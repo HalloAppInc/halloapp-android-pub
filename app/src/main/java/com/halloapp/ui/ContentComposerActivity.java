@@ -629,8 +629,7 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     private void addAdditionalMedia() {
-        final Intent intent = new Intent(this, MediaPickerActivity.class);
-        intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_RESULT);
+        final Intent intent = MediaPickerActivity.pickMoreMedia(this);
         putExtraMediaDataInIntent(intent);
         updatedMediaProcessed = false;
         startActivityForResult(intent, REQUEST_CODE_MORE_MEDIA);

@@ -211,9 +211,7 @@ public class ViewGroupFeedActivity extends HalloActivity {
             intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, groupId);
             startActivity(intent);
         } else if (id == R.id.add_post_gallery) {
-            final Intent intent = new Intent(this, MediaPickerActivity.class);
-            intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_POST);
-            intent.putExtra(MediaPickerActivity.EXTRA_GROUP_ID, groupId);
+            final Intent intent = MediaPickerActivity.pickForPost(this, groupId);
             startActivity(intent);
         } else if (id == R.id.add_post_camera) {
             final Intent intent = new Intent(this, CameraActivity.class);

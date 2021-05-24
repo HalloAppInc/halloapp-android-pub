@@ -970,11 +970,7 @@ public class ChatActivity extends HalloActivity {
     }
 
     private void pickMedia() {
-        final Intent intent = new Intent(this, MediaPickerActivity.class);
-        intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_SEND);
-        intent.putExtra(MediaPickerActivity.EXTRA_CHAT_ID, chatId);
-        intent.putExtra(MediaPickerActivity.EXTRA_REPLY_POST_ID, replyPostId);
-        intent.putExtra(MediaPickerActivity.EXTRA_REPLY_POST_MEDIA_INDEX, replyPostMediaIndex);
+        final Intent intent = MediaPickerActivity.pickForMessage(this, chatId, replyPostId, replyPostMediaIndex);
         startActivityForResult(intent, REQUEST_CODE_COMPOSE);
     }
 

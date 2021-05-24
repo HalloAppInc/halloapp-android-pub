@@ -4,8 +4,8 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Camera;
 import android.graphics.Outline;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.view.ActionMode;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -59,18 +60,94 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class MediaPickerActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
-    public static final String EXTRA_PICKER_PURPOSE = "picker_purpose";
-    public static final String EXTRA_CHAT_ID = "chat_id";
-    public static final String EXTRA_GROUP_ID = "group_id";
-    public static final String EXTRA_REPLY_POST_ID = "reply_id";
-    public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
+    public static Intent pickAvatar(@NonNull Context context) {
+        Intent intent = new Intent(context, MediaPickerActivity.class);
+        intent.putExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_AVATAR);
+        intent.putExtra(EXTRA_SHOW_VIDEOS, false);
+        intent.putExtra(EXTRA_SHOW_CAMERA, true);
+        intent.putExtra(EXTRA_ALLOW_MULTIPLE, false);
+        intent.putExtra(EXTRA_TITLE_ID, R.string.avatar_picker_title);
+        intent.putExtra(EXTRA_CAMERA_PURPOSE, CameraActivity.PURPOSE_AVATAR);
+        return intent;
+    }
 
-    public static final int PICKER_PURPOSE_SEND = 1;
-    public static final int PICKER_PURPOSE_AVATAR = 2;
-    public static final int PICKER_PURPOSE_RESULT = 3;
-    public static final int PICKER_PURPOSE_POST = 4;
-    public static final int PICKER_PURPOSE_GROUP_AVATAR = 5;
-    public static final int PICKER_PURPOSE_COMMENT = 6;
+    public static Intent pickGroupAvatar(@NonNull Context context) {
+        Intent intent = new Intent(context, MediaPickerActivity.class);
+        intent.putExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_GROUP_AVATAR);
+        intent.putExtra(EXTRA_SHOW_VIDEOS, false);
+        intent.putExtra(EXTRA_SHOW_CAMERA, true);
+        intent.putExtra(EXTRA_ALLOW_MULTIPLE, false);
+        intent.putExtra(EXTRA_TITLE_ID, R.string.group_avatar_picker_title);
+        intent.putExtra(EXTRA_CAMERA_PURPOSE, CameraActivity.PURPOSE_AVATAR);
+        return intent;
+    }
+
+    public static Intent pickForMessage(@NonNull Context context, @NonNull ChatId chatId, @Nullable String replyPostId, int replyPostMediaIndex) {
+        final Intent intent = new Intent(context, MediaPickerActivity.class);
+        intent.putExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_SEND);
+        intent.putExtra(EXTRA_CHAT_ID, chatId);
+        intent.putExtra(EXTRA_REPLY_POST_ID, replyPostId);
+        intent.putExtra(EXTRA_REPLY_POST_MEDIA_INDEX, replyPostMediaIndex);
+        intent.putExtra(EXTRA_SHOW_CAMERA, true);
+        return intent;
+    }
+
+    public static Intent pickForPost(@NonNull Context context, @Nullable GroupId groupId) {
+        Intent intent = new Intent(context, MediaPickerActivity.class);
+        intent.putExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_POST);
+        if (groupId != null) {
+            intent.putExtra(EXTRA_GROUP_ID, groupId);
+        }
+        return intent;
+    }
+
+    public static Intent pickForPost(@NonNull Context context) {
+        return pickForPost(context, null);
+    }
+
+    public static Intent pickForComment(@NonNull Context context) {
+        Intent intent = new Intent(context, MediaPickerActivity.class);
+        intent.putExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_COMMENT);
+        intent.putExtra(EXTRA_ALLOW_MULTIPLE, false);
+        intent.putExtra(EXTRA_TITLE_ID, R.string.comment);
+        intent.putExtra(EXTRA_NEXT_BUTTON_TEXT_ID, R.string.done);
+        return intent;
+    }
+
+    public static Intent pickMoreMedia(@NonNull Context context) {
+        Intent intent = new Intent(context, MediaPickerActivity.class);
+        intent.putExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_RESULT);
+        intent.putExtra(EXTRA_NEXT_BUTTON_TEXT_ID, R.string.done);
+        return intent;
+    }
+
+    private static final String EXTRA_PICKER_PURPOSE = "picker_purpose";
+    private static final String EXTRA_CHAT_ID = "chat_id";
+    private static final String EXTRA_GROUP_ID = "group_id";
+    private static final String EXTRA_REPLY_POST_ID = "reply_id";
+    private static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
+
+    private static final String EXTRA_TITLE_ID = "title_id";
+    private static final String EXTRA_NEXT_BUTTON_TEXT_ID = "next_button_text_id";
+    private static final String EXTRA_ALLOW_MULTIPLE = "allow_multiple";
+    private static final String EXTRA_SHOW_CAMERA = "show_camera";
+    private static final String EXTRA_SHOW_VIDEOS = "show_videos";
+    private static final String EXTRA_CAMERA_PURPOSE = "camera_purpose";
+
+    private static final boolean SHOW_VIDEOS_DEFAULT = true;
+    private static final boolean SHOW_CAMERA_DEFAULT = false;
+    private static final boolean ALLOW_MULTIPLE_DEFAULT = true;
+    private static final int TITLE_ID_DEFAULT = R.string.gallery;
+    private static final int NEXT_BUTTON_TEXT_ID_DEFAULT = R.string.next;
+    private static final int CAMERA_PURPOSE_DEFAULT = CameraActivity.PURPOSE_COMPOSE;
+
+    private static final int PICKER_PURPOSE_SEND = 1;
+    private static final int PICKER_PURPOSE_AVATAR = 2;
+    private static final int PICKER_PURPOSE_RESULT = 3;
+    private static final int PICKER_PURPOSE_POST = 4;
+    private static final int PICKER_PURPOSE_GROUP_AVATAR = 5;
+    private static final int PICKER_PURPOSE_COMMENT = 6;
+
 
     private static final int REQUEST_CODE_ASK_STORAGE_PERMISSION = 1;
     private static final int REQUEST_CODE_COMPOSE_CONTENT = 2;
@@ -86,8 +163,6 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     final private List<Long> selected = new ArrayList<>();
 
     private ActionMode actionMode;
-    private int pickerPurpose = PICKER_PURPOSE_SEND;
-
     private static final String KEY_SELECTED_MEDIA = "selected_media";
 
     @Override
@@ -97,15 +172,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        pickerPurpose = getIntent().getIntExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_SEND);
-
-        if (pickerPurpose == PICKER_PURPOSE_AVATAR) {
-            setTitle(R.string.avatar_picker_title);
-        } else if (pickerPurpose == PICKER_PURPOSE_GROUP_AVATAR) {
-            setTitle(R.string.group_avatar_picker_title);
-        } else if (pickerPurpose == PICKER_PURPOSE_COMMENT) {
-            setTitle(R.string.comment);
-        }
+        setTitle(getIntent().getIntExtra(EXTRA_TITLE_ID, TITLE_ID_DEFAULT));
 
         final RecyclerView mediaView = findViewById(android.R.id.list);
         final View progressView = findViewById(R.id.progress);
@@ -124,7 +191,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         mediaView.setAdapter(adapter);
 
         MediaPickerViewModelFactory factory;
-        final boolean includeVideos = !isAvatarPicker();
+        final boolean includeVideos = getIntent().getBooleanExtra(EXTRA_SHOW_VIDEOS, SHOW_VIDEOS_DEFAULT);
         if (savedInstanceState != null && savedInstanceState.getLongArray(KEY_SELECTED_MEDIA) != null) {
             factory = new MediaPickerViewModelFactory(getApplication(), includeVideos, savedInstanceState.getLongArray(KEY_SELECTED_MEDIA));
         } else if (getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA) != null) {
@@ -153,10 +220,6 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         requestPermissions();
     }
 
-    private boolean isAvatarPicker() {
-        return pickerPurpose == PICKER_PURPOSE_AVATAR || pickerPurpose == PICKER_PURPOSE_GROUP_AVATAR;
-    }
-
     private void notifyAdapterOnSelection(List<Long> selected) {
         HashSet<Long> set = new HashSet<>(this.selected);
 
@@ -181,6 +244,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         super.onDestroy();
         thumbnailLoader.destroy();
 
+        int pickerPurpose = getIntent().getIntExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_SEND);
         if (pickerPurpose == PICKER_PURPOSE_SEND || pickerPurpose == PICKER_PURPOSE_POST) {
             if (viewModel.original != null && viewModel.original.size() > 0) {
                 viewModel.clean(viewModel.original);
@@ -289,7 +353,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.media_picker, menu);
-        if (isAvatarPicker() || pickerPurpose == PICKER_PURPOSE_SEND) {
+        if (getIntent().getBooleanExtra(EXTRA_SHOW_CAMERA, SHOW_CAMERA_DEFAULT)) {
             MenuItem menuItem = menu.findItem(R.id.camera);
             menuItem.setVisible(true);
         }
@@ -315,13 +379,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             intent.putExtra(CameraActivity.EXTRA_GROUP_ID, groupId);
             intent.putExtra(CameraActivity.EXTRA_REPLY_POST_ID, getIntent().getStringExtra(EXTRA_REPLY_POST_ID));
             intent.putExtra(CameraActivity.EXTRA_REPLY_POST_MEDIA_INDEX, getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1));
-            if (isAvatarPicker()) {
-                intent.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_AVATAR);
-                startActivityForResult(intent, REQUEST_CODE_SET_AVATAR);
-            } else {
-                intent.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_COMPOSE);
-                startActivity(intent);
-            }
+            intent.putExtra(CameraActivity.EXTRA_PURPOSE, getIntent().getIntExtra(EXTRA_CAMERA_PURPOSE, CAMERA_PURPOSE_DEFAULT));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -357,6 +415,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         final Intent intent = new Intent(this, AvatarPreviewActivity.class);
         intent.setData(uri);
 
+        int pickerPurpose = getIntent().getIntExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_SEND);
         if (pickerPurpose == PICKER_PURPOSE_GROUP_AVATAR) {
             intent.putExtra(AvatarPreviewActivity.EXTRA_AVATAR_FORM, AvatarPreviewActivity.AVATAR_FORM_SQUARE);
         } else {
@@ -374,10 +433,11 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     }
 
     private void handleSelection(@NonNull ArrayList<Uri> uris) {
+        int pickerPurpose = getIntent().getIntExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_SEND);
         if (pickerPurpose == PICKER_PURPOSE_SEND || pickerPurpose == PICKER_PURPOSE_POST) {
             Preconditions.checkState(uris.size() > 0);
             startContentComposer(uris);
-        } else if (isAvatarPicker()) {
+        } else if (pickerPurpose == PICKER_PURPOSE_AVATAR || pickerPurpose == PICKER_PURPOSE_GROUP_AVATAR) {
             Preconditions.checkState(uris.size() == 1);
             startAvatarPreview(uris.get(0));
         } else if (pickerPurpose == PICKER_PURPOSE_RESULT || pickerPurpose == PICKER_PURPOSE_COMMENT) {
@@ -400,7 +460,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                         getMenuInflater().inflate(R.menu.media_picker_action_mode, menu);
 
                         MenuItem menuItem = menu.findItem(R.id.select);
-                        SpannableString ss = new SpannableString(getString(pickerPurpose == PICKER_PURPOSE_RESULT || pickerPurpose == PICKER_PURPOSE_COMMENT ? R.string.done : R.string.next));
+                        SpannableString ss = new SpannableString(getString(getIntent().getIntExtra(EXTRA_NEXT_BUTTON_TEXT_ID, NEXT_BUTTON_TEXT_ID_DEFAULT)));
                         ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), R.color.color_secondary)), 0, ss.length(), 0);
                         menuItem.setTitle(ss);
 
@@ -703,7 +763,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                 thumbnailView.setContentDescription(getString(R.string.photo));
             }
 
-            if (isAvatarPicker() || pickerPurpose == PICKER_PURPOSE_COMMENT) {
+            if (!getIntent().getBooleanExtra(EXTRA_ALLOW_MULTIPLE, ALLOW_MULTIPLE_DEFAULT)) {
                 selectionIndicator.setVisibility(View.GONE);
                 thumbnailFrame.setPadding(0, 0, 0, 0);
                 thumbnailView.setSelected(false);
@@ -750,7 +810,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         }
 
         private void onItemClicked() {
-            if (isAvatarPicker() || pickerPurpose == PICKER_PURPOSE_COMMENT) {
+            if (!getIntent().getBooleanExtra(EXTRA_ALLOW_MULTIPLE, ALLOW_MULTIPLE_DEFAULT)) {
                 final ArrayList<Uri> uris = new ArrayList<>(1);
                 uris.add(ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id));
                 handleSelection(uris);

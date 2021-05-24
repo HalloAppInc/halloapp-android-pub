@@ -397,8 +397,7 @@ public class CommentsActivity extends HalloActivity {
     }
 
     private void pickMedia() {
-        final Intent intent = new Intent(this, MediaPickerActivity.class);
-        intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_COMMENT);
+        final Intent intent = MediaPickerActivity.pickForComment(this);
         startActivityForResult(intent, REQUEST_CODE_PICK_MEDIA);
     }
 

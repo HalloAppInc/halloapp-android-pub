@@ -122,8 +122,7 @@ public class SettingsProfile extends HalloActivity {
 
         final View.OnClickListener changeAvatarListener = v -> {
             Log.d("SettingsProfile request change avatar");
-            final Intent intent = new Intent(this, MediaPickerActivity.class);
-            intent.putExtra(MediaPickerActivity.EXTRA_PICKER_PURPOSE, MediaPickerActivity.PICKER_PURPOSE_AVATAR);
+            final Intent intent = MediaPickerActivity.pickAvatar(this);
             startActivityForResult(intent, CODE_CHANGE_AVATAR);
         };
         changeAvatarView.setOnClickListener(changeAvatarListener);
