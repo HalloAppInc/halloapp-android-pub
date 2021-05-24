@@ -23,6 +23,12 @@ object POEditorStringManager {
         }
     }
 
+    fun uploadStrings() {
+        runBlocking {
+            uploadStringsToPOEditor()
+        }
+    }
+
     suspend fun uploadStringsToPOEditor() {
         val token = getPOEditorToken()
         val stringsFile = getStringFile(null)
