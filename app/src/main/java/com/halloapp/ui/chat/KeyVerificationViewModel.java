@@ -43,8 +43,7 @@ public class KeyVerificationViewModel extends AndroidViewModel {
     private UserId userId;
 
     final ComputableLiveData<String> name;
-    final ComputableLiveData<Bitmap> qrCode;
-    final ComputableLiveData<List<String>> safetyNumber;
+    final ComputableLiveData<VerificationInfo> verificationInfo;
     final MutableLiveData<Boolean> verificationResult = new MutableLiveData<>();
 
     private final Me me = Me.getInstance();
@@ -63,9 +62,9 @@ public class KeyVerificationViewModel extends AndroidViewModel {
             }
         };
 
-        qrCode = new ComputableLiveData<Bitmap>() {
+        verificationInfo = new ComputableLiveData<VerificationInfo>() {
             @Override
-            protected Bitmap compute() {
+            protected VerificationInfo compute() {
                 PublicXECKey peerIdentityKey;
                 try {
                     peerIdentityKey = CryptoUtils.convertPublicEdToX(encryptedKeyStore.getPeerPublicIdentityKey(userId));
@@ -80,6 +79,18 @@ public class KeyVerificationViewModel extends AndroidViewModel {
                 } catch (CryptoException e) {
                     Log.e("KeyVerification: Failed to convert my identity key to XEC format", e);
                     return null;
+                }
+
+                List<String> safetyNumber = new ArrayList<>();
+
+                List<String> a = getSafetyNumber(userId.rawId(), peerIdentityKey);
+                List<String> b = getSafetyNumber(me.getUser(), myIdentityKey);
+                if (ordered(a, b)) {
+                    safetyNumber.addAll(a);
+                    safetyNumber.addAll(b);
+                } else {
+                    safetyNumber.addAll(b);
+                    safetyNumber.addAll(a);
                 }
 
                 byte[] contents = CryptoUtils.concat(new byte[] {0}, uidToBytes(me.getUser()), uidToBytes(userId.rawId()), myIdentityKey.getKeyMaterial(), peerIdentityKey.getKeyMaterial());
@@ -87,46 +98,14 @@ public class KeyVerificationViewModel extends AndroidViewModel {
 
                 try {
                     BitMatrix bm = new QRCodeWriter().encode(s, BarcodeFormat.QR_CODE, QR_MATRIX_SIZE, QR_MATRIX_SIZE);
-                    return bitMatrixToBitmap(bm);
+                    Bitmap qrCode = bitMatrixToBitmap(bm);
+
+                    return new VerificationInfo(qrCode, safetyNumber);
                 } catch (WriterException e) {
                     Log.e("KeyVerification failed to encode QR", e);
                 }
+
                 return null;
-            }
-        };
-
-        safetyNumber = new ComputableLiveData<List<String>>() {
-            @Override
-            protected List<String> compute() {
-                List<String> ret = new ArrayList<>();
-
-                PublicXECKey peerIdentityKey;
-                try {
-                    peerIdentityKey = CryptoUtils.convertPublicEdToX(encryptedKeyStore.getPeerPublicIdentityKey(userId));
-                } catch (CryptoException e) {
-                    Log.e("KeyVerification: Failed to fetch peer identity key", e);
-                    return null;
-                }
-
-                PublicXECKey myIdentityKey;
-                try {
-                    myIdentityKey = CryptoUtils.convertPublicEdToX(encryptedKeyStore.getMyPublicEd25519IdentityKey());
-                } catch (CryptoException e) {
-                    Log.e("KeyVerification: Failed to convert my identity key to XEC format", e);
-                    return null;
-                }
-
-                List<String> a = getSafetyNumber(userId.rawId(), peerIdentityKey);
-                List<String> b = getSafetyNumber(me.getUser(), myIdentityKey);
-                if (ordered(a, b)) {
-                    ret.addAll(a);
-                    ret.addAll(b);
-                } else {
-                    ret.addAll(b);
-                    ret.addAll(a);
-                }
-
-                return ret;
             }
         };
     }
@@ -277,6 +256,16 @@ public class KeyVerificationViewModel extends AndroidViewModel {
         }
 
         return Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
+    }
+
+    public static final class VerificationInfo {
+        public Bitmap qrCode;
+        public List<String> safetyNumber;
+
+        public VerificationInfo(Bitmap qrCode, List<String> safetyNumber) {
+            this.qrCode = qrCode;
+            this.safetyNumber = safetyNumber;
+        }
     }
 
     public static class Factory implements ViewModelProvider.Factory {

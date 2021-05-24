@@ -34,6 +34,7 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public class KeyVerificationActivity extends HalloActivity {
 
@@ -101,11 +102,10 @@ public class KeyVerificationActivity extends HalloActivity {
             }
         });
 
-        viewModel.qrCode.getLiveData().observe(this, qr -> {
-            qrCode.setImageBitmap(qr);
-        });
+        viewModel.verificationInfo.getLiveData().observe(this, info -> {
+            qrCode.setImageBitmap(info.qrCode);
 
-        viewModel.safetyNumber.getLiveData().observe(this, sn -> {
+            List<String> sn = info.safetyNumber;
             if (sn == null || sn.size() < 12) {
                 Log.e("Received invalid safety number " + sn);
                 return;
