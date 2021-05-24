@@ -8,6 +8,7 @@ public class Constants {
 
     public static final String MAIN_WEBSITE_URL = "https://www.halloapp.com/";
     public static final String ABOUT_PAGE_URL = "https://www.halloapp.com/about";
+    public static final String FAQ_URL = "https://www.halloapp.com/help/";
     public static final String PRIVACY_POLICY_URL = "https://www.halloapp.com/privacy";
     public static final String TERMS_OF_SERVICE_URL = "https://www.halloapp.com/terms";
     public static final String GROUP_INVITE_BASE_URL = "https://halloapp.com/invite/?g=";

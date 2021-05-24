@@ -22,6 +22,26 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/faq"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@color/primary_text"
+                android:text="@string/faq"
+                android:paddingStart="24dp"
+                android:paddingEnd="5dp"
+                android:paddingTop="15dp"
+                android:background="?selectableItemBackground"
+                android:paddingBottom="16dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/window_background"/>
+
+
+
+            <TextView
                 android:id="@+id/terms_of_service"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
