@@ -519,5 +519,6 @@
     <string name="manage_feed_privacy">Manage privacy</string>
     <!-- Shown below on seen by to explain that posts disappear -->
     <string name="seen_by_post_expiration_notice">Your posts will disappear after 30 days.</string>
+    <!-- Frequently asked questions option in help menu -->
     <string name="faq">FAQ</string>
 </resources>
