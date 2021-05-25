@@ -47,6 +47,8 @@ import java.util.List;
 
 public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.MediaViewHolder> implements LifecycleEventObserver {
 
+    private static final float MAX_MEDIA_RATIO = 0.6f;
+
     private final MediaPagerAdapterParent parent;
     private final float mediaCornerRadius;
     private final float maxAspectRatio;
@@ -151,12 +153,11 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         final Media mediaItem = media.get(Rtl.isRtl(holder.itemView.getContext()) ? media.size() - 1 - position : position);
         holder.container.setAspectRatio(fixedAspectRatio);
 
+        int displayHeight = holder.container.getContext().getResources().getDisplayMetrics().heightPixels;
+        holder.container.setMaxHeight((int) (displayHeight * MAX_MEDIA_RATIO));
+
         if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
-            if (mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
-                holder.playerView.setResizeMode(com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
-            } else {
-                holder.playerView.setResizeMode(com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT);
-            }
+            holder.playerView.setResizeMode(com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT);
 
             if (mediaItem.width > 0) {
                 holder.playerView.setAspectRatio(1f * mediaItem.height / mediaItem.width);
@@ -332,7 +333,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
             container = itemView.findViewById(R.id.container);
             imageView = itemView.findViewById(R.id.image);
             playerView = itemView.findViewById(R.id.video);
-            progressView = itemView.findViewById(R.id.progress);
+            progressView = itemView.findViewById(R.id.media_progress);
 
             imageView.setCornerRadius(mediaCornerRadius);
             imageView.setSinglePointerDragStartDisabled(true);

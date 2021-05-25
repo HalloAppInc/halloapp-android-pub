@@ -123,7 +123,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         }
 
         if (mediaPagerView != null) {
-            mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.post_media_radius), Constants.MAX_IMAGE_ASPECT_RATIO);
+            mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.post_media_radius), 0);
             mediaPagerView.setAdapter(mediaPagerAdapter);
             mediaPagerView.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                 @Override

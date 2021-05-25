@@ -7,8 +7,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.text.Selection;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.text.TextUtils;
@@ -21,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -42,13 +39,10 @@ import com.halloapp.content.Message;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.UploadMediaTask;
-import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
-import com.halloapp.ui.contacts.ContactHashInfoBottomSheetDialogFragment;
 import com.halloapp.ui.groups.GroupParticipants;
-import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.Rtl;
@@ -226,7 +220,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
 
         if (mediaPagerView != null) {
             final int defaultMediaInset = mediaPagerView.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);
-            mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.message_bubble_corner_radius), Constants.MAX_IMAGE_ASPECT_RATIO);
+            mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.message_bubble_corner_radius), 0);
             mediaPagerAdapter.setMediaInset(0, 0, 0, defaultMediaInset);
             mediaPagerView.setAdapter(mediaPagerAdapter);
             mediaPagerView.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {

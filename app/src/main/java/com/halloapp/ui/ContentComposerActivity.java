@@ -452,12 +452,13 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     private void updateAspectRatioForMedia(List<ContentComposerViewModel.EditMediaPair> mediaPairList) {
-        if (chatId == null) {
-            mediaPager.setMaxAspectRatio(
-                    Math.min(Constants.MAX_IMAGE_ASPECT_RATIO, ContentComposerViewModel.EditMediaPair.getMaxAspectRatio(mediaPairList)));
-        } else {
-            mediaPager.setMaxAspectRatio(ContentComposerViewModel.EditMediaPair.getMaxAspectRatio(mediaPairList));
+        int maxHeight = findViewById(R.id.media_container).getHeight() - getResources().getDimensionPixelSize(R.dimen.content_composer_min_card_margin);
+
+        if (mediaPairList.size() > 1) {
+            maxHeight -= mediaPagerIndicator.getHeight();
         }
+
+        mediaPager.setSizeLimits(ContentComposerViewModel.EditMediaPair.getMaxAspectRatio(mediaPairList), maxHeight);
     }
 
     @Override
@@ -1000,10 +1001,9 @@ public class ContentComposerActivity extends HalloActivity {
             final View view = getLayoutInflater().inflate(R.layout.content_composer_media_pager_item, container, false);
             final ContentPhotoView imageView = view.findViewById(R.id.image);
             final ContentPlayerView contentPlayerView = view.findViewById(R.id.video);
-            if (chatId != null) {
-                imageView.setMaxAspectRatio(0);
-                contentPlayerView.setMaxAspectRatio(0);
-            }
+            imageView.setMaxAspectRatio(0);
+            contentPlayerView.setMaxAspectRatio(0);
+
             final int currentPosition = Rtl.isRtl(container.getContext()) ? mediaPairList.size() - 1 - position : position;
             final ContentComposerViewModel.EditMediaPair mediaPair = mediaPairList.get(currentPosition);
             final Media mediaItem = mediaPair.getRelevantMedia();
@@ -1013,11 +1013,7 @@ public class ContentComposerActivity extends HalloActivity {
             if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
                 imageView.setVisibility(View.GONE);
                 contentPlayerView.setVisibility(View.VISIBLE);
-                if (mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
-                    contentPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
-                } else {
-                    contentPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
-                }
+                contentPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
                 if (mediaItem.width > 0) {
                     contentPlayerView.setAspectRatio(1f * mediaItem.height / mediaItem.width);
                 }
@@ -1041,15 +1037,6 @@ public class ContentComposerActivity extends HalloActivity {
                 });
                 contentPlayerView.setOnTouchListener((v, event) -> doubleTapDetector.onTouchEvent(event));
             } else {
-                if (mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
-                    if (chatId == null && mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
-                        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    } else {
-                        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    }
-                } else {
-                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                }
                 fullThumbnailLoader.load(imageView, mediaItem);
                 imageView.setDrawDelegate(drawDelegateView);
                 imageView.setOnClickListener(v -> clearEditFocus());

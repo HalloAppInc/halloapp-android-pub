@@ -154,13 +154,20 @@ public class ContentPhotoView extends com.github.chrisbanes.photoview.PhotoView 
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         final int width = getMeasuredWidth();
+        final int height = getMeasuredHeight();
+
         final Drawable drawable = getDrawable();
         if (drawable != null && drawable.getIntrinsicWidth() > 0) {
             int drawableWidth = drawable.getIntrinsicWidth();
             int drawableHeight = computeConstrainedHeight(drawableWidth, drawable.getIntrinsicHeight());
-            float drawableAspectRatio = 1f * drawableHeight / drawableWidth;
-            final int height = (int) (width * drawableAspectRatio);
-            setMeasuredDimension(width, height);
+
+            if (getScaleType() == ScaleType.FIT_CENTER) {
+                float scale = Math.min(1f * width / drawableWidth, 1f * height / drawableHeight);
+                setMeasuredDimension((int) (drawableWidth * scale), (int) (drawableHeight * scale));
+            } else {
+                float drawableAspectRatio = 1f * drawableHeight / drawableWidth;
+                setMeasuredDimension(width, (int) (width * drawableAspectRatio));
+            }
         }
     }
 

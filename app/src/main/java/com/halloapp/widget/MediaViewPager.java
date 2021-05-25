@@ -12,6 +12,7 @@ import androidx.viewpager.widget.ViewPager;
 public class MediaViewPager extends ViewPager {
 
     float maxAspectRatio;
+    int maxHeight;
 
     public MediaViewPager(@NonNull Context context) {
         super(context);
@@ -21,8 +22,10 @@ public class MediaViewPager extends ViewPager {
         super(context, attrs);
     }
 
-    public void setMaxAspectRatio(float maxAspectRatio) {
+    public void setSizeLimits(float maxAspectRatio, int maxHeight) {
         this.maxAspectRatio = maxAspectRatio;
+        this.maxHeight = maxHeight;
+
         requestLayout();
     }
 
@@ -38,7 +41,13 @@ public class MediaViewPager extends ViewPager {
                 childVPadding = child.getPaddingTop() + child.getPaddingBottom();
             }
             final int height = (int) ((getMeasuredWidth() - childHPadding) * maxAspectRatio) + childVPadding;
-            setMeasuredDimension(getMeasuredWidth(), height);
+
+            if (maxHeight > 0) {
+                setMeasuredDimension(getMeasuredWidth(), Math.min(maxHeight, height));
+            } else {
+                setMeasuredDimension(getMeasuredWidth(), height);
+            }
+
             for (int i = 0; i < getChildCount(); i++) {
                 final View child = getChildAt(i);
                 child.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.EXACTLY));

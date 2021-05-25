@@ -6,12 +6,11 @@
     android:layout_height="match_parent"
     android:padding="@dimen/media_pager_child_padding">
 
-
     <com.halloapp.widget.ContentPhotoView
         android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         android:layout_gravity="center"
         app:contentPvBorderColor="@color/media_content_outline"
         app:contentPvCornerRadius="@dimen/content_composer_media_border"
