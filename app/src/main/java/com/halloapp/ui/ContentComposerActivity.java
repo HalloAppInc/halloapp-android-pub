@@ -711,7 +711,6 @@ public class ContentComposerActivity extends HalloActivity {
         } else {
             maxVideoLength = ServerProps.getInstance().getMaxFeedVideoDuration();
         }
-
         List<ContentComposerViewModel.EditMediaPair> media = viewModel.getEditMedia();
 
         BgWorkers.getInstance().execute(() -> {
@@ -730,7 +729,7 @@ public class ContentComposerActivity extends HalloActivity {
 
             if (videoTooLong) {
                 runOnUiThread(() -> {
-                    String message = getResources().getString(R.string.max_video_length, maxVideoLength);
+                    String message = getResources().getQuantityString(R.plurals.max_video_length, (int) maxVideoLength, maxVideoLength);
                     SnackbarHelper.showWarning(mediaVerticalScrollView, message);
 
                     fail.run();

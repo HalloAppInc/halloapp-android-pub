@@ -514,7 +514,10 @@
     <string name="post_preview_with_caption">%1$s: %2$s</string>
     <string name="composer_sharing_message">Sending to %s</string>
     <string name="composer_sharing_post">Sharing with %s</string>
-    <string name="max_video_length">Your video is over %d seconds long. Please select another video or edit it.</string>
+    <plurals name="max_video_length">
+        <item quantity="one">Your video is over %d second long. Please select another video or edit it.</item>
+        <item quantity="other">Your video is over %d seconds long. Please select another video or edit it.</item>
+    </plurals>
     <string name="video_edit_unable_trim">Video trimming was unsuccessful.</string>
     <string name="mute">Mute</string>
     <!-- Button to expand seen by list to see more -->
