@@ -318,7 +318,30 @@ public class CropImageActivity extends HalloActivity {
                 model.clear();
             }
 
-            runOnUiThread(this::finish);
+            Bitmap original = EditImageView.loadBitmap(this, selected.original.file);
+            Bitmap cropped = EditImageView.loadBitmap(this, selected.getMedia().file);
+
+            runOnUiThread(() -> {
+                prepareTransitionView(original, cropped);
+
+                transitionView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        transitionView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                        int position = viewModel.getSelectedPosition();
+                        if (position < 0) {
+                            position = getIntent().getIntExtra(EXTRA_SELECTED, 0);
+                        }
+
+                        Intent intent = new Intent();
+                        intent.putExtra(EXTRA_SELECTED, position);
+                        setResult(RESULT_OK, intent);
+
+                        finishAfterTransition();
+                    }
+                });
+            });
         });
     }
 

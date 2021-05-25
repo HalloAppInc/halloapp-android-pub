@@ -678,21 +678,11 @@ public class ChatActivity extends HalloActivity {
         if (resultCode == RESULT_OK && data.hasExtra(MediaExplorerActivity.EXTRA_CONTENT_ID) && data.hasExtra(MediaExplorerActivity.EXTRA_SELECTED)) {
             String contentId = data.getStringExtra(MediaExplorerActivity.EXTRA_CONTENT_ID);
             int position = data.getIntExtra(MediaExplorerActivity.EXTRA_SELECTED, 0);
+            View root = findViewById(R.id.chat);
 
-            ViewPager2 pager = findViewById(R.id.chat).findViewWithTag(MediaPagerAdapter.getPagerTag(contentId));
-
-            if (pager != null && pager.getCurrentItem() != position) {
+            if (root != null && contentId != null) {
                 postponeEnterTransition();
-
-                pager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        pager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        startPostponedEnterTransition();
-                    }
-                });
-
-                pager.setCurrentItem(position, false);
+                MediaPagerAdapter.preparePagerForTransition(root, contentId, position, this::startPostponedEnterTransition);
             }
         }
     }

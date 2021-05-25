@@ -5,10 +5,8 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.transition.Transition;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,12 +15,10 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.SharedElementCallback;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedListAdapter;
@@ -77,7 +73,6 @@ public class MediaExplorerActivity extends HalloActivity {
     private CircleIndicator3 indicator;
     private MotionEvent swipeExitStart;
     private boolean isSwipeExitInProgress = false;
-    private ImageView transitionImage;
     private boolean isExiting = false;
 
     private final HashSet<PlayerView> playerViews = new HashSet<>();
@@ -89,26 +84,10 @@ public class MediaExplorerActivity extends HalloActivity {
 
         @Override
         public void onTransitionEnd(Transition transition) {
-            transition.removeListener(this);
-
-            transitionImage.post(() -> {
-                pager.setAlpha(1f);
-                transitionImage.setAlpha(0f);
-                transitionImage.setImageBitmap(null);
-                transitionImage.setLeft(0);
-                transitionImage.setTop(0);
-                transitionImage.setBottom(0);
-                transitionImage.setRight(0);
-
-                ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)transitionImage.getLayoutParams();
-                params.width = 0;
-                params.height = 0;
-                params.topMargin = 0;
-                params.leftMargin = 0;
-                transitionImage.setLayoutParams(params);
-
+            pager.post(() -> {
                 viewModel.setInitializationInProgress(false);
                 handlePlaybackOnPageChange(true);
+                updatePlaybackControlsVisibility();
             });
         }
 
@@ -123,56 +102,10 @@ public class MediaExplorerActivity extends HalloActivity {
     final private SharedElementCallback sharedElementCallback = new SharedElementCallback() {
         @Override
         public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-            sharedElements.put(transitionImage.getTransitionName(), transitionImage);
-        }
-
-        @Override
-        public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
-            if (sharedElementSnapshots.size() < 1 || sharedElementSnapshots.get(0) == null) {
-                return;
-            }
-
-            Rect snapshotFrame = getFrame(sharedElementSnapshots.get(0));
-            Rect containerFrame = getFrame(findViewById(R.id.main));
-
-            float scale = Math.min((float)containerFrame.width() / (float)snapshotFrame.width(), (float)containerFrame.height() / (float)snapshotFrame.height());
-            int width = (int)((float)snapshotFrame.width() * scale);
-            int height = (int)((float)snapshotFrame.height() * scale);
-            int centerX = containerFrame.centerX();
-            int centerY = containerFrame.centerY();
-
             MediaExplorerViewModel.MediaModel model = getCurrentItem();
             View mediaView = pager.findViewWithTag(model);
-            if (mediaView != null) {
-                centerX += mediaView.getTranslationX();
-                centerY += mediaView.getTranslationY();
-                width *= mediaView.getScaleX();
-                height *= mediaView.getScaleY();
-            }
 
-            // Layout is executed only after the transition, where as setLeft, ..., have immediate
-            // effect but are not kept after transition
-            View transitionView = sharedElements.get(0);
-            transitionView.setLeft(centerX - width / 2);
-            transitionView.setTop(centerY - height / 2);
-            transitionView.setBottom(centerY + height / 2);
-            transitionView.setRight(centerX + width / 2);
-
-            // Layout is executed only after the transition, but the state is kept
-            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)transitionView.getLayoutParams();
-            params.width = width;
-            params.height = height;
-            params.topMargin = centerY - height / 2;
-            params.leftMargin = centerX - width / 2;
-            transitionView.setLayoutParams(params);
-        }
-
-        @NonNull
-        private Rect getFrame(@NonNull View view) {
-            int[] location = new int[2];
-            view.getLocationInWindow(location);
-
-            return new Rect(location[0], location[1], location[0] + view.getWidth(), location[1] + view.getHeight());
+            sharedElements.put(mediaView.getTransitionName(), mediaView);
         }
     };
 
@@ -212,12 +145,7 @@ public class MediaExplorerActivity extends HalloActivity {
             }
         });
 
-        int selected = getIntent().getIntExtra(EXTRA_SELECTED, 0);
-
         indicator = findViewById(R.id.media_pager_indicator);
-        transitionImage = findViewById(R.id.transition_image);
-        transitionImage.setTransitionName(MediaPagerAdapter.getTransitionName(getIntent().getStringExtra(EXTRA_CONTENT_ID), selected));
-        getWindow().getSharedElementEnterTransition().addListener(transitionListener);
 
         findViewById(R.id.main).setOnClickListener(v -> toggleSystemUI());
 
@@ -227,7 +155,7 @@ public class MediaExplorerActivity extends HalloActivity {
             return;
         }
 
-        setupViewModel(getIntent().getParcelableExtra(EXTRA_CHAT_ID), media, selected);
+        setupViewModel(getIntent().getParcelableExtra(EXTRA_CHAT_ID), media, getIntent().getIntExtra(EXTRA_SELECTED, 0));
     }
 
     private void setupViewModel(@Nullable ChatId chatId, @NonNull List<MediaExplorerViewModel.MediaModel> media, int selected) {
@@ -259,7 +187,7 @@ public class MediaExplorerActivity extends HalloActivity {
             bgWorkers.execute(() -> {
                 viewModel.setPosition(viewModel.getPositionInChat(media.get(selected).rowId));
                 pager.setCurrentItem(viewModel.getPosition(), false);
-                new Handler(getMainLooper()).post(this::finishEnterTransitionWhenReady);
+                pager.post(this::finishEnterTransitionWhenReady);
             });
         }
     }
@@ -272,26 +200,37 @@ public class MediaExplorerActivity extends HalloActivity {
                 pager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
                 MediaExplorerViewModel.MediaModel model = getCurrentItem();
-                if (model == null) {
-                    return;
+                View view = pager.findViewWithTag(model);
+
+                if (view != null) {
+                    String contentId = getIntent().getStringExtra(EXTRA_CONTENT_ID);
+                    int selected = getIntent().getIntExtra(EXTRA_SELECTED, 0);
+
+                    view.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, selected));
+                    getWindow().getSharedElementEnterTransition().addListener(transitionListener);
                 }
 
-                bgWorkers.execute(() -> {
-                    Bitmap bitmap;
-                    try {
-                        bitmap = MediaUtils.decode(new File(model.uri.getPath()), model.type, Constants.MAX_IMAGE_DIMENSION);
-                    } catch (IOException e) {
-                        Log.e("MediaExplorerActivity: missing shared element enter transition media", e);
-                        return;
-                    }
+                if (view instanceof PlayerView) {
+                    PlayerView playerView = (PlayerView) view;
+                    playerView.hideController();
 
-                    transitionImage.post(() -> {
-                        transitionImage.setImageBitmap(bitmap);
-                        pager.setAlpha(0f);
-                        transitionImage.setAlpha(1f);
+                    Player player = playerView.getPlayer();
+                    if (player != null) {
+                        player.addListener(new Player.EventListener() {
+                            @Override
+                            public void onPlaybackStateChanged(int state) {
+                                if (state == Player.STATE_READY) {
+                                    player.removeListener(this);
+                                    startPostponedEnterTransition();
+                                }
+                            }
+                        });
+                    } else {
                         startPostponedEnterTransition();
-                    });
-                });
+                    }
+                } else {
+                    startPostponedEnterTransition();
+                }
             }
         });
     }
@@ -383,7 +322,7 @@ public class MediaExplorerActivity extends HalloActivity {
     }
 
     private void finishSwipeExit() {
-         onBackPressed();
+        onBackPressed();
     }
 
     private void onSwipeExitMove(MotionEvent event) {
@@ -406,6 +345,10 @@ public class MediaExplorerActivity extends HalloActivity {
 
             View main = findViewById(R.id.main);
             main.setBackgroundColor(Color.argb(alpha, 0, 0, 0));
+
+            if (model != null && model.type == Media.MEDIA_TYPE_VIDEO) {
+                ((PlayerView)view).hideController();
+            }
         }
     }
 
@@ -497,7 +440,7 @@ public class MediaExplorerActivity extends HalloActivity {
         bgWorkers.execute(() -> {
             String contentId;
             int selected;
-            if (viewModel.isChat()) {
+            if (viewModel.isChat() && model != null) {
                 contentId = viewModel.getContentIdInChat(model.rowId);
                 selected = viewModel.getPositionInMessage(model.rowId);
             } else {
@@ -505,23 +448,21 @@ public class MediaExplorerActivity extends HalloActivity {
                 selected = viewModel.getPosition();
             }
 
-            Bitmap bitmap;
-            try {
-                bitmap = MediaUtils.decode(new File(model.uri.getPath()), model.type, Constants.MAX_IMAGE_DIMENSION);
-            } catch (IOException e) {
-                Log.e("MediaExplorerActivity: missing shared element return transition media", e);
-                return;
-            }
+            View view = pager.findViewWithTag(model);
 
-            transitionImage.post(() -> {
+            pager.post(() -> {
+                if (view != null) {
+                    if (model != null && model.type == Media.MEDIA_TYPE_VIDEO) {
+                        ((PlayerView)view).hideController();
+                    }
+
+                    view.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, selected));
+                }
+
                 Intent intent = new Intent();
                 intent.putExtra(EXTRA_CONTENT_ID, contentId);
                 intent.putExtra(EXTRA_SELECTED, selected);
                 setResult(RESULT_OK, intent);
-
-                transitionImage.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, selected));
-                transitionImage.setImageBitmap(bitmap);
-                transitionImage.setAlpha(1f);
 
                 finishAfterTransition();
             });

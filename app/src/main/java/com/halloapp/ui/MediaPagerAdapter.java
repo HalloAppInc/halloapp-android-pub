@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.exoplayer2.ControlDispatcher;
 import com.google.android.exoplayer2.MediaItem;
@@ -27,6 +29,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.ui.PlayerControlView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.halloapp.Constants;
@@ -81,6 +84,71 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
 
     public static String getTransitionName(String contentId, int mediaIndex) {
         return "image-transition-" + contentId + "-" + mediaIndex;
+    }
+
+    public static void preparePagerForTransition(@NonNull View root, @NonNull String contentId, int mediaIndex, @NonNull Runnable runnable) {
+        ViewPager2 pager = root.findViewWithTag(getPagerTag(contentId));
+
+        if (pager != null && pager.getCurrentItem() != mediaIndex) {
+            pager.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    pager.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                    MediaPagerAdapter adapter = (MediaPagerAdapter) pager.getAdapter();
+                    if (adapter == null) {
+                        root.post(runnable);
+                        return true;
+                    }
+
+                    View view = pager.findViewWithTag(adapter.media.get(mediaIndex));
+
+                    if (view instanceof ContentPhotoView) {
+                        ContentPhotoView photoView = (ContentPhotoView) view;
+
+                        if (photoView.getDrawable() == null) {
+                            photoView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                                @Override
+                                public boolean onPreDraw() {
+                                    photoView.getViewTreeObserver().removeOnPreDrawListener(this);
+                                    root.post(runnable);
+                                    return true;
+                                }
+                            });
+                        } else {
+                            root.post(runnable);
+                        }
+                    } else if (view instanceof PlayerView) {
+                        ContentPlayerView playerView = (ContentPlayerView) view;
+                        Player player = playerView.getPlayer();
+
+                        if (player != null && player.getPlaybackState() == Player.STATE_READY) {
+                            root.post(runnable);
+                        } else if (player != null) {
+                            player.addListener(new Player.EventListener() {
+                                @Override
+                                public void onPlaybackStateChanged(int state) {
+                                    if (state == Player.STATE_READY) {
+                                        player.removeListener(this);
+                                        root.post(runnable);
+                                    }
+                                }
+                            });
+                        } else {
+                            root.post(runnable);
+                        }
+                    } else {
+                        root.post(runnable);
+                    }
+
+                    return true;
+                }
+            });
+
+            pager.setCurrentItem(mediaIndex, false);
+        } else {
+            root.post(runnable);
+        }
     }
 
     public MediaPagerAdapter(@NonNull MediaPagerAdapter.MediaPagerAdapterParent parent, float mediaCornerRadius) {
@@ -146,6 +214,12 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
     @Override
     public void onBindViewHolder(@NonNull MediaViewHolder holder, int position) {
         holder.releasePlayer();
+        holder.imageView.setTransitionName("");
+        holder.playerView.setTransitionName("");
+        holder.imageView.setVisibility(View.GONE);
+        holder.playerView.setVisibility(View.GONE);
+        holder.imageView.setTag(null);
+        holder.playerView.setTag(null);
 
         if (overrideMediaPadding) {
             holder.itemView.setPadding(mediaInsetLeft, mediaInsetTop, mediaInsetRight, mediaInsetBottom);
@@ -156,6 +230,8 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         int displayHeight = holder.container.getContext().getResources().getDisplayMetrics().heightPixels;
         holder.container.setMaxHeight((int) (displayHeight * MAX_MEDIA_RATIO));
 
+        String transitionName = MediaPagerAdapter.getTransitionName(contentId, position);
+
         if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
             holder.playerView.setResizeMode(com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT);
 
@@ -163,17 +239,13 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
                 holder.playerView.setAspectRatio(1f * mediaItem.height / mediaItem.width);
             }
 
-            holder.imageView.setTransitionName("");
-            holder.playerView.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, position));
-            holder.imageView.setVisibility(View.GONE);
+            holder.playerView.setTransitionName(transitionName);
             holder.playerView.setVisibility(View.VISIBLE);
-
             holder.initPlayer(mediaItem);
         } else {
-            holder.imageView.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, position));
-            holder.playerView.setTransitionName("");
+            holder.imageView.setTransitionName(transitionName);
+            holder.imageView.setTag(mediaItem);
             holder.imageView.setVisibility(View.VISIBLE);
-            holder.playerView.setVisibility(View.GONE);
 
             parent.getMediaThumbnailLoader().load(holder.imageView, mediaItem);
         }

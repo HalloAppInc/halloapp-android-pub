@@ -3,6 +3,7 @@ package com.halloapp.ui.profile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewTreeObserver;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
@@ -62,21 +64,11 @@ public class ViewProfileActivity extends HalloActivity {
         if (resultCode == RESULT_OK && data.hasExtra(MediaExplorerActivity.EXTRA_CONTENT_ID) && data.hasExtra(MediaExplorerActivity.EXTRA_SELECTED)) {
             String contentId = data.getStringExtra(MediaExplorerActivity.EXTRA_CONTENT_ID);
             int position = data.getIntExtra(MediaExplorerActivity.EXTRA_SELECTED, 0);
+            View root = findViewById(R.id.profile_fragment_placeholder);
 
-            ViewPager2 pager = findViewById(R.id.profile_fragment_placeholder).findViewWithTag(MediaPagerAdapter.getPagerTag(contentId));
-
-            if (pager != null && pager.getCurrentItem() != position) {
+            if (root != null && contentId != null) {
                 postponeEnterTransition();
-
-                pager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        pager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        startPostponedEnterTransition();
-                    }
-                });
-
-                pager.setCurrentItem(position, false);
+                MediaPagerAdapter.preparePagerForTransition(root, contentId, position, this::startPostponedEnterTransition);
             }
         }
     }

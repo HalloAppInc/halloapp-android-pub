@@ -23,6 +23,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -769,18 +770,32 @@ public class ContentComposerActivity extends HalloActivity {
 
         // Do it here instead of onActivityResult because onActivityResult is called only after
         // the animated transition ends.
-        if (resultCode == RESULT_OK && data.hasExtra(CropImageActivity.EXTRA_MEDIA)) {
-            postponeEnterTransition();
-            onDataUpdated(data);
-            updatedMediaProcessed = true;
+        if (resultCode == RESULT_OK && data.hasExtra(CropImageActivity.EXTRA_SELECTED)) {
+            if (data.hasExtra(CropImageActivity.EXTRA_MEDIA)) {
+                postponeEnterTransition();
 
-            mediaPager.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-                @Override
-                public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                    mediaPager.removeOnLayoutChangeListener(this);
+                mediaPager.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        mediaPager.getViewTreeObserver().removeOnPreDrawListener(this);
+                        startPostponedEnterTransition();
+
+                        return true;
+                    }
+                });
+
+                onDataUpdated(data);
+                updatedMediaProcessed = true;
+            } else {
+                int selected = data.getIntExtra(CropImageActivity.EXTRA_SELECTED, getCurrentItem());
+                List<ContentComposerViewModel.EditMediaPair> items = viewModel.editMedia.getValue();
+
+                if (items != null && getCurrentItem() != selected && 0 <= selected && selected < items.size()) {
+                    postponeEnterTransition();
+                    mediaPager.setCurrentItem(selected, false);
                     startPostponedEnterTransition();
                 }
-            });
+            }
         }
     }
 

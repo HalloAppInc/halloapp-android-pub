@@ -31,15 +31,7 @@
         app:ci_drawable="@drawable/pager_item_indicator_selected_stroke"
         app:ci_drawable_unselected="@drawable/pager_item_indicator_unselected_white"
         app:ci_animator="@animator/explorer_pager_indicator"
-        android:layoutDirection="ltr"/>
-
-    <com.halloapp.widget.ContentPhotoView
-        android:id="@+id/transition_image"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:alpha="0"
+        android:visibility="gone"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

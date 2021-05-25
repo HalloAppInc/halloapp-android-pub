@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,19 +20,23 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionManager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.camera.CameraActivity;
+import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
 
@@ -224,6 +229,22 @@ public class ViewGroupFeedActivity extends HalloActivity {
     private void markUserInteracted() {
         userInteracted = true;
         setResult(RESULT_OK);
+    }
+
+    @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        super.onActivityReenter(resultCode, data);
+
+        if (resultCode == RESULT_OK && data.hasExtra(MediaExplorerActivity.EXTRA_CONTENT_ID) && data.hasExtra(MediaExplorerActivity.EXTRA_SELECTED)) {
+            String contentId = data.getStringExtra(MediaExplorerActivity.EXTRA_CONTENT_ID);
+            int position = data.getIntExtra(MediaExplorerActivity.EXTRA_SELECTED, 0);
+            View root = findViewById(R.id.profile_fragment_placeholder);
+
+            if (root != null && contentId != null) {
+                postponeEnterTransition();
+                MediaPagerAdapter.preparePagerForTransition(root, contentId, position, this::startPostponedEnterTransition);
+            }
+        }
     }
 
     @Override

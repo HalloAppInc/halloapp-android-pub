@@ -2,6 +2,7 @@ package com.halloapp.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.SharedElementCallback;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -65,6 +66,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -416,21 +418,11 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         if (resultCode == RESULT_OK && data.hasExtra(MediaExplorerActivity.EXTRA_CONTENT_ID) && data.hasExtra(MediaExplorerActivity.EXTRA_SELECTED)) {
             String contentId = data.getStringExtra(MediaExplorerActivity.EXTRA_CONTENT_ID);
             int position = data.getIntExtra(MediaExplorerActivity.EXTRA_SELECTED, 0);
+            View root = findViewById(R.id.container);
 
-            ViewPager2 pager = findViewById(R.id.container).findViewWithTag(MediaPagerAdapter.getPagerTag(contentId));
-
-            if (pager != null && pager.getCurrentItem() != position) {
+            if (root != null && contentId != null) {
                 postponeEnterTransition();
-
-                pager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        pager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        startPostponedEnterTransition();
-                    }
-                });
-
-                pager.setCurrentItem(position, false);
+                MediaPagerAdapter.preparePagerForTransition(root, contentId, position, this::startPostponedEnterTransition);
             }
         }
     }

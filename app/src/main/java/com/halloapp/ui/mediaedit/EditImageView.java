@@ -92,8 +92,8 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
     @WorkerThread
     @Nullable
-    private Bitmap loadBitmap(@Nullable File file) {
-        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+    public static Bitmap loadBitmap(Context context, @Nullable File file) {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics displayMetrics = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(displayMetrics);
 
@@ -120,12 +120,12 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         }
 
         BgWorkers.getInstance().execute(() -> {
-            final Bitmap bitmap = loadBitmap(originalFile);
+            final Bitmap bitmap = loadBitmap(getContext(), originalFile);
             if (bitmap == null) {
                 return;
             }
 
-            final Bitmap cropped = state != null ? loadBitmap(croppedFile) : null;
+            final Bitmap cropped = state != null ? loadBitmap(getContext(), croppedFile) : null;
 
             post(() -> {
                 setImageBitmap(bitmap);
