@@ -53,6 +53,8 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
 
     private boolean scrollUpOnDataLoaded;
 
+    private RecyclerView postsView;
+    private View newPostsView;
     private FrameLayout welcomeNuxContainer;
     private FrameLayout nuxActivityCenterContainer;
     private FrameLayout nuxFeedContainer;
@@ -91,9 +93,9 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
         setHasOptionsMenu(true);
 
         final View root = inflater.inflate(R.layout.fragment_home, container, false);
-        final RecyclerView postsView = root.findViewById(R.id.posts);
+        postsView = root.findViewById(R.id.posts);
         final View emptyView = root.findViewById(android.R.id.empty);
-        final View newPostsView = root.findViewById(R.id.new_posts);
+        newPostsView = root.findViewById(R.id.new_posts);
 
         final View contactPermsNag = root.findViewById(R.id.contact_permissions_nag);
         final Button contactsContinue = contactPermsNag.findViewById(R.id.continue_btn);
@@ -250,6 +252,19 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
             contactsContinue.setText(R.string.continue_button);
         }
 
+        NestedHorizontalScrollHelper.applyDefaultScrollRatio(postsView);
+
+        Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
+
+        postsView.setAdapter(adapter);
+
+        return root;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()) {
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -260,14 +275,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
                 }
             }
         });
-
-        NestedHorizontalScrollHelper.applyDefaultScrollRatio(postsView);
-
-        Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
-
-        postsView.setAdapter(adapter);
-
-        return root;
     }
 
     private void refreshInviteNux() {

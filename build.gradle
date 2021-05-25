@@ -24,9 +24,6 @@ allprojects {
         mavenCentral()
         jcenter {
             content {
-                // TODO(jack): Remove if they migrate to Maven Central https://github.com/leinardi/FloatingActionButtonSpeedDial/issues/159
-                includeGroup("com.leinardi.android")
-
                 // TODO(jack): Remove these once they migrate to Maven Central https://github.com/natario1/CameraView/issues/1043
                 includeGroup("com.otaliastudios")
                 includeGroup("com.otaliastudios.opengl")
