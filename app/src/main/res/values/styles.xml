@@ -306,4 +306,8 @@
         <item name="android:background">?selectableItemBackgroundBorderless</item>
     </style>
 
+    <style name="VerificationSwitchTheme" parent="AppTheme">
+        <item name="colorAccent">@color/color_secondary</item>
+    </style>
+
 </resources>

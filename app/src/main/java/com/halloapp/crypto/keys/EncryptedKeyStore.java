@@ -50,6 +50,7 @@ public class EncryptedKeyStore {
     private static final String PREF_KEY_MESSAGE_KEY_SET_PREFIX = "message_key_set";
     private static final String PREF_KEY_LAST_DOWNLOAD_ATTEMPT_SUFFIX = "last_download_attempt";
 
+    private static final String PREF_KEY_PEER_VERIFIED = "peer_verified";
     private static final String PREF_KEY_SESSION_ALREADY_SET_UP_SUFFIX = "session_already_set_up";
     private static final String PREF_KEY_PEER_RESPONDED_SUFFIX = "peer_responded";
     private static final String PREF_KEY_PEER_IDENTITY_KEY_SUFFIX = "peer_identity_key";
@@ -105,6 +106,26 @@ public class EncryptedKeyStore {
 
     public void ensureMigrated() {
         getPreferences();
+    }
+
+    public boolean getPeerVerified(UserId peerUserId) {
+        return getPreferences().getBoolean(getPeerVerifiedPrefKey(peerUserId), false);
+    }
+
+    public void setPeerVerified(UserId peerUserId, boolean verified) {
+        if (!getPreferences().edit().putBoolean(getPeerVerifiedPrefKey(peerUserId), verified).commit()) {
+            Log.e("EncryptedKeyStore: failed to set peer verification state");
+        }
+    }
+
+    public void clearPeerVerified(UserId peerUserId) {
+        if (!getPreferences().edit().remove(getPeerVerifiedPrefKey(peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear peer verification state");
+        }
+    }
+
+    private String getPeerVerifiedPrefKey(UserId peerUserId) {
+        return peerUserId.rawId() + "/" + PREF_KEY_PEER_VERIFIED;
     }
 
     public boolean getSessionAlreadySetUp(UserId peerUserId) {

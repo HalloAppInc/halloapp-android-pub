@@ -292,6 +292,8 @@
     <string name="key_verification_fetching_keys">Fetching keys…</string>
     <!-- Shown when we fail to get key verification info -->
     <string name="key_verification_key_fetch_failed">Failed to fetch keys</string>
+    <!-- Shown on the key verification activity next to a switch where the user can keep track of whether they verified the identity of the other user -->
+    <string name="key_verification_switch_label">Verified</string>
     <string name="view_profile">View profile</string>
     <string name="action_hide">Hide</string>
     <string name="hide_my_posts">Hide my posts</string>

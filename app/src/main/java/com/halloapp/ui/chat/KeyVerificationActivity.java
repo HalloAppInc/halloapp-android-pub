@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -91,6 +92,11 @@ public class KeyVerificationActivity extends HalloActivity {
             startActivityForResult(intent, IntentIntegrator.REQUEST_CODE);
         });
 
+        SwitchCompat verifiedSwitch = findViewById(R.id.verified_switch);
+        verifiedSwitch.setOnClickListener(v -> {
+            viewModel.markVerificationState(verifiedSwitch.isChecked());
+        });
+
         viewModel = new ViewModelProvider(this,
                 new KeyVerificationViewModel.Factory(getApplication(), userId)).get(KeyVerificationViewModel.class);
 
@@ -107,7 +113,9 @@ public class KeyVerificationActivity extends HalloActivity {
             }
         });
 
-        viewModel.verificationInfo.getLiveData().observe(this, info -> {
+        viewModel.verifiedSwitchState.getLiveData().observe(this, verifiedSwitch::setChecked);
+
+        viewModel.keyVerificationData.getLiveData().observe(this, info -> {
             if (info == null) {
                 SnackbarHelper.showWarning(this, R.string.key_verification_key_fetch_failed);
                 return;

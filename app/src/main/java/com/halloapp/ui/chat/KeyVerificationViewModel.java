@@ -49,7 +49,8 @@ public class KeyVerificationViewModel extends AndroidViewModel {
     private UserId userId;
 
     final ComputableLiveData<String> name;
-    final ComputableLiveData<VerificationInfo> verificationInfo;
+    final ComputableLiveData<KeyVerificationData> keyVerificationData;
+    final ComputableLiveData<Boolean> verifiedSwitchState;
     final MutableLiveData<Boolean> verificationResult = new MutableLiveData<>();
 
     private final Me me = Me.getInstance();
@@ -69,9 +70,16 @@ public class KeyVerificationViewModel extends AndroidViewModel {
             }
         };
 
-        verificationInfo = new ComputableLiveData<VerificationInfo>() {
+        verifiedSwitchState = new ComputableLiveData<Boolean>() {
             @Override
-            protected VerificationInfo compute() {
+            protected Boolean compute() {
+                return encryptedKeyStore.getPeerVerified(userId);
+            }
+        };
+
+        keyVerificationData = new ComputableLiveData<KeyVerificationData>() {
+            @Override
+            protected KeyVerificationData compute() {
                 PublicXECKey peerIdentityKey;
                 try {
                     peerIdentityKey = CryptoUtils.convertPublicEdToX(encryptedKeyStore.getPeerPublicIdentityKey(userId));
@@ -119,7 +127,7 @@ public class KeyVerificationViewModel extends AndroidViewModel {
                     BitMatrix bm = new QRCodeWriter().encode(s, BarcodeFormat.QR_CODE, QR_MATRIX_SIZE, QR_MATRIX_SIZE);
                     Bitmap qrCode = bitMatrixToBitmap(bm);
 
-                    return new VerificationInfo(qrCode, safetyNumber);
+                    return new KeyVerificationData(qrCode, safetyNumber);
                 } catch (WriterException e) {
                     Log.e("KeyVerification failed to encode QR", e);
                 }
@@ -127,6 +135,13 @@ public class KeyVerificationViewModel extends AndroidViewModel {
                 return null;
             }
         };
+    }
+
+    void markVerificationState(boolean verified) {
+        bgWorkers.execute(() -> {
+            encryptedKeyStore.setPeerVerified(userId, verified);
+            verifiedSwitchState.invalidate();
+        });
     }
 
     void verify(@NonNull String result) {
@@ -277,11 +292,11 @@ public class KeyVerificationViewModel extends AndroidViewModel {
         return Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
     }
 
-    public static final class VerificationInfo {
+    public static final class KeyVerificationData {
         public Bitmap qrCode;
         public List<String> safetyNumber;
 
-        public VerificationInfo(Bitmap qrCode, List<String> safetyNumber) {
+        public KeyVerificationData(Bitmap qrCode, List<String> safetyNumber) {
             this.qrCode = qrCode;
             this.safetyNumber = safetyNumber;
         }

@@ -154,6 +154,31 @@
             android:gravity="center"
             tools:text="@string/key_verification_explanation"/>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/verified_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="@string/key_verification_switch_label"/>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/verified_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:theme="@style/VerificationSwitchTheme"
+                />
+
+        </LinearLayout>
     </LinearLayout>
 
 </FrameLayout>
