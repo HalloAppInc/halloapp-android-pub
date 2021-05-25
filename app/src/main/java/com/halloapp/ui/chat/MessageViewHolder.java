@@ -420,6 +420,22 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                     systemMessageSingleUser(message, R.string.system_message_group_deleted_by_you, R.string.system_message_group_deleted);
                     break;
                 }
+                case Message.USAGE_KEYS_CHANGED: {
+                    contactLoader.load(systemMessage, message.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
+                        @Override
+                        public void showResult(@NonNull TextView view, @Nullable Contact result) {
+                            if (result != null) {
+                                systemMessage.setText(itemView.getContext().getString(R.string.system_message_keys_changed, result.getDisplayName()));
+                            }
+                        }
+
+                        @Override
+                        public void showLoading(@NonNull TextView view) {
+                            systemMessage.setText("");
+                        }
+                    });
+                    break;
+                }
                 case Message.USAGE_CHAT:
                 default: {
                     Log.w("Unrecognized system message usage " + message.usage);

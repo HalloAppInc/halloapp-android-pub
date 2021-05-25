@@ -381,7 +381,7 @@ public class MainConnectionObserver extends Connection.Observer {
             connection.sendAck(ackId);
         } else if (message.userId != null) {
             encryptedSessionManager.tearDownSession(message.userId);
-            connection.sendAck(ackId);
+            addSystemMessage(message.userId, Message.USAGE_KEYS_CHANGED, null, () -> connection.sendAck(ackId));
         }
     }
 
@@ -597,9 +597,9 @@ public class MainConnectionObserver extends Connection.Observer {
         contentDb.addPost(systemPost, completionRunnable);
     }
 
-    private void addSystemMessage(@NonNull GroupId groupId, @NonNull UserId sender, @Message.Usage int usage, @Nullable String text, @Nullable Runnable completionRunnable) {
-        Message promoteAdminsMessage = new Message(0,
-                groupId,
+    private void addSystemMessage(@NonNull UserId sender, @Message.Usage int usage, @Nullable String text, @Nullable Runnable completionRunnable) {
+        Message message = new Message(0,
+                sender,
                 sender,
                 RandomId.create(),
                 System.currentTimeMillis(),
@@ -613,6 +613,6 @@ public class MainConnectionObserver extends Connection.Observer {
                 -1,
                 null,
                 0);
-        contentDb.addMessage(promoteAdminsMessage, false, completionRunnable);
+        contentDb.addMessage(message, false, completionRunnable);
     }
 }

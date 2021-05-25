@@ -356,6 +356,8 @@
     <string name="system_message_group_bg_changed_by_you">You changed the background color</string>
     <string name="system_message_you_joined">You joined the group via invite link</string>
     <string name="system_message_joined">%s joined the group via invite link</string>
+    <!-- Shown inline in a chat when the e2e keys securing the messages have changed, i.e. if the other user changes phones or reinstalls -->
+    <string name="system_message_keys_changed">Security keys with %s changed</string>
 
     <string name="system_post_group_created">This group was created by %s</string>
     <string name="system_post_group_created_by_you">This group was created by you</string>
