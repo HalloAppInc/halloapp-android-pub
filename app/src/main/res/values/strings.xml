@@ -258,7 +258,7 @@
         <item quantity="one">Would you like to delete this group?</item>
         <item quantity="other">Would you like to delete %d selected groups?</item>
     </plurals>
-    <string name="delete_chat_confirmation">Would you like to delete this group?</string>
+    <string name="delete_chat_confirmation">Would you like to delete this chat?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="ok">OK</string>
