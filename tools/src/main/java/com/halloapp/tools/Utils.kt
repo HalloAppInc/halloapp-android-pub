@@ -24,7 +24,6 @@ fun getStringFile(id: String?): File {
 fun getPOEditorToken(): String {
     val tokenFile = File(POEDITOR_TOKEN_FILE)
     if (!tokenFile.exists()) {
-        tokenFile.createNewFile()
         println("Please add your token to ${tokenFile.absolutePath}" )
         throw Exception("POEditor API token missing!")
     }
