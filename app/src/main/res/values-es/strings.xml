@@ -241,6 +241,8 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
 "</item>
         <item quantity="other">"¿Te gustaría eliminar los %d grupos seleccionados?"</item>
     </plurals>
+
+    <!-- Fuzzy -->
     <string name="delete_chat_confirmation">"¿Te gustaría eliminar este grupo?"</string>
     <string name="yes">"Sí"</string>
     <string name="no">"No"</string>
@@ -513,7 +515,12 @@ Puedes compartir estas historias con todos tus contactos o solo con las personas
     <string name="post_preview_with_caption">"%s: %s"</string>
     <string name="composer_sharing_message">"Enviar a %s"</string>
     <string name="composer_sharing_post">"Compartir con %s"</string>
-    <string name="max_video_length">"Tu video dura más de %d segundos. Por favor selecciona otro video o edítalo."</string>
+
+    <!-- Fuzzy -->
+    <plurals name="max_video_length">
+        <item quantity="one">"Tu video dura más de %d segundos. Por favor selecciona otro video o edítalo."</item>
+        <item quantity="other">"Tu video dura más de %d segundos. Por favor selecciona otro video o edítalo."</item>
+    </plurals>
     <string name="video_edit_unable_trim">"No se pudo editar el video."</string>
     <string name="mute">"Silenciar"</string>
     <string name="share_link">"Compartir el enlace"</string>
@@ -610,4 +617,20 @@ Puedes compartir estas historias con todos tus contactos o solo con las personas
 
     <!-- Shown below on seen by to explain that posts disappear -->
     <string name="seen_by_post_expiration_notice">"Your posts will disappear after 30 days."</string>
+
+    <!-- Frequently asked questions option in help menu -->
+    <string name="faq">"FAQ"</string>
+
+    <!-- Shown in progress dialog when loading key verification info -->
+    <string name="key_verification_fetching_keys">"Fetching keys…"</string>
+
+    <!-- Shown when we fail to get key verification info -->
+    <string name="key_verification_key_fetch_failed">"Failed to fetch keys"</string>
+
+    <!-- Shown inline in a chat when the e2e keys securing the messages have changed, i.e. if the other user changes phones or reinstalls -->
+    <string name="system_message_keys_changed">"Security keys with %s changed"</string>
+
+    <!-- Shown on the key verification activity next to a switch where the user can keep track of whether they verified the identity of the other user -->
+    <string name="key_verification_switch_label">"Verified"</string>
+    <string name="action_add">"Add"</string>
 </resources>

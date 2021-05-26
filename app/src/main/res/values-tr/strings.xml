@@ -240,6 +240,8 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
         <item quantity="one">"Bu grubu silmek mi istiyorsun?"</item>
         <item quantity="other">"Seçtiğin %d grubu silmek mi istiyorsun?"</item>
     </plurals>
+
+    <!-- Fuzzy -->
     <string name="delete_chat_confirmation">"Bu grubu silmek mi istiyorsun?"</string>
     <string name="yes">"Evet"</string>
     <string name="no">"Hayır"</string>
@@ -508,7 +510,12 @@ Yayınlarını, dilersen listendeki kişilerin tamamıyla ya da yalnızca seçti
     <string name="post_preview_with_caption">"%s: %s"</string>
     <string name="composer_sharing_message">"%s kişisine gönderiliyor"</string>
     <string name="composer_sharing_post">"%s ile paylaşılıyor"</string>
-    <string name="max_video_length">"Videon %d saniyeden daha uzun. Lütfen bunu düzenle ya da başka bir video seç."</string>
+
+    <!-- Fuzzy -->
+    <plurals name="max_video_length">
+        <item quantity="one">"Videon %d saniyeden daha uzun. Lütfen bunu düzenle ya da başka bir video seç."</item>
+        <item quantity="other">"Videon %d saniyeden daha uzun. Lütfen bunu düzenle ya da başka bir video seç."</item>
+    </plurals>
     <string name="video_edit_unable_trim">"Video kırpma başarısız"</string>
     <string name="mute">"Sessize al"</string>
     <string name="share_link">"İlişimi paylaş"</string>
@@ -605,4 +612,20 @@ Yayınlarını, dilersen listendeki kişilerin tamamıyla ya da yalnızca seçti
 
     <!-- Shown below on seen by to explain that posts disappear -->
     <string name="seen_by_post_expiration_notice">"Your posts will disappear after 30 days."</string>
+
+    <!-- Frequently asked questions option in help menu -->
+    <string name="faq">"FAQ"</string>
+
+    <!-- Shown in progress dialog when loading key verification info -->
+    <string name="key_verification_fetching_keys">"Fetching keys…"</string>
+
+    <!-- Shown when we fail to get key verification info -->
+    <string name="key_verification_key_fetch_failed">"Failed to fetch keys"</string>
+
+    <!-- Shown inline in a chat when the e2e keys securing the messages have changed, i.e. if the other user changes phones or reinstalls -->
+    <string name="system_message_keys_changed">"Security keys with %s changed"</string>
+
+    <!-- Shown on the key verification activity next to a switch where the user can keep track of whether they verified the identity of the other user -->
+    <string name="key_verification_switch_label">"Verified"</string>
+    <string name="action_add">"Add"</string>
 </resources>
