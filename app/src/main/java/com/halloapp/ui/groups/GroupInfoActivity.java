@@ -144,7 +144,7 @@ public class GroupInfoActivity extends HalloActivity {
                 }
             }
             int maxGroupSize = ServerProps.getInstance().getMaxGroupSize() - excludeIds.size();
-            startActivityForResult(MultipleContactPickerActivity.newPickerIntentExclude(this, excludeIds, maxGroupSize, R.string.add_members, false), REQUEST_CODE_ADD_MEMBERS);
+            startActivityForResult(MultipleContactPickerActivity.newPickerIntentExclude(this, excludeIds, maxGroupSize, R.string.add_members, R.string.action_add, false), REQUEST_CODE_ADD_MEMBERS);
         });
 
         View.OnClickListener openEditGroupListener = v -> {

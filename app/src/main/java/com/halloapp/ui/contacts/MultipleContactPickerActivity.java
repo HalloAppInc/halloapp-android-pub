@@ -95,8 +95,8 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title, boolean onlyFriends) {
         return newPickerIntent(context, selectedIds, title, R.string.action_save, null, onlyFriends);
     }
-    public static Intent newPickerIntentExclude(@NonNull Context context, @Nullable Collection<UserId> excludeIds, @Nullable Integer maxSelection, @StringRes int title, boolean onlyFriends) {
-        Intent intent = newPickerIntent(context, null, title, R.string.action_save, maxSelection, onlyFriends);
+    public static Intent newPickerIntentExclude(@NonNull Context context, @Nullable Collection<UserId> excludeIds, @Nullable Integer maxSelection, @StringRes int title, @StringRes int action, boolean onlyFriends) {
+        Intent intent = newPickerIntent(context, null, title, action, maxSelection, onlyFriends);
         if (excludeIds != null) {
             intent.putParcelableArrayListExtra(EXTRA_EXCLUDED_IDS, new ArrayList<>(excludeIds));
         }

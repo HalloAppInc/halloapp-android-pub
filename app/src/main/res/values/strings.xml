@@ -312,6 +312,7 @@
     <string name="search">Search</string>
     <string name="contact_search_empty">Nothing found for \'%s\'</string>
     <string name="action_save">Save</string>
+    <string name="action_add">Add</string>
     <string name="invite_friends">Invite friends &amp; family</string>
     <string name="invite_friend_chooser_title">Invite %s</string>
     <string name="invite_text_with_name_and_number">Hey %1$s, I have an invite for you to join me on HalloApp (a simple social app for sharing everyday moments). Use %2$s to register. Get it at halloapp.com/dl</string>
