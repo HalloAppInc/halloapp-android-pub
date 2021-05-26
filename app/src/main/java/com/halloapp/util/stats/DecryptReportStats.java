@@ -68,13 +68,8 @@ public class DecryptReportStats {
 
         long now = System.currentTimeMillis();
 
-        if (!run(now, false)) {
+        if (!run(now)) {
             Log.i("DecryptReportStats.run normal message failure");
-            return ListenableWorker.Result.failure();
-        }
-
-        if (!run(now, true)) {
-            Log.i("DecryptReportStats.run silent message failure");
             return ListenableWorker.Result.failure();
         }
 
@@ -83,10 +78,10 @@ public class DecryptReportStats {
     }
 
     @WorkerThread
-    private boolean run(long now, boolean silent) {
-        long lastId = silent ? preferences.getLastSilentDecryptStatMessageRowId() : preferences.getLastDecryptStatMessageRowId();
-        List<DecryptStats> stats = silent ? contentDb.getSilentMessageDecryptStats(lastId) : contentDb.getMessageDecryptStats(lastId);
-        Log.i("DecryptReportStats.run silent: " + silent + " lastId: " + lastId);
+    private boolean run(long now) {
+        long lastId = preferences.getLastDecryptStatMessageRowId();
+        List<DecryptStats> stats = contentDb.getMessageDecryptStats(lastId);
+        Log.i("DecryptReportStats.run lastId: " + lastId);
 
         if (lastId < 0) {
             Log.i("DecryptReportStats.run first time running; setting last id to most recent message");
@@ -96,11 +91,7 @@ public class DecryptReportStats {
                 }
             }
 
-            if (silent) {
-                preferences.setLastSilentDecryptStatMessageRowId(lastId);
-            } else {
-                preferences.setLastDecryptStatMessageRowId(lastId);
-            }
+            preferences.setLastDecryptStatMessageRowId(lastId);
 
             return true;
         }
@@ -135,11 +126,7 @@ public class DecryptReportStats {
                 events.sendDecryptionReports(reports).await();
                 long newLastId = batch.get(batch.size() - 1).rowId;
 
-                if (silent) {
-                    preferences.setLastSilentDecryptStatMessageRowId(newLastId);
-                } else {
-                    preferences.setLastDecryptStatMessageRowId(newLastId);
-                }
+                preferences.setLastDecryptStatMessageRowId(newLastId);
 
                 Log.i("DecryptReportStats.run batch succeeded; new lastId is " + newLastId);
             } catch (InterruptedException | ObservableErrorException e) {

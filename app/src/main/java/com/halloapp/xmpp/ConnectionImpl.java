@@ -14,7 +14,6 @@ import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.content.Comment;
-import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
@@ -59,7 +58,6 @@ import com.halloapp.proto.server.Ping;
 import com.halloapp.proto.server.Presence;
 import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.SeenReceipt;
-import com.halloapp.proto.server.SilentChatStanza;
 import com.halloapp.proto.server.WhisperKeys;
 import com.halloapp.registration.Registration;
 import com.halloapp.util.BgWorkers;
@@ -630,41 +628,6 @@ public class ConnectionImpl extends Connection {
         });
     }
 
-    private String getSilentIdFromMessage(@NonNull Message message) {
-        // Format: shhh:from:to:timestampInSeconds:id
-        return "shhh:" + me.getUser() + ":" + message.chatId.rawId() + ":" + message.timestamp / 1000L + ":" + message.id;
-    }
-
-    public void sendSilentMessage(@NonNull Message message, @Nullable SessionSetupInfo sessionSetupInfo) {
-        executor.execute(() -> {
-            if (message.isLocalMessage()) {
-                Log.i("connection: System message shouldn't be sent");
-                return;
-            }
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot send message, no connection");
-                return;
-            }
-            final UserId recipientUserId = (UserId)message.chatId;
-
-            ChatMessageElement chatMessageElement = new ChatMessageElement(
-                    message,
-                    recipientUserId,
-                    sessionSetupInfo);
-
-            SilentChatStanza silentChatStanza = SilentChatStanza.newBuilder().setChatStanza(chatMessageElement.toProto()).build();
-
-            Msg msg = Msg.newBuilder()
-                    .setId(getSilentIdFromMessage(message))
-                    .setType(Msg.Type.CHAT)
-                    .setToUid(Long.parseLong(message.chatId.rawId()))
-                    .setSilentChatStanza(silentChatStanza)
-                    .build();
-            ackHandlers.put(message.id, () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
-            sendPacket(Packet.newBuilder().setMsg(msg).build());
-        });
-    }
-
     @Override
     public void sendGroupMessage(@NonNull Message message, @Nullable SessionSetupInfo sessionSetupInfo) {
         executor.execute(() -> {
@@ -971,31 +934,9 @@ public class ConnectionImpl extends Connection {
 
                     bgWorkers.execute(() -> {
                         ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
-                        Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), false, chatStanza.getSenderClientVersion());
+                        Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), chatStanza.getSenderClientVersion());
                         processMentions(message.mentions);
                         connectionObservers.notifyIncomingMessageReceived(message);
-                    });
-
-                    handled = true;
-                } else if (msg.hasSilentChatStanza()) { // TODO(jack): remove silent chat stanzas when no longer needed
-                    Log.i("connection: got silent chat stanza " + ProtoPrinter.toString(msg));
-                    ChatStanza chatStanza = msg.getSilentChatStanza().getChatStanza();
-                    UserId fromUserId = new UserId(Long.toString(msg.getFromUid()));
-
-                    Log.i("silent message " + msg.getId() + " from version " + chatStanza.getSenderClientVersion() + ": " + chatStanza.getSenderLogInfo());
-
-                    // NOTE: push names are not collected because eventually these messages will be removed
-
-                    bgWorkers.execute(() -> {
-                        ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
-                        Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), true, chatStanza.getSenderClientVersion());
-                        processMentions(message.mentions);
-                        if (!ContentDb.getInstance().hasSilentMessage(fromUserId, msg.getId())) {
-                            connectionObservers.notifyIncomingSilentMessageReceived(message);
-                        } else {
-                            Log.i("silent message id " + msg.getId() + " already present in DB; only updating decrypt status");
-                            connectionObservers.notifyIncomingSilentMessageRedecrypt(message);
-                        }
                     });
 
                     handled = true;

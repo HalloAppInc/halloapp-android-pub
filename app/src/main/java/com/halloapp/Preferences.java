@@ -335,18 +335,6 @@ public class Preferences {
     }
 
     @WorkerThread
-    public long getLastSilentDecryptStatMessageRowId() {
-        return getPreferences().getLong(PREF_KEY_LAST_SILENT_DECRYPT_MESSAGE_ROW_ID, -1);
-    }
-
-    @WorkerThread
-    public void setLastSilentDecryptStatMessageRowId(long id) {
-        if (!getPreferences().edit().putLong(PREF_KEY_LAST_SILENT_DECRYPT_MESSAGE_ROW_ID, id).commit()) {
-            Log.e("preferences: failed to set last silent decrypt stat message row id to " + id);
-        }
-    }
-
-    @WorkerThread
     public @PrivacyList.Type String getFeedPrivacyActiveList() {
         return getPreferences().getString(PREF_KEY_FEED_PRIVACY_SETTING, PrivacyList.Type.INVALID);
     }

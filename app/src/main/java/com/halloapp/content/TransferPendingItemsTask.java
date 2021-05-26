@@ -69,7 +69,7 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
                         connection.retractMessage((UserId) message.chatId, message.id);
                     }
                 } else if (message.media.isEmpty()) {
-                    encryptedSessionManager.sendMessage(message, false);
+                    encryptedSessionManager.sendMessage(message);
                 } else {
                     mainHandler.post(() -> new UploadMediaTask(message, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR));
                 }

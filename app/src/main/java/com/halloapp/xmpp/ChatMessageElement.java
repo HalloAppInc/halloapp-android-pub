@@ -95,7 +95,7 @@ public class ChatMessageElement {
     }
 
     @NonNull
-    Message getMessage(UserId fromUserId, String id, boolean isSilentMessage, String senderAgent) {
+    Message getMessage(UserId fromUserId, String id, String senderAgent) {
         boolean isFriend = ContactsDb.getInstance().getContact(fromUserId).friend;
         Log.i("Local state relevant to message " + id + " from " + (isFriend ? "friend" : "non-friend") + ": " + getLogInfo(fromUserId));
         String senderPlatform = senderAgent.contains("Android") ? "android" : senderAgent.contains("iOS") ? "ios" : "";
@@ -145,15 +145,9 @@ public class ChatMessageElement {
                 if (Constants.REREQUEST_SEND_ENABLED) {
                     Log.i("Rerequesting message " + id);
                     int count;
-                    if (isSilentMessage) {
-                        count = contentDb.getSilentMessageRerequestCount(fromUserId, id);
-                        count += 1;
-                        contentDb.setSilentMessageRerequestCount(fromUserId, id, count);
-                    } else {
-                        count = contentDb.getMessageRerequestCount(fromUserId, fromUserId, id);
-                        count += 1;
-                        contentDb.setMessageRerequestCount(fromUserId, fromUserId, id, count);
-                    }
+                    count = contentDb.getMessageRerequestCount(fromUserId, fromUserId, id);
+                    count += 1;
+                    contentDb.setMessageRerequestCount(fromUserId, fromUserId, id, count);
                     byte[] teardownKey = e instanceof CryptoException ? ((CryptoException) e).teardownKey : null;
                     EncryptedSessionManager.getInstance().sendRerequest(fromUserId, id, count, teardownKey);
                 }

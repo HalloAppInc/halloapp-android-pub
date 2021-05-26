@@ -30,7 +30,6 @@ import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.groups.GroupsSync;
 import com.halloapp.privacy.BlockListManager;
 import com.halloapp.privacy.FeedPrivacyManager;
-import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.Background;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
@@ -258,20 +257,6 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onIncomingSilentMessageReceived(@NonNull Message message) {
-        final Runnable completionRunnable = () -> {
-            connection.sendAck(message.id);
-        };
-        contentDb.addSilentMessage(message, completionRunnable);
-    }
-
-    @Override
-    public void onIncomingSilentMessageRedecrypt(@NonNull Message message) {
-        final Runnable completionRunnable = () -> connection.sendAck(message.id);
-        contentDb.updateSilentMessageDecrypt(message, completionRunnable);
-    }
-
-    @Override
     public void onIncomingMessageSeenReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         contentDb.setMessageSeenReceiptSent(chatId, senderUserId, messageId);
     }
@@ -298,7 +283,7 @@ public class MainConnectionObserver extends Connection.Observer {
             Message message = contentDb.getMessage(peerUserId, UserId.ME, messageId);
             if (message != null && message.rerequestCount < Constants.MAX_REREQUESTS_PER_MESSAGE) {
                 contentDb.setMessageRerequestCount(peerUserId, UserId.ME, messageId, message.rerequestCount + 1);
-                encryptedSessionManager.sendMessage(message, false);
+                encryptedSessionManager.sendMessage(message);
             }
             connection.sendAck(stanzaId);
         });

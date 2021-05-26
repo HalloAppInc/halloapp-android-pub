@@ -140,7 +140,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
     public void onMessageAdded(@NonNull Message message) {
         if (message.shouldSend()) {
             if (message.media.isEmpty()) {
-                bgWorkers.execute(() -> encryptedSessionManager.sendMessage(message, true));
+                bgWorkers.execute(() -> encryptedSessionManager.sendMessage(message));
             } else {
                 new UploadMediaTask(message, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }

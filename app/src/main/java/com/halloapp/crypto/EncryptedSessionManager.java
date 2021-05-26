@@ -125,18 +125,7 @@ public class EncryptedSessionManager {
         connection.sendRerequest(senderUserId, messageId, rerequestCount, teardownKey);
     }
 
-    // Temporary for generating silent chat stanzas
-    private String genRandomString() {
-        Random random = new Random();
-        final int MIN_LEN = 2;
-        final int MAX_LEN = 256;
-        int len = MIN_LEN + random.nextInt(MAX_LEN - MIN_LEN);
-        byte[] bytes = new byte[len];
-        random.nextBytes(bytes);
-        return new String(bytes);
-    }
-
-    public void sendMessage(final @NonNull Message message, boolean generateSilentMessages) {
+    public void sendMessage(final @NonNull Message message) {
         if (message.chatId instanceof GroupId) {
             // TODO(jack): support groups encryption
             connection.sendGroupMessage(message, null);
@@ -151,49 +140,6 @@ public class EncryptedSessionManager {
             Log.e("Failed to set up encryption session", e);
             Log.sendErrorReport("Failed to get session setup info");
             connection.sendMessage(message, null);
-        }
-
-        if (generateSilentMessages && connection instanceof ConnectionImpl) {
-            final List<Message> silentMessages = new ArrayList<>();
-            final List<Contact> users = ContactsDb.getInstance().getUsers();
-
-            if (!users.isEmpty()) {
-                int count = serverProps.getSilentChatMessageCount();
-                for (int i=0; i<count; i++) {
-                    UserId recipient = users.get(new Random().nextInt(users.size())).userId;
-                    String text = genRandomString();
-                    Message gm = new Message(
-                            -1,
-                            recipient,
-                            UserId.ME,
-                            RandomId.create(),
-                            System.currentTimeMillis() * 1000L,
-                            Message.TYPE_CHAT,
-                            Message.USAGE_CHAT,
-                            Message.STATE_OUTGOING_SENT,
-                            text,
-                            null,
-                            -1,
-                            null,
-                            -1,
-                            null,
-                            0
-                    );
-                    silentMessages.add(gm);
-                }
-            }
-
-            for (Message silentMessage : silentMessages) {
-                final UserId recipient = (UserId)silentMessage.chatId;
-                try (AutoCloseLock autoCloseLock = acquireLock(recipient)) {
-                    SessionSetupInfo sessionSetupInfo = setUpSession(recipient);
-                    ((ConnectionImpl)connection).sendSilentMessage(silentMessage, sessionSetupInfo);
-                } catch (Exception e) {
-                    Log.e("Failed to set up encryption session", e);
-                    Log.sendErrorReport("Failed to get session setup info");
-                    ((ConnectionImpl)connection).sendSilentMessage(silentMessage, null);
-                }
-            }
         }
     }
 

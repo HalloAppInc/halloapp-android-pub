@@ -635,24 +635,6 @@ public class ContentDb {
         });
     }
 
-    public void addSilentMessage(@NonNull Message message, @Nullable Runnable completionRunnable) {
-        databaseWriteExecutor.execute(() -> {
-            messagesDb.addSilentMessage(message);
-            if (completionRunnable != null) {
-                completionRunnable.run();
-            }
-        });
-    }
-
-    public void updateSilentMessageDecrypt(@NonNull Message message, @Nullable Runnable completionRunnable) {
-        databaseWriteExecutor.execute(() -> {
-            messagesDb.updateSilentMessageDecrypt(message);
-            if (completionRunnable != null) {
-                completionRunnable.run();
-            }
-        });
-    }
-
     public void addGroupChat(@NonNull GroupInfo groupInfo, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
             if (messagesDb.addGroupChat(groupInfo)) {
@@ -810,12 +792,6 @@ public class ContentDb {
         });
     }
 
-    public void setSilentMessageRerequestCount(@NonNull UserId senderUserId, @NonNull String messageId, int count) {
-        databaseWriteExecutor.execute(() -> {
-            messagesDb.setSilentMessageRerequestCount(senderUserId, messageId, count);
-        });
-    }
-
     public void setMessageTransferred(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         databaseWriteExecutor.execute(() -> {
             messagesDb.setMessageTransferred(chatId, senderUserId, messageId);
@@ -850,11 +826,6 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public boolean hasSilentMessage(UserId senderUserId, String id) {
-        return messagesDb.hasSilentMessage(senderUserId, id);
-    }
-
-    @WorkerThread
     public @Nullable Message getMessage(long rowId) {
         return messagesDb.getMessage(rowId);
     }
@@ -867,11 +838,6 @@ public class ContentDb {
     @WorkerThread
     public int getMessageRerequestCount(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         return messagesDb.getMessageRerequestCount(chatId, senderUserId, messageId);
-    }
-
-    @WorkerThread
-    public int getSilentMessageRerequestCount(@NonNull UserId senderUserId, @NonNull String messageId) {
-        return messagesDb.getSilentMessageRerequestCount(senderUserId, messageId);
     }
 
     @WorkerThread
@@ -976,11 +942,6 @@ public class ContentDb {
 
     public void updatePostAudience(@NonNull Map<UserId, Collection<Post>> shareMap) {
         postsDb.updatePostAudience(shareMap);
-    }
-
-    @WorkerThread
-    public List<DecryptStats> getSilentMessageDecryptStats(long lastRowId) {
-        return messagesDb.getSilentMessageDecryptStats(lastRowId);
     }
 
     @WorkerThread

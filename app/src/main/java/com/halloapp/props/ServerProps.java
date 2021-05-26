@@ -31,7 +31,6 @@ public class ServerProps {
     private static final String PROP_INTERNAL_USER = "dev";
     private static final String PROP_GROUP_CHATS_ENABLED = "group_chat";
     private static final String PROP_MAX_GROUP_SIZE = "max_group_size";
-    private static final String PROP_SILENT_CHAT_MESSAGES = "silent_chat_messages";
     private static final String PROP_MAX_FEED_VIDEO_DURATION = "max_feed_video_duration";
     private static final String PROP_MAX_CHAT_VIDEO_DURATION = "max_chat_video_duration";
     private static final String PROP_MIN_GROUP_SYNC_INTERVAL = "group_sync_time";
@@ -65,7 +64,6 @@ public class ServerProps {
     private final BooleanProp propInternalUser = createProp(PROP_INTERNAL_USER, false);
     private final IntegerProp propMaxGroupSize = createProp(PROP_MAX_GROUP_SIZE, 25);
     private final BooleanProp propGroupChatsEnabled = createProp(PROP_GROUP_CHATS_ENABLED, true);
-    private final IntegerProp propSilentChatMessages = createProp(PROP_SILENT_CHAT_MESSAGES, 5);
     private final IntegerProp propMaxFeedVideoDuration = createProp(PROP_MAX_FEED_VIDEO_DURATION, 60);
     private final IntegerProp propMaxChatVideoDuration = createProp(PROP_MAX_CHAT_VIDEO_DURATION, 120);
     private final IntegerProp propMinGroupSyncInterval = createProp(PROP_MIN_GROUP_SYNC_INTERVAL, WEEK_IN_SECONDS);
@@ -199,10 +197,6 @@ public class ServerProps {
 
     public synchronized boolean getNewClientContainerEnabled() {
         return Constants.SEND_CONTAINER || propNewClientContainerEnabled.getValue();
-    }
-
-    public synchronized int getSilentChatMessageCount() {
-        return propSilentChatMessages.getValue();
     }
 
     public synchronized int getMaxFeedVideoDuration() {

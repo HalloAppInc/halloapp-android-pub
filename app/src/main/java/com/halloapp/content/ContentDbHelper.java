@@ -28,7 +28,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 42;
+    private static final int DATABASE_VERSION = 43;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -91,26 +91,6 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP INDEX IF EXISTS " + MessagesTable.INDEX_MESSAGE_KEY);
         db.execSQL("CREATE UNIQUE INDEX " + MessagesTable.INDEX_MESSAGE_KEY + " ON " + MessagesTable.TABLE_NAME + "("
                 + MessagesTable.COLUMN_CHAT_ID + ", "
-                + MessagesTable.COLUMN_SENDER_USER_ID + ", "
-                + MessagesTable.COLUMN_MESSAGE_ID
-                + ");");
-
-        db.execSQL("DROP TABLE IF EXISTS " + SilentMessagesTable.TABLE_NAME);
-        db.execSQL("CREATE TABLE " + SilentMessagesTable.TABLE_NAME + " ("
-                + SilentMessagesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + SilentMessagesTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
-                + SilentMessagesTable.COLUMN_MESSAGE_ID + " TEXT NOT NULL,"
-                + SilentMessagesTable.COLUMN_REREQUEST_COUNT + " INTEGER,"
-                + SilentMessagesTable.COLUMN_FAILURE_REASON + " TEXT,"
-                + SilentMessagesTable.COLUMN_CLIENT_VERSION + " TEXT,"
-                + SilentMessagesTable.COLUMN_SENDER_PLATFORM + " TEXT,"
-                + SilentMessagesTable.COLUMN_SENDER_VERSION + " TEXT,"
-                + SilentMessagesTable.COLUMN_RECEIVE_TIME + " INTEGER,"
-                + SilentMessagesTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER"
-                + ");");
-
-        db.execSQL("DROP INDEX IF EXISTS " + SilentMessagesTable.INDEX_SILENT_MESSAGE_KEY);
-        db.execSQL("CREATE UNIQUE INDEX " + SilentMessagesTable.INDEX_SILENT_MESSAGE_KEY + " ON " + SilentMessagesTable.TABLE_NAME + "("
                 + MessagesTable.COLUMN_SENDER_USER_ID + ", "
                 + MessagesTable.COLUMN_MESSAGE_ID
                 + ");");
@@ -427,6 +407,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 41: {
                 upgradeFromVersion41(db);
+            }
+            case 42: {
+                upgradeFromVersion42(db);
             }
             break;
             default: {
@@ -820,6 +803,11 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + "DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + CommentsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + CommentsTable.TABLE_NAME + "'; "
                 + "DELETE FROM " + FutureProofTable.TABLE_NAME + " WHERE " + FutureProofTable.COLUMN_PARENT_ROW_ID + "=OLD." + CommentsTable._ID + " AND " + FutureProofTable.COLUMN_PARENT_TABLE + "='" + CommentsTable.TABLE_NAME + "'; "
                 + "END;");
+    }
+
+    private void upgradeFromVersion42(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP INDEX IF EXISTS " + SilentMessagesTable.INDEX_SILENT_MESSAGE_KEY);
+        db.execSQL("DROP TABLE IF EXISTS " + SilentMessagesTable.TABLE_NAME);
     }
 
     /**

@@ -10,7 +10,6 @@ import com.halloapp.BuildConfig;
 import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
-import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
 import java.lang.annotation.Retention;
@@ -129,7 +128,7 @@ public class Message extends ContentItem {
 
     @Override
     public void send(@NonNull Connection connection) {
-        EncryptedSessionManager.getInstance().sendMessage(this, true);
+        EncryptedSessionManager.getInstance().sendMessage(this);
     }
 
     @Override
