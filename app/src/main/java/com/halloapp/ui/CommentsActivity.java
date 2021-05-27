@@ -268,6 +268,7 @@ public class CommentsActivity extends HalloActivity {
             // TODO(jack): Remove restriction on group for media comments when ready for rollout
             List<String> allowedGroups = Arrays.asList(
                     "g9YekRT6-NDRXu6cALrn2L", // Test group
+                    "gvy88VgCK0ug_TcI0PQpPy", // Memes at HalloApp
                     "gTNOJoTsQakTj_HIRA5wJH", // HalloApp Android
                     "gHRk9DYCJZcvuFAJuZvQPN"  // Everyone at HalloApp
             );
