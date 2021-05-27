@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -81,6 +82,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
 
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
     private static final int REQUEST_CODE_SET_AVATAR = 2;
+    private static final int VIDEO_WARNING_DURATION_SEC = 10;
 
     public static final int PURPOSE_COMPOSE = 1;
     public static final int PURPOSE_AVATAR = 2;
@@ -112,6 +114,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private File mediaFile;
 
     private Chronometer videoTimer;
+    private Chronometer videoTimeLimitTimer;
     private ImageButton captureButton;
     private ImageButton flipCameraButton;
     private ImageButton toggleFlashButton;
@@ -160,6 +163,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         cameraCardView = findViewById(R.id.cameraCard);
         videoTimer = findViewById(R.id.video_timer);
         captureButton = findViewById(R.id.capture);
+        videoTimeLimitTimer = findViewById(R.id.video_countdown_timer);
         captureButton.setOnLongClickListener(v -> {
             Log.d("CameraActivity: capture button onLongClick");
             prepareToTakeVideo();
@@ -563,6 +567,36 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         playRecordStartAnimation();
         clearMediaFile();
         mediaFile = generateTempCameraFile(Media.MEDIA_TYPE_VIDEO);
+        cameraView.addCameraListener(new CameraListener() {
+
+            @Override
+            public void onVideoRecordingStart() {
+                super.onVideoRecordingStart();
+                Handler countdownHandler = new Handler();
+                Runnable countdownRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isRecordingVideo) {
+                            String message = getResources().getString(R.string.video_countdown_message);
+                            videoTimeLimitTimer.setFormat(message);
+                            videoTimeLimitTimer.setBase(SystemClock.elapsedRealtime() + VIDEO_WARNING_DURATION_SEC * 1000);
+                            videoTimeLimitTimer.setVisibility(View.VISIBLE);
+                            videoTimeLimitTimer.start();
+                        }
+                    }
+                };
+                countdownHandler.postDelayed(countdownRunnable, (maxVideoDurationSeconds - VIDEO_WARNING_DURATION_SEC) * 1000);
+            }
+
+            @Override
+            public void onVideoRecordingEnd() {
+                super.onVideoRecordingEnd();
+                if (videoTimeLimitTimer.getVisibility() == View.VISIBLE) {
+                    videoTimeLimitTimer.stop();
+                    videoTimeLimitTimer.setVisibility(View.GONE);
+                }
+            }
+        });
         cameraView.takeVideo(mediaFile, maxVideoDurationSeconds * 1000);
     }
 

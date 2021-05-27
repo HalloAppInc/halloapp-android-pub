@@ -712,6 +712,7 @@ public class ContentComposerActivity extends HalloActivity {
         } else {
             maxVideoLength = ServerProps.getInstance().getMaxFeedVideoDuration();
         }
+
         List<ContentComposerViewModel.EditMediaPair> media = viewModel.getEditMedia();
 
         BgWorkers.getInstance().execute(() -> {
