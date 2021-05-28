@@ -14,6 +14,10 @@
 
     <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
 
+    <queries>
+        <package android:name="com.whatsapp" />
+    </queries>
+
     <application
         android:name=".HalloApp"
         android:allowBackup="true"
