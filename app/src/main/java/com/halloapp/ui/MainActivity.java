@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -50,6 +51,7 @@ import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.groups.GroupCreationPickerActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
@@ -85,6 +87,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
 
     private final ServerProps serverProps = ServerProps.getInstance();
+    private final BgWorkers bgWorkers = BgWorkers.getInstance();
 
     private SpeedDialView fabView;
     private View toolbarContainer;
@@ -104,6 +107,17 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        bgWorkers.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+                long numberBytesAvail = Environment.getDataDirectory().getFreeSpace();
+                if (numberBytesAvail < LowStorageActivity.MINIMUM_STORAGE_BYTES) {
+                    startActivity(new Intent(getBaseContext(), LowStorageActivity.class));
+                    finish();
+                }
+            }
+        });
 
         if (Build.VERSION.SDK_INT >= 28) {
             getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;

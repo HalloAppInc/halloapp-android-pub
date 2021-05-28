@@ -534,4 +534,8 @@
     <string name="seen_by_post_expiration_notice">Your posts will disappear after 30 days.</string>
     <!-- Frequently asked questions option in help menu -->
     <string name="faq">FAQ</string>
+    <!-- Button takes user to settings to manage their storage -->
+    <string name="manage_storage_button">Manage Storage</string>
+    <!-- Message that's displayed if user has low storage -->
+    <string name="low_storage_msg">Your phone is running low on storage.\n In order to use HalloApp please free some storage on this phone.</string>
 </resources>
