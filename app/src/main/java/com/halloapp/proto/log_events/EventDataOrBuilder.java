@@ -117,5 +117,16 @@ public interface EventDataOrBuilder extends
    */
   com.halloapp.proto.log_events.DecryptionReport getDecryptionReport();
 
+  /**
+   * <code>.server.Permissions permissions = 15;</code>
+   * @return Whether the permissions field is set.
+   */
+  boolean hasPermissions();
+  /**
+   * <code>.server.Permissions permissions = 15;</code>
+   * @return The permissions.
+   */
+  com.halloapp.proto.log_events.Permissions getPermissions();
+
   public com.halloapp.proto.log_events.EventData.EdataCase getEdataCase();
 }

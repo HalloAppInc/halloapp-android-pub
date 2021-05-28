@@ -161,6 +161,8 @@ public  final class Msg extends
     SILENT_CHAT_STANZA(23),
     GROUP_FEED_ITEMS(24),
     END_OF_QUEUE(26),
+    INVITEE_NOTICE(27),
+    GROUP_FEED_REREQUEST(28),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -196,6 +198,8 @@ public  final class Msg extends
         case 23: return SILENT_CHAT_STANZA;
         case 24: return GROUP_FEED_ITEMS;
         case 26: return END_OF_QUEUE;
+        case 27: return INVITEE_NOTICE;
+        case 28: return GROUP_FEED_REREQUEST;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -1353,6 +1357,106 @@ public  final class Msg extends
    */
   private void clearEndOfQueue() {
     if (payloadCase_ == 26) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int INVITEE_NOTICE_FIELD_NUMBER = 27;
+  /**
+   * <code>.server.InviteeNotice invitee_notice = 27;</code>
+   */
+  @java.lang.Override
+  public boolean hasInviteeNotice() {
+    return payloadCase_ == 27;
+  }
+  /**
+   * <code>.server.InviteeNotice invitee_notice = 27;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.InviteeNotice getInviteeNotice() {
+    if (payloadCase_ == 27) {
+       return (com.halloapp.proto.server.InviteeNotice) payload_;
+    }
+    return com.halloapp.proto.server.InviteeNotice.getDefaultInstance();
+  }
+  /**
+   * <code>.server.InviteeNotice invitee_notice = 27;</code>
+   */
+  private void setInviteeNotice(com.halloapp.proto.server.InviteeNotice value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 27;
+  }
+  /**
+   * <code>.server.InviteeNotice invitee_notice = 27;</code>
+   */
+  private void mergeInviteeNotice(com.halloapp.proto.server.InviteeNotice value) {
+    value.getClass();
+  if (payloadCase_ == 27 &&
+        payload_ != com.halloapp.proto.server.InviteeNotice.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.InviteeNotice.newBuilder((com.halloapp.proto.server.InviteeNotice) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 27;
+  }
+  /**
+   * <code>.server.InviteeNotice invitee_notice = 27;</code>
+   */
+  private void clearInviteeNotice() {
+    if (payloadCase_ == 27) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int GROUP_FEED_REREQUEST_FIELD_NUMBER = 28;
+  /**
+   * <code>.server.GroupFeedRerequest group_feed_rerequest = 28;</code>
+   */
+  @java.lang.Override
+  public boolean hasGroupFeedRerequest() {
+    return payloadCase_ == 28;
+  }
+  /**
+   * <code>.server.GroupFeedRerequest group_feed_rerequest = 28;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.GroupFeedRerequest getGroupFeedRerequest() {
+    if (payloadCase_ == 28) {
+       return (com.halloapp.proto.server.GroupFeedRerequest) payload_;
+    }
+    return com.halloapp.proto.server.GroupFeedRerequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.GroupFeedRerequest group_feed_rerequest = 28;</code>
+   */
+  private void setGroupFeedRerequest(com.halloapp.proto.server.GroupFeedRerequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 28;
+  }
+  /**
+   * <code>.server.GroupFeedRerequest group_feed_rerequest = 28;</code>
+   */
+  private void mergeGroupFeedRerequest(com.halloapp.proto.server.GroupFeedRerequest value) {
+    value.getClass();
+  if (payloadCase_ == 28 &&
+        payload_ != com.halloapp.proto.server.GroupFeedRerequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.GroupFeedRerequest.newBuilder((com.halloapp.proto.server.GroupFeedRerequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 28;
+  }
+  /**
+   * <code>.server.GroupFeedRerequest group_feed_rerequest = 28;</code>
+   */
+  private void clearGroupFeedRerequest() {
+    if (payloadCase_ == 28) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -2629,6 +2733,102 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.InviteeNotice invitee_notice = 27;</code>
+     */
+    @java.lang.Override
+    public boolean hasInviteeNotice() {
+      return instance.hasInviteeNotice();
+    }
+    /**
+     * <code>.server.InviteeNotice invitee_notice = 27;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.InviteeNotice getInviteeNotice() {
+      return instance.getInviteeNotice();
+    }
+    /**
+     * <code>.server.InviteeNotice invitee_notice = 27;</code>
+     */
+    public Builder setInviteeNotice(com.halloapp.proto.server.InviteeNotice value) {
+      copyOnWrite();
+      instance.setInviteeNotice(value);
+      return this;
+    }
+    /**
+     * <code>.server.InviteeNotice invitee_notice = 27;</code>
+     */
+    public Builder setInviteeNotice(
+        com.halloapp.proto.server.InviteeNotice.Builder builderForValue) {
+      copyOnWrite();
+      instance.setInviteeNotice(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.InviteeNotice invitee_notice = 27;</code>
+     */
+    public Builder mergeInviteeNotice(com.halloapp.proto.server.InviteeNotice value) {
+      copyOnWrite();
+      instance.mergeInviteeNotice(value);
+      return this;
+    }
+    /**
+     * <code>.server.InviteeNotice invitee_notice = 27;</code>
+     */
+    public Builder clearInviteeNotice() {
+      copyOnWrite();
+      instance.clearInviteeNotice();
+      return this;
+    }
+
+    /**
+     * <code>.server.GroupFeedRerequest group_feed_rerequest = 28;</code>
+     */
+    @java.lang.Override
+    public boolean hasGroupFeedRerequest() {
+      return instance.hasGroupFeedRerequest();
+    }
+    /**
+     * <code>.server.GroupFeedRerequest group_feed_rerequest = 28;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.GroupFeedRerequest getGroupFeedRerequest() {
+      return instance.getGroupFeedRerequest();
+    }
+    /**
+     * <code>.server.GroupFeedRerequest group_feed_rerequest = 28;</code>
+     */
+    public Builder setGroupFeedRerequest(com.halloapp.proto.server.GroupFeedRerequest value) {
+      copyOnWrite();
+      instance.setGroupFeedRerequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupFeedRerequest group_feed_rerequest = 28;</code>
+     */
+    public Builder setGroupFeedRerequest(
+        com.halloapp.proto.server.GroupFeedRerequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setGroupFeedRerequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.GroupFeedRerequest group_feed_rerequest = 28;</code>
+     */
+    public Builder mergeGroupFeedRerequest(com.halloapp.proto.server.GroupFeedRerequest value) {
+      copyOnWrite();
+      instance.mergeGroupFeedRerequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupFeedRerequest group_feed_rerequest = 28;</code>
+     */
+    public Builder clearGroupFeedRerequest() {
+      copyOnWrite();
+      instance.clearGroupFeedRerequest();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -2728,13 +2928,15 @@ public  final class Msg extends
             com.halloapp.proto.server.GroupFeedItems.class,
             "rerequestCount_",
             com.halloapp.proto.server.EndOfQueue.class,
+            com.halloapp.proto.server.InviteeNotice.class,
+            com.halloapp.proto.server.GroupFeedRerequest.class,
           };
           java.lang.String info =
-              "\u0000\u001a\u0001\u0000\u0001\u001a\u001a\u0000\u0000\u0000\u0001\u0208\u0002\f" +
+              "\u0000\u001c\u0001\u0000\u0001\u001c\u001c\u0000\u0000\u0000\u0001\u0208\u0002\f" +
               "\u0003\u0002\u0004\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000" +
               "\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011" +
               "<\u0000\u0012<\u0000\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000" +
-              "\u0018<\u0000\u0019\u0004\u001a<\u0000";
+              "\u0018<\u0000\u0019\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

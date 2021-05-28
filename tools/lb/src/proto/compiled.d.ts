@@ -1462,6 +1462,9 @@ export namespace server {
 
         /** Post publisherName */
         publisherName?: (string|null);
+
+        /** Post encPayload */
+        encPayload?: (Uint8Array|null);
     }
 
     /** Represents a Post. */
@@ -1490,6 +1493,9 @@ export namespace server {
 
         /** Post publisherName. */
         public publisherName: string;
+
+        /** Post encPayload. */
+        public encPayload: Uint8Array;
 
         /**
          * Creates a new Post instance using the specified properties.
@@ -1585,6 +1591,9 @@ export namespace server {
 
         /** Comment timestamp */
         timestamp?: (number|Long|null);
+
+        /** Comment encPayload */
+        encPayload?: (Uint8Array|null);
     }
 
     /** Represents a Comment. */
@@ -1616,6 +1625,9 @@ export namespace server {
 
         /** Comment timestamp. */
         public timestamp: (number|Long);
+
+        /** Comment encPayload. */
+        public encPayload: Uint8Array;
 
         /**
          * Creates a new Comment instance using the specified properties.
@@ -2013,6 +2025,102 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a SenderStateBundle. */
+    interface ISenderStateBundle {
+
+        /** SenderStateBundle encSenderState */
+        encSenderState?: (Uint8Array|null);
+
+        /** SenderStateBundle uid */
+        uid?: (number|Long|null);
+    }
+
+    /** Represents a SenderStateBundle. */
+    class SenderStateBundle implements ISenderStateBundle {
+
+        /**
+         * Constructs a new SenderStateBundle.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.ISenderStateBundle);
+
+        /** SenderStateBundle encSenderState. */
+        public encSenderState: Uint8Array;
+
+        /** SenderStateBundle uid. */
+        public uid: (number|Long);
+
+        /**
+         * Creates a new SenderStateBundle instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SenderStateBundle instance
+         */
+        public static create(properties?: server.ISenderStateBundle): server.SenderStateBundle;
+
+        /**
+         * Encodes the specified SenderStateBundle message. Does not implicitly {@link server.SenderStateBundle.verify|verify} messages.
+         * @param message SenderStateBundle message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.ISenderStateBundle, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SenderStateBundle message, length delimited. Does not implicitly {@link server.SenderStateBundle.verify|verify} messages.
+         * @param message SenderStateBundle message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.ISenderStateBundle, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SenderStateBundle message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SenderStateBundle
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.SenderStateBundle;
+
+        /**
+         * Decodes a SenderStateBundle message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SenderStateBundle
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.SenderStateBundle;
+
+        /**
+         * Verifies a SenderStateBundle message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SenderStateBundle message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SenderStateBundle
+         */
+        public static fromObject(object: { [k: string]: any }): server.SenderStateBundle;
+
+        /**
+         * Creates a plain object from a SenderStateBundle message. Also converts values to other types if specified.
+         * @param message SenderStateBundle
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.SenderStateBundle, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SenderStateBundle to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a GroupFeedItem. */
     interface IGroupFeedItem {
 
@@ -2033,6 +2141,15 @@ export namespace server {
 
         /** GroupFeedItem comment */
         comment?: (server.IComment|null);
+
+        /** GroupFeedItem senderStateBundles */
+        senderStateBundles?: (server.ISenderStateBundle[]|null);
+
+        /** GroupFeedItem encSenderState */
+        encSenderState?: (Uint8Array|null);
+
+        /** GroupFeedItem audienceHash */
+        audienceHash?: (Uint8Array|null);
     }
 
     /** Represents a GroupFeedItem. */
@@ -2061,6 +2178,15 @@ export namespace server {
 
         /** GroupFeedItem comment. */
         public comment?: (server.IComment|null);
+
+        /** GroupFeedItem senderStateBundles. */
+        public senderStateBundles: server.ISenderStateBundle[];
+
+        /** GroupFeedItem encSenderState. */
+        public encSenderState: Uint8Array;
+
+        /** GroupFeedItem audienceHash. */
+        public audienceHash: Uint8Array;
 
         /** GroupFeedItem item. */
         public item?: ("post"|"comment");
@@ -3670,6 +3796,9 @@ export namespace server {
         /** ChatStanza senderName */
         senderName?: (string|null);
 
+        /** ChatStanza senderPhone */
+        senderPhone?: (string|null);
+
         /** ChatStanza senderLogInfo */
         senderLogInfo?: (string|null);
 
@@ -3703,6 +3832,9 @@ export namespace server {
 
         /** ChatStanza senderName. */
         public senderName: string;
+
+        /** ChatStanza senderPhone. */
+        public senderPhone: string;
 
         /** ChatStanza senderLogInfo. */
         public senderLogInfo: string;
@@ -4566,6 +4698,12 @@ export namespace server {
         /** Msg endOfQueue */
         endOfQueue?: (server.IEndOfQueue|null);
 
+        /** Msg inviteeNotice */
+        inviteeNotice?: (server.IInviteeNotice|null);
+
+        /** Msg groupFeedRerequest */
+        groupFeedRerequest?: (server.IGroupFeedRerequest|null);
+
         /** Msg retryCount */
         retryCount?: (number|null);
 
@@ -4654,6 +4792,12 @@ export namespace server {
         /** Msg endOfQueue. */
         public endOfQueue?: (server.IEndOfQueue|null);
 
+        /** Msg inviteeNotice. */
+        public inviteeNotice?: (server.IInviteeNotice|null);
+
+        /** Msg groupFeedRerequest. */
+        public groupFeedRerequest?: (server.IGroupFeedRerequest|null);
+
         /** Msg retryCount. */
         public retryCount: number;
 
@@ -4661,7 +4805,7 @@ export namespace server {
         public rerequestCount: number;
 
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest");
 
         /**
          * Creates a new Msg instance using the specified properties.
@@ -6152,6 +6296,102 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a GroupFeedRerequest. */
+    interface IGroupFeedRerequest {
+
+        /** GroupFeedRerequest gid */
+        gid?: (string|null);
+
+        /** GroupFeedRerequest id */
+        id?: (string|null);
+    }
+
+    /** Represents a GroupFeedRerequest. */
+    class GroupFeedRerequest implements IGroupFeedRerequest {
+
+        /**
+         * Constructs a new GroupFeedRerequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IGroupFeedRerequest);
+
+        /** GroupFeedRerequest gid. */
+        public gid: string;
+
+        /** GroupFeedRerequest id. */
+        public id: string;
+
+        /**
+         * Creates a new GroupFeedRerequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GroupFeedRerequest instance
+         */
+        public static create(properties?: server.IGroupFeedRerequest): server.GroupFeedRerequest;
+
+        /**
+         * Encodes the specified GroupFeedRerequest message. Does not implicitly {@link server.GroupFeedRerequest.verify|verify} messages.
+         * @param message GroupFeedRerequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IGroupFeedRerequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GroupFeedRerequest message, length delimited. Does not implicitly {@link server.GroupFeedRerequest.verify|verify} messages.
+         * @param message GroupFeedRerequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IGroupFeedRerequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GroupFeedRerequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GroupFeedRerequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.GroupFeedRerequest;
+
+        /**
+         * Decodes a GroupFeedRerequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GroupFeedRerequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.GroupFeedRerequest;
+
+        /**
+         * Verifies a GroupFeedRerequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GroupFeedRerequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GroupFeedRerequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.GroupFeedRerequest;
+
+        /**
+         * Creates a plain object from a GroupFeedRerequest message. Also converts values to other types if specified.
+         * @param message GroupFeedRerequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.GroupFeedRerequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GroupFeedRerequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a SeenReceipt. */
     interface ISeenReceipt {
 
@@ -7163,6 +7403,204 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of an InviteeNotice. */
+    interface IInviteeNotice {
+
+        /** InviteeNotice inviters */
+        inviters?: (server.IInviter[]|null);
+    }
+
+    /** Represents an InviteeNotice. */
+    class InviteeNotice implements IInviteeNotice {
+
+        /**
+         * Constructs a new InviteeNotice.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IInviteeNotice);
+
+        /** InviteeNotice inviters. */
+        public inviters: server.IInviter[];
+
+        /**
+         * Creates a new InviteeNotice instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns InviteeNotice instance
+         */
+        public static create(properties?: server.IInviteeNotice): server.InviteeNotice;
+
+        /**
+         * Encodes the specified InviteeNotice message. Does not implicitly {@link server.InviteeNotice.verify|verify} messages.
+         * @param message InviteeNotice message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IInviteeNotice, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified InviteeNotice message, length delimited. Does not implicitly {@link server.InviteeNotice.verify|verify} messages.
+         * @param message InviteeNotice message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IInviteeNotice, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an InviteeNotice message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns InviteeNotice
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.InviteeNotice;
+
+        /**
+         * Decodes an InviteeNotice message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns InviteeNotice
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.InviteeNotice;
+
+        /**
+         * Verifies an InviteeNotice message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an InviteeNotice message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns InviteeNotice
+         */
+        public static fromObject(object: { [k: string]: any }): server.InviteeNotice;
+
+        /**
+         * Creates a plain object from an InviteeNotice message. Also converts values to other types if specified.
+         * @param message InviteeNotice
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.InviteeNotice, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this InviteeNotice to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an Inviter. */
+    interface IInviter {
+
+        /** Inviter uid */
+        uid?: (number|Long|null);
+
+        /** Inviter name */
+        name?: (string|null);
+
+        /** Inviter phone */
+        phone?: (string|null);
+
+        /** Inviter timestamp */
+        timestamp?: (number|Long|null);
+    }
+
+    /** Represents an Inviter. */
+    class Inviter implements IInviter {
+
+        /**
+         * Constructs a new Inviter.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IInviter);
+
+        /** Inviter uid. */
+        public uid: (number|Long);
+
+        /** Inviter name. */
+        public name: string;
+
+        /** Inviter phone. */
+        public phone: string;
+
+        /** Inviter timestamp. */
+        public timestamp: (number|Long);
+
+        /**
+         * Creates a new Inviter instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Inviter instance
+         */
+        public static create(properties?: server.IInviter): server.Inviter;
+
+        /**
+         * Encodes the specified Inviter message. Does not implicitly {@link server.Inviter.verify|verify} messages.
+         * @param message Inviter message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IInviter, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified Inviter message, length delimited. Does not implicitly {@link server.Inviter.verify|verify} messages.
+         * @param message Inviter message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IInviter, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an Inviter message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Inviter
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.Inviter;
+
+        /**
+         * Decodes an Inviter message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Inviter
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.Inviter;
+
+        /**
+         * Verifies an Inviter message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an Inviter message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns Inviter
+         */
+        public static fromObject(object: { [k: string]: any }): server.Inviter;
+
+        /**
+         * Creates a plain object from an Inviter message. Also converts values to other types if specified.
+         * @param message Inviter
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.Inviter, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this Inviter to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an EventData. */
     interface IEventData {
 
@@ -7192,6 +7630,9 @@ export namespace server {
 
         /** EventData decryptionReport */
         decryptionReport?: (server.IDecryptionReport|null);
+
+        /** EventData permissions */
+        permissions?: (server.IPermissions|null);
     }
 
     /** Represents an EventData. */
@@ -7230,8 +7671,11 @@ export namespace server {
         /** EventData decryptionReport. */
         public decryptionReport?: (server.IDecryptionReport|null);
 
+        /** EventData permissions. */
+        public permissions?: (server.IPermissions|null);
+
         /** EventData edata. */
-        public edata?: ("mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport");
+        public edata?: ("mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport"|"permissions");
 
         /**
          * Creates a new EventData instance using the specified properties.
@@ -7955,6 +8399,117 @@ export namespace server {
         enum Status {
             OK = 0,
             FAIL = 1
+        }
+    }
+
+    /** Properties of a Permissions. */
+    interface IPermissions {
+
+        /** Permissions type */
+        type?: (server.Permissions.Type|null);
+
+        /** Permissions status */
+        status?: (server.Permissions.Status|null);
+    }
+
+    /** Represents a Permissions. */
+    class Permissions implements IPermissions {
+
+        /**
+         * Constructs a new Permissions.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IPermissions);
+
+        /** Permissions type. */
+        public type: server.Permissions.Type;
+
+        /** Permissions status. */
+        public status: server.Permissions.Status;
+
+        /**
+         * Creates a new Permissions instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Permissions instance
+         */
+        public static create(properties?: server.IPermissions): server.Permissions;
+
+        /**
+         * Encodes the specified Permissions message. Does not implicitly {@link server.Permissions.verify|verify} messages.
+         * @param message Permissions message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IPermissions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified Permissions message, length delimited. Does not implicitly {@link server.Permissions.verify|verify} messages.
+         * @param message Permissions message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IPermissions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a Permissions message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Permissions
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.Permissions;
+
+        /**
+         * Decodes a Permissions message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Permissions
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.Permissions;
+
+        /**
+         * Verifies a Permissions message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a Permissions message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns Permissions
+         */
+        public static fromObject(object: { [k: string]: any }): server.Permissions;
+
+        /**
+         * Creates a plain object from a Permissions message. Also converts values to other types if specified.
+         * @param message Permissions
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.Permissions, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this Permissions to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace Permissions {
+
+        /** Type enum. */
+        enum Type {
+            CONTACTS = 0,
+            NOTIFICATIONS = 1
+        }
+
+        /** Status enum. */
+        enum Status {
+            ALLOWED = 0,
+            DENIED = 1
         }
     }
 }

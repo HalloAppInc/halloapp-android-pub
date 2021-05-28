@@ -59,4 +59,14 @@ public interface PostOrBuilder extends
    */
   com.google.protobuf.ByteString
       getPublisherNameBytes();
+
+  /**
+   * <pre>
+   * Serialized EncryptedPayload (from client.proto).
+   * </pre>
+   *
+   * <code>bytes enc_payload = 7;</code>
+   * @return The encPayload.
+   */
+  com.google.protobuf.ByteString getEncPayload();
 }

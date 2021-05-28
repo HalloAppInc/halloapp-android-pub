@@ -22,6 +22,7 @@ public  final class EventData extends
     MEDIA_COMPOSE_LOAD(12),
     PUSH_RECEIVED(13),
     DECRYPTION_REPORT(14),
+    PERMISSIONS(15),
     EDATA_NOT_SET(0);
     private final int value;
     private EdataCase(int value) {
@@ -42,6 +43,7 @@ public  final class EventData extends
         case 12: return MEDIA_COMPOSE_LOAD;
         case 13: return PUSH_RECEIVED;
         case 14: return DECRYPTION_REPORT;
+        case 15: return PERMISSIONS;
         case 0: return EDATA_NOT_SET;
         default: return null;
       }
@@ -501,6 +503,56 @@ public  final class EventData extends
    */
   private void clearDecryptionReport() {
     if (edataCase_ == 14) {
+      edataCase_ = 0;
+      edata_ = null;
+    }
+  }
+
+  public static final int PERMISSIONS_FIELD_NUMBER = 15;
+  /**
+   * <code>.server.Permissions permissions = 15;</code>
+   */
+  @java.lang.Override
+  public boolean hasPermissions() {
+    return edataCase_ == 15;
+  }
+  /**
+   * <code>.server.Permissions permissions = 15;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.log_events.Permissions getPermissions() {
+    if (edataCase_ == 15) {
+       return (com.halloapp.proto.log_events.Permissions) edata_;
+    }
+    return com.halloapp.proto.log_events.Permissions.getDefaultInstance();
+  }
+  /**
+   * <code>.server.Permissions permissions = 15;</code>
+   */
+  private void setPermissions(com.halloapp.proto.log_events.Permissions value) {
+    value.getClass();
+  edata_ = value;
+    edataCase_ = 15;
+  }
+  /**
+   * <code>.server.Permissions permissions = 15;</code>
+   */
+  private void mergePermissions(com.halloapp.proto.log_events.Permissions value) {
+    value.getClass();
+  if (edataCase_ == 15 &&
+        edata_ != com.halloapp.proto.log_events.Permissions.getDefaultInstance()) {
+      edata_ = com.halloapp.proto.log_events.Permissions.newBuilder((com.halloapp.proto.log_events.Permissions) edata_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      edata_ = value;
+    }
+    edataCase_ = 15;
+  }
+  /**
+   * <code>.server.Permissions permissions = 15;</code>
+   */
+  private void clearPermissions() {
+    if (edataCase_ == 15) {
       edataCase_ = 0;
       edata_ = null;
     }
@@ -1056,6 +1108,54 @@ public  final class EventData extends
       return this;
     }
 
+    /**
+     * <code>.server.Permissions permissions = 15;</code>
+     */
+    @java.lang.Override
+    public boolean hasPermissions() {
+      return instance.hasPermissions();
+    }
+    /**
+     * <code>.server.Permissions permissions = 15;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.log_events.Permissions getPermissions() {
+      return instance.getPermissions();
+    }
+    /**
+     * <code>.server.Permissions permissions = 15;</code>
+     */
+    public Builder setPermissions(com.halloapp.proto.log_events.Permissions value) {
+      copyOnWrite();
+      instance.setPermissions(value);
+      return this;
+    }
+    /**
+     * <code>.server.Permissions permissions = 15;</code>
+     */
+    public Builder setPermissions(
+        com.halloapp.proto.log_events.Permissions.Builder builderForValue) {
+      copyOnWrite();
+      instance.setPermissions(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.Permissions permissions = 15;</code>
+     */
+    public Builder mergePermissions(com.halloapp.proto.log_events.Permissions value) {
+      copyOnWrite();
+      instance.mergePermissions(value);
+      return this;
+    }
+    /**
+     * <code>.server.Permissions permissions = 15;</code>
+     */
+    public Builder clearPermissions() {
+      copyOnWrite();
+      instance.clearPermissions();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.EventData)
   }
   @java.lang.Override
@@ -1083,10 +1183,11 @@ public  final class EventData extends
             com.halloapp.proto.log_events.MediaComposeLoad.class,
             com.halloapp.proto.log_events.PushReceived.class,
             com.halloapp.proto.log_events.DecryptionReport.class,
+            com.halloapp.proto.log_events.Permissions.class,
           };
           java.lang.String info =
-              "\u0000\t\u0001\u0000\u0001\u000e\t\u0000\u0000\u0000\u0001\u0003\u0002\f\u0003\u0208" +
-              "\u0004\u0003\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000";
+              "\u0000\n\u0001\u0000\u0001\u000f\n\u0000\u0000\u0000\u0001\u0003\u0002\f\u0003\u0208" +
+              "\u0004\u0003\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

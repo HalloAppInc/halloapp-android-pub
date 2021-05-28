@@ -17,6 +17,7 @@ public  final class Comment extends
     parentCommentId_ = "";
     publisherName_ = "";
     payload_ = com.google.protobuf.ByteString.EMPTY;
+    encPayload_ = com.google.protobuf.ByteString.EMPTY;
   }
   public static final int ID_FIELD_NUMBER = 1;
   private java.lang.String id_;
@@ -283,6 +284,45 @@ public  final class Comment extends
   private void clearTimestamp() {
     
     timestamp_ = 0L;
+  }
+
+  public static final int ENC_PAYLOAD_FIELD_NUMBER = 8;
+  private com.google.protobuf.ByteString encPayload_;
+  /**
+   * <pre>
+   * Serialized EncryptedPayload (from client.proto).
+   * </pre>
+   *
+   * <code>bytes enc_payload = 8;</code>
+   * @return The encPayload.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getEncPayload() {
+    return encPayload_;
+  }
+  /**
+   * <pre>
+   * Serialized EncryptedPayload (from client.proto).
+   * </pre>
+   *
+   * <code>bytes enc_payload = 8;</code>
+   * @param value The encPayload to set.
+   */
+  private void setEncPayload(com.google.protobuf.ByteString value) {
+    value.getClass();
+  
+    encPayload_ = value;
+  }
+  /**
+   * <pre>
+   * Serialized EncryptedPayload (from client.proto).
+   * </pre>
+   *
+   * <code>bytes enc_payload = 8;</code>
+   */
+  private void clearEncPayload() {
+    
+    encPayload_ = getDefaultInstance().getEncPayload();
   }
 
   public static com.halloapp.proto.server.Comment parseFrom(
@@ -660,6 +700,46 @@ public  final class Comment extends
       return this;
     }
 
+    /**
+     * <pre>
+     * Serialized EncryptedPayload (from client.proto).
+     * </pre>
+     *
+     * <code>bytes enc_payload = 8;</code>
+     * @return The encPayload.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getEncPayload() {
+      return instance.getEncPayload();
+    }
+    /**
+     * <pre>
+     * Serialized EncryptedPayload (from client.proto).
+     * </pre>
+     *
+     * <code>bytes enc_payload = 8;</code>
+     * @param value The encPayload to set.
+     * @return This builder for chaining.
+     */
+    public Builder setEncPayload(com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setEncPayload(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Serialized EncryptedPayload (from client.proto).
+     * </pre>
+     *
+     * <code>bytes enc_payload = 8;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearEncPayload() {
+      copyOnWrite();
+      instance.clearEncPayload();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Comment)
   }
   @java.lang.Override
@@ -683,10 +763,11 @@ public  final class Comment extends
             "publisherName_",
             "payload_",
             "timestamp_",
+            "encPayload_",
           };
           java.lang.String info =
-              "\u0000\u0007\u0000\u0000\u0001\u0007\u0007\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
-              "\u0003\u0208\u0004\u0002\u0005\u0208\u0006\n\u0007\u0002";
+              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0000\u0000\u0001\u0208\u0002\u0208\u0003\u0208" +
+              "\u0004\u0002\u0005\u0208\u0006\n\u0007\u0002\b\n";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

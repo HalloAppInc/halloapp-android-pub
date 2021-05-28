@@ -15,6 +15,9 @@ public  final class GroupFeedItem extends
     gid_ = "";
     name_ = "";
     avatarId_ = "";
+    senderStateBundles_ = emptyProtobufList();
+    encSenderState_ = com.google.protobuf.ByteString.EMPTY;
+    audienceHash_ = com.google.protobuf.ByteString.EMPTY;
   }
   /**
    * Protobuf enum {@code server.GroupFeedItem.Action}
@@ -431,6 +434,210 @@ public  final class GroupFeedItem extends
     }
   }
 
+  public static final int SENDER_STATE_BUNDLES_FIELD_NUMBER = 7;
+  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.SenderStateBundle> senderStateBundles_;
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  @java.lang.Override
+  public java.util.List<com.halloapp.proto.server.SenderStateBundle> getSenderStateBundlesList() {
+    return senderStateBundles_;
+  }
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  public java.util.List<? extends com.halloapp.proto.server.SenderStateBundleOrBuilder> 
+      getSenderStateBundlesOrBuilderList() {
+    return senderStateBundles_;
+  }
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  @java.lang.Override
+  public int getSenderStateBundlesCount() {
+    return senderStateBundles_.size();
+  }
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.SenderStateBundle getSenderStateBundles(int index) {
+    return senderStateBundles_.get(index);
+  }
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  public com.halloapp.proto.server.SenderStateBundleOrBuilder getSenderStateBundlesOrBuilder(
+      int index) {
+    return senderStateBundles_.get(index);
+  }
+  private void ensureSenderStateBundlesIsMutable() {
+    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.SenderStateBundle> tmp = senderStateBundles_;
+    if (!tmp.isModifiable()) {
+      senderStateBundles_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
+     }
+  }
+
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  private void setSenderStateBundles(
+      int index, com.halloapp.proto.server.SenderStateBundle value) {
+    value.getClass();
+  ensureSenderStateBundlesIsMutable();
+    senderStateBundles_.set(index, value);
+  }
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  private void addSenderStateBundles(com.halloapp.proto.server.SenderStateBundle value) {
+    value.getClass();
+  ensureSenderStateBundlesIsMutable();
+    senderStateBundles_.add(value);
+  }
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  private void addSenderStateBundles(
+      int index, com.halloapp.proto.server.SenderStateBundle value) {
+    value.getClass();
+  ensureSenderStateBundlesIsMutable();
+    senderStateBundles_.add(index, value);
+  }
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  private void addAllSenderStateBundles(
+      java.lang.Iterable<? extends com.halloapp.proto.server.SenderStateBundle> values) {
+    ensureSenderStateBundlesIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, senderStateBundles_);
+  }
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  private void clearSenderStateBundles() {
+    senderStateBundles_ = emptyProtobufList();
+  }
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  private void removeSenderStateBundles(int index) {
+    ensureSenderStateBundlesIsMutable();
+    senderStateBundles_.remove(index);
+  }
+
+  public static final int ENC_SENDER_STATE_FIELD_NUMBER = 8;
+  private com.google.protobuf.ByteString encSenderState_;
+  /**
+   * <pre>
+   * Meant for the receiver, computed by the server using `sender_state_bundles`.
+   * </pre>
+   *
+   * <code>bytes enc_sender_state = 8;</code>
+   * @return The encSenderState.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getEncSenderState() {
+    return encSenderState_;
+  }
+  /**
+   * <pre>
+   * Meant for the receiver, computed by the server using `sender_state_bundles`.
+   * </pre>
+   *
+   * <code>bytes enc_sender_state = 8;</code>
+   * @param value The encSenderState to set.
+   */
+  private void setEncSenderState(com.google.protobuf.ByteString value) {
+    value.getClass();
+  
+    encSenderState_ = value;
+  }
+  /**
+   * <pre>
+   * Meant for the receiver, computed by the server using `sender_state_bundles`.
+   * </pre>
+   *
+   * <code>bytes enc_sender_state = 8;</code>
+   */
+  private void clearEncSenderState() {
+    
+    encSenderState_ = getDefaultInstance().getEncSenderState();
+  }
+
+  public static final int AUDIENCE_HASH_FIELD_NUMBER = 9;
+  private com.google.protobuf.ByteString audienceHash_;
+  /**
+   * <code>bytes audience_hash = 9;</code>
+   * @return The audienceHash.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getAudienceHash() {
+    return audienceHash_;
+  }
+  /**
+   * <code>bytes audience_hash = 9;</code>
+   * @param value The audienceHash to set.
+   */
+  private void setAudienceHash(com.google.protobuf.ByteString value) {
+    value.getClass();
+  
+    audienceHash_ = value;
+  }
+  /**
+   * <code>bytes audience_hash = 9;</code>
+   */
+  private void clearAudienceHash() {
+    
+    audienceHash_ = getDefaultInstance().getAudienceHash();
+  }
+
   public static com.halloapp.proto.server.GroupFeedItem parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -827,6 +1034,224 @@ public  final class GroupFeedItem extends
       return this;
     }
 
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    @java.lang.Override
+    public java.util.List<com.halloapp.proto.server.SenderStateBundle> getSenderStateBundlesList() {
+      return java.util.Collections.unmodifiableList(
+          instance.getSenderStateBundlesList());
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    @java.lang.Override
+    public int getSenderStateBundlesCount() {
+      return instance.getSenderStateBundlesCount();
+    }/**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.SenderStateBundle getSenderStateBundles(int index) {
+      return instance.getSenderStateBundles(index);
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    public Builder setSenderStateBundles(
+        int index, com.halloapp.proto.server.SenderStateBundle value) {
+      copyOnWrite();
+      instance.setSenderStateBundles(index, value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    public Builder setSenderStateBundles(
+        int index, com.halloapp.proto.server.SenderStateBundle.Builder builderForValue) {
+      copyOnWrite();
+      instance.setSenderStateBundles(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    public Builder addSenderStateBundles(com.halloapp.proto.server.SenderStateBundle value) {
+      copyOnWrite();
+      instance.addSenderStateBundles(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    public Builder addSenderStateBundles(
+        int index, com.halloapp.proto.server.SenderStateBundle value) {
+      copyOnWrite();
+      instance.addSenderStateBundles(index, value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    public Builder addSenderStateBundles(
+        com.halloapp.proto.server.SenderStateBundle.Builder builderForValue) {
+      copyOnWrite();
+      instance.addSenderStateBundles(builderForValue.build());
+      return this;
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    public Builder addSenderStateBundles(
+        int index, com.halloapp.proto.server.SenderStateBundle.Builder builderForValue) {
+      copyOnWrite();
+      instance.addSenderStateBundles(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    public Builder addAllSenderStateBundles(
+        java.lang.Iterable<? extends com.halloapp.proto.server.SenderStateBundle> values) {
+      copyOnWrite();
+      instance.addAllSenderStateBundles(values);
+      return this;
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    public Builder clearSenderStateBundles() {
+      copyOnWrite();
+      instance.clearSenderStateBundles();
+      return this;
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    public Builder removeSenderStateBundles(int index) {
+      copyOnWrite();
+      instance.removeSenderStateBundles(index);
+      return this;
+    }
+
+    /**
+     * <pre>
+     * Meant for the receiver, computed by the server using `sender_state_bundles`.
+     * </pre>
+     *
+     * <code>bytes enc_sender_state = 8;</code>
+     * @return The encSenderState.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getEncSenderState() {
+      return instance.getEncSenderState();
+    }
+    /**
+     * <pre>
+     * Meant for the receiver, computed by the server using `sender_state_bundles`.
+     * </pre>
+     *
+     * <code>bytes enc_sender_state = 8;</code>
+     * @param value The encSenderState to set.
+     * @return This builder for chaining.
+     */
+    public Builder setEncSenderState(com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setEncSenderState(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Meant for the receiver, computed by the server using `sender_state_bundles`.
+     * </pre>
+     *
+     * <code>bytes enc_sender_state = 8;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearEncSenderState() {
+      copyOnWrite();
+      instance.clearEncSenderState();
+      return this;
+    }
+
+    /**
+     * <code>bytes audience_hash = 9;</code>
+     * @return The audienceHash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getAudienceHash() {
+      return instance.getAudienceHash();
+    }
+    /**
+     * <code>bytes audience_hash = 9;</code>
+     * @param value The audienceHash to set.
+     * @return This builder for chaining.
+     */
+    public Builder setAudienceHash(com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setAudienceHash(value);
+      return this;
+    }
+    /**
+     * <code>bytes audience_hash = 9;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearAudienceHash() {
+      copyOnWrite();
+      instance.clearAudienceHash();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.GroupFeedItem)
   }
   @java.lang.Override
@@ -851,10 +1276,14 @@ public  final class GroupFeedItem extends
             "avatarId_",
             com.halloapp.proto.server.Post.class,
             com.halloapp.proto.server.Comment.class,
+            "senderStateBundles_",
+            com.halloapp.proto.server.SenderStateBundle.class,
+            "encSenderState_",
+            "audienceHash_",
           };
           java.lang.String info =
-              "\u0000\u0006\u0001\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\f\u0002\u0208" +
-              "\u0003\u0208\u0004\u0208\u0005<\u0000\u0006<\u0000";
+              "\u0000\t\u0001\u0000\u0001\t\t\u0000\u0001\u0000\u0001\f\u0002\u0208\u0003\u0208" +
+              "\u0004\u0208\u0005<\u0000\u0006<\u0000\u0007\u001b\b\n\t\n";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -263,6 +263,28 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.EndOfQueue getEndOfQueue();
 
   /**
+   * <code>.server.InviteeNotice invitee_notice = 27;</code>
+   * @return Whether the inviteeNotice field is set.
+   */
+  boolean hasInviteeNotice();
+  /**
+   * <code>.server.InviteeNotice invitee_notice = 27;</code>
+   * @return The inviteeNotice.
+   */
+  com.halloapp.proto.server.InviteeNotice getInviteeNotice();
+
+  /**
+   * <code>.server.GroupFeedRerequest group_feed_rerequest = 28;</code>
+   * @return Whether the groupFeedRerequest field is set.
+   */
+  boolean hasGroupFeedRerequest();
+  /**
+   * <code>.server.GroupFeedRerequest group_feed_rerequest = 28;</code>
+   * @return The groupFeedRerequest.
+   */
+  com.halloapp.proto.server.GroupFeedRerequest getGroupFeedRerequest();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */

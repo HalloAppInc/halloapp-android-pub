@@ -72,4 +72,14 @@ public interface CommentOrBuilder extends
    * @return The timestamp.
    */
   long getTimestamp();
+
+  /**
+   * <pre>
+   * Serialized EncryptedPayload (from client.proto).
+   * </pre>
+   *
+   * <code>bytes enc_payload = 8;</code>
+   * @return The encPayload.
+   */
+  com.google.protobuf.ByteString getEncPayload();
 }

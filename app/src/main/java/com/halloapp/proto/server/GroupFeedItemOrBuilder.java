@@ -76,5 +76,47 @@ public interface GroupFeedItemOrBuilder extends
    */
   com.halloapp.proto.server.Comment getComment();
 
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  java.util.List<com.halloapp.proto.server.SenderStateBundle> 
+      getSenderStateBundlesList();
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  com.halloapp.proto.server.SenderStateBundle getSenderStateBundles(int index);
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  int getSenderStateBundlesCount();
+
+  /**
+   * <pre>
+   * Meant for the receiver, computed by the server using `sender_state_bundles`.
+   * </pre>
+   *
+   * <code>bytes enc_sender_state = 8;</code>
+   * @return The encSenderState.
+   */
+  com.google.protobuf.ByteString getEncSenderState();
+
+  /**
+   * <code>bytes audience_hash = 9;</code>
+   * @return The audienceHash.
+   */
+  com.google.protobuf.ByteString getAudienceHash();
+
   public com.halloapp.proto.server.GroupFeedItem.ItemCase getItemCase();
 }
