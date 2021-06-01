@@ -163,7 +163,7 @@ Open the app settings screen to modify app permissions."</string>
     <string name="group_avatar_picker_title">"Group avatar"</string>
     <string name="other_media">"Other media"</string>
     <string name="rotate">"Rotate"</string>
-    <plurals name="seen_by">
+    <plurals name="seen_by_people">
         <item quantity="one">"Seen by %d person"</item>
         <item quantity="other">"Seen by %d person"</item>
     </plurals>

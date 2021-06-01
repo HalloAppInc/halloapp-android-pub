@@ -60,7 +60,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
         if (post.seenByCount > 0) {
             seenIndicator.setVisibility(View.VISIBLE);
             seenButton.setVisibility(View.GONE);
-            seenIndicator.setContentDescription(itemView.getContext().getResources().getQuantityString(R.plurals.seen_by, post.seenByCount, post.seenByCount));
+            seenIndicator.setContentDescription(itemView.getContext().getResources().getQuantityString(R.plurals.seen_by_people, post.seenByCount, post.seenByCount));
             seenIndicator.setAvatarCount(Math.min(post.seenByCount, MAX_SEEN_BY_AVATARS));
             if (post.seenByCount > MAX_SEEN_BY_AVATARS) {
                 final ImageView imageView0 = (ImageView)seenIndicator.getChildAt(0);

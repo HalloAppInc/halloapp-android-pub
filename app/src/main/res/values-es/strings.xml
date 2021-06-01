@@ -180,7 +180,7 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="group_avatar_picker_title">"Avatar del grupo"</string>
     <string name="other_media">"Otros medios"</string>
     <string name="rotate">"Girar"</string>
-    <plurals name="seen_by">
+    <plurals name="seen_by_people">
         <item quantity="one">"Visto por %d persona"</item>
         <item quantity="other">"Visto por %d personas"</item>
     </plurals>

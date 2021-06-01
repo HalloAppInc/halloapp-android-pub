@@ -202,7 +202,7 @@
     <string name="new_comments_notification">%s commented on your post</string>
     <string name="new_comments_on_multiple_posts_notification">%s commented on your posts</string>
     <string name="new_posts_and_comments_notification">%1$s. %2$s.</string>
-    <plurals name="seen_by">
+    <plurals name="seen_by_people">
         <item quantity="one">Seen by %d person</item>
         <item quantity="other">Seen by %d people</item>
     </plurals>

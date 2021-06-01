@@ -188,7 +188,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="rotate">"Drehen"</string>
 
     <!-- in version 0.153 when no one saw post yet -  header still reads "Seen by" in English -->
-    <plurals name="seen_by">
+    <plurals name="seen_by_people">
         <item quantity="one">"Gesehen von %d Person"</item>
         <item quantity="other">"Gesehen von %d Personen"</item>
     </plurals>

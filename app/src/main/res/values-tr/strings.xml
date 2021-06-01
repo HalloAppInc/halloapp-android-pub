@@ -181,7 +181,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="group_avatar_picker_title">"Grup simgesi"</string>
     <string name="other_media">"Diğer görseller"</string>
     <string name="rotate">"Döndür"</string>
-    <plurals name="seen_by">
+    <plurals name="seen_by_people">
         <item quantity="one">"%d kişi tarafından görüldü"</item>
         <item quantity="other">"%d kişi tarafından görüldü"</item>
     </plurals>
