@@ -69,7 +69,7 @@ public class AddressBookContacts {
             return contacts;
         } catch (SecurityException ex) {
             Log.e("AddressBookContacts", ex);
-            return null;
+            return contacts;
         }
     }
 
