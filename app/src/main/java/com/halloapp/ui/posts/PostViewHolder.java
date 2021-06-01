@@ -184,7 +184,6 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                     public void showResult(@NonNull View view, @Nullable Chat result) {
                         if (result != null) {
                             GroupTheme theme = GroupTheme.getTheme(result.theme);
-                            groupView.setTextColor(ContextCompat.getColor(view.getContext(), theme.textColor));
                             groupView.setText(result.name);
                             groupView.setOnClickListener(v -> {
                                 ChatId chatId = result.chatId;
