@@ -89,13 +89,24 @@ public class GroupFeedViewModel extends ViewModel {
         }
 
         @Override
-        public void onGroupBackgroundChanged(@NonNull GroupId groupId) {
-            chat.invalidate();
+        public void onGroupBackgroundChanged(@NonNull GroupId gid) {
+            if (groupId.equals(gid)) {
+                chat.invalidate();
+            }
         }
 
         @Override
-        public void onGroupMetadataChanged(@NonNull GroupId groupId) {
-            chat.invalidate();
+        public void onGroupMetadataChanged(@NonNull GroupId gid) {
+            if (groupId.equals(gid)) {
+                chat.invalidate();
+            }
+        }
+
+        @Override
+        public void onGroupMembersChanged(@NonNull GroupId gid) {
+            if (groupId.equals(gid)) {
+                members.invalidate();
+            }
         }
 
         @Override
