@@ -39,7 +39,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="registration_failed_no_friends_title">"Ups!"</string>
     <string name="type_a_message_hint">"Nachricht eingeben"</string>
     <string name="write_a_description">"Eine Beschreibung eingeben"</string>
-    <string name="write_a_post">"Schreibe einen Beitrag"</string>
+    <string name="write_a_post">"Einen Beitrag schreiben"</string>
     <string name="send">"Senden"</string>
     <string name="set_avatar_done">"Fertig"</string>
 
@@ -151,7 +151,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
         <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und %3$d andere Personen haben &lt;b&gt;%4$s&lt;/b&gt;'s Beitrag kommentiert"</item>
     </plurals>
     <string name="contact_hashing_faq_dialog_title">"Deine Privatsphäre ist unsere oberste Priorität"</string>
-    <string name="contact_hashing_faq_dialog_info">"Um dich mit deinen Freunden auf HalloApp zu verbinden verwendet HalloApp nur das Telefonnummernfeld und wird keine weiteren Kontaktdaten erfassen."</string>
+    <string name="contact_hashing_faq_dialog_info">"Um den Kontakt mit deinen Freunden auf HalloApp herzustellen verwendet HalloApp nur das Feld für die Telefonnummer und wird keine weiteren Daten aus deinen Kontakten erfassen."</string>
     <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; hat einen eigenen Beitrag kommentiert"</string>
     <string name="list_of_two">"%1$s und %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
@@ -278,8 +278,12 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
 
     <!-- pls give example -->
     <string name="last_seen">"Zuletzt online %s"</string>
+
+    <!-- It looks like that the translation is to long. Instead of "less than a minute ago" can we use "just now"? -->
     <string name="last_seen_less_minute">"Zuletzt online vor weniger als einer Minute"</string>
     <string name="online">"online"</string>
+
+    <!-- Capital or lower case? -->
     <string name="today">"Heute"</string>
     <string name="today_at_time">"Heute um %s"</string>
     <string name="yesterday">"Gestern"</string>
@@ -471,7 +475,7 @@ Version: %s
 
     <!-- instead of using that they will "disappear" can we use they will be automatically "deleted"? -->
     <!-- Fuzzy -->
-    <string name="feed_nux_bottom_sheet_text">"Über Home-Feed kannst du Text-, Foto- und Video-Updates teilen, die nach 30 Tagen automatisch verschwinden.
+    <string name="feed_nux_bottom_sheet_text">"Über Home-Feed kannst du Text-, Foto- und Video-Updates teilen, die nach 30 Tagen automatisch gelöscht werden.
 
 Wenn du Updates mit jemanden teilen möchtest, müssen beide Seiten ihre jeweiligen Nummern auf ihren Telefonen gespeichert haben.
 
@@ -526,7 +530,7 @@ Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewähl
     <string name="invite_link_loading">"Gruppe wird hochgeladen..."</string>
     <string name="invite_link_copied">"Link wurde kopiert!"</string>
     <string name="invite_link_title">"Einladungs-Link"</string>
-    <string name="invite_link_summary">"Alle HalloApp-Nutzer können diesen Link nutzen, um dieser Gruppe beizutreten."</string>
+    <string name="invite_link_summary">"Alle Kontakte auf HalloApp können diesen Link nutzen, um dieser Gruppe beizutreten."</string>
     <string name="invite_link_failed_to_join">"Dieser Gruppe konnte nicht beigetreten werden"</string>
     <string name="join_group_action">"Der Gruppe beitreten"</string>
     <string name="system_message_you_joined">"Du bist der Gruppe über einen Einladungs-Link beigetreten"</string>
@@ -597,7 +601,7 @@ Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewähl
     <string name="key_verification_tap_to_scan">"Tap to scan"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. "<![CDATA[<a href="https://halloapp.com/help/">Learn more</a>]]>"."</string>
+    <string name="key_verification_explanation">"Um zu verifizieren ob die Verbindung mit %s sicher ist, prüfe ob die obige Nummer mit der auf dem Gerät angezeigten übereinstimmt oder scanne den QR-Code auf dem Telefon. "<![CDATA[<a href="https://halloapp.com/help/">Mehr erfahren</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"More"</string>
@@ -612,7 +616,7 @@ Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewähl
     </plurals>
 
     <!-- Button to invite a contact to a group with an invite link -->
-    <string name="group_invite_via_link">"Invite to group via link"</string>
+    <string name="group_invite_via_link">"Mit Link zur Gruppe einladen"</string>
 
     <!-- Shown below on seen by to explain that posts disappear -->
     <!-- Fuzzy -->
@@ -633,4 +637,12 @@ Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewähl
     <!-- Shown on the key verification activity next to a switch where the user can keep track of whether they verified the identity of the other user -->
     <string name="key_verification_switch_label">"Verifiziert"</string>
     <string name="action_add">"Add"</string>
+    <string name="video_countdown_message">"Recording will end in %s"</string>
+
+    <!-- Button takes user to settings to manage their storage -->
+    <string name="manage_storage_button">"Manage Storage"</string>
+
+    <!-- Message that's displayed if user has low storage -->
+    <string name="low_storage_msg">"Your phone is running low on storage.
+In order to use HalloApp please free some storage on this phone."</string>
 </resources>

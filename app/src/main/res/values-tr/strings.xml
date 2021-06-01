@@ -628,4 +628,12 @@ Yayınlarını, dilersen listendeki kişilerin tamamıyla ya da yalnızca seçti
     <!-- Shown on the key verification activity next to a switch where the user can keep track of whether they verified the identity of the other user -->
     <string name="key_verification_switch_label">"Verified"</string>
     <string name="action_add">"Add"</string>
+    <string name="video_countdown_message">"Recording will end in %s"</string>
+
+    <!-- Button takes user to settings to manage their storage -->
+    <string name="manage_storage_button">"Manage Storage"</string>
+
+    <!-- Message that's displayed if user has low storage -->
+    <string name="low_storage_msg">"Your phone is running low on storage.
+In order to use HalloApp please free some storage on this phone."</string>
 </resources>
