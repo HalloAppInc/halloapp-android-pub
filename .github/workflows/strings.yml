@@ -15,6 +15,17 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      - name: Check for name reuse
+        run: |
+          BY_COUNT="$(cat app/src/main/res/values/strings.xml | grep 'name="' | sed -e 's/^.*name="//g' | sed -e 's/">.*$//g' | sort | uniq -c | sed -e 's/^ *//g')"
+          DUPLICATES="$(printf "0\n$BY_COUNT" | grep -v '^1 ')" # Include extra first line since otherwise grep returns non-zero exit code on no dupes
+          printf "SIZE: $(printf "$DUPLICATES" | wc -l)\n"
+          if [ "$(printf "$DUPLICATES" | wc -l)" -ne "0" ]
+          then
+               printf "HAS DUPLICATES"
+               exit 1
+          fi
+
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
