@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
@@ -60,22 +61,8 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
     }
 
     private List<GalleryItem> load(Long start, boolean after, int size) {
-        String[] projection;
-        if (Build.VERSION.SDK_INT >= 29) {
-            projection = Arrays.copyOf(MEDIA_PROJECTION, MEDIA_PROJECTION.length + 1);
-            projection[projection.length - 1] = MediaStore.Files.FileColumns.DURATION;
-        } else {
-            projection = MEDIA_PROJECTION;
-        }
-
         final List<GalleryItem> galleryItems = new ArrayList<>();
-        try (final Cursor cursor = contentResolver.query(
-                MediaStore.Files.getContentUri(MEDIA_VOLUME),
-                projection,
-                (includeVideos ? MEDIA_TYPE_SELECTION : MEDIA_TYPE_IMAGES_ONLY) + (start == null ? "" : ((after ? " AND _id<" : " AND _id>") + start)),
-                null,
-                "_id DESC LIMIT " + size,
-                null)) {
+        try (final Cursor cursor = getCursor(start, after, size)) {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
                     long id = cursor.getLong(0);
@@ -97,6 +84,28 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
             Log.w("GalleryDataSource.load", ex);
         }
         return galleryItems;
+    }
+
+    private Cursor getCursor(Long start, boolean after, int size) {
+        String[] projection;
+        if (Build.VERSION.SDK_INT >= 29) {
+            projection = Arrays.copyOf(MEDIA_PROJECTION, MEDIA_PROJECTION.length + 1);
+            projection[projection.length - 1] = MediaStore.Files.FileColumns.DURATION;
+        } else {
+            projection = MEDIA_PROJECTION;
+        }
+
+        String selection = (includeVideos ? MEDIA_TYPE_SELECTION : MEDIA_TYPE_IMAGES_ONLY) + (start == null ? "" : ((after ? " AND _id<" : " AND _id>") + start));
+        Uri uri = MediaStore.Files.getContentUri(MEDIA_VOLUME);
+        if (Build.VERSION.SDK_INT >= 30) { // Adding LIMIT in the sortOrder field like below causes a crash starting on API 30
+            Bundle queryArgs = new Bundle();
+            queryArgs.putString(ContentResolver.QUERY_ARG_SQL_SELECTION, selection);
+            queryArgs.putString(ContentResolver.QUERY_ARG_SQL_SORT_ORDER, "_id DESC");
+            queryArgs.putString(ContentResolver.QUERY_ARG_SQL_LIMIT, Integer.toString(size));
+            return contentResolver.query(uri, projection, queryArgs, null);
+        } else {
+            return contentResolver.query(uri, projection, selection, null, "_id DESC LIMIT " + size, null);
+        }
     }
 
     private long getDuration(long id) {
