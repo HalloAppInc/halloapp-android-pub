@@ -217,6 +217,8 @@
     <string name="reset_link">Reset link</string>
     <!-- Button to invite a contact to a group with an invite link -->
     <string name="group_invite_via_link">Invite to group via link</string>
+    <!-- Text that provides context for a group invite link being shared -->
+    <string name="group_invite_link_context">Click on this link to join my HalloApp group: %s</string>
     <string name="invite_links_not_currently_supported">Invite links are not supported yet</string>
     <string name="view_group_invite_link_action">View group invite</string>
     <string name="invite_link_resetting_progress">Resetting link…</string>

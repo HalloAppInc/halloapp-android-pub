@@ -62,7 +62,7 @@ public class GroupInviteLinkActivity extends HalloActivity {
         View inviteLinkContainer = findViewById(R.id.invite_link_container);
 
         copyLink.setOnClickListener(v -> {
-            ClipUtils.copyToClipboard(getInviteLink());
+            ClipUtils.copyToClipboard(getInviteLinkText());
             CenterToast.show(this, R.string.invite_link_copied);
         });
         viewModel.getInviteLink().observe(this, link -> {
@@ -105,7 +105,7 @@ public class GroupInviteLinkActivity extends HalloActivity {
     private void shareInviteLink() {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        String link = getInviteLink();
+        String link = getInviteLinkText();
         if (!TextUtils.isEmpty(link)) {
             sendIntent.putExtra(Intent.EXTRA_TEXT, link);
             sendIntent.setType("text/plain");
@@ -116,11 +116,12 @@ public class GroupInviteLinkActivity extends HalloActivity {
     }
 
     @Nullable
-    private String getInviteLink() {
+    private String getInviteLinkText() {
         String inviteCode = viewModel.getInviteLink().getValue();
         if (TextUtils.isEmpty(inviteCode)) {
             return null;
         }
-        return Constants.GROUP_INVITE_BASE_URL + inviteCode;
+        String url = Constants.GROUP_INVITE_BASE_URL + inviteCode;
+        return getString(R.string.group_invite_link_context, url);
     }
 }
