@@ -88,6 +88,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     private View nux;
     private View emptyView;
     private TextView emptyViewMessage;
+    private RecyclerView chatsView;
 
     private MenuItem searchMenuItem;
 
@@ -164,7 +165,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
         Log.i("ChatsFragment.onCreateView");
         final View root = inflater.inflate(R.layout.fragment_chats, container, false);
-        final RecyclerView chatsView = root.findViewById(R.id.chats);
+        chatsView = root.findViewById(R.id.chats);
         emptyView = root.findViewById(android.R.id.empty);
         emptyViewMessage = root.findViewById(R.id.empty_text);
 
@@ -185,7 +186,6 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         });
         viewModel.messageUpdated.observe(getViewLifecycleOwner(), updated -> adapter.notifyDataSetChanged());
 
-        chatsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
         if (!ServerProps.getInstance().getIsInternalUser()) {
             viewModel.showMessagesNux.getLiveData().observe(getViewLifecycleOwner(), shouldShow -> {
                 if (shouldShow == null) {
@@ -210,6 +210,12 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         }
 
         return root;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        chatsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
     }
 
     @Override

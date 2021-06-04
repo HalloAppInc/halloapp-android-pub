@@ -52,6 +52,7 @@ public class ProfileFragment extends PostsFragment {
     private TextView nameView;
     private TextView subtitleView;
     private View messageView;
+    private RecyclerView postsView;
 
     private MenuItem blockMenuItem;
 
@@ -109,7 +110,7 @@ public class ProfileFragment extends PostsFragment {
         setHasOptionsMenu(true);
 
         final View root = inflater.inflate(getLayout(), container, false);
-        final RecyclerView postsView = root.findViewById(R.id.posts);
+        postsView = root.findViewById(R.id.posts);
         final TextView emptyView = root.findViewById(R.id.empty_profile_text);
         final View emptyContainer = root.findViewById(android.R.id.empty);
         final ImageView emptyIcon = root.findViewById(R.id.empty_icon);
@@ -133,7 +134,6 @@ public class ProfileFragment extends PostsFragment {
         if (viewModel.getSavedScrollState() != null) {
             layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
         }
-        postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
 
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
@@ -189,6 +189,12 @@ public class ProfileFragment extends PostsFragment {
         postsView.setAdapter(adapter);
         contactsDb.addObserver(contactsObserver);
         return root;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
     }
 
     private void loadAvatar() {

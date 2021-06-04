@@ -80,6 +80,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
 
     private GroupListViewModel viewModel;
 
+    private RecyclerView groupsView;
     private LinearLayoutManager layoutManager;
 
     private View emptyView;
@@ -162,7 +163,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
 
         Log.i("GroupsFragment.onCreateView");
         final View root = inflater.inflate(R.layout.fragment_groups, container, false);
-        final RecyclerView groupsView = root.findViewById(R.id.groups);
+        groupsView = root.findViewById(R.id.groups);
         emptyView = root.findViewById(android.R.id.empty);
         emptyViewMessage = root.findViewById(R.id.empty_text);
 
@@ -181,9 +182,13 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
             emptyView.setVisibility(chats.size() == 0 ? View.VISIBLE : View.GONE);
         });
 
-        groupsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
-
         return root;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        groupsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
     }
 
     @Override

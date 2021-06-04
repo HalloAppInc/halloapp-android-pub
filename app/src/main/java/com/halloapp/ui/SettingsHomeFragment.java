@@ -32,9 +32,10 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
 
     private MyProfileViewModel viewModel;
 
-    private AvatarLoader avatarLoader = AvatarLoader.getInstance();
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
     private ImageView avatarView;
+    private NestedScrollView scrollView;
 
     @Override
     public void resetScrollPosition() {
@@ -46,12 +47,7 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
         viewModel = new ViewModelProvider(requireActivity()).get(MyProfileViewModel.class);
 
         View root = inflater.inflate(R.layout.fragment_settings_home, container, false);
-
-        NestedScrollView scrollView = root.findViewById(R.id.container);
-        ActionBarShadowOnScrollListener scrollListener = new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity());
-        scrollListener.resetElevation();
-
-        scrollView.setOnScrollChangeListener(scrollListener);
+        scrollView = root.findViewById(R.id.container);
 
         View profileContainer = root.findViewById(R.id.profile_container);
         profileContainer.setOnClickListener(v -> {
@@ -101,6 +97,16 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
         avatarLoader.load(avatarView, UserId.ME, false);
 
         return root;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        ActionBarShadowOnScrollListener scrollListener = new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity());
+        scrollListener.resetElevation();
+
+        scrollView.setOnScrollChangeListener(scrollListener);
     }
 
     @Override

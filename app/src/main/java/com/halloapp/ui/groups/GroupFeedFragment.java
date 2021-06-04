@@ -32,6 +32,8 @@ public class GroupFeedFragment extends PostsFragment {
 
     private GroupFeedViewModel viewModel;
 
+    private RecyclerView postsView;
+
     public static GroupFeedFragment newInstance(@NonNull GroupId groupId) {
         GroupFeedFragment feedFragment = new GroupFeedFragment();
         Bundle args = new Bundle();
@@ -71,7 +73,7 @@ public class GroupFeedFragment extends PostsFragment {
         setHasOptionsMenu(true);
 
         final View root = inflater.inflate(getLayout(), container, false);
-        final RecyclerView postsView = root.findViewById(R.id.posts);
+        postsView = root.findViewById(R.id.posts);
         final View emptyContainer = root.findViewById(android.R.id.empty);
 
         layoutManager = new LinearLayoutManager(getContext());
@@ -95,7 +97,6 @@ public class GroupFeedFragment extends PostsFragment {
         if (viewModel.getSavedScrollState() != null) {
             layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
         }
-        postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
 
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
@@ -112,6 +113,12 @@ public class GroupFeedFragment extends PostsFragment {
         postsView.setAdapter(adapter);
 
         return root;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        postsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
     }
 
     @Override
