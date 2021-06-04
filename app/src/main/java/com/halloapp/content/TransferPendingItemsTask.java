@@ -79,9 +79,19 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
         final List<Comment> comments = contentDb.getPendingComments();
         Log.i("TransferPendingItemsTask: " + comments.size() + " comments");
         for (Comment comment : comments) {
-            Preconditions.checkArgument(comment.isOutgoing());
-            Preconditions.checkArgument(!comment.transferred);
-            connection.sendComment(comment);
+            if (comment.isIncoming()) {
+                if (!comment.media.isEmpty()) {
+                    mainHandler.post(() -> new DownloadMediaTask(comment, fileStore, contentDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR));
+                } else {
+                    contentDb.setCommentTransferred(comment.postId, comment.senderUserId, comment.id);
+                }
+            } else /*comment.isOutgoing()*/ {
+                if (comment.media.isEmpty()) {
+                    connection.sendComment(comment);
+                } else {
+                    mainHandler.post(() -> new UploadMediaTask(comment, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR));
+                }
+            }
         }
 
         final List<SeenReceipt> postSeenReceipts = contentDb.getPendingPostSeenReceipts();
