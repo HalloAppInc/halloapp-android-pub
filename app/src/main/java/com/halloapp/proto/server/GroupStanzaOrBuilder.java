@@ -97,4 +97,10 @@ public interface GroupStanzaOrBuilder extends
    */
   com.google.protobuf.ByteString
       getBackgroundBytes();
+
+  /**
+   * <code>bytes audience_hash = 9;</code>
+   * @return The audienceHash.
+   */
+  com.google.protobuf.ByteString getAudienceHash();
 }

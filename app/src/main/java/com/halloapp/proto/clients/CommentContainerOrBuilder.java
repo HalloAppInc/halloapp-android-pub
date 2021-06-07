@@ -40,5 +40,16 @@ public interface CommentContainerOrBuilder extends
    */
   com.halloapp.proto.clients.Album getAlbum();
 
+  /**
+   * <code>.clients.VoiceNote voice_note = 4;</code>
+   * @return Whether the voiceNote field is set.
+   */
+  boolean hasVoiceNote();
+  /**
+   * <code>.clients.VoiceNote voice_note = 4;</code>
+   * @return The voiceNote.
+   */
+  com.halloapp.proto.clients.VoiceNote getVoiceNote();
+
   public com.halloapp.proto.clients.CommentContainer.CommentCase getCommentCase();
 }

@@ -16,6 +16,7 @@ public  final class GroupMember extends
     avatarId_ = "";
     result_ = "";
     reason_ = "";
+    identityKey_ = com.google.protobuf.ByteString.EMPTY;
   }
   /**
    * Protobuf enum {@code server.GroupMember.Action}
@@ -529,6 +530,33 @@ public  final class GroupMember extends
     
   }
 
+  public static final int IDENTITY_KEY_FIELD_NUMBER = 8;
+  private com.google.protobuf.ByteString identityKey_;
+  /**
+   * <code>bytes identity_key = 8;</code>
+   * @return The identityKey.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getIdentityKey() {
+    return identityKey_;
+  }
+  /**
+   * <code>bytes identity_key = 8;</code>
+   * @param value The identityKey to set.
+   */
+  private void setIdentityKey(com.google.protobuf.ByteString value) {
+    value.getClass();
+  
+    identityKey_ = value;
+  }
+  /**
+   * <code>bytes identity_key = 8;</code>
+   */
+  private void clearIdentityKey() {
+    
+    identityKey_ = getDefaultInstance().getIdentityKey();
+  }
+
   public static com.halloapp.proto.server.GroupMember parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -940,6 +968,34 @@ public  final class GroupMember extends
       return this;
     }
 
+    /**
+     * <code>bytes identity_key = 8;</code>
+     * @return The identityKey.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getIdentityKey() {
+      return instance.getIdentityKey();
+    }
+    /**
+     * <code>bytes identity_key = 8;</code>
+     * @param value The identityKey to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIdentityKey(com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setIdentityKey(value);
+      return this;
+    }
+    /**
+     * <code>bytes identity_key = 8;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearIdentityKey() {
+      copyOnWrite();
+      instance.clearIdentityKey();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.GroupMember)
   }
   @java.lang.Override
@@ -963,10 +1019,11 @@ public  final class GroupMember extends
             "avatarId_",
             "result_",
             "reason_",
+            "identityKey_",
           };
           java.lang.String info =
-              "\u0000\u0007\u0000\u0000\u0001\u0007\u0007\u0000\u0000\u0000\u0001\f\u0002\u0002" +
-              "\u0003\f\u0004\u0208\u0005\u0208\u0006\u0208\u0007\u0208";
+              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0000\u0000\u0001\f\u0002\u0002\u0003\f\u0004" +
+              "\u0208\u0005\u0208\u0006\u0208\u0007\u0208\b\n";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

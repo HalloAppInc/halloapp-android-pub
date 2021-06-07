@@ -82,4 +82,10 @@ public interface GroupMemberOrBuilder extends
    */
   com.google.protobuf.ByteString
       getReasonBytes();
+
+  /**
+   * <code>bytes identity_key = 8;</code>
+   * @return The identityKey.
+   */
+  com.google.protobuf.ByteString getIdentityKey();
 }

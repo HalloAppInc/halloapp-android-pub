@@ -18,6 +18,7 @@ public  final class GroupStanza extends
     senderName_ = "";
     members_ = emptyProtobufList();
     background_ = "";
+    audienceHash_ = com.google.protobuf.ByteString.EMPTY;
   }
   /**
    * Protobuf enum {@code server.GroupStanza.Action}
@@ -80,6 +81,10 @@ public  final class GroupStanza extends
      * <code>SET_BACKGROUND = 13;</code>
      */
     SET_BACKGROUND(13),
+    /**
+     * <code>GET_MEMBER_IDENTITY_KEYS = 14;</code>
+     */
+    GET_MEMBER_IDENTITY_KEYS(14),
     UNRECOGNIZED(-1),
     ;
 
@@ -139,6 +144,10 @@ public  final class GroupStanza extends
      * <code>SET_BACKGROUND = 13;</code>
      */
     public static final int SET_BACKGROUND_VALUE = 13;
+    /**
+     * <code>GET_MEMBER_IDENTITY_KEYS = 14;</code>
+     */
+    public static final int GET_MEMBER_IDENTITY_KEYS_VALUE = 14;
 
 
     @java.lang.Override
@@ -176,6 +185,7 @@ public  final class GroupStanza extends
         case 11: return JOIN;
         case 12: return PREVIEW;
         case 13: return SET_BACKGROUND;
+        case 14: return GET_MEMBER_IDENTITY_KEYS;
         default: return null;
       }
     }
@@ -611,6 +621,33 @@ public  final class GroupStanza extends
     checkByteStringIsUtf8(value);
     background_ = value.toStringUtf8();
     
+  }
+
+  public static final int AUDIENCE_HASH_FIELD_NUMBER = 9;
+  private com.google.protobuf.ByteString audienceHash_;
+  /**
+   * <code>bytes audience_hash = 9;</code>
+   * @return The audienceHash.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getAudienceHash() {
+    return audienceHash_;
+  }
+  /**
+   * <code>bytes audience_hash = 9;</code>
+   * @param value The audienceHash to set.
+   */
+  private void setAudienceHash(com.google.protobuf.ByteString value) {
+    value.getClass();
+  
+    audienceHash_ = value;
+  }
+  /**
+   * <code>bytes audience_hash = 9;</code>
+   */
+  private void clearAudienceHash() {
+    
+    audienceHash_ = getDefaultInstance().getAudienceHash();
   }
 
   public static com.halloapp.proto.server.GroupStanza parseFrom(
@@ -1129,6 +1166,34 @@ public  final class GroupStanza extends
       return this;
     }
 
+    /**
+     * <code>bytes audience_hash = 9;</code>
+     * @return The audienceHash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getAudienceHash() {
+      return instance.getAudienceHash();
+    }
+    /**
+     * <code>bytes audience_hash = 9;</code>
+     * @param value The audienceHash to set.
+     * @return This builder for chaining.
+     */
+    public Builder setAudienceHash(com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setAudienceHash(value);
+      return this;
+    }
+    /**
+     * <code>bytes audience_hash = 9;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearAudienceHash() {
+      copyOnWrite();
+      instance.clearAudienceHash();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.GroupStanza)
   }
   @java.lang.Override
@@ -1154,10 +1219,11 @@ public  final class GroupStanza extends
             "members_",
             com.halloapp.proto.server.GroupMember.class,
             "background_",
+            "audienceHash_",
           };
           java.lang.String info =
-              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0001\u0000\u0001\f\u0002\u0208\u0003\u0208" +
-              "\u0004\u0208\u0005\u0002\u0006\u0208\u0007\u001b\b\u0208";
+              "\u0000\t\u0000\u0000\u0001\t\t\u0000\u0001\u0000\u0001\f\u0002\u0208\u0003\u0208" +
+              "\u0004\u0208\u0005\u0002\u0006\u0208\u0007\u001b\b\u0208\t\n";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

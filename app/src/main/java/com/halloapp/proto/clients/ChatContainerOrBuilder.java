@@ -51,5 +51,16 @@ public interface ChatContainerOrBuilder extends
    */
   com.halloapp.proto.clients.ContactCard getContactCard();
 
+  /**
+   * <code>.clients.VoiceNote voice_note = 5;</code>
+   * @return Whether the voiceNote field is set.
+   */
+  boolean hasVoiceNote();
+  /**
+   * <code>.clients.VoiceNote voice_note = 5;</code>
+   * @return The voiceNote.
+   */
+  com.halloapp.proto.clients.VoiceNote getVoiceNote();
+
   public com.halloapp.proto.clients.ChatContainer.MessageCase getMessageCase();
 }
