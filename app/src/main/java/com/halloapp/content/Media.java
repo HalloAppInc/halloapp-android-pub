@@ -7,6 +7,7 @@ import com.halloapp.proto.clients.AlbumMedia;
 import com.halloapp.proto.clients.EncryptedResource;
 import com.halloapp.proto.clients.Image;
 import com.halloapp.proto.clients.Video;
+import com.halloapp.proto.clients.VoiceNote;
 import com.halloapp.xmpp.PublishedEntry;
 
 import java.io.File;
@@ -19,11 +20,12 @@ import java.util.Objects;
 public class Media {
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({MEDIA_TYPE_UNKNOWN, MEDIA_TYPE_IMAGE, MEDIA_TYPE_VIDEO})
+    @IntDef({MEDIA_TYPE_UNKNOWN, MEDIA_TYPE_IMAGE, MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO})
     public @interface MediaType {}
     public static final int MEDIA_TYPE_UNKNOWN = 0;
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
+    public static final int MEDIA_TYPE_AUDIO = 3;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({TRANSFERRED_UNKNOWN, TRANSFERRED_NO, TRANSFERRED_YES, TRANSFERRED_FAILURE, TRANSFERRED_RESUME})
@@ -70,6 +72,13 @@ public class Media {
                 video.getWidth(), video.getHeight());
     }
 
+    public static Media parseFromProto(VoiceNote voiceNote) {
+        EncryptedResource resource = voiceNote.getAudio();
+        return createFromUrl(MEDIA_TYPE_AUDIO, resource.getDownloadUrl(),
+                resource.getEncryptionKey().toByteArray(), resource.getCiphertextHash().toByteArray(),
+                0, 0);
+    }
+
     public static Media parseFromProto(AlbumMedia albumMedia) {
         switch (albumMedia.getMediaCase()) {
             case IMAGE: return parseFromProto(albumMedia.getImage());
@@ -98,6 +107,8 @@ public class Media {
             return MEDIA_TYPE_IMAGE;
         } else if (mime.startsWith("video/")) {
             return MEDIA_TYPE_VIDEO;
+        } else if (mime.startsWith("audio/")) {
+            return MEDIA_TYPE_AUDIO;
         } else {
             return MEDIA_TYPE_UNKNOWN;
         }
@@ -110,6 +121,9 @@ public class Media {
             }
             case MEDIA_TYPE_VIDEO: {
                 return "mp4";
+            }
+            case MEDIA_TYPE_AUDIO: {
+                return "aac";
             }
             case MEDIA_TYPE_UNKNOWN:
             default: {

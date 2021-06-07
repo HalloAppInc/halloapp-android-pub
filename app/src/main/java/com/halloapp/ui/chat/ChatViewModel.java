@@ -15,11 +15,15 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.halloapp.Constants;
+import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
+import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.MessagesDataSource;
 import com.halloapp.content.Post;
@@ -27,15 +31,21 @@ import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.media.MediaUtils;
+import com.halloapp.media.VoiceNotePlayer;
+import com.halloapp.media.VoiceNoteRecorder;
 import com.halloapp.privacy.BlockListManager;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -69,6 +79,9 @@ public class ChatViewModel extends AndroidViewModel {
     private final BlockListManager blockListManager;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+    private VoiceNoteRecorder voiceNoteRecorder;
+    private VoiceNotePlayer voiceNotePlayer;
 
     private final BlockListManager.Observer blockListObserver = () -> {
         blockListLiveData.invalidate();
@@ -250,6 +263,9 @@ public class ChatViewModel extends AndroidViewModel {
             connection.updateChatState(chatId, ChatState.Type.AVAILABLE);
             lastUpdateTime = 0;
         };
+
+        voiceNoteRecorder = new VoiceNoteRecorder();
+        voiceNotePlayer = new VoiceNotePlayer();
     }
 
     private long lastUpdateTime;
@@ -263,6 +279,37 @@ public class ChatViewModel extends AndroidViewModel {
             lastUpdateTime = System.currentTimeMillis();
         }
         mainHandler.postDelayed(resetComposingRunnable, 3000);
+    }
+
+    public LiveData<Boolean> isRecording() {
+        return voiceNoteRecorder.isRecording();
+    }
+
+    public LiveData<Long> getRecordingTime() {
+        return voiceNoteRecorder.getRecordingTime();
+    }
+
+    public void startRecording() {
+        voiceNoteRecorder.record();
+    }
+
+    public void finishRecording(int replyPostMediaIndex, boolean canceled) {
+        File recording = voiceNoteRecorder.finishRecording();
+        if (canceled) {
+            return;
+        }
+        bgWorkers.execute(() -> {
+            final File targetFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_AUDIO));
+            if (!recording.renameTo(targetFile)) {
+                Log.e("failed to rename " + recording.getAbsolutePath() + " to " + targetFile.getAbsolutePath());
+                return;
+            }
+            final ContentItem contentItem = new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.TYPE_VOICE_NOTE, Message.USAGE_CHAT, Message.STATE_INITIAL, null, replyPostId, replyPostMediaIndex, null, -1, null, 0);
+
+            final Media sendMedia = Media.createFromFile(Media.MEDIA_TYPE_AUDIO, targetFile);
+            contentItem.media.add(sendMedia);
+            contentItem.addToStorage(contentDb);
+        });
     }
 
     public void updateMessageRowId(long rowId) {
@@ -338,6 +385,7 @@ public class ChatViewModel extends AndroidViewModel {
         blockListManager.removeObserver(blockListObserver);
         mainHandler.removeCallbacks(resetComposingRunnable);
         resetComposingRunnable.run();
+        voiceNotePlayer.onCleared();
     }
 
     int getOutgoingAdded() {
@@ -350,6 +398,10 @@ public class ChatViewModel extends AndroidViewModel {
 
     int getInitialUnseen() {
         return initialUnseen.get();
+    }
+
+    public VoiceNotePlayer getVoiceNotePlayer() {
+        return voiceNotePlayer;
     }
 
     void reloadMessagesAt(long rowId) {

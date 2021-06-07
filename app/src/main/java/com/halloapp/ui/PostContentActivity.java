@@ -33,6 +33,7 @@ import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Post;
 import com.halloapp.groups.ChatLoader;
+import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
@@ -59,6 +60,7 @@ public class PostContentActivity extends HalloActivity {
     private SeenByLoader seenByLoader;
     private TextContentLoader textContentLoader;
     private TimestampRefresher timestampRefresher;
+    private AudioDurationLoader audioDurationLoader;
 
     private DrawDelegateView drawDelegateView;
     private final RecyclerView.RecycledViewPool recycledMediaViews = new RecyclerView.RecycledViewPool();
@@ -114,6 +116,11 @@ public class PostContentActivity extends HalloActivity {
         @Override
         public TextContentLoader getTextContentLoader() {
             return textContentLoader;
+        }
+
+        @Override
+        public AudioDurationLoader getAudioDurationLoader() {
+            return audioDurationLoader;
         }
 
         @Override
@@ -209,6 +216,7 @@ public class PostContentActivity extends HalloActivity {
         seenByLoader = new SeenByLoader(this);
         avatarLoader = AvatarLoader.getInstance();
         textContentLoader = new TextContentLoader(this);
+        audioDurationLoader = new AudioDurationLoader(this);
         ContactsDb.getInstance().addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> updatePost());

@@ -637,6 +637,10 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                             mediaIcon.setImageResource(R.drawable.ic_video);
                             break;
                         }
+                        case Media.MEDIA_TYPE_AUDIO: {
+                            mediaIcon.setImageResource(R.drawable.ic_keyboard_voice);
+                            break;
+                        }
                         case Media.MEDIA_TYPE_UNKNOWN:
                         default: {
                             mediaIcon.setImageResource(R.drawable.ic_media_collection);
@@ -683,6 +687,10 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                             }
                             case Media.MEDIA_TYPE_VIDEO: {
                                 text = itemView.getContext().getString(R.string.video);
+                                break;
+                            }
+                            case Media.MEDIA_TYPE_AUDIO: {
+                                text = itemView.getContext().getString(R.string.voice_note);
                                 break;
                             }
                             case Media.MEDIA_TYPE_UNKNOWN:

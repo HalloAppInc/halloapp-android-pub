@@ -815,6 +815,12 @@ public class ContentDb {
         });
     }
 
+    public void processFutureProofContent() {
+        databaseWriteExecutor.execute(() -> {
+            messagesDb.processFutureProofMessages(observers::notifyMessageUpdated);
+        });
+    }
+
     @WorkerThread
     public @NonNull List<Message> getUnseenMessages(int count) {
         return messagesDb.getUnseenMessages(count);

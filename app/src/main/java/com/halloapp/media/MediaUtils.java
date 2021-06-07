@@ -505,6 +505,30 @@ public class MediaUtils {
         }
     }
 
+    @WorkerThread
+    public static long getAudioDuration(@NonNull File file) {
+        if (Build.VERSION.SDK_INT >= 29) {
+            try (MediaMetadataRetriever retriever = new MediaMetadataRetriever()) {
+                retriever.setDataSource(file.getAbsolutePath());
+                return Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+            } catch (IllegalArgumentException e) {
+                Log.e("MediaUtils.getAudioDuration", e);
+                return 0;
+            }
+        } else {
+            try {
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                retriever.setDataSource(file.getAbsolutePath());
+                long duration = Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+                retriever.release();
+                return duration;
+            } catch (IllegalArgumentException e) {
+                Log.e("MediaUtils.getAudioDuration", e);
+                return 0;
+            }
+        }
+    }
+
     public static long getVideoDuration(@NonNull File file) {
         if (Build.VERSION.SDK_INT >= 29) {
             try (MediaMetadataRetriever retriever = new MediaMetadataRetriever()) {

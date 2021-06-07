@@ -333,6 +333,9 @@ public class Notifications {
                     case Media.MEDIA_TYPE_VIDEO: {
                         return context.getString(R.string.video);
                     }
+                    case Media.MEDIA_TYPE_AUDIO: {
+                        return context.getString(R.string.voice_note);
+                    }
                     case Media.MEDIA_TYPE_UNKNOWN:
                     default: {
                         Log.e("unknown media type " + media.file.getAbsolutePath());
@@ -359,6 +362,9 @@ public class Notifications {
                 }
                 case Media.MEDIA_TYPE_VIDEO: {
                     return "\uD83D\uDCF9 ";
+                }
+                case Media.MEDIA_TYPE_AUDIO: {
+                    return "\uD83C\uDFA4";
                 }
                 case Media.MEDIA_TYPE_UNKNOWN:
                 default: {

@@ -32,6 +32,7 @@ import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Post;
 import com.halloapp.groups.ChatLoader;
+import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -58,6 +59,7 @@ public class PostsFragment extends HalloFragment {
     private SeenByLoader seenByLoader;
     private TextContentLoader textContentLoader;
     private TimestampRefresher timestampRefresher;
+    private AudioDurationLoader audioDurationLoader;
 
     private DrawDelegateView drawDelegateView;
     private final RecyclerView.RecycledViewPool recycledMediaViews = new RecyclerView.RecycledViewPool();
@@ -86,6 +88,7 @@ public class PostsFragment extends HalloFragment {
         contactLoader = new ContactLoader();
         seenByLoader = new SeenByLoader(requireContext());
         avatarLoader = AvatarLoader.getInstance();
+        audioDurationLoader = new AudioDurationLoader(requireContext());
         textContentLoader = new TextContentLoader(requireContext());
         ContactsDb.getInstance().addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
@@ -170,6 +173,11 @@ public class PostsFragment extends HalloFragment {
             @Override
             public TextContentLoader getTextContentLoader() {
                 return textContentLoader;
+            }
+
+            @Override
+            public AudioDurationLoader getAudioDurationLoader() {
+                return audioDurationLoader;
             }
 
             @Override

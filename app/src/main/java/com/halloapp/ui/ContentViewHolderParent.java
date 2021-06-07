@@ -6,6 +6,7 @@ import androidx.collection.LongSparseArray;
 
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.groups.ChatLoader;
+import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.SeenByLoader;
@@ -17,6 +18,7 @@ public interface ContentViewHolderParent {
     ChatLoader getChatLoader();
     SeenByLoader getSeenByLoader();
     TextContentLoader getTextContentLoader();
+    AudioDurationLoader getAudioDurationLoader();
     LongSparseArray<Integer> getMediaPagerPositionMap();
     LongSparseArray<Integer> getTextLimits();
     TimestampRefresher getTimestampRefresher();

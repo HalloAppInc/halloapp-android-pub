@@ -52,6 +52,7 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
         long totalSize = 0;
         int numPhotos = 0;
         int numVideos = 0;
+        int numAudio = 0;
         int totalRetries = 0;
         boolean hasFailure = false;
         for (Media media : contentItem.media) {
@@ -61,6 +62,9 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                     break;
                 case Media.MEDIA_TYPE_VIDEO:
                     numVideos++;
+                    break;
+                case Media.MEDIA_TYPE_AUDIO:
+                    numAudio++;
                     break;
                 case Media.MEDIA_TYPE_UNKNOWN:
                     break;

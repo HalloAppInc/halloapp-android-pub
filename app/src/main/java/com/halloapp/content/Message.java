@@ -7,9 +7,16 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
 import com.halloapp.BuildConfig;
+import com.halloapp.Me;
 import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.clients.Album;
+import com.halloapp.proto.clients.AlbumMedia;
+import com.halloapp.proto.clients.ChatContainer;
+import com.halloapp.proto.clients.ChatContext;
+import com.halloapp.proto.clients.Text;
+import com.halloapp.proto.clients.VoiceNote;
 import com.halloapp.xmpp.Connection;
 
 import java.lang.annotation.Retention;
@@ -40,11 +47,12 @@ public class Message extends ContentItem {
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TYPE_CHAT, TYPE_SYSTEM, TYPE_FUTURE_PROOF})
+    @IntDef({TYPE_CHAT, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_VOICE_NOTE})
     public @interface Type {}
     public static final int TYPE_CHAT = 0;
     public static final int TYPE_SYSTEM = 1;
     public static final int TYPE_FUTURE_PROOF = 2;
+    public static final int TYPE_VOICE_NOTE = 3;
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
@@ -103,6 +111,100 @@ public class Message extends ContentItem {
         this.replyMessageMediaIndex = replyMessageMediaIndex;
         this.replyMessageSenderId = replyMessageSenderId;
         this.rerequestCount = rerequestCount;
+    }
+
+    public static Message parseFromProto(UserId fromUserId, String id, long timestamp, @NonNull ChatContainer chatContainer) {
+        Message message;
+        ChatContext context = chatContainer.getContext();
+        String rawReplyMessageId = context.getChatReplyMessageId();
+        String rawSenderId = context.getChatReplyMessageSenderId();
+        switch (chatContainer.getMessageCase()) {
+            case ALBUM:
+                Album album = chatContainer.getAlbum();
+                Text albumText = album.getText();
+                message = new Message(0,
+                        fromUserId,
+                        fromUserId,
+                        id,
+                        timestamp,
+                        Message.TYPE_CHAT,
+                        Message.USAGE_CHAT,
+                        album.getMediaCount() == 0 ? Message.STATE_INCOMING_RECEIVED : Message.STATE_INITIAL,
+                        albumText.getText(),
+                        context.getFeedPostId(),
+                        context.getFeedPostMediaIndex(),
+                        TextUtils.isEmpty(rawReplyMessageId) ? null : rawReplyMessageId,
+                        context.getChatReplyMessageMediaIndex(),
+                        rawSenderId.equals(Me.getInstance().getUser()) ? UserId.ME : new UserId(rawSenderId),
+                        0);
+                for (AlbumMedia item : album.getMediaList()) {
+                    message.media.add(Media.parseFromProto(item));
+                }
+                for (com.halloapp.proto.clients.Mention item : albumText.getMentionsList()) {
+                    message.mentions.add(Mention.parseFromProto(item));
+                }
+                break;
+            case TEXT:
+                Text text = chatContainer.getText();
+                message = new Message(0,
+                        fromUserId,
+                        fromUserId,
+                        id,
+                        timestamp,
+                        Message.TYPE_CHAT,
+                        Message.USAGE_CHAT,
+                        Message.STATE_INCOMING_RECEIVED,
+                        text.getText(),
+                        context.getFeedPostId(),
+                        context.getFeedPostMediaIndex(),
+                        TextUtils.isEmpty(rawReplyMessageId) ? null : rawReplyMessageId,
+                        context.getChatReplyMessageMediaIndex(),
+                        rawSenderId.equals(Me.getInstance().getUser()) ? UserId.ME : new UserId(rawSenderId),
+                        0);
+                for (com.halloapp.proto.clients.Mention item : text.getMentionsList()) {
+                    message.mentions.add(Mention.parseFromProto(item));
+                }
+                break;
+            case VOICE_NOTE:
+                VoiceNote voiceNote = chatContainer.getVoiceNote();
+                message = new VoiceNoteMessage(0,
+                        fromUserId,
+                        fromUserId,
+                        id,
+                        timestamp,
+                        Message.USAGE_CHAT,
+                        Message.STATE_INITIAL,
+                        null,
+                        context.getFeedPostId(),
+                        context.getFeedPostMediaIndex(),
+                        TextUtils.isEmpty(rawReplyMessageId) ? null : rawReplyMessageId,
+                        context.getChatReplyMessageMediaIndex(),
+                        rawSenderId.equals(Me.getInstance().getUser()) ? UserId.ME : new UserId(rawSenderId),
+                        0);
+                message.media.add(Media.parseFromProto(voiceNote));
+                break;
+            default:
+            case MESSAGE_NOT_SET: {
+                FutureProofMessage futureProofMessage = new FutureProofMessage(0,
+                        fromUserId,
+                        fromUserId,
+                        id,
+                        timestamp,
+                        Message.USAGE_CHAT,
+                        Message.STATE_INCOMING_RECEIVED,
+                        null,
+                        context.getFeedPostId(),
+                        context.getFeedPostMediaIndex(),
+                        TextUtils.isEmpty(rawReplyMessageId) ? null : rawReplyMessageId,
+                        context.getChatReplyMessageMediaIndex(),
+                        rawSenderId.equals(Me.getInstance().getUser()) ? UserId.ME : new UserId(rawSenderId),
+                        0);
+                futureProofMessage.setProtoBytes(chatContainer.toByteArray());
+                message = futureProofMessage;
+                break;
+            }
+        }
+        return message;
     }
 
     public boolean isLocalMessage() {

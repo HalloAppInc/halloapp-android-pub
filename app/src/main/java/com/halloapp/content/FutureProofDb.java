@@ -52,12 +52,38 @@ public class FutureProofDb {
         db.insertWithOnConflict(FutureProofTable.TABLE_NAME, null, futureProofValues, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
+    public void fillFutureProof(@NonNull FutureProofMessage message) {
+        message.setProtoBytes(readBytes(MessagesTable.TABLE_NAME, message.rowId));
+    }
+
     public void fillFutureProof(@NonNull FutureProofPost post) {
         post.setProtoBytes(readBytes(PostsTable.TABLE_NAME, post.rowId));
     }
 
     public void fillFutureProof(@NonNull FutureProofComment comment) {
         comment.setProtoBytes(readBytes(CommentsTable.TABLE_NAME, comment.rowId));
+    }
+
+    public void deleteFutureProof(@NonNull SQLiteDatabase writableDb, @NonNull FutureProofMessage message) {
+        deleteFutureProofBytes(writableDb, MessagesTable.TABLE_NAME, message.rowId);
+    }
+
+    public void deleteFutureProof(@NonNull SQLiteDatabase writableDb, @NonNull FutureProofPost post) {
+        deleteFutureProofBytes(writableDb, PostsTable.TABLE_NAME, post.rowId);
+    }
+
+    public void deleteFutureProof(@NonNull SQLiteDatabase writableDb, @NonNull FutureProofComment comment) {
+        deleteFutureProofBytes(writableDb, CommentsTable.TABLE_NAME, comment.rowId);
+    }
+
+    private void deleteFutureProofBytes(@NonNull SQLiteDatabase writableDb, String parentTable, long parentRowId) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.delete(FutureProofTable.TABLE_NAME,
+                FutureProofTable.COLUMN_PARENT_TABLE + "=? AND " + FutureProofTable.COLUMN_PARENT_ROW_ID + "=?",
+                new String[] {
+                        parentTable,
+                        Long.toString(parentRowId)
+                });
     }
 
     private byte[] readBytes(String parentTable, long parentRowId) {

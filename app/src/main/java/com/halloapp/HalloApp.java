@@ -84,6 +84,7 @@ public class HalloApp extends Application {
 
         BgWorkers.getInstance().execute(() -> {
             ContentDb.getInstance().fixGroupMembership();
+            ContentDb.getInstance().processFutureProofContent();
             EncryptedKeyStore.getInstance().ensureMigrated(); // TODO(jack): Remove after May 1
         });
     }

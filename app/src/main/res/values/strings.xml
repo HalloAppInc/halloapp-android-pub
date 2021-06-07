@@ -276,6 +276,7 @@
     <string name="could_not_set_avatar">Please try a different image</string>
     <string name="pick_media">Pick media</string>
     <string name="video">Video</string>
+    <string name="voice_note">Voice note</string>
     <string name="photo">Photo</string>
     <string name="album">Album</string>
     <string name="new_messages">New messages</string>

@@ -15,7 +15,9 @@ import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
+import androidx.arch.core.util.Function;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.AppContext;
 import com.halloapp.FileStore;
 import com.halloapp.content.tables.ChatsTable;
@@ -33,6 +35,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.Background;
+import com.halloapp.proto.clients.ChatContainer;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
@@ -197,7 +200,7 @@ class MessagesDb {
                         ChatsTable.COLUMN_TIMESTAMP + "=" + message.timestamp + " " +
                         (unseen ? (", " + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "=" + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "+1 ") : "") +
                         (unseen ? (", " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + "=CASE WHEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + ">= 0 THEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " ELSE " + message.rowId + " END ") : "") +
-                        (message.type == Message.TYPE_CHAT ? (", " + ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + "=" + message.rowId + " ") : "") +
+                        (message.type != Message.TYPE_SYSTEM ? (", " + ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + "=" + message.rowId + " ") : "") +
                         " WHERE " + ChatsTable.COLUMN_CHAT_ID + "='" + message.chatId.rawId() + "'")) {
                     updatedRowsCount = statement.executeUpdateDelete();
                 }
@@ -205,7 +208,7 @@ class MessagesDb {
                     final ContentValues chatValues = new ContentValues();
                     chatValues.put(ChatsTable.COLUMN_CHAT_ID, message.chatId.rawId());
                     chatValues.put(ChatsTable.COLUMN_TIMESTAMP, message.timestamp);
-                    if (message.type == Message.TYPE_CHAT) {
+                    if (message.type != Message.TYPE_SYSTEM) {
                         chatValues.put(ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID, message.rowId);
                     }
                     if (unseen) {
@@ -810,6 +813,197 @@ class MessagesDb {
         } finally {
             db.endTransaction();
         }
+    }
+
+    interface MessageUpdateListener {
+        void onMessageUpdated(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
+    }
+
+    @WorkerThread
+    public void processFutureProofMessages(MessageUpdateListener listener) {
+        List<FutureProofMessage> futureProofMessages = getFutureProofMessages();
+        for (FutureProofMessage futureProofMessage : futureProofMessages) {
+            try {
+                ChatContainer chatContainer = ChatContainer.parseFrom(futureProofMessage.getProtoBytes());
+                Message message = Message.parseFromProto(futureProofMessage.senderUserId, futureProofMessage.id, futureProofMessage.timestamp, chatContainer);
+                if (message instanceof FutureProofMessage) {
+                    continue;
+                }
+                replaceFutureProofMessage(futureProofMessage, message);
+                listener.onMessageUpdated(message.chatId, message.senderUserId, message.id);
+            } catch (InvalidProtocolBufferException e) {
+                Log.e("MessagesDb/processFutureProofMessages invalid proto", e);
+            }
+        }
+    }
+
+    @WorkerThread
+    private void replaceFutureProofMessage(FutureProofMessage original, Message replacement) {
+        long now = System.currentTimeMillis();
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            final ContentValues messageValues = new ContentValues();
+            messageValues.put(MessagesTable.COLUMN_CHAT_ID, replacement.chatId.rawId());
+            messageValues.put(MessagesTable.COLUMN_SENDER_USER_ID, replacement.senderUserId.rawId());
+            messageValues.put(MessagesTable.COLUMN_MESSAGE_ID, replacement.id);
+            messageValues.put(MessagesTable.COLUMN_TIMESTAMP, replacement.timestamp);
+            messageValues.put(MessagesTable.COLUMN_TYPE, replacement.type);
+            messageValues.put(MessagesTable.COLUMN_USAGE, replacement.usage);
+            messageValues.put(MessagesTable.COLUMN_STATE, replacement.state);
+            messageValues.put(MessagesTable.COLUMN_RESULT_UPDATE_TIME, now);
+            if (replacement.text != null) {
+                messageValues.put(MessagesTable.COLUMN_TEXT, replacement.text);
+            }
+
+            db.update(MessagesTable.TABLE_NAME, messageValues, MessagesTable._ID + "=?", new String[]{Long.toString(original.rowId)});
+            replacement.rowId = original.rowId;
+
+            for (Media mediaItem : replacement.media) {
+                final ContentValues mediaItemValues = new ContentValues();
+                mediaItemValues.put(MediaTable.COLUMN_PARENT_TABLE, MessagesTable.TABLE_NAME);
+                mediaItemValues.put(MediaTable.COLUMN_PARENT_ROW_ID, replacement.rowId);
+                mediaItemValues.put(MediaTable.COLUMN_TYPE, mediaItem.type);
+                if (mediaItem.url != null) {
+                    mediaItemValues.put(MediaTable.COLUMN_URL, mediaItem.url);
+                }
+                if (mediaItem.file != null) {
+                    mediaItemValues.put(MediaTable.COLUMN_FILE, mediaItem.file.getName());
+                    if (mediaItem.width == 0 || mediaItem.height == 0) {
+                        final Size dimensions = MediaUtils.getDimensions(mediaItem.file, mediaItem.type);
+                        if (dimensions != null) {
+                            mediaItem.width = dimensions.getWidth();
+                            mediaItem.height = dimensions.getHeight();
+                        }
+                    }
+                }
+                if (mediaItem.encFile != null) {
+                    mediaItemValues.put(MediaTable.COLUMN_ENC_FILE, mediaItem.encFile.getName());
+                }
+                if (mediaItem.width > 0 && mediaItem.height > 0) {
+                    mediaItemValues.put(MediaTable.COLUMN_WIDTH, mediaItem.width);
+                    mediaItemValues.put(MediaTable.COLUMN_HEIGHT, mediaItem.height);
+                }
+                if (mediaItem.encKey != null) {
+                    mediaItemValues.put(MediaTable.COLUMN_ENC_KEY, mediaItem.encKey);
+                }
+                if (mediaItem.encSha256hash != null) {
+                    mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.encSha256hash);
+                }
+                if (mediaItem.decSha256hash != null) {
+                    mediaItemValues.put(MediaTable.COLUMN_DEC_SHA256_HASH, mediaItem.decSha256hash);
+                }
+                mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
+            }
+            mentionsDb.addMentions(replacement);
+
+            futureProofDb.deleteFutureProof(db, original);
+
+            db.setTransactionSuccessful();
+            Log.i("ContentDb.replaceFutureProof: updated " + replacement);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("ContentDb.addMessage: duplicate " + ex.getMessage() + " " + replacement);
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    @WorkerThread
+    public List<FutureProofMessage> getFutureProofMessages() {
+        final List<FutureProofMessage> messages = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+                "SELECT " +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + ", " +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TYPE + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_USAGE + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_REREQUEST_COUNT + "," +
+                        "m." + MediaTable._ID + "," +
+                        "m." + MediaTable.COLUMN_TYPE + "," +
+                        "m." + MediaTable.COLUMN_URL + "," +
+                        "m." + MediaTable.COLUMN_FILE + "," +
+                        "m." + MediaTable.COLUMN_ENC_FILE + "," +
+                        "m." + MediaTable.COLUMN_ENC_KEY + "," +
+                        "m." + MediaTable.COLUMN_SHA256_HASH + "," +
+                        "m." + MediaTable.COLUMN_DEC_SHA256_HASH + "," +
+                        "m." + MediaTable.COLUMN_WIDTH + "," +
+                        "m." + MediaTable.COLUMN_HEIGHT + "," +
+                        "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
+                        "r." + RepliesTable.COLUMN_POST_ID + ", " +
+                        "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + ", " +
+                        "r." + RepliesTable.COLUMN_REPLY_MESSAGE_ID + ", " +
+                        "r." + RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX + ", " +
+                        "r." + RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID + " " +
+                        "FROM " + MessagesTable.TABLE_NAME + " " +
+                        "LEFT JOIN (" +
+                        "SELECT " +
+                        MediaTable._ID + "," +
+                        MediaTable.COLUMN_PARENT_TABLE + "," +
+                        MediaTable.COLUMN_PARENT_ROW_ID + "," +
+                        MediaTable.COLUMN_TYPE + "," +
+                        MediaTable.COLUMN_URL + "," +
+                        MediaTable.COLUMN_FILE + "," +
+                        MediaTable.COLUMN_ENC_FILE + "," +
+                        MediaTable.COLUMN_ENC_KEY + "," +
+                        MediaTable.COLUMN_SHA256_HASH + "," +
+                        MediaTable.COLUMN_DEC_SHA256_HASH + "," +
+                        MediaTable.COLUMN_WIDTH + "," +
+                        MediaTable.COLUMN_HEIGHT + "," +
+                        MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                        "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+                        "LEFT JOIN (" +
+                        "SELECT " +
+                        RepliesTable.COLUMN_MESSAGE_ROW_ID + "," +
+                        RepliesTable.COLUMN_REPLY_MESSAGE_ID + "," +
+                        RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX + "," +
+                        RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID + "," +
+                        RepliesTable.COLUMN_POST_ID + "," +
+                        RepliesTable.COLUMN_POST_MEDIA_INDEX + " FROM " + RepliesTable.TABLE_NAME + ") " +
+                        "AS r ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=r." + RepliesTable.COLUMN_MESSAGE_ROW_ID + " " +
+                        "WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TYPE + "=? " +
+                        "ORDER BY " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + " DESC ";
+
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{Integer.toString(Message.TYPE_FUTURE_PROOF)})) {
+
+            long lastRowId = -1;
+            FutureProofMessage message = null;
+            while (cursor.moveToNext()) {
+                long rowId = cursor.getLong(0);
+                if (lastRowId != rowId) {
+                    lastRowId = rowId;
+                    if (message != null) {
+                        messages.add(message);
+                    }
+                    String rawReplySenderId = cursor.getString(25);
+                    message = new FutureProofMessage(
+                            rowId,
+                            ChatId.fromNullable(cursor.getString(1)),
+                            new UserId(cursor.getString(2)),
+                            cursor.getString(3),
+                            cursor.getLong(4),
+                            cursor.getInt(6),
+                            cursor.getInt(7),
+                            cursor.getString(8),
+                            cursor.getString(21),
+                            cursor.getInt(22),
+                            cursor.getString(23),
+                            cursor.getInt(24),
+                            rawReplySenderId == null ? null : new UserId(rawReplySenderId),
+                            cursor.getInt(9));
+                    futureProofDb.fillFutureProof(message);
+                }
+            }
+            if (message != null) {
+                messages.add(message);
+            }
+        }
+        return messages;
     }
 
     @WorkerThread

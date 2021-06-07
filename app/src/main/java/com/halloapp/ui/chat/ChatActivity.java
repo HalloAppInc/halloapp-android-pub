@@ -23,6 +23,8 @@ import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -64,7 +66,10 @@ import com.halloapp.groups.ChatLoader;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.media.VoiceNotePlayer;
+import com.halloapp.media.VoiceNoteRecorder;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
@@ -99,6 +104,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class ChatActivity extends HalloActivity {
 
@@ -116,6 +122,7 @@ public class ChatActivity extends HalloActivity {
 
     private static final int ADD_ANIMATION_DURATION = 60;
     private static final int MOVE_ANIMATION_DURATION = 125;
+    private static final int RECORDING_BLINK_ANIMATION_DURATION = 1000;
 
     public static Map<ChatId, String> messageDrafts = new HashMap<>();
 
@@ -144,6 +151,7 @@ public class ChatActivity extends HalloActivity {
     private ReplyLoader replyLoader;
     private ContactLoader contactLoader;
     private TextContentLoader textContentLoader;
+    private AudioDurationLoader audioDurationLoader;
     private TimestampRefresher timestampRefresher;
     private ActionMode actionMode;
 
@@ -159,6 +167,11 @@ public class ChatActivity extends HalloActivity {
     private String copyText;
     private boolean blocked;
     private String chatName;
+
+    private ImageView recordBtn;
+    private View recordingIndicator;
+    private TextView recordingTime;
+    private View deleteRecording;
 
     private ItemSwipeHelper itemSwipeHelper;
     private LinearLayoutManager layoutManager;
@@ -205,6 +218,7 @@ public class ChatActivity extends HalloActivity {
         avatarLoader = AvatarLoader.getInstance();
         presenceLoader = PresenceLoader.getInstance();
         textContentLoader = new TextContentLoader(this);
+        audioDurationLoader = new AudioDurationLoader(this);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
 
@@ -212,6 +226,11 @@ public class ChatActivity extends HalloActivity {
         Log.d("ChatActivity chatId " + chatId);
 
         final ImageView sendButton = findViewById(R.id.send);
+
+        recordBtn = findViewById(R.id.record_voice);
+        deleteRecording = findViewById(R.id.delete_voice_note);
+        recordingIndicator = findViewById(R.id.recording_icon);
+        recordingTime = findViewById(R.id.recording_time);
 
         mentionPickerView = findViewById(R.id.mention_picker_view);
         editText = findViewById(R.id.entry_card);
@@ -235,10 +254,20 @@ public class ChatActivity extends HalloActivity {
             public void afterTextChanged(Editable s) {
                 if (s == null || TextUtils.isEmpty(s.toString())) {
                     messageDrafts.remove(chatId);
-                    sendButton.clearColorFilter();
+                    if (Constants.VOICE_NOTE_SENDING_ENABLED) {
+                        sendButton.setVisibility(View.INVISIBLE);
+                        recordBtn.setVisibility(View.VISIBLE);
+                    } else {
+                        sendButton.clearColorFilter();
+                    }
                 } else {
                     messageDrafts.put(chatId, s.toString());
-                    sendButton.setColorFilter(ContextCompat.getColor(ChatActivity.this, R.color.color_secondary));
+                    if (Constants.VOICE_NOTE_SENDING_ENABLED) {
+                        sendButton.setVisibility(View.VISIBLE);
+                        recordBtn.setVisibility(View.INVISIBLE);
+                    } else {
+                        sendButton.setColorFilter(ContextCompat.getColor(ChatActivity.this, R.color.color_secondary));
+                    }
                 }
             }
         });
@@ -278,8 +307,21 @@ public class ChatActivity extends HalloActivity {
             viewModel.reloadMessagesAt(Long.MAX_VALUE);
         });
 
-        sendButton.setOnClickListener(v -> sendMessage());
-        final View media = findViewById(R.id.media);
+        sendButton.setOnClickListener(v -> {
+            sendMessage();
+        });
+        recordBtn.setOnClickListener(v -> {
+            Boolean isRecording = viewModel.isRecording().getValue();
+            if (isRecording == null || !isRecording) {
+                viewModel.startRecording();
+            } else {
+                viewModel.finishRecording(replyPostMediaIndex, false);
+            }
+        });
+        deleteRecording.setOnClickListener(v -> {
+            viewModel.finishRecording(replyPostMediaIndex, true);
+        });
+        final ImageView media = findViewById(R.id.media);
         media.setOnClickListener(v -> pickMedia());
 
         layoutManager = new LinearLayoutManager(this);
@@ -314,6 +356,48 @@ public class ChatActivity extends HalloActivity {
         newMessagesView.setOnClickListener(v -> {
             scrollUpOnDataLoaded = true;
             viewModel.reloadMessagesAt(Long.MAX_VALUE);
+        });
+
+        if (Constants.VOICE_NOTE_SENDING_ENABLED) {
+            sendButton.setColorFilter(ContextCompat.getColor(ChatActivity.this, R.color.color_secondary));
+            media.setColorFilter(ContextCompat.getColor(ChatActivity.this, R.color.color_secondary));
+            viewModel.isRecording().observe(this, isRecording -> {
+                if (isRecording == null || !isRecording) {
+                    deleteRecording.setVisibility(View.GONE);
+                    recordingTime.setVisibility(View.GONE);
+                    if (recordingIndicator.getAnimation() != null) {
+                        recordingIndicator.getAnimation().cancel();
+                    }
+                    recordingIndicator.setVisibility(View.GONE);
+                    media.setVisibility(View.VISIBLE);
+                    editText.setVisibility(View.VISIBLE);
+                    recordBtn.setImageResource(R.drawable.ic_keyboard_voice);
+                } else {
+                    editText.setVisibility(View.INVISIBLE);
+                    deleteRecording.setVisibility(View.VISIBLE);
+                    recordingTime.setVisibility(View.VISIBLE);
+                    recordingIndicator.setVisibility(View.VISIBLE);
+                    recordBtn.setImageResource(R.drawable.ic_send);
+                    if (recordingIndicator.getAnimation() == null) {
+                        Animation anim = new AlphaAnimation(1.0f, 0.0f);
+                        anim.setDuration(RECORDING_BLINK_ANIMATION_DURATION);
+                        anim.setRepeatMode(Animation.RESTART);
+                        anim.setRepeatCount(Animation.INFINITE);
+                        recordingIndicator.startAnimation(anim);
+                    }
+                    media.setVisibility(View.GONE);
+                }
+            });
+        } else {
+            recordBtn.setVisibility(View.GONE);
+            sendButton.setVisibility(View.VISIBLE);
+        }
+
+        viewModel.getRecordingTime().observe(this, millis -> {
+            if (millis == null) {
+                return;
+            }
+            recordingTime.setText(StringUtils.formatVoiceNoteDuration(ChatActivity.this, millis));
         });
 
         editText.addTextChangedListener(new TextWatcher() {
@@ -1010,6 +1094,8 @@ public class ChatActivity extends HalloActivity {
         static final int VIEW_TYPE_SYSTEM = 8;
         static final int VIEW_TYPE_INCOMING_TOMBSTONE = 9;
         static final int VIEW_TYPE_INCOMING_FUTURE_PROOF = 10;
+        static final int VIEW_TYPE_INCOMING_VOICE_NOTE = 11;
+        static final int VIEW_TYPE_OUTGOING_VOICE_NOTE = 12;
 
         long firstUnseenMessageRowId = -1L;
         int newMessageCount;
@@ -1039,6 +1125,18 @@ public class ChatActivity extends HalloActivity {
         }
 
         @Override
+        public void onViewAttachedToWindow(@NonNull MessageViewHolder holder) {
+            super.onViewAttachedToWindow(holder);
+            holder.markAttach();
+        }
+
+        @Override
+        public void onViewDetachedFromWindow(@NonNull MessageViewHolder holder) {
+            super.onViewDetachedFromWindow(holder);
+            holder.markDetach();
+        }
+
+        @Override
         public int getItemViewType(int position) {
             final Message message = Preconditions.checkNotNull(getItem(position));
             if (message.type == Message.TYPE_SYSTEM) {
@@ -1050,6 +1148,8 @@ public class ChatActivity extends HalloActivity {
                     return VIEW_TYPE_INCOMING_TOMBSTONE;
                 } if (message.isRetracted()) {
                     return VIEW_TYPE_INCOMING_RETRACTED;
+                } else if (message.type == Message.TYPE_VOICE_NOTE) {
+                    return VIEW_TYPE_INCOMING_VOICE_NOTE;
                 } else if (message.media.isEmpty()) {
                     return VIEW_TYPE_INCOMING_TEXT;
                 } else {
@@ -1058,6 +1158,8 @@ public class ChatActivity extends HalloActivity {
             } else {
                 if (message.isRetracted()) {
                     return VIEW_TYPE_OUTGOING_RETRACTED;
+                } else if (message.type == Message.TYPE_VOICE_NOTE) {
+                    return VIEW_TYPE_OUTGOING_VOICE_NOTE;
                 } else if (message.media.isEmpty()) {
                     return VIEW_TYPE_OUTGOING_TEXT;
                 } else {
@@ -1107,6 +1209,16 @@ public class ChatActivity extends HalloActivity {
                 case VIEW_TYPE_INCOMING_FUTURE_PROOF: {
                     layoutRes = R.layout.message_item_future_proof;
                     break;
+                }
+                case VIEW_TYPE_INCOMING_VOICE_NOTE: {
+                    layoutRes = R.layout.message_item_voice_note_incoming;
+                    final View layout = LayoutInflater.from(parent.getContext()).inflate(layoutRes, parent, false);
+                    return new VoiceNoteMessageViewHolder(layout, messageViewHolderParent);
+                }
+                case VIEW_TYPE_OUTGOING_VOICE_NOTE: {
+                    layoutRes = R.layout.message_item_voice_note_outgoing;
+                    final View layout = LayoutInflater.from(parent.getContext()).inflate(layoutRes, parent, false);
+                    return new VoiceNoteMessageViewHolder(layout, messageViewHolderParent);
                 }
                 default: {
                     throw new IllegalArgumentException();
@@ -1228,6 +1340,11 @@ public class ChatActivity extends HalloActivity {
         }
 
         @Override
+        VoiceNotePlayer getVoiceNotePlayer() {
+            return viewModel.getVoiceNotePlayer();
+        }
+
+        @Override
         public long getSelectedMessageRowId() {
             return selectedMessageRowId;
         }
@@ -1284,6 +1401,11 @@ public class ChatActivity extends HalloActivity {
         @Override
         public TextContentLoader getTextContentLoader() {
             return textContentLoader;
+        }
+
+        @Override
+        public AudioDurationLoader getAudioDurationLoader() {
+            return audioDurationLoader;
         }
 
         @Override

@@ -39,6 +39,7 @@ import com.halloapp.content.Message;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.UploadMediaTask;
+import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
@@ -79,7 +80,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final CircleIndicator3 mediaPagerIndicator;
     private final MediaPagerAdapter mediaPagerAdapter;
     private @Nullable ReplyContainer replyContainer;
-    private final MessageViewHolderParent parent;
+    protected final MessageViewHolderParent parent;
 
     private final Me me;
     private final Connection connection;
@@ -88,7 +89,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final ContactLoader contactLoader;
     private final DecryptStatLoader decryptStatLoader;
 
-    private Message message;
+    protected Message message;
 
     abstract static class MessageViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
         abstract void onItemLongClicked(String text, @NonNull Message message);
@@ -99,6 +100,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         abstract void setReplyMessageMediaIndex(long rowId, int pos);
         abstract void scrollToOriginal(Message replyingMessage);
         abstract void clearHighlight();
+        abstract VoiceNotePlayer getVoiceNotePlayer();
     }
 
     public static @DrawableRes int getStatusImageResource(@Message.State int state) {
@@ -280,7 +282,12 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         }
     }
 
+    protected void fillView(@NonNull Message message, boolean changed) {
+
+    }
+
     void bindTo(@NonNull Message message, int newMessageCountSeparator, @Nullable Message prevMessage, @Nullable Message nextMessage) {
+        boolean changed = !message.equals(this.message);
         this.message = message;
 
         boolean mergeWithPrev = shouldMergeBubbles(message, prevMessage);
@@ -317,6 +324,8 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         } else {
             itemView.setBackgroundColor(0);
         }
+
+        fillView(message, changed);
 
         if (statusView != null) {
             if (message.isTransferFailed()) {

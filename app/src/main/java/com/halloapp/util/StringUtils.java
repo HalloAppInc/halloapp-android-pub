@@ -28,6 +28,7 @@ import com.halloapp.ui.contacts.ContactHashInfoBottomSheetDialogFragment;
 
 import java.text.BreakIterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class StringUtils {
 
@@ -107,6 +108,19 @@ public class StringUtils {
         public void updateDrawState(@NonNull TextPaint ds) {
             ds.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         }
+    }
+
+    public static String formatVoiceNoteDuration(Context context, long millis) {
+        long hours = TimeUnit.MILLISECONDS.toHours(millis);
+        long minutes =  TimeUnit.MILLISECONDS.toMinutes(millis) -
+                TimeUnit.HOURS.toMinutes(hours);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis) -
+                TimeUnit.MINUTES.toSeconds(minutes);
+        if (hours > 0) {
+            return String.format(context.getResources().getConfiguration().locale, "%d:%02d:%02d",
+                    hours, minutes, seconds);
+        }
+        return String.format(context.getResources().getConfiguration().locale, "%d:%02d", minutes, seconds);
     }
 
     public static String formatPhoneNumber(@NonNull String phone) {

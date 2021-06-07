@@ -20,6 +20,7 @@ import com.halloapp.proto.clients.Image;
 import com.halloapp.proto.clients.MediaType;
 import com.halloapp.proto.clients.Text;
 import com.halloapp.proto.clients.Video;
+import com.halloapp.proto.clients.VoiceNote;
 import com.halloapp.util.logs.Log;
 
 public class MessageElementHelper {
@@ -120,7 +121,20 @@ public class MessageElementHelper {
             textBuilder.addMentions(Mention.toProto(mention));
         }
 
-        if (!message.media.isEmpty()) {
+        if (message.type == Message.TYPE_VOICE_NOTE) {
+            VoiceNote.Builder voiceNoteBuilder = VoiceNote.newBuilder();
+            if (!message.media.isEmpty()) {
+                Media media = message.media.get(0);
+                if (media.type == Media.MEDIA_TYPE_AUDIO) {
+                    EncryptedResource resource = EncryptedResource.newBuilder()
+                            .setDownloadUrl(media.url)
+                            .setCiphertextHash(ByteString.copyFrom(media.encSha256hash))
+                            .setEncryptionKey(ByteString.copyFrom(media.encKey)).build();
+                    voiceNoteBuilder.setAudio(resource);
+                }
+            }
+            chatContainerBuilder.setVoiceNote(voiceNoteBuilder);
+        } else if (!message.media.isEmpty()) {
             Album.Builder albumBuilder = Album.newBuilder();
             for (Media media : message.media) {
                 EncryptedResource resource = EncryptedResource.newBuilder()
