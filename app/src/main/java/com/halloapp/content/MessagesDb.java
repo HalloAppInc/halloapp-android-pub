@@ -196,20 +196,24 @@ class MessagesDb {
                 }
 
                 final int updatedRowsCount;
-                try (SQLiteStatement statement = db.compileStatement("UPDATE " + ChatsTable.TABLE_NAME + " SET " +
-                        ChatsTable.COLUMN_TIMESTAMP + "=" + message.timestamp + " " +
-                        (unseen ? (", " + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "=" + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "+1 ") : "") +
-                        (unseen ? (", " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + "=CASE WHEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + ">= 0 THEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " ELSE " + message.rowId + " END ") : "") +
-                        (message.type != Message.TYPE_SYSTEM ? (", " + ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + "=" + message.rowId + " ") : "") +
-                        " WHERE " + ChatsTable.COLUMN_CHAT_ID + "='" + message.chatId.rawId() + "'")) {
-                    updatedRowsCount = statement.executeUpdateDelete();
+                if (message.type == Message.TYPE_SYSTEM) {
+                    updatedRowsCount = (int) DatabaseUtils.queryNumEntries(db, ChatsTable.TABLE_NAME, ChatsTable.COLUMN_CHAT_ID + "='" + message.chatId.rawId() + "'");
+                } else {
+                    try (SQLiteStatement statement = db.compileStatement("UPDATE " + ChatsTable.TABLE_NAME + " SET " +
+                            ChatsTable.COLUMN_TIMESTAMP + "=" + message.timestamp + " " +
+                            (unseen ? (", " + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "=" + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "+1 ") : "") +
+                            (unseen ? (", " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + "=CASE WHEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + ">= 0 THEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " ELSE " + message.rowId + " END ") : "") +
+                            ", " + ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + "=" + message.rowId + " " +
+                            " WHERE " + ChatsTable.COLUMN_CHAT_ID + "='" + message.chatId.rawId() + "'")) {
+                        updatedRowsCount = statement.executeUpdateDelete();
+                    }
                 }
                 if (updatedRowsCount == 0) {
                     final ContentValues chatValues = new ContentValues();
                     chatValues.put(ChatsTable.COLUMN_CHAT_ID, message.chatId.rawId());
-                    chatValues.put(ChatsTable.COLUMN_TIMESTAMP, message.timestamp);
                     if (message.type != Message.TYPE_SYSTEM) {
                         chatValues.put(ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID, message.rowId);
+                        chatValues.put(ChatsTable.COLUMN_TIMESTAMP, message.timestamp);
                     }
                     if (unseen) {
                         chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 1);
