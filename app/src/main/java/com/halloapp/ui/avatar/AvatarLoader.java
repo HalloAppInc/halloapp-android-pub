@@ -102,11 +102,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         if (openProfileOnTap) {
             if (chatId instanceof UserId) {
                 UserId userId = (UserId) chatId;
-                if (userId.isMe()) {
-                    view.setOnClickListener(null);
-                } else {
-                    view.setOnClickListener(v -> v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), userId)));
-                }
+                view.setOnClickListener(v -> v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), userId)));
             } else if (chatId instanceof GroupId) {
                 GroupId groupId = (GroupId) chatId;
                 view.setOnClickListener(v -> v.getContext().startActivity(ViewGroupFeedActivity.viewFeed(v.getContext(), groupId)));
