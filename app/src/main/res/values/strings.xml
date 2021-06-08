@@ -406,8 +406,8 @@
     <string name="invite_creation_in_progress">Creating invite…</string>
     <string name="invite_info_fetch_internet">Failed to retrieve invite info, check your internet and try again</string>
     <plurals name="invites_remaining">
-        <item quantity="one">You have %s invite remaining</item>
-        <item quantity="other">You have %s invites remaining</item>
+        <item quantity="one">You have %s invite remaining this week</item>
+        <item quantity="other">You have %s invites remaining this week</item>
     </plurals>
     <string name="no_invites_remaining">More invites coming this Monday!</string>
     <string name="invite_friends_title">Invite friends &amp; family</string>
