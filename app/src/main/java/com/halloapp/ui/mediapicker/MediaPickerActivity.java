@@ -50,6 +50,7 @@ import com.halloapp.widget.SnackbarHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -548,8 +549,10 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         public final static int TYPE_HEADER = 1;
         public final static int TYPE_ITEM = 2;
 
-        private final SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE, MMM d", Locale.getDefault());
-        private final SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.getDefault());
+        private final SimpleDateFormat dayFormatWithYear = new SimpleDateFormat("EEEE, MMM d, y", Locale.getDefault());
+        private final SimpleDateFormat dayFormatNoYear = new SimpleDateFormat("EEEE, MMM d", Locale.getDefault());
+        private final SimpleDateFormat monthFormatWithYear = new SimpleDateFormat("MMMM, y", Locale.getDefault());
+        private final SimpleDateFormat monthFormatNoYear = new SimpleDateFormat("MMMM", Locale.getDefault());
 
         private class Pointer {
             public int type;
@@ -682,9 +685,17 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                     pointers.add(new Pointer(TYPE_HEADER, headers.size()));
 
                     if (gridLayout == LAYOUT_DAY_LARGE || gridLayout == LAYOUT_DAY_SMALL) {
-                        headers.add(dayFormat.format(new Date(item.date)));
+                        if (item.year == Calendar.getInstance().get(Calendar.YEAR)) {
+                            headers.add(dayFormatNoYear.format(new Date(item.date)));
+                        } else {
+                            headers.add(dayFormatWithYear.format(new Date(item.date)));
+                        }
                     } else {
-                        headers.add(monthFormat.format(new Date(item.date)));
+                        if (item.year == Calendar.getInstance().get(Calendar.YEAR)) {
+                            headers.add(monthFormatNoYear.format(new Date(item.date)));
+                        } else {
+                            headers.add(monthFormatWithYear.format(new Date(item.date)));
+                        }
                     }
                 }
 

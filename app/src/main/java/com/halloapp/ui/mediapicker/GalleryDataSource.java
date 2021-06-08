@@ -3,11 +3,13 @@ package com.halloapp.ui.mediapicker;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
@@ -68,6 +70,7 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
                     long id = cursor.getLong(0);
                     int type = cursor.getInt(1);
                     long duration = 0;
+                    long date = cursor.getLong(2);
 
                     if (type == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO) {
                         if (Build.VERSION.SDK_INT >= 29) {
@@ -77,7 +80,7 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
                         }
                     }
 
-                    galleryItems.add(new GalleryItem(id, type, cursor.getLong(2), duration));
+                    galleryItems.add(new GalleryItem(id, type, date, duration));
                 }
             }
         } catch (SecurityException ex) {
@@ -113,9 +116,13 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
 
         try {
-            FileDescriptor fd = contentResolver.openFileDescriptor(uri, "r").getFileDescriptor();
+            ParcelFileDescriptor afd = contentResolver.openFileDescriptor(uri, "r");
+            FileDescriptor fd = afd.getFileDescriptor();
             retriever.setDataSource(fd);
-            return Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+            Long duration = Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+            afd.close();
+            retriever.release();
+            return duration;
         } catch (Exception e) {
             Log.w("GalleryDataSource.getDuration", e);
             return 0;
