@@ -818,6 +818,8 @@ public class ContentDb {
     public void processFutureProofContent() {
         databaseWriteExecutor.execute(() -> {
             messagesDb.processFutureProofMessages(observers::notifyMessageUpdated);
+            FeedContentParser parser = new FeedContentParser(me);
+            postsDb.processFutureProofContent(parser, observers);
         });
     }
 

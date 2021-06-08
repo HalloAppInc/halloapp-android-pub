@@ -54,14 +54,14 @@ public class GroupFeedUpdateIq extends HalloIq {
         if (feedItem.type == FeedItem.Type.POST) {
             Post.Builder pb = Post.newBuilder();
             if (feedItem.payload != null) {
-                pb.setPayload(ByteString.copyFrom(Base64.decode(feedItem.payload, Base64.NO_WRAP)));
+                pb.setPayload(ByteString.copyFrom(feedItem.payload));
             }
             pb.setId(feedItem.id);
             builder.setPost(pb);
         } else if (feedItem.type == FeedItem.Type.COMMENT) {
             Comment.Builder cb = Comment.newBuilder();
             if (feedItem.payload != null) {
-                cb.setPayload(ByteString.copyFrom(Base64.decode(feedItem.payload, Base64.NO_WRAP)));
+                cb.setPayload(ByteString.copyFrom(feedItem.payload));
             }
             if (feedItem.parentCommentId != null) {
                 cb.setParentCommentId(feedItem.parentCommentId);

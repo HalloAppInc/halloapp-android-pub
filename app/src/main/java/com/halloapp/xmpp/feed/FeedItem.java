@@ -22,9 +22,9 @@ public class FeedItem {
     public String parentCommentId;
     public Long timestamp;
 
-    public final @Nullable String payload;
+    public final @Nullable byte[] payload;
 
-    public FeedItem(@Type int type, @NonNull String postId, @Nullable String payload) {
+    public FeedItem(@Type int type, @NonNull String postId, @Nullable byte[] payload) {
         this.id = postId;
         this.type = type;
         this.payload = payload;
@@ -32,7 +32,7 @@ public class FeedItem {
         this.parentCommentId = null;
     }
 
-    public FeedItem(@Type int type, @NonNull String id, @NonNull String parentPostId, @Nullable String payload) {
+    public FeedItem(@Type int type, @NonNull String id, @NonNull String parentPostId, @Nullable byte[] payload) {
         this.id = id;
         this.type = type;
         this.payload = payload;

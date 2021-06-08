@@ -46,7 +46,7 @@ public class VoiceNoteRecorder {
     private long recordStartTime;
 
     public VoiceNoteRecorder() {
-        isRecording = new MutableLiveData<>();
+        isRecording = new MutableLiveData<>(false);
 
         recorderThread = new HandlerThread("VoiceNoteRecorder");
         recorderThread.start();

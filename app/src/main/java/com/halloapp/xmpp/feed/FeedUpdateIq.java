@@ -88,7 +88,7 @@ public class FeedUpdateIq extends HalloIq {
             }
             pb.setId(feedItem.id);
             if (feedItem.payload != null) {
-                pb.setPayload(ByteString.copyFrom(Base64.decode(feedItem.payload, Base64.NO_WRAP)));
+                pb.setPayload(ByteString.copyFrom(feedItem.payload));
             }
             builder.setPost(pb);
         } else if (feedItem != null && feedItem.type == FeedItem.Type.COMMENT) {
@@ -99,7 +99,7 @@ public class FeedUpdateIq extends HalloIq {
                 cb.setParentCommentId(feedItem.parentCommentId);
             }
             if (feedItem.payload != null) {
-                cb.setPayload(ByteString.copyFrom(Base64.decode(feedItem.payload, Base64.NO_WRAP)));
+                cb.setPayload(ByteString.copyFrom(feedItem.payload));
             }
             builder.setComment(cb);
         }

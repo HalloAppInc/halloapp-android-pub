@@ -66,6 +66,7 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Counter;
+import com.halloapp.xmpp.feed.FeedContentEncoder;
 import com.halloapp.xmpp.feed.FeedContentParser;
 import com.halloapp.xmpp.feed.FeedItem;
 import com.halloapp.xmpp.feed.FeedUpdateIq;
@@ -501,7 +502,7 @@ public class ConnectionImpl extends Connection {
             Log.e("connection: sendPost null audience type but not a group post");
             return;
         }
-        FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, entry.getEncodedEntryString());
+        FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, entry.getEncodedEntry());
         HalloIq publishIq;
         if (post.getParentGroup() == null) {
             FeedUpdateIq updateIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, feedItem);
@@ -533,21 +534,27 @@ public class ConnectionImpl extends Connection {
 
     @Override
     public void sendComment(@NonNull Comment comment) {
-        final PublishedEntry entry = new PublishedEntry(
-                PublishedEntry.ENTRY_COMMENT,
-                null,
-                comment.timestamp,
-                me.getUser(),
-                comment.text,
-                comment.postId,
-                comment.parentCommentId);
-        for (Media media : comment.media) {
-            entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.encSha256hash, media.width, media.height));
+        byte[] encodedEntry;
+        if (ServerProps.getInstance().getNewClientContainerEnabled()) {
+            encodedEntry = FeedContentEncoder.encodeComment(comment);
+        } else {
+            final PublishedEntry entry = new PublishedEntry(
+                    PublishedEntry.ENTRY_COMMENT,
+                    null,
+                    comment.timestamp,
+                    me.getUser(),
+                    comment.text,
+                    comment.postId,
+                    comment.parentCommentId);
+            for (Media media : comment.media) {
+                entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.encSha256hash, media.width, media.height));
+            }
+            for (Mention mention : comment.mentions) {
+                entry.mentions.add(Mention.toProto(mention));
+            }
+            encodedEntry = entry.getEncodedEntry();
         }
-        for (Mention mention : comment.mentions) {
-            entry.mentions.add(Mention.toProto(mention));
-        }
-        FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.id, comment.postId, entry.getEncodedEntryString());
+        FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.id, comment.postId, encodedEntry);
         commentItem.parentCommentId = comment.parentCommentId;
         HalloIq requestIq;
         if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {

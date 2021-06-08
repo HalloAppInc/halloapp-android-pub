@@ -31,10 +31,11 @@ public class Comment extends ContentItem {
     public final List<Mention> mentions = new ArrayList<>();
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TYPE_USER, TYPE_FUTURE_PROOF})
+    @IntDef({TYPE_USER, TYPE_FUTURE_PROOF, TYPE_VOICE_NOTE})
     public @interface Type {}
     public static final int TYPE_USER = 0;
     public static final int TYPE_FUTURE_PROOF = 1;
+    public static final int TYPE_VOICE_NOTE = 2;
 
     public @Type int type;
 

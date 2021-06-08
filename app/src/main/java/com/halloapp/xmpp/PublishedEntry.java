@@ -132,11 +132,7 @@ public class PublishedEntry {
         this.parentCommentId = parentCommentId;
     }
 
-    public String getEncodedEntryString() {
-        return Base64.encodeToString(getEncodedEntry(), Base64.NO_WRAP);
-    }
-
-    private byte[] getEncodedEntry() {
+    public byte[] getEncodedEntry() {
         Container.Builder containerBuilder = Container.newBuilder();
         switch (type) {
             case ENTRY_FEED: {

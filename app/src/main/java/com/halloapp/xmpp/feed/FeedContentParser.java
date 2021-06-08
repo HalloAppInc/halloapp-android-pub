@@ -1,5 +1,7 @@
 package com.halloapp.xmpp.feed;
 
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -9,7 +11,10 @@ import com.halloapp.content.FutureProofComment;
 import com.halloapp.content.FutureProofPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
+import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.content.VoiceNoteComment;
+import com.halloapp.content.VoiceNoteMessage;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.Album;
 import com.halloapp.proto.clients.AlbumMedia;
@@ -19,6 +24,7 @@ import com.halloapp.proto.clients.Image;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.clients.Text;
 import com.halloapp.proto.clients.Video;
+import com.halloapp.proto.clients.VoiceNote;
 
 public class FeedContentParser {
 
@@ -96,6 +102,21 @@ public class FeedContentParser {
                     processMention(mention);
                     comment.mentions.add(mention);
                 }
+                return comment;
+            }
+            case VOICE_NOTE: {
+                VoiceNote voiceNote = commentContainer.getVoiceNote();
+                final Comment comment = new VoiceNoteComment(0,
+                        context.getFeedPostId(),
+                        publisherId,
+                        id,
+                        parentCommentId,
+                        timestamp,
+                        true,
+                        false,
+                        null
+                );
+                comment.media.add(Media.parseFromProto(voiceNote));
                 return comment;
             }
             default:

@@ -24,6 +24,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.clients.ChatContainer;
 import com.halloapp.proto.clients.CommentContainer;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.util.logs.Log;
@@ -1525,6 +1526,98 @@ class PostsDb {
             }
         }
         return ret;
+    }
+
+    @WorkerThread
+    public void processFutureProofContent(FeedContentParser parser, ContentDbObservers observers) {
+        processFutureProofComments(parser, observers);
+    }
+
+    private void processFutureProofComments(FeedContentParser parser, ContentDbObservers observers) {
+        List<FutureProofComment> futureProofComments = getFutureProofComments();
+        for (FutureProofComment futureProofComment : futureProofComments) {
+            try {
+                CommentContainer commentContainer = CommentContainer.parseFrom(futureProofComment.getProtoBytes());
+                Comment comment = parser.parseComment(futureProofComment.id, futureProofComment.parentCommentId, futureProofComment.senderUserId, futureProofComment.timestamp, commentContainer);
+                if (comment instanceof FutureProofComment) {
+                    continue;
+                }
+                replaceFutureProofComment(futureProofComment, comment);
+                observers.notifyCommentAdded(comment);
+            } catch (InvalidProtocolBufferException e) {
+                Log.e("PostsDb.processFutureProofComments failed to parse proto", e);
+            }
+        }
+    }
+
+    private void replaceFutureProofComment(@NonNull FutureProofComment original, @NonNull Comment newComment) {
+        final ContentValues values = new ContentValues();
+        values.put(CommentsTable.COLUMN_POST_ID, newComment.postId);
+        values.put(CommentsTable.COLUMN_COMMENT_SENDER_USER_ID, newComment.senderUserId.rawId());
+        values.put(CommentsTable.COLUMN_COMMENT_ID, newComment.id);
+        values.put(CommentsTable.COLUMN_PARENT_ID, newComment.parentCommentId);
+        values.put(CommentsTable.COLUMN_TIMESTAMP, newComment.timestamp);
+        values.put(CommentsTable.COLUMN_TRANSFERRED, newComment.transferred);
+        values.put(CommentsTable.COLUMN_SEEN, newComment.seen);
+        values.put(CommentsTable.COLUMN_TEXT, newComment.text);
+        values.put(CommentsTable.COLUMN_TYPE, newComment.type);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+
+        db.updateWithOnConflict(CommentsTable.TABLE_NAME, values, CommentsTable._ID + "=?", new String[]{Long.toString(original.rowId)}, SQLiteDatabase.CONFLICT_ABORT);
+        newComment.rowId = original.rowId;
+        mediaDb.addMedia(newComment);
+        mentionsDb.addMentions(newComment);
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
+    @WorkerThread
+    @NonNull List<FutureProofComment> getFutureProofComments() {
+        final List<FutureProofComment> comments = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final HashSet<String> checkedPosts = new HashSet<>();
+        final HashMap<String, Post> posts = new HashMap<>();
+        try (final Cursor cursor = db.query(CommentsTable.TABLE_NAME,
+                new String [] {
+                        CommentsTable._ID,
+                        CommentsTable.COLUMN_POST_ID,
+                        CommentsTable.COLUMN_COMMENT_SENDER_USER_ID,
+                        CommentsTable.COLUMN_COMMENT_ID,
+                        CommentsTable.COLUMN_PARENT_ID,
+                        CommentsTable.COLUMN_TIMESTAMP,
+                        CommentsTable.COLUMN_TRANSFERRED,
+                        CommentsTable.COLUMN_SEEN,
+                        CommentsTable.COLUMN_TEXT,
+                        CommentsTable.COLUMN_TYPE},
+                CommentsTable.COLUMN_TYPE + "=? AND " + CommentsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime(),
+                new String[]{Integer.toString(Comment.TYPE_FUTURE_PROOF)}, null, null, null)) {
+            while (cursor.moveToNext()) {
+                final FutureProofComment comment = new FutureProofComment(
+                        cursor.getLong(0),
+                        cursor.getString(1),
+                        new UserId(cursor.getString(2)),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getLong(5),
+                        cursor.getInt(6) == 1,
+                        cursor.getInt(7) == 1,
+                        cursor.getString(8));
+                if (!checkedPosts.contains(comment.postId)) {
+                    Post parentPost = getPost(comment.postId);
+                    checkedPosts.add(comment.postId);
+                    if (parentPost != null) {
+                        posts.put(comment.postId, parentPost);
+                    }
+                }
+                mentionsDb.fillMentions(comment);
+                futureProofDb.fillFutureProof(comment);
+                comment.setParentPost(posts.get(comment.postId));
+                comments.add(comment);
+            }
+        }
+        Log.i("ContentDb.getPendingComments: comments.size=" + comments.size());
+        return comments;
     }
 
     @WorkerThread

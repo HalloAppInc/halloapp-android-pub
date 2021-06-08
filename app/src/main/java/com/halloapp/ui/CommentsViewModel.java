@@ -35,11 +35,14 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.content.VoiceNoteComment;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.media.VoiceNotePlayer;
+import com.halloapp.media.VoiceNoteRecorder;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.proto.server.Audience;
@@ -85,6 +88,9 @@ class CommentsViewModel extends AndroidViewModel {
     private Observer<Post> postObserver;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+    private VoiceNoteRecorder voiceNoteRecorder;
+    private VoiceNotePlayer voiceNotePlayer;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
@@ -144,9 +150,16 @@ class CommentsViewModel extends AndroidViewModel {
         }
     };
 
+    public VoiceNotePlayer getVoiceNotePlayer() {
+        return voiceNotePlayer;
+    }
+
     private CommentsViewModel(@NonNull Application application, @NonNull String postId) {
         super(application);
         this.postId = postId;
+
+        voiceNoteRecorder = new VoiceNoteRecorder();
+        voiceNotePlayer = new VoiceNotePlayer();
 
         contentDb.addObserver(contentObserver);
 
@@ -260,6 +273,12 @@ class CommentsViewModel extends AndroidViewModel {
         contentDb.removeObserver(contentObserver);
         contactsDb.removeObserver(contactsObserver);
         post.removeObserver(postObserver);
+        voiceNotePlayer.onCleared();
+        voiceNoteRecorder.onCleared();
+    }
+
+    public LiveData<Boolean> isRecording() {
+        return voiceNoteRecorder.isRecording();
     }
 
     void loadReplyUser(@NonNull UserId userId) {
@@ -298,6 +317,47 @@ class CommentsViewModel extends AndroidViewModel {
         commentMedia.setValue(null);
     }
 
+    public void startRecording() {
+        voiceNoteRecorder.record();
+    }
+
+    public void cancelRecording() {
+        finishRecording(null, true);
+    }
+
+    public LiveData<Long> getRecordingTime() {
+        return voiceNoteRecorder.getRecordingTime();
+    }
+
+    public void finishRecording(@Nullable String replyCommentId, boolean canceled) {
+        File recording = voiceNoteRecorder.finishRecording();
+        if (canceled) {
+            return;
+        }
+        bgWorkers.execute(() -> {
+            final File targetFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_AUDIO));
+            if (!recording.renameTo(targetFile)) {
+                Log.e("failed to rename " + recording.getAbsolutePath() + " to " + targetFile.getAbsolutePath());
+                return;
+            }
+            final Comment comment = new VoiceNoteComment(
+                    0,
+                    postId,
+                    UserId.ME,
+                    RandomId.create(),
+                    replyCommentId,
+                    System.currentTimeMillis(),
+                    false,
+                    true,
+                    null);
+            comment.setParentPost(post.getValue());
+
+            final Media sendMedia = Media.createFromFile(Media.MEDIA_TYPE_AUDIO, targetFile);
+            comment.media.add(sendMedia);
+            contentDb.addComment(comment);
+        });
+    }
+
     void sendComment(@Nullable String postText, List<Mention> mentions, @Nullable String replyCommentId, boolean supportsWideColor) {
         final Comment comment = new Comment(
                 0,
@@ -310,7 +370,6 @@ class CommentsViewModel extends AndroidViewModel {
                 true,
                 postText);
         comment.setParentPost(post.getValue());
-        comment.mentions.clear();
         for (Mention mention : mentions) {
             if (mention.index < 0 || mention.index >= postText.length()) {
                 continue;

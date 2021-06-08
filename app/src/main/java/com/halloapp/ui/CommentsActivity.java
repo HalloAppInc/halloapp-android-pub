@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Outline;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -25,8 +26,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
@@ -60,6 +64,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
+import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -71,6 +76,7 @@ import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.ActivityUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.logs.Log;
@@ -103,6 +109,8 @@ public class CommentsActivity extends HalloActivity {
 
     private static final int REQUEST_CODE_PICK_MEDIA = 1;
 
+    private static final int VOICE_RECORDING_ANIMATION_DURATION = 1000;
+
     private final CommentsAdapter adapter = new CommentsAdapter();
     private MediaThumbnailLoader mediaThumbnailLoader;
     private AvatarLoader avatarLoader;
@@ -117,6 +125,7 @@ public class CommentsActivity extends HalloActivity {
     private MentionableEntry editText;
     private MentionPickerView mentionPickerView;
     private ImageView sendButton;
+    private ImageView recordBtn;
 
     private ItemSwipeHelper itemSwipeHelper;
     private RecyclerViewKeyboardScrollHelper keyboardScrollHelper;
@@ -139,6 +148,12 @@ public class CommentsActivity extends HalloActivity {
     private boolean showKeyboardOnResume;
     private boolean scrollToComment = false;
     private int commentsFsePosition;
+
+    private boolean showCommentMediaPicker;
+
+    private ImageView mediaPickerView;
+
+    private AudioDurationLoader audioDurationLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -272,7 +287,7 @@ public class CommentsActivity extends HalloActivity {
                 mediaContainer.setVisibility(View.VISIBLE);
                 mediaThumbnailLoader.load(imageView, media);
             }
-            updateSendButtonColor();
+            updateSendButton();
         });
         View removeMedia = findViewById(R.id.remove);
         removeMedia.setOnClickListener(v -> viewModel.resetCommentMediaUri());
@@ -287,8 +302,8 @@ public class CommentsActivity extends HalloActivity {
             mentionPickerView.setMentionableContacts(contacts);
         });
 
-        final View media = findViewById(R.id.media);
-        media.setOnClickListener(v -> pickMedia());
+        mediaPickerView = findViewById(R.id.media);
+        mediaPickerView.setOnClickListener(v -> pickMedia());
 
         viewModel.post.observe(this, post -> {
             adapter.notifyDataSetChanged();
@@ -301,11 +316,11 @@ public class CommentsActivity extends HalloActivity {
                     "gTNOJoTsQakTj_HIRA5wJH", // HalloApp Android
                     "gHRk9DYCJZcvuFAJuZvQPN"  // Everyone at HalloApp
             );
-            boolean showCommentMediaPicker = ServerProps.getInstance().getIsInternalUser() &&
+            showCommentMediaPicker = ServerProps.getInstance().getIsInternalUser() &&
                     post != null &&
                     post.getParentGroup() != null &&
                     allowedGroups.contains(post.getParentGroup().rawId());
-            media.setVisibility(showCommentMediaPicker ? View.VISIBLE : View.GONE);
+            updateMediaPickerVisibility();
         });
         viewModel.loadPost(postId);
 
@@ -343,7 +358,7 @@ public class CommentsActivity extends HalloActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                updateSendButtonColor();
+                updateSendButton();
             }
         });
 
@@ -363,6 +378,8 @@ public class CommentsActivity extends HalloActivity {
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
 
+        audioDurationLoader = new AudioDurationLoader(this);
+
         ContactsDb.getInstance().addObserver(contactsObserver);
 
         final String replyUser;
@@ -377,6 +394,65 @@ public class CommentsActivity extends HalloActivity {
         if (replyUser != null && replyCommentId != null) {
             updateReplyIndicator(new UserId(replyUser), replyCommentId);
         }
+
+        recordBtn = findViewById(R.id.record_voice);
+        recordBtn.setOnClickListener(v -> {
+            Boolean isRecording = viewModel.isRecording().getValue();
+            if (isRecording == null || !isRecording) {
+                viewModel.startRecording();
+            } else {
+                viewModel.finishRecording(this.replyCommentId, false);
+            }
+        });
+
+
+
+        final View recordingIndicator = findViewById(R.id.recording_icon);
+        final View deleteRecording = findViewById(R.id.delete_voice_note);
+        deleteRecording.setOnClickListener(v -> {
+            viewModel.cancelRecording();
+        });
+        final TextView recordingTime = findViewById(R.id.recording_time);
+        if (Constants.VOICE_NOTE_SENDING_ENABLED) {
+            sendButton.setColorFilter(ContextCompat.getColor(CommentsActivity.this, R.color.color_secondary));
+            mediaPickerView.setColorFilter(ContextCompat.getColor(CommentsActivity.this, R.color.color_secondary));
+            viewModel.isRecording().observe(this, isRecording -> {
+                if (isRecording == null || !isRecording) {
+                    deleteRecording.setVisibility(View.GONE);
+                    recordingTime.setVisibility(View.GONE);
+                    if (recordingIndicator.getAnimation() != null) {
+                        recordingIndicator.getAnimation().cancel();
+                    }
+                    recordingIndicator.setVisibility(View.GONE);
+                    editText.setVisibility(View.VISIBLE);
+                    recordBtn.setImageResource(R.drawable.ic_keyboard_voice);
+                } else {
+                    editText.setVisibility(View.INVISIBLE);
+                    deleteRecording.setVisibility(View.VISIBLE);
+                    recordingTime.setVisibility(View.VISIBLE);
+                    recordingIndicator.setVisibility(View.VISIBLE);
+                    recordBtn.setImageResource(R.drawable.ic_send);
+                    if (recordingIndicator.getAnimation() == null) {
+                        Animation anim = new AlphaAnimation(1.0f, 0.0f);
+                        anim.setDuration(VOICE_RECORDING_ANIMATION_DURATION);
+                        anim.setRepeatMode(Animation.RESTART);
+                        anim.setRepeatCount(Animation.INFINITE);
+                        recordingIndicator.startAnimation(anim);
+                    }
+                }
+                updateMediaPickerVisibility();
+            });
+        } else {
+            recordBtn.setVisibility(View.GONE);
+            sendButton.setVisibility(View.VISIBLE);
+        }
+
+        viewModel.getRecordingTime().observe(this, millis -> {
+            if (millis == null) {
+                return;
+            }
+            recordingTime.setText(StringUtils.formatVoiceNoteDuration(CommentsActivity.this, millis));
+        });
 
         itemSwipeHelper = new ItemSwipeHelper(new SwipeListItemHelper(
                 Preconditions.checkNotNull(getDrawable(R.drawable.ic_delete_white)),
@@ -419,14 +495,36 @@ public class CommentsActivity extends HalloActivity {
         itemSwipeHelper.attachToRecyclerView(commentsView);
     }
 
-    private void updateSendButtonColor() {
+    private void updateSendButton() {
         Editable e = editText.getText();
         String s = e == null ? null : e.toString();
         Media m = viewModel.commentMedia.getValue();
         if (m != null || !TextUtils.isEmpty(s)) {
-            sendButton.setColorFilter(ContextCompat.getColor(CommentsActivity.this, R.color.color_secondary));
+            if (Constants.VOICE_NOTE_SENDING_ENABLED) {
+                sendButton.setVisibility(View.VISIBLE);
+                recordBtn.setVisibility(View.INVISIBLE);
+            } else {
+                sendButton.setColorFilter(ContextCompat.getColor(CommentsActivity.this, R.color.color_secondary));
+            }
         } else {
-            sendButton.clearColorFilter();
+            if (Constants.VOICE_NOTE_SENDING_ENABLED) {
+                sendButton.setVisibility(View.INVISIBLE);
+                recordBtn.setVisibility(View.VISIBLE);
+            } else {
+                sendButton.clearColorFilter();
+            }
+        }
+    }
+
+    private void updateMediaPickerVisibility() {
+        Boolean isRecording = viewModel.isRecording().getValue();
+        if (isRecording == null) {
+            isRecording = false;
+        }
+        if (showCommentMediaPicker && !isRecording) {
+            mediaPickerView.setVisibility(View.VISIBLE);
+        } else {
+            mediaPickerView.setVisibility(View.GONE);
         }
     }
 
@@ -544,6 +642,103 @@ public class CommentsActivity extends HalloActivity {
         viewModel.resetCommentMediaUri();
     }
 
+    private class VoiceNoteViewHolder extends ViewHolder {
+
+        Comment comment;
+
+        private SeekBar seekBar;
+        private ImageView controlButton;
+        private TextView seekTime;
+
+        private boolean playing;
+
+        private String audioPath;
+        private boolean wasPlaying;
+
+        public VoiceNoteViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            seekBar = itemView.findViewById(R.id.voice_note_seekbar);
+            controlButton = itemView.findViewById(R.id.control_btn);
+            seekTime = itemView.findViewById(R.id.seek_time);
+
+            controlButton.setOnClickListener(v -> {
+                if (playing) {
+                    viewModel.getVoiceNotePlayer().pause();
+                } else if (audioPath != null) {
+                    viewModel.getVoiceNotePlayer().playFile(audioPath, seekBar.getProgress());
+                }
+            });
+        }
+
+        @Override
+        public void markDetach() {
+            super.markDetach();
+            viewModel.getVoiceNotePlayer().getPlaybackState().removeObservers(this);
+            this.audioPath = null;
+        }
+
+        void bindTo(final @NonNull Comment comment, long lastSeencommentRowId, int position) {
+            bindCommon(comment, lastSeencommentRowId, position);
+            if (comment.media != null && !comment.media.isEmpty()) {
+                Media media = comment.media.get(0);
+                if (media.transferred == Media.TRANSFERRED_YES) {
+                    if (media.file != null) {
+                        String newPath = media.file.getAbsolutePath();
+                        if (!newPath.equals(audioPath)) {
+                            this.audioPath = media.file.getAbsolutePath();
+                            audioDurationLoader.load(seekTime, media);
+                            startObservingPlayback();
+                        }
+                    }
+                    controlButton.setVisibility(View.VISIBLE);
+                } else {
+                    controlButton.setVisibility(View.INVISIBLE);
+                }
+            }
+        }
+
+        private void startObservingPlayback() {
+            viewModel.getVoiceNotePlayer().getPlaybackState().observe(this, state -> {
+                if (state == null || audioPath == null || !audioPath.equals(state.playingTag)) {
+                    return;
+                }
+                playing = state.playing;
+                if (playing) {
+                    controlButton.setImageResource(R.drawable.ic_pause);
+                    seekTime.setText(StringUtils.formatVoiceNoteDuration(seekTime.getContext(), state.seek));
+                } else {
+                    controlButton.setImageResource(R.drawable.ic_play_arrow);
+                    seekTime.setText(StringUtils.formatVoiceNoteDuration(seekTime.getContext(), state.seekMax));
+                }
+                seekBar.setMax(state.seekMax);
+                seekBar.setProgress(state.seek);
+                seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                        wasPlaying = playing;
+                        if (playing) {
+                            viewModel.getVoiceNotePlayer().pause();
+                        }
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        if (wasPlaying) {
+                            viewModel.getVoiceNotePlayer().playFile(audioPath, seekBar.getProgress());
+                        }
+                    }
+                });
+            });
+        }
+
+    }
+
     private class FutureProofViewHolder extends ViewHolder {
 
         Comment comment;
@@ -593,6 +788,7 @@ public class CommentsActivity extends HalloActivity {
         void bindTo(final @NonNull Comment comment, long lastSeenCommentRowId, int position) {
 
             this.comment = comment;
+            bindCommon(comment, lastSeenCommentRowId, position);
 
             avatarLoader.load(avatarView, comment.senderUserId);
             contactLoader.load(nameView, comment.senderUserId);
@@ -673,13 +869,7 @@ public class CommentsActivity extends HalloActivity {
 
         void bindTo(final @NonNull Comment comment, long lastSeenCommentRowId, int position) {
             this.comment = comment;
-
-            avatarLoader.load(avatarView, comment.senderUserId);
-            contactLoader.load(nameView, comment.senderUserId);
-
-            progressView.setVisibility(comment.transferred ? View.GONE : View.VISIBLE);
-            TimeFormatter.setTimePostsFormat(timeView, comment.timestamp);
-            timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
+            bindCommon(comment, lastSeenCommentRowId, position);
 
             final Integer textLimit = textLimits.get(comment.rowId);
             commentView.setLineLimit(textLimit != null ? textLimit : Constants.TEXT_POST_LINE_LIMIT);
@@ -688,8 +878,6 @@ public class CommentsActivity extends HalloActivity {
                 commentView.setVisibility(View.VISIBLE);
                 commentView.setText(getString(R.string.comment_retracted_placeholder));
                 commentView.setTextAppearance(commentView.getContext(), R.style.CommentTextAppearanceRetracted);
-                replyButton.setVisibility(View.GONE);
-                retractButton.setVisibility(View.GONE);
             } else {
                 textContentLoader.load(commentView, comment);
 
@@ -700,9 +888,6 @@ public class CommentsActivity extends HalloActivity {
                 } else {
                     commentView.setTextAppearance(commentView.getContext(), R.style.CommentTextAppearanceNormal);
                 }
-
-                replyButton.setVisibility(View.VISIBLE);
-                retractButton.setVisibility(comment.canBeRetracted() ? View.VISIBLE : View.GONE);
             }
             commentView.setOnReadMoreListener((view, limit) -> {
                 textLimits.put(comment.rowId, limit);
@@ -733,6 +918,40 @@ public class CommentsActivity extends HalloActivity {
                 });
                 commentMedia.setTransitionName(MediaPagerAdapter.getTransitionName(comment.id, 0));
             }
+        }
+
+        void bindCommon(@NonNull Comment comment, long lastSeenCommentRowId, int position) {
+            avatarLoader.load(avatarView, comment.senderUserId);
+            contactLoader.load(nameView, comment.senderUserId);
+
+            Resources resources = avatarView.getResources();
+            int avatarSize;
+            int avatarSpacing;
+            int startPadding;
+            if (comment.parentCommentId != null) {
+                avatarSize = resources.getDimensionPixelSize(R.dimen.reply_comment_avatar_size);
+                avatarSpacing = resources.getDimensionPixelSize(R.dimen.reply_comment_avatar_spacing);
+                startPadding = resources.getDimensionPixelSize(R.dimen.reply_comment_start_padding);
+            } else {
+                avatarSize = resources.getDimensionPixelSize(R.dimen.parent_comment_avatar_size);
+                avatarSpacing = resources.getDimensionPixelSize(R.dimen.parent_comment_avatar_spacing);
+                startPadding = resources.getDimensionPixelSize(R.dimen.parent_comment_start_padding);
+            }
+            ViewGroup.LayoutParams params = avatarView.getLayoutParams();
+            params.width = avatarSize;
+            params.height = avatarSize;
+            if (Rtl.isRtl(avatarView.getContext())) {
+                avatarView.setPadding(avatarSpacing, avatarView.getPaddingTop(), avatarView.getPaddingRight(), avatarSpacing);
+                itemView.setPadding(itemView.getPaddingLeft(), itemView.getPaddingTop(), startPadding, itemView.getPaddingBottom());
+            } else {
+                avatarView.setPadding(avatarView.getPaddingLeft(), avatarView.getPaddingTop(), avatarSpacing,avatarSpacing);
+                itemView.setPadding(startPadding, itemView.getPaddingTop(), itemView.getPaddingRight(), itemView.getPaddingBottom());
+            }
+            avatarView.setLayoutParams(params);
+
+            progressView.setVisibility(comment.transferred ? View.GONE : View.VISIBLE);
+            TimeFormatter.setTimePostsFormat(timeView, comment.timestamp);
+            timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
 
             cardView.setCardBackgroundColor(ContextCompat.getColor(cardView.getContext(), comment.rowId <= lastSeenCommentRowId ? R.color.seen_comment_background : R.color.card_background));
 
@@ -753,6 +972,14 @@ public class CommentsActivity extends HalloActivity {
                 builder.setNegativeButton(R.string.no, null);
                 builder.show();
             });
+
+            if (comment.isRetracted()) {
+                replyButton.setVisibility(View.GONE);
+                retractButton.setVisibility(View.GONE);
+            } else {
+                replyButton.setVisibility(View.VISIBLE);
+                retractButton.setVisibility(comment.canBeRetracted() ? View.VISIBLE : View.GONE);
+            }
         }
 
         void bindTo(final @Nullable Post post) {
@@ -871,10 +1098,9 @@ public class CommentsActivity extends HalloActivity {
 
     private static final int ITEM_TYPE_POST = 0;
     private static final int ITEM_TYPE_COMMENT = 1;
-    private static final int ITEM_TYPE_REPLY = 2;
-    private static final int ITEM_TYPE_FUTURE_PROOF_POST = 3;
-    private static final int ITEM_TYPE_COMMENT_FUTURE_PROOF = 4;
-    private static final int ITEM_TYPE_REPLY_FUTURE_PROOF = 5;
+    private static final int ITEM_TYPE_FUTURE_PROOF_POST = 2;
+    private static final int ITEM_TYPE_COMMENT_FUTURE_PROOF = 3;
+    private static final int ITEM_TYPE_VOICE_NOTE = 4;
 
     private class CommentsAdapter extends AdapterWithLifecycle<ViewHolder> {
 
@@ -951,9 +1177,15 @@ public class CommentsActivity extends HalloActivity {
                 return ITEM_TYPE_POST;
             }
             final Comment comment = Preconditions.checkNotNull(getItem(position));
-            return comment.parentCommentId == null
-                    ? (comment.type == Comment.TYPE_FUTURE_PROOF) ? ITEM_TYPE_COMMENT_FUTURE_PROOF : ITEM_TYPE_COMMENT
-                    : (comment.type == Comment.TYPE_FUTURE_PROOF) ? ITEM_TYPE_REPLY_FUTURE_PROOF : ITEM_TYPE_REPLY;
+            switch (comment.type) {
+                case Comment.TYPE_FUTURE_PROOF:
+                    return ITEM_TYPE_COMMENT_FUTURE_PROOF;
+                case Comment.TYPE_VOICE_NOTE:
+                    return ITEM_TYPE_VOICE_NOTE;
+                case Comment.TYPE_USER:
+                default:
+                    return ITEM_TYPE_COMMENT;
+            }
         }
 
         private @LayoutRes int getLayoutId(int viewType) {
@@ -964,22 +1196,24 @@ public class CommentsActivity extends HalloActivity {
                     return R.layout.comment_post_item;
                 case ITEM_TYPE_COMMENT:
                     return R.layout.comment_item;
-                case ITEM_TYPE_REPLY:
-                    return R.layout.comment_reply_item;
                 case ITEM_TYPE_COMMENT_FUTURE_PROOF:
                     return R.layout.comment_future_proof;
-                case ITEM_TYPE_REPLY_FUTURE_PROOF:
-                    return R.layout.comment_reply_item_future_proof;
+                case ITEM_TYPE_VOICE_NOTE:
+                    return R.layout.comment_voice_note;
             }
             throw new IllegalArgumentException("unknown view type " + viewType);
         }
 
         @Override
         public @NonNull ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            if (viewType == ITEM_TYPE_COMMENT_FUTURE_PROOF || viewType == ITEM_TYPE_REPLY_FUTURE_PROOF) {
-                return new FutureProofViewHolder(LayoutInflater.from(parent.getContext()).inflate(getLayoutId(viewType), parent, false));
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(getLayoutId(viewType), parent, false);
+            if (viewType == ITEM_TYPE_COMMENT_FUTURE_PROOF) {
+                return new FutureProofViewHolder(itemView);
             }
-            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(getLayoutId(viewType), parent, false));
+            if (viewType == ITEM_TYPE_VOICE_NOTE) {
+                return new VoiceNoteViewHolder(itemView);
+            }
+            return new ViewHolder(itemView);
         }
 
         @Override
