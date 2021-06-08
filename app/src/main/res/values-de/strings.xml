@@ -26,16 +26,18 @@
     <string name="text_post">"Text"</string>
     <string name="bad_image">"Nicht unterstützter Medientyp"</string>
     <string name="time_diff_now">"Gerade eben"</string>
-    <string name="phone_number_hint">"Telefonnummer"</string>
+    <string name="phone_number_hint">"Handynummer"</string>
     <string name="request_registration_title">"Willkommen!"</string>
-    <string name="reverify_registration_title">"Bitte deine Telefonnummer erneut eingeben"</string>
+    <string name="reverify_registration_title">"Bitte deine Handynummer erneut eingeben"</string>
     <string name="request_registration_subtitle">"Verifizierungscode wird gesendet. 
 Kosten deines Service-Providers könnten anfallen."</string>
     <string name="verify_registration_title">"Bitte den Code eingeben, den wir an %s gesendet haben"</string>
+
+    <!-- Version 0.158 : current string was not transmitted -->
     <string name="contact_permission_title">"Noch ein Hinweis"</string>
     <string name="registration_code_invalid">"Ungültiger Registrierungscode, versuch es noch einmal"</string>
-    <string name="registration_failed">"Fehler bei der Registrierung der Telefonnummer, versuch es noch einmal"</string>
-    <string name="registration_failed_no_friends">"Nutzung momentan nur auf Einladungs-Basis. Bitte deine Freude oder Familienmitglieder, die auf HalloApp sind, dich über deine Telefonnummer einzuladen."</string>
+    <string name="registration_failed">"Fehler bei der Registrierung der Handynummer, versuch es noch einmal"</string>
+    <string name="registration_failed_no_friends">"Die Nutzung ist derzeit nur über Einladung möglich.  Bitte deine Freude oder Familienmitglieder, die auf HalloApp sind, dich über deine Handynummer einzuladen."</string>
     <string name="registration_failed_no_friends_title">"Ups!"</string>
     <string name="type_a_message_hint">"Nachricht eingeben"</string>
     <string name="write_a_description">"Eine Beschreibung eingeben"</string>
@@ -53,14 +55,14 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="empty_chat_with_name_placeholder">"%s ist auf HalloApp."</string>
     <string name="new_chat_name_placeholder">"%s ist jetzt aktiv auf HalloApp! 🎉"</string>
     <string name="posts_empty">"Deine Beiträge erscheinen hier"</string>
-    <string name="posts_exchange_numbers">"Um euch zu verbinden müsst ihr eure Telefonnummern austauschen"</string>
+    <string name="posts_exchange_numbers">"Um den Kontakt herzustellen, müsst ihr eure Handynummern austauschen"</string>
     <string name="home_page_empty">"Beiträge deiner Kontakte siehst du hier"</string>
     <string name="chats_page_empty">"Kontakte und Nachrichten erscheinen hier"</string>
     <string name="chats_search_empty">"Keine Chats gefunden für '%s'"</string>
     <string name="groups_page_empty">"Deine Gruppen erscheinen hier"</string>
     <string name="groups_search_empty">"Keine Gruppen gefunden für '%s'"</string>
     <string name="contact_profile_empty">"%s's Beiträge erscheinen hier"</string>
-    <string name="invalid_phone_number">"Ungültige Telefonnummer"</string>
+    <string name="invalid_phone_number">"Ungültige Handynummer"</string>
     <string name="share_option_post">"Beitrag"</string>
 
     <!-- the verb? -->
@@ -101,12 +103,12 @@ Kosten deines Service-Providers könnten anfallen."</string>
         <item quantity="one">"Du kannst %d Objekt pro Beitrag auswählen"</item>
         <item quantity="other">"Du kannst bis zu %d Objekte pro Beitrag auswählen"</item>
     </plurals>
-    <string name="camera_record_audio_permission_rationale">"Zum Fotografieren und zur Video-Aufnahme, benötigen wir die Berechtigung, auf die Kamera zuzugreifen und Audio auf deinem Gerät aufzunehmen"</string>
-    <string name="camera_record_audio_permission_rationale_denied">"Zum Fotografieren und zur Video-Aufnahme, benötigen wir die Berechtigung, auf die Kamera zuzugreifen und Audio auf deinem Gerät aufzunehmen.
+    <string name="camera_record_audio_permission_rationale">"Um Fotos und Videos aufzunehmen, benötigen wir deine Erlaubnis, damit wir auf deine Kamera zugreifen und Audio aufnehmen können."</string>
+    <string name="camera_record_audio_permission_rationale_denied">"Um Fotos und Videos aufzunehmen, benötigen wir deine Erlaubnis, damit wir auf deine Kamera zugreifen und Audio aufnehmen können.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
-    <string name="contacts_permission_rationale">"Um den Kontakt zu deinen Freunden und deiner Familie herzustellen, benötigen wir die Zugriffsberechtigung auf deine Kontakte"</string>
-    <string name="contacts_permission_rationale_denied">"Um den Kontakt zu deinen Freunden und deiner Familie herzustellen, benötigen wir die Zugriffsberechtigung auf deine Kontakte.
+    <string name="contacts_permission_rationale">"Um den Kontakt zu deinen Freunden &amp; zur Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können"</string>
+    <string name="contacts_permission_rationale_denied">"Um den Kontakt zu deinen Freunden &amp; zur Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
 
@@ -120,7 +122,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="retry">"Noch einmal probieren"</string>
 
     <!-- the href probably shouldn't be part of the translated string -->
-    <string name="contact_rationale_upload">"Um den Kontakt zu Freunden &amp; Familie herzustellen, benötigen wir die Zugriffsberechtigung auf deine Kontakte. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;"</string>
+    <string name="contact_rationale_upload">"Um den Kontakt zu deinen Freunden und zur Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;"</string>
     <string name="failed_to_initialize">"Fehler bei der Initialisierung"</string>
     <string name="type_a_comment_hint">"Kommentar hinzufügen"</string>
     <string name="comments">"Kommentare"</string>
@@ -151,7 +153,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
         <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und %3$d andere Personen haben &lt;b&gt;%4$s&lt;/b&gt;'s Beitrag kommentiert"</item>
     </plurals>
     <string name="contact_hashing_faq_dialog_title">"Deine Privatsphäre ist unsere oberste Priorität"</string>
-    <string name="contact_hashing_faq_dialog_info">"Um den Kontakt mit deinen Freunden auf HalloApp herzustellen verwendet HalloApp nur das Feld für die Telefonnummer und wird keine weiteren Daten aus deinen Kontakten erfassen."</string>
+    <string name="contact_hashing_faq_dialog_info">"Um den Kontakt mit deinen Freunden auf HalloApp herzustellen, verwendet HalloApp nur das Feld für die Handynummer und wird keine weiteren Daten aus deinen Kontakten erfassen."</string>
     <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; hat einen eigenen Beitrag kommentiert"</string>
     <string name="list_of_two">"%1$s und %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
@@ -188,10 +190,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="rotate">"Drehen"</string>
 
     <!-- in version 0.153 when no one saw post yet -  header still reads "Seen by" in English -->
-    <plurals name="seen_by_people">
-        <item quantity="one">"Gesehen von %d Person"</item>
-        <item quantity="other">"Gesehen von %d Personen"</item>
-    </plurals>
+    <string name="seen_by">"Gesehen von"</string>
     <string name="empty_viewed_by">"Noch hat keiner deinen Beitrag gesehen"</string>
     <string name="options">"Optionen"</string>
     <string name="block">"Blocken"</string>
@@ -256,7 +255,7 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <!-- In activity center, mark all comments/mentions as read -->
     <string name="mark_all_read">"Alle als gelesen markieren"</string>
     <string name="login_failed">"Anmeldung fehlgeschlagen"</string>
-    <string name="login_failed_explanation">"Bitte Telefonnummer erneut überprüfen"</string>
+    <string name="login_failed_explanation">"Bitte Handynummer erneut überprüfen"</string>
     <plurals name="app_expiration_days_left">
         <item quantity="one">"Diese HalloApp-Version wird in %d Tag ablaufen. Bitte lade die neueste Version vom Google Play Store herunter."</item>
         <item quantity="other">"Diese HalloApp-Version wird in %d Tagen ablaufen. Bitte lade die neueste Version vom Google Play Store herunter."</item>
@@ -312,7 +311,7 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <!-- How will it look like? Text will be above the dotted line? -->
     <string name="email_logs_text">"
 ----------------------------------------
-Bitte im Feld oben das Problem beschreiben.
+Bitte oberhalb das Problem beschreiben.
 uid: %s
 Version: %s
 ----------------------------------------
@@ -383,11 +382,13 @@ Version: %s
     <string name="feed_privacy_update_failure">"Fehler bei der Aktualisierung der Einstellung"</string>
     <string name="invite_failed_internet">"Fehler beim Versenden der Einladung. Überprüfe dein Internetverbindung und versuche es noch einmal"</string>
     <string name="invite_failed_no_invites">"Sorry, du hast keine weiteren Einladungen mehr. Versuche es später noch einmal"</string>
-    <string name="invite_failed_invalid_number">"Diese Telefonnummer ist ungültig"</string>
+    <string name="invite_failed_invalid_number">"Diese Handynummer ist ungültig"</string>
     <string name="invite_failed_existing_user">"Dein Kontakt ist bereits auf HalloApp!"</string>
     <string name="invite_failed_unknown">"Fehler beim Versenden der Einladung"</string>
     <string name="invite_creation_in_progress">"Einladung wird erstellt..."</string>
     <string name="invite_info_fetch_internet">"Fehler beim Abrufen der Einladungs-Info, überprüfe deine Internetverbindung und versuche es noch einmal"</string>
+
+    <!-- Fuzzy -->
     <plurals name="invites_remaining">
         <item quantity="one">"Du hast noch %s Einladung"</item>
         <item quantity="other">"Du hast noch %s Einladungen"</item>
@@ -397,7 +398,7 @@ Version: %s
     <string name="invite_title">"Einladung"</string>
     <string name="settings_invite_option">"Einladung zu HalloApp"</string>
     <string name="invite_already_on_halloapp">"Ist bereits auf HalloApp"</string>
-    <string name="invite_invalid_phone_number">"Ungültige Telefonnummer"</string>
+    <string name="invite_invalid_phone_number">"Ungültige Handynummer"</string>
     <string name="edit">"Bearbeiten"</string>
     <string name="done">"Fertig"</string>
     <string name="members_header">"Mitglieder (%s)"</string>
@@ -477,9 +478,9 @@ Version: %s
     <!-- Fuzzy -->
     <string name="feed_nux_bottom_sheet_text">"Über Home-Feed kannst du Text-, Foto- und Video-Updates teilen, die nach 30 Tagen automatisch gelöscht werden.
 
-Wenn du Updates mit jemanden teilen möchtest, müssen beide Seiten ihre jeweiligen Nummern auf ihren Telefonen gespeichert haben.
+Wenn du Updates mit jemanden teilen möchtest, müssen beide Seiten ihre jeweiligen Nummern auf ihren Handys gespeichert haben.
 
-Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewählte Personen freigeben. Dazu unter Einstellungen den Privatsphäre-Feed ändern."</string>
+Du kannst Updates mit deiner gesamten Kontaktliste oder nur mit ausgewählten Personen teilen. Dazu unter Einstellungen den Privatsphäre-Feed ändern."</string>
     <string name="messages_nux_text">"Hier findest du Nachrichten von deinen Freunden &amp; deiner Familie. Du siehst hier auch wenn sich jemand neu bei HalloApp angemeldet hat."</string>
     <string name="post_audience_nux_text">"Deine Beiträge werden mit deinen Kontakten, die auch auf HalloApp sind, geteilt. Du kannst deren Zugriff auf deine Beiträge unter Profil→Einstellungen einschränken."</string>
 
@@ -507,13 +508,11 @@ Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewähl
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
     <string name="composer_sharing_message">"Wird an %s gesendet"</string>
     <string name="composer_sharing_post">"Wird mit %s geteilt"</string>
-
-    <!-- Fuzzy -->
     <plurals name="max_video_length">
-        <item quantity="one">"Dein Video ist über %d Sekunden lang. Bitte bearbeite es oder wähle ein anderes Video aus."</item>
+        <item quantity="one">"Dein Video ist über %d Sekunde lang. Bitte bearbeite es oder wähle ein anderes Video aus."</item>
         <item quantity="other">"Dein Video ist über %d Sekunden lang. Bitte bearbeite es oder wähle ein anderes Video aus."</item>
     </plurals>
-    <string name="video_edit_unable_trim">"Das Video konnte nicht getrimmt werden"</string>
+    <string name="video_edit_unable_trim">"Das Video konnte nicht getrimmt werden."</string>
 
     <!-- noun or verb? -->
     <string name="mute">"Stumm schalten"</string>
@@ -554,14 +553,14 @@ Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewähl
     <string name="contact_permissions_dialog_title">"Kontakte"</string>
     <string name="not_now">"Jetzt nicht"</string>
     <string name="continue_button">"Weiter"</string>
-    <string name="contact_permissions_nag">"Um dir zu helfen, den Kontakt zu deinen Freunden und deiner Familie herzustellen, benötigen wir die Zugriffsberechtigung auf deine Kontakte. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;"</string>
+    <string name="contact_permissions_nag">"Um dir zu helfen, den Kontakt zu deinen Freunden und deiner Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;"</string>
 
     <!-- pls note: I added another ">" (after settings and permissions follows another tap to enable access to contacts) -->
-    <string name="contact_permissions_nag_permanently_blocked">"Um dir zu helfen, den Kontakt zu deinen Freunden &amp; deiner Familie herzustellen benötigen wir deine Zugriffserlaubnis auf deine Kontakte. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;. Tippe auf Einstellungen &gt; Berechtigungen und aktiviere Kontakte"</string>
-    <string name="home_contact_permissions_nag">"Um dir zu helfen, den Kontakt zu deinen Freunden und deiner Familie herzustellen, benötigen wir die Zugriffsberechtigung auf deine Kontakte."</string>
+    <string name="contact_permissions_nag_permanently_blocked">"Um dir zu helfen, den Kontakt zu Freunden und zur Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;. Tippe auf Einstellungen &gt; Berechtigungen und aktiviere Kontakte"</string>
+    <string name="home_contact_permissions_nag">"Um dir zu helfen, den Kontakt zu deinen Freunden und deiner Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können."</string>
 
     <!-- Text got not updated in version 0.156 -->
-    <string name="home_contact_permissions_nag_permanently_blocked">"Um dir zu helfen, den Kontakt zu deinen Freunden &amp; deiner Familie herzustellen benötigen wir deine Zugriffserlaubnis auf deine Kontakte. Tippe auf Einstellungen &gt; Berechtigungen und aktiviere Kontakte"</string>
+    <string name="home_contact_permissions_nag_permanently_blocked">"Um dir zu helfen, den Kontakt zu Freunden und zur Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können. Tippe auf Einstellungen &gt; Berechtigungen und aktiviere Kontakte"</string>
     <string name="invite_link_load_failed">"Fehler beim Öffnen des Links zur Gruppeneinladung"</string>
     <string name="message_tombstone_placeholder">"Auf Nachrichteneingang wird gewartet. Dies kann eine Weile dauern. &lt;a href=\"https://halloapp.com/help/\"&gt;Mehr erfahren&lt;/a&gt;."</string>
     <string name="failed_no_longer_member">"Du bist kein Mitglied dieser Gruppe mehr"</string>
@@ -579,32 +578,32 @@ Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewähl
 &lt;a href=\"update-app\"&gt;Aktualisiere deine App&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
-    <string name="registration_sms_retry_progress">"Requesting new SMS code…"</string>
+    <string name="registration_sms_retry_progress">"Neuen SMS-Code anfordern"</string>
 
     <!-- message when user requests a voice call -->
-    <string name="registration_phone_code_progress">"Requesting code via phone call…"</string>
+    <string name="registration_phone_code_progress">"Code via Anruf anfordern..."</string>
 
     <!-- button to request another sms code -->
-    <string name="resend_sms">"Resend SMS"</string>
+    <string name="resend_sms">"SMS erneut senden"</string>
 
     <!-- button to request registration code via phone call -->
-    <string name="call_me">"Call me"</string>
-    <string name="verify_keys">"Verify keys"</string>
+    <string name="call_me">"Ruf mich an"</string>
+    <string name="verify_keys">"Schlüssel überprüfen"</string>
 
     <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
-    <string name="key_verification_success">"Verification succeeded"</string>
+    <string name="key_verification_success">"Verifikation erfolgreich"</string>
 
     <!-- Shown when the information scanned from the QR code does not match what was expected, indicating the keys do not match -->
-    <string name="key_verification_failure">"Verification failed"</string>
+    <string name="key_verification_failure">"Verifikation fehlgeschlagen"</string>
 
     <!-- Shown on the key verification screen indicating tapping on the QR code will open the scanner -->
-    <string name="key_verification_tap_to_scan">"Tap to scan"</string>
+    <string name="key_verification_tap_to_scan">"Zum Scannen hier tippen"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"Um zu verifizieren ob die Verbindung mit %s sicher ist, prüfe ob die obige Nummer mit der auf dem Gerät angezeigten übereinstimmt oder scanne den QR-Code auf dem Telefon. "<![CDATA[<a href="https://halloapp.com/help/">Mehr erfahren</a>]]>"."</string>
+    <string name="key_verification_explanation">"Um die Sicherheit deiner Verbindung mit %s zu verifizieren, prüfe bitte, ob die obige Nummer mit der auf dem Gerät angezeigten übereinstimmt oder scanne den QR-Code auf dem Handy. "<![CDATA[<a href="https://halloapp.com/help/">Mehr erfahren</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
-    <string name="view_more">"More"</string>
+    <string name="view_more">"Mehr"</string>
 
     <!-- Button to manage your feed privacy settings -->
     <string name="manage_feed_privacy">"Privatsphäre"</string>
@@ -616,7 +615,7 @@ Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewähl
     </plurals>
 
     <!-- Button to invite a contact to a group with an invite link -->
-    <string name="group_invite_via_link">"Mit Link zur Gruppe einladen"</string>
+    <string name="group_invite_via_link">"Zur Gruppe via Link einladen"</string>
 
     <!-- Shown below on seen by to explain that posts disappear -->
     <!-- Fuzzy -->
@@ -626,23 +625,31 @@ Du kannst deine Updates für deine gesamte Kontaktliste oder nur für ausgewähl
     <string name="faq">"FAQ"</string>
 
     <!-- Shown in progress dialog when loading key verification info -->
-    <string name="key_verification_fetching_keys">"Fetching keys…"</string>
+    <string name="key_verification_fetching_keys">"Schlüsseldaten werden abgerufen..."</string>
 
     <!-- Shown when we fail to get key verification info -->
-    <string name="key_verification_key_fetch_failed">"Failed to fetch keys"</string>
+    <string name="key_verification_key_fetch_failed">"Schlüsseldaten können nicht abgerufen werden..."</string>
 
     <!-- Shown inline in a chat when the e2e keys securing the messages have changed, i.e. if the other user changes phones or reinstalls -->
-    <string name="system_message_keys_changed">"Security keys with %s changed"</string>
+    <string name="system_message_keys_changed">"Der Sicherheitsschlüssel von %s hat sich geändert"</string>
 
     <!-- Shown on the key verification activity next to a switch where the user can keep track of whether they verified the identity of the other user -->
     <string name="key_verification_switch_label">"Verifiziert"</string>
-    <string name="action_add">"Add"</string>
-    <string name="video_countdown_message">"Recording will end in %s"</string>
+    <string name="action_add">"Hinzufügen"</string>
+    <string name="video_countdown_message">"Aufnahme endet in %s"</string>
 
     <!-- Button takes user to settings to manage their storage -->
-    <string name="manage_storage_button">"Manage Storage"</string>
+    <string name="manage_storage_button">"Speichermanagement"</string>
 
     <!-- Message that's displayed if user has low storage -->
-    <string name="low_storage_msg">"Your phone is running low on storage.
-In order to use HalloApp please free some storage on this phone."</string>
+    <string name="low_storage_msg">"Der Speicherplatz auf deinem Handy wird knapp.
+Bitte mehr Speicherplatz freigeben, damit du HalloApp weiterhin nutzen kannst."</string>
+    <plurals name="seen_by_people">
+        <item quantity="one">"Gesehen von %d Person"</item>
+        <item quantity="other">"Gesehen von %d Personen"</item>
+    </plurals>
+
+    <!-- Text that provides context for a group invite link being shared -->
+    <string name="group_invite_link_context">"Über diesen Link kannst du meiner HalloApp-Gruppe beitreten: %s"</string>
+    <string name="voice_note">"Sprachnotiz"</string>
 </resources>

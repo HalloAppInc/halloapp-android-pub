@@ -163,10 +163,7 @@ Open the app settings screen to modify app permissions."</string>
     <string name="group_avatar_picker_title">"Group avatar"</string>
     <string name="other_media">"Other media"</string>
     <string name="rotate">"Rotate"</string>
-    <plurals name="seen_by_people">
-        <item quantity="one">"Seen by %d person"</item>
-        <item quantity="other">"Seen by %d person"</item>
-    </plurals>
+    <string name="seen_by">"Seen by"</string>
     <string name="empty_viewed_by">"No one has seen your post yet"</string>
     <string name="options">"Options"</string>
     <string name="block">"Block"</string>
@@ -344,8 +341,8 @@ version: %s
     <string name="invite_creation_in_progress">"Creating invite…"</string>
     <string name="invite_info_fetch_internet">"Failed to retrieve invite info, check your internet and try again"</string>
     <plurals name="invites_remaining">
-        <item quantity="one">"You have %s invite remaining"</item>
-        <item quantity="other">"You have %s invite remaining"</item>
+        <item quantity="one">"You have %s invite remaining this week"</item>
+        <item quantity="other">"You have %s invite remaining this week"</item>
     </plurals>
     <string name="no_invites_remaining">"More invites coming this Monday!"</string>
     <string name="invite_friends_title">"Invite friends &amp; family"</string>
@@ -578,4 +575,12 @@ You can share your updates with your entire contact list or only with selected p
     <!-- Message that's displayed if user has low storage -->
     <string name="low_storage_msg">"Your phone is running low on storage.
 In order to use HalloApp please free some storage on this phone."</string>
+    <plurals name="seen_by_people">
+        <item quantity="one">"Seen by %d person"</item>
+        <item quantity="other">"Seen by %d person"</item>
+    </plurals>
+
+    <!-- Text that provides context for a group invite link being shared -->
+    <string name="group_invite_link_context">"Click on this link to join my HalloApp group: %s"</string>
+    <string name="voice_note">"Voice note"</string>
 </resources>

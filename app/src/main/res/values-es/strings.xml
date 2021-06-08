@@ -180,10 +180,9 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="group_avatar_picker_title">"Avatar del grupo"</string>
     <string name="other_media">"Otros medios"</string>
     <string name="rotate">"Girar"</string>
-    <plurals name="seen_by_people">
-        <item quantity="one">"Visto por %d persona"</item>
-        <item quantity="other">"Visto por %d personas"</item>
-    </plurals>
+
+    <!-- Fuzzy -->
+    <string name="seen_by">"Visto por %d persona"</string>
     <string name="empty_viewed_by">"Todavía nadie ha visto tu publicación"</string>
     <string name="options">"Opciones"</string>
     <string name="block">"Bloquear"</string>
@@ -400,6 +399,8 @@ version: %s
     <string name="invite_failed_unknown">"No se pudo enviar la invitación"</string>
     <string name="invite_creation_in_progress">"Se está generando una invitación…"</string>
     <string name="invite_info_fetch_internet">"No se pudo recoger la información de la invitación, revisa tu internet e intentálo de nuevo"</string>
+
+    <!-- Fuzzy -->
     <plurals name="invites_remaining">
         <item quantity="one">"Te queda %s invitación esta semana"</item>
         <item quantity="other">"Te quedan %s invitaciones esta semana"</item>
@@ -641,4 +642,12 @@ Puedes compartir estas historias con todos tus contactos o solo con las personas
     <!-- Message that's displayed if user has low storage -->
     <string name="low_storage_msg">"Your phone is running low on storage.
 In order to use HalloApp please free some storage on this phone."</string>
+    <plurals name="seen_by_people">
+        <item quantity="one">"Seen by %d person"</item>
+        <item quantity="other">"Seen by %d person"</item>
+    </plurals>
+
+    <!-- Text that provides context for a group invite link being shared -->
+    <string name="group_invite_link_context">"Click on this link to join my HalloApp group: %s"</string>
+    <string name="voice_note">"Voice note"</string>
 </resources>

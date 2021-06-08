@@ -181,10 +181,9 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="group_avatar_picker_title">"Grup simgesi"</string>
     <string name="other_media">"Diğer görseller"</string>
     <string name="rotate">"Döndür"</string>
-    <plurals name="seen_by_people">
-        <item quantity="one">"%d kişi tarafından görüldü"</item>
-        <item quantity="other">"%d kişi tarafından görüldü"</item>
-    </plurals>
+
+    <!-- Fuzzy -->
+    <string name="seen_by">"%d kişi tarafından görüldü"</string>
     <string name="empty_viewed_by">"Gönderini henüz kimse görmedi"</string>
     <string name="options">"Seçenekler"</string>
     <string name="block">"Engelle"</string>
@@ -393,6 +392,8 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="invite_failed_unknown">"Davet gönderilemedi"</string>
     <string name="invite_creation_in_progress">"Davet oluşturuluyor..."</string>
     <string name="invite_info_fetch_internet">"Davet bilgileri alınamadı. İnternet bağlantını kontrol et ve tekrar dene"</string>
+
+    <!-- Fuzzy -->
     <plurals name="invites_remaining">
         <item quantity="one">"%s davet hakkın kaldı"</item>
         <item quantity="other">"%s davet hakkın kaldı"</item>
@@ -636,4 +637,12 @@ Yayınlarını, dilersen listendeki kişilerin tamamıyla ya da yalnızca seçti
     <!-- Message that's displayed if user has low storage -->
     <string name="low_storage_msg">"Your phone is running low on storage.
 In order to use HalloApp please free some storage on this phone."</string>
+    <plurals name="seen_by_people">
+        <item quantity="one">"Seen by %d person"</item>
+        <item quantity="other">"Seen by %d person"</item>
+    </plurals>
+
+    <!-- Text that provides context for a group invite link being shared -->
+    <string name="group_invite_link_context">"Click on this link to join my HalloApp group: %s"</string>
+    <string name="voice_note">"Voice note"</string>
 </resources>
