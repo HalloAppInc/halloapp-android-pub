@@ -924,12 +924,17 @@ public class ConnectionImpl extends Connection {
                     Log.i("connection: got chat stanza " + ProtoPrinter.toString(msg));
                     ChatStanza chatStanza = msg.getChatStanza();
                     String senderName = chatStanza.getSenderName();
+                    String senderPhone = chatStanza.getSenderPhone();
                     UserId fromUserId = new UserId(Long.toString(msg.getFromUid()));
 
                     Log.i("message " + msg.getId() + " from version " + chatStanza.getSenderClientVersion() + ": " + chatStanza.getSenderLogInfo());
 
                     if (!TextUtils.isEmpty(senderName)) {
                         connectionObservers.notifyUserNamesReceived(Collections.singletonMap(fromUserId, senderName));
+                    }
+
+                    if (!TextUtils.isEmpty(senderPhone)) {
+                        connectionObservers.notifyUserPhonesReceived(Collections.singletonMap(fromUserId, senderPhone));
                     }
 
                     bgWorkers.execute(() -> {

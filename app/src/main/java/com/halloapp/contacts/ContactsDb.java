@@ -309,6 +309,48 @@ public class ContactsDb {
         });
     }
 
+    public Future<Void> updateUserPhones(@NonNull Map<UserId, String> phones) {
+        return databaseWriteExecutor.submit(() -> {
+            boolean updated = false;
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            db.beginTransaction();
+            try {
+                for (Map.Entry<UserId, String> user : phones.entrySet()) {
+                    String currentPhone = null;
+                    try (final Cursor cursor = db.query(PhonesTable.TABLE_NAME,
+                            new String[] { PhonesTable.COLUMN_PHONE },
+                            PhonesTable.COLUMN_USER_ID + "=?",
+                            new String [] {user.getKey().rawId()}, null, null, null, "1")) {
+                        if (cursor.moveToNext()) {
+                            currentPhone = cursor.getString(0);
+                        }
+                    }
+                    if (!Objects.equals(currentPhone, user.getValue())) {
+                        final ContentValues values = new ContentValues();
+                        values.put(PhonesTable.COLUMN_PHONE, user.getValue());
+                        final int updatedRowsCount = db.updateWithOnConflict(PhonesTable.TABLE_NAME, values,
+                                PhonesTable.COLUMN_USER_ID + "=? ",
+                                new String[]{user.getKey().rawId()},
+                                SQLiteDatabase.CONFLICT_ABORT);
+                        if (updatedRowsCount == 0) {
+                            values.put(PhonesTable.COLUMN_USER_ID, user.getKey().rawId());
+                            db.insert(PhonesTable.TABLE_NAME, null, values);
+                            Log.i("ContactsDb.updateUserPhones: phone " + user.getValue() + " added for " + user.getKey());
+                        }
+                        updated = true;
+                    }
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+            if (updated) {
+                notifyContactsChanged();
+            }
+            return null;
+        });
+    }
+
     public Future<Void> updateContactAvatarInfo(@NonNull ContactAvatarInfo contact) {
         return databaseWriteExecutor.submit(() -> {
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -410,6 +452,20 @@ public class ContactsDb {
         try (final Cursor cursor = db.query(NamesTable.TABLE_NAME,
                 new String[] { NamesTable.COLUMN_NAME },
                 NamesTable.COLUMN_USER_ID + "=?",
+                new String [] {userId.rawId()}, null, null, null, "1")) {
+            if (cursor.moveToNext()) {
+                return cursor.getString(0);
+            }
+        }
+        return null;
+    }
+
+    @WorkerThread
+    public @Nullable String readPhone(@NonNull UserId userId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(PhonesTable.TABLE_NAME,
+                new String[] { PhonesTable.COLUMN_PHONE },
+                PhonesTable.COLUMN_USER_ID + "=?",
                 new String [] {userId.rawId()}, null, null, null, "1")) {
             if (cursor.moveToNext()) {
                 return cursor.getString(0);
@@ -852,6 +908,18 @@ public class ContactsDb {
         static final String COLUMN_NAME = "name";
     }
 
+    // table for phone number from received 1-1 messages
+    private static final class PhonesTable implements BaseColumns {
+        private PhonesTable() {}
+
+        static final String TABLE_NAME = "phones";
+
+        static final String INDEX_USER_ID = "phones_user_id_index";
+
+        static final String COLUMN_USER_ID = "user_id";
+        static final String COLUMN_PHONE = "phone";
+    }
+
     private static final class BlocklistTable implements BaseColumns {
         private BlocklistTable() { }
 
@@ -885,7 +953,7 @@ public class ContactsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "contacts.db";
-        private static final int DATABASE_VERSION = 12;
+        private static final int DATABASE_VERSION = 13;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -941,6 +1009,18 @@ public class ContactsDb {
                     + NamesTable.COLUMN_USER_ID
                     + ");");
 
+            db.execSQL("DROP TABLE IF EXISTS " + PhonesTable.TABLE_NAME);
+            db.execSQL("CREATE TABLE " + PhonesTable.TABLE_NAME + " ("
+                    + PhonesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + PhonesTable.COLUMN_USER_ID + " TEXT NOT NULL,"
+                    + PhonesTable.COLUMN_PHONE + " TEXT"
+                    + ");");
+
+            db.execSQL("DROP INDEX IF EXISTS " + PhonesTable.INDEX_USER_ID);
+            db.execSQL("CREATE UNIQUE INDEX " + PhonesTable.INDEX_USER_ID + " ON " + PhonesTable.TABLE_NAME + " ("
+                    + PhonesTable.COLUMN_USER_ID
+                    + ");");
+
             db.execSQL("DROP TABLE IF EXISTS " + BlocklistTable.TABLE_NAME);
             db.execSQL("CREATE TABLE " + BlocklistTable.TABLE_NAME + " ("
                     + BlocklistTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -985,6 +1065,9 @@ public class ContactsDb {
                 }
                 case 11: {
                     upgradeFromVersion11(db);
+                }
+                case 12: {
+                    upgradeFromVersion12(db);
                 }
                 break;
                 default: {
@@ -1131,6 +1214,20 @@ public class ContactsDb {
 
         private void upgradeFromVersion11(SQLiteDatabase db) {
             db.execSQL("ALTER TABLE " + ContactsTable.TABLE_NAME + " ADD COLUMN " + ContactsTable.COLUMN_INVITED + " INTEGER");
+        }
+
+        private void upgradeFromVersion12(SQLiteDatabase db) {
+            db.execSQL("DROP TABLE IF EXISTS " + PhonesTable.TABLE_NAME);
+            db.execSQL("CREATE TABLE " + PhonesTable.TABLE_NAME + " ("
+                    + PhonesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + PhonesTable.COLUMN_USER_ID + " TEXT NOT NULL,"
+                    + PhonesTable.COLUMN_PHONE + " TEXT"
+                    + ");");
+
+            db.execSQL("DROP INDEX IF EXISTS " + PhonesTable.INDEX_USER_ID);
+            db.execSQL("CREATE UNIQUE INDEX " + PhonesTable.INDEX_USER_ID + " ON " + PhonesTable.TABLE_NAME + " ("
+                    + PhonesTable.COLUMN_USER_ID
+                    + ");");
         }
 
         private void deleteDb() {

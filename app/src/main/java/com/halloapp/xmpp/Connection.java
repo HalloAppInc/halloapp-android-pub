@@ -73,6 +73,7 @@ public abstract class Connection {
         public void onGroupAdminAutoPromoteReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {}
         public void onGroupDeleteReceived(@NonNull GroupId groupId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
         public void onUserNamesReceived(@NonNull Map<UserId, String> names) {}
+        public void onUserPhonesReceived(@NonNull Map<UserId, String> phones) {}
         public void onPresenceReceived(UserId user, Long lastSeen) {}
         public void onChatStateReceived(UserId user, ChatState chatState) {}
         public void onServerPropsReceived(@NonNull Map<String, String> props, @NonNull String hash) {}

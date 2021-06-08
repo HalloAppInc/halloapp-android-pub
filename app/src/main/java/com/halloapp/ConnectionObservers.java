@@ -220,6 +220,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyUserPhonesReceived(@NonNull Map<UserId, String> phones) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onUserPhonesReceived(phones);
+            }
+        }
+    }
+
     public void notifyWhisperKeysMessage(WhisperKeysMessage message, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {

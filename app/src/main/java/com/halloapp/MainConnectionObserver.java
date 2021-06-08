@@ -325,6 +325,11 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
+    public void onUserPhonesReceived(@NonNull Map<UserId, String> phones) {
+        contactsDb.updateUserPhones(phones);
+    }
+
+    @Override
     public void onPresenceReceived(UserId user, Long lastSeen) {
         presenceLoader.reportPresence(user, lastSeen);
     }

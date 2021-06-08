@@ -3,6 +3,9 @@ package com.halloapp.ui.chat;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
+import android.telephony.PhoneNumberUtils;
+import android.text.TextUtils;
+import android.util.Pair;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
@@ -59,7 +62,7 @@ public class ChatViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Message>> messageList;
     final ComputableLiveData<Contact> contact;
-    final ComputableLiveData<String> name;
+    final ComputableLiveData<Pair<String, String>> nameAndPhone;
     final ComputableLiveData<Chat> chat;
     final ComputableLiveData<Reply> reply;
     final ComputableLiveData<List<Contact>> mentionableContacts;
@@ -176,10 +179,14 @@ public class ChatViewModel extends AndroidViewModel {
             }
         };
 
-        name = new ComputableLiveData<String>() {
+        nameAndPhone = new ComputableLiveData<Pair<String, String>>() {
             @Override
-            protected String compute() {
-                return ContactsDb.getInstance().getContact((UserId)chatId).getDisplayName();
+            protected Pair<String, String> compute() {
+                ContactsDb contactsDb = ContactsDb.getInstance();
+                Contact contact = contactsDb.getContact((UserId)chatId);
+                String phone = TextUtils.isEmpty(contact.addressBookName) ? contactsDb.readPhone((UserId)chatId) : null;
+                String normalizedPhone = phone == null ? null : PhoneNumberUtils.formatNumber("+" + phone, null);
+                return new Pair<>(contact.getDisplayName(), normalizedPhone);
             }
         };
 

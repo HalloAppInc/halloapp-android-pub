@@ -46,7 +46,6 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
@@ -69,7 +68,6 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.VoiceNotePlayer;
-import com.halloapp.media.VoiceNoteRecorder;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
@@ -104,7 +102,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class ChatActivity extends HalloActivity {
 
@@ -497,11 +494,19 @@ public class ChatActivity extends HalloActivity {
             }
 
             if (chatId instanceof UserId) {
-                viewModel.name.getLiveData().observe(this, name -> {
+                viewModel.nameAndPhone.getLiveData().observe(this, nameAndPhone -> {
+                    String name = nameAndPhone.first;
+                    String phone = nameAndPhone.second;
                     chatName = name;
                     setTitle(name);
+                    setSubtitle(phone);
                 });
                 presenceLoader.getLastSeenLiveData((UserId)chatId).observe(this, presenceState -> {
+                    Pair<String, String> pair = viewModel.nameAndPhone.getLiveData().getValue();
+                    if (pair != null && pair.second != null) {
+                        setSubtitle(pair.second);
+                        return;
+                    }
                     if (presenceState == null || presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_UNKNOWN) {
                         setSubtitle(null);
                     } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_ONLINE) {
