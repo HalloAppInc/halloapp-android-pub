@@ -43,9 +43,8 @@ import java.util.concurrent.ConcurrentMap;
  * the Signal protocol should be routed through this class.
  */
 public class EncryptedSessionManager {
-    private static final long MIN_TIME_BETWEEN_KEY_DOWNLOAD_ATTEMPTS = DateUtils.MINUTE_IN_MILLIS;
+    private static final long MIN_TIME_BETWEEN_KEY_DOWNLOAD_ATTEMPTS = 5 * DateUtils.SECOND_IN_MILLIS;
 
-    private final ServerProps serverProps = ServerProps.getInstance();
     private final Connection connection;
     private final KeyManager keyManager;
     private final EncryptedKeyStore encryptedKeyStore;
@@ -139,7 +138,6 @@ public class EncryptedSessionManager {
         } catch (Exception e) {
             Log.e("Failed to set up encryption session", e);
             Log.sendErrorReport("Failed to get session setup info");
-            connection.sendMessage(message, null);
         }
     }
 
