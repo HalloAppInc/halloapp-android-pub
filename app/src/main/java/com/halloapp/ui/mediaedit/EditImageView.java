@@ -13,28 +13,26 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.WorkerThread;
 
-import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.logs.Log;
 
 import java.io.File;
 import java.io.IOException;
 
 public class EditImageView extends androidx.appcompat.widget.AppCompatImageView {
     @FunctionalInterface
-    public interface ImageLoadedListener {
-        void loaded(Bitmap originalBitmap, Bitmap croppedBitmap);
+    public interface StateUpdateListener {
+        void onUpdate(@NonNull State state);
     }
 
     private enum CropRegionSection {
@@ -52,16 +50,18 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     private final RectF imageRect = new RectF();
     private final RectF cropRect = new RectF();
     private final RectF borderRect = new RectF();
-    private float maxAspectRatio = Constants.MAX_IMAGE_ASPECT_RATIO;
+    private float maxAspectRatio = 0;
     private final Path path = new Path();
     private final Paint shadowPaint = new Paint();
     private final Paint borderPaint = new Paint();
     private float offsetX = 0.0f;
     private float offsetY = 0.0f;
     private float scale = 1.0f;
-    private int numberOfRotations = 0;
+    private int rotationCount = 0;
     private boolean hFlipped = false;
     private boolean vFlipped = false;
+
+    private StateUpdateListener stateUpdateListener;
 
     public EditImageView(Context context) {
         super(context);
@@ -90,75 +90,63 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         setOnTouchListener(new GestureListener());
     }
 
-    @WorkerThread
-    @Nullable
-    public static Bitmap loadBitmap(Context context, @Nullable File file) {
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(displayMetrics);
-
-        int limit = Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(displayMetrics.widthPixels, displayMetrics.heightPixels));
-
-        try {
-            return file != null ? MediaUtils.decodeImage(file, limit, limit) : null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public void setMaxAspectRatio(float maxAspectRatio) {
         this.maxAspectRatio = maxAspectRatio;
     }
 
-    public void setAsyncImageFile(@Nullable File originalFile, @Nullable File croppedFile, @Nullable State state, @Nullable ImageLoadedListener listener) {
+    public void setAsyncImageFile(@Nullable File file, @Nullable State state, @Nullable Runnable onLoad) {
+        setState(null);
         setImageDrawable(null);
-        clearValues();
 
-        if (originalFile == null) {
+        if (file == null) {
             return;
         }
 
         BgWorkers.getInstance().execute(() -> {
-            final Bitmap bitmap = loadBitmap(getContext(), originalFile);
-            if (bitmap == null) {
+            Bitmap bitmap;
+            try {
+                bitmap = MediaUtils.decodeImage(getContext(), file);
+            } catch (IOException e) {
+                Log.e("EditImageView: unable to get bitmap", e);
                 return;
             }
 
-            final Bitmap cropped = state != null ? loadBitmap(getContext(), croppedFile) : null;
-
             post(() -> {
                 setImageBitmap(bitmap);
+                setState(state);
 
-                if (state != null) {
-                    setState(state);
-                }
-
-                computeImageRect();
-                if (state == null) {
-                    computeInitialCropRegion();
-                }
-
-                updateImage();
-
-                if (listener != null) {
-                    listener.loaded(bitmap, cropped);
+                if (onLoad != null) {
+                    onLoad.run();
                 }
             });
         });
     }
 
+    public void setStateUpdateListener(StateUpdateListener listener) {
+        stateUpdateListener = listener;
+    }
+
+    private void notifyStateUpdated() {
+        if (stateUpdateListener != null) {
+            stateUpdateListener.onUpdate(getState());
+        }
+    }
+
     public State getState() {
+        if (getDrawable() == null) {
+            return new State();
+        }
+
         final State state = new State();
         state.cropRect = new RectF(cropRect);
         state.scale = scale;
         state.hFlipped = hFlipped;
         state.vFlipped = vFlipped;
-        state.numberOfRotations = numberOfRotations;
+        state.rotationCount = rotationCount;
         state.offsetX = offsetX;
         state.offsetY = offsetY;
 
-        final float imageWidth = numberOfRotations % 2 == 0 ? getDrawable().getIntrinsicWidth() : getDrawable().getIntrinsicHeight();
+        final float imageWidth = rotationCount % 2 == 0 ? getDrawable().getIntrinsicWidth() : getDrawable().getIntrinsicHeight();
         final float baseScale =  imageRect.width() / imageWidth;
 
         final float cropCenterX = (cropRect.left + cropRect.right) / 2;
@@ -175,26 +163,34 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     }
 
     public void setState(@Nullable State state) {
-        if (state == null) {
+        if (getDrawable() == null) {
             return;
         }
 
-        cropRect.set(state.cropRect);
-        scale = state.scale;
-        hFlipped = state.hFlipped;
-        vFlipped = state.vFlipped;
-        numberOfRotations = state.numberOfRotations;
-        offsetX = state.offsetX;
-        offsetY = state.offsetY;
-    }
+        if (state == null) {
+            offsetX = 0.0f;
+            offsetY = 0.0f;
+            scale = 1.0f;
+            rotationCount = 0;
+            hFlipped = false;
+            vFlipped = false;
+        } else {
+            cropRect.set(state.cropRect);
+            scale = state.scale;
+            hFlipped = state.hFlipped;
+            vFlipped = state.vFlipped;
+            rotationCount = state.rotationCount;
+            offsetX = state.offsetX;
+            offsetY = state.offsetY;
+        }
 
-    public void clearValues() {
-        offsetX = 0.0f;
-        offsetY = 0.0f;
-        scale = 1.0f;
-        numberOfRotations = 0;
-        hFlipped = false;
-        vFlipped = false;
+        computeImageRect();
+        if (state == null) {
+            computeInitialCropRegion();
+        }
+
+        updateImage();
+        requestLayout();
     }
 
     private void computeImageRect() {
@@ -207,8 +203,8 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         final float h = getHeight();
         final float cx = w / 2;
         final float cy = h / 2;
-        final float dw = (numberOfRotations % 2) == 0 ? getDrawable().getIntrinsicWidth() : getDrawable().getIntrinsicHeight();
-        final float dh = (numberOfRotations % 2) == 0 ? getDrawable().getIntrinsicHeight() : getDrawable().getIntrinsicWidth();
+        final float dw = (rotationCount % 2) == 0 ? getDrawable().getIntrinsicWidth() : getDrawable().getIntrinsicHeight();
+        final float dh = (rotationCount % 2) == 0 ? getDrawable().getIntrinsicHeight() : getDrawable().getIntrinsicWidth();
 
         final float baseScale = Math.min((w - borderThickness * 2)  / dw, (h - borderThickness * 2) / dh);
         final float iw = dw * baseScale;
@@ -232,7 +228,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         final float h = imageRect.height();
         final float dw = drawable.getIntrinsicWidth();
         final float dh = getDrawable().getIntrinsicHeight();
-        final float baseScale = (numberOfRotations % 2) == 0 ? Math.min(w / dw, h / dh) : Math.min(w / dh, h / dw);
+        final float baseScale = (rotationCount % 2) == 0 ? Math.min(w / dw, h / dh) : Math.min(w / dh, h / dw);
         final float x = imageRect.centerX() - (dw * baseScale * scale) / 2;
         final float y = imageRect.centerY() - (dh * baseScale * scale) / 2;
 
@@ -240,19 +236,17 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         m.postScale(baseScale * scale, baseScale * scale);
         m.postTranslate(x, y);
 
-        m.postRotate(-90 * numberOfRotations, imageRect.centerX(), imageRect.centerY());
+        m.postRotate(-90 * rotationCount, imageRect.centerX(), imageRect.centerY());
         m.postScale(vFlipped ? -1 : 1, hFlipped ? -1 : 1, imageRect.centerX(), imageRect.centerY());
         m.postTranslate(offsetX, offsetY);
 
         setImageMatrix(m);
+
+        notifyStateUpdated();
     }
 
     public void reset() {
-        clearValues();
-        computeImageRect();
-        computeInitialCropRegion();
-        updateImage();
-        requestLayout();
+        setState(null);
     }
 
     public void zoom(float scale, float zoomCenterX, float zoomCenterY) {
@@ -340,7 +334,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     }
 
     public void rotate() {
-        numberOfRotations = (numberOfRotations + 1) % 4;
+        rotationCount = (rotationCount + 1) % 4;
 
         boolean tmp = vFlipped;
         vFlipped = hFlipped;
@@ -494,6 +488,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         }
 
         invalidate();
+        notifyStateUpdated();
     }
 
     @Override
@@ -617,7 +612,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         public float offsetX;
         public float offsetY;
         public float scale;
-        public int numberOfRotations;
+        public int rotationCount;
         public boolean hFlipped;
         public boolean vFlipped;
         public int cropWidth;
@@ -633,7 +628,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         public State() {}
 
         private State(Parcel in) {
-            numberOfRotations = in.readInt();
+            rotationCount = in.readInt();
             hFlipped = in.readInt() > 0; // Unable to use in.readBoolean due to API version
             vFlipped = in.readInt() > 0;
             scale = in.readFloat();
@@ -648,7 +643,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
         @Override
         public void writeToParcel(Parcel parcel, int flags) {
-            parcel.writeInt(numberOfRotations);
+            parcel.writeInt(rotationCount);
             parcel.writeInt(hFlipped ? 1 : 0); // Unable to use parcel.writeBoolean due to API version
             parcel.writeInt(vFlipped ? 1 : 0);
             parcel.writeFloat(scale);
@@ -659,6 +654,24 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             parcel.writeInt(cropHeight);
             parcel.writeInt(cropOffsetX);
             parcel.writeInt(cropOffsetY);
+        }
+
+        @Override
+        public boolean equals(@Nullable Object obj) {
+            if (super.equals(obj)) {
+                return true;
+            }
+
+            if (!(obj instanceof State)) {
+                return false;
+            }
+
+            State state = (State) obj;
+
+            return state.cropRect.equals(cropRect) && state.offsetX == offsetX && state.offsetY == offsetY
+                    && state.scale == scale && state.rotationCount == rotationCount && state.hFlipped == hFlipped
+                    && state.vFlipped == vFlipped && state.cropWidth == cropWidth && state.cropHeight == cropHeight
+                    && state.cropOffsetX == cropOffsetX && state.cropOffsetY == cropOffsetY;
         }
 
         public static final Parcelable.Creator<State> CREATOR = new Parcelable.Creator<State>() {

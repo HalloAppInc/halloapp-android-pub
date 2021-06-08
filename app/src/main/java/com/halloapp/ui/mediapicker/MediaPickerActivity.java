@@ -38,10 +38,10 @@ import com.halloapp.R;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.ui.ContentComposerActivity;
-import com.halloapp.ui.CropImageActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.ui.camera.CameraActivity;
+import com.halloapp.ui.mediaedit.MediaEditActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
@@ -194,15 +194,15 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         final boolean includeVideos = getIntent().getBooleanExtra(EXTRA_SHOW_VIDEOS, SHOW_VIDEOS_DEFAULT);
         if (savedInstanceState != null && savedInstanceState.getLongArray(KEY_SELECTED_MEDIA) != null) {
             factory = new MediaPickerViewModelFactory(getApplication(), includeVideos, savedInstanceState.getLongArray(KEY_SELECTED_MEDIA));
-        } else if (getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA) != null) {
-            factory = new MediaPickerViewModelFactory(getApplication(), includeVideos, getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA));
+        } else if (getIntent().getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA) != null) {
+            factory = new MediaPickerViewModelFactory(getApplication(), includeVideos, getIntent().getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA));
         } else {
             factory = new MediaPickerViewModelFactory(getApplication(), includeVideos);
         }
 
         viewModel = new ViewModelProvider(this, factory).get(MediaPickerViewModel.class);
-        viewModel.original = getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
-        viewModel.state = getIntent().getBundleExtra(CropImageActivity.EXTRA_STATE);
+        viewModel.original = getIntent().getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA);
+        viewModel.state = getIntent().getBundleExtra(MediaEditActivity.EXTRA_STATE);
         viewModel.mediaList.observe(this, mediaItems -> {
             adapter.setPagedList(mediaItems);
             progressView.setVisibility(View.GONE);
@@ -301,9 +301,9 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                     setResult(RESULT_OK, data);
                     finish();
                 } else if (result == RESULT_SELECT_MORE) {
-                    viewModel.original = data.getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
-                    viewModel.state = data.getBundleExtra(CropImageActivity.EXTRA_STATE);
-                    viewModel.setSelected(data.getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA));
+                    viewModel.original = data.getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA);
+                    viewModel.state = data.getBundleExtra(MediaEditActivity.EXTRA_STATE);
+                    viewModel.setSelected(data.getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA));
                 }
                 break;
             }
@@ -512,7 +512,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         Bundle state = viewModel.state != null ? (Bundle)viewModel.state.clone() : null;
 
         Log.i("MediaPickerActivity preparing results for " + uris.size() + " uris");
-        intent.putParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA, uris);
+        intent.putParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA, uris);
 
         if (original != null) {
             original.removeAll(uris);
@@ -523,7 +523,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                     state.remove(uri.toString());
                 }
 
-                intent.putExtra(CropImageActivity.EXTRA_STATE, state);
+                intent.putExtra(MediaEditActivity.EXTRA_STATE, state);
             }
         }
     }

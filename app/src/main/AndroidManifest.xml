@@ -248,17 +248,13 @@
             android:theme="@style/AppTheme.Black"
             android:label="@string/avatar_picker_title" />
 
-        <activity android:name=".ui.CropImageActivity"
-            android:theme="@style/AppTheme.Black"
-            android:label="@string/edit"/>
-
-        <activity android:name=".ui.mediaedit.VideoEditActivity"
-            android:theme="@style/AppTheme.Black"
-            android:label="@string/edit"/>
-
         <activity android:name=".ui.mediaexplorer.MediaExplorerActivity"
             android:theme="@style/AppTheme.Black.Translucent"
             android:label="" />
+
+        <activity android:name=".ui.mediaedit.MediaEditActivity"
+            android:theme="@style/AppTheme.Black"
+            android:label="@string/edit"/>
 
         <receiver
             android:name=".registration.SmsVerificationReceiver"

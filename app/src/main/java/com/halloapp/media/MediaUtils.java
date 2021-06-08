@@ -13,14 +13,18 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
+import android.media.MediaMuxer;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Size;
+import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
@@ -57,6 +61,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -67,6 +72,7 @@ import java.util.Objects;
 
 @SuppressWarnings("WeakerAccess")
 public class MediaUtils {
+    private static final int TRIMMING_BUFFER_SIZE = 2 * 1024 * 1024;
 
     @WorkerThread
     public static int getExifOrientation(@NonNull File file) throws IOException {
@@ -120,6 +126,19 @@ public class MediaUtils {
                 exifOrientation == ExifInterface.ORIENTATION_TRANSVERSE;
     }
 
+    private static int computeMaxDimension(@NonNull Context context) {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(displayMetrics);
+
+        return Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(displayMetrics.widthPixels, displayMetrics.heightPixels));
+    }
+
+    @WorkerThread
+    public static @Nullable Bitmap decode(@NonNull Context context, @NonNull File file, @Media.MediaType int mediaType) throws IOException {
+        return decode(file, mediaType, computeMaxDimension(context));
+    }
+
     @WorkerThread
     public static @Nullable Bitmap decode(@NonNull File file, @Media.MediaType int mediaType, int maxDimension) throws IOException {
         switch (mediaType) {
@@ -146,6 +165,11 @@ public class MediaUtils {
             thumb.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, streamTo);
         }
         thumb.recycle();
+    }
+
+    @WorkerThread
+    public static @Nullable Bitmap decodeImage(Context context, @NonNull File file) throws IOException {
+        return decodeImage(file, computeMaxDimension(context));
     }
 
     @WorkerThread
@@ -612,5 +636,75 @@ public class MediaUtils {
                 }
             }
         }
+    }
+
+    @WorkerThread
+    public static void trimVideo(@NonNull Context context, @NonNull File file, @NonNull File target, long startTimeUs, long endTimeUs, boolean mute) throws IOException {
+        trimVideo(context, Uri.fromFile(file), target, startTimeUs, endTimeUs, mute);
+    }
+
+    @WorkerThread
+    public static void trimVideo(@NonNull Context context, @NonNull Uri uri, @NonNull File target, long startTimeUs, long endTimeUs, boolean mute) throws IOException {
+        int rotationDegrees = 0;
+        HashMap<Integer, Integer> indexes = new HashMap<>();
+
+        MediaMuxer muxer = new MediaMuxer(target.getAbsolutePath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+        MediaExtractor extractor = new MediaExtractor();
+        extractor.setDataSource(context, uri, null);
+
+        for (int i = 0; i < extractor.getTrackCount(); ++i) {
+            MediaFormat format = extractor.getTrackFormat(i);
+            String mime = format.getString(MediaFormat.KEY_MIME);
+
+            if (mute && mime != null && mime.startsWith("audio/")) {
+                continue;
+            }
+
+            if (Build.VERSION.SDK_INT >= 23 && format.containsKey(MediaFormat.KEY_ROTATION)) {
+                rotationDegrees = format.getInteger(MediaFormat.KEY_ROTATION);
+            }
+
+            indexes.put(i, muxer.addTrack(format));
+        }
+
+        ByteBuffer buffer = ByteBuffer.allocate(TRIMMING_BUFFER_SIZE);
+
+        muxer.setOrientationHint(rotationDegrees);
+        muxer.start();
+
+        for (int i = 0; i < extractor.getTrackCount(); ++i) {
+            if (!indexes.containsKey(i)) {
+                continue;
+            }
+
+            extractor.selectTrack(i);
+            extractor.seekTo(startTimeUs, MediaExtractor.SEEK_TO_PREVIOUS_SYNC);
+
+            while (true) {
+                MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
+
+                try {
+                    info.size = extractor.readSampleData(buffer, 0);
+                    info.presentationTimeUs = extractor.getSampleTime();
+                    info.flags = extractor.getSampleFlags();
+                } catch (IllegalArgumentException e) {
+                    Log.e("VideoEditActivity: unable to extract video, probably buffer too small", e);
+                    throw new IOException(e);
+                }
+
+                if (info.size < 0 || (endTimeUs > 0 && info.presentationTimeUs > endTimeUs)) {
+                    break;
+                }
+
+                muxer.writeSampleData(Objects.requireNonNull(indexes.get(i)), buffer, info);
+                extractor.advance();
+            }
+
+            extractor.unselectTrack(i);
+        }
+        muxer.stop();
+
+        extractor.release();
+        muxer.release();
     }
 }

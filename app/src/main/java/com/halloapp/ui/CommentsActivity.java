@@ -63,6 +63,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.mediaedit.MediaEditActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerViewModel;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
@@ -412,7 +413,7 @@ public class CommentsActivity extends HalloActivity {
             case REQUEST_CODE_PICK_MEDIA: {
                 if (resultCode == RESULT_OK) {
                     if (data != null) {
-                        final ArrayList<Uri> uris = data.getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
+                        final ArrayList<Uri> uris = data.getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA);
                         if (uris.size() == 1) {
                             viewModel.loadCommentMediaUri(uris.get(0));
                         } else {

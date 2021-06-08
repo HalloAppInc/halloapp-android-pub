@@ -63,7 +63,7 @@ import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
-import com.halloapp.ui.mediaedit.VideoEditActivity;
+import com.halloapp.ui.mediaedit.MediaEditActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
@@ -147,7 +147,15 @@ public class ContentComposerActivity extends HalloActivity {
             public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
                 final View currentView = mediaPagerAdapter.getCurrentView();
                 if (currentView != null) {
-                    sharedElements.put(CropImageActivity.TRANSITION_VIEW_NAME, currentView.findViewById(R.id.image));
+                    ContentPhotoView imageView = currentView.findViewById(R.id.image);
+                    ContentPlayerView contentPlayerView = currentView.findViewById(R.id.video);
+
+                    if (imageView.getVisibility() == View.VISIBLE) {
+                        sharedElements.put(MediaEditActivity.TRANSITION_VIEW_NAME, imageView);
+                    } else {
+                        sharedElements.put(MediaEditActivity.TRANSITION_VIEW_NAME, contentPlayerView);
+                    }
+
                 }
             }
         });
@@ -207,9 +215,9 @@ public class ContentComposerActivity extends HalloActivity {
                 uris = null;
             }
         } else {
-            if (getIntent().hasExtra(CropImageActivity.EXTRA_MEDIA)) {
+            if (getIntent().hasExtra(MediaEditActivity.EXTRA_MEDIA)) {
                 calledFromPicker = true;
-                uris = getIntent().getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
+                uris = getIntent().getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA);
             } else {
                 calledFromPicker = false;
                 uris = getIntent().getParcelableArrayListExtra(Intent.EXTRA_STREAM);
@@ -217,7 +225,7 @@ public class ContentComposerActivity extends HalloActivity {
         }
         calledFromCamera = getIntent().getBooleanExtra(EXTRA_CALLED_FROM_CAMERA, false);
 
-        final Bundle editStates = getIntent().getParcelableExtra(CropImageActivity.EXTRA_STATE);
+        final Bundle editStates = getIntent().getParcelableExtra(MediaEditActivity.EXTRA_STATE);
 
         if (uris != null) {
             Log.i("ContentComposerActivity received " + uris.size() + " uris");
@@ -491,8 +499,8 @@ public class ContentComposerActivity extends HalloActivity {
             }
         }
 
-        intent.putParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA, uris);
-        intent.putExtra(CropImageActivity.EXTRA_STATE, editStates);
+        intent.putParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA, uris);
+        intent.putExtra(MediaEditActivity.EXTRA_STATE, editStates);
     }
 
     private void prepareResult() {
@@ -650,21 +658,14 @@ public class ContentComposerActivity extends HalloActivity {
                 }
             }
 
-            final Intent intent;
-            if (mediaPairList.get(currentItem).getRelevantMedia().type == Media.MEDIA_TYPE_IMAGE) {
-                intent = new Intent(this, CropImageActivity.class);
-            } else {
-                intent = new Intent(this, VideoEditActivity.class);
-            }
-
-            intent.putExtra(CropImageActivity.EXTRA_MEDIA, uris);
-            intent.putExtra(CropImageActivity.EXTRA_SELECTED, currentItem);
-            intent.putExtra(CropImageActivity.EXTRA_STATE, state);
-            intent.putExtra(CropImageActivity.EXTRA_MAX_ASPECT_RATIO, 0f);
+            Intent intent = new Intent(this, MediaEditActivity.class);
+            intent.putExtra(MediaEditActivity.EXTRA_MEDIA, uris);
+            intent.putExtra(MediaEditActivity.EXTRA_SELECTED, currentItem);
+            intent.putExtra(MediaEditActivity.EXTRA_STATE, state);
 
             updatedMediaProcessed = false;
             ThreadUtils.runWithoutStrictModeRestrictions(() -> {
-                startActivityForResult(intent, REQUEST_CODE_CROP, ActivityOptions.makeSceneTransitionAnimation(this, mediaPager, CropImageActivity.TRANSITION_VIEW_NAME).toBundle());
+                startActivityForResult(intent, REQUEST_CODE_CROP, ActivityOptions.makeSceneTransitionAnimation(this, mediaPager, MediaEditActivity.TRANSITION_VIEW_NAME).toBundle());
             });
         }
     }
@@ -770,13 +771,17 @@ public class ContentComposerActivity extends HalloActivity {
 
         // Do it here instead of onActivityResult because onActivityResult is called only after
         // the animated transition ends.
-        if (resultCode == RESULT_OK && data.hasExtra(CropImageActivity.EXTRA_SELECTED)) {
-            if (data.hasExtra(CropImageActivity.EXTRA_MEDIA)) {
+        if (resultCode == RESULT_OK && data.hasExtra(MediaEditActivity.EXTRA_SELECTED)) {
+            if (data.hasExtra(MediaEditActivity.EXTRA_MEDIA)) {
                 postponeEnterTransition();
 
                 mediaPager.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                     @Override
                     public boolean onPreDraw() {
+                        if (mediaPager.getVisibility() != View.VISIBLE) {
+                            return true;
+                        }
+
                         mediaPager.getViewTreeObserver().removeOnPreDrawListener(this);
                         startPostponedEnterTransition();
 
@@ -785,9 +790,8 @@ public class ContentComposerActivity extends HalloActivity {
                 });
 
                 onDataUpdated(data);
-                updatedMediaProcessed = true;
             } else {
-                int selected = data.getIntExtra(CropImageActivity.EXTRA_SELECTED, getCurrentItem());
+                int selected = data.getIntExtra(MediaEditActivity.EXTRA_SELECTED, getCurrentItem());
                 List<ContentComposerViewModel.EditMediaPair> items = viewModel.editMedia.getValue();
 
                 if (items != null && getCurrentItem() != selected && 0 <= selected && selected < items.size()) {
@@ -796,6 +800,8 @@ public class ContentComposerActivity extends HalloActivity {
                     startPostponedEnterTransition();
                 }
             }
+
+            updatedMediaProcessed = true;
         }
     }
 
@@ -814,9 +820,9 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     private void onDataUpdated(@NonNull final Intent data) {
-        final ArrayList<Uri> uris = data.getParcelableArrayListExtra(CropImageActivity.EXTRA_MEDIA);
-        final int currentItem = data.getIntExtra(CropImageActivity.EXTRA_SELECTED, getCurrentItem());
-        final Bundle editStates = data.getParcelableExtra(CropImageActivity.EXTRA_STATE);
+        final ArrayList<Uri> uris = data.getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA);
+        final int currentItem = data.getIntExtra(MediaEditActivity.EXTRA_SELECTED, getCurrentItem());
+        final Bundle editStates = data.getParcelableExtra(MediaEditActivity.EXTRA_STATE);
 
         if (uris != null) {
             if (uris.size() == 0) {

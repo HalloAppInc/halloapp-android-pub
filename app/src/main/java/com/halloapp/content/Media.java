@@ -1,8 +1,11 @@
 package com.halloapp.content;
 
+import android.util.Size;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
+import com.halloapp.media.MediaUtils;
 import com.halloapp.proto.clients.AlbumMedia;
 import com.halloapp.proto.clients.EncryptedResource;
 import com.halloapp.proto.clients.Image;
@@ -51,7 +54,18 @@ public class Media {
     public @TransferredState int transferred;
 
     public static Media createFromFile(@MediaType int type, File file) {
-        return new Media(0, type, null, file, generateEncKey(), null, null,0, 0, TRANSFERRED_NO);
+        int width = 0;
+        int height = 0;
+
+        if (file.exists()) {
+            Size size = MediaUtils.getDimensions(file, type);
+            if (size != null) {
+                width = size.getWidth();
+                height = size.getHeight();
+            }
+        }
+
+        return new Media(0, type, null, file, generateEncKey(), null, null, width, height, TRANSFERRED_NO);
     }
 
     public static Media createFromUrl(@MediaType int type, String url, byte [] encKey, byte [] encSha256hash, int width, int height) {

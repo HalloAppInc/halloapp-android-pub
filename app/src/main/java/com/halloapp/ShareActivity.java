@@ -8,9 +8,9 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.id.ChatId;
 import com.halloapp.ui.ContentComposerActivity;
-import com.halloapp.ui.CropImageActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.contacts.ContactsActivity;
+import com.halloapp.ui.mediaedit.MediaEditActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +43,7 @@ public class ShareActivity extends HalloActivity {
                         return;
                     }
                     ChatId chatId = ChatId.fromNullable(selectedId);
-                    contentComposer.putExtra(CropImageActivity.EXTRA_MEDIA, uris);
+                    contentComposer.putExtra(MediaEditActivity.EXTRA_MEDIA, uris);
                     contentComposer.putExtra(ContentComposerActivity.EXTRA_CHAT_ID, chatId);
                     contentComposer.putExtra(Intent.EXTRA_TEXT, getIntent().getStringExtra(Intent.EXTRA_TEXT));
                     startActivity(contentComposer);
