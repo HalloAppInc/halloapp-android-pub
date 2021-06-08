@@ -137,6 +137,7 @@ public class CommentsActivity extends HalloActivity {
     private TimestampRefresher timestampRefresher;
 
     private boolean showKeyboardOnResume;
+    private boolean scrollToComment = false;
     private int commentsFsePosition;
 
     @Override
@@ -202,7 +203,34 @@ public class CommentsActivity extends HalloActivity {
         final View replyIndicatorCloseButton = findViewById(R.id.reply_indicator_close);
 
         viewModel = new ViewModelProvider(this, new CommentsViewModel.Factory(getApplication(), postId)).get(CommentsViewModel.class);
-        viewModel.commentList.observe(this, comments -> adapter.submitList(comments, () -> {}));
+        viewModel.commentList.observe(this, comments -> {
+            adapter.submitList(comments, new Runnable() {
+                @Override
+                public void run() {
+                    commentsView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!scrollToComment) {
+                                return;
+                            }
+                            scrollToComment = false;
+                            long currentOldest = 0;
+                            int commentPosition = -1;
+                            for (int i = 0; i < comments.size(); i++) {
+                                Comment comment = comments.get(i);
+                                if (comment.senderUserId.isMe() && comment.timestamp > currentOldest) {
+                                    commentPosition = i;
+                                    currentOldest = comment.timestamp;
+                                }
+                            }
+                            if (commentPosition != -1) {
+                                commentsView.smoothScrollToPosition(commentPosition+1);
+                            }
+                        }
+                    });
+                }
+            });
+        });
 
         viewModel.lastSeenCommentRowId.getLiveData().observe(this, rowId -> adapter.setLastSeenCommentRowId(rowId == null ? -1 : rowId));
 
@@ -299,6 +327,7 @@ public class CommentsActivity extends HalloActivity {
             final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
             resetReplyIndicator();
+            scrollToComment = true;
         });
 
         editText.addTextChangedListener(new TextWatcher() {
