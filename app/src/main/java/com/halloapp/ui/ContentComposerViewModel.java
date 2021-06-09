@@ -1,7 +1,6 @@
 package com.halloapp.ui;
 
 import android.app.Application;
-import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -378,6 +377,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
     static class PrepareContentTask extends AsyncTask<Void, Void, Void> {
 
+        private final ContentDb contentDb = ContentDb.getInstance();
         private final ContactsDb contactsDb = ContactsDb.getInstance();
         private final FeedPrivacyManager feedPrivacyManager = FeedPrivacyManager.getInstance();
 
@@ -406,9 +406,10 @@ public class ContentComposerViewModel extends AndroidViewModel {
         @Override
         protected Void doInBackground(Void... voids) {
 
+            Post replyPost = replyPostId == null ? null : contentDb.getPost(replyPostId);
             final ContentItem contentItem = chatId == null ?
                     new Post(0, UserId.ME, RandomId.create(), System.currentTimeMillis(),Post.TRANSFERRED_NO, Post.SEEN_YES, text) :
-                    new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.TYPE_CHAT, Message.USAGE_CHAT, Message.STATE_INITIAL, text, replyPostId, replyPostMediaIndex, null, -1, null, 0);
+                    new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.TYPE_CHAT, Message.USAGE_CHAT, Message.STATE_INITIAL, text, replyPostId, replyPostMediaIndex, null, -1, replyPost == null ? null : replyPost.senderUserId, 0);
             if (media != null) {
                 for (Media mediaItem : media) {
                     final File postFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(mediaItem.type));
