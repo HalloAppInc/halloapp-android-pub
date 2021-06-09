@@ -153,7 +153,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
         <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und %3$d andere Personen haben &lt;b&gt;%4$s&lt;/b&gt;'s Beitrag kommentiert"</item>
     </plurals>
     <string name="contact_hashing_faq_dialog_title">"Deine Privatsphäre ist unsere oberste Priorität"</string>
-    <string name="contact_hashing_faq_dialog_info">"Um den Kontakt mit deinen Freunden auf HalloApp herzustellen, verwendet HalloApp nur das Feld für die Handynummer und wird keine weiteren Daten aus deinen Kontakten erfassen."</string>
+    <string name="contact_hashing_faq_dialog_info">"HalloApp verwendet nur das Feld für die Handynummer, um den Kontakt zu deinen Freunden auf HalloApp herzustellen. Es werden keine weiteren Daten aus deinen Kontakten erfasst."</string>
     <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; hat einen eigenen Beitrag kommentiert"</string>
     <string name="list_of_two">"%1$s und %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
@@ -279,7 +279,7 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="last_seen">"Zuletzt online %s"</string>
 
     <!-- It looks like that the translation is to long. Instead of "less than a minute ago" can we use "just now"? -->
-    <string name="last_seen_less_minute">"Zuletzt online vor weniger als einer Minute"</string>
+    <string name="last_seen_less_minute">"Zuletzt online gerade eben"</string>
     <string name="online">"online"</string>
 
     <!-- Capital or lower case? -->
