@@ -99,7 +99,7 @@ public class SettingsPrivacy extends HalloActivity implements EasyPermissions.Pe
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 
-            getPreferenceManager().setSharedPreferencesName(Preferences.PREFS_NAME);
+            getPreferenceManager().setSharedPreferencesName(Preferences.DEVICE_LOCAL_PREFS_NAME);
 
             final StrictMode.ThreadPolicy threadPolicy = StrictMode.allowThreadDiskReads();
             try {

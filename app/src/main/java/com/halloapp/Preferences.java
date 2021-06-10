@@ -9,11 +9,17 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Preferences {
 
     private static Preferences instance;
 
-    public static final String PREFS_NAME = "prefs";
+    public static final String BACKED_UP_PREFS_NAME = "prefs_backed_up";
+    public static final String DEVICE_LOCAL_PREFS_NAME = "prefs_device_local";
+
+    private static final String PREF_KEY_MIGRATED_PREFS = "migrated_prefs";
 
     private static final String PREF_KEY_LAST_CONTACTS_SYNC_TIME = "last_sync_time";
     private static final String PREF_KEY_REQUIRE_FULL_CONTACTS_SYNC = "require_full_sync";
@@ -49,8 +55,9 @@ public class Preferences {
     private static final String PREF_KEY_REGISTRATION_TIME = "registration_time";
     private static final String PREF_KEY_INVITE_NOTIFICATION_SEEN = "welcome_invite_seen";
 
-    private AppContext appContext;
-    private SharedPreferences preferences;
+    private final AppContext appContext;
+    private SharedPreferences backedUpPreferences;
+    private SharedPreferences deviceLocalPreferences;
 
     public static Preferences getInstance() {
         if (instance == null) {
@@ -67,297 +74,464 @@ public class Preferences {
         this.appContext = appContext;
     }
 
-    @WorkerThread
-    private synchronized SharedPreferences getPreferences() {
-        if (preferences == null) {
-            preferences = appContext.get().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+    public synchronized void ensureMigrated() {
+        SharedPreferences backedUpPreferences = getPreferences(true);
+        boolean migrated = backedUpPreferences.getBoolean(PREF_KEY_MIGRATED_PREFS, false);
+        Log.d("Prefences migrated? " + migrated);
+        if (migrated) {
+            return;
         }
-        return preferences;
+
+        for (Preference<?> pref : prefs) {
+            pref.migrate();
+        }
+
+        if (!backedUpPreferences.edit().putBoolean(PREF_KEY_MIGRATED_PREFS, true).commit()) {
+            Log.w("Preferences failed to save migration state");
+        }
+    }
+
+    private final List<Preference<?>> prefs = new ArrayList<>();
+
+    private final BooleanPreference prefShowedFeedNux = createPref(false, PREF_KEY_SHOWED_FEED_NUX, false);
+    private final BooleanPreference prefShowedMessagesNux = createPref(false, PREF_KEY_SHOWED_MESSAGES_NUX, false);
+    private final BooleanPreference prefShowedProfileNux = createPref(false, PREF_KEY_SHOWED_PROFILE_NUX, false);
+    private final BooleanPreference prefShowedMakePostNux = createPref(false, PREF_KEY_SHOWED_MAKE_POST_NUX, false);
+    private final BooleanPreference prefShowedActivityCenterNux = createPref(false, PREF_KEY_SHOWED_ACTIVITY_CENTER_NUX, false);
+    private final BooleanPreference prefShowedWelcomeNux = createPref(false, PREF_KEY_SHOWED_WELCOME_NUX, false);
+
+    private final BooleanPreference prefInviteNotificationSeen = createPref(false, PREF_KEY_INVITE_NOTIFICATION_SEEN, false);
+    private final LongPreference prefLastContactSyncTime = createPref(false, PREF_KEY_LAST_CONTACTS_SYNC_TIME, 0L);
+    private final LongPreference prefLastBlockListSyncTime = createPref(false, PREF_KEY_LAST_BLOCK_LIST_SYNC_TIME, 0L);
+    private final LongPreference prefRegistrationTime = createPref(false, PREF_KEY_REGISTRATION_TIME, 0L);
+    private final LongPreference prefLastPushTokenTime = createPref(false, PREF_KEY_LAST_PUSH_TOKEN_SYNC_TIME, 0L);
+    private final StringPreference prefLastPushToken = createPref(false, PREF_KEY_SYNCED_PUSH_TOKEN, null);
+    private final StringPreference prefLastLocale = createPref(false, PREF_KEY_SYNCED_LANGUAGE, null);
+    private final LongPreference prefLastGroupSyncTime = createPref(false, PREF_KEY_LAST_GROUP_SYNC_TIME, 0L);
+    private final IntPreference prefInvitesRemaining = createPref(false, PREF_KEY_INVITES_REMAINING, -1);
+    private final BooleanPreference prefRequireFullContactSync = createPref(false, PREF_KEY_REQUIRE_FULL_CONTACTS_SYNC, true);
+    private final BooleanPreference prefRequireSharePosts = createPref(false, PREF_KEY_REQUIRE_SHARE_POSTS, false);
+    private final LongPreference prefFeedNotificationCutoff = createPref(false, PREF_KEY_FEED_NOTIFICATION_TIME_CUTOFF, 0L);
+    private final BooleanPreference prefUseDebugHost = createPref(false, PREF_KEY_USE_DEBUG_HOST, false);
+    private final StringPreference prefActivePrivacyList = createPref(false, PREF_KEY_FEED_PRIVACY_SETTING, PrivacyList.Type.INVALID);
+    private final IntPreference prefNextNotificationId = createPref(false, PREF_KEY_NEXT_NOTIF_ID, Notifications.FIRST_DYNAMIC_NOTIFICATION_ID);
+    private final LongPreference prefLastDecryptStatRowId = createPref(false, PREF_KEY_LAST_DECRYPT_MESSAGE_ROW_ID, -1L);
+    private final IntPreference prefVideoBitrate = createPref(false, PREF_KEY_VIDEO_BITRATE, Constants.VIDEO_BITRATE);
+    private final IntPreference prefAudioBitrate = createPref(false, PREF_KEY_AUDIO_BITRATE, Constants.AUDIO_BITRATE);
+    private final IntPreference prefH264Res = createPref(false, PREF_KEY_H264_RES, Constants.VIDEO_RESOLUTION_H264);
+    private final IntPreference prefH265Res = createPref(false, PREF_KEY_H265_RES, Constants.VIDEO_RESOLUTION_H265);
+
+    private final BooleanPreference prefNotifyPosts = createPref(true, PREF_KEY_NOTIFY_POSTS, true);
+    private final BooleanPreference prefNotifyComments = createPref(true, PREF_KEY_NOTIFY_COMMENTS, true);
+
+    private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
+        BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
+        prefs.add(pref);
+        return pref;
+    }
+
+    private IntPreference createPref(boolean backedUp, String prefKey, int defaultValue) {
+        IntPreference pref = new IntPreference(backedUp, prefKey, defaultValue);
+        prefs.add(pref);
+        return pref;
+    }
+
+    private LongPreference createPref(boolean backedUp, String prefKey, long defaultValue) {
+        LongPreference pref = new LongPreference(backedUp, prefKey, defaultValue);
+        prefs.add(pref);
+        return pref;
+    }
+
+    private StringPreference createPref(boolean backedUp, String prefKey, String defaultValue) {
+        StringPreference pref = new StringPreference(backedUp, prefKey, defaultValue);
+        prefs.add(pref);
+        return pref;
+    }
+
+    private final String[] deletedPrefs = new String[] {
+            PREF_KEY_LAST_SILENT_DECRYPT_MESSAGE_ROW_ID, // TODO(jack): Remove after August 30
+            PREF_KEY_NEXT_PRESENCE_ID, // TODO(jack): Remove after August 30
+    };
+
+    private abstract class Preference<T> {
+        boolean backedUp;
+        String prefKey;
+        T defaultValue;
+
+        public Preference(boolean backedUp, String prefKey, T defaultValue) {
+            this.backedUp = backedUp;
+            this.prefKey = prefKey;
+            this.defaultValue = defaultValue;
+        }
+
+        protected SharedPreferences getPreferences() {
+            return Preferences.this.getPreferences(this.backedUp);
+        }
+
+        public abstract T get();
+        public abstract void set(T value);
+
+        public boolean remove() {
+            return getPreferences().edit().remove(this.prefKey).commit();
+        }
+
+        public abstract void migrate(); // TODO(jack): Remove once migration complete
+    }
+
+    private class BooleanPreference extends Preference<Boolean> {
+        public BooleanPreference(boolean backedUp, String prefKey, Boolean defaultValue) {
+            super(backedUp, prefKey, defaultValue);
+        }
+
+        public Boolean get() {
+            return getPreferences().getBoolean(this.prefKey, this.defaultValue);
+        }
+
+        public void set(Boolean v) {
+            if (!getPreferences().edit().putBoolean(this.prefKey, v).commit()) {
+                Log.e("Preferences: failed to set " + this.prefKey);
+            }
+        }
+
+        public void migrate() {
+            SharedPreferences originalPreferences = appContext.get().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+            set(originalPreferences.getBoolean(this.prefKey, this.defaultValue));
+        }
+    }
+
+    private class IntPreference extends Preference<Integer> {
+        public IntPreference(boolean backedUp, String prefKey, Integer defaultValue) {
+            super(backedUp, prefKey, defaultValue);
+        }
+
+        public Integer get() {
+            return getPreferences().getInt(this.prefKey, this.defaultValue);
+        }
+
+        public void set(Integer v) {
+            if (!getPreferences().edit().putInt(this.prefKey, v).commit()) {
+                Log.e("Preferences: failed to set " + this.prefKey);
+            }
+        }
+
+        public void migrate() {
+            SharedPreferences originalPreferences = appContext.get().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+            set(originalPreferences.getInt(this.prefKey, this.defaultValue));
+        }
+    }
+
+    private class LongPreference extends Preference<Long> {
+        public LongPreference(boolean backedUp, String prefKey, Long defaultValue) {
+            super(backedUp, prefKey, defaultValue);
+        }
+
+        public Long get() {
+            return getPreferences().getLong(this.prefKey, this.defaultValue);
+        }
+
+        public void set(Long v) {
+            if (!getPreferences().edit().putLong(this.prefKey, v).commit()) {
+                Log.e("Preferences: failed to set " + this.prefKey);
+            }
+        }
+
+        public void migrate() {
+            SharedPreferences originalPreferences = appContext.get().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+            set(originalPreferences.getLong(this.prefKey, this.defaultValue));
+        }
+    }
+
+    private class StringPreference extends Preference<String> {
+        public StringPreference(boolean backedUp, String prefKey, String defaultValue) {
+            super(backedUp, prefKey, defaultValue);
+        }
+
+        public String get() {
+            return getPreferences().getString(this.prefKey, this.defaultValue);
+        }
+
+        public void set(String v) {
+            if (!getPreferences().edit().putString(this.prefKey, v).commit()) {
+                Log.e("Preferences: failed to set " + this.prefKey);
+            }
+        }
+
+        public void migrate() {
+            SharedPreferences originalPreferences = appContext.get().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+            set(originalPreferences.getString(this.prefKey, this.defaultValue));
+        }
+    }
+
+    @WorkerThread
+    private synchronized SharedPreferences getPreferences(boolean backedUp) {
+        if (backedUp) {
+            if (backedUpPreferences == null) {
+                backedUpPreferences = appContext.get().getSharedPreferences(BACKED_UP_PREFS_NAME, Context.MODE_PRIVATE);
+                removeDeletedPrefs(backedUpPreferences);
+            }
+            return backedUpPreferences;
+        } else {
+            if (deviceLocalPreferences == null) {
+                deviceLocalPreferences = appContext.get().getSharedPreferences(DEVICE_LOCAL_PREFS_NAME, Context.MODE_PRIVATE);
+                removeDeletedPrefs(deviceLocalPreferences);
+            }
+            return deviceLocalPreferences;
+        }
+    }
+
+    private void removeDeletedPrefs(SharedPreferences preferences) {
+        SharedPreferences.Editor editor = preferences.edit();
+        for (String prefKey : deletedPrefs) {
+            editor.remove(prefKey);
+        }
+        if (!editor.commit()) {
+            Log.w("Preferences: Failed to remove deleted prefs");
+        }
     }
 
     @WorkerThread
     public long getLastContactsSyncTime() {
-        return getPreferences().getLong(PREF_KEY_LAST_CONTACTS_SYNC_TIME, 0);
+        return prefLastContactSyncTime.get();
     }
 
     @WorkerThread
     public void setLastContactsSyncTime(long time) {
-        if (!getPreferences().edit().putLong(PREF_KEY_LAST_CONTACTS_SYNC_TIME, time).commit()) {
-            Log.e("preferences: failed to set last contacts sync time");
-        }
+        prefLastContactSyncTime.set(time);
     }
 
     @WorkerThread
     public long getLastBlockListSyncTime() {
-        return getPreferences().getLong(PREF_KEY_LAST_BLOCK_LIST_SYNC_TIME, 0);
+        return prefLastBlockListSyncTime.get();
     }
 
     @WorkerThread
     public void setLastBlockListSyncTime(long time) {
-        if (!getPreferences().edit().putLong(PREF_KEY_LAST_BLOCK_LIST_SYNC_TIME, time).commit()) {
-            Log.e("preferences: failed to set last block list sync time");
-        }
+        prefLastBlockListSyncTime.set(time);
     }
 
     @WorkerThread
     public boolean getWelcomeInviteNotificationSeen() {
-        return getPreferences().getBoolean(PREF_KEY_INVITE_NOTIFICATION_SEEN, false);
+        return prefInviteNotificationSeen.get();
     }
 
     @WorkerThread
     public void setWelcomeInviteNotificationSeen(boolean seen) {
-        if (!getPreferences().edit().putBoolean(PREF_KEY_INVITE_NOTIFICATION_SEEN, seen).commit()) {
-            Log.e("preferences: failed to mark invite notification seen");
-        }
+        prefInviteNotificationSeen.set(seen);
     }
 
     @WorkerThread
     public long getInitialRegistrationTime() {
-        return getPreferences().getLong(PREF_KEY_REGISTRATION_TIME, 0);
+        return prefRegistrationTime.get();
     }
 
     @WorkerThread
     public void setInitialRegistrationTime(long time) {
-        if (!getPreferences().edit().putLong(PREF_KEY_REGISTRATION_TIME, time).commit()) {
-            Log.e("preferences: failed to set initial registration time");
-        }
+        prefRegistrationTime.set(time);
     }
 
     @WorkerThread
     public long getLastPushTokenSyncTime() {
-        return getPreferences().getLong(PREF_KEY_LAST_PUSH_TOKEN_SYNC_TIME, 0);
+        return prefLastPushTokenTime.get();
     }
 
     @WorkerThread
     public void setLastPushTokenSyncTime(long time) {
-        if (!getPreferences().edit().putLong(PREF_KEY_LAST_PUSH_TOKEN_SYNC_TIME, time).commit()) {
-            Log.e("preferences: failed to set last push token sync time");
-        }
+        prefLastPushTokenTime.set(time);
     }
 
     @WorkerThread
     public String getLastPushToken() {
-        return getPreferences().getString(PREF_KEY_SYNCED_PUSH_TOKEN, null);
+        return prefLastPushToken.get();
     }
 
     @WorkerThread
     public void setLastPushToken(String token) {
-        if (!getPreferences().edit().putString(PREF_KEY_SYNCED_PUSH_TOKEN, token).commit()) {
-            Log.e("preferences: failed to set last push token");
-        }
+        prefLastPushToken.set(token);
     }
 
     @WorkerThread
     public String getLastDeviceLocale() {
-        return getPreferences().getString(PREF_KEY_SYNCED_LANGUAGE, null);
+        return prefLastLocale.get();
     }
 
     @WorkerThread
     public void setLastDeviceLocale(String languageCode) {
-        if (!getPreferences().edit().putString(PREF_KEY_SYNCED_LANGUAGE, languageCode).commit()) {
-            Log.e("preferences: failed to set last synced language");
-        }
+        prefLastLocale.set(languageCode);
     }
 
     @WorkerThread
     public long getLastGroupSyncTime() {
-        return getPreferences().getLong(PREF_KEY_LAST_GROUP_SYNC_TIME, 0);
+        return prefLastGroupSyncTime.get();
     }
 
     @WorkerThread
     public void setLastGroupSyncTime(long time) {
-        if (!getPreferences().edit().putLong(PREF_KEY_LAST_GROUP_SYNC_TIME, time).commit()) {
-            Log.e("preferences: failed to set last group sync time");
-        }
+        prefLastGroupSyncTime.set(time);
     }
 
     @WorkerThread
     public void setInvitesRemaining(int invitesRemaining) {
-        if (!getPreferences().edit().putInt(PREF_KEY_INVITES_REMAINING, invitesRemaining).commit()) {
-            Log.e("preferences: failed to set invites remaining");
-        }
+        prefInvitesRemaining.set(invitesRemaining);
     }
 
     @WorkerThread
     public int getInvitesRemaining() {
-        return getPreferences().getInt(PREF_KEY_INVITES_REMAINING, -1);
+        return prefInvitesRemaining.get();
     }
 
     @WorkerThread
     public boolean getRequireFullContactsSync() {
-        return getPreferences().getBoolean(PREF_KEY_REQUIRE_FULL_CONTACTS_SYNC, true);
+        return prefRequireFullContactSync.get();
     }
 
     @WorkerThread
     public void setRequireFullContactsSync(boolean requireFullContactsSync) {
-        if (!getPreferences().edit().putBoolean(PREF_KEY_REQUIRE_FULL_CONTACTS_SYNC, requireFullContactsSync).commit()) {
-            Log.e("preferences: failed to set required full contacts sync");
-        }
+        prefRequireFullContactSync.set(requireFullContactsSync);
     }
 
     @WorkerThread
     public boolean getRequireSharePosts() {
-        return getPreferences().getBoolean(PREF_KEY_REQUIRE_SHARE_POSTS, false);
+        return prefRequireSharePosts.get();
     }
 
     @WorkerThread
     public void setRequireSharePosts(boolean requireSharePosts) {
-        if (!getPreferences().edit().putBoolean(PREF_KEY_REQUIRE_SHARE_POSTS, requireSharePosts).commit()) {
-            Log.e("preferences: failed to set required share posts");
-        }
+        prefRequireSharePosts.set(requireSharePosts);
     }
 
     @WorkerThread
     public long getFeedNotificationTimeCutoff() {
-        return getPreferences().getLong(PREF_KEY_FEED_NOTIFICATION_TIME_CUTOFF, 0);
+        return prefFeedNotificationCutoff.get();
     }
 
     @WorkerThread
     public void setFeedNotificationTimeCutoff(long time) {
-        if (!getPreferences().edit().putLong(PREF_KEY_FEED_NOTIFICATION_TIME_CUTOFF, time).commit()) {
-            Log.e("preferences: failed to set feed notification time cutoff");
-        }
+        prefFeedNotificationCutoff.set(time);
     }
 
     @WorkerThread
     public boolean getNotifyPosts() {
-        return getPreferences().getBoolean(PREF_KEY_NOTIFY_POSTS, true);
+        return prefNotifyPosts.get();
     }
 
     @WorkerThread
     public boolean getNotifyComments() {
-        return getPreferences().getBoolean(PREF_KEY_NOTIFY_COMMENTS, true);
+        return prefNotifyComments.get();
     }
 
     @WorkerThread
     public boolean getUseDebugHost() {
-        return getPreferences().getBoolean(PREF_KEY_USE_DEBUG_HOST, false);
+        return prefUseDebugHost.get();
+    }
+
+    @WorkerThread
+    public @PrivacyList.Type String getFeedPrivacyActiveList() {
+        return prefActivePrivacyList.get();
     }
 
     @WorkerThread
     public void setFeedPrivacyActiveList(@PrivacyList.Type String activeList) {
-        if (!getPreferences().edit().putString(PREF_KEY_FEED_PRIVACY_SETTING, activeList).commit()) {
-            Log.e("preferences: failed to set feed privacy active list");
-        }
+        prefActivePrivacyList.set(activeList);
     }
 
     @WorkerThread
     public boolean getShowedFeedNux() {
-        return getPreferences().getBoolean(PREF_KEY_SHOWED_FEED_NUX, false);
+        return prefShowedFeedNux.get();
     }
 
     @WorkerThread
     public void markFeedNuxShown() {
-        if (!getPreferences().edit().putBoolean(PREF_KEY_SHOWED_FEED_NUX, true).commit()) {
-            Log.e("preferences: failed to mark feed nux shown");
-        }
+        prefShowedFeedNux.set(true);
     }
 
     @WorkerThread
     public boolean getShowedMessagesNux() {
-        return getPreferences().getBoolean(PREF_KEY_SHOWED_MESSAGES_NUX, false);
+        return prefShowedMessagesNux.get();
     }
 
     @WorkerThread
     public void markMessagesNuxShown() {
-        if (!getPreferences().edit().putBoolean(PREF_KEY_SHOWED_MESSAGES_NUX, true).commit()) {
-            Log.e("preferences: failed to mark messages nux shown");
-        }
+        prefShowedMessagesNux.set(true);
     }
 
     @WorkerThread
     public boolean getShowedProfileNux() {
-        return getPreferences().getBoolean(PREF_KEY_SHOWED_PROFILE_NUX, false);
+        return prefShowedProfileNux.get();
     }
 
     @WorkerThread
     public void markProfileNuxShown() {
-        if (!getPreferences().edit().putBoolean(PREF_KEY_SHOWED_PROFILE_NUX, true).commit()) {
-            Log.e("preferences: failed to mark profile nux shown");
-        }
+        prefShowedProfileNux.set(true);
     }
 
     @WorkerThread
     public boolean getShowedMakePostNux() {
-        return getPreferences().getBoolean(PREF_KEY_SHOWED_MAKE_POST_NUX, false);
+        return prefShowedMakePostNux.get();
     }
 
     @WorkerThread
     public void markMakePostNuxShown() {
-        if (!getPreferences().edit().putBoolean(PREF_KEY_SHOWED_MAKE_POST_NUX, true).commit()) {
-            Log.e("preferences: failed to mark make post nux shown");
-        }
+        prefShowedMakePostNux.set(true);
     }
 
     @WorkerThread
     public boolean getShowedActivityCenterNux() {
-        return getPreferences().getBoolean(PREF_KEY_SHOWED_ACTIVITY_CENTER_NUX, false);
+        return prefShowedActivityCenterNux.get();
     }
 
     @WorkerThread
     public void markActivityCenterNuxShown() {
-        if (!getPreferences().edit().putBoolean(PREF_KEY_SHOWED_ACTIVITY_CENTER_NUX, true).commit()) {
-            Log.e("preferences: failed to mark activity center nux shown");
-        }
+        prefShowedActivityCenterNux.set(true);
     }
 
     @WorkerThread
     public boolean getShowedWelcomeNux() {
-        return getPreferences().getBoolean(PREF_KEY_SHOWED_WELCOME_NUX, false);
+        return prefShowedWelcomeNux.get();
     }
 
     @WorkerThread
     public void markWelcomeNuxShown() {
-        if (!getPreferences().edit().putBoolean(PREF_KEY_SHOWED_WELCOME_NUX, true).commit()) {
-            Log.e("preferences: failed to mark welcome nux shown");
-        }
+        prefShowedWelcomeNux.set(true);
     }
 
     @WorkerThread
     public int getAndIncrementNotificationId() {
-        int id = getPreferences().getInt(PREF_KEY_NEXT_NOTIF_ID, Notifications.FIRST_DYNAMIC_NOTIFICATION_ID);
-        if (!getPreferences().edit().putInt(PREF_KEY_NEXT_NOTIF_ID, id + 1).commit()) {
-            Log.e("preferences: failed to increment notif id");
-        }
+        int id = prefNextNotificationId.get();
+        prefNextNotificationId.set(id + 1);
         return id;
     }
 
     @WorkerThread
     public long getLastDecryptStatMessageRowId() {
-        return getPreferences().getLong(PREF_KEY_LAST_DECRYPT_MESSAGE_ROW_ID, -1);
+        return prefLastDecryptStatRowId.get();
     }
 
     @WorkerThread
     public void setLastDecryptStatMessageRowId(long id) {
-        if (!getPreferences().edit().putLong(PREF_KEY_LAST_DECRYPT_MESSAGE_ROW_ID, id).commit()) {
-            Log.e("preferences: failed to set last normal decrypt stat message row id to " + id);
-        }
-    }
-
-    @WorkerThread
-    public @PrivacyList.Type String getFeedPrivacyActiveList() {
-        return getPreferences().getString(PREF_KEY_FEED_PRIVACY_SETTING, PrivacyList.Type.INVALID);
+        prefLastDecryptStatRowId.set(id);
     }
 
     @WorkerThread
     public void resetVideoOverride() {
-        getPreferences().edit().remove(PREF_KEY_VIDEO_BITRATE).remove(PREF_KEY_AUDIO_BITRATE).remove(PREF_KEY_H265_RES).remove(PREF_KEY_H264_RES).apply();
+        prefVideoBitrate.remove();
+        prefAudioBitrate.remove();
+        prefH264Res.remove();
+        prefH265Res.remove();
     }
 
     @WorkerThread
     public void saveVideoOverride() {
-        getPreferences().edit()
-                .putInt(PREF_KEY_VIDEO_BITRATE, Constants.VIDEO_BITRATE)
-                .putInt(PREF_KEY_AUDIO_BITRATE, Constants.AUDIO_BITRATE)
-                .putInt(PREF_KEY_H264_RES, Constants.VIDEO_RESOLUTION_H264)
-                .putInt(PREF_KEY_H265_RES, Constants.VIDEO_RESOLUTION_H265).apply();
+        prefVideoBitrate.set(Constants.VIDEO_BITRATE);
+        prefAudioBitrate.set(Constants.AUDIO_BITRATE);
+        prefH264Res.set(Constants.VIDEO_RESOLUTION_H264);
+        prefH265Res.set(Constants.VIDEO_RESOLUTION_H265);
     }
 
     @WorkerThread
     public void loadVideoOverride() {
-        Constants.VIDEO_BITRATE = getPreferences().getInt(PREF_KEY_VIDEO_BITRATE, Constants.VIDEO_BITRATE);
-        Constants.AUDIO_BITRATE = getPreferences().getInt(PREF_KEY_AUDIO_BITRATE, Constants.AUDIO_BITRATE);
-        Constants.VIDEO_RESOLUTION_H264 = getPreferences().getInt(PREF_KEY_H264_RES, Constants.VIDEO_RESOLUTION_H264);
-        Constants.VIDEO_RESOLUTION_H265 = getPreferences().getInt(PREF_KEY_H265_RES, Constants.VIDEO_RESOLUTION_H265);
+        Constants.VIDEO_BITRATE = prefVideoBitrate.get();
+        Constants.AUDIO_BITRATE = prefAudioBitrate.get();
+        Constants.VIDEO_RESOLUTION_H264 = prefH264Res.get();
+        Constants.VIDEO_RESOLUTION_H265 = prefH265Res.get();
     }
 }

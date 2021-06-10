@@ -101,6 +101,8 @@ public class HalloApp extends Application {
 
         // Init server props synchronously so we have the correct values loaded
         ServerProps.getInstance().init();
+
+        Preferences.getInstance().ensureMigrated();
     }
 
     private void connect() {

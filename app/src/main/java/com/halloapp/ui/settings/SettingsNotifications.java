@@ -34,7 +34,7 @@ public class SettingsNotifications extends HalloActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 
-            getPreferenceManager().setSharedPreferencesName(Preferences.PREFS_NAME);
+            getPreferenceManager().setSharedPreferencesName(Preferences.BACKED_UP_PREFS_NAME);
 
             final StrictMode.ThreadPolicy threadPolicy = StrictMode.allowThreadDiskReads();
             try {
