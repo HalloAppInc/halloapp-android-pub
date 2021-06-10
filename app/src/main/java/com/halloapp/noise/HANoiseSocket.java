@@ -25,6 +25,7 @@ import com.southernstorm.noise.protocol.CipherState;
 import com.southernstorm.noise.protocol.CipherStatePair;
 import com.southernstorm.noise.protocol.HandshakeState;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,12 +54,14 @@ public class HANoiseSocket extends Socket {
     private static final int BUFFER_SIZE = 4096;
     private static final int CONNECT_TIMEOUT = 20_000;
     private static final int READ_TIMEOUT = 3 * (int)DateUtils.MINUTE_IN_MILLIS;
+    private static final int NAGLE_WARNING_THRESHOLD = 32;
 
     private final Me me;
 
     private HandshakeState handshakeState;
 
     private final ByteArrayOutputStream readerOutputStream = new ByteArrayOutputStream();
+    private final OutputStream writerOutputStream;
 
     private CipherState sendCrypto;
     private CipherState recvCrypto;
@@ -67,6 +70,8 @@ public class HANoiseSocket extends Socket {
         this.me = me;
         connect(new InetSocketAddress(address, port), CONNECT_TIMEOUT);
         setSoTimeout(READ_TIMEOUT);
+        setTcpNoDelay(true);
+        writerOutputStream = new BufferedOutputStream(getOutputStream());
     }
 
     @WorkerThread
@@ -94,17 +99,8 @@ public class HANoiseSocket extends Socket {
         }
     }
 
-    private void sendHAHandshakeSignature() throws IOException {
-        OutputStream out = getOutputStream();
-        out.write('H');
-        out.write('A');
-        out.write('0');
-        out.write('0');
-    }
-
     private void performIKHandshake(@NonNull AuthRequest authRequest, byte[] localKeypair, PublicEdECKey remoteStaticKey) throws NoSuchAlgorithmException, IOException, ShortBufferException, BadPaddingException, CryptoException, NoiseException {
-        sendHAHandshakeSignature();
-
+        writeHandshakeSignature();
         handshakeState = new HandshakeState(IK_PROTOCOL, HandshakeState.INITIATOR);
 
         PrivateEdECKey priv = new PrivateEdECKey(Arrays.copyOfRange(localKeypair, 32, 96));
@@ -153,8 +149,7 @@ public class HANoiseSocket extends Socket {
     }
 
     private void performXXHandshake(@NonNull AuthRequest authRequest, byte[] localKeypair) throws NoSuchAlgorithmException, IOException, ShortBufferException, BadPaddingException, CryptoException, NoiseException {
-        sendHAHandshakeSignature();
-
+        writeHandshakeSignature();
         handshakeState = new HandshakeState(XX_PROTOCOL, HandshakeState.INITIATOR);
 
         PrivateEdECKey priv = new PrivateEdECKey(Arrays.copyOfRange(localKeypair, 32, 96));
@@ -243,11 +238,27 @@ public class HANoiseSocket extends Socket {
         return remotePubKey;
     }
 
+    private void writeHandshakeSignature() throws IOException {
+        writerOutputStream.write('H');
+        writerOutputStream.write('A');
+        writerOutputStream.write('0');
+        writerOutputStream.write('0');
+    }
+
+    private void writeLength(int len) throws IOException {
+        writerOutputStream.write((len >>> 24) & 0xFF);
+        writerOutputStream.write((len >>> 16) & 0xFF);
+        writerOutputStream.write((len >>> 8) & 0xFF);
+        writerOutputStream.write(len & 0xFF);
+    }
+
     private void writeMessage(byte[] packetBytes, int offset, int len) throws IOException {
-        byte[] msgALenBytes = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(len).array();
-        OutputStream out = getOutputStream();
-        out.write(msgALenBytes);
-        out.write(packetBytes, offset, len);
+        writeLength(len);
+        writerOutputStream.write(packetBytes, offset, len);
+        writerOutputStream.flush();
+        if (len < NAGLE_WARNING_THRESHOLD) {
+            Log.i("NoiseSocket/writeMessage sending " + len + " bytes. Consider coalescing packets, as Nagle's is disabled.");
+        }
     }
 
     private void writeNoiseMessage(NoiseMessage.MessageType type, byte[] content, int len) throws IOException {
