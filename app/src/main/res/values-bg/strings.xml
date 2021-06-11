@@ -169,7 +169,11 @@ Open the app settings screen to modify app permissions."</string>
     <string name="block">"Block"</string>
     <string name="play">"Play"</string>
     <string name="new_posts">"New posts"</string>
+
+    <!-- Confirmation dialog message when user tries to exit with unsaved changes. Options are cancel (keep editing) and discard (exit). -->
     <string name="alert_discard_changes_message">"Discard changes?"</string>
+
+    <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
     <string name="action_discard">"Discard"</string>
     <string name="new_post_notification">"New post from %s"</string>
     <plurals name="new_posts_notification">

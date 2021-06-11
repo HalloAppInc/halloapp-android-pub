@@ -182,14 +182,18 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="rotate">"Girar"</string>
 
     <!-- Fuzzy -->
-    <string name="seen_by">"Visto por %d persona"</string>
+    <string name="seen_by">"Visto por"</string>
     <string name="empty_viewed_by">"Todavía nadie ha visto tu publicación"</string>
     <string name="options">"Opciones"</string>
     <string name="block">"Bloquear"</string>
     <string name="play">"Jugar"</string>
     <string name="new_posts">"Nuevas publicaciones"</string>
-    <string name="alert_discard_changes_message">"¿Cancelar los cambios?"</string>
-    <string name="action_discard">"Cancelar"</string>
+
+    <!-- Confirmation dialog message when user tries to exit with unsaved changes. Options are cancel (keep editing) and discard (exit). -->
+    <string name="alert_discard_changes_message">"¿Descartar los cambios?"</string>
+
+    <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
+    <string name="action_discard">"Descartar"</string>
     <string name="new_post_notification">"Nueva publicación de %s"</string>
 
     <!-- Fuzzy -->

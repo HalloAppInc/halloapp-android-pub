@@ -153,7 +153,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
         <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und %3$d andere Personen haben &lt;b&gt;%4$s&lt;/b&gt;'s Beitrag kommentiert"</item>
     </plurals>
     <string name="contact_hashing_faq_dialog_title">"Deine Privatsphäre ist unsere oberste Priorität"</string>
-    <string name="contact_hashing_faq_dialog_info">"HalloApp verwendet nur das Feld für die Handynummer, um den Kontakt zu deinen Freunden auf HalloApp herzustellen. Es werden keine weiteren Daten aus deinen Kontakten erfasst."</string>
+    <string name="contact_hashing_faq_dialog_info">"HalloApp verwendet nur das Feld für die Handynummer, um den Kontakt zu deinen Freunden auf HalloApp herzustellen. Darüber hinaus werden keine weiteren Daten aus deinen Kontakten erfasst."</string>
     <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; hat einen eigenen Beitrag kommentiert"</string>
     <string name="list_of_two">"%1$s und %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
@@ -196,7 +196,11 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="block">"Blocken"</string>
     <string name="play">"Wiedergabe"</string>
     <string name="new_posts">"Neue Beiträge"</string>
+
+    <!-- Confirmation dialog message when user tries to exit with unsaved changes. Options are cancel (keep editing) and discard (exit). -->
     <string name="alert_discard_changes_message">"Änderungen verwerfen?"</string>
+
+    <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
     <string name="action_discard">"Verwerfen"</string>
     <string name="new_post_notification">"Neuer Beitrag von %s"</string>
     <plurals name="new_posts_notification">
@@ -371,7 +375,7 @@ Version: %s
     <string name="group_info_title">"Gruppen-Info"</string>
     <string name="admin">"Admin"</string>
     <string name="save">"Speichern"</string>
-    <string name="contact_picker_feed_except_title">"Beiträge ausblenden von ..."</string>
+    <string name="contact_picker_feed_except_title">"Meine Kontakte außer..."</string>
     <string name="contact_picker_feed_only_title">"Teile Beiträge mit ..."</string>
     <string name="setting_feed_privacy_title">"Wer kann meine Beiträge sehen"</string>
     <string name="setting_feed_all">"Meine Kontakte"</string>
@@ -480,13 +484,13 @@ Version: %s
 
 Wenn du Updates mit jemanden teilen möchtest, müssen beide Seiten ihre jeweiligen Nummern auf ihren Handys gespeichert haben.
 
-Du kannst Updates mit deiner gesamten Kontaktliste oder nur mit ausgewählten Personen teilen. Dazu unter Einstellungen den Privatsphäre-Feed ändern."</string>
+Du kannst Updates mit deiner gesamten Kontaktliste oder nur mit ausgewählten Personen teilen. Dazu unter deinen Einstellungen den Privatsphäre-Feed ändern."</string>
     <string name="messages_nux_text">"Hier findest du Nachrichten von deinen Freunden &amp; deiner Familie. Du siehst hier auch wenn sich jemand neu bei HalloApp angemeldet hat."</string>
     <string name="post_audience_nux_text">"Deine Beiträge werden mit deinen Kontakten, die auch auf HalloApp sind, geteilt. Du kannst deren Zugriff auf deine Beiträge unter Profil→Einstellungen einschränken."</string>
 
     <!-- Aktivitäten-Center is the German translation for "activity center". But it is really not that common and it really does not "sit with me well" . Would it be ok to just go with "Tap to see..."? -->
     <!-- Fuzzy -->
-    <string name="activity_center_nux">"Hier ist dein Aktivitäten-Center. Um deine letzte Aktivität zu sehen tippe hier."</string>
+    <string name="activity_center_nux">"Hier ist dein Aktivitäten-Center. Tippe hier, um deine letzte Aktivität zu sehen."</string>
     <string name="home_feed_nux">"Willkommen auf deiner Home-Feed-Seite! Hier siehst du Beiträge deiner HalloApp-Kontakte."</string>
     <string name="home_feed_nux_learn_more">"Mehr erfahren"</string>
     <string name="camera_error_generic">"Kamerafehler."</string>

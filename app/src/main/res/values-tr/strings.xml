@@ -183,13 +183,17 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="rotate">"Döndür"</string>
 
     <!-- Fuzzy -->
-    <string name="seen_by">"%d kişi tarafından görüldü"</string>
+    <string name="seen_by">"tarafından görüldü"</string>
     <string name="empty_viewed_by">"Gönderini henüz kimse görmedi"</string>
     <string name="options">"Seçenekler"</string>
     <string name="block">"Engelle"</string>
     <string name="play">"Oynat"</string>
     <string name="new_posts">"Yeni gönderiler"</string>
+
+    <!-- Confirmation dialog message when user tries to exit with unsaved changes. Options are cancel (keep editing) and discard (exit). -->
     <string name="alert_discard_changes_message">"Değişiklikleri iptal et?"</string>
+
+    <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
     <string name="action_discard">"İptal et"</string>
     <string name="new_post_notification">"%s, yeni bir gönderi paylaştı"</string>
 
