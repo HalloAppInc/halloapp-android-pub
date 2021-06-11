@@ -494,19 +494,8 @@ public class ChatActivity extends HalloActivity {
             }
 
             if (chatId instanceof UserId) {
-                viewModel.nameAndPhone.getLiveData().observe(this, nameAndPhone -> {
-                    String name = nameAndPhone.first;
-                    String phone = nameAndPhone.second;
-                    chatName = name;
-                    setTitle(name);
-                    setSubtitle(phone);
-                });
+                viewModel.name.getLiveData().observe(this, this::setTitle);
                 presenceLoader.getLastSeenLiveData((UserId)chatId).observe(this, presenceState -> {
-                    Pair<String, String> pair = viewModel.nameAndPhone.getLiveData().getValue();
-                    if (pair != null && pair.second != null) {
-                        setSubtitle(pair.second);
-                        return;
-                    }
                     if (presenceState == null || presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_UNKNOWN) {
                         setSubtitle(null);
                     } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_ONLINE) {

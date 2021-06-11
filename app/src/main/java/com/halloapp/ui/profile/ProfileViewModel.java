@@ -3,6 +3,7 @@ package com.halloapp.ui.profile;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
 
 import androidx.annotation.MainThread;
@@ -130,7 +131,12 @@ public class ProfileViewModel extends ViewModel {
                 if (userId.isMe()) {
                     return StringUtils.formatPhoneNumber(me.getPhone());
                 } else {
-                    return contactsDb.getContact(userId).getDisplayPhone();
+                    Contact contact = contactsDb.getContact(userId);
+                    if (TextUtils.isEmpty(contact.addressBookName)) {
+                        return PhoneNumberUtils.formatNumber("+" + contactsDb.readPhone(userId), null);
+                    } else {
+                        return contactsDb.getContact(userId).getDisplayPhone();
+                    }
                 }
             }
         };

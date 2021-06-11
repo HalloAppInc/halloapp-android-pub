@@ -18,7 +18,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
-import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
@@ -34,7 +33,6 @@ import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
-import com.halloapp.media.MediaUtils;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.media.VoiceNoteRecorder;
 import com.halloapp.privacy.BlockListManager;
@@ -48,7 +46,6 @@ import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -62,7 +59,7 @@ public class ChatViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Message>> messageList;
     final ComputableLiveData<Contact> contact;
-    final ComputableLiveData<Pair<String, String>> nameAndPhone;
+    final ComputableLiveData<String> name;
     final ComputableLiveData<Chat> chat;
     final ComputableLiveData<Reply> reply;
     final ComputableLiveData<List<Contact>> mentionableContacts;
@@ -179,14 +176,14 @@ public class ChatViewModel extends AndroidViewModel {
             }
         };
 
-        nameAndPhone = new ComputableLiveData<Pair<String, String>>() {
+        name = new ComputableLiveData<String>() {
             @Override
-            protected Pair<String, String> compute() {
+            protected String compute() {
                 ContactsDb contactsDb = ContactsDb.getInstance();
                 Contact contact = contactsDb.getContact((UserId)chatId);
                 String phone = TextUtils.isEmpty(contact.addressBookName) ? contactsDb.readPhone((UserId)chatId) : null;
                 String normalizedPhone = phone == null ? null : PhoneNumberUtils.formatNumber("+" + phone, null);
-                return new Pair<>(contact.getDisplayName(), normalizedPhone);
+                return TextUtils.isEmpty(contact.addressBookName) ? normalizedPhone : contact.getDisplayName();
             }
         };
 
