@@ -269,7 +269,7 @@ public class ChatViewModel extends AndroidViewModel {
         };
 
         voiceNoteRecorder = new VoiceNoteRecorder();
-        voiceNotePlayer = new VoiceNotePlayer();
+        voiceNotePlayer = new VoiceNotePlayer(application);
     }
 
     private long lastUpdateTime;

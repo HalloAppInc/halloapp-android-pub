@@ -1,8 +1,16 @@
 package com.halloapp.media;
 
+import android.app.Application;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.PowerManager;
 
 import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
@@ -13,7 +21,7 @@ import com.halloapp.util.logs.Log;
 
 import java.io.IOException;
 
-public class VoiceNotePlayer {
+public class VoiceNotePlayer implements SensorEventListener {
 
     private static final int SEEKBAR_UPDATE_INTERVAL_MS = 100;
 
@@ -29,14 +37,82 @@ public class VoiceNotePlayer {
 
     private PlaybackState playbackState;
 
+    private SensorManager sensorManager;
+    private Sensor proximitySensor;
 
-    public VoiceNotePlayer() {
+    private PowerManager powerManager;
+    private PowerManager.WakeLock wakeLock;
+
+
+    public VoiceNotePlayer(@NonNull Application application) {
+        sensorManager = (SensorManager) application.getSystemService(Context.SENSOR_SERVICE);
+        proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+
+        powerManager = (PowerManager) application.getSystemService(Context.POWER_SERVICE);
+
         voiceNoteHandlerThread = new HandlerThread("VoiceNoteHandlerThread");
         voiceNoteHandlerThread.start();
 
         voiceNoteHandler = new Handler(voiceNoteHandlerThread.getLooper());
 
         playbackStateLiveData = new MutableLiveData<>();
+    }
+
+    private void registerProximityListener() {
+        if (proximitySensor == null) {
+            return;
+        }
+        acquireWakeLock();
+        sensorManager.registerListener(this, proximitySensor, SensorManager.SENSOR_DELAY_UI);
+    }
+
+    private void unregisterProximityListener() {
+        sensorManager.unregisterListener(this);
+        releaseWakeLock();
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+            if (event.values[0] > 5.0f || event.values[0] == event.sensor.getMaximumRange()) {
+                onFarProximity();
+            } else {
+                onEarProximity();
+            }
+        }
+    }
+
+    private void onEarProximity() {
+        voiceNoteHandler.post(() -> {
+            switchAudioStream(AudioManager.STREAM_VOICE_CALL);
+        });
+    }
+
+    private void switchAudioStream(int stream) {
+        if (mediaPlayer != null && mediaPlayer.isPlaying())  {
+            mediaPlayer.pause();
+            int seek = mediaPlayer.getCurrentPosition() - 1000;
+            seek = Math.max(seek, 0);
+            mediaPlayer.stop();
+            mediaPlayer.setAudioStreamType(stream);
+            try {
+                mediaPlayer.prepare();
+                mediaPlayer.seekTo(seek);
+                mediaPlayer.start();
+            } catch (IOException e) {
+                Log.e("VoiceNotePlayer/switchAudioStream failed", e);
+            }
+        }
+    }
+
+    private void onFarProximity() {
+        voiceNoteHandler.post(() -> {
+            switchAudioStream(AudioManager.STREAM_MUSIC);
+        });
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
     public static class PlaybackState {
@@ -62,6 +138,23 @@ public class VoiceNotePlayer {
         voiceNoteHandler.postDelayed(updatePlayback, SEEKBAR_UPDATE_INTERVAL_MS);
     }
 
+    private void acquireWakeLock() {
+        if (wakeLock != null) {
+            if (!wakeLock.isHeld()) {
+                wakeLock.acquire();
+            }
+        } else {
+            wakeLock = powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK, "HalloApp:VoiceNoteWakeLock");
+            wakeLock.acquire();
+        }
+    }
+
+    private void releaseWakeLock() {
+        if (wakeLock != null && wakeLock.isHeld()) {
+            wakeLock.release();
+        }
+    }
+
     @AnyThread
     public void pause() {
         voiceNoteHandler.post(() -> {
@@ -69,6 +162,7 @@ public class VoiceNotePlayer {
                 mediaPlayer.pause();
                 playbackState.playing = false;
                 playbackStateLiveData.postValue(playbackState);
+                unregisterProximityListener();
             }
         });
     }
@@ -109,12 +203,15 @@ public class VoiceNotePlayer {
                     playbackState.playing = false;
                     playbackState.seek = 0;
                     playbackStateLiveData.postValue(playbackState);
+                    unregisterProximityListener();
+                    releaseWakeLock();
                 }
             });
             playbackStateLiveData.postValue(playbackState);
             voiceNoteHandler.removeCallbacks(updatePlayback);
 
             schedulePlaybackUpdate();
+            registerProximityListener();
 
             currentAudio = absFilePath;
         });
@@ -127,5 +224,8 @@ public class VoiceNotePlayer {
             mediaPlayer.release();
             mediaPlayer = null;
         }
+        unregisterProximityListener();
+        sensorManager = null;
+        proximitySensor = null;
     }
 }

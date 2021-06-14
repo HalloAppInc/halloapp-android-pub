@@ -159,7 +159,7 @@ class CommentsViewModel extends AndroidViewModel {
         this.postId = postId;
 
         voiceNoteRecorder = new VoiceNoteRecorder();
-        voiceNotePlayer = new VoiceNotePlayer();
+        voiceNotePlayer = new VoiceNotePlayer(application);
 
         contentDb.addObserver(contentObserver);
 
