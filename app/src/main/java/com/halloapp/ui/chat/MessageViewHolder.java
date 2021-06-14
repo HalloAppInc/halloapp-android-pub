@@ -224,7 +224,9 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             final int defaultMediaInset = mediaPagerView.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);
             mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.message_bubble_corner_radius), 0);
             mediaPagerAdapter.setMediaInset(0, 0, 0, defaultMediaInset);
+            mediaPagerAdapter.setOffscreenPlayerLimit(1);
             mediaPagerView.setAdapter(mediaPagerAdapter);
+            mediaPagerView.setOffscreenPageLimit(1);
             mediaPagerView.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -240,6 +242,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                     } else {
                         parent.getMediaPagerPositionMap().put(message.rowId, position);
                     }
+                    mediaPagerAdapter.refreshPlayers(position);
                 }
 
                 @Override

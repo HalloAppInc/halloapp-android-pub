@@ -124,7 +124,9 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
         if (mediaPagerView != null) {
             mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.post_media_radius), 0);
+            mediaPagerAdapter.setOffscreenPlayerLimit(1);
             mediaPagerView.setAdapter(mediaPagerAdapter);
+            mediaPagerView.setOffscreenPageLimit(1);
             mediaPagerView.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -140,6 +142,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                     } else {
                         parent.getMediaPagerPositionMap().put(post.rowId, position);
                     }
+                    mediaPagerAdapter.refreshPlayers(position);
                 }
 
                 @Override

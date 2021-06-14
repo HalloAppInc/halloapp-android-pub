@@ -14,6 +14,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
@@ -46,16 +47,20 @@ import com.halloapp.widget.ContentPhotoView;
 import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.DrawDelegateView;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.MediaViewHolder> implements LifecycleEventObserver {
+    public static final float MAX_MEDIA_RATIO = 0.6f;
+    public static final int OFFSCREEN_PLAYER_LIMIT_DEFAULT = -1;
 
-    private static final float MAX_MEDIA_RATIO = 0.6f;
-
+    private final Map<Media, WrappedPlayer> playerMap = new HashMap<>();
     private final MediaPagerAdapterParent parent;
     private final float mediaCornerRadius;
     private final float maxAspectRatio;
-    private List<Media> media;
+    private ArrayList<Media> media;
     private String contentId;
     private RecyclerView recyclerView;
     private boolean isChatMedia = false;
@@ -68,6 +73,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
     private int mediaInsetTop;
 
     private float fixedAspectRatio;
+    private int offscreenPlayerLimit = OFFSCREEN_PLAYER_LIMIT_DEFAULT;
 
     public interface MediaPagerAdapterParent {
         RecyclerView.RecycledViewPool getMediaViewPool();
@@ -164,22 +170,18 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
     }
 
     public void setMedia(@NonNull List<Media> media) {
-        this.fixedAspectRatio = Media.getMaxAspectRatio(media);
-        if (maxAspectRatio != 0) {
-            fixedAspectRatio = Math.min(fixedAspectRatio, maxAspectRatio);
-        }
-        if (this.media == null || this.media.size() != media.size()) {
-            notifyDataSetChanged();
-        } else {
-            for (int i = 0; i < media.size(); i++) {
-                Media newMedia = media.get(i);
-                Media oldMedia = this.media.get(i);
-                if (!oldMedia.equals(newMedia)) {
-                    notifyItemChanged(i);
-                }
+        Log.d("MediaPagerAdapter.setMedia");
+        if (this.media == null || !this.media.equals(media)) {
+            releasePlayers();
+
+            this.media = new ArrayList<>(media);
+            fixedAspectRatio = Media.getMaxAspectRatio(media);
+
+            if (maxAspectRatio != 0) {
+                fixedAspectRatio = Math.min(fixedAspectRatio, maxAspectRatio);
             }
+            notifyDataSetChanged();
         }
-        this.media = media;
     }
 
     public void setMediaInset(int leftInsetPx, int topInsetPx, int rightInsetPx, int bottomInsetPx) {
@@ -204,16 +206,62 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         this.chatId = chatId;
     }
 
+    public void setOffscreenPlayerLimit(int limit) {
+        if (limit >= 1 || limit == OFFSCREEN_PLAYER_LIMIT_DEFAULT) {
+            offscreenPlayerLimit = limit;
+        }
+    }
+
+    private Media getMediaForPosition(int position) {
+        return 0 <= position && position < media.size() ?
+                media.get(Rtl.isRtl(recyclerView.getContext()) ? media.size() - 1 - position : position) :
+                null;
+    }
+
     @NonNull
     @Override
     public MediaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        Log.d("MediaPagerAdapter.onCreateViewHolder");
         return new MediaViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.media_pager_item, parent, false));
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        Log.d("MediaPagerAdapter.onDetachedFromRecyclerView");
+        super.onDetachedFromRecyclerView(recyclerView);
+        releasePlayers();
+    }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull MediaViewHolder holder) {
+        Log.d("MediaPagerAdapter.onViewAttachedToWindow");
+        super.onViewAttachedToWindow(holder);
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull MediaViewHolder holder) {
+        Log.d("MediaPagerAdapter.onViewDetachedFromWindow");
+        super.onViewDetachedFromWindow(holder);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public void onViewRecycled(@NonNull MediaViewHolder holder) {
+        Log.d("MediaPagerAdapter.onViewRecycled");
+        super.onViewRecycled(holder);
+        holder.imageView.setOnClickListener(null);
+        holder.playerView.setOnTouchListener(null);
+        int position = holder.getBindingAdapterPosition();
+        final Media mediaItem = getMediaForPosition(position);
+        if (mediaItem != null) {
+            releasePlayer(mediaItem, holder.playerView);
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull MediaViewHolder holder, int position) {
-        holder.releasePlayer();
+        Log.d("MediaPagerAdapter.onBindViewHolder");
         holder.imageView.setTransitionName("");
         holder.playerView.setTransitionName("");
         holder.imageView.setVisibility(View.GONE);
@@ -232,6 +280,9 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
 
         String transitionName = MediaPagerAdapter.getTransitionName(contentId, position);
 
+        holder.imageView.setOnClickListener(null);
+        holder.playerView.setOnTouchListener(null);
+
         if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
             holder.playerView.setResizeMode(com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT);
 
@@ -241,86 +292,43 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
 
             holder.playerView.setTransitionName(transitionName);
             holder.playerView.setVisibility(View.VISIBLE);
-            holder.initPlayer(mediaItem);
+            initPlayer(mediaItem, holder.playerView);
         } else {
             holder.imageView.setTransitionName(transitionName);
             holder.imageView.setTag(mediaItem);
             holder.imageView.setVisibility(View.VISIBLE);
 
             parent.getMediaThumbnailLoader().load(holder.imageView, mediaItem);
-        }
 
-        holder.imageView.setOnClickListener(null);
-        holder.playerView.setOnTouchListener(null);
-
-        if (mediaItem.file != null && mediaItem.type == Media.MEDIA_TYPE_IMAGE) {
-            holder.imageView.setOnClickListener(v -> exploreMedia(holder.imageView, position, 0));
-        } else if (mediaItem.file != null && mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
-            GestureDetector doubleTapDetector = new GestureDetector(holder.playerView.getContext(), new GestureDetector.SimpleOnGestureListener() {
-                @Override
-                public boolean onDoubleTap(MotionEvent e) {
-                    Player player = holder.playerView.getPlayer();
-                    exploreMedia(holder.playerView, position, player != null ? player.getCurrentPosition() : 0);
-                    return true;
-                }
-
-                @Override
-                public boolean onSingleTapConfirmed(MotionEvent e) {
-                    if (holder.isPlaying()) {
-                        holder.pause();
-                    } else {
-                        holder.play();
-                    }
-                    return true;
-                }
-            });
-
-            ScaleGestureDetector scaleDetector = new ScaleGestureDetector(holder.playerView.getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
-                private float scale = 1.0f;
-
-                @Override
-                public boolean onScaleBegin(ScaleGestureDetector detector) {
-                    scale = 1.0f;
-                    return true;
-                }
-
-                @Override
-                public boolean onScale(ScaleGestureDetector detector) {
-                    scale *= detector.getScaleFactor();
-                    return true;
-                }
-
-                @Override
-                public void onScaleEnd(ScaleGestureDetector detector) {
-                    if (scale >= 1.0f) {
-                        Player player = holder.playerView.getPlayer();
-                        exploreMedia(holder.playerView, position, player != null ? player.getCurrentPosition() : 0);
-                    }
-                }
-            });
-
-            holder.playerView.setOnTouchListener((view, event) -> doubleTapDetector.onTouchEvent(event) || scaleDetector.onTouchEvent(event));
+            if (mediaItem.file != null) {
+                holder.imageView.setOnClickListener(v -> exploreMedia(holder.imageView, mediaItem, 0));
+            }
         }
     }
 
-    private void exploreMedia(View view, int position, long currentTime) {
-        Context ctx = recyclerView.getContext();
+    private void exploreMedia(@NonNull View view, @NonNull Media mediaItem, long currentTime) {
+        int position = media.indexOf(mediaItem);
+        Log.d("MediaPagerAdapter.exploreMedia " + position);
 
-        Intent intent = new Intent(ctx, MediaExplorerActivity.class);
-        intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, MediaExplorerViewModel.MediaModel.fromMedia(media));
-        intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, position);
-        intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, contentId);
-        intent.putExtra(MediaExplorerActivity.EXTRA_INITIAL_TIME, currentTime);
-        if (isChatMedia) {
-            intent.putExtra(MediaExplorerActivity.EXTRA_CHAT_ID, chatId);
-        }
+        if (position != -1) {
+            Context ctx = recyclerView.getContext();
 
-        if (ctx instanceof HalloActivity) {
-            HalloActivity activity = (HalloActivity)ctx;
-            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, view, view.getTransitionName());
-            activity.startActivityForResult(intent,  0, options.toBundle());
-        } else {
-            parent.startActivity(intent);
+            Intent intent = new Intent(ctx, MediaExplorerActivity.class);
+            intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, MediaExplorerViewModel.MediaModel.fromMedia(media));
+            intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, position);
+            intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, contentId);
+            intent.putExtra(MediaExplorerActivity.EXTRA_INITIAL_TIME, currentTime);
+            if (isChatMedia) {
+                intent.putExtra(MediaExplorerActivity.EXTRA_CHAT_ID, chatId);
+            }
+
+            if (ctx instanceof HalloActivity) {
+                HalloActivity activity = (HalloActivity) ctx;
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, view, view.getTransitionName());
+                activity.startActivityForResult(intent, 0, options.toBundle());
+            } else {
+                parent.startActivity(intent);
+            }
         }
     }
 
@@ -349,62 +357,302 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
     }
 
     private void pausePlayers() {
+        Log.d("MediaPagerAdapter.pausePlayers");
         if (recyclerView == null) {
             return;
         }
 
         if (media != null) {
-            for (Media m : media) {
-                View view = recyclerView.findViewWithTag(m);
-
-                if (view instanceof ContentPlayerView) {
-                    ContentPlayerView playerView = (ContentPlayerView) view;
-                    Player player = playerView.getPlayer();
-
-                    if (player != null && player.isPlaying()) {
-                        player.setPlayWhenReady(false);
-                    }
+            for (Media mediaItem : media) {
+                WrappedPlayer wrappedPlayer = playerMap.get(mediaItem);
+                if (wrappedPlayer != null) {
+                    wrappedPlayer.pause();
                 }
             }
         }
     }
 
     private void releasePlayers() {
+        Log.d("MediaPagerAdapter.releasePlayers");
         if (recyclerView == null) {
             return;
         }
 
         if (media != null) {
-            for (Media m : media) {
-                View view = recyclerView.findViewWithTag(m);
+            for (Media mediaItem : media) {
+                final View view = recyclerView.findViewWithTag(mediaItem);
+                final ContentPlayerView playerView = view instanceof  ContentPlayerView ? (ContentPlayerView) view : null;
+                releasePlayer(mediaItem, playerView);
+            }
+        }
+    }
 
-                if (view instanceof ContentPlayerView) {
-                    ContentPlayerView playerView = (ContentPlayerView) view;
-                    Player player = playerView.getPlayer();
+    public void refreshPlayers(int currentPosition) {
+        Log.d("MediaPagerAdapter.refreshPlayers " + currentPosition);
+        if (recyclerView == null) {
+            return;
+        }
 
-                    if (player != null) {
-                        player.setPlayWhenReady(false);
-                        player.release();
+        if (media != null) {
+            for (int position = 0; position < media.size(); position++) {
+                final Media mediaItem = getMediaForPosition(position);
+                if (mediaItem != null) {
+                    final View view = recyclerView.findViewWithTag(mediaItem);
+                    final ContentPlayerView playerView = view instanceof ContentPlayerView ? (ContentPlayerView) view : null;
+                    final WrappedPlayer wrappedPlayer = playerMap.get(mediaItem);
+                    if (Math.abs(currentPosition - position) > offscreenPlayerLimit) {
+                        releasePlayer(mediaItem, playerView, true);
+                    } else {
+                        if (playerView != null && wrappedPlayer == null) {
+                            initPlayer(mediaItem, playerView);
+                        }
                     }
-
-                    playerView.setPauseHiddenPlayerOnScroll(false);
-                    playerView.setPlayer(null);
-                    playerView.setTag(null);
                 }
             }
         }
     }
 
-    public class MediaViewHolder extends RecyclerView.ViewHolder {
-        private final long INITIAL_FRAME_TIME = 1000;
+    @SuppressLint("ClickableViewAccessibility")
+    private void initPlayer(@NonNull final Media mediaItem,
+                            @NonNull final ContentPlayerView playerView) {
+        if (playerMap.get(mediaItem) != null) {
+            Log.w("MediaPagerAdapter.initVideoPlayer called on a view with already attached media player!");
+            releasePlayer(mediaItem, playerView);
+        }
 
+        if (mediaItem.file != null) {
+            Log.d("MediaPagerAdapter.initPlayer " + mediaItem);
+            playerView.setPauseHiddenPlayerOnScroll(true);
+            playerView.setTag(mediaItem);
+            playerView.setControllerAutoShow(true);
+
+            final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(playerView.getContext(), Constants.USER_AGENT);
+            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(Uri.fromFile(mediaItem.file)));
+
+            final SimpleExoPlayer player = new SimpleExoPlayer.Builder(playerView.getContext()).build();
+            final WrappedPlayer wrappedPlayer = new WrappedPlayer(player);
+
+            playerMap.put(mediaItem, wrappedPlayer);
+            playerView.setPlayer(player);
+
+            player.addListener(new Player.EventListener() {
+                @Override
+                public void onPlaybackStateChanged(int state) {
+                    if (state == Player.STATE_READY && !wrappedPlayer.isPlayerInitialized) {
+                        wrappedPlayer.isPlayerInitialized = true;
+                        wrappedPlayer.seekToThumbnailFrame();
+                    }
+                }
+
+                @Override
+                public void onIsPlayingChanged(boolean isPlaying) {
+                    playerView.setKeepScreenOn(isPlaying);
+                }
+            });
+
+            player.setRepeatMode(Player.REPEAT_MODE_ALL);
+            player.setMediaSource(mediaSource);
+            player.prepare();
+
+            PlayerControlView controlView = playerView.findViewById(R.id.exo_controller);
+            controlView.setControlDispatcher(new ControlDispatcher() {
+                @Override
+                public boolean dispatchPrepare(Player player) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchSetPlayWhenReady(@NonNull Player player, boolean playWhenReady) {
+                    if (playWhenReady) {
+                        wrappedPlayer.play();
+                    } else {
+                        wrappedPlayer.pause();
+                    }
+
+                    return true;
+                }
+
+                @Override
+                public boolean dispatchSeekTo(Player player, int windowIndex, long positionMs) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchPrevious(Player player) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchNext(Player player) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchRewind(Player player) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchFastForward(Player player) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchSetRepeatMode(Player player, int repeatMode) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchSetShuffleModeEnabled(Player player, boolean shuffleModeEnabled) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchStop(Player player, boolean reset) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchSetPlaybackParameters(Player player, PlaybackParameters playbackParameters) {
+                    return false;
+                }
+
+                @Override
+                public boolean isRewindEnabled() {
+                    return false;
+                }
+
+                @Override
+                public boolean isFastForwardEnabled() {
+                    return false;
+                }
+            });
+
+            GestureDetector doubleTapDetector = new GestureDetector(playerView.getContext(), new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onDoubleTap(MotionEvent e) {
+                    Player player = playerView.getPlayer();
+                    exploreMedia(playerView, mediaItem, player != null ? player.getCurrentPosition() : 0);
+                    return true;
+                }
+
+                @Override
+                public boolean onSingleTapConfirmed(MotionEvent e) {
+                    if (wrappedPlayer.isPlaying()) {
+                        wrappedPlayer.pause();
+                    } else {
+                        wrappedPlayer.play();
+                    }
+                    return true;
+                }
+            });
+
+            ScaleGestureDetector scaleDetector = new ScaleGestureDetector(playerView.getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                private float scale = 1.0f;
+
+                @Override
+                public boolean onScaleBegin(ScaleGestureDetector detector) {
+                    scale = 1.0f;
+                    return true;
+                }
+
+                @Override
+                public boolean onScale(ScaleGestureDetector detector) {
+                    scale *= detector.getScaleFactor();
+                    return true;
+                }
+
+                @Override
+                public void onScaleEnd(ScaleGestureDetector detector) {
+                    if (scale >= 1.0f) {
+                        Player player = playerView.getPlayer();
+                        exploreMedia(playerView, mediaItem, player != null ? player.getCurrentPosition() : 0);
+                    }
+                }
+            });
+
+            playerView.setOnTouchListener((view, event) -> doubleTapDetector.onTouchEvent(event) || scaleDetector.onTouchEvent(event));
+        }
+    }
+
+    private void releasePlayer(@NonNull Media mediaItem, @Nullable ContentPlayerView playerView) {
+        releasePlayer(mediaItem, playerView, false);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void releasePlayer(@NonNull Media mediaItem, @Nullable ContentPlayerView playerView, boolean keepTag) {
+        if (playerView != null) {
+            playerView.setPauseHiddenPlayerOnScroll(false);
+            playerView.setPlayer(null);
+            playerView.setOnTouchListener(null);
+            if (!keepTag) {
+                playerView.setTag(null);
+            }
+        }
+        final WrappedPlayer wrappedPlayer = playerMap.get(mediaItem);
+        if (wrappedPlayer != null) {
+            wrappedPlayer.getPlayer().stop();
+            wrappedPlayer.getPlayer().release();
+            playerMap.remove(mediaItem);
+            Log.d("MediaPagerAdapter.releaseVideoPlayer " + mediaItem);
+        }
+    }
+
+    private static class WrappedPlayer {
+        private static final long INITIAL_FRAME_TIME = 1000;
+
+        private final SimpleExoPlayer exoPlayer;
+        private boolean isVideoAtStart;
+        boolean isPlayerInitialized;
+
+        WrappedPlayer(SimpleExoPlayer exoPlayer) {
+            this.exoPlayer = exoPlayer;
+        }
+
+        SimpleExoPlayer getPlayer() {
+            return exoPlayer;
+        }
+
+        void seekToThumbnailFrame() {
+            if (!exoPlayer.isPlaying() && (exoPlayer.getDuration() == exoPlayer.getCurrentPosition() || exoPlayer.getCurrentPosition() == 0)) {
+                isVideoAtStart = true;
+
+                if (exoPlayer.getDuration() > INITIAL_FRAME_TIME) {
+                    exoPlayer.seekTo(INITIAL_FRAME_TIME);
+                } else {
+                    exoPlayer.seekTo(exoPlayer.getDuration() / 2);
+                }
+            }
+        }
+
+        void play() {
+            if (exoPlayer != null) {
+                if (isVideoAtStart) {
+                    exoPlayer.seekTo(0);
+                    isVideoAtStart = false;
+                }
+
+                exoPlayer.setPlayWhenReady(true);
+            }
+        }
+
+        void pause() {
+            if (exoPlayer != null) {
+                exoPlayer.setPlayWhenReady(false);
+                seekToThumbnailFrame();
+            }
+        }
+
+        boolean isPlaying() {
+            return exoPlayer != null && exoPlayer.isPlaying();
+        }
+    }
+
+    public class MediaViewHolder extends RecyclerView.ViewHolder {
         final ContentPhotoView imageView;
         final ContentPlayerView playerView;
         final ProgressBar progressView;
         final AspectRatioFrameLayout container;
-
-        private boolean isVideoAtStart = false;
-        private boolean isPlayerInitialized = false;
 
         public MediaViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -418,145 +666,6 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
             imageView.setDrawDelegate(parent.getDrawDelegateView());
             imageView.setMaxAspectRatio(maxAspectRatio);
             imageView.setProgressView(progressView);
-        }
-
-        public void initPlayer(Media media) {
-            releasePlayer();
-
-            if (media.file == null) {
-                Log.w("MediaPagerAdapter: video missing file.");
-                return;
-            }
-
-            playerView.setPauseHiddenPlayerOnScroll(true);
-            playerView.setTag(media);
-            playerView.setControllerAutoShow(true);
-
-            final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(playerView.getContext(), Constants.USER_AGENT);
-            MediaItem mediaItem = MediaItem.fromUri(Uri.fromFile(media.file));
-            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem);
-
-            isPlayerInitialized = false;
-            SimpleExoPlayer player = new SimpleExoPlayer.Builder(playerView.getContext()).build();
-
-            player.addListener(new Player.EventListener() {
-                @Override
-                public void onPlaybackStateChanged(int state) {
-                    if (state == Player.STATE_READY && !isPlayerInitialized) {
-                        isPlayerInitialized = true;
-                        seekToThumbnailFrame(player);
-                    }
-                }
-
-                @Override
-                public void onIsPlayingChanged(boolean isPlaying) {
-                    playerView.setKeepScreenOn(isPlaying);
-                }
-            });
-
-            PlayerControlView controlView = playerView.findViewById(R.id.exo_controller);
-            controlView.setControlDispatcher(new ControlDispatcher() {
-                @Override
-                public boolean dispatchPrepare(Player player) { return false; }
-
-                @Override
-                public boolean dispatchSetPlayWhenReady(@NonNull Player player, boolean playWhenReady) {
-                    if (playWhenReady) {
-                        play();
-                    } else {
-                        pause();
-                    }
-
-                    return true;
-                }
-
-                @Override
-                public boolean dispatchSeekTo(Player player, int windowIndex, long positionMs) { return false; }
-
-                @Override
-                public boolean dispatchPrevious(Player player) { return false; }
-
-                @Override
-                public boolean dispatchNext(Player player) { return false; }
-
-                @Override
-                public boolean dispatchRewind(Player player) { return false; }
-
-                @Override
-                public boolean dispatchFastForward(Player player) { return false; }
-
-                @Override
-                public boolean dispatchSetRepeatMode(Player player, int repeatMode) { return false; }
-
-                @Override
-                public boolean dispatchSetShuffleModeEnabled(Player player, boolean shuffleModeEnabled) { return false; }
-
-                @Override
-                public boolean dispatchStop(Player player, boolean reset) { return false; }
-
-                @Override
-                public boolean dispatchSetPlaybackParameters(Player player, PlaybackParameters playbackParameters) { return false; }
-
-                @Override
-                public boolean isRewindEnabled() { return false; }
-
-                @Override
-                public boolean isFastForwardEnabled() { return false; }
-            });
-
-            playerView.setPlayer(player);
-
-            player.setRepeatMode(Player.REPEAT_MODE_ALL);
-            player.setMediaSource(mediaSource);
-            player.prepare();
-        }
-
-        private void seekToThumbnailFrame(Player player) {
-            if (!player.isPlaying() && (player.getDuration() == player.getCurrentPosition() || player.getCurrentPosition() == 0)) {
-                isVideoAtStart = true;
-
-                if (player.getDuration() > INITIAL_FRAME_TIME) {
-                    player.seekTo(INITIAL_FRAME_TIME);
-                } else {
-                    player.seekTo(player.getDuration() / 2);
-                }
-            }
-        }
-
-        public void play() {
-            Player player = playerView.getPlayer();
-            if (player != null) {
-                if (isVideoAtStart) {
-                    player.seekTo(0);
-                    isVideoAtStart = false;
-                }
-
-                player.setPlayWhenReady(true);
-            }
-        }
-
-        public void pause() {
-            Player player = playerView.getPlayer();
-            if (player != null) {
-                player.setPlayWhenReady(false);
-                seekToThumbnailFrame(player);
-            }
-        }
-
-        public boolean isPlaying() {
-            return playerView.getPlayer() != null && playerView.getPlayer().isPlaying();
-        }
-
-        public void releasePlayer() {
-            Player player = playerView.getPlayer();
-            if (player != null) {
-                player.setPlayWhenReady(false);
-                player.release();
-            }
-
-            playerView.setPauseHiddenPlayerOnScroll(false);
-            playerView.setPlayer(null);
-            playerView.setTag(null);
         }
     }
 }

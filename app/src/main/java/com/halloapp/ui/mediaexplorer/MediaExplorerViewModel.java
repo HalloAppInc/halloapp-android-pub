@@ -22,6 +22,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.id.ChatId;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 
 import java.util.ArrayList;
@@ -65,23 +66,25 @@ public class MediaExplorerViewModel extends AndroidViewModel {
         this.position = position;
 
         if (chatId == null) {
-            Executor executor = new HandlerExecutor(getApplication().getMainLooper());
-            PagedList<MediaModel> list = new PagedList.Builder<>(new PositionalDataSource<MediaModel>() {
-                @Override
-                public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<MediaModel> callback) {
-                    callback.onResult(preloaded, 0, preloaded.size());
-                }
+            final MutableLiveData<PagedList<MediaModel>> liveData = new MutableLiveData<>();
+            final BgWorkers bgWorkers = BgWorkers.getInstance();
+            final Executor executor = new HandlerExecutor(application.getMainLooper());
+            media = liveData;
+            bgWorkers.execute(() -> {
+                PagedList.Builder<Integer, MediaModel> builder = new PagedList.Builder<>(new PositionalDataSource<MediaModel>() {
+                    @Override
+                    public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<MediaModel> callback) {
+                        callback.onResult(preloaded, 0, preloaded.size());
+                    }
 
-                @Override
-                public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<MediaModel> callback) {
-                    callback.onResult(new ArrayList<>());
-                }
-            }, preloaded.size())
-                    .setNotifyExecutor(executor)
-                    .setFetchExecutor(executor)
-                    .build();
-
-            media = new MutableLiveData<>(list);
+                    @Override
+                    public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<MediaModel> callback) {
+                        callback.onResult(new ArrayList<>());
+                    }
+                }, preloaded.size());
+                PagedList<MediaModel> list = builder.setNotifyExecutor(executor).setFetchExecutor(executor).build();
+                liveData.postValue(list);
+            });
         } else {
             MediaExplorerDataSource.Factory factory = new MediaExplorerDataSource.Factory(contentDb, chatId, preloaded);
             media = new LivePagedListBuilder<>(factory, 16).build();

@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.SharedElementCallback;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.paging.PagedList;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
@@ -105,7 +106,9 @@ public class MediaExplorerActivity extends HalloActivity {
             MediaExplorerViewModel.MediaModel model = getCurrentItem();
             View mediaView = pager.findViewWithTag(model);
 
-            sharedElements.put(mediaView.getTransitionName(), mediaView);
+            if (mediaView != null) {
+                sharedElements.put(mediaView.getTransitionName(), mediaView);
+            }
         }
     };
 
@@ -163,11 +166,11 @@ public class MediaExplorerActivity extends HalloActivity {
         viewModel = new ViewModelProvider(this, factory).get(MediaExplorerViewModel.class);
 
         viewModel.getMedia().observe(this, list -> {
-            adapter.submitList(list);
-
-            if (viewModel.isInitializationInProgress()) {
-                finishInitialization(chatId, media, selected);
-            }
+            adapter.submitList(list, () -> {
+                if (viewModel.isInitializationInProgress()) {
+                    finishInitialization(chatId, media, selected);
+                }
+            });
         });
     }
 
@@ -197,18 +200,20 @@ public class MediaExplorerActivity extends HalloActivity {
         pager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                pager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
                 MediaExplorerViewModel.MediaModel model = getCurrentItem();
                 View view = pager.findViewWithTag(model);
 
-                if (view != null) {
-                    String contentId = getIntent().getStringExtra(EXTRA_CONTENT_ID);
-                    int selected = getIntent().getIntExtra(EXTRA_SELECTED, 0);
-
-                    view.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, selected));
-                    getWindow().getSharedElementEnterTransition().addListener(transitionListener);
+                if (view == null) {
+                    return;
                 }
+
+                pager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                String contentId = getIntent().getStringExtra(EXTRA_CONTENT_ID);
+                int selected = getIntent().getIntExtra(EXTRA_SELECTED, 0);
+
+                view.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, selected));
+                getWindow().getSharedElementEnterTransition().addListener(transitionListener);
 
                 if (view instanceof PlayerView) {
                     PlayerView playerView = (PlayerView) view;
@@ -236,7 +241,9 @@ public class MediaExplorerActivity extends HalloActivity {
     }
 
     private MediaExplorerViewModel.MediaModel getCurrentItem() {
-        return adapter.getCurrentList() == null ? null : adapter.getCurrentList().get(viewModel.getPosition());
+        final PagedList<MediaExplorerViewModel.MediaModel> pagedList = adapter.getCurrentList();
+        int position = viewModel.getPosition();
+        return pagedList == null || position >= pagedList.size() ? null : pagedList.get(position);
     }
 
     @Override
