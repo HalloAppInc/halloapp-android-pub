@@ -183,6 +183,7 @@ public class ChatActivity extends HalloActivity {
     private Map<Long, Integer> replyMessageMediaIndexMap = new HashMap<>();
 
     private boolean showKeyboardOnResume;
+    private boolean allowVoiceNoteSending;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -219,6 +220,8 @@ public class ChatActivity extends HalloActivity {
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
 
+        allowVoiceNoteSending = ServerProps.getInstance().getVoiceNoteSendingEnabled();
+
         chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
         Log.d("ChatActivity chatId " + chatId);
 
@@ -251,7 +254,7 @@ public class ChatActivity extends HalloActivity {
             public void afterTextChanged(Editable s) {
                 if (s == null || TextUtils.isEmpty(s.toString())) {
                     messageDrafts.remove(chatId);
-                    if (Constants.VOICE_NOTE_SENDING_ENABLED) {
+                    if (allowVoiceNoteSending) {
                         sendButton.setVisibility(View.INVISIBLE);
                         recordBtn.setVisibility(View.VISIBLE);
                     } else {
@@ -259,7 +262,7 @@ public class ChatActivity extends HalloActivity {
                     }
                 } else {
                     messageDrafts.put(chatId, s.toString());
-                    if (Constants.VOICE_NOTE_SENDING_ENABLED) {
+                    if (allowVoiceNoteSending) {
                         sendButton.setVisibility(View.VISIBLE);
                         recordBtn.setVisibility(View.INVISIBLE);
                     } else {
@@ -355,7 +358,7 @@ public class ChatActivity extends HalloActivity {
             viewModel.reloadMessagesAt(Long.MAX_VALUE);
         });
 
-        if (Constants.VOICE_NOTE_SENDING_ENABLED) {
+        if (allowVoiceNoteSending) {
             sendButton.setColorFilter(ContextCompat.getColor(ChatActivity.this, R.color.color_secondary));
             media.setColorFilter(ContextCompat.getColor(ChatActivity.this, R.color.color_secondary));
             viewModel.isRecording().observe(this, isRecording -> {

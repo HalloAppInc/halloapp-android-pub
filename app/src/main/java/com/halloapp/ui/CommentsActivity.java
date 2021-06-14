@@ -111,6 +111,8 @@ public class CommentsActivity extends HalloActivity {
 
     private static final int VOICE_RECORDING_ANIMATION_DURATION = 1000;
 
+    private final ServerProps serverProps = ServerProps.getInstance();
+
     private final CommentsAdapter adapter = new CommentsAdapter();
     private MediaThumbnailLoader mediaThumbnailLoader;
     private AvatarLoader avatarLoader;
@@ -149,7 +151,8 @@ public class CommentsActivity extends HalloActivity {
     private boolean scrollToComment = false;
     private int commentsFsePosition;
 
-    private boolean showCommentMediaPicker;
+    private boolean allowVoiceNoteSending;
+    private boolean isInternalGroup;
 
     private ImageView mediaPickerView;
 
@@ -316,11 +319,13 @@ public class CommentsActivity extends HalloActivity {
                     "gTNOJoTsQakTj_HIRA5wJH", // HalloApp Android
                     "gHRk9DYCJZcvuFAJuZvQPN"  // Everyone at HalloApp
             );
-            showCommentMediaPicker = ServerProps.getInstance().getIsInternalUser() &&
+            isInternalGroup = serverProps.getIsInternalUser() &&
                     post != null &&
                     post.getParentGroup() != null &&
                     allowedGroups.contains(post.getParentGroup().rawId());
+            allowVoiceNoteSending = serverProps.getVoiceNoteSendingEnabled() && isInternalGroup;
             updateMediaPickerVisibility();
+            updateVoiceNoteSending();
         });
         viewModel.loadPost(postId);
 
@@ -413,39 +418,35 @@ public class CommentsActivity extends HalloActivity {
             viewModel.cancelRecording();
         });
         final TextView recordingTime = findViewById(R.id.recording_time);
-        if (Constants.VOICE_NOTE_SENDING_ENABLED) {
-            sendButton.setColorFilter(ContextCompat.getColor(CommentsActivity.this, R.color.color_secondary));
-            mediaPickerView.setColorFilter(ContextCompat.getColor(CommentsActivity.this, R.color.color_secondary));
-            viewModel.isRecording().observe(this, isRecording -> {
-                if (isRecording == null || !isRecording) {
-                    deleteRecording.setVisibility(View.GONE);
-                    recordingTime.setVisibility(View.GONE);
-                    if (recordingIndicator.getAnimation() != null) {
-                        recordingIndicator.getAnimation().cancel();
-                    }
-                    recordingIndicator.setVisibility(View.GONE);
-                    editText.setVisibility(View.VISIBLE);
-                    recordBtn.setImageResource(R.drawable.ic_keyboard_voice);
-                } else {
-                    editText.setVisibility(View.INVISIBLE);
-                    deleteRecording.setVisibility(View.VISIBLE);
-                    recordingTime.setVisibility(View.VISIBLE);
-                    recordingIndicator.setVisibility(View.VISIBLE);
-                    recordBtn.setImageResource(R.drawable.ic_send);
-                    if (recordingIndicator.getAnimation() == null) {
-                        Animation anim = new AlphaAnimation(1.0f, 0.0f);
-                        anim.setDuration(VOICE_RECORDING_ANIMATION_DURATION);
-                        anim.setRepeatMode(Animation.RESTART);
-                        anim.setRepeatCount(Animation.INFINITE);
-                        recordingIndicator.startAnimation(anim);
-                    }
+
+        updateVoiceNoteSending();
+
+        viewModel.isRecording().observe(this, isRecording -> {
+            if (isRecording == null || !isRecording) {
+                deleteRecording.setVisibility(View.GONE);
+                recordingTime.setVisibility(View.GONE);
+                if (recordingIndicator.getAnimation() != null) {
+                    recordingIndicator.getAnimation().cancel();
                 }
-                updateMediaPickerVisibility();
-            });
-        } else {
-            recordBtn.setVisibility(View.GONE);
-            sendButton.setVisibility(View.VISIBLE);
-        }
+                recordingIndicator.setVisibility(View.GONE);
+                editText.setVisibility(View.VISIBLE);
+                recordBtn.setImageResource(R.drawable.ic_keyboard_voice);
+            } else {
+                editText.setVisibility(View.INVISIBLE);
+                deleteRecording.setVisibility(View.VISIBLE);
+                recordingTime.setVisibility(View.VISIBLE);
+                recordingIndicator.setVisibility(View.VISIBLE);
+                recordBtn.setImageResource(R.drawable.ic_send);
+                if (recordingIndicator.getAnimation() == null) {
+                    Animation anim = new AlphaAnimation(1.0f, 0.0f);
+                    anim.setDuration(VOICE_RECORDING_ANIMATION_DURATION);
+                    anim.setRepeatMode(Animation.RESTART);
+                    anim.setRepeatCount(Animation.INFINITE);
+                    recordingIndicator.startAnimation(anim);
+                }
+            }
+            updateMediaPickerVisibility();
+        });
 
         viewModel.getRecordingTime().observe(this, millis -> {
             if (millis == null) {
@@ -495,19 +496,32 @@ public class CommentsActivity extends HalloActivity {
         itemSwipeHelper.attachToRecyclerView(commentsView);
     }
 
+    private void updateVoiceNoteSending() {
+        if (allowVoiceNoteSending) {
+            sendButton.setColorFilter(ContextCompat.getColor(CommentsActivity.this, R.color.color_secondary));
+            mediaPickerView.setColorFilter(ContextCompat.getColor(CommentsActivity.this, R.color.color_secondary));
+        } else {
+            sendButton.clearColorFilter();
+            mediaPickerView.clearColorFilter();
+            recordBtn.setVisibility(View.GONE);
+            sendButton.setVisibility(View.VISIBLE);
+        }
+        updateSendButton();
+    }
+
     private void updateSendButton() {
         Editable e = editText.getText();
         String s = e == null ? null : e.toString();
         Media m = viewModel.commentMedia.getValue();
         if (m != null || !TextUtils.isEmpty(s)) {
-            if (Constants.VOICE_NOTE_SENDING_ENABLED) {
+            if (allowVoiceNoteSending) {
                 sendButton.setVisibility(View.VISIBLE);
                 recordBtn.setVisibility(View.INVISIBLE);
             } else {
                 sendButton.setColorFilter(ContextCompat.getColor(CommentsActivity.this, R.color.color_secondary));
             }
         } else {
-            if (Constants.VOICE_NOTE_SENDING_ENABLED) {
+            if (allowVoiceNoteSending ) {
                 sendButton.setVisibility(View.INVISIBLE);
                 recordBtn.setVisibility(View.VISIBLE);
             } else {
@@ -521,7 +535,7 @@ public class CommentsActivity extends HalloActivity {
         if (isRecording == null) {
             isRecording = false;
         }
-        if (showCommentMediaPicker && !isRecording) {
+        if (isInternalGroup && !isRecording) {
             mediaPickerView.setVisibility(View.VISIBLE);
         } else {
             mediaPickerView.setVisibility(View.GONE);
