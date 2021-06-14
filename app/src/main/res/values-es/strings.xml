@@ -389,7 +389,7 @@ version: %s
     <string name="contact_picker_feed_only_title">"Compartir publicaciones con…"</string>
     <string name="setting_feed_privacy_title">"Quién puede ver mis publicaciones"</string>
     <string name="setting_feed_all">"Mis contactos"</string>
-    <string name="setting_feed_only">"Solo compartirlos con…"</string>
+    <string name="setting_feed_only">"Solo compartirlas con…"</string>
     <string name="setting_feed_except">"Mis contactos excepto…"</string>
     <string name="feed_privacy_fail_to_load">"La configuración de privacidad no se pudo ejecutar"</string>
     <string name="feed_privacy_update_success">"La configuración fue actualizada satisfactoriamente"</string>

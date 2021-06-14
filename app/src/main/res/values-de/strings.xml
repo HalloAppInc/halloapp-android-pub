@@ -37,7 +37,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="contact_permission_title">"Noch ein Hinweis"</string>
     <string name="registration_code_invalid">"Ungültiger Registrierungscode, versuch es noch einmal"</string>
     <string name="registration_failed">"Fehler bei der Registrierung der Handynummer, versuch es noch einmal"</string>
-    <string name="registration_failed_no_friends">"Die Nutzung ist derzeit nur über Einladung möglich.  Bitte deine Freude oder Familienmitglieder, die auf HalloApp sind, dich über deine Handynummer einzuladen."</string>
+    <string name="registration_failed_no_friends">"Die Nutzung ist derzeit nur mit Einladung möglich. Einfach einen Freund oder ein Familienmitglied, das HalloApp verwendet, bitten, dich mit deiner Handynummer einzuladen."</string>
     <string name="registration_failed_no_friends_title">"Ups!"</string>
     <string name="type_a_message_hint">"Nachricht eingeben"</string>
     <string name="write_a_description">"Eine Beschreibung eingeben"</string>
@@ -122,7 +122,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="retry">"Noch einmal probieren"</string>
 
     <!-- the href probably shouldn't be part of the translated string -->
-    <string name="contact_rationale_upload">"Um den Kontakt zu deinen Freunden und zur Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;"</string>
+    <string name="contact_rationale_upload">"Um den Kontakt zu deinen Freunden und deiner Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;"</string>
     <string name="failed_to_initialize">"Fehler bei der Initialisierung"</string>
     <string name="type_a_comment_hint">"Kommentar hinzufügen"</string>
     <string name="comments">"Kommentare"</string>
@@ -480,12 +480,12 @@ Version: %s
 
     <!-- instead of using that they will "disappear" can we use they will be automatically "deleted"? -->
     <!-- Fuzzy -->
-    <string name="feed_nux_bottom_sheet_text">"Über Home-Feed kannst du Text-, Foto- und Video-Updates teilen, die nach 30 Tagen automatisch gelöscht werden.
+    <string name="feed_nux_bottom_sheet_text">"Auf der Home-Feed-Seite kannst du Text-, Foto- und Video-Updates teilen, die nach 30 Tagen automatisch gelöscht werden.
 
 Wenn du Updates mit jemanden teilen möchtest, müssen beide Seiten ihre jeweiligen Nummern auf ihren Handys gespeichert haben.
 
 Du kannst Updates mit deiner gesamten Kontaktliste oder nur mit ausgewählten Personen teilen. Dazu unter deinen Einstellungen den Privatsphäre-Feed ändern."</string>
-    <string name="messages_nux_text">"Hier findest du Nachrichten von deinen Freunden &amp; deiner Familie. Du siehst hier auch wenn sich jemand neu bei HalloApp angemeldet hat."</string>
+    <string name="messages_nux_text">"Hier findest du Nachrichten von deinen Freunden und deiner Familie. Du siehst hier auch, wenn sich jemand neu bei HalloApp angemeldet hat."</string>
     <string name="post_audience_nux_text">"Deine Beiträge werden mit deinen Kontakten, die auch auf HalloApp sind, geteilt. Du kannst deren Zugriff auf deine Beiträge unter Profil→Einstellungen einschränken."</string>
 
     <!-- Aktivitäten-Center is the German translation for "activity center". But it is really not that common and it really does not "sit with me well" . Would it be ok to just go with "Tap to see..."? -->
