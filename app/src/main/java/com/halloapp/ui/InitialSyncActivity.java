@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.Selection;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -72,7 +73,7 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
         logoView = findViewById(R.id.logo);
 
 
-        SpannableStringBuilder current= new SpannableStringBuilder(rationaleView.getText());
+        SpannableStringBuilder current= new SpannableStringBuilder(Html.fromHtml(getString(R.string.contact_rationale_upload)));
         URLSpan[] spans= current.getSpans(0, current.length(), URLSpan.class);
 
         for (URLSpan span : spans) {
