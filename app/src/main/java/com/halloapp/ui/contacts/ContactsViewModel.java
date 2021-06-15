@@ -23,6 +23,13 @@ public class ContactsViewModel extends AndroidViewModel {
 
     final ComputableLiveData<List<Contact>> contactList;
 
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
+        @Override
+        public void onContactsChanged() {
+            contactList.invalidate();
+        }
+    };
+
     public ContactsViewModel(@NonNull Application application) {
         this(application, false, null);
     }
@@ -47,6 +54,13 @@ public class ContactsViewModel extends AndroidViewModel {
                 return Contact.sort(contacts);
             }
         };
+
+        contactsDb.addObserver(contactsObserver);
+    }
+
+    @Override
+    protected void onCleared() {
+        contactsDb.removeObserver(contactsObserver);
     }
 
     public static class Factory implements ViewModelProvider.Factory {
