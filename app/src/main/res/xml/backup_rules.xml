@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <full-backup-content>
-    <exclude domain="sharedpref" path="me.xml"/>
-    <exclude domain="sharedpref" path="halloapp_keys.xml"/>
-    <exclude domain="sharedpref" path="pt_halloapp_keys.xml"/>
+    <include domain="sharedpref" path="prefs_backed_up.xml"/>
 </full-backup-content>
