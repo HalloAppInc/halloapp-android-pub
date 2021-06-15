@@ -535,7 +535,8 @@ public class ConnectionImpl extends Connection {
     @Override
     public void sendComment(@NonNull Comment comment) {
         byte[] encodedEntry;
-        if (ServerProps.getInstance().getNewClientContainerEnabled()) {
+        if (ServerProps.getInstance().getNewClientContainerEnabled()
+                || comment.type == Comment.TYPE_VOICE_NOTE) { // TODO: (clarkc) remove when old container is removed
             encodedEntry = FeedContentEncoder.encodeComment(comment);
         } else {
             final PublishedEntry entry = new PublishedEntry(
