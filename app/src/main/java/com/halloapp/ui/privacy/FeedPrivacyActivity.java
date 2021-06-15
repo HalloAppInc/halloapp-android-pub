@@ -73,10 +73,10 @@ public class FeedPrivacyActivity extends HalloActivity {
             selectedType = PrivacyList.Type.ALL;
         });
         only.setOnClickListener(v -> {
-            openMultipleContactPicker(REQUEST_CODE_SELECT_ONLY_LIST, onlyList, R.string.contact_picker_feed_only_title);
+            openMultipleContactPicker(REQUEST_CODE_SELECT_ONLY_LIST, getOnlyList(), R.string.contact_picker_feed_only_title);
         });
         except.setOnClickListener(v -> {
-            openMultipleContactPicker(REQUEST_CODE_SELECT_EXCEPT_LIST, exceptList, R.string.contact_picker_feed_except_title);
+            openMultipleContactPicker(REQUEST_CODE_SELECT_EXCEPT_LIST, getExceptList(), R.string.contact_picker_feed_except_title);
         });
 
         View content = findViewById(R.id.options_container);
@@ -92,9 +92,9 @@ public class FeedPrivacyActivity extends HalloActivity {
             } else {
                 content.setVisibility(View.VISIBLE);
             }
-            onlyList = feedPrivacy.onlyList;
-            exceptList = feedPrivacy.exceptList;
-            selectedType = feedPrivacy.activeList;
+            if (selectedType == null) {
+                selectedType = feedPrivacy.activeList;
+            }
             checkRadioButtonForType(selectedType);
         });
 
@@ -122,15 +122,37 @@ public class FeedPrivacyActivity extends HalloActivity {
         });
     }
 
+    private List<UserId> getOnlyList() {
+        if (onlyList != null) {
+            return onlyList;
+        }
+        FeedPrivacy privacy = viewModel.getFeedPrivacy().getValue();
+        if (privacy != null) {
+            return privacy.onlyList;
+        }
+        return null;
+    }
+
+    private List<UserId> getExceptList() {
+        if (exceptList != null) {
+            return exceptList;
+        }
+        FeedPrivacy privacy = viewModel.getFeedPrivacy().getValue();
+        if (privacy != null) {
+            return privacy.exceptList;
+        }
+        return null;
+    }
+
     @NonNull
     private List<UserId> getCurrentList() {
         List<UserId> currentList;
         switch (selectedType) {
             case PrivacyList.Type.EXCEPT:
-                currentList = exceptList;
+                currentList = getExceptList();
                 break;
             case PrivacyList.Type.ONLY:
-                currentList = onlyList;
+                currentList = getOnlyList();
                 break;
             default:
                 currentList = Collections.emptyList();
@@ -162,7 +184,7 @@ public class FeedPrivacyActivity extends HalloActivity {
     }
 
     private void openMultipleContactPicker(int requestCode, List<UserId> currentList, @StringRes int title) {
-        startActivityForResult(MultipleContactPickerActivity.newPickerIntent(this, currentList, title, false), requestCode);
+        startActivityForResult(MultipleContactPickerActivity.newPickerIntentAllowEmpty(this, currentList, title, false), requestCode);
     }
 
     private void revertToPreviousSelection() {

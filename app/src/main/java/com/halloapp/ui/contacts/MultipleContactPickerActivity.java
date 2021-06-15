@@ -30,6 +30,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -49,11 +50,11 @@ import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -71,6 +72,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     protected static final String EXTRA_EXCLUDED_IDS = "excluded_ids";
     protected static final String EXTRA_MAX_SELECTION = "max_selection";
     protected static final String EXTRA_ONLY_FRIENDS = "only_friends";
+    protected static final String EXTRA_ALLOW_EMPTY_SELECTION = "allow_empty_selection";
     public static final String EXTRA_RESULT_SELECTED_IDS = "result_selected_ids";
 
     private final ContactsAdapter adapter = new ContactsAdapter();
@@ -84,16 +86,19 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     private RecyclerView avatarsView;
 
     private HashSet<UserId> initialSelectedContacts;
-    protected HashSet<UserId> selectedContacts;
+    protected LinkedHashSet<UserId> selectedContacts;
     private Map<UserId, Contact> contactMap = new HashMap<>();
 
     private @DrawableRes int selectionIcon;
     private int maxSelection = -1;
+    private boolean allowEmptySelection;
 
     private MenuItem finishMenuItem;
 
-    public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title, boolean onlyFriends) {
-        return newPickerIntent(context, selectedIds, title, R.string.action_save, null, onlyFriends);
+    public static Intent newPickerIntentAllowEmpty(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title, boolean onlyFriends) {
+        Intent intent = newPickerIntent(context, selectedIds, title, R.string.action_save, null, onlyFriends);
+        intent.putExtra(EXTRA_ALLOW_EMPTY_SELECTION, true);
+        return intent;
     }
     public static Intent newPickerIntentExclude(@NonNull Context context, @Nullable Collection<UserId> excludeIds, @Nullable Integer maxSelection, @StringRes int title, @StringRes int action, boolean onlyFriends) {
         Intent intent = newPickerIntent(context, null, title, action, maxSelection, onlyFriends);
@@ -154,7 +159,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         searchBox.requestFocus();
 
         listView = findViewById(android.R.id.list);
-        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         listView.setLayoutManager(layoutManager);
         listView.setAdapter(adapter);
         listView.addItemDecoration(new ContactsSectionItemDecoration(
@@ -167,15 +172,15 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         emptyView = findViewById(android.R.id.empty);
 
         avatarsView = findViewById(R.id.avatars);
-        final RecyclerView.LayoutManager avatarsLayoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
+        final LinearLayoutManager avatarsLayoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
         avatarsView.setLayoutManager(avatarsLayoutManager);
         avatarsView.setAdapter(avatarsAdapter);
 
         ArrayList<UserId> preselected = getIntent().getParcelableArrayListExtra(EXTRA_SELECTED_IDS);
         if (preselected != null) {
-            selectedContacts = new HashSet<>(preselected);
+            selectedContacts = new LinkedHashSet<>(preselected);
         } else {
-            selectedContacts = new HashSet<>();
+            selectedContacts = new LinkedHashSet<>();
         }
         initialSelectedContacts = new HashSet<>(selectedContacts);
         avatarsAdapter.setUserIds(initialSelectedContacts);
@@ -205,6 +210,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         });
 
         maxSelection = getIntent().getIntExtra(EXTRA_MAX_SELECTION, -1);
+        allowEmptySelection = getIntent().getBooleanExtra(EXTRA_ALLOW_EMPTY_SELECTION, false);
 
         @StringRes int title = getIntent().getIntExtra(EXTRA_TITLE_RES, 0);
         if (title != 0) {
@@ -259,11 +265,12 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
                 getSupportActionBar().setSubtitle(getString(R.string.no_contacts_selected_subtitle));
             }
         }
+        boolean allowSelection = hasSelection || allowEmptySelection;
         if (finishMenuItem != null) {
             SpannableString ss = new SpannableString(getActionText());
-            ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), hasSelection ? R.color.color_secondary : R.color.button_disabled_background)), 0, ss.length(), 0);
+            ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), allowSelection ? R.color.color_secondary : R.color.button_disabled_background)), 0, ss.length(), 0);
             finishMenuItem.setTitle(ss);
-            finishMenuItem.setEnabled(hasSelection);
+            finishMenuItem.setEnabled(allowSelection);
         }
         if (avatarsView != null) {
             avatarsView.setVisibility(hasSelection ? View.VISIBLE : View.GONE);
@@ -448,12 +455,14 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
                 }
                 if (selectedContacts.contains(contact.userId)) {
                     selectedContacts.remove(contact.userId);
+                    avatarsAdapter.removeUserId(contact.userId);
                 } else if (getMaxSelection() >= 1 && selectedContacts.size() >= getMaxSelection()) {
                     SnackbarHelper.showWarning(listView, getResources().getQuantityString(R.plurals.contact_maximum_selection, getMaxSelection(), getMaxSelection()));
                 } else {
                     selectedContacts.add(contact.userId);
+                    avatarsAdapter.addUserId(contact.userId);
+                    avatarsView.scrollToPosition(selectedContacts.size() - 1);
                 }
-                avatarsAdapter.setUserIds(selectedContacts);
                 updateSelectionIcon();
                 updateToolbar();
                 clearSearchBar();
@@ -540,22 +549,57 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
 
     private class SelectedAdapter extends RecyclerView.Adapter<ViewHolder> {
         private List<Contact> contacts = new ArrayList<>();
+        private HashMap<String, Long> userIdMap = new HashMap<>();
+
+        private long idIndex = 0;
+
+        SelectedAdapter() {
+            setHasStableIds(true);
+        }
+
+        void removeUserId(UserId userId) {
+            ListIterator<Contact> contactListIterator = contacts.listIterator();
+            int index = -1;
+            while(contactListIterator.hasNext()) {
+                int tmpIndex = contactListIterator.nextIndex();
+                Contact c = contactListIterator.next();
+                if (userId.equals(c.userId)) {
+                    contactListIterator.nextIndex();
+                    contactListIterator.remove();
+                    index = tmpIndex;
+                    break;
+                }
+            }
+            if (index != -1) {
+                notifyItemRemoved(index);
+            }
+
+        }
+
+        void addUserId(UserId userId) {
+            Contact contact = contactMap.get(userId);
+            if (contact != null) {
+                contacts.add(contact);
+                String id = userId.rawId();
+                if (!userIdMap.containsKey(id)) {
+                    userIdMap.put(userId.rawId(), idIndex++);
+                }
+            }
+            notifyItemInserted(contacts.size() - 1);
+        }
 
         void setUserIds(@NonNull Set<UserId> contacts) {
-            List<UserId> list = new ArrayList<>(contacts);
             List<Contact> result = new ArrayList<>();
-            for (UserId userId : list) {
+            for (UserId userId : contacts) {
                 Contact contact = contactMap.get(userId);
                 if (contact != null) {
                     result.add(contact);
+                    String id = userId.rawId();
+                    if (!userIdMap.containsKey(id)) {
+                        userIdMap.put(userId.rawId(), idIndex++);
+                    }
                 }
             }
-            Collections.sort(result, new Comparator<Contact>() {
-                @Override
-                public int compare(Contact o1, Contact o2) {
-                    return o1.getDisplayName().compareTo(o2.getDisplayName());
-                }
-            });
             this.contacts = result;
             notifyDataSetChanged();
         }
@@ -572,6 +616,19 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
                 Contact contact = contacts.get(position);
                 holder.bindTo(Preconditions.checkNotNull(contact.userId));
             }
+        }
+
+        @Override
+        public long getItemId(int position) {
+            UserId userId = contacts.get(position).userId;
+            if (userId == null) {
+                return -1;
+            }
+            Long id = userIdMap.get(userId.rawId());
+            if (id != null) {
+                return id;
+            }
+            return -1;
         }
 
         @Override
