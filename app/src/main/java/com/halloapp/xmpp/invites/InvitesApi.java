@@ -2,6 +2,7 @@ package com.halloapp.xmpp.invites;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.ui.invites.InviteCountAndRefreshTime;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.util.Observable;
 
@@ -19,7 +20,13 @@ public class InvitesApi {
     public Observable<Integer> getAvailableInviteCount() {
         final InvitesRequestIq requestIq = InvitesRequestIq.createGetInviteIq();
         Observable<InvitesResponseIq> inviteRequest = connection.sendRequestIq(requestIq);
-        return inviteRequest.map(inviteIq -> inviteIq.invitesLeft);
+        return inviteRequest.map(inviteIq -> inviteIq.inviteCountRefreshData.getInvitesRemaining());
+    }
+
+    public Observable<InviteCountAndRefreshTime> getInviteAndTimeRefresh(){
+        final InvitesRequestIq requestIq = InvitesRequestIq.createGetInviteIq();
+        Observable<InvitesResponseIq> inviteRequest = connection.sendRequestIq(requestIq);
+        return inviteRequest.map(inviteIq -> inviteIq.inviteCountRefreshData);
     }
 
     public Observable<Integer> sendInvite(@NonNull String phoneNumber) {

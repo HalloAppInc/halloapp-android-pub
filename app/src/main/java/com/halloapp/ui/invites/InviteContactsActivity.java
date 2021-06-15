@@ -1,6 +1,7 @@
 package com.halloapp.ui.invites;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +29,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -48,8 +51,10 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
+import com.halloapp.xmpp.util.Observable;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
+import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -75,7 +80,6 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
 
     private boolean sendingEnabled;
 
-
     private String smsPackageName;
 
     private Drawable waIcon;
@@ -92,7 +96,6 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
         setContentView(R.layout.activity_invite_contacts);
-
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -137,21 +140,24 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
 
         View progress = findViewById(R.id.progress);
 
-        viewModel.getInviteCount().observe(this, nullableCount -> {
-            if (nullableCount == null) {
+        viewModel.getInviteCountAndRefreshTime().observe(this, inviteAndRefresh -> {
+            if (inviteAndRefresh == null) {
                 progress.setVisibility(View.VISIBLE);
                 setSendingEnabled(false);
-            } else if (nullableCount == InviteContactsViewModel.RESPONSE_RETRYABLE) {
+            } else if (inviteAndRefresh.getInvitesRemaining() == InviteContactsViewModel.RESPONSE_RETRYABLE) {
                 bannerView.setText(R.string.invite_info_fetch_internet);
                 progress.setVisibility(View.GONE);
                 setSendingEnabled(false);
-            } else if (nullableCount > 0) {
+            } else if (inviteAndRefresh.getInvitesRemaining() > 0) {
                 progress.setVisibility(View.GONE);
-                bannerView.setText(getResources().getQuantityString(R.plurals.invites_remaining, nullableCount, nullableCount));
+                bannerView.setText(getResources().getQuantityString(R.plurals.invites_remaining,
+                            inviteAndRefresh.getInvitesRemaining(), inviteAndRefresh.getInvitesRemaining()));
                 setSendingEnabled(true);
             } else {
                 progress.setVisibility(View.GONE);
-                bannerView.setText(R.string.no_invites_remaining);
+                long inviteRefreshTime = inviteAndRefresh.getTimeTillRefresh() * 1000L + System.currentTimeMillis();
+                String serverTimeRef = DateUtils.formatDateTime(this, inviteRefreshTime, DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE);
+                bannerView.setText(getString(R.string.server_invite_refresh_time, serverTimeRef));
                 setSendingEnabled(false);
             }
         });

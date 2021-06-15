@@ -3,7 +3,6 @@ package com.halloapp.ui.invites;
 import android.app.Application;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.provider.Telephony;
 
 import androidx.annotation.NonNull;
@@ -38,12 +37,14 @@ public class InviteContactsViewModel extends AndroidViewModel {
 
     private final InvitesApi invitesApi;
 
-    MutableLiveData<Integer> inviteCountData;
+    MutableLiveData<InviteCountAndRefreshTime> inviteAndTimeData;
+
     ComputableLiveData<List<Contact>> contactList;
     ComputableLiveData<Set<String>> waContacts;
     ComputableLiveData<InviteOptions> inviteOptions;
 
     public static final int RESPONSE_RETRYABLE = -1;
+    public static final long RESPONSE_RETRYABLE_LONG = -1;
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
 
@@ -68,7 +69,7 @@ public class InviteContactsViewModel extends AndroidViewModel {
 
         invitesApi = new InvitesApi(connection);
 
-        inviteCountData = new MutableLiveData<>();
+        inviteAndTimeData = new MutableLiveData<>();
 
         contactList = new ComputableLiveData<List<Contact>>() {
 
@@ -119,7 +120,7 @@ public class InviteContactsViewModel extends AndroidViewModel {
         };
 
         contactsDb.addObserver(contactsObserver);
-        fetchInvites();
+        fetchInviteAndTimeRefreshData();
     }
 
     private InviteOptions loadInviteOptions() {
@@ -140,32 +141,36 @@ public class InviteContactsViewModel extends AndroidViewModel {
         return inviteOptions;
     }
 
-    private void fetchInvites() {
+    private void fetchInviteAndTimeRefreshData() {
         bgWorkers.execute(() -> {
-            invitesApi.getAvailableInviteCount().onResponse(response -> {
+            invitesApi.getInviteAndTimeRefresh().onResponse(response -> {
                 if (response == null) {
-                    inviteCountData.postValue(RESPONSE_RETRYABLE);
+                    InviteCountAndRefreshTime retryable = new InviteCountAndRefreshTime();
+                    retryable.setInviteRemaining(RESPONSE_RETRYABLE);
+                    retryable.setTimeTillRefresh(RESPONSE_RETRYABLE_LONG);
+                    inviteAndTimeData.postValue(retryable);
                 } else {
-                    preferences.setInvitesRemaining(response);
-                    inviteCountData.postValue(response);
+                    preferences.setInvitesRemaining(response.getInvitesRemaining());
+                    inviteAndTimeData.postValue(response);
                 }
             }).onError(e -> {
-                inviteCountData.postValue(RESPONSE_RETRYABLE);
+                InviteCountAndRefreshTime retryable = new InviteCountAndRefreshTime();
+                retryable.setInviteRemaining(RESPONSE_RETRYABLE);
+                retryable.setTimeTillRefresh(RESPONSE_RETRYABLE_LONG);
+                inviteAndTimeData.postValue(retryable);
             });
         });
     }
 
-    public void refreshInvites() {
-        fetchInvites();
-    }
+    public void refreshInvites() {fetchInviteAndTimeRefreshData();}
 
     public void refreshContacts() {
         contactList.invalidate();
         waContacts.invalidate();
     }
 
-    public LiveData<Integer> getInviteCount() {
-        return inviteCountData;
+    public LiveData<InviteCountAndRefreshTime> getInviteCountAndRefreshTime() {
+        return inviteAndTimeData;
     }
 
     public LiveData<List<Contact>> getContactList() {
@@ -179,7 +184,7 @@ public class InviteContactsViewModel extends AndroidViewModel {
                 inviteResult.postValue(result);
                 if (result != null && InvitesResponseIq.Result.SUCCESS == result) {
                     contactsDb.markInvited(contact);
-                    fetchInvites();
+                    fetchInviteAndTimeRefreshData();
                     refreshContacts();
                 }
             }).onError(e -> {

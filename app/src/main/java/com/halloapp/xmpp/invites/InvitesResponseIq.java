@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import com.halloapp.proto.server.Invite;
 import com.halloapp.proto.server.InvitesResponse;
 import com.halloapp.proto.server.Iq;
+import com.halloapp.ui.invites.InviteCountAndRefreshTime;
 import com.halloapp.xmpp.HalloIq;
 
 import java.util.HashMap;
@@ -14,7 +15,7 @@ import java.util.Set;
 
 public class InvitesResponseIq extends HalloIq {
 
-    @Nullable Integer invitesLeft;
+    InviteCountAndRefreshTime inviteCountRefreshData;
 
     final Map<String, Integer> failedInvites = new HashMap<>();
     final Set<String> successfulInvites = new HashSet<>();
@@ -35,9 +36,8 @@ public class InvitesResponseIq extends HalloIq {
         String NO_ACCOUNT = "no_account";
     }
 
-    private InvitesResponseIq(int invitesLeft, Set<String> successfulInvites, Map<String, Integer> failedInvites) {
-        this.invitesLeft = invitesLeft;
-        this.successfulInvites.addAll(successfulInvites);
+    private InvitesResponseIq(int invitesLeft, long refreshTimeLeft, Set<String> successfulInvites, Map<String, Integer> failedInvites) {
+        this.inviteCountRefreshData = new InviteCountAndRefreshTime(invitesLeft, refreshTimeLeft);
         for (String key : failedInvites.keySet()) {
             this.failedInvites.put(key, failedInvites.get(key));
         }
@@ -71,6 +71,7 @@ public class InvitesResponseIq extends HalloIq {
 
     public static InvitesResponseIq fromProto(InvitesResponse invitesResponse) {
         int invitesLeft = invitesResponse.getInvitesLeft();
+        long refreshTimeLeft = invitesResponse.getTimeUntilRefresh();
         Map<String, Integer> failedInvites = new HashMap<>();
         Set<String> successfulInvites = new HashSet<>();
         for (Invite invite : invitesResponse.getInvitesList()) {
@@ -84,6 +85,6 @@ public class InvitesResponseIq extends HalloIq {
                 }
             }
         }
-        return new InvitesResponseIq(invitesLeft, successfulInvites, failedInvites);
+        return new InvitesResponseIq(invitesLeft, refreshTimeLeft, successfulInvites, failedInvites);
     }
 }
