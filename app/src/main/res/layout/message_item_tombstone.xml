@@ -47,16 +47,18 @@
                     android:id="@+id/tombstone_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toEndOf="@+id/time_icon"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     android:fontFamily="sans-serif-medium"
                     android:gravity="center"
                     android:paddingTop="9dp"
                     android:paddingBottom="9dp"
+                    android:paddingStart="9dp"
+                    android:paddingEnd="9dp"
                     android:text="@string/message_tombstone_placeholder"
-                    android:textStyle="italic" />
+                    android:textStyle="italic"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/time_icon"
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
