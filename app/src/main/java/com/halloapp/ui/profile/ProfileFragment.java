@@ -3,6 +3,7 @@ package com.halloapp.ui.profile;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +24,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.Me;
 import com.halloapp.R;
+import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Message;
 import com.halloapp.id.UserId;
@@ -52,6 +54,7 @@ public class ProfileFragment extends PostsFragment {
     private TextView nameView;
     private TextView subtitleView;
     private View messageView;
+    private View addToContactsView;
     private RecyclerView postsView;
 
     private MenuItem blockMenuItem;
@@ -141,6 +144,7 @@ public class ProfileFragment extends PostsFragment {
         subtitleView = headerView.findViewById(R.id.subtitle);
         nameView = headerView.findViewById(R.id.name);
         messageView = headerView.findViewById(R.id.message);
+        addToContactsView = headerView.findViewById(R.id.add_to_contacts);
         viewModel.getSubtitle().observe(getViewLifecycleOwner(), s -> {
             subtitleView.setText(s);
             if (s == null) {
@@ -155,6 +159,21 @@ public class ProfileFragment extends PostsFragment {
             intent.putExtra(ChatActivity.EXTRA_CHAT_ID, profileUserId);
             startActivity(intent);
         });
+        addToContactsView.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_INSERT);
+            intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
+
+            Contact contact = viewModel.getContact().getValue();
+            if (contact != null) {
+                intent.putExtra(ContactsContract.Intents.Insert.NAME, contact.getDisplayName());
+            }
+            String phone = viewModel.getSubtitle().getValue();
+            if (phone != null) {
+                intent.putExtra(ContactsContract.Intents.Insert.PHONE, phone);
+            }
+
+            startActivity(intent);
+        });
         if (profileUserId.isMe()) {
             me.name.observe(getViewLifecycleOwner(), nameView::setText);
         } else {
@@ -165,10 +184,12 @@ public class ProfileFragment extends PostsFragment {
                     emptyIcon.setImageResource(R.drawable.ic_exchange_numbers);
                     emptyView.setText(getString(R.string.posts_exchange_numbers));
                     messageView.setVisibility(View.GONE);
+                    addToContactsView.setVisibility(View.VISIBLE);
                 } else {
                     emptyIcon.setImageResource(R.drawable.ic_posts);
                     emptyView.setText(getString(R.string.contact_profile_empty, name));
                     messageView.setVisibility(View.VISIBLE);
+                    addToContactsView.setVisibility(View.GONE);
                 }
             });
         }
