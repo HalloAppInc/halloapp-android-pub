@@ -1,6 +1,6 @@
 package com.halloapp.xmpp;
 
-import com.halloapp.BuildConfig;
+import com.halloapp.Constants;
 import com.halloapp.proto.server.ClientVersion;
 import com.halloapp.proto.server.Iq;
 
@@ -22,7 +22,7 @@ public class SecondsToExpirationIq extends HalloIq {
                 .setId(getStanzaId())
                 .setClientVersion(
                         ClientVersion.newBuilder()
-                                .setVersion(BuildConfig.VERSION_NAME)
+                                .setVersion(Constants.USER_AGENT)
                                 .build())
                 .build();
     }
