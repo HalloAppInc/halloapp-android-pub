@@ -163,7 +163,6 @@ public class MainConnectionObserver extends Connection.Observer {
         connection.updatePresence(foregroundObserver.isInForeground());
         new TransferPendingItemsTask(context).execute();
         HalloApp.updateFirebasePushTokenIfNeeded();
-        new RequestExpirationInfoTask(connection, context).execute();
         presenceLoader.onReconnect();
         groupsSync.startGroupsSync();
         decryptReportStats.start();
@@ -191,6 +190,15 @@ public class MainConnectionObserver extends Connection.Observer {
             AppExpirationActivity.open(context, 0);
         } else {
             notifications.showExpirationNotification(0);
+        }
+    }
+
+    @Override
+    public void onClientVersionExpiringSoon(int daysLeft) {
+        if (foregroundObserver.isInForeground()) {
+            AppExpirationActivity.open(context, daysLeft);
+        } else {
+            notifications.showExpirationNotification(daysLeft);
         }
     }
 

@@ -33,6 +33,9 @@ public class Constants {
     public static final int MAX_NAME_LENGTH = 25;
     public static final int MAX_GROUP_NAME_LENGTH = 25;
 
+    public static final int BUILD_EXPIRES_SOON_THRESHOLD_DAYS = 7;
+    public static final int SECONDS_PER_DAY = 60 * 60 * 24;
+
     public static final int KEYBOARD_SHOW_DELAY = 300;
 
     public static final int JPEG_QUALITY = 80;

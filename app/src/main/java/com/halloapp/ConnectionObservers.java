@@ -92,6 +92,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyClientVersionExpiringSoon(int daysLeft) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onClientVersionExpiringSoon(daysLeft);
+            }
+        }
+    }
+
     public void notifyOutgoingPostSent(@NonNull String postId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {

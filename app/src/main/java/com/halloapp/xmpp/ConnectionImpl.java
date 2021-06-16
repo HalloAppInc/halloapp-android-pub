@@ -899,6 +899,12 @@ public class ConnectionImpl extends Connection {
                 clientExpired();
             } else {
                 ServerProps.getInstance().onReceiveServerPropsHash(connectionPropHash);
+                long secondsLeft = authResult.getVersionTtl();
+                int daysLeft = (int) (secondsLeft / Constants.SECONDS_PER_DAY) + 1;
+                Log.d("connection: build daysLeft=" + daysLeft);
+                if (daysLeft <= Constants.BUILD_EXPIRES_SOON_THRESHOLD_DAYS) {
+                    connectionObservers.notifyClientVersionExpiringSoon(daysLeft);
+                }
             }
         }
 

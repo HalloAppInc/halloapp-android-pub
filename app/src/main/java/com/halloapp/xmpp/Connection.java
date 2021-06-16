@@ -46,6 +46,7 @@ public abstract class Connection {
         public void onDisconnected() {}
         public void onLoginFailed() {}
         public void onClientVersionExpired() {}
+        public void onClientVersionExpiringSoon(int daysLeft) {}
         public void onOutgoingPostSent(@NonNull String postId) {}
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId) {}
         public void onOutgoingCommentSent(@NonNull String postId, @NonNull String commentId) {}
