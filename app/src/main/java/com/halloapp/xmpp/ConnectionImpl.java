@@ -502,7 +502,9 @@ public class ConnectionImpl extends Connection {
             Log.e("connection: sendPost null audience type but not a group post");
             return;
         }
-        FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, entry.getEncodedEntry());
+        Container.Builder containerBuilder = entry.getEntryBuilder();
+        FeedContentEncoder.encodePost(containerBuilder, post);
+        FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, containerBuilder.build().toByteArray());
         HalloIq publishIq;
         if (post.getParentGroup() == null) {
             FeedUpdateIq updateIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, feedItem);
@@ -535,8 +537,7 @@ public class ConnectionImpl extends Connection {
     @Override
     public void sendComment(@NonNull Comment comment) {
         byte[] encodedEntry;
-        if (ServerProps.getInstance().getNewClientContainerEnabled()
-                || comment.type == Comment.TYPE_VOICE_NOTE) { // TODO: (clarkc) remove when old container is removed
+        if (comment.type == Comment.TYPE_VOICE_NOTE) { // TODO: (clarkc) remove when old container is removed
             encodedEntry = FeedContentEncoder.encodeComment(comment);
         } else {
             final PublishedEntry entry = new PublishedEntry(
@@ -553,7 +554,11 @@ public class ConnectionImpl extends Connection {
             for (Mention mention : comment.mentions) {
                 entry.mentions.add(Mention.toProto(mention));
             }
-            encodedEntry = entry.getEncodedEntry();
+            Container.Builder containerBuilder = entry.getEntryBuilder();
+            if (ServerProps.getInstance().getNewClientContainerEnabled()) {
+                FeedContentEncoder.encodeComment(containerBuilder, comment);
+            }
+            encodedEntry = containerBuilder.build().toByteArray();
         }
         FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.id, comment.postId, encodedEntry);
         commentItem.parentCommentId = comment.parentCommentId;

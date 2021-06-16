@@ -6,6 +6,7 @@ import com.google.protobuf.ByteString;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
+import com.halloapp.content.Post;
 import com.halloapp.proto.clients.Album;
 import com.halloapp.proto.clients.AlbumMedia;
 import com.halloapp.proto.clients.CommentContainer;
@@ -13,6 +14,7 @@ import com.halloapp.proto.clients.CommentContext;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.EncryptedResource;
 import com.halloapp.proto.clients.Image;
+import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.clients.Text;
 import com.halloapp.proto.clients.Video;
 import com.halloapp.proto.clients.VoiceNote;
@@ -23,9 +25,7 @@ import java.util.List;
 
 public class FeedContentEncoder {
 
-    public static byte[] encodeComment(@NonNull Comment comment) {
-        Container.Builder containerBuilder = Container.newBuilder();
-
+    public static void encodeComment(Container.Builder containerBuilder, @NonNull Comment comment) {
         CommentContainer.Builder builder = CommentContainer.newBuilder();
         CommentContext.Builder context = CommentContext.newBuilder()
                 .setFeedPostId(comment.postId);
@@ -71,8 +71,41 @@ public class FeedContentEncoder {
         }
         builder.setContext(context.build());
         containerBuilder.setCommentContainer(builder.build());
+    }
 
+    public static byte[] encodeComment(@NonNull Comment comment) {
+        Container.Builder containerBuilder = Container.newBuilder();
+        encodeComment(containerBuilder, comment);
         return containerBuilder.build().toByteArray();
+    }
+
+    public static void encodePost(Container.Builder containerBuilder, @NonNull Post post) {
+        PostContainer.Builder builder = PostContainer.newBuilder();
+        Text textContainer = null;
+        if (post.text != null) {
+            Text.Builder textBuilder = Text.newBuilder();
+            textBuilder.setText(post.text);
+            if (!post.mentions.isEmpty()) {
+                List<com.halloapp.proto.clients.Mention> mentionsList = new ArrayList<>();
+                for (Mention mention : post.mentions) {
+                    mentionsList.add(Mention.toProto(mention));
+                }
+                textBuilder.addAllMentions(mentionsList);
+            }
+            textContainer = textBuilder.build();
+        }
+
+        if (!post.media.isEmpty()) {
+            Album.Builder albumBuilder = Album.newBuilder();
+            albumBuilder.addAllMedia(getAlbumMediaProtos(post.media));
+            if (textContainer != null) {
+                albumBuilder.setText(textContainer);
+            }
+            builder.setAlbum(albumBuilder);
+        } else {
+            builder.setText(textContainer);
+        }
+        containerBuilder.setPostContainer(builder);
     }
 
     private static List<AlbumMedia> getAlbumMediaProtos(List<Media> media) {
@@ -103,4 +136,5 @@ public class FeedContentEncoder {
         }
         return mediaList;
     }
+
 }

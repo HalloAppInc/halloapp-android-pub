@@ -132,7 +132,7 @@ public class PublishedEntry {
         this.parentCommentId = parentCommentId;
     }
 
-    public byte[] getEncodedEntry() {
+    public Container.Builder getEntryBuilder() {
         Container.Builder containerBuilder = Container.newBuilder();
         switch (type) {
             case ENTRY_FEED: {
@@ -234,7 +234,7 @@ public class PublishedEntry {
                 }
             }
         }
-        return containerBuilder.build().toByteArray();
+        return containerBuilder;
     }
 
     private List<AlbumMedia> getAlbumMediaProtos() {
