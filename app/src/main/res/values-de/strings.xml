@@ -108,7 +108,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
     <string name="contacts_permission_rationale">"Um den Kontakt zu deinen Freunden &amp; zur Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können"</string>
-    <string name="contacts_permission_rationale_denied">"Um den Kontakt zu deinen Freunden &amp; zur Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können.
+    <string name="contacts_permission_rationale_denied">"Um den Kontakt zu deinen Freunden und zur Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
 
@@ -397,7 +397,6 @@ Version: %s
         <item quantity="one">"Du hast noch %s Einladung"</item>
         <item quantity="other">"Du hast noch %s Einladungen"</item>
     </plurals>
-    <string name="no_invites_remaining">"Weitere Einladungen kommen diesen Montag!"</string>
     <string name="invite_friends_title">"Freunde &amp; Familie einladen"</string>
     <string name="invite_title">"Einladung"</string>
     <string name="settings_invite_option">"Einladung zu HalloApp"</string>
@@ -479,12 +478,11 @@ Version: %s
     <string name="feed_nux_bottom_sheet_title">"Über HalloApp"</string>
 
     <!-- instead of using that they will "disappear" can we use they will be automatically "deleted"? -->
-    <!-- Fuzzy -->
-    <string name="feed_nux_bottom_sheet_text">"Auf der Home-Feed-Seite kannst du Text-, Foto- und Video-Updates teilen, die nach 30 Tagen automatisch gelöscht werden.
+    <string name="feed_nux_bottom_sheet_text">"Auf der Home-Feed-Seite kannst du Text-, Foto- und Video-Beiträge teilen, die nach 30 Tagen automatisch gelöscht werden.
 
-Wenn du Updates mit jemanden teilen möchtest, müssen beide Seiten ihre jeweiligen Nummern auf ihren Handys gespeichert haben.
+Wenn du Beiträge mit jemanden teilen möchtest, müssen beide Seiten ihre jeweiligen Nummern auf ihren Handys gespeichert haben.
 
-Du kannst Updates mit deiner gesamten Kontaktliste oder nur mit ausgewählten Personen teilen. Dazu unter deinen Einstellungen den Privatsphäre-Feed ändern."</string>
+Du kannst Beiträge mit deiner gesamten Kontaktliste oder nur mit ausgewählten Personen teilen. Dazu unter deinen Einstellungen den Privatsphäre-Feed ändern."</string>
     <string name="messages_nux_text">"Hier findest du Nachrichten von deinen Freunden und deiner Familie. Du siehst hier auch, wenn sich jemand neu bei HalloApp angemeldet hat."</string>
     <string name="post_audience_nux_text">"Deine Beiträge werden mit deinen Kontakten, die auch auf HalloApp sind, geteilt. Du kannst deren Zugriff auf deine Beiträge unter Profil→Einstellungen einschränken."</string>
 
@@ -656,4 +654,12 @@ Bitte mehr Speicherplatz freigeben, damit du HalloApp weiterhin nutzen kannst."<
     <!-- Text that provides context for a group invite link being shared -->
     <string name="group_invite_link_context">"Über diesen Link kannst du meiner HalloApp-Gruppe beitreten: %s"</string>
     <string name="voice_note">"Sprachnotiz"</string>
+
+    <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
+This string is used in InviteContactsActivity.java line 160 to show the time that invites will be refreshed after invite count is 0
+example: More invites coming on [Saturday, June 19, 7:59 PM], where content in the brackets is displayed by %s -->
+    <string name="server_invite_refresh_time">"Weitere Einladungen kommen am %s"</string>
+
+    <!-- Button text on profile of a user not in the user's contacts; tapping takes the user to the contacts app with data prefilled -->
+    <string name="add_to_contacts">"Add to contacts"</string>
 </resources>

@@ -348,7 +348,6 @@ version: %s
         <item quantity="one">"You have %s invite remaining this week"</item>
         <item quantity="other">"You have %s invite remaining this week"</item>
     </plurals>
-    <string name="no_invites_remaining">"More invites coming this Monday!"</string>
     <string name="invite_friends_title">"Invite friends &amp; family"</string>
     <string name="invite_title">"Invite"</string>
     <string name="settings_invite_option">"Invite to HalloApp"</string>
@@ -587,4 +586,12 @@ In order to use HalloApp please free some storage on this phone."</string>
     <!-- Text that provides context for a group invite link being shared -->
     <string name="group_invite_link_context">"Click on this link to join my HalloApp group: %s"</string>
     <string name="voice_note">"Voice note"</string>
+
+    <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
+This string is used in InviteContactsActivity.java line 160 to show the time that invites will be refreshed after invite count is 0
+example: More invites coming on [Saturday, June 19, 7:59 PM], where content in the brackets is displayed by %s -->
+    <string name="server_invite_refresh_time">"More invites coming on %s"</string>
+
+    <!-- Button text on profile of a user not in the user's contacts; tapping takes the user to the contacts app with data prefilled -->
+    <string name="add_to_contacts">"Add to contacts"</string>
 </resources>
