@@ -516,6 +516,12 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         intent.putParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA, uris);
 
         if (original != null) {
+            for (int index = 0; index < uris.size(); index++) {
+                if (!original.contains(uris.get(index))) {
+                    intent.putExtra(MediaEditActivity.EXTRA_SELECTED, index);
+                    break;
+                }
+            }
             original.removeAll(uris);
             viewModel.clean(original);
 

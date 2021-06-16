@@ -134,6 +134,7 @@ public class ContentComposerActivity extends HalloActivity {
 
     private boolean prevEditEmpty;
     private boolean updatedMediaProcessed = false;
+    private int currentItemToSet = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -367,6 +368,10 @@ public class ContentComposerActivity extends HalloActivity {
             updateAspectRatioForMedia(media);
             if (chatId != null) {
                 mediaVerticalScrollView.postScrollToBottom();
+            }
+            if (currentItemToSet != -1) {
+                setCurrentItem(currentItemToSet, false);
+                currentItemToSet = -1;
             }
         });
         viewModel.mentionableContacts.getLiveData().observe(this, contacts -> mentionPickerView.setMentionableContacts(contacts));
@@ -796,7 +801,7 @@ public class ContentComposerActivity extends HalloActivity {
 
                 if (items != null && getCurrentItem() != selected && 0 <= selected && selected < items.size()) {
                     postponeEnterTransition();
-                    mediaPager.setCurrentItem(selected, false);
+                    setCurrentItem(selected, false);
                     startPostponedEnterTransition();
                 }
             }
@@ -847,6 +852,7 @@ public class ContentComposerActivity extends HalloActivity {
             loadingView.setVisibility(View.VISIBLE);
             mediaPager.setVisibility(View.GONE);
             expectedMediaCount = uris.size();
+            currentItemToSet = currentItem;
             viewModel.loadUris(uris, editStates);
         }
     }
