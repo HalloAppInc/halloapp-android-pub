@@ -2,6 +2,7 @@ package com.halloapp.ui.chats;
 
 import android.app.Application;
 import android.os.Parcelable;
+import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -12,15 +13,15 @@ import androidx.lifecycle.MutableLiveData;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.content.Post;
-import com.halloapp.id.ChatId;
-import com.halloapp.id.GroupId;
-import com.halloapp.id.UserId;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.MessageLoader;
+import com.halloapp.content.Post;
 import com.halloapp.content.SeenReceipt;
+import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
@@ -169,7 +170,10 @@ public class ChatsViewModel extends AndroidViewModel {
                 }
                 for (Chat chat : chats) {
                     if (TextUtils.isEmpty(chat.name) && chat.chatId instanceof UserId) {
-                        chat.name = contactsDb.getContact((UserId)chat.chatId).getDisplayName();
+                        Contact contact = contactsDb.getContact((UserId)chat.chatId);
+                        String phone = TextUtils.isEmpty(contact.addressBookName) ? contactsDb.readPhone(Preconditions.checkNotNull(contact.userId)) : null;
+                        String normalizedPhone = phone == null ? null : PhoneNumberUtils.formatNumber("+" + phone, null);
+                        chat.name = TextUtils.isEmpty(contact.addressBookName) ? normalizedPhone : contact.getDisplayName();
                     }
                 }
                 Collections.sort(chats, (obj1, obj2) -> {
