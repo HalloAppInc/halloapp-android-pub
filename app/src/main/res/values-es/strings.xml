@@ -45,7 +45,7 @@
     <string name="new_message">"Nuevo mensaje"</string>
 
     <!-- Fuzzy -->
-    <string name="chat_message_attribution">"%s: %s"</string>
+    <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s está en HalloApp."</string>
     <string name="new_chat_name_placeholder">"¡%s está usando HalloApp!"</string>
     <string name="posts_empty">"Tus publicaciones aparecerán aquí"</string>
@@ -121,19 +121,19 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; te mencionó en un comentario en su publicación"</string>
 
     <!-- Fuzzy -->
-    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%s&lt;/b&gt; te mencionó en un comentario en algo que publicó &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; te mencionó en un comentario en algo que publicó &lt;b&gt;%2$s&lt;/b&gt;"</string>
     <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; hizo un comentario en tu publicación"</string>
 
     <!-- Fuzzy -->
-    <string name="commented_on_your_post_2">"&lt;b&gt;%1s&lt;/b&gt; y &lt;b&gt;%2s&lt;/b&gt; comentaron en tu publicación"</string>
+    <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; y &lt;b&gt;%2$s&lt;/b&gt; comentaron en tu publicación"</string>
 
     <!-- Fuzzy -->
-    <string name="commented_on_your_post_3">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; y &lt;b&gt;%3s&lt;/b&gt; comentaron en tu publicación"</string>
+    <string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; y &lt;b&gt;%3$s&lt;/b&gt; comentaron en tu publicación"</string>
 
     <!-- Fuzzy -->
     <plurals name="commented_on_your_post_4">
-        <item quantity="one">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; y %d comentaron en tu publicación"</item>
-        <item quantity="other">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; y %d otros comentaron en tu publicación"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; y %3$d comentaron en tu publicación"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; y %3$d otros comentaron en tu publicación"</item>
     </plurals>
     <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; comentó en la publicación de &lt;b&gt;%2$s&lt;/b&gt;"</string>
     <string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; y &lt;b&gt;%2$s&lt;/b&gt; comentaron en la publicación de &lt;b&gt;%3$s&lt;/b&gt;"</string>
@@ -147,7 +147,7 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt;comentó en su publicación"</string>
 
     <!-- Fuzzy -->
-    <string name="list_of_two">"%s y %s"</string>
+    <string name="list_of_two">"%1$s y %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
     <string name="list_of_many_middle">", %s"</string>
     <string name="list_of_many_end">"y %s"</string>
@@ -198,14 +198,14 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
 
     <!-- Fuzzy -->
     <plurals name="new_posts_notification">
-        <item quantity="one">"%d nueva publicación de %s"</item>
-        <item quantity="other">"%d nuevas publicaciones de %s"</item>
+        <item quantity="one">"%1$d nueva publicación de %2$s"</item>
+        <item quantity="other">"%1$d nuevas publicaciones de %2$s"</item>
     </plurals>
 
     <!-- Fuzzy -->
     <plurals name="new_messages_notification">
-        <item quantity="one">"%d nuevo mensaje de %s"</item>
-        <item quantity="other">"%d mensajes de %s"</item>
+        <item quantity="one">"%1$d nuevo mensaje de %2$s"</item>
+        <item quantity="other">"%1$d mensajes de %2$s"</item>
     </plurals>
     <plurals name="new_messages_separator">
         <item quantity="one">"%d nuevo mensaje"</item>
@@ -215,7 +215,7 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="new_comments_on_multiple_posts_notification">"%s comentó en tus publicaciones"</string>
 
     <!-- Fuzzy -->
-    <string name="new_posts_and_comments_notification">"%s. %s."</string>
+    <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"HalloApp ha expirado"</string>
     <string name="notification_app_expiration_body">"Descarga la versión más reciente"</string>
     <plurals name="notification_app_expiration_days_left_title">
@@ -282,7 +282,7 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="yesterday_at_time">"Ayer a las %s"</string>
 
     <!-- Fuzzy -->
-    <string name="day_of_week_at_time">"El %s a las %s"</string>
+    <string name="day_of_week_at_time">"El %1$s a las %2$s"</string>
     <string name="unknown_contact">"Contacto desconocido"</string>
     <string name="select_contact">"Nuevo mensaje"</string>
     <string name="search_contacts">"Buscar contactos"</string>
@@ -293,17 +293,19 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="invite_friend_chooser_title">"Invita a %s"</string>
 
     <!-- Fuzzy -->
-    <string name="invite_text_with_name_and_number">"Hola %s, tengo una invitación para que te unas a mí en HalloApp (una aplicación social sencilla para compartir los momentos cotidianos). Usa %s para registrarte. Obténla en halloapp.com/dl"</string>
+    <string name="invite_text_with_name_and_number">"Hola %1$s, tengo una invitación para que te unas a mí en HalloApp (una aplicación social sencilla para compartir los momentos cotidianos). Usa %2$s para registrarte. Obténla en halloapp.com/dl"</string>
     <string name="name_hint">"Tu nombre"</string>
     <string name="name_must_be_specified">"Debes especificar tu nombre"</string>
 
     <!-- Fuzzy -->
-    <string name="counter">"%d/%d"</string>
+    <string name="counter">"%1$d/%2$d"</string>
     <string name="invite_pending">"Pendiente"</string>
     <string name="failed_update_profile">"Tu perfil no se pudo actualizar, trata de nuevo más tarde"</string>
     <string name="profile_updated">"Tu perfil ha sido actualizado"</string>
     <string name="flip">"Girar"</string>
-    <string name="email_logs_subject">"HalloApp Android %s %s"</string>
+
+    <!-- Fuzzy -->
+    <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
 
     <!-- Fuzzy -->
     <string name="email_logs_text">"
@@ -326,27 +328,27 @@ version: %s
     <string name="system_message_group_created_by_you">"Este grupo fue creado por ti"</string>
 
     <!-- Fuzzy -->
-    <string name="system_message_members_added">"%s agrego a %s"</string>
+    <string name="system_message_members_added">"%1$s agrego a %2$s"</string>
     <string name="system_message_members_added_by_you">"Tú agregaste a %s"</string>
 
     <!-- Fuzzy -->
-    <string name="system_message_members_removed">"%s eliminó a %s"</string>
+    <string name="system_message_members_removed">"%1$s eliminó a %2$s"</string>
     <string name="system_message_members_removed_by_you">"Tú eliminaste a %s"</string>
     <string name="system_message_member_left">"%s se salió"</string>
     <string name="system_message_member_you_left">"Tu te saliste"</string>
 
     <!-- Fuzzy -->
-    <string name="system_message_members_promoted">"%s designó a %s como administrador"</string>
+    <string name="system_message_members_promoted">"%1$s designó a %2$s como administrador"</string>
     <string name="system_message_members_promoted_by_you">"Tú designaste a %s como administrador"</string>
 
     <!-- Fuzzy -->
-    <string name="system_message_members_demoted">"%s descartó a %s como administrador"</string>
+    <string name="system_message_members_demoted">"%1$s descartó a %2$s como administrador"</string>
     <string name="system_message_members_demoted_by_you">"Tu descartaste a %s como administrador"</string>
     <string name="system_message_member_auto_promoted">"%s fue autopromovido como administrador"</string>
     <string name="system_message_member_auto_promoted_you">"Tú fuiste autopromovido como administrador"</string>
 
     <!-- Fuzzy -->
-    <string name="system_message_group_name_changed">"%s cambió el nombre del grupo a %s"</string>
+    <string name="system_message_group_name_changed">"%1$s cambió el nombre del grupo a %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"Tu cambiaste el nombre del grupo a %s"</string>
     <string name="system_message_group_avatar_changed">"%s cambió el avatar del grupo"</string>
     <string name="system_message_group_avatar_changed_by_you">"Tú cambiaste el avatar del grupo"</string>
@@ -356,27 +358,27 @@ version: %s
     <string name="system_post_group_created_by_you">"Este grupo fue creado por ti"</string>
 
     <!-- Fuzzy -->
-    <string name="system_post_members_added">"%s agregó a %s"</string>
+    <string name="system_post_members_added">"%1$s agregó a %2$s"</string>
     <string name="system_post_members_added_by_you">"Tú agregaste a %s"</string>
 
     <!-- Fuzzy -->
-    <string name="system_post_members_removed">"%s sacó a %s"</string>
+    <string name="system_post_members_removed">"%1$s sacó a %2$s"</string>
     <string name="system_post_members_removed_by_you">"Tú sacaste a %s"</string>
     <string name="system_post_member_left">"%s se salió"</string>
     <string name="system_post_member_you_left">"Tú te saliste"</string>
 
     <!-- Fuzzy -->
-    <string name="system_post_members_promoted">"%s designó a %s como administrador"</string>
+    <string name="system_post_members_promoted">"%1$s designó a %2$s como administrador"</string>
     <string name="system_post_members_promoted_by_you">"Tú designaste a %s como administrador"</string>
 
     <!-- Fuzzy -->
-    <string name="system_post_members_demoted">"%s descartó a %s como administrador"</string>
+    <string name="system_post_members_demoted">"%1$s descartó a %2$s como administrador"</string>
     <string name="system_post_members_demoted_by_you">"Tú descargaste a %s como administrador"</string>
     <string name="system_post_member_auto_promoted">"%s fue autopromovido como administrador"</string>
     <string name="system_post_member_auto_promoted_you">"Tú fuiste autopromovido como administrador"</string>
 
     <!-- Fuzzy -->
-    <string name="system_post_group_name_changed">"%s cambió el nombre del grupo a %s"</string>
+    <string name="system_post_group_name_changed">"%1$s cambió el nombre del grupo a %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"Tú cambiaste el nombre del grupo a %s"</string>
     <string name="system_post_group_avatar_changed">"%s cambió el avatar del grupo"</string>
     <string name="system_post_group_avatar_changed_by_you">"Tú cambiaste el avatar del grupo"</string>
@@ -516,7 +518,7 @@ Puedes compartir estas historias con todos tus contactos o solo con las personas
     <string name="post_preview_no_caption">"%s compartió una publicación"</string>
 
     <!-- Fuzzy -->
-    <string name="post_preview_with_caption">"%s: %s"</string>
+    <string name="post_preview_with_caption">"%1$s: %2$s"</string>
     <string name="composer_sharing_message">"Enviar a %s"</string>
     <string name="composer_sharing_post">"Compartir con %s"</string>
 

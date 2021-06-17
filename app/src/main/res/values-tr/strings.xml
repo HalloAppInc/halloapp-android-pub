@@ -46,7 +46,7 @@
     <string name="new_message">"Yeni mesaj"</string>
 
     <!-- Fuzzy -->
-    <string name="chat_message_attribution">"%s: %s"</string>
+    <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s, HalloApp'te"</string>
     <string name="new_chat_name_placeholder">"%s, HalloApp kullanıyor! 🎉"</string>
     <string name="posts_empty">"Gönderilerin burada görünecek"</string>
@@ -118,19 +118,19 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt;, gönderisindeki bir yorumda senden bahsetti"</string>
 
     <!-- Fuzzy -->
-    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; kişisinin gönderisine yaptığı yorumda senden bahsetti"</string>
+    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; kişisinin gönderisine yaptığı yorumda senden bahsetti"</string>
     <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt;, gönderine yorum yaptı"</string>
 
     <!-- Fuzzy -->
-    <string name="commented_on_your_post_2">"&lt;b&gt;%s&lt;/b&gt; ve  &lt;b&gt;%2s&lt;/b&gt; gönderine yorum yaptılar"</string>
+    <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; ve  &lt;b&gt;%2$s&lt;/b&gt; gönderine yorum yaptılar"</string>
 
     <!-- Fuzzy -->
-    <string name="commented_on_your_post_3">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; ve &lt;b&gt;%3s&lt;/b&gt; gönderine yorum yaptılar"</string>
+    <string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; ve &lt;b&gt;%3$s&lt;/b&gt; gönderine yorum yaptılar"</string>
 
     <!-- Fuzzy -->
     <plurals name="commented_on_your_post_4">
-        <item quantity="one">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; ve %d farklı kişi, gönderine yorum yaptı"</item>
-        <item quantity="other">"&lt;b&gt;%1s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; ve %d farklı kişi, gönderine yorum yaptı"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; ve %3$d farklı kişi, gönderine yorum yaptı"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; ve %3$d farklı kişi, gönderine yorum yaptı"</item>
     </plurals>
     <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt;,  &lt;b&gt;%2$s&lt;/b&gt; kişisinin gönderisine yorum yaptı"</string>
     <string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; ve &lt;b&gt;%2$s&lt;/b&gt;,  &lt;b&gt;%3$s&lt;/b&gt; kişisinin gönderisine yorum yaptılar"</string>
@@ -144,7 +144,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt;, kendi gönderisine yorum yaptı"</string>
 
     <!-- Fuzzy -->
-    <string name="list_of_two">"%s ve %s"</string>
+    <string name="list_of_two">"%1$s ve %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
     <string name="list_of_many_middle">", %s"</string>
     <string name="list_of_many_end">", ve %s"</string>
@@ -205,8 +205,8 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
 
     <!-- Fuzzy -->
     <plurals name="new_messages_notification">
-        <item quantity="one">"%s kişisinden %d yeni mesaj"</item>
-        <item quantity="other">"%s kişisinden %d yeni mesaj"</item>
+        <item quantity="one">"%2$s kişisinden %1$d yeni mesaj"</item>
+        <item quantity="other">"%2$s kişisinden %1$d yeni mesaj"</item>
     </plurals>
     <plurals name="new_messages_separator">
         <item quantity="one">"%d yeni mesaj"</item>
@@ -216,7 +216,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="new_comments_on_multiple_posts_notification">"%s, gönderilerine yorum yaptı"</string>
 
     <!-- Fuzzy -->
-    <string name="new_posts_and_comments_notification">"%s. %s."</string>
+    <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"HalloApp'in süresi doldu"</string>
     <string name="notification_app_expiration_body">"Lütfen en son sürümü indir"</string>
     <plurals name="notification_app_expiration_days_left_title">
@@ -281,7 +281,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="yesterday_at_time">"Dün saat %s'de/te"</string>
 
     <!-- Fuzzy -->
-    <string name="day_of_week_at_time">"%s saat %s'de/te"</string>
+    <string name="day_of_week_at_time">"%1$s saat %2$s'de/te"</string>
     <string name="unknown_contact">"Bilinmeyen kişi"</string>
     <string name="select_contact">"Yeni mesaj"</string>
     <string name="search_contacts">"Kişilerde ara"</string>
@@ -293,17 +293,19 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
 
     <!-- Will the second %s here be a link? -->
     <!-- Fuzzy -->
-    <string name="invite_text_with_name_and_number">"Merhaba %s, seni, günün her anını kolayca paylaşabileceğin bir sosyal medya uygulaması olan HalloApp'te bana katılmaya davet ediyorum. Kaydolmak için %s numarasını kullanabilir ya da halloapp.com/dl adresinden indirebilirsin."</string>
+    <string name="invite_text_with_name_and_number">"Merhaba %1$s, seni, günün her anını kolayca paylaşabileceğin bir sosyal medya uygulaması olan HalloApp'te bana katılmaya davet ediyorum. Kaydolmak için %2$s numarasını kullanabilir ya da halloapp.com/dl adresinden indirebilirsin."</string>
     <string name="name_hint">"Adın"</string>
     <string name="name_must_be_specified">"Ad belirtilmeli"</string>
 
     <!-- Fuzzy -->
-    <string name="counter">"%d/%d"</string>
+    <string name="counter">"%1$d/%2$d"</string>
     <string name="invite_pending">"Beklemede"</string>
     <string name="failed_update_profile">"Profil güncellemesi başarısız, daha sonra tekrar dene"</string>
     <string name="profile_updated">"Profil güncellendi"</string>
     <string name="flip">"Çevir"</string>
-    <string name="email_logs_subject">"HalloApp Android %s %s"</string>
+
+    <!-- Fuzzy -->
+    <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
 
     <!-- Fuzzy -->
     <string name="email_logs_text">"Lüften sorununu yukarıda açıkla."</string>
@@ -321,27 +323,27 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="system_message_group_created_by_you">"Bu grubu sen kurdun"</string>
 
     <!-- Fuzzy -->
-    <string name="system_message_members_added">"%s, %s kişisini ekledi"</string>
+    <string name="system_message_members_added">"%1$s, %2$s kişisini ekledi"</string>
     <string name="system_message_members_added_by_you">"%s kişisini ekledin"</string>
 
     <!-- Fuzzy -->
-    <string name="system_message_members_removed">"%s, %s kişisini çıkardı"</string>
+    <string name="system_message_members_removed">"%1$s, %2$s kişisini çıkardı"</string>
     <string name="system_message_members_removed_by_you">"%s kişisini çıkardın"</string>
     <string name="system_message_member_left">"%s ayrıldı"</string>
     <string name="system_message_member_you_left">"Ayrıldın"</string>
 
     <!-- Fuzzy -->
-    <string name="system_message_members_promoted">"%s, %s kişisini yönetici yaptı"</string>
+    <string name="system_message_members_promoted">"%1$s, %2$s kişisini yönetici yaptı"</string>
     <string name="system_message_members_promoted_by_you">"%s kişisini yönetici yaptın"</string>
 
     <!-- Fuzzy -->
-    <string name="system_message_members_demoted">"%s, %s kişisini yöneticilikten çıkardı"</string>
+    <string name="system_message_members_demoted">"%1$s, %2$s kişisini yöneticilikten çıkardı"</string>
     <string name="system_message_members_demoted_by_you">"%s kişisini yöneticilikten çıkardın"</string>
     <string name="system_message_member_auto_promoted">"%s, otomatik olarak yönetici oldu"</string>
     <string name="system_message_member_auto_promoted_you">"Otomatik olarak yönetici oldun"</string>
 
     <!-- Fuzzy -->
-    <string name="system_message_group_name_changed">"%s, grubun adını %s olarak değiştirdi"</string>
+    <string name="system_message_group_name_changed">"%1$s, grubun adını %2$s olarak değiştirdi"</string>
     <string name="system_message_group_name_changed_by_you">"Grubun adını %s olarak değiştirdin"</string>
     <string name="system_message_group_avatar_changed">"%s, grubun simgesini değiştirdi"</string>
     <string name="system_message_group_avatar_changed_by_you">"Grubun simgesini değiştirdin"</string>
@@ -351,27 +353,27 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="system_post_group_created_by_you">"Bu grubu sen kurdun"</string>
 
     <!-- Fuzzy -->
-    <string name="system_post_members_added">"%s, %s kişisini ekledi"</string>
+    <string name="system_post_members_added">"%1$s, %2$s kişisini ekledi"</string>
     <string name="system_post_members_added_by_you">"%s kişisini ekledin"</string>
 
     <!-- Fuzzy -->
-    <string name="system_post_members_removed">"%s, %s kişisini sildi"</string>
+    <string name="system_post_members_removed">"%1$s, %2$s kişisini sildi"</string>
     <string name="system_post_members_removed_by_you">"%s kişisini sildin"</string>
     <string name="system_post_member_left">"%s ayrıldı"</string>
     <string name="system_post_member_you_left">"Ayrıldın"</string>
 
     <!-- Fuzzy -->
-    <string name="system_post_members_promoted">"%s, %s kişisini yönetici yaptı"</string>
+    <string name="system_post_members_promoted">"%1$s, %2$s kişisini yönetici yaptı"</string>
     <string name="system_post_members_promoted_by_you">"%s kişisini yönetici yaptın"</string>
 
     <!-- Fuzzy -->
-    <string name="system_post_members_demoted">"%s, %s kişisini yöneticilikten çıkardı"</string>
+    <string name="system_post_members_demoted">"%1$s, %2$s kişisini yöneticilikten çıkardı"</string>
     <string name="system_post_members_demoted_by_you">"%s kişisini yöneticilikten çıkardın"</string>
     <string name="system_post_member_auto_promoted">"%s, otomatik olarak yönetici oldu"</string>
     <string name="system_post_member_auto_promoted_you">"Otomatik olarak yönetici oldun"</string>
 
     <!-- Fuzzy -->
-    <string name="system_post_group_name_changed">"%s, grubun adını %s olarak değiştirdi"</string>
+    <string name="system_post_group_name_changed">"%1$s, grubun adını %2$s olarak değiştirdi"</string>
     <string name="system_post_group_name_changed_by_you">"Grubun adını %s olarak değiştirdin"</string>
     <string name="system_post_group_avatar_changed">"%s, grubun simgesini değiştirdi"</string>
     <string name="system_post_group_avatar_changed_by_you">"Grubun simgesini değiştirdin"</string>
@@ -511,7 +513,7 @@ Yayınlarını, dilersen listendeki kişilerin tamamıyla ya da yalnızca seçti
     <string name="post_preview_no_caption">"%s, bir gönderi paylaştı"</string>
 
     <!-- Fuzzy -->
-    <string name="post_preview_with_caption">"%s: %s"</string>
+    <string name="post_preview_with_caption">"%1$s: %2$s"</string>
     <string name="composer_sharing_message">"%s kişisine gönderiliyor"</string>
     <string name="composer_sharing_post">"%s ile paylaşılıyor"</string>
 

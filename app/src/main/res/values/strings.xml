@@ -130,7 +130,7 @@
     <string name="commented_on_your_post_3">&lt;b>%1$s&lt;/b>, &lt;b>%2$s&lt;/b>, and &lt;b>%3$s&lt;/b> commented on your post</string>
     <plurals name="commented_on_your_post_4">
         <item quantity="one">&lt;b>%1$s&lt;/b>, &lt;b>%2$s&lt;/b>, and %3$d other commented on your post</item>
-        <item quantity="other">&lt;b>%1$s&lt;/b>, &lt;b>%2s&lt;/b>, and %3$d others commented on your post</item>
+        <item quantity="other">&lt;b>%1$s&lt;/b>, &lt;b>%2$s&lt;/b>, and %3$d others commented on your post</item>
     </plurals>
     <string name="commented_on_someones_post_1">&lt;b>%1$s&lt;/b> commented on &lt;b>%2$s&lt;/b>\'s post</string>
     <string name="commented_on_someones_post_2">&lt;b>%1$s&lt;/b> and &lt;b>%2$s&lt;/b> commented on &lt;b>%3$s&lt;/b>\'s post</string>
@@ -330,8 +330,8 @@
     <string name="failed_update_profile">Failed to update profile, try again later</string>
     <string name="profile_updated">Profile updated</string>
     <string name="flip">Flip</string>
-    <string name="email_logs_subject">HalloApp Android %s %s</string>
-    <string name="email_logs_text">\n----------------------------------------\nPlease describe the issue above.\nuid: %s\nversion: %s\n----------------------------------------\n</string>
+    <string name="email_logs_subject">HalloApp Android %1$s %2$s</string>
+    <string name="email_logs_text">\n----------------------------------------\nPlease describe the issue above.\nuid: %1$s\nversion: %2$s\n----------------------------------------\n</string>
     <string name="share">Share</string>
     <string name="unblock">Unblock</string>
     <string name="unblock_user_confirmation">Would you like to unblock %s?</string>

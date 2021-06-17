@@ -267,12 +267,12 @@ Open the app settings screen to modify app permissions."</string>
     <string name="failed_update_profile">"Failed to update profile, try again later"</string>
     <string name="profile_updated">"Profile updated"</string>
     <string name="flip">"Flip"</string>
-    <string name="email_logs_subject">"HalloApp Android %s %s"</string>
+    <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
     <string name="email_logs_text">"
 ----------------------------------------
 Please describe the issue above.
-uid: %s
-version: %s
+uid: %1$s
+version: %2$s
 ----------------------------------------
 "</string>
     <string name="share">"Share"</string>

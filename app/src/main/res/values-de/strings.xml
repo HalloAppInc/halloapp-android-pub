@@ -141,6 +141,8 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; hat deinen Beitrag kommentiert"</string>
     <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; und &lt;b&gt;%2$s&lt;/b&gt; haben deinen Beitrag kommentiert"</string>
     <string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und &lt;b&gt;%3$s&lt;/b&gt; haben deinen Beitrag kommentiert"</string>
+
+    <!-- Fuzzy -->
     <plurals name="commented_on_your_post_4">
         <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und  %3$d weitere Person haben deinen Beitrag kommentiert"</item>
         <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; und %3$d weitere Personen haben deinen Beitrag kommentiert"</item>
@@ -310,9 +312,12 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="failed_update_profile">"Fehler bei der Aktualisierung des Profils, probiere es später noch einmal"</string>
     <string name="profile_updated">"Profil wurde aktualisiert"</string>
     <string name="flip">"Drehen"</string>
-    <string name="email_logs_subject">"HalloApp Android %s %s"</string>
+
+    <!-- Fuzzy -->
+    <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
 
     <!-- How will it look like? Text will be above the dotted line? -->
+    <!-- Fuzzy -->
     <string name="email_logs_text">"
 ----------------------------------------
 Bitte oberhalb das Problem beschreiben.
@@ -661,5 +666,5 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="server_invite_refresh_time">"Weitere Einladungen kommen am %s"</string>
 
     <!-- Button text on profile of a user not in the user's contacts; tapping takes the user to the contacts app with data prefilled -->
-    <string name="add_to_contacts">"Add to contacts"</string>
+    <string name="add_to_contacts">"Zu meinen Kontakten hinzufügen"</string>
 </resources>
