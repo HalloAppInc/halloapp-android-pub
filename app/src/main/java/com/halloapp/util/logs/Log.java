@@ -15,6 +15,7 @@ import com.halloapp.util.Preconditions;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 
 public class Log {
@@ -129,6 +130,7 @@ public class Log {
             String user = me.getUser();
             FirebaseCrashlytics.getInstance().setCustomKey("user", user);
             FirebaseCrashlytics.getInstance().setCustomKey("internal", ServerProps.getInstance().getIsInternalUser());
+            FirebaseCrashlytics.getInstance().setCustomKey("locale", Locale.getDefault().toLanguageTag());
             FirebaseCrashlytics.getInstance().setUserId(user);
             return null;
         }
