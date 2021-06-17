@@ -27,6 +27,7 @@ import com.halloapp.util.ComputableLiveData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GroupFeedViewModel extends ViewModel {
 
@@ -36,6 +37,7 @@ public class GroupFeedViewModel extends ViewModel {
     private final Me me = Me.getInstance();
     private final ContentDb contentDb = ContentDb.getInstance();
     private final ContactsDb contactsDb = ContactsDb.getInstance();
+    private final AtomicBoolean loadedOutgoingPost = new AtomicBoolean(false);
 
     private final PostsDataSource.Factory dataSourceFactory;
 
@@ -55,6 +57,10 @@ public class GroupFeedViewModel extends ViewModel {
         public void onPostAdded(@NonNull Post post) {
             if (groupId.equals(post.getParentGroup())) {
                 invalidatePosts();
+                if (post.isOutgoing()) {
+                    reloadPostsAt(Long.MAX_VALUE);
+                    loadedOutgoingPost.set(true);
+                }
             }
         }
 
@@ -159,6 +165,10 @@ public class GroupFeedViewModel extends ViewModel {
     @Override
     protected void onCleared() {
         contentDb.removeObserver(contentObserver);
+    }
+
+    boolean checkLoadedOutgoingPost() {
+        return loadedOutgoingPost.compareAndSet(true, false);
     }
 
     void reloadPostsAt(long timestamp) {

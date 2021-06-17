@@ -93,7 +93,12 @@ public class GroupFeedFragment extends PostsFragment {
             throw new IllegalArgumentException("You must specify a group id for a group feed fragment");
         }
         viewModel = new ViewModelProvider(requireActivity(), new GroupFeedViewModel.Factory(groupId)).get(GroupFeedViewModel.class);
-        viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> emptyContainer.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE)));
+        viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> {
+            if (viewModel.checkLoadedOutgoingPost()) {
+                postsView.scrollToPosition(0);
+            }
+            emptyContainer.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
+        }));
         if (viewModel.getSavedScrollState() != null) {
             layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
         }
