@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
+import com.halloapp.ui.mediapicker.MediaPickerViewModel;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
@@ -51,6 +52,7 @@ public class Preferences {
     private static final String PREF_KEY_AUDIO_BITRATE = "audio_bitrate";
     private static final String PREF_KEY_H264_RES = "h264_res";
     private static final String PREF_KEY_H265_RES = "h265_res";
+    private static final String PREF_KEY_PICKER_LAYOUT = "picker_layout";
 
     private static final String PREF_KEY_REGISTRATION_TIME = "registration_time";
     private static final String PREF_KEY_INVITE_NOTIFICATION_SEEN = "welcome_invite_seen";
@@ -120,6 +122,7 @@ public class Preferences {
     private final IntPreference prefAudioBitrate = createPref(false, PREF_KEY_AUDIO_BITRATE, Constants.AUDIO_BITRATE);
     private final IntPreference prefH264Res = createPref(false, PREF_KEY_H264_RES, Constants.VIDEO_RESOLUTION_H264);
     private final IntPreference prefH265Res = createPref(false, PREF_KEY_H265_RES, Constants.VIDEO_RESOLUTION_H265);
+    private final IntPreference prefPickerLayout = createPref(false, PREF_KEY_PICKER_LAYOUT, MediaPickerViewModel.LAYOUT_DAY_SMALL);
 
     private final BooleanPreference prefNotifyPosts = createPref(true, PREF_KEY_NOTIFY_POSTS, true);
     private final BooleanPreference prefNotifyComments = createPref(true, PREF_KEY_NOTIFY_COMMENTS, true);
@@ -533,5 +536,15 @@ public class Preferences {
         Constants.AUDIO_BITRATE = prefAudioBitrate.get();
         Constants.VIDEO_RESOLUTION_H264 = prefH264Res.get();
         Constants.VIDEO_RESOLUTION_H265 = prefH265Res.get();
+    }
+
+    @WorkerThread
+    public int getPickerLayout() {
+        return prefPickerLayout.get();
+    }
+
+    @WorkerThread
+    public void setPickerLayout(int layout) {
+        prefPickerLayout.set(layout);
     }
 }

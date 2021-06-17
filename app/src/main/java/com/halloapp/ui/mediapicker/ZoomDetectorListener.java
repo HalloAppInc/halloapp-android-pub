@@ -5,76 +5,48 @@ import android.view.ScaleGestureDetector;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.halloapp.util.Preconditions;
+
 public class ZoomDetectorListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
     private static final int ZOOM_IN = 1;
     private static final int ZOOM_OUT = 2;
 
-    private RecyclerView view;
+    private final ZoomAnimator animator;
+    private final MediaPickerViewModel viewModel;
     private int direction = 0;
 
-    public ZoomDetectorListener(RecyclerView view) {
-        this.view = view;
+    public ZoomDetectorListener(ZoomAnimator animator, MediaPickerViewModel viewModel) {
+        this.animator = animator;
+        this.viewModel = viewModel;
     }
 
     @Override
     public void onScaleEnd(ScaleGestureDetector detector) {
         super.onScaleEnd(detector);
-        getAnimator().endManualAnimations();
-    }
-
-    private ZoomAnimator getAnimator() {
-        return (ZoomAnimator) view.getItemAnimator();
-    }
-
-    private MediaPickerActivity.MediaItemsAdapter getAdapter() {
-        return (MediaPickerActivity.MediaItemsAdapter) view.getAdapter();
-    }
-
-    private GridLayoutManager getLayoutManager() {
-        return (GridLayoutManager) view.getLayoutManager();
+        animator.endManualAnimations();
     }
 
     private void zoomIn() {
-        final MediaPickerActivity.MediaItemsAdapter adapter = getAdapter();
-        final GridLayoutManager manager = getLayoutManager();
-        final int layout = getAdapter().getGridLayout();
-
-        switch (layout) {
-            case MediaPickerActivity.MediaItemsAdapter.LAYOUT_MONTH: {
-                adapter.setGridLayout(MediaPickerActivity.MediaItemsAdapter.LAYOUT_DAY_SMALL);
-                manager.setSpanCount(MediaPickerActivity.MediaItemsAdapter.SPAN_COUNT_DAY_SMALL);
-                manager.requestLayout();
-                adapter.notifyDataSetChanged();
+        switch (Preconditions.checkNotNull(viewModel.getLayout().getValue())) {
+            case MediaPickerViewModel.LAYOUT_MONTH: {
+                viewModel.setLayout(MediaPickerViewModel.LAYOUT_DAY_SMALL);
                 break;
             }
-            case MediaPickerActivity.MediaItemsAdapter.LAYOUT_DAY_SMALL: {
-                adapter.setGridLayout(MediaPickerActivity.MediaItemsAdapter.LAYOUT_DAY_LARGE);
-                manager.setSpanCount(MediaPickerActivity.MediaItemsAdapter.SPAN_COUNT_DAY_LARGE);
-                manager.requestLayout();
-                adapter.notifyDataSetChanged();
+            case MediaPickerViewModel.LAYOUT_DAY_SMALL: {
+                viewModel.setLayout(MediaPickerViewModel.LAYOUT_DAY_LARGE);
                 break;
             }
         }
     }
 
     private void zoomOut() {
-        final MediaPickerActivity.MediaItemsAdapter adapter = getAdapter();
-        final GridLayoutManager manager = getLayoutManager();
-        final int layout = getAdapter().getGridLayout();
-
-        switch (layout) {
-            case MediaPickerActivity.MediaItemsAdapter.LAYOUT_DAY_LARGE: {
-                adapter.setGridLayout(MediaPickerActivity.MediaItemsAdapter.LAYOUT_DAY_SMALL);
-                manager.setSpanCount(MediaPickerActivity.MediaItemsAdapter.SPAN_COUNT_DAY_SMALL);
-                manager.requestLayout();
-                adapter.notifyDataSetChanged();
+        switch (Preconditions.checkNotNull(viewModel.getLayout().getValue())) {
+            case MediaPickerViewModel.LAYOUT_DAY_LARGE: {
+                viewModel.setLayout(MediaPickerViewModel.LAYOUT_DAY_SMALL);
                 break;
             }
-            case MediaPickerActivity.MediaItemsAdapter.LAYOUT_DAY_SMALL: {
-                adapter.setGridLayout(MediaPickerActivity.MediaItemsAdapter.LAYOUT_MONTH);
-                manager.setSpanCount(MediaPickerActivity.MediaItemsAdapter.SPAN_COUNT_MONTH);
-                manager.requestLayout();
-                adapter.notifyDataSetChanged();
+            case MediaPickerViewModel.LAYOUT_DAY_SMALL: {
+                viewModel.setLayout(MediaPickerViewModel.LAYOUT_MONTH);
                 break;
             }
         }
@@ -85,8 +57,6 @@ public class ZoomDetectorListener extends ScaleGestureDetector.SimpleOnScaleGest
         if (detector.getScaleFactor() == 1.0) {
             return true;
         }
-
-        final ZoomAnimator animator = getAnimator();
 
         if (!animator.isManualAnimationRunning()) {
             animator.beginManualAnimations();

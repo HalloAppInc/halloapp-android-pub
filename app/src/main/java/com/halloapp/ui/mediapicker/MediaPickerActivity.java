@@ -48,10 +48,7 @@ import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.GridSpacingItemDecoration;
 import com.halloapp.widget.SnackbarHelper;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -175,36 +172,31 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
         setTitle(getIntent().getIntExtra(EXTRA_TITLE_ID, TITLE_ID_DEFAULT));
 
-        final RecyclerView mediaView = findViewById(android.R.id.list);
         final View progressView = findViewById(R.id.progress);
         final View emptyView = findViewById(android.R.id.empty);
 
-        mediaView.addOnScrollListener(new ActionBarShadowOnScrollListener(this));
+        viewModel = buildViewModel(savedInstanceState);
+        viewModel.original = getIntent().getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA);
+        viewModel.state = getIntent().getBundleExtra(MediaEditActivity.EXTRA_STATE);
 
         adapter = new MediaItemsAdapter();
 
         final GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
-        layoutManager.setSpanCount(MediaItemsAdapter.SPAN_COUNT_DAY_SMALL);
-        layoutManager.setSpanSizeLookup(new GallerySpanSizeLookup(mediaView));
+        layoutManager.setSpanCount(MediaPickerViewModel.SPAN_COUNT_DAY_SMALL);
+        layoutManager.setSpanSizeLookup(new GallerySpanSizeLookup(viewModel));
 
+        final RecyclerView mediaView = findViewById(android.R.id.list);
         mediaView.setLayoutManager(layoutManager);
-        mediaView.addItemDecoration(new GridSpacingItemDecoration(adapter, getResources().getDimensionPixelSize(R.dimen.media_gallery_grid_spacing)));
+        mediaView.addItemDecoration(new GridSpacingItemDecoration(viewModel, getResources().getDimensionPixelSize(R.dimen.media_gallery_grid_spacing)));
         mediaView.setAdapter(adapter);
+        mediaView.addOnScrollListener(new ActionBarShadowOnScrollListener(this));
 
-        MediaPickerViewModelFactory factory;
-        final boolean includeVideos = getIntent().getBooleanExtra(EXTRA_SHOW_VIDEOS, SHOW_VIDEOS_DEFAULT);
-        if (savedInstanceState != null && savedInstanceState.getLongArray(KEY_SELECTED_MEDIA) != null) {
-            factory = new MediaPickerViewModelFactory(getApplication(), includeVideos, savedInstanceState.getLongArray(KEY_SELECTED_MEDIA));
-        } else if (getIntent().getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA) != null) {
-            factory = new MediaPickerViewModelFactory(getApplication(), includeVideos, getIntent().getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA));
-        } else {
-            factory = new MediaPickerViewModelFactory(getApplication(), includeVideos);
-        }
+        thumbnailLoader = new GalleryThumbnailLoader(this, getResources().getDimensionPixelSize(R.dimen.media_gallery_grid_size));
+        preview = new MediaPickerPreview(this);
 
-        viewModel = new ViewModelProvider(this, factory).get(MediaPickerViewModel.class);
-        viewModel.original = getIntent().getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA);
-        viewModel.state = getIntent().getBundleExtra(MediaEditActivity.EXTRA_STATE);
-        viewModel.mediaList.observe(this, mediaItems -> {
+        setupZoom(mediaView);
+
+        viewModel.getMediaList().observe(this, mediaItems -> {
             adapter.setPagedList(mediaItems);
             progressView.setVisibility(View.GONE);
             emptyView.setVisibility(mediaItems.isEmpty() ? View.VISIBLE : View.GONE);
@@ -213,11 +205,26 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             notifyAdapterOnSelection(selected);
             updateActionMode(selected);
         });
+        viewModel.getLayout().observe(this, layout -> {
+            switch (layout) {
+                case MediaPickerViewModel.LAYOUT_DAY_SMALL: {
+                    layoutManager.setSpanCount(MediaPickerViewModel.SPAN_COUNT_DAY_SMALL);
+                    break;
+                }
+                case MediaPickerViewModel.LAYOUT_DAY_LARGE: {
+                    layoutManager.setSpanCount(MediaPickerViewModel.SPAN_COUNT_DAY_LARGE);
+                    break;
+                }
+                case MediaPickerViewModel.LAYOUT_MONTH: {
+                    layoutManager.setSpanCount(MediaPickerViewModel.SPAN_COUNT_MONTH);
+                    break;
+                }
+            }
 
-        thumbnailLoader = new GalleryThumbnailLoader(this, getResources().getDimensionPixelSize(R.dimen.media_gallery_grid_size));
-        preview = new MediaPickerPreview(this);
+            layoutManager.requestLayout();
+            adapter.notifyDataSetChanged();
+        });
 
-        setupZoom(mediaView);
         requestPermissions();
     }
 
@@ -385,11 +392,26 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         return super.onOptionsItemSelected(item);
     }
 
+    private MediaPickerViewModel buildViewModel(Bundle savedInstanceState) {
+        MediaPickerViewModelFactory factory;
+        final boolean includeVideos = getIntent().getBooleanExtra(EXTRA_SHOW_VIDEOS, SHOW_VIDEOS_DEFAULT);
+        if (savedInstanceState != null && savedInstanceState.getLongArray(KEY_SELECTED_MEDIA) != null) {
+            factory = new MediaPickerViewModelFactory(getApplication(), includeVideos, savedInstanceState.getLongArray(KEY_SELECTED_MEDIA));
+        } else if (getIntent().getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA) != null) {
+            factory = new MediaPickerViewModelFactory(getApplication(), includeVideos, getIntent().getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA));
+        } else {
+            factory = new MediaPickerViewModelFactory(getApplication(), includeVideos);
+        }
+
+        return new ViewModelProvider(this, factory).get(MediaPickerViewModel.class);
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     private void setupZoom(RecyclerView mediaView) {
-        mediaView.setItemAnimator(new ZoomAnimator());
+        ZoomAnimator animator = new ZoomAnimator();
+        mediaView.setItemAnimator(animator);
 
-        final ScaleGestureDetector zoomDetector = new ScaleGestureDetector(this, new ZoomDetectorListener(mediaView));
+        final ScaleGestureDetector zoomDetector = new ScaleGestureDetector(this, new ZoomDetectorListener(animator, viewModel));
         mediaView.setOnTouchListener((View view, MotionEvent motionEvent) -> {
             if (motionEvent.getPointerCount() > 1) {
                 return zoomDetector.onTouchEvent(motionEvent);
@@ -536,43 +558,6 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     }
 
     public class MediaItemsAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
-        public final static int LAYOUT_DAY_LARGE = 1;
-        public final static int LAYOUT_DAY_SMALL = 2;
-        public final static int LAYOUT_MONTH = 3;
-
-        public final static int SPAN_COUNT_DAY_LARGE = 6;
-        public final static int SPAN_COUNT_DAY_SMALL = 4;
-        public final static int SPAN_COUNT_MONTH = 5;
-
-        /**
-         * The day layout with large thumbnails consists of blocks of up to 5 items.
-         * Two items sit on the first row and three on the second.
-         */
-        public final static int BLOCK_SIZE_DAY_LARGE = 5;
-        public final static int BLOCK_DAY_LARGE_SIZE_ROW_1 = 2;
-        public final static int BLOCK_DAY_LARGE_SIZE_ROW_2 = 3;
-
-        public final static int TYPE_HEADER = 1;
-        public final static int TYPE_ITEM = 2;
-
-        private final SimpleDateFormat dayFormatWithYear = new SimpleDateFormat("EEEE, MMM d, y", Locale.getDefault());
-        private final SimpleDateFormat dayFormatNoYear = new SimpleDateFormat("EEEE, MMM d", Locale.getDefault());
-        private final SimpleDateFormat monthFormatWithYear = new SimpleDateFormat("MMMM, y", Locale.getDefault());
-        private final SimpleDateFormat monthFormatNoYear = new SimpleDateFormat("MMMM", Locale.getDefault());
-
-        private class Pointer {
-            public int type;
-            public int position;
-
-            Pointer(int type, int position) {
-                this.type = type;
-                this.position = position;
-            }
-        }
-
-        private int gridLayout = LAYOUT_DAY_SMALL;
-        private final ArrayList<String> headers = new ArrayList<>();
-        private final ArrayList<Pointer> pointers = new ArrayList<>();
         private PagedList<GalleryItem> items;
 
         private final PagedList.Callback pagedListCallback = new PagedList.Callback() {
@@ -582,7 +567,6 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
             @Override
             public void onInserted(int position, int count) {
-                buildHeaders();
                 notifyDataSetChanged();
             }
 
@@ -600,113 +584,28 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             this.items = items;
             this.items.addWeakCallback(null, pagedListCallback);
 
-            buildHeaders();
             notifyDataSetChanged();
-        }
-
-        public int getGridLayout() {
-            return gridLayout;
-        }
-
-        public void setGridLayout(int layout) {
-            gridLayout = layout;
-            buildHeaders();
         }
 
         @Override
         public int getItemCount() {
-            return pointers.size();
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return pointers.get(position).type;
+            return items.size();
         }
 
         @Override
         public @NonNull MediaItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            if (viewType == TYPE_ITEM) {
-                return new MediaItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.media_gallery_item, parent, false));
-            } else {
-                return new MediaItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.media_header, parent, false));
-            }
+            return new MediaItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.media_gallery_item, parent, false));
         }
 
         @Override
         public void onBindViewHolder(@NonNull MediaItemViewHolder holder, int position) {
-            Pointer p = pointers.get(position);
-
-            if (p.type == TYPE_HEADER) {
-                holder.bindTo(headers.get(p.position));
-            } else {
-                holder.bindTo(Preconditions.checkNotNull(items.get(p.position)));
-                items.loadAround(p.position);
-            }
+            holder.bindTo(Preconditions.checkNotNull(items.get(position)));
+            items.loadAround(position);
         }
 
         @Override
         public long getItemId(int position) {
-            Pointer p = pointers.get(position);
-
-            if (p.type == TYPE_ITEM) {
-                return Preconditions.checkNotNull(items.get(p.position)).id;
-            } else {
-                // The minus is to avoid accidental collision with item ids
-                return -headers.get(p.position).hashCode();
-            }
-        }
-
-        private boolean notSameMonth(GalleryItem l, GalleryItem r) {
-            return l.year != r.year || l.month != r.month;
-        }
-
-        private boolean notSameDay(GalleryItem l, GalleryItem r) {
-            return l.year != r.year || l.month != r.month || l.day != r.day;
-        }
-
-        private boolean shouldAddHeader(int position) {
-            if (position == 0) {
-                return true;
-            }
-
-            GalleryItem current = Preconditions.checkNotNull(items.get(position));
-            GalleryItem prev = Preconditions.checkNotNull(items.get(position - 1));
-
-            return (gridLayout == LAYOUT_MONTH && notSameMonth(current, prev)) ||
-                    (gridLayout == LAYOUT_DAY_SMALL && notSameDay(current, prev)) ||
-                    (gridLayout == LAYOUT_DAY_LARGE && notSameDay(current, prev));
-        }
-
-        public void buildHeaders() {
-            headers.clear();
-            pointers.clear();
-
-            if (items == null) {
-                return;
-            }
-
-            for (int i = 0; i < items.getLoadedCount(); ++i) {
-                if (shouldAddHeader(i)) {
-                    GalleryItem item = Preconditions.checkNotNull(items.get(i));
-                    pointers.add(new Pointer(TYPE_HEADER, headers.size()));
-
-                    if (gridLayout == LAYOUT_DAY_LARGE || gridLayout == LAYOUT_DAY_SMALL) {
-                        if (item.year == Calendar.getInstance().get(Calendar.YEAR)) {
-                            headers.add(dayFormatNoYear.format(new Date(item.date)));
-                        } else {
-                            headers.add(dayFormatWithYear.format(new Date(item.date)));
-                        }
-                    } else {
-                        if (item.year == Calendar.getInstance().get(Calendar.YEAR)) {
-                            headers.add(monthFormatNoYear.format(new Date(item.date)));
-                        } else {
-                            headers.add(monthFormatWithYear.format(new Date(item.date)));
-                        }
-                    }
-                }
-
-                pointers.add(new Pointer(TYPE_ITEM, i));
-            }
+            return Preconditions.checkNotNull(items.get(position)).id;
         }
     }
 
@@ -721,7 +620,6 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         boolean animateSelection = false;
         boolean animateDeselection = false;
 
-        final TextView titleView;
         final ImageView thumbnailView;
         final View thumbnailFrame;
         final ImageView selectionIndicator;
@@ -737,7 +635,6 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             thumbnailFrame = v.findViewById(R.id.thumbnail_frame);
             selectionIndicator = v.findViewById(R.id.selection_indicator);
             selectionCounter = v.findViewById(R.id.selection_counter);
-            titleView = v.findViewById(R.id.title);
             duration = v.findViewById(R.id.duration);
 
             if (thumbnailView != null) {
@@ -763,10 +660,6 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                     return false;
                 });
             }
-        }
-
-        void bindTo(final @NonNull String text) {
-            titleView.setText(text);
         }
 
         void bindTo(final @NonNull GalleryItem galleryItem) {

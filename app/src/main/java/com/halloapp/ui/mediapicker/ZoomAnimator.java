@@ -15,10 +15,10 @@ public class ZoomAnimator extends RecyclerView.ItemAnimator {
 
     private float progress = 0.0f;
     private boolean isManualAnimation = false;
-    private ArrayList<Item> appear = new ArrayList<>();
-    private ArrayList<Item> disappear = new ArrayList<>();
-    private ArrayList<Item> persist = new ArrayList<>();
-    private ArrayList<Item> change = new ArrayList<>();
+    private final ArrayList<Item> appear = new ArrayList<>();
+    private final ArrayList<Item> disappear = new ArrayList<>();
+    private final ArrayList<Item> persist = new ArrayList<>();
+    private final ArrayList<Item> change = new ArrayList<>();
 
     private static class Item {
         public RecyclerView.ViewHolder holder, older;

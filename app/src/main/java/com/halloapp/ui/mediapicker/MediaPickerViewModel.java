@@ -2,36 +2,51 @@ package com.halloapp.ui.mediapicker;
 
 import android.app.Application;
 import android.content.ContentUris;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
-import android.text.TextUtils;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
 import com.halloapp.FileStore;
+import com.halloapp.Preferences;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 public class MediaPickerViewModel extends AndroidViewModel {
+    public final static int LAYOUT_DAY_LARGE = 1;
+    public final static int LAYOUT_DAY_SMALL = 2;
+    public final static int LAYOUT_MONTH = 3;
 
-    final LiveData<PagedList<GalleryItem>> mediaList;
-    final MutableLiveData<List<Long>> selected = new MutableLiveData<>();
+    public final static int SPAN_COUNT_DAY_LARGE = 6;
+    public final static int SPAN_COUNT_DAY_SMALL = 3;
+    public final static int SPAN_COUNT_MONTH = 5;
+
+    /**
+     * The day layout with large thumbnails consists of blocks of up to 5 items.
+     * Two items sit on the first row and three on the second.
+     */
+    public final static int BLOCK_SIZE_DAY_LARGE = 5;
+    public final static int BLOCK_DAY_LARGE_SIZE_ROW_1 = 2;
+    public final static int BLOCK_DAY_LARGE_SIZE_ROW_2 = 3;
+
+    private final BgWorkers bgWorkers = BgWorkers.getInstance();
+    private final Preferences preferences = Preferences.getInstance();
+
+    private final MutableLiveData<Integer> layout = new MutableLiveData<>();
+    private final LiveData<PagedList<GalleryItem>> mediaList;
+    private final MutableLiveData<List<Long>> selected = new MutableLiveData<>();
 
     public ArrayList<Uri> original;
     public Bundle state;
@@ -57,6 +72,8 @@ public class MediaPickerViewModel extends AndroidViewModel {
 
         final GalleryDataSource.Factory dataSourceFactory = new GalleryDataSource.Factory(getApplication().getContentResolver(), includeVideos);
         mediaList = new LivePagedListBuilder<>(dataSourceFactory, 250).build();
+
+        bgWorkers.execute(() -> layout.postValue(preferences.getPickerLayout()));
     }
 
     void invalidate() {
@@ -77,6 +94,10 @@ public class MediaPickerViewModel extends AndroidViewModel {
             }
         }
         selected.setValue(items);
+    }
+
+    public LiveData<PagedList<GalleryItem>> getMediaList() {
+        return mediaList;
     }
 
     public LiveData<List<Long>> getSelected() {
@@ -156,7 +177,7 @@ public class MediaPickerViewModel extends AndroidViewModel {
     }
 
     public void clean(List<Uri> uris) {
-        BgWorkers.getInstance().execute(() -> {
+        bgWorkers.execute(() -> {
             final FileStore store = FileStore.getInstance();
 
             for (Uri uri : uris) {
@@ -172,6 +193,16 @@ public class MediaPickerViewModel extends AndroidViewModel {
                 }
             }
         });
+    }
+
+    public LiveData<Integer> getLayout() {
+        return layout;
+    }
+
+    @MainThread
+    public void setLayout(int layout) {
+        this.layout.setValue(layout);
+        bgWorkers.execute(() -> preferences.setPickerLayout(layout));
     }
 }
 
