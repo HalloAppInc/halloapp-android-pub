@@ -194,9 +194,11 @@ public class RegistrationRequestActivity extends HalloActivity {
 
     private void onRereg() {
         Log.i("RegistrationRequestActivity: rereg success");
-        preferences.setLastGroupSyncTime(0);
         contactsSync.startContactsSync(true);
-        bgWorkers.execute(avatarLoader::removeMyAvatar);
+        bgWorkers.execute(() -> {
+            preferences.setLastGroupSyncTime(0);
+            avatarLoader.removeMyAvatar();
+        });
     }
 
     private void startRegistrationRequest() {
