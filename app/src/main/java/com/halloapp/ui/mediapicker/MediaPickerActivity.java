@@ -151,6 +151,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     private static final int REQUEST_CODE_COMPOSE_CONTENT = 2;
     private static final int REQUEST_CODE_PICK_MEDIA = 3;
     private static final int REQUEST_CODE_SET_AVATAR = 4;
+    private static final int REQUEST_CODE_TAKE_PHOTO = 5;
 
     public static final int RESULT_SELECT_MORE = RESULT_FIRST_USER + 1;
 
@@ -315,6 +316,12 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                 }
                 break;
             }
+            case REQUEST_CODE_TAKE_PHOTO: {
+                if (result == RESULT_OK) {
+                    setResult(RESULT_OK, data);
+                    finish();
+                }
+            }
         }
     }
 
@@ -372,10 +379,10 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.other_media) {
             final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, getIntent().getBooleanExtra(EXTRA_ALLOW_MULTIPLE, true));
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("*/*");
-            final String[] mimeTypes = {"image/*", "video/*"};
+            final String[] mimeTypes = (getIntent().getBooleanExtra(EXTRA_SHOW_VIDEOS, true)) ? new String[]{"image/*", "video/*"} : new String[]{"image/*"};
             intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
             startActivityForResult(intent, REQUEST_CODE_PICK_MEDIA);
             return true;
@@ -388,6 +395,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             intent.putExtra(CameraActivity.EXTRA_REPLY_POST_ID, getIntent().getStringExtra(EXTRA_REPLY_POST_ID));
             intent.putExtra(CameraActivity.EXTRA_REPLY_POST_MEDIA_INDEX, getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1));
             intent.putExtra(CameraActivity.EXTRA_PURPOSE, getIntent().getIntExtra(EXTRA_CAMERA_PURPOSE, CAMERA_PURPOSE_DEFAULT));
+            startActivityForResult(intent, REQUEST_CODE_TAKE_PHOTO);
         }
         return super.onOptionsItemSelected(item);
     }
