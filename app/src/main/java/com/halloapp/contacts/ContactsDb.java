@@ -625,7 +625,10 @@ public class ContactsDb {
                         ContactsTable.COLUMN_NORMALIZED_PHONE,
                         ContactsTable.COLUMN_AVATAR_ID,
                         ContactsTable.COLUMN_USER_ID,
-                        ContactsTable.COLUMN_FRIEND
+                        ContactsTable.COLUMN_FRIEND,
+                        ContactsTable.COLUMN_NEW_CONNECTION,
+                        ContactsTable.COLUMN_CONNECTION_TIME,
+                        ContactsTable.COLUMN_HIDE_CHAT
                 },
                 ContactsTable.COLUMN_USER_ID + " IS NOT NULL AND " + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL",
                 null, null, null, null)) {
@@ -642,6 +645,9 @@ public class ContactsDb {
                             cursor.getString(5),
                             new UserId(userIdStr),
                             cursor.getInt(7) == 1);
+                    contact.newConnection = cursor.getInt(8) == 1;
+                    contact.connectionTime = cursor.getLong(9);
+                    contact.hideChat = cursor.getInt(10) == 1;
                     contacts.add(contact);
                 }
             }

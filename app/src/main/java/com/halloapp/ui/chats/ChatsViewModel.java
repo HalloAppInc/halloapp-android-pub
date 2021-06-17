@@ -172,8 +172,8 @@ public class ChatsViewModel extends AndroidViewModel {
                     if (TextUtils.isEmpty(chat.name) && chat.chatId instanceof UserId) {
                         Contact contact = contactsDb.getContact((UserId)chat.chatId);
                         String phone = TextUtils.isEmpty(contact.addressBookName) ? contactsDb.readPhone(Preconditions.checkNotNull(contact.userId)) : null;
-                        String normalizedPhone = phone == null ? null : PhoneNumberUtils.formatNumber("+" + phone, null);
-                        chat.name = TextUtils.isEmpty(contact.addressBookName) ? normalizedPhone : contact.getDisplayName();
+                        String nonContactDisplayName = phone == null ? contact.getDisplayName() : PhoneNumberUtils.formatNumber("+" + phone, null);
+                        chat.name = TextUtils.isEmpty(contact.addressBookName) ? nonContactDisplayName : contact.getDisplayName();
                     }
                 }
                 Collections.sort(chats, (obj1, obj2) -> {
