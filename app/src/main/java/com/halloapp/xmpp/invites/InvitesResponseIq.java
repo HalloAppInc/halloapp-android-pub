@@ -38,6 +38,7 @@ public class InvitesResponseIq extends HalloIq {
 
     private InvitesResponseIq(int invitesLeft, long refreshTimeLeft, Set<String> successfulInvites, Map<String, Integer> failedInvites) {
         this.inviteCountRefreshData = new InviteCountAndRefreshTime(invitesLeft, refreshTimeLeft);
+        this.successfulInvites.addAll(successfulInvites);
         for (String key : failedInvites.keySet()) {
             this.failedInvites.put(key, failedInvites.get(key));
         }
