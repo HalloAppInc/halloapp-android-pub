@@ -14,10 +14,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.VoiceNotePlayer;
-import com.halloapp.util.BgWorkers;
 import com.halloapp.util.StringUtils;
-
-import java.io.IOException;
 
 public class VoiceNoteMessageViewHolder extends MessageViewHolder {
 
@@ -100,7 +97,7 @@ public class VoiceNoteMessageViewHolder extends MessageViewHolder {
     protected void fillView(@NonNull Message message, boolean changed) {
         if (changed) {
             this.audioPath = null;
-            parent.getAvatarLoader().load(avatarView, message.senderUserId);
+            parent.getAvatarLoader().load(avatarView, message.senderUserId, false);
         }
         if (message.media != null && !message.media.isEmpty()) {
             Media media = message.media.get(0);
