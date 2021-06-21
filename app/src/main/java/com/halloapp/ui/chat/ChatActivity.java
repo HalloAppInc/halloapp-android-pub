@@ -1212,19 +1212,19 @@ public class ChatActivity extends HalloActivity {
                 }
                 case VIEW_TYPE_INCOMING_VOICE_NOTE: {
                     layoutRes = R.layout.message_item_voice_note_incoming;
-                    final View layout = LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
-                    return new VoiceNoteMessageViewHolder(layout, messageViewHolderParent);
+                    LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
+                    return new VoiceNoteMessageViewHolder(root, messageViewHolderParent);
                 }
                 case VIEW_TYPE_OUTGOING_VOICE_NOTE: {
                     layoutRes = R.layout.message_item_voice_note_outgoing;
-                    final View layout = LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
-                    return new VoiceNoteMessageViewHolder(layout, messageViewHolderParent);
+                    LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
+                    return new VoiceNoteMessageViewHolder(root, messageViewHolderParent);
                 }
                 default: {
                     throw new IllegalArgumentException();
                 }
             }
-            final View layout = LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
+            LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
             return new MessageViewHolder(root, messageViewHolderParent);
         }
 
@@ -1245,13 +1245,15 @@ public class ChatActivity extends HalloActivity {
         }
     }
 
-    private boolean updateActionMode(String text) {
+    private boolean updateActionMode(@Nullable String text) {
         if (actionMode == null) {
             copyText = text;
             actionMode = startSupportActionMode(new ActionMode.Callback() {
                 @Override
                 public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                     getMenuInflater().inflate(R.menu.clipboard, menu);
+                    MenuItem copyItem = menu.findItem(R.id.copy);
+                    copyItem.setVisible(!TextUtils.isEmpty(text));
                     return true;
                 }
 

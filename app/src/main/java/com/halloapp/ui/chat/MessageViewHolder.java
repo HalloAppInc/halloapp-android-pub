@@ -145,8 +145,9 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         messageTextLayout = itemView.findViewById(R.id.message_text_container);
 
         itemView.setOnLongClickListener(v -> {
-            if (parent.getSelectedMessageRowId() == -1 && textView != null) {
-                parent.onItemLongClicked(textView.getText().toString(), message);
+            if (parent.getSelectedMessageRowId() == -1) {
+                String text = textView == null ? null : textView.getText().toString();
+                parent.onItemLongClicked(text, message);
                 return true;
             }
             return false;
@@ -457,6 +458,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             }
 
             if (TextUtils.isEmpty(message.text)) {
+                textView.setText(message.text);
                 textView.setVisibility(View.GONE);
             } else {
                 textView.setVisibility(View.VISIBLE);
