@@ -107,7 +107,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="camera_record_audio_permission_rationale_denied">"Um Fotos und Videos aufzunehmen, benötigen wir deine Erlaubnis, damit wir auf deine Kamera zugreifen und Audio aufnehmen können.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
-    <string name="contacts_permission_rationale">"Um den Kontakt zu deinen Freunden &amp; zur Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können"</string>
+    <string name="contacts_permission_rationale">"Um den Kontakt zu deinen Freunden und zur Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können"</string>
     <string name="contacts_permission_rationale_denied">"Um den Kontakt zu deinen Freunden und zur Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
@@ -289,7 +289,7 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="online">"online"</string>
 
     <!-- Capital or lower case? -->
-    <string name="today">"Heute"</string>
+    <string name="today">"heute"</string>
     <string name="today_at_time">"Heute um %s"</string>
     <string name="yesterday">"Gestern"</string>
     <string name="yesterday_at_time">"Gestern um %s"</string>
