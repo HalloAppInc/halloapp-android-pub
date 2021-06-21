@@ -144,23 +144,13 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         futureProofMessage = itemView.findViewById(R.id.future_proof_text);
         messageTextLayout = itemView.findViewById(R.id.message_text_container);
 
-        if (textView != null) {
-            textView.setOnLongClickListener(v -> {
-                if (parent.getSelectedMessageRowId() == -1) {
-                    parent.onItemLongClicked(textView.getText().toString(), message);
-                }
+        itemView.setOnLongClickListener(v -> {
+            if (parent.getSelectedMessageRowId() == -1 && textView != null) {
+                parent.onItemLongClicked(textView.getText().toString(), message);
                 return true;
-            });
-        }
-
-        if (contentView != null) {
-            contentView.setOnLongClickListener(v -> {
-                if (parent.getSelectedMessageRowId() == -1 && textView != null) {
-                    parent.onItemLongClicked(textView.getText().toString(), message);
-                }
-                return true;
-            });
-        }
+            }
+            return false;
+        });
 
         if (systemMessage != null) {
             systemMessage.setOnClickListener(v -> {

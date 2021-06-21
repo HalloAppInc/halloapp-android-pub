@@ -95,6 +95,7 @@ import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.widget.SwipeListItemHelper;
+import com.halloapp.widget.LongPressInterceptView;
 import com.halloapp.xmpp.PresenceLoader;
 
 import java.util.ArrayList;
@@ -1168,6 +1169,8 @@ public class ChatActivity extends HalloActivity {
         @Override
         public @NonNull
         MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LongPressInterceptView root = new LongPressInterceptView(parent.getContext());
+            root.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             Log.i("ChatAdapter.onCreateViewHolder " + viewType);
             final @LayoutRes int layoutRes;
             switch (viewType) {
@@ -1209,20 +1212,20 @@ public class ChatActivity extends HalloActivity {
                 }
                 case VIEW_TYPE_INCOMING_VOICE_NOTE: {
                     layoutRes = R.layout.message_item_voice_note_incoming;
-                    final View layout = LayoutInflater.from(parent.getContext()).inflate(layoutRes, parent, false);
+                    final View layout = LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
                     return new VoiceNoteMessageViewHolder(layout, messageViewHolderParent);
                 }
                 case VIEW_TYPE_OUTGOING_VOICE_NOTE: {
                     layoutRes = R.layout.message_item_voice_note_outgoing;
-                    final View layout = LayoutInflater.from(parent.getContext()).inflate(layoutRes, parent, false);
+                    final View layout = LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
                     return new VoiceNoteMessageViewHolder(layout, messageViewHolderParent);
                 }
                 default: {
                     throw new IllegalArgumentException();
                 }
             }
-            final View layout = LayoutInflater.from(parent.getContext()).inflate(layoutRes, parent, false);
-            return new MessageViewHolder(layout, messageViewHolderParent);
+            final View layout = LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
+            return new MessageViewHolder(root, messageViewHolderParent);
         }
 
         @Override
