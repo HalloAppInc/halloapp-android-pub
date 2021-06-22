@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.paging.InitialPagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
@@ -152,7 +153,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                     newPostsView.setVisibility(View.GONE);
                 }
             }
-            emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
+            emptyView.setVisibility(!(posts instanceof InitialPagedList) && posts.size() == 0 ? View.VISIBLE : View.GONE);
         }));
         viewModel.socialHistory.getLiveData().observe(getViewLifecycleOwner(), commentHistoryData -> {
             if (notificationDrawable != null) {
