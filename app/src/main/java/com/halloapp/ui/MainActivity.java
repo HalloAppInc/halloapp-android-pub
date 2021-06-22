@@ -86,6 +86,9 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     private static final int REQUEST_CODE_SELECT_CONTACT = 3;
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_CHAT = 4;
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_CREATE_GROUP = 5;
+    private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_TEXT = 6;
+    private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_CAMERA = 7;
+    private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MEDIA = 8;
 
 
     private final ServerProps serverProps = ServerProps.getInstance();
@@ -317,16 +320,42 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void onFabActionSelected(@IdRes int id) {
+        final String[] perms = {Manifest.permission.READ_CONTACTS};
+        boolean hasPermissions = EasyPermissions.hasPermissions(MainActivity.this, perms);
         if (id == R.id.add_post_text) {
-            startActivity(new Intent(this, ContentComposerActivity.class));
+            if (!hasPermissions) {
+                ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_TEXT);
+            } else {
+                startTextPost();
+            }
         } else if (id == R.id.add_post_gallery) {
-            final Intent intent = MediaPickerActivity.pickForPost(this);
-            startActivity(intent);
+            if (!hasPermissions) {
+                ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MEDIA);
+            } else {
+                startMediaPost();
+            }
         } else if (id == R.id.add_post_camera) {
-            final Intent intent = new Intent(this, CameraActivity.class);
-            startActivity(intent);
+            if (!hasPermissions) {
+                ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_CAMERA);
+            } else {
+                startCameraPost();
+            }
         }
         fabView.close(false);
+    }
+
+    private void startTextPost() {
+        startActivity(new Intent(this, ContentComposerActivity.class));
+    }
+
+    private void startMediaPost() {
+        final Intent intent = MediaPickerActivity.pickForPost(this);
+        startActivity(intent);
+    }
+
+    private void startCameraPost() {
+        final Intent intent = new Intent(this, CameraActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -401,6 +430,18 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             }
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION_CREATE_GROUP: {
                 createNewGroup();
+                break;
+            }
+            case REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_TEXT: {
+                startTextPost();
+                break;
+            }
+            case REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_CAMERA: {
+                startCameraPost();
+                break;
+            }
+            case REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MEDIA: {
+                startMediaPost();
                 break;
             }
         }
