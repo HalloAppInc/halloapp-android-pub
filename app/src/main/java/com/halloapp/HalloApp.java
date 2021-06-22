@@ -154,6 +154,10 @@ public class HalloApp extends Application {
                             locale = configuration.locale;
                         }
                         String language = locale.getLanguage();
+                        if ("en".equals(language) || "pt".equals(language) || "zh".equals(language)) {
+                            language += "-" + locale.getCountry();
+                        }
+
                         String savedLocale = Preferences.getInstance().getLastDeviceLocale();
                         String savedToken = Preferences.getInstance().getLastPushToken();
                         long lastUpdateTime = Preferences.getInstance().getLastPushTokenSyncTime();
