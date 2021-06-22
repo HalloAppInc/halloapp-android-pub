@@ -289,6 +289,14 @@ public class ChatViewModel extends AndroidViewModel {
         return voiceNoteRecorder.isRecording();
     }
 
+    public boolean checkIsRecording() {
+        Boolean isRecording = voiceNoteRecorder.isRecording().getValue();
+        if (isRecording == null) {
+            return false;
+        }
+        return isRecording;
+    }
+
     public LiveData<Long> getRecordingTime() {
         return voiceNoteRecorder.getRecordingTime();
     }

@@ -167,9 +167,11 @@ public class ChatActivity extends HalloActivity {
     private String chatName;
 
     private ImageView recordBtn;
+    private ImageView sendButton;
     private View recordingIndicator;
     private TextView recordingTime;
     private View deleteRecording;
+    private ImageView media;
 
     private ItemSwipeHelper itemSwipeHelper;
     private LinearLayoutManager layoutManager;
@@ -203,6 +205,8 @@ public class ChatActivity extends HalloActivity {
         avatarView = findViewById(R.id.avatar);
         footer = findViewById(R.id.footer);
 
+        media = findViewById(R.id.media);
+
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -226,7 +230,7 @@ public class ChatActivity extends HalloActivity {
         chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
         Log.d("ChatActivity chatId " + chatId);
 
-        final ImageView sendButton = findViewById(R.id.send);
+        sendButton = findViewById(R.id.send);
 
         recordBtn = findViewById(R.id.record_voice);
         deleteRecording = findViewById(R.id.delete_voice_note);
@@ -253,23 +257,7 @@ public class ChatActivity extends HalloActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s == null || TextUtils.isEmpty(s.toString())) {
-                    messageDrafts.remove(chatId);
-                    if (allowVoiceNoteSending) {
-                        sendButton.setVisibility(View.INVISIBLE);
-                        recordBtn.setVisibility(View.VISIBLE);
-                    } else {
-                        sendButton.clearColorFilter();
-                    }
-                } else {
-                    messageDrafts.put(chatId, s.toString());
-                    if (allowVoiceNoteSending) {
-                        sendButton.setVisibility(View.VISIBLE);
-                        recordBtn.setVisibility(View.INVISIBLE);
-                    } else {
-                        sendButton.setColorFilter(ContextCompat.getColor(ChatActivity.this, R.color.color_secondary));
-                    }
-                }
+                updateSendButton(s);
             }
         });
         drawDelegateView = findViewById(R.id.draw_delegate);
@@ -322,7 +310,6 @@ public class ChatActivity extends HalloActivity {
         deleteRecording.setOnClickListener(v -> {
             viewModel.finishRecording(replyPostMediaIndex, true);
         });
-        final ImageView media = findViewById(R.id.media);
         media.setOnClickListener(v -> pickMedia());
 
         layoutManager = new LinearLayoutManager(this);
@@ -373,6 +360,7 @@ public class ChatActivity extends HalloActivity {
                     media.setVisibility(View.VISIBLE);
                     editText.setVisibility(View.VISIBLE);
                     recordBtn.setImageResource(R.drawable.ic_keyboard_voice);
+                    updateSendButton(editText.getText());
                 } else {
                     editText.setVisibility(View.INVISIBLE);
                     deleteRecording.setVisibility(View.VISIBLE);
@@ -409,7 +397,7 @@ public class ChatActivity extends HalloActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                media.setVisibility(TextUtils.isEmpty(s) ? View.VISIBLE : View.GONE);
+
             }
 
             @Override
@@ -693,6 +681,30 @@ public class ChatActivity extends HalloActivity {
 
         if (replyPostId != null) {
             showKeyboardOnResume = true;
+        }
+    }
+
+    private void updateSendButton(Editable s) {
+        boolean currentlyRecording = viewModel.checkIsRecording();
+
+        if (s == null || TextUtils.isEmpty(s.toString()) || currentlyRecording) {
+            messageDrafts.remove(chatId);
+            if (allowVoiceNoteSending) {
+                sendButton.setVisibility(View.INVISIBLE);
+                recordBtn.setVisibility(View.VISIBLE);
+            } else {
+                sendButton.clearColorFilter();
+            }
+            media.setVisibility(currentlyRecording ? View.GONE : View.VISIBLE);
+        } else {
+            messageDrafts.put(chatId, s.toString());
+            if (allowVoiceNoteSending) {
+                sendButton.setVisibility(View.VISIBLE);
+                recordBtn.setVisibility(View.INVISIBLE);
+            } else {
+                sendButton.setColorFilter(ContextCompat.getColor(ChatActivity.this, R.color.color_secondary));
+            }
+            media.setVisibility(View.GONE);
         }
     }
 
