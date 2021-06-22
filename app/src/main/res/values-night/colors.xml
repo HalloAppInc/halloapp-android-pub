@@ -57,7 +57,7 @@
 
     <color name="chat_message_preview">@color/white_70</color>
     <color name="empty_chat_placeholder">@color/white_30</color>
-    <color name="post_timestamp">@color/white_30</color>
+    <color name="post_timestamp">@color/white_40</color>
 
     <color name="button_disabled_background">@color/white_20</color>
 

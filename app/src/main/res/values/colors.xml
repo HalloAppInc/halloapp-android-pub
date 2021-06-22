@@ -99,7 +99,7 @@
     <color name="new_comments_indicator">@color/color_secondary_70_alpha</color>
     <color name="chat_message_preview">@color/black_70</color>
     <color name="empty_chat_placeholder">@color/black_30</color>
-    <color name="post_timestamp">@color/black_30</color>
+    <color name="post_timestamp">@color/black_40</color>
 
     <color name="message_timestamp">#94AAC8</color>
 

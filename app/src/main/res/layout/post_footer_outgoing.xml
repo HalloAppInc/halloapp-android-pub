@@ -50,6 +50,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_gravity="center_vertical"
             >
 
             <com.halloapp.widget.AvatarsLayout
@@ -65,7 +66,7 @@
                 app:alPaddingColor="@color/card_background"
                 app:alPaddingSize="1dp"
                 app:alElevation="0dp"
-                app:alAvatarSize="28dp"
+                app:alAvatarSize="27dp"
                 android:visibility="gone"
                 tools:visibility="visible"/>
 

@@ -74,7 +74,7 @@ public class AvatarsLayout extends FrameLayout {
             for (int i = 0; i < count - childCount; i++) {
                 final AvatarImageView view = new AvatarImageView(getContext());
                 view.paint.setColor(paddingColor);
-                view.paint.setStrokeWidth(2 * paddingSize);
+                view.paint.setStrokeWidth(3 * paddingSize);
                 view.paint.setStyle(Paint.Style.STROKE);
                 view.setElevation(elevation);
                 view.setScaleType(ImageView.ScaleType.CENTER_CROP);
