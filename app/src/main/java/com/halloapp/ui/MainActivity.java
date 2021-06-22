@@ -2,17 +2,14 @@ package com.halloapp.ui;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.SharedElementCallback;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 
 import androidx.annotation.DrawableRes;
@@ -27,36 +24,31 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.halloapp.BuildConfig;
-import com.halloapp.Constants;
 import com.halloapp.Debug;
 import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.id.ChatId;
-import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.contacts.ContactsActivity;
-import com.halloapp.ui.contacts.MultipleContactPickerActivity;
-import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.groups.GroupCreationPickerActivity;
+import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
-import com.halloapp.widget.BadgedDrawable;
 import com.halloapp.widget.NetworkIndicatorView;
 import com.halloapp.xmpp.Connection;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
@@ -65,10 +57,7 @@ import com.leinardi.android.speeddial.SpeedDialView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
-import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks, ActionBarShadowOnScrollListener.Host {
@@ -89,6 +78,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_TEXT = 6;
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_CAMERA = 7;
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MEDIA = 8;
+    public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE = 9;
 
 
     private final ServerProps serverProps = ServerProps.getInstance();
@@ -113,7 +103,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        bgWorkers.getInstance().execute(new Runnable() {
+        bgWorkers.execute(new Runnable() {
             @Override
             public void run() {
                 long numberBytesAvail = Environment.getDataDirectory().getFreeSpace();
@@ -417,11 +407,11 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> list) {
-        //noinspection SwitchStatementWithTooFewBranches
+        ContactsSync.getInstance(this).startAddressBookListener();
+        ContactsSync.getInstance(this).startContactsSync(true);
         switch (requestCode) {
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
-                ContactsSync.getInstance(this).startAddressBookListener();
-                ContactsSync.getInstance(this).startContactsSync(true);
+                // Just sync
                 break;
             }
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION_CHAT: {
@@ -442,6 +432,10 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             }
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MEDIA: {
                 startMediaPost();
+                break;
+            }
+            case REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE: {
+                startActivity(new Intent(this, InviteContactsActivity.class));
                 break;
             }
         }

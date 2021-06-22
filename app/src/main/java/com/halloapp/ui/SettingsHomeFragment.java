@@ -1,12 +1,9 @@
 package com.halloapp.ui;
 
+import android.Manifest;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.widget.NestedScrollView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +11,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.ui.settings.SettingsNotifications;
@@ -27,6 +28,8 @@ import com.halloapp.ui.settings.SettingsPrivacy;
 import com.halloapp.ui.settings.SettingsProfile;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class SettingsHomeFragment extends HalloFragment implements MainNavFragment {
 
@@ -71,7 +74,12 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
 
         View invite = root.findViewById(R.id.invite);
         invite.setOnClickListener(v -> {
-            startActivity(new Intent(v.getContext(), InviteContactsActivity.class));
+            final String[] perms = {Manifest.permission.READ_CONTACTS};
+            if (!EasyPermissions.hasPermissions(requireContext(), perms)) {
+                ContactPermissionBottomSheetDialog.showRequest(getChildFragmentManager(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE);
+            } else {
+                startActivity(new Intent(requireContext(), InviteContactsActivity.class));
+            }
         });
 
         View privacy = root.findViewById(R.id.privacy);
