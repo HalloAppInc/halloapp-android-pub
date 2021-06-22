@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
@@ -90,6 +91,12 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
         View notifications = root.findViewById(R.id.notifications);
         notifications.setOnClickListener(v -> {
             startActivity(new Intent(v.getContext(), SettingsNotifications.class));
+        });
+
+        View account = root.findViewById(R.id.account);
+        account.setVisibility(BuildConfig.DEBUG ? View.VISIBLE : View.GONE);
+        account.setOnClickListener(v -> {
+            startActivity(new Intent(v.getContext(), AccountActivity.class));
         });
 
         TextView number = root.findViewById(R.id.number);

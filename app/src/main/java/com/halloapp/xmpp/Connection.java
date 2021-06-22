@@ -44,7 +44,7 @@ public abstract class Connection {
     public static abstract class Observer {
         public void onConnected() {}
         public void onDisconnected() {}
-        public void onLoginFailed() {}
+        public void onLoginFailed(boolean deleted) {}
         public void onClientVersionExpired() {}
         public void onClientVersionExpiringSoon(int daysLeft) {}
         public void onOutgoingPostSent(@NonNull String postId) {}
@@ -160,4 +160,6 @@ public abstract class Connection {
     public abstract boolean getClientExpired();
 
     public abstract String getAndIncrementShortId();
+
+    public abstract Observable<Iq> deleteAccount(@NonNull String phone);
 }

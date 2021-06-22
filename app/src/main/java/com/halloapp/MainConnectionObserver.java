@@ -1,6 +1,7 @@
 package com.halloapp;
 
 import android.content.Context;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,6 +33,7 @@ import com.halloapp.privacy.BlockListManager;
 import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.proto.clients.Background;
 import com.halloapp.ui.AppExpirationActivity;
+import com.halloapp.ui.DeleteAccountActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
@@ -174,13 +176,24 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onLoginFailed() {
+    public void onLoginFailed(boolean accountDeleted) {
         me.resetRegistration();
         blockListManager.onLoginFailed();
-        if (foregroundObserver.isInForeground()) {
-            RegistrationRequestActivity.reVerify(context);
+
+        boolean isInForeground = foregroundObserver.isInForeground();
+        if (!accountDeleted) {
+            if (isInForeground) {
+                RegistrationRequestActivity.reVerify(context);
+            } else {
+                notifications.showLoginFailedNotification();
+            }
         } else {
-            notifications.showLoginFailedNotification();
+            if (isInForeground) {
+                context.startActivity(new Intent(context, RegistrationRequestActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+            } else {
+                DeleteAccountActivity.deleteAllUserData();
+            }
         }
     }
 

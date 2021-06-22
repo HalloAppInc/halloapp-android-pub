@@ -116,6 +116,13 @@
             android:label="@string/help"/>
 
         <activity
+            android:name=".ui.AccountActivity"
+            android:label="@string/settings_account"/>
+
+        <activity android:name=".ui.DeleteAccountActivity"
+            android:label=""/>
+
+        <activity
             android:name=".ui.groups.ViewGroupFeedActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 

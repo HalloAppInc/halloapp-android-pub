@@ -26,6 +26,18 @@
     <string name="bad_image">Unsupported media type</string>
     <string name="time_diff_now">Now</string>
     <string name="phone_number_hint">Phone number</string>
+    <!-- Title shown when a user starts the account deletion process under 'account' -->
+    <string name="delete_account_title">Delete account</string>
+    <!-- Button text at bottom for user to confirm account deletion -->
+    <string name="delete_account_button">Delete</string>
+    <!-- Note at bottom of account deletion activity -->
+    <string name="delete_account_note">This cannot be undone.</string>
+    <!-- Error message at bottom of account deletion screen when deletion fails -->
+    <string name="delete_account_failed">Failed to delete account</string>
+    <!-- Category in the top-level settings -->
+    <string name="settings_account">Account</string>
+    <!-- Shown for when a user wants to request to download all of their data in a GDPR-compliant manner -->
+    <string name="request_data_title">Get my data</string>
     <string name="request_registration_title">Welcome!</string>
     <string name="reverify_registration_title">Please, re-verify your phone number</string>
     <string name="request_registration_subtitle">You will receive a verification code.\nCarrier rates may apply.</string>

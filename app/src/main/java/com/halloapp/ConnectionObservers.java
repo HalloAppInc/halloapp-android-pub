@@ -76,10 +76,10 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyLoginFailed() {
+    public void notifyLoginFailed(boolean deleted) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onLoginFailed();
+                observer.onLoginFailed(deleted);
             }
         }
     }

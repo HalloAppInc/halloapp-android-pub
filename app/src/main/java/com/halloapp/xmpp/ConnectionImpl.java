@@ -782,6 +782,14 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public Observable<Iq> deleteAccount(@NonNull String phone) {
+        return sendIqRequestAsync(new DeleteAccountRequestIq(phone)).map(response -> {
+            Log.d("connection: response after deleting account " + ProtoPrinter.toString(response));
+            return response;
+        });
+    }
+
+    @Override
     public UserId getUserId(@NonNull String user) {
         return isMe(user) ? UserId.ME : new UserId(user);
     }
@@ -893,10 +901,14 @@ public class ConnectionImpl extends Connection {
             if ("spub_mismatch".equalsIgnoreCase(authResult.getReason())) {
                 Log.e("connection: failed to login");
                 disconnectInBackground();
-                connectionObservers.notifyLoginFailed();
+                connectionObservers.notifyLoginFailed(false);
             } else if ("invalid client version".equalsIgnoreCase(authResult.getReason())) {
                 Log.e("connection: invalid client version");
                 clientExpired();
+            } else if ("account_deleted".equalsIgnoreCase(authResult.getReason())) {
+                Log.e("connection: account deleted");
+                disconnectInBackground();
+                connectionObservers.notifyLoginFailed(true);
             } else {
                 ServerProps.getInstance().onReceiveServerPropsHash(connectionPropHash);
                 long secondsLeft = authResult.getVersionTtl();
