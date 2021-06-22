@@ -99,7 +99,7 @@ public class HalloApp extends Application {
     private boolean checkContactsPermissionChanged() {
         if (!hasContactPermission) {
             hasContactPermission = PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(HalloApp.this, Manifest.permission.READ_CONTACTS);
-            return true;
+            return hasContactPermission;
         } else {
             return false;
         }
