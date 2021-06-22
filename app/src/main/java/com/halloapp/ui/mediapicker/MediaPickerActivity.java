@@ -222,6 +222,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                 }
             }
 
+            layoutManager.removeAllViews();
             layoutManager.requestLayout();
             adapter.notifyDataSetChanged();
         });
