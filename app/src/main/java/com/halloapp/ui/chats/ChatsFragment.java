@@ -1,5 +1,6 @@
 package com.halloapp.ui.chats;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -68,6 +69,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
+import pub.devrel.easypermissions.EasyPermissions;
+
 public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
     private static final int REQUEST_CODE_OPEN_CHAT = 1;
@@ -130,6 +133,9 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         searchMenuItem = menu.findItem(R.id.menu_search);
         final MenuItem closeMenuItem = menu.findItem(R.id.menu_clear);
         final SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        
+        final String[] perms = {Manifest.permission.READ_CONTACTS};
+        searchMenuItem.setVisible(EasyPermissions.hasPermissions(requireContext(), perms));
 
         closeMenuItem.setVisible(false);
         ImageView closeBtn = searchView.findViewById(R.id.search_close_btn);
