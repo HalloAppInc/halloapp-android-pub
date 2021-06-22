@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.R;
+import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ActivityCenterActivity;
@@ -41,9 +42,11 @@ import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.BadgedDrawable;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 
+import java.util.List;
+
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class HomeFragment extends PostsFragment implements MainNavFragment {
+public class HomeFragment extends PostsFragment implements MainNavFragment, EasyPermissions.PermissionCallbacks {
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
@@ -348,5 +351,27 @@ public class HomeFragment extends PostsFragment implements MainNavFragment {
         } else {
             nuxActivityCenterContainer.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
+                ContactsSync.getInstance(requireContext()).startAddressBookListener();
+                ContactsSync.getInstance(requireContext()).startContactsSync(true);
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+
     }
 }
