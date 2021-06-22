@@ -1,8 +1,10 @@
 package com.halloapp;
 
+import android.Manifest;
 import android.app.Application;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -12,6 +14,7 @@ import android.os.StrictMode;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
@@ -32,6 +35,8 @@ import java.util.Locale;
 public class HalloApp extends Application {
 
     private final AppContext appContext = AppContext.getInstance();
+
+    private boolean hasContactPermission;
 
     @Override
     public void onCreate() {
@@ -74,6 +79,8 @@ public class HalloApp extends Application {
 
         connect();
 
+        checkContactsPermissionChanged();
+
         Lifecycle lifecycle = ProcessLifecycleOwner.get().getLifecycle();
         lifecycle.addObserver(new AppLifecycleObserver());
         lifecycle.addObserver(ForegroundObserver.getInstance());
@@ -87,6 +94,15 @@ public class HalloApp extends Application {
             ContentDb.getInstance().processFutureProofContent();
             EncryptedKeyStore.getInstance().ensureMigrated(); // TODO(jack): Remove after May 1
         });
+    }
+
+    private boolean checkContactsPermissionChanged() {
+        if (!hasContactPermission) {
+            hasContactPermission = PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(HalloApp.this, Manifest.permission.READ_CONTACTS);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -192,6 +208,12 @@ public class HalloApp extends Application {
             registerReceiver(airplaneModeChangeReceiver, new IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED));
             mainHandler.removeCallbacks(disconnectOnBackgroundedRunnable);
             Connection.getInstance().updatePresence(true);
+
+            if (checkContactsPermissionChanged()) {
+                // We got contacts permission
+                ContactsSync.getInstance(HalloApp.this).startAddressBookListener();
+                ContactsSync.getInstance(HalloApp.this).startContactsSync(true);
+            }
         }
     }
 
