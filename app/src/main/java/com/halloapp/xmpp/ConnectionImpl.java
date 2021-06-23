@@ -898,14 +898,14 @@ public class ConnectionImpl extends Connection {
 
         private void handleAuth(AuthResult authResult) {
             String connectionPropHash = Hex.bytesToStringLowercase(authResult.getPropsHash().toByteArray());
-            if ("spub_mismatch".equalsIgnoreCase(authResult.getReason())) {
+            if ("spub_mismatch".equalsIgnoreCase(authResult.getReasonString())) {
                 Log.e("connection: failed to login");
                 disconnectInBackground();
                 connectionObservers.notifyLoginFailed(false);
-            } else if ("invalid client version".equalsIgnoreCase(authResult.getReason())) {
+            } else if ("invalid client version".equalsIgnoreCase(authResult.getReasonString())) {
                 Log.e("connection: invalid client version");
                 clientExpired();
-            } else if ("account_deleted".equalsIgnoreCase(authResult.getReason())) {
+            } else if ("account_deleted".equalsIgnoreCase(authResult.getReasonString())) {
                 Log.e("connection: account deleted");
                 disconnectInBackground();
                 connectionObservers.notifyLoginFailed(true);
