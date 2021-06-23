@@ -667,4 +667,22 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Button text on profile of a user not in the user's contacts; tapping takes the user to the contacts app with data prefilled -->
     <string name="add_to_contacts">"Zu meinen Kontakten hinzufügen"</string>
+
+    <!-- Title shown when a user starts the account deletion process under 'account' -->
+    <string name="delete_account_title">"Delete account"</string>
+
+    <!-- Button text at bottom for user to confirm account deletion -->
+    <string name="delete_account_button">"Delete"</string>
+
+    <!-- Note at bottom of account deletion activity -->
+    <string name="delete_account_note">"This cannot be undone."</string>
+
+    <!-- Error message at bottom of account deletion screen when deletion fails -->
+    <string name="delete_account_failed">"Failed to delete account"</string>
+
+    <!-- Category in the top-level settings -->
+    <string name="settings_account">"Account"</string>
+
+    <!-- Shown for when a user wants to request to download all of their data in a GDPR-compliant manner -->
+    <string name="request_data_title">"Get my data"</string>
 </resources>
