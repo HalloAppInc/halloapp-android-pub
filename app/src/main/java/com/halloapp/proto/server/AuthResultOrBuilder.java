@@ -8,28 +8,28 @@ public interface AuthResultOrBuilder extends
     com.google.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>string result = 1;</code>
-   * @return The result.
+   * <code>string result_string = 1;</code>
+   * @return The resultString.
    */
-  java.lang.String getResult();
+  java.lang.String getResultString();
   /**
-   * <code>string result = 1;</code>
-   * @return The bytes for result.
+   * <code>string result_string = 1;</code>
+   * @return The bytes for resultString.
    */
   com.google.protobuf.ByteString
-      getResultBytes();
+      getResultStringBytes();
 
   /**
-   * <code>string reason = 2;</code>
-   * @return The reason.
+   * <code>string reason_string = 2;</code>
+   * @return The reasonString.
    */
-  java.lang.String getReason();
+  java.lang.String getReasonString();
   /**
-   * <code>string reason = 2;</code>
-   * @return The bytes for reason.
+   * <code>string reason_string = 2;</code>
+   * @return The bytes for reasonString.
    */
   com.google.protobuf.ByteString
-      getReasonBytes();
+      getReasonStringBytes();
 
   /**
    * <code>bytes props_hash = 3;</code>
@@ -42,4 +42,26 @@ public interface AuthResultOrBuilder extends
    * @return The versionTtl.
    */
   long getVersionTtl();
+
+  /**
+   * <code>.server.AuthResult.Result result = 5;</code>
+   * @return The enum numeric value on the wire for result.
+   */
+  int getResultValue();
+  /**
+   * <code>.server.AuthResult.Result result = 5;</code>
+   * @return The result.
+   */
+  com.halloapp.proto.server.AuthResult.Result getResult();
+
+  /**
+   * <code>.server.AuthResult.Reason reason = 6;</code>
+   * @return The enum numeric value on the wire for reason.
+   */
+  int getReasonValue();
+  /**
+   * <code>.server.AuthResult.Reason reason = 6;</code>
+   * @return The reason.
+   */
+  com.halloapp.proto.server.AuthResult.Reason getReason();
 }

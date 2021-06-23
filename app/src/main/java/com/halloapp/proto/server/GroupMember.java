@@ -533,6 +533,10 @@ public  final class GroupMember extends
   public static final int IDENTITY_KEY_FIELD_NUMBER = 8;
   private com.google.protobuf.ByteString identityKey_;
   /**
+   * <pre>
+   * Identity key to be returned on `GET_MEMBER_IDENTITY_KEYS` IQ.
+   * </pre>
+   *
    * <code>bytes identity_key = 8;</code>
    * @return The identityKey.
    */
@@ -541,6 +545,10 @@ public  final class GroupMember extends
     return identityKey_;
   }
   /**
+   * <pre>
+   * Identity key to be returned on `GET_MEMBER_IDENTITY_KEYS` IQ.
+   * </pre>
+   *
    * <code>bytes identity_key = 8;</code>
    * @param value The identityKey to set.
    */
@@ -550,6 +558,10 @@ public  final class GroupMember extends
     identityKey_ = value;
   }
   /**
+   * <pre>
+   * Identity key to be returned on `GET_MEMBER_IDENTITY_KEYS` IQ.
+   * </pre>
+   *
    * <code>bytes identity_key = 8;</code>
    */
   private void clearIdentityKey() {
@@ -969,6 +981,10 @@ public  final class GroupMember extends
     }
 
     /**
+     * <pre>
+     * Identity key to be returned on `GET_MEMBER_IDENTITY_KEYS` IQ.
+     * </pre>
+     *
      * <code>bytes identity_key = 8;</code>
      * @return The identityKey.
      */
@@ -977,6 +993,10 @@ public  final class GroupMember extends
       return instance.getIdentityKey();
     }
     /**
+     * <pre>
+     * Identity key to be returned on `GET_MEMBER_IDENTITY_KEYS` IQ.
+     * </pre>
+     *
      * <code>bytes identity_key = 8;</code>
      * @param value The identityKey to set.
      * @return This builder for chaining.
@@ -987,6 +1007,10 @@ public  final class GroupMember extends
       return this;
     }
     /**
+     * <pre>
+     * Identity key to be returned on `GET_MEMBER_IDENTITY_KEYS` IQ.
+     * </pre>
+     *
      * <code>bytes identity_key = 8;</code>
      * @return This builder for chaining.
      */

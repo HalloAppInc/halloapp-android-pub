@@ -6196,6 +6196,7 @@ $root.server = (function() {
          * @property {string|null} [avatarId] GroupMember avatarId
          * @property {string|null} [result] GroupMember result
          * @property {string|null} [reason] GroupMember reason
+         * @property {Uint8Array|null} [identityKey] GroupMember identityKey
          */
 
         /**
@@ -6270,6 +6271,14 @@ $root.server = (function() {
         GroupMember.prototype.reason = "";
 
         /**
+         * GroupMember identityKey.
+         * @member {Uint8Array} identityKey
+         * @memberof server.GroupMember
+         * @instance
+         */
+        GroupMember.prototype.identityKey = $util.newBuffer([]);
+
+        /**
          * Creates a new GroupMember instance using the specified properties.
          * @function create
          * @memberof server.GroupMember
@@ -6307,6 +6316,8 @@ $root.server = (function() {
                 writer.uint32(/* id 6, wireType 2 =*/50).string(message.result);
             if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
                 writer.uint32(/* id 7, wireType 2 =*/58).string(message.reason);
+            if (message.identityKey != null && Object.hasOwnProperty.call(message, "identityKey"))
+                writer.uint32(/* id 8, wireType 2 =*/66).bytes(message.identityKey);
             return writer;
         };
 
@@ -6361,6 +6372,9 @@ $root.server = (function() {
                     break;
                 case 7:
                     message.reason = reader.string();
+                    break;
+                case 8:
+                    message.identityKey = reader.bytes();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -6432,6 +6446,9 @@ $root.server = (function() {
             if (message.reason != null && message.hasOwnProperty("reason"))
                 if (!$util.isString(message.reason))
                     return "reason: string expected";
+            if (message.identityKey != null && message.hasOwnProperty("identityKey"))
+                if (!(message.identityKey && typeof message.identityKey.length === "number" || $util.isString(message.identityKey)))
+                    return "identityKey: buffer expected";
             return null;
         };
 
@@ -6500,6 +6517,11 @@ $root.server = (function() {
                 message.result = String(object.result);
             if (object.reason != null)
                 message.reason = String(object.reason);
+            if (object.identityKey != null)
+                if (typeof object.identityKey === "string")
+                    $util.base64.decode(object.identityKey, message.identityKey = $util.newBuffer($util.base64.length(object.identityKey)), 0);
+                else if (object.identityKey.length)
+                    message.identityKey = object.identityKey;
             return message;
         };
 
@@ -6528,6 +6550,13 @@ $root.server = (function() {
                 object.avatarId = "";
                 object.result = "";
                 object.reason = "";
+                if (options.bytes === String)
+                    object.identityKey = "";
+                else {
+                    object.identityKey = [];
+                    if (options.bytes !== Array)
+                        object.identityKey = $util.newBuffer(object.identityKey);
+                }
             }
             if (message.action != null && message.hasOwnProperty("action"))
                 object.action = options.enums === String ? $root.server.GroupMember.Action[message.action] : message.action;
@@ -6546,6 +6575,8 @@ $root.server = (function() {
                 object.result = message.result;
             if (message.reason != null && message.hasOwnProperty("reason"))
                 object.reason = message.reason;
+            if (message.identityKey != null && message.hasOwnProperty("identityKey"))
+                object.identityKey = options.bytes === String ? $util.base64.encode(message.identityKey, 0, message.identityKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.identityKey) : message.identityKey;
             return object;
         };
 
@@ -6613,6 +6644,7 @@ $root.server = (function() {
          * @property {string|null} [senderName] GroupStanza senderName
          * @property {Array.<server.IGroupMember>|null} [members] GroupStanza members
          * @property {string|null} [background] GroupStanza background
+         * @property {Uint8Array|null} [audienceHash] GroupStanza audienceHash
          */
 
         /**
@@ -6696,6 +6728,14 @@ $root.server = (function() {
         GroupStanza.prototype.background = "";
 
         /**
+         * GroupStanza audienceHash.
+         * @member {Uint8Array} audienceHash
+         * @memberof server.GroupStanza
+         * @instance
+         */
+        GroupStanza.prototype.audienceHash = $util.newBuffer([]);
+
+        /**
          * Creates a new GroupStanza instance using the specified properties.
          * @function create
          * @memberof server.GroupStanza
@@ -6736,6 +6776,8 @@ $root.server = (function() {
                     $root.server.GroupMember.encode(message.members[i], writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
             if (message.background != null && Object.hasOwnProperty.call(message, "background"))
                 writer.uint32(/* id 8, wireType 2 =*/66).string(message.background);
+            if (message.audienceHash != null && Object.hasOwnProperty.call(message, "audienceHash"))
+                writer.uint32(/* id 9, wireType 2 =*/74).bytes(message.audienceHash);
             return writer;
         };
 
@@ -6796,6 +6838,9 @@ $root.server = (function() {
                 case 8:
                     message.background = reader.string();
                     break;
+                case 9:
+                    message.audienceHash = reader.bytes();
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -6849,6 +6894,7 @@ $root.server = (function() {
                 case 11:
                 case 12:
                 case 13:
+                case 14:
                     break;
                 }
             if (message.gid != null && message.hasOwnProperty("gid"))
@@ -6878,6 +6924,9 @@ $root.server = (function() {
             if (message.background != null && message.hasOwnProperty("background"))
                 if (!$util.isString(message.background))
                     return "background: string expected";
+            if (message.audienceHash != null && message.hasOwnProperty("audienceHash"))
+                if (!(message.audienceHash && typeof message.audienceHash.length === "number" || $util.isString(message.audienceHash)))
+                    return "audienceHash: buffer expected";
             return null;
         };
 
@@ -6950,6 +6999,10 @@ $root.server = (function() {
             case 13:
                 message.action = 13;
                 break;
+            case "GET_MEMBER_IDENTITY_KEYS":
+            case 14:
+                message.action = 14;
+                break;
             }
             if (object.gid != null)
                 message.gid = String(object.gid);
@@ -6980,6 +7033,11 @@ $root.server = (function() {
             }
             if (object.background != null)
                 message.background = String(object.background);
+            if (object.audienceHash != null)
+                if (typeof object.audienceHash === "string")
+                    $util.base64.decode(object.audienceHash, message.audienceHash = $util.newBuffer($util.base64.length(object.audienceHash)), 0);
+                else if (object.audienceHash.length)
+                    message.audienceHash = object.audienceHash;
             return message;
         };
 
@@ -7010,6 +7068,13 @@ $root.server = (function() {
                     object.senderUid = options.longs === String ? "0" : 0;
                 object.senderName = "";
                 object.background = "";
+                if (options.bytes === String)
+                    object.audienceHash = "";
+                else {
+                    object.audienceHash = [];
+                    if (options.bytes !== Array)
+                        object.audienceHash = $util.newBuffer(object.audienceHash);
+                }
             }
             if (message.action != null && message.hasOwnProperty("action"))
                 object.action = options.enums === String ? $root.server.GroupStanza.Action[message.action] : message.action;
@@ -7033,6 +7098,8 @@ $root.server = (function() {
             }
             if (message.background != null && message.hasOwnProperty("background"))
                 object.background = message.background;
+            if (message.audienceHash != null && message.hasOwnProperty("audienceHash"))
+                object.audienceHash = options.bytes === String ? $util.base64.encode(message.audienceHash, 0, message.audienceHash.length) : options.bytes === Array ? Array.prototype.slice.call(message.audienceHash) : message.audienceHash;
             return object;
         };
 
@@ -7065,6 +7132,7 @@ $root.server = (function() {
          * @property {number} JOIN=11 JOIN value
          * @property {number} PREVIEW=12 PREVIEW value
          * @property {number} SET_BACKGROUND=13 SET_BACKGROUND value
+         * @property {number} GET_MEMBER_IDENTITY_KEYS=14 GET_MEMBER_IDENTITY_KEYS value
          */
         GroupStanza.Action = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -7082,6 +7150,7 @@ $root.server = (function() {
             values[valuesById[11] = "JOIN"] = 11;
             values[valuesById[12] = "PREVIEW"] = 12;
             values[valuesById[13] = "SET_BACKGROUND"] = 13;
+            values[valuesById[14] = "GET_MEMBER_IDENTITY_KEYS"] = 14;
             return values;
         })();
 
@@ -8353,10 +8422,12 @@ $root.server = (function() {
          * Properties of an AuthResult.
          * @memberof server
          * @interface IAuthResult
-         * @property {string|null} [result] AuthResult result
-         * @property {string|null} [reason] AuthResult reason
+         * @property {string|null} [resultString] AuthResult resultString
+         * @property {string|null} [reasonString] AuthResult reasonString
          * @property {Uint8Array|null} [propsHash] AuthResult propsHash
          * @property {number|Long|null} [versionTtl] AuthResult versionTtl
+         * @property {server.AuthResult.Result|null} [result] AuthResult result
+         * @property {server.AuthResult.Reason|null} [reason] AuthResult reason
          */
 
         /**
@@ -8375,20 +8446,20 @@ $root.server = (function() {
         }
 
         /**
-         * AuthResult result.
-         * @member {string} result
+         * AuthResult resultString.
+         * @member {string} resultString
          * @memberof server.AuthResult
          * @instance
          */
-        AuthResult.prototype.result = "";
+        AuthResult.prototype.resultString = "";
 
         /**
-         * AuthResult reason.
-         * @member {string} reason
+         * AuthResult reasonString.
+         * @member {string} reasonString
          * @memberof server.AuthResult
          * @instance
          */
-        AuthResult.prototype.reason = "";
+        AuthResult.prototype.reasonString = "";
 
         /**
          * AuthResult propsHash.
@@ -8405,6 +8476,22 @@ $root.server = (function() {
          * @instance
          */
         AuthResult.prototype.versionTtl = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * AuthResult result.
+         * @member {server.AuthResult.Result} result
+         * @memberof server.AuthResult
+         * @instance
+         */
+        AuthResult.prototype.result = 0;
+
+        /**
+         * AuthResult reason.
+         * @member {server.AuthResult.Reason} reason
+         * @memberof server.AuthResult
+         * @instance
+         */
+        AuthResult.prototype.reason = 0;
 
         /**
          * Creates a new AuthResult instance using the specified properties.
@@ -8430,14 +8517,18 @@ $root.server = (function() {
         AuthResult.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
-                writer.uint32(/* id 1, wireType 2 =*/10).string(message.result);
-            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
-                writer.uint32(/* id 2, wireType 2 =*/18).string(message.reason);
+            if (message.resultString != null && Object.hasOwnProperty.call(message, "resultString"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.resultString);
+            if (message.reasonString != null && Object.hasOwnProperty.call(message, "reasonString"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.reasonString);
             if (message.propsHash != null && Object.hasOwnProperty.call(message, "propsHash"))
                 writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.propsHash);
             if (message.versionTtl != null && Object.hasOwnProperty.call(message, "versionTtl"))
                 writer.uint32(/* id 4, wireType 0 =*/32).int64(message.versionTtl);
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.result);
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 6, wireType 0 =*/48).int32(message.reason);
             return writer;
         };
 
@@ -8473,16 +8564,22 @@ $root.server = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.result = reader.string();
+                    message.resultString = reader.string();
                     break;
                 case 2:
-                    message.reason = reader.string();
+                    message.reasonString = reader.string();
                     break;
                 case 3:
                     message.propsHash = reader.bytes();
                     break;
                 case 4:
                     message.versionTtl = reader.int64();
+                    break;
+                case 5:
+                    message.result = reader.int32();
+                    break;
+                case 6:
+                    message.reason = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -8519,18 +8616,40 @@ $root.server = (function() {
         AuthResult.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.result != null && message.hasOwnProperty("result"))
-                if (!$util.isString(message.result))
-                    return "result: string expected";
-            if (message.reason != null && message.hasOwnProperty("reason"))
-                if (!$util.isString(message.reason))
-                    return "reason: string expected";
+            if (message.resultString != null && message.hasOwnProperty("resultString"))
+                if (!$util.isString(message.resultString))
+                    return "resultString: string expected";
+            if (message.reasonString != null && message.hasOwnProperty("reasonString"))
+                if (!$util.isString(message.reasonString))
+                    return "reasonString: string expected";
             if (message.propsHash != null && message.hasOwnProperty("propsHash"))
                 if (!(message.propsHash && typeof message.propsHash.length === "number" || $util.isString(message.propsHash)))
                     return "propsHash: buffer expected";
             if (message.versionTtl != null && message.hasOwnProperty("versionTtl"))
                 if (!$util.isInteger(message.versionTtl) && !(message.versionTtl && $util.isInteger(message.versionTtl.low) && $util.isInteger(message.versionTtl.high)))
                     return "versionTtl: integer|Long expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                    break;
+                }
             return null;
         };
 
@@ -8546,10 +8665,10 @@ $root.server = (function() {
             if (object instanceof $root.server.AuthResult)
                 return object;
             var message = new $root.server.AuthResult();
-            if (object.result != null)
-                message.result = String(object.result);
-            if (object.reason != null)
-                message.reason = String(object.reason);
+            if (object.resultString != null)
+                message.resultString = String(object.resultString);
+            if (object.reasonString != null)
+                message.reasonString = String(object.reasonString);
             if (object.propsHash != null)
                 if (typeof object.propsHash === "string")
                     $util.base64.decode(object.propsHash, message.propsHash = $util.newBuffer($util.base64.length(object.propsHash)), 0);
@@ -8564,6 +8683,50 @@ $root.server = (function() {
                     message.versionTtl = object.versionTtl;
                 else if (typeof object.versionTtl === "object")
                     message.versionTtl = new $util.LongBits(object.versionTtl.low >>> 0, object.versionTtl.high >>> 0).toNumber();
+            switch (object.result) {
+            case "UNKNOWN":
+            case 0:
+                message.result = 0;
+                break;
+            case "SUCCESS":
+            case 1:
+                message.result = 1;
+                break;
+            case "FAILURE":
+            case 2:
+                message.result = 2;
+                break;
+            }
+            switch (object.reason) {
+            case "UNKNOWN_REASON":
+            case 0:
+                message.reason = 0;
+                break;
+            case "OK":
+            case 1:
+                message.reason = 1;
+                break;
+            case "SPUB_MISMATCH":
+            case 2:
+                message.reason = 2;
+                break;
+            case "INVALID_CLIENT_VERSION":
+            case 3:
+                message.reason = 3;
+                break;
+            case "INVALID_RESOURCE":
+            case 4:
+                message.reason = 4;
+                break;
+            case "ACCOUNT_DELETED":
+            case 5:
+                message.reason = 5;
+                break;
+            case "INVALID_UID_OR_PASSWORD":
+            case 6:
+                message.reason = 6;
+                break;
+            }
             return message;
         };
 
@@ -8581,8 +8744,8 @@ $root.server = (function() {
                 options = {};
             var object = {};
             if (options.defaults) {
-                object.result = "";
-                object.reason = "";
+                object.resultString = "";
+                object.reasonString = "";
                 if (options.bytes === String)
                     object.propsHash = "";
                 else {
@@ -8595,11 +8758,13 @@ $root.server = (function() {
                     object.versionTtl = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.versionTtl = options.longs === String ? "0" : 0;
+                object.result = options.enums === String ? "UNKNOWN" : 0;
+                object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
             }
-            if (message.result != null && message.hasOwnProperty("result"))
-                object.result = message.result;
-            if (message.reason != null && message.hasOwnProperty("reason"))
-                object.reason = message.reason;
+            if (message.resultString != null && message.hasOwnProperty("resultString"))
+                object.resultString = message.resultString;
+            if (message.reasonString != null && message.hasOwnProperty("reasonString"))
+                object.reasonString = message.reasonString;
             if (message.propsHash != null && message.hasOwnProperty("propsHash"))
                 object.propsHash = options.bytes === String ? $util.base64.encode(message.propsHash, 0, message.propsHash.length) : options.bytes === Array ? Array.prototype.slice.call(message.propsHash) : message.propsHash;
             if (message.versionTtl != null && message.hasOwnProperty("versionTtl"))
@@ -8607,6 +8772,10 @@ $root.server = (function() {
                     object.versionTtl = options.longs === String ? String(message.versionTtl) : message.versionTtl;
                 else
                     object.versionTtl = options.longs === String ? $util.Long.prototype.toString.call(message.versionTtl) : options.longs === Number ? new $util.LongBits(message.versionTtl.low >>> 0, message.versionTtl.high >>> 0).toNumber() : message.versionTtl;
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.AuthResult.Result[message.result] : message.result;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = options.enums === String ? $root.server.AuthResult.Reason[message.reason] : message.reason;
             return object;
         };
 
@@ -8620,6 +8789,46 @@ $root.server = (function() {
         AuthResult.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
+
+        /**
+         * Result enum.
+         * @name server.AuthResult.Result
+         * @enum {number}
+         * @property {number} UNKNOWN=0 UNKNOWN value
+         * @property {number} SUCCESS=1 SUCCESS value
+         * @property {number} FAILURE=2 FAILURE value
+         */
+        AuthResult.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN"] = 0;
+            values[valuesById[1] = "SUCCESS"] = 1;
+            values[valuesById[2] = "FAILURE"] = 2;
+            return values;
+        })();
+
+        /**
+         * Reason enum.
+         * @name server.AuthResult.Reason
+         * @enum {number}
+         * @property {number} UNKNOWN_REASON=0 UNKNOWN_REASON value
+         * @property {number} OK=1 OK value
+         * @property {number} SPUB_MISMATCH=2 SPUB_MISMATCH value
+         * @property {number} INVALID_CLIENT_VERSION=3 INVALID_CLIENT_VERSION value
+         * @property {number} INVALID_RESOURCE=4 INVALID_RESOURCE value
+         * @property {number} ACCOUNT_DELETED=5 ACCOUNT_DELETED value
+         * @property {number} INVALID_UID_OR_PASSWORD=6 INVALID_UID_OR_PASSWORD value
+         */
+        AuthResult.Reason = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_REASON"] = 0;
+            values[valuesById[1] = "OK"] = 1;
+            values[valuesById[2] = "SPUB_MISMATCH"] = 2;
+            values[valuesById[3] = "INVALID_CLIENT_VERSION"] = 3;
+            values[valuesById[4] = "INVALID_RESOURCE"] = 4;
+            values[valuesById[5] = "ACCOUNT_DELETED"] = 5;
+            values[valuesById[6] = "INVALID_UID_OR_PASSWORD"] = 6;
+            return values;
+        })();
 
         return AuthResult;
     })();

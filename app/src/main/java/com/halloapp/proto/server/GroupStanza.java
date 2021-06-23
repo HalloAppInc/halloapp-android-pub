@@ -626,6 +626,10 @@ public  final class GroupStanza extends
   public static final int AUDIENCE_HASH_FIELD_NUMBER = 9;
   private com.google.protobuf.ByteString audienceHash_;
   /**
+   * <pre>
+   * Audience hash to be returned on `GET_MEMBER_IDENTITY_KEYS` IQ.
+   * </pre>
+   *
    * <code>bytes audience_hash = 9;</code>
    * @return The audienceHash.
    */
@@ -634,6 +638,10 @@ public  final class GroupStanza extends
     return audienceHash_;
   }
   /**
+   * <pre>
+   * Audience hash to be returned on `GET_MEMBER_IDENTITY_KEYS` IQ.
+   * </pre>
+   *
    * <code>bytes audience_hash = 9;</code>
    * @param value The audienceHash to set.
    */
@@ -643,6 +651,10 @@ public  final class GroupStanza extends
     audienceHash_ = value;
   }
   /**
+   * <pre>
+   * Audience hash to be returned on `GET_MEMBER_IDENTITY_KEYS` IQ.
+   * </pre>
+   *
    * <code>bytes audience_hash = 9;</code>
    */
   private void clearAudienceHash() {
@@ -1167,6 +1179,10 @@ public  final class GroupStanza extends
     }
 
     /**
+     * <pre>
+     * Audience hash to be returned on `GET_MEMBER_IDENTITY_KEYS` IQ.
+     * </pre>
+     *
      * <code>bytes audience_hash = 9;</code>
      * @return The audienceHash.
      */
@@ -1175,6 +1191,10 @@ public  final class GroupStanza extends
       return instance.getAudienceHash();
     }
     /**
+     * <pre>
+     * Audience hash to be returned on `GET_MEMBER_IDENTITY_KEYS` IQ.
+     * </pre>
+     *
      * <code>bytes audience_hash = 9;</code>
      * @param value The audienceHash to set.
      * @return This builder for chaining.
@@ -1185,6 +1205,10 @@ public  final class GroupStanza extends
       return this;
     }
     /**
+     * <pre>
+     * Audience hash to be returned on `GET_MEMBER_IDENTITY_KEYS` IQ.
+     * </pre>
+     *
      * <code>bytes audience_hash = 9;</code>
      * @return This builder for chaining.
      */

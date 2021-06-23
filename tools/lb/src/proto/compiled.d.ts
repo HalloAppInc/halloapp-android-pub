@@ -2402,6 +2402,9 @@ export namespace server {
 
         /** GroupMember reason */
         reason?: (string|null);
+
+        /** GroupMember identityKey */
+        identityKey?: (Uint8Array|null);
     }
 
     /** Represents a GroupMember. */
@@ -2433,6 +2436,9 @@ export namespace server {
 
         /** GroupMember reason. */
         public reason: string;
+
+        /** GroupMember identityKey. */
+        public identityKey: Uint8Array;
 
         /**
          * Creates a new GroupMember instance using the specified properties.
@@ -2550,6 +2556,9 @@ export namespace server {
 
         /** GroupStanza background */
         background?: (string|null);
+
+        /** GroupStanza audienceHash */
+        audienceHash?: (Uint8Array|null);
     }
 
     /** Represents a GroupStanza. */
@@ -2584,6 +2593,9 @@ export namespace server {
 
         /** GroupStanza background. */
         public background: string;
+
+        /** GroupStanza audienceHash. */
+        public audienceHash: Uint8Array;
 
         /**
          * Creates a new GroupStanza instance using the specified properties.
@@ -2673,7 +2685,8 @@ export namespace server {
             SET_NAME = 10,
             JOIN = 11,
             PREVIEW = 12,
-            SET_BACKGROUND = 13
+            SET_BACKGROUND = 13,
+            GET_MEMBER_IDENTITY_KEYS = 14
         }
     }
 
@@ -3156,17 +3169,23 @@ export namespace server {
     /** Properties of an AuthResult. */
     interface IAuthResult {
 
-        /** AuthResult result */
-        result?: (string|null);
+        /** AuthResult resultString */
+        resultString?: (string|null);
 
-        /** AuthResult reason */
-        reason?: (string|null);
+        /** AuthResult reasonString */
+        reasonString?: (string|null);
 
         /** AuthResult propsHash */
         propsHash?: (Uint8Array|null);
 
         /** AuthResult versionTtl */
         versionTtl?: (number|Long|null);
+
+        /** AuthResult result */
+        result?: (server.AuthResult.Result|null);
+
+        /** AuthResult reason */
+        reason?: (server.AuthResult.Reason|null);
     }
 
     /** Represents an AuthResult. */
@@ -3178,17 +3197,23 @@ export namespace server {
          */
         constructor(properties?: server.IAuthResult);
 
-        /** AuthResult result. */
-        public result: string;
+        /** AuthResult resultString. */
+        public resultString: string;
 
-        /** AuthResult reason. */
-        public reason: string;
+        /** AuthResult reasonString. */
+        public reasonString: string;
 
         /** AuthResult propsHash. */
         public propsHash: Uint8Array;
 
         /** AuthResult versionTtl. */
         public versionTtl: (number|Long);
+
+        /** AuthResult result. */
+        public result: server.AuthResult.Result;
+
+        /** AuthResult reason. */
+        public reason: server.AuthResult.Reason;
 
         /**
          * Creates a new AuthResult instance using the specified properties.
@@ -3259,6 +3284,27 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    namespace AuthResult {
+
+        /** Result enum. */
+        enum Result {
+            UNKNOWN = 0,
+            SUCCESS = 1,
+            FAILURE = 2
+        }
+
+        /** Reason enum. */
+        enum Reason {
+            UNKNOWN_REASON = 0,
+            OK = 1,
+            SPUB_MISMATCH = 2,
+            INVALID_CLIENT_VERSION = 3,
+            INVALID_RESOURCE = 4,
+            ACCOUNT_DELETED = 5,
+            INVALID_UID_OR_PASSWORD = 6
+        }
     }
 
     /** Properties of an Invite. */

@@ -84,6 +84,10 @@ public interface GroupMemberOrBuilder extends
       getReasonBytes();
 
   /**
+   * <pre>
+   * Identity key to be returned on `GET_MEMBER_IDENTITY_KEYS` IQ.
+   * </pre>
+   *
    * <code>bytes identity_key = 8;</code>
    * @return The identityKey.
    */

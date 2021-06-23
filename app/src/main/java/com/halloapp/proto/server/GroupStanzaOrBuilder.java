@@ -99,6 +99,10 @@ public interface GroupStanzaOrBuilder extends
       getBackgroundBytes();
 
   /**
+   * <pre>
+   * Audience hash to be returned on `GET_MEMBER_IDENTITY_KEYS` IQ.
+   * </pre>
+   *
    * <code>bytes audience_hash = 9;</code>
    * @return The audienceHash.
    */

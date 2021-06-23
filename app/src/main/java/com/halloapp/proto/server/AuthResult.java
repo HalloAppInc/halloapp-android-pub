@@ -16,101 +16,333 @@ public  final class AuthResult extends
     // @@protoc_insertion_point(message_implements:server.AuthResult)
     AuthResultOrBuilder {
   private AuthResult() {
-    result_ = "";
-    reason_ = "";
+    resultString_ = "";
+    reasonString_ = "";
     propsHash_ = com.google.protobuf.ByteString.EMPTY;
   }
-  public static final int RESULT_FIELD_NUMBER = 1;
-  private java.lang.String result_;
   /**
-   * <code>string result = 1;</code>
-   * @return The result.
+   * Protobuf enum {@code server.AuthResult.Result}
+   */
+  public enum Result
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>UNKNOWN = 0;</code>
+     */
+    UNKNOWN(0),
+    /**
+     * <code>SUCCESS = 1;</code>
+     */
+    SUCCESS(1),
+    /**
+     * <code>FAILURE = 2;</code>
+     */
+    FAILURE(2),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>UNKNOWN = 0;</code>
+     */
+    public static final int UNKNOWN_VALUE = 0;
+    /**
+     * <code>SUCCESS = 1;</code>
+     */
+    public static final int SUCCESS_VALUE = 1;
+    /**
+     * <code>FAILURE = 2;</code>
+     */
+    public static final int FAILURE_VALUE = 2;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static Result valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static Result forNumber(int value) {
+      switch (value) {
+        case 0: return UNKNOWN;
+        case 1: return SUCCESS;
+        case 2: return FAILURE;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<Result>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        Result> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<Result>() {
+            @java.lang.Override
+            public Result findValueByNumber(int number) {
+              return Result.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return ResultVerifier.INSTANCE;
+    }
+
+    private static final class ResultVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new ResultVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return Result.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private Result(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.AuthResult.Result)
+  }
+
+  /**
+   * Protobuf enum {@code server.AuthResult.Reason}
+   */
+  public enum Reason
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>UNKNOWN_REASON = 0;</code>
+     */
+    UNKNOWN_REASON(0),
+    /**
+     * <code>OK = 1;</code>
+     */
+    OK(1),
+    /**
+     * <code>SPUB_MISMATCH = 2;</code>
+     */
+    SPUB_MISMATCH(2),
+    /**
+     * <code>INVALID_CLIENT_VERSION = 3;</code>
+     */
+    INVALID_CLIENT_VERSION(3),
+    /**
+     * <code>INVALID_RESOURCE = 4;</code>
+     */
+    INVALID_RESOURCE(4),
+    /**
+     * <code>ACCOUNT_DELETED = 5;</code>
+     */
+    ACCOUNT_DELETED(5),
+    /**
+     * <code>INVALID_UID_OR_PASSWORD = 6;</code>
+     */
+    INVALID_UID_OR_PASSWORD(6),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>UNKNOWN_REASON = 0;</code>
+     */
+    public static final int UNKNOWN_REASON_VALUE = 0;
+    /**
+     * <code>OK = 1;</code>
+     */
+    public static final int OK_VALUE = 1;
+    /**
+     * <code>SPUB_MISMATCH = 2;</code>
+     */
+    public static final int SPUB_MISMATCH_VALUE = 2;
+    /**
+     * <code>INVALID_CLIENT_VERSION = 3;</code>
+     */
+    public static final int INVALID_CLIENT_VERSION_VALUE = 3;
+    /**
+     * <code>INVALID_RESOURCE = 4;</code>
+     */
+    public static final int INVALID_RESOURCE_VALUE = 4;
+    /**
+     * <code>ACCOUNT_DELETED = 5;</code>
+     */
+    public static final int ACCOUNT_DELETED_VALUE = 5;
+    /**
+     * <code>INVALID_UID_OR_PASSWORD = 6;</code>
+     */
+    public static final int INVALID_UID_OR_PASSWORD_VALUE = 6;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static Reason valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static Reason forNumber(int value) {
+      switch (value) {
+        case 0: return UNKNOWN_REASON;
+        case 1: return OK;
+        case 2: return SPUB_MISMATCH;
+        case 3: return INVALID_CLIENT_VERSION;
+        case 4: return INVALID_RESOURCE;
+        case 5: return ACCOUNT_DELETED;
+        case 6: return INVALID_UID_OR_PASSWORD;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<Reason>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        Reason> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<Reason>() {
+            @java.lang.Override
+            public Reason findValueByNumber(int number) {
+              return Reason.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return ReasonVerifier.INSTANCE;
+    }
+
+    private static final class ReasonVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new ReasonVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return Reason.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private Reason(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.AuthResult.Reason)
+  }
+
+  public static final int RESULT_STRING_FIELD_NUMBER = 1;
+  private java.lang.String resultString_;
+  /**
+   * <code>string result_string = 1;</code>
+   * @return The resultString.
    */
   @java.lang.Override
-  public java.lang.String getResult() {
-    return result_;
+  public java.lang.String getResultString() {
+    return resultString_;
   }
   /**
-   * <code>string result = 1;</code>
-   * @return The bytes for result.
+   * <code>string result_string = 1;</code>
+   * @return The bytes for resultString.
    */
   @java.lang.Override
   public com.google.protobuf.ByteString
-      getResultBytes() {
-    return com.google.protobuf.ByteString.copyFromUtf8(result_);
+      getResultStringBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(resultString_);
   }
   /**
-   * <code>string result = 1;</code>
-   * @param value The result to set.
+   * <code>string result_string = 1;</code>
+   * @param value The resultString to set.
    */
-  private void setResult(
+  private void setResultString(
       java.lang.String value) {
     value.getClass();
   
-    result_ = value;
+    resultString_ = value;
   }
   /**
-   * <code>string result = 1;</code>
+   * <code>string result_string = 1;</code>
    */
-  private void clearResult() {
+  private void clearResultString() {
     
-    result_ = getDefaultInstance().getResult();
+    resultString_ = getDefaultInstance().getResultString();
   }
   /**
-   * <code>string result = 1;</code>
-   * @param value The bytes for result to set.
+   * <code>string result_string = 1;</code>
+   * @param value The bytes for resultString to set.
    */
-  private void setResultBytes(
+  private void setResultStringBytes(
       com.google.protobuf.ByteString value) {
     checkByteStringIsUtf8(value);
-    result_ = value.toStringUtf8();
+    resultString_ = value.toStringUtf8();
     
   }
 
-  public static final int REASON_FIELD_NUMBER = 2;
-  private java.lang.String reason_;
+  public static final int REASON_STRING_FIELD_NUMBER = 2;
+  private java.lang.String reasonString_;
   /**
-   * <code>string reason = 2;</code>
-   * @return The reason.
+   * <code>string reason_string = 2;</code>
+   * @return The reasonString.
    */
   @java.lang.Override
-  public java.lang.String getReason() {
-    return reason_;
+  public java.lang.String getReasonString() {
+    return reasonString_;
   }
   /**
-   * <code>string reason = 2;</code>
-   * @return The bytes for reason.
+   * <code>string reason_string = 2;</code>
+   * @return The bytes for reasonString.
    */
   @java.lang.Override
   public com.google.protobuf.ByteString
-      getReasonBytes() {
-    return com.google.protobuf.ByteString.copyFromUtf8(reason_);
+      getReasonStringBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(reasonString_);
   }
   /**
-   * <code>string reason = 2;</code>
-   * @param value The reason to set.
+   * <code>string reason_string = 2;</code>
+   * @param value The reasonString to set.
    */
-  private void setReason(
+  private void setReasonString(
       java.lang.String value) {
     value.getClass();
   
-    reason_ = value;
+    reasonString_ = value;
   }
   /**
-   * <code>string reason = 2;</code>
+   * <code>string reason_string = 2;</code>
    */
-  private void clearReason() {
+  private void clearReasonString() {
     
-    reason_ = getDefaultInstance().getReason();
+    reasonString_ = getDefaultInstance().getReasonString();
   }
   /**
-   * <code>string reason = 2;</code>
-   * @param value The bytes for reason to set.
+   * <code>string reason_string = 2;</code>
+   * @param value The bytes for reasonString to set.
    */
-  private void setReasonBytes(
+  private void setReasonStringBytes(
       com.google.protobuf.ByteString value) {
     checkByteStringIsUtf8(value);
-    reason_ = value.toStringUtf8();
+    reasonString_ = value.toStringUtf8();
     
   }
 
@@ -165,6 +397,90 @@ public  final class AuthResult extends
   private void clearVersionTtl() {
     
     versionTtl_ = 0L;
+  }
+
+  public static final int RESULT_FIELD_NUMBER = 5;
+  private int result_;
+  /**
+   * <code>.server.AuthResult.Result result = 5;</code>
+   * @return The enum numeric value on the wire for result.
+   */
+  @java.lang.Override
+  public int getResultValue() {
+    return result_;
+  }
+  /**
+   * <code>.server.AuthResult.Result result = 5;</code>
+   * @return The result.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.AuthResult.Result getResult() {
+    com.halloapp.proto.server.AuthResult.Result result = com.halloapp.proto.server.AuthResult.Result.forNumber(result_);
+    return result == null ? com.halloapp.proto.server.AuthResult.Result.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.AuthResult.Result result = 5;</code>
+   * @param value The enum numeric value on the wire for result to set.
+   */
+  private void setResultValue(int value) {
+      result_ = value;
+  }
+  /**
+   * <code>.server.AuthResult.Result result = 5;</code>
+   * @param value The result to set.
+   */
+  private void setResult(com.halloapp.proto.server.AuthResult.Result value) {
+    result_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.AuthResult.Result result = 5;</code>
+   */
+  private void clearResult() {
+    
+    result_ = 0;
+  }
+
+  public static final int REASON_FIELD_NUMBER = 6;
+  private int reason_;
+  /**
+   * <code>.server.AuthResult.Reason reason = 6;</code>
+   * @return The enum numeric value on the wire for reason.
+   */
+  @java.lang.Override
+  public int getReasonValue() {
+    return reason_;
+  }
+  /**
+   * <code>.server.AuthResult.Reason reason = 6;</code>
+   * @return The reason.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.AuthResult.Reason getReason() {
+    com.halloapp.proto.server.AuthResult.Reason result = com.halloapp.proto.server.AuthResult.Reason.forNumber(reason_);
+    return result == null ? com.halloapp.proto.server.AuthResult.Reason.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.AuthResult.Reason reason = 6;</code>
+   * @param value The enum numeric value on the wire for reason to set.
+   */
+  private void setReasonValue(int value) {
+      reason_ = value;
+  }
+  /**
+   * <code>.server.AuthResult.Reason reason = 6;</code>
+   * @param value The reason to set.
+   */
+  private void setReason(com.halloapp.proto.server.AuthResult.Reason value) {
+    reason_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.AuthResult.Reason reason = 6;</code>
+   */
+  private void clearReason() {
+    
+    reason_ = 0;
   }
 
   public static com.halloapp.proto.server.AuthResult parseFrom(
@@ -267,100 +583,100 @@ public  final class AuthResult extends
 
 
     /**
-     * <code>string result = 1;</code>
-     * @return The result.
+     * <code>string result_string = 1;</code>
+     * @return The resultString.
      */
     @java.lang.Override
-    public java.lang.String getResult() {
-      return instance.getResult();
+    public java.lang.String getResultString() {
+      return instance.getResultString();
     }
     /**
-     * <code>string result = 1;</code>
-     * @return The bytes for result.
+     * <code>string result_string = 1;</code>
+     * @return The bytes for resultString.
      */
     @java.lang.Override
     public com.google.protobuf.ByteString
-        getResultBytes() {
-      return instance.getResultBytes();
+        getResultStringBytes() {
+      return instance.getResultStringBytes();
     }
     /**
-     * <code>string result = 1;</code>
-     * @param value The result to set.
+     * <code>string result_string = 1;</code>
+     * @param value The resultString to set.
      * @return This builder for chaining.
      */
-    public Builder setResult(
+    public Builder setResultString(
         java.lang.String value) {
       copyOnWrite();
-      instance.setResult(value);
+      instance.setResultString(value);
       return this;
     }
     /**
-     * <code>string result = 1;</code>
+     * <code>string result_string = 1;</code>
      * @return This builder for chaining.
      */
-    public Builder clearResult() {
+    public Builder clearResultString() {
       copyOnWrite();
-      instance.clearResult();
+      instance.clearResultString();
       return this;
     }
     /**
-     * <code>string result = 1;</code>
-     * @param value The bytes for result to set.
+     * <code>string result_string = 1;</code>
+     * @param value The bytes for resultString to set.
      * @return This builder for chaining.
      */
-    public Builder setResultBytes(
+    public Builder setResultStringBytes(
         com.google.protobuf.ByteString value) {
       copyOnWrite();
-      instance.setResultBytes(value);
+      instance.setResultStringBytes(value);
       return this;
     }
 
     /**
-     * <code>string reason = 2;</code>
-     * @return The reason.
+     * <code>string reason_string = 2;</code>
+     * @return The reasonString.
      */
     @java.lang.Override
-    public java.lang.String getReason() {
-      return instance.getReason();
+    public java.lang.String getReasonString() {
+      return instance.getReasonString();
     }
     /**
-     * <code>string reason = 2;</code>
-     * @return The bytes for reason.
+     * <code>string reason_string = 2;</code>
+     * @return The bytes for reasonString.
      */
     @java.lang.Override
     public com.google.protobuf.ByteString
-        getReasonBytes() {
-      return instance.getReasonBytes();
+        getReasonStringBytes() {
+      return instance.getReasonStringBytes();
     }
     /**
-     * <code>string reason = 2;</code>
-     * @param value The reason to set.
+     * <code>string reason_string = 2;</code>
+     * @param value The reasonString to set.
      * @return This builder for chaining.
      */
-    public Builder setReason(
+    public Builder setReasonString(
         java.lang.String value) {
       copyOnWrite();
-      instance.setReason(value);
+      instance.setReasonString(value);
       return this;
     }
     /**
-     * <code>string reason = 2;</code>
+     * <code>string reason_string = 2;</code>
      * @return This builder for chaining.
      */
-    public Builder clearReason() {
+    public Builder clearReasonString() {
       copyOnWrite();
-      instance.clearReason();
+      instance.clearReasonString();
       return this;
     }
     /**
-     * <code>string reason = 2;</code>
-     * @param value The bytes for reason to set.
+     * <code>string reason_string = 2;</code>
+     * @param value The bytes for reasonString to set.
      * @return This builder for chaining.
      */
-    public Builder setReasonBytes(
+    public Builder setReasonStringBytes(
         com.google.protobuf.ByteString value) {
       copyOnWrite();
-      instance.setReasonBytes(value);
+      instance.setReasonStringBytes(value);
       return this;
     }
 
@@ -420,6 +736,98 @@ public  final class AuthResult extends
       return this;
     }
 
+    /**
+     * <code>.server.AuthResult.Result result = 5;</code>
+     * @return The enum numeric value on the wire for result.
+     */
+    @java.lang.Override
+    public int getResultValue() {
+      return instance.getResultValue();
+    }
+    /**
+     * <code>.server.AuthResult.Result result = 5;</code>
+     * @param value The result to set.
+     * @return This builder for chaining.
+     */
+    public Builder setResultValue(int value) {
+      copyOnWrite();
+      instance.setResultValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.AuthResult.Result result = 5;</code>
+     * @return The result.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.AuthResult.Result getResult() {
+      return instance.getResult();
+    }
+    /**
+     * <code>.server.AuthResult.Result result = 5;</code>
+     * @param value The enum numeric value on the wire for result to set.
+     * @return This builder for chaining.
+     */
+    public Builder setResult(com.halloapp.proto.server.AuthResult.Result value) {
+      copyOnWrite();
+      instance.setResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.AuthResult.Result result = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearResult() {
+      copyOnWrite();
+      instance.clearResult();
+      return this;
+    }
+
+    /**
+     * <code>.server.AuthResult.Reason reason = 6;</code>
+     * @return The enum numeric value on the wire for reason.
+     */
+    @java.lang.Override
+    public int getReasonValue() {
+      return instance.getReasonValue();
+    }
+    /**
+     * <code>.server.AuthResult.Reason reason = 6;</code>
+     * @param value The reason to set.
+     * @return This builder for chaining.
+     */
+    public Builder setReasonValue(int value) {
+      copyOnWrite();
+      instance.setReasonValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.AuthResult.Reason reason = 6;</code>
+     * @return The reason.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.AuthResult.Reason getReason() {
+      return instance.getReason();
+    }
+    /**
+     * <code>.server.AuthResult.Reason reason = 6;</code>
+     * @param value The enum numeric value on the wire for reason to set.
+     * @return This builder for chaining.
+     */
+    public Builder setReason(com.halloapp.proto.server.AuthResult.Reason value) {
+      copyOnWrite();
+      instance.setReason(value);
+      return this;
+    }
+    /**
+     * <code>.server.AuthResult.Reason reason = 6;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearReason() {
+      copyOnWrite();
+      instance.clearReason();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.AuthResult)
   }
   @java.lang.Override
@@ -436,14 +844,16 @@ public  final class AuthResult extends
       }
       case BUILD_MESSAGE_INFO: {
           java.lang.Object[] objects = new java.lang.Object[] {
-            "result_",
-            "reason_",
+            "resultString_",
+            "reasonString_",
             "propsHash_",
             "versionTtl_",
+            "result_",
+            "reason_",
           };
           java.lang.String info =
-              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
-              "\u0003\n\u0004\u0002";
+              "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
+              "\u0003\n\u0004\u0002\u0005\f\u0006\f";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
