@@ -121,7 +121,6 @@ public class ContactsDb {
                     values.put(ContactsTable.COLUMN_NORMALIZED_PHONE, updateContact.normalizedPhone);
                     values.put(ContactsTable.COLUMN_AVATAR_ID, updateContact.avatarId);
                     values.put(ContactsTable.COLUMN_USER_ID, updateContact.getRawUserId());
-                    values.put(ContactsTable.COLUMN_FRIEND, false);
                     values.put(ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS, updateContact.numPotentialFriends);
                     db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
                             ContactsTable._ID + "=? ",
@@ -186,7 +185,6 @@ public class ContactsDb {
                     values.put(ContactsTable.COLUMN_USER_ID, updateContact.getRawUserId());
                     values.put(ContactsTable.COLUMN_NORMALIZED_PHONE, updateContact.normalizedPhone);
                     values.put(ContactsTable.COLUMN_AVATAR_ID, updateContact.avatarId);
-                    values.put(ContactsTable.COLUMN_FRIEND, false);
                     values.put(ContactsTable.COLUMN_NEW_CONNECTION, updateContact.newConnection);
                     values.put(ContactsTable.COLUMN_CONNECTION_TIME, updateContact.connectionTime);
                     values.put(ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS, updateContact.numPotentialFriends);
@@ -225,7 +223,6 @@ public class ContactsDb {
                     boolean newContact = existing == null ||
                             !Objects.equals(normalizedPhoneData.userId.rawId(), existing.userId == null ? null : existing.userId.rawId());
                     final ContentValues values = new ContentValues();
-                    values.put(ContactsTable.COLUMN_FRIEND, false);
                     if (newContact) {
                         values.put(ContactsTable.COLUMN_CONNECTION_TIME, syncTime);
                         values.put(ContactsTable.COLUMN_NEW_CONNECTION, true);
@@ -425,7 +422,6 @@ public class ContactsDb {
                         ContactsTable.COLUMN_NORMALIZED_PHONE,
                         ContactsTable.COLUMN_AVATAR_ID,
                         ContactsTable.COLUMN_USER_ID,
-                        ContactsTable.COLUMN_FRIEND,
                         ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS
                 },
                 ContactsTable.COLUMN_USER_ID + "=?",
@@ -439,7 +435,7 @@ public class ContactsDb {
                         cursor.getString(4),
                         cursor.getString(5),
                         userId);
-                c.numPotentialFriends = cursor.getLong(8);
+                c.numPotentialFriends = cursor.getLong(7);
                 return c;
             }
         }
@@ -486,7 +482,6 @@ public class ContactsDb {
                         ContactsTable.COLUMN_NORMALIZED_PHONE,
                         ContactsTable.COLUMN_AVATAR_ID,
                         ContactsTable.COLUMN_USER_ID,
-                        ContactsTable.COLUMN_FRIEND,
                         ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS,
                         ContactsTable.COLUMN_NEW_CONNECTION,
                         ContactsTable.COLUMN_CONNECTION_TIME,
@@ -503,9 +498,9 @@ public class ContactsDb {
                         cursor.getString(4),
                         cursor.getString(5),
                         userIdStr == null ? null : new UserId(userIdStr));
-                contact.numPotentialFriends = cursor.getLong(8);
-                contact.newConnection = cursor.getInt(9) == 1;
-                contact.connectionTime = cursor.getLong(10);
+                contact.numPotentialFriends = cursor.getLong(7);
+                contact.newConnection = cursor.getInt(8) == 1;
+                contact.connectionTime = cursor.getLong(9);
                 contacts.add(contact);
             }
         }
@@ -542,7 +537,6 @@ public class ContactsDb {
                         ContactsTable.COLUMN_NORMALIZED_PHONE,
                         ContactsTable.COLUMN_AVATAR_ID,
                         ContactsTable.COLUMN_USER_ID,
-                        ContactsTable.COLUMN_FRIEND,
                         ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS,
                         ContactsTable.COLUMN_INVITED
                 },
@@ -563,8 +557,8 @@ public class ContactsDb {
                             cursor.getString(4),
                             cursor.getString(5),
                             userIdStr == null ? null : new UserId(userIdStr));
-                    contact.numPotentialFriends = cursor.getLong(8);
-                    contact.invited = cursor.getInt(9) == 1;
+                    contact.numPotentialFriends = cursor.getLong(7);
+                    contact.invited = cursor.getInt(8) == 1;
                     contacts.add(contact);
                 }
             }
@@ -585,7 +579,6 @@ public class ContactsDb {
                         ContactsTable.COLUMN_NORMALIZED_PHONE,
                         ContactsTable.COLUMN_AVATAR_ID,
                         ContactsTable.COLUMN_USER_ID,
-                        ContactsTable.COLUMN_FRIEND,
                         ContactsTable.COLUMN_NEW_CONNECTION,
                         ContactsTable.COLUMN_CONNECTION_TIME,
                         ContactsTable.COLUMN_HIDE_CHAT
@@ -604,9 +597,9 @@ public class ContactsDb {
                             cursor.getString(4),
                             cursor.getString(5),
                             new UserId(userIdStr));
-                    contact.newConnection = cursor.getInt(8) == 1;
-                    contact.connectionTime = cursor.getLong(9);
-                    contact.hideChat = cursor.getInt(10) == 1;
+                    contact.newConnection = cursor.getInt(7) == 1;
+                    contact.connectionTime = cursor.getLong(8);
+                    contact.hideChat = cursor.getInt(9) == 1;
                     contacts.add(contact);
                 }
             }
@@ -918,7 +911,7 @@ public class ContactsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "contacts.db";
-        private static final int DATABASE_VERSION = 13;
+        private static final int DATABASE_VERSION = 14;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -936,7 +929,6 @@ public class ContactsDb {
                     + ContactsTable.COLUMN_NORMALIZED_PHONE + " TEXT,"
                     + ContactsTable.COLUMN_AVATAR_ID + " TEXT,"
                     + ContactsTable.COLUMN_USER_ID + " TEXT,"
-                    + ContactsTable.COLUMN_FRIEND + " INTEGER,"
                     + ContactsTable.COLUMN_NEW_CONNECTION + " INTEGER,"
                     + ContactsTable.COLUMN_CONNECTION_TIME + " INTEGER,"
                     + ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS + " INTEGER,"
@@ -1034,6 +1026,9 @@ public class ContactsDb {
                 case 12: {
                     upgradeFromVersion12(db);
                 }
+                case 13: {
+                    upgradeFromVersion13(db);
+                }
                 break;
                 default: {
                     onCreate(db);
@@ -1102,7 +1097,6 @@ public class ContactsDb {
                 values.put(ContactsTable.COLUMN_NORMALIZED_PHONE, contact.normalizedPhone);
                 values.put(ContactsTable.COLUMN_AVATAR_ID, contact.avatarId);
                 values.put(ContactsTable.COLUMN_USER_ID, contact.getRawUserId());
-                values.put(ContactsTable.COLUMN_FRIEND, false);
                 db.insert(ContactsTable.TABLE_NAME, null, values);
             }
 
@@ -1192,6 +1186,56 @@ public class ContactsDb {
             db.execSQL("CREATE UNIQUE INDEX " + PhonesTable.INDEX_USER_ID + " ON " + PhonesTable.TABLE_NAME + " ("
                     + PhonesTable.COLUMN_USER_ID
                     + ");");
+        }
+
+        private void upgradeFromVersion13(SQLiteDatabase db) {
+            recreateTable(db, ContactsTable.TABLE_NAME, new String[] {
+                    ContactsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT",
+                    ContactsTable.COLUMN_ADDRESS_BOOK_ID + " INTEGER NOT NULL",
+                    ContactsTable.COLUMN_ADDRESS_BOOK_NAME + " TEXT",
+                    ContactsTable.COLUMN_ADDRESS_BOOK_PHONE + " TEXT",
+                    ContactsTable.COLUMN_NORMALIZED_PHONE + " TEXT",
+                    ContactsTable.COLUMN_AVATAR_ID + " TEXT",
+                    ContactsTable.COLUMN_USER_ID + " TEXT",
+                    ContactsTable.COLUMN_NEW_CONNECTION + " INTEGER",
+                    ContactsTable.COLUMN_CONNECTION_TIME + " INTEGER",
+                    ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS + " INTEGER",
+                    ContactsTable.COLUMN_HIDE_CHAT + " INTEGER",
+                    ContactsTable.COLUMN_INVITED + " INTEGER",
+            });
+
+            db.execSQL("DROP INDEX IF EXISTS " + ContactsTable.INDEX_USER_ID);
+            db.execSQL("CREATE INDEX " + ContactsTable.INDEX_USER_ID + " ON " + ContactsTable.TABLE_NAME + " ("
+                    + ContactsTable.COLUMN_USER_ID
+                    + ");");
+        }
+
+        /**
+         * Recreates a table with a new schema specified by columns.
+         *
+         * Be careful as triggers AND indices on the old table will be deleted, and WILL need to be recreated.
+         */
+        private void recreateTable(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String [] columns) {
+            final StringBuilder schema = new StringBuilder();
+            for (String column : columns) {
+                if (schema.length() != 0) {
+                    schema.append(',');
+                }
+                schema.append(column);
+            }
+            final StringBuilder selection = new StringBuilder();
+            for (String column : columns) {
+                if (selection.length() != 0) {
+                    selection.append(',');
+                }
+                selection.append(column.substring(0, column.indexOf(' ')));
+            }
+
+            db.execSQL("DROP TABLE IF EXISTS tmp");
+            db.execSQL("CREATE TABLE tmp (" + schema.toString() + ");");
+            db.execSQL("INSERT INTO tmp SELECT " + selection.toString() + " FROM " + tableName);
+            db.execSQL("DROP TABLE " + tableName);
+            db.execSQL("ALTER TABLE tmp RENAME TO " + tableName);
         }
 
         private void deleteDb() {
