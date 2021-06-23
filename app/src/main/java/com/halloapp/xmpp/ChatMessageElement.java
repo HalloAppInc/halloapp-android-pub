@@ -98,8 +98,7 @@ public class ChatMessageElement {
 
     @NonNull
     Message getMessage(UserId fromUserId, String id, String senderAgent) {
-        boolean isFriend = ContactsDb.getInstance().getContact(fromUserId).friend;
-        Log.i("Local state relevant to message " + id + " from " + (isFriend ? "friend" : "non-friend") + ": " + getLogInfo(fromUserId));
+        Log.i("Local state relevant to message " + id + " from:" + getLogInfo(fromUserId));
         String senderPlatform = senderAgent.contains("Android") ? "android" : senderAgent.contains("iOS") ? "ios" : "";
         String senderVersion = senderPlatform.equals("android") ? senderAgent.split("Android")[1] : senderPlatform.equals("ios") ? senderAgent.split("iOS")[1] : "";
         String failureReason = null;

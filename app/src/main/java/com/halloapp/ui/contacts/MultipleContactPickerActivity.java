@@ -95,20 +95,20 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
 
     private MenuItem finishMenuItem;
 
-    public static Intent newPickerIntentAllowEmpty(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title, boolean onlyFriends) {
-        Intent intent = newPickerIntent(context, selectedIds, title, R.string.action_save, null, onlyFriends);
+    public static Intent newPickerIntentAllowEmpty(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title) {
+        Intent intent = newPickerIntent(context, selectedIds, title, R.string.action_save, null);
         intent.putExtra(EXTRA_ALLOW_EMPTY_SELECTION, true);
         return intent;
     }
-    public static Intent newPickerIntentExclude(@NonNull Context context, @Nullable Collection<UserId> excludeIds, @Nullable Integer maxSelection, @StringRes int title, @StringRes int action, boolean onlyFriends) {
-        Intent intent = newPickerIntent(context, null, title, action, maxSelection, onlyFriends);
+    public static Intent newPickerIntentExclude(@NonNull Context context, @Nullable Collection<UserId> excludeIds, @Nullable Integer maxSelection, @StringRes int title, @StringRes int action) {
+        Intent intent = newPickerIntent(context, null, title, action, maxSelection);
         if (excludeIds != null) {
             intent.putParcelableArrayListExtra(EXTRA_EXCLUDED_IDS, new ArrayList<>(excludeIds));
         }
         return intent;
     }
 
-    public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title, @StringRes int action, @Nullable Integer maxSelection, boolean onlyFriends) {
+    public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds, @StringRes int title, @StringRes int action, @Nullable Integer maxSelection) {
         Intent intent = new Intent(context, MultipleContactPickerActivity.class);
         if (selectedIds != null) {
             if (maxSelection != null && maxSelection >= 1 && selectedIds.size() > maxSelection) {
@@ -119,7 +119,6 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         intent.putExtra(EXTRA_TITLE_RES, title);
         intent.putExtra(EXTRA_ACTION_RES, action);
         intent.putExtra(EXTRA_MAX_SELECTION, maxSelection);
-        intent.putExtra(EXTRA_ONLY_FRIENDS, onlyFriends);
         return intent;
     }
 
@@ -185,8 +184,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         initialSelectedContacts = new HashSet<>(selectedContacts);
         avatarsAdapter.setUserIds(initialSelectedContacts);
 
-        boolean onlyFriends = getIntent().getBooleanExtra(EXTRA_ONLY_FRIENDS, false);
-        viewModel = new ViewModelProvider(this, new ContactsViewModel.Factory(getApplication(), onlyFriends, initialSelectedContacts)).get(ContactsViewModel.class);
+        viewModel = new ViewModelProvider(this, new ContactsViewModel.Factory(getApplication(), initialSelectedContacts)).get(ContactsViewModel.class);
 
         ArrayList<UserId> excluded = new ArrayList<>();
         ArrayList<UserId> excludedInput = getIntent().getParcelableArrayListExtra(EXTRA_EXCLUDED_IDS);

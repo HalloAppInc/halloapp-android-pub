@@ -29,8 +29,6 @@ public class Contact implements Parcelable {
     public @Nullable String avatarId; // from server
     public @Nullable
     UserId userId;
-    @Deprecated
-    public boolean friend;
     public boolean newConnection;
     public long connectionTime;
     public long numPotentialFriends;
@@ -39,7 +37,7 @@ public class Contact implements Parcelable {
 
     public Contact(long rowId,
                    long addressBookId, @Nullable String addressBookName, @Nullable String addressBookPhone,
-                   @Nullable String normalizedPhone, @Nullable String avatarId, @Nullable UserId userId, boolean friend) {
+                   @Nullable String normalizedPhone, @Nullable String avatarId, @Nullable UserId userId) {
         this.rowId = rowId;
         this.addressBookId = addressBookId;
         this.addressBookName = addressBookName;
@@ -47,11 +45,10 @@ public class Contact implements Parcelable {
         this.normalizedPhone = normalizedPhone;
         this.avatarId = avatarId;
         this.userId = userId;
-        this.friend = friend;
     }
 
     public Contact(@NonNull UserId userId, @Nullable String name, @Nullable String halloName) {
-        this(0, 0, name, null, null, null, userId, false);
+        this(0, 0, name, null, null, null, userId);
         this.halloName = halloName;
     }
 
@@ -117,7 +114,7 @@ public class Contact implements Parcelable {
             String avatarId = in.readString();
             UserId userId = in.readParcelable(UserId.class.getClassLoader());
             boolean friend = in.readInt() == 1;
-            return new Contact(rowId, addressBookId, addressBookName, addressBookPhone, normalizedPhone, avatarId, userId, friend);
+            return new Contact(rowId, addressBookId, addressBookName, addressBookPhone, normalizedPhone, avatarId, userId);
         }
 
         public Contact[] newArray(int size) {
@@ -141,6 +138,6 @@ public class Contact implements Parcelable {
         dest.writeString(normalizedPhone);
         dest.writeString(avatarId);
         dest.writeParcelable(userId, flags);
-        dest.writeInt(friend ? 1 : 0);
+        dest.writeInt(0);
     }
 }

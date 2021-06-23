@@ -184,7 +184,7 @@ public class FeedPrivacyActivity extends HalloActivity {
     }
 
     private void openMultipleContactPicker(int requestCode, List<UserId> currentList, @StringRes int title) {
-        startActivityForResult(MultipleContactPickerActivity.newPickerIntentAllowEmpty(this, currentList, title, false), requestCode);
+        startActivityForResult(MultipleContactPickerActivity.newPickerIntentAllowEmpty(this, currentList, title), requestCode);
     }
 
     private void revertToPreviousSelection() {

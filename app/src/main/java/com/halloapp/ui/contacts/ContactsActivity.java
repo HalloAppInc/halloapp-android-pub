@@ -200,7 +200,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
     }
 
     private void onCreateGroup(@Nullable Collection<UserId> initialIds) {
-        startActivityForResult(MultipleContactPickerActivity.newPickerIntent(this, initialIds, R.string.group_picker_title, R.string.next, serverProps.getMaxGroupSize(), false), REQUEST_CODE_CREATE_GROUP_SELECT_CONTACTS);
+        startActivityForResult(MultipleContactPickerActivity.newPickerIntent(this, initialIds, R.string.group_picker_title, R.string.next, serverProps.getMaxGroupSize()), REQUEST_CODE_CREATE_GROUP_SELECT_CONTACTS);
     }
 
     @Override

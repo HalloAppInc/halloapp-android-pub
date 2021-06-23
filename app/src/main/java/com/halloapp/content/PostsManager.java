@@ -44,7 +44,7 @@ public class PostsManager {
 
     private final ContactsDb.Observer observer = new ContactsDb.BaseObserver() {
         @Override
-        public void onNewFriends(@NonNull Collection<UserId> newFriends) {
+        public void onNewContacts(@NonNull Collection<UserId> newContacts) {
             bgWorkers.execute(() -> {
                 synchronized (PostsManager.this) {
                     shareOperations++;
@@ -52,7 +52,7 @@ public class PostsManager {
                         preferences.setRequireSharePosts(true);
                     }
                 }
-                sharePosts(newFriends, false);
+                sharePosts(newContacts, false);
             });
         }
     };
@@ -81,20 +81,20 @@ public class PostsManager {
             }
             shareOperations++;
         }
-        List<Contact> friends = contactsDb.getFriends();
+        List<Contact> contacts = contactsDb.getUsers();
         HashSet<UserId> shareToIds = new HashSet<>();
-        for (Contact contact : friends) {
+        for (Contact contact : contacts) {
             shareToIds.add(contact.userId);
         }
         sharePosts(shareToIds, true);
     }
 
     @WorkerThread
-    private void sharePosts(@NonNull Collection<UserId> friends, boolean dontResend) {
+    private void sharePosts(@NonNull Collection<UserId> contacts, boolean dontResend) {
         Collection<Post> shareablePosts = contentDb.getShareablePosts();
         Map<UserId, Collection<Post>> shareMap = new HashMap<>();
         for (Post post : shareablePosts) {
-            HashSet<UserId> friendSet = new HashSet<>(friends);
+            HashSet<UserId> contactSet = new HashSet<>(contacts);
             if (post.getAudienceType() == null) {
                 continue;
             }
@@ -105,7 +105,7 @@ public class PostsManager {
                     List<UserId> exceptList = post.getExcludeList();
                     if (exceptList != null) {
                         for (UserId user : exceptList) {
-                            friendSet.remove(user);
+                            contactSet.remove(user);
                         }
                     }
                     break;
@@ -119,10 +119,10 @@ public class PostsManager {
             }
             if (dontResend) {
                 for (UserId user : currentAudience) {
-                    friendSet.remove(user);
+                    contactSet.remove(user);
                 }
             }
-            for (UserId user : friendSet) {
+            for (UserId user : contactSet) {
                 Collection<Post> mapColl = shareMap.get(user);
                 if (mapColl == null) {
                     mapColl = new ArrayList<>();

@@ -194,7 +194,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                             avatarId = connection.getMyAvatarId().await();
                             contactAvatarInfo.avatarCheckTimestamp = System.currentTimeMillis();
                         }
-                    } else if (contact.friend) {
+                    } else {
                         avatarId = contact.avatarId;
                     }
 

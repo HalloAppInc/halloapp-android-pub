@@ -266,7 +266,7 @@ public class ContactsSync {
         }
 
         final Collection<Contact> updatedContacts = new ArrayList<>();
-        final Collection<UserId> newFriends = new HashSet<>();
+        final Collection<UserId> newContacts = new HashSet<>();
         final long syncTime = System.currentTimeMillis();
         final boolean initialSync = Preferences.getInstance().getLastContactsSyncTime() == 0;
         for (ContactInfo contactsSyncResult : contactSyncResults) {
@@ -277,24 +277,17 @@ public class ContactsSync {
             }
             for (Contact contact : phoneContacts) {
                 boolean contactUpdated = false;
-                boolean isNewFriend = false;
-                if (contact.friend != ("friends".equals(contactsSyncResult.role))) {
-                    contact.friend = !contact.friend;
-                    contactUpdated = true;
-                    if (contact.friend) {
-                        isNewFriend = true;
-                        if (!initialSync) {
-                            contact.newConnection = true;
-                            contact.connectionTime = syncTime;
-                        }
-                    }
-                    Log.i("ContactsSync.performContactSync: update friendship for " + contact.addressBookName + " to " + contact.friend);
-                }
+                boolean isNewContact = false;
                 if (!Objects.equals(contact.userId == null ? null : contact.userId.rawId(), contactsSyncResult.userId)) {
                     if (contactsSyncResult.userId == null) {
                         contact.userId = null;
                     } else {
                         contact.userId = new UserId(contactsSyncResult.userId);
+                        isNewContact = true;
+                        if (!initialSync) {
+                            contact.newConnection = true;
+                            contact.connectionTime = syncTime;
+                        }
                     }
                     Log.i("ContactsSync.performContactSync: update user id for " + contact.addressBookName + " to " + contact.userId);
                     contactUpdated = true;
@@ -322,15 +315,15 @@ public class ContactsSync {
                 if (contactUpdated) {
                     updatedContacts.add(contact);
                 }
-                if (isNewFriend) {
-                    newFriends.add(contact.userId);
+                if (isNewContact) {
+                    newContacts.add(contact.userId);
                 }
             }
         }
 
         if (!updatedContacts.isEmpty()) {
             try {
-                ContactsDb.getInstance().updateContactsServerData(updatedContacts, newFriends).get();
+                ContactsDb.getInstance().updateContactsServerData(updatedContacts, newContacts).get();
                 Map<UserId, String> nameMap = new HashMap<>();
                 for (Contact contact : updatedContacts) {
                     nameMap.put(contact.userId, contact.halloName);

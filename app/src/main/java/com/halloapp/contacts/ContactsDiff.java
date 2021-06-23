@@ -44,7 +44,6 @@ class ContactsDiff {
                     contact.halloName = null;
                     contact.normalizedPhone = null;
                     contact.userId = null;
-                    contact.friend = false;
                     updated.add(contact);
                 } else if (!Objects.equals(contact.addressBookName, addressBookContact.name)) {
                     contact.addressBookName = addressBookContact.name;

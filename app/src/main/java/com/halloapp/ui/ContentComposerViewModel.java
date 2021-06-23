@@ -135,7 +135,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
                 GroupId groupId = groupFeedId;
                 if (groupId == null) {
                     if (!(chatId instanceof GroupId)) {
-                        return contactsDb.getFriends();
+                        return contactsDb.getUsers();
                     }
                     groupId = (GroupId) chatId;
                 }
@@ -452,7 +452,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
                     List<UserId> audienceList;
                     @PrivacyList.Type String audienceType;
                     if (feedPrivacy == null || PrivacyList.Type.ALL.equals(feedPrivacy.activeList)) {
-                        List<Contact> contacts = contactsDb.getFriends();
+                        List<Contact> contacts = contactsDb.getUsers();
                         audienceList = new ArrayList<>(contacts.size());
                         for (Contact contact : contacts) {
                             audienceList.add(contact.userId);
@@ -464,7 +464,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
                     } else {
                         HashSet<UserId> excludedSet = new HashSet<>(feedPrivacy.exceptList);
                         audienceType = PrivacyList.Type.EXCEPT;
-                        List<Contact> contacts = contactsDb.getFriends();
+                        List<Contact> contacts = contactsDb.getUsers();
                         audienceList = new ArrayList<>(contacts.size());
                         for (Contact contact : contacts) {
                             if (!excludedSet.contains(contact.userId)) {

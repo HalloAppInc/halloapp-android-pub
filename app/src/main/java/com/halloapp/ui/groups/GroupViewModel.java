@@ -136,11 +136,7 @@ public class GroupViewModel extends AndroidViewModel {
                         } else if (m2.memberInfo.isAdmin() && !m1.memberInfo.isAdmin()) {
                             return 1;
                         }
-                        if (m1.contact.friend && !m2.contact.friend) {
-                            return -1;
-                        } else if (m2.contact.friend && !m1.contact.friend) {
-                            return 1;
-                        } else if (m1.contact.addressBookName != null && m2.contact.addressBookName == null) {
+                        if (m1.contact.addressBookName != null && m2.contact.addressBookName == null) {
                             return -1;
                         } else if (m2.contact.addressBookName != null && m1.contact.addressBookName == null) {
                             return 1;

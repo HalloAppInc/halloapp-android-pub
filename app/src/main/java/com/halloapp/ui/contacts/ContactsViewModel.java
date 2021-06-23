@@ -31,17 +31,17 @@ public class ContactsViewModel extends AndroidViewModel {
     };
 
     public ContactsViewModel(@NonNull Application application) {
-        this(application, false, null);
+        this(application, null);
     }
 
-    public ContactsViewModel(@NonNull Application application, boolean onlyFriends, @Nullable Set<UserId> initialSelection) {
+    public ContactsViewModel(@NonNull Application application, @Nullable Set<UserId> initialSelection) {
         super(application);
 
         contactList = new ComputableLiveData<List<Contact>>() {
 
             @Override
             protected List<Contact> compute() {
-                List<Contact> contacts = onlyFriends ? contactsDb.getFriends() : contactsDb.getUsers();
+                List<Contact> contacts = contactsDb.getUsers();
                 if (initialSelection != null) {
                     Set<UserId> initialSelectionCopy = new HashSet<>(initialSelection);
                     for (Contact contact : contacts) {
@@ -66,12 +66,10 @@ public class ContactsViewModel extends AndroidViewModel {
     public static class Factory implements ViewModelProvider.Factory {
 
         private final Application application;
-        private final boolean onlyFriends;
         private final Set<UserId> initialSelection;
 
-        Factory(@NonNull Application application, boolean onlyFriends, @Nullable Set<UserId> initialSelection) {
+        Factory(@NonNull Application application, @Nullable Set<UserId> initialSelection) {
             this.application = application;
-            this.onlyFriends = onlyFriends;
             this.initialSelection = initialSelection;
         }
 
@@ -79,7 +77,7 @@ public class ContactsViewModel extends AndroidViewModel {
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(ContactsViewModel.class)) {
                 //noinspection unchecked
-                return (T) new ContactsViewModel(application, onlyFriends, initialSelection);
+                return (T) new ContactsViewModel(application, initialSelection);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
