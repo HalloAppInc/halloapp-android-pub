@@ -29,6 +29,7 @@ public class Contact implements Parcelable {
     public @Nullable String avatarId; // from server
     public @Nullable
     UserId userId;
+    @Deprecated
     public boolean friend;
     public boolean newConnection;
     public long connectionTime;
