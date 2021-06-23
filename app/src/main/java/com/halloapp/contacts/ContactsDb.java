@@ -194,7 +194,7 @@ public class ContactsDb {
                             ContactsTable._ID + "=? ",
                             new String [] {Long.toString(updateContact.rowId)},
                             SQLiteDatabase.CONFLICT_ABORT);
-                    Log.i("ContactsDb.updateContactsServerData: " + updatedContactRows + " rows updated for " + updateContact.getDisplayName() + " " + updateContact.normalizedPhone + " " + updateContact.userId + " " + updateContact.avatarId);
+                    Log.i("ContactsDb.updateContactsServerData: " + updatedContactRows + " rows updated for " + updateContact.getDisplayName() + " " + updateContact.normalizedPhone + " " + updateContact.userId + " " + updateContact.avatarId + " " + updateContact.connectionTime);
                     updatedRows += updatedContactRows;
                 }
                 Log.i("ContactsDb.updateContactsServerData: " + updatedRows + " rows updated for " + updatedContacts.size() + " contacts");
@@ -487,7 +487,10 @@ public class ContactsDb {
                         ContactsTable.COLUMN_AVATAR_ID,
                         ContactsTable.COLUMN_USER_ID,
                         ContactsTable.COLUMN_FRIEND,
-                        ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS
+                        ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS,
+                        ContactsTable.COLUMN_NEW_CONNECTION,
+                        ContactsTable.COLUMN_CONNECTION_TIME,
+                        ContactsTable.COLUMN_HIDE_CHAT
                 },
                 ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL", null, null, null, null, null)) {
             while (cursor.moveToNext()) {
@@ -501,6 +504,8 @@ public class ContactsDb {
                         cursor.getString(5),
                         userIdStr == null ? null : new UserId(userIdStr));
                 contact.numPotentialFriends = cursor.getLong(8);
+                contact.newConnection = cursor.getInt(9) == 1;
+                contact.connectionTime = cursor.getLong(10);
                 contacts.add(contact);
             }
         }
