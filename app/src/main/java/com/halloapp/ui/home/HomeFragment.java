@@ -134,6 +134,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         }
         postsView.post(this::refreshInviteNux);
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> {
+            Log.i("HomeFragment: post list updated " + posts);
             if (viewModel.checkPendingOutgoing() || scrollUpOnDataLoaded) {
                 scrollUpOnDataLoaded = false;
                 postsView.scrollToPosition(0);
