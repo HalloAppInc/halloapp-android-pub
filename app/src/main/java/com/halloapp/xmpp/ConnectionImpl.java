@@ -45,6 +45,7 @@ import com.halloapp.proto.server.ContactHash;
 import com.halloapp.proto.server.ContactList;
 import com.halloapp.proto.server.DeliveryReceipt;
 import com.halloapp.proto.server.ErrorStanza;
+import com.halloapp.proto.server.ExportData;
 import com.halloapp.proto.server.FeedItems;
 import com.halloapp.proto.server.GroupFeedItem;
 import com.halloapp.proto.server.GroupFeedItems;
@@ -60,6 +61,7 @@ import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.SeenReceipt;
 import com.halloapp.proto.server.WhisperKeys;
 import com.halloapp.registration.Registration;
+import com.halloapp.ui.ExportDataActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
@@ -786,6 +788,16 @@ public class ConnectionImpl extends Connection {
         return sendIqRequestAsync(new DeleteAccountRequestIq(phone)).map(response -> {
             Log.d("connection: response after deleting account " + ProtoPrinter.toString(response));
             return response;
+        });
+    }
+
+    @Override
+    public Observable<ExportDataResponseIq> requestAccountData() {
+        return sendIqRequestAsync(new ExportDataRequestIq()).map(response -> {
+            Log.d("connection: response after export request " + ProtoPrinter.toString(response));
+            ExportDataResponseIq iq = ExportDataResponseIq.fromProto(response.getExportData());
+            preferences.setExportDataState(iq.status == ExportData.Status.PENDING ? ExportDataActivity.EXPORT_STATE_PENDING : ExportDataActivity.EXPORT_STATE_READY);
+            return iq;
         });
     }
 

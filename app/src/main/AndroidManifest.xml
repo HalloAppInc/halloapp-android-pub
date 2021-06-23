@@ -120,7 +120,12 @@
             android:name=".ui.AccountActivity"
             android:label="@string/settings_account"/>
 
-        <activity android:name=".ui.DeleteAccountActivity"
+        <activity
+            android:name=".ui.ExportDataActivity"
+            android:label="@string/request_data_title"/>
+
+        <activity
+            android:name=".ui.DeleteAccountActivity"
             android:label=""/>
 
         <activity

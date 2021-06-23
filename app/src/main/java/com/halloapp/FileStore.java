@@ -29,6 +29,7 @@ public class FileStore {
     private final File cameraDir;
     private final File avatarDir;
     private final File logDir;
+    private final File exportDir;
 
     public static FileStore getInstance() {
         if (instance == null) {
@@ -59,6 +60,7 @@ public class FileStore {
             cameraDir = prepareDir(new File(context.getCacheDir(), "camera"));
             avatarDir = prepareDir(new File(context.getFilesDir(), "avatars"));
             logDir = prepareDir(new File(context.getFilesDir(), "logs"));
+            exportDir = prepareDir(new File(context.getCacheDir(), "export"));
         } finally {
             StrictMode.setThreadPolicy(threadPolicy);
         }
@@ -151,6 +153,10 @@ public class FileStore {
 
     public File getLogFile(String timestamp) {
         return new File(logDir, "halloapp-" + timestamp + ".log");
+    }
+
+    public File getExportDataFile() {
+        return new File(exportDir, "export-data.json");
     }
 
     @WorkerThread
