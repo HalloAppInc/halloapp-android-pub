@@ -225,7 +225,7 @@ public class ContactsDb {
                     boolean newContact = existing == null ||
                             !Objects.equals(normalizedPhoneData.userId.rawId(), existing.userId == null ? null : existing.userId.rawId());
                     final ContentValues values = new ContentValues();
-                    values.put(ContactsTable.COLUMN_FRIEND, normalizedPhoneData.friend);
+                    values.put(ContactsTable.COLUMN_FRIEND, false);
                     if (newContact) {
                         values.put(ContactsTable.COLUMN_CONNECTION_TIME, syncTime);
                         values.put(ContactsTable.COLUMN_NEW_CONNECTION, true);
@@ -236,7 +236,7 @@ public class ContactsDb {
                             ContactsTable.COLUMN_NORMALIZED_PHONE + "=? ",
                             new String [] {normalizedPhoneData.normalizedPhone},
                             SQLiteDatabase.CONFLICT_ABORT);
-                    Log.i("ContactsDb.updateNormalizedPhoneData: " + updatedContactRows + " rows updated for " + normalizedPhoneData.normalizedPhone + " " + normalizedPhoneData.userId + " " + normalizedPhoneData.avatarId + " " + normalizedPhoneData.friend);
+                    Log.i("ContactsDb.updateNormalizedPhoneData: " + updatedContactRows + " rows updated for " + normalizedPhoneData.normalizedPhone + " " + normalizedPhoneData.userId + " " + normalizedPhoneData.avatarId);
                     updatedRows += updatedContactRows;
                     if (newContact) {
                         newContacts.add(normalizedPhoneData.userId);
@@ -1214,13 +1214,11 @@ public class ContactsDb {
     public static class NormalizedPhoneData {
         private final String normalizedPhone;
         private final UserId userId;
-        private final boolean friend;
         private final String avatarId;
 
-        public NormalizedPhoneData(@NonNull String normalizedPhone, @NonNull UserId userId, boolean friend, String avatarId) {
+        public NormalizedPhoneData(@NonNull String normalizedPhone, @NonNull UserId userId, String avatarId) {
             this.normalizedPhone = normalizedPhone;
             this.userId = userId;
-            this.friend = friend;
             this.avatarId = avatarId;
         }
     }
