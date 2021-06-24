@@ -60,6 +60,7 @@ public class ChatViewModel extends AndroidViewModel {
     final LiveData<PagedList<Message>> messageList;
     final ComputableLiveData<Contact> contact;
     final ComputableLiveData<String> name;
+    final MutableLiveData<String> phone = new MutableLiveData<>();
     final ComputableLiveData<Chat> chat;
     final ComputableLiveData<Reply> reply;
     final ComputableLiveData<List<Contact>> mentionableContacts;
@@ -183,6 +184,7 @@ public class ChatViewModel extends AndroidViewModel {
                 Contact contact = contactsDb.getContact((UserId)chatId);
                 String phone = TextUtils.isEmpty(contact.addressBookName) ? contactsDb.readPhone((UserId)chatId) : null;
                 String normalizedPhone = phone == null ? null : PhoneNumberUtils.formatNumber("+" + phone, null);
+                ChatViewModel.this.phone.postValue(normalizedPhone);
                 return TextUtils.isEmpty(contact.addressBookName) ? normalizedPhone : contact.getDisplayName();
             }
         };

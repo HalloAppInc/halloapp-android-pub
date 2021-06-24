@@ -8,6 +8,7 @@ import android.graphics.Outline;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -182,7 +183,7 @@ public class ChatActivity extends HalloActivity {
     private boolean scrollToNewMessageOnDataLoaded = true;
     private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
 
-    private MenuItem menuItem;
+    private MenuItem blockMenuItem;
     private Map<Long, Integer> replyMessageMediaIndexMap = new HashMap<>();
 
     private boolean showKeyboardOnResume;
@@ -809,17 +810,20 @@ public class ChatActivity extends HalloActivity {
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.chat_menu, menu);
-        menuItem = menu.findItem(R.id.block);
-        menuItem.setVisible(chatId instanceof UserId);
+        blockMenuItem = menu.findItem(R.id.block);
+        blockMenuItem.setVisible(chatId instanceof UserId);
         menu.findItem(R.id.verify).setVisible(chatId instanceof UserId && ServerProps.getInstance().getIsInternalUser());
         viewModel.getBlockList().observe(this, userIds -> {
             blocked = updateBlockedContact(userIds);
             Log.i("ChatActivity: blocked = " + blocked);
             if (blocked) {
-                menuItem.setTitle(getString(R.string.unblock));
+                blockMenuItem.setTitle(getString(R.string.unblock));
             } else {
-                menuItem.setTitle(getString(R.string.block));
+                blockMenuItem.setTitle(getString(R.string.block));
             }
+        });
+        viewModel.contact.getLiveData().observe(this, contact -> {
+            menu.findItem(R.id.add_to_contacts).setVisible(TextUtils.isEmpty(contact.addressBookName));
         });
         return true;
     }
@@ -843,6 +847,20 @@ public class ChatActivity extends HalloActivity {
             return true;
         } else if (item.getItemId() == R.id.verify) {
             startActivity(KeyVerificationActivity.openKeyVerification(this, (UserId) chatId));
+        } else if (item.getItemId() == R.id.add_to_contacts) {
+            Intent intent = new Intent(Intent.ACTION_INSERT);
+            intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
+
+            Contact contact = viewModel.contact.getLiveData().getValue();
+            if (contact != null) {
+                intent.putExtra(ContactsContract.Intents.Insert.NAME, contact.getDisplayName());
+            }
+            String phone = viewModel.phone.getValue();
+            if (phone != null) {
+                intent.putExtra(ContactsContract.Intents.Insert.PHONE, phone);
+            }
+
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -1366,7 +1384,7 @@ public class ChatActivity extends HalloActivity {
         @Override
         public void unblockContactFromTap() {
             if (blocked) {
-                unBlockContact(menuItem);
+                unBlockContact(blockMenuItem);
             }
         }
 
