@@ -463,13 +463,8 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
 
                 @Override
                 public boolean dispatchSetPlayWhenReady(@NonNull Player player, boolean playWhenReady) {
-                    if (playWhenReady) {
-                        wrappedPlayer.play();
-                    } else {
-                        wrappedPlayer.pause();
-                    }
-
-                    return true;
+                    exploreMedia(playerView, mediaItem, player != null ? player.getCurrentPosition() : 0);
+                    return false;
                 }
 
                 @Override
@@ -530,19 +525,9 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
 
             GestureDetector doubleTapDetector = new GestureDetector(playerView.getContext(), new GestureDetector.SimpleOnGestureListener() {
                 @Override
-                public boolean onDoubleTap(MotionEvent e) {
+                public boolean onSingleTapUp(MotionEvent e) {
                     Player player = playerView.getPlayer();
                     exploreMedia(playerView, mediaItem, player != null ? player.getCurrentPosition() : 0);
-                    return true;
-                }
-
-                @Override
-                public boolean onSingleTapConfirmed(MotionEvent e) {
-                    if (wrappedPlayer.isPlaying()) {
-                        wrappedPlayer.pause();
-                    } else {
-                        wrappedPlayer.play();
-                    }
                     return true;
                 }
             });
