@@ -52,7 +52,6 @@ import org.mp4parser.boxes.iso14496.part12.TrackHeaderBox;
 import org.mp4parser.muxer.FileRandomAccessSourceImpl;
 import org.mp4parser.muxer.Movie;
 import org.mp4parser.muxer.RandomAccessSource;
-import org.mp4parser.muxer.builder.DefaultMp4Builder;
 import org.mp4parser.muxer.builder.Mp4Builder;
 import org.mp4parser.muxer.container.mp4.MovieCreator;
 
@@ -581,7 +580,7 @@ public class MediaUtils {
         try (FileInputStream fileInputStream = new FileInputStream(videoFile)) {
             try (RandomAccessSource randomAccessSource = new FileRandomAccessSourceImpl(new RandomAccessFile(videoFile, "r"))) {
                 final Movie inputMovie = MovieCreator.build(fileInputStream.getChannel(), randomAccessSource, "video");
-                final Mp4Builder mp4Builder = new DefaultMp4Builder();
+                final Mp4Builder mp4Builder = new StreamableMp4Builder();
                 final Container container = mp4Builder.build(inputMovie);
 
                 MovieBox movieBox = null;
