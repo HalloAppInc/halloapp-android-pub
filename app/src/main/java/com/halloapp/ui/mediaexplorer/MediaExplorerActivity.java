@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.transition.Transition;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -547,6 +548,20 @@ public class MediaExplorerActivity extends HalloActivity {
             playerView = itemView.findViewById(R.id.player);
             playerView.setControllerAutoShow(false);
             playerView.setOnClickListener(v -> toggleSystemUI());
+
+            GestureDetector doubleTapGestureDetector = new GestureDetector(playerView.getContext(), new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onDoubleTap(MotionEvent e) {
+                    Player player = playerView.getPlayer();
+                    if (player != null) {
+                        player.setPlayWhenReady(!player.isPlaying());
+                    }
+
+                    return true;
+                }
+            });
+
+            playerView.setOnTouchListener((v, event) -> doubleTapGestureDetector.onTouchEvent(event));
 
             if (isSystemUIShown()) {
                 playerView.showController();
