@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.view.ViewCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -43,6 +44,7 @@ import com.halloapp.ui.posts.OutgoingPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
 import com.halloapp.ui.posts.RetractedPostViewHolder;
 import com.halloapp.ui.posts.SeenByLoader;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
@@ -89,6 +91,11 @@ public class PostContentActivity extends HalloActivity {
     static final int POST_DIRECTION_MASK = 0xFF00;
 
     private final PostViewHolder.PostViewHolderParent postViewHolderParent = new PostViewHolder.PostViewHolderParent() {
+
+        @Override
+        public void showDialogFragment(@NonNull DialogFragment dialogFragment) {
+            DialogFragmentUtils.showDialogFragmentOnce(dialogFragment, getSupportFragmentManager());
+        }
 
         private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
         private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();

@@ -118,6 +118,14 @@
     <string name="contacts_permission_rationale_denied">To connect with your friends and family we need permission to access contacts on your device.\n\nOpen the app settings screen to modify app permissions.</string>
     <string name="storage_permission_rationale">To pick media we need permission to access your device storage</string>
     <string name="storage_permission_rationale_denied">To pick media we need permission to access your device storage.\n\nOpen the app settings screen to modify app permissions.</string>
+    <!-- Explanation for why we need storage permissions when using save to gallery feature -->
+    <string name="save_to_gallery_storage_permission_rationale">To save the media to the gallery we need permission to access your device storage</string>
+    <!-- Explanation for why we need storage permissions when using save to gallery feature. This is used when the user needs to manually go to their settings -->
+    <string name="save_to_gallery_storage_permission_rationale_denied">To save the media to the gallery we need permission to access your device storage.\n\nOpen the app settings screen to modify app permissions.</string>
+    <!-- Message when we successfully save post media to gallery -->
+    <string name="media_saved_to_gallery">Saved to gallery</string>
+    <!-- Message when we failed to save post media to gallery -->
+    <string name="media_save_to_gallery_failed">Failed to save to gallery</string>
     <string name="retry">Retry</string>
     <string name="contact_rationale_upload">In order to connect you with your friends &amp; family we’ll need your permission to access your contacts. <a href="learn-more">Learn more</a></string>
     <string name="failed_to_initialize">Failed to initialize</string>
@@ -313,10 +321,16 @@
     <string name="key_verification_key_fetch_failed">Failed to fetch keys</string>
     <!-- Shown on the key verification activity next to a switch where the user can keep track of whether they verified the identity of the other user -->
     <string name="key_verification_switch_label">Verified</string>
+    <!-- Menu option to delete a post -->
+    <string name="delete_post">Delete post</string>
+    <!-- Option to save a photo/video to the user's gallery -->
+    <string name="save_to_gallery">Save to gallery</string>
     <string name="view_profile">View profile</string>
     <string name="action_hide">Hide</string>
     <string name="hide_my_posts">Hide my posts</string>
     <string name="my_posts">My posts</string>
+    <!-- Title for the user's post -->
+    <string name="my_post">My post</string>
     <string name="last_seen">Last seen %s</string>
     <string name="last_seen_less_minute">Last seen less than a minute ago</string>
     <string name="online">online</string>

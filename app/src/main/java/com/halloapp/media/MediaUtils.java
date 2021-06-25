@@ -2,6 +2,7 @@ package com.halloapp.media;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -20,6 +21,7 @@ import android.media.MediaMetadataRetriever;
 import android.media.MediaMuxer;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -38,6 +40,7 @@ import com.halloapp.FileStore;
 import com.halloapp.content.Media;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.mediapicker.GalleryDataSource;
+import com.halloapp.util.FileUtils;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 
@@ -57,8 +60,11 @@ import org.mp4parser.muxer.container.mp4.MovieCreator;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -549,6 +555,47 @@ public class MediaUtils {
                 Log.e("MediaUtils.getAudioDuration", e);
                 return 0;
             }
+        }
+    }
+
+    public static boolean saveMediaToGallery(@NonNull Context context, @NonNull Media media) {
+        if (media.file == null || !media.file.exists()) {
+            return false;
+        }
+        ContentResolver contentResolver = context.getContentResolver();
+        ContentValues values = new ContentValues();
+        Uri contentUri;
+        switch (media.type) {
+            case Media.MEDIA_TYPE_IMAGE: {
+                values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+                values.put(MediaStore.Images.Media.TITLE, media.file.getName());
+                contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                break;
+            }
+            case Media.MEDIA_TYPE_VIDEO: {
+                values.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
+                values.put(MediaStore.Video.Media.TITLE, media.file.getName());
+                contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                break;
+            }
+            default:
+                return false;
+        }
+        Uri uri = contentResolver.insert(contentUri, values);
+        if (uri == null) {
+            return false;
+        }
+        try (OutputStream os = contentResolver.openOutputStream(uri)) {
+            if (os == null) {
+                return false;
+            }
+            try (InputStream is = new FileInputStream(media.file)) {
+                FileUtils.copyFile(is, os);
+            }
+            return true;
+        } catch (IOException e) {
+            Log.e("MediaUtils/saveMediaToGallery failed to save media to gallery", e);
+            return false;
         }
     }
 

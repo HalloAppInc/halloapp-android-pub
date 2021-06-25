@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
@@ -43,6 +44,7 @@ import com.halloapp.ui.posts.OutgoingPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.ui.posts.SubtlePostViewHolder;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
 
@@ -228,6 +230,11 @@ public class PostsFragment extends HalloFragment {
             @Override
             public boolean shouldOpenProfileOnNamePress() {
                 return PostsFragment.this.shouldOpenProfileOnNamePress();
+            }
+
+            @Override
+            public void showDialogFragment(@NonNull DialogFragment dialogFragment) {
+                DialogFragmentUtils.showDialogFragmentOnce(dialogFragment, getParentFragmentManager());
             }
         };
 

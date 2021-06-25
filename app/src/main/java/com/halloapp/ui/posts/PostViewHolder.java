@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.BuildConfig;
@@ -29,9 +30,11 @@ import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
+import com.halloapp.ui.PostOptionsBottomSheetDialogFragment;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.groups.GroupTheme;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
@@ -50,6 +53,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final TextView timeView;
     private final ImageView statusView;
     private final View progressView;
+    private final View moreOptionsView;
     private final ViewPager2 mediaPagerView;
     private final CircleIndicator3 mediaPagerIndicator;
     private final LimitingTextView textView;
@@ -72,6 +76,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         public boolean shouldOpenProfileOnNamePress() {
             return true;
         }
+        public abstract void showDialogFragment(@NonNull DialogFragment dialogFragment);
     }
 
     public void setShowGroupName(boolean visible) {
@@ -106,6 +111,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         timeView = itemView.findViewById(R.id.time);
         statusView = itemView.findViewById(R.id.status);
         progressView = itemView.findViewById(R.id.progress);
+        moreOptionsView = itemView.findViewById(R.id.more_options);
         mediaPagerView = itemView.findViewById(R.id.media_pager);
         mediaPagerIndicator = itemView.findViewById(R.id.media_pager_indicator);
         textView = itemView.findViewById(R.id.text);
@@ -119,6 +125,12 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                 } else {
                     DownloadMediaTask.download(fileStore, contentDb, post);
                 }
+            });
+        }
+
+        if (moreOptionsView != null) {
+            moreOptionsView.setOnClickListener(v -> {
+                parent.showDialogFragment(PostOptionsBottomSheetDialogFragment.newInstance(post.id));
             });
         }
 
@@ -228,6 +240,13 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             progressView.setVisibility(View.GONE);
             statusView.setVisibility(View.GONE);
         }
+        if (moreOptionsView != null) {
+            if (shouldShowMoreOptions()) {
+                moreOptionsView.setVisibility(View.VISIBLE);
+            } else {
+                moreOptionsView.setVisibility(View.GONE);
+            }
+        }
         TimeFormatter.setTimePostsFormat(timeView, post.timestamp);
         parent.getTimestampRefresher().scheduleTimestampRefresh(post.timestamp);
         if (BuildConfig.DEBUG) {
@@ -283,6 +302,13 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         } else {
             footer.setVisibility(View.VISIBLE);
         }
+    }
+
+    private boolean shouldShowMoreOptions() {
+        if (post.senderUserId.isMe()) {
+            return true;
+        }
+        return post.getParentGroup() != null && !post.media.isEmpty();
     }
 
     public void selectMedia(int index) {
