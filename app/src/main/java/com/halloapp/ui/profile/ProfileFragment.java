@@ -17,6 +17,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +31,7 @@ import com.halloapp.content.Message;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.PostsFragment;
+import com.halloapp.ui.avatar.ViewAvatarActivity;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.chat.KeyVerificationActivity;
 import com.halloapp.ui.settings.SettingsPrivacy;
@@ -197,6 +199,9 @@ public class ProfileFragment extends PostsFragment {
         viewModel.getIsBlocked().observe(getViewLifecycleOwner(), this::updateMenu);
 
         avatarView = headerView.findViewById(R.id.avatar);
+        avatarView.setOnClickListener(v -> {
+            ViewAvatarActivity.viewAvatarWithTransition(requireActivity(), avatarView, profileUserId);
+        });
         loadAvatar();
 
         if (profileUserId.isMe()) {

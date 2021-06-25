@@ -23,6 +23,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
+import com.halloapp.ui.avatar.ViewAvatarActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
@@ -126,7 +127,9 @@ public class SettingsProfile extends HalloActivity {
             startActivityForResult(intent, CODE_CHANGE_AVATAR);
         };
         changeAvatarView.setOnClickListener(changeAvatarListener);
-        avatarView.setOnClickListener(changeAvatarListener);
+        avatarView.setOnClickListener(v -> {
+            ViewAvatarActivity.viewAvatarWithTransition(this, avatarView, UserId.ME);
+        });
 
         viewModel.getSaveProfileWorkInfo().observe(this, new Observer<List<WorkInfo>>() {
 

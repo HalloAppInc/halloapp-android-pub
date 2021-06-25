@@ -260,6 +260,10 @@
             android:theme="@style/AppTheme.Black.Translucent"
             android:label="" />
 
+        <activity android:name=".ui.avatar.ViewAvatarActivity"
+            android:theme="@style/AppTheme.Black.Translucent"
+            android:label="" />
+
         <activity android:name=".ui.mediaedit.MediaEditActivity"
             android:theme="@style/AppTheme.Black"
             android:label="@string/edit"/>
