@@ -150,6 +150,8 @@ public  final class Iq extends
     GROUP_AVATAR(27),
     DELETE_ACCOUNT(28),
     GROUP_INVITE_LINK(31),
+    HISTORY_RESEND(32),
+    EXPORT_DATA(33),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -191,6 +193,8 @@ public  final class Iq extends
         case 27: return GROUP_AVATAR;
         case 28: return DELETE_ACCOUNT;
         case 31: return GROUP_INVITE_LINK;
+        case 32: return HISTORY_RESEND;
+        case 33: return EXPORT_DATA;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -1596,6 +1600,106 @@ public  final class Iq extends
    */
   private void clearGroupInviteLink() {
     if (payloadCase_ == 31) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int HISTORY_RESEND_FIELD_NUMBER = 32;
+  /**
+   * <code>.server.HistoryResend history_resend = 32;</code>
+   */
+  @java.lang.Override
+  public boolean hasHistoryResend() {
+    return payloadCase_ == 32;
+  }
+  /**
+   * <code>.server.HistoryResend history_resend = 32;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.HistoryResend getHistoryResend() {
+    if (payloadCase_ == 32) {
+       return (com.halloapp.proto.server.HistoryResend) payload_;
+    }
+    return com.halloapp.proto.server.HistoryResend.getDefaultInstance();
+  }
+  /**
+   * <code>.server.HistoryResend history_resend = 32;</code>
+   */
+  private void setHistoryResend(com.halloapp.proto.server.HistoryResend value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 32;
+  }
+  /**
+   * <code>.server.HistoryResend history_resend = 32;</code>
+   */
+  private void mergeHistoryResend(com.halloapp.proto.server.HistoryResend value) {
+    value.getClass();
+  if (payloadCase_ == 32 &&
+        payload_ != com.halloapp.proto.server.HistoryResend.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.HistoryResend.newBuilder((com.halloapp.proto.server.HistoryResend) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 32;
+  }
+  /**
+   * <code>.server.HistoryResend history_resend = 32;</code>
+   */
+  private void clearHistoryResend() {
+    if (payloadCase_ == 32) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int EXPORT_DATA_FIELD_NUMBER = 33;
+  /**
+   * <code>.server.ExportData export_data = 33;</code>
+   */
+  @java.lang.Override
+  public boolean hasExportData() {
+    return payloadCase_ == 33;
+  }
+  /**
+   * <code>.server.ExportData export_data = 33;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.ExportData getExportData() {
+    if (payloadCase_ == 33) {
+       return (com.halloapp.proto.server.ExportData) payload_;
+    }
+    return com.halloapp.proto.server.ExportData.getDefaultInstance();
+  }
+  /**
+   * <code>.server.ExportData export_data = 33;</code>
+   */
+  private void setExportData(com.halloapp.proto.server.ExportData value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 33;
+  }
+  /**
+   * <code>.server.ExportData export_data = 33;</code>
+   */
+  private void mergeExportData(com.halloapp.proto.server.ExportData value) {
+    value.getClass();
+  if (payloadCase_ == 33 &&
+        payload_ != com.halloapp.proto.server.ExportData.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.ExportData.newBuilder((com.halloapp.proto.server.ExportData) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 33;
+  }
+  /**
+   * <code>.server.ExportData export_data = 33;</code>
+   */
+  private void clearExportData() {
+    if (payloadCase_ == 33) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -3051,6 +3155,102 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.HistoryResend history_resend = 32;</code>
+     */
+    @java.lang.Override
+    public boolean hasHistoryResend() {
+      return instance.hasHistoryResend();
+    }
+    /**
+     * <code>.server.HistoryResend history_resend = 32;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.HistoryResend getHistoryResend() {
+      return instance.getHistoryResend();
+    }
+    /**
+     * <code>.server.HistoryResend history_resend = 32;</code>
+     */
+    public Builder setHistoryResend(com.halloapp.proto.server.HistoryResend value) {
+      copyOnWrite();
+      instance.setHistoryResend(value);
+      return this;
+    }
+    /**
+     * <code>.server.HistoryResend history_resend = 32;</code>
+     */
+    public Builder setHistoryResend(
+        com.halloapp.proto.server.HistoryResend.Builder builderForValue) {
+      copyOnWrite();
+      instance.setHistoryResend(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.HistoryResend history_resend = 32;</code>
+     */
+    public Builder mergeHistoryResend(com.halloapp.proto.server.HistoryResend value) {
+      copyOnWrite();
+      instance.mergeHistoryResend(value);
+      return this;
+    }
+    /**
+     * <code>.server.HistoryResend history_resend = 32;</code>
+     */
+    public Builder clearHistoryResend() {
+      copyOnWrite();
+      instance.clearHistoryResend();
+      return this;
+    }
+
+    /**
+     * <code>.server.ExportData export_data = 33;</code>
+     */
+    @java.lang.Override
+    public boolean hasExportData() {
+      return instance.hasExportData();
+    }
+    /**
+     * <code>.server.ExportData export_data = 33;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.ExportData getExportData() {
+      return instance.getExportData();
+    }
+    /**
+     * <code>.server.ExportData export_data = 33;</code>
+     */
+    public Builder setExportData(com.halloapp.proto.server.ExportData value) {
+      copyOnWrite();
+      instance.setExportData(value);
+      return this;
+    }
+    /**
+     * <code>.server.ExportData export_data = 33;</code>
+     */
+    public Builder setExportData(
+        com.halloapp.proto.server.ExportData.Builder builderForValue) {
+      copyOnWrite();
+      instance.setExportData(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.ExportData export_data = 33;</code>
+     */
+    public Builder mergeExportData(com.halloapp.proto.server.ExportData value) {
+      copyOnWrite();
+      instance.mergeExportData(value);
+      return this;
+    }
+    /**
+     * <code>.server.ExportData export_data = 33;</code>
+     */
+    public Builder clearExportData() {
+      copyOnWrite();
+      instance.clearExportData();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -3097,13 +3297,16 @@ public  final class Iq extends
             com.halloapp.proto.server.UploadGroupAvatar.class,
             com.halloapp.proto.server.DeleteAccount.class,
             com.halloapp.proto.server.GroupInviteLink.class,
+            com.halloapp.proto.server.HistoryResend.class,
+            com.halloapp.proto.server.ExportData.class,
           };
           java.lang.String info =
-              "\u0000\u001c\u0001\u0000\u0001\u001f\u001c\u0000\u0000\u0000\u0001\u0208\u0002\f" +
-              "\u0003<\u0000\u0004<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000" +
-              "\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012" +
+              "\u0000\u001e\u0001\u0000\u0001!\u001e\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003" +
+              "<\u0000\u0004<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<" +
+              "\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012" +
               "<\u0000\u0013<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000" +
-              "\u0019<\u0000\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001f<\u0000";
+              "\u0019<\u0000\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001f<\u0000 <\u0000!<\u0000" +
+              "";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

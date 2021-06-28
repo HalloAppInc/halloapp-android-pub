@@ -163,6 +163,7 @@ public  final class Msg extends
     END_OF_QUEUE(26),
     INVITEE_NOTICE(27),
     GROUP_FEED_REREQUEST(28),
+    HISTORY_RESEND(29),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -200,6 +201,7 @@ public  final class Msg extends
         case 26: return END_OF_QUEUE;
         case 27: return INVITEE_NOTICE;
         case 28: return GROUP_FEED_REREQUEST;
+        case 29: return HISTORY_RESEND;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -1457,6 +1459,56 @@ public  final class Msg extends
    */
   private void clearGroupFeedRerequest() {
     if (payloadCase_ == 28) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int HISTORY_RESEND_FIELD_NUMBER = 29;
+  /**
+   * <code>.server.HistoryResend history_resend = 29;</code>
+   */
+  @java.lang.Override
+  public boolean hasHistoryResend() {
+    return payloadCase_ == 29;
+  }
+  /**
+   * <code>.server.HistoryResend history_resend = 29;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.HistoryResend getHistoryResend() {
+    if (payloadCase_ == 29) {
+       return (com.halloapp.proto.server.HistoryResend) payload_;
+    }
+    return com.halloapp.proto.server.HistoryResend.getDefaultInstance();
+  }
+  /**
+   * <code>.server.HistoryResend history_resend = 29;</code>
+   */
+  private void setHistoryResend(com.halloapp.proto.server.HistoryResend value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 29;
+  }
+  /**
+   * <code>.server.HistoryResend history_resend = 29;</code>
+   */
+  private void mergeHistoryResend(com.halloapp.proto.server.HistoryResend value) {
+    value.getClass();
+  if (payloadCase_ == 29 &&
+        payload_ != com.halloapp.proto.server.HistoryResend.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.HistoryResend.newBuilder((com.halloapp.proto.server.HistoryResend) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 29;
+  }
+  /**
+   * <code>.server.HistoryResend history_resend = 29;</code>
+   */
+  private void clearHistoryResend() {
+    if (payloadCase_ == 29) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -2829,6 +2881,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.HistoryResend history_resend = 29;</code>
+     */
+    @java.lang.Override
+    public boolean hasHistoryResend() {
+      return instance.hasHistoryResend();
+    }
+    /**
+     * <code>.server.HistoryResend history_resend = 29;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.HistoryResend getHistoryResend() {
+      return instance.getHistoryResend();
+    }
+    /**
+     * <code>.server.HistoryResend history_resend = 29;</code>
+     */
+    public Builder setHistoryResend(com.halloapp.proto.server.HistoryResend value) {
+      copyOnWrite();
+      instance.setHistoryResend(value);
+      return this;
+    }
+    /**
+     * <code>.server.HistoryResend history_resend = 29;</code>
+     */
+    public Builder setHistoryResend(
+        com.halloapp.proto.server.HistoryResend.Builder builderForValue) {
+      copyOnWrite();
+      instance.setHistoryResend(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.HistoryResend history_resend = 29;</code>
+     */
+    public Builder mergeHistoryResend(com.halloapp.proto.server.HistoryResend value) {
+      copyOnWrite();
+      instance.mergeHistoryResend(value);
+      return this;
+    }
+    /**
+     * <code>.server.HistoryResend history_resend = 29;</code>
+     */
+    public Builder clearHistoryResend() {
+      copyOnWrite();
+      instance.clearHistoryResend();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -2930,13 +3030,14 @@ public  final class Msg extends
             com.halloapp.proto.server.EndOfQueue.class,
             com.halloapp.proto.server.InviteeNotice.class,
             com.halloapp.proto.server.GroupFeedRerequest.class,
+            com.halloapp.proto.server.HistoryResend.class,
           };
           java.lang.String info =
-              "\u0000\u001c\u0001\u0000\u0001\u001c\u001c\u0000\u0000\u0000\u0001\u0208\u0002\f" +
+              "\u0000\u001d\u0001\u0000\u0001\u001d\u001d\u0000\u0000\u0000\u0001\u0208\u0002\f" +
               "\u0003\u0002\u0004\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000" +
               "\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011" +
               "<\u0000\u0012<\u0000\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000" +
-              "\u0018<\u0000\u0019\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000";
+              "\u0018<\u0000\u0019\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

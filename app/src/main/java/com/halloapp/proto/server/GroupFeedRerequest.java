@@ -15,6 +15,115 @@ public  final class GroupFeedRerequest extends
     gid_ = "";
     id_ = "";
   }
+  /**
+   * <pre>
+   * To capture the type of decryption failure.
+   * </pre>
+   *
+   * Protobuf enum {@code server.GroupFeedRerequest.RerequestType}
+   */
+  public enum RerequestType
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <pre>
+     * Unable to decrypt post/comment's payload
+     * </pre>
+     *
+     * <code>PAYLOAD = 0;</code>
+     */
+    PAYLOAD(0),
+    /**
+     * <pre>
+     * Unable to decrypt sender state.
+     * </pre>
+     *
+     * <code>SENDER_STATE = 1;</code>
+     */
+    SENDER_STATE(1),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <pre>
+     * Unable to decrypt post/comment's payload
+     * </pre>
+     *
+     * <code>PAYLOAD = 0;</code>
+     */
+    public static final int PAYLOAD_VALUE = 0;
+    /**
+     * <pre>
+     * Unable to decrypt sender state.
+     * </pre>
+     *
+     * <code>SENDER_STATE = 1;</code>
+     */
+    public static final int SENDER_STATE_VALUE = 1;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static RerequestType valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static RerequestType forNumber(int value) {
+      switch (value) {
+        case 0: return PAYLOAD;
+        case 1: return SENDER_STATE;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<RerequestType>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        RerequestType> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<RerequestType>() {
+            @java.lang.Override
+            public RerequestType findValueByNumber(int number) {
+              return RerequestType.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return RerequestTypeVerifier.INSTANCE;
+    }
+
+    private static final class RerequestTypeVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new RerequestTypeVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return RerequestType.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private RerequestType(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.GroupFeedRerequest.RerequestType)
+  }
+
   public static final int GID_FIELD_NUMBER = 1;
   private java.lang.String gid_;
   /**
@@ -127,6 +236,48 @@ public  final class GroupFeedRerequest extends
     checkByteStringIsUtf8(value);
     id_ = value.toStringUtf8();
     
+  }
+
+  public static final int REREQUEST_TYPE_FIELD_NUMBER = 3;
+  private int rerequestType_;
+  /**
+   * <code>.server.GroupFeedRerequest.RerequestType rerequest_type = 3;</code>
+   * @return The enum numeric value on the wire for rerequestType.
+   */
+  @java.lang.Override
+  public int getRerequestTypeValue() {
+    return rerequestType_;
+  }
+  /**
+   * <code>.server.GroupFeedRerequest.RerequestType rerequest_type = 3;</code>
+   * @return The rerequestType.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.GroupFeedRerequest.RerequestType getRerequestType() {
+    com.halloapp.proto.server.GroupFeedRerequest.RerequestType result = com.halloapp.proto.server.GroupFeedRerequest.RerequestType.forNumber(rerequestType_);
+    return result == null ? com.halloapp.proto.server.GroupFeedRerequest.RerequestType.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.GroupFeedRerequest.RerequestType rerequest_type = 3;</code>
+   * @param value The enum numeric value on the wire for rerequestType to set.
+   */
+  private void setRerequestTypeValue(int value) {
+      rerequestType_ = value;
+  }
+  /**
+   * <code>.server.GroupFeedRerequest.RerequestType rerequest_type = 3;</code>
+   * @param value The rerequestType to set.
+   */
+  private void setRerequestType(com.halloapp.proto.server.GroupFeedRerequest.RerequestType value) {
+    rerequestType_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.GroupFeedRerequest.RerequestType rerequest_type = 3;</code>
+   */
+  private void clearRerequestType() {
+    
+    rerequestType_ = 0;
   }
 
   public static com.halloapp.proto.server.GroupFeedRerequest parseFrom(
@@ -342,6 +493,52 @@ public  final class GroupFeedRerequest extends
       return this;
     }
 
+    /**
+     * <code>.server.GroupFeedRerequest.RerequestType rerequest_type = 3;</code>
+     * @return The enum numeric value on the wire for rerequestType.
+     */
+    @java.lang.Override
+    public int getRerequestTypeValue() {
+      return instance.getRerequestTypeValue();
+    }
+    /**
+     * <code>.server.GroupFeedRerequest.RerequestType rerequest_type = 3;</code>
+     * @param value The rerequestType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setRerequestTypeValue(int value) {
+      copyOnWrite();
+      instance.setRerequestTypeValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupFeedRerequest.RerequestType rerequest_type = 3;</code>
+     * @return The rerequestType.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.GroupFeedRerequest.RerequestType getRerequestType() {
+      return instance.getRerequestType();
+    }
+    /**
+     * <code>.server.GroupFeedRerequest.RerequestType rerequest_type = 3;</code>
+     * @param value The enum numeric value on the wire for rerequestType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setRerequestType(com.halloapp.proto.server.GroupFeedRerequest.RerequestType value) {
+      copyOnWrite();
+      instance.setRerequestType(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupFeedRerequest.RerequestType rerequest_type = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearRerequestType() {
+      copyOnWrite();
+      instance.clearRerequestType();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.GroupFeedRerequest)
   }
   @java.lang.Override
@@ -360,10 +557,11 @@ public  final class GroupFeedRerequest extends
           java.lang.Object[] objects = new java.lang.Object[] {
             "gid_",
             "id_",
+            "rerequestType_",
           };
           java.lang.String info =
-              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
-              "";
+              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
+              "\u0003\f";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

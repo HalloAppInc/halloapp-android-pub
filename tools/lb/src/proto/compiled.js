@@ -5706,6 +5706,7 @@ $root.server = (function() {
                     return "action: enum value expected";
                 case 0:
                 case 1:
+                case 2:
                     break;
                 }
             if (message.gid != null && message.hasOwnProperty("gid"))
@@ -5773,6 +5774,10 @@ $root.server = (function() {
             case "RETRACT":
             case 1:
                 message.action = 1;
+                break;
+            case "SHARE":
+            case 2:
+                message.action = 2;
                 break;
             }
             if (object.gid != null)
@@ -5896,11 +5901,13 @@ $root.server = (function() {
          * @enum {number}
          * @property {number} PUBLISH=0 PUBLISH value
          * @property {number} RETRACT=1 RETRACT value
+         * @property {number} SHARE=2 SHARE value
          */
         GroupFeedItem.Action = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "PUBLISH"] = 0;
             values[valuesById[1] = "RETRACT"] = 1;
+            values[valuesById[2] = "SHARE"] = 2;
             return values;
         })();
 
@@ -11422,6 +11429,477 @@ $root.server = (function() {
         return EndOfQueue;
     })();
 
+    server.HistoryResend = (function() {
+
+        /**
+         * Properties of a HistoryResend.
+         * @memberof server
+         * @interface IHistoryResend
+         * @property {string|null} [gid] HistoryResend gid
+         * @property {string|null} [id] HistoryResend id
+         * @property {number|Long|null} [senderUid] HistoryResend senderUid
+         * @property {Array.<number|Long>|null} [receiverUids] HistoryResend receiverUids
+         * @property {Uint8Array|null} [payload] HistoryResend payload
+         * @property {Uint8Array|null} [encPayload] HistoryResend encPayload
+         * @property {Array.<server.ISenderStateBundle>|null} [senderStateBundles] HistoryResend senderStateBundles
+         * @property {Uint8Array|null} [encSenderState] HistoryResend encSenderState
+         * @property {Uint8Array|null} [audienceHash] HistoryResend audienceHash
+         */
+
+        /**
+         * Constructs a new HistoryResend.
+         * @memberof server
+         * @classdesc Represents a HistoryResend.
+         * @implements IHistoryResend
+         * @constructor
+         * @param {server.IHistoryResend=} [properties] Properties to set
+         */
+        function HistoryResend(properties) {
+            this.receiverUids = [];
+            this.senderStateBundles = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * HistoryResend gid.
+         * @member {string} gid
+         * @memberof server.HistoryResend
+         * @instance
+         */
+        HistoryResend.prototype.gid = "";
+
+        /**
+         * HistoryResend id.
+         * @member {string} id
+         * @memberof server.HistoryResend
+         * @instance
+         */
+        HistoryResend.prototype.id = "";
+
+        /**
+         * HistoryResend senderUid.
+         * @member {number|Long} senderUid
+         * @memberof server.HistoryResend
+         * @instance
+         */
+        HistoryResend.prototype.senderUid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * HistoryResend receiverUids.
+         * @member {Array.<number|Long>} receiverUids
+         * @memberof server.HistoryResend
+         * @instance
+         */
+        HistoryResend.prototype.receiverUids = $util.emptyArray;
+
+        /**
+         * HistoryResend payload.
+         * @member {Uint8Array} payload
+         * @memberof server.HistoryResend
+         * @instance
+         */
+        HistoryResend.prototype.payload = $util.newBuffer([]);
+
+        /**
+         * HistoryResend encPayload.
+         * @member {Uint8Array} encPayload
+         * @memberof server.HistoryResend
+         * @instance
+         */
+        HistoryResend.prototype.encPayload = $util.newBuffer([]);
+
+        /**
+         * HistoryResend senderStateBundles.
+         * @member {Array.<server.ISenderStateBundle>} senderStateBundles
+         * @memberof server.HistoryResend
+         * @instance
+         */
+        HistoryResend.prototype.senderStateBundles = $util.emptyArray;
+
+        /**
+         * HistoryResend encSenderState.
+         * @member {Uint8Array} encSenderState
+         * @memberof server.HistoryResend
+         * @instance
+         */
+        HistoryResend.prototype.encSenderState = $util.newBuffer([]);
+
+        /**
+         * HistoryResend audienceHash.
+         * @member {Uint8Array} audienceHash
+         * @memberof server.HistoryResend
+         * @instance
+         */
+        HistoryResend.prototype.audienceHash = $util.newBuffer([]);
+
+        /**
+         * Creates a new HistoryResend instance using the specified properties.
+         * @function create
+         * @memberof server.HistoryResend
+         * @static
+         * @param {server.IHistoryResend=} [properties] Properties to set
+         * @returns {server.HistoryResend} HistoryResend instance
+         */
+        HistoryResend.create = function create(properties) {
+            return new HistoryResend(properties);
+        };
+
+        /**
+         * Encodes the specified HistoryResend message. Does not implicitly {@link server.HistoryResend.verify|verify} messages.
+         * @function encode
+         * @memberof server.HistoryResend
+         * @static
+         * @param {server.IHistoryResend} message HistoryResend message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HistoryResend.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.gid != null && Object.hasOwnProperty.call(message, "gid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.gid);
+            if (message.id != null && Object.hasOwnProperty.call(message, "id"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.id);
+            if (message.senderUid != null && Object.hasOwnProperty.call(message, "senderUid"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.senderUid);
+            if (message.receiverUids != null && message.receiverUids.length) {
+                writer.uint32(/* id 4, wireType 2 =*/34).fork();
+                for (var i = 0; i < message.receiverUids.length; ++i)
+                    writer.int64(message.receiverUids[i]);
+                writer.ldelim();
+            }
+            if (message.payload != null && Object.hasOwnProperty.call(message, "payload"))
+                writer.uint32(/* id 5, wireType 2 =*/42).bytes(message.payload);
+            if (message.encPayload != null && Object.hasOwnProperty.call(message, "encPayload"))
+                writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.encPayload);
+            if (message.senderStateBundles != null && message.senderStateBundles.length)
+                for (var i = 0; i < message.senderStateBundles.length; ++i)
+                    $root.server.SenderStateBundle.encode(message.senderStateBundles[i], writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
+            if (message.encSenderState != null && Object.hasOwnProperty.call(message, "encSenderState"))
+                writer.uint32(/* id 8, wireType 2 =*/66).bytes(message.encSenderState);
+            if (message.audienceHash != null && Object.hasOwnProperty.call(message, "audienceHash"))
+                writer.uint32(/* id 9, wireType 2 =*/74).bytes(message.audienceHash);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified HistoryResend message, length delimited. Does not implicitly {@link server.HistoryResend.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.HistoryResend
+         * @static
+         * @param {server.IHistoryResend} message HistoryResend message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HistoryResend.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a HistoryResend message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.HistoryResend
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.HistoryResend} HistoryResend
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HistoryResend.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.HistoryResend();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.gid = reader.string();
+                    break;
+                case 2:
+                    message.id = reader.string();
+                    break;
+                case 3:
+                    message.senderUid = reader.int64();
+                    break;
+                case 4:
+                    if (!(message.receiverUids && message.receiverUids.length))
+                        message.receiverUids = [];
+                    if ((tag & 7) === 2) {
+                        var end2 = reader.uint32() + reader.pos;
+                        while (reader.pos < end2)
+                            message.receiverUids.push(reader.int64());
+                    } else
+                        message.receiverUids.push(reader.int64());
+                    break;
+                case 5:
+                    message.payload = reader.bytes();
+                    break;
+                case 6:
+                    message.encPayload = reader.bytes();
+                    break;
+                case 7:
+                    if (!(message.senderStateBundles && message.senderStateBundles.length))
+                        message.senderStateBundles = [];
+                    message.senderStateBundles.push($root.server.SenderStateBundle.decode(reader, reader.uint32()));
+                    break;
+                case 8:
+                    message.encSenderState = reader.bytes();
+                    break;
+                case 9:
+                    message.audienceHash = reader.bytes();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a HistoryResend message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.HistoryResend
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.HistoryResend} HistoryResend
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HistoryResend.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a HistoryResend message.
+         * @function verify
+         * @memberof server.HistoryResend
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        HistoryResend.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.gid != null && message.hasOwnProperty("gid"))
+                if (!$util.isString(message.gid))
+                    return "gid: string expected";
+            if (message.id != null && message.hasOwnProperty("id"))
+                if (!$util.isString(message.id))
+                    return "id: string expected";
+            if (message.senderUid != null && message.hasOwnProperty("senderUid"))
+                if (!$util.isInteger(message.senderUid) && !(message.senderUid && $util.isInteger(message.senderUid.low) && $util.isInteger(message.senderUid.high)))
+                    return "senderUid: integer|Long expected";
+            if (message.receiverUids != null && message.hasOwnProperty("receiverUids")) {
+                if (!Array.isArray(message.receiverUids))
+                    return "receiverUids: array expected";
+                for (var i = 0; i < message.receiverUids.length; ++i)
+                    if (!$util.isInteger(message.receiverUids[i]) && !(message.receiverUids[i] && $util.isInteger(message.receiverUids[i].low) && $util.isInteger(message.receiverUids[i].high)))
+                        return "receiverUids: integer|Long[] expected";
+            }
+            if (message.payload != null && message.hasOwnProperty("payload"))
+                if (!(message.payload && typeof message.payload.length === "number" || $util.isString(message.payload)))
+                    return "payload: buffer expected";
+            if (message.encPayload != null && message.hasOwnProperty("encPayload"))
+                if (!(message.encPayload && typeof message.encPayload.length === "number" || $util.isString(message.encPayload)))
+                    return "encPayload: buffer expected";
+            if (message.senderStateBundles != null && message.hasOwnProperty("senderStateBundles")) {
+                if (!Array.isArray(message.senderStateBundles))
+                    return "senderStateBundles: array expected";
+                for (var i = 0; i < message.senderStateBundles.length; ++i) {
+                    var error = $root.server.SenderStateBundle.verify(message.senderStateBundles[i]);
+                    if (error)
+                        return "senderStateBundles." + error;
+                }
+            }
+            if (message.encSenderState != null && message.hasOwnProperty("encSenderState"))
+                if (!(message.encSenderState && typeof message.encSenderState.length === "number" || $util.isString(message.encSenderState)))
+                    return "encSenderState: buffer expected";
+            if (message.audienceHash != null && message.hasOwnProperty("audienceHash"))
+                if (!(message.audienceHash && typeof message.audienceHash.length === "number" || $util.isString(message.audienceHash)))
+                    return "audienceHash: buffer expected";
+            return null;
+        };
+
+        /**
+         * Creates a HistoryResend message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.HistoryResend
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.HistoryResend} HistoryResend
+         */
+        HistoryResend.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.HistoryResend)
+                return object;
+            var message = new $root.server.HistoryResend();
+            if (object.gid != null)
+                message.gid = String(object.gid);
+            if (object.id != null)
+                message.id = String(object.id);
+            if (object.senderUid != null)
+                if ($util.Long)
+                    (message.senderUid = $util.Long.fromValue(object.senderUid)).unsigned = false;
+                else if (typeof object.senderUid === "string")
+                    message.senderUid = parseInt(object.senderUid, 10);
+                else if (typeof object.senderUid === "number")
+                    message.senderUid = object.senderUid;
+                else if (typeof object.senderUid === "object")
+                    message.senderUid = new $util.LongBits(object.senderUid.low >>> 0, object.senderUid.high >>> 0).toNumber();
+            if (object.receiverUids) {
+                if (!Array.isArray(object.receiverUids))
+                    throw TypeError(".server.HistoryResend.receiverUids: array expected");
+                message.receiverUids = [];
+                for (var i = 0; i < object.receiverUids.length; ++i)
+                    if ($util.Long)
+                        (message.receiverUids[i] = $util.Long.fromValue(object.receiverUids[i])).unsigned = false;
+                    else if (typeof object.receiverUids[i] === "string")
+                        message.receiverUids[i] = parseInt(object.receiverUids[i], 10);
+                    else if (typeof object.receiverUids[i] === "number")
+                        message.receiverUids[i] = object.receiverUids[i];
+                    else if (typeof object.receiverUids[i] === "object")
+                        message.receiverUids[i] = new $util.LongBits(object.receiverUids[i].low >>> 0, object.receiverUids[i].high >>> 0).toNumber();
+            }
+            if (object.payload != null)
+                if (typeof object.payload === "string")
+                    $util.base64.decode(object.payload, message.payload = $util.newBuffer($util.base64.length(object.payload)), 0);
+                else if (object.payload.length)
+                    message.payload = object.payload;
+            if (object.encPayload != null)
+                if (typeof object.encPayload === "string")
+                    $util.base64.decode(object.encPayload, message.encPayload = $util.newBuffer($util.base64.length(object.encPayload)), 0);
+                else if (object.encPayload.length)
+                    message.encPayload = object.encPayload;
+            if (object.senderStateBundles) {
+                if (!Array.isArray(object.senderStateBundles))
+                    throw TypeError(".server.HistoryResend.senderStateBundles: array expected");
+                message.senderStateBundles = [];
+                for (var i = 0; i < object.senderStateBundles.length; ++i) {
+                    if (typeof object.senderStateBundles[i] !== "object")
+                        throw TypeError(".server.HistoryResend.senderStateBundles: object expected");
+                    message.senderStateBundles[i] = $root.server.SenderStateBundle.fromObject(object.senderStateBundles[i]);
+                }
+            }
+            if (object.encSenderState != null)
+                if (typeof object.encSenderState === "string")
+                    $util.base64.decode(object.encSenderState, message.encSenderState = $util.newBuffer($util.base64.length(object.encSenderState)), 0);
+                else if (object.encSenderState.length)
+                    message.encSenderState = object.encSenderState;
+            if (object.audienceHash != null)
+                if (typeof object.audienceHash === "string")
+                    $util.base64.decode(object.audienceHash, message.audienceHash = $util.newBuffer($util.base64.length(object.audienceHash)), 0);
+                else if (object.audienceHash.length)
+                    message.audienceHash = object.audienceHash;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a HistoryResend message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.HistoryResend
+         * @static
+         * @param {server.HistoryResend} message HistoryResend
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        HistoryResend.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults) {
+                object.receiverUids = [];
+                object.senderStateBundles = [];
+            }
+            if (options.defaults) {
+                object.gid = "";
+                object.id = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.senderUid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.senderUid = options.longs === String ? "0" : 0;
+                if (options.bytes === String)
+                    object.payload = "";
+                else {
+                    object.payload = [];
+                    if (options.bytes !== Array)
+                        object.payload = $util.newBuffer(object.payload);
+                }
+                if (options.bytes === String)
+                    object.encPayload = "";
+                else {
+                    object.encPayload = [];
+                    if (options.bytes !== Array)
+                        object.encPayload = $util.newBuffer(object.encPayload);
+                }
+                if (options.bytes === String)
+                    object.encSenderState = "";
+                else {
+                    object.encSenderState = [];
+                    if (options.bytes !== Array)
+                        object.encSenderState = $util.newBuffer(object.encSenderState);
+                }
+                if (options.bytes === String)
+                    object.audienceHash = "";
+                else {
+                    object.audienceHash = [];
+                    if (options.bytes !== Array)
+                        object.audienceHash = $util.newBuffer(object.audienceHash);
+                }
+            }
+            if (message.gid != null && message.hasOwnProperty("gid"))
+                object.gid = message.gid;
+            if (message.id != null && message.hasOwnProperty("id"))
+                object.id = message.id;
+            if (message.senderUid != null && message.hasOwnProperty("senderUid"))
+                if (typeof message.senderUid === "number")
+                    object.senderUid = options.longs === String ? String(message.senderUid) : message.senderUid;
+                else
+                    object.senderUid = options.longs === String ? $util.Long.prototype.toString.call(message.senderUid) : options.longs === Number ? new $util.LongBits(message.senderUid.low >>> 0, message.senderUid.high >>> 0).toNumber() : message.senderUid;
+            if (message.receiverUids && message.receiverUids.length) {
+                object.receiverUids = [];
+                for (var j = 0; j < message.receiverUids.length; ++j)
+                    if (typeof message.receiverUids[j] === "number")
+                        object.receiverUids[j] = options.longs === String ? String(message.receiverUids[j]) : message.receiverUids[j];
+                    else
+                        object.receiverUids[j] = options.longs === String ? $util.Long.prototype.toString.call(message.receiverUids[j]) : options.longs === Number ? new $util.LongBits(message.receiverUids[j].low >>> 0, message.receiverUids[j].high >>> 0).toNumber() : message.receiverUids[j];
+            }
+            if (message.payload != null && message.hasOwnProperty("payload"))
+                object.payload = options.bytes === String ? $util.base64.encode(message.payload, 0, message.payload.length) : options.bytes === Array ? Array.prototype.slice.call(message.payload) : message.payload;
+            if (message.encPayload != null && message.hasOwnProperty("encPayload"))
+                object.encPayload = options.bytes === String ? $util.base64.encode(message.encPayload, 0, message.encPayload.length) : options.bytes === Array ? Array.prototype.slice.call(message.encPayload) : message.encPayload;
+            if (message.senderStateBundles && message.senderStateBundles.length) {
+                object.senderStateBundles = [];
+                for (var j = 0; j < message.senderStateBundles.length; ++j)
+                    object.senderStateBundles[j] = $root.server.SenderStateBundle.toObject(message.senderStateBundles[j], options);
+            }
+            if (message.encSenderState != null && message.hasOwnProperty("encSenderState"))
+                object.encSenderState = options.bytes === String ? $util.base64.encode(message.encSenderState, 0, message.encSenderState.length) : options.bytes === Array ? Array.prototype.slice.call(message.encSenderState) : message.encSenderState;
+            if (message.audienceHash != null && message.hasOwnProperty("audienceHash"))
+                object.audienceHash = options.bytes === String ? $util.base64.encode(message.audienceHash, 0, message.audienceHash.length) : options.bytes === Array ? Array.prototype.slice.call(message.audienceHash) : message.audienceHash;
+            return object;
+        };
+
+        /**
+         * Converts this HistoryResend to JSON.
+         * @function toJSON
+         * @memberof server.HistoryResend
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        HistoryResend.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return HistoryResend;
+    })();
+
     server.Iq = (function() {
 
         /**
@@ -11456,6 +11934,8 @@ $root.server = (function() {
          * @property {server.IUploadGroupAvatar|null} [groupAvatar] Iq groupAvatar
          * @property {server.IDeleteAccount|null} [deleteAccount] Iq deleteAccount
          * @property {server.IGroupInviteLink|null} [groupInviteLink] Iq groupInviteLink
+         * @property {server.IHistoryResend|null} [historyResend] Iq historyResend
+         * @property {server.IExportData|null} [exportData] Iq exportData
          */
 
         /**
@@ -11697,17 +12177,33 @@ $root.server = (function() {
          */
         Iq.prototype.groupInviteLink = null;
 
+        /**
+         * Iq historyResend.
+         * @member {server.IHistoryResend|null|undefined} historyResend
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.historyResend = null;
+
+        /**
+         * Iq exportData.
+         * @member {server.IExportData|null|undefined} exportData
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.exportData = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * Iq payload.
-         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|undefined} payload
+         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|undefined} payload
          * @memberof server.Iq
          * @instance
          */
         Object.defineProperty(Iq.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink"]),
+            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -11791,6 +12287,10 @@ $root.server = (function() {
                 $root.server.DeleteAccount.encode(message.deleteAccount, writer.uint32(/* id 28, wireType 2 =*/226).fork()).ldelim();
             if (message.groupInviteLink != null && Object.hasOwnProperty.call(message, "groupInviteLink"))
                 $root.server.GroupInviteLink.encode(message.groupInviteLink, writer.uint32(/* id 31, wireType 2 =*/250).fork()).ldelim();
+            if (message.historyResend != null && Object.hasOwnProperty.call(message, "historyResend"))
+                $root.server.HistoryResend.encode(message.historyResend, writer.uint32(/* id 32, wireType 2 =*/258).fork()).ldelim();
+            if (message.exportData != null && Object.hasOwnProperty.call(message, "exportData"))
+                $root.server.ExportData.encode(message.exportData, writer.uint32(/* id 33, wireType 2 =*/266).fork()).ldelim();
             return writer;
         };
 
@@ -11908,6 +12408,12 @@ $root.server = (function() {
                     break;
                 case 31:
                     message.groupInviteLink = $root.server.GroupInviteLink.decode(reader, reader.uint32());
+                    break;
+                case 32:
+                    message.historyResend = $root.server.HistoryResend.decode(reader, reader.uint32());
+                    break;
+                case 33:
+                    message.exportData = $root.server.ExportData.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -12216,6 +12722,26 @@ $root.server = (function() {
                         return "groupInviteLink." + error;
                 }
             }
+            if (message.historyResend != null && message.hasOwnProperty("historyResend")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.HistoryResend.verify(message.historyResend);
+                    if (error)
+                        return "historyResend." + error;
+                }
+            }
+            if (message.exportData != null && message.hasOwnProperty("exportData")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.ExportData.verify(message.exportData);
+                    if (error)
+                        return "exportData." + error;
+                }
+            }
             return null;
         };
 
@@ -12381,6 +12907,16 @@ $root.server = (function() {
                     throw TypeError(".server.Iq.groupInviteLink: object expected");
                 message.groupInviteLink = $root.server.GroupInviteLink.fromObject(object.groupInviteLink);
             }
+            if (object.historyResend != null) {
+                if (typeof object.historyResend !== "object")
+                    throw TypeError(".server.Iq.historyResend: object expected");
+                message.historyResend = $root.server.HistoryResend.fromObject(object.historyResend);
+            }
+            if (object.exportData != null) {
+                if (typeof object.exportData !== "object")
+                    throw TypeError(".server.Iq.exportData: object expected");
+                message.exportData = $root.server.ExportData.fromObject(object.exportData);
+            }
             return message;
         };
 
@@ -12535,6 +13071,16 @@ $root.server = (function() {
                 if (options.oneofs)
                     object.payload = "groupInviteLink";
             }
+            if (message.historyResend != null && message.hasOwnProperty("historyResend")) {
+                object.historyResend = $root.server.HistoryResend.toObject(message.historyResend, options);
+                if (options.oneofs)
+                    object.payload = "historyResend";
+            }
+            if (message.exportData != null && message.hasOwnProperty("exportData")) {
+                object.exportData = $root.server.ExportData.toObject(message.exportData, options);
+                if (options.oneofs)
+                    object.payload = "exportData";
+            }
             return object;
         };
 
@@ -12602,6 +13148,7 @@ $root.server = (function() {
          * @property {server.IEndOfQueue|null} [endOfQueue] Msg endOfQueue
          * @property {server.IInviteeNotice|null} [inviteeNotice] Msg inviteeNotice
          * @property {server.IGroupFeedRerequest|null} [groupFeedRerequest] Msg groupFeedRerequest
+         * @property {server.IHistoryResend|null} [historyResend] Msg historyResend
          * @property {number|null} [retryCount] Msg retryCount
          * @property {number|null} [rerequestCount] Msg rerequestCount
          */
@@ -12830,6 +13377,14 @@ $root.server = (function() {
         Msg.prototype.groupFeedRerequest = null;
 
         /**
+         * Msg historyResend.
+         * @member {server.IHistoryResend|null|undefined} historyResend
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.historyResend = null;
+
+        /**
          * Msg retryCount.
          * @member {number} retryCount
          * @memberof server.Msg
@@ -12850,12 +13405,12 @@ $root.server = (function() {
 
         /**
          * Msg payload.
-         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|undefined} payload
+         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|undefined} payload
          * @memberof server.Msg
          * @instance
          */
         Object.defineProperty(Msg.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest"]),
+            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -12939,6 +13494,8 @@ $root.server = (function() {
                 $root.server.InviteeNotice.encode(message.inviteeNotice, writer.uint32(/* id 27, wireType 2 =*/218).fork()).ldelim();
             if (message.groupFeedRerequest != null && Object.hasOwnProperty.call(message, "groupFeedRerequest"))
                 $root.server.GroupFeedRerequest.encode(message.groupFeedRerequest, writer.uint32(/* id 28, wireType 2 =*/226).fork()).ldelim();
+            if (message.historyResend != null && Object.hasOwnProperty.call(message, "historyResend"))
+                $root.server.HistoryResend.encode(message.historyResend, writer.uint32(/* id 29, wireType 2 =*/234).fork()).ldelim();
             return writer;
         };
 
@@ -13050,6 +13607,9 @@ $root.server = (function() {
                     break;
                 case 28:
                     message.groupFeedRerequest = $root.server.GroupFeedRerequest.decode(reader, reader.uint32());
+                    break;
+                case 29:
+                    message.historyResend = $root.server.HistoryResend.decode(reader, reader.uint32());
                     break;
                 case 21:
                     message.retryCount = reader.int32();
@@ -13331,6 +13891,16 @@ $root.server = (function() {
                         return "groupFeedRerequest." + error;
                 }
             }
+            if (message.historyResend != null && message.hasOwnProperty("historyResend")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.HistoryResend.verify(message.historyResend);
+                    if (error)
+                        return "historyResend." + error;
+                }
+            }
             if (message.retryCount != null && message.hasOwnProperty("retryCount"))
                 if (!$util.isInteger(message.retryCount))
                     return "retryCount: integer expected";
@@ -13504,6 +14074,11 @@ $root.server = (function() {
                     throw TypeError(".server.Msg.groupFeedRerequest: object expected");
                 message.groupFeedRerequest = $root.server.GroupFeedRerequest.fromObject(object.groupFeedRerequest);
             }
+            if (object.historyResend != null) {
+                if (typeof object.historyResend !== "object")
+                    throw TypeError(".server.Msg.historyResend: object expected");
+                message.historyResend = $root.server.HistoryResend.fromObject(object.historyResend);
+            }
             if (object.retryCount != null)
                 message.retryCount = object.retryCount | 0;
             if (object.rerequestCount != null)
@@ -13667,6 +14242,11 @@ $root.server = (function() {
                 object.groupFeedRerequest = $root.server.GroupFeedRerequest.toObject(message.groupFeedRerequest, options);
                 if (options.oneofs)
                     object.payload = "groupFeedRerequest";
+            }
+            if (message.historyResend != null && message.hasOwnProperty("historyResend")) {
+                object.historyResend = $root.server.HistoryResend.toObject(message.historyResend, options);
+                if (options.oneofs)
+                    object.payload = "historyResend";
             }
             return object;
         };
@@ -17313,6 +17893,7 @@ $root.server = (function() {
          * @interface IGroupFeedRerequest
          * @property {string|null} [gid] GroupFeedRerequest gid
          * @property {string|null} [id] GroupFeedRerequest id
+         * @property {server.GroupFeedRerequest.RerequestType|null} [rerequestType] GroupFeedRerequest rerequestType
          */
 
         /**
@@ -17347,6 +17928,14 @@ $root.server = (function() {
         GroupFeedRerequest.prototype.id = "";
 
         /**
+         * GroupFeedRerequest rerequestType.
+         * @member {server.GroupFeedRerequest.RerequestType} rerequestType
+         * @memberof server.GroupFeedRerequest
+         * @instance
+         */
+        GroupFeedRerequest.prototype.rerequestType = 0;
+
+        /**
          * Creates a new GroupFeedRerequest instance using the specified properties.
          * @function create
          * @memberof server.GroupFeedRerequest
@@ -17374,6 +17963,8 @@ $root.server = (function() {
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.gid);
             if (message.id != null && Object.hasOwnProperty.call(message, "id"))
                 writer.uint32(/* id 2, wireType 2 =*/18).string(message.id);
+            if (message.rerequestType != null && Object.hasOwnProperty.call(message, "rerequestType"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.rerequestType);
             return writer;
         };
 
@@ -17413,6 +18004,9 @@ $root.server = (function() {
                     break;
                 case 2:
                     message.id = reader.string();
+                    break;
+                case 3:
+                    message.rerequestType = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -17455,6 +18049,14 @@ $root.server = (function() {
             if (message.id != null && message.hasOwnProperty("id"))
                 if (!$util.isString(message.id))
                     return "id: string expected";
+            if (message.rerequestType != null && message.hasOwnProperty("rerequestType"))
+                switch (message.rerequestType) {
+                default:
+                    return "rerequestType: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
             return null;
         };
 
@@ -17474,6 +18076,16 @@ $root.server = (function() {
                 message.gid = String(object.gid);
             if (object.id != null)
                 message.id = String(object.id);
+            switch (object.rerequestType) {
+            case "PAYLOAD":
+            case 0:
+                message.rerequestType = 0;
+                break;
+            case "SENDER_STATE":
+            case 1:
+                message.rerequestType = 1;
+                break;
+            }
             return message;
         };
 
@@ -17493,11 +18105,14 @@ $root.server = (function() {
             if (options.defaults) {
                 object.gid = "";
                 object.id = "";
+                object.rerequestType = options.enums === String ? "PAYLOAD" : 0;
             }
             if (message.gid != null && message.hasOwnProperty("gid"))
                 object.gid = message.gid;
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
+            if (message.rerequestType != null && message.hasOwnProperty("rerequestType"))
+                object.rerequestType = options.enums === String ? $root.server.GroupFeedRerequest.RerequestType[message.rerequestType] : message.rerequestType;
             return object;
         };
 
@@ -17511,6 +18126,20 @@ $root.server = (function() {
         GroupFeedRerequest.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
+
+        /**
+         * RerequestType enum.
+         * @name server.GroupFeedRerequest.RerequestType
+         * @enum {number}
+         * @property {number} PAYLOAD=0 PAYLOAD value
+         * @property {number} SENDER_STATE=1 SENDER_STATE value
+         */
+        GroupFeedRerequest.RerequestType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "PAYLOAD"] = 0;
+            values[valuesById[1] = "SENDER_STATE"] = 1;
+            return values;
+        })();
 
         return GroupFeedRerequest;
     })();
@@ -19725,6 +20354,286 @@ $root.server = (function() {
         };
 
         return DeleteAccount;
+    })();
+
+    server.ExportData = (function() {
+
+        /**
+         * Properties of an ExportData.
+         * @memberof server
+         * @interface IExportData
+         * @property {number|Long|null} [dataReadyTs] ExportData dataReadyTs
+         * @property {server.ExportData.Status|null} [status] ExportData status
+         * @property {string|null} [dataUrl] ExportData dataUrl
+         */
+
+        /**
+         * Constructs a new ExportData.
+         * @memberof server
+         * @classdesc Represents an ExportData.
+         * @implements IExportData
+         * @constructor
+         * @param {server.IExportData=} [properties] Properties to set
+         */
+        function ExportData(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ExportData dataReadyTs.
+         * @member {number|Long} dataReadyTs
+         * @memberof server.ExportData
+         * @instance
+         */
+        ExportData.prototype.dataReadyTs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * ExportData status.
+         * @member {server.ExportData.Status} status
+         * @memberof server.ExportData
+         * @instance
+         */
+        ExportData.prototype.status = 0;
+
+        /**
+         * ExportData dataUrl.
+         * @member {string} dataUrl
+         * @memberof server.ExportData
+         * @instance
+         */
+        ExportData.prototype.dataUrl = "";
+
+        /**
+         * Creates a new ExportData instance using the specified properties.
+         * @function create
+         * @memberof server.ExportData
+         * @static
+         * @param {server.IExportData=} [properties] Properties to set
+         * @returns {server.ExportData} ExportData instance
+         */
+        ExportData.create = function create(properties) {
+            return new ExportData(properties);
+        };
+
+        /**
+         * Encodes the specified ExportData message. Does not implicitly {@link server.ExportData.verify|verify} messages.
+         * @function encode
+         * @memberof server.ExportData
+         * @static
+         * @param {server.IExportData} message ExportData message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ExportData.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.dataReadyTs != null && Object.hasOwnProperty.call(message, "dataReadyTs"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.dataReadyTs);
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.status);
+            if (message.dataUrl != null && Object.hasOwnProperty.call(message, "dataUrl"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.dataUrl);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ExportData message, length delimited. Does not implicitly {@link server.ExportData.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.ExportData
+         * @static
+         * @param {server.IExportData} message ExportData message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ExportData.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an ExportData message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.ExportData
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.ExportData} ExportData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ExportData.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.ExportData();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.dataReadyTs = reader.int64();
+                    break;
+                case 2:
+                    message.status = reader.int32();
+                    break;
+                case 3:
+                    message.dataUrl = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an ExportData message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.ExportData
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.ExportData} ExportData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ExportData.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an ExportData message.
+         * @function verify
+         * @memberof server.ExportData
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ExportData.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.dataReadyTs != null && message.hasOwnProperty("dataReadyTs"))
+                if (!$util.isInteger(message.dataReadyTs) && !(message.dataReadyTs && $util.isInteger(message.dataReadyTs.low) && $util.isInteger(message.dataReadyTs.high)))
+                    return "dataReadyTs: integer|Long expected";
+            if (message.status != null && message.hasOwnProperty("status"))
+                switch (message.status) {
+                default:
+                    return "status: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.dataUrl != null && message.hasOwnProperty("dataUrl"))
+                if (!$util.isString(message.dataUrl))
+                    return "dataUrl: string expected";
+            return null;
+        };
+
+        /**
+         * Creates an ExportData message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.ExportData
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.ExportData} ExportData
+         */
+        ExportData.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.ExportData)
+                return object;
+            var message = new $root.server.ExportData();
+            if (object.dataReadyTs != null)
+                if ($util.Long)
+                    (message.dataReadyTs = $util.Long.fromValue(object.dataReadyTs)).unsigned = false;
+                else if (typeof object.dataReadyTs === "string")
+                    message.dataReadyTs = parseInt(object.dataReadyTs, 10);
+                else if (typeof object.dataReadyTs === "number")
+                    message.dataReadyTs = object.dataReadyTs;
+                else if (typeof object.dataReadyTs === "object")
+                    message.dataReadyTs = new $util.LongBits(object.dataReadyTs.low >>> 0, object.dataReadyTs.high >>> 0).toNumber();
+            switch (object.status) {
+            case "UNKNOWN":
+            case 0:
+                message.status = 0;
+                break;
+            case "PENDING":
+            case 1:
+                message.status = 1;
+                break;
+            case "READY":
+            case 2:
+                message.status = 2;
+                break;
+            }
+            if (object.dataUrl != null)
+                message.dataUrl = String(object.dataUrl);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an ExportData message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.ExportData
+         * @static
+         * @param {server.ExportData} message ExportData
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ExportData.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.dataReadyTs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.dataReadyTs = options.longs === String ? "0" : 0;
+                object.status = options.enums === String ? "UNKNOWN" : 0;
+                object.dataUrl = "";
+            }
+            if (message.dataReadyTs != null && message.hasOwnProperty("dataReadyTs"))
+                if (typeof message.dataReadyTs === "number")
+                    object.dataReadyTs = options.longs === String ? String(message.dataReadyTs) : message.dataReadyTs;
+                else
+                    object.dataReadyTs = options.longs === String ? $util.Long.prototype.toString.call(message.dataReadyTs) : options.longs === Number ? new $util.LongBits(message.dataReadyTs.low >>> 0, message.dataReadyTs.high >>> 0).toNumber() : message.dataReadyTs;
+            if (message.status != null && message.hasOwnProperty("status"))
+                object.status = options.enums === String ? $root.server.ExportData.Status[message.status] : message.status;
+            if (message.dataUrl != null && message.hasOwnProperty("dataUrl"))
+                object.dataUrl = message.dataUrl;
+            return object;
+        };
+
+        /**
+         * Converts this ExportData to JSON.
+         * @function toJSON
+         * @memberof server.ExportData
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ExportData.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Status enum.
+         * @name server.ExportData.Status
+         * @enum {number}
+         * @property {number} UNKNOWN=0 UNKNOWN value
+         * @property {number} PENDING=1 PENDING value
+         * @property {number} READY=2 READY value
+         */
+        ExportData.Status = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN"] = 0;
+            values[valuesById[1] = "PENDING"] = 1;
+            values[valuesById[2] = "READY"] = 2;
+            return values;
+        })();
+
+        return ExportData;
     })();
 
     server.PushContent = (function() {

@@ -285,6 +285,17 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.GroupFeedRerequest getGroupFeedRerequest();
 
   /**
+   * <code>.server.HistoryResend history_resend = 29;</code>
+   * @return Whether the historyResend field is set.
+   */
+  boolean hasHistoryResend();
+  /**
+   * <code>.server.HistoryResend history_resend = 29;</code>
+   * @return The historyResend.
+   */
+  com.halloapp.proto.server.HistoryResend getHistoryResend();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */

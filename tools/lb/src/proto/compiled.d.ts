@@ -2267,7 +2267,8 @@ export namespace server {
         /** Action enum. */
         enum Action {
             PUBLISH = 0,
-            RETRACT = 1
+            RETRACT = 1,
+            SHARE = 2
         }
     }
 
@@ -4403,6 +4404,144 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a HistoryResend. */
+    interface IHistoryResend {
+
+        /** HistoryResend gid */
+        gid?: (string|null);
+
+        /** HistoryResend id */
+        id?: (string|null);
+
+        /** HistoryResend senderUid */
+        senderUid?: (number|Long|null);
+
+        /** HistoryResend receiverUids */
+        receiverUids?: ((number|Long)[]|null);
+
+        /** HistoryResend payload */
+        payload?: (Uint8Array|null);
+
+        /** HistoryResend encPayload */
+        encPayload?: (Uint8Array|null);
+
+        /** HistoryResend senderStateBundles */
+        senderStateBundles?: (server.ISenderStateBundle[]|null);
+
+        /** HistoryResend encSenderState */
+        encSenderState?: (Uint8Array|null);
+
+        /** HistoryResend audienceHash */
+        audienceHash?: (Uint8Array|null);
+    }
+
+    /** Represents a HistoryResend. */
+    class HistoryResend implements IHistoryResend {
+
+        /**
+         * Constructs a new HistoryResend.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IHistoryResend);
+
+        /** HistoryResend gid. */
+        public gid: string;
+
+        /** HistoryResend id. */
+        public id: string;
+
+        /** HistoryResend senderUid. */
+        public senderUid: (number|Long);
+
+        /** HistoryResend receiverUids. */
+        public receiverUids: (number|Long)[];
+
+        /** HistoryResend payload. */
+        public payload: Uint8Array;
+
+        /** HistoryResend encPayload. */
+        public encPayload: Uint8Array;
+
+        /** HistoryResend senderStateBundles. */
+        public senderStateBundles: server.ISenderStateBundle[];
+
+        /** HistoryResend encSenderState. */
+        public encSenderState: Uint8Array;
+
+        /** HistoryResend audienceHash. */
+        public audienceHash: Uint8Array;
+
+        /**
+         * Creates a new HistoryResend instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HistoryResend instance
+         */
+        public static create(properties?: server.IHistoryResend): server.HistoryResend;
+
+        /**
+         * Encodes the specified HistoryResend message. Does not implicitly {@link server.HistoryResend.verify|verify} messages.
+         * @param message HistoryResend message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IHistoryResend, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HistoryResend message, length delimited. Does not implicitly {@link server.HistoryResend.verify|verify} messages.
+         * @param message HistoryResend message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IHistoryResend, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HistoryResend message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HistoryResend
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.HistoryResend;
+
+        /**
+         * Decodes a HistoryResend message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HistoryResend
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.HistoryResend;
+
+        /**
+         * Verifies a HistoryResend message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HistoryResend message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HistoryResend
+         */
+        public static fromObject(object: { [k: string]: any }): server.HistoryResend;
+
+        /**
+         * Creates a plain object from a HistoryResend message. Also converts values to other types if specified.
+         * @param message HistoryResend
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.HistoryResend, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HistoryResend to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an Iq. */
     interface IIq {
 
@@ -4489,6 +4628,12 @@ export namespace server {
 
         /** Iq groupInviteLink */
         groupInviteLink?: (server.IGroupInviteLink|null);
+
+        /** Iq historyResend */
+        historyResend?: (server.IHistoryResend|null);
+
+        /** Iq exportData */
+        exportData?: (server.IExportData|null);
     }
 
     /** Represents an Iq. */
@@ -4584,8 +4729,14 @@ export namespace server {
         /** Iq groupInviteLink. */
         public groupInviteLink?: (server.IGroupInviteLink|null);
 
+        /** Iq historyResend. */
+        public historyResend?: (server.IHistoryResend|null);
+
+        /** Iq exportData. */
+        public exportData?: (server.IExportData|null);
+
         /** Iq payload. */
-        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink");
+        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData");
 
         /**
          * Creates a new Iq instance using the specified properties.
@@ -4750,6 +4901,9 @@ export namespace server {
         /** Msg groupFeedRerequest */
         groupFeedRerequest?: (server.IGroupFeedRerequest|null);
 
+        /** Msg historyResend */
+        historyResend?: (server.IHistoryResend|null);
+
         /** Msg retryCount */
         retryCount?: (number|null);
 
@@ -4844,6 +4998,9 @@ export namespace server {
         /** Msg groupFeedRerequest. */
         public groupFeedRerequest?: (server.IGroupFeedRerequest|null);
 
+        /** Msg historyResend. */
+        public historyResend?: (server.IHistoryResend|null);
+
         /** Msg retryCount. */
         public retryCount: number;
 
@@ -4851,7 +5008,7 @@ export namespace server {
         public rerequestCount: number;
 
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend");
 
         /**
          * Creates a new Msg instance using the specified properties.
@@ -6350,6 +6507,9 @@ export namespace server {
 
         /** GroupFeedRerequest id */
         id?: (string|null);
+
+        /** GroupFeedRerequest rerequestType */
+        rerequestType?: (server.GroupFeedRerequest.RerequestType|null);
     }
 
     /** Represents a GroupFeedRerequest. */
@@ -6366,6 +6526,9 @@ export namespace server {
 
         /** GroupFeedRerequest id. */
         public id: string;
+
+        /** GroupFeedRerequest rerequestType. */
+        public rerequestType: server.GroupFeedRerequest.RerequestType;
 
         /**
          * Creates a new GroupFeedRerequest instance using the specified properties.
@@ -6436,6 +6599,15 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    namespace GroupFeedRerequest {
+
+        /** RerequestType enum. */
+        enum RerequestType {
+            PAYLOAD = 0,
+            SENDER_STATE = 1
+        }
     }
 
     /** Properties of a SeenReceipt. */
@@ -7351,6 +7523,118 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an ExportData. */
+    interface IExportData {
+
+        /** ExportData dataReadyTs */
+        dataReadyTs?: (number|Long|null);
+
+        /** ExportData status */
+        status?: (server.ExportData.Status|null);
+
+        /** ExportData dataUrl */
+        dataUrl?: (string|null);
+    }
+
+    /** Represents an ExportData. */
+    class ExportData implements IExportData {
+
+        /**
+         * Constructs a new ExportData.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IExportData);
+
+        /** ExportData dataReadyTs. */
+        public dataReadyTs: (number|Long);
+
+        /** ExportData status. */
+        public status: server.ExportData.Status;
+
+        /** ExportData dataUrl. */
+        public dataUrl: string;
+
+        /**
+         * Creates a new ExportData instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ExportData instance
+         */
+        public static create(properties?: server.IExportData): server.ExportData;
+
+        /**
+         * Encodes the specified ExportData message. Does not implicitly {@link server.ExportData.verify|verify} messages.
+         * @param message ExportData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IExportData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ExportData message, length delimited. Does not implicitly {@link server.ExportData.verify|verify} messages.
+         * @param message ExportData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IExportData, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ExportData message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ExportData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.ExportData;
+
+        /**
+         * Decodes an ExportData message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ExportData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.ExportData;
+
+        /**
+         * Verifies an ExportData message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ExportData message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ExportData
+         */
+        public static fromObject(object: { [k: string]: any }): server.ExportData;
+
+        /**
+         * Creates a plain object from an ExportData message. Also converts values to other types if specified.
+         * @param message ExportData
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.ExportData, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ExportData to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace ExportData {
+
+        /** Status enum. */
+        enum Status {
+            UNKNOWN = 0,
+            PENDING = 1,
+            READY = 2
+        }
     }
 
     /** Properties of a PushContent. */

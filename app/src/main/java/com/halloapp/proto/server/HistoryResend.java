@@ -4,208 +4,27 @@
 package com.halloapp.proto.server;
 
 /**
- * Protobuf type {@code server.GroupFeedItem}
+ * Protobuf type {@code server.HistoryResend}
  */
-public  final class GroupFeedItem extends
+public  final class HistoryResend extends
     com.google.protobuf.GeneratedMessageLite<
-        GroupFeedItem, GroupFeedItem.Builder> implements
-    // @@protoc_insertion_point(message_implements:server.GroupFeedItem)
-    GroupFeedItemOrBuilder {
-  private GroupFeedItem() {
+        HistoryResend, HistoryResend.Builder> implements
+    // @@protoc_insertion_point(message_implements:server.HistoryResend)
+    HistoryResendOrBuilder {
+  private HistoryResend() {
     gid_ = "";
-    name_ = "";
-    avatarId_ = "";
+    id_ = "";
+    receiverUids_ = emptyLongList();
+    payload_ = com.google.protobuf.ByteString.EMPTY;
+    encPayload_ = com.google.protobuf.ByteString.EMPTY;
     senderStateBundles_ = emptyProtobufList();
     encSenderState_ = com.google.protobuf.ByteString.EMPTY;
     audienceHash_ = com.google.protobuf.ByteString.EMPTY;
   }
-  /**
-   * Protobuf enum {@code server.GroupFeedItem.Action}
-   */
-  public enum Action
-      implements com.google.protobuf.Internal.EnumLite {
-    /**
-     * <code>PUBLISH = 0;</code>
-     */
-    PUBLISH(0),
-    /**
-     * <code>RETRACT = 1;</code>
-     */
-    RETRACT(1),
-    /**
-     * <code>SHARE = 2;</code>
-     */
-    SHARE(2),
-    UNRECOGNIZED(-1),
-    ;
-
-    /**
-     * <code>PUBLISH = 0;</code>
-     */
-    public static final int PUBLISH_VALUE = 0;
-    /**
-     * <code>RETRACT = 1;</code>
-     */
-    public static final int RETRACT_VALUE = 1;
-    /**
-     * <code>SHARE = 2;</code>
-     */
-    public static final int SHARE_VALUE = 2;
-
-
-    @java.lang.Override
-    public final int getNumber() {
-      if (this == UNRECOGNIZED) {
-        throw new java.lang.IllegalArgumentException(
-            "Can't get the number of an unknown enum value.");
-      }
-      return value;
-    }
-
-    /**
-     * @param value The number of the enum to look for.
-     * @return The enum associated with the given number.
-     * @deprecated Use {@link #forNumber(int)} instead.
-     */
-    @java.lang.Deprecated
-    public static Action valueOf(int value) {
-      return forNumber(value);
-    }
-
-    public static Action forNumber(int value) {
-      switch (value) {
-        case 0: return PUBLISH;
-        case 1: return RETRACT;
-        case 2: return SHARE;
-        default: return null;
-      }
-    }
-
-    public static com.google.protobuf.Internal.EnumLiteMap<Action>
-        internalGetValueMap() {
-      return internalValueMap;
-    }
-    private static final com.google.protobuf.Internal.EnumLiteMap<
-        Action> internalValueMap =
-          new com.google.protobuf.Internal.EnumLiteMap<Action>() {
-            @java.lang.Override
-            public Action findValueByNumber(int number) {
-              return Action.forNumber(number);
-            }
-          };
-
-    public static com.google.protobuf.Internal.EnumVerifier 
-        internalGetVerifier() {
-      return ActionVerifier.INSTANCE;
-    }
-
-    private static final class ActionVerifier implements 
-         com.google.protobuf.Internal.EnumVerifier { 
-            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new ActionVerifier();
-            @java.lang.Override
-            public boolean isInRange(int number) {
-              return Action.forNumber(number) != null;
-            }
-          };
-
-    private final int value;
-
-    private Action(int value) {
-      this.value = value;
-    }
-
-    // @@protoc_insertion_point(enum_scope:server.GroupFeedItem.Action)
-  }
-
-  private int itemCase_ = 0;
-  private java.lang.Object item_;
-  public enum ItemCase {
-    POST(5),
-    COMMENT(6),
-    ITEM_NOT_SET(0);
-    private final int value;
-    private ItemCase(int value) {
-      this.value = value;
-    }
-    /**
-     * @deprecated Use {@link #forNumber(int)} instead.
-     */
-    @java.lang.Deprecated
-    public static ItemCase valueOf(int value) {
-      return forNumber(value);
-    }
-
-    public static ItemCase forNumber(int value) {
-      switch (value) {
-        case 5: return POST;
-        case 6: return COMMENT;
-        case 0: return ITEM_NOT_SET;
-        default: return null;
-      }
-    }
-    public int getNumber() {
-      return this.value;
-    }
-  };
-
-  @java.lang.Override
-  public ItemCase
-  getItemCase() {
-    return ItemCase.forNumber(
-        itemCase_);
-  }
-
-  private void clearItem() {
-    itemCase_ = 0;
-    item_ = null;
-  }
-
-  public static final int ACTION_FIELD_NUMBER = 1;
-  private int action_;
-  /**
-   * <code>.server.GroupFeedItem.Action action = 1;</code>
-   * @return The enum numeric value on the wire for action.
-   */
-  @java.lang.Override
-  public int getActionValue() {
-    return action_;
-  }
-  /**
-   * <code>.server.GroupFeedItem.Action action = 1;</code>
-   * @return The action.
-   */
-  @java.lang.Override
-  public com.halloapp.proto.server.GroupFeedItem.Action getAction() {
-    com.halloapp.proto.server.GroupFeedItem.Action result = com.halloapp.proto.server.GroupFeedItem.Action.forNumber(action_);
-    return result == null ? com.halloapp.proto.server.GroupFeedItem.Action.UNRECOGNIZED : result;
-  }
-  /**
-   * <code>.server.GroupFeedItem.Action action = 1;</code>
-   * @param value The enum numeric value on the wire for action to set.
-   */
-  private void setActionValue(int value) {
-      action_ = value;
-  }
-  /**
-   * <code>.server.GroupFeedItem.Action action = 1;</code>
-   * @param value The action to set.
-   */
-  private void setAction(com.halloapp.proto.server.GroupFeedItem.Action value) {
-    action_ = value.getNumber();
-    
-  }
-  /**
-   * <code>.server.GroupFeedItem.Action action = 1;</code>
-   */
-  private void clearAction() {
-    
-    action_ = 0;
-  }
-
-  public static final int GID_FIELD_NUMBER = 2;
+  public static final int GID_FIELD_NUMBER = 1;
   private java.lang.String gid_;
   /**
-   * <code>string gid = 2;</code>
+   * <code>string gid = 1;</code>
    * @return The gid.
    */
   @java.lang.Override
@@ -213,7 +32,7 @@ public  final class GroupFeedItem extends
     return gid_;
   }
   /**
-   * <code>string gid = 2;</code>
+   * <code>string gid = 1;</code>
    * @return The bytes for gid.
    */
   @java.lang.Override
@@ -222,7 +41,7 @@ public  final class GroupFeedItem extends
     return com.google.protobuf.ByteString.copyFromUtf8(gid_);
   }
   /**
-   * <code>string gid = 2;</code>
+   * <code>string gid = 1;</code>
    * @param value The gid to set.
    */
   private void setGid(
@@ -232,14 +51,14 @@ public  final class GroupFeedItem extends
     gid_ = value;
   }
   /**
-   * <code>string gid = 2;</code>
+   * <code>string gid = 1;</code>
    */
   private void clearGid() {
     
     gid_ = getDefaultInstance().getGid();
   }
   /**
-   * <code>string gid = 2;</code>
+   * <code>string gid = 1;</code>
    * @param value The bytes for gid to set.
    */
   private void setGidBytes(
@@ -249,205 +68,221 @@ public  final class GroupFeedItem extends
     
   }
 
-  public static final int NAME_FIELD_NUMBER = 3;
-  private java.lang.String name_;
+  public static final int ID_FIELD_NUMBER = 2;
+  private java.lang.String id_;
   /**
-   * <code>string name = 3;</code>
-   * @return The name.
+   * <code>string id = 2;</code>
+   * @return The id.
    */
   @java.lang.Override
-  public java.lang.String getName() {
-    return name_;
+  public java.lang.String getId() {
+    return id_;
   }
   /**
-   * <code>string name = 3;</code>
-   * @return The bytes for name.
-   */
-  @java.lang.Override
-  public com.google.protobuf.ByteString
-      getNameBytes() {
-    return com.google.protobuf.ByteString.copyFromUtf8(name_);
-  }
-  /**
-   * <code>string name = 3;</code>
-   * @param value The name to set.
-   */
-  private void setName(
-      java.lang.String value) {
-    value.getClass();
-  
-    name_ = value;
-  }
-  /**
-   * <code>string name = 3;</code>
-   */
-  private void clearName() {
-    
-    name_ = getDefaultInstance().getName();
-  }
-  /**
-   * <code>string name = 3;</code>
-   * @param value The bytes for name to set.
-   */
-  private void setNameBytes(
-      com.google.protobuf.ByteString value) {
-    checkByteStringIsUtf8(value);
-    name_ = value.toStringUtf8();
-    
-  }
-
-  public static final int AVATAR_ID_FIELD_NUMBER = 4;
-  private java.lang.String avatarId_;
-  /**
-   * <code>string avatar_id = 4;</code>
-   * @return The avatarId.
-   */
-  @java.lang.Override
-  public java.lang.String getAvatarId() {
-    return avatarId_;
-  }
-  /**
-   * <code>string avatar_id = 4;</code>
-   * @return The bytes for avatarId.
+   * <code>string id = 2;</code>
+   * @return The bytes for id.
    */
   @java.lang.Override
   public com.google.protobuf.ByteString
-      getAvatarIdBytes() {
-    return com.google.protobuf.ByteString.copyFromUtf8(avatarId_);
+      getIdBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(id_);
   }
   /**
-   * <code>string avatar_id = 4;</code>
-   * @param value The avatarId to set.
+   * <code>string id = 2;</code>
+   * @param value The id to set.
    */
-  private void setAvatarId(
+  private void setId(
       java.lang.String value) {
     value.getClass();
   
-    avatarId_ = value;
+    id_ = value;
   }
   /**
-   * <code>string avatar_id = 4;</code>
+   * <code>string id = 2;</code>
    */
-  private void clearAvatarId() {
+  private void clearId() {
     
-    avatarId_ = getDefaultInstance().getAvatarId();
+    id_ = getDefaultInstance().getId();
   }
   /**
-   * <code>string avatar_id = 4;</code>
-   * @param value The bytes for avatarId to set.
+   * <code>string id = 2;</code>
+   * @param value The bytes for id to set.
    */
-  private void setAvatarIdBytes(
+  private void setIdBytes(
       com.google.protobuf.ByteString value) {
     checkByteStringIsUtf8(value);
-    avatarId_ = value.toStringUtf8();
+    id_ = value.toStringUtf8();
     
   }
 
-  public static final int POST_FIELD_NUMBER = 5;
+  public static final int SENDER_UID_FIELD_NUMBER = 3;
+  private long senderUid_;
   /**
-   * <code>.server.Post post = 5;</code>
+   * <code>int64 sender_uid = 3;</code>
+   * @return The senderUid.
    */
   @java.lang.Override
-  public boolean hasPost() {
-    return itemCase_ == 5;
+  public long getSenderUid() {
+    return senderUid_;
   }
   /**
-   * <code>.server.Post post = 5;</code>
+   * <code>int64 sender_uid = 3;</code>
+   * @param value The senderUid to set.
    */
-  @java.lang.Override
-  public com.halloapp.proto.server.Post getPost() {
-    if (itemCase_ == 5) {
-       return (com.halloapp.proto.server.Post) item_;
-    }
-    return com.halloapp.proto.server.Post.getDefaultInstance();
+  private void setSenderUid(long value) {
+    
+    senderUid_ = value;
   }
   /**
-   * <code>.server.Post post = 5;</code>
+   * <code>int64 sender_uid = 3;</code>
    */
-  private void setPost(com.halloapp.proto.server.Post value) {
-    value.getClass();
-  item_ = value;
-    itemCase_ = 5;
-  }
-  /**
-   * <code>.server.Post post = 5;</code>
-   */
-  private void mergePost(com.halloapp.proto.server.Post value) {
-    value.getClass();
-  if (itemCase_ == 5 &&
-        item_ != com.halloapp.proto.server.Post.getDefaultInstance()) {
-      item_ = com.halloapp.proto.server.Post.newBuilder((com.halloapp.proto.server.Post) item_)
-          .mergeFrom(value).buildPartial();
-    } else {
-      item_ = value;
-    }
-    itemCase_ = 5;
-  }
-  /**
-   * <code>.server.Post post = 5;</code>
-   */
-  private void clearPost() {
-    if (itemCase_ == 5) {
-      itemCase_ = 0;
-      item_ = null;
-    }
+  private void clearSenderUid() {
+    
+    senderUid_ = 0L;
   }
 
-  public static final int COMMENT_FIELD_NUMBER = 6;
+  public static final int RECEIVER_UIDS_FIELD_NUMBER = 4;
+  private com.google.protobuf.Internal.LongList receiverUids_;
   /**
-   * <code>.server.Comment comment = 6;</code>
+   * <code>repeated int64 receiver_uids = 4;</code>
+   * @return A list containing the receiverUids.
    */
   @java.lang.Override
-  public boolean hasComment() {
-    return itemCase_ == 6;
+  public java.util.List<java.lang.Long>
+      getReceiverUidsList() {
+    return receiverUids_;
   }
   /**
-   * <code>.server.Comment comment = 6;</code>
+   * <code>repeated int64 receiver_uids = 4;</code>
+   * @return The count of receiverUids.
    */
   @java.lang.Override
-  public com.halloapp.proto.server.Comment getComment() {
-    if (itemCase_ == 6) {
-       return (com.halloapp.proto.server.Comment) item_;
-    }
-    return com.halloapp.proto.server.Comment.getDefaultInstance();
+  public int getReceiverUidsCount() {
+    return receiverUids_.size();
   }
   /**
-   * <code>.server.Comment comment = 6;</code>
+   * <code>repeated int64 receiver_uids = 4;</code>
+   * @param index The index of the element to return.
+   * @return The receiverUids at the given index.
    */
-  private void setComment(com.halloapp.proto.server.Comment value) {
+  @java.lang.Override
+  public long getReceiverUids(int index) {
+    return receiverUids_.getLong(index);
+  }
+  private int receiverUidsMemoizedSerializedSize = -1;
+  private void ensureReceiverUidsIsMutable() {
+    com.google.protobuf.Internal.LongList tmp = receiverUids_;
+    if (!tmp.isModifiable()) {
+      receiverUids_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
+     }
+  }
+  /**
+   * <code>repeated int64 receiver_uids = 4;</code>
+   * @param index The index to set the value at.
+   * @param value The receiverUids to set.
+   */
+  private void setReceiverUids(
+      int index, long value) {
+    ensureReceiverUidsIsMutable();
+    receiverUids_.setLong(index, value);
+  }
+  /**
+   * <code>repeated int64 receiver_uids = 4;</code>
+   * @param value The receiverUids to add.
+   */
+  private void addReceiverUids(long value) {
+    ensureReceiverUidsIsMutable();
+    receiverUids_.addLong(value);
+  }
+  /**
+   * <code>repeated int64 receiver_uids = 4;</code>
+   * @param values The receiverUids to add.
+   */
+  private void addAllReceiverUids(
+      java.lang.Iterable<? extends java.lang.Long> values) {
+    ensureReceiverUidsIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, receiverUids_);
+  }
+  /**
+   * <code>repeated int64 receiver_uids = 4;</code>
+   */
+  private void clearReceiverUids() {
+    receiverUids_ = emptyLongList();
+  }
+
+  public static final int PAYLOAD_FIELD_NUMBER = 5;
+  private com.google.protobuf.ByteString payload_;
+  /**
+   * <code>bytes payload = 5;</code>
+   * @return The payload.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getPayload() {
+    return payload_;
+  }
+  /**
+   * <code>bytes payload = 5;</code>
+   * @param value The payload to set.
+   */
+  private void setPayload(com.google.protobuf.ByteString value) {
     value.getClass();
-  item_ = value;
-    itemCase_ = 6;
+  
+    payload_ = value;
   }
   /**
-   * <code>.server.Comment comment = 6;</code>
+   * <code>bytes payload = 5;</code>
    */
-  private void mergeComment(com.halloapp.proto.server.Comment value) {
+  private void clearPayload() {
+    
+    payload_ = getDefaultInstance().getPayload();
+  }
+
+  public static final int ENC_PAYLOAD_FIELD_NUMBER = 6;
+  private com.google.protobuf.ByteString encPayload_;
+  /**
+   * <pre>
+   * Encrypted payload using the group feed channel.
+   * </pre>
+   *
+   * <code>bytes enc_payload = 6;</code>
+   * @return The encPayload.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getEncPayload() {
+    return encPayload_;
+  }
+  /**
+   * <pre>
+   * Encrypted payload using the group feed channel.
+   * </pre>
+   *
+   * <code>bytes enc_payload = 6;</code>
+   * @param value The encPayload to set.
+   */
+  private void setEncPayload(com.google.protobuf.ByteString value) {
     value.getClass();
-  if (itemCase_ == 6 &&
-        item_ != com.halloapp.proto.server.Comment.getDefaultInstance()) {
-      item_ = com.halloapp.proto.server.Comment.newBuilder((com.halloapp.proto.server.Comment) item_)
-          .mergeFrom(value).buildPartial();
-    } else {
-      item_ = value;
-    }
-    itemCase_ = 6;
+  
+    encPayload_ = value;
   }
   /**
-   * <code>.server.Comment comment = 6;</code>
+   * <pre>
+   * Encrypted payload using the group feed channel.
+   * </pre>
+   *
+   * <code>bytes enc_payload = 6;</code>
    */
-  private void clearComment() {
-    if (itemCase_ == 6) {
-      itemCase_ = 0;
-      item_ = null;
-    }
+  private void clearEncPayload() {
+    
+    encPayload_ = getDefaultInstance().getEncPayload();
   }
 
   public static final int SENDER_STATE_BUNDLES_FIELD_NUMBER = 7;
   private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.SenderStateBundle> senderStateBundles_;
   /**
    * <pre>
-   * Sent by the publisher.
+   * Sent by the sender.
    * </pre>
    *
    * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -458,7 +293,7 @@ public  final class GroupFeedItem extends
   }
   /**
    * <pre>
-   * Sent by the publisher.
+   * Sent by the sender.
    * </pre>
    *
    * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -469,7 +304,7 @@ public  final class GroupFeedItem extends
   }
   /**
    * <pre>
-   * Sent by the publisher.
+   * Sent by the sender.
    * </pre>
    *
    * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -480,7 +315,7 @@ public  final class GroupFeedItem extends
   }
   /**
    * <pre>
-   * Sent by the publisher.
+   * Sent by the sender.
    * </pre>
    *
    * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -491,7 +326,7 @@ public  final class GroupFeedItem extends
   }
   /**
    * <pre>
-   * Sent by the publisher.
+   * Sent by the sender.
    * </pre>
    *
    * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -510,7 +345,7 @@ public  final class GroupFeedItem extends
 
   /**
    * <pre>
-   * Sent by the publisher.
+   * Sent by the sender.
    * </pre>
    *
    * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -523,7 +358,7 @@ public  final class GroupFeedItem extends
   }
   /**
    * <pre>
-   * Sent by the publisher.
+   * Sent by the sender.
    * </pre>
    *
    * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -535,7 +370,7 @@ public  final class GroupFeedItem extends
   }
   /**
    * <pre>
-   * Sent by the publisher.
+   * Sent by the sender.
    * </pre>
    *
    * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -548,7 +383,7 @@ public  final class GroupFeedItem extends
   }
   /**
    * <pre>
-   * Sent by the publisher.
+   * Sent by the sender.
    * </pre>
    *
    * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -561,7 +396,7 @@ public  final class GroupFeedItem extends
   }
   /**
    * <pre>
-   * Sent by the publisher.
+   * Sent by the sender.
    * </pre>
    *
    * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -571,7 +406,7 @@ public  final class GroupFeedItem extends
   }
   /**
    * <pre>
-   * Sent by the publisher.
+   * Sent by the sender.
    * </pre>
    *
    * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -585,7 +420,7 @@ public  final class GroupFeedItem extends
   private com.google.protobuf.ByteString encSenderState_;
   /**
    * <pre>
-   * Meant for the receiver, computed by the server using `sender_state_bundles`.
+   * Meant for the receiver, selected by the server from `sender_state_bundles`.
    * </pre>
    *
    * <code>bytes enc_sender_state = 8;</code>
@@ -597,7 +432,7 @@ public  final class GroupFeedItem extends
   }
   /**
    * <pre>
-   * Meant for the receiver, computed by the server using `sender_state_bundles`.
+   * Meant for the receiver, selected by the server from `sender_state_bundles`.
    * </pre>
    *
    * <code>bytes enc_sender_state = 8;</code>
@@ -610,7 +445,7 @@ public  final class GroupFeedItem extends
   }
   /**
    * <pre>
-   * Meant for the receiver, computed by the server using `sender_state_bundles`.
+   * Meant for the receiver, selected by the server from `sender_state_bundles`.
    * </pre>
    *
    * <code>bytes enc_sender_state = 8;</code>
@@ -647,73 +482,73 @@ public  final class GroupFeedItem extends
     audienceHash_ = getDefaultInstance().getAudienceHash();
   }
 
-  public static com.halloapp.proto.server.GroupFeedItem parseFrom(
+  public static com.halloapp.proto.server.HistoryResend parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data);
   }
-  public static com.halloapp.proto.server.GroupFeedItem parseFrom(
+  public static com.halloapp.proto.server.HistoryResend parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data, extensionRegistry);
   }
-  public static com.halloapp.proto.server.GroupFeedItem parseFrom(
+  public static com.halloapp.proto.server.HistoryResend parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data);
   }
-  public static com.halloapp.proto.server.GroupFeedItem parseFrom(
+  public static com.halloapp.proto.server.HistoryResend parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data, extensionRegistry);
   }
-  public static com.halloapp.proto.server.GroupFeedItem parseFrom(byte[] data)
+  public static com.halloapp.proto.server.HistoryResend parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data);
   }
-  public static com.halloapp.proto.server.GroupFeedItem parseFrom(
+  public static com.halloapp.proto.server.HistoryResend parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data, extensionRegistry);
   }
-  public static com.halloapp.proto.server.GroupFeedItem parseFrom(java.io.InputStream input)
+  public static com.halloapp.proto.server.HistoryResend parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, input);
   }
-  public static com.halloapp.proto.server.GroupFeedItem parseFrom(
+  public static com.halloapp.proto.server.HistoryResend parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, input, extensionRegistry);
   }
-  public static com.halloapp.proto.server.GroupFeedItem parseDelimitedFrom(java.io.InputStream input)
+  public static com.halloapp.proto.server.HistoryResend parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return parseDelimitedFrom(DEFAULT_INSTANCE, input);
   }
-  public static com.halloapp.proto.server.GroupFeedItem parseDelimitedFrom(
+  public static com.halloapp.proto.server.HistoryResend parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
   }
-  public static com.halloapp.proto.server.GroupFeedItem parseFrom(
+  public static com.halloapp.proto.server.HistoryResend parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, input);
   }
-  public static com.halloapp.proto.server.GroupFeedItem parseFrom(
+  public static com.halloapp.proto.server.HistoryResend parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -724,84 +559,26 @@ public  final class GroupFeedItem extends
   public static Builder newBuilder() {
     return (Builder) DEFAULT_INSTANCE.createBuilder();
   }
-  public static Builder newBuilder(com.halloapp.proto.server.GroupFeedItem prototype) {
+  public static Builder newBuilder(com.halloapp.proto.server.HistoryResend prototype) {
     return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
   }
 
   /**
-   * Protobuf type {@code server.GroupFeedItem}
+   * Protobuf type {@code server.HistoryResend}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageLite.Builder<
-        com.halloapp.proto.server.GroupFeedItem, Builder> implements
-      // @@protoc_insertion_point(builder_implements:server.GroupFeedItem)
-      com.halloapp.proto.server.GroupFeedItemOrBuilder {
-    // Construct using com.halloapp.proto.server.GroupFeedItem.newBuilder()
+        com.halloapp.proto.server.HistoryResend, Builder> implements
+      // @@protoc_insertion_point(builder_implements:server.HistoryResend)
+      com.halloapp.proto.server.HistoryResendOrBuilder {
+    // Construct using com.halloapp.proto.server.HistoryResend.newBuilder()
     private Builder() {
       super(DEFAULT_INSTANCE);
     }
 
-    @java.lang.Override
-    public ItemCase
-        getItemCase() {
-      return instance.getItemCase();
-    }
-
-    public Builder clearItem() {
-      copyOnWrite();
-      instance.clearItem();
-      return this;
-    }
-
 
     /**
-     * <code>.server.GroupFeedItem.Action action = 1;</code>
-     * @return The enum numeric value on the wire for action.
-     */
-    @java.lang.Override
-    public int getActionValue() {
-      return instance.getActionValue();
-    }
-    /**
-     * <code>.server.GroupFeedItem.Action action = 1;</code>
-     * @param value The action to set.
-     * @return This builder for chaining.
-     */
-    public Builder setActionValue(int value) {
-      copyOnWrite();
-      instance.setActionValue(value);
-      return this;
-    }
-    /**
-     * <code>.server.GroupFeedItem.Action action = 1;</code>
-     * @return The action.
-     */
-    @java.lang.Override
-    public com.halloapp.proto.server.GroupFeedItem.Action getAction() {
-      return instance.getAction();
-    }
-    /**
-     * <code>.server.GroupFeedItem.Action action = 1;</code>
-     * @param value The enum numeric value on the wire for action to set.
-     * @return This builder for chaining.
-     */
-    public Builder setAction(com.halloapp.proto.server.GroupFeedItem.Action value) {
-      copyOnWrite();
-      instance.setAction(value);
-      return this;
-    }
-    /**
-     * <code>.server.GroupFeedItem.Action action = 1;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearAction() {
-      copyOnWrite();
-      instance.clearAction();
-      return this;
-    }
-
-    /**
-     * <code>string gid = 2;</code>
+     * <code>string gid = 1;</code>
      * @return The gid.
      */
     @java.lang.Override
@@ -809,7 +586,7 @@ public  final class GroupFeedItem extends
       return instance.getGid();
     }
     /**
-     * <code>string gid = 2;</code>
+     * <code>string gid = 1;</code>
      * @return The bytes for gid.
      */
     @java.lang.Override
@@ -818,7 +595,7 @@ public  final class GroupFeedItem extends
       return instance.getGidBytes();
     }
     /**
-     * <code>string gid = 2;</code>
+     * <code>string gid = 1;</code>
      * @param value The gid to set.
      * @return This builder for chaining.
      */
@@ -829,7 +606,7 @@ public  final class GroupFeedItem extends
       return this;
     }
     /**
-     * <code>string gid = 2;</code>
+     * <code>string gid = 1;</code>
      * @return This builder for chaining.
      */
     public Builder clearGid() {
@@ -838,7 +615,7 @@ public  final class GroupFeedItem extends
       return this;
     }
     /**
-     * <code>string gid = 2;</code>
+     * <code>string gid = 1;</code>
      * @param value The bytes for gid to set.
      * @return This builder for chaining.
      */
@@ -850,202 +627,222 @@ public  final class GroupFeedItem extends
     }
 
     /**
-     * <code>string name = 3;</code>
-     * @return The name.
+     * <code>string id = 2;</code>
+     * @return The id.
      */
     @java.lang.Override
-    public java.lang.String getName() {
-      return instance.getName();
+    public java.lang.String getId() {
+      return instance.getId();
     }
     /**
-     * <code>string name = 3;</code>
-     * @return The bytes for name.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getNameBytes() {
-      return instance.getNameBytes();
-    }
-    /**
-     * <code>string name = 3;</code>
-     * @param value The name to set.
-     * @return This builder for chaining.
-     */
-    public Builder setName(
-        java.lang.String value) {
-      copyOnWrite();
-      instance.setName(value);
-      return this;
-    }
-    /**
-     * <code>string name = 3;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearName() {
-      copyOnWrite();
-      instance.clearName();
-      return this;
-    }
-    /**
-     * <code>string name = 3;</code>
-     * @param value The bytes for name to set.
-     * @return This builder for chaining.
-     */
-    public Builder setNameBytes(
-        com.google.protobuf.ByteString value) {
-      copyOnWrite();
-      instance.setNameBytes(value);
-      return this;
-    }
-
-    /**
-     * <code>string avatar_id = 4;</code>
-     * @return The avatarId.
-     */
-    @java.lang.Override
-    public java.lang.String getAvatarId() {
-      return instance.getAvatarId();
-    }
-    /**
-     * <code>string avatar_id = 4;</code>
-     * @return The bytes for avatarId.
+     * <code>string id = 2;</code>
+     * @return The bytes for id.
      */
     @java.lang.Override
     public com.google.protobuf.ByteString
-        getAvatarIdBytes() {
-      return instance.getAvatarIdBytes();
+        getIdBytes() {
+      return instance.getIdBytes();
     }
     /**
-     * <code>string avatar_id = 4;</code>
-     * @param value The avatarId to set.
+     * <code>string id = 2;</code>
+     * @param value The id to set.
      * @return This builder for chaining.
      */
-    public Builder setAvatarId(
+    public Builder setId(
         java.lang.String value) {
       copyOnWrite();
-      instance.setAvatarId(value);
+      instance.setId(value);
       return this;
     }
     /**
-     * <code>string avatar_id = 4;</code>
+     * <code>string id = 2;</code>
      * @return This builder for chaining.
      */
-    public Builder clearAvatarId() {
+    public Builder clearId() {
       copyOnWrite();
-      instance.clearAvatarId();
+      instance.clearId();
       return this;
     }
     /**
-     * <code>string avatar_id = 4;</code>
-     * @param value The bytes for avatarId to set.
+     * <code>string id = 2;</code>
+     * @param value The bytes for id to set.
      * @return This builder for chaining.
      */
-    public Builder setAvatarIdBytes(
+    public Builder setIdBytes(
         com.google.protobuf.ByteString value) {
       copyOnWrite();
-      instance.setAvatarIdBytes(value);
+      instance.setIdBytes(value);
       return this;
     }
 
     /**
-     * <code>.server.Post post = 5;</code>
+     * <code>int64 sender_uid = 3;</code>
+     * @return The senderUid.
      */
     @java.lang.Override
-    public boolean hasPost() {
-      return instance.hasPost();
+    public long getSenderUid() {
+      return instance.getSenderUid();
     }
     /**
-     * <code>.server.Post post = 5;</code>
+     * <code>int64 sender_uid = 3;</code>
+     * @param value The senderUid to set.
+     * @return This builder for chaining.
      */
-    @java.lang.Override
-    public com.halloapp.proto.server.Post getPost() {
-      return instance.getPost();
-    }
-    /**
-     * <code>.server.Post post = 5;</code>
-     */
-    public Builder setPost(com.halloapp.proto.server.Post value) {
+    public Builder setSenderUid(long value) {
       copyOnWrite();
-      instance.setPost(value);
+      instance.setSenderUid(value);
       return this;
     }
     /**
-     * <code>.server.Post post = 5;</code>
+     * <code>int64 sender_uid = 3;</code>
+     * @return This builder for chaining.
      */
-    public Builder setPost(
-        com.halloapp.proto.server.Post.Builder builderForValue) {
+    public Builder clearSenderUid() {
       copyOnWrite();
-      instance.setPost(builderForValue.build());
-      return this;
-    }
-    /**
-     * <code>.server.Post post = 5;</code>
-     */
-    public Builder mergePost(com.halloapp.proto.server.Post value) {
-      copyOnWrite();
-      instance.mergePost(value);
-      return this;
-    }
-    /**
-     * <code>.server.Post post = 5;</code>
-     */
-    public Builder clearPost() {
-      copyOnWrite();
-      instance.clearPost();
+      instance.clearSenderUid();
       return this;
     }
 
     /**
-     * <code>.server.Comment comment = 6;</code>
+     * <code>repeated int64 receiver_uids = 4;</code>
+     * @return A list containing the receiverUids.
      */
     @java.lang.Override
-    public boolean hasComment() {
-      return instance.hasComment();
+    public java.util.List<java.lang.Long>
+        getReceiverUidsList() {
+      return java.util.Collections.unmodifiableList(
+          instance.getReceiverUidsList());
     }
     /**
-     * <code>.server.Comment comment = 6;</code>
+     * <code>repeated int64 receiver_uids = 4;</code>
+     * @return The count of receiverUids.
      */
     @java.lang.Override
-    public com.halloapp.proto.server.Comment getComment() {
-      return instance.getComment();
+    public int getReceiverUidsCount() {
+      return instance.getReceiverUidsCount();
     }
     /**
-     * <code>.server.Comment comment = 6;</code>
+     * <code>repeated int64 receiver_uids = 4;</code>
+     * @param index The index of the element to return.
+     * @return The receiverUids at the given index.
      */
-    public Builder setComment(com.halloapp.proto.server.Comment value) {
+    @java.lang.Override
+    public long getReceiverUids(int index) {
+      return instance.getReceiverUids(index);
+    }
+    /**
+     * <code>repeated int64 receiver_uids = 4;</code>
+     * @param value The receiverUids to set.
+     * @return This builder for chaining.
+     */
+    public Builder setReceiverUids(
+        int index, long value) {
       copyOnWrite();
-      instance.setComment(value);
+      instance.setReceiverUids(index, value);
       return this;
     }
     /**
-     * <code>.server.Comment comment = 6;</code>
+     * <code>repeated int64 receiver_uids = 4;</code>
+     * @param value The receiverUids to add.
+     * @return This builder for chaining.
      */
-    public Builder setComment(
-        com.halloapp.proto.server.Comment.Builder builderForValue) {
+    public Builder addReceiverUids(long value) {
       copyOnWrite();
-      instance.setComment(builderForValue.build());
+      instance.addReceiverUids(value);
       return this;
     }
     /**
-     * <code>.server.Comment comment = 6;</code>
+     * <code>repeated int64 receiver_uids = 4;</code>
+     * @param values The receiverUids to add.
+     * @return This builder for chaining.
      */
-    public Builder mergeComment(com.halloapp.proto.server.Comment value) {
+    public Builder addAllReceiverUids(
+        java.lang.Iterable<? extends java.lang.Long> values) {
       copyOnWrite();
-      instance.mergeComment(value);
+      instance.addAllReceiverUids(values);
       return this;
     }
     /**
-     * <code>.server.Comment comment = 6;</code>
+     * <code>repeated int64 receiver_uids = 4;</code>
+     * @return This builder for chaining.
      */
-    public Builder clearComment() {
+    public Builder clearReceiverUids() {
       copyOnWrite();
-      instance.clearComment();
+      instance.clearReceiverUids();
+      return this;
+    }
+
+    /**
+     * <code>bytes payload = 5;</code>
+     * @return The payload.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getPayload() {
+      return instance.getPayload();
+    }
+    /**
+     * <code>bytes payload = 5;</code>
+     * @param value The payload to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPayload(com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setPayload(value);
+      return this;
+    }
+    /**
+     * <code>bytes payload = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPayload() {
+      copyOnWrite();
+      instance.clearPayload();
       return this;
     }
 
     /**
      * <pre>
-     * Sent by the publisher.
+     * Encrypted payload using the group feed channel.
+     * </pre>
+     *
+     * <code>bytes enc_payload = 6;</code>
+     * @return The encPayload.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getEncPayload() {
+      return instance.getEncPayload();
+    }
+    /**
+     * <pre>
+     * Encrypted payload using the group feed channel.
+     * </pre>
+     *
+     * <code>bytes enc_payload = 6;</code>
+     * @param value The encPayload to set.
+     * @return This builder for chaining.
+     */
+    public Builder setEncPayload(com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setEncPayload(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Encrypted payload using the group feed channel.
+     * </pre>
+     *
+     * <code>bytes enc_payload = 6;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearEncPayload() {
+      copyOnWrite();
+      instance.clearEncPayload();
+      return this;
+    }
+
+    /**
+     * <pre>
+     * Sent by the sender.
      * </pre>
      *
      * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -1057,7 +854,7 @@ public  final class GroupFeedItem extends
     }
     /**
      * <pre>
-     * Sent by the publisher.
+     * Sent by the sender.
      * </pre>
      *
      * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -1067,7 +864,7 @@ public  final class GroupFeedItem extends
       return instance.getSenderStateBundlesCount();
     }/**
      * <pre>
-     * Sent by the publisher.
+     * Sent by the sender.
      * </pre>
      *
      * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -1078,7 +875,7 @@ public  final class GroupFeedItem extends
     }
     /**
      * <pre>
-     * Sent by the publisher.
+     * Sent by the sender.
      * </pre>
      *
      * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -1091,7 +888,7 @@ public  final class GroupFeedItem extends
     }
     /**
      * <pre>
-     * Sent by the publisher.
+     * Sent by the sender.
      * </pre>
      *
      * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -1105,7 +902,7 @@ public  final class GroupFeedItem extends
     }
     /**
      * <pre>
-     * Sent by the publisher.
+     * Sent by the sender.
      * </pre>
      *
      * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -1117,7 +914,7 @@ public  final class GroupFeedItem extends
     }
     /**
      * <pre>
-     * Sent by the publisher.
+     * Sent by the sender.
      * </pre>
      *
      * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -1130,7 +927,7 @@ public  final class GroupFeedItem extends
     }
     /**
      * <pre>
-     * Sent by the publisher.
+     * Sent by the sender.
      * </pre>
      *
      * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -1143,7 +940,7 @@ public  final class GroupFeedItem extends
     }
     /**
      * <pre>
-     * Sent by the publisher.
+     * Sent by the sender.
      * </pre>
      *
      * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -1157,7 +954,7 @@ public  final class GroupFeedItem extends
     }
     /**
      * <pre>
-     * Sent by the publisher.
+     * Sent by the sender.
      * </pre>
      *
      * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -1170,7 +967,7 @@ public  final class GroupFeedItem extends
     }
     /**
      * <pre>
-     * Sent by the publisher.
+     * Sent by the sender.
      * </pre>
      *
      * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -1182,7 +979,7 @@ public  final class GroupFeedItem extends
     }
     /**
      * <pre>
-     * Sent by the publisher.
+     * Sent by the sender.
      * </pre>
      *
      * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
@@ -1195,7 +992,7 @@ public  final class GroupFeedItem extends
 
     /**
      * <pre>
-     * Meant for the receiver, computed by the server using `sender_state_bundles`.
+     * Meant for the receiver, selected by the server from `sender_state_bundles`.
      * </pre>
      *
      * <code>bytes enc_sender_state = 8;</code>
@@ -1207,7 +1004,7 @@ public  final class GroupFeedItem extends
     }
     /**
      * <pre>
-     * Meant for the receiver, computed by the server using `sender_state_bundles`.
+     * Meant for the receiver, selected by the server from `sender_state_bundles`.
      * </pre>
      *
      * <code>bytes enc_sender_state = 8;</code>
@@ -1221,7 +1018,7 @@ public  final class GroupFeedItem extends
     }
     /**
      * <pre>
-     * Meant for the receiver, computed by the server using `sender_state_bundles`.
+     * Meant for the receiver, selected by the server from `sender_state_bundles`.
      * </pre>
      *
      * <code>bytes enc_sender_state = 8;</code>
@@ -1261,7 +1058,7 @@ public  final class GroupFeedItem extends
       return this;
     }
 
-    // @@protoc_insertion_point(builder_scope:server.GroupFeedItem)
+    // @@protoc_insertion_point(builder_scope:server.HistoryResend)
   }
   @java.lang.Override
   @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
@@ -1270,29 +1067,27 @@ public  final class GroupFeedItem extends
       java.lang.Object arg0, java.lang.Object arg1) {
     switch (method) {
       case NEW_MUTABLE_INSTANCE: {
-        return new com.halloapp.proto.server.GroupFeedItem();
+        return new com.halloapp.proto.server.HistoryResend();
       }
       case NEW_BUILDER: {
         return new Builder();
       }
       case BUILD_MESSAGE_INFO: {
           java.lang.Object[] objects = new java.lang.Object[] {
-            "item_",
-            "itemCase_",
-            "action_",
             "gid_",
-            "name_",
-            "avatarId_",
-            com.halloapp.proto.server.Post.class,
-            com.halloapp.proto.server.Comment.class,
+            "id_",
+            "senderUid_",
+            "receiverUids_",
+            "payload_",
+            "encPayload_",
             "senderStateBundles_",
             com.halloapp.proto.server.SenderStateBundle.class,
             "encSenderState_",
             "audienceHash_",
           };
           java.lang.String info =
-              "\u0000\t\u0001\u0000\u0001\t\t\u0000\u0001\u0000\u0001\f\u0002\u0208\u0003\u0208" +
-              "\u0004\u0208\u0005<\u0000\u0006<\u0000\u0007\u001b\b\n\t\n";
+              "\u0000\t\u0000\u0000\u0001\t\t\u0000\u0002\u0000\u0001\u0208\u0002\u0208\u0003\u0002" +
+              "\u0004%\u0005\n\u0006\n\u0007\u001b\b\n\t\n";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
@@ -1300,13 +1095,13 @@ public  final class GroupFeedItem extends
         return DEFAULT_INSTANCE;
       }
       case GET_PARSER: {
-        com.google.protobuf.Parser<com.halloapp.proto.server.GroupFeedItem> parser = PARSER;
+        com.google.protobuf.Parser<com.halloapp.proto.server.HistoryResend> parser = PARSER;
         if (parser == null) {
-          synchronized (com.halloapp.proto.server.GroupFeedItem.class) {
+          synchronized (com.halloapp.proto.server.HistoryResend.class) {
             parser = PARSER;
             if (parser == null) {
               parser =
-                  new DefaultInstanceBasedParser<com.halloapp.proto.server.GroupFeedItem>(
+                  new DefaultInstanceBasedParser<com.halloapp.proto.server.HistoryResend>(
                       DEFAULT_INSTANCE);
               PARSER = parser;
             }
@@ -1325,24 +1120,24 @@ public  final class GroupFeedItem extends
   }
 
 
-  // @@protoc_insertion_point(class_scope:server.GroupFeedItem)
-  private static final com.halloapp.proto.server.GroupFeedItem DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:server.HistoryResend)
+  private static final com.halloapp.proto.server.HistoryResend DEFAULT_INSTANCE;
   static {
-    GroupFeedItem defaultInstance = new GroupFeedItem();
+    HistoryResend defaultInstance = new HistoryResend();
     // New instances are implicitly immutable so no need to make
     // immutable.
     DEFAULT_INSTANCE = defaultInstance;
     com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
-      GroupFeedItem.class, defaultInstance);
+      HistoryResend.class, defaultInstance);
   }
 
-  public static com.halloapp.proto.server.GroupFeedItem getDefaultInstance() {
+  public static com.halloapp.proto.server.HistoryResend getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static volatile com.google.protobuf.Parser<GroupFeedItem> PARSER;
+  private static volatile com.google.protobuf.Parser<HistoryResend> PARSER;
 
-  public static com.google.protobuf.Parser<GroupFeedItem> parser() {
+  public static com.google.protobuf.Parser<HistoryResend> parser() {
     return DEFAULT_INSTANCE.getParserForType();
   }
 }

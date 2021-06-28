@@ -38,4 +38,15 @@ public interface GroupFeedRerequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getIdBytes();
+
+  /**
+   * <code>.server.GroupFeedRerequest.RerequestType rerequest_type = 3;</code>
+   * @return The enum numeric value on the wire for rerequestType.
+   */
+  int getRerequestTypeValue();
+  /**
+   * <code>.server.GroupFeedRerequest.RerequestType rerequest_type = 3;</code>
+   * @return The rerequestType.
+   */
+  com.halloapp.proto.server.GroupFeedRerequest.RerequestType getRerequestType();
 }

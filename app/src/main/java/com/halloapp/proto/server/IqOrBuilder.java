@@ -316,5 +316,27 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.GroupInviteLink getGroupInviteLink();
 
+  /**
+   * <code>.server.HistoryResend history_resend = 32;</code>
+   * @return Whether the historyResend field is set.
+   */
+  boolean hasHistoryResend();
+  /**
+   * <code>.server.HistoryResend history_resend = 32;</code>
+   * @return The historyResend.
+   */
+  com.halloapp.proto.server.HistoryResend getHistoryResend();
+
+  /**
+   * <code>.server.ExportData export_data = 33;</code>
+   * @return Whether the exportData field is set.
+   */
+  boolean hasExportData();
+  /**
+   * <code>.server.ExportData export_data = 33;</code>
+   * @return The exportData.
+   */
+  com.halloapp.proto.server.ExportData getExportData();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }
