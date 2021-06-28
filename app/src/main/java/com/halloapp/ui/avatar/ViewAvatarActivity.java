@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.transition.Transition;
+import android.transition.TransitionSet;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -14,6 +16,7 @@ import com.github.chrisbanes.photoview.PhotoView;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.RadiusTransition;
 import com.halloapp.util.Preconditions;
 
 public class ViewAvatarActivity extends HalloActivity {
@@ -54,5 +57,24 @@ public class ViewAvatarActivity extends HalloActivity {
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         Preconditions.checkNotNull(getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_arrow_left_stroke);
+
+        TransitionSet enterTransition =  createTransitionSet(getWindow().getSharedElementEnterTransition());
+        Transition toSquare = RadiusTransition.toSquare();
+        enterTransition.addTransition(toSquare);
+        getWindow().setSharedElementEnterTransition(enterTransition);
+
+        TransitionSet returnTransition = createTransitionSet(getWindow().getSharedElementReturnTransition());
+        Transition toCircle = RadiusTransition.toCircle();
+        returnTransition.addTransition(toCircle);
+        getWindow().setSharedElementReturnTransition(returnTransition);
+    }
+
+    private TransitionSet createTransitionSet(Transition transition) {
+        if (transition instanceof TransitionSet) {
+            return ((TransitionSet) transition).clone();
+        }
+        TransitionSet set = new TransitionSet();
+        set.addTransition(transition);
+        return set;
     }
 }
