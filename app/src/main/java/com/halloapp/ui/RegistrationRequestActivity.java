@@ -92,10 +92,13 @@ public class RegistrationRequestActivity extends HalloActivity {
         loadingProgressBar = findViewById(R.id.loading);
         nextButton = findViewById(R.id.next);
 
+        final TextView titleView = findViewById(R.id.title);
         if (getIntent().getBooleanExtra(EXTRA_RE_VERIFY, false)) {
-            final TextView titleView = findViewById(R.id.title);
+            titleView.setVisibility(View.VISIBLE);
             titleView.setText(R.string.reverify_registration_title);
             findViewById(R.id.name_layout).setVisibility(View.GONE);
+        } else {
+            titleView.setVisibility(View.GONE);
         }
         Notifications.getInstance(this).clearLoginFailedNotification();
 
@@ -135,7 +138,6 @@ public class RegistrationRequestActivity extends HalloActivity {
                     SnackbarHelper.showInfo(this, R.string.registration_failed);
                 }
                 nextButton.setVisibility(View.VISIBLE);
-                phoneNumberEditText.setEnabled(true);
                 countryCodePicker.setCcpClickable(true);
             }
             loadingProgressBar.setVisibility(View.INVISIBLE );
@@ -246,7 +248,6 @@ public class RegistrationRequestActivity extends HalloActivity {
 
         loadingProgressBar.setVisibility(View.VISIBLE);
         nextButton.setVisibility(View.INVISIBLE);
-        phoneNumberEditText.setEnabled(false);
         countryCodePicker.setCcpClickable(false);
         Log.i("RegistrationRequestActivity.startRegistrationRequest for " + countryCodePicker.getFullNumber());
 
