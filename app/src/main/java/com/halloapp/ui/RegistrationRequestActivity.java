@@ -147,6 +147,22 @@ public class RegistrationRequestActivity extends HalloActivity {
             }
             return false;
         });
+        phoneNumberEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateNextButton();
+            }
+        });
 
         final TextView counterView = findViewById(R.id.counter);
         nameEditText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(Constants.MAX_NAME_LENGTH)});
@@ -163,11 +179,19 @@ public class RegistrationRequestActivity extends HalloActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                updateNextButton();
             }
         });
         nameEditText.requestFocus();
 
         findViewById(R.id.next).setOnClickListener(v -> startRegistrationRequest());
+
+        updateNextButton();
+    }
+
+    private void updateNextButton() {
+        nextButton.setEnabled(!TextUtils.isEmpty(nameEditText.getText().toString())
+                && countryCodePicker.isValidFullNumber());
     }
 
     @Override
