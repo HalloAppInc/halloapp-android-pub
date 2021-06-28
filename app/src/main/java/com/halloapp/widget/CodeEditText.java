@@ -124,7 +124,7 @@ public class CodeEditText extends AppCompatEditText {
         textPaint.setColor(getCurrentTextColor());
         textPaint.setTextSize(textSize);
         textPaint.setTextAlign(Paint.Align.CENTER);
-        textPaint.setTypeface(Typeface.DEFAULT_BOLD);
+        textPaint.setTypeface(Typeface.DEFAULT);
 
         final float xOffset = left + width / 2f - ((cellSize + cellSpacing) * codeLength) / 2 + cellSpacing/2;
         for (int i = 0; i < codeLength; i++) {

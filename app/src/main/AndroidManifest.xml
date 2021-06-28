@@ -54,7 +54,7 @@
             android:name=".ui.RegistrationVerificationActivity"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysVisible" />
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
 
         <activity
             android:name=".ui.RegistrationRequestActivity"

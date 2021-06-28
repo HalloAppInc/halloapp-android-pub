@@ -286,6 +286,7 @@
 
     <style name="Widget.Button.Secondary" parent="Widget.Button">
         <item name="backgroundTint">@color/secondary_button_color_selector</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="Widget.Button" parent="@style/Widget.MaterialComponents.Button">

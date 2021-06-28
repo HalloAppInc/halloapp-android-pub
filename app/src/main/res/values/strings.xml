@@ -52,9 +52,9 @@
     <!-- message when user requests a voice call -->
     <string name="registration_phone_code_progress">Requesting code via phone call…</string>
     <!-- button to request another sms code -->
-    <string name="resend_sms">Resend SMS</string>
+    <string name="resend_sms">Resend SMS Code</string>
     <!-- button to request registration code via phone call -->
-    <string name="call_me">Call me</string>
+    <string name="request_call">Request a Call</string>
     <string name="type_a_message_hint">Type a message</string>
     <string name="write_a_description">Write a description</string>
     <string name="write_a_post">Write a post</string>
