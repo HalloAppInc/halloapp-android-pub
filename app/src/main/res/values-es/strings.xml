@@ -588,10 +588,7 @@ Puedes compartir estas historias con todos tus contactos o solo con las personas
     <string name="registration_phone_code_progress">"Requesting code via phone call…"</string>
 
     <!-- button to request another sms code -->
-    <string name="resend_sms">"Resend SMS"</string>
-
-    <!-- button to request registration code via phone call -->
-    <string name="call_me">"Call me"</string>
+    <string name="resend_sms">"Resend SMS Code"</string>
     <string name="verify_keys">"Verify keys"</string>
 
     <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
@@ -681,4 +678,30 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Shown for when a user wants to request to download all of their data in a GDPR-compliant manner -->
     <string name="request_data_title">"Get my data"</string>
+
+    <!-- Explanation for why we need storage permissions when using save to gallery feature -->
+    <string name="save_to_gallery_storage_permission_rationale">"To save the media to the gallery we need permission to access your device storage"</string>
+
+    <!-- Explanation for why we need storage permissions when using save to gallery feature. This is used when the user needs to manually go to their settings -->
+    <string name="save_to_gallery_storage_permission_rationale_denied">"To save the media to the gallery we need permission to access your device storage.
+
+Open the app settings screen to modify app permissions."</string>
+
+    <!-- Message when we successfully save post media to gallery -->
+    <string name="media_saved_to_gallery">"Saved to gallery"</string>
+
+    <!-- Message when we failed to save post media to gallery -->
+    <string name="media_save_to_gallery_failed">"Failed to save to gallery"</string>
+
+    <!-- Menu option to delete a post -->
+    <string name="delete_post">"Delete post"</string>
+
+    <!-- Option to save a photo/video to the user's gallery -->
+    <string name="save_to_gallery">"Save to gallery"</string>
+
+    <!-- Title for the user's post -->
+    <string name="my_post">"My post"</string>
+
+    <!-- button to request registration code via phone call -->
+    <string name="request_call">"Request a Call"</string>
 </resources>
