@@ -47,6 +47,7 @@ import com.halloapp.xmpp.Connection;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -86,6 +87,20 @@ public class ChatViewModel extends AndroidViewModel {
 
     private final BlockListManager.Observer blockListObserver = () -> {
         blockListLiveData.invalidate();
+    };
+
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
+        @Override
+        public void onNewContacts(@NonNull Collection<UserId> newContacts) {
+            contact.invalidate();
+            name.invalidate();
+        }
+
+        @Override
+        public void onContactsChanged() {
+            contact.invalidate();
+            name.invalidate();
+        }
     };
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
@@ -163,6 +178,7 @@ public class ChatViewModel extends AndroidViewModel {
         contentDb.addObserver(contentObserver);
         connection = Connection.getInstance();
         contactsDb = ContactsDb.getInstance();
+        contactsDb.addObserver(contactsObserver);
         serverProps = ServerProps.getInstance();
 
         blockListManager = BlockListManager.getInstance();
@@ -395,6 +411,7 @@ public class ChatViewModel extends AndroidViewModel {
 
     @Override
     protected void onCleared() {
+        contactsDb.removeObserver(contactsObserver);
         contentDb.removeObserver(contentObserver);
         blockListManager.removeObserver(blockListObserver);
         mainHandler.removeCallbacks(resetComposingRunnable);

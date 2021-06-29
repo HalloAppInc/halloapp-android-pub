@@ -20,13 +20,13 @@ import androidx.paging.PagedList;
 import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.content.Message;
-import com.halloapp.id.ChatId;
-import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostsDataSource;
+import com.halloapp.id.ChatId;
+import com.halloapp.id.UserId;
 import com.halloapp.privacy.BlockListManager;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
@@ -34,6 +34,7 @@ import com.halloapp.util.DelayedProgressLiveData;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 
+import java.util.Collection;
 import java.util.List;
 
 public class ProfileViewModel extends ViewModel {
@@ -118,9 +119,22 @@ public class ProfileViewModel extends ViewModel {
         }
     };
 
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
+        @Override
+        public void onContactsChanged() {
+            contactLiveData.invalidate();
+        }
+
+        @Override
+        public void onNewContacts(@NonNull Collection<UserId> newContacts) {
+            contactLiveData.invalidate();
+        }
+    };
+
     public ProfileViewModel(@NonNull UserId userId) {
         this.userId = userId;
 
+        contactsDb.addObserver(contactsObserver);
         contentDb.addObserver(contentObserver);
 
         dataSourceFactory = new PostsDataSource.Factory(contentDb, userId);
@@ -241,6 +255,7 @@ public class ProfileViewModel extends ViewModel {
 
     @Override
     protected void onCleared() {
+        contactsDb.removeObserver(contactsObserver);
         contentDb.removeObserver(contentObserver);
         blockListManager.removeObserver(this::updateIsBlocked);
     }
