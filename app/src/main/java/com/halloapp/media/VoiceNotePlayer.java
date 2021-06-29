@@ -27,9 +27,8 @@ public class VoiceNotePlayer implements SensorEventListener {
 
     private MediaPlayer mediaPlayer;
 
-    private HandlerThread voiceNoteHandlerThread;
-
-    private Handler voiceNoteHandler;
+    private final HandlerThread voiceNoteHandlerThread;
+    private final Handler voiceNoteHandler;
 
     private String currentAudio;
 
@@ -40,7 +39,7 @@ public class VoiceNotePlayer implements SensorEventListener {
     private SensorManager sensorManager;
     private Sensor proximitySensor;
 
-    private PowerManager powerManager;
+    private final PowerManager powerManager;
     private PowerManager.WakeLock wakeLock;
 
 

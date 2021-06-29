@@ -49,8 +49,6 @@ public class ContentDb {
     private final FutureProofDb futureProofDb;
     private final PostsDb postsDb;
 
-    private final ServerProps serverProps;
-
     public interface Observer {
         void onPostAdded(@NonNull Post post);
         void onPostRetracted(@NonNull Post post);
@@ -126,7 +124,6 @@ public class ContentDb {
         Context context = appContext.get();
         databaseHelper = new ContentDbHelper(context.getApplicationContext(), observers);
         this.me = me;
-        this.serverProps = serverProps;
 
         mentionsDb = new MentionsDb(databaseHelper);
         mediaDb = new MediaDb(databaseHelper, fileStore);
@@ -466,11 +463,6 @@ public class ContentDb {
             return null;
         }
         return posts.get(0);
-    }
-
-    @WorkerThread
-    @NonNull List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, @Nullable UserId senderUserId) {
-        return getPosts(timestamp, count, after, senderUserId,null);
     }
 
     @WorkerThread

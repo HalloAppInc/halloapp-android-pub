@@ -25,8 +25,8 @@ public class NetworkConnectivityManager {
         return instance;
     }
 
-    private MediatorLiveData<NetworkInfo> networkInfoLiveData;
-    private MutableLiveData<Boolean> airplaneModeLiveData;
+    private final MediatorLiveData<NetworkInfo> networkInfoLiveData;
+    private final MutableLiveData<Boolean> airplaneModeLiveData;
 
     private NetworkConnectivityManager() {
         airplaneModeLiveData = new MutableLiveData<>();

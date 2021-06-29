@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.widget.ImageView;
 
 import androidx.annotation.MainThread;
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.collection.LruCache;
+import androidx.core.content.ContextCompat;
 
 import com.halloapp.AppContext;
 import com.halloapp.FileStore;
@@ -46,14 +48,13 @@ import java.util.concurrent.ExecutionException;
 
 public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
-    private static final long AVATAR_DATA_EXPIRATION_MS = 7 * 24 * 60 * 60 * 1000; // a week
+    private static final long AVATAR_DATA_EXPIRATION_MS = DateUtils.WEEK_IN_MILLIS;
 
     private static AvatarLoader instance;
 
     private final Context context;
     private final Connection connection;
     private final ContactsDb contactsDb;
-    private final ServerProps serverProps;
     private final LruCache<String, Bitmap> cache;
 
     private Drawable defaultUserAvatar;
@@ -65,18 +66,17 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         if (instance == null) {
             synchronized (AvatarLoader.class) {
                 if (instance == null) {
-                    instance = new AvatarLoader(AppContext.getInstance().get(), Connection.getInstance(), ContactsDb.getInstance(), ServerProps.getInstance());
+                    instance = new AvatarLoader(AppContext.getInstance().get(), Connection.getInstance(), ContactsDb.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private AvatarLoader(@NonNull Context context, @NonNull Connection connection, @NonNull ContactsDb contactsDb, @NonNull ServerProps serverProps) {
+    private AvatarLoader(@NonNull Context context, @NonNull Connection connection, @NonNull ContactsDb contactsDb) {
         this.context = context.getApplicationContext();
         this.connection = connection;
         this.contactsDb = contactsDb;
-        this.serverProps = serverProps;
 
         // Use 1/8th of the available memory for memory cache
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
@@ -221,7 +221,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                         return null;
                     }
 
-                    if (shouldDownloadAvatar(avatarFile, avatarId, contactAvatarInfo)) {
+                    if (shouldDownloadAvatar(avatarFile, Preconditions.checkNotNull(avatarId), contactAvatarInfo)) {
                         String url = "https://avatar-cdn.halloapp.net/" + avatarId;
                         Downloader.run(url, null, null, Media.MEDIA_TYPE_UNKNOWN, null, avatarFile, p -> true);
                         contactAvatarInfo.avatarId = avatarId;
@@ -272,14 +272,14 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     @NonNull private Drawable getDefaultUserAvatar() {
         if (defaultUserAvatar == null) {
-            defaultUserAvatar = context.getDrawable(R.drawable.avatar_person);
+            defaultUserAvatar = ContextCompat.getDrawable(context, R.drawable.avatar_person);
         }
         return defaultUserAvatar;
     }
 
     @NonNull private Drawable getDefaultGroupAvatar() {
         if (defaultGroupAvatar == null) {
-            defaultGroupAvatar = context.getDrawable(R.drawable.avatar_groups_placeholder);
+            defaultGroupAvatar = ContextCompat.getDrawable(context, R.drawable.avatar_groups_placeholder);
         }
         return defaultGroupAvatar;
     }

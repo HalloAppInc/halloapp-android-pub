@@ -27,6 +27,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
@@ -161,7 +162,7 @@ public class HalloApp extends Application {
                         String savedLocale = Preferences.getInstance().getLastDeviceLocale();
                         String savedToken = Preferences.getInstance().getLastPushToken();
                         long lastUpdateTime = Preferences.getInstance().getLastPushTokenSyncTime();
-                        if (!pushToken.equals(savedToken)
+                        if (!Preconditions.checkNotNull(pushToken).equals(savedToken)
                                 || !language.equals(savedLocale)
                                 || System.currentTimeMillis() - lastUpdateTime > Constants.PUSH_TOKEN_RESYNC_TIME) {
                             Connection.getInstance().sendPushToken(pushToken, language);

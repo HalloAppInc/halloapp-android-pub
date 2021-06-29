@@ -338,6 +338,7 @@ public class PostContentActivity extends HalloActivity {
                     break;
                 case Post.TYPE_USER: {
                     type = post.media.isEmpty() ? POST_TYPE_TEXT : POST_TYPE_MEDIA;
+                    break;
                 }
             }
             if (post.isRetracted()) {

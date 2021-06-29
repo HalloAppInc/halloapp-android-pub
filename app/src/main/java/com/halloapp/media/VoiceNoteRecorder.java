@@ -22,7 +22,7 @@ public class VoiceNoteRecorder {
 
     private MediaRecorder mediaRecorder;
 
-    private FileStore fileStore = FileStore.getInstance();
+    private final FileStore fileStore = FileStore.getInstance();
 
     private int state;
 
@@ -37,8 +37,8 @@ public class VoiceNoteRecorder {
 
     private File recordingLocation;
 
-    private MutableLiveData<Boolean> isRecording;
-    private MutableLiveData<Long> recordingDuration = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isRecording;
+    private final MutableLiveData<Long> recordingDuration = new MutableLiveData<>();
 
     private Handler recorderHandler;
     private HandlerThread recorderThread;

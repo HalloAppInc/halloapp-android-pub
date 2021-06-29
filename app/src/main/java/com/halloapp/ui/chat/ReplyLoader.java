@@ -1,6 +1,5 @@
 package com.halloapp.ui.chat;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
 
@@ -9,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
 
-import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.ContentDb;
@@ -28,18 +26,14 @@ import java.util.concurrent.Callable;
 
 class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
 
-    private final Me me;
-    private final Context context;
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
     private final int dimensionLimit;
     private final LruCache<Long, Result> cache = new LruCache<>(32);
 
     @MainThread
-    ReplyLoader(@NonNull Context context, int dimensionLimit) {
+    ReplyLoader(int dimensionLimit) {
         this.dimensionLimit = dimensionLimit;
-        this.me = Me.getInstance();
-        this.context = context.getApplicationContext();
         this.contentDb = ContentDb.getInstance();
         this.contactsDb = ContactsDb.getInstance();
     }

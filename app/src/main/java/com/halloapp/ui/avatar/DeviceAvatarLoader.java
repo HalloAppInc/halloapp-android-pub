@@ -26,7 +26,7 @@ public class DeviceAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String
 
     private final LruCache<String, Bitmap> cache;
 
-    private Context context;
+    private final Context context;
 
     public DeviceAvatarLoader(@NonNull Context context) {
         this.context = context.getApplicationContext();

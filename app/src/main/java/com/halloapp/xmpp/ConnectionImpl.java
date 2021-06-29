@@ -1135,7 +1135,7 @@ public class ConnectionImpl extends Connection {
                 }
             }
             if (!handled) {
-                Log.i("connection: got unknown message " + ProtoPrinter.toString(msg));
+                Log.i("connection: did not handle message " + ProtoPrinter.toString(msg));
                 sendAck(msg.getId());
             }
         }

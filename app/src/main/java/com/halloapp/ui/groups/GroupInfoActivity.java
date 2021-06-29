@@ -4,14 +4,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,7 +32,6 @@ import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HeaderFooterAdapter;
-import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
@@ -307,7 +304,7 @@ public class GroupInfoActivity extends HalloActivity {
                 @NonNull
                 @Override
                 public ViewGroup getParentViewGroup() {
-                    return (ViewGroup) findViewById(android.R.id.content);
+                    return findViewById(android.R.id.content);
                 }
             });
         }

@@ -45,7 +45,7 @@ public abstract class Connection {
         public void onConnected() {}
         public void onDisconnected() {}
         public void onLoginFailed(boolean deleted) {}
-        public void onClientVersionExpired() {}
+
         public void onClientVersionExpiringSoon(int daysLeft) {}
         public void onOutgoingPostSent(@NonNull String postId) {}
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId) {}
@@ -56,7 +56,7 @@ public abstract class Connection {
         public void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {}
         public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {}
         public void onIncomingMessageReceived(@NonNull Message message) {}
-        public void onIncomingMessageRedecrypt(@NonNull Message message) {}
+
         public void onIncomingMessageSeenReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onMessageRerequest(@NonNull UserId senderUserId, @NonNull String messageId, @NonNull PublicEdECKey peerIdentityKey, @Nullable Integer otpkId, @NonNull byte[] sessionSetupKey, @NonNull byte[] messageEphemeralKey, @NonNull String stanzaId) {}
         public void onContactsChanged(@NonNull List<ContactInfo> contacts, @NonNull List<String> contactHashes, @NonNull String ackId) {}

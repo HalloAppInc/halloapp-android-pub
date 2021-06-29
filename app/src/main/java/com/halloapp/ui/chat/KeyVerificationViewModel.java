@@ -46,7 +46,7 @@ public class KeyVerificationViewModel extends AndroidViewModel {
 
     private static final int QR_MATRIX_SIZE = 1000;
 
-    private UserId userId;
+    private final UserId userId;
 
     final ComputableLiveData<String> name;
     final ComputableLiveData<KeyVerificationData> keyVerificationData;

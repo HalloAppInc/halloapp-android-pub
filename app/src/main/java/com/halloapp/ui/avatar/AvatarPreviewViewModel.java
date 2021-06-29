@@ -80,7 +80,7 @@ public class AvatarPreviewViewModel extends AndroidViewModel {
 
     LiveData<TranscodeResult> preparePost() {
         // TODO(jack): Switch this over to using a worker instead
-        new TranscodeTask(getApplication(), getMedia(), cropRect, rotation, result).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new TranscodeTask(getMedia(), cropRect, rotation, result).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         return result;
     }
 
@@ -103,15 +103,13 @@ public class AvatarPreviewViewModel extends AndroidViewModel {
     public static class TranscodeTask extends AsyncTask<Void, Void, TranscodeResult> {
 
         private final Media media;
-        private final Application application;
         private final RectF cropRect;
         private final int rotation;
         private final MutableLiveData<TranscodeResult> result;
 
         private File transcodedFile;
 
-        TranscodeTask(@NonNull Application application, @Nullable Media media, @Nullable RectF cropRect, int rotation, @NonNull MutableLiveData<TranscodeResult> result) {
-            this.application = application;
+        TranscodeTask(@Nullable Media media, @Nullable RectF cropRect, int rotation, @NonNull MutableLiveData<TranscodeResult> result) {
             this.media = media;
             this.cropRect = cropRect;
             this.rotation = rotation;
@@ -206,7 +204,6 @@ public class AvatarPreviewViewModel extends AndroidViewModel {
 
         @Override
         protected Media doInBackground(Void... voids) {
-            final ContentResolver contentResolver = application.getContentResolver();
             final Map<Uri, Integer> types = MediaUtils.getMediaTypes(application, Collections.singletonList(uri));
             @Media.MediaType int mediaType = types.get(uri);
             final File file = FileStore.getInstance().getTmpFile(RandomId.create());

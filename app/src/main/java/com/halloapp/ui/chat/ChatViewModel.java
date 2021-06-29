@@ -73,7 +73,6 @@ public class ChatViewModel extends AndroidViewModel {
     private final ContentDb contentDb;
     private final Connection connection;
     private final ContactsDb contactsDb;
-    private final ServerProps serverProps;
     private final AtomicInteger outgoingAddedCount = new AtomicInteger(0);
     private final AtomicInteger incomingAddedCount = new AtomicInteger(0);
     private final AtomicInteger initialUnseen = new AtomicInteger(0);
@@ -82,8 +81,8 @@ public class ChatViewModel extends AndroidViewModel {
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private VoiceNoteRecorder voiceNoteRecorder;
-    private VoiceNotePlayer voiceNotePlayer;
+    private final VoiceNoteRecorder voiceNoteRecorder;
+    private final VoiceNotePlayer voiceNotePlayer;
 
     private final BlockListManager.Observer blockListObserver = () -> {
         blockListLiveData.invalidate();
@@ -179,7 +178,6 @@ public class ChatViewModel extends AndroidViewModel {
         connection = Connection.getInstance();
         contactsDb = ContactsDb.getInstance();
         contactsDb.addObserver(contactsObserver);
-        serverProps = ServerProps.getInstance();
 
         blockListManager = BlockListManager.getInstance();
 

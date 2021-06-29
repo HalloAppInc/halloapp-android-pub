@@ -84,14 +84,6 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyClientVersionExpired() {
-        synchronized (observers) {
-            for (Connection.Observer observer : observers) {
-                observer.onClientVersionExpired();
-            }
-        }
-    }
-
     public void notifyClientVersionExpiringSoon(int daysLeft) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
@@ -176,14 +168,6 @@ public class ConnectionObservers {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onIncomingMessageReceived(message);
-            }
-        }
-    }
-
-    public void notifyIncomingMessageRedecrypt(@NonNull Message message) {
-        synchronized (observers) {
-            for (Connection.Observer observer : observers) {
-                observer.onIncomingMessageRedecrypt(message);
             }
         }
     }

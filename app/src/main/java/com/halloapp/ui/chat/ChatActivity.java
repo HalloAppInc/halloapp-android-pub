@@ -40,7 +40,6 @@ import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
@@ -52,7 +51,6 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.Debug;
 import com.halloapp.ForegroundChat;
-import com.halloapp.Me;
 import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
@@ -92,11 +90,11 @@ import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.ItemSwipeHelper;
+import com.halloapp.widget.LongPressInterceptView;
 import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.widget.SwipeListItemHelper;
-import com.halloapp.widget.LongPressInterceptView;
 import com.halloapp.xmpp.PresenceLoader;
 
 import java.util.ArrayList;
@@ -141,7 +139,6 @@ public class ChatActivity extends HalloActivity {
 
     private ChatId chatId;
 
-    private Me me;
     private AvatarLoader avatarLoader;
     private PresenceLoader presenceLoader;
 
@@ -184,7 +181,7 @@ public class ChatActivity extends HalloActivity {
     private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
 
     private MenuItem blockMenuItem;
-    private Map<Long, Integer> replyMessageMediaIndexMap = new HashMap<>();
+    private final Map<Long, Integer> replyMessageMediaIndexMap = new HashMap<>();
 
     private boolean showKeyboardOnResume;
     private boolean allowVoiceNoteSending;
@@ -217,8 +214,7 @@ public class ChatActivity extends HalloActivity {
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         contactLoader = new ContactLoader();
         chatLoader = new ChatLoader();
-        replyLoader = new ReplyLoader(this, getResources().getDimensionPixelSize(R.dimen.reply_thumb_size));
-        me = Me.getInstance();
+        replyLoader = new ReplyLoader(getResources().getDimensionPixelSize(R.dimen.reply_thumb_size));
         avatarLoader = AvatarLoader.getInstance();
         presenceLoader = PresenceLoader.getInstance();
         textContentLoader = new TextContentLoader(this);
@@ -471,12 +467,7 @@ public class ChatActivity extends HalloActivity {
                 }
             }
         };
-        viewModel.mentionableContacts.getLiveData().observe(this, new Observer<List<Contact>>() {
-            @Override
-            public void onChanged(List<Contact> contacts) {
-                mentionPickerView.setMentionableContacts(contacts);
-            }
-        });
+        viewModel.mentionableContacts.getLiveData().observe(this, contacts -> mentionPickerView.setMentionableContacts(contacts));
         viewModel.messageList.observe(this, messages -> adapter.submitList(messages, newListCommitCallback));
         viewModel.chat.getLiveData().observe(this, chat -> {
             Log.i("ChatActivity: chat changed, newMessageCount=" + (chat == null ? "null" : chat.newMessageCount));
@@ -548,7 +539,7 @@ public class ChatActivity extends HalloActivity {
         });
 
         SwipeListItemHelper swipeListItemHelper = new SwipeListItemHelper(
-                Preconditions.checkNotNull(getDrawable(R.drawable.ic_swipe_reply)),
+                Preconditions.checkNotNull(ContextCompat.getDrawable(this, R.drawable.ic_swipe_reply)),
                 ContextCompat.getColor(this, R.color.swipe_reply_background),
                 getResources().getDimensionPixelSize(R.dimen.swipe_reply_icon_margin)) {
 
@@ -594,7 +585,7 @@ public class ChatActivity extends HalloActivity {
         chatView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             private static final int ACTIVE_POINTER_ID_NONE = -1;
 
-            private int slop = ViewConfiguration.get(chatView.getContext()).getScaledTouchSlop();
+            private final int slop = ViewConfiguration.get(chatView.getContext()).getScaledTouchSlop();
 
             private int activePointerId;
             private float initialX;

@@ -198,15 +198,6 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onClientVersionExpired() {
-        if (foregroundObserver.isInForeground()) {
-            AppExpirationActivity.open(context, 0);
-        } else {
-            notifications.showExpirationNotification(0);
-        }
-    }
-
-    @Override
     public void onClientVersionExpiringSoon(int daysLeft) {
         if (foregroundObserver.isInForeground()) {
             AppExpirationActivity.open(context, daysLeft);
@@ -269,12 +260,6 @@ public class MainConnectionObserver extends Connection.Observer {
         } else {
             contentDb.retractMessage(message, completionRunnable);
         }
-    }
-
-    @Override
-    public void onIncomingMessageRedecrypt(@NonNull Message message) {
-        final Runnable completionRunnable = () -> connection.sendAck(message.id);
-        contentDb.updateMessageDecrypt(message, completionRunnable);
     }
 
     @Override

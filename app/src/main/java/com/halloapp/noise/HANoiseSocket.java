@@ -34,7 +34,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
@@ -212,7 +211,7 @@ public class HANoiseSocket extends Socket {
         byte[] packetBytes = packet.toByteArray();
         byte[] encryptedBytes = new byte[packetBytes.length + sendCrypto.getMACLength()];
         int encryptedLen = sendCrypto.encryptWithAd(null, packetBytes, 0, encryptedBytes, 0, packetBytes.length);
-        writeMessage(encryptedBytes, 0, encryptedLen);
+        writeMessage(encryptedBytes, encryptedLen);
     }
 
     private boolean verifyCertificate(byte[] certificate, int certLen) {
@@ -252,9 +251,9 @@ public class HANoiseSocket extends Socket {
         writerOutputStream.write(len & 0xFF);
     }
 
-    private void writeMessage(byte[] packetBytes, int offset, int len) throws IOException {
+    private void writeMessage(byte[] packetBytes, int len) throws IOException {
         writeLength(len);
-        writerOutputStream.write(packetBytes, offset, len);
+        writerOutputStream.write(packetBytes, 0, len);
         writerOutputStream.flush();
         if (len < NAGLE_WARNING_THRESHOLD) {
             Log.i("NoiseSocket/writeMessage sending " + len + " bytes. Consider coalescing packets, as Nagle's is disabled.");
@@ -264,7 +263,7 @@ public class HANoiseSocket extends Socket {
     private void writeNoiseMessage(NoiseMessage.MessageType type, byte[] content, int len) throws IOException {
         NoiseMessage msg = NoiseMessage.newBuilder().setContent(ByteString.copyFrom(content, 0, len)).setMessageType(type).build();
         byte[] msgBytes = msg.toByteArray();
-        writeMessage(msgBytes, 0, msgBytes.length);
+        writeMessage(msgBytes, msgBytes.length);
     }
 
     private NoiseMessage readNextNoiseMessage() throws IOException {

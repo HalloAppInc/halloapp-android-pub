@@ -20,7 +20,7 @@ public class ViewGroupInviteLinkViewModel extends AndroidViewModel{
 
     private final String linkCode;
 
-    private MutableLiveData<InviteLinkResult> inviteLinkPreview;
+    private final MutableLiveData<InviteLinkResult> inviteLinkPreview;
 
     public static class InviteLinkResult {
         public final GroupInfo groupInfo;

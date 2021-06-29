@@ -25,7 +25,7 @@ public class AudioDurationLoader extends ViewDataLoader<TextView, Long, File> {
 
     private final LruCache<File, Long> cache;
 
-    private Context context;
+    private final Context context;
 
     public AudioDurationLoader(@NonNull Context context) {
         this.context = context;
