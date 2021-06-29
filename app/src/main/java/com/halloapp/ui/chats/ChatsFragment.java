@@ -623,7 +623,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             }
 
             private void bindMessagePreview(@NonNull Message message) {
-                if (message.isIncoming()) {
+                if (message.isIncoming() || message.isRetracted()) {
                     statusView.setVisibility(View.GONE);
                 } else {
                     statusView.setVisibility(View.VISIBLE);
