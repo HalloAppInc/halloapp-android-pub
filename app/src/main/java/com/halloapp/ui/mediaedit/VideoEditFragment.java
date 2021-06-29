@@ -147,7 +147,7 @@ public class VideoEditFragment extends Fragment {
                 imageViewLayoutParams.weight = 1;
 
                 for (Bitmap thumb : thumbnails) {
-                    ImageView imageView = new ImageView(requireContext());
+                    ImageView imageView = new ImageView(root.getContext());
                     imageView.setLayoutParams(imageViewLayoutParams);
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     imageView.setImageBitmap(thumb);
