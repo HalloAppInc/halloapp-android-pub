@@ -56,6 +56,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     private PostThumbnailLoader postThumbnailLoader;
 
     private boolean scrollUpOnDataLoaded;
+    private boolean restoreStateOnDataLoaded;
 
     private RecyclerView postsView;
     private View newPostsView;
@@ -129,11 +130,17 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         });
 
         viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        viewModel.loadSavedState(savedInstanceState);
+
         if (viewModel.getSavedScrollState() != null) {
-            layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
+            restoreStateOnDataLoaded = true;
         }
+
         postsView.post(this::refreshInviteNux);
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> {
+            if (posts instanceof InitialPagedList) {
+                return;
+            }
             Log.i("HomeFragment: post list updated " + posts);
             if (viewModel.checkPendingOutgoing() || scrollUpOnDataLoaded) {
                 scrollUpOnDataLoaded = false;
@@ -154,7 +161,11 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                     newPostsView.setVisibility(View.GONE);
                 }
             }
-            emptyView.setVisibility(!(posts instanceof InitialPagedList) && posts.size() == 0 ? View.VISIBLE : View.GONE);
+            emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
+            if (restoreStateOnDataLoaded) {
+                layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
+                restoreStateOnDataLoaded = false;
+            }
         }));
         viewModel.socialHistory.getLiveData().observe(getViewLifecycleOwner(), commentHistoryData -> {
             if (notificationDrawable != null) {
@@ -280,6 +291,14 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                 }
             }
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (viewModel != null && layoutManager != null) {
+            viewModel.saveInstanceState(outState);
+        }
     }
 
     private void refreshInviteNux() {

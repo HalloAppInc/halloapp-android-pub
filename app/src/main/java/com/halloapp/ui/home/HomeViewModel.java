@@ -2,6 +2,7 @@ package com.halloapp.ui.home;
 
 import android.Manifest;
 import android.app.Application;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
@@ -39,6 +40,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class HomeViewModel extends AndroidViewModel {
+
+    private static final String STATE_SAVED_SCROLL_STATE = "homeviewmodel_saved_scroll_state";
 
     final LiveData<PagedList<Post>> postList;
     final ComputableLiveData<SocialHistory> socialHistory;
@@ -173,6 +176,18 @@ public class HomeViewModel extends AndroidViewModel {
         final String[] perms = {Manifest.permission.READ_CONTACTS};
         if (!EasyPermissions.hasPermissions(application, perms)) {
             showContactPermsNag.setValue(true);
+        }
+    }
+
+    public void loadSavedState(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null && savedScrollState == null) {
+            savedScrollState = savedInstanceState.getParcelable(STATE_SAVED_SCROLL_STATE);
+        }
+    }
+
+    public void saveInstanceState(@NonNull Bundle outState) {
+        if (savedScrollState != null) {
+            outState.putParcelable(STATE_SAVED_SCROLL_STATE, savedScrollState);
         }
     }
 
