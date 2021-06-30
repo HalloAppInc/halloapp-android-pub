@@ -331,6 +331,8 @@
     <string name="key_verification_key_fetch_failed">Failed to fetch keys</string>
     <!-- Shown on the key verification activity next to a switch where the user can keep track of whether they verified the identity of the other user -->
     <string name="key_verification_switch_label">Verified</string>
+    <!-- Notification shown as if it were the first message in a chat -->
+    <string name="e2e_notice">Chats are end-to-end encrypted and HalloApp does not have access to them. Tap to learn more. </string>
     <!-- Menu option to delete a post -->
     <string name="delete_post">Delete post</string>
     <!-- Option to save a photo/video to the user's gallery -->

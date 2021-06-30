@@ -1262,7 +1262,8 @@ public class ChatActivity extends HalloActivity {
                             : null,
                     position >= 1
                             ? getItem(position - 1)
-                            : null);
+                            : null,
+                    position == getItemCount() - 1);
         }
     }
 

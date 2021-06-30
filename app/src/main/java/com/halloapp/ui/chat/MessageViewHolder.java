@@ -70,6 +70,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final TextView timestampView;
     private final TextView decryptStatusView;
     private final TextView newMessagesSeparator;
+    private final TextView e2eNoticeView;
     private final TextView nameView;
     private final TextView systemMessage;
     private final TextView tombstoneMessage;
@@ -135,6 +136,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         timestampView = itemView.findViewById(R.id.timestamp);
         decryptStatusView = itemView.findViewById(R.id.decrypt_status);
         newMessagesSeparator = itemView.findViewById(R.id.new_messages);
+        e2eNoticeView = itemView.findViewById(R.id.e2e_notice);
         nameView = itemView.findViewById(R.id.name);
         textView = itemView.findViewById(R.id.text);
         mediaPagerView = itemView.findViewById(R.id.media_pager);
@@ -280,7 +282,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
 
     }
 
-    void bindTo(@NonNull Message message, int newMessageCountSeparator, @Nullable Message prevMessage, @Nullable Message nextMessage) {
+    void bindTo(@NonNull Message message, int newMessageCountSeparator, @Nullable Message prevMessage, @Nullable Message nextMessage, boolean isLast) {
         boolean changed = !message.equals(this.message);
         this.message = message;
 
@@ -483,12 +485,25 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             }
         }
 
-        if (newMessagesSeparator !=null) {
+        if (newMessagesSeparator != null) {
             if (newMessageCountSeparator > 0) {
                 newMessagesSeparator.setVisibility(View.VISIBLE);
                 newMessagesSeparator.setText(newMessagesSeparator.getContext().getResources().getQuantityString(R.plurals.new_messages_separator, newMessageCountSeparator, newMessageCountSeparator));
             } else {
                 newMessagesSeparator.setVisibility(View.GONE);
+            }
+        }
+
+        if (e2eNoticeView != null) {
+            if (!isLast) {
+                e2eNoticeView.setVisibility(View.GONE);
+            } else {
+                e2eNoticeView.setVisibility(View.VISIBLE);
+                e2eNoticeView.setOnClickListener(v -> {
+                    Uri uri = Uri.parse(Constants.FAQ_URL);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    parent.startActivity(intent);
+                });
             }
         }
 

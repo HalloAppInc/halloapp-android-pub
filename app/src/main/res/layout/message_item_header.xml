@@ -23,6 +23,23 @@
         tools:text="6 new messages"/>
 
     <TextView
+        android:id="@+id/e2e_notice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="6dp"
+        android:gravity="center"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:textAppearance="?textAppearanceBody1"
+        android:background="@drawable/new_messages_separator_background"
+        android:textColor="@color/new_messages_text"
+        android:text="@string/e2e_notice"/>
+
+    <TextView
         android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="22sp"
