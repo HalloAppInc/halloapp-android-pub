@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/invite"
+        android:icon="@drawable/ic_invite"
+        android:title="@string/invite_title"
+        app:iconTint="@color/feed_notification_icon"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/notifications"
         android:icon="@drawable/ic_feed_activity"
         android:title="@string/notifications"

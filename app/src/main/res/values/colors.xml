@@ -75,7 +75,7 @@
     <color name="dim_facepile_avatar_1">#40ffffff</color>
     <color name="home_navigation_divider">#FFFFFF</color>
     <color name="divider_color">@color/black_5</color>
-    <color name="feed_notification_icon">@color/black_80</color>
+    <color name="feed_notification_icon">@color/color_secondary</color>
     <color name="crop_done">#69a1ff</color>
     <color name="settings_text_entry_background">@android:color/white</color>
     <color name="avatars_footer_divider">@android:color/white</color>

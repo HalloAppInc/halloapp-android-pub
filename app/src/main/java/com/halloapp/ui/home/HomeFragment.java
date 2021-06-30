@@ -386,6 +386,9 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                 viewModel.closeWelcomeNux();
             }
             return true;
+        } else if (item.getItemId() == R.id.invite) {
+            startActivity(new Intent(requireContext(), InviteContactsActivity.class));
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
