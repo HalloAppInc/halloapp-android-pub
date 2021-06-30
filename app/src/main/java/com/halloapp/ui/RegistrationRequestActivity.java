@@ -69,6 +69,8 @@ public class RegistrationRequestActivity extends HalloActivity {
     private ContactsSync contactsSync;
     private AvatarLoader avatarLoader;
 
+    private boolean isReverification = false;
+
     public static void reVerify(final Context context) {
         context.startActivity(new Intent(context, RegistrationRequestActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -93,7 +95,8 @@ public class RegistrationRequestActivity extends HalloActivity {
         nextButton = findViewById(R.id.next);
 
         final TextView titleView = findViewById(R.id.title);
-        if (getIntent().getBooleanExtra(EXTRA_RE_VERIFY, false)) {
+        isReverification = getIntent().getBooleanExtra(EXTRA_RE_VERIFY, false);
+        if (isReverification) {
             titleView.setVisibility(View.VISIBLE);
             titleView.setText(R.string.reverify_registration_title);
             findViewById(R.id.name_layout).setVisibility(View.GONE);
@@ -192,8 +195,8 @@ public class RegistrationRequestActivity extends HalloActivity {
     }
 
     private void updateNextButton() {
-        nextButton.setEnabled(!TextUtils.isEmpty(nameEditText.getText().toString())
-                && countryCodePicker.isValidFullNumber());
+        boolean nameValid = isReverification || !TextUtils.isEmpty(nameEditText.getText().toString());
+        nextButton.setEnabled(nameValid && countryCodePicker.isValidFullNumber());
     }
 
     @Override
