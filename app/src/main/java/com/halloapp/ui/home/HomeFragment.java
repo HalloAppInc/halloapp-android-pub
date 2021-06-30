@@ -1,6 +1,8 @@
 package com.halloapp.ui.home;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -50,6 +52,8 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class HomeFragment extends PostsFragment implements MainNavFragment, EasyPermissions.PermissionCallbacks {
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
+
+    private static final int NEW_POSTS_BANNER_DISAPPEAR_TIME_MS = 5000;
 
     private HomeViewModel viewModel;
     private BadgedDrawable notificationDrawable;
@@ -149,11 +153,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                 final View childView = layoutManager.getChildAt(0);
                 final boolean scrolled = childView == null || layoutManager.getPosition(childView) != 0;
                 if (scrolled) {
-                    if (newPostsView.getVisibility() != View.VISIBLE) {
-                        newPostsView.setVisibility(View.VISIBLE);
-                        newPostsView.setTranslationY(-getResources().getDimension(R.dimen.details_media_list_height));
-                        newPostsView.animate().setDuration(200).translationY(0).start();
-                    }
+                    showNewPostsBanner();
                 } else {
                     scrollUpOnDataLoaded = false;
                     postsView.scrollToPosition(0);
@@ -291,6 +291,32 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                 }
             }
         });
+    }
+
+    private void showNewPostsBanner() {
+        if (newPostsView.getVisibility() != View.VISIBLE) {
+            newPostsView.setVisibility(View.VISIBLE);
+            final float initialTranslation = -getResources().getDimension(R.dimen.details_media_list_height);
+            newPostsView.setTranslationY(initialTranslation);
+            newPostsView.animate().setDuration(200).translationY(0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    newPostsView.setTranslationY(0);
+                }
+            }).start();
+        }
+        newPostsView.removeCallbacks(this::hideNewPostsBanner);
+        newPostsView.postDelayed(this::hideNewPostsBanner, NEW_POSTS_BANNER_DISAPPEAR_TIME_MS);
+    }
+
+    private void hideNewPostsBanner() {
+        final float initialTranslation = -getResources().getDimension(R.dimen.details_media_list_height);
+        newPostsView.animate().setDuration(200).translationY(initialTranslation).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                newPostsView.setVisibility(View.GONE);
+            }
+        }).start();
     }
 
     @Override
