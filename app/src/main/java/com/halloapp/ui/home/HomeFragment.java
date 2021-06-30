@@ -136,7 +136,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
             restoreStateOnDataLoaded = true;
         }
 
-        postsView.post(this::refreshInviteNux);
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> {
             if (posts instanceof InitialPagedList) {
                 return;
@@ -166,6 +165,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                 layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
                 restoreStateOnDataLoaded = false;
             }
+            refreshInviteNux();
         }));
         viewModel.socialHistory.getLiveData().observe(getViewLifecycleOwner(), commentHistoryData -> {
             if (notificationDrawable != null) {
