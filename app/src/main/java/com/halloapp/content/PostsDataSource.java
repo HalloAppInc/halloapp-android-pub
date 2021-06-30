@@ -45,6 +45,7 @@ public class PostsDataSource extends ItemKeyedDataSource<Long, Post> {
         }
 
         public void invalidateLatestDataSource() {
+            Log.i("PostsDataSource.Factory.invalidateLatestDataSource");
             latestSource.invalidate();
         }
     }
