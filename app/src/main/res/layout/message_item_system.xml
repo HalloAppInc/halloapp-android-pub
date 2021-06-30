@@ -5,6 +5,9 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+    <include
+        layout="@layout/message_item_header"/>
+
     <TextView
         android:id="@+id/system_message"
         android:layout_width="match_parent"
