@@ -52,8 +52,6 @@ public class ChatMessageElement {
     private final UserId recipientUserId;
     private final SessionSetupInfo sessionSetupInfo;
     private final byte[] encryptedBytes;
-    private ChatMessage plaintextChatMessage = null; // TODO(jack): Remove before removing s1 XML tag
-    private ChatContainer plaintextChatContainer = null;
 
     private final Stats stats = Stats.getInstance();
     private final ContentDb contentDb = ContentDb.getInstance();
@@ -110,22 +108,10 @@ public class ChatMessageElement {
                     // TODO: (clarkc) remove legacy proto format once clients are all sending new format
                     if (!container.hasChatContainer()) {
                         chatMessage = MessageElementHelper.readEncodedEntry(dec);
-                        if (plaintextChatMessage != null && !plaintextChatMessage.equals(chatMessage)) {
-                            Log.sendErrorReport("Decrypted message does not match plaintext");
-                            failureReason = "plaintext_mismatch";
-                            stats.reportDecryptError(failureReason, senderPlatform, senderVersion);
-                        } else {
-                            stats.reportDecryptSuccess(senderPlatform, senderVersion);
-                        }
+                        stats.reportDecryptSuccess(senderPlatform, senderVersion);
                     } else {
                         chatContainer = container.getChatContainer();
-                        if (plaintextChatContainer != null && !plaintextChatContainer.equals(chatContainer)) {
-                            Log.sendErrorReport("Decrypted message container does not match plaintext");
-                            failureReason = "plaintext_mismatch";
-                            stats.reportDecryptError(failureReason, senderPlatform, senderVersion);
-                        } else {
-                            stats.reportDecryptSuccess(senderPlatform, senderVersion);
-                        }
+                        stats.reportDecryptSuccess(senderPlatform, senderVersion);
                     }
                 } catch (InvalidProtocolBufferException e) {
                     chatMessage = null;
@@ -137,11 +123,6 @@ public class ChatMessageElement {
                 Log.e("Failed to decrypt message: " + failureReason + ", falling back to plaintext", e);
                 Log.sendErrorReport("Decryption failure: " + failureReason);
                 stats.reportDecryptError(failureReason, senderPlatform, senderVersion);
-
-                // TODO(jack): Remove this block once plaintext-sending clients have expired
-                if (!ServerProps.getInstance().getIsInternalUser()) {
-                    chatMessage = plaintextChatMessage;
-                }
 
                 if (Constants.REREQUEST_SEND_ENABLED) {
                     Log.i("Rerequesting message " + id);
@@ -278,10 +259,6 @@ public class ChatMessageElement {
         ChatStanza.Builder builder = ChatStanza.newBuilder();
         builder.setSenderLogInfo(getLogInfo(recipientUserId));
 
-        if (serverProps.getCleartextChatMessagesEnabled()) {
-            builder.setPayload(ByteString.copyFrom(getEncodedEntry()));
-        }
-
         if (sessionSetupInfo != null) {
             builder.setPublicKey(ByteString.copyFrom(sessionSetupInfo.identityKey.getKeyMaterial()));
             if (sessionSetupInfo.oneTimePreKeyId != null) {
@@ -301,27 +278,12 @@ public class ChatMessageElement {
         long timestamp = chatStanza.getTimestamp() * 1000L;
 
         ByteString encrypted = chatStanza.getEncPayload();
-        ByteString plaintext = chatStanza.getPayload();
-
-        ChatMessage plaintextChatMessage = null;
-        ChatContainer plaintextChatContainer = null;
-        if (plaintext != null && !ServerProps.getInstance().getIsInternalUser()) {
-            plaintextChatMessage = MessageElementHelper.readEncodedEntry(plaintext.toByteArray());
-            plaintextChatContainer = MessageElementHelper.readEncodedContainer(plaintext.toByteArray());
-        }
 
         ChatMessageElement ret = null;
         if (encrypted != null && encrypted.size() > 0) {
             ByteString identityKey = chatStanza.getPublicKey();
             ret = readEncryptedEntryProto(encrypted.toByteArray(), identityKey.toByteArray(), (int) chatStanza.getOneTimePreKeyId(), timestamp, chatStanza.getSenderName());
-            ret.plaintextChatMessage = plaintextChatMessage;
         }
-
-        if (ret == null) {
-            ret = new ChatMessageElement(plaintextChatMessage, timestamp);
-        }
-
-        ret.plaintextChatContainer = plaintextChatContainer;
 
         return ret;
     }
