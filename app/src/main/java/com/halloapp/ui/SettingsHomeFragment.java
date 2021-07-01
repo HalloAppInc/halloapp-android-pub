@@ -94,7 +94,6 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
         });
 
         View account = root.findViewById(R.id.account);
-        account.setVisibility(BuildConfig.DEBUG ? View.VISIBLE : View.GONE);
         account.setOnClickListener(v -> {
             startActivity(new Intent(v.getContext(), AccountActivity.class));
         });
