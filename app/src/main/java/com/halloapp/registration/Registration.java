@@ -21,6 +21,7 @@ import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.proto.clients.IdentityKey;
 import com.halloapp.proto.clients.SignedPreKey;
 import com.halloapp.util.FileUtils;
+import com.halloapp.util.LanguageUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
@@ -106,6 +107,7 @@ public class Registration {
             if (phoneCall) {
                 requestJson.put("method", "voice_call");
             }
+            requestJson.put("lang_id", LanguageUtils.getLocaleIdentifier());
             connection.getOutputStream().write(requestJson.toString().getBytes());
 
             final int responseCode = connection.getResponseCode();

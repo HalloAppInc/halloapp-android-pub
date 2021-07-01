@@ -27,6 +27,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.LanguageUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
@@ -147,25 +148,15 @@ public class HalloApp extends Application {
                     } else {
                         Log.d("halloapp: obtained the push token!");
 
-                        Configuration configuration = AppContext.getInstance().get().getResources().getConfiguration();
-                        Locale locale;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            locale = configuration.getLocales().get(0);
-                        } else {
-                            locale = configuration.locale;
-                        }
-                        String language = locale.getLanguage();
-                        if ("en".equals(language) || "pt".equals(language) || "zh".equals(language)) {
-                            language += "-" + locale.getCountry();
-                        }
+                        String locale = LanguageUtils.getLocaleIdentifier();
 
                         String savedLocale = Preferences.getInstance().getLastDeviceLocale();
                         String savedToken = Preferences.getInstance().getLastPushToken();
                         long lastUpdateTime = Preferences.getInstance().getLastPushTokenSyncTime();
                         if (!Preconditions.checkNotNull(pushToken).equals(savedToken)
-                                || !language.equals(savedLocale)
+                                || !locale.equals(savedLocale)
                                 || System.currentTimeMillis() - lastUpdateTime > Constants.PUSH_TOKEN_RESYNC_TIME) {
-                            Connection.getInstance().sendPushToken(pushToken, language);
+                            Connection.getInstance().sendPushToken(pushToken, locale);
                         } else {
                             Log.i("halloapp: no need to sync push token");
                         }
