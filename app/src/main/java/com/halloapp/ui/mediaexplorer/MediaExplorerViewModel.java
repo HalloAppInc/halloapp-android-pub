@@ -1,6 +1,7 @@
 package com.halloapp.ui.mediaexplorer;
 
 import android.app.Application;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -21,10 +22,13 @@ import com.google.android.gms.common.util.concurrent.HandlerExecutor;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
+import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
+import com.halloapp.media.MediaUtils;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -54,6 +58,7 @@ public class MediaExplorerViewModel extends AndroidViewModel {
     }
 
     private final LiveData<PagedList<MediaModel>> media;
+    private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final ContentDb contentDb = ContentDb.getInstance();
     private final ChatId chatId;
     private int position;
@@ -137,6 +142,24 @@ public class MediaExplorerViewModel extends AndroidViewModel {
         }
 
         return -1;
+    }
+
+    public LiveData<Boolean> savePostToGallery(MediaExplorerViewModel.MediaModel model) {
+        MutableLiveData<Boolean> success = new MutableLiveData<>();
+
+        if (model.uri == null || model.uri.getPath() == null) {
+            success.setValue(false);
+            return success;
+        }
+        bgWorkers.execute(() -> {
+            if (!MediaUtils.saveMediaToGallery(getApplication(), new File(model.uri.getPath()), model.type)) {
+                success.postValue(false);
+                Log.e("MediaExplorerViewModel/savePostToGallery failed to save media to gallery: " + media);
+                return;
+            }
+            success.postValue(true);
+        });
+        return success;
     }
 
     public static class MediaModel implements Parcelable {

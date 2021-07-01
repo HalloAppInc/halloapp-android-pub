@@ -1,7 +1,9 @@
 package com.halloapp.ui.mediaexplorer;
 
+import android.Manifest;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -10,6 +12,8 @@ import android.os.Bundle;
 import android.transition.Transition;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +52,7 @@ import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.SnackbarHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,13 +62,17 @@ import java.util.List;
 import java.util.Map;
 
 import me.relex.circleindicator.CircleIndicator3;
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
 
-public class MediaExplorerActivity extends HalloActivity {
+public class MediaExplorerActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
     public static final String EXTRA_MEDIA = "media";
     public static final String EXTRA_SELECTED = "selected";
     public static final String EXTRA_CONTENT_ID = "content-id";
     public static final String EXTRA_CHAT_ID = "chat-id";
     public static final String EXTRA_INITIAL_TIME = "initial-time";
+
+    private static final int REQUEST_EXTERNAL_STORAGE_PERMISSIONS = 1;
 
     private int swipeExitStartThreshold;
     private int swipeExitFinishThreshold;
@@ -254,6 +263,33 @@ public class MediaExplorerActivity extends HalloActivity {
         return onTouchEventForSwipeExit(event) || super.dispatchTouchEvent(event);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.media_explorer, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.save_to_gallery) {
+            if (Build.VERSION.SDK_INT < 29) {
+                if (!EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    if (EasyPermissions.permissionPermanentlyDenied(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        new AppSettingsDialog.Builder(this)
+                                .setRationale(getString(R.string.save_to_gallery_storage_permission_rationale_denied))
+                                .build().show();
+                    } else {
+                        EasyPermissions.requestPermissions(this, getString(R.string.save_to_gallery_storage_permission_rationale), REQUEST_EXTERNAL_STORAGE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    }
+                }
+            }
+            saveCurrentItemToGallery();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private boolean onTouchEventForSwipeExit(MotionEvent event) {
         int action = event.getAction();
 
@@ -362,6 +398,20 @@ public class MediaExplorerActivity extends HalloActivity {
         }
     }
 
+    private void saveCurrentItemToGallery() {
+        MediaExplorerViewModel.MediaModel current = getCurrentItem();
+        viewModel.savePostToGallery(current).observe(this, success -> {
+            if (success == null) {
+                return;
+            }
+            if (success) {
+                SnackbarHelper.showInfo(this, R.string.media_saved_to_gallery);
+            } else {
+                SnackbarHelper.showInfo(this, R.string.media_save_to_gallery_failed);
+            }
+        });
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -437,6 +487,27 @@ public class MediaExplorerActivity extends HalloActivity {
             }
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        if (requestCode == REQUEST_EXTERNAL_STORAGE_PERMISSIONS) {
+            saveCurrentItemToGallery();
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        new AppSettingsDialog.Builder(this)
+                .setRationale(getString(R.string.save_to_gallery_storage_permission_rationale_denied))
+                .build().show();
+    }
+
 
     @Override
     public void onBackPressed() {

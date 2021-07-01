@@ -557,22 +557,26 @@ public class MediaUtils {
     }
 
     public static boolean saveMediaToGallery(@NonNull Context context, @NonNull Media media) {
-        if (media.file == null || !media.file.exists()) {
+        return saveMediaToGallery(context, media.file, media.type);
+    }
+
+    public static boolean saveMediaToGallery(@NonNull Context context, @Nullable File file, @Media.MediaType int type) {
+        if (file == null || !file.exists()) {
             return false;
         }
         ContentResolver contentResolver = context.getContentResolver();
         ContentValues values = new ContentValues();
         Uri contentUri;
-        switch (media.type) {
+        switch (type) {
             case Media.MEDIA_TYPE_IMAGE: {
                 values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-                values.put(MediaStore.Images.Media.TITLE, media.file.getName());
+                values.put(MediaStore.Images.Media.TITLE, file.getName());
                 contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
                 break;
             }
             case Media.MEDIA_TYPE_VIDEO: {
                 values.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
-                values.put(MediaStore.Video.Media.TITLE, media.file.getName());
+                values.put(MediaStore.Video.Media.TITLE, file.getName());
                 contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
                 break;
             }
@@ -587,7 +591,7 @@ public class MediaUtils {
             if (os == null) {
                 return false;
             }
-            try (InputStream is = new FileInputStream(media.file)) {
+            try (InputStream is = new FileInputStream(file)) {
                 FileUtils.copyFile(is, os);
             }
             return true;
