@@ -49,6 +49,7 @@ public class HomeViewModel extends AndroidViewModel {
     final ComputableLiveData<Boolean> showFeedNux;
     final ComputableLiveData<Boolean> showActivityCenterNux;
     final ComputableLiveData<Boolean> showWelcomeNux;
+    final ComputableLiveData<Boolean> unseenHomePosts;
 
     final MutableLiveData<Boolean> showContactPermsNag;
 
@@ -64,6 +65,9 @@ public class HomeViewModel extends AndroidViewModel {
 
     private Parcelable savedScrollState;
 
+    private long lastSeenTimestamp;
+    private long lastSavedTimestamp;
+
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
         @Override
         public void onPostAdded(@NonNull Post post) {
@@ -76,6 +80,8 @@ public class HomeViewModel extends AndroidViewModel {
                 if (post.doesMention(UserId.ME)) {
                     invalidateSocialHistory();
                 }
+                lastSeenTimestamp = Math.max(post.timestamp, lastSeenTimestamp);
+                unseenHomePosts.invalidate();
             }
         }
 
@@ -97,6 +103,7 @@ public class HomeViewModel extends AndroidViewModel {
 
         public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
             invalidateSocialHistory();
+            unseenHomePosts.invalidate();
         }
 
         @Override
@@ -171,6 +178,18 @@ public class HomeViewModel extends AndroidViewModel {
             }
         };
 
+        unseenHomePosts = new ComputableLiveData<Boolean>() {
+            @Override
+            protected Boolean compute() {
+                long lastTime = preferences.getLastSeenPostTime();
+                List<Post> unseenPosts = contentDb.getUnseenPosts(lastTime, 5);
+                if (!unseenPosts.isEmpty()) {
+                    lastSeenTimestamp = Math.max(lastSeenTimestamp, unseenPosts.get(0).timestamp);
+                }
+                return !unseenPosts.isEmpty();
+            }
+        };
+
         showContactPermsNag = new MutableLiveData<>(false);
 
         final String[] perms = {Manifest.permission.READ_CONTACTS};
@@ -189,6 +208,10 @@ public class HomeViewModel extends AndroidViewModel {
         if (savedScrollState != null) {
             outState.putParcelable(STATE_SAVED_SCROLL_STATE, savedScrollState);
         }
+    }
+
+    public LiveData<Boolean> getUnseenHomePosts() {
+        return unseenHomePosts.getLiveData();
     }
 
     public LiveData<Boolean> showContactsPermissionsNag() {
@@ -275,6 +298,16 @@ public class HomeViewModel extends AndroidViewModel {
             } else {
                 unseenOut.add(activity);
             }
+        }
+    }
+
+    public void onScrollToTop() {
+        if (lastSavedTimestamp != lastSeenTimestamp) {
+            lastSavedTimestamp = lastSeenTimestamp;
+            bgWorkers.execute(() -> {
+                preferences.setLastSeenPostTime(lastSeenTimestamp);
+                unseenHomePosts.invalidate();
+            });
         }
     }
 

@@ -22,6 +22,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.InitialPagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,6 +37,7 @@ import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ActivityCenterActivity;
 import com.halloapp.ui.FeedNuxBottomSheetDialogFragment;
 import com.halloapp.ui.MainNavFragment;
+import com.halloapp.ui.MainViewModel;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.util.DialogFragmentUtils;
@@ -140,6 +142,16 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
             restoreStateOnDataLoaded = true;
         }
 
+        viewModel.unseenHomePosts.getLiveData().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean hasUnseen) {
+                if (hasUnseen) {
+                    showNewPostsBanner();
+                }
+                viewModel.unseenHomePosts.getLiveData().removeObserver(this);
+            }
+        });
+
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> {
             if (posts instanceof InitialPagedList) {
                 return;
@@ -149,6 +161,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                 scrollUpOnDataLoaded = false;
                 postsView.scrollToPosition(0);
                 newPostsView.setVisibility(View.GONE);
+                onScrollToTop();
             } else if (viewModel.checkPendingIncoming()) {
                 final View childView = layoutManager.getChildAt(0);
                 final boolean scrolled = childView == null || layoutManager.getPosition(childView) != 0;
@@ -158,6 +171,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                     scrollUpOnDataLoaded = false;
                     postsView.scrollToPosition(0);
                     newPostsView.setVisibility(View.GONE);
+                    onScrollToTop();
                 }
             }
             emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
@@ -277,6 +291,11 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         return root;
     }
 
+    private void onScrollToTop() {
+        viewModel.onScrollToTop();
+        newPostsView.setVisibility(View.GONE);
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -287,7 +306,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                 final RecyclerView.LayoutManager layoutManager = Preconditions.checkNotNull(recyclerView.getLayoutManager());
                 final View childView = layoutManager.getChildAt(0);
                 if (childView != null && layoutManager.getPosition(childView) == 0) {
-                    newPostsView.setVisibility(View.GONE);
+                    onScrollToTop();
                 }
             }
         });

@@ -42,6 +42,7 @@ import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.contacts.ContactsActivity;
 import com.halloapp.ui.groups.GroupCreationPickerActivity;
+import com.halloapp.ui.home.HomeViewModel;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
@@ -89,6 +90,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     private BottomNavigationView navView;
 
     private MainViewModel mainViewModel;
+    private HomeViewModel homeViewModel;
     private ProfileNuxViewModel profileNuxViewModel;
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
@@ -149,6 +151,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         messagesTab.setClipChildren(false);
         messagesTab.setClipToPadding(false);
 
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         profileNuxViewModel = new ViewModelProvider(this).get(ProfileNuxViewModel.class);
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.unseenChatsCount.getLiveData().observe(this,
@@ -200,7 +203,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             progress.setVisibility(View.GONE);
         });
 
-        mainViewModel.unseenHomePosts.getLiveData().observe(this, unseenPosts -> {
+        homeViewModel.getUnseenHomePosts().observe(this, unseenPosts -> {
             if (unseenPosts == null || !unseenPosts) {
                 navView.removeBadge(R.id.navigation_home);
             } else {
