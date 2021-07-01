@@ -47,12 +47,6 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!ServerProps.getInstance().getGroupInviteLinksEnabled()) {
-            CenterToast.show(this, R.string.invite_links_not_currently_supported);
-            finish();
-            return;
-        }
-
         contactLoader = new ContactLoader();
 
         getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));

@@ -125,12 +125,6 @@ public class GroupInfoActivity extends HalloActivity {
             startActivity(GroupInviteLinkActivity.newIntent(this, groupId));
         });
 
-        if (!ServerProps.getInstance().getGroupInviteLinksEnabled()) {
-            inviteLinkView.setVisibility(View.VISIBLE);
-        } else {
-            inviteLinkView.setVisibility(View.GONE);
-        }
-
         addMembersView = findViewById(R.id.add_members);
         addMembersView.setOnClickListener(v -> {
             List<GroupViewModel.GroupMember> members = viewModel.getMembers().getValue();

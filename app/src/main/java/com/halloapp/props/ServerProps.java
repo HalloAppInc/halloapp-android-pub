@@ -34,7 +34,6 @@ public class ServerProps {
     private static final String PROP_MAX_FEED_VIDEO_DURATION = "max_feed_video_duration";
     private static final String PROP_MAX_CHAT_VIDEO_DURATION = "max_chat_video_duration";
     private static final String PROP_MIN_GROUP_SYNC_INTERVAL = "group_sync_time";
-    private static final String PROP_GROUP_INVITE_LINKS = "group_invite_links";
     private static final String PROP_NEW_CLIENT_CONTAINER = "new_client_container";
     private static final String PROP_MAX_VIDEO_BITRATE = "max_video_bit_rate";
     private static final String PROP_VOICE_NOTE_SENDING_ENABLED = "voice_notes";
@@ -67,7 +66,6 @@ public class ServerProps {
     private final IntegerProp propMaxFeedVideoDuration = createProp(PROP_MAX_FEED_VIDEO_DURATION, 60);
     private final IntegerProp propMaxChatVideoDuration = createProp(PROP_MAX_CHAT_VIDEO_DURATION, 120);
     private final IntegerProp propMinGroupSyncInterval = createProp(PROP_MIN_GROUP_SYNC_INTERVAL, WEEK_IN_SECONDS);
-    private final BooleanProp propGroupInviteLinksEnabled = createProp(PROP_GROUP_INVITE_LINKS, false);
     private final BooleanProp propNewClientContainerEnabled = createProp(PROP_NEW_CLIENT_CONTAINER, false);
     private final IntegerProp propMaxVideoBitrate = createProp(PROP_MAX_VIDEO_BITRATE, 8000000);
     private final BooleanProp propVoiceNoteSendingEnabled = createProp(PROP_VOICE_NOTE_SENDING_ENABLED, false);
@@ -100,6 +98,7 @@ public class ServerProps {
         preferences.edit()
                 .remove("private_reactions") // TODO(jack): Remove after May 1
                 .remove("cleartext_chat_messages") // TODO(jack): Remove after Oct 1
+                .remove("group_invite_links") // TODO(clark): Remove after Oct 1
                 .apply();
 
         loadProps();
@@ -212,10 +211,6 @@ public class ServerProps {
 
     public synchronized int getMinGroupSyncIntervalSeconds() {
         return propMinGroupSyncInterval.getValue();
-    }
-
-    public synchronized boolean getGroupInviteLinksEnabled() {
-        return propGroupInviteLinksEnabled.getValue();
     }
 
     public synchronized int getMaxVideoBitrate() {
