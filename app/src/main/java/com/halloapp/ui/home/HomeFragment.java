@@ -310,7 +310,11 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     }
 
     private void hideNewPostsBanner() {
-        final float initialTranslation = -getResources().getDimension(R.dimen.details_media_list_height);
+        Context context = getContext();
+        if (context == null) {
+            return;
+        }
+        final float initialTranslation = -context.getResources().getDimension(R.dimen.details_media_list_height);
         newPostsView.animate().setDuration(200).translationY(initialTranslation).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
