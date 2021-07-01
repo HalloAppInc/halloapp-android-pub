@@ -53,7 +53,6 @@ public class HANoiseSocket extends Socket {
     private static final int BUFFER_SIZE = 4096;
     private static final int CONNECT_TIMEOUT = 20_000;
     private static final int READ_TIMEOUT = 3 * (int)DateUtils.MINUTE_IN_MILLIS;
-    private static final int NAGLE_WARNING_THRESHOLD = 32;
 
     private final Me me;
 
@@ -255,9 +254,6 @@ public class HANoiseSocket extends Socket {
         writeLength(len);
         writerOutputStream.write(packetBytes, 0, len);
         writerOutputStream.flush();
-        if (len < NAGLE_WARNING_THRESHOLD) {
-            Log.i("NoiseSocket/writeMessage sending " + len + " bytes. Consider coalescing packets, as Nagle's is disabled.");
-        }
     }
 
     private void writeNoiseMessage(NoiseMessage.MessageType type, byte[] content, int len) throws IOException {
