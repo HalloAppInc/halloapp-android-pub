@@ -1,5 +1,6 @@
 package com.halloapp.ui.groups;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -25,6 +26,8 @@ import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.InitialSyncActivity;
+import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.ViewDataLoader;
@@ -60,6 +63,25 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
         }
 
         viewModel = new ViewModelProvider(this, new ViewGroupInviteLinkViewModel.Factory(getApplication(), code)).get(ViewGroupInviteLinkViewModel.class);
+
+        viewModel.registrationStatus.getLiveData().observe(this, checkResult -> {
+            if (checkResult == null) {
+                return;
+            }
+            if (!checkResult.registered) {
+                Log.i("MainActivity.onStart: not registered");
+                startActivity(new Intent(getBaseContext(), RegistrationRequestActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return;
+            } else if (checkResult.lastSyncTime <= 0) {
+                Log.i("MainActivity.onStart: not synced");
+                startActivity(new Intent(getBaseContext(), InitialSyncActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return;
+            }
+        });
 
         setContentView(R.layout.activity_view_invite_link);
 

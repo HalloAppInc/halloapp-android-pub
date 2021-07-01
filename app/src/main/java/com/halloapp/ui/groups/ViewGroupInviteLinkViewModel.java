@@ -10,16 +10,23 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.halloapp.Me;
+import com.halloapp.Preferences;
 import com.halloapp.groups.GroupInfo;
+import com.halloapp.registration.CheckRegistration;
+import com.halloapp.util.ComputableLiveData;
 import com.halloapp.xmpp.groups.GroupsApi;
 
 
 public class ViewGroupInviteLinkViewModel extends AndroidViewModel{
 
+    private final Me me = Me.getInstance();
     private final GroupsApi groupsApi = GroupsApi.getInstance();
+    private final Preferences preferences = Preferences.getInstance();
 
     private final String linkCode;
 
+    final ComputableLiveData<CheckRegistration.CheckResult> registrationStatus;
     private final MutableLiveData<InviteLinkResult> inviteLinkPreview;
 
     public static class InviteLinkResult {
@@ -36,6 +43,13 @@ public class ViewGroupInviteLinkViewModel extends AndroidViewModel{
         this.linkCode = linkCode;
 
         inviteLinkPreview = new MutableLiveData<>();
+
+        registrationStatus = new ComputableLiveData<CheckRegistration.CheckResult>() {
+            @Override
+            protected CheckRegistration.CheckResult compute() {
+                return CheckRegistration.checkRegistration(me, preferences);
+            }
+        };
 
         fetchInvitePreview();
     }
