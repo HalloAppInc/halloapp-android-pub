@@ -190,8 +190,10 @@ public class MediaExplorerActivity extends HalloActivity {
         } else {
             bgWorkers.execute(() -> {
                 viewModel.setPosition(viewModel.getPositionInChat(media.get(selected).rowId));
-                pager.setCurrentItem(viewModel.getPosition(), false);
-                pager.post(this::finishEnterTransitionWhenReady);
+                pager.post(() -> {
+                    pager.setCurrentItem(viewModel.getPosition(), false);
+                    finishEnterTransitionWhenReady();
+                });
             });
         }
     }
