@@ -91,7 +91,6 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
     private MainViewModel mainViewModel;
     private HomeViewModel homeViewModel;
-    private ProfileNuxViewModel profileNuxViewModel;
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
@@ -152,7 +151,6 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         messagesTab.setClipToPadding(false);
 
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-        profileNuxViewModel = new ViewModelProvider(this).get(ProfileNuxViewModel.class);
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.unseenChatsCount.getLiveData().observe(this,
                 unseenChatsCount -> {
@@ -392,11 +390,6 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                     || ev.getY() > fabView.getY() + fabView.getHeight()
                     || ev.getY() < fabView.getY()) {
                 fabView.close();
-            }
-        }
-        if (navView.getSelectedItemId() == R.id.navigation_profile) {
-            if (profileNuxViewModel.dismissMakePostNuxIfOpen()) {
-                return true;
             }
         }
         return super.dispatchTouchEvent(ev);

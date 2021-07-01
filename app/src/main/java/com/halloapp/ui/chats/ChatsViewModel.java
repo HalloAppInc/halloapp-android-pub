@@ -38,7 +38,6 @@ import java.util.Map;
 
 public class ChatsViewModel extends AndroidViewModel {
 
-    final ComputableLiveData<Boolean> showMessagesNux;
     final ComputableLiveData<List<Chat>> chatsList;
     final MutableLiveData<Boolean> messageUpdated;
 
@@ -135,12 +134,6 @@ public class ChatsViewModel extends AndroidViewModel {
         preferences = Preferences.getInstance();
 
         messageLoader = new MessageLoader(Preconditions.checkNotNull(application));
-        showMessagesNux = new ComputableLiveData<Boolean>() {
-            @Override
-            protected Boolean compute() {
-                return !preferences.getShowedMessagesNux();
-            }
-        };
         chatsList = new ComputableLiveData<List<Chat>>() {
             @Override
             protected List<Chat> compute() {
@@ -199,13 +192,6 @@ public class ChatsViewModel extends AndroidViewModel {
                     contactsDb.hideEmptyChat((UserId) chatId);
                 }
             }
-        });
-    }
-
-    public void closeNux() {
-        bgWorkers.execute(() -> {
-            preferences.markMessagesNuxShown();
-            showMessagesNux.invalidate();
         });
     }
 

@@ -540,8 +540,6 @@
     <string name="user_typing">typing…</string>
     <string name="group_user_typing">%s is typing…</string>
     <string name="group_many_users_typing">multiple users typing…</string>
-    <string name="feed_nux_bottom_sheet_title">About HalloApp</string>
-    <string name="feed_nux_bottom_sheet_text">Home feed allows you to share text, photo, and video updates that disappear after 30 days.\n\nIf you want to share updates with someone, both parties must have each other\'s numbers saved on their phones.\n\nYou can share your updates with your entire contact list or only with selected people. Go to settings to change feed privacy.</string>
     <string name="messages_nux_text">This is where you’ll find messages from your friends &amp; family. When someone new joins HalloApp you can see them here.</string>
     <string name="post_audience_nux_text">Your post will be shared with your phone contacts who use HalloApp. You can limit their access to your posts by going to Profile→Settings.</string>
     <string name="activity_center_nux">This is your activity center. Tap to see your most recent activity.</string>

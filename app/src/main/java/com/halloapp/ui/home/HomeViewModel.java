@@ -46,8 +46,6 @@ public class HomeViewModel extends AndroidViewModel {
     final LiveData<PagedList<Post>> postList;
     final ComputableLiveData<SocialHistory> socialHistory;
 
-    final ComputableLiveData<Boolean> showFeedNux;
-    final ComputableLiveData<Boolean> showActivityCenterNux;
     final ComputableLiveData<Boolean> showWelcomeNux;
     final ComputableLiveData<Boolean> unseenHomePosts;
 
@@ -159,18 +157,6 @@ public class HomeViewModel extends AndroidViewModel {
                 return loadSocialHistory();
             }
         };
-        showActivityCenterNux = new ComputableLiveData<Boolean>() {
-            @Override
-            protected Boolean compute() {
-                return preferences.getShowedFeedNux() && !preferences.getShowedActivityCenterNux();
-            }
-        };
-        showFeedNux = new ComputableLiveData<Boolean>() {
-            @Override
-            protected Boolean compute() {
-                return !preferences.getShowedFeedNux();
-            }
-        };
         showWelcomeNux = new ComputableLiveData<Boolean>() {
             @Override
             protected Boolean compute() {
@@ -220,21 +206,6 @@ public class HomeViewModel extends AndroidViewModel {
 
     public void hideContactsNag() {
         showContactPermsNag.setValue(false);
-    }
-
-    public void closeFeedNux() {
-        bgWorkers.execute(() -> {
-            preferences.markFeedNuxShown();
-            showFeedNux.invalidate();
-            showActivityCenterNux.invalidate();
-        });
-    }
-
-    public void closeActivityCenterNux() {
-        bgWorkers.execute(() -> {
-            preferences.markActivityCenterNuxShown();
-            showActivityCenterNux.invalidate();
-        });
     }
 
     public void markWelcomeNuxShown() {

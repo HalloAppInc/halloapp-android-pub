@@ -98,11 +98,6 @@ public class Preferences {
 
     private final List<Preference<?>> prefs = new ArrayList<>();
 
-    private final BooleanPreference prefShowedFeedNux = createPref(false, PREF_KEY_SHOWED_FEED_NUX, false);
-    private final BooleanPreference prefShowedMessagesNux = createPref(false, PREF_KEY_SHOWED_MESSAGES_NUX, false);
-    private final BooleanPreference prefShowedProfileNux = createPref(false, PREF_KEY_SHOWED_PROFILE_NUX, false);
-    private final BooleanPreference prefShowedMakePostNux = createPref(false, PREF_KEY_SHOWED_MAKE_POST_NUX, false);
-    private final BooleanPreference prefShowedActivityCenterNux = createPref(false, PREF_KEY_SHOWED_ACTIVITY_CENTER_NUX, false);
     private final BooleanPreference prefShowedWelcomeNux = createPref(false, PREF_KEY_SHOWED_WELCOME_NUX, false);
 
     private final BooleanPreference prefInviteNotificationSeen = createPref(false, PREF_KEY_INVITE_NOTIFICATION_SEEN, false);
@@ -159,6 +154,11 @@ public class Preferences {
     private final String[] deletedPrefs = new String[] {
             PREF_KEY_LAST_SILENT_DECRYPT_MESSAGE_ROW_ID, // TODO(jack): Remove after August 30
             PREF_KEY_NEXT_PRESENCE_ID, // TODO(jack): Remove after August 30
+            PREF_KEY_SHOWED_FEED_NUX, // TODO(clark): Remove after October 1
+            PREF_KEY_SHOWED_ACTIVITY_CENTER_NUX,
+            PREF_KEY_SHOWED_MESSAGES_NUX,
+            PREF_KEY_SHOWED_PROFILE_NUX,
+            PREF_KEY_SHOWED_MAKE_POST_NUX,
     };
 
     private abstract class Preference<T> {
@@ -440,56 +440,6 @@ public class Preferences {
     @WorkerThread
     public void setFeedPrivacyActiveList(@PrivacyList.Type String activeList) {
         prefActivePrivacyList.set(activeList);
-    }
-
-    @WorkerThread
-    public boolean getShowedFeedNux() {
-        return prefShowedFeedNux.get();
-    }
-
-    @WorkerThread
-    public void markFeedNuxShown() {
-        prefShowedFeedNux.set(true);
-    }
-
-    @WorkerThread
-    public boolean getShowedMessagesNux() {
-        return prefShowedMessagesNux.get();
-    }
-
-    @WorkerThread
-    public void markMessagesNuxShown() {
-        prefShowedMessagesNux.set(true);
-    }
-
-    @WorkerThread
-    public boolean getShowedProfileNux() {
-        return prefShowedProfileNux.get();
-    }
-
-    @WorkerThread
-    public void markProfileNuxShown() {
-        prefShowedProfileNux.set(true);
-    }
-
-    @WorkerThread
-    public boolean getShowedMakePostNux() {
-        return prefShowedMakePostNux.get();
-    }
-
-    @WorkerThread
-    public void markMakePostNuxShown() {
-        prefShowedMakePostNux.set(true);
-    }
-
-    @WorkerThread
-    public boolean getShowedActivityCenterNux() {
-        return prefShowedActivityCenterNux.get();
-    }
-
-    @WorkerThread
-    public void markActivityCenterNuxShown() {
-        prefShowedActivityCenterNux.set(true);
     }
 
     @WorkerThread
