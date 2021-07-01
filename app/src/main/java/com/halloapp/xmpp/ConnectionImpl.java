@@ -1292,7 +1292,7 @@ public class ConnectionImpl extends Connection {
             final Map<UserId, String> names = new HashMap<>();
 
             for (GroupFeedItem item : items) {
-                if (item.getAction() == GroupFeedItem.Action.PUBLISH) {
+                if (item.getAction() == GroupFeedItem.Action.PUBLISH || item.getAction() == GroupFeedItem.Action.SHARE) {
                     if (item.hasComment()) {
                         com.halloapp.proto.server.Comment protoComment = item.getComment();
                         Comment comment = processComment(protoComment, names);
