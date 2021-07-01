@@ -53,7 +53,7 @@
                             android:maxLines="1"
                             android:ellipsize="end"
                             android:textAppearance="@style/TextAppearance.Toolbar.Title.Chat"
-                            android:text="@string/verify_keys"/>
+                            android:text="@string/verify_safety_number"/>
 
                         <TextView
                             android:id="@+id/subtitle"

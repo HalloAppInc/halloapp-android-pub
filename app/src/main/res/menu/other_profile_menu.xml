@@ -9,7 +9,7 @@
 
     <item
         android:id="@+id/verify"
-        android:title="@string/verify_keys"
+        android:title="@string/view_safety_number"
         app:showAsAction="never"
         android:visible="false"
         />

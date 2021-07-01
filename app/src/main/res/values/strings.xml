@@ -316,7 +316,10 @@
     <string name="new_messages">New messages</string>
     <string name="delete">Delete</string>
     <string name="clear_chat">Clear chat</string>
-    <string name="verify_keys">Verify keys</string>
+    <!-- Shown on buttons for opening up the key verification activity -->
+    <string name="view_safety_number">View safety number</string>
+    <!-- Shown as title of key verification activity -->
+    <string name="verify_safety_number">Verify safety number</string>
     <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
     <string name="key_verification_success">Verification succeeded</string>
     <!-- Shown when the information scanned from the QR code does not match what was expected, indicating the keys do not match -->
