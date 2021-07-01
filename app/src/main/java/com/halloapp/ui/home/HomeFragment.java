@@ -350,6 +350,12 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         }
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        saveScrollState();
+    }
+
     private void refreshInviteNux() {
         int lastItem = adapter.getItemCount() - 1;
         if (lastItem == layoutManager.findLastVisibleItemPosition()) {
@@ -373,12 +379,10 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         }
     }
 
-    @Override
-    public void onDestroyView() {
+    private void saveScrollState() {
         if (viewModel != null && layoutManager != null) {
             viewModel.saveScrollState(layoutManager.onSaveInstanceState());
         }
-        super.onDestroyView();
     }
 
     @Override
