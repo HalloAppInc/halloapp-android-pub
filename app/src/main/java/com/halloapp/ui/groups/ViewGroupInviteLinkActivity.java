@@ -24,7 +24,6 @@ import com.halloapp.contacts.ContactLoader;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.UserId;
-import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.InitialSyncActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
@@ -69,17 +68,15 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
                 return;
             }
             if (!checkResult.registered) {
-                Log.i("MainActivity.onStart: not registered");
+                Log.i("ViewGroupInviteLinkActivity/checkRegistration: not registered");
                 startActivity(new Intent(getBaseContext(), RegistrationRequestActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
-                return;
             } else if (checkResult.lastSyncTime <= 0) {
-                Log.i("MainActivity.onStart: not synced");
+                Log.i("ViewGroupInviteLinkActivity/checkRegistration: not synced");
                 startActivity(new Intent(getBaseContext(), InitialSyncActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
-                return;
             }
         });
 
