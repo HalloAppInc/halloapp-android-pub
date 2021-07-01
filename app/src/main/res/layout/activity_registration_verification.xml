@@ -88,7 +88,7 @@
                 app:layout_constraintTop_toBottomOf="@id/resend_sms"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="30"
+                android:layout_marginBottom="30dp"
                 android:background="?selectableItemBackground"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
