@@ -6,111 +6,120 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="24dp"
-        tools:context=".ui.RegistrationRequestActivity">
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/loading"
+        android:fillViewport="true">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="160dp"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"
-            android:gravity="start"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            android:text="@string/verify_registration_title"/>
-
-        <com.halloapp.widget.CodeEditText
-            android:id="@+id/code"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:inputType="numberPassword"
-            android:importantForAutofill="no"
-            android:gravity="center"
-            android:textSize="22dp"
-            android:singleLine="true"
-            app:cetBorderColor="@android:color/white"
-            app:cetCellRadius="5dp"
-            app:cetCellSpacing="9dp"
-            app:cetCellSize="@dimen/code_edit_box_size"
-            android:layout_marginTop="24dp"
-            android:background="@null"
-            android:textColor="@color/black_80"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title"/>
-
-        <LinearLayout
-            android:id="@+id/resend_sms"
-            app:layout_constraintTop_toBottomOf="@id/code"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="30dp"
-            android:background="?selectableItemBackground"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            tools:context=".ui.RegistrationRequestActivity">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/title"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/secondary_button_color_selector"
-                android:paddingStart="10dp"
-                android:textSize="15sp"
-                android:paddingEnd="10dp"
-                android:padding="4dp"
-                android:text="@string/resend_sms"/>
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:gravity="start"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:text="@string/verify_registration_title"/>
+
+            <com.halloapp.widget.CodeEditText
+                android:id="@+id/code"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:inputType="numberPassword"
+                android:importantForAutofill="no"
+                android:gravity="center"
+                android:textSize="22dp"
+                android:singleLine="true"
+                app:cetBorderColor="@android:color/white"
+                app:cetCellRadius="5dp"
+                app:cetCellSpacing="9dp"
+                app:cetCellSize="@dimen/code_edit_box_size"
+                android:layout_marginTop="24dp"
+                android:background="@null"
+                android:textColor="@color/black_80"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title"/>
+
+            <LinearLayout
+                android:id="@+id/resend_sms"
+                app:layout_constraintTop_toBottomOf="@id/code"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="30dp"
+                android:background="?selectableItemBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/secondary_button_color_selector"
+                    android:paddingStart="10dp"
+                    android:textSize="15sp"
+                    android:paddingEnd="10dp"
+                    android:padding="4dp"
+                    android:text="@string/resend_sms"/>
+
+                <TextView
+                    android:id="@+id/resent_sms_timer"
+                    app:layout_constraintTop_toTopOf="@id/resend_sms"
+                    app:layout_constraintBottom_toBottomOf="@id/resend_sms"
+                    app:layout_constraintStart_toEndOf="@id/resend_sms"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/button_disabled_background"
+                    android:textSize="15sp"
+                    tools:text="1:30"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/call_me"
+                app:layout_constraintTop_toBottomOf="@id/resend_sms"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="30"
+                android:background="?selectableItemBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:textSize="15sp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:textColor="@color/secondary_button_color_selector"
+                    android:text="@string/request_call"/>
+
+                <TextView
+                    android:id="@+id/call_me_timer"
+                    app:layout_constraintTop_toTopOf="@id/call_me"
+                    app:layout_constraintBottom_toBottomOf="@id/call_me"
+                    app:layout_constraintStart_toEndOf="@id/call_me"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/button_disabled_background"
+                    android:textSize="15sp"
+                    tools:text="1:30"/>
+
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/call_me"
-            app:layout_constraintTop_toBottomOf="@id/resend_sms"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="10dp"
-            android:background="?selectableItemBackground"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="4dp"
-                android:textSize="15sp"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:textColor="@color/secondary_button_color_selector"
-                android:text="@string/request_call"/>
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/resent_sms_timer"
-            app:layout_constraintTop_toTopOf="@id/resend_sms"
-            app:layout_constraintBottom_toBottomOf="@id/resend_sms"
-            app:layout_constraintStart_toEndOf="@id/resend_sms"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/button_disabled_background"
-            android:textSize="15sp"
-            tools:text="1:30"/>
-
-        <TextView
-            android:id="@+id/call_me_timer"
-            app:layout_constraintTop_toTopOf="@id/call_me"
-            app:layout_constraintBottom_toBottomOf="@id/call_me"
-            app:layout_constraintStart_toEndOf="@id/call_me"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/button_disabled_background"
-            android:textSize="15sp"
-            tools:text="1:30"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
     <ProgressBar
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
