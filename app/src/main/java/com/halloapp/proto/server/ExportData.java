@@ -31,6 +31,10 @@ public  final class ExportData extends
      * <code>READY = 2;</code>
      */
     READY(2),
+    /**
+     * <code>NOT_STARTED = 3;</code>
+     */
+    NOT_STARTED(3),
     UNRECOGNIZED(-1),
     ;
 
@@ -46,6 +50,10 @@ public  final class ExportData extends
      * <code>READY = 2;</code>
      */
     public static final int READY_VALUE = 2;
+    /**
+     * <code>NOT_STARTED = 3;</code>
+     */
+    public static final int NOT_STARTED_VALUE = 3;
 
 
     @java.lang.Override
@@ -72,6 +80,7 @@ public  final class ExportData extends
         case 0: return UNKNOWN;
         case 1: return PENDING;
         case 2: return READY;
+        case 3: return NOT_STARTED;
         default: return null;
       }
     }
@@ -225,6 +234,32 @@ public  final class ExportData extends
     checkByteStringIsUtf8(value);
     dataUrl_ = value.toStringUtf8();
     
+  }
+
+  public static final int AVAILABLE_UNTIL_TS_FIELD_NUMBER = 4;
+  private long availableUntilTs_;
+  /**
+   * <code>int64 available_until_ts = 4;</code>
+   * @return The availableUntilTs.
+   */
+  @java.lang.Override
+  public long getAvailableUntilTs() {
+    return availableUntilTs_;
+  }
+  /**
+   * <code>int64 available_until_ts = 4;</code>
+   * @param value The availableUntilTs to set.
+   */
+  private void setAvailableUntilTs(long value) {
+    
+    availableUntilTs_ = value;
+  }
+  /**
+   * <code>int64 available_until_ts = 4;</code>
+   */
+  private void clearAvailableUntilTs() {
+    
+    availableUntilTs_ = 0L;
   }
 
   public static com.halloapp.proto.server.ExportData parseFrom(
@@ -445,6 +480,34 @@ public  final class ExportData extends
       return this;
     }
 
+    /**
+     * <code>int64 available_until_ts = 4;</code>
+     * @return The availableUntilTs.
+     */
+    @java.lang.Override
+    public long getAvailableUntilTs() {
+      return instance.getAvailableUntilTs();
+    }
+    /**
+     * <code>int64 available_until_ts = 4;</code>
+     * @param value The availableUntilTs to set.
+     * @return This builder for chaining.
+     */
+    public Builder setAvailableUntilTs(long value) {
+      copyOnWrite();
+      instance.setAvailableUntilTs(value);
+      return this;
+    }
+    /**
+     * <code>int64 available_until_ts = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearAvailableUntilTs() {
+      copyOnWrite();
+      instance.clearAvailableUntilTs();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.ExportData)
   }
   @java.lang.Override
@@ -464,10 +527,11 @@ public  final class ExportData extends
             "dataReadyTs_",
             "status_",
             "dataUrl_",
+            "availableUntilTs_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0002\u0002\f" +
-              "\u0003\u0208";
+              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0002\u0002\f" +
+              "\u0003\u0208\u0004\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

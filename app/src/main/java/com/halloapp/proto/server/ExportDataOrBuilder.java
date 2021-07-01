@@ -35,4 +35,10 @@ public interface ExportDataOrBuilder extends
    */
   com.google.protobuf.ByteString
       getDataUrlBytes();
+
+  /**
+   * <code>int64 available_until_ts = 4;</code>
+   * @return The availableUntilTs.
+   */
+  long getAvailableUntilTs();
 }

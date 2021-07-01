@@ -7536,6 +7536,9 @@ export namespace server {
 
         /** ExportData dataUrl */
         dataUrl?: (string|null);
+
+        /** ExportData availableUntilTs */
+        availableUntilTs?: (number|Long|null);
     }
 
     /** Represents an ExportData. */
@@ -7555,6 +7558,9 @@ export namespace server {
 
         /** ExportData dataUrl. */
         public dataUrl: string;
+
+        /** ExportData availableUntilTs. */
+        public availableUntilTs: (number|Long);
 
         /**
          * Creates a new ExportData instance using the specified properties.
@@ -7633,7 +7639,8 @@ export namespace server {
         enum Status {
             UNKNOWN = 0,
             PENDING = 1,
-            READY = 2
+            READY = 2,
+            NOT_STARTED = 3
         }
     }
 

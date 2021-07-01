@@ -20365,6 +20365,7 @@ $root.server = (function() {
          * @property {number|Long|null} [dataReadyTs] ExportData dataReadyTs
          * @property {server.ExportData.Status|null} [status] ExportData status
          * @property {string|null} [dataUrl] ExportData dataUrl
+         * @property {number|Long|null} [availableUntilTs] ExportData availableUntilTs
          */
 
         /**
@@ -20407,6 +20408,14 @@ $root.server = (function() {
         ExportData.prototype.dataUrl = "";
 
         /**
+         * ExportData availableUntilTs.
+         * @member {number|Long} availableUntilTs
+         * @memberof server.ExportData
+         * @instance
+         */
+        ExportData.prototype.availableUntilTs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
          * Creates a new ExportData instance using the specified properties.
          * @function create
          * @memberof server.ExportData
@@ -20436,6 +20445,8 @@ $root.server = (function() {
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.status);
             if (message.dataUrl != null && Object.hasOwnProperty.call(message, "dataUrl"))
                 writer.uint32(/* id 3, wireType 2 =*/26).string(message.dataUrl);
+            if (message.availableUntilTs != null && Object.hasOwnProperty.call(message, "availableUntilTs"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.availableUntilTs);
             return writer;
         };
 
@@ -20478,6 +20489,9 @@ $root.server = (function() {
                     break;
                 case 3:
                     message.dataUrl = reader.string();
+                    break;
+                case 4:
+                    message.availableUntilTs = reader.int64();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -20524,11 +20538,15 @@ $root.server = (function() {
                 case 0:
                 case 1:
                 case 2:
+                case 3:
                     break;
                 }
             if (message.dataUrl != null && message.hasOwnProperty("dataUrl"))
                 if (!$util.isString(message.dataUrl))
                     return "dataUrl: string expected";
+            if (message.availableUntilTs != null && message.hasOwnProperty("availableUntilTs"))
+                if (!$util.isInteger(message.availableUntilTs) && !(message.availableUntilTs && $util.isInteger(message.availableUntilTs.low) && $util.isInteger(message.availableUntilTs.high)))
+                    return "availableUntilTs: integer|Long expected";
             return null;
         };
 
@@ -20566,9 +20584,22 @@ $root.server = (function() {
             case 2:
                 message.status = 2;
                 break;
+            case "NOT_STARTED":
+            case 3:
+                message.status = 3;
+                break;
             }
             if (object.dataUrl != null)
                 message.dataUrl = String(object.dataUrl);
+            if (object.availableUntilTs != null)
+                if ($util.Long)
+                    (message.availableUntilTs = $util.Long.fromValue(object.availableUntilTs)).unsigned = false;
+                else if (typeof object.availableUntilTs === "string")
+                    message.availableUntilTs = parseInt(object.availableUntilTs, 10);
+                else if (typeof object.availableUntilTs === "number")
+                    message.availableUntilTs = object.availableUntilTs;
+                else if (typeof object.availableUntilTs === "object")
+                    message.availableUntilTs = new $util.LongBits(object.availableUntilTs.low >>> 0, object.availableUntilTs.high >>> 0).toNumber();
             return message;
         };
 
@@ -20593,6 +20624,11 @@ $root.server = (function() {
                     object.dataReadyTs = options.longs === String ? "0" : 0;
                 object.status = options.enums === String ? "UNKNOWN" : 0;
                 object.dataUrl = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.availableUntilTs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.availableUntilTs = options.longs === String ? "0" : 0;
             }
             if (message.dataReadyTs != null && message.hasOwnProperty("dataReadyTs"))
                 if (typeof message.dataReadyTs === "number")
@@ -20603,6 +20639,11 @@ $root.server = (function() {
                 object.status = options.enums === String ? $root.server.ExportData.Status[message.status] : message.status;
             if (message.dataUrl != null && message.hasOwnProperty("dataUrl"))
                 object.dataUrl = message.dataUrl;
+            if (message.availableUntilTs != null && message.hasOwnProperty("availableUntilTs"))
+                if (typeof message.availableUntilTs === "number")
+                    object.availableUntilTs = options.longs === String ? String(message.availableUntilTs) : message.availableUntilTs;
+                else
+                    object.availableUntilTs = options.longs === String ? $util.Long.prototype.toString.call(message.availableUntilTs) : options.longs === Number ? new $util.LongBits(message.availableUntilTs.low >>> 0, message.availableUntilTs.high >>> 0).toNumber() : message.availableUntilTs;
             return object;
         };
 
@@ -20624,12 +20665,14 @@ $root.server = (function() {
          * @property {number} UNKNOWN=0 UNKNOWN value
          * @property {number} PENDING=1 PENDING value
          * @property {number} READY=2 READY value
+         * @property {number} NOT_STARTED=3 NOT_STARTED value
          */
         ExportData.Status = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "UNKNOWN"] = 0;
             values[valuesById[1] = "PENDING"] = 1;
             values[valuesById[2] = "READY"] = 2;
+            values[valuesById[3] = "NOT_STARTED"] = 3;
             return values;
         })();
 
