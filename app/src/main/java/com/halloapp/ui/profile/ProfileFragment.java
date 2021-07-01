@@ -56,6 +56,7 @@ public class ProfileFragment extends PostsFragment {
     private TextView nameView;
     private TextView subtitleView;
     private View messageView;
+    private View unblockView;
     private View addToContactsView;
     private RecyclerView postsView;
 
@@ -146,6 +147,7 @@ public class ProfileFragment extends PostsFragment {
         subtitleView = headerView.findViewById(R.id.subtitle);
         nameView = headerView.findViewById(R.id.name);
         messageView = headerView.findViewById(R.id.message);
+        unblockView = headerView.findViewById(R.id.unblock);
         addToContactsView = headerView.findViewById(R.id.add_to_contacts);
         viewModel.getSubtitle().observe(getViewLifecycleOwner(), s -> {
             subtitleView.setText(s);
@@ -154,6 +156,9 @@ public class ProfileFragment extends PostsFragment {
             } else {
                 subtitleView.setVisibility(View.VISIBLE);
             }
+        });
+        unblockView.setOnClickListener(v -> {
+            unBlockContact();
         });
         messageView.setOnClickListener(v -> {
             final Intent intent = new Intent(getContext(), ChatActivity.class);
@@ -185,18 +190,20 @@ public class ProfileFragment extends PostsFragment {
                 if (contact.addressBookName == null) {
                     emptyIcon.setImageResource(R.drawable.ic_exchange_numbers);
                     emptyView.setText(getString(R.string.posts_exchange_numbers));
-                    messageView.setVisibility(View.GONE);
                     addToContactsView.setVisibility(View.VISIBLE);
                 } else {
                     emptyIcon.setImageResource(R.drawable.ic_posts);
                     emptyView.setText(getString(R.string.contact_profile_empty, name));
-                    messageView.setVisibility(View.VISIBLE);
                     addToContactsView.setVisibility(View.GONE);
                 }
+                updateMessageUnblock();
             });
         }
 
-        viewModel.getIsBlocked().observe(getViewLifecycleOwner(), this::updateMenu);
+        viewModel.getIsBlocked().observe(getViewLifecycleOwner(), isBlocked -> {
+            updateMenu(isBlocked);
+            updateMessageUnblock();
+        });
 
         avatarView = headerView.findViewById(R.id.avatar);
         avatarView.setOnClickListener(v -> {
@@ -215,6 +222,22 @@ public class ProfileFragment extends PostsFragment {
         postsView.setAdapter(adapter);
         contactsDb.addObserver(contactsObserver);
         return root;
+    }
+
+    private void updateMessageUnblock() {
+        Contact contact = viewModel.getContact().getValue();
+        Boolean isBlocked = viewModel.getIsBlocked().getValue();
+        boolean blocked = isBlocked != null && isBlocked;
+        if (contact == null || contact.addressBookName == null || blocked) {
+            messageView.setVisibility(View.GONE);
+        } else {
+            messageView.setVisibility(View.VISIBLE);
+        }
+        if (blocked) {
+            unblockView.setVisibility(View.VISIBLE);
+        } else {
+            unblockView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -307,7 +330,7 @@ public class ProfileFragment extends PostsFragment {
         String chatName = nameView.getText().toString();
         ProgressDialog unblockDialog = ProgressDialog.show(requireContext(), null, getString(R.string.unblocking_user_in_progress, chatName), true);
         unblockDialog.show();
-        viewModel.unblockContact(new UserId(profileUserId.rawId())).observe(this, success -> {
+        viewModel.unblockContact(new UserId(profileUserId.rawId())).observe(getViewLifecycleOwner(), success -> {
             if (success == null) {
                 return;
             }
