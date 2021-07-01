@@ -1167,6 +1167,7 @@ public class ConnectionImpl extends Connection {
                         com.halloapp.proto.server.Post protoPost = item.getPost();
                         Post post = processPost(protoPost, names);
                         if (post != null) {
+                            post.seen = item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.PUBLISH) ? Post.SEEN_NO : Post.SEEN_YES;
                             posts.add(post);
                         } else {
                             Log.e("connection: invalid post");
@@ -1176,6 +1177,7 @@ public class ConnectionImpl extends Connection {
                         com.halloapp.proto.server.Comment protoComment = item.getComment();
                         Comment comment = processComment(protoComment, names);
                         if (comment != null) {
+                            comment.seen = item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE);
                             comments.add(comment);
                         } else {
                             Log.e("connection: invalid comment");
@@ -1195,7 +1197,7 @@ public class ConnectionImpl extends Connection {
             return !posts.isEmpty() || !comments.isEmpty();
         }
 
-        private Post processPost( com.halloapp.proto.server.Post protoPost, Map<UserId, String> names) {
+        private Post processPost(com.halloapp.proto.server.Post protoPost, Map<UserId, String> names) {
             if (protoPost.getPublisherUid() != 0 && protoPost.getPublisherName() != null) {
                 names.put(new UserId(Long.toString(protoPost.getPublisherUid())), protoPost.getPublisherName());
             }
