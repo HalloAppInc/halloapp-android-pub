@@ -262,6 +262,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         if (!post.media.isEmpty()) {
             mediaPagerAdapter.setMedia(post.media);
             if (!post.id.equals(mediaPagerAdapter.getContentId())) {
+                Log.i("PostViewHolder.bindTo: post " + post.id + " has " + post.media.size() + " media: " + post.media);
                 mediaPagerAdapter.setContentId(post.id);
                 final int defaultMediaInset = mediaPagerView.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);
                 if (post.media.size() > 1) {

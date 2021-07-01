@@ -1047,6 +1047,7 @@ public class CommentsActivity extends HalloActivity {
             MediaAdapter(Post post) {
                 this.post = post;
                 this.media = post.media;
+                Log.i("CommentsActivity.MediaAdapter: post " + post.id + " has " + media.size() + " media: " + media);
             }
 
             @NonNull
