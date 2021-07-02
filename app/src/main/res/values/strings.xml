@@ -169,11 +169,8 @@
         <item quantity="one">&lt;b>%1$s&lt;/b>, &lt;b>%2$s&lt;/b>, and %3$d other commented on &lt;b>%4$s&lt;/b>\'s post</item>
         <item quantity="other">&lt;b>%1$s&lt;/b>, &lt;b>%2$s&lt;/b>, and %3$d others commented on &lt;b>%4$s&lt;/b>\'s post</item>
     </plurals>
-    <!-- Text shown in activity center with number of invites. %d is replaced with the count -->
-    <plurals name="welcome_notification_invites">
-        <item quantity="one">Welcome to HalloApp! You have %d invite. &lt;a href="invite-friend">Invite a friend&lt;/a></item>
-        <item quantity="other">Welcome to HalloApp! You have %d invites. &lt;a href="invite-friend">Invite a friend&lt;/a></item>
-    </plurals>
+    <!-- Text shown in activity center upon successful registration -->
+    <string name="welcome_notification">Welcome to HalloApp! &lt;a href="invite-friend">Invite a friend&lt;/a></string>
     <string name="contact_hashing_faq_dialog_title">Your privacy is our priority</string>
     <string name="contact_hashing_faq_dialog_info">HalloApp only uses the phone number field to match you with your friends on HalloApp, and does not capture any additional data from your contact book.</string>
     <string name="commented_on_own_post">&lt;b>%1s&lt;/b> commented on their post</string>

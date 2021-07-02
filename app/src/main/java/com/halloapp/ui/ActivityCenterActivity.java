@@ -271,7 +271,7 @@ public class ActivityCenterActivity extends HalloActivity {
                         }
                     }
                 } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_WELCOME) {
-                    CharSequence text = Html.fromHtml(infoView.getContext().getResources().getQuantityString(R.plurals.welcome_notification_invites, socialEvent.numInvites, socialEvent.numInvites));
+                    CharSequence text = Html.fromHtml(infoView.getContext().getResources().getString(R.string.welcome_notification));
                     text = StringUtils.replaceLink(infoView.getContext(), text, "invite-friend", ActivityCenterActivity.this::onInvitesNotificationClicked);
                     infoView.setText(text);
                     infoView.setMovementMethod(LinkMovementMethod.getInstance());
