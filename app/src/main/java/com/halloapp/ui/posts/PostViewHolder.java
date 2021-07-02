@@ -260,6 +260,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
         final Integer selPos = parent.getMediaPagerPositionMap().get(post.rowId);
         if (!post.media.isEmpty()) {
+            mediaPagerAdapter.setAllowSaving(shouldShowMoreOptions());
             mediaPagerAdapter.setMedia(post.media);
             if (!post.id.equals(mediaPagerAdapter.getContentId())) {
                 Log.i("PostViewHolder.bindTo: post " + post.id + " has " + post.media.size() + " media: " + post.media);

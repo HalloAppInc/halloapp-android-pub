@@ -65,6 +65,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
     private RecyclerView recyclerView;
     private boolean isChatMedia = false;
     private ChatId chatId;
+    private boolean allowSaving;
 
     private boolean overrideMediaPadding = false;
     private int mediaInsetLeft;
@@ -201,6 +202,10 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         return contentId;
     }
 
+    public void setAllowSaving(boolean allowSaving) {
+        this.allowSaving = allowSaving;
+    }
+
     public void setChat(ChatId chatId) {
         isChatMedia = true;
         this.chatId = chatId;
@@ -318,6 +323,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
             intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, position);
             intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, contentId);
             intent.putExtra(MediaExplorerActivity.EXTRA_INITIAL_TIME, currentTime);
+            intent.putExtra(MediaExplorerActivity.EXTRA_ALLOW_SAVING, allowSaving);
             if (isChatMedia) {
                 intent.putExtra(MediaExplorerActivity.EXTRA_CHAT_ID, chatId);
             }

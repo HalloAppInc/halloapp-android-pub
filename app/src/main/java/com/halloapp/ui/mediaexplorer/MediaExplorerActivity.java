@@ -71,6 +71,7 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
     public static final String EXTRA_CONTENT_ID = "content-id";
     public static final String EXTRA_CHAT_ID = "chat-id";
     public static final String EXTRA_INITIAL_TIME = "initial-time";
+    public static final String EXTRA_ALLOW_SAVING = "allow_saving";
 
     private static final int REQUEST_EXTERNAL_STORAGE_PERMISSIONS = 1;
 
@@ -85,6 +86,8 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
     private MotionEvent swipeExitStart;
     private boolean isSwipeExitInProgress = false;
     private boolean isExiting = false;
+
+    private boolean allowSaving;
 
     private final HashSet<PlayerView> playerViews = new HashSet<>();
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
@@ -167,6 +170,8 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
             finish();
             return;
         }
+
+        allowSaving = getIntent().getBooleanExtra(EXTRA_ALLOW_SAVING, false);
 
         setupViewModel(getIntent().getParcelableExtra(EXTRA_CHAT_ID), media, getIntent().getIntExtra(EXTRA_SELECTED, 0));
     }
@@ -265,6 +270,9 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (!allowSaving) {
+            return false;
+        }
         getMenuInflater().inflate(R.menu.media_explorer, menu);
         return true;
     }

@@ -218,6 +218,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.message_bubble_corner_radius), 0);
             mediaPagerAdapter.setMediaInset(0, 0, 0, defaultMediaInset);
             mediaPagerAdapter.setOffscreenPlayerLimit(1);
+            mediaPagerAdapter.setAllowSaving(true);
             mediaPagerView.setAdapter(mediaPagerAdapter);
             mediaPagerView.setOffscreenPageLimit(1);
             mediaPagerView.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
