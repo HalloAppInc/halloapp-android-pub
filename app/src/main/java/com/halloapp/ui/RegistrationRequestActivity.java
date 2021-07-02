@@ -3,7 +3,6 @@ package com.halloapp.ui;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -37,9 +36,9 @@ import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.hbb20.CountryCodePicker;
 

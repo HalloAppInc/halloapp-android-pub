@@ -60,7 +60,7 @@
             android:name=".ui.RegistrationRequestActivity"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:windowSoftInputMode="adjustResize"/>
 
         <activity android:name=".ui.InitialSyncActivity"
             android:theme="@style/AppTheme.NoActionBar"
