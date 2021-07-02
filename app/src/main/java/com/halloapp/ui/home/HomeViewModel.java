@@ -49,8 +49,6 @@ public class HomeViewModel extends AndroidViewModel {
     final ComputableLiveData<Boolean> showWelcomeNux;
     final ComputableLiveData<Boolean> unseenHomePosts;
 
-    final MutableLiveData<Boolean> showContactPermsNag;
-
     private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
@@ -175,13 +173,6 @@ public class HomeViewModel extends AndroidViewModel {
                 return !unseenPosts.isEmpty();
             }
         };
-
-        showContactPermsNag = new MutableLiveData<>(false);
-
-        final String[] perms = {Manifest.permission.READ_CONTACTS};
-        if (!EasyPermissions.hasPermissions(application, perms)) {
-            showContactPermsNag.setValue(true);
-        }
     }
 
     public void loadSavedState(@Nullable Bundle savedInstanceState) {
@@ -198,18 +189,6 @@ public class HomeViewModel extends AndroidViewModel {
 
     public LiveData<Boolean> getUnseenHomePosts() {
         return unseenHomePosts.getLiveData();
-    }
-
-    public LiveData<Boolean> showContactsPermissionsNag() {
-        return showContactPermsNag;
-    }
-
-    public void hideContactsNag() {
-        showContactPermsNag.setValue(false);
-    }
-
-    public void markWelcomeNuxShown() {
-        bgWorkers.execute(preferences::markWelcomeNuxShown);
     }
 
     public void closeWelcomeNux() {

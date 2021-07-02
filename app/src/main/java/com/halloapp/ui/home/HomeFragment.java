@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -63,8 +61,10 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     private RecyclerView postsView;
     private View newPostsView;
     private FrameLayout welcomeNuxContainer;
-    private FrameLayout nuxActivityCenterContainer;
     private View nuxWelcome;
+
+    private View contactsNag;
+    private Button contactsSettingsButton;
 
     private View inviteView;
 
@@ -101,12 +101,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         final View emptyView = root.findViewById(android.R.id.empty);
         newPostsView = root.findViewById(R.id.new_posts);
 
-        final View contactPermsNag = root.findViewById(R.id.contact_permissions_nag);
-        final Button contactsContinue = contactPermsNag.findViewById(R.id.continue_btn);
-        final View contactsNotNow = contactPermsNag.findViewById(R.id.not_now);
-        final TextView contactsInfo = contactPermsNag.findViewById(R.id.contact_permissions_info);
-
-        nuxActivityCenterContainer = root.findViewById(R.id.activity_center_nux_container);
         welcomeNuxContainer = root.findViewById(R.id.welcome_nux_container);
 
         newPostsView.setOnClickListener(v -> {
@@ -192,22 +186,9 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                 nuxWelcome = null;
             }
         });
-
-        viewModel.showContactsPermissionsNag().observe(getViewLifecycleOwner(), showNag -> {
-            if (showNag == null || !showNag) {
-                contactPermsNag.setVisibility(View.GONE);
-            } else {
-                contactPermsNag.setVisibility(View.VISIBLE);
-            }
-        });
-
-        contactsNotNow.setOnClickListener(v -> {
-            viewModel.hideContactsNag();
-        });
-
-        contactsContinue.setOnClickListener(v -> {
-            viewModel.hideContactsNag();
-
+        contactsNag = root.findViewById(R.id.contacts_nag);
+        contactsSettingsButton = contactsNag.findViewById(R.id.settings_btn);
+        contactsSettingsButton.setOnClickListener(v -> {
             if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)) {
                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                         .setData(Uri.fromParts("package", BuildConfig.APPLICATION_ID, null));
@@ -219,13 +200,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
             }
         });
 
-        if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)) {
-            contactsInfo.setText(R.string.home_contact_permissions_nag_permanently_blocked);
-            contactsContinue.setText(R.string.settings);
-        } else {
-            contactsInfo.setText(R.string.home_contact_permissions_nag);
-            contactsContinue.setText(R.string.continue_button);
-        }
+        updateContactsNag();
 
         NestedHorizontalScrollHelper.applyDefaultScrollRatio(postsView);
 
@@ -239,6 +214,19 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     private void onScrollToTop() {
         viewModel.onScrollToTop();
         newPostsView.setVisibility(View.GONE);
+    }
+
+    private void updateContactsNag() {
+        if (EasyPermissions.hasPermissions(requireContext(), Manifest.permission.READ_CONTACTS)) {
+            contactsNag.setVisibility(View.GONE);
+        } else {
+            contactsNag.setVisibility(View.VISIBLE);
+            if (EasyPermissions.permissionPermanentlyDenied(this, Manifest.permission.READ_CONTACTS)) {
+                contactsSettingsButton.setText(R.string.go_to_settings);
+            } else {
+                contactsSettingsButton.setText(R.string.continue_button);
+            }
+        }
     }
 
     @Override
@@ -365,11 +353,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     private void updateSocialHistory(@Nullable HomeViewModel.SocialHistory socialHistory) {
         boolean hideBadge = socialHistory == null || socialHistory.unseenCount == 0;
         notificationDrawable.setBadge(hideBadge ? "" : "•");
-        if (!hideBadge) {
-            nuxActivityCenterContainer.setVisibility(View.VISIBLE);
-        } else {
-            nuxActivityCenterContainer.setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -384,6 +367,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
                 ContactsSync.getInstance(requireContext()).startAddressBookListener();
                 ContactsSync.getInstance(requireContext()).startContactsSync(true);
+                updateContactsNag();
                 break;
             }
         }
@@ -391,6 +375,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-
+        updateContactsNag();
     }
 }
