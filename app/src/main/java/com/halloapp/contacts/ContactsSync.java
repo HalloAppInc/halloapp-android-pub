@@ -48,7 +48,7 @@ public class ContactsSync {
     private static final String WORKER_PARAM_FULL_SYNC = "full_sync";
     private static final String WORKER_PARAM_CONTACT_HASHES = "contact_hashes";
 
-    private static final int CONTACT_SYNC_BATCH_SIZE = 512;
+    private static final int CONTACT_SYNC_BATCH_SIZE = 1024;
 
     private static ContactsSync instance;
 
