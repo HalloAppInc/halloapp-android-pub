@@ -83,6 +83,17 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
             }
         });
 
+        View share = root.findViewById(R.id.share);
+        share.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_halloapp_text));
+            intent.setType("text/plain");
+
+            Intent shareIntent = Intent.createChooser(intent, null);
+            startActivity(shareIntent);
+        });
+
         View privacy = root.findViewById(R.id.privacy);
         privacy.setOnClickListener(v -> {
             startActivity(new Intent(v.getContext(), SettingsPrivacy.class));
