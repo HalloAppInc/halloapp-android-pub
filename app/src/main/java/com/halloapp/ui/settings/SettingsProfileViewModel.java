@@ -36,7 +36,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class SettingsProfileViewModel extends AndroidViewModel {
 
@@ -48,12 +47,14 @@ public class SettingsProfileViewModel extends AndroidViewModel {
     private MutableLiveData<Bitmap> tempAvatarLiveData;
     private MutableLiveData<Boolean> nameChangedLiveData = new MutableLiveData<>(false);
     private MediatorLiveData<Boolean> canSave;
+    private MutableLiveData<Boolean> hasAvatarSet = new MutableLiveData<>();
 
     private String tempName;
 
     private String avatarFile;
     private Integer avatarWidth;
     private Integer avatarHeight;
+    private boolean avatarDeleted = false;
 
     public SettingsProfileViewModel(@NonNull Application application) {
         super(application);
@@ -67,22 +68,28 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         bgWorkers.execute(() -> me.getName());
         canSave = new MediatorLiveData<>();
         canSave.addSource(nameChangedLiveData, nameChanged -> {
-            boolean avatarChanged = tempAvatarLiveData.getValue() != null;
-            canSave.setValue(avatarChanged || nameChanged);
+            setCanSave();
         });
         canSave.addSource(tempAvatarLiveData, bitmap -> {
-            Boolean nameChanged = nameChangedLiveData.getValue();
-            boolean avatarChanged = bitmap != null;
-            if (nameChanged != null) {
-                canSave.setValue(nameChanged || avatarChanged);
-            } else {
-                canSave.setValue(avatarChanged);
-            }
+            setCanSave();
         });
+        bgWorkers.execute(() -> {
+            hasAvatarSet.postValue(AvatarLoader.getInstance().hasAvatar());
+        });
+
+    }
+    public void removeAvatar() {
+        avatarDeleted = true;
+        tempAvatarLiveData.setValue(null);
+        hasAvatarSet.setValue(false);
     }
 
     public LiveData<List<WorkInfo>> getSaveProfileWorkInfo() {
         return workManager.getWorkInfosForUniqueWorkLiveData(UpdateProfileWorker.WORK_NAME);
+    }
+
+    public LiveData<Boolean> getHasAvatarSet() {
+        return hasAvatarSet;
     }
 
     public void saveProfile() {
@@ -99,9 +106,18 @@ public class SettingsProfileViewModel extends AndroidViewModel {
             builder.putInt(UpdateProfileWorker.WORKER_PARAM_AVATAR_WIDTH, avatarWidth);
             builder.putString(UpdateProfileWorker.WORKER_PARAM_AVATAR_FILE, avatarFile);
         }
+        if (avatarDeleted) {
+            builder.putBoolean(UpdateProfileWorker.WORKER_PARAM_AVATAR_REMOVAL, true);
+        }
         final Data data = builder.build();
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(UpdateProfileWorker.class).setInputData(data).build();
         workManager.enqueueUniqueWork(UpdateProfileWorker.WORK_NAME, ExistingWorkPolicy.REPLACE, workRequest);
+    }
+
+    private void setCanSave() {
+        boolean nameChanged = nameChangedLiveData.getValue() != null ? nameChangedLiveData.getValue() : false;
+        boolean avatarChanged = tempAvatarLiveData.getValue() != null;
+        canSave.setValue(nameChanged || avatarChanged || avatarDeleted);
     }
 
     public LiveData<String> getName() {
@@ -117,6 +133,8 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         this.avatarHeight = height;
         this.avatarFile = filepath;
         bgWorkers.execute(() -> tempAvatarLiveData.postValue(BitmapFactory.decodeFile(filepath)));
+        hasAvatarSet.setValue(true);
+        avatarDeleted = false;
     }
 
     public LiveData<Boolean> canSave() {
@@ -142,6 +160,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         private static final String WORKER_PARAM_AVATAR_WIDTH = "avatar_width";
         private static final String WORKER_PARAM_AVATAR_HEIGHT = "avatar_height";
         private static final String WORKER_PARAM_NAME = "name";
+        private static final String WORKER_PARAM_AVATAR_REMOVAL = "avatar_removal";
 
         public UpdateProfileWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
             super(context, workerParams);
@@ -151,6 +170,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         public @NonNull Result doWork() {
             final String name = getInputData().getString(WORKER_PARAM_NAME);
             final String avatarFilePath = getInputData().getString(WORKER_PARAM_AVATAR_FILE);
+            final boolean avatarDeleted = getInputData().getBoolean(WORKER_PARAM_AVATAR_REMOVAL,false);
             int avatarWidth = getInputData().getInt(WORKER_PARAM_AVATAR_WIDTH, -1);
             int avatarHeight = getInputData().getInt(WORKER_PARAM_AVATAR_HEIGHT, -1);
             try {
@@ -184,6 +204,11 @@ public class SettingsProfileViewModel extends AndroidViewModel {
                         Log.e("Avatar upload interrupted", e);
                         return Result.failure();
                     }
+                }
+                if (avatarDeleted) {
+                    AvatarLoader avatarLoader = AvatarLoader.getInstance();
+                    avatarLoader.removeMyAvatar();
+                    Connection.getInstance().removeAvatar();
                 }
                 return Result.success();
             } catch (InterruptedException | ObservableErrorException e) {

@@ -7,6 +7,7 @@ import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,13 +18,14 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.work.WorkInfo;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
-import com.halloapp.ui.avatar.ViewAvatarActivity;
+import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
@@ -43,6 +45,9 @@ public class SettingsProfile extends HalloActivity {
 
     private TextView nameView;
     private ImageView avatarView;
+    private FrameLayout changeAvatarLayout;
+    private View changeAvatarView;
+    private ImageView tempAvatarView;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -81,8 +86,9 @@ public class SettingsProfile extends HalloActivity {
 
         nameView = findViewById(R.id.edit_name);
         avatarView = findViewById(R.id.avatar);
-        ImageView tempAvatarView = findViewById(R.id.temp_avatar);
-        final View changeAvatarView = findViewById(R.id.change_avatar);
+        tempAvatarView = findViewById(R.id.temp_avatar);
+        changeAvatarView = findViewById(R.id.change_avatar);
+        changeAvatarLayout = findViewById(R.id.change_avatar_camera_btn);
         final View saveButton = findViewById(R.id.save);
         final View progressBar = findViewById(R.id.progress);
 
@@ -90,11 +96,11 @@ public class SettingsProfile extends HalloActivity {
 
         viewModel.canSave().observe(this, saveButton::setEnabled);
         viewModel.getTempAvatar().observe(this, avatar -> {
-            tempAvatarView.setImageBitmap(avatar);
+            tempAvatarView.setVisibility(View.VISIBLE);
             if (avatar != null) {
-                tempAvatarView.setVisibility(View.VISIBLE);
+                tempAvatarView.setImageBitmap(avatar);
             } else {
-                tempAvatarView.setVisibility(View.GONE);
+                tempAvatarView.setImageResource(R.drawable.avatar_person);
             }
         });
 
@@ -119,16 +125,6 @@ public class SettingsProfile extends HalloActivity {
                 }
                 viewModel.setTempName(s.toString());
             }
-        });
-
-        final View.OnClickListener changeAvatarListener = v -> {
-            Log.d("SettingsProfile request change avatar");
-            final Intent intent = MediaPickerActivity.pickAvatar(this);
-            startActivityForResult(intent, CODE_CHANGE_AVATAR);
-        };
-        changeAvatarView.setOnClickListener(changeAvatarListener);
-        avatarView.setOnClickListener(v -> {
-            ViewAvatarActivity.viewAvatarWithTransition(this, avatarView, UserId.ME);
         });
 
         viewModel.getSaveProfileWorkInfo().observe(this, new Observer<List<WorkInfo>>() {
@@ -172,8 +168,54 @@ public class SettingsProfile extends HalloActivity {
             }
             viewModel.saveProfile();
         });
+
+        viewModel.getHasAvatarSet().observe(this, (avatarSet) -> {
+            setPhotoSelectOptions(avatarSet);
+        });
     }
 
+    final View.OnClickListener setAvatarListener = v -> {
+        final Intent intent = MediaPickerActivity.pickAvatar(this);
+        startActivityForResult(intent, CODE_CHANGE_AVATAR);
+    };
+
+    final View.OnClickListener avatarOptionsListener = v -> {
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        bottomSheetDialog.setContentView(R.layout.profile_avatar_change);
+        View cameraButton = bottomSheetDialog.findViewById(R.id.profile_avatar_take_photo);
+        cameraButton.setOnClickListener(view -> {
+            final Intent intent = new Intent(this, CameraActivity.class);
+            intent.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_AVATAR);
+            startActivityForResult(intent, CODE_CHANGE_AVATAR);
+            bottomSheetDialog.hide();
+        });
+        View mediaButton = bottomSheetDialog.findViewById(R.id.profile_avatar_picture_select);
+        mediaButton.setOnClickListener(view -> {
+            final Intent intent = MediaPickerActivity.pickAvatar(this);
+            startActivityForResult(intent, CODE_CHANGE_AVATAR);
+            bottomSheetDialog.hide();
+        });
+        View removeAvatar = bottomSheetDialog.findViewById(R.id.profile_avatar_remove_avatar);
+        removeAvatar.setOnClickListener(view -> {
+            viewModel.removeAvatar();
+            bottomSheetDialog.hide();
+        });
+        bottomSheetDialog.show();
+    };
+
+    private void setPhotoSelectOptions(boolean hasAvatar) {
+        if (hasAvatar) {
+            changeAvatarLayout.setVisibility(View.GONE);
+            changeAvatarView.setOnClickListener(avatarOptionsListener);
+            avatarView.setOnClickListener(avatarOptionsListener);
+            tempAvatarView.setOnClickListener(avatarOptionsListener);
+        } else {
+            changeAvatarLayout.setVisibility(View.VISIBLE);
+            changeAvatarView.setOnClickListener(setAvatarListener);
+            avatarView.setOnClickListener(setAvatarListener);
+            tempAvatarView.setOnClickListener(setAvatarListener);
+        }
+    }
     @Override
     public void onBackPressed() {
         if (!viewModel.hasChanges()) {

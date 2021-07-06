@@ -153,6 +153,11 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     }
 
     @WorkerThread
+    public boolean hasAvatar() {
+        return cache.get(UserId.ME.rawId()) != null || getAvatarImpl(UserId.ME) != null;
+    }
+
+    @WorkerThread
     @NonNull public Bitmap getAvatar(@NonNull ChatId chatId) {
         Bitmap avatar = cache.get(chatId.rawId());
         if (avatar != null) {

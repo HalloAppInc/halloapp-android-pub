@@ -596,4 +596,12 @@
     <string name="manage_storage_button">Manage Storage</string>
     <!-- Message that's displayed if user has low storage -->
     <string name="low_storage_msg">Your phone is running low on storage.\n In order to use HalloApp please free some storage on this phone.</string>
+    <!-- Button for user to remove their profile photo and reset it to the default -->
+    <string name="remove_photo">Remove Photo</string>
+    <!-- Button for user to take a new photo to replace their profile photo -->
+    <string name="take_photo">Take Photo</string>
+    <!-- Button for user to select a new photo from their gallery to replace their profile photo -->
+    <string name="choose_photo">Choose Photo</string>
+    <!-- Label above the options for changing the profile photo -->
+    <string name="your_profile_photo">Your profile photo</string>
 </resources>
