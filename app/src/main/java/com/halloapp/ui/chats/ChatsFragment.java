@@ -48,11 +48,13 @@ import com.halloapp.props.ServerProps;
 import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloFragment;
+import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.chat.MessageViewHolder;
+import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.profile.ViewProfileActivity;
@@ -420,7 +422,13 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 infoContainer.setVisibility(View.GONE);
                 nameView.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_secondary));
 
-                itemView.setOnClickListener(v -> startActivity(new Intent(getContext(), InviteContactsActivity.class)));
+                itemView.setOnClickListener(v -> {
+                    if (EasyPermissions.hasPermissions(requireContext(), Manifest.permission.READ_CONTACTS)) {
+                        startActivity(new Intent(getContext(), InviteContactsActivity.class));
+                    } else {
+                        ContactPermissionBottomSheetDialog.showRequest(requireActivity().getSupportFragmentManager(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE);
+                    }
+                });
             }
         }
 

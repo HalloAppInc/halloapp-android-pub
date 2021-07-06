@@ -229,7 +229,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-
+        finish();
     }
 
     private void loadContacts() {

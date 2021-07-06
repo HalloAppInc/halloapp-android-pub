@@ -33,9 +33,7 @@ import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class SettingsPrivacy extends HalloActivity implements EasyPermissions.PermissionCallbacks {
-
-    private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
+public class SettingsPrivacy extends HalloActivity {
 
     private static final String EXTRA_TARGET_SETTING = "target_setting";
 
@@ -61,32 +59,11 @@ public class SettingsPrivacy extends HalloActivity implements EasyPermissions.Pe
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        final String[] perms = {Manifest.permission.READ_CONTACTS};
-        if (!EasyPermissions.hasPermissions(this, perms)) {
-            ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION);
-        }
-
         String targetSetting = getIntent().getStringExtra(EXTRA_TARGET_SETTING);
         if (TARGET_SETTING_FEED_PRIVACY.equals(targetSetting)) {
             Intent intent = new Intent(this, FeedPrivacyActivity.class);
             startActivity(intent);
         }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @Override
-    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-
     }
 
     public static class SettingsFragment extends HalloPreferenceFragment {

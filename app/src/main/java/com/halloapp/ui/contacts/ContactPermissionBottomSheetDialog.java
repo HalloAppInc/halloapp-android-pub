@@ -2,21 +2,15 @@ package com.halloapp.ui.contacts;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Html;
-import android.text.Selection;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,8 +22,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.halloapp.AppContext;
 import com.halloapp.BuildConfig;
 import com.halloapp.R;
+import com.halloapp.contacts.ContactsSync;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.StringUtils;
 
@@ -60,10 +56,23 @@ public class ContactPermissionBottomSheetDialog extends BottomSheetDialogFragmen
 
     private static final String[] permissions = new String[] { Manifest.permission.READ_CONTACTS };
 
+    private final AppContext appContext = AppContext.getInstance();
+
     private EasyPermissions.PermissionCallbacks permissionCallbacks;
 
     private TextView info;
     private TextView continueButton;
+
+    private int requestCode;
+    private boolean requestedPermissions = false;
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_SETTINGS) {
+            dismiss();
+        }
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -71,6 +80,8 @@ public class ContactPermissionBottomSheetDialog extends BottomSheetDialogFragmen
             case REQUEST_CODE_CONTACT_PERMISSIONS: {
                 if (grantResults.length > 0 &&
                         grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    ContactsSync.getInstance(appContext.get()).startAddressBookListener();
+                    ContactsSync.getInstance(appContext.get()).startContactsSync(true);
                     if (permissionCallbacks != null) {
                         permissionCallbacks.onPermissionsGranted(requireArguments().getInt(ARG_REQUEST_CODE), Arrays.asList(permissions));
                     }
@@ -96,7 +107,7 @@ public class ContactPermissionBottomSheetDialog extends BottomSheetDialogFragmen
 
         Bundle args = requireArguments();
 
-        int requestCode = args.getInt(ARG_REQUEST_CODE);
+        requestCode = args.getInt(ARG_REQUEST_CODE);
 
         Spanned current = replaceLearnMore(info.getText());
         info.setText(current);
@@ -105,6 +116,7 @@ public class ContactPermissionBottomSheetDialog extends BottomSheetDialogFragmen
         continueButton = view.findViewById(R.id.button2);
         continueButton.setText(R.string.continue_button);
         continueButton.setOnClickListener(v -> {
+            requestedPermissions = true;
             if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)) {
                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                         .setData(Uri.fromParts("package", BuildConfig.APPLICATION_ID, null));
@@ -121,9 +133,6 @@ public class ContactPermissionBottomSheetDialog extends BottomSheetDialogFragmen
         notNow.setVisibility(View.VISIBLE);
         notNow.setOnClickListener(v -> {
             dismiss();
-            if (permissionCallbacks != null) {
-                permissionCallbacks.onPermissionsDenied(requestCode, Arrays.asList(permissions));
-            }
         });
 
         updateNagContents();
@@ -160,10 +169,10 @@ public class ContactPermissionBottomSheetDialog extends BottomSheetDialogFragmen
             if (getParentFragment() instanceof EasyPermissions.PermissionCallbacks) {
                 permissionCallbacks = (EasyPermissions.PermissionCallbacks) getParentFragment();
             }
-        }
-
-        if (context instanceof EasyPermissions.PermissionCallbacks) {
-            permissionCallbacks = (EasyPermissions.PermissionCallbacks) context;
+        } else {
+            if (context instanceof EasyPermissions.PermissionCallbacks) {
+                permissionCallbacks = (EasyPermissions.PermissionCallbacks) context;
+            }
         }
     }
 
@@ -172,5 +181,15 @@ public class ContactPermissionBottomSheetDialog extends BottomSheetDialogFragmen
         super.onDetach();
 
         permissionCallbacks = null;
+    }
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (!requestedPermissions) {
+            if (permissionCallbacks != null) {
+                permissionCallbacks.onPermissionsDenied(requestCode, Arrays.asList(permissions));
+            }
+        }
     }
 }

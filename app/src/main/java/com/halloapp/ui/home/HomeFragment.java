@@ -32,8 +32,10 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.ui.ActivityCenterActivity;
+import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.PostsFragment;
+import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
@@ -112,7 +114,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         postsView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
 
         inviteView = root.findViewById(R.id.home_invite);
-        inviteView.setOnClickListener(v -> startActivity(new Intent(requireContext(), InviteContactsActivity.class)));
+        inviteView.setOnClickListener(v -> openInviteFlow());
         postsView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -345,10 +347,18 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
             }
             return true;
         } else if (item.getItemId() == R.id.invite) {
-            startActivity(new Intent(requireContext(), InviteContactsActivity.class));
+            openInviteFlow();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openInviteFlow() {
+        if (EasyPermissions.hasPermissions(requireContext(), Manifest.permission.READ_CONTACTS)) {
+            startActivity(new Intent(requireContext(), InviteContactsActivity.class));
+        } else {
+            ContactPermissionBottomSheetDialog.showRequest(requireActivity().getSupportFragmentManager(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE);
+        }
     }
 
     private void updateSocialHistory(@Nullable HomeViewModel.SocialHistory socialHistory) {
@@ -369,6 +379,9 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                 ContactsSync.getInstance(requireContext()).startAddressBookListener();
                 ContactsSync.getInstance(requireContext()).startContactsSync(true);
                 updateContactsNag();
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).refreshFab();
+                }
                 break;
             }
         }

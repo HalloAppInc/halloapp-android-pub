@@ -1,5 +1,6 @@
 package com.halloapp.ui.privacy;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -24,9 +25,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactsSync;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.contacts.ContactsActivity;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
@@ -35,7 +38,9 @@ import com.halloapp.widget.SnackbarHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockListActivity extends HalloActivity {
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class BlockListActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final int REQUEST_CHOOSE_BLOCKED_CONTACT = 0;
 
@@ -109,10 +114,18 @@ public class BlockListActivity extends HalloActivity {
         return true;
     }
 
+    private void pickContactToBlock() {
+        if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS)) {
+            startActivityForResult(ContactsActivity.createBlocklistContactPicker(this, blockedUsers), REQUEST_CHOOSE_BLOCKED_CONTACT);
+        } else {
+            ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CHOOSE_BLOCKED_CONTACT);
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == 0) {
-            startActivityForResult(ContactsActivity.createBlocklistContactPicker(this, blockedUsers), REQUEST_CHOOSE_BLOCKED_CONTACT);
+            pickContactToBlock();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -158,6 +171,20 @@ public class BlockListActivity extends HalloActivity {
                 SnackbarHelper.showWarning(this, getString(R.string.blocking_user_failed_check_internet, contact.getDisplayName()));
             }
         });
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        if (requestCode == REQUEST_CHOOSE_BLOCKED_CONTACT) {
+            ContactsSync.getInstance(this).startAddressBookListener();
+            ContactsSync.getInstance(this).startContactsSync(true);
+            pickContactToBlock();
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+
     }
 
     private class ContactViewHolder extends RecyclerView.ViewHolder {

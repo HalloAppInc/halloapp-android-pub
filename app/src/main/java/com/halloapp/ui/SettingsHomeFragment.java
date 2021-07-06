@@ -77,7 +77,7 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
         invite.setOnClickListener(v -> {
             final String[] perms = {Manifest.permission.READ_CONTACTS};
             if (!EasyPermissions.hasPermissions(requireContext(), perms)) {
-                ContactPermissionBottomSheetDialog.showRequest(getChildFragmentManager(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE);
+                ContactPermissionBottomSheetDialog.showRequest(requireActivity().getSupportFragmentManager(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE);
             } else {
                 startActivity(new Intent(requireContext(), InviteContactsActivity.class));
             }

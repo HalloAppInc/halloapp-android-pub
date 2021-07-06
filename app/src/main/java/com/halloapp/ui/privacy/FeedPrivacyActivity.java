@@ -1,5 +1,6 @@
 package com.halloapp.ui.privacy;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,10 +17,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.R;
+import com.halloapp.contacts.ContactsSync;
 import com.halloapp.id.UserId;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.MainActivity;
+import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
+import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.privacy.PrivacyList;
@@ -27,10 +32,15 @@ import com.halloapp.xmpp.privacy.PrivacyList;
 import java.util.Collections;
 import java.util.List;
 
-public class FeedPrivacyActivity extends HalloActivity {
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class FeedPrivacyActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final int REQUEST_CODE_SELECT_EXCEPT_LIST = 1;
     private static final int REQUEST_CODE_SELECT_ONLY_LIST = 2;
+
+    public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY = 1;
+    public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_EXCEPT = 2;
 
     private FeedPrivacyViewModel viewModel;
 
@@ -73,10 +83,18 @@ public class FeedPrivacyActivity extends HalloActivity {
             selectedType = PrivacyList.Type.ALL;
         });
         only.setOnClickListener(v -> {
-            openMultipleContactPicker(REQUEST_CODE_SELECT_ONLY_LIST, getOnlyList(), R.string.contact_picker_feed_only_title);
+            if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS)) {
+                editOnlyList();
+            } else {
+                ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_SELECT_ONLY_LIST);
+            }
         });
         except.setOnClickListener(v -> {
-            openMultipleContactPicker(REQUEST_CODE_SELECT_EXCEPT_LIST, getExceptList(), R.string.contact_picker_feed_except_title);
+            if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS)) {
+                editExceptList();
+            } else {
+                ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_SELECT_EXCEPT_LIST);
+            }
         });
 
         View content = findViewById(R.id.options_container);
@@ -120,6 +138,20 @@ public class FeedPrivacyActivity extends HalloActivity {
             }
             finish();
         });
+    }
+
+    private void editExceptList() {
+        openMultipleContactPicker(REQUEST_CODE_SELECT_EXCEPT_LIST, getExceptList(), R.string.contact_picker_feed_except_title);
+    }
+
+    private void editOnlyList() {
+        openMultipleContactPicker(REQUEST_CODE_SELECT_ONLY_LIST, getOnlyList(), R.string.contact_picker_feed_only_title);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private List<UserId> getOnlyList() {
@@ -241,5 +273,26 @@ public class FeedPrivacyActivity extends HalloActivity {
             default:
                 super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        ContactsSync.getInstance(this).startAddressBookListener();
+        ContactsSync.getInstance(this).startContactsSync(true);
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_CONTACTS_PERMISSION_EXCEPT: {
+                editExceptList();
+                break;
+            }
+            case REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY: {
+                editOnlyList();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        revertToPreviousSelection();
     }
 }

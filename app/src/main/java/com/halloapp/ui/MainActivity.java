@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -92,6 +93,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     private MainViewModel mainViewModel;
     private HomeViewModel homeViewModel;
 
+    private NavController navController;
+
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsReset() {
@@ -136,7 +139,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 R.id.navigation_groups,
                 R.id.navigation_messages,
                 R.id.navigation_profile).build();
-        final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
@@ -213,6 +216,13 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         });
     }
 
+    public void refreshFab() {
+        NavDestination current = navController.getCurrentDestination();
+        if (current != null) {
+            updateFab(current.getId());
+        }
+    }
+
     private void scrollToTop() {
         Fragment navigationFragment = getSupportFragmentManager().getPrimaryNavigationFragment();
         if (navigationFragment != null) {
@@ -277,26 +287,30 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             });
             fabView.setOnActionSelectedListener(null);
         } else if (id == R.id.navigation_home){
-            fabView.show();
-            fabView.findViewById(R.id.sd_main_fab).setContentDescription(getString(R.string.add_post));
-            fabView.setMainFabClosedDrawable(ContextCompat.getDrawable(this, R.drawable.ic_add));
-            fabView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
-                @Override
-                public boolean onMainActionSelected() {
-                    return false;
-                }
+            if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS)) {
+                fabView.show();
+                fabView.findViewById(R.id.sd_main_fab).setContentDescription(getString(R.string.add_post));
+                fabView.setMainFabClosedDrawable(ContextCompat.getDrawable(this, R.drawable.ic_add));
+                fabView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
+                    @Override
+                    public boolean onMainActionSelected() {
+                        return false;
+                    }
 
-                @Override
-                public void onToggleChanged(boolean isOpen) {
-                }
-            });
-            fabView.setOnActionSelectedListener(actionItem -> {
-                onFabActionSelected(actionItem.getId());
-                return true;
-            });
-            addFabItem(fabView, R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);
-            addFabItem(fabView, R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
-            addFabItem(fabView, R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
+                    @Override
+                    public void onToggleChanged(boolean isOpen) {
+                    }
+                });
+                fabView.setOnActionSelectedListener(actionItem -> {
+                    onFabActionSelected(actionItem.getId());
+                    return true;
+                });
+                addFabItem(fabView, R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);
+                addFabItem(fabView, R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
+                addFabItem(fabView, R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
+            } else {
+                fabView.hide();
+            }
         } else {
             fabView.hide();
         }
@@ -407,6 +421,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     public void onPermissionsGranted(int requestCode, @NonNull List<String> list) {
         ContactsSync.getInstance(this).startAddressBookListener();
         ContactsSync.getInstance(this).startContactsSync(true);
+        refreshFab();
         switch (requestCode) {
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
                 // Just sync
