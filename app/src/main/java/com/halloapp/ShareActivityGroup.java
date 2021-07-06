@@ -9,20 +9,20 @@ import androidx.annotation.Nullable;
 import com.halloapp.id.ChatId;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
-import com.halloapp.ui.contacts.ContactsActivity;
+import com.halloapp.ui.groups.GroupPickerActivity;
 import com.halloapp.ui.mediaedit.MediaEditActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class ShareActivity extends HalloActivity {
+public class ShareActivityGroup extends HalloActivity {
 
-    private static final int REQUEST_SELECT_CHAT = 1;
+    private static final int REQUEST_SELECT_GROUP = 1;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode) {
-            case REQUEST_SELECT_CHAT:
+            case REQUEST_SELECT_GROUP:
                 if (resultCode == RESULT_OK && data != null) {
                     Intent contentComposer = new Intent(this, ContentComposerActivity.class);
                     final ArrayList<Uri> uris;
@@ -36,14 +36,14 @@ public class ShareActivity extends HalloActivity {
                     } else {
                         uris = getIntent().getParcelableArrayListExtra(Intent.EXTRA_STREAM);
                     }
-                    String selectedId = data.getStringExtra(ContactsActivity.RESULT_SELECTED_ID);
+                    String selectedId = data.getStringExtra(GroupPickerActivity.RESULT_SELECTED_ID);
                     if (selectedId == null) {
                         finish();
                         return;
                     }
-                    ChatId chatId = ChatId.fromNullable(selectedId);
+                    ChatId groupId = ChatId.fromNullable(selectedId);
                     contentComposer.putExtra(MediaEditActivity.EXTRA_MEDIA, uris);
-                    contentComposer.putExtra(ContentComposerActivity.EXTRA_CHAT_ID, chatId);
+                    contentComposer.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, groupId);
                     contentComposer.putExtra(Intent.EXTRA_TEXT, getIntent().getStringExtra(Intent.EXTRA_TEXT));
                     startActivity(contentComposer);
                 }
@@ -56,7 +56,7 @@ public class ShareActivity extends HalloActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent contactPicker = ContactsActivity.createSharePicker(this);
-        startActivityForResult(contactPicker, REQUEST_SELECT_CHAT);
+        Intent groupPicker = GroupPickerActivity.createSharePicker(this);
+        startActivityForResult(groupPicker, REQUEST_SELECT_GROUP);
     }
 }

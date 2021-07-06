@@ -92,6 +92,11 @@
             android:label="@string/select_contact"/>
 
         <activity
+            android:name=".ui.groups.GroupPickerActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/select_group"/>
+
+        <activity
             android:name=".ui.contacts.MultipleContactPickerActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize"/>
@@ -198,7 +203,26 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-        
+
+        <activity android:name=".ShareActivityGroup">
+            <intent-filter
+                android:label="@string/share_option_group">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+                <data android:mimeType="video/*" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter
+                android:label="@string/share_option_group">
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+                <data android:mimeType="video/*" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
         <activity android:name=".ui.groups.ViewGroupInviteLinkActivity"
             android:label="@string/invite_link_title"
             android:theme="@style/AppTheme.Transparent">

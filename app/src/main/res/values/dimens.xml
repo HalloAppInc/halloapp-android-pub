@@ -35,9 +35,13 @@
     <dimen name="post_media_radius">15dp</dimen>
     <dimen name="message_media_radius">12dp</dimen>
     <dimen name="contacts_list_item_height">72dp</dimen>
+    <dimen name="groups_list_item_height">72dp</dimen>
     <dimen name="code_edit_box_size">50dp</dimen>
     <dimen name="contacts_list_item_header_text_size">20sp</dimen>
+    <dimen name="groups_list_item_header_text_size">20sp</dimen>
     <dimen name="contacts_list_item_header_width">56dp</dimen>
+    <dimen name="groupss_list_item_header_width">56dp</dimen>
+    <dimen name="groups_list_item_header_width">56dp</dimen>
     <dimen name="swipe_delete_icon_margin">24dp</dimen>
     <dimen name="swipe_reply_icon_margin">24dp</dimen>
     <dimen name="avatar_crop_overlay_stroke">3dp</dimen>

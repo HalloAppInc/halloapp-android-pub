@@ -62,6 +62,7 @@
     <color name="message_text_incoming">#de000000</color>
     <color name="message_text_outgoing">@color/color_secondary</color>
     <color name="contacts_list_item_header_text_color">@color/color_secondary</color>
+    <color name="groups_list_item_header_text_color">@color/color_secondary</color>
     <color name="search_highlight">#ff33b5e5</color>
     <color name="message_highlight">#FFFFF81B</color>
     <color name="message_highlight_00_alpha">#00FFF81B</color>
