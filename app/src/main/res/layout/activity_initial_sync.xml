@@ -34,18 +34,33 @@
         android:text="@string/contact_permission_title"/>
 
 
-    <ProgressBar
+    <LinearLayout
         android:id="@+id/loading"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:gravity="center"
         android:visibility="gone"
-        android:indeterminateDuration="1500"
-        android:indeterminateDrawable="@drawable/thick_progress_spinner"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ProgressBar
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:indeterminateDuration="1500"
+            android:indeterminateDrawable="@drawable/thick_progress_spinner" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginTop="6dp"
+            android:text="@string/app_initializing"/>
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/error"
