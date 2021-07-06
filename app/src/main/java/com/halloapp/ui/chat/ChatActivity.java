@@ -865,6 +865,7 @@ public class ChatActivity extends HalloActivity {
                 return;
             }
             blockDialog.cancel();
+            String chatName = viewModel.name.getLiveData().getValue();
             if (success) {
                 SnackbarHelper.showInfo(chatView, getString(R.string.blocking_user_successful, chatName));
                 item.setTitle(getString(R.string.unblock));
@@ -883,6 +884,7 @@ public class ChatActivity extends HalloActivity {
                 return;
             }
             unblockDialog.cancel();
+            String chatName = viewModel.name.getLiveData().getValue();
             if (success) {
                 SnackbarHelper.showInfo(chatView, getString(R.string.unblocking_user_successful, chatName));
                 item.setTitle(getString(R.string.block));
