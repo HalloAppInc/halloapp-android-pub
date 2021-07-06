@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <dimen name="badge">13dp</dimen>
-    <dimen name="badge_offset_horizontal">3dp</dimen>
-    <dimen name="badge_offset_vertical">4dp</dimen>
+    <dimen name="badge_offset_horizontal">1dp</dimen>
+    <dimen name="badge_offset_vertical">3dp</dimen>
     <dimen name="action_bar_elevation">4dp</dimen>
     <dimen name="media_pager_margin">8dp</dimen>
     <dimen name="toolbar_title_offset">72dp</dimen>
@@ -56,6 +56,7 @@
     <dimen name="message_text_size">16sp</dimen>
     <dimen name="message_text_size_few_emoji">32sp</dimen>
     <dimen name="design_bottom_navigation_height" tools:override="true">54dp</dimen>
+    <dimen name="mtrl_badge_radius" tools:override="true">3dp</dimen>
     <dimen name="media_pager_child_padding">8dp</dimen>
     <dimen name="explorer_pager_margin">16dp</dimen>
     <dimen name="content_composer_button_size">36dp</dimen>
