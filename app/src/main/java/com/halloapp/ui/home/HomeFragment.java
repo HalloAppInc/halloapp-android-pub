@@ -187,6 +187,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
             }
         });
         contactsNag = root.findViewById(R.id.contacts_nag);
+        contactsNag.setOnClickListener(v -> {}); // Don't let touches pass through
         contactsSettingsButton = contactsNag.findViewById(R.id.settings_btn);
         contactsSettingsButton.setOnClickListener(v -> {
             if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)) {
