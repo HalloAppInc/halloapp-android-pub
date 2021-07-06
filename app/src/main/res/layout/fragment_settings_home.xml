@@ -323,7 +323,7 @@
                     android:layout_marginStart="20dp"
                     android:scaleType="center"
                     app:tint="@color/color_primary"
-                    android:src="@drawable/ic_share"/>
+                    android:src="@drawable/ic_share_outline"/>
 
                 <TextView
                     android:layout_width="match_parent"
