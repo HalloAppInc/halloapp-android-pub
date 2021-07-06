@@ -74,6 +74,7 @@
         android:background="@color/card_background"
         android:textColor="@color/secondary_text_button"
         android:elevation="1dp"
+        android:visibility="gone"
         tools:text="You have 5 invites remaining"/>
 
 

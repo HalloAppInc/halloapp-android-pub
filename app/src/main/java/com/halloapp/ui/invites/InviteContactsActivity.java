@@ -29,7 +29,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,32 +39,26 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
-import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.avatar.DeviceAvatarLoader;
 import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
-import com.halloapp.ui.contacts.ContactsSectionItemDecoration;
-import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
-import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
-import com.halloapp.xmpp.util.Observable;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
-import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class InviteContactsActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
     public static final String EXTRA_SEARCH_TEXT = "search_text";
+
+    private static final int OPEN_INVITE_COUNT = 10_000;
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
@@ -148,17 +141,24 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
                 bannerView.setText(R.string.invite_info_fetch_internet);
                 progress.setVisibility(View.GONE);
                 setSendingEnabled(false);
+                bannerView.setVisibility(View.VISIBLE);
+            } else if (inviteAndRefresh.getInvitesRemaining() >= OPEN_INVITE_COUNT) {
+                progress.setVisibility(View.GONE);
+                bannerView.setVisibility(View.GONE);
+                setSendingEnabled(true);
             } else if (inviteAndRefresh.getInvitesRemaining() > 0) {
                 progress.setVisibility(View.GONE);
                 bannerView.setText(getResources().getQuantityString(R.plurals.invites_remaining,
                             inviteAndRefresh.getInvitesRemaining(), inviteAndRefresh.getInvitesRemaining()));
                 setSendingEnabled(true);
+                bannerView.setVisibility(View.VISIBLE);
             } else {
                 progress.setVisibility(View.GONE);
                 long inviteRefreshTime = inviteAndRefresh.getTimeTillRefresh() * 1000L + System.currentTimeMillis();
                 String serverTimeRef = DateUtils.formatDateTime(this, inviteRefreshTime, DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE);
                 bannerView.setText(getString(R.string.server_invite_refresh_time, serverTimeRef));
                 setSendingEnabled(false);
+                bannerView.setVisibility(View.VISIBLE);
             }
         });
         loadContacts();
