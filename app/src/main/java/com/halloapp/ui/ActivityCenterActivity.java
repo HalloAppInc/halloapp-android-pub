@@ -277,7 +277,8 @@ public class ActivityCenterActivity extends HalloActivity {
                     infoView.setMovementMethod(LinkMovementMethod.getInstance());
                 }
 
-                avatarLoader.load(avatarView, socialEvent.postSenderUserId);
+                UserId actorUserId = socialEvent.involvedUsers.size() > 0 ? socialEvent.involvedUsers.get(0) : socialEvent.postSenderUserId;
+                avatarLoader.load(avatarView, actorUserId);
 
                 itemView.setOnClickListener(v -> {
                     if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_WELCOME) {
