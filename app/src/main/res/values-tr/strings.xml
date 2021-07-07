@@ -10,11 +10,11 @@
     <string name="comment">"Yorum yap"</string>
     <string name="next">"İleri"</string>
     <string name="message">"Mesaj at"</string>
-    <string name="add_post">"Yeni gönderi"</string>
+    <string name="add_post">"Gönderi ekle"</string>
     <string name="new_chat">"Yeni sohbet"</string>
     <string name="new_group">"Yeni grup"</string>
     <string name="notifications">"Bildirimler"</string>
-    <string name="feed_notifications_channel_name">"Geri bildirim ver"</string>
+    <string name="feed_notifications_channel_name">"Geri bildirim bildirimleri"</string>
     <string name="message_notifications_channel_name">"Mesaj bildirimleri"</string>
     <string name="critical_notifications_channel_name">"Önemli uygulama uyarıları"</string>
     <string name="invite_notifications_channel_name">"Davet bildirimleri"</string>
@@ -55,16 +55,18 @@
     <string name="chats_page_empty">"Kişilerin ve mesajların burada görünecek"</string>
     <string name="chats_search_empty">"%s ile yapılmış herhangi bir sohbet bulunamadı"</string>
     <string name="groups_page_empty">"Grupların burada görünecek"</string>
+
+    <!-- %s, refers to person, right? -->
     <string name="groups_search_empty">"%s kişisinin bulunduğu bir grup bulunamadı"</string>
     <string name="contact_profile_empty">"%s kişisinin gönderileri burada görünecek"</string>
     <string name="invalid_phone_number">"Geçersiz numara"</string>
 
     <!-- Noun or verb? -->
-    <string name="share_option_post">"Paylaş"</string>
-    <string name="share_option_message">"Mesaj at"</string>
+    <string name="share_option_post">"Gönderi"</string>
+    <string name="share_option_message">"Mesaj"</string>
     <plurals name="time_diff_minutes">
-        <item quantity="one">"%dd"</item>
-        <item quantity="other">"%dd"</item>
+        <item quantity="one">"%ddk"</item>
+        <item quantity="other">"%ddk"</item>
     </plurals>
     <plurals name="time_diff_minutes_long">
         <item quantity="one">"%d dakika önce"</item>
@@ -90,7 +92,7 @@
         <item quantity="one">"Gönderi başına en fazla %d öge seçebilirsin"</item>
         <item quantity="other">"Gönderi başına en fazla %d öge seçebilirsin"</item>
     </plurals>
-    <string name="camera_record_audio_permission_rationale">"Fotoğraf çekebilmek ve video kaydedebilmek için cihaz ayarlarından kamera ve ses kaydına erişim izni vermen gerekmektedir."</string>
+    <string name="camera_record_audio_permission_rationale">"Fotoğraf çekmek ve video kaydetmek için kamerana erişme ve cihazına ses kaydetme iznine ihtiyacımız var."</string>
     <string name="camera_record_audio_permission_rationale_denied">"Fotoğraf çekebilmek ve video kaydedebilmek için cihaz ayarlarından kamera ve ses kaydına erişim izni vermen gerekmektedir.
 
 Uygulama izinlerini değiştirmek için uygulama ayarları ekranına git."</string>
@@ -109,10 +111,12 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="comments">"Yorumlar"</string>
     <string name="reply">"Yanıtla"</string>
     <string name="close">"Kapat"</string>
-    <string name="reply_to_self">"Kendini yanıtla"</string>
+    <string name="reply_to_self">"Kendine yanıt ver"</string>
     <string name="reply_to_contact">"%s kişisine yanıt ver"</string>
     <string name="reply_original_not_found">"Asıl mesaj bulunamadı"</string>
     <string name="reply_original_post_not_found">"Asıl gönderi bulunamadı"</string>
+
+    <!-- Does <b>%s</b> refers to more than one person? -->
     <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt;, gönderisinde senden bahsetti"</string>
     <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt;, gönderindeki bir yorumda senden bahsetti"</string>
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt;, gönderisindeki bir yorumda senden bahsetti"</string>
@@ -486,12 +490,6 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="user_typing">"yazıyor..."</string>
     <string name="group_user_typing">"%s yazıyor..."</string>
     <string name="group_many_users_typing">"Birden çok kişi yazıyor..."</string>
-    <string name="feed_nux_bottom_sheet_title">"HalloApp hakkında"</string>
-    <string name="feed_nux_bottom_sheet_text">"Ana sayfada, 30 gün sonra kaybolacak olan metin, fotoğraf ve video yayınları paylaşabilirsin.
-
-Bu yayınları görmesini istediğin kişilerle telefon numaralarınızın birbirinizde ekli olması gerekir. 
-
-Yayınlarını, dilersen listendeki kişilerin tamamıyla ya da yalnızca seçtiğin kişilerle paylaşabilirsin. Yayın gizliliğini değiştirmek için ayarlara git."</string>
     <string name="messages_nux_text">"Ailenden ve arkadaşlarından gelen mesajları burada bulabilirsin. HalloApp'e yeni biri katıldığında, onu burada görebilirsin."</string>
     <string name="post_audience_nux_text">"Gönderilerin, rehberinde bulunan ve HalloApp kullanan kişilerle paylaşılacak. Profil→Ayarlar'a giderek gönderilerine erişimlerini sınırlayabilirsin."</string>
     <string name="activity_center_nux">"Burası senin hareket merkezin. En son etkinliğini görmek için dokun."</string>
@@ -544,7 +542,7 @@ Yayınlarını, dilersen listendeki kişilerin tamamıyla ya da yalnızca seçti
     <string name="system_message_joined">"%s, davet ilişimiyle gruba katıldı"</string>
     <string name="activity_center_welcome">"Hallo!"</string>
     <string name="post_preview_retracted">"%s, bir gönderiyi sildi"</string>
-    <string name="system_message_group_bg_changed">"%, arka plan rengini değiştirdi"</string>
+    <string name="system_message_group_bg_changed">"%s, arka plan rengini değiştirdi"</string>
     <string name="system_message_group_bg_changed_by_you">"Arka plan rengini değiştirdin"</string>
     <string name="group_background_hint">"Arka plan"</string>
     <string name="group_background_saving_dialog">"Arka plan ayarlanıyor..."</string>
@@ -584,8 +582,7 @@ Yayınlarını, dilersen listendeki kişilerin tamamıyla ya da yalnızca seçti
 
     <!-- button to request another sms code -->
     <!-- Fuzzy -->
-    <string name="resend_sms">"SMS'i tekrar gönder"</string>
-    <string name="verify_keys">"Doğrulama kodu"</string>
+    <string name="resend_sms">"SMS kodunu tekrar gönder"</string>
 
     <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
     <string name="key_verification_success">"Doğrulama başarılı"</string>
@@ -597,7 +594,7 @@ Yayınlarını, dilersen listendeki kişilerin tamamıyla ya da yalnızca seçti
     <string name="key_verification_tap_to_scan">"Taramak için dokun"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"%1$s ile bağlantınızın güvenliğini doğrulamak için yukarıdaki numaraların, onun cihazında gösterilenlerle eşleşip eşleşmediğini kontrol et veya %1$s kişisinin telefonundaki QR kodunu tara. "<![CDATA[<a href="https://halloapp.com/help/">Daha fazlasını öğren</a>]]>"."</string>
+    <string name="key_verification_explanation">"%1$s ile bağlantınızın güvenliğini doğrulamak için yukarıdaki numaraların, onun cihazında gösterilenlerle eşleşip eşleşmediğini kontrol et veya telefonundaki QR kodunu tarat. "<![CDATA[<a href="https://halloapp.com/help/">Daha fazlasını öğren</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Daha fazla"</string>
@@ -605,99 +602,158 @@ Yayınlarını, dilersen listendeki kişilerin tamamıyla ya da yalnızca seçti
     <!-- Button to manage your feed privacy settings -->
     <string name="manage_feed_privacy">"Gizliliği yönet"</string>
 
-    <!-- Text shown in activity center with number of invites. %d is replaced with the count -->
-    <plurals name="welcome_notification_invites">
-        <item quantity="one">"Welcome to HalloApp! You have %d invite. &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</item>
-        <item quantity="other">"Welcome to HalloApp! You have %d invite. &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</item>
-    </plurals>
-
     <!-- Button to invite a contact to a group with an invite link -->
-    <string name="group_invite_via_link">"Invite to group via link"</string>
+    <string name="group_invite_via_link">"Gruba, ilişim yoluyla davet et"</string>
 
     <!-- Shown below on seen by to explain that posts disappear -->
-    <string name="seen_by_post_expiration_notice">"Your posts will disappear after 30 days."</string>
+    <string name="seen_by_post_expiration_notice">"Gönderilerin 30 gün sonra kaybolacak."</string>
 
     <!-- Frequently asked questions option in help menu -->
-    <string name="faq">"FAQ"</string>
+    <string name="faq">"SSS"</string>
 
     <!-- Shown in progress dialog when loading key verification info -->
-    <string name="key_verification_fetching_keys">"Fetching keys…"</string>
+    <string name="key_verification_fetching_keys">"Güvenlik kodu bilgileri getiriliyor..."</string>
 
     <!-- Shown when we fail to get key verification info -->
-    <string name="key_verification_key_fetch_failed">"Failed to fetch keys"</string>
+    <string name="key_verification_key_fetch_failed">"Güvenlik kodu bilgileri getirme başarısız"</string>
 
     <!-- Shown inline in a chat when the e2e keys securing the messages have changed, i.e. if the other user changes phones or reinstalls -->
-    <string name="system_message_keys_changed">"Security keys with %s changed"</string>
+    <string name="system_message_keys_changed">"%s ile güvenlik kodu değişti"</string>
 
     <!-- Shown on the key verification activity next to a switch where the user can keep track of whether they verified the identity of the other user -->
-    <string name="key_verification_switch_label">"Verified"</string>
-    <string name="action_add">"Add"</string>
-    <string name="video_countdown_message">"Recording will end in %s"</string>
+    <string name="key_verification_switch_label">"Doğrulandı"</string>
+    <string name="action_add">"Ekle"</string>
+
+    <!-- Does %s refers to a time? -->
+    <string name="video_countdown_message">"Kaydetme %s içinde sona erecek"</string>
 
     <!-- Button takes user to settings to manage their storage -->
-    <string name="manage_storage_button">"Manage Storage"</string>
+    <string name="manage_storage_button">"Depolamayı Yönet"</string>
 
     <!-- Message that's displayed if user has low storage -->
-    <string name="low_storage_msg">"Your phone is running low on storage.
-In order to use HalloApp please free some storage on this phone."</string>
+    <string name="low_storage_msg">"Telefonunuzun depolama alanı azalıyor.
+HalloApp'i kullanmak için lütfen bu telefonda bir miktar depolama alanı boşaltın."</string>
     <plurals name="seen_by_people">
-        <item quantity="one">"Seen by %d person"</item>
-        <item quantity="other">"Seen by %d person"</item>
+        <item quantity="one">"%d kişi tarafından görüldü"</item>
+        <item quantity="other">"%d kişi tarafından görüldü"</item>
     </plurals>
 
     <!-- Text that provides context for a group invite link being shared -->
-    <string name="group_invite_link_context">"Click on this link to join my HalloApp group: %s"</string>
-    <string name="voice_note">"Voice note"</string>
+    <string name="group_invite_link_context">"%s ilişimine dokunarak HalloApp grubuma katıl"</string>
+    <string name="voice_note">"Sesli not"</string>
 
     <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
 This string is used in InviteContactsActivity.java line 160 to show the time that invites will be refreshed after invite count is 0
 example: More invites coming on [Saturday, June 19, 7:59 PM], where content in the brackets is displayed by %s -->
-    <string name="server_invite_refresh_time">"More invites coming on %s"</string>
+    <string name="server_invite_refresh_time">"%s tarihinde daha fazla davetiye geliyor"</string>
 
     <!-- Button text on profile of a user not in the user's contacts; tapping takes the user to the contacts app with data prefilled -->
-    <string name="add_to_contacts">"Add to contacts"</string>
+    <string name="add_to_contacts">"Kişilere ekle"</string>
 
     <!-- Title shown when a user starts the account deletion process under 'account' -->
-    <string name="delete_account_title">"Delete account"</string>
+    <string name="delete_account_title">"Hesabı sil"</string>
 
     <!-- Button text at bottom for user to confirm account deletion -->
-    <string name="delete_account_button">"Delete"</string>
+    <string name="delete_account_button">"Sil"</string>
 
     <!-- Note at bottom of account deletion activity -->
-    <string name="delete_account_note">"This cannot be undone."</string>
+    <string name="delete_account_note">"Bu işlem geri alınamaz."</string>
 
     <!-- Error message at bottom of account deletion screen when deletion fails -->
-    <string name="delete_account_failed">"Failed to delete account"</string>
+    <string name="delete_account_failed">"Hesap silinemedi"</string>
 
     <!-- Category in the top-level settings -->
-    <string name="settings_account">"Account"</string>
+    <string name="settings_account">"Hesap"</string>
 
     <!-- Shown for when a user wants to request to download all of their data in a GDPR-compliant manner -->
-    <string name="request_data_title">"Get my data"</string>
+    <string name="request_data_title">"Verilerimi talep et"</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature -->
-    <string name="save_to_gallery_storage_permission_rationale">"To save the media to the gallery we need permission to access your device storage"</string>
+    <string name="save_to_gallery_storage_permission_rationale">"Görseli galeriye kaydetmek için cihazının depolama alanına erişme iznine ihtiyacımız var."</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature. This is used when the user needs to manually go to their settings -->
-    <string name="save_to_gallery_storage_permission_rationale_denied">"To save the media to the gallery we need permission to access your device storage.
+    <string name="save_to_gallery_storage_permission_rationale_denied">"Görseli galeriye kaydetmek için cihazının depolama alanına erişim iznine ihtiyacımız var.
 
-Open the app settings screen to modify app permissions."</string>
+Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</string>
 
     <!-- Message when we successfully save post media to gallery -->
-    <string name="media_saved_to_gallery">"Saved to gallery"</string>
+    <string name="media_saved_to_gallery">"Galeriye kaydedildi"</string>
 
     <!-- Message when we failed to save post media to gallery -->
-    <string name="media_save_to_gallery_failed">"Failed to save to gallery"</string>
+    <string name="media_save_to_gallery_failed">"Galeriye kaydetme başarısız"</string>
 
     <!-- Menu option to delete a post -->
-    <string name="delete_post">"Delete post"</string>
+    <string name="delete_post">"Gönderiyi sil"</string>
 
     <!-- Option to save a photo/video to the user's gallery -->
-    <string name="save_to_gallery">"Save to gallery"</string>
+    <string name="save_to_gallery">"Galeriye kaydet"</string>
 
     <!-- Title for the user's post -->
-    <string name="my_post">"My post"</string>
+    <string name="my_post">"Gönderim"</string>
 
     <!-- button to request registration code via phone call -->
-    <string name="request_call">"Request a Call"</string>
+    <string name="request_call">"Çağrı talebinde bulun"</string>
+
+    <!-- Shown on request page when there is not a known active request -->
+    <string name="request_data_button">"Veri talebinde bulun"</string>
+
+    <!-- Shown as settings option title after the user has requested their data but before it is available for download; string param is date -->
+    <string name="data_available_at">"Veriler, %s tarihinde mevcut olacak"</string>
+
+    <!-- Shown at top of data request page explaining the process -->
+    <string name="export_data_explanation">"HalloApp sunucularında depolanan tüm kullanıcı verilerinin bir kopyasını indir. Mesajlar ve gönderiler buna dahil değildir. &lt;a href=\"https://halloapp.com/help/\"&gt;Daha fazla bilgi edinin&lt;/a&gt;"</string>
+
+    <!-- Shown when a request to the server for data export fails -->
+    <string name="request_export_data_failed">"İstek başarısız"</string>
+
+    <!-- Button for exporting account information requested for download -->
+    <string name="export_account_data">"Verilerimi dışa aktar"</string>
+
+    <!-- Notification shown as if it were the first message in a chat -->
+    <string name="e2e_notice">"Sohbetler uçtan uca şifrelenir ve HalloApp'in bunlara erişimi yoktur. Daha fazlasını öğrenmek için dokun."</string>
+
+    <!-- Shown on buttons for opening up the key verification activity -->
+    <string name="view_safety_number">"Güvenlik numarasını gör"</string>
+
+    <!-- Shown as title of key verification activity -->
+    <string name="verify_safety_number">"Güvenlik numarasını doğrula"</string>
+
+    <!-- Shown when user has contact permissions disabled on the home feed -->
+    <string name="enable_contacts_rationale">"Kişi izinlerini açarak ailen ve arkadaşlarının güncellemelerini gör"</string>
+
+    <!-- Button that takes users to system settings -->
+    <string name="go_to_settings">"Ayarlara git"</string>
+
+    <!-- Text shown in activity center upon successful registration -->
+    <string name="welcome_notification">"HalloApp'e hoş geldin! &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</string>
+
+    <!-- added new option for sharing -->
+    <string name="share_option_group">"Gruba gönder"</string>
+
+    <!-- A new label used as the title/label of the GroupPickerActivity -->
+    <string name="select_group">"Grup seç"</string>
+
+    <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
+    <string name="search_groups">"Grupları ara"</string>
+
+    <!-- Button for user to remove their profile photo and reset it to the default -->
+    <string name="remove_photo">"Fotoğrafı kaldır"</string>
+
+    <!-- Button for user to take a new photo to replace their profile photo -->
+    <string name="take_photo">"Fotoğraf çek"</string>
+
+    <!-- Button for user to select a new photo from their gallery to replace their profile photo -->
+    <string name="choose_photo">"Fotoğraf seç"</string>
+
+    <!-- Label above the options for changing the profile photo -->
+    <string name="your_profile_photo">"Profil fotoğrafın"</string>
+
+    <!-- Text shown under progress bar when first setting up HalloApp -->
+    <string name="app_initializing">"HalloApp ayarlanıyor..."</string>
+
+    <!-- Shown on a button in settings which shares text with a link to download HalloApp into any other app -->
+    <string name="settings_share_option">"HalloApp'i paylaş"</string>
+
+    <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
+    <string name="share_halloapp_text">"HalloApp'te bana katıl, halloapp.com/dl üzerinden ücretsiz indir"</string>
 </resources>

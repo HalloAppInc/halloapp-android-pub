@@ -491,12 +491,6 @@ version: %s
     <string name="user_typing">"escribe…"</string>
     <string name="group_user_typing">"%s está escribiendo…"</string>
     <string name="group_many_users_typing">"muchos usuarios están escribiendo…"</string>
-    <string name="feed_nux_bottom_sheet_title">"Acerca de HalloApp"</string>
-    <string name="feed_nux_bottom_sheet_text">"El contenido de la página de inicio te permite compartir lo que te interesa en textos, fotos y videos que desaparecen después de 30 días.
-
-Si quieres compartir algo con alguien, ambos deben tener el número de teléfono de cada uno guardado en sus teléfonos.
-
-Puedes compartir estas historias con todos tus contactos o solo con las personas que elijas. Ve a configuración para cambiar la privacidad del contenido."</string>
     <string name="messages_nux_text">"Aquí encontrarás mensajes de tu familia y de tus amigos. Cuando alguien nuevo se une a HalloApp los puedes ver aquí."</string>
     <string name="post_audience_nux_text">"Tu publicación será compartida con tus contactos de teléfono que usan HalloApp. Puedes restringir el acceso a tus publicaciones si vas a Perfil→Configuración."</string>
     <string name="activity_center_nux">"Este es tu centro de actividades. Toca la pantalla para ver tu actividad más reciente."</string>
@@ -573,135 +567,190 @@ Puedes compartir estas historias con todos tus contactos o solo con las personas
     <string name="failed_no_longer_member">"Ya no formas parte de este grupo."</string>
 
     <!-- Placeholder when we do not understand the received message -->
-    <string name="message_upgrade_placeholder">"Your version of HalloApp does not support this type of message. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+    <string name="message_upgrade_placeholder">"Tu versión de HalloApp no es compatible con esta clase de mensaje. &lt;a href=\"update-app\"&gt;Actualiza la aplicación&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received post -->
-    <string name="post_upgrade_placeholder">"Your version of HalloApp does not support this type of post. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+    <string name="post_upgrade_placeholder">"Tu versión de HalloApp no es compatible con esta clase de publicación. &lt;a href=\"update-app\"&gt;Actualiza la aplicación&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received comment -->
-    <string name="comment_upgrade_placeholder">"Your version of HalloApp does not support this type of comment. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+    <string name="comment_upgrade_placeholder">"Tu versión de HalloApp no es compatible con esta clase de comentario. &lt;a href=\"update-app\"&gt;Actualiza la aplicación&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
-    <string name="registration_sms_retry_progress">"Requesting new SMS code…"</string>
+    <string name="registration_sms_retry_progress">"Solicitando un nuevo código SMS..."</string>
 
     <!-- message when user requests a voice call -->
-    <string name="registration_phone_code_progress">"Requesting code via phone call…"</string>
+    <string name="registration_phone_code_progress">"Solicitando código mediante llamada..."</string>
 
     <!-- button to request another sms code -->
-    <string name="resend_sms">"Resend SMS Code"</string>
-    <string name="verify_keys">"Verify keys"</string>
+    <string name="resend_sms">"Reenviar código SMS"</string>
 
     <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
-    <string name="key_verification_success">"Verification succeeded"</string>
+    <string name="key_verification_success">"Verificación correcta"</string>
 
     <!-- Shown when the information scanned from the QR code does not match what was expected, indicating the keys do not match -->
-    <string name="key_verification_failure">"Verification failed"</string>
+    <string name="key_verification_failure">"Verificación fallida"</string>
 
     <!-- Shown on the key verification screen indicating tapping on the QR code will open the scanner -->
-    <string name="key_verification_tap_to_scan">"Tap to scan"</string>
+    <string name="key_verification_tap_to_scan">"Toca para escanear"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. "<![CDATA[<a href="https://halloapp.com/help/">Learn more</a>]]>"."</string>
+    <string name="key_verification_explanation">"Para verificar la seguridad de tu conexión con %s, comprueba que los números de arriba coinciden con los mostrados en su dispositivo o escanea el código QR en su teléfono. "<![CDATA[<a href="https://halloapp.com/help/">Learn more</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
-    <string name="view_more">"More"</string>
+    <string name="view_more">"Más"</string>
 
     <!-- Button to manage your feed privacy settings -->
-    <string name="manage_feed_privacy">"Manage privacy"</string>
-
-    <!-- Text shown in activity center with number of invites. %d is replaced with the count -->
-    <plurals name="welcome_notification_invites">
-        <item quantity="one">"Welcome to HalloApp! You have %d invite. &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</item>
-        <item quantity="other">"Welcome to HalloApp! You have %d invite. &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</item>
-    </plurals>
+    <string name="manage_feed_privacy">"Gestionar privacidad"</string>
 
     <!-- Button to invite a contact to a group with an invite link -->
-    <string name="group_invite_via_link">"Invite to group via link"</string>
+    <string name="group_invite_via_link">"Invitar al grupo mediante enlace"</string>
 
     <!-- Shown below on seen by to explain that posts disappear -->
-    <string name="seen_by_post_expiration_notice">"Your posts will disappear after 30 days."</string>
+    <string name="seen_by_post_expiration_notice">"Tus publicaciones desaparecerán después de 30 días."</string>
 
     <!-- Frequently asked questions option in help menu -->
-    <string name="faq">"FAQ"</string>
+    <string name="faq">"Preguntas frecuentes"</string>
 
     <!-- Shown in progress dialog when loading key verification info -->
-    <string name="key_verification_fetching_keys">"Fetching keys…"</string>
+    <string name="key_verification_fetching_keys">"Solicitando claves..."</string>
 
     <!-- Shown when we fail to get key verification info -->
-    <string name="key_verification_key_fetch_failed">"Failed to fetch keys"</string>
+    <string name="key_verification_key_fetch_failed">"La solicitud de claves  ha fallado"</string>
 
     <!-- Shown inline in a chat when the e2e keys securing the messages have changed, i.e. if the other user changes phones or reinstalls -->
-    <string name="system_message_keys_changed">"Security keys with %s changed"</string>
+    <string name="system_message_keys_changed">"Cambiadas claves de seguridad con %s"</string>
 
     <!-- Shown on the key verification activity next to a switch where the user can keep track of whether they verified the identity of the other user -->
-    <string name="key_verification_switch_label">"Verified"</string>
-    <string name="action_add">"Add"</string>
-    <string name="video_countdown_message">"Recording will end in %s"</string>
+    <string name="key_verification_switch_label">"Verificada"</string>
+    <string name="action_add">"Añadir"</string>
+    <string name="video_countdown_message">"La grabación terminará en %s"</string>
 
     <!-- Button takes user to settings to manage their storage -->
-    <string name="manage_storage_button">"Manage Storage"</string>
+    <string name="manage_storage_button">"Gestionar almacenamiento"</string>
 
     <!-- Message that's displayed if user has low storage -->
-    <string name="low_storage_msg">"Your phone is running low on storage.
-In order to use HalloApp please free some storage on this phone."</string>
+    <string name="low_storage_msg">"Tu teléfono se está quedando sin almacenamiento. Para poder usar HalloApp libera algo de espacio en el teléfono"</string>
     <plurals name="seen_by_people">
-        <item quantity="one">"Seen by %d person"</item>
-        <item quantity="other">"Seen by %d person"</item>
+        <item quantity="one">"Visto por %d persona"</item>
+        <item quantity="other">"Visto por %d personas"</item>
     </plurals>
 
     <!-- Text that provides context for a group invite link being shared -->
-    <string name="group_invite_link_context">"Click on this link to join my HalloApp group: %s"</string>
-    <string name="voice_note">"Voice note"</string>
+    <string name="group_invite_link_context">"Clica en este enlace para unirte a mi grupo de HalloApp: %s"</string>
+    <string name="voice_note">"Nota de voz"</string>
 
     <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
 This string is used in InviteContactsActivity.java line 160 to show the time that invites will be refreshed after invite count is 0
 example: More invites coming on [Saturday, June 19, 7:59 PM], where content in the brackets is displayed by %s -->
-    <string name="server_invite_refresh_time">"More invites coming on %s"</string>
+    <string name="server_invite_refresh_time">"Más invitaciones a partir del %s"</string>
 
     <!-- Button text on profile of a user not in the user's contacts; tapping takes the user to the contacts app with data prefilled -->
-    <string name="add_to_contacts">"Add to contacts"</string>
+    <string name="add_to_contacts">"Añadir a contactos"</string>
 
     <!-- Title shown when a user starts the account deletion process under 'account' -->
-    <string name="delete_account_title">"Delete account"</string>
+    <string name="delete_account_title">"Borrar cuenta"</string>
 
     <!-- Button text at bottom for user to confirm account deletion -->
-    <string name="delete_account_button">"Delete"</string>
+    <string name="delete_account_button">"Borrar"</string>
 
     <!-- Note at bottom of account deletion activity -->
-    <string name="delete_account_note">"This cannot be undone."</string>
+    <string name="delete_account_note">"Esto no se puede deshacer."</string>
 
     <!-- Error message at bottom of account deletion screen when deletion fails -->
-    <string name="delete_account_failed">"Failed to delete account"</string>
+    <string name="delete_account_failed">"No se ha podido borrar la cuenta"</string>
 
     <!-- Category in the top-level settings -->
-    <string name="settings_account">"Account"</string>
+    <string name="settings_account">"Cuenta"</string>
 
     <!-- Shown for when a user wants to request to download all of their data in a GDPR-compliant manner -->
-    <string name="request_data_title">"Get my data"</string>
+    <string name="request_data_title">"Solicitar mis datos"</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature -->
-    <string name="save_to_gallery_storage_permission_rationale">"To save the media to the gallery we need permission to access your device storage"</string>
+    <string name="save_to_gallery_storage_permission_rationale">"Para guardar los archivos multimedia a la galería necesitamos permiso para acceder al almacenamiento de tu dispositivo"</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature. This is used when the user needs to manually go to their settings -->
-    <string name="save_to_gallery_storage_permission_rationale_denied">"To save the media to the gallery we need permission to access your device storage.
+    <string name="save_to_gallery_storage_permission_rationale_denied">"Para guardar los archivos multimedia a la galería necesitamos permiso para acceder al almacenamiento de tu dispositivo.
 
-Open the app settings screen to modify app permissions."</string>
+Abre la pantalla de ajustes de la aplicación para modificar los permisos."</string>
 
     <!-- Message when we successfully save post media to gallery -->
-    <string name="media_saved_to_gallery">"Saved to gallery"</string>
+    <string name="media_saved_to_gallery">"Guardado en la galería"</string>
 
     <!-- Message when we failed to save post media to gallery -->
-    <string name="media_save_to_gallery_failed">"Failed to save to gallery"</string>
+    <string name="media_save_to_gallery_failed">"No se ha podido guardar en la galería"</string>
 
     <!-- Menu option to delete a post -->
-    <string name="delete_post">"Delete post"</string>
+    <string name="delete_post">"Borrar publicación"</string>
 
     <!-- Option to save a photo/video to the user's gallery -->
-    <string name="save_to_gallery">"Save to gallery"</string>
+    <string name="save_to_gallery">"Guardar en la galería"</string>
 
     <!-- Title for the user's post -->
-    <string name="my_post">"My post"</string>
+    <string name="my_post">"Mi publicación"</string>
 
     <!-- button to request registration code via phone call -->
-    <string name="request_call">"Request a Call"</string>
+    <string name="request_call">"Solicitar una llamada"</string>
+
+    <!-- Shown on request page when there is not a known active request -->
+    <string name="request_data_button">"Solicitar datos"</string>
+
+    <!-- Shown as settings option title after the user has requested their data but before it is available for download; string param is date -->
+    <string name="data_available_at">"Los datos estarán disponibles el %s"</string>
+
+    <!-- Shown at top of data request page explaining the process -->
+    <string name="export_data_explanation">"Descarga una copia de todos tus datos almacenados en los servidores de HalloApp. Esto no contiene mensajes o contenido de publicaciones. &lt;a href=\"https://halloapp.com/help/\"&gt;Saber más&lt;/a&gt;"</string>
+
+    <!-- Shown when a request to the server for data export fails -->
+    <string name="request_export_data_failed">"Solicitud fallida"</string>
+
+    <!-- Button for exporting account information requested for download -->
+    <string name="export_account_data">"Exportar mis datos"</string>
+
+    <!-- Notification shown as if it were the first message in a chat -->
+    <string name="e2e_notice">"Chats are end-to-end encrypted and HalloApp does not have access to them. Tap to learn more."</string>
+
+    <!-- Shown on buttons for opening up the key verification activity -->
+    <string name="view_safety_number">"Ver cifras de seguridad"</string>
+
+    <!-- Shown as title of key verification activity -->
+    <string name="verify_safety_number">"Verificar cifras de seguridad"</string>
+
+    <!-- Shown when user has contact permissions disabled on the home feed -->
+    <string name="enable_contacts_rationale">"Get updates from friends &amp; family by turning on contact permissions"</string>
+
+    <!-- Button that takes users to system settings -->
+    <string name="go_to_settings">"Go to settings"</string>
+
+    <!-- Text shown in activity center upon successful registration -->
+    <string name="welcome_notification">"Welcome to HalloApp! &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</string>
+
+    <!-- added new option for sharing -->
+    <string name="share_option_group">"Post to Group"</string>
+
+    <!-- A new label used as the title/label of the GroupPickerActivity -->
+    <string name="select_group">"Select group"</string>
+
+    <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
+    <string name="search_groups">"Search groups"</string>
+
+    <!-- Button for user to remove their profile photo and reset it to the default -->
+    <string name="remove_photo">"Descartar foto"</string>
+
+    <!-- Button for user to take a new photo to replace their profile photo -->
+    <string name="take_photo">"Tomar foto"</string>
+
+    <!-- Button for user to select a new photo from their gallery to replace their profile photo -->
+    <string name="choose_photo">"Seleccionar foto"</string>
+
+    <!-- Label above the options for changing the profile photo -->
+    <string name="your_profile_photo">"Tu foto de perfil"</string>
+
+    <!-- Text shown under progress bar when first setting up HalloApp -->
+    <string name="app_initializing">"Setting up HalloApp…"</string>
+
+    <!-- Shown on a button in settings which shares text with a link to download HalloApp into any other app -->
+    <string name="settings_share_option">"Compartir HalloApp"</string>
+
+    <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
+    <string name="share_halloapp_text">"Join me on HalloApp, download for free at halloapp.com/dl"</string>
 </resources>

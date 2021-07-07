@@ -27,7 +27,7 @@
     <string name="bad_image">"Nicht unterstützter Medientyp"</string>
     <string name="time_diff_now">"Gerade eben"</string>
     <string name="phone_number_hint">"Handynummer"</string>
-    <string name="request_registration_title">"Willkommen!"</string>
+    <string name="request_registration_title">"Herzlich willkommen!"</string>
     <string name="reverify_registration_title">"Bitte deine Handynummer erneut eingeben"</string>
     <string name="request_registration_subtitle">"Verifizierungscode wird gesendet. 
 Kosten deines Service-Providers könnten anfallen."</string>
@@ -37,7 +37,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="contact_permission_title">"Noch ein Hinweis"</string>
     <string name="registration_code_invalid">"Ungültiger Registrierungscode, versuch es noch einmal"</string>
     <string name="registration_failed">"Fehler bei der Registrierung der Handynummer, versuch es noch einmal"</string>
-    <string name="registration_failed_no_friends">"Die Nutzung ist derzeit nur mit Einladung möglich. Einfach einen Freund oder ein Familienmitglied, das HalloApp verwendet, bitten, dich mit deiner Handynummer einzuladen."</string>
+    <string name="registration_failed_no_friends">"Die Nutzung ist derzeit nur mit Einladung möglich. Falls du Freunde oder Familienmitglieder hast, die HalloApp bereits nutzen, bitte sie, dich mit deiner Handynummer einzuladen."</string>
     <string name="registration_failed_no_friends_title">"Ups!"</string>
     <string name="type_a_message_hint">"Nachricht eingeben"</string>
     <string name="write_a_description">"Eine Beschreibung eingeben"</string>
@@ -113,10 +113,10 @@ Kosten deines Service-Providers könnten anfallen."</string>
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
 
     <!-- updated -->
-    <string name="storage_permission_rationale">"Für die Medienauswahl benötigen wir die Berechtigung, auf deinen Speicher zuzugreifen."</string>
+    <string name="storage_permission_rationale">"Für die Auswahl der Medien benötigen wir deine Erlaubnis, um auf den Speicher deines Geräts zugreifen zu können."</string>
 
     <!-- updated -->
-    <string name="storage_permission_rationale_denied">"Für die Medienauswahl benötigen wir die Berechtigung, auf deinen Speicher zuzugreifen.
+    <string name="storage_permission_rationale_denied">"Für die Auswahl der Medien benötigen wir deine Erlaubnis, um auf den Speicher deines Geräts zugreifen zu können.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
     <string name="retry">"Noch einmal probieren"</string>
@@ -154,7 +154,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
         <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und %3$d andere Person haben &lt;b&gt;%4$s&lt;/b&gt;'s Beitrag kommentiert"</item>
         <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und %3$d andere Personen haben &lt;b&gt;%4$s&lt;/b&gt;'s Beitrag kommentiert"</item>
     </plurals>
-    <string name="contact_hashing_faq_dialog_title">"Deine Privatsphäre ist unsere oberste Priorität"</string>
+    <string name="contact_hashing_faq_dialog_title">"Deine Privatsphäre ist unsere Priorität"</string>
     <string name="contact_hashing_faq_dialog_info">"HalloApp verwendet nur das Feld für die Handynummer, um den Kontakt zu deinen Freunden auf HalloApp herzustellen. Darüber hinaus werden keine weiteren Daten aus deinen Kontakten erfasst."</string>
     <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; hat einen eigenen Beitrag kommentiert"</string>
     <string name="list_of_two">"%1$s und %2$s"</string>
@@ -404,7 +404,7 @@ Version: %s
     </plurals>
     <string name="invite_friends_title">"Freunde &amp; Familie einladen"</string>
     <string name="invite_title">"Einladung"</string>
-    <string name="settings_invite_option">"Einladung zu HalloApp"</string>
+    <string name="settings_invite_option">"Zu HalloApp einladen"</string>
     <string name="invite_already_on_halloapp">"Ist bereits auf HalloApp"</string>
     <string name="invite_invalid_phone_number">"Ungültige Handynummer"</string>
     <string name="edit">"Bearbeiten"</string>
@@ -480,21 +480,13 @@ Version: %s
     <string name="user_typing">"schreibt..."</string>
     <string name="group_user_typing">"%s schreibt..."</string>
     <string name="group_many_users_typing">"mehrere Benutzer schreiben..."</string>
-    <string name="feed_nux_bottom_sheet_title">"Über HalloApp"</string>
-
-    <!-- instead of using that they will "disappear" can we use they will be automatically "deleted"? -->
-    <string name="feed_nux_bottom_sheet_text">"Auf der Home-Feed-Seite kannst du Text-, Foto- und Video-Beiträge teilen, die nach 30 Tagen automatisch gelöscht werden.
-
-Wenn du Beiträge mit jemanden teilen möchtest, müssen beide Seiten ihre jeweiligen Nummern auf ihren Handys gespeichert haben.
-
-Du kannst Beiträge mit deiner gesamten Kontaktliste oder nur mit ausgewählten Personen teilen. Dazu unter deinen Einstellungen den Privatsphäre-Feed ändern."</string>
     <string name="messages_nux_text">"Hier findest du Nachrichten von deinen Freunden und deiner Familie. Du siehst hier auch, wenn sich jemand neu bei HalloApp angemeldet hat."</string>
     <string name="post_audience_nux_text">"Deine Beiträge werden mit deinen Kontakten, die auch auf HalloApp sind, geteilt. Du kannst deren Zugriff auf deine Beiträge unter Profil→Einstellungen einschränken."</string>
 
     <!-- Aktivitäten-Center is the German translation for "activity center". But it is really not that common and it really does not "sit with me well" . Would it be ok to just go with "Tap to see..."? -->
     <!-- Fuzzy -->
-    <string name="activity_center_nux">"Hier ist dein Aktivitäten-Center. Tippe hier, um deine letzte Aktivität zu sehen."</string>
-    <string name="home_feed_nux">"Willkommen auf deiner Home-Feed-Seite! Hier siehst du Beiträge deiner HalloApp-Kontakte."</string>
+    <string name="activity_center_nux">"Hier ist dein Aktivitäten-Center. Tippe hier, um die neuesten Aktivitäten zu sehen."</string>
+    <string name="home_feed_nux">"Herzlich willkommen auf deiner Home-Feed-Seite! Hier siehst du Beiträge deiner HalloApp-Kontakte."</string>
     <string name="home_feed_nux_learn_more">"Mehr erfahren"</string>
     <string name="camera_error_generic">"Kamerafehler."</string>
     <string name="camera_error_photo">"Foto konnte nicht gemacht werden."</string>
@@ -585,15 +577,14 @@ Du kannst Beiträge mit deiner gesamten Kontaktliste oder nur mit ausgewählten 
 &lt;a href=\"update-app\"&gt;Aktualisiere deine App&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
-    <string name="registration_sms_retry_progress">"Neuen SMS-Code anfordern"</string>
+    <string name="registration_sms_retry_progress">"Neuer SMS-Code wird gesendet..."</string>
 
     <!-- message when user requests a voice call -->
-    <string name="registration_phone_code_progress">"Code via Anruf anfordern..."</string>
+    <string name="registration_phone_code_progress">"Code via Anruf angefordert..."</string>
 
     <!-- button to request another sms code -->
     <!-- Fuzzy -->
     <string name="resend_sms">"SMS erneut senden"</string>
-    <string name="verify_keys">"Schlüssel überprüfen"</string>
 
     <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
     <string name="key_verification_success">"Verifikation erfolgreich"</string>
@@ -611,13 +602,7 @@ Du kannst Beiträge mit deiner gesamten Kontaktliste oder nur mit ausgewählten 
     <string name="view_more">"Mehr"</string>
 
     <!-- Button to manage your feed privacy settings -->
-    <string name="manage_feed_privacy">"Privatsphäre"</string>
-
-    <!-- Text shown in activity center with number of invites. %d is replaced with the count -->
-    <plurals name="welcome_notification_invites">
-        <item quantity="one">"Willkommen bei HalloApp! Du hast noch %d Einladung. &lt;a href=\"invite-friend\"&gt;Jemanden einladen&lt;/a&gt;"</item>
-        <item quantity="other">"Willkommen bei HalloApp! Du hast noch %d Einladungen. &lt;a href=\"invite-friend\"&gt;Jemanden einladen&lt;/a&gt;"</item>
-    </plurals>
+    <string name="manage_feed_privacy">"Privatsphäre verwalten"</string>
 
     <!-- Button to invite a contact to a group with an invite link -->
     <string name="group_invite_via_link">"Zur Gruppe via Link einladen"</string>
@@ -667,46 +652,109 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="add_to_contacts">"Zu meinen Kontakten hinzufügen"</string>
 
     <!-- Title shown when a user starts the account deletion process under 'account' -->
-    <string name="delete_account_title">"Delete account"</string>
+    <string name="delete_account_title">"Account löschen"</string>
 
     <!-- Button text at bottom for user to confirm account deletion -->
-    <string name="delete_account_button">"Delete"</string>
+    <string name="delete_account_button">"Löschen"</string>
 
     <!-- Note at bottom of account deletion activity -->
-    <string name="delete_account_note">"This cannot be undone."</string>
+    <string name="delete_account_note">"Es ist nicht möglich, diesen Schritt rückgängig zu machen."</string>
 
     <!-- Error message at bottom of account deletion screen when deletion fails -->
-    <string name="delete_account_failed">"Failed to delete account"</string>
+    <string name="delete_account_failed">"Der Account konnte nicht gelöscht werden"</string>
 
     <!-- Category in the top-level settings -->
     <string name="settings_account">"Account"</string>
 
     <!-- Shown for when a user wants to request to download all of their data in a GDPR-compliant manner -->
-    <string name="request_data_title">"Get my data"</string>
+    <string name="request_data_title">"Meine Daten anfordern"</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature -->
-    <string name="save_to_gallery_storage_permission_rationale">"To save the media to the gallery we need permission to access your device storage"</string>
+    <string name="save_to_gallery_storage_permission_rationale">"Für die Speicherung der Medien in der Gallerie, benötigen wir deine Erlaubnis, um auf den Speicher deines Geräts zugreifen zu können."</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature. This is used when the user needs to manually go to their settings -->
-    <string name="save_to_gallery_storage_permission_rationale_denied">"To save the media to the gallery we need permission to access your device storage.
+    <string name="save_to_gallery_storage_permission_rationale_denied">"Für die Speicherung der Medien in der Gallerie, benötigen wir deine Erlaubnis, um auf den Speicher deines Geräts zugreifen zu können.
 
-Open the app settings screen to modify app permissions."</string>
+Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
 
     <!-- Message when we successfully save post media to gallery -->
-    <string name="media_saved_to_gallery">"Saved to gallery"</string>
+    <string name="media_saved_to_gallery">"In der Galerie gespeichert"</string>
 
     <!-- Message when we failed to save post media to gallery -->
-    <string name="media_save_to_gallery_failed">"Failed to save to gallery"</string>
+    <string name="media_save_to_gallery_failed">"Fehler beim Speichern in der Galerie"</string>
 
     <!-- Menu option to delete a post -->
-    <string name="delete_post">"Delete post"</string>
+    <string name="delete_post">"Beitrag löschen"</string>
 
     <!-- Option to save a photo/video to the user's gallery -->
-    <string name="save_to_gallery">"Save to gallery"</string>
+    <string name="save_to_gallery">"In Galerie speichern"</string>
 
     <!-- Title for the user's post -->
-    <string name="my_post">"My post"</string>
+    <string name="my_post">"Mein Beitrag"</string>
 
     <!-- button to request registration code via phone call -->
-    <string name="request_call">"Request a Call"</string>
+    <string name="request_call">"Mich anrufen"</string>
+
+    <!-- Shown on request page when there is not a known active request -->
+    <string name="request_data_button">"Daten anfordern"</string>
+
+    <!-- Shown as settings option title after the user has requested their data but before it is available for download; string param is date -->
+    <string name="data_available_at">"Daten sind verfügbar am %s"</string>
+
+    <!-- Shown at top of data request page explaining the process -->
+    <string name="export_data_explanation">"Lade eine Kopie aller deiner Benutzerdaten herunter, die auf den Servern von HalloApp gespeichert sind. Die Kopie enthält keine Nachrichten- oder Beitragsinhalte. &lt;a href=\"https://halloapp.com/help/\"&gt;Mehr erfahren&lt;/a&gt;"</string>
+
+    <!-- Shown when a request to the server for data export fails -->
+    <string name="request_export_data_failed">"Anfrage ist fehlgeschlagen"</string>
+
+    <!-- Button for exporting account information requested for download -->
+    <string name="export_account_data">"Meine Daten exportieren"</string>
+
+    <!-- Notification shown as if it were the first message in a chat -->
+    <string name="e2e_notice">"Die Chats sind Ende-zu-Ende verschlüsselt und HalloApp hat darauf keinen Zugriff. Tippe hier, um mehr zu erfahren."</string>
+
+    <!-- Shown on buttons for opening up the key verification activity -->
+    <string name="view_safety_number">"Sicherheitsnummer anzeigen"</string>
+
+    <!-- Shown as title of key verification activity -->
+    <string name="verify_safety_number">"Sicherheitsnummer überprüfen"</string>
+
+    <!-- Shown when user has contact permissions disabled on the home feed -->
+    <string name="enable_contacts_rationale">"Erlaube den Zugriff auf deine Kontakte, um die Updates deiner Freunde und Familie zu sehen"</string>
+
+    <!-- Button that takes users to system settings -->
+    <string name="go_to_settings">"Zu meinen Einstellungen"</string>
+
+    <!-- Text shown in activity center upon successful registration -->
+    <string name="welcome_notification">"Herzlich willkommen bei HalloApp! &lt;a href=\"invite-friend\"&gt;Jemanden einladen&lt;/a&gt;"</string>
+
+    <!-- added new option for sharing -->
+    <string name="share_option_group">"In Gruppe teilen"</string>
+
+    <!-- A new label used as the title/label of the GroupPickerActivity -->
+    <string name="select_group">"Gruppe auswählen"</string>
+
+    <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
+    <string name="search_groups">"Gruppe suchen"</string>
+
+    <!-- Button for user to remove their profile photo and reset it to the default -->
+    <string name="remove_photo">"Foto entfernen"</string>
+
+    <!-- Button for user to take a new photo to replace their profile photo -->
+    <string name="take_photo">"Foto aufnehmen"</string>
+
+    <!-- Button for user to select a new photo from their gallery to replace their profile photo -->
+    <string name="choose_photo">"Foto auswählen"</string>
+
+    <!-- Label above the options for changing the profile photo -->
+    <string name="your_profile_photo">"Dein Profilbild"</string>
+
+    <!-- Text shown under progress bar when first setting up HalloApp -->
+    <string name="app_initializing">"HalloApp einrichten..."</string>
+
+    <!-- Shown on a button in settings which shares text with a link to download HalloApp into any other app -->
+    <string name="settings_share_option">"HalloApp teilen"</string>
+
+    <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
+    <string name="share_halloapp_text">"Mach mit bei HalloApp! Download kostenlos auf halloapp.com/dl"</string>
 </resources>
