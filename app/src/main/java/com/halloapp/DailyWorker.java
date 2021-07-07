@@ -53,7 +53,7 @@ public class DailyWorker extends Worker {
         Log.i("DailyWorker.doWork");
         ContentDb.getInstance().cleanup();
         FileStore.getInstance().cleanup();
-        ContactsSync.getInstance(getApplicationContext()).startContactsSync(true);
+        ContactsSync.getInstance().startContactsSync(true);
         schedule(getApplicationContext());
         return Result.success();
     }

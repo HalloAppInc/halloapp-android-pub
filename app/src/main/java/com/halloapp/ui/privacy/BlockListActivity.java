@@ -176,8 +176,8 @@ public class BlockListActivity extends HalloActivity implements EasyPermissions.
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         if (requestCode == REQUEST_CHOOSE_BLOCKED_CONTACT) {
-            ContactsSync.getInstance(this).startAddressBookListener();
-            ContactsSync.getInstance(this).startContactsSync(true);
+            ContactsSync.getInstance().startAddressBookListener();
+            ContactsSync.getInstance().startContactsSync(true);
             pickContactToBlock();
         }
     }

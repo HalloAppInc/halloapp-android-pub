@@ -103,7 +103,7 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
         });
 
         continueView.setOnClickListener(v -> {
-            final ContactsSync contactsSync = ContactsSync.getInstance(InitialSyncActivity.this);
+            final ContactsSync contactsSync = ContactsSync.getInstance();
             contactsSync.cancelContactsSync();
             contactsSync.getWorkInfoLiveData()
                     .observe(InitialSyncActivity.this, workInfos -> {
@@ -112,7 +112,7 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
                                 if (workInfo.getId().equals(contactsSync.getLastSyncRequestId())) {
                                     if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
                                         startActivity(new Intent(getBaseContext(), MainActivity.class));
-                                        ContactsSync.getInstance(getBaseContext()).startAddressBookListener();
+                                        ContactsSync.getInstance().startAddressBookListener();
                                         finish();
                                     } else if (workInfo.getState().isFinished()) {
                                         syncInFlight = false;
@@ -205,6 +205,6 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
     private void startSync() {
         syncInFlight = true;
         showRunningState();
-        ContactsSync.getInstance(this).startContactsSync(true);
+        ContactsSync.getInstance().startContactsSync(true);
     }
 }

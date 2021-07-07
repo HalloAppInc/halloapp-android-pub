@@ -80,8 +80,8 @@ public class ContactPermissionBottomSheetDialog extends BottomSheetDialogFragmen
             case REQUEST_CODE_CONTACT_PERMISSIONS: {
                 if (grantResults.length > 0 &&
                         grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    ContactsSync.getInstance(appContext.get()).startAddressBookListener();
-                    ContactsSync.getInstance(appContext.get()).startContactsSync(true);
+                    ContactsSync.getInstance().startAddressBookListener();
+                    ContactsSync.getInstance().startContactsSync(true);
                     if (permissionCallbacks != null) {
                         permissionCallbacks.onPermissionsGranted(requireArguments().getInt(ARG_REQUEST_CODE), Arrays.asList(permissions));
                     }

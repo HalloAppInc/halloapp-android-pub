@@ -419,8 +419,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> list) {
-        ContactsSync.getInstance(this).startAddressBookListener();
-        ContactsSync.getInstance(this).startContactsSync(true);
+        ContactsSync.getInstance().startAddressBookListener();
+        ContactsSync.getInstance().startContactsSync(true);
         refreshFab();
         switch (requestCode) {
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {

@@ -19,6 +19,7 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.halloapp.AppContext;
 import com.halloapp.Preferences;
 import com.halloapp.id.UserId;
 import com.halloapp.util.RandomId;
@@ -52,27 +53,28 @@ public class ContactsSync {
 
     private static ContactsSync instance;
 
-    private final Context context;
+    private final AppContext appContext;
+
     private boolean initialized;
     private UUID lastSyncRequestId;
 
-    public static ContactsSync getInstance(@NonNull Context context) {
+    public static ContactsSync getInstance() {
         if (instance == null) {
             synchronized(ContactsSync.class) {
                 if (instance == null) {
-                    instance = new ContactsSync(context);
+                    instance = new ContactsSync(AppContext.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private ContactsSync(@NonNull Context context) {
-        this.context = context.getApplicationContext();
+    private ContactsSync(@NonNull AppContext appContext) {
+        this.appContext = appContext;
     }
 
     public LiveData<List<WorkInfo>> getWorkInfoLiveData() {
-        return WorkManager.getInstance(context).getWorkInfosForUniqueWorkLiveData(ContactsSync.FULL_CONTACT_SYNC_WORK_ID);
+        return WorkManager.getInstance(appContext.get()).getWorkInfosForUniqueWorkLiveData(ContactsSync.FULL_CONTACT_SYNC_WORK_ID);
     }
 
     public UUID getLastSyncRequestId() {
@@ -83,7 +85,7 @@ public class ContactsSync {
     public void startAddressBookListener() {
         if (!initialized) {
             try {
-                context.getContentResolver().registerContentObserver(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, true, new ContentObserver(null) {
+                appContext.get().getContentResolver().registerContentObserver(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, true, new ContentObserver(null) {
 
                     public void onChange(boolean selfChange, Uri uri) {
                         Log.i("ContactsSync: changed " + uri);
@@ -98,6 +100,7 @@ public class ContactsSync {
     }
 
     public void cancelContactsSync() {
+        Context context = appContext.get();
         WorkManager.getInstance(context).cancelUniqueWork(INCREMENTAL_CONTACT_SYNC_WORK_ID);
         WorkManager.getInstance(context).cancelUniqueWork(FULL_CONTACT_SYNC_WORK_ID);
     }
@@ -106,7 +109,7 @@ public class ContactsSync {
         final Data data = new Data.Builder().putBoolean(WORKER_PARAM_FULL_SYNC, fullSync).putStringArray(WORKER_PARAM_CONTACT_HASHES, contactHashes).build();
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(ContactSyncWorker.class).setInputData(data).build();
         lastSyncRequestId = workRequest.getId();
-        WorkManager.getInstance(context).enqueueUniqueWork(fullSync ? FULL_CONTACT_SYNC_WORK_ID : INCREMENTAL_CONTACT_SYNC_WORK_ID, ExistingWorkPolicy.REPLACE, workRequest);
+        WorkManager.getInstance(appContext.get()).enqueueUniqueWork(fullSync ? FULL_CONTACT_SYNC_WORK_ID : INCREMENTAL_CONTACT_SYNC_WORK_ID, ExistingWorkPolicy.REPLACE, workRequest);
     }
 
     public void startContactsSync(boolean fullSync) {
@@ -355,7 +358,7 @@ public class ContactsSync {
             if (contactHashes == null) {
                 contactHashes = new String[]{};
             }
-            final Result result = ContactsSync.getInstance(getApplicationContext()).performContactSync(fullSync, Arrays.asList(contactHashes));
+            final Result result = ContactsSync.getInstance().performContactSync(fullSync, Arrays.asList(contactHashes));
             if  (!Result.success().equals(result)) {
                 Log.sendErrorReport("ContactsSync failed");
             }

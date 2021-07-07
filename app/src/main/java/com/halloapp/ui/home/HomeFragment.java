@@ -376,8 +376,8 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         switch (requestCode) {
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
-                ContactsSync.getInstance(requireContext()).startAddressBookListener();
-                ContactsSync.getInstance(requireContext()).startContactsSync(true);
+                ContactsSync.getInstance().startAddressBookListener();
+                ContactsSync.getInstance().startContactsSync(true);
                 updateContactsNag();
                 if (getActivity() instanceof MainActivity) {
                     ((MainActivity) getActivity()).refreshFab();

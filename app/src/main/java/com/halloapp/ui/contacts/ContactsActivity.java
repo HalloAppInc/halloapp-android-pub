@@ -27,7 +27,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
@@ -167,7 +166,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.refresh_contacts) {
-            ContactsSync.getInstance(this).startContactsSync(true);
+            ContactsSync.getInstance().startContactsSync(true);
             return true;
         } else if (item.getItemId() == R.id.invite_friends) {
             onInviteFriends();

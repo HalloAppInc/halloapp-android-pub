@@ -82,7 +82,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         setContentView(R.layout.activity_registration_request);
 
         preferences = Preferences.getInstance();
-        contactsSync = ContactsSync.getInstance(this);
+        contactsSync = ContactsSync.getInstance();
         avatarLoader = AvatarLoader.getInstance();
 
         nameEditText = findViewById(R.id.name);

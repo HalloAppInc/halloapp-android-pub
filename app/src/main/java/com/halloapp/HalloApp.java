@@ -5,9 +5,7 @@ import android.app.Application;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
@@ -31,8 +29,6 @@ import com.halloapp.util.LanguageUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
-
-import java.util.Locale;
 
 public class HalloApp extends Application {
 
@@ -89,7 +85,7 @@ public class HalloApp extends Application {
 
         DailyWorker.schedule(this);
 
-        new StartContactSyncTask(Preferences.getInstance(), ContactsSync.getInstance(this)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new StartContactSyncTask(Preferences.getInstance(), ContactsSync.getInstance()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         BgWorkers.getInstance().execute(() -> {
             ContentDb.getInstance().fixGroupMembership();
@@ -207,8 +203,8 @@ public class HalloApp extends Application {
 
             if (checkContactsPermissionChanged()) {
                 // We got contacts permission
-                ContactsSync.getInstance(HalloApp.this).startAddressBookListener();
-                ContactsSync.getInstance(HalloApp.this).startContactsSync(true);
+                ContactsSync.getInstance().startAddressBookListener();
+                ContactsSync.getInstance().startContactsSync(true);
             }
         }
     }

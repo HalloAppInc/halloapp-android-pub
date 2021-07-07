@@ -1,7 +1,6 @@
 package com.halloapp.ui.invites;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -204,7 +203,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.refresh_contacts) {
-            ContactsSync.getInstance(this).startContactsSync(true);
+            ContactsSync.getInstance().startContactsSync(true);
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -305,7 +305,7 @@ public class MainConnectionObserver extends Connection.Observer {
             try {
                 contactsDb.updateNormalizedPhoneData(normalizedPhoneDataList).get();
                 if (!contactHashes.isEmpty()) {
-                    ContactsSync.getInstance(context).startContactSync(contactHashes);
+                    ContactsSync.getInstance().startContactSync(contactHashes);
                 }
                 connection.sendAck(ackId);
             } catch (ExecutionException | InterruptedException e) {

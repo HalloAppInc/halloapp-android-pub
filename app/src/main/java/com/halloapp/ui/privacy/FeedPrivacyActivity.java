@@ -21,10 +21,8 @@ import com.halloapp.contacts.ContactsSync;
 import com.halloapp.id.UserId;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.ui.HalloActivity;
-import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
-import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.privacy.PrivacyList;
@@ -277,8 +275,8 @@ public class FeedPrivacyActivity extends HalloActivity implements EasyPermission
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-        ContactsSync.getInstance(this).startAddressBookListener();
-        ContactsSync.getInstance(this).startContactsSync(true);
+        ContactsSync.getInstance().startAddressBookListener();
+        ContactsSync.getInstance().startContactsSync(true);
         switch (requestCode) {
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION_EXCEPT: {
                 editExceptList();
