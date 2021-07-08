@@ -77,7 +77,7 @@
                     app:layout_constraintStart_toEndOf="@id/resend_sms"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/button_disabled_background"
+                    android:textColor="@color/disabled_text"
                     android:textSize="15sp"
                     tools:text="1:30"/>
 
@@ -110,7 +110,7 @@
                     app:layout_constraintStart_toEndOf="@id/call_me"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/button_disabled_background"
+                    android:textColor="@color/disabled_text"
                     android:textSize="15sp"
                     tools:text="1:30"/>
 

@@ -59,7 +59,8 @@
     <color name="empty_chat_placeholder">@color/white_30</color>
     <color name="post_timestamp">@color/white_40</color>
 
-    <color name="button_disabled_background">@color/white_20</color>
+    <color name="button_disabled_background">@color/white_10</color>
+    <color name="disabled_text">@color/white_10</color>
 
     <color name="scroll_down_background">#FF525252</color>
     <color name="scroll_down_background_pressed">#323232</color>

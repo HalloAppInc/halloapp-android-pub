@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/ic_posts"
-            app:tint="@color/button_disabled_background"/>
+            app:tint="@color/disabled_text"/>
 
         <TextView
             android:id="@+id/empty_profile_text"

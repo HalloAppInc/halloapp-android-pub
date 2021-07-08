@@ -194,7 +194,7 @@ public class CreateGroupActivity extends HalloActivity {
     private void updateAction(boolean enabled) {
         if (createMenuItem != null) {
             SpannableString ss = new SpannableString(getString(R.string.button_create_group));
-            ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), enabled ? R.color.color_secondary : R.color.button_disabled_background)), 0, ss.length(), 0);
+            ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), enabled ? R.color.color_secondary : R.color.disabled_text)), 0, ss.length(), 0);
             createMenuItem.setTitle(ss);
             createMenuItem.setEnabled(enabled);
         }

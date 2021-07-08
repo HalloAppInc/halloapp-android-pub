@@ -266,7 +266,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         boolean allowSelection = hasSelection || allowEmptySelection;
         if (finishMenuItem != null) {
             SpannableString ss = new SpannableString(getActionText());
-            ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), allowSelection ? R.color.color_secondary : R.color.button_disabled_background)), 0, ss.length(), 0);
+            ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), allowSelection ? R.color.color_secondary : R.color.disabled_text)), 0, ss.length(), 0);
             finishMenuItem.setTitle(ss);
             finishMenuItem.setEnabled(allowSelection);
         }
