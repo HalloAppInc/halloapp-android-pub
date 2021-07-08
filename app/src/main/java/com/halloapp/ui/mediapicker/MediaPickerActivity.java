@@ -598,7 +598,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
         @Override
         public int getItemCount() {
-            return items.size();
+            return items == null ? 0 : items.size();
         }
 
         @Override
