@@ -8,7 +8,6 @@ import android.graphics.Outline;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -83,6 +82,7 @@ import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.ClipUtils;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
@@ -839,18 +839,9 @@ public class ChatActivity extends HalloActivity {
         } else if (item.getItemId() == R.id.verify) {
             startActivity(KeyVerificationActivity.openKeyVerification(this, (UserId) chatId));
         } else if (item.getItemId() == R.id.add_to_contacts) {
-            Intent intent = new Intent(Intent.ACTION_INSERT);
-            intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
-
             Contact contact = viewModel.contact.getLiveData().getValue();
-            if (contact != null) {
-                intent.putExtra(ContactsContract.Intents.Insert.NAME, contact.getDisplayName());
-            }
             String phone = viewModel.phone.getValue();
-            if (phone != null) {
-                intent.putExtra(ContactsContract.Intents.Insert.PHONE, phone);
-            }
-
+            Intent intent = IntentUtils.createContactIntent(contact, phone);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);

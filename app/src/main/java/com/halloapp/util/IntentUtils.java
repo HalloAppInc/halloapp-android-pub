@@ -8,11 +8,14 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.ContactsContract;
 import android.provider.Telephony;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.contacts.Contact;
 import com.halloapp.util.logs.Log;
 
 import java.text.Collator;
@@ -54,6 +57,20 @@ public class IntentUtils {
         fbIntent.setClassName(FB_MESSENGER_PACKAGE, "com.facebook.messenger.intents.ShareIntentHandler");
         fbIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         return fbIntent;
+    }
+
+    public static Intent createContactIntent(@Nullable Contact contact, @Nullable String phone) {
+        Intent intent = new Intent(Intent.ACTION_INSERT);
+        intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
+
+        if (contact != null) {
+            intent.putExtra(ContactsContract.Intents.Insert.NAME, TextUtils.isEmpty(contact.halloName) ? contact.fallbackName : contact.halloName);
+        }
+        if (phone != null) {
+            intent.putExtra(ContactsContract.Intents.Insert.PHONE, phone);
+        }
+
+        return intent;
     }
 
     private static boolean isEnabled(@NonNull Context context, @Nullable String packageName) {

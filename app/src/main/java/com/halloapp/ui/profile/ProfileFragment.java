@@ -3,7 +3,6 @@ package com.halloapp.ui.profile;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,7 +16,6 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,14 +29,15 @@ import com.halloapp.content.Message;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.PostsFragment;
+import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.ViewAvatarActivity;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.chat.KeyVerificationActivity;
 import com.halloapp.ui.settings.SettingsPrivacy;
-import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.settings.SettingsProfile;
-import com.halloapp.util.logs.Log;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 import com.halloapp.widget.SnackbarHelper;
@@ -167,18 +166,9 @@ public class ProfileFragment extends PostsFragment {
             startActivity(intent);
         });
         addToContactsView.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_INSERT);
-            intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
-
             Contact contact = viewModel.getContact().getValue();
-            if (contact != null) {
-                intent.putExtra(ContactsContract.Intents.Insert.NAME, contact.getDisplayName());
-            }
             String phone = viewModel.getSubtitle().getValue();
-            if (phone != null) {
-                intent.putExtra(ContactsContract.Intents.Insert.PHONE, phone);
-            }
-
+            Intent intent = IntentUtils.createContactIntent(contact, phone);
             startActivity(intent);
         });
         if (profileUserId.isMe()) {
