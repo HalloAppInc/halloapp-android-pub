@@ -257,6 +257,7 @@ public class ContactsSync {
                     if (contactSyncBatchResults != null) {
                         contactSyncResults.addAll(contactSyncBatchResults);
                         phonesBatch.clear();
+                        batchIndex++;
                     } else {
                         Log.e("ContactsSync.performContactSync: failed to sync batch");
                         return ListenableWorker.Result.failure();
