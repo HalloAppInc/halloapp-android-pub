@@ -501,7 +501,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             } else {
                 e2eNoticeView.setVisibility(View.VISIBLE);
                 e2eNoticeView.setOnClickListener(v -> {
-                    Uri uri = Uri.parse(Constants.FAQ_URL);
+                    Uri uri = Uri.parse(Constants.ENCRYPTED_CHAT_BLOG_URL);
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                     parent.startActivity(intent);
                 });
