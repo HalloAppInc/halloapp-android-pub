@@ -27,7 +27,8 @@
     <string name="phone_number_hint">"Número de teléfono"</string>
     <string name="request_registration_title">"¡Hallo te da la bienvenida!"</string>
     <string name="reverify_registration_title">"Por favor, vuelve a verificar tu número de teléfono"</string>
-    <string name="request_registration_subtitle">"Recibirás un código de verificación.n\ Se pueden aplicar cargos por servicios de telefonía móvil."</string>
+    <string name="request_registration_subtitle">"Recibirás un código de verificación.
+Se pueden aplicar cargos por servicios de telefonía móvil."</string>
     <string name="verify_registration_title">"Ingresa el código que te envíamos a
 %s"</string>
     <string name="contact_permission_title">"Y por último"</string>
