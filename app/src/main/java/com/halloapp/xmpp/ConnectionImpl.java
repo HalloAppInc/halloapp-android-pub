@@ -1310,6 +1310,7 @@ public class ConnectionImpl extends Connection {
                         com.halloapp.proto.server.Post protoPost = item.getPost();
                         Post post = processPost(protoPost, names);
                         if (post != null) {
+                            post.seen = item.getAction().equals(GroupFeedItem.Action.PUBLISH) ? Post.SEEN_NO : Post.SEEN_YES;
                             post.setParentGroup(new GroupId(item.getGid()));
                             posts.add(post);
                         }
