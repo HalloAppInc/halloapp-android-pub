@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 
@@ -49,6 +50,9 @@ public class ExportDataActivity extends HalloActivity {
         setContentView(R.layout.activity_export_data);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        TextView explanationText = findViewById(R.id.explanation);
+        explanationText.setMovementMethod(LinkMovementMethod.getInstance());
 
         viewModel = new ViewModelProvider(this).get(ExportDataViewModel.class);
 
