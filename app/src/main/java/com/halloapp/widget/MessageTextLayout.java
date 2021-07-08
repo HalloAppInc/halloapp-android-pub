@@ -44,7 +44,7 @@ public class MessageTextLayout extends FrameLayout {
         }
         final TextView messageView = (TextView)getChildAt(0);
         final Layout layout = messageView.getLayout();
-        if (layout == null || layout.getLineCount() == 0) {
+        if (layout != null && layout.getLineCount() == 0) {
             return;
         }
         final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
@@ -57,7 +57,7 @@ public class MessageTextLayout extends FrameLayout {
         final int messageViewWidth = messageView.getMeasuredWidth();
         int width = getMeasuredWidth();
         int height = getMeasuredHeight();
-        if (layout.getLineCount() == 1) {
+        if (layout == null || layout.getLineCount() == 1) {
             if (messageViewWidth + statusViewWidth <= widthSize && !forceSeparateLine) {
                 if (widthMode != MeasureSpec.EXACTLY) {
                     width = messageViewWidth + statusViewWidth;
