@@ -4,28 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="24dp"
-    android:paddingBottom="0dp"
     tools:context=".ui.RegistrationRequestActivity">
-
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="30dp"
-        android:paddingEnd="30dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginBottom="36dp"
-        android:src="@drawable/ic_logo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
         android:id="@+id/entry_card"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/loading"
-        app:layout_constraintTop_toBottomOf="@+id/logo"
+        app:layout_constraintTop_toTopOf="parent"
         android:fillViewport="true">
 
         <LinearLayout
@@ -36,6 +22,16 @@
             android:gravity="center_vertical"
             android:orientation="vertical"
             tools:context=".ui.RegistrationRequestActivity">
+
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:layout_marginBottom="24dp"
+                android:src="@drawable/ic_logo"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
            <TextView
                android:id="@+id/title"
