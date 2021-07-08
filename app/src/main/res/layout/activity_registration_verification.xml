@@ -122,7 +122,7 @@
     </ScrollView>
 
     <ProgressBar
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        style="@style/Widget.ProgressBar.Horizontal"
         android:id="@+id/loading"
         android:indeterminateTint="@color/color_secondary"
         android:indeterminate="true"
