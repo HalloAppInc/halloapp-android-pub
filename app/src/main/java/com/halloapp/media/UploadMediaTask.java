@@ -1,6 +1,7 @@
 package com.halloapp.media;
 
 import android.os.AsyncTask;
+import android.util.Size;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -355,6 +356,12 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                 mediaConverter.convert();
             } catch (BadMediaException e) {
                 throw new IOException(e);
+            }
+
+            Size size = MediaUtils.getDimensions(file, media.type);
+            if (size != null) {
+                media.width = size.getWidth();
+                media.height = size.getHeight();
             }
 
             if (!media.file.delete()) {
