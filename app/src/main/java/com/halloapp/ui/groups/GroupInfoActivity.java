@@ -369,7 +369,8 @@ public class GroupInfoActivity extends HalloActivity {
                 Context context = getBaseContext();
                 List<String> optionsList = new ArrayList<>();
                 optionsList.add(context.getString(R.string.view_profile));
-                if (groupMember.contact.addressBookName != null) {
+                boolean allowMessage = groupMember.contact.addressBookName != null;
+                if (allowMessage) {
                     optionsList.add(context.getString(R.string.message));
                 }
                 if (getUserIsAdmin() && getChatIsActive()) {
@@ -382,6 +383,9 @@ public class GroupInfoActivity extends HalloActivity {
                         new AlertDialog.Builder(v.getContext())
                         .setItems(options, (d, which) -> {
                             UserId userId = member.userId;
+                            if (which > 0 && !allowMessage) {
+                                which += 1;
+                            }
                             switch (which) {
                                 case 0: {
                                     viewProfile(userId);
