@@ -540,7 +540,7 @@
         <item quantity="other">%d contacts selected</item>
     </plurals>
     <!-- Text shown under progress bar when first setting up HalloApp -->
-    <string name="app_initializing">Setting up HalloApp…</string>
+    <string name="app_initializing">Setting up HalloApp</string>
     <string name="settings_feed_selected_empty">No contacts selected</string>
     <string name="settings_version_footer">HalloApp Version %s</string>
     <string name="connectivity_info_airplane_mode">Airplane mode on</string>
