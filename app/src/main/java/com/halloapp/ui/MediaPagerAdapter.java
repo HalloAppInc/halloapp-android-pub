@@ -256,10 +256,9 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         super.onViewRecycled(holder);
         holder.imageView.setOnClickListener(null);
         holder.playerView.setOnTouchListener(null);
-        int position = holder.getBindingAdapterPosition();
-        final Media mediaItem = getMediaForPosition(position);
-        if (mediaItem != null) {
-            releasePlayer(mediaItem, holder.playerView);
+        if (holder.mediaItem != null) {
+            releasePlayer(holder.mediaItem, holder.playerView);
+            holder.mediaItem = null;
         }
     }
 
@@ -278,6 +277,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
             holder.itemView.setPadding(mediaInsetLeft, mediaInsetTop, mediaInsetRight, mediaInsetBottom);
         }
         final Media mediaItem = media.get(Rtl.isRtl(holder.itemView.getContext()) ? media.size() - 1 - position : position);
+        holder.mediaItem = mediaItem;
         holder.container.setAspectRatio(fixedAspectRatio);
 
         int displayHeight = holder.container.getContext().getResources().getDisplayMetrics().heightPixels;
@@ -644,6 +644,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         final ContentPlayerView playerView;
         final ProgressBar progressView;
         final AspectRatioFrameLayout container;
+        Media mediaItem;
 
         public MediaViewHolder(@NonNull View itemView) {
             super(itemView);

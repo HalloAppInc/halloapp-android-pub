@@ -22,7 +22,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.paging.InitialPagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
@@ -141,9 +140,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         });
 
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> {
-            if (posts instanceof InitialPagedList) {
-                return;
-            }
             Log.i("HomeFragment: post list updated " + posts);
             if (viewModel.checkPendingOutgoing() || scrollUpOnDataLoaded) {
                 scrollUpOnDataLoaded = false;
