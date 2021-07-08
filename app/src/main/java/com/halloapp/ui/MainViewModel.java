@@ -9,8 +9,10 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
+import com.halloapp.content.Post;
 import com.halloapp.content.SeenReceipt;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.UserId;
 import com.halloapp.registration.CheckRegistration;
 import com.halloapp.util.ComputableLiveData;
 
@@ -19,6 +21,7 @@ import java.util.Collection;
 public class MainViewModel extends AndroidViewModel {
 
     final ComputableLiveData<Integer> unseenChatsCount;
+    final ComputableLiveData<Integer> unseenGroupsCount;
     final ComputableLiveData<CheckRegistration.CheckResult> registrationStatus;
 
     private final Me me;
@@ -26,6 +29,21 @@ public class MainViewModel extends AndroidViewModel {
     private final Preferences preferences;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
+
+        @Override
+        public void onPostAdded(@NonNull Post post) {
+            unseenGroupsCount.invalidate();
+        }
+
+        @Override
+        public void onPostRetracted(@NonNull Post post) {
+            unseenGroupsCount.invalidate();
+        }
+
+        @Override
+        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
+            unseenGroupsCount.invalidate();
+        }
 
         public void onMessageAdded(@NonNull Message message) {
             if (message.isIncoming()) {
@@ -54,6 +72,12 @@ public class MainViewModel extends AndroidViewModel {
             @Override
             protected Integer compute() {
                 return contentDb.getUnseenChatsCount();
+            }
+        };
+        unseenGroupsCount = new ComputableLiveData<Integer>() {
+            @Override
+            protected Integer compute() {
+                return contentDb.getUnseenGroups();
             }
         };
         registrationStatus = new ComputableLiveData<CheckRegistration.CheckResult>() {

@@ -166,6 +166,17 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                         badge.setNumber(unseenChatsCount);
                     }
                 });
+        mainViewModel.unseenGroupsCount.getLiveData().observe(this,
+                unseenGroupsCount -> {
+                    if (unseenGroupsCount == null || unseenGroupsCount == 0) {
+                        navView.removeBadge(R.id.navigation_groups);
+                    } else {
+                        BadgeDrawable badge = navView.getOrCreateBadge(R.id.navigation_groups);
+                        badge.setVerticalOffset(getResources().getDimensionPixelSize(R.dimen.badge_offset_vertical));
+                        badge.setHorizontalOffset(getResources().getDimensionPixelSize(R.dimen.badge_offset_horizontal));
+                        badge.setNumber(unseenGroupsCount);
+                    }
+                });
         fabView = findViewById(R.id.speed_dial);
         fabView.getMainFab().setRippleColor(ContextCompat.getColor(this, R.color.white_20));
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {

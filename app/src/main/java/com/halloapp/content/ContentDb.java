@@ -443,6 +443,11 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public int getUnseenGroups() {
+        return postsDb.getUnreadGroups();
+    }
+
+    @WorkerThread
     public @NonNull List<Post> getUnseenGroupPosts(@NonNull GroupId groupId) {
         return getPosts(null, 256, true, null, groupId, true);
     }

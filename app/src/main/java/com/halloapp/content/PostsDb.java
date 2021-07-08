@@ -646,6 +646,15 @@ class PostsDb {
     }
 
     @WorkerThread
+    int getUnreadGroups() {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String query = "SELECT DISTINCT " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + " FROM " + PostsTable.TABLE_NAME + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + " IS NOT NULL AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "=0";
+        try (final Cursor cursor = db.rawQuery(query, null)) {
+            return cursor.getCount();
+        }
+    }
+
+    @WorkerThread
     @NonNull List<Post> getPosts(@Nullable Long timestamp, @Nullable Integer count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId, boolean unseenOnly) {
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
