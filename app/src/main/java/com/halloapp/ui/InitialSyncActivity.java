@@ -25,6 +25,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.ui.contacts.ContactHashInfoBottomSheetDialogFragment;
 import com.halloapp.util.DialogFragmentUtils;
+import com.halloapp.util.StringUtils;
 
 import java.util.List;
 
@@ -72,31 +73,9 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
         titleView = findViewById(R.id.title);
         logoView = findViewById(R.id.logo);
 
-
-        SpannableStringBuilder current= new SpannableStringBuilder(Html.fromHtml(getString(R.string.contact_rationale_upload)));
-        URLSpan[] spans= current.getSpans(0, current.length(), URLSpan.class);
-
-        for (URLSpan span : spans) {
-            int start = current.getSpanStart(span);
-            int end = current.getSpanEnd(span);
-            current.removeSpan(span);
-
-            ClickableSpan learnMoreSpan = new ClickableSpan() {
-                @Override
-                public void updateDrawState(@NonNull TextPaint ds) {
-                    ds.setUnderlineText(false);
-                    ds.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-                }
-
-                @Override
-                public void onClick(@NonNull View widget) {
-                    DialogFragmentUtils.showDialogFragmentOnce(new ContactHashInfoBottomSheetDialogFragment(), getSupportFragmentManager());
-                    Selection.removeSelection((Spannable)rationaleView.getText());
-                }
-            };
-            current.setSpan(learnMoreSpan, start, end, 0);
-        }
-        rationaleView.setText(current);
+        rationaleView.setText(StringUtils.replaceLink(this, Html.fromHtml(getString(R.string.contact_rationale_upload)), "learn-more", () -> {
+            DialogFragmentUtils.showDialogFragmentOnce(new ContactHashInfoBottomSheetDialogFragment(), getSupportFragmentManager());
+        }));
         rationaleView.setMovementMethod(LinkMovementMethod.getInstance());
         retryView.setOnClickListener(v -> {
             tryStartSync();
