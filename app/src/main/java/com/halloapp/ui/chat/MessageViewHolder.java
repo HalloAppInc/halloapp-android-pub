@@ -70,7 +70,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final TextView timestampView;
     private final TextView decryptStatusView;
     private final TextView newMessagesSeparator;
-    private final TextView e2eNoticeView;
+    private final View e2eNoticeView;
     private final TextView nameView;
     private final TextView systemMessage;
     private final TextView tombstoneMessage;

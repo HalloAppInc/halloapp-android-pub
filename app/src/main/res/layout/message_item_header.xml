@@ -22,22 +22,53 @@
         android:ellipsize="end"
         tools:text="6 new messages"/>
 
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/e2e_notice"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="6dp"
-        android:gravity="center"
-        android:paddingStart="14dp"
-        android:paddingEnd="14dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="4dp"
-        android:textAppearance="?textAppearanceBody1"
-        android:background="@drawable/new_messages_separator_background"
-        android:textColor="@color/new_messages_text"
-        android:text="@string/e2e_notice"/>
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent=".6"
+            app:layout_constraintHorizontal_bias=".5"
+            android:orientation="horizontal"
+            android:background="@drawable/new_messages_separator_background"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:layout_marginStart="44dp"
+            android:layout_marginEnd="44dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="6dp">
+
+            <ImageView
+                android:id="@+id/lock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:src="@drawable/ic_settings_privacy"
+                app:tint="@color/black_54"/>
+
+            <TextView
+                android:id="@+id/e2e_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?textAppearanceBody1"
+                android:textSize="12sp"
+                android:gravity="center"
+                android:textColor="@color/new_messages_text"
+                android:text="@string/e2e_notice"/>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/date"
