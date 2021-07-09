@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Application;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,7 +11,6 @@ import android.os.StrictMode;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
@@ -23,6 +21,8 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.ContentDb;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
+import com.halloapp.permissions.PermissionObserver;
+import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.LanguageUtils;
@@ -33,8 +33,6 @@ import com.halloapp.xmpp.Connection;
 public class HalloApp extends Application {
 
     private final AppContext appContext = AppContext.getInstance();
-
-    private boolean hasContactPermission;
 
     @Override
     public void onCreate() {
@@ -77,11 +75,22 @@ public class HalloApp extends Application {
 
         connect();
 
-        checkContactsPermissionChanged();
+        PermissionWatcher permissionWatcher = PermissionWatcher.getInstance();
+        permissionWatcher.addObserver(new PermissionObserver() {
+
+            @Override
+            public void onWatchedPermissionGranted(@NonNull String permission) {
+                if (Manifest.permission.READ_CONTACTS.equals(permission)) {
+                    ContactsSync.getInstance().startAddressBookListener();
+                    ContactsSync.getInstance().startContactsSync(true);
+                }
+            }
+        });
 
         Lifecycle lifecycle = ProcessLifecycleOwner.get().getLifecycle();
         lifecycle.addObserver(new AppLifecycleObserver());
         lifecycle.addObserver(ForegroundObserver.getInstance());
+        lifecycle.addObserver(permissionWatcher);
 
         DailyWorker.schedule(this);
 
@@ -92,15 +101,6 @@ public class HalloApp extends Application {
             ContentDb.getInstance().processFutureProofContent();
             EncryptedKeyStore.getInstance().ensureMigrated(); // TODO(jack): Remove after May 1
         });
-    }
-
-    private boolean checkContactsPermissionChanged() {
-        if (!hasContactPermission) {
-            hasContactPermission = PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(HalloApp.this, Manifest.permission.READ_CONTACTS);
-            return hasContactPermission;
-        } else {
-            return false;
-        }
     }
 
     /**
@@ -200,12 +200,6 @@ public class HalloApp extends Application {
             registerReceiver(airplaneModeChangeReceiver, new IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED));
             mainHandler.removeCallbacks(disconnectOnBackgroundedRunnable);
             Connection.getInstance().updatePresence(true);
-
-            if (checkContactsPermissionChanged()) {
-                // We got contacts permission
-                ContactsSync.getInstance().startAddressBookListener();
-                ContactsSync.getInstance().startContactsSync(true);
-            }
         }
     }
 

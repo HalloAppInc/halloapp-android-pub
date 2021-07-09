@@ -497,12 +497,6 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         if (requestCode == REQUEST_EXTERNAL_STORAGE_PERMISSIONS) {
             saveCurrentItemToGallery();

@@ -29,7 +29,6 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.R;
-import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.ui.ActivityCenterActivity;
 import com.halloapp.ui.MainActivity;
@@ -201,8 +200,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                 requestPermissions(perms, REQUEST_CODE_ASK_CONTACTS_PERMISSION);
             }
         });
-
-        updateContactsNag();
+        viewModel.getHasContactPermission().observe(getViewLifecycleOwner(), this::updateContactsNag);
 
         NestedHorizontalScrollHelper.applyDefaultScrollRatio(postsView);
 
@@ -218,8 +216,8 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         newPostsView.setVisibility(View.GONE);
     }
 
-    private void updateContactsNag() {
-        if (EasyPermissions.hasPermissions(requireContext(), Manifest.permission.READ_CONTACTS)) {
+    private void updateContactsNag(boolean hasPermission) {
+        if (hasPermission) {
             contactsNag.setVisibility(View.GONE);
         } else {
             contactsNag.setVisibility(View.VISIBLE);
@@ -368,18 +366,9 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         switch (requestCode) {
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
-                ContactsSync.getInstance().startAddressBookListener();
-                ContactsSync.getInstance().startContactsSync(true);
-                updateContactsNag();
                 if (getActivity() instanceof MainActivity) {
                     ((MainActivity) getActivity()).refreshFab();
                 }
@@ -390,6 +379,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        updateContactsNag();
+        updateContactsNag(false);
     }
 }

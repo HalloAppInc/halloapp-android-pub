@@ -15,7 +15,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 
-public abstract class InfoBottomSheetDialogFragment extends BottomSheetDialogFragment {
+public abstract class InfoBottomSheetDialogFragment extends HalloBottomSheetDialogFragment {
 
     @Nullable
     @Override

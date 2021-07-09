@@ -20,7 +20,7 @@ import com.halloapp.ui.privacy.HideFuturePostsDialogFragment;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.DialogFragmentUtils;
 
-public class ContactMenuBottomSheetDialogFragment extends BottomSheetDialogFragment {
+public class ContactMenuBottomSheetDialogFragment extends HalloBottomSheetDialogFragment {
 
     private static final String ARG_CONTACT = "contact";
     private static final String ARG_POST_ID = "post_id";
@@ -76,10 +76,4 @@ public class ContactMenuBottomSheetDialogFragment extends BottomSheetDialogFragm
         });
         return view;
     }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
 }

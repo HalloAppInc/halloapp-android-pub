@@ -335,12 +335,6 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> list) {
         //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {

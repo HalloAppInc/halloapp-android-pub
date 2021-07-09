@@ -146,12 +146,6 @@ public class FeedPrivacyActivity extends HalloActivity implements EasyPermission
         openMultipleContactPicker(REQUEST_CODE_SELECT_ONLY_LIST, getOnlyList(), R.string.contact_picker_feed_only_title);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
     private List<UserId> getOnlyList() {
         if (onlyList != null) {
             return onlyList;
@@ -275,8 +269,6 @@ public class FeedPrivacyActivity extends HalloActivity implements EasyPermission
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-        ContactsSync.getInstance().startAddressBookListener();
-        ContactsSync.getInstance().startContactsSync(true);
         switch (requestCode) {
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION_EXCEPT: {
                 editExceptList();

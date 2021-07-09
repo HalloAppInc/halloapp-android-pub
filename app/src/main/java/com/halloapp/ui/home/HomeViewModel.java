@@ -1,5 +1,6 @@
 package com.halloapp.ui.home;
 
+import android.Manifest;
 import android.app.Application;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +17,7 @@ import androidx.lifecycle.LiveData;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
@@ -52,6 +54,7 @@ public class HomeViewModel extends AndroidViewModel {
     private final AtomicBoolean pendingOutgoing = new AtomicBoolean(false);
     private final AtomicBoolean pendingIncoming = new AtomicBoolean(false);
     private final PostsDataSource.Factory dataSourceFactory;
+    private final PermissionWatcher permissionWatcher = PermissionWatcher.getInstance();
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
@@ -214,6 +217,10 @@ public class HomeViewModel extends AndroidViewModel {
         if (pagedList != null) {
             ((PostsDataSource)pagedList.getDataSource()).reloadAt(timestamp);
         }
+    }
+
+    public LiveData<Boolean> getHasContactPermission() {
+        return permissionWatcher.getPermissionLiveData(Manifest.permission.READ_CONTACTS);
     }
 
     public void saveScrollState(@Nullable Parcelable savedScrollState) {

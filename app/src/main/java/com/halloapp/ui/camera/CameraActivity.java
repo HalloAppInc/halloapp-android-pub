@@ -393,12 +393,6 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         return true;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
     private boolean hasCameraAndAudioPermission() {
         final String[] permissions = { Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
         return EasyPermissions.hasPermissions(this, permissions);

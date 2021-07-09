@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
@@ -26,7 +25,7 @@ import java.util.List;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class PostOptionsBottomSheetDialogFragment extends BottomSheetDialogFragment implements EasyPermissions.PermissionCallbacks {
+public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialogFragment implements EasyPermissions.PermissionCallbacks {
 
     private static final int REQUEST_EXTERNAL_STORAGE_PERMISSIONS = 1;
 
@@ -43,12 +42,6 @@ public class PostOptionsBottomSheetDialogFragment extends BottomSheetDialogFragm
     private PostOptionsViewModel viewModel;
 
     private ContactLoader contactLoader;
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
 
     @Nullable
     @Override

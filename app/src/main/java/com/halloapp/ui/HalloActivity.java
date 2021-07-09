@@ -5,13 +5,16 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.Display;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.ThreadUtils;
+
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class HalloActivity extends AppCompatActivity {
 
@@ -98,6 +101,13 @@ public class HalloActivity extends AppCompatActivity {
         ThreadUtils.runWithoutStrictModeRestrictions(() -> {
             super.startActivityForResult(intent, requestCode);
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionWatcher.getInstance().onRequestPermissionsResult(permissions, grantResults);
     }
 
     @Override

@@ -26,14 +26,14 @@ import com.halloapp.AppContext;
 import com.halloapp.BuildConfig;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.ui.HalloBottomSheetDialogFragment;
 import com.halloapp.util.DialogFragmentUtils;
-import com.halloapp.util.StringUtils;
 
 import java.util.Arrays;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class ContactPermissionBottomSheetDialog extends BottomSheetDialogFragment {
+public class ContactPermissionBottomSheetDialog extends HalloBottomSheetDialogFragment {
 
     private static final int REQUEST_CODE_CONTACT_PERMISSIONS = 1;
     private static final int REQUEST_CODE_SETTINGS = 2;
@@ -80,8 +80,6 @@ public class ContactPermissionBottomSheetDialog extends BottomSheetDialogFragmen
             case REQUEST_CODE_CONTACT_PERMISSIONS: {
                 if (grantResults.length > 0 &&
                         grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    ContactsSync.getInstance().startAddressBookListener();
-                    ContactsSync.getInstance().startContactsSync(true);
                     if (permissionCallbacks != null) {
                         permissionCallbacks.onPermissionsGranted(requireArguments().getInt(ARG_REQUEST_CODE), Arrays.asList(permissions));
                     }
