@@ -2,18 +2,11 @@ package com.halloapp.ui;
 
 import android.content.Intent;
 import android.graphics.Outline;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.Selection;
-import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
-import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,14 +29,12 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.contacts.ContactHashInfoBottomSheetDialogFragment;
-import com.halloapp.ui.home.HomeViewModel;
 import com.halloapp.ui.invites.InviteContactsActivity;
-import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -54,7 +45,7 @@ public class ActivityCenterActivity extends HalloActivity {
 
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
-    private SocialEventsAdapter adapter = new SocialEventsAdapter();
+    private final SocialEventsAdapter adapter = new SocialEventsAdapter();
     private PostThumbnailLoader postThumbnailLoader;
     private RecyclerView listView;
     private View emptyView;
@@ -152,7 +143,6 @@ public class ActivityCenterActivity extends HalloActivity {
 
         private List<ActivityCenterViewModel.SocialActionEvent> socialEvents;
         private Map<UserId, Contact> contacts;
-        private boolean contactsInvalidated;
 
         void setEvents(@NonNull List<ActivityCenterViewModel.SocialActionEvent> socialEvents) {
             this.socialEvents = socialEvents;
@@ -161,19 +151,13 @@ public class ActivityCenterActivity extends HalloActivity {
 
         void setContacts(@NonNull Map<UserId, Contact> contacts) {
             this.contacts = contacts;
-            this.contactsInvalidated = false;
             notifyDataSetChanged();
         }
 
         void reset() {
             this.socialEvents = null;
             this.contacts = null;
-            this.contactsInvalidated = false;
             notifyDataSetChanged();
-        }
-
-        void invalidateContacts() {
-            this.contactsInvalidated = true;
         }
 
         @Override
