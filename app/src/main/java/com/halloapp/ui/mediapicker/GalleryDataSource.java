@@ -3,7 +3,6 @@ package com.halloapp.ui.mediapicker;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentUris;
-import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
@@ -19,6 +18,7 @@ import androidx.paging.ItemKeyedDataSource;
 import com.halloapp.util.logs.Log;
 
 import java.io.FileDescriptor;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -116,16 +116,25 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
 
         try {
-            ParcelFileDescriptor afd = contentResolver.openFileDescriptor(uri, "r");
-            FileDescriptor fd = afd.getFileDescriptor();
+            ParcelFileDescriptor pfd = contentResolver.openFileDescriptor(uri, "r");
+            if (pfd == null) {
+                Log.w("GalleryDataSource.getDuration got null file descriptor");
+                return 0;
+            }
+            FileDescriptor fd = pfd.getFileDescriptor();
             retriever.setDataSource(fd);
-            Long duration = Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
-            afd.close();
-            retriever.release();
-            return duration;
-        } catch (Exception e) {
-            Log.w("GalleryDataSource.getDuration", e);
+            String durationString = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            pfd.close();
+            if (durationString == null) {
+                Log.w("GalleryDataSource.getDuration got null duration");
+                return 0;
+            }
+            return Long.parseLong(durationString);
+        } catch (IOException e) {
+            Log.w("GalleryDataSource.getDuration IO failed", e);
             return 0;
+        } finally  {
+            retriever.release();
         }
     }
 
