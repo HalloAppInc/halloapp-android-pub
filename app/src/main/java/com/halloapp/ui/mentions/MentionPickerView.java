@@ -3,10 +3,6 @@ package com.halloapp.ui.mentions;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
-
-import androidx.transition.AutoTransition;
-import androidx.transition.TransitionManager;
-
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -20,7 +16,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.AutoTransition;
 import androidx.transition.Transition;
+import androidx.transition.TransitionManager;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;

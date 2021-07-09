@@ -135,7 +135,13 @@ public class ContentComposerViewModel extends AndroidViewModel {
                 GroupId groupId = groupFeedId;
                 if (groupId == null) {
                     if (!(chatId instanceof GroupId)) {
-                        return contactsDb.getUsers();
+                        List<Contact> users = contactsDb.getUsers();
+                        for (Contact contact : users) {
+                            if (contact.userId != null) {
+                                contact.halloName = contactsDb.readName(contact.userId);
+                            }
+                        }
+                        return users;
                     }
                     groupId = (GroupId) chatId;
                 }

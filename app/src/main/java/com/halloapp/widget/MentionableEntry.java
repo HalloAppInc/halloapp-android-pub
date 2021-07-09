@@ -21,6 +21,7 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.content.Mention;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
