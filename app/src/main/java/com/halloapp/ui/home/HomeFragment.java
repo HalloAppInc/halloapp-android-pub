@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -66,6 +67,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
 
     private View contactsNag;
     private Button contactsSettingsButton;
+    private TextView contactsNagTextView;
 
     private View inviteView;
 
@@ -186,6 +188,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         });
         contactsNag = root.findViewById(R.id.contacts_nag);
         contactsNag.setOnClickListener(v -> {}); // Don't let touches pass through
+        contactsNagTextView = contactsNag.findViewById(R.id.contact_permissions_nag);
         contactsSettingsButton = contactsNag.findViewById(R.id.settings_btn);
         contactsSettingsButton.setOnClickListener(v -> {
             if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)) {
@@ -222,8 +225,10 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
             contactsNag.setVisibility(View.VISIBLE);
             if (EasyPermissions.permissionPermanentlyDenied(this, Manifest.permission.READ_CONTACTS)) {
                 contactsSettingsButton.setText(R.string.go_to_settings);
+                contactsNagTextView.setText(R.string.contact_permissions_request_permanently_denied);
             } else {
                 contactsSettingsButton.setText(R.string.continue_button);
+                contactsNagTextView.setText(R.string.contact_permissions_request);
             }
         }
     }
