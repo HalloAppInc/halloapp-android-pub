@@ -217,7 +217,9 @@ public class ActivityCenterActivity extends HalloActivity {
 
             void bind(ActivityCenterViewModel.SocialActionEvent socialEvent, Map<UserId, Contact> contacts) {
 
-                postThumbnailLoader.load(thumbnailView, socialEvent.postSenderUserId, socialEvent.postId);
+                if (socialEvent.postId != null) {
+                    postThumbnailLoader.load(thumbnailView, socialEvent.postSenderUserId, socialEvent.postId);
+                }
 
                 unseenIndicatorView.setVisibility(socialEvent.seen ? View.INVISIBLE : View.VISIBLE);
                 itemView.setBackgroundColor(socialEvent.seen ? 0 : ContextCompat.getColor(itemView.getContext(), R.color.color_secondary_10_alpha));
