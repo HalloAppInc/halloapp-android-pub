@@ -145,10 +145,10 @@
     <string name="comments">Comments</string>
     <string name="reply">Reply</string>
     <string name="close">Close</string>
-    <string name="contact_permissions_nag">To help you connect with friends and family, we’ll need your permission to access your contacts. &lt;a href="learn-more"&gt;Learn more&lt;/a&gt;</string>
-    <string name="contact_permissions_nag_permanently_blocked">To help you connect with friends and family, we’ll need your permission to access your contacts. &lt;a href="learn-more"&gt;Learn more&lt;/a&gt;. Tap Settings > Permissions, and turn Contacts on</string>
-    <string name="home_contact_permissions_nag">To help you connect with friends and family, we’ll need your permission to access your contacts.</string>
-    <string name="home_contact_permissions_nag_permanently_blocked">To help you connect with friends and family, we’ll need your permission to access your contacts. Tap Settings > Permissions, and turn Contacts on</string>
+    <!-- Dialog shown to user before requesting contact permissions -->
+    <string name="contact_permissions_request">Allow HalloApp access to your contacts so you can send and receive updates</string>
+    <!-- Dialog shown to user before requesting contact permissions, but user has previously denied them, so they must go to settings -->
+    <string name="contact_permissions_request_permanently_denied">Allow HalloApp access to your contacts so you can send and receive updates. Tap Settings > Permissions, and turn Contacts on</string>
     <string name="reply_to_self">Reply to myself</string>
     <string name="reply_to_contact">Reply to %s</string>
     <string name="reply_original_not_found">Original message not found</string>

@@ -109,10 +109,6 @@ public class ContactPermissionBottomSheetDialog extends BottomSheetDialogFragmen
 
         requestCode = args.getInt(ARG_REQUEST_CODE);
 
-        Spanned current = replaceLearnMore(info.getText());
-        info.setText(current);
-        info.setMovementMethod(LinkMovementMethod.getInstance());
-
         continueButton = view.findViewById(R.id.button2);
         continueButton.setText(R.string.continue_button);
         continueButton.setOnClickListener(v -> {
@@ -139,18 +135,12 @@ public class ContactPermissionBottomSheetDialog extends BottomSheetDialogFragmen
         return view;
     }
 
-    private Spanned replaceLearnMore(CharSequence text) {
-        return StringUtils.replaceLink(requireContext(), text, "learn-more", () -> {
-            DialogFragmentUtils.showDialogFragmentOnce(new ContactHashInfoBottomSheetDialogFragment(), getChildFragmentManager());
-        });
-    }
-
     private void updateNagContents() {
         if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)) {
-            info.setText(replaceLearnMore(Html.fromHtml(getString(R.string.contact_permissions_nag_permanently_blocked))));
+            info.setText(getString(R.string.contact_permissions_request_permanently_denied));
             continueButton.setText(R.string.settings);
         } else {
-            info.setText(replaceLearnMore(Html.fromHtml(getString(R.string.contact_permissions_nag))));
+            info.setText(getString(R.string.contact_permissions_request));
             continueButton.setText(R.string.continue_button);
         }
     }
