@@ -496,6 +496,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                     public void showResult(@NonNull View view, @Nullable List<Post> result) {
                         if (result == null || result.size() == 0) {
                             newMessagesView.setVisibility(View.GONE);
+                            timeView.setTextColor(ContextCompat.getColor(timeView.getContext(), R.color.secondary_text));
                         } else {
                             newMessagesView.setVisibility(View.VISIBLE);
                             newMessagesView.setText(String.format(Locale.getDefault(), "%d", result.size()));
