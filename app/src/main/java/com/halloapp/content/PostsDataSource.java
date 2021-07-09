@@ -38,7 +38,9 @@ public class PostsDataSource extends ItemKeyedDataSource<Long, Post> {
 
         @Override
         public @NonNull DataSource<Long, Post> create() {
+            Log.i("PostsDataSource.Factory.create");
             if (latestSource.isInvalid()) {
+                Log.i("PostsDataSource.Factory.create old source was invalidated; creating a new one");
                 latestSource = new PostsDataSource(contentDb, senderUserId, groupId);
             }
             return latestSource;

@@ -1,6 +1,5 @@
 package com.halloapp.ui.home;
 
-import android.Manifest;
 import android.app.Application;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,18 +13,17 @@ import androidx.annotation.WorkerThread;
 import androidx.core.util.Pair;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostsDataSource;
+import com.halloapp.id.UserId;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 
@@ -36,8 +34,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import pub.devrel.easypermissions.EasyPermissions;
 
 public class HomeViewModel extends AndroidViewModel {
 
