@@ -67,7 +67,9 @@ public class HomeViewModel extends AndroidViewModel {
                 pendingOutgoing.set(true);
                 mainHandler.post(() -> reloadPostsAt(Long.MAX_VALUE));
             } else {
-                pendingIncoming.set(true);
+                if (post.type == Post.TYPE_USER) {
+                    pendingIncoming.set(true);
+                }
                 invalidatePosts();
                 if (post.doesMention(UserId.ME)) {
                     invalidateSocialHistory();
