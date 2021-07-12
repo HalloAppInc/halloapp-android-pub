@@ -55,10 +55,10 @@ Se pueden aplicar cargos por servicios de telefonía móvil."</string>
 
     <!-- Fuzzy -->
     <string name="chats_page_empty">"Tus contactos y mensajes aparecerán aquí"</string>
-    <string name="chats_search_empty">"No se encontraron chats con \%s'"</string>
+    <string name="chats_search_empty">"No se encontraron chats con '%s'"</string>
     <string name="groups_page_empty">"Tus grupos aparecerán aquí"</string>
     <string name="groups_search_empty">"No se encontraron grupos de \'%s\'"</string>
-    <string name="contact_profile_empty">"Las publicaciones de %s\ aparecerán aquí"</string>
+    <string name="contact_profile_empty">"Las publicaciones de %s aparecerán aquí"</string>
     <string name="invalid_phone_number">"Número de teléfono inválido"</string>
     <string name="share_option_post">"Comentar"</string>
     <string name="share_option_message">"Enviar mensaje"</string>
@@ -314,8 +314,10 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="email_logs_text">"
 ----------------------------------------
 Por favor describe tu asunto arriba.
-uid: %s
-version: %s
+uid: %1$s
+version: %2$s
+----------------------------------------
+
 "</string>
     <string name="share">"Compartir"</string>
     <string name="unblock">"Desbloquear"</string>

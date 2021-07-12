@@ -36,7 +36,7 @@
         android:layout_height="22dp"
         android:padding="2dp"
         android:src="@drawable/ic_check"
-        android:tint="@android:color/white"
+        app:tint="@android:color/white"
         android:elevation="2dp"
         android:layout_margin="8dp"
         app:layout_constraintEnd_toEndOf="@id/avatar"

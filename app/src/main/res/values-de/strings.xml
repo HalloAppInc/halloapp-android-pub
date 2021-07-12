@@ -321,9 +321,10 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="email_logs_text">"
 ----------------------------------------
 Bitte oberhalb das Problem beschreiben.
-uid: %s
-Version: %s
+uid: %1$s
+Version: %2$s
 ----------------------------------------
+
 "</string>
     <string name="share">"Teilen"</string>
     <string name="unblock">"Freigeben"</string>

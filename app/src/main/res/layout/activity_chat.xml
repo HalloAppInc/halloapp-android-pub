@@ -209,7 +209,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/reply_text"
                     app:layout_constraintTop_toTopOf="@+id/reply_text"
                     app:layout_constraintBottom_toBottomOf="@+id/reply_text"
-                    android:tint="?android:textColorSecondary"
+                    app:tint="?android:textColorSecondary"
                     tools:src="@drawable/ic_camera"/>
 
                 <TextView

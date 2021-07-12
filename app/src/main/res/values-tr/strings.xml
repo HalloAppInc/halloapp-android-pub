@@ -314,7 +314,14 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
 
     <!-- Fuzzy -->
-    <string name="email_logs_text">"Lüften sorununu yukarıda açıkla."</string>
+    <string name="email_logs_text">"
+----------------------------------------
+Lüften sorununu yukarıda açıkla.
+uid: %1$s
+version: %2$s
+----------------------------------------
+
+"</string>
     <string name="share">"Paylaş"</string>
     <string name="unblock">"Engeli kaldır"</string>
     <string name="unblock_user_confirmation">"%s kişisinin engelini kaldırmak mı istiyorsun?"</string>
