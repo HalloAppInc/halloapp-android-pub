@@ -28,15 +28,12 @@ import com.hbb20.CountryCodePicker;
 
 public class DeleteAccountActivity extends HalloActivity {
 
-    private final BgWorkers bgWorkers = BgWorkers.getInstance();
-
     private DeleteAccountViewModel viewModel;
 
     private CountryCodePicker countryCodePicker;
     private EditText phoneNumberEditText;
     private View nextButton;
     private View loadingProgressBar;
-    private Preferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +46,6 @@ public class DeleteAccountActivity extends HalloActivity {
         }
 
         viewModel = new ViewModelProvider(this).get(DeleteAccountViewModel.class);
-
-        preferences = Preferences.getInstance();
 
         phoneNumberEditText = findViewById(R.id.phone_number);
         countryCodePicker = findViewById(R.id.ccp);
@@ -79,6 +74,8 @@ public class DeleteAccountActivity extends HalloActivity {
     private void deleteAccount() {
         if (!countryCodePicker.isValidFullNumber()) {
             SnackbarHelper.showWarning(this, R.string.invalid_phone_number);
+            loadingProgressBar.setVisibility(View.INVISIBLE);
+            nextButton.setEnabled(true);
             phoneNumberEditText.requestFocus();
             return;
         }
@@ -89,7 +86,6 @@ public class DeleteAccountActivity extends HalloActivity {
 
     public static class DeleteAccountViewModel extends AndroidViewModel {
 
-        private final Me me = Me.getInstance();
         private final Connection connection = Connection.getInstance();
 
         private final MutableLiveData<Boolean> result = new MutableLiveData<>();
