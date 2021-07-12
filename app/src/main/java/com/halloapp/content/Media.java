@@ -146,6 +146,27 @@ public class Media {
         }
     }
 
+    public static String getMediaTransferStateString(@TransferredState int state) {
+        switch (state) {
+            case TRANSFERRED_NO: {
+                return "no";
+            }
+            case TRANSFERRED_YES: {
+                return "yes";
+            }
+            case TRANSFERRED_FAILURE: {
+                return "failure";
+            }
+            case TRANSFERRED_RESUME: {
+                return "resume";
+            }
+            case TRANSFERRED_UNKNOWN:
+            default: {
+                return "unknown";
+            }
+        }
+    }
+
     public Media(long rowId, @MediaType int type, String url, File file, byte[] encKey, byte [] encSha256hash, byte [] decSha256hash, int width, int height, @TransferredState int transferred) {
         this.rowId = rowId;
         this.type = type;

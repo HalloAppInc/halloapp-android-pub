@@ -55,7 +55,7 @@ public class ResumableUploader {
     }
 
     @WorkerThread
-    public static String sendPatchRequest(File file, long offset, @NonNull String url, @Nullable ResumableUploadListener listener) throws IOException {
+    public static String sendPatchRequest(File file, long offset, @NonNull String url, @Nullable ResumableUploadListener listener, String mediaLogId) throws IOException {
         ThreadUtils.setSocketTag();
 
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
@@ -94,7 +94,7 @@ public class ResumableUploader {
                 int newUploadPercent = (int)((outStreamSize + offset) * 100 / inStreamSize);
                 if (newUploadPercent != uploadPercent) {
                     uploadPercent = newUploadPercent;
-                    Log.d("Resumable Uploader:" + uploadPercent + "%");
+                    Log.d("Resumable Uploader progress for " + mediaLogId + ": " + uploadPercent + "%");
                 }
                 cancelled = !listener.onProgress(uploadPercent);
             }

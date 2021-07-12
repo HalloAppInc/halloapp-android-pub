@@ -89,16 +89,22 @@ public class Downloader {
     }
 
     @WorkerThread
-    private static void download(@NonNull InputStream inStream, long contentLength, @NonNull File localFile, @Nullable DownloadListener listener) throws IOException {
+    private static void download(@NonNull InputStream inStream, long contentLength, @NonNull File localFile, @Nullable DownloadListener listener, @NonNull String mediaLogId) throws IOException {
         try (OutputStream outStream = new BufferedOutputStream(new FileOutputStream(localFile, localFile.exists()))) {
             int byteRead;
             long byteWritten = 0;
             final byte[] buffer = new byte[1024];
             boolean cancelled = false;
+            int downloadPercent = 0;
             while (!cancelled && (byteRead = inStream.read(buffer)) > 0) {
                 outStream.write(buffer, 0, byteRead);
                 byteWritten += byteRead;
                 if (contentLength != 0 && listener != null) {
+                    int newUploadPercent = (int)(byteWritten * 100 / contentLength);
+                    if (newUploadPercent != downloadPercent) {
+                        downloadPercent = newUploadPercent;
+                        Log.i("Downloader progress for " + mediaLogId + ":" + downloadPercent + "%");
+                    }
                     cancelled = !listener.onProgress((int) (byteWritten * 100 / contentLength));
                 }
             }
@@ -107,8 +113,9 @@ public class Downloader {
         }
     }
 
-    public static void run(@NonNull String remotePath, @Nullable byte [] mediaKey, @Nullable byte [] sha256hash, @Media.MediaType int type, @Nullable File partialEnc, @NonNull File localFile, @Nullable DownloadListener listener) throws IOException, GeneralSecurityException {
+    public static void run(@NonNull String remotePath, @Nullable byte [] mediaKey, @Nullable byte [] sha256hash, @Media.MediaType int type, @Nullable File partialEnc, @NonNull File localFile, @Nullable DownloadListener listener, @NonNull String mediaLogId) throws IOException, GeneralSecurityException {
         ThreadUtils.setSocketTag();
+        Log.i("Downloader starting download of " + mediaLogId + " from " + remotePath);
         InputStream inStream = null;
         HttpURLConnection connection = null;
         try {
@@ -135,9 +142,10 @@ public class Downloader {
             inStream = connection.getInputStream();
 
             int contentLength = connection.getContentLength();
-            Log.i("Downloader: content length: " + contentLength);
+            Log.i("Downloader: content length for " + mediaLogId + ": " + contentLength);
+            Log.i("Downloader: full headers for " + mediaLogId + ": " + connection.getHeaderFields());
             if (partialEnc != null) {
-                download(inStream, contentLength, partialEnc, listener);
+                download(inStream, contentLength, partialEnc, listener, mediaLogId);
                 inStream = new FileInputStream(partialEnc);
             }
             try {

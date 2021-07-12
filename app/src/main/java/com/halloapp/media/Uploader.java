@@ -35,7 +35,7 @@ public class Uploader {
     }
 
     @WorkerThread
-    public static byte [] run(@NonNull File file, @Nullable byte [] mediaKey, @Media.MediaType int type, @NonNull String url, @Nullable UploadListener listener) throws IOException {
+    public static byte [] run(@NonNull File file, @Nullable byte [] mediaKey, @Media.MediaType int type, @NonNull String url, @Nullable UploadListener listener, @NonNull String mediaLogId) throws IOException {
         ThreadUtils.setSocketTag();
 
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
@@ -79,7 +79,7 @@ public class Uploader {
                 int newUploadPercent = (outStreamSize * 100 / inStreamSize);
                 if (newUploadPercent != uploadPercent) {
                     uploadPercent = newUploadPercent;
-                    Log.i("Uploader:" + uploadPercent + "%");
+                    Log.i("Uploader progress for " + mediaLogId + ":" + uploadPercent + "%");
                 }
                 cancelled = !listener.onProgress(uploadPercent);
             }

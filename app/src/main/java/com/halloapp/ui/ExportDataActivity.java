@@ -180,7 +180,7 @@ public class ExportDataActivity extends HalloActivity {
                 File file = fileStore.getExportDataFile();
                 if (!file.exists()) {
                     try {
-                        Downloader.run(url, null, null, Media.MEDIA_TYPE_UNKNOWN, null, file, p -> true);
+                        Downloader.run(url, null, null, Media.MEDIA_TYPE_UNKNOWN, null, file, p -> true, "export-data");
                     } catch (IOException | GeneralSecurityException e) {
                         Log.w("Failed to save export data", e);
                     }
