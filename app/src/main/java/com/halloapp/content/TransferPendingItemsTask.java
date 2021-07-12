@@ -41,6 +41,10 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
         final List<Post> posts = contentDb.getPendingPosts();
         Log.i("TransferPendingItemsTask: " + posts.size() + " posts");
         for (Post post : posts) {
+            if (post.isRetracted()) {
+                connection.retractPost(post.id);
+                continue;
+            }
             if (post.isIncoming()) {
                 if (!post.media.isEmpty()) {
                     mainHandler.post(() -> new DownloadMediaTask(post, fileStore, contentDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR));
