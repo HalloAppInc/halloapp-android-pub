@@ -104,6 +104,8 @@
 
 Отворете менюто с настройките на приложението, за да промените разрешенията."</string>
     <string name="retry">"Опитайте отново"</string>
+
+    <!-- Fuzzy -->
     <string name="contact_rationale_upload">"За да ви свържем със семейството и приятелите ви ще имаме нужда от вашето разрешение за достъп до списъка ви с контакти.  &lt;a href=\"learn-more\"&gt;Научете повече&lt;/a&gt;"</string>
     <string name="failed_to_initialize">"Неуспешна инициализация"</string>
     <string name="type_a_comment_hint">"Добавете коментар"</string>
@@ -492,10 +494,6 @@ uid: %1$s
     <string name="contact_permissions_dialog_title">"Контакти"</string>
     <string name="not_now">"Не сега"</string>
     <string name="continue_button">"Продължи"</string>
-    <string name="contact_permissions_nag">"За да Ви помогнем да се свържете с приятелите и семейството си, ще ни е необходимо разрешението Ви за достъп до Вашите контакти. &lt;a href=\"learn-more\"&gt; Научете повече &lt;/a&gt;"</string>
-    <string name="contact_permissions_nag_permanently_blocked">"За да Ви помогнем да се свържете с приятелите и семейството си, ще ни е необходимо разрешението Ви за достъп до Вашите контакти. &lt;a href=\"learn-more\"&gt; Научете повече &lt;/a&gt; Натиснете Настройки&gt; Разрешения и включете Контакти"</string>
-    <string name="home_contact_permissions_nag">"За да Ви помогнем да се свържете с приятелите и семейството си, ще ни е необходимо разрешението Ви за достъп до Вашите контакти"</string>
-    <string name="home_contact_permissions_nag_permanently_blocked">"За да Ви помогнем да се свържете с приятелите и семейството си, ще ни е необходимо разрешението Ви за достъп до Вашите контакти. Натиснете Настройки&gt; Разрешения и включете Контакти"</string>
     <string name="invite_link_load_failed">"Неуспешно отваряне на връзката за покана на група"</string>
     <string name="message_tombstone_placeholder">"В очакване на това съобщение. Това може да отнеме известно време. &lt;a href=\"https://halloapp.com/help/\"&gt; Научете повече &lt;/a&gt;."</string>
     <string name="failed_no_longer_member">"Вече не сте член на тази група"</string>
@@ -681,6 +679,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="your_profile_photo">"Твоята профилна снимка"</string>
 
     <!-- Text shown under progress bar when first setting up HalloApp -->
+    <!-- Fuzzy -->
     <string name="app_initializing">"Приготвяме HalloApp"</string>
 
     <!-- Shown on a button in settings which shares text with a link to download HalloApp into any other app -->
@@ -688,4 +687,10 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
     <string name="share_halloapp_text">"Join me on HalloApp, download for free at halloapp.com/dl"</string>
+
+    <!-- Dialog shown to user before requesting contact permissions -->
+    <string name="contact_permissions_request">"Allow HalloApp access to your contacts so you can send and receive updates"</string>
+
+    <!-- Dialog shown to user before requesting contact permissions, but user has previously denied them, so they must go to settings -->
+    <string name="contact_permissions_request_permanently_denied">"Allow HalloApp access to your contacts so you can send and receive updates. Tap Settings &gt; Permissions, and turn Contacts on"</string>
 </resources>
