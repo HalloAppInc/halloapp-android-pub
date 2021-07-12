@@ -64,6 +64,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class GroupsFragment extends HalloFragment implements MainNavFragment {
 
@@ -450,6 +451,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
             }
 
             void bindTo(@NonNull Chat chat, @Nullable List<String> filterTokens) {
+                boolean differentChat = this.chat == null || !Objects.equals(chat.chatId, this.chat.chatId);
                 this.chat = chat;
                 if (selectedChats.containsKey(chat.chatId)) {
                     selectionView.setVisibility(View.VISIBLE);
@@ -487,8 +489,10 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
 
                     @Override
                     public void showLoading(@NonNull View view) {
-                        infoView.setVisibility(View.VISIBLE);
-                        infoView.setText("");
+                        if (differentChat) {
+                            infoView.setVisibility(View.VISIBLE);
+                            infoView.setText("");
+                        }
                     }
                 });
                 unseenGroupPostsLoader.load(newMessagesView, new ViewDataLoader.Displayer<View, List<Post>>() {
@@ -506,7 +510,9 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
 
                     @Override
                     public void showLoading(@NonNull View view) {
-                        newMessagesView.setVisibility(View.GONE);
+                        if (differentChat) {
+                            newMessagesView.setVisibility(View.GONE);
+                        }
                     }
                 }, (GroupId) chat.chatId);
             }
