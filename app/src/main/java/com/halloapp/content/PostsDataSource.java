@@ -60,15 +60,20 @@ public class PostsDataSource extends ItemKeyedDataSource<Long, Post> {
 
     @Override
     public @NonNull Long getKey(@NonNull Post item) {
-        if (keyTimestamp  != null) {
-            return keyTimestamp;
+        Log.d("PostsDataSource.getKey item=" + item);
+        if (keyTimestamp != null) {
+            Log.i("PostsDataSource.getKey reload was requested at " + keyTimestamp + "; clearing reload request");
+            Long tmp = keyTimestamp;
+            keyTimestamp = null;
+            return tmp;
         }
         return item.timestamp;
     }
 
-    public void reloadAt(long timestamp) {
+    public void reloadAt(long timestamp) { // TODO(jack): Find a better way to scroll to an area not paged in; keyTimestamp feels hacky
         // next call to getKey on this data source will be used by framework to find load point of next data source after current one is invalidated;
         // this ensures that next call to getKey returns timestamp regardless of what actual post item is
+        Log.d("PostsDataSource.reloadAt timestamp=" + timestamp);
         keyTimestamp = timestamp;
         invalidate();
     }
