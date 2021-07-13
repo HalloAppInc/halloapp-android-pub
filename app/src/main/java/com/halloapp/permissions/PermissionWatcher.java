@@ -110,14 +110,14 @@ public class PermissionWatcher implements LifecycleObserver {
     public void onRequestPermissionsResult(@NonNull String[] permissions, @NonNull int[] grantResults) {
         for (int i = 0; i < permissions.length; i++) {
             String perm = permissions[i];
-            if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                if (deniedPermissions.contains(perm)) {
+            if (deniedPermissions.contains(perm)) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                     deniedPermissions.remove(perm);
                     notifyPermissionGranted(perm);
+                    updatePermissionLiveData(perm, true);
+                } else {
+                    updatePermissionLiveData(perm, false);
                 }
-                updatePermissionLiveData(perm, true);
-            } else {
-                updatePermissionLiveData(perm, false);
             }
         }
     }
