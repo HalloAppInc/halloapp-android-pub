@@ -387,7 +387,8 @@ public class MediaUtils {
                 if (mediaFormat.containsKey(MediaFormat.KEY_DURATION)) {
                     final long trackDurationMs = mediaFormat.getLong(MediaFormat.KEY_DURATION) / 1000;
                     if (trackDurationMs != 0) {
-                        bitrate = Math.max(bitrate, 8 * fileLength / (trackDurationMs / 1000));
+                        final double trackDurationSeconds = trackDurationMs / 1000.0;
+                        bitrate = Math.max(bitrate, (long) (8 * fileLength / trackDurationSeconds));
                         duration = Math.max(duration, trackDurationMs);
                     }
                 }
