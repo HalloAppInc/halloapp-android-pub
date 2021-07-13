@@ -34,7 +34,6 @@ public class HomeViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Post>> postList;
 
-    final ComputableLiveData<Boolean> showWelcomeNux;
     final ComputableLiveData<Boolean> unseenHomePosts;
 
     private final BgWorkers bgWorkers;
@@ -125,13 +124,6 @@ public class HomeViewModel extends AndroidViewModel {
         dataSourceFactory = new PostsDataSource.Factory(contentDb, null, null);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
-        showWelcomeNux = new ComputableLiveData<Boolean>() {
-            @Override
-            protected Boolean compute() {
-                return !preferences.getShowedWelcomeNux();
-            }
-        };
-
         unseenHomePosts = new ComputableLiveData<Boolean>() {
             @Override
             protected Boolean compute() {
@@ -159,13 +151,6 @@ public class HomeViewModel extends AndroidViewModel {
 
     public LiveData<Boolean> getUnseenHomePosts() {
         return unseenHomePosts.getLiveData();
-    }
-
-    public void closeWelcomeNux() {
-        bgWorkers.execute(() -> {
-            preferences.markWelcomeNuxShown();
-            showWelcomeNux.invalidate();
-        });
     }
 
     @Override

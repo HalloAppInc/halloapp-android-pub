@@ -63,8 +63,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
 
     private RecyclerView postsView;
     private View newPostsView;
-    private FrameLayout welcomeNuxContainer;
-    private View nuxWelcome;
 
     private View contactsNag;
     private Button contactsSettingsButton;
@@ -104,8 +102,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         postsView = root.findViewById(R.id.posts);
         final View emptyView = root.findViewById(android.R.id.empty);
         newPostsView = root.findViewById(R.id.new_posts);
-
-        welcomeNuxContainer = root.findViewById(R.id.welcome_nux_container);
 
         newPostsView.setOnClickListener(v -> {
             scrollUpOnDataLoaded = true;
@@ -175,19 +171,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
             }
         });
 
-        viewModel.showWelcomeNux.getLiveData().observe(getViewLifecycleOwner(), shouldShow -> {
-            if (shouldShow == null) {
-                return;
-            }
-            if (shouldShow) {
-                if (nuxWelcome == null) {
-                    nuxWelcome = LayoutInflater.from(requireContext()).inflate(R.layout.nux_welcome, welcomeNuxContainer, true);
-                }
-            } else {
-                welcomeNuxContainer.removeAllViews();
-                nuxWelcome = null;
-            }
-        });
         contactsNag = root.findViewById(R.id.contacts_nag);
         contactsNag.setOnClickListener(v -> {}); // Don't let touches pass through
         contactsNagTextView = contactsNag.findViewById(R.id.contact_permissions_nag);
@@ -343,10 +326,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.notifications) {
             startActivity(new Intent(requireContext(), ActivityCenterActivity.class));
-            if (nuxWelcome != null) {
-                welcomeNuxContainer.setVisibility(View.GONE);
-                viewModel.closeWelcomeNux();
-            }
             return true;
         } else if (item.getItemId() == R.id.invite) {
             openInviteFlow();

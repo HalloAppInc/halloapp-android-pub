@@ -98,8 +98,6 @@ public class Preferences {
 
     private final List<Preference<?>> prefs = new ArrayList<>();
 
-    private final BooleanPreference prefShowedWelcomeNux = createPref(false, PREF_KEY_SHOWED_WELCOME_NUX, false);
-
     private final BooleanPreference prefInviteNotificationSeen = createPref(false, PREF_KEY_INVITE_NOTIFICATION_SEEN, false);
     private final LongPreference prefLastContactSyncTime = createPref(false, PREF_KEY_LAST_CONTACTS_SYNC_TIME, 0L);
     private final LongPreference prefLastBlockListSyncTime = createPref(false, PREF_KEY_LAST_BLOCK_LIST_SYNC_TIME, 0L);
@@ -159,6 +157,7 @@ public class Preferences {
             PREF_KEY_SHOWED_MESSAGES_NUX,
             PREF_KEY_SHOWED_PROFILE_NUX,
             PREF_KEY_SHOWED_MAKE_POST_NUX,
+            PREF_KEY_SHOWED_WELCOME_NUX, // TODO(clark): Remove after October 30
     };
 
     private abstract class Preference<T> {
@@ -440,16 +439,6 @@ public class Preferences {
     @WorkerThread
     public void setFeedPrivacyActiveList(@PrivacyList.Type String activeList) {
         prefActivePrivacyList.set(activeList);
-    }
-
-    @WorkerThread
-    public boolean getShowedWelcomeNux() {
-        return prefShowedWelcomeNux.get();
-    }
-
-    @WorkerThread
-    public void markWelcomeNuxShown() {
-        prefShowedWelcomeNux.set(true);
     }
 
     @WorkerThread
