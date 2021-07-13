@@ -3,7 +3,6 @@ package com.halloapp.ui.mediaexplorer;
 import android.Manifest;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -203,9 +202,10 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
             finishEnterTransitionWhenReady();
         } else {
             bgWorkers.execute(() -> {
-                viewModel.setPosition(viewModel.getPositionInChat(media.get(selected).rowId));
+                int position = viewModel.getPositionInChat(media.get(selected).rowId);
+                viewModel.setPosition(position);
                 pager.post(() -> {
-                    pager.setCurrentItem(viewModel.getPosition(), false);
+                    pager.setCurrentItem(position, false);
                     finishEnterTransitionWhenReady();
                 });
             });
