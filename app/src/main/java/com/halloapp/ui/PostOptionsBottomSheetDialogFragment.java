@@ -100,18 +100,7 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
                     return;
                 }
             }
-            Activity parent = requireActivity();
-            viewModel.savePostToGallery().observe(requireActivity(), success -> {
-                if (success == null) {
-                    return;
-                }
-                if (success) {
-                    SnackbarHelper.showInfo(parent, R.string.media_saved_to_gallery);
-                } else {
-                    SnackbarHelper.showInfo(parent, R.string.media_save_to_gallery_failed);
-                }
-            });
-            dismiss();
+            saveToGalleryAndDismiss();
         });
         deletePost.setOnClickListener(v -> {
             Post post = viewModel.post.getLiveData().getValue();
@@ -128,10 +117,25 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
         return view;
     }
 
+    private void saveToGalleryAndDismiss() {
+        Activity parent = requireActivity();
+        viewModel.savePostToGallery().observe(requireActivity(), success -> {
+            if (success == null) {
+                return;
+            }
+            if (success) {
+                SnackbarHelper.showInfo(parent, R.string.media_saved_to_gallery);
+            } else {
+                SnackbarHelper.showInfo(parent, R.string.media_save_to_gallery_failed);
+            }
+        });
+        dismiss();
+    }
+
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         if (requestCode == REQUEST_EXTERNAL_STORAGE_PERMISSIONS) {
-            viewModel.savePostToGallery();
+            saveToGalleryAndDismiss();
         }
     }
 
