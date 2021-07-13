@@ -16,6 +16,7 @@ import androidx.security.crypto.MasterKeys;
 
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
+import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
@@ -118,6 +119,18 @@ public class Me {
         }
         // TODO (clarkc) Remove getPassword() when migration is finished.
         return !TextUtils.isEmpty(getUser()) && !TextUtils.isEmpty(getName()) && (getMyEd25519NoiseKey() != null || !TextUtils.isEmpty(getPassword()));
+    }
+
+    /**
+     * Avoid using this if possible. Right now it is needed as a work around for
+     * system messages/posts as we can't use the sentinal value of "" in the
+     * affected lists. Typically UserId.isMe should be sufficient.
+     * @param userId
+     * @return
+     */
+    @Deprecated
+    public boolean isMe(@NonNull UserId userId) {
+        return userId.isMe() || userId.rawId().equals(user.getValue());
     }
 
     @WorkerThread

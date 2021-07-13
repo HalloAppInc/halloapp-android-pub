@@ -393,7 +393,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                     break;
                 }
                 case Message.USAGE_NAME_CHANGE: {
-                    if (message.senderUserId.rawId().equals(me.user.getValue()) || message.senderUserId.isMe()) {
+                    if (me.isMe(message.senderUserId)) {
                         systemMessage.setText(itemView.getContext().getString(R.string.system_message_group_name_changed_by_you, message.text));
                     } else {
                         contactLoader.load(systemMessage, message.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
@@ -545,7 +545,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     }
 
     private void systemMessageSingleUser(@NonNull Message message, @StringRes int meString, @StringRes int otherString) {
-        if (message.senderUserId.isMe() || message.senderUserId.rawId().equals(me.user.getValue())) {
+        if (me.isMe(message.senderUserId)) {
             systemMessage.setText(itemView.getContext().getString(meString));
         } else {
             contactLoader.load(systemMessage, message.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
@@ -581,11 +581,11 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             public void showResult(@NonNull TextView view, @Nullable List<Contact> result) {
                 if (result != null) {
                     Contact sender = result.get(0);
-                    boolean senderIsMe = Preconditions.checkNotNull(sender.userId).rawId().equals(me.user.getValue()) || sender.userId.isMe();
+                    boolean senderIsMe = me.isMe(Preconditions.checkNotNull(sender.userId));
                     List<String> names = new ArrayList<>();
                     for (int i=1; i<result.size(); i++) {
                         Contact contact = result.get(i);
-                        names.add(Preconditions.checkNotNull(contact.userId).rawId().equals(me.user.getValue()) || contact.userId.isMe() ? systemMessage.getResources().getString(R.string.you) : contact.getDisplayName());
+                        names.add(me.isMe(Preconditions.checkNotNull(contact.userId)) ? systemMessage.getResources().getString(R.string.you) : contact.getDisplayName());
                     }
                     String formatted = ListFormatter.format(itemView.getContext(), names);
                     if (senderIsMe) {
