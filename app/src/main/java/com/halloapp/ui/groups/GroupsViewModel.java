@@ -86,7 +86,9 @@ public class GroupsViewModel extends AndroidViewModel {
             }
 
             public void onChatDeleted(@NonNull ChatId chatId) {
-                invalidateGroups();
+                if (chatId instanceof GroupId) {
+                    invalidateGroups();
+                }
             }
 
             private void invalidateGroups() {

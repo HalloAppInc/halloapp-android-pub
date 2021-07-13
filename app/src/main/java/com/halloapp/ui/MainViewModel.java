@@ -12,10 +12,12 @@ import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.SeenReceipt;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.registration.CheckRegistration;
 import com.halloapp.util.ComputableLiveData;
 
+import java.security.acl.Group;
 import java.util.Collection;
 
 public class MainViewModel extends AndroidViewModel {
@@ -56,7 +58,11 @@ public class MainViewModel extends AndroidViewModel {
         }
 
         public void onChatDeleted(@NonNull ChatId chatId) {
-            unseenChatsCount.invalidate();
+            if (chatId instanceof GroupId) {
+                unseenGroupsCount.invalidate();
+            } else {
+                unseenChatsCount.invalidate();
+            }
         }
     };
 

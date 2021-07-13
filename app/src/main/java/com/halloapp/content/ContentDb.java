@@ -902,6 +902,9 @@ public class ContentDb {
 
     public void deleteChat(@NonNull ChatId chatId) {
         databaseWriteExecutor.execute(() -> {
+            if (chatId instanceof GroupId) {
+                postsDb.deleteGroup((GroupId) chatId);
+            }
             messagesDb.deleteChat(chatId);
             observers.notifyChatDeleted(chatId);
         });
