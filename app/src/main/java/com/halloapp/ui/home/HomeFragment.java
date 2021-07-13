@@ -31,6 +31,7 @@ import com.halloapp.BuildConfig;
 import com.halloapp.R;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.ui.ActivityCenterActivity;
+import com.halloapp.ui.ActivityCenterViewModel;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.PostsFragment;
@@ -53,6 +54,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     private static final int NEW_POSTS_BANNER_DISAPPEAR_TIME_MS = 5000;
 
     private HomeViewModel viewModel;
+    private ActivityCenterViewModel activityCenterViewModel;
     private BadgedDrawable notificationDrawable;
     private PostThumbnailLoader postThumbnailLoader;
 
@@ -124,6 +126,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         });
 
         viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        activityCenterViewModel = new ViewModelProvider(requireActivity()).get(ActivityCenterViewModel.class);
         viewModel.loadSavedState(savedInstanceState);
 
         if (viewModel.getSavedScrollState() != null) {
@@ -166,7 +169,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
             }
             refreshInviteNux();
         }));
-        viewModel.socialHistory.getLiveData().observe(getViewLifecycleOwner(), commentHistoryData -> {
+        activityCenterViewModel.getSocialHistory().observe(getViewLifecycleOwner(), commentHistoryData -> {
             if (notificationDrawable != null) {
                 updateSocialHistory(commentHistoryData);
             }
@@ -331,7 +334,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                 getResources().getColor(R.color.badge_background),
                 getResources().getColor(R.color.window_background),
                 getResources().getDimension(R.dimen.badge));
-        updateSocialHistory(viewModel.socialHistory.getLiveData().getValue());
+        updateSocialHistory(activityCenterViewModel.getSocialHistory().getValue());
         notificationsMenuItem.setIcon(notificationDrawable);
         super.onCreateOptionsMenu(menu,inflater);
     }
@@ -360,7 +363,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         }
     }
 
-    private void updateSocialHistory(@Nullable HomeViewModel.SocialHistory socialHistory) {
+    private void updateSocialHistory(@Nullable ActivityCenterViewModel.SocialHistory socialHistory) {
         boolean hideBadge = socialHistory == null || socialHistory.unseenCount == 0;
         notificationDrawable.setBadge(hideBadge ? "" : "•");
     }

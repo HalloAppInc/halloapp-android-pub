@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.Manifest;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.core.util.Pair;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
@@ -18,6 +21,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
+import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.xmpp.Connection;
@@ -37,17 +41,22 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
     final ComputableLiveData<Map<UserId, Contact>> contacts;
 
+    private LiveData<Boolean> contactPermissionLiveData;
+
     private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
     private final Connection connection;
     private final ContactsDb contactsDb;
     private final Preferences preferences;
+    private final PermissionWatcher permissionWatcher;
 
     private InvitesApi invitesApi;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private Integer numInvites;
+
+    private final Observer<Boolean> contactPermissionObserver;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
         @Override
@@ -112,6 +121,9 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         contactsDb = ContactsDb.getInstance();
         contactsDb.addObserver(contactsObserver);
         preferences = Preferences.getInstance();
+        permissionWatcher = PermissionWatcher.getInstance();
+
+        contactPermissionLiveData = permissionWatcher.getPermissionLiveData(Manifest.permission.READ_CONTACTS);
 
         invitesApi = new InvitesApi(connection);
 
@@ -121,6 +133,14 @@ public class ActivityCenterViewModel extends AndroidViewModel {
                 return loadSocialHistory();
             }
         };
+
+        contactPermissionObserver = hasPermission -> {
+            // Only check true case because flipping to false would kill our process
+            if (hasPermission) {
+                socialHistory.invalidate();
+            }
+        };
+        contactPermissionLiveData.observeForever(contactPermissionObserver);
 
         contacts = new ComputableLiveData<Map<UserId, Contact>>() {
             @Override
@@ -187,10 +207,32 @@ public class ActivityCenterViewModel extends AndroidViewModel {
     protected void onCleared() {
         contentDb.removeObserver(contentObserver);
         contactsDb.removeObserver(contactsObserver);
+        contactPermissionLiveData.removeObserver(contactPermissionObserver);
     }
 
-    private void processMentionedComments(@NonNull List<Comment> mentionedComments, @NonNull List<SocialActionEvent> seenOut, @NonNull List<SocialActionEvent> unseenOut) {
+    public LiveData<SocialHistory> getSocialHistory() {
+        return socialHistory.getLiveData();
+    }
+
+    private boolean shouldShowPost(@Nullable Post post, boolean hasContactsPerms) {
+        if (post == null) {
+            return false;
+        }
+        if (post.senderUserId.isMe()) {
+            return true;
+        }
+        if (!hasContactsPerms && post.getParentGroup() == null) {
+            return false;
+        }
+        return true;
+    }
+
+    private void processMentionedComments(@NonNull List<Comment> mentionedComments, @NonNull List<SocialActionEvent> seenOut, @NonNull List<SocialActionEvent> unseenOut, boolean hasContactPermissions) {
         for (Comment comment : mentionedComments) {
+            Post parentPost = comment.getParentPost();
+            if (!shouldShowPost(parentPost, hasContactPermissions)) {
+                continue;
+            }
             SocialActionEvent activity = SocialActionEvent.fromMentionedComment(comment);
             if (activity == null) {
                 continue;
@@ -203,8 +245,11 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         }
     }
 
-    private void processMentionedPosts(@NonNull List<Post> mentionedPosts, @NonNull List<SocialActionEvent> seenOut, @NonNull List<SocialActionEvent> unseenOut) {
+    private void processMentionedPosts(@NonNull List<Post> mentionedPosts, @NonNull List<SocialActionEvent> seenOut, @NonNull List<SocialActionEvent> unseenOut, boolean hasContactPermissions) {
         for (Post post : mentionedPosts) {
+            if (!shouldShowPost(post, hasContactPermissions)) {
+                continue;
+            }
             SocialActionEvent activity = SocialActionEvent.fromMentionedPost(post);
             if (activity.seen){
                 seenOut.add(activity);
@@ -230,6 +275,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         for (Comment mentionedComment : mentionedComments) {
             comments.remove(mentionedComment);
         }
+        boolean hasContactPerms = Boolean.TRUE.equals(contactPermissionLiveData.getValue());
 
         final Map<Pair<UserId, String>, SocialActionEvent> unseenComments = new HashMap<>();
         final List<SocialActionEvent> seenComments = new ArrayList<>();
@@ -238,7 +284,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         SocialActionEvent lastActivity = null;
         for (Comment comment : comments) {
             Post parentPost = comment.getParentPost();
-            if (parentPost == null) {
+            if (!shouldShowPost(parentPost, hasContactPerms)) {
                 continue;
             }
             if (comment.seen) {
@@ -266,8 +312,8 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             }
         }
 
-        processMentionedComments(mentionedComments, seenMentions, unseenMentions);
-        processMentionedPosts(mentionedPosts, seenMentions, unseenMentions);
+        processMentionedComments(mentionedComments, seenMentions, unseenMentions, hasContactPerms);
+        processMentionedPosts(mentionedPosts, seenMentions, unseenMentions, hasContactPerms);
 
         final ArrayList<SocialActionEvent> socialActionEvents = new ArrayList<>(unseenMentions.size() + seenMentions.size() + unseenComments.size() + seenComments.size());
         socialActionEvents.addAll(seenMentions);
