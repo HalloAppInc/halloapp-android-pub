@@ -62,6 +62,7 @@ public class PostsFragment extends HalloFragment {
     private TextContentLoader textContentLoader;
     private TimestampRefresher timestampRefresher;
     private AudioDurationLoader audioDurationLoader;
+    private SystemMessageTextResolver systemMessageTextResolver;
 
     private DrawDelegateView drawDelegateView;
     private final RecyclerView.RecycledViewPool recycledMediaViews = new RecyclerView.RecycledViewPool();
@@ -95,6 +96,7 @@ public class PostsFragment extends HalloFragment {
         ContactsDb.getInstance().addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
+        systemMessageTextResolver = new SystemMessageTextResolver(contactLoader);
     }
 
     @CallSuper
@@ -160,6 +162,11 @@ public class PostsFragment extends HalloFragment {
             @Override
             public ContactLoader getContactLoader() {
                 return contactLoader;
+            }
+
+            @Override
+            public SystemMessageTextResolver getSystemMessageTextResolver() {
+                return systemMessageTextResolver;
             }
 
             @Override

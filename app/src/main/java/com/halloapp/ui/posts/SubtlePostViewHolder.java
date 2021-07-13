@@ -59,7 +59,7 @@ public class SubtlePostViewHolder extends ViewHolderWithLifecycle {
         } else {
             itemView.setPadding(itemView.getPaddingLeft(), 0, itemView.getPaddingRight(), itemView.getPaddingBottom());
         }
-
+        parent.getContactLoader().cancel(textView);
         if (post.type == Post.TYPE_USER) {
             textView.setTextColor(ContextCompat.getColor(textView.getContext(), R.color.secondary_text));
             textView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(textView.getContext(), theme == 0 ? R.color.deleted_post_bg : R.color.deleted_post_themed_bg)));
@@ -91,144 +91,11 @@ public class SubtlePostViewHolder extends ViewHolderWithLifecycle {
         } else {
             textView.setTextColor(ContextCompat.getColor(textView.getContext(), R.color.system_post_text));
             textView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(textView.getContext(), R.color.system_post_bg)));
-            bindGroupSystemPostPreview(post);
+            parent.getSystemMessageTextResolver().bindGroupSystemPostPreview(textView, post);
         }
     }
 
     public void applyTheme(int theme) {
         this.theme = theme;
-    }
-
-    private void bindGroupSystemPostPreview(@NonNull Post post) {
-        switch (post.usage) {
-            case Post.USAGE_CREATE_GROUP: {
-                systemMessageSingleUser(post, R.string.system_post_group_created_by_you, R.string.system_post_group_created);
-                break;
-            }
-            case Post.USAGE_ADD_MEMBERS: {
-                systemMessageAffectedList(post, R.string.system_post_members_added_by_you, R.string.system_post_members_added);
-                break;
-            }
-            case Post.USAGE_REMOVE_MEMBER: {
-                systemMessageAffectedList(post, R.string.system_post_members_removed_by_you, R.string.system_post_members_removed);
-                break;
-            }
-            case Post.USAGE_MEMBER_LEFT: {
-                systemMessageSingleUser(post, R.string.system_post_member_you_left, R.string.system_post_member_left);
-                break;
-            }
-            case Post.USAGE_PROMOTE: {
-                systemMessageAffectedList(post, R.string.system_post_members_promoted_by_you, R.string.system_post_members_promoted);
-                break;
-            }
-            case Post.USAGE_DEMOTE: {
-                systemMessageAffectedList(post, R.string.system_post_members_demoted_by_you, R.string.system_post_members_demoted);
-                break;
-            }
-            case Post.USAGE_AUTO_PROMOTE: {
-                systemMessageSingleUser(post, R.string.system_post_member_auto_promoted_you, R.string.system_post_member_auto_promoted);
-                break;
-            }
-            case Post.USAGE_NAME_CHANGE: {
-                if (post.senderUserId.isMe()) {
-                    textView.setText(itemView.getContext().getString(R.string.system_post_group_name_changed_by_you, post.text));
-                } else {
-                    parent.getContactLoader().load(textView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
-                        @Override
-                        public void showResult(@NonNull TextView view, @Nullable Contact result) {
-                            if (result != null) {
-                                textView.setText(itemView.getContext().getString(R.string.system_post_group_name_changed, result.getDisplayName(), post.text));
-                            }
-                        }
-
-                        @Override
-                        public void showLoading(@NonNull TextView view) {
-                            textView.setText("");
-                        }
-                    });
-                }
-                break;
-            }
-            case Post.USAGE_AVATAR_CHANGE: {
-                systemMessageSingleUser(post, R.string.system_post_group_avatar_changed_by_you, R.string.system_post_group_avatar_changed);
-                break;
-            }
-            case Post.USAGE_GROUP_DELETED: {
-                systemMessageSingleUser(post, R.string.system_post_group_deleted_by_you, R.string.system_post_group_deleted);
-                break;
-            }
-            case Post.USAGE_MEMBER_JOINED: {
-                systemMessageSingleUser(post, R.string.system_message_you_joined, R.string.system_message_joined);
-                break;
-            }
-            case Post.USAGE_GROUP_THEME_CHANGED: {
-                systemMessageSingleUser(post, R.string.system_message_group_bg_changed_by_you, R.string.system_message_group_bg_changed);
-                break;
-            }
-            case Post.USAGE_POST:
-            default: {
-                Log.w("Unrecognized system message usage " + post.usage);
-            }
-        }
-    }
-
-    private void systemMessageSingleUser(@NonNull Post message, @StringRes int meString, @StringRes int otherString) {
-        if (message.senderUserId.isMe()) {
-            textView.setText(itemView.getContext().getString(meString));
-        } else {
-            parent.getContactLoader().load(textView, message.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
-                @Override
-                public void showResult(@NonNull TextView view, @Nullable Contact result) {
-                    if (result != null) {
-                        textView.setText(itemView.getContext().getString(otherString, result.getDisplayName()));
-                    }
-                }
-
-                @Override
-                public void showLoading(@NonNull TextView view) {
-                    textView.setText("");
-                }
-            });
-        }
-    }
-
-    private void systemMessageAffectedList(@NonNull Post message, @StringRes int meString, @StringRes int otherString) {
-        String commaSeparatedMembers = message.text;
-        if (commaSeparatedMembers == null) {
-            Log.w("MessageViewHolder system message of type " + message.usage + " missing affected list " + message);
-            return;
-        }
-        String[] parts = commaSeparatedMembers.split(",");
-        List<UserId> userIds = new ArrayList<>();
-        userIds.add(message.senderUserId);
-        for (String part : parts) {
-            userIds.add(new UserId(part));
-        }
-        parent.getContactLoader().loadMultiple(textView, userIds, new ViewDataLoader.Displayer<TextView, List<Contact>>() {
-            @Override
-            public void showResult(@NonNull TextView view, @Nullable List<Contact> result) {
-                if (result != null) {
-                    Contact sender = result.get(0);
-                    boolean senderIsMe = sender.userId.isMe();
-                    List<String> names = new ArrayList<>();
-                    for (int i = 1; i < result.size(); i++) {
-                        Contact contact = result.get(i);
-                        names.add(me.isMe(Preconditions.checkNotNull(contact.userId)) ? textView.getResources().getString(R.string.you) : contact.getDisplayName());
-                    }
-                    String formatted = ListFormatter.format(itemView.getContext(), names);
-                    if (senderIsMe) {
-                        textView.setText(itemView.getContext().getString(meString, formatted));
-                    } else {
-                        String senderName = sender.getDisplayName();
-                        textView.setText(itemView.getContext().getString(otherString, senderName, formatted));
-                    }
-                }
-            }
-
-            @Override
-            public void showLoading(@NonNull TextView view) {
-                textView.setText("");
-            }
-        });
     }
 }

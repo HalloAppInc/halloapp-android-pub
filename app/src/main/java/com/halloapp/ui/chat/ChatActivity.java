@@ -70,6 +70,7 @@ import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.MediaPagerAdapter;
+import com.halloapp.ui.SystemMessageTextResolver;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -150,6 +151,7 @@ public class ChatActivity extends HalloActivity {
     private AudioDurationLoader audioDurationLoader;
     private TimestampRefresher timestampRefresher;
     private ActionMode actionMode;
+    private SystemMessageTextResolver systemMessageTextResolver;
 
     private String replyPostId;
     private UserId replySenderId;
@@ -221,6 +223,8 @@ public class ChatActivity extends HalloActivity {
         audioDurationLoader = new AudioDurationLoader(this);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
+
+        systemMessageTextResolver = new SystemMessageTextResolver(contactLoader);
 
         allowVoiceNoteSending = ServerProps.getInstance().getVoiceNoteSendingEnabled();
 
@@ -1402,6 +1406,11 @@ public class ChatActivity extends HalloActivity {
         @Override
         public ContactLoader getContactLoader() {
             return contactLoader;
+        }
+
+        @Override
+        public SystemMessageTextResolver getSystemMessageTextResolver() {
+            return systemMessageTextResolver;
         }
 
         @Override

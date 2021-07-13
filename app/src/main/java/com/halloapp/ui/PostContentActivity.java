@@ -63,6 +63,7 @@ public class PostContentActivity extends HalloActivity {
     private TextContentLoader textContentLoader;
     private TimestampRefresher timestampRefresher;
     private AudioDurationLoader audioDurationLoader;
+    private SystemMessageTextResolver systemMessageTextResolver;
 
     private DrawDelegateView drawDelegateView;
     private final RecyclerView.RecycledViewPool recycledMediaViews = new RecyclerView.RecycledViewPool();
@@ -108,6 +109,11 @@ public class PostContentActivity extends HalloActivity {
         @Override
         public ContactLoader getContactLoader() {
             return contactLoader;
+        }
+
+        @Override
+        public SystemMessageTextResolver getSystemMessageTextResolver() {
+            return systemMessageTextResolver;
         }
 
         @Override
@@ -227,6 +233,7 @@ public class PostContentActivity extends HalloActivity {
         ContactsDb.getInstance().addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> updatePost());
+        systemMessageTextResolver = new SystemMessageTextResolver(contactLoader);
 
         drawDelegateView = Preconditions.checkNotNull(this).findViewById(R.id.draw_delegate);
 

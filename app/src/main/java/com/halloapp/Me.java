@@ -121,18 +121,6 @@ public class Me {
         return !TextUtils.isEmpty(getUser()) && !TextUtils.isEmpty(getName()) && (getMyEd25519NoiseKey() != null || !TextUtils.isEmpty(getPassword()));
     }
 
-    /**
-     * Avoid using this if possible. Right now it is needed as a work around for
-     * system messages/posts as we can't use the sentinal value of "" in the
-     * affected lists. Typically UserId.isMe should be sufficient.
-     * @param userId
-     * @return
-     */
-    @Deprecated
-    public boolean isMe(@NonNull UserId userId) {
-        return userId.isMe() || userId.rawId().equals(user.getValue());
-    }
-
     @WorkerThread
     public synchronized String getUser() {
         final String user = getPreferences().getString(PREF_KEY_USER_ID, null);

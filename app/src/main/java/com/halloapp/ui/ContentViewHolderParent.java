@@ -15,6 +15,7 @@ public interface ContentViewHolderParent {
 
     AvatarLoader getAvatarLoader();
     ContactLoader getContactLoader();
+    SystemMessageTextResolver getSystemMessageTextResolver();
     ChatLoader getChatLoader();
     SeenByLoader getSeenByLoader();
     TextContentLoader getTextContentLoader();
