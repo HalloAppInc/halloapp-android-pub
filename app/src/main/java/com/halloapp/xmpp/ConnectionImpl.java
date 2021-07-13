@@ -510,7 +510,13 @@ public class ConnectionImpl extends Connection {
             return;
         }
         Container.Builder containerBuilder = entry.getEntryBuilder();
-        FeedContentEncoder.encodePost(containerBuilder, post);
+        if (ServerProps.getInstance().getNewClientContainerEnabled()) {
+            FeedContentEncoder.encodePost(containerBuilder, post);
+        }
+        if (!containerBuilder.hasPostContainer()) {
+            Log.e("connection: sendPost no post content");
+            return;
+        }
         FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, containerBuilder.build().toByteArray());
         HalloIq publishIq;
         if (post.getParentGroup() == null) {

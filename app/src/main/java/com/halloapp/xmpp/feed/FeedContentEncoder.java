@@ -19,6 +19,7 @@ import com.halloapp.proto.clients.Text;
 import com.halloapp.proto.clients.Video;
 import com.halloapp.proto.clients.VoiceNote;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,8 +103,11 @@ public class FeedContentEncoder {
                 albumBuilder.setText(textContainer);
             }
             builder.setAlbum(albumBuilder);
-        } else {
+        } else if (textContainer != null) {
             builder.setText(textContainer);
+        } else {
+            Log.e("FeedContentEncoder/encodePost no content aborting");
+            return;
         }
         containerBuilder.setPostContainer(builder);
     }

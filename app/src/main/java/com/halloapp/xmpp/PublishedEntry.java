@@ -171,69 +171,6 @@ public class PublishedEntry {
                 throw new IllegalStateException("Unknown type " + type);
             }
         }
-        if (ServerProps.getInstance().getNewClientContainerEnabled()) {
-            switch (type) {
-                case ENTRY_FEED: {
-                    PostContainer.Builder builder = PostContainer.newBuilder();
-                    Text textContainer = null;
-                    if (text != null) {
-                        Text.Builder textBuilder = Text.newBuilder();
-                        textBuilder.setText(text);
-                        if (!mentions.isEmpty()) {
-                            textBuilder.addAllMentions(mentions);
-                        }
-                        textContainer = textBuilder.build();
-                    }
-
-                    if (!media.isEmpty()) {
-                        Album.Builder albumBuilder = Album.newBuilder();
-                        albumBuilder.addAllMedia(getAlbumMediaProtos());
-                        if (textContainer != null) {
-                            albumBuilder.setText(textContainer);
-                        }
-                        builder.setAlbum(albumBuilder);
-                    } else {
-                        builder.setText(textContainer);
-                    }
-                    containerBuilder.setPostContainer(builder);
-                    break;
-                }
-                case ENTRY_COMMENT: {
-                    CommentContainer.Builder builder = CommentContainer.newBuilder();
-                    CommentContext.Builder context = CommentContext.newBuilder()
-                            .setFeedPostId(feedItemId);
-                    if (parentCommentId != null) {
-                        context.setParentCommentId(parentCommentId);
-                    }
-                    Text textContainer = null;
-                    if (text != null) {
-                        Text.Builder textBuilder = Text.newBuilder();
-                        textBuilder.setText(text);
-                        if (!mentions.isEmpty()) {
-                            textBuilder.addAllMentions(mentions);
-                        }
-                        textContainer = textBuilder.build();
-                    }
-
-                    if (!media.isEmpty()) {
-                        Album.Builder albumBuilder = Album.newBuilder();
-                        albumBuilder.addMedia(getAlbumMediaProtos().get(0));
-                        if (textContainer != null) {
-                            albumBuilder.setText(textContainer);
-                        }
-                        builder.setAlbum(albumBuilder);
-                    } else if (textContainer != null) {
-                        builder.setText(textContainer);
-                    }
-                    builder.setContext(context.build());
-                    containerBuilder.setCommentContainer(builder.build());
-                    break;
-                }
-                default: {
-                    throw new IllegalStateException("Unknown type " + type);
-                }
-            }
-        }
         return containerBuilder;
     }
 
