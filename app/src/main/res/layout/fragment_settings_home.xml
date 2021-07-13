@@ -291,7 +291,8 @@
                     android:layout_marginEnd="18dp"
                     android:layout_marginStart="20dp"
                     android:scaleType="center"
-                    android:src="@drawable/ic_person_outline"/>
+                    app:tint="@color/color_primary"
+                    android:src="@drawable/ic_invite"/>
 
                 <TextView
                     android:layout_width="match_parent"
