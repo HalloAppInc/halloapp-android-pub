@@ -290,6 +290,7 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
                     } else {
                         EasyPermissions.requestPermissions(this, getString(R.string.save_to_gallery_storage_permission_rationale), REQUEST_EXTERNAL_STORAGE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     }
+                    return true;
                 }
             }
             saveCurrentItemToGallery();
