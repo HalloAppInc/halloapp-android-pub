@@ -1006,7 +1006,10 @@ class PostsDb {
                     MediaTable.COLUMN_ENC_FILE + "," +
                     MediaTable.COLUMN_WIDTH + "," +
                     MediaTable.COLUMN_HEIGHT + "," +
-                    MediaTable.COLUMN_TRANSFERRED + " " +
+                    MediaTable.COLUMN_TRANSFERRED + "," +
+                    MediaTable.COLUMN_ENC_KEY + "," +
+                    MediaTable.COLUMN_SHA256_HASH + "," +
+                    MediaTable.COLUMN_DEC_SHA256_HASH + " " +
                 "FROM " + MediaTable.TABLE_NAME + " " +
                 "WHERE " + MediaTable.TABLE_NAME + "." + MediaTable.COLUMN_PARENT_ROW_ID + " = ? AND " + MediaTable.TABLE_NAME + "." + MediaTable.COLUMN_PARENT_TABLE + " = ?" +
                 "ORDER BY " + MediaTable._ID + " ASC";
@@ -1019,9 +1022,9 @@ class PostsDb {
                         cursor.getInt(1),
                         cursor.getString(2),
                         fileStore.getMediaFile(cursor.getString(3)),
-                        null,
-                        null,
-                        null,
+                        cursor.getBlob(8),
+                        cursor.getBlob(9),
+                        cursor.getBlob(10),
                         cursor.getInt(5),
                         cursor.getInt(6),
                         cursor.getInt(7));
@@ -1546,6 +1549,7 @@ class PostsDb {
                     }
                 }
                 mentionsDb.fillMentions(comment);
+                fillMedia(comment);
                 comment.setParentPost(posts.get(comment.postId));
                 comments.add(comment);
             }
