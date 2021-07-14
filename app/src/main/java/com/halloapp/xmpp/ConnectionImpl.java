@@ -514,7 +514,7 @@ public class ConnectionImpl extends Connection {
         if (ServerProps.getInstance().getNewClientContainerEnabled()) {
             FeedContentEncoder.encodePost(containerBuilder, post);
         }
-        if (!containerBuilder.hasPostContainer()) {
+        if (!containerBuilder.hasPost()) {
             Log.e("connection: sendPost no post content");
             return;
         }
