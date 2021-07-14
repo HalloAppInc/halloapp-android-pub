@@ -68,6 +68,7 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Counter;
+import com.halloapp.xmpp.chat.ChatMessageProtocol;
 import com.halloapp.xmpp.feed.FeedContentEncoder;
 import com.halloapp.xmpp.feed.FeedContentParser;
 import com.halloapp.xmpp.feed.FeedItem;
@@ -638,16 +639,11 @@ public class ConnectionImpl extends Connection {
             }
             final UserId recipientUserId = (UserId)message.chatId;
 
-            ChatMessageElement chatMessageElement = new ChatMessageElement(
-                    message,
-                    recipientUserId,
-                    sessionSetupInfo);
-
             Msg msg = Msg.newBuilder()
                     .setId(message.id)
                     .setType(Msg.Type.CHAT)
                     .setToUid(Long.parseLong(message.chatId.rawId()))
-                    .setChatStanza(chatMessageElement.toProto())
+                    .setChatStanza(ChatMessageProtocol.getInstance().serializeMessage(message, recipientUserId, sessionSetupInfo))
                     .build();
             ackHandlers.put(message.id, () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
             sendPacket(Packet.newBuilder().setMsg(msg).build());
@@ -992,8 +988,11 @@ public class ConnectionImpl extends Connection {
                     }
 
                     bgWorkers.execute(() -> {
-                        ChatMessageElement chatMessageElement = ChatMessageElement.fromProto(chatStanza);
-                        Message message = chatMessageElement.getMessage(fromUserId, msg.getId(), chatStanza.getSenderClientVersion());
+                        Message message = ChatMessageProtocol.getInstance().parseMessage(chatStanza, msg.getId(), fromUserId);
+                        if (message == null) {
+                            Log.e("connection: got plaintext payload");
+                            return;
+                        }
                         processMentions(message.mentions);
                         connectionObservers.notifyIncomingMessageReceived(message);
                     });

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Base64;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
@@ -21,8 +22,12 @@ import com.halloapp.util.logs.Log;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -672,6 +677,33 @@ public class EncryptedKeyStore {
         return peerUserId.rawId() + "/" + PREF_KEY_INBOUND_TEARDOWN_KEY;
     }
 
+    public String getLogInfo(@NonNull UserId userId) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("TS: ");
+        DateFormat df = SimpleDateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.LONG, Locale.US);
+        sb.append(df.format(new Date()));
+
+        try {
+            sb.append("; MIK:");
+            sb.append(Base64.encodeToString(getMyPublicEd25519IdentityKey().getKeyMaterial(), Base64.NO_WRAP));
+        } catch (NullPointerException e) {
+            sb.append("null");
+        }
+
+        try {
+            sb.append("; PIK:");
+            sb.append(Base64.encodeToString(getPeerPublicIdentityKey(userId).getKeyMaterial(), Base64.NO_WRAP));
+        } catch (NullPointerException | CryptoException e) {
+            Log.w("Failed to get peer public identity key", e);
+            sb.append("CryptoException");
+        }
+
+        sb.append("; MICK:").append(CryptoUtils.obfuscate(getInboundChainKey(userId)));
+        sb.append("; MOCK:").append(CryptoUtils.obfuscate(getOutboundChainKey(userId)));
+
+        return sb.toString();
+    }
 
     // Only private key is stored; public key can be generated from it
     private void storeCurve25519PrivateKey(String prefKey, byte[] privateKey) {
