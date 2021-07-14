@@ -473,6 +473,8 @@ public class Notifications {
                 }
                 break;
             }
+        } else {
+            contentIntent.putExtra(MainActivity.EXTRA_SCROLL_TO_TOP, true);
         }
         builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE_FEED, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
         final Intent deleteIntent = new Intent(context, DeleteNotificationReceiver.class);

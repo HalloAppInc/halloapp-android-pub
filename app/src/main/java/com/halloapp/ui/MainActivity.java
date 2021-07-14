@@ -66,6 +66,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
     public static final String EXTRA_POST_ID = "target_post";
     public static final String EXTRA_POST_SHOW_COMMENTS = "show_comments";
+    public static final String EXTRA_SCROLL_TO_TOP = "scroll_to_top";
     public static final String EXTRA_NAV_TARGET = "nav_target";
     public static final String NAV_TARGET_FEED = "feed";
     public static final String NAV_TARGET_GROUPS = "groups";
@@ -535,6 +536,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             } else {
                 scrollToTop();
             }
+        } else if (intent.getBooleanExtra(EXTRA_SCROLL_TO_TOP, false)) {
+            scrollToTop();
         }
     }
 
