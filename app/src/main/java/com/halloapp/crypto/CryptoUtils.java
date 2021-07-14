@@ -64,6 +64,12 @@ public class CryptoUtils {
         return publicKey;
     }
 
+    public static PublicEdECKey publicEdECKeyFromPrivate(PrivateEdECKey key) {
+        byte[] publicKeyBytes = new byte[Sign.ED25519_PUBLICKEYBYTES];
+        sign.cryptoSignEd25519SkToPk(publicKeyBytes, key.getKeyMaterial());
+        return new PublicEdECKey(publicKeyBytes);
+    }
+
     public static PublicXECKey convertPublicEdToX(PublicEdECKey ed) throws CryptoException {
         byte[] ret = new byte[Box.PUBLICKEYBYTES];
         sign.convertPublicKeyEd25519ToCurve25519(ret, ed.getKeyMaterial());
@@ -82,6 +88,7 @@ public class CryptoUtils {
         return ret;
     }
 
+    // TODO(jack): Rename this
     public static byte[] verifyDetached(byte[] message, PrivateEdECKey key) {
         byte[] ret = new byte[Sign.ED25519_BYTES];
         sign.cryptoSignDetached(ret, message, message.length, key.getKeyMaterial());

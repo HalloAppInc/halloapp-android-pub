@@ -11,6 +11,7 @@ import com.halloapp.proto.server.Comment;
 import com.halloapp.proto.server.GroupFeedItem;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.Post;
+import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.HalloIq;
 
 import java.lang.annotation.Retention;
@@ -50,11 +51,20 @@ public class GroupFeedUpdateIq extends HalloIq {
         GroupFeedItem.Builder builder = GroupFeedItem.newBuilder();
         builder.setAction(getProtoAction());
         builder.setGid(groupId.rawId());
+        if (feedItem.senderStateBundles != null && feedItem.senderStateBundles.size() > 0) {
+            builder.addAllSenderStateBundles(feedItem.senderStateBundles);
+        }
+        if (feedItem.audienceHash != null) {
+            builder.setAudienceHash(ByteString.copyFrom(feedItem.audienceHash));
+        }
 
         if (feedItem.type == FeedItem.Type.POST) {
             Post.Builder pb = Post.newBuilder();
             if (feedItem.payload != null) {
                 pb.setPayload(ByteString.copyFrom(feedItem.payload));
+            }
+            if (feedItem.encPayload != null) {
+                pb.setEncPayload(ByteString.copyFrom(feedItem.encPayload));
             }
             pb.setId(feedItem.id);
             builder.setPost(pb);
@@ -62,6 +72,9 @@ public class GroupFeedUpdateIq extends HalloIq {
             Comment.Builder cb = Comment.newBuilder();
             if (feedItem.payload != null) {
                 cb.setPayload(ByteString.copyFrom(feedItem.payload));
+            }
+            if (feedItem.encPayload != null) {
+                cb.setEncPayload(ByteString.copyFrom(feedItem.encPayload));
             }
             if (feedItem.parentCommentId != null) {
                 cb.setParentCommentId(feedItem.parentCommentId);

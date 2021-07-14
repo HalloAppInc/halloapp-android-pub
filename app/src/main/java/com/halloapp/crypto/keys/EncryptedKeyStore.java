@@ -10,11 +10,13 @@ import androidx.annotation.Nullable;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
+import com.google.crypto.tink.subtle.Hex;
 import com.halloapp.AppContext;
 import com.halloapp.Me;
 import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
@@ -73,6 +75,14 @@ public class EncryptedKeyStore {
     private static final String PREF_KEY_OUTBOUND_CURRENT_CHAIN_INDEX_SUFFIX = "outbound_current_chain_index";
     private static final String PREF_KEY_INBOUND_TEARDOWN_KEY = "inbound_teardown_key";
     private static final String PREF_KEY_OUTBOUND_TEARDOWN_KEY = "outbound_teardown_key";
+
+    private static final String PREF_KEY_GROUP_SEND_ALREADY_SET_UP = "group_send_already_set_up";
+    private static final String PREF_KEY_MY_GROUP_CURRENT_CHAIN_INDEX = "my_current_chain_index";
+    private static final String PREF_KEY_PEER_GROUP_CURRENT_CHAIN_INDEX = "peer_current_chain_index";
+    private static final String PREF_KEY_MY_GROUP_CHAIN_KEY = "my_group_chain_key";
+    private static final String PREF_KEY_PEER_GROUP_CHAIN_KEY = "peer_group_chain_key";
+    private static final String PREF_KEY_MY_GROUP_SIGNING_KEY = "my_group_signing_key";
+    private static final String PREF_KEY_PEER_GROUP_SIGNING_KEY = "peer_group_signing_key";
 
     private static final int CURVE_25519_PRIVATE_KEY_LENGTH = 32;
 
@@ -704,6 +714,155 @@ public class EncryptedKeyStore {
 
         return sb.toString();
     }
+
+
+
+    // GROUPS
+    private String getGroupSendAlreadySetUpPrefKey(GroupId groupId) {
+        return groupId.rawId() + "/" + PREF_KEY_GROUP_SEND_ALREADY_SET_UP;
+    }
+
+    public void setGroupSendAlreadySetUp(GroupId groupId) {
+        if (!getPreferences().edit().putBoolean(getGroupSendAlreadySetUpPrefKey(groupId), true).commit()) {
+            Log.e("EncryptedKeyStore: failed to set group already set up");
+        }
+    }
+
+    public boolean getGroupSendAlreadySetUp(GroupId groupId) {
+        return getPreferences().getBoolean(getGroupSendAlreadySetUpPrefKey(groupId), false);
+    }
+
+    public void clearGroupSendAlreadySetUp(GroupId groupId) {
+        if (!getPreferences().edit().remove(getGroupSendAlreadySetUpPrefKey(groupId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear group send already set up");
+        }
+    }
+
+    private String getMyGroupCurrentChainIndexPrefKey(GroupId groupId) {
+        return groupId.rawId() + "/" + PREF_KEY_MY_GROUP_CURRENT_CHAIN_INDEX;
+    }
+
+    public void setMyGroupCurrentChainIndex(GroupId groupId, int index) {
+        if (!getPreferences().edit().putInt(getMyGroupCurrentChainIndexPrefKey(groupId), index).commit()) {
+            Log.e("EncryptedKeyStore: failed to set my group current chain index");
+        }
+    }
+
+    public int getMyGroupCurrentChainIndex(GroupId groupId) {
+        return getPreferences().getInt(getMyGroupCurrentChainIndexPrefKey(groupId), 0);
+    }
+
+    public void clearMyGroupCurrentChainIndex(GroupId groupId) {
+        if (!getPreferences().edit().remove(getMyGroupCurrentChainIndexPrefKey(groupId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear my group current chain index");
+        }
+    }
+
+    private String getPeerGroupCurrentChainIndexPrefKey(GroupId groupId, UserId peerUserId) {
+        return groupId.rawId() + "/" + PREF_KEY_PEER_GROUP_CURRENT_CHAIN_INDEX + "/" + peerUserId.rawId();
+    }
+
+    public void setPeerGroupCurrentChainIndex(GroupId groupId, UserId peerUserId, int index) {
+        if (!getPreferences().edit().putInt(getPeerGroupCurrentChainIndexPrefKey(groupId, peerUserId), index).commit()) {
+            Log.e("EncryptedKeyStore: failed to set peer group current chain index");
+        }
+    }
+
+    public int getPeerGroupCurrentChainIndex(GroupId groupId, UserId peerUserId) {
+        return getPreferences().getInt(getPeerGroupCurrentChainIndexPrefKey(groupId, peerUserId), 0);
+    }
+
+    public void clearPeerGroupCurrentChainIndex(GroupId groupId, UserId peerUserId) {
+        if (!getPreferences().edit().remove(getPeerGroupCurrentChainIndexPrefKey(groupId, peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear peer group current chain index");
+        }
+    }
+
+    private String getMyGroupChainKeyPrefKey(GroupId groupId) {
+        return groupId.rawId() + "/" + PREF_KEY_MY_GROUP_CHAIN_KEY;
+    }
+
+    public void setMyGroupChainKey(GroupId groupId, byte[] key) {
+        storeBytes(getMyGroupChainKeyPrefKey(groupId), key);
+    }
+
+    public byte[] getMyGroupChainKey(GroupId groupId) {
+        return retrieveBytes(getMyGroupChainKeyPrefKey(groupId));
+    }
+
+    public void clearMyGroupChainKey(GroupId groupId) {
+        if (!getPreferences().edit().remove(getMyGroupChainKeyPrefKey(groupId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear my group chain key");
+        }
+    }
+
+    private String getPeerGroupChainKeyPrefKey(GroupId groupId, UserId peerUserId) {
+        return groupId.rawId() + "/" + PREF_KEY_PEER_GROUP_CHAIN_KEY + "/" + peerUserId.rawId();
+    }
+
+    public void setPeerGroupChainKey(GroupId groupId, UserId peerUserId, byte[] key) {
+        storeBytes(getPeerGroupChainKeyPrefKey(groupId, peerUserId), key);
+    }
+
+    public byte[] getPeerGroupChainKey(GroupId groupId, UserId peerUserId) {
+        return retrieveBytes(getPeerGroupChainKeyPrefKey(groupId, peerUserId));
+    }
+
+    public void clearPeerGroupChainKey(GroupId groupId, UserId peerUserId) {
+        if (!getPreferences().edit().remove(getPeerGroupChainKeyPrefKey(groupId, peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear peer group chain key");
+        }
+    }
+
+    private String getMyGroupSigningKeyPrefKey(GroupId groupId) {
+        return groupId.rawId() + "/" + PREF_KEY_MY_GROUP_SIGNING_KEY;
+    }
+
+    public void setMyGroupSigningKey(GroupId groupId, PrivateEdECKey key) {
+        storeBytes(getMyGroupSigningKeyPrefKey(groupId), key.getKeyMaterial());
+    }
+
+    public PrivateEdECKey getMyPrivateGroupSigningKey(GroupId groupId) throws CryptoException {
+        try {
+            return new PrivateEdECKey(retrieveBytes(getMyGroupSigningKeyPrefKey(groupId)));
+        } catch (NullPointerException e) {
+            throw new CryptoException("my_group_signing_key_not_found", e);
+        }
+    }
+
+    public PublicEdECKey getMyPublicGroupSigningKey(GroupId groupId) throws CryptoException {
+        return CryptoUtils.publicEdECKeyFromPrivate(getMyPrivateGroupSigningKey(groupId));
+    }
+
+    public void clearMyGroupSigningKey(GroupId groupId) {
+        if (!getPreferences().edit().remove(getMyGroupSigningKeyPrefKey(groupId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear my group signing key");
+        }
+    }
+
+    private String getPeerGroupSigningKeyPrefKey(GroupId groupId, UserId peerUserId) {
+        return groupId.rawId() + "/" + PREF_KEY_PEER_GROUP_SIGNING_KEY + "/" + peerUserId.rawId();
+    }
+
+    public void setPeerGroupSigningKey(GroupId groupId, UserId peerUserId, PublicEdECKey key) {
+        storeBytes(getPeerGroupSigningKeyPrefKey(groupId, peerUserId), key.getKeyMaterial());
+    }
+
+    public PublicEdECKey getPeerGroupSigningKey(GroupId groupId, UserId peerUserId) throws CryptoException {
+        try {
+            return new PublicEdECKey(retrieveBytes(getPeerGroupSigningKeyPrefKey(groupId, peerUserId)));
+        } catch (NullPointerException e) {
+            throw new CryptoException("peer_group_signing_key_not_found", e);
+        }
+    }
+
+    public void clearPeerGroupSigningKey(GroupId groupId, UserId peerUserId) {
+        if (!getPreferences().edit().remove(getPeerGroupSigningKeyPrefKey(groupId, peerUserId)).commit()) {
+            Log.e("EncryptedKeyStore: failed to clear peer group signing key");
+        }
+    }
+
+
 
     // Only private key is stored; public key can be generated from it
     private void storeCurve25519PrivateKey(String prefKey, byte[] privateKey) {

@@ -8,19 +8,32 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.google.android.gms.common.util.Hex;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.goterl.lazysodium.interfaces.Sign;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactSyncResult;
 import com.halloapp.content.Comment;
+import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.crypto.CryptoByteUtils;
+import com.halloapp.crypto.CryptoException;
+import com.halloapp.crypto.CryptoUtils;
+import com.halloapp.crypto.group.GroupFeedCipher;
+import com.halloapp.crypto.group.GroupFeedKeyManager;
+import com.halloapp.crypto.group.GroupFeedSessionManager;
+import com.halloapp.crypto.keys.EncryptedKeyStore;
+import com.halloapp.crypto.keys.PrivateEdECKey;
 import com.halloapp.crypto.signal.SessionSetupInfo;
 import com.halloapp.crypto.keys.PublicEdECKey;
+import com.halloapp.crypto.signal.SignalSessionManager;
+import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -31,6 +44,8 @@ import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.clients.CommentContainer;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.PostContainer;
+import com.halloapp.proto.clients.SenderKey;
+import com.halloapp.proto.clients.SenderState;
 import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.server.Ack;
 import com.halloapp.proto.server.AuthRequest;
@@ -62,6 +77,8 @@ import com.halloapp.proto.server.PlayedReceipt;
 import com.halloapp.proto.server.Presence;
 import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.SeenReceipt;
+import com.halloapp.proto.server.SenderStateBundle;
+import com.halloapp.proto.server.SenderStateWithKeyInfo;
 import com.halloapp.proto.server.WhisperKeys;
 import com.halloapp.registration.Registration;
 import com.halloapp.ui.ExportDataActivity;
@@ -92,6 +109,10 @@ import com.halloapp.xmpp.util.ResponseHandler;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -546,13 +567,125 @@ public class ConnectionImpl extends Connection {
             Log.e("connection: sendPost no post content");
             return;
         }
-        FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, containerBuilder.build().toByteArray());
         HalloIq publishIq;
         if (post.getParentGroup() == null) {
+            byte[] payload = containerBuilder.build().toByteArray();
+            FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload);
             FeedUpdateIq updateIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, feedItem);
             updateIq.setPostAudience(post.getAudienceType(), post.getAudienceList());
             publishIq = updateIq;
         } else {
+            GroupId groupId = post.getParentGroup();
+            byte[] payload = containerBuilder.build().toByteArray();
+            byte[] encPayload = null;
+            List<SenderStateBundle> senderStateBundles = new ArrayList<>();
+            byte[] audienceHash = null;
+
+            SignalSessionManager signalSessionManager = SignalSessionManager.getInstance();
+            EncryptedKeyStore encryptedKeyStore = EncryptedKeyStore.getInstance();
+
+            if (Constants.GROUP_FEED_ENC_ENABLED) {
+                try {
+                    // Get member list
+                    List<MemberInfo> members = new ArrayList<>();
+                    for (MemberInfo memberInfo : ContentDb.getInstance().getGroupMembers(groupId)) {
+                        UserId userId = memberInfo.userId;
+                        if (userId.isMe()) {
+                            members.add(new MemberInfo(-1, new UserId(Me.getInstance().getUser()), memberInfo.type, memberInfo.name));
+                        } else {
+                            // TODO: Include session setup info in case users have not messaged
+                            SessionSetupInfo sessionSetupInfo = null;
+                            try {
+                                sessionSetupInfo = signalSessionManager.getSessionSetupInfo(userId);
+                            } catch (Exception e) {
+                                throw new CryptoException("failed_get_session_setup_info", e);
+                            }
+
+                            members.add(memberInfo);
+                        }
+                    }
+
+                    // Include sender state bundles
+                    List<byte[]> identityKeyList = new ArrayList<>();
+                    for (MemberInfo memberInfo : members) {
+                        UserId userId = memberInfo.userId;
+
+                        byte[] ik;
+                        if (Me.getInstance().getUser().equals(userId.rawId())) {
+                            ik = EncryptedKeyStore.getInstance().getMyPublicEd25519IdentityKey().getKeyMaterial();
+                            identityKeyList.add(ik);
+                        } else {
+                            ik = EncryptedKeyStore.getInstance().getPeerPublicIdentityKey(userId).getKeyMaterial();
+                            identityKeyList.add(ik);
+                        }
+                    }
+
+                    // Ensure outbound setting has been set up
+                    if (!EncryptedKeyStore.getInstance().getGroupSendAlreadySetUp(groupId)) {
+                        Log.i("connection: Group send not yet set up for " + groupId + "; setting up now");
+                        // Generate sender state bundle (check generated when sending post/comment)
+                        SecureRandom r = new SecureRandom();
+                        byte[] chainKey = new byte[32];
+                        r.nextBytes(chainKey);
+
+                        byte[] signatureKey = CryptoUtils.generateEd25519KeyPair(); // BOTH PUBLIC AND SECRET
+                        byte[] publicSignatureKeyBytes = Arrays.copyOfRange(signatureKey, 0, Sign.ED25519_PUBLICKEYBYTES);
+                        byte[] privateSignatureKeyBytes = Arrays.copyOfRange(signatureKey, Sign.ED25519_PUBLICKEYBYTES, signatureKey.length);
+                        PrivateEdECKey privateSignatureKey = new PrivateEdECKey(privateSignatureKeyBytes);
+
+                        int currentChainIndex = 0;
+
+                        // Set up for inclusion in outbound message
+                        SenderKey senderKey = SenderKey.newBuilder()
+                                .setChainKey(ByteString.copyFrom(chainKey))
+                                .setPublicSignatureKey(ByteString.copyFrom(publicSignatureKeyBytes))
+                                .build();
+
+                        // Encrypt all sender state bundles
+                        for (MemberInfo memberInfo : members) {
+                            if (me.getUser().equals(memberInfo.userId.rawId())) {
+                                continue;
+                            }
+                            UserId peerUserId = memberInfo.userId;
+                            byte[] senderKeyBytes = senderKey.toByteArray();
+                            byte[] encSenderKey = SignalSessionManager.getInstance().encryptMessage(senderKeyBytes, peerUserId);
+                            SenderStateWithKeyInfo info = SenderStateWithKeyInfo.newBuilder()
+                                    .setEncSenderState(ByteString.copyFrom(encSenderKey))
+                                    .build();
+                            SenderStateBundle senderStateBundle = SenderStateBundle.newBuilder()
+                                    .setSenderState(info)
+                                    .setUid(Long.parseLong(peerUserId.rawId()))
+                                    .build();
+                            senderStateBundles.add(senderStateBundle);
+                        }
+
+                        // Save values in EKS
+                        encryptedKeyStore.setMyGroupCurrentChainIndex(groupId, currentChainIndex);
+                        encryptedKeyStore.setMyGroupChainKey(groupId, chainKey);
+                        encryptedKeyStore.setMyGroupSigningKey(groupId, privateSignatureKey);
+                        encryptedKeyStore.setGroupSendAlreadySetUp(groupId);
+                    }
+
+                    // Calculate audience hash
+                    byte[] xor = new byte[32];
+                    for (byte[] arr : identityKeyList) {
+                        for (int i = 0; i < arr.length; i++) {
+                            xor[i] = (byte) (xor[i] ^ arr[i]);
+                        }
+                    }
+
+                    MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                    byte[] fullHash = digest.digest(xor);
+                    audienceHash = Arrays.copyOfRange(fullHash, 0, 6);
+
+                    encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
+                } catch (CryptoException e) {
+                    Log.e("Failed to encrypt group post", e);
+                } catch (NoSuchAlgorithmException e) {
+                    Log.e("Failed to calculate audience hash", e);
+                }
+            }
+            FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, encPayload, senderStateBundles, audienceHash);
             publishIq = new GroupFeedUpdateIq(post.getParentGroup(), GroupFeedUpdateIq.Action.PUBLISH, feedItem);
         }
         sendIqRequestAsync(publishIq)
@@ -608,6 +741,7 @@ public class ConnectionImpl extends Connection {
         if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
             requestIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, commentItem);
         } else {
+            // TODO(jack): encryption for comments
             requestIq = new GroupFeedUpdateIq(comment.getParentPost().getParentGroup(), FeedUpdateIq.Action.PUBLISH, commentItem);
         }
         sendIqRequestAsync(requestIq)
@@ -1239,7 +1373,7 @@ public class ConnectionImpl extends Connection {
                 } else if (item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE) || item.getAction() == com.halloapp.proto.server.FeedItem.Action.PUBLISH) {
                     if (item.hasPost()) {
                         com.halloapp.proto.server.Post protoPost = item.getPost();
-                        Post post = processPost(protoPost, names);
+                        Post post = processPost(protoPost, names, null);
                         if (post != null) {
                             post.seen = item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.PUBLISH) ? Post.SEEN_NO : Post.SEEN_NO_HIDDEN;
                             posts.add(post);
@@ -1249,7 +1383,7 @@ public class ConnectionImpl extends Connection {
 
                     } else if (item.hasComment()) {
                         com.halloapp.proto.server.Comment protoComment = item.getComment();
-                        Comment comment = processComment(protoComment, names);
+                        Comment comment = processComment(protoComment, names, null);
                         if (comment != null) {
                             comment.seen = item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE);
                             comments.add(comment);
@@ -1271,17 +1405,34 @@ public class ConnectionImpl extends Connection {
             return !posts.isEmpty() || !comments.isEmpty();
         }
 
-        private Post processPost(com.halloapp.proto.server.Post protoPost, Map<UserId, String> names) {
+        private Post processPost(com.halloapp.proto.server.Post protoPost, Map<UserId, String> names, @Nullable GroupId groupId) {
             if (protoPost.getPublisherUid() != 0 && protoPost.getPublisherName() != null) {
                 names.put(new UserId(Long.toString(protoPost.getPublisherUid())), protoPost.getPublisherName());
             }
 
+            UserId publisherUserId = getUserId(Long.toString(protoPost.getPublisherUid()));
             byte[] payload = protoPost.getPayload().toByteArray();
+
+            if (groupId != null) {
+                byte[] encPayload = protoPost.getEncPayload().toByteArray();
+                if (encPayload != null && encPayload.length > 0) {
+                    try {
+                        // TODO: stats
+                        byte[] decPayload = GroupFeedSessionManager.getInstance().decryptMessage(encPayload, groupId, publisherUserId);
+                        if (!Arrays.equals(payload, decPayload)) {
+                            Log.e("Group Feed Encryption plaintext and decrypted differ");
+                        }
+                    } catch (CryptoException e) {
+                        Log.e("Failed to decrypt encrypted group payload", e);
+                    }
+                }
+            }
+
             Container container;
             try {
                 container = Container.parseFrom(payload);
             } catch (InvalidProtocolBufferException e) {
-                Log.e("connection: invalid post payload");
+                Log.e("connection: invalid post payload", e);
                 return null;
             }
             if (!container.hasPostContainer()) {
@@ -1312,12 +1463,28 @@ public class ConnectionImpl extends Connection {
             }
         }
 
-        private Comment processComment(com.halloapp.proto.server.Comment protoComment, Map<UserId, String> names) {
+        private Comment processComment(com.halloapp.proto.server.Comment protoComment, Map<UserId, String> names, @Nullable GroupId groupId) {
             if (protoComment.getPublisherUid() != 0 && protoComment.getPublisherName() != null) {
                 names.put(new UserId(Long.toString(protoComment.getPublisherUid())), protoComment.getPublisherName());
             }
 
+            UserId publisherUserId = getUserId(Long.toString(protoComment.getPublisherUid()));
             byte[] payload = protoComment.getPayload().toByteArray();
+
+            if (groupId != null) {
+                byte[] encPayload = protoComment.getEncPayload().toByteArray();
+                if (encPayload != null && encPayload.length > 0) {
+                    try {
+                        // TODO: stats
+                        byte[] decPayload = GroupFeedSessionManager.getInstance().decryptMessage(encPayload, groupId, publisherUserId);
+                        if (!Arrays.equals(payload, decPayload)) {
+                            Log.e("Group Feed Encryption plaintext and decrypted differ");
+                        }
+                    } catch (CryptoException e) {
+                        Log.e("Failed to decrypt encrypted group payload", e);
+                    }
+                }
+            }
 
             Container container;
             try {
@@ -1368,10 +1535,51 @@ public class ConnectionImpl extends Connection {
             final Map<UserId, String> names = new HashMap<>();
 
             for (GroupFeedItem item : items) {
+                GroupId groupId = new GroupId(item.getGid());
+                if (item.hasSenderState()) {
+                    SenderStateWithKeyInfo senderStateWithKeyInfo = item.getSenderState();
+
+                    long publisherUid;
+                    if (item.hasComment()) {
+                        publisherUid = item.getComment().getPublisherUid();
+                    } else if (item.hasPost()) {
+                        publisherUid = item.getPost().getPublisherUid();
+                    } else {
+                        Log.e("GroupFeedItem " + ProtoPrinter.toString(item) + " has neither post nor comment");
+                        continue;
+                    }
+                    UserId publisherUserId = new UserId(Long.toString(publisherUid));
+
+                    byte[] encSenderState = senderStateWithKeyInfo.getEncSenderState().toByteArray();
+                    byte[] peerPublicIdentityKey = senderStateWithKeyInfo.getPublicKey().toByteArray();
+                    long oneTimePreKeyId = senderStateWithKeyInfo.getOneTimePreKeyId();
+                    SessionSetupInfo sessionSetupInfo = peerPublicIdentityKey == null || peerPublicIdentityKey.length == 0 ? null : new SessionSetupInfo(new PublicEdECKey(peerPublicIdentityKey), (int) oneTimePreKeyId);
+                    try {
+                        byte[] senderStateDec = SignalSessionManager.getInstance().decryptMessage(encSenderState, publisherUserId, sessionSetupInfo);
+                        SenderKey senderKey = SenderKey.parseFrom(senderStateDec);
+
+//                        int currentChainIndex = senderState.getCurrentChainIndex();
+//                        SenderKey senderKey = senderState.getSenderKey();
+                        byte[] chainKey = senderKey.getChainKey().toByteArray();
+                        byte[] publicSignatureKeyBytes = senderKey.getPublicSignatureKey().toByteArray();
+                        PublicEdECKey publicSignatureKey = new PublicEdECKey(publicSignatureKeyBytes);
+
+                        EncryptedKeyStore encryptedKeyStore = EncryptedKeyStore.getInstance();
+                        // TODO(jack): Figure out where current chain index is supposed to be stored, don't see a protobuf field
+//                        encryptedKeyStore.setPeerGroupCurrentChainIndex(groupId, publisherUserId, currentChainIndex);
+                        encryptedKeyStore.setPeerGroupChainKey(groupId, publisherUserId, chainKey);
+                        encryptedKeyStore.setPeerGroupSigningKey(groupId, publisherUserId, publicSignatureKey);
+                    } catch (CryptoException e) {
+                        Log.e("Failed to decrypt sender state for " + ProtoPrinter.toString(item), e);
+                    } catch (InvalidProtocolBufferException e) {
+                        Log.e("Failed to parse sender state for " + ProtoPrinter.toString(item), e);
+                    }
+                }
+
                 if (item.getAction() == GroupFeedItem.Action.PUBLISH || item.getAction() == GroupFeedItem.Action.SHARE) {
                     if (item.hasComment()) {
                         com.halloapp.proto.server.Comment protoComment = item.getComment();
-                        Comment comment = processComment(protoComment, names);
+                        Comment comment = processComment(protoComment, names, groupId);
                         if (comment != null) {
                             comments.add(comment);
                         } else {
@@ -1379,7 +1587,7 @@ public class ConnectionImpl extends Connection {
                         }
                     } else if (item.hasPost()) {
                         com.halloapp.proto.server.Post protoPost = item.getPost();
-                        Post post = processPost(protoPost, names);
+                        Post post = processPost(protoPost, names, groupId);
                         if (post != null) {
                             post.seen = item.getAction().equals(GroupFeedItem.Action.PUBLISH) ? Post.SEEN_NO : Post.SEEN_NO_HIDDEN;
                             post.setParentGroup(new GroupId(item.getGid()));

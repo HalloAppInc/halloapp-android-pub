@@ -106,7 +106,7 @@ public class SignalSessionManager {
             if (e.teardownKeyMatched) {
                 Log.i("Teardown key matched; skipping session reset");
             } else {
-                Log.i("Resetting session because teardown key did not match");
+                Log.i("Resetting session because teardown key did not match", e);
                 signalKeyManager.tearDownSession(peerUserId);
                 setUpSession(peerUserId);
             }
@@ -134,6 +134,16 @@ public class SignalSessionManager {
         } catch (Exception e) {
             Log.e("Failed to set up encryption session", e);
             Log.sendErrorReport("Failed to get session setup info");
+        }
+    }
+
+    public SessionSetupInfo getSessionSetupInfo(final @NonNull UserId peerUserId) throws Exception {
+        try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
+            return setUpSession(peerUserId);
+        } catch (Exception e) {
+            Log.e("Failed to set up encryption session", e);
+            Log.sendErrorReport("Failed to get session setup info");
+            throw e;
         }
     }
 
