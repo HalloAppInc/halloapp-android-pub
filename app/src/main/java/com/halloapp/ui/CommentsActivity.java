@@ -311,18 +311,9 @@ public class CommentsActivity extends HalloActivity {
         viewModel.post.observe(this, post -> {
             adapter.notifyDataSetChanged();
             viewModel.mentionableContacts.invalidate();
-
-            // TODO(jack): Remove restriction on group for media comments when ready for rollout
-            List<String> allowedGroups = Arrays.asList(
-                    "g9YekRT6-NDRXu6cALrn2L", // Test group
-                    "gvy88VgCK0ug_TcI0PQpPy", // Memes at HalloApp
-                    "gTNOJoTsQakTj_HIRA5wJH", // HalloApp Android
-                    "gHRk9DYCJZcvuFAJuZvQPN"  // Everyone at HalloApp
-            );
             isInternalGroup = serverProps.getIsInternalUser() &&
                     post != null &&
-                    post.getParentGroup() != null &&
-                    allowedGroups.contains(post.getParentGroup().rawId());
+                    post.getParentGroup() != null;
             allowVoiceNoteSending = serverProps.getVoiceNoteSendingEnabled() && isInternalGroup;
             updateMediaPickerVisibility();
             updateVoiceNoteSending();
