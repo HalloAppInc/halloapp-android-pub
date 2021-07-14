@@ -67,6 +67,14 @@ public class GroupListViewModel extends AndroidViewModel {
         }
 
         @Override
+        public void onPostRetracted(@NonNull Post post) {
+            if (post.getParentGroup() != null) {
+                groupPostLoader.removeFromCache(post.getParentGroup());
+                invalidateGroups();
+            }
+        }
+
+        @Override
         public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
             invalidateGroups();
         }
