@@ -15,8 +15,8 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.crypto.CryptoException;
-import com.halloapp.crypto.EncryptedSessionManager;
-import com.halloapp.crypto.SessionSetupInfo;
+import com.halloapp.crypto.signal.SignalSessionManager;
+import com.halloapp.crypto.signal.SessionSetupInfo;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.id.UserId;
@@ -42,7 +42,7 @@ public class ChatMessageProtocol {
                             ContentDb.getInstance(),
                             ServerProps.getInstance(),
                             EncryptedKeyStore.getInstance(),
-                            EncryptedSessionManager.getInstance());
+                            SignalSessionManager.getInstance());
                 }
             }
         }
@@ -53,19 +53,19 @@ public class ChatMessageProtocol {
     private final ContentDb contentDb;
     private final ServerProps serverProps;
     private final EncryptedKeyStore encryptedKeyStore;
-    private final EncryptedSessionManager encryptedSessionManager;
+    private final SignalSessionManager signalSessionManager;
 
     private ChatMessageProtocol(
             @NonNull Stats stats,
             @NonNull ContentDb contentDb,
             @NonNull ServerProps serverProps,
             @NonNull EncryptedKeyStore encryptedKeyStore,
-            @NonNull EncryptedSessionManager encryptedSessionManager) {
+            @NonNull SignalSessionManager signalSessionManager) {
         this.stats = stats;
         this.contentDb = contentDb;
         this.serverProps = serverProps;
         this.encryptedKeyStore = encryptedKeyStore;
-        this.encryptedSessionManager = encryptedSessionManager;
+        this.signalSessionManager = signalSessionManager;
     }
 
     public ChatStanza serializeMessage(@NonNull Message message, UserId recipientUserId, @Nullable SessionSetupInfo sessionSetupInfo) {
@@ -90,7 +90,7 @@ public class ChatMessageProtocol {
     private byte[] encryptMessage(@NonNull Message message, @NonNull UserId recipientUserId) {
         try {
             byte[] encodedEntry = serializeMessageToBytes(message);
-            byte[] encryptedEntry = encryptedSessionManager.encryptMessage(encodedEntry, recipientUserId);
+            byte[] encryptedEntry = signalSessionManager.encryptMessage(encodedEntry, recipientUserId);
             stats.reportEncryptSuccess();
             return encryptedEntry;
         } catch (CryptoException e) {
@@ -139,7 +139,7 @@ public class ChatMessageProtocol {
         ChatContainer chatContainer = null;
         if (encryptedBytes != null) {
             try {
-                final byte[] dec = encryptedSessionManager.decryptMessage(encryptedBytes, fromUserId, sessionSetupInfo);
+                final byte[] dec = signalSessionManager.decryptMessage(encryptedBytes, fromUserId, sessionSetupInfo);
                 try {
                     Container container = Container.parseFrom(dec);
                     // TODO: (clarkc) remove legacy proto format once clients are all sending new format
@@ -166,7 +166,7 @@ public class ChatMessageProtocol {
                     count += 1;
                     contentDb.setMessageRerequestCount(fromUserId, fromUserId, id, count);
                     byte[] teardownKey = e instanceof CryptoException ? ((CryptoException) e).teardownKey : null;
-                    encryptedSessionManager.sendRerequest(fromUserId, id, count, teardownKey);
+                    signalSessionManager.sendRerequest(fromUserId, id, count, teardownKey);
                 }
             }
         }

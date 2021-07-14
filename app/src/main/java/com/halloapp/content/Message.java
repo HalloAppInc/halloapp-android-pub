@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Me;
-import com.halloapp.crypto.EncryptedSessionManager;
+import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.Album;
@@ -230,7 +230,7 @@ public class Message extends ContentItem {
 
     @Override
     public void send(@NonNull Connection connection) {
-        EncryptedSessionManager.getInstance().sendMessage(this);
+        SignalSessionManager.getInstance().sendMessage(this);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.halloapp.crypto;
+package com.halloapp.crypto.signal;
 
 import com.halloapp.crypto.keys.PublicEdECKey;
 

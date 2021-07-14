@@ -12,11 +12,12 @@ import com.halloapp.contacts.ContactsSync;
 
 import com.halloapp.content.PostsManager;
 import com.halloapp.crypto.CryptoException;
-import com.halloapp.crypto.SessionSetupInfo;
+import com.halloapp.crypto.signal.SessionSetupInfo;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.KeyManager;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
+import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
@@ -27,7 +28,6 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.TransferPendingItemsTask;
-import com.halloapp.crypto.EncryptedSessionManager;
 import com.halloapp.groups.GroupsSync;
 import com.halloapp.privacy.BlockListManager;
 import com.halloapp.privacy.FeedPrivacyManager;
@@ -78,7 +78,7 @@ public class MainConnectionObserver extends Connection.Observer {
     private final FeedPrivacyManager feedPrivacyManager;
     private final ForegroundObserver foregroundObserver;
     private final DecryptReportStats decryptReportStats;
-    private final EncryptedSessionManager encryptedSessionManager;
+    private final SignalSessionManager signalSessionManager;
 
     public static MainConnectionObserver getInstance(@NonNull Context context) {
         if (instance == null) {
@@ -104,7 +104,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             FeedPrivacyManager.getInstance(),
                             ForegroundObserver.getInstance(),
                             DecryptReportStats.getInstance(),
-                            EncryptedSessionManager.getInstance());
+                            SignalSessionManager.getInstance());
                 }
             }
         }
@@ -132,7 +132,7 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull FeedPrivacyManager feedPrivacyManager,
             @NonNull ForegroundObserver foregroundObserver,
             @NonNull DecryptReportStats decryptReportStats,
-            @NonNull EncryptedSessionManager encryptedSessionManager) {
+            @NonNull SignalSessionManager signalSessionManager) {
         this.context = context.getApplicationContext();
 
         this.me = me;
@@ -153,7 +153,7 @@ public class MainConnectionObserver extends Connection.Observer {
         this.feedPrivacyManager = feedPrivacyManager;
         this.foregroundObserver = foregroundObserver;
         this.decryptReportStats = decryptReportStats;
-        this.encryptedSessionManager = encryptedSessionManager;
+        this.signalSessionManager = signalSessionManager;
     }
 
     @Override
@@ -289,7 +289,7 @@ public class MainConnectionObserver extends Connection.Observer {
             Message message = contentDb.getMessage(peerUserId, UserId.ME, messageId);
             if (message != null && message.rerequestCount < Constants.MAX_REREQUESTS_PER_MESSAGE) {
                 contentDb.setMessageRerequestCount(peerUserId, UserId.ME, messageId, message.rerequestCount + 1);
-                encryptedSessionManager.sendMessage(message);
+                signalSessionManager.sendMessage(message);
             }
             connection.sendAck(stanzaId);
         });
@@ -372,11 +372,11 @@ public class MainConnectionObserver extends Connection.Observer {
         if (message.count != null) {
             int count = message.count;
             Log.i("OTPK count down to " + count + "; replenishing");
-            List<byte[]> protoKeys = encryptedSessionManager.getFreshOneTimePreKeyProtos();
+            List<byte[]> protoKeys = signalSessionManager.getFreshOneTimePreKeyProtos();
             connection.uploadMoreOneTimePreKeys(protoKeys);
             connection.sendAck(ackId);
         } else if (message.userId != null) {
-            encryptedSessionManager.tearDownSession(message.userId);
+            signalSessionManager.tearDownSession(message.userId);
             addSystemMessage(message.userId, Message.USAGE_KEYS_CHANGED, null, () -> connection.sendAck(ackId));
         }
     }

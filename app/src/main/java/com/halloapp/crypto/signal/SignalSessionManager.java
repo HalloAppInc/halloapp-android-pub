@@ -1,4 +1,4 @@
-package com.halloapp.crypto;
+package com.halloapp.crypto.signal;
 
 import android.text.format.DateUtils;
 import android.util.Base64;
@@ -8,9 +8,10 @@ import androidx.annotation.Nullable;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.halloapp.contacts.Contact;
-import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Message;
+import com.halloapp.crypto.AutoCloseLock;
+import com.halloapp.crypto.CryptoException;
+import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.KeyManager;
 import com.halloapp.crypto.keys.OneTimePreKey;
@@ -18,14 +19,11 @@ import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
-import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.IdentityKey;
 import com.halloapp.proto.clients.SignedPreKey;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.ConnectionImpl;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
 import com.halloapp.xmpp.util.ObservableErrorException;
 
@@ -33,7 +31,6 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -42,34 +39,34 @@ import java.util.concurrent.ConcurrentMap;
  * The public-facing interface for Signal protocol. All production calls to code related to
  * the Signal protocol should be routed through this class.
  */
-public class EncryptedSessionManager {
+public class SignalSessionManager {
     private static final long MIN_TIME_BETWEEN_KEY_DOWNLOAD_ATTEMPTS = 5 * DateUtils.SECOND_IN_MILLIS;
 
     private final Connection connection;
     private final KeyManager keyManager;
     private final EncryptedKeyStore encryptedKeyStore;
-    private final MessageCipher messageCipher;
+    private final SignalMessageCipher signalMessageCipher;
     private final ConcurrentMap<UserId, AutoCloseLock> lockMap = new ConcurrentHashMap<>();
 
-    private static EncryptedSessionManager instance = null;
+    private static SignalSessionManager instance = null;
 
-    public static EncryptedSessionManager getInstance() {
+    public static SignalSessionManager getInstance() {
         if (instance == null) {
-            synchronized (EncryptedSessionManager.class) {
+            synchronized (SignalSessionManager.class) {
                 if (instance == null) {
-                    instance = new EncryptedSessionManager(Connection.getInstance(), KeyManager.getInstance(), EncryptedKeyStore.getInstance());
+                    instance = new SignalSessionManager(Connection.getInstance(), KeyManager.getInstance(), EncryptedKeyStore.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private EncryptedSessionManager(Connection connection, KeyManager keyManager, EncryptedKeyStore encryptedKeyStore) {
+    private SignalSessionManager(Connection connection, KeyManager keyManager, EncryptedKeyStore encryptedKeyStore) {
         this.connection = connection;
         this.keyManager = keyManager;
         this.encryptedKeyStore = encryptedKeyStore;
 
-        this.messageCipher = new MessageCipher(keyManager, encryptedKeyStore);
+        this.signalMessageCipher = new SignalMessageCipher(keyManager, encryptedKeyStore);
     }
 
     // Should be used in a try-with-resources block for auto-release
@@ -80,7 +77,7 @@ public class EncryptedSessionManager {
 
     public byte[] encryptMessage(@NonNull byte[] message, @NonNull UserId peerUserId) throws CryptoException {
         try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
-            return messageCipher.convertForWire(message, peerUserId);
+            return signalMessageCipher.convertForWire(message, peerUserId);
         } catch (InterruptedException e) {
             throw new CryptoException("enc_interrupted", e);
         }
@@ -105,7 +102,7 @@ public class EncryptedSessionManager {
             }
             encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
 
-            return messageCipher.convertFromWire(message, peerUserId);
+            return signalMessageCipher.convertFromWire(message, peerUserId);
         } catch (CryptoException e) {
             if (e.teardownKeyMatched) {
                 Log.i("Teardown key matched; skipping session reset");

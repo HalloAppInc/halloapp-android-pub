@@ -1,5 +1,7 @@
-package com.halloapp.crypto;
+package com.halloapp.crypto.signal;
 
+import com.halloapp.crypto.CryptoException;
+import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.KeyManager;
 import com.halloapp.crypto.keys.MessageKey;
@@ -17,13 +19,13 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-class MessageCipher {
+class SignalMessageCipher {
     private static final int COUNTER_SIZE_BYTES = 4;
 
     private final KeyManager keyManager;
     private final EncryptedKeyStore encryptedKeyStore;
 
-    MessageCipher(KeyManager keyManager, EncryptedKeyStore encryptedKeyStore) {
+    SignalMessageCipher(KeyManager keyManager, EncryptedKeyStore encryptedKeyStore) {
         this.keyManager = keyManager;
         this.encryptedKeyStore = encryptedKeyStore;
     }

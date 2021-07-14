@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
-import com.halloapp.crypto.SessionSetupInfo;
+import com.halloapp.crypto.signal.SessionSetupInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.util.logs.Log;
 

@@ -9,7 +9,7 @@ import com.halloapp.Preferences;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
-import com.halloapp.crypto.SessionSetupInfo;
+import com.halloapp.crypto.signal.SessionSetupInfo;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;

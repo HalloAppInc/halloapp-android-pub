@@ -8,13 +8,12 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 
 import com.halloapp.FileStore;
-import com.halloapp.crypto.EncryptedSessionManager;
+import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.id.UserId;
 import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.MediaUploadDownloadThreadPool;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.util.logs.Log;
-import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
 
 import java.util.List;
@@ -24,13 +23,13 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
     private final Connection connection;
     private final FileStore fileStore;
     private final ContentDb contentDb;
-    private final EncryptedSessionManager encryptedSessionManager;
+    private final SignalSessionManager signalSessionManager;
 
     public TransferPendingItemsTask(@NonNull Context context) {
         this.connection = Connection.getInstance();
         this.fileStore = FileStore.getInstance();
         this.contentDb = ContentDb.getInstance();
-        this.encryptedSessionManager = EncryptedSessionManager.getInstance();
+        this.signalSessionManager = SignalSessionManager.getInstance();
     }
 
     @Override
@@ -73,7 +72,7 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
                         connection.retractMessage((UserId) message.chatId, message.id);
                     }
                 } else if (message.media.isEmpty()) {
-                    encryptedSessionManager.sendMessage(message);
+                    signalSessionManager.sendMessage(message);
                 } else {
                     mainHandler.post(() -> new UploadMediaTask(message, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR));
                 }

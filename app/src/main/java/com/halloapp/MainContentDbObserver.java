@@ -9,7 +9,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.SeenReceipt;
-import com.halloapp.crypto.EncryptedSessionManager;
+import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -31,7 +31,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
     private final FileStore fileStore;
     private final ContentDb contentDb;
     private final Notifications notifications;
-    private final EncryptedSessionManager encryptedSessionManager;
+    private final SignalSessionManager signalSessionManager;
 
     public static MainContentDbObserver getInstance(@NonNull Context context) {
         if (instance == null) {
@@ -51,7 +51,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
         this.fileStore = FileStore.getInstance();
         this.contentDb = ContentDb.getInstance();
         this.notifications = Notifications.getInstance(context);
-        this.encryptedSessionManager = EncryptedSessionManager.getInstance();
+        this.signalSessionManager = SignalSessionManager.getInstance();
     }
 
     @Override
@@ -140,7 +140,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
     public void onMessageAdded(@NonNull Message message) {
         if (message.shouldSend()) {
             if (message.media.isEmpty()) {
-                bgWorkers.execute(() -> encryptedSessionManager.sendMessage(message));
+                bgWorkers.execute(() -> signalSessionManager.sendMessage(message));
             } else {
                 new UploadMediaTask(message, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
