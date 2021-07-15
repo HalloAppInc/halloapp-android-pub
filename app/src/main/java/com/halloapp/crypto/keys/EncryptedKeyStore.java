@@ -367,7 +367,7 @@ public class EncryptedKeyStore {
         }
     }
 
-    public String getPeerPublicIdentityKeyPrefKey(UserId peerUserId) {
+    private String getPeerPublicIdentityKeyPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_PEER_IDENTITY_KEY_SUFFIX;
     }
 
