@@ -3,7 +3,7 @@ name: Strings
 on:
   push:
     branches: [ master, ci-test ]
-    paths: 
+    paths:
       - '**/strings.xml'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -47,7 +47,7 @@ jobs:
       - name: Setup token
         run: |
           mkdir tools/tokens
-          echo 'a0db7f62bf50c12de97044e1ca28d2b9' >> tools/tokens/poeditor_token
+          echo "${{ secrets.POEDITOR_TOKEN }}" >> tools/tokens/poeditor_token
 
       # GitHub servers currently come with only version 21 installed. See: https://github.com/actions/virtual-environments/issues/578#issuecomment-605886387
       # For other options, see https://github.com/gradle/gradle/issues/12440#issuecomment-606188282
