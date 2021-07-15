@@ -42,6 +42,7 @@ import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.app.SharedElementCallback;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
@@ -56,6 +57,7 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.Debug;
 import com.halloapp.R;
+import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Comment;
@@ -128,6 +130,8 @@ public class CommentsActivity extends HalloActivity {
     private MentionPickerView mentionPickerView;
     private ImageView sendButton;
     private ImageView recordBtn;
+    private View footer;
+    private View membershipNotice;
 
     private ItemSwipeHelper itemSwipeHelper;
     private RecyclerViewKeyboardScrollHelper keyboardScrollHelper;
@@ -319,6 +323,27 @@ public class CommentsActivity extends HalloActivity {
             updateVoiceNoteSending();
         });
         viewModel.loadPost(postId);
+
+        footer = findViewById(R.id.footer);
+        membershipNotice = findViewById(R.id.membership_layout);
+        viewModel.isMember.getLiveData().observe(this, isMember -> {
+            adapter.notifyDataSetChanged();
+            if (!isMember) {
+                footer.setVisibility(View.INVISIBLE);
+                membershipNotice.setVisibility(View.VISIBLE);
+                editText.setFocusableInTouchMode(false);
+                editText.setFocusable(false);
+                replyIndicator.setVisibility(View.GONE);
+                final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
+                imm.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
+            } else {
+                footer.setVisibility(View.VISIBLE);
+                membershipNotice.setVisibility(View.INVISIBLE);
+                editText.setFocusableInTouchMode(true);
+                editText.setFocusable(true);
+                showKeyboard();
+            }
+        });
 
         replyIndicatorCloseButton.setOnClickListener(v -> resetReplyIndicator());
 
@@ -978,7 +1003,7 @@ public class CommentsActivity extends HalloActivity {
                 builder.show();
             });
 
-            if (comment.isRetracted()) {
+            if (comment.isRetracted() || !viewModel.isMember.getLiveData().getValue()) {
                 replyButton.setVisibility(View.GONE);
                 retractButton.setVisibility(View.GONE);
             } else {

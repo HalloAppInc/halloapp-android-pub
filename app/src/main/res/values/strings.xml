@@ -610,4 +610,6 @@
     <string name="choose_photo">Choose Photo</string>
     <!-- Label above the options for changing the profile photo -->
     <string name="your_profile_photo">Your profile photo</string>
+    <!-- Banner explaining why user can't leave a comment in a group they've left -->
+    <string name="no_longer_group_member">You\'re no longer a member of this group</string>
 </resources>

@@ -69,6 +69,7 @@ class CommentsViewModel extends AndroidViewModel {
     final LiveData<PagedList<Comment>> commentList;
     final ComputableLiveData<Long> lastSeenCommentRowId;
     final ComputableLiveData<List<Contact>> mentionableContacts;
+    final ComputableLiveData<Boolean> isMember;
     final MutableLiveData<Post> post = new MutableLiveData<>();
     final MutableLiveData<Contact> replyContact = new MutableLiveData<>();
     final MutableLiveData<Boolean> postDeleted = new MutableLiveData<>();
@@ -141,6 +142,13 @@ class CommentsViewModel extends AndroidViewModel {
         private void invalidateDataSource() {
             mainHandler.post(dataSourceFactory::invalidateLatestDataSource);
         }
+
+        @Override
+        public void onGroupMembersChanged(@NonNull GroupId groupId) {
+            if (CommentsViewModel.this.post.getValue().getParentGroup().equals(groupId)) {
+                isMember.invalidate();
+            }
+        }
     };
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
@@ -169,6 +177,23 @@ class CommentsViewModel extends AndroidViewModel {
                 long rowId = contentDb.getLastSeenCommentRowId(postId);
                 contentDb.setCommentsSeen(postId);
                 return rowId;
+            }
+        };
+
+        isMember = new ComputableLiveData<Boolean>() {
+            @Override
+            protected Boolean compute() {
+                GroupId groupId = contentDb.getPost(postId).getParentGroup();
+                if (groupId != null) {
+                    List<MemberInfo> members = contentDb.getGroupMembers(groupId);
+                    for (MemberInfo memberInfo : members) {
+                        if (memberInfo.userId.rawId().equals(me.getUser()) || memberInfo.userId.isMe()) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                return true;
             }
         };
 
