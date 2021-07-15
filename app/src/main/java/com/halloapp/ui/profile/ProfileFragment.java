@@ -149,6 +149,7 @@ public class ProfileFragment extends PostsFragment {
         unblockView = headerView.findViewById(R.id.unblock);
         addToContactsView = headerView.findViewById(R.id.add_to_contacts);
         viewModel.getSubtitle().observe(getViewLifecycleOwner(), s -> {
+            updateAddToContacts();
             subtitleView.setText(s);
             if (s == null) {
                 subtitleView.setVisibility(View.GONE);
@@ -180,11 +181,11 @@ public class ProfileFragment extends PostsFragment {
                 if (contact.addressBookName == null) {
                     emptyIcon.setImageResource(R.drawable.ic_exchange_numbers);
                     emptyView.setText(getString(R.string.posts_exchange_numbers));
-                    addToContactsView.setVisibility(View.VISIBLE);
+                    updateAddToContacts();
                 } else {
                     emptyIcon.setImageResource(R.drawable.ic_posts);
                     emptyView.setText(getString(R.string.contact_profile_empty, name));
-                    addToContactsView.setVisibility(View.GONE);
+                    updateAddToContacts();
                 }
                 updateMessageUnblock();
             });
@@ -228,6 +229,15 @@ public class ProfileFragment extends PostsFragment {
         } else {
             unblockView.setVisibility(View.GONE);
         }
+    }
+
+    private void updateAddToContacts() {
+        if (profileUserId.isMe() || viewModel.getSubtitle().getValue() == null) {
+            addToContactsView.setVisibility(View.GONE);
+            return;
+        }
+        Contact contact = viewModel.getContact().getValue();
+        addToContactsView.setVisibility(contact == null || contact.addressBookName != null ? View.GONE : View.VISIBLE);
     }
 
     @Override
