@@ -95,8 +95,8 @@ public class DeviceAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String
                 null, null, null)) {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
-                    contactId = cursor.getLong(cursor
-                            .getColumnIndex(ContactsContract.PhoneLookup._ID));
+                    //noinspection Range
+                    contactId = cursor.getLong(cursor.getColumnIndex(ContactsContract.PhoneLookup._ID));
                 } while (cursor.moveToNext());
             }
         }

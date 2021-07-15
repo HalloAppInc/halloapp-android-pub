@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Ignore everything in the test source set -->
+    <issue id="all">
+        <ignore path="\*/test/\*" />
+    </issue>
+
+    <!-- Expected; we upload new strings on push to master -->
+    <issue id="MissingTranslation" severity="ignore" />
+    <!-- Expected; new strings import to other languages from POEditor like this -->
+    <issue id="ImpliedQuantity" severity="ignore" />
+</lint>
