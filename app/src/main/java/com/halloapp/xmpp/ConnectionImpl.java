@@ -1177,11 +1177,7 @@ public class ConnectionImpl extends Connection {
                         com.halloapp.proto.server.Post protoPost = item.getPost();
                         Post post = processPost(protoPost, names);
                         if (post != null) {
-                            boolean sharedPost = item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE);
-                            post.seen = sharedPost ? Post.SEEN_YES : Post.SEEN_NO;
-                            if (sharedPost) {
-                                sendPostSeenReceipt(post.senderUserId, post.id);
-                            }
+                            post.seen = item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.PUBLISH) ? Post.SEEN_NO : Post.SEEN_NO_HIDDEN;
                             posts.add(post);
                         } else {
                             Log.e("connection: invalid post");
@@ -1319,7 +1315,7 @@ public class ConnectionImpl extends Connection {
                         com.halloapp.proto.server.Post protoPost = item.getPost();
                         Post post = processPost(protoPost, names);
                         if (post != null) {
-                            post.seen = item.getAction().equals(GroupFeedItem.Action.PUBLISH) ? Post.SEEN_NO : Post.SEEN_YES;
+                            post.seen = item.getAction().equals(GroupFeedItem.Action.PUBLISH) ? Post.SEEN_NO : Post.SEEN_NO_HIDDEN;
                             post.setParentGroup(new GroupId(item.getGid()));
                             posts.add(post);
                         }

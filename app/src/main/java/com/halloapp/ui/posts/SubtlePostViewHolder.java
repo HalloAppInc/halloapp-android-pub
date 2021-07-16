@@ -83,7 +83,7 @@ public class SubtlePostViewHolder extends ViewHolderWithLifecycle {
 
             final SeenDetectorLayout postContentLayout = itemView.findViewById(R.id.post_container);
             postContentLayout.setOnSeenListener(() -> {
-                if (post.seen == Post.SEEN_NO && post.isIncoming()) {
+                if (post.shouldSendSeenReceipt()) {
                     post.seen = Post.SEEN_YES_PENDING;
                     ContentDb.getInstance().setIncomingPostSeen(post.senderUserId, post.id);
                 }

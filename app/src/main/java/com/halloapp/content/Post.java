@@ -29,11 +29,12 @@ public class Post extends ContentItem {
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({SEEN_NO, SEEN_YES_PENDING, SEEN_YES})
+    @IntDef({SEEN_NO, SEEN_YES_PENDING, SEEN_YES, SEEN_NO_HIDDEN})
     public @interface SeenState {}
     public static final int SEEN_NO = 0;
     public static final int SEEN_YES_PENDING = 1;
     public static final int SEEN_YES = 2;
+    public static final int SEEN_NO_HIDDEN = 3;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({TRANSFERRED_NO, TRANSFERRED_YES})
@@ -234,5 +235,14 @@ public class Post extends ContentItem {
                 seen == post.seen &&
                 media.equals(post.media) &&
                 type == post.type;
+    }
+
+    public boolean shouldSendSeenReceipt() {
+        switch (seen) {
+            case SEEN_NO:
+            case SEEN_NO_HIDDEN:
+                return isIncoming();
+        }
+        return false;
     }
 }
