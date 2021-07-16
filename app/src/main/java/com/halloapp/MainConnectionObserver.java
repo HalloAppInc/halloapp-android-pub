@@ -159,7 +159,7 @@ public class MainConnectionObserver extends Connection.Observer {
     @Override
     public void onConnected() {
         bgWorkers.execute(blockListManager::fetchBlockList);
-        bgWorkers.execute(feedPrivacyManager::fetchFeedPrivacy);
+        bgWorkers.execute(feedPrivacyManager::fetchInitialFeedPrivacy);
         bgWorkers.execute(postsManager::ensurePostsShared);
 
         connection.updatePresence(foregroundObserver.isInForeground());

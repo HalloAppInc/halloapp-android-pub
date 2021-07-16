@@ -10,10 +10,12 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.UserId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.IqErrorException;
 import com.halloapp.xmpp.privacy.PrivacyList;
 import com.halloapp.xmpp.privacy.PrivacyListApi;
 import com.halloapp.xmpp.util.ObservableErrorException;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -71,6 +73,14 @@ public class FeedPrivacyManager {
         this.privacyListApi = new PrivacyListApi(Connection.getInstance());
     }
 
+    @WorkerThread
+    public void fetchInitialFeedPrivacy() {
+        String cachedActiveList = preferences.getFeedPrivacyActiveList();
+        if (PrivacyList.Type.INVALID.equals(cachedActiveList)) {
+            fetchFeedPrivacy();
+        }
+    }
+
     @AnyThread
     public void fetchFeedPrivacy() {
         privacyListApi.getFeedPrivacy().onResponse(this::saveFeedPrivacy).onError(e -> {
@@ -85,8 +95,51 @@ public class FeedPrivacyManager {
         notifyFeedPrivacyChanged();
     }
 
+    private void diffList(@NonNull List<UserId> oldList, @NonNull List<UserId> newList, List<UserId> addedUsers, List<UserId> deletedUsers) {
+        HashSet<UserId> oldSet = new HashSet<>(oldList);
+        HashSet<UserId> newSet = new HashSet<>(newList);
+        for (UserId userId : oldSet) {
+            if (!newSet.contains(userId)) {
+                deletedUsers.add(userId);
+            }
+        }
+        for (UserId userId : newSet) {
+            if (!oldSet.contains(userId)) {
+                addedUsers.add(userId);
+            }
+        }
+    }
+
     @WorkerThread
-    public boolean updateFeedPrivacy(@PrivacyList.Type String selectedList, @Nullable List<UserId> addedUsers, @Nullable List<UserId> deletedUsers) {
+    public boolean updateFeedPrivacy(@PrivacyList.Type String selectedList, @NonNull List<UserId> userIds) {
+        return updateFeedPrivacy(selectedList, userIds, true);
+    }
+
+    @WorkerThread
+    public boolean updateFeedPrivacy(@PrivacyList.Type String selectedList, @NonNull List<UserId> userIds, boolean allowRetry) {
+        FeedPrivacy feedPrivacy = getFeedPrivacy();
+        if (feedPrivacy == null) {
+            Log.e("FeedPrivacyManager/updateFeedPrivacy failed to update, null current feed privacy?");
+            return false;
+        }
+        List<UserId> addedUsers = new ArrayList<>();
+        List<UserId> deletedUsers = new ArrayList<>();
+        switch (selectedList) {
+            case PrivacyList.Type.ALL:
+                break;
+            case PrivacyList.Type.EXCEPT:
+                diffList(feedPrivacy.exceptList, userIds, addedUsers, deletedUsers);
+                break;
+            case PrivacyList.Type.ONLY:
+                diffList(feedPrivacy.onlyList, userIds, addedUsers, deletedUsers);
+                break;
+        }
+        if (selectedList.equals(feedPrivacy.activeList)) {
+            if (addedUsers.isEmpty() && deletedUsers.isEmpty()) {
+                return true;
+            }
+        }
+
         try {
             Boolean result = privacyListApi.setFeedPrivacy(selectedList, addedUsers, deletedUsers).await();
             if (result == null || !result) {
@@ -101,10 +154,38 @@ public class FeedPrivacyManager {
             }
             notifyFeedPrivacyChanged();
             return true;
-        } catch (ObservableErrorException | InterruptedException e) {
+        } catch (ObservableErrorException e) {
+            if (allowRetry) {
+                Throwable cause = e.getCause();
+                if (cause instanceof IqErrorException) {
+                    IqErrorException iqError = (IqErrorException) cause;
+                    if ("hash_mismatch".equals(iqError.getReason())) {
+                        Log.i("FeedPrivacyManager/updateFeedPrivacy: hash mismatch, retrying");
+                        if (!refetchFeedPrivacySync()) {
+                            return false;
+                        }
+                        return updateFeedPrivacy(selectedList, userIds, false);
+                    }
+                }
+            }
             Log.e("FeedPrivacyManager/updateFeedPrivacy: failed to update feed privacy", e);
+        } catch (InterruptedException e) {
+            Log.e("FeedPrivacyManager/updateFeedPrivacy: failed to update feed privacy interrupted", e);
         }
         return false;
+    }
+
+    @WorkerThread
+    private boolean refetchFeedPrivacySync() {
+        FeedPrivacy feedPrivacy;
+        try {
+            feedPrivacy = privacyListApi.getFeedPrivacy().await();
+        } catch (ObservableErrorException | InterruptedException e) {
+            Log.e("FeedPrivacyManager/retryUpdateFeedPrivacyHash failed to fetch feed privacy");
+            return false;
+        }
+        saveFeedPrivacy(feedPrivacy);
+        return true;
     }
 
     @WorkerThread

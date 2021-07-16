@@ -96,37 +96,7 @@ public class FeedPrivacyViewModel extends AndroidViewModel {
     @NonNull
     public LiveData<Boolean> savePrivacy(@PrivacyList.Type String newSetting, @NonNull List<UserId> userIds) {
         MutableLiveData<Boolean> savingLiveData = new MutableLiveData<>();
-        FeedPrivacy feedPrivacy = feedPrivacyLiveData.getLiveData().getValue();
-        if (feedPrivacy == null) {
-            savingLiveData.setValue(Boolean.TRUE);
-            return savingLiveData;
-        }
-        List<UserId> addedUsers = new ArrayList<>();
-        List<UserId> deletedUsers = new ArrayList<>();
-        switch (newSetting) {
-            case PrivacyList.Type.ALL:
-                break;
-            case PrivacyList.Type.EXCEPT:
-                diffList(feedPrivacy.exceptList, userIds, addedUsers, deletedUsers);
-                break;
-            case PrivacyList.Type.ONLY:
-                diffList(feedPrivacy.onlyList, userIds, addedUsers, deletedUsers);
-                break;
-        }
-        if (newSetting.equals(feedPrivacy.activeList)) {
-            if (addedUsers.isEmpty() && deletedUsers.isEmpty()) {
-                savingLiveData.setValue(Boolean.TRUE);
-                return savingLiveData;
-            }
-        }
-        bgWorkers.execute(() -> {
-            boolean success = feedPrivacyManager.updateFeedPrivacy(newSetting, addedUsers, deletedUsers);
-            if (!success) {
-                savingLiveData.postValue(Boolean.FALSE);
-            } else {
-                savingLiveData.postValue(Boolean.TRUE);
-            }
-        });
+        bgWorkers.execute(() -> savingLiveData.postValue(feedPrivacyManager.updateFeedPrivacy(newSetting, new ArrayList<>(userIds))));
         return savingLiveData;
     }
 

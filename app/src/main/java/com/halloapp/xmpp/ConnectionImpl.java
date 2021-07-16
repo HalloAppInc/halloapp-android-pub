@@ -1646,12 +1646,6 @@ public class ConnectionImpl extends Connection {
         }
     }
 
-    private static class IqErrorException extends Exception {
-        public IqErrorException(String id, String reason) {
-            super("Server returned error response for " + id + ": " + reason);
-        }
-    }
-
     private static class NotConnectedException extends Exception {
         public NotConnectedException() {
             super("Could not connect to server");

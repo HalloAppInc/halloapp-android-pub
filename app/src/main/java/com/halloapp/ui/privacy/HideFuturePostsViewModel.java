@@ -47,13 +47,17 @@ public class HideFuturePostsViewModel extends ViewModel {
                 return;
             }
             if (PrivacyList.Type.ONLY.equals(currentPrivacy.activeList)) {
-                hideResult.postValue(feedPrivacyManager.updateFeedPrivacy(currentPrivacy.activeList, null, Collections.singletonList(contact.userId)));
+                currentPrivacy.onlyList.remove(contact.userId);
+                hideResult.postValue(feedPrivacyManager.updateFeedPrivacy(currentPrivacy.activeList, currentPrivacy.onlyList));
                 hiding.postValue(null);
             } else if (PrivacyList.Type.EXCEPT.equals(currentPrivacy.activeList)) {
-                hideResult.postValue(feedPrivacyManager.updateFeedPrivacy(currentPrivacy.activeList, Collections.singletonList(contact.userId), null));
+                if (!currentPrivacy.exceptList.contains(contact.userId)) {
+                    currentPrivacy.exceptList.add(contact.userId);
+                }
+                hideResult.postValue(feedPrivacyManager.updateFeedPrivacy(currentPrivacy.activeList, currentPrivacy.exceptList));
                 hiding.postValue(null);
             } else {
-                hideResult.postValue(feedPrivacyManager.updateFeedPrivacy(PrivacyList.Type.EXCEPT, Collections.singletonList(contact.userId), null));
+                hideResult.postValue(feedPrivacyManager.updateFeedPrivacy(PrivacyList.Type.EXCEPT, Collections.singletonList(contact.userId)));
                 hiding.postValue(null);
             }
         });
