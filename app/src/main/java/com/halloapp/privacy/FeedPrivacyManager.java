@@ -77,6 +77,7 @@ public class FeedPrivacyManager {
     public void fetchInitialFeedPrivacy() {
         String cachedActiveList = preferences.getFeedPrivacyActiveList();
         if (PrivacyList.Type.INVALID.equals(cachedActiveList)) {
+            Log.i("FeedPrivacyManager/fetching initial feed privacy");
             fetchFeedPrivacy();
         }
     }
@@ -86,6 +87,11 @@ public class FeedPrivacyManager {
         privacyListApi.getFeedPrivacy().onResponse(this::saveFeedPrivacy).onError(e -> {
             Log.e("FeedPrivacyManager/fetchFeedPrivacy failed to fetch privacy settings", e);
         });
+    }
+
+    @WorkerThread
+    public void onLoginFailed() {
+        preferences.setFeedPrivacyActiveList(PrivacyList.Type.INVALID);
     }
 
     private void saveFeedPrivacy(@NonNull FeedPrivacy feedPrivacy) {

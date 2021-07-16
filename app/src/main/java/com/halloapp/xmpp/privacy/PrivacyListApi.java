@@ -21,24 +21,17 @@ public class PrivacyListApi {
 
     public Observable<Boolean> blockUsers(@NonNull Collection<UserId> users) {
         final SetPrivacyListIq requestIq = new SetPrivacyListIq(PrivacyList.Type.BLOCK, users, null);
-        final MutableObservable<Boolean> requestResult = new MutableObservable<>();
-        connection.sendRequestIq(requestIq).onResponse(iq -> {
-            requestResult.setResponse(Boolean.TRUE);
-        }).onError(e -> {
-            requestResult.setResponse(Boolean.FALSE);
-        });
-        return requestResult;
+        return connection.sendRequestIq(requestIq).map(result -> true);
     }
 
     public Observable<Boolean> unblockUsers(@NonNull Collection<UserId> users) {
         final SetPrivacyListIq requestIq = new SetPrivacyListIq(PrivacyList.Type.BLOCK, null, users);
-        final MutableObservable<Boolean> requestResult = new MutableObservable<>();
-        connection.sendRequestIq(requestIq).onResponse(iq -> {
-            requestResult.setResponse(Boolean.TRUE);
-        }).onError(e -> {
-            requestResult.setResponse(Boolean.FALSE);
-        });
-        return requestResult;
+        return connection.sendRequestIq(requestIq).map(result -> true);
+    }
+
+    public Observable<Boolean> updateBlockList(@NonNull List<UserId> addUsers, @NonNull List<UserId> deleteUsers) {
+        final SetPrivacyListIq requestIq = new SetPrivacyListIq(PrivacyList.Type.BLOCK, addUsers, deleteUsers);
+        return connection.sendRequestIq(requestIq).map(input -> true);
     }
 
     public Observable<List<UserId>> getBlockList() {

@@ -10,10 +10,13 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.UserId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.IqErrorException;
 import com.halloapp.xmpp.privacy.PrivacyListApi;
 import com.halloapp.xmpp.util.MutableObservable;
 import com.halloapp.xmpp.util.Observable;
+import com.halloapp.xmpp.util.ObservableErrorException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -93,16 +96,64 @@ public class BlockListManager {
     }
 
     @WorkerThread
+    public void fetchInitialBlockList() {
+        if (preferences.getLastBlockListSyncTime() == 0) {
+            Log.i("BlockListManager/fetching initial block list");
+            fetchBlockList();
+        }
+    }
+
+    @WorkerThread
     public void fetchBlockList() {
         privacyListApi.getBlockList().onResponse(blockListResponse -> {
            if (blockListResponse != null) {
-               contactsDb.setBlockList(blockListResponse);
-               preferences.setLastBlockListSyncTime(System.currentTimeMillis());
-               notifyBlockListChanged();
+               saveBlockList(blockListResponse);
            }
         }).onError(e -> {
             Log.e("BlockListManager/fetchBlockList failed to fetch blocklist", e);
         });
+    }
+
+    private void saveBlockList(@NonNull List<UserId> blockList) {
+        contactsDb.setBlockList(blockList);
+        preferences.setLastBlockListSyncTime(System.currentTimeMillis());
+        notifyBlockListChanged();
+    }
+
+    public boolean refetchBlockListSync() {
+        try {
+            List<UserId> blockList = privacyListApi.getBlockList().await();
+            saveBlockList(blockList);
+            return true;
+        } catch (ObservableErrorException | InterruptedException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @AnyThread
+    private Observable<Boolean> updateBlockList(@NonNull List<UserId> currentList, @NonNull List<UserId> newBlockList) {
+        List<UserId> addedUsers = new ArrayList<>();
+        List<UserId> deletedUsers = new ArrayList<>();
+
+        diffList(currentList, newBlockList, addedUsers, deletedUsers);
+
+        return privacyListApi.updateBlockList(addedUsers, deletedUsers);
+    }
+
+    private void diffList(@NonNull List<UserId> oldList, @NonNull List<UserId> newList, List<UserId> addedUsers, List<UserId> deletedUsers) {
+        HashSet<UserId> oldSet = new HashSet<>(oldList);
+        HashSet<UserId> newSet = new HashSet<>(newList);
+        for (UserId userId : oldSet) {
+            if (!newSet.contains(userId)) {
+                deletedUsers.add(userId);
+            }
+        }
+        for (UserId userId : newSet) {
+            if (!oldSet.contains(userId)) {
+                addedUsers.add(userId);
+            }
+        }
     }
 
     @AnyThread
@@ -116,7 +167,31 @@ public class BlockListManager {
             contactsDb.addUserToBlockList(userId);
             resultObservable.setResponse(true);
             notifyBlockListChanged();
-        }).onError(resultObservable::setException);
+        }).onError(e -> {
+          if (e instanceof IqErrorException) {
+              IqErrorException iqError = (IqErrorException) e;
+              if ("hash_mismatch".equals(iqError.getReason())) {
+                  Log.i("BlockListManager/blockContact hash_mismatch retrying!");
+                  List<UserId> blockList = contactsDb.getBlockList();
+                  blockList.add(userId);
+                  if (refetchBlockListSync()) {
+                      updateBlockList(contactsDb.getBlockList(), blockList)
+                              .onResponse(result -> {
+                                  if (result == null || !result) {
+                                      resultObservable.setResponse(false);
+                                      return;
+                                  }
+                                  saveBlockList(blockList);
+                                  resultObservable.setResponse(true);
+                              })
+                              .onError(resultObservable::setException);
+                      return;
+                  }
+              }
+          }
+          resultObservable.setException(e);
+        });
+
         return resultObservable;
     }
 
@@ -131,7 +206,31 @@ public class BlockListManager {
             contactsDb.removeUserFromBlockList(userId);
             resultObservable.setResponse(true);
             notifyBlockListChanged();
-        }).onError(resultObservable::setException);
+        }).onError(e -> {
+            if (e instanceof IqErrorException) {
+                IqErrorException iqError = (IqErrorException) e;
+                if ("hash_mismatch".equals(iqError.getReason())) {
+                    Log.i("BlockListManager/unblockContact hash_mismatch retrying!");
+                    List<UserId> blockList = contactsDb.getBlockList();
+                    blockList.remove(userId);
+                    if (refetchBlockListSync()) {
+                        updateBlockList(contactsDb.getBlockList(), blockList)
+                                .onResponse(result -> {
+                                    if (result == null || !result) {
+                                        resultObservable.setResponse(false);
+                                        return;
+                                    }
+                                    saveBlockList(blockList);
+                                    resultObservable.setResponse(true);
+                                })
+                                .onError(resultObservable::setException);
+                        return;
+                    }
+                }
+            }
+            resultObservable.setException(e);
+        });
+
         return resultObservable;
     }
 }

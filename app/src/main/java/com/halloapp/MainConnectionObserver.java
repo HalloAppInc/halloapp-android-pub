@@ -158,7 +158,7 @@ public class MainConnectionObserver extends Connection.Observer {
 
     @Override
     public void onConnected() {
-        bgWorkers.execute(blockListManager::fetchBlockList);
+        bgWorkers.execute(blockListManager::fetchInitialBlockList);
         bgWorkers.execute(feedPrivacyManager::fetchInitialFeedPrivacy);
         bgWorkers.execute(postsManager::ensurePostsShared);
 
@@ -179,6 +179,7 @@ public class MainConnectionObserver extends Connection.Observer {
     public void onLoginFailed(boolean accountDeleted) {
         me.resetRegistration();
         blockListManager.onLoginFailed();
+        feedPrivacyManager.onLoginFailed();
 
         boolean isInForeground = foregroundObserver.isInForeground();
         if (!accountDeleted) {
