@@ -235,6 +235,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
 
                     getActivity().getWindow().setStatusBarColor(getContext().getResources().getColor(R.color.color_secondary));
                     previousVisibility = getActivity().getWindow().getDecorView().getSystemUiVisibility();
+                    //noinspection InlinedApi
                     getActivity().getWindow().getDecorView().setSystemUiVisibility(previousVisibility & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
                     return true;
                 }

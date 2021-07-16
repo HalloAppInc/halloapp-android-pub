@@ -89,8 +89,6 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
     private LinearLayoutManager layoutManager;
 
-    private FrameLayout nuxContainer;
-    private View nux;
     private View emptyView;
     private TextView emptyViewMessage;
     private RecyclerView chatsView;
@@ -99,7 +97,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
     private ActionMode actionMode;
 
-    private HashSet<ChatId> selectedChats = new HashSet<>();
+    private final HashSet<ChatId> selectedChats = new HashSet<>();
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -176,8 +174,6 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         chatsView = root.findViewById(R.id.chats);
         emptyView = root.findViewById(android.R.id.empty);
         emptyViewMessage = root.findViewById(R.id.empty_text);
-
-        nuxContainer = root.findViewById(R.id.nux_container);
 
         Preconditions.checkNotNull((SimpleItemAnimator)chatsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
@@ -274,6 +270,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
                     getActivity().getWindow().setStatusBarColor(getContext().getResources().getColor(R.color.color_secondary));
                     previousVisibility = getActivity().getWindow().getDecorView().getSystemUiVisibility();
+                    //noinspection InlinedApi
                     getActivity().getWindow().getDecorView().setSystemUiVisibility(previousVisibility & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
                     return true;
                 }

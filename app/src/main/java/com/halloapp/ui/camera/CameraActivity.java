@@ -26,6 +26,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
@@ -154,9 +155,9 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
 
         bgWorkers = BgWorkers.getInstance();
 
-        flashOnDrawable = getDrawable(R.drawable.ic_flash_on);
-        flashOffDrawable = getDrawable(R.drawable.ic_flash_off);
-        captureButtonDrawable = getDrawable(R.drawable.ic_camera_capture);
+        flashOnDrawable = ContextCompat.getDrawable(this, R.drawable.ic_flash_on);
+        flashOffDrawable = ContextCompat.getDrawable(this, R.drawable.ic_flash_off);
+        captureButtonDrawable = ContextCompat.getDrawable(this, R.drawable.ic_camera_capture);
         recordStartDrawable = AnimatedVectorDrawableCompat.create(this, R.drawable.record_video_start_animation);
         recordStopDrawable = AnimatedVectorDrawableCompat.create(this, R.drawable.record_video_stop_animation);
 

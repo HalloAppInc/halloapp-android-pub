@@ -5,7 +5,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.view.View;
 import android.widget.Filter;
 
 import androidx.annotation.ColorInt;
@@ -14,12 +13,12 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.halloapp.R;
-import com.halloapp.contacts.Contact;
 
 import java.text.BreakIterator;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class FilterUtils {
 
@@ -45,7 +44,7 @@ public class FilterUtils {
         int start = boundary.first();
         for (int end = boundary.next(); end != BreakIterator.DONE; start = end, end = boundary.next()) {
             if (end > start) {
-                filterTokens.add(filterTextString.substring(start, end).toLowerCase());
+                filterTokens.add(filterTextString.substring(start, end).toLowerCase(Locale.getDefault()));
             }
         }
         return filterTokens;
@@ -61,7 +60,7 @@ public class FilterUtils {
             if (end <= start) {
                 continue;
             }
-            final String word = text.substring(start, end).toLowerCase();
+            final String word = text.substring(start, end).toLowerCase(Locale.getDefault());
             for (String filterToken : filterTokens) {
                 if (startsWith(word, filterToken)) {
                     if (formattedName == null) {

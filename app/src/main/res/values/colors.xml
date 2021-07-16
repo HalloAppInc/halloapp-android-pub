@@ -58,7 +58,6 @@
     <color name="reply_indicator_background">#cccccc</color>
     <color name="text_post_thumbnail_color">#ff000000</color>
     <color name="fab_background">#ff4500</color>
-    <color name="message_background_e2e_notice">#EDE14A</color>
     <color name="message_background_incoming">#ffffff</color>
     <color name="message_background_outgoing">#d0def1</color>
     <color name="message_text_incoming">#de000000</color>
@@ -132,8 +131,6 @@
     <color name="tertiary_text">@color/black_40</color>
     <color name="hint_text">@color/black_30</color>
     <color name="disabled_text">@color/black_20</color>
-
-    <color name="nux_button_text">@color/white_70</color>
 
     <color name="reply_text_color">@color/secondary_text</color>
 

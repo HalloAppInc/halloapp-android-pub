@@ -13,6 +13,7 @@ import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.util.logs.Log;
 
+@SuppressWarnings("SetTextI18n")
 public class DebugActivity extends HalloActivity {
 
     private final Preferences preferences = Preferences.getInstance();

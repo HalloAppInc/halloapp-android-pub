@@ -35,6 +35,7 @@ import com.halloapp.widget.CenterToast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ViewGroupInviteLinkActivity extends HalloActivity {
 
@@ -240,7 +241,7 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
         if (uri == null || uri.getHost() == null) {
             return null;
         }
-        if (uri.getHost().toLowerCase().startsWith("invite.")) {
+        if (uri.getHost().toLowerCase(Locale.ROOT).startsWith("invite.")) {
             return uri.getLastPathSegment();
         }
         if (!"invite".equalsIgnoreCase(uri.getLastPathSegment())) {

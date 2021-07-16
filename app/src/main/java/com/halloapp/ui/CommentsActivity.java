@@ -472,7 +472,7 @@ public class CommentsActivity extends HalloActivity {
         });
 
         itemSwipeHelper = new ItemSwipeHelper(new SwipeListItemHelper(
-                Preconditions.checkNotNull(getDrawable(R.drawable.ic_delete_white)),
+                Preconditions.checkNotNull(ContextCompat.getDrawable(this, R.drawable.ic_delete_white)),
                 ContextCompat.getColor(this, R.color.swipe_delete_background),
                 getResources().getDimensionPixelSize(R.dimen.swipe_delete_icon_margin)) {
 

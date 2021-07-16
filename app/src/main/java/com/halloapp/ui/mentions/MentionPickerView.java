@@ -27,6 +27,7 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 public class MentionPickerView extends FrameLayout {
 
@@ -139,9 +140,9 @@ public class MentionPickerView extends FrameLayout {
             return;
         }
         if (filter != null) {
-            String searchString = filter.toString().toLowerCase();
+            String searchString = filter.toString().toLowerCase(Locale.getDefault());
             for (Contact contact : mentionableContacts) {
-                String contactDisplayName = contact.getDisplayName().toLowerCase();
+                String contactDisplayName = contact.getDisplayName().toLowerCase(Locale.getDefault());
                 if (TextUtils.isEmpty(contactDisplayName)) {
                     continue;
                 }

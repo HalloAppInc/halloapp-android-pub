@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 public class IntentUtils {
 
@@ -110,7 +111,7 @@ public class IntentUtils {
             List<ResolveInfo> resInfos = context.getPackageManager().queryIntentActivities(smsIntent, 0);
             for (ResolveInfo resolveInfo : resInfos) {
                 String packageName = resolveInfo.activityInfo.packageName;
-                if (!packageName.toLowerCase().contains("whatsapp") && (fbIsDefaultSms || !packageName.toLowerCase().contains("facebook"))) {
+                if (!packageName.toLowerCase(Locale.ROOT).contains("whatsapp") && (fbIsDefaultSms || !packageName.toLowerCase(Locale.ROOT).contains("facebook"))) {
                     Intent intent = new Intent(smsIntent);
                     intent.setComponent(new ComponentName(packageName, resolveInfo.activityInfo.name));
                     intent.setPackage(packageName);

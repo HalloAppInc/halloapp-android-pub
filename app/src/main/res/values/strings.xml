@@ -252,7 +252,6 @@
     <string name="group_invite_via_link">Invite to group via link</string>
     <!-- Text that provides context for a group invite link being shared -->
     <string name="group_invite_link_context">Click on this link to join my HalloApp group: %s</string>
-    <string name="invite_links_not_currently_supported">Invite links are not supported yet</string>
     <string name="view_group_invite_link_action">View group invite</string>
     <string name="invite_link_resetting_progress">Resetting link…</string>
     <string name="invite_link_reset">Link reset</string>
@@ -558,12 +557,6 @@
     <string name="user_typing">typing…</string>
     <string name="group_user_typing">%s is typing…</string>
     <string name="group_many_users_typing">multiple users typing…</string>
-    <string name="messages_nux_text">This is where you’ll find messages from your friends &amp; family. When someone new joins HalloApp you can see them here.</string>
-    <string name="post_audience_nux_text">Your post will be shared with your phone contacts who use HalloApp. You can limit their access to your posts by going to Profile→Settings.</string>
-    <string name="activity_center_nux">This is your activity center. Tap to see your most recent activity.</string>
-    <string name="activity_center_welcome">Hallo!</string>
-    <string name="home_feed_nux">Welcome to your home feed! This is where you can see posts from your phone contacts who use HalloApp.</string>
-    <string name="home_feed_nux_learn_more">Learn more</string>
     <string name="camera_error_generic">Camera failure.</string>
     <string name="camera_error_photo">Could not take a photo.</string>
     <string name="camera_error_video">Could not record a video.</string>
@@ -587,7 +580,6 @@
         <item quantity="one">Your video is over %d second long. Please select another video or edit it.</item>
         <item quantity="other">Your video is over %d seconds long. Please select another video or edit it.</item>
     </plurals>
-    <string name="video_edit_unable_trim">Video trimming was unsuccessful.</string>
     <string name="video_countdown_message">Recording will end in %s</string>
     <string name="mute">Mute</string>
     <!-- Button to expand seen by list to see more -->

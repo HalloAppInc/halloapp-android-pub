@@ -52,6 +52,8 @@ public class ContentPlayerView extends PlayerView {
             }
         });
         setClipToOutline(true);
+
+        a.recycle();
     }
 
     public void setMaxAspectRatio(float maxAspectRatio) {
