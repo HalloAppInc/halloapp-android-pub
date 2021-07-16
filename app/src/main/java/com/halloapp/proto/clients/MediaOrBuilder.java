@@ -53,4 +53,27 @@ public interface MediaOrBuilder extends
    */
   com.google.protobuf.ByteString
       getDownloadUrlBytes();
+
+  /**
+   * <code>.clients.BlobVersion blob_version = 7;</code>
+   * @return The enum numeric value on the wire for blobVersion.
+   */
+  int getBlobVersionValue();
+  /**
+   * <code>.clients.BlobVersion blob_version = 7;</code>
+   * @return The blobVersion.
+   */
+  com.halloapp.proto.clients.BlobVersion getBlobVersion();
+
+  /**
+   * <code>int32 chunk_size = 8;</code>
+   * @return The chunkSize.
+   */
+  int getChunkSize();
+
+  /**
+   * <code>int64 blob_size = 9;</code>
+   * @return The blobSize.
+   */
+  long getBlobSize();
 }

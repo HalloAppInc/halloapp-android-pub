@@ -211,6 +211,100 @@ public  final class Media extends
     
   }
 
+  public static final int BLOB_VERSION_FIELD_NUMBER = 7;
+  private int blobVersion_;
+  /**
+   * <code>.clients.BlobVersion blob_version = 7;</code>
+   * @return The enum numeric value on the wire for blobVersion.
+   */
+  @java.lang.Override
+  public int getBlobVersionValue() {
+    return blobVersion_;
+  }
+  /**
+   * <code>.clients.BlobVersion blob_version = 7;</code>
+   * @return The blobVersion.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.BlobVersion getBlobVersion() {
+    com.halloapp.proto.clients.BlobVersion result = com.halloapp.proto.clients.BlobVersion.forNumber(blobVersion_);
+    return result == null ? com.halloapp.proto.clients.BlobVersion.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.clients.BlobVersion blob_version = 7;</code>
+   * @param value The enum numeric value on the wire for blobVersion to set.
+   */
+  private void setBlobVersionValue(int value) {
+      blobVersion_ = value;
+  }
+  /**
+   * <code>.clients.BlobVersion blob_version = 7;</code>
+   * @param value The blobVersion to set.
+   */
+  private void setBlobVersion(com.halloapp.proto.clients.BlobVersion value) {
+    blobVersion_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.clients.BlobVersion blob_version = 7;</code>
+   */
+  private void clearBlobVersion() {
+    
+    blobVersion_ = 0;
+  }
+
+  public static final int CHUNK_SIZE_FIELD_NUMBER = 8;
+  private int chunkSize_;
+  /**
+   * <code>int32 chunk_size = 8;</code>
+   * @return The chunkSize.
+   */
+  @java.lang.Override
+  public int getChunkSize() {
+    return chunkSize_;
+  }
+  /**
+   * <code>int32 chunk_size = 8;</code>
+   * @param value The chunkSize to set.
+   */
+  private void setChunkSize(int value) {
+    
+    chunkSize_ = value;
+  }
+  /**
+   * <code>int32 chunk_size = 8;</code>
+   */
+  private void clearChunkSize() {
+    
+    chunkSize_ = 0;
+  }
+
+  public static final int BLOB_SIZE_FIELD_NUMBER = 9;
+  private long blobSize_;
+  /**
+   * <code>int64 blob_size = 9;</code>
+   * @return The blobSize.
+   */
+  @java.lang.Override
+  public long getBlobSize() {
+    return blobSize_;
+  }
+  /**
+   * <code>int64 blob_size = 9;</code>
+   * @param value The blobSize to set.
+   */
+  private void setBlobSize(long value) {
+    
+    blobSize_ = value;
+  }
+  /**
+   * <code>int64 blob_size = 9;</code>
+   */
+  private void clearBlobSize() {
+    
+    blobSize_ = 0L;
+  }
+
   public static com.halloapp.proto.clients.Media parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -513,6 +607,108 @@ public  final class Media extends
       return this;
     }
 
+    /**
+     * <code>.clients.BlobVersion blob_version = 7;</code>
+     * @return The enum numeric value on the wire for blobVersion.
+     */
+    @java.lang.Override
+    public int getBlobVersionValue() {
+      return instance.getBlobVersionValue();
+    }
+    /**
+     * <code>.clients.BlobVersion blob_version = 7;</code>
+     * @param value The blobVersion to set.
+     * @return This builder for chaining.
+     */
+    public Builder setBlobVersionValue(int value) {
+      copyOnWrite();
+      instance.setBlobVersionValue(value);
+      return this;
+    }
+    /**
+     * <code>.clients.BlobVersion blob_version = 7;</code>
+     * @return The blobVersion.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.BlobVersion getBlobVersion() {
+      return instance.getBlobVersion();
+    }
+    /**
+     * <code>.clients.BlobVersion blob_version = 7;</code>
+     * @param value The enum numeric value on the wire for blobVersion to set.
+     * @return This builder for chaining.
+     */
+    public Builder setBlobVersion(com.halloapp.proto.clients.BlobVersion value) {
+      copyOnWrite();
+      instance.setBlobVersion(value);
+      return this;
+    }
+    /**
+     * <code>.clients.BlobVersion blob_version = 7;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearBlobVersion() {
+      copyOnWrite();
+      instance.clearBlobVersion();
+      return this;
+    }
+
+    /**
+     * <code>int32 chunk_size = 8;</code>
+     * @return The chunkSize.
+     */
+    @java.lang.Override
+    public int getChunkSize() {
+      return instance.getChunkSize();
+    }
+    /**
+     * <code>int32 chunk_size = 8;</code>
+     * @param value The chunkSize to set.
+     * @return This builder for chaining.
+     */
+    public Builder setChunkSize(int value) {
+      copyOnWrite();
+      instance.setChunkSize(value);
+      return this;
+    }
+    /**
+     * <code>int32 chunk_size = 8;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearChunkSize() {
+      copyOnWrite();
+      instance.clearChunkSize();
+      return this;
+    }
+
+    /**
+     * <code>int64 blob_size = 9;</code>
+     * @return The blobSize.
+     */
+    @java.lang.Override
+    public long getBlobSize() {
+      return instance.getBlobSize();
+    }
+    /**
+     * <code>int64 blob_size = 9;</code>
+     * @param value The blobSize to set.
+     * @return This builder for chaining.
+     */
+    public Builder setBlobSize(long value) {
+      copyOnWrite();
+      instance.setBlobSize(value);
+      return this;
+    }
+    /**
+     * <code>int64 blob_size = 9;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearBlobSize() {
+      copyOnWrite();
+      instance.clearBlobSize();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.Media)
   }
   @java.lang.Override
@@ -535,10 +731,13 @@ public  final class Media extends
             "encryptionKey_",
             "ciphertextHash_",
             "downloadUrl_",
+            "blobVersion_",
+            "chunkSize_",
+            "blobSize_",
           };
           java.lang.String info =
-              "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\f\u0002\u0004" +
-              "\u0003\u0004\u0004\n\u0005\n\u0006\u0208";
+              "\u0000\t\u0000\u0000\u0001\t\t\u0000\u0000\u0000\u0001\f\u0002\u0004\u0003\u0004" +
+              "\u0004\n\u0005\n\u0006\u0208\u0007\f\b\u0004\t\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
