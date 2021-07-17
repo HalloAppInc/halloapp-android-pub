@@ -2078,27 +2078,4 @@ class MessagesDb {
         }
         return null;
     }
-
-    @WorkerThread
-    public void fixGroupMembership() {
-        List<Chat> groups = getGroups();
-        for (Chat group : groups) {
-            if (!group.isActive) {
-                continue;
-            }
-            if (group.chatId instanceof GroupId) {
-                boolean isMember = false;
-                List<MemberInfo> memberInfos = getGroupMembers((GroupId) group.chatId);
-                for (MemberInfo member : memberInfos) {
-                    if (member.userId.isMe()) {
-                        isMember = true;
-                        break;
-                    }
-                }
-                if (!isMember) {
-                    setGroupInactive((GroupId) group.chatId);
-                }
-            }
-        }
-    }
 }

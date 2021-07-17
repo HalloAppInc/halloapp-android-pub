@@ -109,10 +109,6 @@ public class EncryptedKeyStore {
         return sharedPreferences;
     }
 
-    public void ensureMigrated() {
-        getPreferences();
-    }
-
     public boolean getPeerVerified(UserId peerUserId) {
         return getPreferences().getBoolean(getPeerVerifiedPrefKey(peerUserId), false);
     }

@@ -984,13 +984,6 @@ public class ContentDb {
         return postsDb.getShareablePosts();
     }
 
-    // TODO(clarkc): remove after version 100
-    public void fixGroupMembership() {
-        Log.i("ContentDb.fixGroupMembership");
-        messagesDb.fixGroupMembership();
-        Log.i("ContentDb.groupmembership fix complete");
-    }
-
     @WorkerThread
     public void migrateGroupTimestamps() {
         if (preferences.getMigratedGroupTimestamps()) {

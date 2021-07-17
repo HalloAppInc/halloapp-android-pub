@@ -97,9 +97,7 @@ public class HalloApp extends Application {
         new StartContactSyncTask(Preferences.getInstance(), ContactsSync.getInstance()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         BgWorkers.getInstance().execute(() -> {
-            ContentDb.getInstance().fixGroupMembership();
             ContentDb.getInstance().processFutureProofContent();
-            EncryptedKeyStore.getInstance().ensureMigrated(); // TODO(jack): Remove after May 1
             ContentDb.getInstance().migrateGroupTimestamps(); // TODO(clark): Remove after Oct 1
         });
     }
