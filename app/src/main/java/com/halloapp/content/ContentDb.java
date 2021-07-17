@@ -12,6 +12,7 @@ import com.halloapp.AppContext;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
+import com.halloapp.Preferences;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
@@ -43,11 +44,12 @@ public class ContentDb {
     private final ContentDbHelper databaseHelper;
 
     private final Me me;
+    private final MediaDb mediaDb;
+    private final PostsDb postsDb;
     private final MentionsDb mentionsDb;
     private final MessagesDb messagesDb;
-    private final MediaDb mediaDb;
+    private final Preferences preferences;
     private final FutureProofDb futureProofDb;
-    private final PostsDb postsDb;
 
     public interface Observer {
         void onPostAdded(@NonNull Post post);
@@ -109,7 +111,7 @@ public class ContentDb {
         if (instance == null) {
             synchronized (ContentDb.class) {
                 if (instance == null) {
-                    instance = new ContentDb(Me.getInstance(), FileStore.getInstance(), AppContext.getInstance(), ServerProps.getInstance());
+                    instance = new ContentDb(Me.getInstance(), FileStore.getInstance(), Preferences.getInstance(), AppContext.getInstance(), ServerProps.getInstance());
                 }
             }
         }
@@ -119,11 +121,13 @@ public class ContentDb {
     private ContentDb(
             @NonNull Me me,
             @NonNull final FileStore fileStore,
+            @NonNull final Preferences preferences,
             final @NonNull AppContext appContext,
             @NonNull final ServerProps serverProps) {
         Context context = appContext.get();
         databaseHelper = new ContentDbHelper(context.getApplicationContext(), observers);
         this.me = me;
+        this.preferences = preferences;
 
         mentionsDb = new MentionsDb(databaseHelper);
         mediaDb = new MediaDb(databaseHelper, fileStore);
@@ -160,6 +164,9 @@ public class ContentDb {
                     } else {
                         try {
                             postsDb.addPost(post);
+                            if (post.getParentGroup() != null) {
+                                messagesDb.updateGroupTimestamp(post.getParentGroup(), post.timestamp);
+                            }
                         } catch (SQLiteConstraintException ex) {
                             Log.w("ContentDb.addPost: duplicate " + ex.getMessage() + " " + post);
                             duplicate = true;
@@ -982,6 +989,27 @@ public class ContentDb {
         Log.i("ContentDb.fixGroupMembership");
         messagesDb.fixGroupMembership();
         Log.i("ContentDb.groupmembership fix complete");
+    }
+
+    @WorkerThread
+    public void migrateGroupTimestamps() {
+        if (preferences.getMigratedGroupTimestamps()) {
+            return;
+        }
+        Log.i("ContentDb.migrateGroupTimestamps");
+        final List<Chat> chats = getGroups();
+        for (Chat chat : chats) {
+            if (!chat.isGroup) {
+                continue;
+            }
+            GroupId groupId = (GroupId) chat.chatId;
+            Post lastPost = getLastGroupPost(groupId);
+            if (lastPost != null) {
+                messagesDb.updateGroupTimestamp(groupId, lastPost.timestamp);
+            }
+        }
+        preferences.setMigratedGroupTimestamps(true);
+        Log.i("ContentDb.migrateGroupTimestamps complete");
     }
 
     public void deleteDb() {

@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class GroupListViewModel extends AndroidViewModel {
 
@@ -119,31 +120,22 @@ public class GroupListViewModel extends AndroidViewModel {
         groupsList = new ComputableLiveData<List<Chat>>() {
             @Override
             protected List<Chat> compute() {
-
-                final List<Chat> chats = ContentDb.getInstance().getGroups();
+                final List<Chat> chats = contentDb.getGroups();
                 final Collator collator = Collator.getInstance(Locale.getDefault());
-                final HashMap<ChatId, Post> lastPosts = new HashMap<>();
-                for (Chat chat : chats) {
-                    if (chat.chatId instanceof GroupId) {
-                        Post lastPost = contentDb.getLastGroupPost((GroupId) chat.chatId);
-                        if (lastPost != null) {
-                            lastPosts.put(chat.chatId, lastPost);
-                        }
-                    }
-                }
                 Collections.sort(chats, (obj1, obj2) -> {
-                    Post lastPost1 = lastPosts.get((obj1.chatId));
-                    Post lastPost2 = lastPosts.get((obj2.chatId));
-                    if (lastPost1 == null && lastPost2 == null) {
+                    if (obj2.timestamp == obj1.timestamp) {
+                        if (Objects.equals(obj1.name, obj2.name)) {
+                            return 0;
+                        }
+                        if (obj1.name == null) {
+                            return 1;
+                        }
+                        if (obj2.name == null) {
+                            return -1;
+                        }
                         return collator.compare(obj1.name, obj2.name);
                     }
-                    if (lastPost1 == null) {
-                        return 1;
-                    }
-                    if (lastPost2 == null) {
-                        return -1;
-                    }
-                    return lastPost1.timestamp < lastPost2.timestamp ? 1 : -1;
+                    return obj1.timestamp < obj2.timestamp ? 1 : -1;
                 });
                 return chats;
             }

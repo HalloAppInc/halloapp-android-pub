@@ -100,6 +100,7 @@ public class HalloApp extends Application {
             ContentDb.getInstance().fixGroupMembership();
             ContentDb.getInstance().processFutureProofContent();
             EncryptedKeyStore.getInstance().ensureMigrated(); // TODO(jack): Remove after May 1
+            ContentDb.getInstance().migrateGroupTimestamps(); // TODO(clark): Remove after Oct 1
         });
     }
 

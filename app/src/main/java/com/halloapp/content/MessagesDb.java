@@ -337,6 +337,17 @@ class MessagesDb {
     }
 
     @WorkerThread
+    void updateGroupTimestamp(@NonNull GroupId groupId, long timestamp) {
+        Log.i("MessagesDb.updateGroupTimestamp " + groupId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        int updatedRowsCount;
+        try (SQLiteStatement statement = db.compileStatement("UPDATE " + ChatsTable.TABLE_NAME + " SET " +
+                ChatsTable.COLUMN_TIMESTAMP + "=" + timestamp + " WHERE " + ChatsTable.COLUMN_CHAT_ID + "='" + groupId.rawId() + "'")) {
+            statement.executeUpdateDelete();
+        }
+    }
+
+    @WorkerThread
     boolean setGroupTheme(@NonNull GroupId groupId, int theme) {
         Log.i("MessagesDb.setGroupBackground " + groupId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
