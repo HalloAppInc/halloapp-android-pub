@@ -237,7 +237,8 @@ public class ProfileFragment extends PostsFragment {
             return;
         }
         Contact contact = viewModel.getContact().getValue();
-        addToContactsView.setVisibility(contact == null || contact.addressBookName != null ? View.GONE : View.VISIBLE);
+        boolean showAddtoContacts = contact != null && contact.addressBookName != null && contact.addressBookPhone != null;
+        addToContactsView.setVisibility(showAddtoContacts ? View.GONE : View.VISIBLE);
     }
 
     @Override
