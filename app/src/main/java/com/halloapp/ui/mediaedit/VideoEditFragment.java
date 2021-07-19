@@ -123,8 +123,9 @@ public class VideoEditFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
-        MenuItem item = menu.findItem(R.id.mute);
-        item.setIcon(state != null && state.mute ? R.drawable.ic_volume_mute : R.drawable.ic_volume_up);
+        MenuItem muteMenuItem = menu.findItem(R.id.mute);
+        muteMenuItem.setVisible(isPlayerInitialized);
+        muteMenuItem.setIcon(state != null && state.mute ? R.drawable.ic_volume_mute : R.drawable.ic_volume_up);
     }
 
     @Override
