@@ -250,7 +250,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         editText.setText(ChatActivity.messageDrafts.get(chatId));
         editText.setMediaInputListener(uri -> startActivity(new Intent(getBaseContext(), ContentComposerActivity.class)
                 .putParcelableArrayListExtra(Intent.EXTRA_STREAM, new ArrayList<>(Collections.singleton(uri)))
-                .putExtra(ContentComposerActivity.EXTRA_CHAT_ID, chatId)));
+                .putExtra(ContentComposerActivity.EXTRA_CHAT_ID, chatId)
+                .putExtra(ContentComposerActivity.EXTRA_ALLOW_ADD_MEDIA, true)));
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

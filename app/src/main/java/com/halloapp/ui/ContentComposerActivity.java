@@ -93,6 +93,7 @@ import me.relex.circleindicator.CircleIndicator;
 
 public class ContentComposerActivity extends HalloActivity {
     public static final String EXTRA_CALLED_FROM_CAMERA = "called_from_camera";
+    public static final String EXTRA_ALLOW_ADD_MEDIA = "allow_add_media";
     public static final String EXTRA_CHAT_ID = "chat_id";
     public static final String EXTRA_GROUP_ID = "group_id";
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
@@ -116,6 +117,7 @@ public class ContentComposerActivity extends HalloActivity {
     private Toolbar toolbar;
     private View replyContainer;
 
+    private boolean allowAddMedia;
     private boolean calledFromCamera;
     private boolean calledFromPicker;
 
@@ -225,6 +227,7 @@ public class ContentComposerActivity extends HalloActivity {
             }
         }
         calledFromCamera = getIntent().getBooleanExtra(EXTRA_CALLED_FROM_CAMERA, false);
+        allowAddMedia = getIntent().getBooleanExtra(EXTRA_ALLOW_ADD_MEDIA, false);
 
         final Bundle editStates = getIntent().getParcelableExtra(MediaEditActivity.EXTRA_STATE);
 
@@ -879,7 +882,7 @@ public class ContentComposerActivity extends HalloActivity {
         final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.getEditMedia();
         final boolean editIsFocused = editText != null && editText.isFocused();
         if (mediaPairList != null && !mediaPairList.isEmpty() && !editIsFocused) {
-            addMediaButton.setVisibility(calledFromCamera ? View.GONE : View.VISIBLE);
+            addMediaButton.setVisibility(allowAddMedia ? View.VISIBLE : View.GONE);
             deletePictureButton.setVisibility(View.VISIBLE);
             cropPictureButton.setVisibility(View.VISIBLE);
         } else {

@@ -430,6 +430,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         GroupId groupId = getIntent().getParcelableExtra(EXTRA_GROUP_ID);
         intent.putExtra(ContentComposerActivity.EXTRA_CHAT_ID, chatId);
         intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, groupId);
+        intent.putExtra(ContentComposerActivity.EXTRA_ALLOW_ADD_MEDIA, true);
         intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_ID, getIntent().getStringExtra(EXTRA_REPLY_POST_ID));
         intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_MEDIA_INDEX, getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1));
 
