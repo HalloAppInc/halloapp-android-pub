@@ -184,7 +184,9 @@ public class HalloApp extends Application {
             Log.i("halloapp: onBackground");
             unregisterReceiver(receiver);
             unregisterReceiver(airplaneModeChangeReceiver);
-            Notifications.getInstance(HalloApp.this).setEnabled(true);
+            Notifications notifications = Notifications.getInstance(HalloApp.this);
+            notifications.setEnabled(true);
+            notifications.updateFeedNotifications();
             mainHandler.postDelayed(disconnectOnBackgroundedRunnable, 20000);
             Connection.getInstance().updatePresence(false);
         }
