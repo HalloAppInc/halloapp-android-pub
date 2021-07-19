@@ -355,8 +355,8 @@ class CommentsViewModel extends AndroidViewModel {
     }
 
     public void finishRecording(@Nullable String replyCommentId, boolean canceled) {
-        File recording = voiceNoteRecorder.finishRecording();
-        if (canceled) {
+        final File recording = voiceNoteRecorder.finishRecording();
+        if (canceled || recording == null) {
             return;
         }
         bgWorkers.execute(() -> {

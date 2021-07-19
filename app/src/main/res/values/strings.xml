@@ -100,6 +100,10 @@
         <item quantity="other">You can select up to %d items per post</item>
     </plurals>
 
+    <!-- Rationale for when requesting microphone permission for voice notes-->
+    <string name="voice_note_record_audio_permission_rationale">To record voice notes we need permission to access the microphone</string>
+    <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
+    <string name="voice_note_record_audio_permission_rationale_denied">To record voice notes we need permission to access the microphone.\n\nOpen the app settings screen to modify app permissions.</string>
     <string name="camera_record_audio_permission_rationale">To take photos and record videos we need permission to access the camera and record audio on your device</string>
     <string name="camera_record_audio_permission_rationale_denied">To take photos and record videos we need permission to access the camera and record audio on your device.\n\nOpen the app settings screen to modify app permissions.</string>
     <string name="contacts_permission_rationale">To connect with your friends and family we need permission to access contacts on your device</string>

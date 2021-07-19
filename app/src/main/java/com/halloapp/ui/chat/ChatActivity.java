@@ -1,5 +1,6 @@
 package com.halloapp.ui.chat;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -104,7 +105,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChatActivity extends HalloActivity {
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class ChatActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
     public static final String EXTRA_CHAT_ID = "chat_id";
     public static final String EXTRA_REPLY_POST_SENDER_ID = "reply_post_sender_id";
@@ -117,6 +121,8 @@ public class ChatActivity extends HalloActivity {
 
     private static final int REQUEST_CODE_COMPOSE = 1;
     private static final int REQUEST_CODE_VIEW_GROUP_INFO = 2;
+
+    private static final int REQUEST_PERMISSIONS_RECORD_VOICE_NOTE = 1;
 
     private static final int ADD_ANIMATION_DURATION = 60;
     private static final int MOVE_ANIMATION_DURATION = 125;
@@ -303,7 +309,11 @@ public class ChatActivity extends HalloActivity {
         recordBtn.setOnClickListener(v -> {
             Boolean isRecording = viewModel.isRecording().getValue();
             if (isRecording == null || !isRecording) {
-                viewModel.startRecording();
+                if (EasyPermissions.hasPermissions(this, Manifest.permission.RECORD_AUDIO)) {
+                    viewModel.startRecording();
+                } else {
+                    EasyPermissions.requestPermissions(this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSIONS_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
+                }
             } else {
                 viewModel.finishRecording(replyPostMediaIndex, false);
             }
@@ -1097,6 +1107,24 @@ public class ChatActivity extends HalloActivity {
             return oldItem.equals(newItem);
         }
     };
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        if (requestCode == REQUEST_PERMISSIONS_RECORD_VOICE_NOTE) {
+            if (EasyPermissions.hasPermissions(this, Manifest.permission.RECORD_AUDIO)) {
+                viewModel.startRecording();
+            }
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        if (requestCode == REQUEST_PERMISSIONS_RECORD_VOICE_NOTE) {
+            new AppSettingsDialog.Builder(this)
+                    .setRationale(getString(R.string.voice_note_record_audio_permission_rationale_denied))
+                    .build().show();
+        }
+    }
 
     private class ChatAdapter extends PagedListAdapter<Message, MessageViewHolder> {
 

@@ -323,7 +323,7 @@ public class ChatViewModel extends AndroidViewModel {
 
     public void finishRecording(int replyPostMediaIndex, boolean canceled) {
         File recording = voiceNoteRecorder.finishRecording();
-        if (canceled) {
+        if (canceled || recording == null) {
             return;
         }
         bgWorkers.execute(() -> {

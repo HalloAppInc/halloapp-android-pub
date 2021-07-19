@@ -1,7 +1,6 @@
 package com.halloapp.media;
 
 import android.media.MediaRecorder;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
 
@@ -22,6 +21,7 @@ public class VoiceNoteRecorder {
 
     private MediaRecorder mediaRecorder;
 
+    private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final FileStore fileStore = FileStore.getInstance();
 
     private int state;
@@ -136,13 +136,35 @@ public class VoiceNoteRecorder {
             Log.w("VoiceNoteRecording/finishRecording not currently recording");
             return null;
         }
-        mediaRecorder.stop();
-        mediaRecorder.reset();
-        mediaRecorder.release();
+        RuntimeException error = null;
+        try {
+            mediaRecorder.stop();
+            mediaRecorder.reset();
+            mediaRecorder.release();
+        } catch (RuntimeException e) {
+            Log.e("VoiceNoteRecorder/finishRecording failed to finish");
+            error = e;
+        }
         mediaRecorder = null;
         state = STATE_NOT_READY;
         isRecording.postValue(false);
         recorderHandler.removeCallbacks(updatePlayback);
+        if (error != null) {
+            final File loc = recordingLocation;
+            recordingLocation = null;
+            bgWorkers.execute(() -> {
+                if (loc == null) {
+                    return;
+                }
+                if (loc.exists()) {
+                    if (loc.delete()) {
+                        Log.i("VoiceNoteRecorder/finishRecording tmp file successfully deleted");
+                    } else {
+                        Log.e("VoiceNoteRecorder/finishRecording tmp failed to delete");
+                    }
+                }
+            });
+        }
         return recordingLocation;
     }
 

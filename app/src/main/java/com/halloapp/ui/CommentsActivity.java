@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -97,7 +98,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class CommentsActivity extends HalloActivity {
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class CommentsActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
     public static final String EXTRA_POST_SENDER_USER_ID = "post_sender_user_id";
     public static final String EXTRA_POST_ID = "post_id";
@@ -110,6 +114,8 @@ public class CommentsActivity extends HalloActivity {
     private static final String KEY_REPLY_USER_ID = "reply_user_id";
 
     private static final int REQUEST_CODE_PICK_MEDIA = 1;
+
+    private static final int REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE = 1;
 
     private static final int VOICE_RECORDING_ANIMATION_DURATION = 1000;
 
@@ -420,13 +426,15 @@ public class CommentsActivity extends HalloActivity {
         recordBtn.setOnClickListener(v -> {
             Boolean isRecording = viewModel.isRecording().getValue();
             if (isRecording == null || !isRecording) {
-                viewModel.startRecording();
+                if (EasyPermissions.hasPermissions(this, Manifest.permission.RECORD_AUDIO)) {
+                    viewModel.startRecording();
+                } else {
+                    EasyPermissions.requestPermissions(this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
+                }
             } else {
                 viewModel.finishRecording(this.replyCommentId, false);
             }
         });
-
-
 
         final View recordingIndicator = findViewById(R.id.recording_icon);
         final View deleteRecording = findViewById(R.id.delete_voice_note);
@@ -670,6 +678,22 @@ public class CommentsActivity extends HalloActivity {
         replyCommentId = null;
         viewModel.resetReplyUser();
         viewModel.resetCommentMediaUri();
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        if (requestCode == REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE) {
+            viewModel.startRecording();
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        if (requestCode == REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE) {
+            new AppSettingsDialog.Builder(this)
+                    .setRationale(getString(R.string.voice_note_record_audio_permission_rationale_denied))
+                    .build().show();
+        }
     }
 
     private class VoiceNoteViewHolder extends ViewHolder {
