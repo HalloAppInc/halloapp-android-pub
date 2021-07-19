@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
+<?xml version="1.0" encoding="UTF-8"?><resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"घर"</string>
     <string name="title_messages">"बातचीत"</string>
@@ -16,7 +15,7 @@
     <string name="message_notifications_channel_name">"संदेश सूचनाएं"</string>
     <string name="critical_notifications_channel_name">"महत्वपूर्ण एप्लिकेशन अलर्ट"</string>
     <string name="invite_notifications_channel_name">"सूचनाएं आमंत्रित करें"</string>
-    <string name="invite_notification_text">"%s ने HalloApp में शामिल होने के लिए आपके निमंत्रण को अभी स्वीकार किया है 🎉"</string>
+    <string name="invite_notification_text">"%s ने HalloApp में शामिल होने के लिए आपके निमंत्रण को अभी स्वीकार किया है &#127881;"</string>
     <string name="me">"मैं"</string>
     <string name="you">"आप"</string>
     <string name="camera_post">"कैमरा"</string>
@@ -48,7 +47,7 @@
     <!-- Fuzzy -->
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s HalloApp पर हैI"</string>
-    <string name="new_chat_name_placeholder">"%s HalloApp का उपयोग कर रहा है! 🎉"</string>
+    <string name="new_chat_name_placeholder">"%s HalloApp का उपयोग कर रहा है! &#127881;"</string>
     <string name="posts_empty">"आपके पोस्ट यहां दिखाई देंगे"</string>
     <string name="posts_exchange_numbers">"कनेक्ट करने के लिए आपको फोन नंबर एक्सचेंज करना होगा"</string>
     <string name="home_page_empty">"आपके संपर्कों के पोस्ट यहां दिखाई देंगे"</string>
@@ -62,30 +61,6 @@
     <string name="invalid_phone_number">"अवैध फोन नंबर"</string>
     <string name="share_option_post">"पोस्ट"</string>
     <string name="share_option_message">"संदेश"</string>
-    <plurals name="time_diff_minutes">
-        <item quantity="one">"%dm"</item>
-        <item quantity="other">"%dm"</item>
-    </plurals>
-    <plurals name="time_diff_minutes_long">
-        <item quantity="one">"%d मिनट पहले"</item>
-        <item quantity="other">"%d मिनट पहले"</item>
-    </plurals>
-    <plurals name="time_diff_hours">
-        <item quantity="one">"%dh"</item>
-        <item quantity="other">"%dh"</item>
-    </plurals>
-    <plurals name="time_diff_hours_long">
-        <item quantity="one">"%d घंटा पहले"</item>
-        <item quantity="other">"%d घंटे पहले"</item>
-    </plurals>
-    <plurals name="time_diff_days">
-        <item quantity="one">"एक %dd"</item>
-        <item quantity="other">"अन्य %dd"</item>
-    </plurals>
-    <plurals name="time_diff_days_long">
-        <item quantity="one">"%d दिन पहले"</item>
-        <item quantity="other">"%d दिन पहले"</item>
-    </plurals>
     <plurals name="max_post_media_items">
         <item quantity="one">"आप प्रति पोस्ट पर %d आइटम का चयन कर सकते हैं "</item>
         <item quantity="other">"आप प्रति पोस्ट पर %d आइटम का चयन कर सकते हैं"</item>
@@ -432,11 +407,6 @@ version: %2$s
     <string name="user_typing">"टाइपिंग …"</string>
     <string name="group_user_typing">"%s टाइप कर रहा है …"</string>
     <string name="group_many_users_typing">"टाइप करने वाले कई उपयोगकर्ता …"</string>
-    <string name="messages_nux_text">"यह वह जगह है जहाँ आप अपने मित्रों और परिवार से संदेश प्राप्त करेंगे। जब कोई नया व्यक्ति HalloApp से जुड़ता है तो आप उन्हें यहाँ देख सकते हैं।"</string>
-    <string name="post_audience_nux_text">"आपकी पोस्ट आपके फ़ोन संपर्कों के साथ साझा की जाएगी जो HalloApp का उपयोग करते हैं। आप प्रोफ़ाइल → सेटिंग पर जाकर अपनी पोस्ट तक उनकी पहुंच सीमित कर सकते हैं।"</string>
-    <string name="activity_center_nux">"यह आपका गतिविधि केंद्र है। अपनी सबसे हाल की गतिविधि देखने के लिए टैप करें।"</string>
-    <string name="home_feed_nux">"अपने home फ़ीड में आपका स्वागत है! यह वह जगह है जहां आप अपने फोन संपर्कों से पोस्ट देख सकते हैं जो HalloApp का उपयोग करते हैं।"</string>
-    <string name="home_feed_nux_learn_more">"और अधिक जानें"</string>
     <string name="camera_error_generic">"कैमरा विफलता"</string>
     <string name="camera_error_photo">"फ़ोटो नहीं ले सका।"</string>
     <string name="camera_error_video">"वीडियो रिकॉर्ड नहीं किया जा सका।"</string>
@@ -458,12 +428,10 @@ version: %2$s
         <item quantity="one">"Your video is over %d second long. Please select another video or edit it."</item>
         <item quantity="other">"Your video is over %d second long. Please select another video or edit it."</item>
     </plurals>
-    <string name="video_edit_unable_trim">"Video trimming was unsuccessful."</string>
     <string name="mute">"Mute"</string>
     <string name="share_link">"Share link"</string>
     <string name="copy_link">"Copy link"</string>
     <string name="reset_link">"Reset link"</string>
-    <string name="invite_links_not_currently_supported">"Invite links are not supported yet"</string>
     <string name="view_group_invite_link_action">"View group invite"</string>
     <string name="invite_link_resetting_progress">"Resetting link…"</string>
     <string name="invite_link_reset">"Link reset"</string>
@@ -478,7 +446,6 @@ version: %2$s
     <string name="join_group_action">"Join group"</string>
     <string name="system_message_you_joined">"You joined the group via invite link"</string>
     <string name="system_message_joined">"%s joined the group via invite link"</string>
-    <string name="activity_center_welcome">"Hallo!"</string>
     <string name="post_preview_retracted">"%s deleted a post"</string>
     <string name="system_message_group_bg_changed">"%s changed the background color"</string>
     <string name="system_message_group_bg_changed_by_you">"You changed the background color"</string>
@@ -693,4 +660,8 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Dialog shown to user before requesting contact permissions, but user has previously denied them, so they must go to settings -->
     <string name="contact_permissions_request_permanently_denied">"Allow HalloApp access to your contacts so you can send and receive updates. Tap Settings &gt; Permissions, and turn Contacts on"</string>
+
+    <!-- Banner explaining why user can't leave a comment in a group they've left -->
+    <string name="no_longer_group_member">"You're no longer a member of this group"</string>
 </resources>
+

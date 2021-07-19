@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
+<?xml version="1.0" encoding="UTF-8"?><resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Home"</string>
     <string name="title_messages">"Chats"</string>
@@ -18,11 +17,11 @@
     <string name="message_notifications_channel_name">"Benachrichtigungen"</string>
     <string name="critical_notifications_channel_name">"Wichtige App-Warnmeldungen"</string>
     <string name="invite_notifications_channel_name">"Einladungs-Mitteilungen"</string>
-    <string name="invite_notification_text">"%s hat deine Einladung zu HalloApp 🎉 angenommen"</string>
+    <string name="invite_notification_text">"%s hat deine Einladung zu HalloApp &#127881; angenommen"</string>
     <string name="me">"Ich"</string>
     <string name="you">"Du"</string>
     <string name="camera_post">"Kamera"</string>
-    <string name="gallery_post">"Gallerie"</string>
+    <string name="gallery_post">"Galerie"</string>
     <string name="text_post">"Text"</string>
     <string name="bad_image">"Nicht unterstützter Medientyp"</string>
     <string name="time_diff_now">"Gerade eben"</string>
@@ -53,7 +52,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <!-- Fuzzy translation?  Pls. provide more details -->
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s ist auf HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s ist jetzt aktiv auf HalloApp! 🎉"</string>
+    <string name="new_chat_name_placeholder">"%s ist jetzt aktiv auf HalloApp! &#127881;"</string>
     <string name="posts_empty">"Deine Beiträge erscheinen hier"</string>
     <string name="posts_exchange_numbers">"Um den Kontakt herzustellen, müsst ihr eure Handynummern austauschen"</string>
     <string name="home_page_empty">"Beiträge deiner Kontakte siehst du hier"</string>
@@ -67,36 +66,6 @@ Kosten deines Service-Providers könnten anfallen."</string>
 
     <!-- the verb? -->
     <string name="share_option_message">"Nachricht"</string>
-
-    <!-- pls provide more details -->
-    <plurals name="time_diff_minutes">
-        <item quantity="one">"%d Min."</item>
-        <item quantity="other">"%d Min."</item>
-    </plurals>
-    <plurals name="time_diff_minutes_long">
-        <item quantity="one">"vor %d Minute"</item>
-        <item quantity="other">"vor %d Minuten"</item>
-    </plurals>
-
-    <!-- ? Pls provide more details -->
-    <plurals name="time_diff_hours">
-        <item quantity="one">"%d Std."</item>
-        <item quantity="other">"%d Std."</item>
-    </plurals>
-    <plurals name="time_diff_hours_long">
-        <item quantity="one">"vor %d Stunde"</item>
-        <item quantity="other">"vor %d Stunden"</item>
-    </plurals>
-
-    <!-- pls provide more details -->
-    <plurals name="time_diff_days">
-        <item quantity="one">"%d Tag"</item>
-        <item quantity="other">"%d Tage"</item>
-    </plurals>
-    <plurals name="time_diff_days_long">
-        <item quantity="one">"vor %d Tag"</item>
-        <item quantity="other">"vor %d Tagen"</item>
-    </plurals>
 
     <!-- pls provide more details -->
     <plurals name="max_post_media_items">
@@ -185,7 +154,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="notify_comments">"Kommentare"</string>
     <string name="read_more">"Mehr erfahren"</string>
     <string name="no_photos_or_videos_found">"Keine Fotos oder Videos gefunden"</string>
-    <string name="gallery">"Gallerie"</string>
+    <string name="gallery">"Galerie"</string>
     <string name="avatar_picker_title">"Profilbild"</string>
     <string name="group_avatar_picker_title">"Gruppenbild"</string>
     <string name="other_media">"Andere Medien"</string>
@@ -381,12 +350,12 @@ Version: %2$s
     <string name="group_info_title">"Gruppen-Info"</string>
     <string name="admin">"Admin"</string>
     <string name="save">"Speichern"</string>
-    <string name="contact_picker_feed_except_title">"Meine Kontakte außer..."</string>
-    <string name="contact_picker_feed_only_title">"Teile Beiträge mit ..."</string>
+    <string name="contact_picker_feed_except_title">"Meine Kontakte außer…"</string>
+    <string name="contact_picker_feed_only_title">"Teile Beiträge mit …"</string>
     <string name="setting_feed_privacy_title">"Wer kann meine Beiträge sehen"</string>
     <string name="setting_feed_all">"Meine Kontakte"</string>
-    <string name="setting_feed_only">"Nur teilen mit..."</string>
-    <string name="setting_feed_except">"Meine Kontakte außer ..."</string>
+    <string name="setting_feed_only">"Nur teilen mit…"</string>
+    <string name="setting_feed_except">"Meine Kontakte außer …"</string>
     <string name="feed_privacy_fail_to_load">"Fehler beim Hochladen der Privatsphäre-Einstellungen"</string>
     <string name="feed_privacy_update_success">"Einstellung erfolgreich aktualisiert"</string>
     <string name="feed_privacy_update_failure">"Fehler bei der Aktualisierung der Einstellung"</string>
@@ -395,7 +364,7 @@ Version: %2$s
     <string name="invite_failed_invalid_number">"Diese Handynummer ist ungültig"</string>
     <string name="invite_failed_existing_user">"Dein Kontakt ist bereits auf HalloApp!"</string>
     <string name="invite_failed_unknown">"Fehler beim Versenden der Einladung"</string>
-    <string name="invite_creation_in_progress">"Einladung wird erstellt..."</string>
+    <string name="invite_creation_in_progress">"Einladung wird erstellt…"</string>
     <string name="invite_info_fetch_internet">"Fehler beim Abrufen der Einladungs-Info, überprüfe deine Internetverbindung und versuche es noch einmal"</string>
 
     <!-- Fuzzy -->
@@ -412,7 +381,7 @@ Version: %2$s
     <string name="done">"Fertig"</string>
     <string name="members_header">"Mitglieder (%s)"</string>
     <string name="add_members">"Mitglieder hinzufügen"</string>
-    <string name="add_members_in_progress">"Mitglieder werden hinzugefügt..."</string>
+    <string name="add_members_in_progress">"Mitglieder werden hinzugefügt…"</string>
     <string name="failed_add_members">"Fehler beim Hinzufügen von Mitgliedern, probiere es später noch einmal"</string>
     <string name="create_group_in_progress">"Gruppe %s… wird gegründet"</string>
     <string name="new_group_title">"Gruppennamen erstellen"</string>
@@ -425,9 +394,9 @@ Version: %2$s
     <string name="promote_admin_in_progress">"Admin-Übertragung läuft"</string>
     <string name="failed_promote_admin">"Fehler bei Vergabe von Admin-Rechten, probiere es später noch einmal"</string>
     <string name="group_demote_from_admin">"Admin entfernen"</string>
-    <string name="demote_admin_in_progress">"Admin wird entfernt..."</string>
+    <string name="demote_admin_in_progress">"Admin wird entfernt…"</string>
     <string name="failed_demote_admin">"Fehler bei der Admin-Entfernung, probiere es später noch einmal"</string>
-    <string name="remove_member_in_progress">"Mitglied entfernen..."</string>
+    <string name="remove_member_in_progress">"Mitglied entfernen…"</string>
     <string name="failed_remove_member">"Fehler bei Löschung des Mitglieds, probiere es später noch einmal"</string>
     <string name="leave_group">"Gruppe verlassen"</string>
     <plurals name="leave_group_plural">
@@ -439,10 +408,10 @@ Version: %2$s
         <item quantity="one">"Möchtest du diese Gruppe verlassen?"</item>
         <item quantity="other">"Möchtest Du die %d ausgewählten Gruppen verlassen?"</item>
     </plurals>
-    <string name="leave_group_in_progress">"Gruppe wird verlassen..."</string>
+    <string name="leave_group_in_progress">"Gruppe wird verlassen…"</string>
     <plurals name="leave_groups_progress">
-        <item quantity="one">"Gruppe wird verlassen..."</item>
-        <item quantity="other">"Gruppen werden verlassen..."</item>
+        <item quantity="one">"Gruppe wird verlassen…"</item>
+        <item quantity="other">"Gruppen werden verlassen…"</item>
     </plurals>
     <string name="failed_leave_group">"Fehler beim Verlassen der Gruppe, probiere es später noch einmal"</string>
     <string name="delete_group">"Gruppe löschen"</string>
@@ -470,7 +439,7 @@ Version: %2$s
     <string name="connectivity_info_not_connected">"Kein Netz"</string>
     <string name="blocking_user_failed_check_internet">"%s kann nicht geblockt werden. Überprüfe deine Internetverbindung und versuche es später noch einmal."</string>
     <string name="blocking_user_successful">"%s wurde geblockt"</string>
-    <string name="blocking_user_in_progress">"%s wird geblockt..."</string>
+    <string name="blocking_user_in_progress">"%s wird geblockt…"</string>
     <string name="unblocking_user_successful">"%s ist freigegeben"</string>
     <string name="unblocking_user_failed_check_internet">"%s kann nicht freigegeben werden. Überprüfe deine Internetverbindung und versuche es später noch einmal."</string>
     <string name="unblocking_user_in_progress">"Freigabe von %s"</string>
@@ -478,17 +447,9 @@ Version: %2$s
     <string name="hide_future_posts_confirmation">"Bist du dir sicher, dass du alle deine zukünftigen Beiträge vor %s verbergen möchtest? Du kannst dies später jederzeit ändern."</string>
     <string name="feed_privacy_hide_success">"Privatsphäre-Feed wurde aktualisiert. Beiträge von %s werden ausgeblendet"</string>
     <string name="feed_privacy_hide_failure">"Fehler bei der Aktualisierung des Privatsphäre-Feeds. Überprüfe deine Internetverbindung und versuche es noch einmal"</string>
-    <string name="user_typing">"schreibt..."</string>
-    <string name="group_user_typing">"%s schreibt..."</string>
-    <string name="group_many_users_typing">"mehrere Benutzer schreiben..."</string>
-    <string name="messages_nux_text">"Hier findest du Nachrichten von deinen Freunden und deiner Familie. Du siehst hier auch, wenn sich jemand neu bei HalloApp angemeldet hat."</string>
-    <string name="post_audience_nux_text">"Deine Beiträge werden mit deinen Kontakten, die auch auf HalloApp sind, geteilt. Du kannst deren Zugriff auf deine Beiträge unter Profil→Einstellungen einschränken."</string>
-
-    <!-- Aktivitäten-Center is the German translation for "activity center". But it is really not that common and it really does not "sit with me well" . Would it be ok to just go with "Tap to see..."? -->
-    <!-- Fuzzy -->
-    <string name="activity_center_nux">"Hier ist dein Aktivitäten-Center. Tippe hier, um die neuesten Aktivitäten zu sehen."</string>
-    <string name="home_feed_nux">"Herzlich willkommen auf deiner Home-Feed-Seite! Hier siehst du Beiträge deiner HalloApp-Kontakte."</string>
-    <string name="home_feed_nux_learn_more">"Mehr erfahren"</string>
+    <string name="user_typing">"schreibt…"</string>
+    <string name="group_user_typing">"%s schreibt…"</string>
+    <string name="group_many_users_typing">"mehrere Benutzer schreiben…"</string>
     <string name="camera_error_generic">"Kamerafehler."</string>
     <string name="camera_error_photo">"Foto konnte nicht gemacht werden."</string>
     <string name="camera_error_video">"Video konnte nicht aufgenommen werden."</string>
@@ -512,21 +473,19 @@ Version: %2$s
         <item quantity="one">"Dein Video ist über %d Sekunde lang. Bitte bearbeite es oder wähle ein anderes Video aus."</item>
         <item quantity="other">"Dein Video ist über %d Sekunden lang. Bitte bearbeite es oder wähle ein anderes Video aus."</item>
     </plurals>
-    <string name="video_edit_unable_trim">"Das Video konnte nicht getrimmt werden."</string>
 
     <!-- noun or verb? -->
     <string name="mute">"Stumm schalten"</string>
     <string name="share_link">"Link teilen"</string>
     <string name="copy_link">"Link kopieren"</string>
     <string name="reset_link">"Link zurücksetzen"</string>
-    <string name="invite_links_not_currently_supported">"Einladungs-Links werden noch nicht unterstützt"</string>
     <string name="view_group_invite_link_action">"Gruppeneinladung anzeigen"</string>
-    <string name="invite_link_resetting_progress">"Link wird zurückgesetzt..."</string>
+    <string name="invite_link_resetting_progress">"Link wird zurückgesetzt…"</string>
     <string name="invite_link_reset">"Link zurücksetzen"</string>
     <string name="invite_link_reset_failed">"Link konnte nicht zurückgesetzt werden"</string>
     <string name="reset_invite_link_confirmation">"Möchtest du den Link zur Gruppeneinladung zurücksetzen?"</string>
-    <string name="invite_link_joining">"Gruppe wird beigetreten..."</string>
-    <string name="invite_link_loading">"Gruppe wird hochgeladen..."</string>
+    <string name="invite_link_joining">"Gruppe wird beigetreten…"</string>
+    <string name="invite_link_loading">"Gruppe wird hochgeladen…"</string>
     <string name="invite_link_copied">"Link wurde kopiert!"</string>
     <string name="invite_link_title">"Einladungs-Link"</string>
     <string name="invite_link_summary">"Alle Kontakte auf HalloApp können diesen Link nutzen, um dieser Gruppe beizutreten."</string>
@@ -534,14 +493,13 @@ Version: %2$s
     <string name="join_group_action">"Der Gruppe beitreten"</string>
     <string name="system_message_you_joined">"Du bist der Gruppe über einen Einladungs-Link beigetreten"</string>
     <string name="system_message_joined">"%s ist der Gruppe über einen Einladungs-Link beigetreten"</string>
-    <string name="activity_center_welcome">"Hallo!"</string>
 
     <!-- Note: This is translated when someone else did it. Need new string for when "you" did it. -->
     <string name="post_preview_retracted">"%s hat einen Beitrag gelöscht"</string>
     <string name="system_message_group_bg_changed">"%s hat die Hintergrundfarbe geändert"</string>
     <string name="system_message_group_bg_changed_by_you">"Du hast die Hintergrundfarbe geändert"</string>
     <string name="group_background_hint">"Hintergrund"</string>
-    <string name="group_background_saving_dialog">"Hintergrund wird gespeichert..."</string>
+    <string name="group_background_saving_dialog">"Hintergrund wird gespeichert…"</string>
     <string name="group_background_save_failed">"Fehler beim Festlegen des Gruppenhintergrunds"</string>
     <string name="group_background_save_success">"Gruppenhintergrund aktualisiert"</string>
     <string name="group_background_color">"Farbe"</string>
@@ -570,10 +528,10 @@ Version: %2$s
 &lt;a href=\"update-app\"&gt;Aktualisiere deine App&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
-    <string name="registration_sms_retry_progress">"Neuer SMS-Code wird gesendet..."</string>
+    <string name="registration_sms_retry_progress">"Neuer SMS-Code wird gesendet…"</string>
 
     <!-- message when user requests a voice call -->
-    <string name="registration_phone_code_progress">"Code via Anruf angefordert..."</string>
+    <string name="registration_phone_code_progress">"Code via Anruf angefordert…"</string>
 
     <!-- button to request another sms code -->
     <!-- Fuzzy -->
@@ -608,10 +566,10 @@ Version: %2$s
     <string name="faq">"FAQ"</string>
 
     <!-- Shown in progress dialog when loading key verification info -->
-    <string name="key_verification_fetching_keys">"Schlüsseldaten werden abgerufen..."</string>
+    <string name="key_verification_fetching_keys">"Schlüsseldaten werden abgerufen…"</string>
 
     <!-- Shown when we fail to get key verification info -->
-    <string name="key_verification_key_fetch_failed">"Schlüsseldaten können nicht abgerufen werden..."</string>
+    <string name="key_verification_key_fetch_failed">"Schlüsseldaten können nicht abgerufen werden…"</string>
 
     <!-- Shown inline in a chat when the e2e keys securing the messages have changed, i.e. if the other user changes phones or reinstalls -->
     <string name="system_message_keys_changed">"Der Sicherheitsschlüssel von %s hat sich geändert"</string>
@@ -663,10 +621,10 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="request_data_title">"Meine Daten anfordern"</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature -->
-    <string name="save_to_gallery_storage_permission_rationale">"Für die Speicherung der Medien in der Gallerie, benötigen wir deine Erlaubnis, um auf den Speicher deines Geräts zugreifen zu können."</string>
+    <string name="save_to_gallery_storage_permission_rationale">"Für die Speicherung der Medien in der Galerie, benötigen wir deine Erlaubnis, um auf den Speicher deines Geräts zugreifen zu können."</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature. This is used when the user needs to manually go to their settings -->
-    <string name="save_to_gallery_storage_permission_rationale_denied">"Für die Speicherung der Medien in der Gallerie, benötigen wir deine Erlaubnis, um auf den Speicher deines Geräts zugreifen zu können.
+    <string name="save_to_gallery_storage_permission_rationale_denied">"Für die Speicherung der Medien in der Galerie, benötigen wir deine Erlaubnis, um auf den Speicher deines Geräts zugreifen zu können.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
 
@@ -704,7 +662,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="export_account_data">"Meine Daten exportieren"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
-    <string name="e2e_notice">"Die Chats sind Ende-zu-Ende verschlüsselt und HalloApp hat darauf keinen Zugriff. Tippe hier, um mehr zu erfahren."</string>
+    <string name="e2e_notice">"Die Chats sind Ende-zu-Ende verschlüsselt und HalloApp hat keinen Zugriff darauf. Tippe hier, um mehr zu erfahren."</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"Sicherheitsnummer anzeigen"</string>
@@ -749,11 +707,15 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="settings_share_option">"HalloApp teilen"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <string name="share_halloapp_text">"Mach mit bei HalloApp! Download kostenlos auf halloapp.com/dl"</string>
+    <string name="share_halloapp_text">"Mach mit bei HalloApp! Kostenlos herunterladen auf halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
     <string name="contact_permissions_request">"Erlaube HalloApp den Zugriff auf deine Kontakte, damit du Updates senden und empfangen kannst."</string>
 
     <!-- Dialog shown to user before requesting contact permissions, but user has previously denied them, so they must go to settings -->
     <string name="contact_permissions_request_permanently_denied">"Erlaube HalloApp den Zugriff auf deine Kontakte, damit du Updates senden und empfangen kannst. Tippe auf Einstellungen &gt; Berechtigungen und aktiviere Kontakte"</string>
+
+    <!-- Banner explaining why user can't leave a comment in a group they've left -->
+    <string name="no_longer_group_member">"Du bist kein Mitglied dieser Gruppe mehr"</string>
 </resources>
+

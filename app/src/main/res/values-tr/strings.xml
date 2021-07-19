@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
+<?xml version="1.0" encoding="UTF-8"?><resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Ana sayfa"</string>
     <string name="title_messages">"Sohbetler"</string>
@@ -18,7 +17,7 @@
     <string name="message_notifications_channel_name">"Mesaj bildirimleri"</string>
     <string name="critical_notifications_channel_name">"Önemli uygulama uyarıları"</string>
     <string name="invite_notifications_channel_name">"Davet bildirimleri"</string>
-    <string name="invite_notification_text">"%s, HalloApp'e katılma davetini kabul etti 🎉"</string>
+    <string name="invite_notification_text">"%s, HalloApp'e katılma davetini kabul etti &#127881;"</string>
     <string name="me">"Ben"</string>
     <string name="you">"Sen"</string>
     <string name="camera_post">"Kamera"</string>
@@ -48,7 +47,7 @@
     <!-- Fuzzy -->
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s, HalloApp'te"</string>
-    <string name="new_chat_name_placeholder">"%s, HalloApp kullanıyor! 🎉"</string>
+    <string name="new_chat_name_placeholder">"%s, HalloApp kullanıyor! &#127881;"</string>
     <string name="posts_empty">"Gönderilerin burada görünecek"</string>
     <string name="posts_exchange_numbers">"İletişim kurmak için birbirinize telefon numaralarınızı vermelisiniz"</string>
     <string name="home_page_empty">"Kişilerinin paylaştıkları gönderiler, burada görünecek"</string>
@@ -57,37 +56,13 @@
     <string name="groups_page_empty">"Grupların burada görünecek"</string>
 
     <!-- %s, refers to person, right? -->
-    <string name="groups_search_empty">"%s kişisinin bulunduğu bir grup bulunamadı"</string>
+    <string name="groups_search_empty">"%s için bir grup bulunamadı"</string>
     <string name="contact_profile_empty">"%s kişisinin gönderileri burada görünecek"</string>
     <string name="invalid_phone_number">"Geçersiz numara"</string>
 
     <!-- Noun or verb? -->
     <string name="share_option_post">"Gönderi"</string>
     <string name="share_option_message">"Mesaj"</string>
-    <plurals name="time_diff_minutes">
-        <item quantity="one">"%ddk"</item>
-        <item quantity="other">"%ddk"</item>
-    </plurals>
-    <plurals name="time_diff_minutes_long">
-        <item quantity="one">"%d dakika önce"</item>
-        <item quantity="other">"%d dakika önce"</item>
-    </plurals>
-    <plurals name="time_diff_hours">
-        <item quantity="one">"%ds"</item>
-        <item quantity="other">"%ds"</item>
-    </plurals>
-    <plurals name="time_diff_hours_long">
-        <item quantity="one">"%d saat önce"</item>
-        <item quantity="other">"%d saat önce"</item>
-    </plurals>
-    <plurals name="time_diff_days">
-        <item quantity="one">"%dg"</item>
-        <item quantity="other">"%dg"</item>
-    </plurals>
-    <plurals name="time_diff_days_long">
-        <item quantity="one">"%d gün önce"</item>
-        <item quantity="other">"%d gün önce"</item>
-    </plurals>
     <plurals name="max_post_media_items">
         <item quantity="one">"Gönderi başına en fazla %d öge seçebilirsin"</item>
         <item quantity="other">"Gönderi başına en fazla %d öge seçebilirsin"</item>
@@ -409,7 +384,7 @@ version: %2$s
     <string name="invite_failed_invalid_number">"Telefon numarası geçersiz"</string>
     <string name="invite_failed_existing_user">"Arkadaşın zaten HalloApp'te!"</string>
     <string name="invite_failed_unknown">"Davet gönderilemedi"</string>
-    <string name="invite_creation_in_progress">"Davet oluşturuluyor..."</string>
+    <string name="invite_creation_in_progress">"Davet oluşturuluyor…"</string>
     <string name="invite_info_fetch_internet">"Davet bilgileri alınamadı. İnternet bağlantını kontrol et ve tekrar dene"</string>
 
     <!-- Fuzzy -->
@@ -428,7 +403,7 @@ version: %2$s
     <string name="add_members">"Üye ekle"</string>
     <string name="add_members_in_progress">"Üye ekleniyor…"</string>
     <string name="failed_add_members">"Üye ekleme başarısız, daha sonra tekrar dene"</string>
-    <string name="create_group_in_progress">" %s adlı grup oluşturuluyor..."</string>
+    <string name="create_group_in_progress">" %s adlı grup oluşturuluyor…"</string>
     <string name="new_group_title">"Grubuna bir ad ver"</string>
     <string name="group_picker_title">"Yeni grup"</string>
     <string name="button_create_group">"Oluştur"</string>
@@ -436,12 +411,12 @@ version: %2$s
     <string name="failed_create_group">"Grup oluşturma başarısız, daha sonra tekrar dene"</string>
     <string name="group_remove_member">"Çıkar"</string>
     <string name="group_promote_to_admin">"Yönetici yap"</string>
-    <string name="promote_admin_in_progress">"Yönetici yapılıyor..."</string>
+    <string name="promote_admin_in_progress">"Yönetici yapılıyor…"</string>
     <string name="failed_promote_admin">"Yönetici yapma başarısız, daha sonra tekrar dene"</string>
     <string name="group_demote_from_admin">"Yöneticilikten çıkar"</string>
-    <string name="demote_admin_in_progress">"Yöneticilikten çıkarılıyor..."</string>
+    <string name="demote_admin_in_progress">"Yöneticilikten çıkarılıyor…"</string>
     <string name="failed_demote_admin">"Yönetici çıkarma başarısız, daha sonra tekrar dene"</string>
-    <string name="remove_member_in_progress">"Üye çıkarılıyor..."</string>
+    <string name="remove_member_in_progress">"Üye çıkarılıyor…"</string>
     <string name="failed_remove_member">"Üye çıkarma başarısız, daha sonra tekrar dene"</string>
     <string name="leave_group">"Gruptan ayrıl"</string>
     <plurals name="leave_group_plural">
@@ -455,10 +430,10 @@ version: %2$s
     </plurals>
 
     <!-- I guess this means "you are leaving the group?", right? I might change with a better translation if so. -->
-    <string name="leave_group_in_progress">"Gruptan ayrılınıyor..."</string>
+    <string name="leave_group_in_progress">"Gruptan ayrılınıyor…"</string>
     <plurals name="leave_groups_progress">
-        <item quantity="one">"Gruptan ayrılınıyor... "</item>
-        <item quantity="other">"Gruplardan ayrılınıyor..."</item>
+        <item quantity="one">"Gruptan ayrılınıyor… "</item>
+        <item quantity="other">"Gruplardan ayrılınıyor…"</item>
     </plurals>
     <string name="failed_leave_group">"Gruptan ayrılma başarısız, daha sonra tekrar dene"</string>
     <string name="delete_group">"Grubu sil"</string>
@@ -488,22 +463,17 @@ version: %2$s
     <string name="connectivity_info_not_connected">"Ağ yok"</string>
     <string name="blocking_user_failed_check_internet">"%s engellenemiyor. İnternet bağlantını kontrol et ve tekrar dene"</string>
     <string name="blocking_user_successful">"%s engellendi"</string>
-    <string name="blocking_user_in_progress">"%s engelleniyor..."</string>
+    <string name="blocking_user_in_progress">"%s engelleniyor…"</string>
     <string name="unblocking_user_successful">"%s kişisinin engeli kaldırıldı"</string>
     <string name="unblocking_user_failed_check_internet">"%s kişisinin engeli kaldırılamıyor. İnternet bağlantını kontrol et ve tekrar dene"</string>
-    <string name="unblocking_user_in_progress">"%s kişisinin engeli kaldırılıyor..."</string>
+    <string name="unblocking_user_in_progress">"%s kişisinin engeli kaldırılıyor…"</string>
     <string name="are_you_sure_dialog_title">"Emin misin?"</string>
     <string name="hide_future_posts_confirmation">"Gelecekteki bütün gönderilerini %s kişisinden gizlemek istediğine emin misin? Bunu daha sonra değiştirebilirsin."</string>
     <string name="feed_privacy_hide_success">"Yayın gizliliği güncellendi. %s kişisinin gönderileri gizleniyor"</string>
     <string name="feed_privacy_hide_failure">"Yayın gizliliği güncellemesi başarısız. Bağlantını kontrol et ve tekrar dene"</string>
-    <string name="user_typing">"yazıyor..."</string>
-    <string name="group_user_typing">"%s yazıyor..."</string>
-    <string name="group_many_users_typing">"Birden çok kişi yazıyor..."</string>
-    <string name="messages_nux_text">"Ailenden ve arkadaşlarından gelen mesajları burada bulabilirsin. HalloApp'e yeni biri katıldığında, onu burada görebilirsin."</string>
-    <string name="post_audience_nux_text">"Gönderilerin, rehberinde bulunan ve HalloApp kullanan kişilerle paylaşılacak. Profil→Ayarlar'a giderek gönderilerine erişimlerini sınırlayabilirsin."</string>
-    <string name="activity_center_nux">"Burası senin hareket merkezin. En son etkinliğini görmek için dokun."</string>
-    <string name="home_feed_nux">"Ana sayfana hoş geldin! Rehberinde bulunan ve HalloApp kullanan kişilerin gönderilerini burada görebilirsin"</string>
-    <string name="home_feed_nux_learn_more">"Daha fazlasını öğren"</string>
+    <string name="user_typing">"yazıyor…"</string>
+    <string name="group_user_typing">"%s yazıyor…"</string>
+    <string name="group_many_users_typing">"Birden çok kişi yazıyor…"</string>
     <string name="camera_error_generic">"Kamera çalışmıyor"</string>
     <string name="camera_error_photo">"Fotoğraf çekilemiyor"</string>
     <string name="camera_error_video">"Video kaydedilemiyor"</string>
@@ -529,19 +499,17 @@ version: %2$s
         <item quantity="one">"Videon %d saniyeden daha uzun. Lütfen bunu düzenle ya da başka bir video seç."</item>
         <item quantity="other">"Videon %d saniyeden daha uzun. Lütfen bunu düzenle ya da başka bir video seç."</item>
     </plurals>
-    <string name="video_edit_unable_trim">"Video kırpma başarısız"</string>
     <string name="mute">"Sessize al"</string>
     <string name="share_link">"İlişimi paylaş"</string>
     <string name="copy_link">"İlişimi kopyala"</string>
     <string name="reset_link">"İlişimi sıfırla"</string>
-    <string name="invite_links_not_currently_supported">"Davet ilişimleri henüz desteklenmiyor"</string>
     <string name="view_group_invite_link_action">"Grup davetini görüntüle"</string>
-    <string name="invite_link_resetting_progress">"İlişim sıfırlanıyor..."</string>
+    <string name="invite_link_resetting_progress">"İlişim sıfırlanıyor…"</string>
     <string name="invite_link_reset">"İlişim sıfırlama"</string>
     <string name="invite_link_reset_failed">"İlişim sıfırlama başarısız"</string>
     <string name="reset_invite_link_confirmation">"Gruba davet ilişimini sıfırlamak ister misin?"</string>
-    <string name="invite_link_joining">"Gruba katılınıyor..."</string>
-    <string name="invite_link_loading">"Grup yükleniyor..."</string>
+    <string name="invite_link_joining">"Gruba katılınıyor…"</string>
+    <string name="invite_link_loading">"Grup yükleniyor…"</string>
     <string name="invite_link_copied">"İlişim kopyalandı!"</string>
     <string name="invite_link_title">"Davet ilişimi"</string>
     <string name="invite_link_summary">"HalloApp'e sahip olan herkes, bu ilişimi kullanarak gruba katılabilir."</string>
@@ -549,12 +517,11 @@ version: %2$s
     <string name="join_group_action">"Gruba katıl"</string>
     <string name="system_message_you_joined">"Gruba, davet ilişimiyle katıldın"</string>
     <string name="system_message_joined">"%s, davet ilişimiyle gruba katıldı"</string>
-    <string name="activity_center_welcome">"Hallo!"</string>
     <string name="post_preview_retracted">"%s, bir gönderiyi sildi"</string>
     <string name="system_message_group_bg_changed">"%s, arka plan rengini değiştirdi"</string>
     <string name="system_message_group_bg_changed_by_you">"Arka plan rengini değiştirdin"</string>
     <string name="group_background_hint">"Arka plan"</string>
-    <string name="group_background_saving_dialog">"Arka plan ayarlanıyor..."</string>
+    <string name="group_background_saving_dialog">"Arka plan ayarlanıyor…"</string>
     <string name="group_background_save_failed">"Arka plan ayarlaması başarısız"</string>
     <string name="group_background_save_success">"Grubun arka planı güncellendi"</string>
     <string name="group_background_color">"Renk"</string>
@@ -580,10 +547,10 @@ version: %2$s
     <string name="comment_upgrade_placeholder">"HalloApp sürümün, bu tür yorumları desteklemiyor. &lt;a href=\"update-app\"&gt;Uygulamanı güncelle&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
-    <string name="registration_sms_retry_progress">"Yeni SMS kodu isteniyor..."</string>
+    <string name="registration_sms_retry_progress">"Yeni SMS kodu isteniyor…"</string>
 
     <!-- message when user requests a voice call -->
-    <string name="registration_phone_code_progress">"Arama yoluyla kod isteniyor..."</string>
+    <string name="registration_phone_code_progress">"Arama yoluyla kod isteniyor…"</string>
 
     <!-- button to request another sms code -->
     <!-- Fuzzy -->
@@ -617,7 +584,7 @@ version: %2$s
     <string name="faq">"SSS"</string>
 
     <!-- Shown in progress dialog when loading key verification info -->
-    <string name="key_verification_fetching_keys">"Güvenlik kodu bilgileri getiriliyor..."</string>
+    <string name="key_verification_fetching_keys">"Güvenlik anahtarı aranıyor…"</string>
 
     <!-- Shown when we fail to get key verification info -->
     <string name="key_verification_key_fetch_failed">"Güvenlik kodu bilgileri getirme başarısız"</string>
@@ -630,7 +597,7 @@ version: %2$s
     <string name="action_add">"Ekle"</string>
 
     <!-- Does %s refers to a time? -->
-    <string name="video_countdown_message">"Kaydetme %s içinde sona erecek"</string>
+    <string name="video_countdown_message">"Kayıt, %s içinde sona erecek"</string>
 
     <!-- Button takes user to settings to manage their storage -->
     <string name="manage_storage_button">"Depolamayı Yönet"</string>
@@ -755,7 +722,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</str
 
     <!-- Text shown under progress bar when first setting up HalloApp -->
     <!-- Fuzzy -->
-    <string name="app_initializing">"HalloApp ayarlanıyor..."</string>
+    <string name="app_initializing">"HalloApp ayarlanıyor…"</string>
 
     <!-- Shown on a button in settings which shares text with a link to download HalloApp into any other app -->
     <string name="settings_share_option">"HalloApp'i paylaş"</string>
@@ -764,8 +731,12 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</str
     <string name="share_halloapp_text">"HalloApp'te bana katıl, halloapp.com/dl üzerinden ücretsiz indir"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
-    <string name="contact_permissions_request">"Allow HalloApp access to your contacts so you can send and receive updates"</string>
+    <string name="contact_permissions_request">"Güncelleme almak ve göndermek için HalloApp'in kişilerine erişmesine izin ver."</string>
 
     <!-- Dialog shown to user before requesting contact permissions, but user has previously denied them, so they must go to settings -->
-    <string name="contact_permissions_request_permanently_denied">"Allow HalloApp access to your contacts so you can send and receive updates. Tap Settings &gt; Permissions, and turn Contacts on"</string>
+    <string name="contact_permissions_request_permanently_denied">"Güncelleme almak ve göndermek için HalloApp'in kişilerine erişmesine izin ver. Ayarlar &gt; İzinler'e dokun ve Kişiler'i aç. "</string>
+
+    <!-- Banner explaining why user can't leave a comment in a group they've left -->
+    <string name="no_longer_group_member">"Artık bu grubun bir üyesi değilsin."</string>
 </resources>
+

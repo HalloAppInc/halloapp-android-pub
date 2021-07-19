@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
+<?xml version="1.0" encoding="UTF-8"?><resources>
     <string name="app_name">"HalloApp"</string>
 
     <!-- Fuzzy -->
@@ -22,7 +21,7 @@
     <string name="message_notifications_channel_name">"Известия за съобщения"</string>
     <string name="critical_notifications_channel_name">"Критични известия за приложението"</string>
     <string name="invite_notifications_channel_name">"Известия за покани"</string>
-    <string name="invite_notification_text">"%s току-що прие вашата покана да се присъедини към HalloApp 🎉"</string>
+    <string name="invite_notification_text">"%s току-що прие вашата покана да се присъедини към HalloApp &#127881;"</string>
     <string name="me">"Аз"</string>
     <string name="you">"Ти"</string>
     <string name="camera_post">"Камера"</string>
@@ -51,7 +50,7 @@
     <string name="new_message">"Ново съобщение"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s е в HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s използва HalloApp! 🎉"</string>
+    <string name="new_chat_name_placeholder">"%s използва HalloApp! &#127881;"</string>
     <string name="posts_empty">"Вашите публикации ще се появят тук"</string>
     <string name="posts_exchange_numbers">"Трябва да размените телефонните си номера, за да се свържете"</string>
     <string name="home_page_empty">"Публикациите от хората в списъка ви с контакти ще се появят тук"</string>
@@ -63,30 +62,6 @@
     <string name="invalid_phone_number">"Невалиден телефонен номер"</string>
     <string name="share_option_post">"Публикувай"</string>
     <string name="share_option_message">"Съобщение"</string>
-    <plurals name="time_diff_minutes">
-        <item quantity="one">"%dм"</item>
-        <item quantity="other">"%dм"</item>
-    </plurals>
-    <plurals name="time_diff_minutes_long">
-        <item quantity="one">"Преди %d минута"</item>
-        <item quantity="other">"Преди %d минути"</item>
-    </plurals>
-    <plurals name="time_diff_hours">
-        <item quantity="one">"%dч"</item>
-        <item quantity="other">"%dч"</item>
-    </plurals>
-    <plurals name="time_diff_hours_long">
-        <item quantity="one">"Преди %d час"</item>
-        <item quantity="other">"Преди %d часа"</item>
-    </plurals>
-    <plurals name="time_diff_days">
-        <item quantity="one">"%dд"</item>
-        <item quantity="other">"%dд"</item>
-    </plurals>
-    <plurals name="time_diff_days_long">
-        <item quantity="one">"Преди %d ден"</item>
-        <item quantity="other">"Преди %d дни"</item>
-    </plurals>
     <plurals name="max_post_media_items">
         <item quantity="one">"Можете да изберете до %d обект на публикация"</item>
         <item quantity="other">"Можете да изберете до %d обекта на публикация"</item>
@@ -333,12 +308,12 @@ uid: %1$s
     <string name="group_info_title">"Информация за групата"</string>
     <string name="admin">"Администратор"</string>
     <string name="save">"Запазване"</string>
-    <string name="contact_picker_feed_except_title">"Скриване на публикации от..."</string>
-    <string name="contact_picker_feed_only_title">"Споделяне на публикации с..."</string>
+    <string name="contact_picker_feed_except_title">"Скриване на публикации от…"</string>
+    <string name="contact_picker_feed_only_title">"Споделяне на публикации с…"</string>
     <string name="setting_feed_privacy_title">"Кой може да вижда публикациите ми"</string>
     <string name="setting_feed_all">"Моите контакти"</string>
-    <string name="setting_feed_only">"Споделяйте само с..."</string>
-    <string name="setting_feed_except">"Моите контакти с изключение на..."</string>
+    <string name="setting_feed_only">"Споделяйте само с…"</string>
+    <string name="setting_feed_except">"Моите контакти с изключение на…"</string>
     <string name="feed_privacy_fail_to_load">"Неуспешно зареждане на настройките за поверителност"</string>
     <string name="feed_privacy_update_success">"Настройката беше успешно актуализирана"</string>
     <string name="feed_privacy_update_failure">"Актуализирането на настройката не беше успешно"</string>
@@ -347,7 +322,7 @@ uid: %1$s
     <string name="invite_failed_invalid_number">"Този телефонен номер е невалиден"</string>
     <string name="invite_failed_existing_user">"Вашият приятел вече е в HalloApp!"</string>
     <string name="invite_failed_unknown">"Изпращането на покана не беше успешно"</string>
-    <string name="invite_creation_in_progress">"Създаване на покана..."</string>
+    <string name="invite_creation_in_progress">"Създаване на покана…"</string>
     <string name="invite_info_fetch_internet">"Извличането на информация за покана не беше успешно, проверете интернета и опитайте отново"</string>
     <plurals name="invites_remaining">
         <item quantity="one">"Имате %s оставаща покана тази седмица"</item>
@@ -362,7 +337,7 @@ uid: %1$s
     <string name="done">"Готово"</string>
     <string name="members_header">"Членове (%s)"</string>
     <string name="add_members">"Добавяне на членове"</string>
-    <string name="add_members_in_progress">"Добавяне на членове..."</string>
+    <string name="add_members_in_progress">"Добавяне на членове…"</string>
     <string name="failed_add_members">"Добавянето на членове не беше успешно, опитайте отново по-късно"</string>
     <string name="create_group_in_progress">"Създаване на група %s…"</string>
     <string name="new_group_title">"Дайте име на Вашата група"</string>
@@ -372,12 +347,12 @@ uid: %1$s
     <string name="failed_create_group">"Създаването на група не беше успешно, опитайте отново по-късно"</string>
     <string name="group_remove_member">"Премахване"</string>
     <string name="group_promote_to_admin">"Повишаване до администратор"</string>
-    <string name="promote_admin_in_progress">"Повишаване до администратор..."</string>
+    <string name="promote_admin_in_progress">"Повишаване до администратор…"</string>
     <string name="failed_promote_admin">"Повишаването на администратора не беше успешно, опитайте отново по-късно"</string>
     <string name="group_demote_from_admin">"Понижаване на администратора"</string>
-    <string name="demote_admin_in_progress">"Понижаване на администратора..."</string>
+    <string name="demote_admin_in_progress">"Понижаване на администратора…"</string>
     <string name="failed_demote_admin">"Неуспешно понижаване на администратора, опитайте отново по-късно"</string>
-    <string name="remove_member_in_progress">"Премахване на члена..."</string>
+    <string name="remove_member_in_progress">"Премахване на члена…"</string>
     <string name="failed_remove_member">"Премахването на члена не беше успешно, опитайте отново по-късно"</string>
     <string name="leave_group">"Напуснете групата"</string>
     <plurals name="leave_group_plural">
@@ -389,10 +364,10 @@ uid: %1$s
         <item quantity="one">"Искате ли да напуснете тази група?"</item>
         <item quantity="other">"Искате ли да напуснете %d избрани групи?"</item>
     </plurals>
-    <string name="leave_group_in_progress">"Напускане на групата..."</string>
+    <string name="leave_group_in_progress">"Напускане на групата…"</string>
     <plurals name="leave_groups_progress">
-        <item quantity="one">"Напускане на групата..."</item>
-        <item quantity="other">"Напускане на групите..."</item>
+        <item quantity="one">"Напускане на групата…"</item>
+        <item quantity="other">"Напускане на групите…"</item>
     </plurals>
     <string name="failed_leave_group">"Излизането от групата не беше успешно, опитайте отново по-късно"</string>
     <string name="delete_group">"Изтриване на групата"</string>
@@ -428,14 +403,9 @@ uid: %1$s
     <string name="hide_future_posts_confirmation">"Наистина ли искате да скриете всичките си бъдещи публикации от %s? Винаги можете да промените това на по-късен етап."</string>
     <string name="feed_privacy_hide_success">"Поверителността на емисията беше актуализирана. Скриване на публикации от %s"</string>
     <string name="feed_privacy_hide_failure">"Актуализирането на поверителността на емисията не беше успешно, проверете интернета си и опитайте отново"</string>
-    <string name="user_typing">"пише..."</string>
-    <string name="group_user_typing">"%s пише..."</string>
-    <string name="group_many_users_typing">"много потребители пишат..."</string>
-    <string name="messages_nux_text">"Тук ще намерите съобщения от приятелите и семейството си. Когато някой нов се присъедини към HalloApp, можете да го видите тук."</string>
-    <string name="post_audience_nux_text">"Публикацията Ви ще бъде споделена с контактите в телефона Ви, които използват HalloApp. Можете да ограничите достъпа им до Вашите публикации, като отворите Профил→Настройки."</string>
-    <string name="activity_center_nux">"Това е Вашият център за дейности. Натиснете, за да видите най-скорошната си активност."</string>
-    <string name="home_feed_nux">"Добре дошли в домашния Ви канал! Тук можете да видите публикации от контактите си в телефона, които използват HalloApp."</string>
-    <string name="home_feed_nux_learn_more">"Научете повече"</string>
+    <string name="user_typing">"пише…"</string>
+    <string name="group_user_typing">"%s пише…"</string>
+    <string name="group_many_users_typing">"много потребители пишат…"</string>
     <string name="camera_error_generic">"Неизправност на камерата."</string>
     <string name="camera_error_photo">"Не можа да направи снимка."</string>
     <string name="camera_error_video">"Видеоклипът не можа да бъде записан."</string>
@@ -457,19 +427,17 @@ uid: %1$s
         <item quantity="one">"Видеоклипът Ви е с продължителност над %d секунда. Моля, изберете друг видеоклип или го редактирайте."</item>
         <item quantity="other">"Видеоклипът Ви е с продължителност над %d секунди. Моля, изберете друг видеоклип или го редактирайте."</item>
     </plurals>
-    <string name="video_edit_unable_trim">"Отрязването на видеото беше неуспешно."</string>
     <string name="mute">"Без звук"</string>
     <string name="share_link">"Споделяне на връзката"</string>
     <string name="copy_link">"Копиране на връзката"</string>
     <string name="reset_link">"Нулиране на връзката"</string>
-    <string name="invite_links_not_currently_supported">"Все още не се поддържат връзки за покани"</string>
     <string name="view_group_invite_link_action">"Преглед на покана за група"</string>
-    <string name="invite_link_resetting_progress">"Връзката се нулира..."</string>
+    <string name="invite_link_resetting_progress">"Връзката се нулира…"</string>
     <string name="invite_link_reset">"Нулиране на връзката"</string>
     <string name="invite_link_reset_failed">"Нулирането на връзката не беше успешно"</string>
     <string name="reset_invite_link_confirmation">"Искате ли да нулирате връзката за покана за група?"</string>
-    <string name="invite_link_joining">"Присъединяване към група..."</string>
-    <string name="invite_link_loading">"Групата се зарежда..."</string>
+    <string name="invite_link_joining">"Присъединяване към група…"</string>
+    <string name="invite_link_loading">"Групата се зарежда…"</string>
     <string name="invite_link_copied">"Връзката е копирана!"</string>
     <string name="invite_link_title">"Връзка за покана"</string>
     <string name="invite_link_summary">"Всеки с HalloApp може да използва тази връзка, за да се присъедини към тази група."</string>
@@ -477,12 +445,11 @@ uid: %1$s
     <string name="join_group_action">"Присъединяване към групата"</string>
     <string name="system_message_you_joined">"Присъединихте се към групата чрез връзка за покана"</string>
     <string name="system_message_joined">"%s се присъедини към групата чрез връзка за покана"</string>
-    <string name="activity_center_welcome">"Hallo!"</string>
     <string name="post_preview_retracted">"%s изтри публикация"</string>
     <string name="system_message_group_bg_changed">"%s промени цвета на фона"</string>
     <string name="system_message_group_bg_changed_by_you">"Променихте цвета на фона"</string>
     <string name="group_background_hint">"Фон"</string>
-    <string name="group_background_saving_dialog">"Задаване на фон..."</string>
+    <string name="group_background_saving_dialog">"Задаване на фон…"</string>
     <string name="group_background_save_failed">"Задаването на фона на групата не беше успешно"</string>
     <string name="group_background_save_success">"Фонът на групата беше актуализиран"</string>
     <string name="group_background_color">"Цвят"</string>
@@ -508,10 +475,10 @@ uid: %1$s
     <string name="comment_upgrade_placeholder">"Вашата версия на HalloApp не поддържа този тип коментар. &lt;a href=\"update-app\"&gt;Актуализирайте приложението си &lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
-    <string name="registration_sms_retry_progress">"Заявка за нов SMS код..."</string>
+    <string name="registration_sms_retry_progress">"Заявка за нов SMS код…"</string>
 
     <!-- message when user requests a voice call -->
-    <string name="registration_phone_code_progress">"Заявка за код чрез телефонно обаждане..."</string>
+    <string name="registration_phone_code_progress">"Заявка за код чрез телефонно обаждане…"</string>
 
     <!-- button to request another sms code -->
     <string name="resend_sms">"Повторно изпращане на SMS код"</string>
@@ -544,7 +511,7 @@ uid: %1$s
     <string name="faq">"ЧЗВ"</string>
 
     <!-- Shown in progress dialog when loading key verification info -->
-    <string name="key_verification_fetching_keys">"Извличане на ключове..."</string>
+    <string name="key_verification_fetching_keys">"Извличане на ключове…"</string>
 
     <!-- Shown when we fail to get key verification info -->
     <string name="key_verification_key_fetch_failed">"Извличането на ключове не беше успешно"</string>
@@ -693,4 +660,8 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Dialog shown to user before requesting contact permissions, but user has previously denied them, so they must go to settings -->
     <string name="contact_permissions_request_permanently_denied">"Allow HalloApp access to your contacts so you can send and receive updates. Tap Settings &gt; Permissions, and turn Contacts on"</string>
+
+    <!-- Banner explaining why user can't leave a comment in a group they've left -->
+    <string name="no_longer_group_member">"You're no longer a member of this group"</string>
 </resources>
+

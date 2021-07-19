@@ -1,12 +1,19 @@
 package com.halloapp.tools
 
 import kotlinx.coroutines.runBlocking
-import java.io.BufferedInputStream
-import java.io.FileOutputStream
-import java.io.InputStream
-import java.io.OutputStream
+import org.w3c.dom.Document
+import org.w3c.dom.Node
+import org.w3c.dom.Text
+import org.w3c.dom.bootstrap.DOMImplementationRegistry
+import org.w3c.dom.ls.DOMImplementationLS
+import org.w3c.dom.ls.LSOutput
+import org.w3c.dom.ls.LSSerializer
+import java.io.*
 import java.net.URL
 import java.net.URLConnection
+import javax.xml.parsers.DocumentBuilderFactory
+import kotlin.text.Charsets.UTF_8
+
 
 fun main() {
     POEditorStringManager.updateStrings()
@@ -88,6 +95,77 @@ object POEditorStringManager {
             output.flush()
             output.close()
             input.close()
+
+            processStrings(getStringFile(language.code))
         }
     }
+
+    fun processStrings(stringsFile : File) {
+        val dbFactory = DocumentBuilderFactory.newInstance()
+        val dBuilder = dbFactory.newDocumentBuilder()
+        val doc = dBuilder.parse(stringsFile)
+        doc.documentElement.normalize()
+
+        processNodes(doc, "string")
+        processNodes(doc, "item")
+
+        outputXml(doc, stringsFile)
+    }
+
+    fun processNodes(doc : Document, tag : String) {
+        val stringList = doc.getElementsByTagName(tag)
+        for (i in 0 until stringList.length) {
+            val stringNode: Node = stringList.item(i)
+
+            if (stringNode.nodeType != Node.ELEMENT_NODE) {
+                continue
+            }
+            var strName: String? = null
+            var translatable: String? = null
+            for (j in 0 until stringNode.attributes.length) {
+                val node = stringNode.attributes.item(j)
+                when (node.nodeName) {
+                    "name" -> strName = node.nodeValue
+                    "translatable" -> translatable = node.nodeValue
+                    "quantity" -> strName = node.nodeValue
+                }
+            }
+            if (strName == null || translatable == "false") {
+                continue
+            }
+            processNode(stringNode)
+        }
+    }
+
+    fun processNode(node: Node) {
+        val childNodes = node.childNodes
+        for (j in 0 until childNodes.length) {
+            val n = childNodes.item(j)
+            if (n is Text) {
+                n.textContent = processString(n.textContent)
+            } else {
+                processNode(n)
+            }
+        }
+    }
+
+    fun outputXml(doc : Node, output :File) {
+        val dom: DOMImplementationLS = DOMImplementationRegistry.newInstance().getDOMImplementation("LS") as DOMImplementationLS
+        val serializer: LSSerializer = dom.createLSSerializer()
+        serializer.newLine = "\n"
+        val destination: LSOutput = dom.createLSOutput()
+        destination.setEncoding(UTF_8.name())
+        val bos = FileOutputStream(output)
+        destination.setByteStream(bos)
+        serializer.write(doc, destination)
+
+        // Ensure file ends with a new line
+        bos.write("\n\n".toByteArray(UTF_8))
+        bos.flush()
+    }
+
+    fun processString(str: String): String {
+        return str.replace("...", "…")
+    }
+
 }
