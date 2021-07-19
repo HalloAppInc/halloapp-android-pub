@@ -199,7 +199,12 @@ public class ChatViewModel extends AndroidViewModel {
                 String phone = TextUtils.isEmpty(contact.addressBookName) ? contactsDb.readPhone((UserId)chatId) : null;
                 String normalizedPhone = phone == null ? null : PhoneNumberUtils.formatNumber("+" + phone, null);
                 ChatViewModel.this.phone.postValue(normalizedPhone);
-                return TextUtils.isEmpty(contact.addressBookName) ? normalizedPhone : contact.getDisplayName();
+                if (!TextUtils.isEmpty(contact.addressBookName)) {
+                    return contact.addressBookName;
+                } else if (!TextUtils.isEmpty(normalizedPhone)) {
+                    return normalizedPhone;
+                }
+                return contact.getDisplayName();
             }
         };
 
