@@ -3,6 +3,7 @@ package com.halloapp.ui.profile;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -232,13 +233,12 @@ public class ProfileFragment extends PostsFragment {
     }
 
     private void updateAddToContacts() {
-        if (profileUserId.isMe() || viewModel.getSubtitle().getValue() == null) {
+        if (profileUserId.isMe() || TextUtils.isEmpty(viewModel.getSubtitle().getValue())) {
             addToContactsView.setVisibility(View.GONE);
             return;
         }
         Contact contact = viewModel.getContact().getValue();
-        boolean showAddtoContacts = contact != null && contact.addressBookName != null && contact.addressBookPhone != null;
-        addToContactsView.setVisibility(showAddtoContacts ? View.GONE : View.VISIBLE);
+        addToContactsView.setVisibility(contact == null || contact.addressBookName != null ? View.GONE : View.VISIBLE);
     }
 
     @Override
