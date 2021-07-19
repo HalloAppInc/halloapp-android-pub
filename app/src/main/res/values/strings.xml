@@ -95,30 +95,6 @@
     <string name="contact_permissions_dialog_title">Contacts</string>
     <string name="not_now">Not now</string>
     <string name="continue_button">Continue</string>
-    <plurals name="time_diff_minutes">
-        <item quantity="one">%dm</item>
-        <item quantity="other">%dm</item>
-    </plurals>
-    <plurals name="time_diff_minutes_long">
-        <item quantity="one">%d minute ago</item>
-        <item quantity="other">%d minutes ago</item>
-    </plurals>
-    <plurals name="time_diff_hours">
-        <item quantity="one">%dh</item>
-        <item quantity="other">%dh</item>
-    </plurals>
-    <plurals name="time_diff_hours_long">
-        <item quantity="one">%d hour ago</item>
-        <item quantity="other">%d hours ago</item>
-    </plurals>
-    <plurals name="time_diff_days">
-        <item quantity="one">%dd</item>
-        <item quantity="other">%dd</item>
-    </plurals>
-    <plurals name="time_diff_days_long">
-        <item quantity="one">%d day ago</item>
-        <item quantity="other">%d days ago</item>
-    </plurals>
     <plurals name="max_post_media_items">
         <item quantity="one">You can select up to %d item per post</item>
         <item quantity="other">You can select up to %d items per post</item>

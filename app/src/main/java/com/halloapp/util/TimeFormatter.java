@@ -13,26 +13,6 @@ import java.util.Locale;
 
 public class TimeFormatter {
 
-    public static String formatTimeDiff(@NonNull Context context, long timeDiff, boolean longFormat) {
-        final long seconds = timeDiff / 1000L;
-        if (seconds < 60) {
-            return context.getString(R.string.time_diff_now);
-        }
-        final long minutes = seconds / 60L;
-        if (minutes < 60) {
-            return context.getResources().getQuantityString(
-                    longFormat ? R.plurals.time_diff_minutes_long : R.plurals.time_diff_minutes, (int)minutes, (int)minutes);
-        }
-        final long hours = minutes / 60L;
-        if (hours < 24) {
-            return context.getResources().getQuantityString(
-                    longFormat ? R.plurals.time_diff_hours_long : R.plurals.time_diff_hours, (int)hours, (int)hours);
-        }
-        final long days = hours / 24L;
-        return context.getResources().getQuantityString(
-                longFormat ? R.plurals.time_diff_days_long : R.plurals.time_diff_days, (int)days, (int)days);
-    }
-
     /**
      * Formats time relative to current time
      * If within 60 seconds: Now
@@ -90,11 +70,6 @@ public class TimeFormatter {
         String text = formatRelativePostTime(textView.getContext(), timeStamp);
         textView.setText(text);
         textView.setContentDescription(text);
-    }
-
-    public static void setTimeDiffText(@NonNull TextView textView, long timeDiff) {
-        textView.setText(formatTimeDiff(textView.getContext(), timeDiff, false));
-        textView.setContentDescription(formatTimeDiff(textView.getContext(), timeDiff, true));
     }
 
     public static CharSequence formatMessageSeparatorDate(@NonNull Context context, long timestamp) {
