@@ -1027,7 +1027,8 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
                 builder.show();
             });
 
-            if (comment.isRetracted() || !viewModel.isMember.getLiveData().getValue()) {
+            // TODO(jack): Make this more reliable
+            if (comment.isRetracted() || Boolean.FALSE.equals(viewModel.isMember.getLiveData().getValue())) {
                 replyButton.setVisibility(View.GONE);
                 retractButton.setVisibility(View.GONE);
             } else {
