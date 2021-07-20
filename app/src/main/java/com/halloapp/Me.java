@@ -40,6 +40,8 @@ public class Me {
     private static final String PREF_KEY_MY_ED25519_NOISE_KEY = "my_ed25519_noise_key";
     private static final String PREF_KEY_SERVER_PUBLIC_STATIC_KEY = "server_public_static_key";
 
+    private static final int KEY_STORE_RETRY_WAIT_MS = 50;
+
     private final AppContext appContext;
     private SharedPreferences preferences;
 
@@ -92,6 +94,18 @@ public class Me {
                         preferences = getPreferences(false);
                     } else {
                         Log.sendErrorReport("Me prefs reset failure");
+                    }
+                } catch (IllegalArgumentException e) {
+                    if (allowRecurse) {
+                        try {
+                            Thread.sleep(KEY_STORE_RETRY_WAIT_MS);
+                        } catch (InterruptedException ex) {
+                            Log.e("Me.getPreferences keystore wait interrupted");
+                        }
+                        Log.e("Me.getPreferences hit illegal argument exception retrying", e);
+                        preferences = getPreferences(false);
+                    } else {
+                        throw e;
                     }
                 }
 
