@@ -50,6 +50,7 @@ public class ContactsSync {
     private static final String WORKER_PARAM_CONTACT_HASHES = "contact_hashes";
 
     private static final int CONTACT_SYNC_BATCH_SIZE = 1024;
+    private static final int ATTEMPTS_PER_BATCH = 8;
 
     private static ContactsSync instance;
 
@@ -251,19 +252,36 @@ public class ContactsSync {
             phonesSyncedCount++;
             final boolean lastBatch = phonesSyncedCount == phones.size();
             if (phonesBatch.size() >= CONTACT_SYNC_BATCH_SIZE || lastBatch) {
+                List<ContactInfo> contactSyncBatchResults = null;
+                int attempts = 0;
+                int prevDelay = 1;
+                int delaySeconds = 1;
                 Log.i("ContactsSync.performContactSync: batch " + phonesBatch.size() + " phones to sync");
-                try {
-                    final List<ContactInfo> contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, null, fullSync, syncId, batchIndex, lastBatch).await();
-                    if (contactSyncBatchResults != null) {
-                        contactSyncResults.addAll(contactSyncBatchResults);
-                        phonesBatch.clear();
-                        batchIndex++;
-                    } else {
-                        Log.e("ContactsSync.performContactSync: failed to sync batch");
-                        return ListenableWorker.Result.failure();
+                while (contactSyncBatchResults == null && attempts < ATTEMPTS_PER_BATCH) {
+                    if (attempts > 0) {
+                        Log.i("ContactsSync.performContactSync waiting " + delaySeconds + " seconds before retrying");
+                        try {
+                            Thread.sleep(delaySeconds * 1000);
+                        } catch (InterruptedException ex) {
+                            Log.i("ContactsSync.performContactSync delay interrupted", ex);
+                        }
+                        int nextDelay = prevDelay + delaySeconds;
+                        prevDelay = delaySeconds;
+                        delaySeconds = nextDelay;
                     }
-                } catch (InterruptedException | ObservableErrorException e) {
-                    Log.e("ContactsSync.performContactSync: failed to sync batch", e);
+                    attempts++;
+                    Log.i("ContactsSync.performContactSync: attempting sync of batch: " + batchIndex + " attempt: " + attempts);
+                    try {
+                        contactSyncBatchResults = Connection.getInstance().syncContacts(phonesBatch, null, fullSync, syncId, batchIndex, lastBatch).await();
+                    } catch (InterruptedException | ObservableErrorException e) {
+                        Log.e("ContactsSync.performContactSync: failed to sync batch", e);
+                    }
+                }
+                if (contactSyncBatchResults != null) {
+                    contactSyncResults.addAll(contactSyncBatchResults);
+                    phonesBatch.clear();
+                    batchIndex++;
+                } else {
                     return ListenableWorker.Result.failure();
                 }
             }
