@@ -194,9 +194,6 @@ public class GroupInfoActivity extends HalloActivity {
         addMembersView.setVisibility(both ? View.VISIBLE : View.GONE);
         addDivider.setVisibility(both ? View.VISIBLE : View.GONE);
         inviteLinkView.setVisibility(both ? View.VISIBLE : View.GONE);
-        if (deleteMenuItem != null) {
-            deleteMenuItem.setVisible(both);
-        }
         if (leaveMenuItem != null) {
             leaveMenuItem.setVisible(chatIsActive);
         }
@@ -214,7 +211,6 @@ public class GroupInfoActivity extends HalloActivity {
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.group_info_menu, menu);
-        deleteMenuItem = menu.findItem(R.id.delete);
         leaveMenuItem = menu.findItem(R.id.leave);
 
         updateVisibilities();
