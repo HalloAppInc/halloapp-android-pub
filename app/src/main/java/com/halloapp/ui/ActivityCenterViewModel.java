@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class ActivityCenterViewModel extends AndroidViewModel {
 
@@ -54,7 +55,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private Integer numInvites;
+    private @Nullable Integer numInvites;
 
     private final Observer<Boolean> contactPermissionObserver;
 
@@ -173,7 +174,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
                 if (response != null) {
                     preferences.setInvitesRemaining(response);
                     synchronized (this) {
-                        if (numInvites != response) {
+                        if (!Objects.equals(numInvites, response)) {
                             numInvites = response;
                             socialHistory.invalidate();
                         }
@@ -322,7 +323,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         socialActionEvents.addAll(seenComments);
 
         long initialRegTimestamp = preferences.getInitialRegistrationTime();
-        if (initialRegTimestamp != 0 && numInvites > 0) {
+        if (initialRegTimestamp != 0 && (numInvites != null && numInvites > 0)) {
             SocialActionEvent event = SocialActionEvent.forInvites(numInvites, initialRegTimestamp);
             event.seen = preferences.getWelcomeInviteNotificationSeen();
             socialActionEvents.add(event);

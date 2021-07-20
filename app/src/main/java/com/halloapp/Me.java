@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.lifecycle.MutableLiveData;
 import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
 import androidx.security.crypto.MasterKeys;
 
 import com.halloapp.crypto.keys.EncryptedKeyStore;
@@ -71,10 +72,14 @@ public class Me {
         if (preferences == null) {
             if (Build.VERSION.SDK_INT >= 23) {
                 try {
+                    MasterKey masterKey = new MasterKey.Builder(context)
+                            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                            .build();
+
                     preferences = EncryptedSharedPreferences.create(
-                            FILE_NAME,
-                            MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
                             context,
+                            FILE_NAME,
+                            masterKey,
                             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
                     );
