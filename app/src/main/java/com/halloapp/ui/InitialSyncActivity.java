@@ -26,6 +26,7 @@ import com.halloapp.contacts.ContactsSync;
 import com.halloapp.ui.contacts.ContactHashInfoBottomSheetDialogFragment;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.StringUtils;
+import com.halloapp.widget.NetworkIndicatorView;
 
 import java.util.List;
 
@@ -105,6 +106,9 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
 
             tryStartSync();
         });
+
+        final NetworkIndicatorView indicatorView = findViewById(R.id.network_indicator);
+        indicatorView.bind(this);
     }
 
     private void showRunningState() {

@@ -7,6 +7,13 @@
     android:padding="24dp"
     tools:context=".ui.InitialSyncActivity">
 
+    <com.halloapp.widget.NetworkIndicatorView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/network_indicator"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/logo"
         android:layout_width="wrap_content"

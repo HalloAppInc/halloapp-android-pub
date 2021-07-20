@@ -39,6 +39,7 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.NetworkIndicatorView;
 import com.halloapp.widget.SnackbarHelper;
 import com.hbb20.CountryCodePicker;
 
@@ -189,6 +190,9 @@ public class RegistrationRequestActivity extends HalloActivity {
         nameEditText.requestFocus();
 
         findViewById(R.id.next).setOnClickListener(v -> startRegistrationRequest());
+
+        final NetworkIndicatorView indicatorView = findViewById(R.id.network_indicator);
+        indicatorView.bind(this);
 
         updateNextButton();
     }
