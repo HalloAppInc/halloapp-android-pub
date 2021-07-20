@@ -10,9 +10,9 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="64dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="16dp">
+        android:layout_marginStart="64dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp">
 
         <LinearLayout
             android:id="@+id/content"
