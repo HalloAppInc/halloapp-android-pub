@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"घर"</string>
     <string name="title_messages">"बातचीत"</string>
@@ -15,7 +16,7 @@
     <string name="message_notifications_channel_name">"संदेश सूचनाएं"</string>
     <string name="critical_notifications_channel_name">"महत्वपूर्ण एप्लिकेशन अलर्ट"</string>
     <string name="invite_notifications_channel_name">"सूचनाएं आमंत्रित करें"</string>
-    <string name="invite_notification_text">"%s ने HalloApp में शामिल होने के लिए आपके निमंत्रण को अभी स्वीकार किया है &#127881;"</string>
+    <string name="invite_notification_text">"%s ने HalloApp में शामिल होने के लिए आपके निमंत्रण को अभी स्वीकार किया है &#x1f389;"</string>
     <string name="me">"मैं"</string>
     <string name="you">"आप"</string>
     <string name="camera_post">"कैमरा"</string>
@@ -47,7 +48,7 @@
     <!-- Fuzzy -->
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s HalloApp पर हैI"</string>
-    <string name="new_chat_name_placeholder">"%s HalloApp का उपयोग कर रहा है! &#127881;"</string>
+    <string name="new_chat_name_placeholder">"%s HalloApp का उपयोग कर रहा है! &#x1f389;"</string>
     <string name="posts_empty">"आपके पोस्ट यहां दिखाई देंगे"</string>
     <string name="posts_exchange_numbers">"कनेक्ट करने के लिए आपको फोन नंबर एक्सचेंज करना होगा"</string>
     <string name="home_page_empty">"आपके संपर्कों के पोस्ट यहां दिखाई देंगे"</string>
@@ -663,5 +664,13 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Banner explaining why user can't leave a comment in a group they've left -->
     <string name="no_longer_group_member">"You're no longer a member of this group"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice notes -->
+    <string name="voice_note_record_audio_permission_rationale">"To record voice notes we need permission to access the microphone"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
+    <string name="voice_note_record_audio_permission_rationale_denied">"To record voice notes we need permission to access the microphone.
+
+Open the app settings screen to modify app permissions."</string>
 </resources>
 

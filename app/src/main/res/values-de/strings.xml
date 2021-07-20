@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Home"</string>
     <string name="title_messages">"Chats"</string>
@@ -17,7 +18,7 @@
     <string name="message_notifications_channel_name">"Benachrichtigungen"</string>
     <string name="critical_notifications_channel_name">"Wichtige App-Warnmeldungen"</string>
     <string name="invite_notifications_channel_name">"Einladungs-Mitteilungen"</string>
-    <string name="invite_notification_text">"%s hat deine Einladung zu HalloApp &#127881; angenommen"</string>
+    <string name="invite_notification_text">"%s hat deine Einladung zu HalloApp &#x1f389; angenommen"</string>
     <string name="me">"Ich"</string>
     <string name="you">"Du"</string>
     <string name="camera_post">"Kamera"</string>
@@ -52,7 +53,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <!-- Fuzzy translation?  Pls. provide more details -->
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s ist auf HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s ist jetzt aktiv auf HalloApp! &#127881;"</string>
+    <string name="new_chat_name_placeholder">"%s ist jetzt aktiv auf HalloApp! &#x1f389;"</string>
     <string name="posts_empty">"Deine Beiträge erscheinen hier"</string>
     <string name="posts_exchange_numbers">"Um den Kontakt herzustellen, müsst ihr eure Handynummern austauschen"</string>
     <string name="home_page_empty">"Beiträge deiner Kontakte siehst du hier"</string>
@@ -624,7 +625,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="save_to_gallery_storage_permission_rationale">"Für die Speicherung der Medien in der Galerie, benötigen wir deine Erlaubnis, um auf den Speicher deines Geräts zugreifen zu können."</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature. This is used when the user needs to manually go to their settings -->
-    <string name="save_to_gallery_storage_permission_rationale_denied">"Für die Speicherung der Medien in der Galerie, benötigen wir deine Erlaubnis, um auf den Speicher deines Geräts zugreifen zu können.
+    <string name="save_to_gallery_storage_permission_rationale_denied">"Für die Speicherung der Medien in der Galerie benötigen wir deine Erlaubnis, um auf den Speicher deines Geräts zugreifen zu können.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
 
@@ -717,5 +718,14 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Banner explaining why user can't leave a comment in a group they've left -->
     <string name="no_longer_group_member">"Du bist kein Mitglied dieser Gruppe mehr"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice notes -->
+    <string name="voice_note_record_audio_permission_rationale">"Um Sprachnotizen aufzunehmen, benötigen wir die Erlaubnis, auf das Mikrofon zuzugreifen"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
+    <string name="voice_note_record_audio_permission_rationale_denied">"Zur Aufnahme von Sprachnotizen benötigen wir deine Erlaubnis, um auf das Mikrofon zugreifen zu können.
+
+Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern.
+"</string>
 </resources>
 

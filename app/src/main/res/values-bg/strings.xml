@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"HalloApp"</string>
 
     <!-- Fuzzy -->
@@ -21,7 +22,7 @@
     <string name="message_notifications_channel_name">"Известия за съобщения"</string>
     <string name="critical_notifications_channel_name">"Критични известия за приложението"</string>
     <string name="invite_notifications_channel_name">"Известия за покани"</string>
-    <string name="invite_notification_text">"%s току-що прие вашата покана да се присъедини към HalloApp &#127881;"</string>
+    <string name="invite_notification_text">"%s току-що прие вашата покана да се присъедини към HalloApp &#x1f389;"</string>
     <string name="me">"Аз"</string>
     <string name="you">"Ти"</string>
     <string name="camera_post">"Камера"</string>
@@ -50,7 +51,7 @@
     <string name="new_message">"Ново съобщение"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s е в HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s използва HalloApp! &#127881;"</string>
+    <string name="new_chat_name_placeholder">"%s използва HalloApp! &#x1f389;"</string>
     <string name="posts_empty">"Вашите публикации ще се появят тук"</string>
     <string name="posts_exchange_numbers">"Трябва да размените телефонните си номера, за да се свържете"</string>
     <string name="home_page_empty">"Публикациите от хората в списъка ви с контакти ще се появят тук"</string>
@@ -663,5 +664,13 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Banner explaining why user can't leave a comment in a group they've left -->
     <string name="no_longer_group_member">"You're no longer a member of this group"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice notes -->
+    <string name="voice_note_record_audio_permission_rationale">"To record voice notes we need permission to access the microphone"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
+    <string name="voice_note_record_audio_permission_rationale_denied">"To record voice notes we need permission to access the microphone.
+
+Open the app settings screen to modify app permissions."</string>
 </resources>
 

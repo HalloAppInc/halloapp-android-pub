@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Αρχική"</string>
     <string name="title_messages">"Συνομιλίες"</string>
@@ -15,7 +16,7 @@
     <string name="message_notifications_channel_name">"Ειδοποιήσεις μηνυμάτων"</string>
     <string name="critical_notifications_channel_name">"Κρίσιμες ειδοποιήσεις εφαρμογής"</string>
     <string name="invite_notifications_channel_name">"Ειδοποιήσεις προσκλήσεων"</string>
-    <string name="invite_notification_text">"%s μόλις αποδέχτηκε την πρόσκλησή σας να συμμετέχει στο HalloApp &#127881;"</string>
+    <string name="invite_notification_text">"%s μόλις αποδέχτηκε την πρόσκλησή σας να συμμετέχει στο HalloApp &#x1f389;"</string>
     <string name="me">"Εγώ"</string>
     <string name="you">"Εσύ"</string>
     <string name="camera_post">"Κάμερα"</string>
@@ -46,7 +47,7 @@
 
     <!-- I added "The user" %s because in Greek there are masculine and feminine pronouns that are normally used. Thus, in order to avoid it, you can add the user ... -->
     <string name="empty_chat_with_name_placeholder">"Ο χρήστης %s είναι στο HalloApp."</string>
-    <string name="new_chat_name_placeholder">"Ο χρήστης %s χρησιμοποιεί το HalloApp! &#127881;"</string>
+    <string name="new_chat_name_placeholder">"Ο χρήστης %s χρησιμοποιεί το HalloApp! &#x1f389;"</string>
     <string name="posts_empty">"Οι δημοσιεύσεις σας θα εμφανιστούν εδώ"</string>
     <string name="posts_exchange_numbers">"Για να συνδεθείτε πρέπει να ανταλλάξετε αριθμούς τηλεφώνου"</string>
     <string name="home_page_empty">"Οι δημοσιεύσεις από τις επαφές σας θα εμφανίζονται εδώ"</string>
@@ -434,13 +435,13 @@ uid: %1$s
     <string name="invite_link_loading">"Φόρτωση ομάδας…"</string>
     <string name="invite_link_copied">"Σύνδεσμος αντιγράφηκε!"</string>
     <string name="invite_link_title">"Σύνδεσμος πρόσκλησης"</string>
-    <string name="invite_link_summary">"Οποιοσδήποτε διαθέτει HalloApp μπορεί να χρησιμοποιήσει αυτόν τον σύνδεσμο για να συμμετάσχει σε αυτήν την ομάδα."</string>
+    <string name="invite_link_summary">"Οποιοσδήποτε διαθέτει το HalloApp μπορεί να χρησιμοποιήσει αυτόν τον σύνδεσμο για να συμμετάσχει σε αυτήν την ομάδα."</string>
     <string name="invite_link_failed_to_join">"Αποτυχία συμμετοχής στην ομάδα"</string>
     <string name="join_group_action">"Συμμετοχή σε ομάδα"</string>
     <string name="system_message_you_joined">"Συμμετέχετε στην ομάδα μέσω συνδέσμου πρόσκλησης"</string>
-    <string name="system_message_joined">"%s συμμετέχει στην ομάδα μέσω συνδέσμου πρόσκλησης"</string>
-    <string name="post_preview_retracted">"%s διέγραψε μια δημοσίευση"</string>
-    <string name="system_message_group_bg_changed">"%s άλλαξε το χρώμα του φόντου"</string>
+    <string name="system_message_joined">"Ο χρήστης %s συμμετέχει στην ομάδα μέσω συνδέσμου πρόσκλησης"</string>
+    <string name="post_preview_retracted">"Ο χρήστης %s διέγραψε μια δημοσίευση"</string>
+    <string name="system_message_group_bg_changed">"Ο χρήστης %s άλλαξε το χρώμα του φόντου"</string>
     <string name="system_message_group_bg_changed_by_you">"Αλλάξατε το χρώμα φόντου"</string>
     <string name="group_background_hint">"Φόντο"</string>
     <string name="group_background_saving_dialog">"Ρύθμιση φόντου…"</string>
@@ -449,9 +450,9 @@ uid: %1$s
     <string name="group_background_color">"Χρώμα"</string>
     <string name="group_background_default">"Προεπιλογή"</string>
     <string name="group_info_members">"Μέλη (%d)"</string>
-    <string name="delete_message_confirmation">"Διαγραφή επιλεγμένου μηνύματος;"</string>
+    <string name="delete_message_confirmation">"Θέλετε να γίνει διαγραφή του επιλεγμένου μηνύματος;"</string>
     <string name="retract_message_option">"Διαγραφή για όλους"</string>
-    <string name="delete_message_option">"Διαγραφή για μένα"</string>
+    <string name="delete_message_option">"Διαγραφή για εμένα"</string>
     <string name="contact_permissions_dialog_title">"Επαφές"</string>
     <string name="not_now">"Οχι τώρα"</string>
     <string name="continue_button">"Συνέχεια"</string>
@@ -460,22 +461,22 @@ uid: %1$s
     <string name="failed_no_longer_member">"Δεν είστε πλέον μέλος αυτής της ομάδας"</string>
 
     <!-- Placeholder when we do not understand the received message -->
-    <string name="message_upgrade_placeholder">"Η έκδοση του HalloApp δεν υποστηρίζει αυτόν τον τύπο μηνύματος. &lt;a href=\"update-app\"&gt;Ενημερώστε την εφαρμογή σας&lt;/a&gt;"</string>
+    <string name="message_upgrade_placeholder">"Η έκδοση σας του HalloApp δεν υποστηρίζει αυτόν τον τύπο μηνύματος. &lt;a href=\"update-app\"&gt;Ενημερώστε την εφαρμογή σας&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received post -->
-    <string name="post_upgrade_placeholder">"Η έκδοση του HalloApp δεν υποστηρίζει αυτόν τον τύπο δημοσίευσης. &lt;a href=\"update-app\"&gt;Ενημερώστε την εφαρμογή σας&lt;/a&gt;"</string>
+    <string name="post_upgrade_placeholder">"Η έκδοση σας του HalloApp δεν υποστηρίζει αυτόν τον τύπο δημοσίευσης. &lt;a href=\"update-app\"&gt;Ενημερώστε την εφαρμογή σας&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received comment -->
-    <string name="comment_upgrade_placeholder">"Η έκδοση του HalloApp δεν υποστηρίζει αυτόν τον τύπο σχολίου. &lt;a href=\"update-app\"&gt;Ενημερώστε την εφαρμογή σας&lt;/a&gt;"</string>
+    <string name="comment_upgrade_placeholder">"Η έκδοση σας του HalloApp δεν υποστηρίζει αυτόν τον τύπο σχολίου. &lt;a href=\"update-app\"&gt;Ενημερώστε την εφαρμογή σας&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
-    <string name="registration_sms_retry_progress">"Αίτημα νέου κωδικού SMS…"</string>
+    <string name="registration_sms_retry_progress">"Αίτημα νέου κωδικού μέσω μηνύματος…"</string>
 
     <!-- message when user requests a voice call -->
     <string name="registration_phone_code_progress">"Αίτημα κωδικού μέσω τηλεφωνικής κλήσης…"</string>
 
     <!-- button to request another sms code -->
-    <string name="resend_sms">"Νέα Αποστολή Κωδικού SMS"</string>
+    <string name="resend_sms">"Επαναποστολή Μηνύματος Κωδικού "</string>
 
     <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
     <string name="key_verification_success">"Η επαλήθευση ολοκληρώθηκε με επιτυχία"</string>
@@ -487,7 +488,7 @@ uid: %1$s
     <string name="key_verification_tap_to_scan">"Πατήστε για σάρωση"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"Για να επαληθεύσετε την ασφάλεια της σύνδεσής σας με %s, βεβαιωθείτε ότι οι παραπάνω αριθμοί ταιριάζουν με αυτούς που εμφανίζονται στη συσκευή τους ή σαρώστε τον κωδικό QR στο τηλέφωνό τους. "<![CDATA[<a href="https://halloapp.com/help/">Μάθετε περισσότερα</a>]]>"."</string>
+    <string name="key_verification_explanation">"Για να επαληθεύσετε την ασφάλεια της σύνδεσής σας με τον χρήστη %s, βεβαιωθείτε ότι οι παραπάνω αριθμοί ταιριάζουν με αυτούς που εμφανίζονται στη συσκευή τους ή σαρώστε τον κωδικό QR στο τηλέφωνό τους. "<![CDATA[<a href="https://halloapp.com/help/">Μάθετε περισσότερα</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Περισσότερα"</string>
@@ -523,7 +524,7 @@ uid: %1$s
 
     <!-- Message that's displayed if user has low storage -->
     <string name="low_storage_msg">"Ο χώρος αποθήκευσης του τηλεφώνου σας εξαντλείται.
-Για να χρησιμοποιήσετε το HalloApp, ελευθερώστε χώρο αποθήκευσης σε αυτό το τηλέφωνο."</string>
+Για να χρησιμοποιήσετε το HalloApp, ελευθερώστε τον χώρο αποθήκευσης σε αυτό το τηλέφωνο."</string>
     <plurals name="seen_by_people">
         <item quantity="one">"Αναγνώστηκε από %d άτομο"</item>
         <item quantity="other">"Αναγνώστηκε από %d άτομα"</item>
@@ -560,10 +561,10 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="request_data_title">"Αίτημα για τα δεδομένα μου"</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature -->
-    <string name="save_to_gallery_storage_permission_rationale">"Για να αποθηκεύσουμε τα πολυμέσα στη συλλογή χρειαζόμαστε άδεια για πρόσβαση στον χώρο αποθήκευσης της συσκευής σας"</string>
+    <string name="save_to_gallery_storage_permission_rationale">"Για να αποθηκεύσουμε τα πολυμέσα στη συλλογή χρειαζόμαστε την άδεια σας για πρόσβαση στον χώρο αποθήκευσης της συσκευής σας"</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature. This is used when the user needs to manually go to their settings -->
-    <string name="save_to_gallery_storage_permission_rationale_denied">"Για να αποθηκεύσουμε τα πολυμέσα στη συλλογή χρειαζόμαστε άδεια για πρόσβαση στον χώρο αποθήκευσης της συσκευής σας
+    <string name="save_to_gallery_storage_permission_rationale_denied">"Για να αποθηκεύσουμε τα πολυμέσα στη συλλογή χρειαζόμαστε την άδεια σας για πρόσβαση στον χώρο αποθήκευσης της συσκευής σας
 
 Ανοίξτε την οθόνη ρυθμίσεων εφαρμογής για να τροποποιήσετε τα δικαιώματα της εφαρμογής."</string>
 
@@ -601,7 +602,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="export_account_data">"Εξαγωγή των δεδομένων μου"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
-    <string name="e2e_notice">"Οι συνομιλίες είναι κρυπτογραφημένες από άκρο σε άκρο και το HalloApp δεν έχει πρόσβαση σε αυτές. Πατήστε για να μάθετε περισσότερα."</string>
+    <string name="e2e_notice">"Οι συνομιλίες είναι κρυπτογραφημένες και το HalloApp δεν έχει πρόσβαση σε αυτές. Πατήστε για να μάθετε περισσότερα."</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"Προβολή αριθμού ασφαλείας"</string>
@@ -655,6 +656,14 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="contact_permissions_request_permanently_denied">"Επιτρέψτε στο HalloApp να έχει πρόσβαση στις επαφές σας, ώστε να μπορείτε να στέλνετε και να λαμβάνετε ενημερώσεις. Πατήστε Ρυθμίσεις &gt; Δικαιώματα και ενεργοποιήστε τις Επαφές"</string>
 
     <!-- Banner explaining why user can't leave a comment in a group they've left -->
-    <string name="no_longer_group_member">"You're no longer a member of this group"</string>
+    <string name="no_longer_group_member">"Δεν είστε πλέον μέλος αυτής της ομάδας"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice notes -->
+    <string name="voice_note_record_audio_permission_rationale">"To record voice notes we need permission to access the microphone"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
+    <string name="voice_note_record_audio_permission_rationale_denied">"To record voice notes we need permission to access the microphone.
+
+Open the app settings screen to modify app permissions."</string>
 </resources>
 
