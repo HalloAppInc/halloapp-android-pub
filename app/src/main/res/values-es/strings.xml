@@ -20,7 +20,7 @@
     <string name="me">"Yo"</string>
     <string name="you">"Tú"</string>
     <string name="camera_post">"Cámara"</string>
-    <string name="gallery_post">"Galería"</string>
+    <string name="gallery_post">"Galería de fotos"</string>
     <string name="text_post">"Texto"</string>
     <string name="bad_image">"Este medio no es compatible"</string>
     <string name="time_diff_now">"Ahora"</string>
@@ -154,7 +154,7 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="notify_comments">"Comentarios"</string>
     <string name="read_more">"Leer más"</string>
     <string name="no_photos_or_videos_found">"No se encontraron fotos o videos"</string>
-    <string name="gallery">"Galería"</string>
+    <string name="gallery">"Galería de fotos"</string>
     <string name="avatar_picker_title">"Foto de perfil"</string>
     <string name="group_avatar_picker_title">"Avatar del grupo"</string>
     <string name="other_media">"Otros medios"</string>
@@ -247,7 +247,7 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="album">"Álbum"</string>
     <string name="new_messages">"Nuevos mensajes"</string>
     <string name="delete">"Borrar"</string>
-    <string name="clear_chat">"Vaciar chat"</string>
+    <string name="clear_chat">"Borrar toda la conversación"</string>
     <string name="view_profile">"Ver perfil"</string>
     <string name="action_hide">"Ocultar"</string>
     <string name="hide_my_posts">"Ocultar mis publicaciones"</string>
@@ -471,7 +471,9 @@ versión: %2$s
     <string name="hide_future_posts_confirmation">"¿Estás seguro que quieres ocultar todas tus publicaciones futuras de %s? Siempre puedes cambiar esto después."</string>
     <string name="feed_privacy_hide_success">"El contenido de privacidad ha sido actualizado. Ocultando las publicaciones de %s"</string>
     <string name="feed_privacy_hide_failure">"No se pudo activar el contenido de privacidad, revisa tu conexión a Internet e inténtalo de nuevo"</string>
-    <string name="user_typing">"escribiendo…"</string>
+
+    <!-- it says in my device escribe and should say escribiendo, or está escribiendo -->
+    <string name="user_typing">"está escribiendo…"</string>
     <string name="group_user_typing">"%s está escribiendo…"</string>
     <string name="group_many_users_typing">"varios usuarios están escribiendo…"</string>
     <string name="camera_error_generic">"Error de cámara."</string>
@@ -732,14 +734,14 @@ Abre la pantalla de ajustes de la aplicación para modificar los permisos."</str
     <string name="contact_permissions_request_permanently_denied">"Permite a HalloApp el acceso a tus contactos para que puedas enviar y recibir actualizaciones. Selecciona Configuración &gt; Permisos y activa Contactos"</string>
 
     <!-- Banner explaining why user can't leave a comment in a group they've left -->
-    <string name="no_longer_group_member">"You're no longer a member of this group"</string>
+    <string name="no_longer_group_member">"Ya no eres miembro de este grupo"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes -->
-    <string name="voice_note_record_audio_permission_rationale">"To record voice notes we need permission to access the microphone"</string>
+    <string name="voice_note_record_audio_permission_rationale">"Para grabar notas de voz necesitamos permiso para acceder a tu micrófono"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
-    <string name="voice_note_record_audio_permission_rationale_denied">"To record voice notes we need permission to access the microphone.
+    <string name="voice_note_record_audio_permission_rationale_denied">"Para grabar notas de voz necesitamos permiso para acceder a tu micrófono.
 
-Open the app settings screen to modify app permissions."</string>
+Abre la pantalla de configuración para modificar los permisos de la aplicación."</string>
 </resources>
 

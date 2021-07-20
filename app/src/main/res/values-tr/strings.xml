@@ -271,7 +271,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="contact_search_empty">"%s için bir şey bulunamadı"</string>
     <string name="action_save">"Kaydet"</string>
     <string name="invite_friends">"Aile ve arkadaşlarını davet et"</string>
-    <string name="invite_friend_chooser_title">"% kişisini davet et"</string>
+    <string name="invite_friend_chooser_title">"%s kişisini davet et"</string>
 
     <!-- Will the second %s here be a link? -->
     <!-- Fuzzy -->
