@@ -148,10 +148,12 @@ public class ContactsSync {
 
         final Preferences preferences = Preferences.getInstance();
         final ListenableWorker.Result result;
-        if (fullSync ||
+
+        boolean shouldPerformFullSync = fullSync ||
                 preferences.getRequireFullContactsSync() ||
                 preferences.getLastContactsSyncTime() <= 0 ||
-                contactHashes.contains("")) {
+                contactHashes.contains("");
+        if (shouldPerformFullSync) {
             result = performFullContactSync();
         } else {
             result = performIncrementalContactSync(syncResult, getHashSyncContacts(contactHashes));
@@ -161,7 +163,9 @@ public class ContactsSync {
             preferences.setRequireFullContactsSync(true);
         } else {
             preferences.setRequireFullContactsSync(false);
-            preferences.setLastContactsSyncTime(System.currentTimeMillis());
+            if (shouldPerformFullSync) {
+                preferences.setLastContactsSyncTime(System.currentTimeMillis());
+            }
         }
 
         Log.i("ContactsSync.done: " + Preferences.getInstance().getLastContactsSyncTime());

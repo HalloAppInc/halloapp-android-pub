@@ -93,6 +93,7 @@ public class HalloApp extends Application {
         lifecycle.addObserver(permissionWatcher);
 
         DailyWorker.schedule(this);
+        ScheduledContactSyncWorker.schedule(this);
 
         new StartContactSyncTask(Preferences.getInstance(), ContactsSync.getInstance()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
