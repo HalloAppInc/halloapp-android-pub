@@ -157,7 +157,8 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
 
     private TimestampRefresher timestampRefresher;
 
-    private boolean showKeyboardOnResume;
+    private boolean enterTransitionComplete;
+    private boolean showKeyboardAfterEnter;
     private boolean scrollToComment = false;
     private int commentsFsePosition;
 
@@ -394,7 +395,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
         }
 
         if (getIntent().getBooleanExtra(EXTRA_SHOW_KEYBOARD, true)) {
-            showKeyboardOnResume = true;
+            showKeyboard();
         }
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
@@ -591,18 +592,11 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (showKeyboardOnResume) {
-            editText.postDelayed(this::showKeyboard, Constants.KEYBOARD_SHOW_DELAY);
-
-            showKeyboardOnResume = false;
-        }
-    }
-
     private void showKeyboard() {
+        if (!enterTransitionComplete) {
+            showKeyboardAfterEnter = true;
+            return;
+        }
         editText.requestFocus();
         final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
         imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
@@ -646,6 +640,16 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
 
                 layoutManager.scrollToPosition(position);
             }
+        }
+    }
+
+    @Override
+    public void onEnterAnimationComplete() {
+        super.onEnterAnimationComplete();
+
+        enterTransitionComplete = true;
+        if (showKeyboardAfterEnter) {
+            showKeyboard();
         }
     }
 
