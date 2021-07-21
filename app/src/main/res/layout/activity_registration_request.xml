@@ -110,7 +110,7 @@
                     app:ccpDialog_textColor="?android:textColorPrimary"
                     app:ccp_autoDetectCountry="true"
                     app:ccp_contentColor="?android:textColorPrimary"
-                    app:ccp_countryPreference="us,in"
+                    app:ccp_countryPreference="us,in,br"
                     app:ccp_hintExampleNumberType="MOBILE"
                     app:ccp_useFlagEmoji="true" />
 
