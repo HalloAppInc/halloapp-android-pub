@@ -345,7 +345,7 @@
     <string name="action_add">Add</string>
     <string name="invite_friends">Invite friends &amp; family</string>
     <string name="invite_friend_chooser_title">Invite %s</string>
-    <string name="invite_text_with_name_and_number">Hey %1$s, I have an invite for you to join me on HalloApp (a simple social app for sharing everyday moments). Use %2$s to register. Get it at halloapp.com/dl</string>
+    <string name="invite_text_with_name_and_number">Hey %1$s, I have an invite for you to join me on HalloApp - a real-relationship network for those closest to me. Use %2$s to register. Get it at https://halloapp.com/dl</string>
     <string name="name_hint">Your name</string>
     <string name="name_must_be_specified">Name must be specified</string>
     <string name="counter">%1$d/%2$d</string>
