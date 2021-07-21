@@ -132,7 +132,7 @@ public class ChatMessageProtocol {
         String senderAgent = chatStanza.getSenderClientVersion();
 
         Log.i("Local state relevant to message " + id + " from:" + encryptedKeyStore.getLogInfo(fromUserId));
-        String senderPlatform = senderAgent.contains("Android") ? "android" : senderAgent.contains("iOS") ? "ios" : "";
+        String senderPlatform = senderAgent == null ? "" : senderAgent.contains("Android") ? "android" : senderAgent.contains("iOS") ? "ios" : "";
         String senderVersion = senderPlatform.equals("android") ? senderAgent.split("Android")[1] : senderPlatform.equals("ios") ? senderAgent.split("iOS")[1] : "";
         String failureReason = null;
         ChatMessage chatMessage = null;
