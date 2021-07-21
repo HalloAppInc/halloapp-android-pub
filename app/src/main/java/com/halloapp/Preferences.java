@@ -24,7 +24,7 @@ public class Preferences {
     private static final String PREF_KEY_MIGRATED_PREFS = "migrated_prefs";
     private static final String PREF_KEY_MIGRATED_GROUP_TIMESTAMPS = "updated_group_timestamps";
 
-    private static final String PREF_KEY_LAST_CONTACTS_SYNC_TIME = "last_sync_time";
+    private static final String PREF_KEY_LAST_FULL_CONTACTS_SYNC_TIME = "last_sync_time";
     private static final String PREF_KEY_REQUIRE_FULL_CONTACTS_SYNC = "require_full_sync";
     private static final String PREF_KEY_REQUIRE_SHARE_POSTS = "require_share_posts";
 
@@ -101,7 +101,7 @@ public class Preferences {
 
     private final BooleanPreference prefMigratedGroupTimestamp = createPref(false, PREF_KEY_MIGRATED_GROUP_TIMESTAMPS, false);
     private final BooleanPreference prefInviteNotificationSeen = createPref(false, PREF_KEY_INVITE_NOTIFICATION_SEEN, false);
-    private final LongPreference prefLastContactSyncTime = createPref(false, PREF_KEY_LAST_CONTACTS_SYNC_TIME, 0L);
+    private final LongPreference prefLastFullContactSyncTime = createPref(false, PREF_KEY_LAST_FULL_CONTACTS_SYNC_TIME, 0L);
     private final LongPreference prefLastBlockListSyncTime = createPref(false, PREF_KEY_LAST_BLOCK_LIST_SYNC_TIME, 0L);
     private final LongPreference prefRegistrationTime = createPref(false, PREF_KEY_REGISTRATION_TIME, 0L);
     private final LongPreference prefLastPushTokenTime = createPref(false, PREF_KEY_LAST_PUSH_TOKEN_SYNC_TIME, 0L);
@@ -299,13 +299,13 @@ public class Preferences {
     }
 
     @WorkerThread
-    public long getLastContactsSyncTime() {
-        return prefLastContactSyncTime.get();
+    public long getLastFullContactSyncTime() {
+        return prefLastFullContactSyncTime.get();
     }
 
     @WorkerThread
-    public void setLastContactsSyncTime(long time) {
-        prefLastContactSyncTime.set(time);
+    public void setLastFullContactSyncTime(long time) {
+        prefLastFullContactSyncTime.set(time);
     }
 
     @WorkerThread

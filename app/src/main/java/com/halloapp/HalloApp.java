@@ -20,7 +20,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.ContentDb;
-import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.permissions.PermissionObserver;
 import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.props.ServerProps;
@@ -67,7 +66,7 @@ public class HalloApp extends Application {
         ContactsDb.getInstance().addObserver(new ContactsDb.BaseObserver() {
             @Override
             public void onContactsReset() {
-                Preferences.getInstance().setLastContactsSyncTime(0);
+                Preferences.getInstance().setLastFullContactSyncTime(0);
             }
         });
 
@@ -217,7 +216,7 @@ public class HalloApp extends Application {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            return preferences.getLastContactsSyncTime() > 0;
+            return preferences.getLastFullContactSyncTime() > 0;
         }
 
         @Override

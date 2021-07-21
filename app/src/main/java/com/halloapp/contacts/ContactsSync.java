@@ -151,7 +151,7 @@ public class ContactsSync {
 
         boolean shouldPerformFullSync = fullSync ||
                 preferences.getRequireFullContactsSync() ||
-                preferences.getLastContactsSyncTime() <= 0 ||
+                preferences.getLastFullContactSyncTime() <= 0 ||
                 contactHashes.contains("");
         if (shouldPerformFullSync) {
             result = performFullContactSync();
@@ -164,11 +164,11 @@ public class ContactsSync {
         } else {
             preferences.setRequireFullContactsSync(false);
             if (shouldPerformFullSync) {
-                preferences.setLastContactsSyncTime(System.currentTimeMillis());
+                preferences.setLastFullContactSyncTime(System.currentTimeMillis());
             }
         }
 
-        Log.i("ContactsSync.done: " + Preferences.getInstance().getLastContactsSyncTime());
+        Log.i("ContactsSync.done: " + Preferences.getInstance().getLastFullContactSyncTime());
         return result;
     }
 
@@ -294,7 +294,7 @@ public class ContactsSync {
         final Collection<Contact> updatedContacts = new ArrayList<>();
         final Collection<UserId> newContacts = new HashSet<>();
         final long syncTime = System.currentTimeMillis();
-        final boolean initialSync = Preferences.getInstance().getLastContactsSyncTime() == 0;
+        final boolean initialSync = Preferences.getInstance().getLastFullContactSyncTime() == 0;
         for (ContactInfo contactsSyncResult : contactSyncResults) {
             final List<Contact> phoneContacts = phones.get(contactsSyncResult.phone);
             if (phoneContacts == null) {

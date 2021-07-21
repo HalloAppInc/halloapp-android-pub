@@ -11,7 +11,7 @@ public class CheckRegistration {
     @WorkerThread
     @NonNull
     public static CheckResult checkRegistration(@NonNull Me me, @NonNull Preferences preferences) {
-        return new CheckResult(me.isRegistered(), preferences.getLastContactsSyncTime());
+        return new CheckResult(me.isRegistered(), preferences.getLastFullContactSyncTime());
     }
 
     public static class CheckResult {

@@ -210,7 +210,7 @@ public class RegistrationRequestActivity extends HalloActivity {
             case REQUEST_CODE_VERIFICATION: {
                 if (result == RESULT_OK) {
                     startActivity(new Intent(this, MainActivity.class));
-                    if (preferences.getLastContactsSyncTime() > 0) {
+                    if (preferences.getLastFullContactSyncTime() > 0) {
                         onRereg();
                     }
                     finish();

@@ -5,9 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.ExistingWorkPolicy;
 import androidx.work.NetworkType;
-import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
@@ -24,7 +22,7 @@ public class ScheduledContactSyncWorker extends Worker {
     private static final String CONTACT_SYNC_WORKER_ID = "scheduled-contact-sync-worker";
 
     static void schedule(@NonNull Context context) {
-        long lastFullSync = Preferences.getInstance().getLastContactsSyncTime();
+        long lastFullSync = Preferences.getInstance().getLastFullContactSyncTime();
         long syncDelayMs = ServerProps.getInstance().getContactSyncIntervalSeconds() * 1000L;
 
         long timeSince = System.currentTimeMillis() - lastFullSync;
@@ -48,7 +46,7 @@ public class ScheduledContactSyncWorker extends Worker {
             return Result.failure();
         }
         Log.i("ScheduledContactSyncWorker.doWork");
-        long lastFullSync = Preferences.getInstance().getLastContactsSyncTime();
+        long lastFullSync = Preferences.getInstance().getLastFullContactSyncTime();
         long syncDelayMs = ServerProps.getInstance().getContactSyncIntervalSeconds() * 1000L;
 
         long timeSince = System.currentTimeMillis() - lastFullSync;
