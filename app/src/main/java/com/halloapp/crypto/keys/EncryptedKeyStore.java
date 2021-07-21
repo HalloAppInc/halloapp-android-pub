@@ -747,41 +747,6 @@ public class EncryptedKeyStore {
             return null;
         }
 
-        boolean migrated = encrypted.getBoolean(PREF_KEY_PT_MIGRATED, false);
-        Log.i("EncryptedKeyStore migrated? " + migrated);
-        if (!migrated) {
-            SharedPreferences plaintext = context.getSharedPreferences(EncryptedKeyStore.PT_PREF_FILE_NAME, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = encrypted.edit();
-
-            for (Map.Entry<String, ?> entry : plaintext.getAll().entrySet()) {
-                String key = entry.getKey();
-                Log.i("EncryptedKeyStore migrating entry " + key);
-                Object value = entry.getValue();
-                if (value instanceof Boolean) {
-                    editor.putBoolean(key, (Boolean) value);
-                } else if (value instanceof Integer) {
-                    editor.putInt(key, (Integer) value);
-                } else if (value instanceof Long) {
-                    editor.putLong(key, (Long) value);
-                } else if (value instanceof Float) {
-                    editor.putFloat(key, (Float) value);
-                } else if (value instanceof String) {
-                    editor.putString(key, (String) value);
-                } else if (value instanceof Set) {
-                    editor.putStringSet(key, (Set<String>) value);
-                }
-            }
-
-            editor.putBoolean(PREF_KEY_PT_MIGRATED, true);
-            if (editor.commit()) {
-                plaintext.edit().clear().apply();
-            } else {
-                Log.e("Failed to migrate EncryptedKeyStore");
-                Log.sendErrorReport("EncryptedKeyStore Migration Failed");
-            }
-
-        }
-
         return encrypted;
     }
 
