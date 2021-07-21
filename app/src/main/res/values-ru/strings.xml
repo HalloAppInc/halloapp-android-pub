@@ -1,0 +1,718 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">"HalloApp"</string>
+    <string name="title_home">"Главная"</string>
+    <string name="title_messages">"Чаты"</string>
+    <string name="title_profile">"Профиль"</string>
+    <string name="title_groups">"Группы"</string>
+    <string name="comment">"Комментарий"</string>
+    <string name="next">"Далее"</string>
+    <string name="message">"Сообщение"</string>
+    <string name="add_post">"Добавить пост"</string>
+    <string name="new_chat">"Новый чат"</string>
+    <string name="new_group">"Новая группа"</string>
+    <string name="notifications">"Уведомления"</string>
+    <string name="feed_notifications_channel_name">"Уведомления в ленте"</string>
+    <string name="message_notifications_channel_name">"Уведомления о сообщениях"</string>
+    <string name="critical_notifications_channel_name">"Критические оповещения приложения"</string>
+    <string name="invite_notifications_channel_name">"Уведомления о приглашениях"</string>
+    <string name="invite_notification_text">"%s только что принял(а) ваше приглашение присоединиться к HalloApp &#x1f389;"</string>
+    <string name="me">"Я"</string>
+    <string name="you">"Вы"</string>
+    <string name="camera_post">"Камера"</string>
+    <string name="gallery_post">"Галерея"</string>
+    <string name="text_post">"Текст"</string>
+    <string name="bad_image">"Неподдерживаемый тип медиафайла"</string>
+    <string name="time_diff_now">"Сейчас"</string>
+    <string name="phone_number_hint">"Номер телефона"</string>
+    <string name="request_registration_title">"Добро пожаловать!"</string>
+    <string name="reverify_registration_title">"Пожалуйста, подтвердите свой номер телефона еще раз"</string>
+    <string name="request_registration_subtitle">"Вы получите проверочный код.
+Могут применяться тарифы оператора связи."</string>
+    <string name="verify_registration_title">"Укажите код, который мы отправили на номер
+%s"</string>
+    <string name="contact_permission_title">"И последнее"</string>
+    <string name="registration_code_invalid">"Неверный регистрационный код. Попробуйте еще раз"</string>
+    <string name="registration_failed">"Не удалось зарегистрировать номер телефона. Попробуйте еще раз"</string>
+    <string name="registration_failed_no_friends">"В настоящее время мы работаем только по приглашениям. Если у вас есть друг или член семьи, использующий HalloApp, попросите его или ее пригласить вас по вашему номеру телефона."</string>
+    <string name="registration_failed_no_friends_title">"Ох!"</string>
+    <string name="type_a_message_hint">"Напишите сообщение"</string>
+    <string name="write_a_description">"Напишите описание"</string>
+    <string name="write_a_post">"Напишите пост"</string>
+    <string name="send">"Отправить"</string>
+    <string name="set_avatar_done">"Готово"</string>
+    <string name="set_avatar_reset">"Сбросить"</string>
+    <string name="new_post">"Новый пост"</string>
+    <string name="new_message">"Новое сообщение"</string>
+    <string name="chat_message_attribution">"%1$s: %2$s"</string>
+    <string name="empty_chat_with_name_placeholder">"%s есть на HalloApp."</string>
+    <string name="new_chat_name_placeholder">"%s использует HalloApp! &#x1f389;"</string>
+    <string name="posts_empty">"Ваши посты появятся здесь"</string>
+    <string name="posts_exchange_numbers">"Для подключения необходимо обменяться номерами телефонов"</string>
+    <string name="home_page_empty">"Здесь будут появляться сообщения от ваших контактов"</string>
+    <string name="chats_page_empty">"Контакты и сообщения появятся здесь"</string>
+    <string name="chats_search_empty">"Чаты для «%s» не найдены"</string>
+    <string name="groups_page_empty">"Ваши группы появятся здесь"</string>
+    <string name="groups_search_empty">"Группы для «%s» не найдены"</string>
+    <string name="contact_profile_empty">"Здесь будут появляться посты %s"</string>
+    <string name="invalid_phone_number">"Неверный номер телефона"</string>
+    <string name="share_option_post">"Пост"</string>
+    <string name="share_option_message">"Сообщение"</string>
+    <plurals name="max_post_media_items">
+        <item quantity="one">"Вы можете выбрать до %d элемента в сообщении"</item>
+        <item quantity="few">"Вы можете выбрать до %d элементов в сообщении"</item>
+        <item quantity="many">"Вы можете выбрать до %d элементов в сообщении"</item>
+        <item quantity="other">"Вы можете выбрать до %d элементов в сообщении"</item>
+    </plurals>
+    <string name="camera_record_audio_permission_rationale">"Чтобы снимать фото и записывать видео, нам необходимо разрешение на доступ к камере и запись звука на вашем устройстве"</string>
+    <string name="camera_record_audio_permission_rationale_denied">"Чтобы снимать фото и записывать видео, нам необходимо разрешение на доступ к камере и запись звука на вашем устройстве.
+
+Откройте экран настроек приложения, чтобы изменить разрешения приложения."</string>
+    <string name="contacts_permission_rationale">"Чтобы вы могли общаться с друзьями и семьей, нам нужно разрешение на доступ к контактам на вашем устройстве"</string>
+    <string name="contacts_permission_rationale_denied">"Чтобы вы могли общаться с друзьями и семьей, нам нужно разрешение на доступ к контактам на вашем устройстве.
+
+Откройте экран настроек приложения, чтобы изменить разрешения приложения."</string>
+    <string name="storage_permission_rationale">"Чтобы выбирать медиафайлы, нам нужно разрешение на доступ к хранилищу вашего устройства"</string>
+    <string name="storage_permission_rationale_denied">"Чтобы выбирать медиафайлы, нам нужно разрешение на доступ к хранилищу вашего устройства.
+
+Откройте экран настроек приложения, чтобы изменить разрешения приложения."</string>
+    <string name="retry">"Еще раз"</string>
+    <string name="contact_rationale_upload">"Чтобы вы могли общаться с друзьями и семьей, нам потребуется ваше разрешение на доступ к вашим контактам. &lt;a href=\"learn-more\"&gt;Подробнее…&lt;/a&gt;"</string>
+    <string name="failed_to_initialize">"Ошибка инициализации"</string>
+    <string name="type_a_comment_hint">"Добавить комментарий"</string>
+    <string name="comments">"Комментарии"</string>
+    <string name="reply">"Ответить"</string>
+    <string name="close">"Закрыть"</string>
+    <string name="reply_to_self">"Ответить себе"</string>
+    <string name="reply_to_contact">"Ответить %s"</string>
+    <string name="reply_original_not_found">"Исходное сообщение не найдено"</string>
+    <string name="reply_original_post_not_found">"Исходный пост не найден"</string>
+    <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; упомянул(а) вас в своем посте"</string>
+    <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; упомянул(а) вас в комментарии к вашему посту"</string>
+    <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; упомянул(а) вас в комментарии к своему посту"</string>
+    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%s&lt;/b&gt; упомянул(а) вас в комментарии к посту пользователя &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; прокомментировал(а) ваш пост"</string>
+    <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; прокомментировали ваш пост"</string>
+    <string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и &lt;b&gt;%3$s&lt;/b&gt; прокомментировали ваш пост"</string>
+    <plurals name="commented_on_your_post_4">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и еще   %3$d человек прокомментировали ваш пост"</item>
+        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и еще   %3$d человека прокомментировали ваш пост"</item>
+        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и еще   %3$d человек прокомментировали ваш пост"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и еще   %3$d человек прокомментировали ваш пост"</item>
+    </plurals>
+    <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; прокомментировал(а) пост &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; прокомментировали пост &lt;b&gt;%3$s&lt;/b&gt;"</string>
+    <string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и &lt;b&gt;%3$s&lt;/b&gt; прокомментировали пост &lt;b&gt;%4$s&lt;/b&gt;"</string>
+    <plurals name="commented_on_someones_post_4">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человек прокомментировали пост &lt;b&gt;%4$s&lt;/b&gt;"</item>
+        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человека прокомментировали пост &lt;b&gt;%4$s&lt;/b&gt;"</item>
+        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человек прокомментировали пост &lt;b&gt;%4$s&lt;/b&gt;"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человек прокомментировали пост &lt;b&gt;%4$s&lt;/b&gt;"</item>
+    </plurals>
+    <string name="contact_hashing_faq_dialog_title">"Ваша конфиденциальность — наш главный приоритет"</string>
+    <string name="contact_hashing_faq_dialog_info">"HalloApp использует поле номера телефона только для того, чтобы связать вас с вашими друзьями в HalloApp, и не собирает никаких дополнительных данных из вашей контактной книги."</string>
+    <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; прокомментировал(а) свой пост"</string>
+    <string name="list_of_two">"%1$s и %2$s"</string>
+    <string name="list_of_many_start">"%s"</string>
+    <string name="list_of_many_middle">", %s"</string>
+    <string name="list_of_many_end">"и %s"</string>
+    <string name="no_activity">"Нет активности"</string>
+    <string name="failed_to_load_media">"Не удалось загрузить медиафайл"</string>
+    <string name="settings">"Настройки"</string>
+    <string name="send_logs">"Делитесь отзывами и журналами"</string>
+    <string name="terms_of_service">"Условия использования"</string>
+    <string name="privacy_policy">"Политика конфиденциальности"</string>
+    <string name="settings_block_list">"Заблокированные контакты"</string>
+    <string name="settings_feed_privacy">"Посты"</string>
+    <string name="settings_privacy">"Конфиденциальность"</string>
+    <plurals name="contact_selection_subtitle">
+        <item quantity="one">"Выбран %d контакт"</item>
+        <item quantity="few">"Выбрано %d контакта"</item>
+        <item quantity="many">"Выбрано %d контактов"</item>
+        <item quantity="other">"Выбрано %d контактов"</item>
+    </plurals>
+    <plurals name="contact_maximum_selection">
+        <item quantity="one">"Вы можете выбрать не более %d контакта"</item>
+        <item quantity="few">"Вы можете выбрать не более %d контактов"</item>
+        <item quantity="many">"Вы можете выбрать не более %d контактов"</item>
+        <item quantity="other">"Вы можете выбрать не более %d контактов"</item>
+    </plurals>
+    <string name="no_contacts_selected_subtitle">"Контакты не выбраны"</string>
+    <string name="help">"Помощь"</string>
+    <string name="about">"О нас"</string>
+    <string name="notify_posts">"Посты"</string>
+    <string name="notify_comments">"Комментарии"</string>
+    <string name="read_more">"подробнее"</string>
+    <string name="no_photos_or_videos_found">"не найдены фото и видео"</string>
+    <string name="gallery">"Галерея"</string>
+    <string name="avatar_picker_title">"Фото профиля"</string>
+    <string name="group_avatar_picker_title">"Аватар группы"</string>
+    <string name="other_media">"Другие медиа"</string>
+    <string name="rotate">"Вращать"</string>
+    <string name="seen_by">"Просмотрено"</string>
+    <string name="empty_viewed_by">"Никто еще не видел твой пост"</string>
+    <string name="options">"Параметры"</string>
+    <string name="block">"Блокировать"</string>
+    <string name="play">"Воспроизвести"</string>
+    <string name="new_posts">"Новые посты"</string>
+
+    <!-- Confirmation dialog message when user tries to exit with unsaved changes. Options are cancel (keep editing) and discard (exit). -->
+    <string name="alert_discard_changes_message">"Отменить изменения?"</string>
+
+    <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
+    <string name="action_discard">"Отменить"</string>
+    <string name="new_post_notification">"Новый пост от  %s"</string>
+    <plurals name="new_posts_notification">
+        <item quantity="one">"%1$d новый пост от %2$s"</item>
+        <item quantity="few">"%1$d новых поста от %2$s"</item>
+        <item quantity="many">"%1$d новых постов от %2$s"</item>
+        <item quantity="other">"%1$d новых поста от %2$s"</item>
+    </plurals>
+    <plurals name="new_messages_notification">
+        <item quantity="one">"%1$d сообщение от %2$s"</item>
+        <item quantity="few">"%1$d сообщения от %2$s"</item>
+        <item quantity="many">"%1$d сообщений от  %2$s"</item>
+        <item quantity="other">"%1$d сообщения от %2$s"</item>
+    </plurals>
+    <plurals name="new_messages_separator">
+        <item quantity="one">"%d новое сообщение"</item>
+        <item quantity="few">"%d новых сообщения"</item>
+        <item quantity="many">"%d новых сообщений"</item>
+        <item quantity="other">"%d новых сообщения"</item>
+    </plurals>
+    <string name="new_comments_notification">"%s прокомментировал(-а) твой пост"</string>
+    <string name="new_comments_on_multiple_posts_notification">"%s прокомментировал(-а) твой посты"</string>
+    <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
+    <string name="notification_app_expired_title">"Срок HalloApp истек"</string>
+    <string name="notification_app_expiration_body">"Скачай последний релиз"</string>
+    <plurals name="notification_app_expiration_days_left_title">
+        <item quantity="one">"Срок HalloApp истекает через %d день"</item>
+        <item quantity="few">"Срок HalloApp истекает через %d дня"</item>
+        <item quantity="many">"Срок HalloApp истекает через %d дней"</item>
+        <item quantity="other">"Срок HalloApp истекает через %d дня"</item>
+    </plurals>
+    <string name="app_expiration_download_button">"Скачать обновление"</string>
+    <string name="app_expired_explanation">"Эта версия HalloApp слишком старая и больше не может быть использована. Перейди в магазин Google Play и загрузи последний релиз."</string>
+    <string name="app_expiration_no_play_store">"Google Play не устаовлено"</string>
+    <string name="refresh_contacts">"Обновить контакты"</string>
+    <string name="post_retracted_with_name">"%s удалил(-а) свой пост"</string>
+    <string name="post_retracted_by_me">"Ты удалил(-а) свой пост"</string>
+    <string name="post_retracted_placeholder">"Этот пост был удален"</string>
+    <string name="message_retracted_placeholder">"Это сообщение было удалено"</string>
+    <string name="comment_retracted_placeholder">"Этот комментарий был удален"</string>
+    <string name="retract">"Удалить"</string>
+    <string name="retract_post_confirmation">"Хочешь удалить свой пост?"</string>
+    <string name="retract_comment_confirmation">"Хочешь удалить свой комментарий?"</string>
+    <plurals name="delete_chats_confirmation">
+        <item quantity="one">"Хочешь удалить этот чат?"</item>
+        <item quantity="few">"Хочешь удалить %d выбранных чата?"</item>
+        <item quantity="many">"Хочешь удалить %d выбранных чатов?"</item>
+        <item quantity="other">"Хочешь удалить %d выбранных чатов?"</item>
+    </plurals>
+    <plurals name="delete_groups_confirmation">
+        <item quantity="one">"Хочешь удалить эту группу?"</item>
+        <item quantity="few">"Хочешь удалить %d выбранные группы?"</item>
+        <item quantity="many">"Хочешь удалить %d выбранных групп?"</item>
+        <item quantity="other">"Хочешь удалить %d выбранных групп?"</item>
+    </plurals>
+    <string name="delete_chat_confirmation">"Хочешь удалить этот чат?"</string>
+    <string name="yes">"Да"</string>
+    <string name="no">"Нет"</string>
+    <string name="ok">"ОК"</string>
+    <string name="activity">"Активность"</string>
+
+    <!-- In activity center, mark all comments/mentions as read -->
+    <string name="mark_all_read">"Читать все"</string>
+    <string name="login_failed">"Не удалось войти"</string>
+    <string name="login_failed_explanation">"Перепроверь свой номер телефона"</string>
+    <plurals name="app_expiration_days_left">
+        <item quantity="one">"Срок этой версии HalloApp истекает через %d день. Перейди в магазин Google Play и загрузи последний релиз."</item>
+        <item quantity="few">"Срок этой версии HalloApp истекает через %d дня. Перейди в магазин Google Play и загрузи последний релиз."</item>
+        <item quantity="many">"Срок этой версии HalloApp истекает через %d дней. Перейди в магазин Google Play и загрузи последний релиз."</item>
+        <item quantity="other">"Срок этой версии HalloApp истекает через %d дней. Перейди в магазин Google Play и загрузи последний релиз."</item>
+    </plurals>
+    <string name="could_not_set_avatar">"Попробуй другое изображение"</string>
+    <string name="pick_media">"Выбери медиа"</string>
+    <string name="video">"Видео"</string>
+    <string name="photo">"Фото"</string>
+    <string name="album">"Альбом"</string>
+    <string name="new_messages">"Новые сообщения"</string>
+    <string name="delete">"Удалить"</string>
+    <string name="clear_chat">"Очистить чат"</string>
+    <string name="view_profile">"Смотреть профиль"</string>
+    <string name="action_hide">"Скрыть"</string>
+    <string name="hide_my_posts">"Скрыть мои посты"</string>
+    <string name="my_posts">"Мои посты"</string>
+    <string name="last_seen">"Последний раз в сети %s"</string>
+    <string name="last_seen_less_minute">"Последний раз в сети менее минуты назад"</string>
+    <string name="online">"в сети"</string>
+    <string name="today">"Сегодня"</string>
+    <string name="today_at_time">"Сегодня в %s"</string>
+    <string name="yesterday">"Вчера"</string>
+    <string name="yesterday_at_time">"Вчера в %s"</string>
+    <string name="day_of_week_at_time">"%1$s в %2$s"</string>
+    <string name="unknown_contact">"Неизвестный контакт"</string>
+    <string name="select_contact">"Новое сообщение"</string>
+    <string name="search_contacts">"Поиск контактов"</string>
+    <string name="search">"Поиск"</string>
+    <string name="contact_search_empty">"Ничего не найдено для '%s'"</string>
+    <string name="action_save">"Сохранить"</string>
+    <string name="invite_friends">"Пригласить друзей и семью"</string>
+    <string name="invite_friend_chooser_title">"Пригласить %s"</string>
+
+    <!-- Fuzzy -->
+    <string name="invite_text_with_name_and_number">"Привет, %1$s, приглашаю тебя присоединиться ко мне в HalloApp (простое социальное приложение для того, чтобы делиться повседневными впечатлениями). Используй %2$ для регистрации. Скачай на halloapp.com/dl"</string>
+    <string name="name_hint">"Твое имя"</string>
+    <string name="name_must_be_specified">"Нужно указать имя"</string>
+    <string name="counter">"%1$d/%2$d"</string>
+    <string name="invite_pending">"В ожидании"</string>
+    <string name="failed_update_profile">"Не удалось обновить профиль, попробуй позже"</string>
+    <string name="profile_updated">"Профиль обновлен"</string>
+    <string name="flip">"Перевернуть"</string>
+    <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
+    <string name="email_logs_text">"----------------------------------------
+Пожалуйста, опиши проблему выше.
+uid: %1$s
+версия: %2$s
+----------------------------------------"</string>
+    <string name="share">"Поделиться"</string>
+    <string name="unblock">"Разблокировать"</string>
+    <string name="unblock_user_confirmation">"Хочешь разблокировать%s?"</string>
+    <string name="menu_item_block_user">"Блокировать пользователя"</string>
+    <string name="picker_title_block_user">"Блокировать пользователя"</string>
+    <string name="cancel">"Отмена"</string>
+    <string name="group_subtitle">"нажми здесь для просмотра сведений о группе"</string>
+    <string name="empty_block_list">"Нет блокированных контактов"</string>
+    <string name="block_notification">"Ты заблокировал(-а) этот контакт. Нажми, чтобы разблокировать"</string>
+    <string name="unblock_notification">"Вы разблокировал(-а) этот контакт"</string>
+    <string name="system_message_group_created">"Эта группа создана %s"</string>
+    <string name="system_message_group_created_by_you">"Эта группа создана тобой"</string>
+    <string name="system_message_members_added">"%1$s добавил(-а)%2$s"</string>
+    <string name="system_message_members_added_by_you">"Ты добавил(-а) %s"</string>
+    <string name="system_message_members_removed">"%1$s удалил(-а) %2$s"</string>
+    <string name="system_message_members_removed_by_you">"Ты удалил(-а) %s"</string>
+    <string name="system_message_member_left">"%s ушел(-ла)"</string>
+    <string name="system_message_member_you_left">"Ты ушел(-ла)"</string>
+    <string name="system_message_members_promoted">"%1$s повысил(-а) %2$s до администратора"</string>
+    <string name="system_message_members_promoted_by_you">"Ты повысил(-а) %s до администратора"</string>
+    <string name="system_message_members_demoted">"%1$s лишил(-а) %2$s статуса администратора"</string>
+    <string name="system_message_members_demoted_by_you">"Ты лишил(-а) %s статуса администратора"</string>
+    <string name="system_message_member_auto_promoted">"%s был(-а) автоматически повышен(-а) до администратора"</string>
+    <string name="system_message_member_auto_promoted_you">"Ты был(-а) автоматически повышен(-а) до администратора"</string>
+    <string name="system_message_group_name_changed">"%1$s изменил(-а) название группы на %2$s"</string>
+    <string name="system_message_group_name_changed_by_you">"Ты изменил(-а) название группы на %s"</string>
+    <string name="system_message_group_avatar_changed">"%s изменил(-а) аватар группы"</string>
+    <string name="system_message_group_avatar_changed_by_you">"Вы изменили аватар группы"</string>
+    <string name="system_message_group_deleted">"%s удалил(-а) группу"</string>
+    <string name="system_message_group_deleted_by_you">"Вы удалили группу"</string>
+    <string name="system_post_group_created">"Эту группа создал(-а) %s"</string>
+    <string name="system_post_group_created_by_you">"Эту группу создали вы"</string>
+    <string name="system_post_members_added">"%1$s добавил(-а) %2$s"</string>
+    <string name="system_post_members_added_by_you">"Вы добавили %s"</string>
+    <string name="system_post_members_removed">"%1$s удалил(-а) %2$s"</string>
+    <string name="system_post_members_removed_by_you">"Вы удалили %s"</string>
+    <string name="system_post_member_left">"%s покинул(-а)"</string>
+    <string name="system_post_member_you_left">"Вы покинули"</string>
+    <string name="system_post_members_promoted">"%1$s повысил(-а) %2$s до администратора"</string>
+    <string name="system_post_members_promoted_by_you">"Вы повысили %s до администратора"</string>
+    <string name="system_post_members_demoted">"%1$s понизил(-а) %2$s с роли администратора"</string>
+    <string name="system_post_members_demoted_by_you">"Вы понизили %s с роли администратора"</string>
+    <string name="system_post_member_auto_promoted">"%s был(-а) автоматически повышен(-а) до администратора"</string>
+    <string name="system_post_member_auto_promoted_you">"Вы были автоматически повышены до администратора"</string>
+    <string name="system_post_group_name_changed">"%1$s изменил(-а) название группы на %2$s"</string>
+    <string name="system_post_group_name_changed_by_you">"Вы изменили название группы на %s"</string>
+    <string name="system_post_group_avatar_changed">"%s изменил(-а) аватар группы"</string>
+    <string name="system_post_group_avatar_changed_by_you">"Вы изменили аватар группы"</string>
+    <string name="system_post_group_deleted">"%s удалил(-а) группу"</string>
+    <string name="system_post_group_deleted_by_you">"Вы удалили группу"</string>
+    <string name="group_info_title">"Информация о группе"</string>
+    <string name="admin">"Администратор"</string>
+    <string name="save">"Сохранить"</string>
+    <string name="contact_picker_feed_except_title">"Скрыть посты от…"</string>
+    <string name="contact_picker_feed_only_title">"Поделиться постами с…"</string>
+    <string name="setting_feed_privacy_title">"Кто может видеть мои посты"</string>
+    <string name="setting_feed_all">"Мои контакты"</string>
+    <string name="setting_feed_only">"Делиться только с…"</string>
+    <string name="setting_feed_except">"Мои контакты, кроме…"</string>
+    <string name="feed_privacy_fail_to_load">"Не удалось загрузить настройки конфиденциальности"</string>
+    <string name="feed_privacy_update_success">"Настройки успешно обновлены"</string>
+    <string name="feed_privacy_update_failure">"Не удалось обновить настройки"</string>
+    <string name="invite_failed_internet">"Не удалось отправить приглашение, проверьте свой интернет и повторите попытку"</string>
+    <string name="invite_failed_no_invites">"Извините, у вас закончились приглашения, попробуйте еще раз позже"</string>
+    <string name="invite_failed_invalid_number">"Этот номер телефона недействителен"</string>
+    <string name="invite_failed_existing_user">"Ваш друг уже в HalloApp!"</string>
+    <string name="invite_failed_unknown">"Не удалось отправить приглашение"</string>
+    <string name="invite_creation_in_progress">"Создание приглашения…"</string>
+    <string name="invite_info_fetch_internet">"Не удалось получить информацию о приглашении, проверьте свой интернет и повторите попытку"</string>
+    <plurals name="invites_remaining">
+        <item quantity="one">"У вас осталось %s приглашение на этой неделе"</item>
+        <item quantity="few">"У вас осталось %s приглашений на этой неделе"</item>
+        <item quantity="many">"У вас осталось %s приглашений на этой неделе"</item>
+        <item quantity="other">"У вас осталось %s приглашения на этой неделе"</item>
+    </plurals>
+    <string name="invite_friends_title">"Пригласите друзей и семью"</string>
+    <string name="invite_title">"Пригласить"</string>
+    <string name="settings_invite_option">"Пригласить в HalloApp"</string>
+    <string name="invite_already_on_halloapp">"Уже в HalloApp"</string>
+    <string name="invite_invalid_phone_number">"Неверный номер телефона"</string>
+    <string name="edit">"Редактировать"</string>
+    <string name="done">"Готово"</string>
+    <string name="members_header">"Участники (%s)"</string>
+    <string name="add_members">"Добавить участников"</string>
+    <string name="add_members_in_progress">"Добавление участников…"</string>
+    <string name="failed_add_members">"Не удалось добавить участников, повторите попытку позже"</string>
+    <string name="create_group_in_progress">"Создание группы %s…"</string>
+    <string name="new_group_title">"Назовите свою группу"</string>
+    <string name="group_picker_title">"Новая группа"</string>
+    <string name="button_create_group">"Создать"</string>
+    <string name="group_name_hint">"Название группы"</string>
+    <string name="failed_create_group">"Не удалось создать группу, повторите попытку позже"</string>
+    <string name="group_remove_member">"Удалить"</string>
+    <string name="group_promote_to_admin">"Повысить до администратора"</string>
+    <string name="promote_admin_in_progress">"Повышение до администратора…"</string>
+    <string name="failed_promote_admin">"Не удалось повысить до администратора, повторите попытку позже"</string>
+    <string name="group_demote_from_admin">"Отменить админство"</string>
+    <string name="demote_admin_in_progress">"Отмена админства"</string>
+    <string name="failed_demote_admin">"Не удалось отменить админство, повторите попытку позже"</string>
+    <string name="remove_member_in_progress">"Удаление участника…"</string>
+    <string name="failed_remove_member">"Не удалось удалить участника, повторите попытку позже"</string>
+    <string name="leave_group">"Покинуть группу"</string>
+    <plurals name="leave_group_plural">
+        <item quantity="one">"Покинуть группу"</item>
+        <item quantity="few">"Покинуть группы"</item>
+        <item quantity="many">"Покинуть группы"</item>
+        <item quantity="other">"Покинуть группы"</item>
+    </plurals>
+    <string name="leave_group_confirmation">"Вы хотите покинуть эту группу?"</string>
+    <plurals name="leave_multiple_groups_confirmation">
+        <item quantity="one">"Вы хотите покинуть эту группу?"</item>
+        <item quantity="few">"Вы хотите покинуть %s выбранные группы?"</item>
+        <item quantity="many">"Вы хотите покинуть %s выбранных групп?"</item>
+        <item quantity="other">"Вы хотите покинуть %s выбранных групп?"</item>
+    </plurals>
+    <string name="leave_group_in_progress">"Выход из группы…"</string>
+    <plurals name="leave_groups_progress">
+        <item quantity="one">"Выход из группы…"</item>
+        <item quantity="few">"Выход из групп…"</item>
+        <item quantity="many">"Выход из групп…"</item>
+        <item quantity="other">"Выход из групп…"</item>
+    </plurals>
+    <string name="failed_leave_group">"Не удалось покинуть группу, повторите попытку позже"</string>
+    <string name="delete_group">"Удалить группу"</string>
+    <plurals name="friends_on_halloapp">
+        <item quantity="one">"%d контакт в HalloApp"</item>
+        <item quantity="few">"%d контактов в HalloApp"</item>
+        <item quantity="many">"%d контактов в HalloApp"</item>
+        <item quantity="other">"%d контакта в HalloApp"</item>
+    </plurals>
+    <plurals name="settings_block_list_summary">
+        <item quantity="one">"%d контакт"</item>
+        <item quantity="few">"%d контактов"</item>
+        <item quantity="many">"%d контактов"</item>
+        <item quantity="other">"%d контакта"</item>
+    </plurals>
+    <string name="settings_block_list_none_summary">"Нет"</string>
+    <string name="settings_feed_contacts_summary">"Мои телефонные контакты"</string>
+    <plurals name="settings_feed_excluded_summary">
+        <item quantity="one">"%d контакт исключен"</item>
+        <item quantity="few">"%d контактов исключены"</item>
+        <item quantity="many">"%d контактов исключены"</item>
+        <item quantity="other">"%d контакта исключены"</item>
+    </plurals>
+    <plurals name="settings_feed_selected">
+        <item quantity="one">"%d контакт выбран"</item>
+        <item quantity="few">"%d контактов выбраны"</item>
+        <item quantity="many">"%d контактов выбраны"</item>
+        <item quantity="other">"%d контакта выбраны"</item>
+    </plurals>
+    <string name="settings_feed_selected_empty">"Контакты не выбраны"</string>
+    <string name="settings_version_footer">"Версия HalloApp %s"</string>
+    <string name="connectivity_info_airplane_mode">"Режим полета включен"</string>
+    <string name="connectivity_info_not_connected">"Нет сети"</string>
+    <string name="blocking_user_failed_check_internet">"Не удалось заблокировать %s. Проверьте свой интернет и повторите попытку."</string>
+    <string name="blocking_user_successful">"%s заблокирован(-а)"</string>
+    <string name="blocking_user_in_progress">"Блокировка %s…"</string>
+    <string name="unblocking_user_successful">"%s разблокирован(-а)"</string>
+    <string name="unblocking_user_failed_check_internet">"Не удалось разблокировать %s. Проверьте свой интернет и повторите попытку."</string>
+    <string name="unblocking_user_in_progress">"Разблокировка %s…"</string>
+    <string name="are_you_sure_dialog_title">"Вы уверены?"</string>
+    <string name="hide_future_posts_confirmation">"Вы уверены, что хотите скрыть все свои будущие посты от %s? Вы всегда можете изменить это позже."</string>
+    <string name="feed_privacy_hide_success">"Обновлена конфиденциальность ленты. Посты скрываются от %s"</string>
+    <string name="feed_privacy_hide_failure">"Не удалось обновить конфиденциальность ленты, проверьте свой интернет и повторите попытку"</string>
+    <string name="user_typing">"печатает…"</string>
+    <string name="group_user_typing">"%s печатает…"</string>
+    <string name="group_many_users_typing">"несколько пользователей печатают…"</string>
+    <string name="camera_error_generic">"Сбой камеры."</string>
+    <string name="camera_error_photo">"Не удалось сделать фото."</string>
+    <string name="camera_error_video">"Не удалось записать видео."</string>
+    <plurals name="group_feed_members">
+        <item quantity="one">"%d участник"</item>
+        <item quantity="few">"%d участников"</item>
+        <item quantity="many">"%d участников"</item>
+        <item quantity="other">"%d участника"</item>
+    </plurals>
+    <string name="composer_sharing_all_summary">"Поделиться с моими контактами"</string>
+    <string name="composer_sharing_except_summary">"Поделиться с некоторыми из моих контактов"</string>
+    <plurals name="composer_sharing_only_summary">
+        <item quantity="one">"Поделиться с %d из моих контактов"</item>
+        <item quantity="few">"Поделиться с %d из моих контактов"</item>
+        <item quantity="many">"Поделиться с %d из моих контактов"</item>
+        <item quantity="other">"Поделиться с %d из моих контактов"</item>
+    </plurals>
+    <string name="post_preview_no_caption">"%s поделился(-лась) постом"</string>
+    <string name="post_preview_with_caption">"%1$s: %2$s"</string>
+    <string name="composer_sharing_message">"Отправка %s"</string>
+    <string name="composer_sharing_post">"Поделиться с %s"</string>
+    <plurals name="max_video_length">
+        <item quantity="one">"Ваше видео длится более %d секунды. Пожалуйста, выберите другое видео или отредактируйте его."</item>
+        <item quantity="few">"Ваше видео длится более %d секунд. Пожалуйста, выберите другое видео или отредактируйте его."</item>
+        <item quantity="many">"Ваше видео длится более %d секунд. Пожалуйста, выберите другое видео или отредактируйте его."</item>
+        <item quantity="other">"Ваше видео длится более %d секунд. Пожалуйста, выберите другое видео или отредактируйте его."</item>
+    </plurals>
+    <string name="mute">"Отключить звук"</string>
+    <string name="share_link">"Поделиться ссылкой"</string>
+    <string name="copy_link">"Копировать ссылку"</string>
+    <string name="reset_link">"Сбросить ссылку"</string>
+    <string name="view_group_invite_link_action">"Посмотреть приглашение в группу"</string>
+    <string name="invite_link_resetting_progress">"Сброс ссылки…"</string>
+    <string name="invite_link_reset">"Ссылка сброшена"</string>
+    <string name="invite_link_reset_failed">"Не удалось сбросить ссылку"</string>
+    <string name="reset_invite_link_confirmation">"Хотите сбросить ссылку для приглашения в группу?"</string>
+    <string name="invite_link_joining">"Присоединение к группе…"</string>
+    <string name="invite_link_loading">"Загрузка группы…"</string>
+    <string name="invite_link_copied">"Ссылка скопирована!"</string>
+    <string name="invite_link_title">"Ссылка для приглашения"</string>
+    <string name="invite_link_summary">"Любой, у кого есть HalloApp, может использовать эту ссылку, чтобы присоединиться к этой группе."</string>
+    <string name="invite_link_failed_to_join">"Не удалось вступить в группу"</string>
+    <string name="join_group_action">"Вступить в группу"</string>
+    <string name="system_message_you_joined">"Вы вступили в группу по пригласительной ссылке"</string>
+    <string name="system_message_joined">"%s вступил(а) в группу по пригласительной ссылке"</string>
+    <string name="post_preview_retracted">"%s удалил(а) пост"</string>
+    <string name="system_message_group_bg_changed">"%s изменил(а) цвет фона"</string>
+    <string name="system_message_group_bg_changed_by_you">"Вы изменили цвет фона"</string>
+    <string name="group_background_hint">"Фон"</string>
+    <string name="group_background_saving_dialog">"Установка фона…"</string>
+    <string name="group_background_save_failed">"Не удалось установить фон группы"</string>
+    <string name="group_background_save_success">"Фон группы обновлен"</string>
+    <string name="group_background_color">"Цвет"</string>
+    <string name="group_background_default">"По умолчанию"</string>
+    <string name="group_info_members">"Участники ( %d)"</string>
+    <string name="delete_message_confirmation">"Удалить выбранное сообщение?"</string>
+    <string name="retract_message_option">"Удалить для всех"</string>
+    <string name="delete_message_option">"Удалить для меня"</string>
+    <string name="contact_permissions_dialog_title">"Контакты"</string>
+    <string name="not_now">"Не сейчас"</string>
+    <string name="continue_button">"Продолжить"</string>
+    <string name="invite_link_load_failed">"Не удалось открыть ссылку для приглашения в группу"</string>
+    <string name="message_tombstone_placeholder">"Ожидание этого сообщения. Это может занять некоторое время. &lt;a href=\"https://halloapp.com/help/\"&gt;Подробнее…&lt;/a&gt;"</string>
+    <string name="failed_no_longer_member">"Вы больше не являетесь участником этой группы"</string>
+
+    <!-- Placeholder when we do not understand the received message -->
+    <string name="message_upgrade_placeholder">"Ваша версия HalloApp не поддерживает этот тип сообщений. &lt;a href=\"update-app\"&gt;Обновите приложение&lt;/a&gt;"</string>
+
+    <!-- Placeholder when we do not understand the received post -->
+    <string name="post_upgrade_placeholder">"Ваша версия HalloApp не поддерживает этот тип постов. &lt;a href=\"update-app\"&gt;Обновите приложение&lt;/a&gt;"</string>
+
+    <!-- Placeholder when we do not understand the received comment -->
+    <string name="comment_upgrade_placeholder">"Ваша версия HalloApp не поддерживает этот тип комментариев. &lt;a href=\"update-app\"&gt;Обновите приложение&lt;/a&gt;"</string>
+
+    <!-- message when user requests another SMS during registration -->
+    <string name="registration_sms_retry_progress">"Запрос нового SMS-кода…"</string>
+
+    <!-- message when user requests a voice call -->
+    <string name="registration_phone_code_progress">"Запрос кода по телефону…"</string>
+
+    <!-- button to request another sms code -->
+    <string name="resend_sms">"Отправить SMS-код повторно"</string>
+
+    <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
+    <string name="key_verification_success">"Проверка прошла успешно"</string>
+
+    <!-- Shown when the information scanned from the QR code does not match what was expected, indicating the keys do not match -->
+    <string name="key_verification_failure">"Проверка не удалась"</string>
+
+    <!-- Shown on the key verification screen indicating tapping on the QR code will open the scanner -->
+    <string name="key_verification_tap_to_scan">"Нажмите, чтобы отсканировать"</string>
+
+    <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
+    <string name="key_verification_explanation">"Чтобы проверить безопасность вашего соединения с %s , убедитесь, что приведенные выше цифры соответствуют номерам, указанным на устройстве, или отсканируйте QR-код на телефоне. "<![CDATA[<a href="https://halloapp.com/help/">Подробнее</a>]]>"."</string>
+
+    <!-- Button to expand seen by list to see more -->
+    <string name="view_more">"Еще"</string>
+
+    <!-- Button to manage your feed privacy settings -->
+    <string name="manage_feed_privacy">"Управление конфиденциальностью"</string>
+
+    <!-- Button to invite a contact to a group with an invite link -->
+    <string name="group_invite_via_link">"Пригласить в группу по ссылке"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear -->
+    <string name="seen_by_post_expiration_notice">"Ваши посты исчезнут через 30 дней."</string>
+
+    <!-- Frequently asked questions option in help menu -->
+    <string name="faq">"Частые вопросы"</string>
+
+    <!-- Shown in progress dialog when loading key verification info -->
+    <string name="key_verification_fetching_keys">"Получение ключей…"</string>
+
+    <!-- Shown when we fail to get key verification info -->
+    <string name="key_verification_key_fetch_failed">"Не удалось получить ключи"</string>
+
+    <!-- Shown inline in a chat when the e2e keys securing the messages have changed, i.e. if the other user changes phones or reinstalls -->
+    <string name="system_message_keys_changed">"Ключи безопасности с %s изменены"</string>
+
+    <!-- Shown on the key verification activity next to a switch where the user can keep track of whether they verified the identity of the other user -->
+    <string name="key_verification_switch_label">"Проверено"</string>
+    <string name="action_add">"Добавить"</string>
+    <string name="video_countdown_message">"Запись закончится через %s"</string>
+
+    <!-- Button takes user to settings to manage their storage -->
+    <string name="manage_storage_button">"Управление хранилищем"</string>
+
+    <!-- Message that's displayed if user has low storage -->
+    <string name="low_storage_msg">"На вашем телефоне заканчивается место.
+Чтобы использовать HalloApp, освободите место для хранения на этом телефоне."</string>
+    <plurals name="seen_by_people">
+        <item quantity="one">"Видел %d человек"</item>
+        <item quantity="few">"Видели %d человека"</item>
+        <item quantity="many">"Видели %d человек"</item>
+        <item quantity="other">"Видели %d человек"</item>
+    </plurals>
+
+    <!-- Text that provides context for a group invite link being shared -->
+    <string name="group_invite_link_context">"Нажмите на эту ссылку, чтобы присоединиться к моей группе в HalloApp: %s"</string>
+    <string name="voice_note">"Голосовая заметка"</string>
+
+    <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
+This string is used in InviteContactsActivity.java line 160 to show the time that invites will be refreshed after invite count is 0
+example: More invites coming on [Saturday, June 19, 7:59 PM], where content in the brackets is displayed by %s -->
+    <string name="server_invite_refresh_time">"Еще больше приглашений будет в %s"</string>
+
+    <!-- Button text on profile of a user not in the user's contacts; tapping takes the user to the contacts app with data prefilled -->
+    <string name="add_to_contacts">"Добавить в контакты"</string>
+
+    <!-- Title shown when a user starts the account deletion process under 'account' -->
+    <string name="delete_account_title">"Удалить аккаунт"</string>
+
+    <!-- Button text at bottom for user to confirm account deletion -->
+    <string name="delete_account_button">"Удалить"</string>
+
+    <!-- Note at bottom of account deletion activity -->
+    <string name="delete_account_note">"Это действие не может быть отменено."</string>
+
+    <!-- Error message at bottom of account deletion screen when deletion fails -->
+    <string name="delete_account_failed">"Не удалось удалить аккаунт"</string>
+
+    <!-- Category in the top-level settings -->
+    <string name="settings_account">"Аккаунт"</string>
+
+    <!-- Shown for when a user wants to request to download all of their data in a GDPR-compliant manner -->
+    <string name="request_data_title">"Запросить мои данные"</string>
+
+    <!-- Explanation for why we need storage permissions when using save to gallery feature -->
+    <string name="save_to_gallery_storage_permission_rationale">"Чтобы сохранять медиафайлы в галерее, нам нужно разрешение на доступ к хранилищу вашего устройства"</string>
+
+    <!-- Explanation for why we need storage permissions when using save to gallery feature. This is used when the user needs to manually go to their settings -->
+    <string name="save_to_gallery_storage_permission_rationale_denied">"Чтобы сохранять медиафайлы в галерее, нам нужно разрешение на доступ к хранилищу вашего устройства.
+
+Откройте экран настроек приложения, чтобы изменить разрешения."</string>
+
+    <!-- Message when we successfully save post media to gallery -->
+    <string name="media_saved_to_gallery">"Сохранено в галерее"</string>
+
+    <!-- Message when we failed to save post media to gallery -->
+    <string name="media_save_to_gallery_failed">"Не удалось сохранить в галерею"</string>
+
+    <!-- Menu option to delete a post -->
+    <string name="delete_post">"Удалить пост"</string>
+
+    <!-- Option to save a photo/video to the user's gallery -->
+    <string name="save_to_gallery">"Сохранить в галерею"</string>
+
+    <!-- Title for the user's post -->
+    <string name="my_post">"Мой пост"</string>
+
+    <!-- button to request registration code via phone call -->
+    <string name="request_call">"Запросить звонок"</string>
+
+    <!-- Shown on request page when there is not a known active request -->
+    <string name="request_data_button">"Запросить данные"</string>
+
+    <!-- Shown as settings option title after the user has requested their data but before it is available for download; string param is date -->
+    <string name="data_available_at">"Данные будут доступны %s"</string>
+
+    <!-- Shown at top of data request page explaining the process -->
+    <string name="export_data_explanation">"Загрузите копию всех своих пользовательских данных, хранящихся на серверах HalloApp. Здесь не содержатся сообщения или посты. &lt;a href=\"https://halloapp.com/help/\"&gt;Подробнее…&lt;/a&gt;"</string>
+
+    <!-- Shown when a request to the server for data export fails -->
+    <string name="request_export_data_failed">"Запрос не выполнен"</string>
+
+    <!-- Button for exporting account information requested for download -->
+    <string name="export_account_data">"Экспортировать мои данные"</string>
+
+    <!-- Notification shown as if it were the first message in a chat -->
+    <string name="e2e_notice">"Чаты зашифрованы сквозным шифрованием, и HalloApp не имеет к ним доступа. Нажмите, чтобы узнать больше."</string>
+
+    <!-- Shown on buttons for opening up the key verification activity -->
+    <string name="view_safety_number">"Посмотреть номер безопасности"</string>
+
+    <!-- Shown as title of key verification activity -->
+    <string name="verify_safety_number">"Проверить номер безопасности"</string>
+
+    <!-- Shown when user has contact permissions disabled on the home feed -->
+    <string name="enable_contacts_rationale">"Получайте новости от друзей и родственников, включив разрешения для контактов"</string>
+
+    <!-- Button that takes users to system settings -->
+    <string name="go_to_settings">"Перейти к настройкам"</string>
+
+    <!-- Text shown in activity center upon successful registration -->
+    <string name="welcome_notification">"Добро пожаловать в HalloApp! &lt;a href=\"invite-friend\"&gt;Пригласите друга&lt;/a&gt;"</string>
+
+    <!-- added new option for sharing -->
+    <string name="share_option_group">"Опубликовать в группе"</string>
+
+    <!-- A new label used as the title/label of the GroupPickerActivity -->
+    <string name="select_group">"Выбрать группу"</string>
+
+    <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
+    <string name="search_groups">"Поиск групп"</string>
+
+    <!-- Button for user to remove their profile photo and reset it to the default -->
+    <string name="remove_photo">"Удалить фото"</string>
+
+    <!-- Button for user to take a new photo to replace their profile photo -->
+    <string name="take_photo">"Снять фото"</string>
+
+    <!-- Button for user to select a new photo from their gallery to replace their profile photo -->
+    <string name="choose_photo">"Выбрать фото"</string>
+
+    <!-- Label above the options for changing the profile photo -->
+    <string name="your_profile_photo">"Фото вашего профиля"</string>
+
+    <!-- Text shown under progress bar when first setting up HalloApp -->
+    <string name="app_initializing">"Настройка HalloApp"</string>
+
+    <!-- Shown on a button in settings which shares text with a link to download HalloApp into any other app -->
+    <string name="settings_share_option">"Поделиться HalloApp"</string>
+
+    <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
+    <string name="share_halloapp_text">"Присоединяйтесь ко мне в HalloApp — загрузите приложение бесплатно на halloapp.com/dl"</string>
+
+    <!-- Dialog shown to user before requesting contact permissions -->
+    <string name="contact_permissions_request">"Разрешите HalloApp доступ к вашим контактам, чтобы вы могли отправлять и получать обновления"</string>
+
+    <!-- Dialog shown to user before requesting contact permissions, but user has previously denied them, so they must go to settings -->
+    <string name="contact_permissions_request_permanently_denied">"Разрешите HalloApp доступ к вашим контактам, чтобы вы могли отправлять и получать обновления. Нажмите «Настройки» &gt; «Разрешения» и включите «Контакты»"</string>
+
+    <!-- Banner explaining why user can't leave a comment in a group they've left -->
+    <string name="no_longer_group_member">"Вы больше не являетесь участником этой группы"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice notes -->
+    <string name="voice_note_record_audio_permission_rationale">"Для записи голосовых заметок нам нужно разрешение на доступ к микрофону"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
+    <string name="voice_note_record_audio_permission_rationale_denied">"Для записи голосовых заметок нам нужно разрешение на доступ к микрофону.
+
+Откройте экран настроек приложения, чтобы изменить разрешения приложения."</string>
+</resources>
+

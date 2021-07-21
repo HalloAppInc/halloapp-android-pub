@@ -272,6 +272,8 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="action_save">"Speichern"</string>
     <string name="invite_friends">"Freunde &amp; Familie einladen"</string>
     <string name="invite_friend_chooser_title">"%s einladen"</string>
+
+    <!-- Fuzzy -->
     <string name="invite_text_with_name_and_number">"Hallo %1$s, ich lade dich ein, dich auch bei HalloApp anzumelden. Eine einfache Social-App, um alltägliche Momente zu teilen. Nutze %2$s zur Registrierung und hol sie dir auf halloapp.com/dl"</string>
     <string name="name_hint">"Dein Name"</string>
     <string name="name_must_be_specified">"Name muss angegeben werden"</string>

@@ -242,6 +242,8 @@
     <string name="action_save">"Запази"</string>
     <string name="invite_friends">"Покани семейство и приятели"</string>
     <string name="invite_friend_chooser_title">"Покани %s"</string>
+
+    <!-- Fuzzy -->
     <string name="invite_text_with_name_and_number">"Хей, %1$s, имам покана за теб да се присъединиш към мен в HalloApp (лесно за използване социално приложение за споделяне на моменти от ежедневието). Използвай %2$s, за да се регистрираш. Получи я на halloapp.com/dl"</string>
     <string name="name_hint">"Ваашето име"</string>
     <string name="name_must_be_specified">"Името трябва да бъде посочено"</string>

@@ -236,6 +236,8 @@
     <string name="action_save">"Αποθήκευση"</string>
     <string name="invite_friends">"Προσκάλεσε φίλους και οικογένεια"</string>
     <string name="invite_friend_chooser_title">"Πρόσκληση σε %s"</string>
+
+    <!-- Fuzzy -->
     <string name="invite_text_with_name_and_number">"Γεια σου %1$s, σε προσκαλώ να με βρεις στο HalloApp (μια απλή κοινωνική εφαρμογή κοινοποίησης καθημερινών στιγμών). Χρησιμοποίησε το %2$s για να εγγραφείς. Κάνε λήψη στο halloapp.com/dl"</string>
     <string name="name_hint">"Το όνομά σου"</string>
     <string name="name_must_be_specified">"Πρέπει να οριστεί το όνομα"</string>
