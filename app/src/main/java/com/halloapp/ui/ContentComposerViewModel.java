@@ -34,6 +34,7 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.proto.log_events.MediaComposeLoad;
+import com.halloapp.ui.mediaedit.EditImageView;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Preconditions;
@@ -344,7 +345,13 @@ public class ContentComposerViewModel extends AndroidViewModel {
                         editItem = null;
                     }
 
-                    final Parcelable state = (editStates != null) ? editStates.getParcelable(uri.toString()) : null;
+                    final Parcelable state;
+                    if (editStates == null) {
+                        state = null;
+                    } else {
+                        editStates.setClassLoader(EditImageView.State.class.getClassLoader());
+                        state = editStates.getParcelable(uri.toString());
+                    }
                     mediaPairList.add(new EditMediaPair(uri, originalItem, editItem, state));
 
                     if (mediaPairList.size() == 1 && uriIndex + 1 != uris.size()) {
