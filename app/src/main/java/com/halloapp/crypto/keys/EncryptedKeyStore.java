@@ -678,8 +678,13 @@ public class EncryptedKeyStore {
         StringBuilder sb = new StringBuilder();
 
         sb.append("TS: ");
-        DateFormat df = SimpleDateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.LONG, Locale.US);
-        sb.append(df.format(new Date()));
+        try {
+            DateFormat df = SimpleDateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.LONG, Locale.US);
+            sb.append(df.format(new Date()));
+        } catch (IllegalArgumentException e) {
+            Log.w("Failed to create date format", e);
+            sb.append("IllegalArgumentException");
+        }
 
         try {
             sb.append("; MIK:");
