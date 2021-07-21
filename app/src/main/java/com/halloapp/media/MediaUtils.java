@@ -626,6 +626,7 @@ public class MediaUtils {
     }
 
     public static void reconstructVideoContainer(@NonNull File videoFile) throws IOException {
+        Log.i("MediaUtils.reconstructVideoContainer file " + videoFile.getAbsolutePath() + " of size " + videoFile.length());
         final Date zeroDate = new Date(0);
         try (FileInputStream fileInputStream = new FileInputStream(videoFile)) {
             try (RandomAccessSource randomAccessSource = new FileRandomAccessSourceImpl(new RandomAccessFile(videoFile, "r"))) {
