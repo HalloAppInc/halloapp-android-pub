@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.telephony.PhoneNumberUtils;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
@@ -47,6 +48,10 @@ import com.hbb20.CountryCodePicker;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import io.michaelrocks.libphonenumber.android.NumberParseException;
+import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
+import io.michaelrocks.libphonenumber.android.Phonenumber;
 
 
 public class RegistrationRequestActivity extends HalloActivity {
@@ -207,7 +212,17 @@ public class RegistrationRequestActivity extends HalloActivity {
 
     private void updateNextButton() {
         boolean nameValid = isReverification || !TextUtils.isEmpty(nameEditText.getText().toString());
-        nextButton.setEnabled(nameValid && countryCodePicker.isValidFullNumber());
+
+        boolean phoneOkayLength = false;
+        PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.createInstance(this);
+        try {
+            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(countryCodePicker.getFormattedFullNumber(), countryCodePicker.getSelectedCountryNameCode());
+            phoneOkayLength = phoneNumberUtil.isPossibleNumberWithReason(phoneNumber) == PhoneNumberUtil.ValidationResult.IS_POSSIBLE;
+        } catch (NumberParseException e) {
+            Log.i("Failed to parse number", e);
+        }
+
+        nextButton.setEnabled(nameValid && phoneOkayLength);
     }
 
     @Override
