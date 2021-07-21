@@ -1,24 +1,22 @@
 package com.halloapp.ui;
 
 import android.Manifest;
+import android.app.Application;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.Selection;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.style.URLSpan;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.work.WorkInfo;
 
+import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
@@ -26,9 +24,12 @@ import com.halloapp.contacts.ContactsSync;
 import com.halloapp.ui.contacts.ContactHashInfoBottomSheetDialogFragment;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.StringUtils;
+import com.halloapp.util.logs.LogProvider;
 import com.halloapp.widget.NetworkIndicatorView;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -37,6 +38,8 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
+    private InitialSyncViewModel viewModel;
+
     private View loadingView;
     private View errorView;
     private View retryView;
@@ -44,6 +47,7 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
     private View continueView;
     private View logoView;
     private View titleView;
+    private View sendLogsButton;
 
     private boolean syncInFlight = false;
 
@@ -51,6 +55,8 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial_sync);
+
+        viewModel = new ViewModelProvider(this).get(InitialSyncViewModel.class);
 
         final CheckRegistrationTask checkRegistrationTask = new CheckRegistrationTask(Me.getInstance(), Preferences.getInstance());
         checkRegistrationTask.result.observe(this, checkResult -> {
@@ -73,6 +79,7 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
         continueView = findViewById(R.id.cont);
         titleView = findViewById(R.id.title);
         logoView = findViewById(R.id.logo);
+        sendLogsButton = findViewById(R.id.send_logs);
 
         rationaleView.setText(StringUtils.replaceLink(this, Html.fromHtml(getString(R.string.contact_rationale_upload)), "learn-more", () -> {
             DialogFragmentUtils.showDialogFragmentOnce(new ContactHashInfoBottomSheetDialogFragment(), getSupportFragmentManager());
@@ -109,6 +116,11 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
 
         final NetworkIndicatorView indicatorView = findViewById(R.id.network_indicator);
         indicatorView.bind(this);
+
+        viewModel.showSendLogs.observe(this, show -> {
+            sendLogsButton.setVisibility(Boolean.TRUE.equals(show) ? View.VISIBLE : View.GONE);
+        });
+        sendLogsButton.setOnClickListener(v -> LogProvider.openLogIntent(this));
     }
 
     private void showRunningState() {
@@ -183,5 +195,23 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
         syncInFlight = true;
         showRunningState();
         ContactsSync.getInstance().startContactsSync(true);
+    }
+
+    public static class InitialSyncViewModel extends AndroidViewModel {
+
+        public final MutableLiveData<Boolean> showSendLogs = new MutableLiveData<>(false);
+
+        public InitialSyncViewModel(@NonNull Application application) {
+            super(application);
+
+            Timer timer = new Timer();
+            TimerTask timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    showSendLogs.postValue(true);
+                }
+            };
+            timer.schedule(timerTask, Constants.SEND_LOGS_BUTTON_DELAY_MS);
+        }
     }
 }

@@ -33,6 +33,7 @@ public class Constants {
     public static final int MAX_AVATAR_DIMENSION = 250;
     public static final int MAX_NAME_LENGTH = 25;
     public static final int MAX_GROUP_NAME_LENGTH = 25;
+    public static final int SEND_LOGS_BUTTON_DELAY_MS = 15000;
 
     public static final int BUILD_EXPIRES_SOON_THRESHOLD_DAYS = 7;
     public static final int SECONDS_PER_DAY = 60 * 60 * 24;

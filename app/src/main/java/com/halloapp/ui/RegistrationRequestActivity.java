@@ -39,6 +39,7 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
+import com.halloapp.util.logs.LogProvider;
 import com.halloapp.widget.NetworkIndicatorView;
 import com.halloapp.widget.SnackbarHelper;
 import com.hbb20.CountryCodePicker;
@@ -65,6 +66,7 @@ public class RegistrationRequestActivity extends HalloActivity {
     private EditText nameEditText;
     private View nextButton;
     private View loadingProgressBar;
+    private View sendLogsButton;
     private Preferences preferences;
     private ContactsSync contactsSync;
     private AvatarLoader avatarLoader;
@@ -93,6 +95,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         countryCodePicker.useFlagEmoji(Build.VERSION.SDK_INT >= 28);
         loadingProgressBar = findViewById(R.id.loading);
         nextButton = findViewById(R.id.next);
+        sendLogsButton = findViewById(R.id.send_logs);
 
         final TextView titleView = findViewById(R.id.title);
         isReverification = getIntent().getBooleanExtra(EXTRA_RE_VERIFY, false);
@@ -194,6 +197,11 @@ public class RegistrationRequestActivity extends HalloActivity {
         final NetworkIndicatorView indicatorView = findViewById(R.id.network_indicator);
         indicatorView.bind(this);
 
+        registrationRequestViewModel.showSendLogs.observe(this, show -> {
+            sendLogsButton.setVisibility(Boolean.TRUE.equals(show) ? View.VISIBLE : View.GONE);
+        });
+        sendLogsButton.setOnClickListener(v -> LogProvider.openLogIntent(this));
+
         updateNextButton();
     }
 
@@ -263,6 +271,8 @@ public class RegistrationRequestActivity extends HalloActivity {
 
     public static class RegistrationRequestViewModel extends AndroidViewModel {
 
+        public final MutableLiveData<Boolean> showSendLogs = new MutableLiveData<>(false);
+
         private final BgWorkers bgWorkers = BgWorkers.getInstance();
         private final Registration registration = Registration.getInstance();
 
@@ -272,6 +282,15 @@ public class RegistrationRequestActivity extends HalloActivity {
 
         public RegistrationRequestViewModel(@NonNull Application application) {
             super(application);
+
+            Timer timer = new Timer();
+            TimerTask timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    showSendLogs.postValue(true);
+                }
+            };
+            timer.schedule(timerTask, Constants.SEND_LOGS_BUTTON_DELAY_MS);
         }
 
         LiveData<Registration.RegistrationRequestResult> getRegistrationRequestResult() {

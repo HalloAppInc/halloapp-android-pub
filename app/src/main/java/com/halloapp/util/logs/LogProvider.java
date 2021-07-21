@@ -57,6 +57,15 @@ public class LogProvider extends ContentProvider {
     }
 
     @MainThread
+    public static void openLogIntent(final Context context) {
+        if (BuildConfig.DEBUG) {
+            LogProvider.openDebugLogcatIntent(context, null);
+        } else {
+            LogProvider.openEmailLogIntent(context, null);
+        }
+    }
+
+    @MainThread
     public static void openEmailLogIntent(final Context context, @Nullable String contentId) {
         LogUploaderWorker.uploadLogs(context);
         new AsyncTask<Void, Void, String>() {

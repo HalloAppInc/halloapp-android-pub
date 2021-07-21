@@ -79,7 +79,6 @@ public class GroupInfoActivity extends HalloActivity {
     private View addDivider;
     private View leaveGroup;
 
-    private MenuItem deleteMenuItem;
     private MenuItem leaveMenuItem;
 
     @Override

@@ -24,6 +24,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
@@ -31,7 +32,11 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ViewUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.LogProvider;
 import com.halloapp.widget.SnackbarHelper;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class RegistrationVerificationActivity extends HalloActivity {
 
@@ -47,6 +52,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
 
     private TextView codeEditText;
     private View loadingProgressBar;
+    private View sendLogsButton;
 
     private final SmsVerificationManager.Observer smsVerificationObserver = new SmsVerificationManager.Observer() {
 
@@ -69,6 +75,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
 
         codeEditText = findViewById(R.id.code);
         loadingProgressBar = findViewById(R.id.loading);
+        sendLogsButton = findViewById(R.id.send_logs);
 
         registrationVerificationViewModel = new ViewModelProvider(this).get(RegistrationVerificationViewModel.class);
         registrationVerificationViewModel.getRegistrationVerificationResult().observe(this, result -> {
@@ -177,6 +184,10 @@ public class RegistrationVerificationActivity extends HalloActivity {
             }
         });
 
+        registrationVerificationViewModel.showSendLogs.observe(this, show -> {
+            sendLogsButton.setVisibility(Boolean.TRUE.equals(show) ? View.VISIBLE : View.GONE);
+        });
+        sendLogsButton.setOnClickListener(v -> LogProvider.openLogIntent(this));
     }
 
     @Override
@@ -193,6 +204,8 @@ public class RegistrationVerificationActivity extends HalloActivity {
 
     public static class RegistrationVerificationViewModel extends AndroidViewModel {
 
+        public final MutableLiveData<Boolean> showSendLogs = new MutableLiveData<>(false);
+
         private final BgWorkers bgWorkers = BgWorkers.getInstance();
         private final Registration registration = Registration.getInstance();
 
@@ -207,6 +220,14 @@ public class RegistrationVerificationActivity extends HalloActivity {
         public RegistrationVerificationViewModel(@NonNull Application application) {
             super(application);
 
+            Timer timer = new Timer();
+            TimerTask timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    showSendLogs.postValue(true);
+                }
+            };
+            timer.schedule(timerTask, Constants.SEND_LOGS_BUTTON_DELAY_MS);
         }
 
         LiveData<Registration.RegistrationVerificationResult> getRegistrationVerificationResult() {
