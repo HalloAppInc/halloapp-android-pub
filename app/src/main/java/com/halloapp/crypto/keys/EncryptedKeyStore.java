@@ -42,7 +42,7 @@ import java.util.Set;
 public class EncryptedKeyStore {
 
     private static final String ENC_PREF_FILE_NAME = "halloapp_keys";
-    private static final String PT_PREF_FILE_NAME = "pt_halloapp_keys";
+    private static final String PT_PREF_FILE_NAME = "pt_halloapp_keys"; // TODO(jack): delete file
 
     private static final String PREF_KEY_PT_MIGRATED = "pt_migrated";
 
@@ -79,6 +79,7 @@ public class EncryptedKeyStore {
     private static final int CURVE_25519_PRIVATE_KEY_LENGTH = 32;
 
     private static final int ONE_TIME_PRE_KEY_BATCH_COUNT = 100;
+    private static final int KEY_STORE_RETRY_WAIT_MS = 50;
 
     private static EncryptedKeyStore instance;
 
@@ -104,7 +105,7 @@ public class EncryptedKeyStore {
 
     private synchronized SharedPreferences getPreferences() {
         if (sharedPreferences == null) {
-            sharedPreferences = getSharedPreferences(appContext.get());
+            sharedPreferences = getSharedPreferences(appContext.get(), true);
         }
         return sharedPreferences;
     }
@@ -728,7 +729,7 @@ public class EncryptedKeyStore {
         return stringToBytes(stored);
     }
 
-    private static SharedPreferences getSharedPreferences(Context context) {
+    private static SharedPreferences getSharedPreferences(Context context, boolean allowRecurse) {
         SharedPreferences encrypted;
         try {
             MasterKey masterKey = new MasterKey.Builder(context)
@@ -745,6 +746,18 @@ public class EncryptedKeyStore {
         } catch (GeneralSecurityException | IOException e) {
             Log.e("EncryptedKeyStore failed to get shared preferences", e);
             return null;
+        } catch (IllegalArgumentException e) {
+            if (allowRecurse) {
+                try {
+                    Thread.sleep(KEY_STORE_RETRY_WAIT_MS);
+                } catch (InterruptedException ex) {
+                    Log.e("EncryptedKeyStore.getSharedPreferences keystore wait interrupted");
+                }
+                Log.e("EncryptedKeyStore.getSharedPreferences hit illegal argument exception; retrying", e);
+                encrypted = getSharedPreferences(context, false);
+            } else {
+                throw e;
+            }
         }
 
         return encrypted;
