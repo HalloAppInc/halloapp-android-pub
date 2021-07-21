@@ -67,6 +67,22 @@ dependencies {
     implementation 'at.favre.lib:hkdf:1.1.0'
     implementation 'com.google.firebase:firebase-crashlytics:17.0.0'
     implementation 'com.dstukalov:videoconverter:1.8'
+    // TODO(jack): Remove strict versions if dima updates dependencies
+    implementation('org.mp4parser:isoparser') {
+        version {
+            strictly '1.9.41'
+        }
+    }
+    implementation('org.mp4parser:muxer') {
+        version {
+            strictly '1.9.41'
+        }
+    }
+    implementation('org.mp4parser:streaming') {
+        version {
+            strictly '1.9.41'
+        }
+    }
     implementation 'com.google.android.exoplayer:exoplayer:2.13.3'
     implementation 'com.google.android.gms:play-services-auth-api-phone:17.4.0'
     implementation 'com.google.android.material:material:1.2.0-alpha06'
