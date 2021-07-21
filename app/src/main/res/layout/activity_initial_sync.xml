@@ -76,7 +76,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-        android:textColor="@color/design_default_color_error"
+        android:textColor="@color/primary_text"
         android:text="@string/failed_to_initialize"
         android:visibility="gone"
         app:layout_constraintVertical_bias="0.33"
@@ -87,6 +87,7 @@
         app:layout_constraintBottom_toTopOf="@+id/retry"/>
 
     <Button
+        style="@style/Widget.Button.Secondary"
         android:id="@+id/retry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
