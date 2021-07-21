@@ -1,5 +1,6 @@
 package com.halloapp;
 
+import android.Manifest;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,8 @@ import com.halloapp.props.ServerProps;
 import com.halloapp.util.logs.Log;
 
 import java.util.concurrent.TimeUnit;
+
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class ScheduledContactSyncWorker extends Worker {
 
@@ -51,8 +54,12 @@ public class ScheduledContactSyncWorker extends Worker {
 
         long timeSince = System.currentTimeMillis() - lastFullSync;
         if (timeSince > syncDelayMs) {
-            Log.i("ScheduledContactSyncWorker.doWork starting full sync");
-            ContactsSync.getInstance().startContactsSync(true);
+            if (EasyPermissions.hasPermissions(getApplicationContext(), Manifest.permission.READ_CONTACTS)) {
+                Log.i("ScheduledContactSyncWorker.doWork starting full sync");
+                ContactsSync.getInstance().startContactsSync(true);
+            } else {
+                Log.i("ScheduledContactSyncWorker.doWork no permissions aborting sync");
+            }
         } else {
             schedule(getApplicationContext());
         }
