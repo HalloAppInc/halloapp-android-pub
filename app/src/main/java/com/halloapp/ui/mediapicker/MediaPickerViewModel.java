@@ -9,8 +9,10 @@ import android.provider.MediaStore;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
@@ -44,6 +46,7 @@ public class MediaPickerViewModel extends AndroidViewModel {
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final Preferences preferences = Preferences.getInstance();
 
+    private final GalleryDataSource.Factory dataSourceFactory;
     private final MutableLiveData<Integer> layout = new MutableLiveData<>();
     private final LiveData<PagedList<GalleryItem>> mediaList;
     private final MutableLiveData<List<Long>> selected = new MutableLiveData<>();
@@ -70,14 +73,14 @@ public class MediaPickerViewModel extends AndroidViewModel {
     public MediaPickerViewModel(@NonNull Application application, boolean includeVideos) {
         super(application);
 
-        final GalleryDataSource.Factory dataSourceFactory = new GalleryDataSource.Factory(getApplication().getContentResolver(), includeVideos);
+        dataSourceFactory = new GalleryDataSource.Factory(getApplication().getContentResolver(), includeVideos);
         mediaList = new LivePagedListBuilder<>(dataSourceFactory, 250).build();
 
         bgWorkers.execute(() -> layout.postValue(preferences.getPickerLayout()));
     }
 
     void invalidate() {
-        Preconditions.checkNotNull(mediaList.getValue()).getDataSource().invalidate();
+        dataSourceFactory.invalidateLatestDataSource();
     }
 
     public void setSelected(List<Uri> uris) {

@@ -148,15 +148,26 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
 
         final ContentResolver contentResolver;
         final boolean includeVideos;
+        private GalleryDataSource latestSource;
 
         Factory(ContentResolver contentResolver, boolean includeVideos) {
             this.contentResolver = contentResolver;
             this.includeVideos = includeVideos;
+            latestSource = new GalleryDataSource(contentResolver, includeVideos);
         }
 
         @Override
         public @NonNull DataSource<Long, GalleryItem> create() {
-            return new GalleryDataSource(contentResolver, includeVideos);
+            if (latestSource.isInvalid()) {
+                Log.i("GalleryDataSource.Factory.create old source was invalidated; creating a new one");
+                latestSource = new GalleryDataSource(contentResolver, includeVideos);
+            }
+            return latestSource;
+        }
+
+        public void invalidateLatestDataSource() {
+            Log.i("GalleryDataSource.Factory.invalidateLatestDataSource");
+            latestSource.invalidate();
         }
     }
 }
