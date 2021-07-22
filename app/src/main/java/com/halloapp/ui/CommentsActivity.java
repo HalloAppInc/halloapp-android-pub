@@ -1127,6 +1127,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
                     intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, MediaExplorerViewModel.MediaModel.fromMedia(media));
                     intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, position);
                     intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, post.id);
+                    intent.putExtra(MediaExplorerActivity.EXTRA_ALLOW_SAVING, post.parentGroup != null);
 
                     if (imageView.getContext() instanceof Activity) {
                         final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(CommentsActivity.this, imageView, imageView.getTransitionName());
