@@ -1079,8 +1079,13 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
 
         private class PostMediaItemViewHolder extends RecyclerView.ViewHolder {
 
+            final public ImageView previewImage;
+            final public ImageView videoIcon;
+
             PostMediaItemViewHolder(@NonNull View itemView) {
                 super(itemView);
+                previewImage = itemView.findViewById(R.id.media_thumbnail);
+                videoIcon = itemView.findViewById(R.id.video_icon);
             }
         }
 
@@ -1098,21 +1103,20 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
             @NonNull
             @Override
             public PostMediaItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                final ImageView imageView = new ImageView(parent.getContext());
-                imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                imageView.setOutlineProvider(new ViewOutlineProvider() {
+                PostMediaItemViewHolder holder = new PostMediaItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.post_media_item, parent, false));
+                holder.itemView.setOutlineProvider(new ViewOutlineProvider() {
                     @Override
                     public void getOutline(View view, Outline outline) {
                         outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.comment_media_list_corner_radius));
                     }
                 });
-                imageView.setClipToOutline(true);
-                return new PostMediaItemViewHolder(imageView);
+                holder.itemView.setClipToOutline(true);
+                return holder;
             }
 
             @Override
             public void onBindViewHolder(@NonNull PostMediaItemViewHolder holder, int position) {
-                final ImageView imageView = (ImageView)holder.itemView;
+                final ImageView imageView = holder.previewImage;
                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 imageView.setAdjustViewBounds(true);
                 mediaThumbnailLoader.load(imageView, media.get(position));
@@ -1131,7 +1135,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
                         startActivity(intent);
                     }
                 });
-
+                holder.videoIcon.setVisibility(media.get(position).type == Media.MEDIA_TYPE_VIDEO ? View.VISIBLE : View.GONE);
                 imageView.setTransitionName(MediaPagerAdapter.getTransitionName(post.id, position));
             }
 
