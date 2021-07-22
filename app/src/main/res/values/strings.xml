@@ -151,6 +151,22 @@
         <item quantity="one">&lt;b>%1$s&lt;/b>, &lt;b>%2$s&lt;/b>, and %3$d other commented on &lt;b>%4$s&lt;/b>\'s post</item>
         <item quantity="other">&lt;b>%1$s&lt;/b>, &lt;b>%2$s&lt;/b>, and %3$d others commented on &lt;b>%4$s&lt;/b>\'s post</item>
     </plurals>
+
+    <!-- Activity center item when someone replies. %1$s is the person, %2$s is their comment preview -->
+    <string name="replied_to_with_preview">&lt;b>%1$s&lt;/b> replied: %2$s</string>
+    <!-- Activity center item when someone comments. %1$s is the person, %2$s is their comment preview -->
+    <string name="commented_on_with_preview">&lt;b>%1$s&lt;/b> commented: %2$s</string>
+    <!-- Activity center item when non-contacts comment on your post -->
+    <plurals name="commented_on_your_post_grouped">
+        <item quantity="one">&lt;b>%1$s&lt;/b> other commented on your post</item>
+        <item quantity="other">&lt;b>%1$s&lt;/b> others commented on your post</item>
+    </plurals>
+    <!-- Activity center item when non-contacts comment on someones post -->
+    <plurals name="commented_on_someones_post_grouped">
+        <item quantity="one">&lt;b>%1$s&lt;/b> other person commented on &lt;b>%2$s&lt;/b>\'s post</item>
+        <item quantity="other">&lt;b>%1$s&lt;/b> others commented on &lt;b>%2$s&lt;/b>\'s post</item>
+    </plurals>
+
     <!-- Text shown in activity center upon successful registration -->
     <string name="welcome_notification">Welcome to HalloApp! &lt;a href="invite-friend">Invite a friend&lt;/a></string>
     <string name="contact_hashing_faq_dialog_title">Your privacy is our priority</string>

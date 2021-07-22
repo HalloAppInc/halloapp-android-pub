@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -26,10 +27,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.content.Comment;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.invites.InviteContactsActivity;
+import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
@@ -46,6 +49,7 @@ public class ActivityCenterActivity extends HalloActivity {
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
     private final SocialEventsAdapter adapter = new SocialEventsAdapter();
+    private TextContentLoader textContentLoader;
     private PostThumbnailLoader postThumbnailLoader;
     private RecyclerView listView;
     private View emptyView;
@@ -83,6 +87,7 @@ public class ActivityCenterActivity extends HalloActivity {
             }
         });
 
+        textContentLoader = new TextContentLoader(this);
         postThumbnailLoader = new PostThumbnailLoader(this, getResources().getDimensionPixelSize(R.dimen.comment_history_thumbnail_size));
 
         ActionBar actionBar = getSupportActionBar();
@@ -222,24 +227,34 @@ public class ActivityCenterActivity extends HalloActivity {
                     }
                 }
                 TimeFormatter.setTimePostsFormat(timeView, timestamp);
-
+                textContentLoader.cancel(infoView);
                 if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_COMMENT) {
-                    if (socialEvent.postSenderUserId.isMe()) {
-                        infoView.setText(Html.fromHtml(ListFormatter.format(infoView.getContext(),
-                                R.string.commented_on_your_post_1,
-                                R.string.commented_on_your_post_2,
-                                R.string.commented_on_your_post_3,
-                                R.plurals.commented_on_your_post_4, names)));
-                    } else {
-                        final Contact contact = Preconditions.checkNotNull(contacts.get(socialEvent.postSenderUserId));
-                        if (userIdSet.size() == 1 && userIdSet.iterator().next().equals(socialEvent.postSenderUserId)) {
-                            infoView.setText(Html.fromHtml(infoView.getContext().getResources().getString(R.string.commented_on_own_post, contact.getDisplayName())));
+                    if (socialEvent.involvedUsers.size() == 1) {
+                        Comment comment = (Comment) socialEvent.contentItem;
+                        @StringRes int commentString;
+                        if (comment.parentCommentId == null) {
+                            commentString = R.string.commented_on_with_preview;
                         } else {
-                            infoView.setText(Html.fromHtml(ListFormatter.format(infoView.getContext(),
-                                    R.string.commented_on_someones_post_1,
-                                    R.string.commented_on_someones_post_2,
-                                    R.string.commented_on_someones_post_3,
-                                    R.plurals.commented_on_someones_post_4, names, contact.getDisplayName())));
+                            commentString = R.string.replied_to_with_preview;
+                        }
+                        textContentLoader.load(infoView, comment, new TextContentLoader.TextDisplayer() {
+                            @Override
+                            public void showResult(TextView tv, CharSequence text) {
+                                infoView.setText(Html.fromHtml(getResources().getString(commentString, names.get(0), text)));
+                            }
+
+                            @Override
+                            public void showPreview(TextView tv, CharSequence text) {
+                                infoView.setText(Html.fromHtml(getResources().getString(commentString, names.get(0), "")));
+                            }
+                        });
+                    } else {
+                        int commenters = socialEvent.involvedUsers.size();
+                        if (socialEvent.postSenderUserId.isMe()) {
+                            infoView.setText(Html.fromHtml(getResources().getQuantityString(R.plurals.commented_on_your_post_grouped, commenters, commenters)));
+                        } else {
+                            final Contact contact = Preconditions.checkNotNull(contacts.get(socialEvent.postSenderUserId));
+                            infoView.setText(Html.fromHtml(getResources().getQuantityString(R.plurals.commented_on_someones_post_grouped, commenters, commenters, contact.getDisplayName())));
                         }
                     }
                 } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_MENTION_IN_POST) {
@@ -250,7 +265,8 @@ public class ActivityCenterActivity extends HalloActivity {
                         infoView.setText(Html.fromHtml(infoView.getContext().getString(R.string.mentioned_you_in_comment_on_your_post, names.get(0))));
                     } else {
                         final Contact contact = Preconditions.checkNotNull(contacts.get(socialEvent.postSenderUserId));
-                        if (socialEvent.involvedUsers.get(0).equals(socialEvent.postSenderUserId)) {
+                        Comment comment = (Comment) socialEvent.contentItem;
+                        if (comment.senderUserId.equals(socialEvent.postSenderUserId)) {
                             infoView.setText(Html.fromHtml(infoView.getContext().getString(R.string.mentioned_you_in_comment_on_own_post, contact.getDisplayName())));
                         } else {
                             infoView.setText(Html.fromHtml(infoView.getContext().getString(R.string.mentioned_you_in_comment_on_someones_post, names.get(0), contact.getDisplayName())));
@@ -263,7 +279,7 @@ public class ActivityCenterActivity extends HalloActivity {
                     infoView.setMovementMethod(LinkMovementMethod.getInstance());
                 }
 
-                UserId actorUserId = socialEvent.involvedUsers.size() > 0 ? socialEvent.involvedUsers.get(0) : socialEvent.postSenderUserId;
+                final UserId actorUserId = socialEvent.involvedUsers.isEmpty() ? socialEvent.postSenderUserId : socialEvent.involvedUsers.iterator().next();
                 avatarLoader.load(avatarView, actorUserId);
 
                 itemView.setOnClickListener(v -> {

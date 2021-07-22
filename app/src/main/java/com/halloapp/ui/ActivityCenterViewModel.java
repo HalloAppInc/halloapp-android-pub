@@ -4,12 +4,12 @@ import android.Manifest;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
-import androidx.core.util.Pair;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -17,6 +17,7 @@ import androidx.lifecycle.Observer;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
@@ -35,6 +36,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class ActivityCenterViewModel extends AndroidViewModel {
 
@@ -278,49 +280,61 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         }
         boolean hasContactPerms = Boolean.TRUE.equals(contactPermissionLiveData.getValue());
 
-        final Map<Pair<UserId, String>, SocialActionEvent> unseenComments = new HashMap<>();
-        final List<SocialActionEvent> seenComments = new ArrayList<>();
+        final List<SocialActionEvent> commentEvents = new ArrayList<>();
         final List<SocialActionEvent> seenMentions = new ArrayList<>();
         final List<SocialActionEvent> unseenMentions = new ArrayList<>();
-        SocialActionEvent lastActivity = null;
+        final HashMap<String, SocialActionEvent> groupedPostMap = new HashMap<>();
+        final Map<UserId, Contact> contacts = new HashMap<>();
         for (Comment comment : comments) {
             Post parentPost = comment.getParentPost();
             if (!shouldShowPost(parentPost, hasContactPerms)) {
                 continue;
             }
-            if (comment.seen) {
-                if (lastActivity == null || !lastActivity.postId.equals(comment.postId)) {
-                    lastActivity = new SocialActionEvent(SocialActionEvent.Action.TYPE_COMMENT, parentPost.senderUserId, comment.postId);
-                    lastActivity.seen = true;
-                    seenComments.add(lastActivity);
-                }
-                lastActivity.involvedUsers.add(comment.senderUserId);
-                if (comment.timestamp > lastActivity.timestamp) {
-                    lastActivity.timestamp = comment.timestamp;
-                }
+            if (comment.senderUserId.isMe()) {
+                continue;
+            }
+            Contact contact;
+            if (!contacts.containsKey(comment.senderUserId)) {
+                contact = contactsDb.getContact(comment.senderUserId);
+                contacts.put(comment.senderUserId, contact);
             } else {
-                final Pair<UserId, String> postKey = Pair.create(parentPost.senderUserId, comment.postId);
-                SocialActionEvent commentsGroup = unseenComments.get(postKey);
-                if (commentsGroup == null) {
-                    commentsGroup = new SocialActionEvent(SocialActionEvent.Action.TYPE_COMMENT, parentPost.senderUserId, comment.postId);
-                    commentsGroup.seen = false;
-                    unseenComments.put(postKey, commentsGroup);
+                contact = contacts.get(comment.senderUserId);
+            }
+
+            if (contact == null || TextUtils.isEmpty(contact.addressBookName)) {
+                SocialActionEvent groupedEvent = groupedPostMap.get(comment.postId);
+                if (groupedEvent == null) {
+                    groupedEvent = new SocialActionEvent(SocialActionEvent.Action.TYPE_COMMENT, parentPost.senderUserId, comment.postId);
+                    groupedEvent.contentItem = comment;
+                    groupedPostMap.put(comment.postId, groupedEvent);
+                    groupedEvent.seen = comment.seen;
+                    groupedEvent.timestamp = comment.timestamp;
+                } else {
+                    if (comment.timestamp > groupedEvent.timestamp) {
+                        groupedEvent.timestamp = comment.timestamp;
+                        groupedEvent.contentItem = comment;
+                    }
+                    groupedEvent.seen &= comment.seen;
                 }
-                commentsGroup.involvedUsers.add(comment.senderUserId);
-                if (comment.timestamp > commentsGroup.timestamp) {
-                    commentsGroup.timestamp = comment.timestamp;
-                }
+                groupedEvent.involvedUsers.add(comment.senderUserId);
+            } else {
+                SocialActionEvent commentEvent = new SocialActionEvent(SocialActionEvent.Action.TYPE_COMMENT, parentPost.senderUserId, comment.postId);
+                commentEvent.seen = comment.seen;
+                commentEvent.contentItem = comment;
+                commentEvent.timestamp = comment.timestamp;
+                commentEvent.involvedUsers.add(comment.senderUserId);
+                commentEvents.add(commentEvent);
             }
         }
 
         processMentionedComments(mentionedComments, seenMentions, unseenMentions, hasContactPerms);
         processMentionedPosts(mentionedPosts, seenMentions, unseenMentions, hasContactPerms);
 
-        final ArrayList<SocialActionEvent> socialActionEvents = new ArrayList<>(unseenMentions.size() + seenMentions.size() + unseenComments.size() + seenComments.size());
+        final ArrayList<SocialActionEvent> socialActionEvents = new ArrayList<>(unseenMentions.size() + seenMentions.size() + commentEvents.size());
         socialActionEvents.addAll(seenMentions);
         socialActionEvents.addAll(unseenMentions);
-        socialActionEvents.addAll(unseenComments.values());
-        socialActionEvents.addAll(seenComments);
+        socialActionEvents.addAll(groupedPostMap.values());
+        socialActionEvents.addAll(commentEvents);
 
         long initialRegTimestamp = preferences.getInitialRegistrationTime();
         if (initialRegTimestamp != 0 && (numInvites != null && numInvites > 0)) {
@@ -329,14 +343,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             socialActionEvents.add(event);
         }
 
-        Collections.sort(socialActionEvents, ((o1, o2) -> {
-            if (o1.seen != o2.seen) {
-                return o1.seen ? 1 : -1;
-            }
-            return -Long.compare(o1.timestamp, o2.timestamp);
-        }));
-
-        final Map<UserId, Contact> contacts = new HashMap<>();
+        int unseenCount = 0;
         for (SocialActionEvent event : socialActionEvents) {
             if (!event.postSenderUserId.isMe() && !contacts.containsKey(event.postSenderUserId)) {
                 final Contact contact = contactsDb.getContact(event.postSenderUserId);
@@ -349,8 +356,18 @@ public class ActivityCenterViewModel extends AndroidViewModel {
                 final Contact contact = contactsDb.getContact(involvedUser);
                 contacts.put(involvedUser, contact);
             }
+            if (!event.seen) {
+                unseenCount++;
+            }
         }
-        return new SocialHistory(socialActionEvents, unseenMentions.size() + unseenComments.size(), contacts);
+        Collections.sort(socialActionEvents, ((o1, o2) -> {
+            if (o1.seen != o2.seen) {
+                return o1.seen ? 1 : -1;
+            }
+            return -Long.compare(o1.timestamp, o2.timestamp);
+        }));
+
+        return new SocialHistory(socialActionEvents, unseenCount, contacts);
     }
 
     public static class SocialActionEvent {
@@ -372,9 +389,11 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
         public final @Action int action;
 
-        public final List<UserId> involvedUsers = new ArrayList<>();
+        public final Set<UserId> involvedUsers = new HashSet<>();
 
         public int numInvites;
+
+        public ContentItem contentItem;
 
         public static SocialActionEvent fromMentionedPost(@NonNull Post post) {
             SocialActionEvent activity = new SocialActionEvent(Action.TYPE_MENTION_IN_POST, post.senderUserId, post.id);
