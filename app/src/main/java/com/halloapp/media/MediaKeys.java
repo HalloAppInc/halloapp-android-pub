@@ -34,6 +34,9 @@ class MediaKeys {
             case Media.MEDIA_TYPE_VIDEO: {
                 return "HalloApp video";
             }
+            case Media.MEDIA_TYPE_AUDIO: {
+                return "HalloApp audio";
+            }
             case Media.MEDIA_TYPE_UNKNOWN:
             default: {
                 return "";
