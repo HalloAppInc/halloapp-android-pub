@@ -99,8 +99,11 @@ public class RegistrationVerificationActivity extends HalloActivity {
 
         final String groupInviteToken = getIntent().getStringExtra(EXTRA_GROUP_INVITE_TOKEN);
         final String phoneNumber = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_PHONE_NUMBER));
+        Log.i("RegistrationVerificationActivity got phone number " + phoneNumber);
+        final String formattedNumber = PhoneNumberUtils.formatNumber("+" + phoneNumber, null);
+        Log.i("RegistrationVerificationActivity formatted number " + formattedNumber);
         final TextView titleView = findViewById(R.id.title);
-        titleView.setText(getString(R.string.verify_registration_title, PhoneNumberUtils.formatNumber("+" + phoneNumber, null)));
+        titleView.setText(getString(R.string.verify_registration_title, formattedNumber));
 
         codeEditText.setFilters(new InputFilter[]{
                 new DigitsKeyListener(),
