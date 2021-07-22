@@ -9,6 +9,7 @@
     <issue id="MissingTranslation" severity="ignore" />
     <!-- Expected; new strings import to other languages from POEditor like this -->
     <issue id="ImpliedQuantity" severity="ignore" />
+    <issue id="MissingQuantity" severity="ignore" />
     <!-- Expected; strings deleted from English get removed from other languages on next sync -->
     <issue id="ExtraTranslation" severity="ignore" />
     <issue id="MissingDefaultResource" severity="ignore" />
