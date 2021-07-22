@@ -249,7 +249,7 @@ public class RegistrationRequestActivity extends HalloActivity {
 
     private void onRereg() {
         Log.i("RegistrationRequestActivity: rereg success");
-        contactsSync.startContactsSync(true);
+        contactsSync.forceFullContactsSync();
         bgWorkers.execute(() -> {
             preferences.setLastGroupSyncTime(0);
             avatarLoader.removeMyAvatar();

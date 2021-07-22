@@ -203,7 +203,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.refresh_contacts) {
-            ContactsSync.getInstance().startContactsSync(true);
+            ContactsSync.getInstance().forceFullContactsSync();
             return true;
         }
         return super.onOptionsItemSelected(item);

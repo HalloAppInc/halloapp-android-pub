@@ -3,6 +3,7 @@ package com.halloapp;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
@@ -200,6 +201,10 @@ public class Preferences {
             if (!getPreferences().edit().putBoolean(this.prefKey, v).commit()) {
                 Log.e("Preferences: failed to set " + this.prefKey);
             }
+        }
+
+        public void apply(Boolean v) {
+            getPreferences().edit().putBoolean(this.prefKey, v).apply();
         }
 
         public void migrate() {
@@ -401,6 +406,11 @@ public class Preferences {
     @WorkerThread
     public boolean getRequireFullContactsSync() {
         return prefRequireFullContactSync.get();
+    }
+
+    @AnyThread
+    public void applyRequireFullContactsSync(boolean requireFullContactsSync) {
+        prefRequireFullContactSync.apply(requireFullContactsSync);
     }
 
     @WorkerThread

@@ -22,6 +22,7 @@ import androidx.work.WorkerParameters;
 import com.halloapp.AppContext;
 import com.halloapp.Preferences;
 import com.halloapp.id.UserId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
@@ -110,7 +111,12 @@ public class ContactsSync {
         final Data data = new Data.Builder().putBoolean(WORKER_PARAM_FULL_SYNC, fullSync).putStringArray(WORKER_PARAM_CONTACT_HASHES, contactHashes).build();
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(ContactSyncWorker.class).setInputData(data).build();
         lastSyncRequestId = workRequest.getId();
-        WorkManager.getInstance(appContext.get()).enqueueUniqueWork(fullSync ? FULL_CONTACT_SYNC_WORK_ID : INCREMENTAL_CONTACT_SYNC_WORK_ID, ExistingWorkPolicy.REPLACE, workRequest);
+        WorkManager.getInstance(appContext.get()).enqueueUniqueWork(fullSync ? FULL_CONTACT_SYNC_WORK_ID : INCREMENTAL_CONTACT_SYNC_WORK_ID, ExistingWorkPolicy.APPEND_OR_REPLACE, workRequest);
+    }
+
+    public void forceFullContactsSync() {
+        Preferences.getInstance().applyRequireFullContactsSync(true);
+        startContactsSyncInternal(true, new String[]{});
     }
 
     public void startContactsSync(boolean fullSync) {
@@ -377,9 +383,18 @@ public class ContactsSync {
         @Override
         public @NonNull Result doWork() {
             boolean fullSync = getInputData().getBoolean(WORKER_PARAM_FULL_SYNC, true);
+            boolean forceSync = Preferences.getInstance().getRequireFullContactsSync();
             String[] contactHashes = getInputData().getStringArray(WORKER_PARAM_CONTACT_HASHES);
             if (contactHashes == null) {
                 contactHashes = new String[]{};
+            }
+            if (fullSync && !forceSync) {
+                long syncIntervalMs = ServerProps.getInstance().getContactSyncIntervalSeconds() * 1000L;
+                long lastFullSync = Preferences.getInstance().getLastFullContactSyncTime();
+                if (System.currentTimeMillis() - lastFullSync < syncIntervalMs) {
+                    Log.i("ContactsSyncWorker.doWork aborting full sync too soon");
+                    return Result.success();
+                }
             }
             final Result result = ContactsSync.getInstance().performContactSync(fullSync, Arrays.asList(contactHashes));
             if  (!Result.success().equals(result)) {

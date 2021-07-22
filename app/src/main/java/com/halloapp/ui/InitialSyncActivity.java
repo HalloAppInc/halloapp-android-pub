@@ -194,7 +194,7 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
     private void startSync() {
         syncInFlight = true;
         showRunningState();
-        ContactsSync.getInstance().startContactsSync(true);
+        ContactsSync.getInstance().forceFullContactsSync();
     }
 
     public static class InitialSyncViewModel extends AndroidViewModel {

@@ -110,7 +110,7 @@ public class Debug {
                     break;
                 }
                 case DEBUG_MENU_SYNC_CONTACTS: {
-                    ContactsSync.getInstance().startContactsSync(true);
+                    ContactsSync.getInstance().forceFullContactsSync();
                     break;
                 }
                 case DEBUG_MENU_SET_COMMENTS_SEEN: {
