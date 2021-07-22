@@ -1,6 +1,7 @@
 package com.halloapp.tools
 
 import java.io.File
+import java.util.Locale;
 
 const val POEDITOR_TOKEN_FILE = "tokens/poeditor_token"
 
@@ -17,6 +18,11 @@ fun isEmpty(str: String?): Boolean {
 fun getStringFile(id: String?): File {
     if (id == null) {
         return File("../app/src/main/res/values/strings.xml")
+    }
+    var id = id
+    if (id.contains("-")) {
+        val parts = id.split("-")
+        id = "${parts[0]}-r${parts[1].toUpperCase(Locale.ROOT)}"
     }
     return File("../app/src/main/res/values-$id/strings.xml")
 }
