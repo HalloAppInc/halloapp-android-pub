@@ -219,7 +219,7 @@ public class RegistrationRequestActivity extends HalloActivity {
             Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(countryCodePicker.getFormattedFullNumber(), countryCodePicker.getSelectedCountryNameCode());
             phoneOkayLength = phoneNumberUtil.isPossibleNumberWithReason(phoneNumber) == PhoneNumberUtil.ValidationResult.IS_POSSIBLE;
         } catch (NumberParseException e) {
-            Log.i("Failed to parse number", e);
+            Log.i("Failed to parse number: " + e);
         }
 
         nextButton.setEnabled(nameValid && phoneOkayLength);
