@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
-import com.google.crypto.tink.subtle.X25519;
 import com.halloapp.AppContext;
 import com.halloapp.Me;
 import com.halloapp.crypto.CryptoException;
@@ -28,7 +27,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -192,7 +190,7 @@ public class EncryptedKeyStore {
 
     public void generateClientPrivateKeys() {
         setMyEd25519IdentityKey(CryptoUtils.generateEd25519KeyPair());
-        setMyPrivateSignedPreKey(X25519.generatePrivateKey());
+        setMyPrivateSignedPreKey(CryptoUtils.generateX25519PrivateKey());
     }
 
     private void setMyEd25519IdentityKey(byte[] key) {

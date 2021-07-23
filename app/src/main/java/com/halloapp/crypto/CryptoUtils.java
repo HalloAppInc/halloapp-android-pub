@@ -29,6 +29,7 @@ public class CryptoUtils {
     private static final LazySodiumAndroid lazySodium = new LazySodiumAndroid(new SodiumAndroid(), StandardCharsets.UTF_8);
     private static final Sign.Native sign = lazySodium;
     private static final Auth.Native auth = lazySodium;
+    private static final Box.Native box = lazySodium;
 
     public static byte[] concat(byte[] first, byte[]... rest) {
         int len = first.length;
@@ -86,6 +87,13 @@ public class CryptoUtils {
         byte[] privateKey = new byte[Sign.ED25519_SECRETKEYBYTES];
         sign.cryptoSignKeypair(publicKey, privateKey);
         return CryptoUtils.concat(publicKey, privateKey);
+    }
+
+    public static byte[] generateX25519PrivateKey() {
+        byte[] x25519PublicKey = new byte[Box.CURVE25519XSALSA20POLY1305_PUBLICKEYBYTES];
+        byte[] x25519PrivateKey = new byte[Box.CURVE25519XSALSA20POLY1305_SECRETKEYBYTES];
+        box.cryptoBoxKeypair(x25519PublicKey, x25519PrivateKey);
+        return x25519PrivateKey;
     }
 
     public static PublicXECKey convertPublicEdToX(PublicEdECKey ed) throws CryptoException {

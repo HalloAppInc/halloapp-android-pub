@@ -2,8 +2,8 @@ package com.halloapp.crypto.keys;
 
 import com.google.crypto.tink.subtle.X25519;
 import com.halloapp.crypto.CryptoException;
+import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.util.logs.Log;
-import com.halloapp.util.Preconditions;
 
 import java.security.InvalidKeyException;
 
@@ -12,7 +12,7 @@ public abstract class XECKey extends Key {
 
     public static PrivateXECKey generatePrivateKey() {
         try {
-            return new PrivateXECKey(X25519.generatePrivateKey());
+            return new PrivateXECKey(CryptoUtils.generateX25519PrivateKey());
         } catch (CryptoException e) {
             throw new IllegalStateException("Generated key was invalid");
         }
