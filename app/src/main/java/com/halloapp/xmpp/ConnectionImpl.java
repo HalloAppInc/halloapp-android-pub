@@ -13,6 +13,7 @@ import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
+import com.halloapp.contacts.ContactSyncResult;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
@@ -43,6 +44,7 @@ import com.halloapp.proto.server.ClientVersion;
 import com.halloapp.proto.server.Contact;
 import com.halloapp.proto.server.ContactHash;
 import com.halloapp.proto.server.ContactList;
+import com.halloapp.proto.server.ContactSyncError;
 import com.halloapp.proto.server.DeliveryReceipt;
 import com.halloapp.proto.server.ErrorStanza;
 import com.halloapp.proto.server.ExportData;
@@ -335,17 +337,22 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public Observable<List<ContactInfo>> syncContacts(@Nullable Collection<String> addPhones, @Nullable Collection<String> deletePhones, boolean fullSync, @Nullable String syncId, int index, boolean lastBatch) {
+    public Observable<ContactSyncResult> syncContacts(@Nullable Collection<String> addPhones, @Nullable Collection<String> deletePhones, boolean fullSync, @Nullable String syncId, int index, boolean lastBatch) {
         final ContactsSyncRequestIq contactsSyncIq = new ContactsSyncRequestIq(
                 addPhones, deletePhones, fullSync, syncId, index, lastBatch);
 
         return sendIqRequestAsync(contactsSyncIq).map(response -> {
-            List<Contact> contacts = response.getContactList().getContactsList();
-            List<ContactInfo> ret = new ArrayList<>();
-            for (Contact contact : contacts) {
-                ret.add(new ContactInfo(contact));
+            if (response.hasContactSyncError()) {
+                ContactSyncError error = response.getContactSyncError();
+                return ContactSyncResult.failure(error.getRetryAfterSecs());
+            } else {
+                List<Contact> contacts = response.getContactList().getContactsList();
+                List<ContactInfo> ret = new ArrayList<>();
+                for (Contact contact : contacts) {
+                    ret.add(new ContactInfo(contact));
+                }
+                return ContactSyncResult.success(ret);
             }
-            return ret;
         });
     }
 

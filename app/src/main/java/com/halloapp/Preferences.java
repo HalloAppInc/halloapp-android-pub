@@ -26,6 +26,7 @@ public class Preferences {
     private static final String PREF_KEY_MIGRATED_GROUP_TIMESTAMPS = "updated_group_timestamps";
 
     private static final String PREF_KEY_LAST_FULL_CONTACTS_SYNC_TIME = "last_sync_time";
+    private static final String PREF_KEY_CONTACT_SYNC_BACKOFF_TIME = "contact_sync_backoff_time";
     private static final String PREF_KEY_REQUIRE_FULL_CONTACTS_SYNC = "require_full_sync";
     private static final String PREF_KEY_REQUIRE_SHARE_POSTS = "require_share_posts";
 
@@ -102,6 +103,7 @@ public class Preferences {
 
     private final BooleanPreference prefMigratedGroupTimestamp = createPref(false, PREF_KEY_MIGRATED_GROUP_TIMESTAMPS, false);
     private final BooleanPreference prefInviteNotificationSeen = createPref(false, PREF_KEY_INVITE_NOTIFICATION_SEEN, false);
+    private final LongPreference prefContactSyncBackoffTime = createPref(false, PREF_KEY_CONTACT_SYNC_BACKOFF_TIME, 0L);
     private final LongPreference prefLastFullContactSyncTime = createPref(false, PREF_KEY_LAST_FULL_CONTACTS_SYNC_TIME, 0L);
     private final LongPreference prefLastBlockListSyncTime = createPref(false, PREF_KEY_LAST_BLOCK_LIST_SYNC_TIME, 0L);
     private final LongPreference prefRegistrationTime = createPref(false, PREF_KEY_REGISTRATION_TIME, 0L);
@@ -249,6 +251,10 @@ public class Preferences {
             }
         }
 
+        public void apply(Long v) {
+            getPreferences().edit().putLong(this.prefKey, v).apply();
+        }
+
         public void migrate() {
             SharedPreferences originalPreferences = appContext.get().getSharedPreferences("prefs", Context.MODE_PRIVATE);
             set(originalPreferences.getLong(this.prefKey, this.defaultValue));
@@ -301,6 +307,21 @@ public class Preferences {
         if (!editor.commit()) {
             Log.w("Preferences: Failed to remove deleted prefs");
         }
+    }
+
+    @WorkerThread
+    public long getContactSyncBackoffTime() {
+        return prefContactSyncBackoffTime.get();
+    }
+
+    @WorkerThread
+    public void setContactSyncBackoffTime(long time) {
+        prefContactSyncBackoffTime.set(time);
+    }
+
+    @AnyThread
+    public void clearContactSyncBackoffTime() {
+        prefContactSyncBackoffTime.apply(0L);
     }
 
     @WorkerThread

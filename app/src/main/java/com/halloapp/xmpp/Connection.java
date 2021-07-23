@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
+import com.halloapp.contacts.ContactSyncResult;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
@@ -97,7 +98,7 @@ public abstract class Connection {
 
     public abstract Observable<MediaUploadIq.Urls> requestMediaUpload(long fileSize, @Nullable String downloadUrl);
 
-    public abstract Observable<List<ContactInfo>> syncContacts(@Nullable Collection<String> addPhones, @Nullable Collection<String> deletePhones, boolean fullSync, @Nullable String syncId, int index, boolean lastBatch);
+    public abstract Observable<ContactSyncResult> syncContacts(@Nullable Collection<String> addPhones, @Nullable Collection<String> deletePhones, boolean fullSync, @Nullable String syncId, int index, boolean lastBatch);
 
     public abstract void sendPushToken(@NonNull final String pushToken, @NonNull String languageCode);
 

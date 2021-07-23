@@ -23,6 +23,7 @@ import com.halloapp.AppContext;
 import com.halloapp.Preferences;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
@@ -56,6 +57,7 @@ public class ContactsSync {
     private static ContactsSync instance;
 
     private final AppContext appContext;
+    private final Preferences preferences;
 
     private boolean initialized;
     private UUID lastSyncRequestId;
@@ -64,15 +66,16 @@ public class ContactsSync {
         if (instance == null) {
             synchronized(ContactsSync.class) {
                 if (instance == null) {
-                    instance = new ContactsSync(AppContext.getInstance());
+                    instance = new ContactsSync(AppContext.getInstance(), Preferences.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private ContactsSync(@NonNull AppContext appContext) {
+    private ContactsSync(@NonNull AppContext appContext, @NonNull Preferences preferences) {
         this.appContext = appContext;
+        this.preferences = preferences;
     }
 
     public LiveData<List<WorkInfo>> getWorkInfoLiveData() {
@@ -115,7 +118,14 @@ public class ContactsSync {
     }
 
     public void forceFullContactsSync() {
-        Preferences.getInstance().applyRequireFullContactsSync(true);
+        forceFullContactsSync(false);
+    }
+
+    public void forceFullContactsSync(boolean initialSync) {
+        if (initialSync) {
+            preferences.clearContactSyncBackoffTime();
+        }
+        preferences.applyRequireFullContactsSync(true);
         startContactsSyncInternal(true, new String[]{});
     }
 
@@ -152,7 +162,6 @@ public class ContactsSync {
             return ListenableWorker.Result.failure();
         }
 
-        final Preferences preferences = Preferences.getInstance();
         final ListenableWorker.Result result;
 
         boolean shouldPerformFullSync = fullSync ||
@@ -174,7 +183,7 @@ public class ContactsSync {
             }
         }
 
-        Log.i("ContactsSync.done: " + Preferences.getInstance().getLastFullContactSyncTime());
+        Log.i("ContactsSync.done: " + preferences.getLastFullContactSyncTime());
         return result;
     }
 
@@ -218,8 +227,16 @@ public class ContactsSync {
     private ListenableWorker.Result performIncrementalContactSync(@NonNull ContactsDb.AddressBookSyncResult addressBookSyncResult, @NonNull List<Contact> hashSyncContacts) {
         if (!addressBookSyncResult.removed.isEmpty()) {
             try {
-                Connection.getInstance().syncContacts(null, addressBookSyncResult.removed,
+                ContactSyncResult result = Connection.getInstance().syncContacts(null, addressBookSyncResult.removed,
                         false, null, 0, true).await();
+                if (result == null) {
+                    return ListenableWorker.Result.failure();
+                }
+                if (!result.success) {
+                    setSyncBackoff(result.retryAfterSecs);
+                    Log.e("ContactsSync.performContactSync: failed to delete contacts backoff=" + result.retryAfterSecs);
+                    return ListenableWorker.Result.failure();
+                }
             } catch (InterruptedException | ObservableErrorException e) {
                 Log.i("ContactsSync.performContactSync: failed to delete contacts", e);
                 return ListenableWorker.Result.failure();
@@ -262,7 +279,7 @@ public class ContactsSync {
             phonesSyncedCount++;
             final boolean lastBatch = phonesSyncedCount == phones.size();
             if (phonesBatch.size() >= CONTACT_SYNC_BATCH_SIZE || lastBatch) {
-                List<ContactInfo> contactSyncBatchResults = null;
+                ContactSyncResult contactSyncBatchResults = null;
                 int attempts = 0;
                 int prevDelay = 1;
                 int delaySeconds = 1;
@@ -286,21 +303,25 @@ public class ContactsSync {
                     } catch (InterruptedException | ObservableErrorException e) {
                         Log.e("ContactsSync.performContactSync: failed to sync batch", e);
                     }
+                    if (contactSyncBatchResults != null && !contactSyncBatchResults.success) {
+                        Log.e("ContactSync.performContactSync: hit an error during batch backoff secs=" + contactSyncBatchResults.retryAfterSecs);
+                        setSyncBackoff(contactSyncBatchResults.retryAfterSecs);
+                        return ListenableWorker.Result.failure();
+                    }
                 }
-                if (contactSyncBatchResults != null) {
-                    contactSyncResults.addAll(contactSyncBatchResults);
-                    phonesBatch.clear();
-                    batchIndex++;
-                } else {
+                if (contactSyncBatchResults == null) {
                     return ListenableWorker.Result.failure();
                 }
+                contactSyncResults.addAll(Preconditions.checkNotNull(contactSyncBatchResults.contactList));
+                phonesBatch.clear();
+                batchIndex++;
             }
         }
 
         final Collection<Contact> updatedContacts = new ArrayList<>();
         final Collection<UserId> newContacts = new HashSet<>();
         final long syncTime = System.currentTimeMillis();
-        final boolean initialSync = Preferences.getInstance().getLastFullContactSyncTime() == 0;
+        final boolean initialSync = preferences.getLastFullContactSyncTime() == 0;
         for (ContactInfo contactsSyncResult : contactSyncResults) {
             final List<Contact> phoneContacts = phones.get(contactsSyncResult.phone);
             if (phoneContacts == null) {
@@ -372,6 +393,11 @@ public class ContactsSync {
         return ListenableWorker.Result.success();
     }
 
+    private void setSyncBackoff(long backoffTimeSecs) {
+        long backoffUntil = System.currentTimeMillis() + (backoffTimeSecs * 1000L);
+        preferences.setContactSyncBackoffTime(backoffUntil);
+    }
+
     public static class ContactSyncWorker extends Worker {
 
         public ContactSyncWorker(
@@ -387,6 +413,11 @@ public class ContactsSync {
             String[] contactHashes = getInputData().getStringArray(WORKER_PARAM_CONTACT_HASHES);
             if (contactHashes == null) {
                 contactHashes = new String[]{};
+            }
+            long backoffTime = Preferences.getInstance().getContactSyncBackoffTime();
+            if (System.currentTimeMillis() < backoffTime) {
+                Log.i("ContactsSyncWorker.doWork aborting backoff until " + backoffTime);
+                return Result.success();
             }
             if (fullSync && !forceSync) {
                 long syncIntervalMs = ServerProps.getInstance().getContactSyncIntervalSeconds() * 1000L;
