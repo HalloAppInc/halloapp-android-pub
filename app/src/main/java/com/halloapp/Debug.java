@@ -432,6 +432,7 @@ public class Debug {
         @Override
         protected Void doInBackground(Void... voids) {
             Me.getInstance().resetRegistration();
+            EncryptedKeyStore.getInstance().clearAll();
             restart(application);
             return null;
         }
