@@ -12,6 +12,7 @@ import androidx.security.crypto.MasterKey;
 
 import com.halloapp.AppContext;
 import com.halloapp.Me;
+import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.id.UserId;
@@ -698,8 +699,8 @@ public class EncryptedKeyStore {
             sb.append("CryptoException");
         }
 
-        sb.append("; MICK:").append(CryptoUtils.obfuscate(getInboundChainKey(userId)));
-        sb.append("; MOCK:").append(CryptoUtils.obfuscate(getOutboundChainKey(userId)));
+        sb.append("; MICK:").append(CryptoByteUtils.obfuscate(getInboundChainKey(userId)));
+        sb.append("; MOCK:").append(CryptoByteUtils.obfuscate(getOutboundChainKey(userId)));
 
         return sb.toString();
     }

@@ -3,7 +3,6 @@ package com.halloapp.crypto;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.android.gms.common.util.Hex;
 import com.google.crypto.tink.subtle.Hkdf;
 import com.goterl.lazysodium.LazySodiumAndroid;
 import com.goterl.lazysodium.SodiumAndroid;
@@ -19,7 +18,6 @@ import com.halloapp.util.logs.Log;
 
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
 
 public class CryptoUtils {
     // not instantiable
@@ -30,33 +28,6 @@ public class CryptoUtils {
     private static final Auth.Native auth = lazySodium;
     private static final Box.Native box = lazySodium;
     private static final DiffieHellman.Native dh = lazySodium;
-
-    public static byte[] concat(byte[] first, byte[]... rest) {
-        int len = first.length;
-        for (byte[] arr : rest) {
-            len += arr.length;
-        }
-        byte[] ret = Arrays.copyOf(first, len);
-        int destOffset = first.length;
-        for (byte[] arr : rest) {
-            System.arraycopy(arr, 0, ret, destOffset, arr.length);
-            destOffset += arr.length;
-        }
-        return ret;
-    }
-
-    public static void nullify(@Nullable byte[] first, byte[]... rest) {
-        nullify(first);
-        for (byte[] bytes : rest) {
-            nullify(bytes);
-        }
-    }
-
-    private static void nullify(@Nullable byte[] bytes) {
-        if (bytes != null) {
-            Arrays.fill(bytes, (byte) 0);
-        }
-    }
 
     public static byte[] hkdf(@NonNull byte[] ikm, @Nullable byte[] salt, @Nullable byte[] info, int len) throws GeneralSecurityException {
         try {
@@ -83,7 +54,7 @@ public class CryptoUtils {
         byte[] publicKey = new byte[Sign.ED25519_PUBLICKEYBYTES];
         byte[] privateKey = new byte[Sign.ED25519_SECRETKEYBYTES];
         sign.cryptoSignKeypair(publicKey, privateKey);
-        return CryptoUtils.concat(publicKey, privateKey);
+        return CryptoByteUtils.concat(publicKey, privateKey);
     }
 
     public static byte[] generateX25519PrivateKey() {
@@ -132,30 +103,5 @@ public class CryptoUtils {
 
     public static boolean verifyOpen(byte[] msgBytes, byte[] cert, int certLen, byte[] publicKey) {
         return sign.cryptoSignOpen(msgBytes, cert, certLen, publicKey);
-    }
-
-    public static String obfuscate(@Nullable byte[] bytes) {
-        if (bytes == null) {
-            return "null";
-        }
-
-        StringBuilder sb = new StringBuilder();
-
-        if (bytes.length < 32) {
-            for (int i=0; i<bytes.length; i++) {
-                sb.append("*");
-            }
-            return sb.toString();
-        }
-
-        for (int i=0; i<bytes.length; i++) {
-            if (i >= 1 && i < bytes.length - 1) {
-                sb.append("*");
-            } else {
-                sb.append(Hex.bytesToStringLowercase(new byte[] {bytes[i]}));
-            }
-        }
-
-        return sb.toString();
     }
 }

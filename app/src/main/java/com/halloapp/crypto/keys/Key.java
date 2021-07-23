@@ -2,7 +2,7 @@ package com.halloapp.crypto.keys;
 
 import androidx.annotation.NonNull;
 
-import com.halloapp.crypto.CryptoUtils;
+import com.halloapp.crypto.CryptoByteUtils;
 
 public abstract class Key {
     private final byte[] key;
@@ -18,7 +18,7 @@ public abstract class Key {
     @NonNull
     @Override
     public String toString() {
-        return CryptoUtils.obfuscate(key);
+        return CryptoByteUtils.obfuscate(key);
     }
 
     /**
@@ -29,7 +29,7 @@ public abstract class Key {
      * contains the key material and we can access it, so we delete it.
      */
     public void destroyKeyMaterial() {
-        CryptoUtils.nullify(key);
+        CryptoByteUtils.nullify(key);
     }
     @Override
     protected void finalize() throws Throwable {

@@ -3,6 +3,7 @@ package com.halloapp.crypto.keys;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.signal.SessionSetupInfo;
@@ -83,10 +84,10 @@ public class KeyManager {
             byte[] masterSecret;
             if (recipientPublicOneTimePreKey != null) {
                 byte[] d = CryptoUtils.ecdh(privateEphemeralKey, recipientPublicOneTimePreKey.publicXECKey);
-                masterSecret = CryptoUtils.concat(a, b, c, d);
-                CryptoUtils.nullify(d);
+                masterSecret = CryptoByteUtils.concat(a, b, c, d);
+                CryptoByteUtils.nullify(d);
             } else {
-                masterSecret = CryptoUtils.concat(a, b, c);
+                masterSecret = CryptoByteUtils.concat(a, b, c);
             }
 
             byte[] output = CryptoUtils.hkdf(masterSecret, null, HKDF_ROOT_KEY_INFO, 96);
@@ -104,7 +105,7 @@ public class KeyManager {
 
             encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
 
-            CryptoUtils.nullify(a, b, c, masterSecret, output, rootKey, outboundChainKey, inboundChainKey);
+            CryptoByteUtils.nullify(a, b, c, masterSecret, output, rootKey, outboundChainKey, inboundChainKey);
         } catch (GeneralSecurityException e) {
             throw new CryptoException("setup_has_bad_keys", e);
         }
@@ -137,10 +138,10 @@ public class KeyManager {
                     tearDownSession(peerUserId);
                     throw e;
                 }
-                masterSecret = CryptoUtils.concat(a, b, c, d);
-                CryptoUtils.nullify(d);
+                masterSecret = CryptoByteUtils.concat(a, b, c, d);
+                CryptoByteUtils.nullify(d);
             } else {
-                masterSecret = CryptoUtils.concat(a, b, c);
+                masterSecret = CryptoByteUtils.concat(a, b, c);
             }
 
             byte[] output = CryptoUtils.hkdf(masterSecret, null, HKDF_ROOT_KEY_INFO, 96);
@@ -164,7 +165,7 @@ public class KeyManager {
 
             encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
 
-            CryptoUtils.nullify(a, b, c, masterSecret, output, rootKey, inboundChainKey, outboundChainKey);
+            CryptoByteUtils.nullify(a, b, c, masterSecret, output, rootKey, inboundChainKey, outboundChainKey);
         } catch (GeneralSecurityException e) {
             throw new CryptoException("setup_received_bad_keys", e);
         }
@@ -249,7 +250,7 @@ public class KeyManager {
 
     private byte[] getNextMessageKey(UserId peerUserId, boolean isOutbound) throws CryptoException {
         byte[] chainKey = isOutbound ? encryptedKeyStore.getOutboundChainKey(peerUserId) : encryptedKeyStore.getInboundChainKey(peerUserId);
-        Log.d("Getting message key for " + peerUserId + "; " + (isOutbound ? "outbound" : "inbound") + " chain key: " + CryptoUtils.obfuscate(chainKey));
+        Log.d("Getting message key for " + peerUserId + "; " + (isOutbound ? "outbound" : "inbound") + " chain key: " + CryptoByteUtils.obfuscate(chainKey));
 
         try {
             byte[] messageKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_MESSAGE_KEY, 80);
@@ -261,7 +262,7 @@ public class KeyManager {
                 encryptedKeyStore.setInboundChainKey(peerUserId, newChainKey);
             }
 
-            CryptoUtils.nullify(chainKey, newChainKey);
+            CryptoByteUtils.nullify(chainKey, newChainKey);
 
             return messageKey;
         } catch (GeneralSecurityException e) {
@@ -284,7 +285,7 @@ public class KeyManager {
             byte[] output = CryptoUtils.hkdf(ephemeralSecret, encryptedKeyStore.getRootKey(peerUserId), HKDF_ROOT_KEY_INFO, 64);
             byte[] rootKey = Arrays.copyOfRange(output, 0, 32);
             byte[] chainKey = Arrays.copyOfRange(output, 32, 64);
-            Log.d("root key with " + peerUserId + " updated to: " + CryptoUtils.obfuscate(rootKey));
+            Log.d("root key with " + peerUserId + " updated to: " + CryptoByteUtils.obfuscate(rootKey));
 
             encryptedKeyStore.setRootKey(peerUserId, rootKey);
             if (isOutbound) {
@@ -293,7 +294,7 @@ public class KeyManager {
                 encryptedKeyStore.setInboundChainKey(peerUserId, chainKey);
             }
 
-            CryptoUtils.nullify(ephemeralSecret, output, rootKey, chainKey);
+            CryptoByteUtils.nullify(ephemeralSecret, output, rootKey, chainKey);
         } catch (GeneralSecurityException e) {
             throw new CryptoException((isOutbound ? "outbound" : "inbound") + "_asym_ratchet_failure", e);
         }

@@ -1,5 +1,6 @@
 package com.halloapp.crypto.signal;
 
+import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
@@ -62,7 +63,7 @@ class SignalMessageCipher {
             c.init(Cipher.DECRYPT_MODE, secretKeySpec, ivSpec);
             byte[] ret = c.doFinal(encryptedMessage);
 
-            CryptoUtils.nullify(inboundMessageKey, aesKey, hmacKey, iv);
+            CryptoByteUtils.nullify(inboundMessageKey, aesKey, hmacKey, iv);
 
             return ret;
         } catch (GeneralSecurityException e) {
@@ -103,14 +104,14 @@ class SignalMessageCipher {
 
             byte[] hmac = CryptoUtils.hmac(hmacKey, encryptedContents);
 
-            CryptoUtils.nullify(outboundMessageKey, aesKey, hmacKey, iv);
+            CryptoByteUtils.nullify(outboundMessageKey, aesKey, hmacKey, iv);
 
             byte[] ephemeralKeyBytes = XECKey.publicFromPrivate(encryptedKeyStore.getOutboundEphemeralKey(peerUserId)).getKeyMaterial();
             byte[] ephemeralKeyIdBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId)).array();
             byte[] previousChainLengthBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(messageKey.getPreviousChainLength()).array();
             byte[] currentChainIndexBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(messageKey.getCurrentChainIndex()).array();
 
-            return CryptoUtils.concat(ephemeralKeyBytes, ephemeralKeyIdBytes, previousChainLengthBytes, currentChainIndexBytes, encryptedContents, hmac);
+            return CryptoByteUtils.concat(ephemeralKeyBytes, ephemeralKeyIdBytes, previousChainLengthBytes, currentChainIndexBytes, encryptedContents, hmac);
         } catch (GeneralSecurityException e) {
             throw new CryptoException("cipher_enc_failure", e);
         }

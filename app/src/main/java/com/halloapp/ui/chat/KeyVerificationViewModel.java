@@ -18,6 +18,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.halloapp.Me;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
@@ -120,7 +121,7 @@ public class KeyVerificationViewModel extends AndroidViewModel {
                     safetyNumber.addAll(a);
                 }
 
-                byte[] contents = CryptoUtils.concat(new byte[] {0}, uidToBytes(me.getUser()), uidToBytes(userId.rawId()), myIdentityKey.getKeyMaterial(), peerIdentityKey.getKeyMaterial());
+                byte[] contents = CryptoByteUtils.concat(new byte[] {0}, uidToBytes(me.getUser()), uidToBytes(userId.rawId()), myIdentityKey.getKeyMaterial(), peerIdentityKey.getKeyMaterial());
                 String s = bytesToString(contents);
 
                 try {
@@ -244,7 +245,7 @@ public class KeyVerificationViewModel extends AndroidViewModel {
 
             for (int i=0; i<6; i++) {
                 byte[] sub = Arrays.copyOfRange(bytes, i * 5, (i+1) * 5);
-                long l = ByteBuffer.wrap(CryptoUtils.concat(new byte[]{0,0,0}, sub)).getLong();
+                long l = ByteBuffer.wrap(CryptoByteUtils.concat(new byte[]{0,0,0}, sub)).getLong();
                 long m = l % 100_000;
                 ret.add(String.format(Locale.US, "%05d", m));
             }
