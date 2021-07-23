@@ -338,5 +338,16 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.ExportData getExportData();
 
+  /**
+   * <code>.server.ContactSyncError contact_sync_error = 34;</code>
+   * @return Whether the contactSyncError field is set.
+   */
+  boolean hasContactSyncError();
+  /**
+   * <code>.server.ContactSyncError contact_sync_error = 34;</code>
+   * @return The contactSyncError.
+   */
+  com.halloapp.proto.server.ContactSyncError getContactSyncError();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }

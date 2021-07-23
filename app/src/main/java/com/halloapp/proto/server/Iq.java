@@ -152,6 +152,7 @@ public  final class Iq extends
     GROUP_INVITE_LINK(31),
     HISTORY_RESEND(32),
     EXPORT_DATA(33),
+    CONTACT_SYNC_ERROR(34),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -195,6 +196,7 @@ public  final class Iq extends
         case 31: return GROUP_INVITE_LINK;
         case 32: return HISTORY_RESEND;
         case 33: return EXPORT_DATA;
+        case 34: return CONTACT_SYNC_ERROR;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -1700,6 +1702,56 @@ public  final class Iq extends
    */
   private void clearExportData() {
     if (payloadCase_ == 33) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int CONTACT_SYNC_ERROR_FIELD_NUMBER = 34;
+  /**
+   * <code>.server.ContactSyncError contact_sync_error = 34;</code>
+   */
+  @java.lang.Override
+  public boolean hasContactSyncError() {
+    return payloadCase_ == 34;
+  }
+  /**
+   * <code>.server.ContactSyncError contact_sync_error = 34;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.ContactSyncError getContactSyncError() {
+    if (payloadCase_ == 34) {
+       return (com.halloapp.proto.server.ContactSyncError) payload_;
+    }
+    return com.halloapp.proto.server.ContactSyncError.getDefaultInstance();
+  }
+  /**
+   * <code>.server.ContactSyncError contact_sync_error = 34;</code>
+   */
+  private void setContactSyncError(com.halloapp.proto.server.ContactSyncError value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 34;
+  }
+  /**
+   * <code>.server.ContactSyncError contact_sync_error = 34;</code>
+   */
+  private void mergeContactSyncError(com.halloapp.proto.server.ContactSyncError value) {
+    value.getClass();
+  if (payloadCase_ == 34 &&
+        payload_ != com.halloapp.proto.server.ContactSyncError.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.ContactSyncError.newBuilder((com.halloapp.proto.server.ContactSyncError) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 34;
+  }
+  /**
+   * <code>.server.ContactSyncError contact_sync_error = 34;</code>
+   */
+  private void clearContactSyncError() {
+    if (payloadCase_ == 34) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -3251,6 +3303,54 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.ContactSyncError contact_sync_error = 34;</code>
+     */
+    @java.lang.Override
+    public boolean hasContactSyncError() {
+      return instance.hasContactSyncError();
+    }
+    /**
+     * <code>.server.ContactSyncError contact_sync_error = 34;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.ContactSyncError getContactSyncError() {
+      return instance.getContactSyncError();
+    }
+    /**
+     * <code>.server.ContactSyncError contact_sync_error = 34;</code>
+     */
+    public Builder setContactSyncError(com.halloapp.proto.server.ContactSyncError value) {
+      copyOnWrite();
+      instance.setContactSyncError(value);
+      return this;
+    }
+    /**
+     * <code>.server.ContactSyncError contact_sync_error = 34;</code>
+     */
+    public Builder setContactSyncError(
+        com.halloapp.proto.server.ContactSyncError.Builder builderForValue) {
+      copyOnWrite();
+      instance.setContactSyncError(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.ContactSyncError contact_sync_error = 34;</code>
+     */
+    public Builder mergeContactSyncError(com.halloapp.proto.server.ContactSyncError value) {
+      copyOnWrite();
+      instance.mergeContactSyncError(value);
+      return this;
+    }
+    /**
+     * <code>.server.ContactSyncError contact_sync_error = 34;</code>
+     */
+    public Builder clearContactSyncError() {
+      copyOnWrite();
+      instance.clearContactSyncError();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -3299,14 +3399,15 @@ public  final class Iq extends
             com.halloapp.proto.server.GroupInviteLink.class,
             com.halloapp.proto.server.HistoryResend.class,
             com.halloapp.proto.server.ExportData.class,
+            com.halloapp.proto.server.ContactSyncError.class,
           };
           java.lang.String info =
-              "\u0000\u001e\u0001\u0000\u0001!\u001e\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003" +
+              "\u0000\u001f\u0001\u0000\u0001\"\u001f\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003" +
               "<\u0000\u0004<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<" +
               "\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012" +
               "<\u0000\u0013<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000" +
               "\u0019<\u0000\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001f<\u0000 <\u0000!<\u0000" +
-              "";
+              "\"<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
