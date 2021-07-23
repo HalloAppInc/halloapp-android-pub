@@ -94,6 +94,12 @@ public class CryptoUtils {
         return x25519PrivateKey;
     }
 
+    public static byte[] publicX25519FromPrivate(byte[] privateKey) {
+        byte[] publicKey = new byte[DiffieHellman.SCALARMULT_CURVE25519_BYTES];
+        dh.cryptoScalarMultBase(publicKey, privateKey);
+        return publicKey;
+    }
+
     public static PublicXECKey convertPublicEdToX(PublicEdECKey ed) throws CryptoException {
         byte[] ret = new byte[Box.PUBLICKEYBYTES];
         sign.convertPublicKeyEd25519ToCurve25519(ret, ed.getKeyMaterial());

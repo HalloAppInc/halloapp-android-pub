@@ -1,9 +1,7 @@
 package com.halloapp.crypto.keys;
 
-import com.google.crypto.tink.subtle.X25519;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
-import com.halloapp.util.logs.Log;
 
 import java.security.InvalidKeyException;
 
@@ -19,12 +17,7 @@ public abstract class XECKey extends Key {
     }
 
     public static PublicXECKey publicFromPrivate(PrivateXECKey privateECKey) throws InvalidKeyException, CryptoException {
-        try {
-            return new PublicXECKey(X25519.publicFromPrivate(privateECKey.getKeyMaterial()));
-        } catch (InvalidKeyException e) {
-            Log.e("Got invalid key during private to public XEC conversion");
-            throw e;
-        }
+        return new PublicXECKey(CryptoUtils.publicX25519FromPrivate(privateECKey.getKeyMaterial()));
     }
 
     public XECKey(byte[] key) throws CryptoException {
