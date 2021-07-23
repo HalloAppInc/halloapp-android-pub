@@ -226,4 +226,9 @@ public class MainContentDbObserver implements ContentDb.Observer {
     public void onDbCreated() {
         // TODO (ds): restore from backup
     }
+
+    @Override
+    public void onArchivedPostRemoved(@NonNull Post post) {
+
+    }
 }

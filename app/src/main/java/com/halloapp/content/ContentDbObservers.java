@@ -49,6 +49,13 @@ class ContentDbObservers {
             }
         }
     }
+    void notifyArchivedPostRemoved(@NonNull Post post) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onArchivedPostRemoved(post);
+            }
+        }
+    }
 
     void notifyIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
         synchronized (observers) {

@@ -20,6 +20,8 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
+import com.halloapp.props.ServerProps;
+import com.halloapp.ui.archive.ArchiveActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.invites.InviteContactsActivity;
@@ -67,6 +69,12 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
         myPosts.setOnClickListener(v -> {
             startActivity(ViewProfileActivity.viewProfile(v.getContext(), UserId.ME));
         });
+        View archivedPosts = root.findViewById(R.id.archived_posts);
+        archivedPosts.setOnClickListener(v -> {
+            startActivity(new Intent(v.getContext(), ArchiveActivity.class));
+        });
+        archivedPosts.setVisibility(ServerProps.getInstance().getIsInternalUser() ? View.VISIBLE : View.GONE);
+
 
         View help = root.findViewById(R.id.help);
         help.setOnClickListener(v -> {

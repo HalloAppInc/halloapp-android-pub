@@ -148,8 +148,10 @@ public class LimitingTextView extends AppCompatTextView {
         if (listener != null && listener.onReadMore(this, lineLimit + lineStep)) {
             return;
         }
-        lineLimit += lineStep;
-        setText(originalText);
+        if (listener != null) {
+            lineLimit += lineStep;
+            setText(originalText);
+        }
     }
 
     public interface OnReadMoreListener {

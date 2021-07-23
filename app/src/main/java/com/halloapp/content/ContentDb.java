@@ -76,6 +76,7 @@ public class ContentDb {
         void onChatDeleted(@NonNull ChatId chatId);
         void onFeedCleanup();
         void onDbCreated();
+        void onArchivedPostRemoved(@NonNull Post post);
     }
 
     public static class DefaultObserver implements Observer {
@@ -102,6 +103,7 @@ public class ContentDb {
         public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {}
         public void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts) {}
         public void onChatDeleted(@NonNull ChatId chatId) {}
+        public void onArchivedPostRemoved(@NonNull Post post) {}
 
         public void onFeedCleanup() {}
         public void onDbCreated() {}
@@ -222,6 +224,13 @@ public class ContentDb {
         databaseWriteExecutor.execute(() -> {
             postsDb.retractPost(post);
             observers.notifyPostRetracted(post);
+        });
+    }
+
+    public void removePostFromArchive(@NonNull Post post) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.removePostFromArchive(post);
+            observers.notifyArchivedPostRemoved(post);
         });
     }
 
@@ -1003,6 +1012,26 @@ public class ContentDb {
         }
         preferences.setMigratedGroupTimestamps(true);
         Log.i("ContentDb.migrateGroupTimestamps complete");
+    }
+
+    @NonNull
+    public List<Post> getArchivedPosts(Long timestamp, int count, boolean after) {
+        return postsDb.getArchivedPosts(timestamp, count, after);
+    }
+
+    @WorkerThread
+    public @Nullable Post getArchivePost(@NonNull String postId) {
+        return postsDb.getArchivePost(postId);
+    }
+
+    @WorkerThread
+    public void archivePosts() {
+        postsDb.archivePosts();
+    }
+
+    @WorkerThread
+    public void deleteArchive() {
+        postsDb.deleteArchive();
     }
 
     public void deleteDb() {

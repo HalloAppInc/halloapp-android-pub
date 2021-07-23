@@ -590,6 +590,8 @@
     <string name="manage_storage_button">Manage Storage</string>
     <!-- Message that's displayed if user has low storage -->
     <string name="low_storage_msg">Your phone is running low on storage.\n In order to use HalloApp please free some storage on this phone.</string>
+    <!-- Shown when an archived post's photo thumbnail can't be loaded -->
+    <string name="couldnt_load_thumbnail">Couldn\'t load thumbnail</string>
     <!-- Button for user to remove their profile photo and reset it to the default -->
     <string name="remove_photo">Remove Photo</string>
     <!-- Button for user to take a new photo to replace their profile photo -->
@@ -600,4 +602,12 @@
     <string name="your_profile_photo">Your profile photo</string>
     <!-- Banner explaining why user can't leave a comment in a group they've left -->
     <string name="no_longer_group_member">You\'re no longer a member of this group</string>
+    <!-- Button for user to re-share old posts which have expired -->
+    <string name="reshare_post">Reshare post</string>
+    <!-- Button for going to utility for viewing expired posts -->
+    <string name="archived_posts">Archived Posts</string>
+    <!-- Title of utility for viewing expired posts -->
+    <string name="archive">Archive</string>
+    <!-- Label displaying the date when a post expired -->
+    <string name="archived_on">Archived %s</string>
 </resources>

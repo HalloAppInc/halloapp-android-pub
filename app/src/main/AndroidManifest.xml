@@ -119,6 +119,10 @@
             android:label="@string/settings_feed_privacy"/>
 
         <activity
+            android:name=".ui.archive.ArchiveActivity"
+            android:label="@string/archive"/>
+
+        <activity
             android:name=".ui.profile.ViewProfileActivity" />
 
         <activity

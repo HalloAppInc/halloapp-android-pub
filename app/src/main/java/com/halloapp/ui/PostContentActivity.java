@@ -38,6 +38,7 @@ import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
+import com.halloapp.ui.posts.ArchivedPostViewHolder;
 import com.halloapp.ui.posts.FutureProofPostViewHolder;
 import com.halloapp.ui.posts.IncomingPostViewHolder;
 import com.halloapp.ui.posts.OutgoingPostViewHolder;
@@ -54,6 +55,7 @@ public class PostContentActivity extends HalloActivity {
     public static final String EXTRA_POST_SENDER_USER_ID = "post_sender_user_id";
     public static final String EXTRA_POST_ID = "post_id";
     public static final String EXTRA_POST_MEDIA_INDEX = "post_media_index";
+    public static final String EXTRA_IS_ARCHIVED = "is_archived";
 
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ChatLoader chatLoader;
@@ -218,8 +220,9 @@ public class PostContentActivity extends HalloActivity {
         });
 
         final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
+        final boolean isArchivedPost = getIntent().getBooleanExtra(EXTRA_IS_ARCHIVED, false);
 
-        final PostContentViewModel viewModel = new ViewModelProvider(this, new PostContentViewModel.Factory(getApplication(), postId)).get(PostContentViewModel.class);
+        final PostContentViewModel viewModel = new ViewModelProvider(this, new PostContentViewModel.Factory(getApplication(), postId, isArchivedPost)).get(PostContentViewModel.class);
 
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
@@ -308,6 +311,10 @@ public class PostContentActivity extends HalloActivity {
                 return new RetractedPostViewHolder(layout, postViewHolderParent);
             }
             final ViewGroup footer = layout.findViewById(R.id.post_footer);
+            if (post.isArchived) {
+                LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_archive, footer, true);
+                return new ArchivedPostViewHolder(layout, postViewHolderParent);
+            }
             switch (viewType & POST_DIRECTION_MASK) {
                 case POST_DIRECTION_INCOMING: {
                     LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_incoming, footer, true);
@@ -329,6 +336,9 @@ public class PostContentActivity extends HalloActivity {
 
         @Override
         public void onBindViewHolder(@NonNull PostViewHolder postViewHolder, int position) {
+            if (post.isArchived) {
+                postViewHolder.setShowGroupName(true);
+            }
             postViewHolder.bindTo(post);
             if (!initialSelectionSet) {
                 postViewHolder.selectMedia(getIntent().getIntExtra(EXTRA_POST_MEDIA_INDEX, 0));

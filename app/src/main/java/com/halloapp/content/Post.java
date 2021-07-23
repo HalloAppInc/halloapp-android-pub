@@ -81,6 +81,9 @@ public class Post extends ContentItem {
 
     public GroupId parentGroup;
 
+    public boolean isArchived = false;
+    public long archiveDate;
+
     public Post(
             long rowId,
             UserId senderUserId,

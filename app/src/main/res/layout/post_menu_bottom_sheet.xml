@@ -49,6 +49,34 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/reshare_post"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="15dp"
+        android:background="?selectableItemBackground"
+        android:paddingBottom="15dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="10dp"
+            app:tint="@color/color_secondary"
+            android:src="@drawable/ic_send"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="17sp"
+            android:textColor="@color/color_secondary"
+            android:text="@string/reshare_post"/>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/delete_post"
         android:background="?selectableItemBackground"
         android:layout_width="match_parent"

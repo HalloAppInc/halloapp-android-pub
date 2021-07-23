@@ -14,6 +14,7 @@ import androidx.annotation.WorkerThread;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
+import com.halloapp.content.tables.ArchiveTable;
 import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.MediaTable;
@@ -24,11 +25,9 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.props.ServerProps;
-import com.halloapp.proto.clients.ChatContainer;
 import com.halloapp.proto.clients.CommentContainer;
-import com.halloapp.proto.clients.PostContainer;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.feed.FeedContentParser;
 
 import java.io.File;
@@ -62,6 +61,54 @@ class PostsDb {
         this.databaseHelper = databaseHelper;
         this.fileStore = fileStore;
         this.serverProps = serverProps;
+    }
+
+    @WorkerThread
+    void addPostToArchive(@NonNull Post post) {
+        Log.i("ContentDb.addPostToArchive " + post);
+        if (post.isRetracted()) {
+            return;
+        }
+        final ContentValues values = new ContentValues();
+        values.put(ArchiveTable.COLUMN_POST_ID, post.id);
+        values.put(ArchiveTable.COLUMN_TIMESTAMP, post.timestamp);
+        if (post.getParentGroup() != null) {
+            values.put(ArchiveTable.COLUMN_GROUP_ID, post.getParentGroup().rawId());
+        }
+        if (post.text != null) {
+            values.put(ArchiveTable.COLUMN_TEXT, post.text);
+        }
+        values.put(ArchiveTable.COLUMN_ARCHIVE_TIMESTAMP, System.currentTimeMillis());
+
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        post.rowId = db.insertWithOnConflict(ArchiveTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+
+        post.isArchived = true;
+        if (!post.mentions.isEmpty()) {
+            mentionsDb.addMentions(post);
+        }
+        mediaDb.addArchiveMedia(post);
+
+        Log.i("ContentDb.addPostToArchive: moved " + post);
+    }
+
+    @WorkerThread
+    void removePostFromArchive(@NonNull Post post) {
+        Log.i("ContentDb.removePostFromArchive " + post);
+        for (Media media : post.media) {
+            if (media.file != null) {
+                if (!media.file.delete()) {
+                    Log.e("ContentDb.removePostFromArchive: failed to delete " + media.file.getAbsolutePath());
+                }
+            }
+        }
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        final int removedCount = db.delete(ArchiveTable.TABLE_NAME, ArchiveTable.COLUMN_POST_ID + "=?", new String[]{post.id});
+        if (removedCount > 0) {
+            Log.i("ContentDb.removePostFromArchive: removed " + post);
+        } else {
+            Log.w("ContentDb.removePostFromArchive: failed to remove post: " + post);
+        }
     }
 
     @WorkerThread
@@ -938,6 +985,86 @@ class PostsDb {
     }
 
     @WorkerThread
+    @Nullable Post getArchivePost(@NonNull String postId) {
+        Post post = null;
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+                "SELECT " +
+                        ArchiveTable.TABLE_NAME + "." + ArchiveTable._ID + "," +
+                        ArchiveTable.TABLE_NAME + "." + ArchiveTable.COLUMN_POST_ID + "," +
+                        ArchiveTable.TABLE_NAME + "." + ArchiveTable.COLUMN_TIMESTAMP + "," +
+                        ArchiveTable.TABLE_NAME + "." + ArchiveTable.COLUMN_TEXT + "," +
+                        ArchiveTable.TABLE_NAME + "." + ArchiveTable.COLUMN_GROUP_ID + "," +
+                        ArchiveTable.TABLE_NAME + "." + ArchiveTable.COLUMN_ARCHIVE_TIMESTAMP + "," +
+                        "m." + MediaTable._ID + "," +
+                        "m." + MediaTable.COLUMN_TYPE + "," +
+                        "m." + MediaTable.COLUMN_URL + "," +
+                        "m." + MediaTable.COLUMN_FILE + "," +
+                        "m." + MediaTable.COLUMN_ENC_FILE + "," +
+                        "m." + MediaTable.COLUMN_WIDTH + "," +
+                        "m." + MediaTable.COLUMN_HEIGHT + "," +
+                        "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+                        "FROM " + ArchiveTable.TABLE_NAME + " " +
+                        "LEFT JOIN (" +
+                        "SELECT " +
+                        MediaTable._ID + "," +
+                        MediaTable.COLUMN_PARENT_TABLE + "," +
+                        MediaTable.COLUMN_PARENT_ROW_ID + "," +
+                        MediaTable.COLUMN_TYPE + "," +
+                        MediaTable.COLUMN_URL + "," +
+                        MediaTable.COLUMN_FILE + "," +
+                        MediaTable.COLUMN_ENC_FILE + "," +
+                        MediaTable.COLUMN_WIDTH + "," +
+                        MediaTable.COLUMN_HEIGHT + "," +
+                        MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                        "AS m ON " + ArchiveTable.TABLE_NAME + "." + ArchiveTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + ArchiveTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+                        "WHERE " + ArchiveTable.TABLE_NAME + "." + ArchiveTable.COLUMN_POST_ID + "=?";
+
+        try (final Cursor cursor = db.rawQuery(sql, new String[] {postId})) {
+
+            while (cursor.moveToNext()) {
+                long rowId = cursor.getLong(0);
+                if (post == null) {
+                    post = new Post(
+                            rowId,
+                            UserId.ME,
+                            cursor.getString(1),
+                            cursor.getLong(2),
+                            Post.TRANSFERRED_YES,
+                            Post.SEEN_NO,
+                            Post.TYPE_USER,
+                            cursor.getString(3));
+
+                    GroupId parentGroupId = GroupId.fromNullable(cursor.getString(4));
+                    if (parentGroupId != null) {
+                        post.setParentGroup(parentGroupId);
+                    }
+                    post.isArchived = true;
+                    post.archiveDate = cursor.getLong(5);
+                    mentionsDb.fillMentions(post);
+                }
+                if (!cursor.isNull(6)) {
+                    Media media = new Media(
+                            cursor.getLong(6),
+                            cursor.getInt(7),
+                            cursor.getString(8),
+                            fileStore.getMediaFile(cursor.getString(9)),
+                            null,
+                            null,
+                            null,
+                            cursor.getInt(11),
+                            cursor.getInt(12),
+                            cursor.getInt(13));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(10));
+                    Preconditions.checkNotNull(post).media.add(media);
+                }
+            }
+        }
+        Log.i("ContentDb.getArchivePost: post=" + post);
+        return post;
+    }
+
+    @WorkerThread
     long getLastSeenCommentRowId(@NonNull String postId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final String sql =
@@ -1592,6 +1719,108 @@ class PostsDb {
         return ret;
     }
 
+    @NonNull
+    List<Post> getArchivedPosts(Long timestamp, Integer pageSize, boolean after) {
+        final List<Post> posts = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+
+        String where;
+        if (timestamp != null) {
+            where = "WHERE " + (after ?  ArchiveTable.TABLE_NAME + "." + ArchiveTable.COLUMN_TIMESTAMP + ">" + timestamp : ArchiveTable.TABLE_NAME + "." + ArchiveTable.COLUMN_TIMESTAMP + "<" + timestamp) + " ";
+        } else {
+            if (after) {
+                where = "WHERE " + ArchiveTable.TABLE_NAME + "." + ArchiveTable.COLUMN_TIMESTAMP + ">" + 0L + " ";
+            } else {
+                where = "WHERE " + ArchiveTable.TABLE_NAME + "." + ArchiveTable.COLUMN_TIMESTAMP + "<" + Long.MAX_VALUE + " ";
+            }
+        }
+
+        String sql =
+                "SELECT " +
+                        ArchiveTable.TABLE_NAME + "." + ArchiveTable._ID + "," +
+                        ArchiveTable.TABLE_NAME + "." + ArchiveTable.COLUMN_POST_ID + "," +
+                        ArchiveTable.TABLE_NAME + "." + ArchiveTable.COLUMN_TIMESTAMP + "," +
+                        ArchiveTable.TABLE_NAME + "." + ArchiveTable.COLUMN_TEXT + "," +
+                        ArchiveTable.TABLE_NAME + "." + ArchiveTable.COLUMN_GROUP_ID + "," +
+                        ArchiveTable.TABLE_NAME + "." + ArchiveTable.COLUMN_ARCHIVE_TIMESTAMP + "," +
+                        "m." + MediaTable._ID + "," +
+                        "m." + MediaTable.COLUMN_TYPE + "," +
+                        "m." + MediaTable.COLUMN_URL + "," +
+                        "m." + MediaTable.COLUMN_FILE + "," +
+                        "m." + MediaTable.COLUMN_ENC_FILE + "," +
+                        "m." + MediaTable.COLUMN_WIDTH + "," +
+                        "m." + MediaTable.COLUMN_HEIGHT + "," +
+                        "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+                        "FROM " + ArchiveTable.TABLE_NAME + " " +
+                        "LEFT JOIN (" +
+                        "SELECT " +
+                            MediaTable._ID + "," +
+                            MediaTable.COLUMN_PARENT_TABLE + "," +
+                            MediaTable.COLUMN_PARENT_ROW_ID + "," +
+                            MediaTable.COLUMN_TYPE + "," +
+                            MediaTable.COLUMN_URL + "," +
+                            MediaTable.COLUMN_FILE + "," +
+                            MediaTable.COLUMN_ENC_FILE + "," +
+                            MediaTable.COLUMN_WIDTH + "," +
+                            MediaTable.COLUMN_HEIGHT + "," +
+                            MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                        "AS m ON " + ArchiveTable.TABLE_NAME + "." + ArchiveTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + ArchiveTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+                        where + "ORDER BY " + ArchiveTable.TABLE_NAME + "." + ArchiveTable.COLUMN_TIMESTAMP + (after ? " ASC " : " DESC ") +
+                        (pageSize == null ? "" : ("LIMIT " + pageSize));
+
+        try (final Cursor cursor = db.rawQuery(sql, null)) {
+
+            long lastRowId = -1;
+            Post post = null;
+            while (cursor.moveToNext()) {
+                long rowId = cursor.getLong(0);
+                if (lastRowId != rowId) {
+                    lastRowId = rowId;
+                    if (post != null) {
+                        posts.add(post);
+                    }
+                    post = new Post(
+                            rowId,
+                            UserId.ME,
+                            cursor.getString(1),
+                            cursor.getLong(2),
+                            Post.TRANSFERRED_NO,
+                            Post.SEEN_NO,
+                            Post.TYPE_USER,
+                            cursor.getString(3));
+
+                    GroupId parentGroupId = GroupId.fromNullable(cursor.getString(4));
+                    if (parentGroupId != null) {
+                        post.setParentGroup(parentGroupId);
+                    }
+                    post.isArchived = true;
+                    post.archiveDate = cursor.getLong(5);
+                    mentionsDb.fillMentions(post);
+                }
+                if (!cursor.isNull(6)) {
+                    Media media = new Media(
+                            cursor.getLong(6),
+                            cursor.getInt(7),
+                            cursor.getString(8),
+                            fileStore.getMediaFile(cursor.getString(9)),
+                            null,
+                            null,
+                            null,
+                            cursor.getInt(11),
+                            cursor.getInt(12),
+                            cursor.getInt(13));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(10));
+                    Preconditions.checkNotNull(post).media.add(media);
+                }
+            }
+            if (post != null && (pageSize == null || cursor.getCount() < pageSize)) {
+                posts.add(post);
+            }
+        }
+        Log.i("ContentDb.getArchivedPosts: timestamp=" + timestamp + " count=" + pageSize + " posts.size=" + posts.size() + (posts.isEmpty() ? "" : (" got posts from " + posts.get(0).timestamp + " to " + posts.get(posts.size()-1).timestamp)));
+        return posts;
+    }
+
     @WorkerThread
     public void processFutureProofContent(FeedContentParser parser, ContentDbObservers observers) {
         processFutureProofComments(parser, observers);
@@ -1701,7 +1930,7 @@ class PostsDb {
                     MediaTable.COLUMN_ENC_FILE + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + ")" +
                 "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
-            "WHERE " + PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime();
+            "WHERE " + PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime() + " AND " + PostsTable.COLUMN_SENDER_USER_ID + "!= ''";
         int deletedFiles = 0;
         try (final Cursor cursor = db.rawQuery(sql, null)) {
             while (cursor.moveToNext()) {
@@ -1725,8 +1954,21 @@ class PostsDb {
         }
         Log.i("ContentDb.cleanup: " + deletedFiles + " media files deleted");
 
+        String archiveSql = "SELECT " + PostsTable.COLUMN_POST_ID +
+                " FROM " + PostsTable.TABLE_NAME +
+                " WHERE " + PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime() + " AND " + PostsTable.COLUMN_SENDER_USER_ID + " = ''";
+        int archivedPostsCount = 0;
+        try (final Cursor cursor = db.rawQuery(archiveSql, null)) {
+            while (cursor.moveToNext()) {
+                Post post = getPost(cursor.getString(0));
+                addPostToArchive(post);
+                archivedPostsCount += db.delete(PostsTable.TABLE_NAME, PostsTable.COLUMN_POST_ID + "=?", new String[]{post.id});
+            }
+        }
+        Log.i("ContentDb.cleanup: " + archivedPostsCount + " posts archived");
+
         final int deletedPostsCount = db.delete(PostsTable.TABLE_NAME,
-                PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime(),
+                PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime() + " AND " + PostsTable.COLUMN_SENDER_USER_ID + "!= ''",
                 null);
         Log.i("ContentDb.cleanup: " + deletedPostsCount + " posts deleted");
 
@@ -1742,7 +1984,25 @@ class PostsDb {
                 null);
         Log.i("ContentDb.cleanup: " + deletedSeenCount + " seen receipts deleted");
 
-        return (deletedPostsCount > 0 || deletedCommentsCount > 0 || deletedSeenCount > 0);
+        return (deletedPostsCount > 0 || deletedCommentsCount > 0 || deletedSeenCount > 0 || archivedPostsCount > 0);
+    }
+
+    //Note that this class archives ALL current posts (even those which aren't expired), for testing purposes only from debug menu
+    @WorkerThread
+    void archivePosts() {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        Cursor cursor = db.query(PostsTable.TABLE_NAME, new String[]{PostsTable.COLUMN_POST_ID}, PostsTable.COLUMN_SENDER_USER_ID + " =?", new String[]{UserId.ME.rawId()}, null, null, null, null);
+        while (cursor.moveToNext()) {
+            Post post = getPost(cursor.getString(0));
+            addPostToArchive(post);
+            db.delete(PostsTable.TABLE_NAME,PostsTable.COLUMN_POST_ID + "=?",new String[]{post.id});
+        }
+    }
+
+    @WorkerThread
+    void deleteArchive() {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.delete(ArchiveTable.TABLE_NAME,null,null);
     }
 
     private static long getPostExpirationTime() {

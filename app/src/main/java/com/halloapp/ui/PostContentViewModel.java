@@ -35,7 +35,7 @@ public class PostContentViewModel extends AndroidViewModel {
         }
     };
 
-    private PostContentViewModel(@NonNull Application application, @NonNull String postId) {
+    private PostContentViewModel(@NonNull Application application, @NonNull String postId, boolean isArchived) {
         super(application);
 
         this.postId = postId;
@@ -46,7 +46,7 @@ public class PostContentViewModel extends AndroidViewModel {
         post = new ComputableLiveData<Post>() {
             @Override
             protected Post compute() {
-                return ContentDb.getInstance().getPost(postId);
+                return isArchived? ContentDb.getInstance().getArchivePost(postId) : ContentDb.getInstance().getPost(postId);
             }
         };
     }
@@ -64,17 +64,19 @@ public class PostContentViewModel extends AndroidViewModel {
 
         private final Application application;
         private final String postId;
+        private final boolean isArchived;
 
-        Factory(@NonNull Application application, @NonNull String postId) {
+        Factory(@NonNull Application application, @NonNull String postId, boolean isArchived) {
             this.application = application;
             this.postId = postId;
+            this.isArchived = isArchived;
         }
 
         @Override
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(PostContentViewModel.class)) {
                 //noinspection unchecked
-                return (T) new PostContentViewModel(application, postId);
+                return (T) new PostContentViewModel(application, postId, isArchived);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }

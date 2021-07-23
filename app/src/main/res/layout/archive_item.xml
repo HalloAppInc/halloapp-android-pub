@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintDimensionRatio="1:1"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:layout_width="@dimen/media_gallery_grid_size"
+    tools:layout_height="@dimen/media_gallery_grid_size"
+    android:background="@color/post_card_background"
+    android:layout_margin="2dp">
+
+        <com.halloapp.widget.LimitingTextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="12dp"
+            android:id="@+id/archive_item_name"
+            android:textAppearance="?textAppearanceListItemSmall"
+            android:textSize="14sp"
+            android:lineSpacingMultiplier="1.1"
+            android:layout_centerVertical="true"
+            android:ellipsize="end"
+            app:ltvReadMore=""
+            tools:text="Test Post"/>
+
+        <FrameLayout
+            android:id="@+id/archive_thumbnail_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible">
+
+                <com.halloapp.widget.SquareImageView
+                    android:id="@+id/archive_thumbnail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleType="centerCrop"/>
+
+                <TextView
+                    android:id="@+id/archive_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|bottom"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="1dp"
+                    android:layout_marginEnd="3dp" />
+
+        </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

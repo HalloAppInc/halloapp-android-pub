@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.content.tables.ArchiveTable;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.MessagesTable;
@@ -40,9 +41,9 @@ public class MentionsDb {
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         for (Mention mention : post.mentions) {
             final ContentValues mentionItemValues = new ContentValues();
-            mentionItemValues.put(MentionsTable.COLUMN_PARENT_TABLE, PostsTable.TABLE_NAME);
-            mentionItemValues.put(MentionsTable.COLUMN_PARENT_ROW_ID, post.rowId);
 
+            mentionItemValues.put(MentionsTable.COLUMN_PARENT_TABLE, post.isArchived ? ArchiveTable.TABLE_NAME : PostsTable.TABLE_NAME);
+            mentionItemValues.put(MentionsTable.COLUMN_PARENT_ROW_ID, post.rowId);
             mentionItemValues.put(MentionsTable.COLUMN_MENTION_INDEX, mention.index);
             mentionItemValues.put(MentionsTable.COLUMN_MENTION_NAME, mention.fallbackName);
             mentionItemValues.put(MentionsTable.COLUMN_MENTION_USER_ID, mention.userId.rawId());
@@ -85,7 +86,11 @@ public class MentionsDb {
 
     public void fillMentions(@NonNull Post post) {
         post.mentions.clear();
-        post.mentions.addAll(readMentions(PostsTable.TABLE_NAME, post.rowId));
+        if (post.isArchived) {
+            post.mentions.addAll(readMentions(ArchiveTable.TABLE_NAME, post.rowId));
+        } else {
+            post.mentions.addAll(readMentions(PostsTable.TABLE_NAME, post.rowId));
+        }
     }
 
     public void fillMentions(@NonNull Message message) {

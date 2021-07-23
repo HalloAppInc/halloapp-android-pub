@@ -66,6 +66,8 @@ public class Debug {
     private static final String DEBUG_MENU_RUN_DAILY_WORKER = "Run daily worker";
     private static final String DEBUG_MENU_CORRUPT_KEY_STORE = "Corrupt key store";
     private static final String DEBUG_MENU_NORMAL_USER_MODE = "Normal user mode";
+    private static final String DEBUG_MENU_ADD_TO_ARCHIVE = "Add to archive";
+    private static final String DEBUG_MENU_REMOVE_ARCHIVE = "Remove archive";
 
     private static final BgWorkers bgWorkers = BgWorkers.getInstance();
 
@@ -90,6 +92,8 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_RUN_DAILY_WORKER);
         menu.getMenu().add(DEBUG_MENU_CORRUPT_KEY_STORE);
         menu.getMenu().add(DEBUG_MENU_NORMAL_USER_MODE);
+        menu.getMenu().add(DEBUG_MENU_ADD_TO_ARCHIVE);
+        menu.getMenu().add(DEBUG_MENU_REMOVE_ARCHIVE);
         menu.setOnMenuItemClickListener(item -> {
             SnackbarHelper.showInfo(activity, item.getTitle());
             switch (item.getTitle().toString()) {
@@ -246,6 +250,18 @@ public class Debug {
                             })
                             .setPositiveButton("Yes", (dialog, which) -> ServerProps.getInstance().forceExternalUser());
                     builder.show();
+                    break;
+                }
+                case DEBUG_MENU_ADD_TO_ARCHIVE: {
+                    bgWorkers.execute(() -> {
+                        ContentDb.getInstance().archivePosts();
+                    });
+                    break;
+                }
+                case DEBUG_MENU_REMOVE_ARCHIVE: {
+                    bgWorkers.execute(() -> {
+                        ContentDb.getInstance().deleteArchive();
+                    });
                     break;
                 }
             }

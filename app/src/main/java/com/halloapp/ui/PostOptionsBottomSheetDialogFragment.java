@@ -2,6 +2,8 @@ package com.halloapp.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,6 +20,8 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
+import com.halloapp.util.ActivityUtils;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.widget.SnackbarHelper;
 
 import java.util.List;
@@ -30,10 +34,12 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
     private static final int REQUEST_EXTERNAL_STORAGE_PERMISSIONS = 1;
 
     private static final String ARG_POST_ID = "post_id";
+    private static final String ARG_IS_ARCHIVE = "is_archived";
 
-    public static PostOptionsBottomSheetDialogFragment newInstance(@NonNull String postId) {
+    public static PostOptionsBottomSheetDialogFragment newInstance(@NonNull String postId, boolean isArchived) {
         Bundle args = new Bundle();
         args.putString(ARG_POST_ID, postId);
+        args.putBoolean(ARG_IS_ARCHIVE, isArchived);
         PostOptionsBottomSheetDialogFragment dialogFragment = new PostOptionsBottomSheetDialogFragment();
         dialogFragment.setArguments(args);
         return dialogFragment;
@@ -48,8 +54,9 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Bundle args = requireArguments();
         String postId = args.getString(ARG_POST_ID);
+        boolean isArchived = args.getBoolean(ARG_IS_ARCHIVE, false);
 
-        viewModel = new ViewModelProvider(this, new PostOptionsViewModel.Factory(postId)).get(PostOptionsViewModel.class);
+        viewModel = new ViewModelProvider(this, new PostOptionsViewModel.Factory(postId, isArchived)).get(PostOptionsViewModel.class);
         contactLoader = new ContactLoader();
 
         final View view = inflater.inflate(R.layout.post_menu_bottom_sheet, container, false);
@@ -57,6 +64,7 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
 
         final View saveToGallery = view.findViewById(R.id.save_to_gallery);
         final View deletePost = view.findViewById(R.id.delete_post);
+        final View resharePost = view.findViewById(R.id.reshare_post);
         viewModel.post.getLiveData().observe(this, post -> {
             if (post == null) {
                 saveToGallery.setVisibility(View.INVISIBLE);
@@ -76,6 +84,7 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
             } else {
                 saveToGallery.setVisibility(View.VISIBLE);
             }
+            resharePost.setVisibility(post.isArchived ? View.VISIBLE : View.GONE);
         });
 
         viewModel.postDeleted.observe(this, deleted -> {
@@ -105,14 +114,30 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
         deletePost.setOnClickListener(v -> {
             Post post = viewModel.post.getLiveData().getValue();
             if (post != null) {
+                DialogInterface.OnClickListener listener = post.isArchived ?
+                        (dialog, which) -> {
+                            ContentDb.getInstance().removePostFromArchive(post);
+                            this.getActivity().finish();
+                        } :
+                        (dialog, which) -> ContentDb.getInstance().retractPost(post);
+
                 new AlertDialog.Builder(requireContext())
                         .setMessage(getString(R.string.retract_post_confirmation))
                         .setCancelable(true)
-                        .setPositiveButton(R.string.yes, (dialog, which) ->
-                                ContentDb.getInstance().retractPost(post))
+                        .setPositiveButton(R.string.yes, listener)
                         .setNegativeButton(R.string.no, null)
                         .show();
             }
+        });
+        resharePost.setOnClickListener(v -> {
+            BgWorkers.getInstance().execute(() -> {
+                viewModel.resharePost(ActivityUtils.supportsWideColor(this.getActivity()));
+                Intent intent = new Intent(v.getContext(), MainActivity.class);
+                intent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
+                dismiss();
+                this.getActivity().finish();
+                startActivity(intent);
+            });
         });
         return view;
     }

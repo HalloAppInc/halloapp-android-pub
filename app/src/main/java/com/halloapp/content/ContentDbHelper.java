@@ -8,6 +8,7 @@ import android.provider.BaseColumns;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.content.tables.ArchiveTable;
 import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.CommentsTable;
@@ -28,7 +29,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 43;
+    private static final int DATABASE_VERSION = 44;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -55,6 +56,26 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + PostsTable.COLUMN_GROUP_ID + " TEXT,"
                 + PostsTable.COLUMN_TYPE + " INTEGER DEFAULT 0,"
                 + PostsTable.COLUMN_USAGE + " INTEGER DEFAULT 0"
+                + ");");
+
+        db.execSQL("DROP TABLE IF EXISTS " + ArchiveTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + ArchiveTable.TABLE_NAME + " ("
+                + ArchiveTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + ArchiveTable.COLUMN_POST_ID + " TEXT NOT NULL,"
+                + ArchiveTable.COLUMN_TIMESTAMP + " INTEGER,"
+                + ArchiveTable.COLUMN_TEXT + " TEXT,"
+                + ArchiveTable.COLUMN_GROUP_ID + " TEXT,"
+                + ArchiveTable.COLUMN_ARCHIVE_TIMESTAMP + " INTEGER"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + ArchiveTable.INDEX_POST_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + ArchiveTable.INDEX_POST_KEY + " ON " + ArchiveTable.TABLE_NAME + "("
+                + ArchiveTable.COLUMN_POST_ID
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + ArchiveTable.INDEX_TIMESTAMP);
+        db.execSQL("CREATE INDEX " + ArchiveTable.INDEX_TIMESTAMP + " ON " + ArchiveTable.TABLE_NAME + "("
+                + ArchiveTable.COLUMN_TIMESTAMP
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_POST_KEY);
@@ -410,6 +431,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 42: {
                 upgradeFromVersion42(db);
+            }
+            case 43: {
+                upgradeFromVersion43(db);
             }
             break;
             default: {
@@ -808,6 +832,28 @@ class ContentDbHelper extends SQLiteOpenHelper {
     private void upgradeFromVersion42(@NonNull SQLiteDatabase db) {
         db.execSQL("DROP INDEX IF EXISTS " + SilentMessagesTable.INDEX_SILENT_MESSAGE_KEY);
         db.execSQL("DROP TABLE IF EXISTS " + SilentMessagesTable.TABLE_NAME);
+    }
+
+    private void upgradeFromVersion43(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + ArchiveTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + ArchiveTable.TABLE_NAME + " ("
+                + ArchiveTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + ArchiveTable.COLUMN_POST_ID + " TEXT NOT NULL,"
+                + ArchiveTable.COLUMN_TIMESTAMP + " INTEGER,"
+                + ArchiveTable.COLUMN_TEXT + " TEXT,"
+                + ArchiveTable.COLUMN_GROUP_ID + " TEXT,"
+                + ArchiveTable.COLUMN_ARCHIVE_TIMESTAMP + " INTEGER"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + ArchiveTable.INDEX_POST_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + ArchiveTable.INDEX_POST_KEY + " ON " + ArchiveTable.TABLE_NAME + "("
+                + ArchiveTable.COLUMN_POST_ID
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + ArchiveTable.INDEX_TIMESTAMP);
+        db.execSQL("CREATE INDEX " + ArchiveTable.INDEX_TIMESTAMP + " ON " + ArchiveTable.TABLE_NAME + "("
+                + ArchiveTable.COLUMN_TIMESTAMP
+                + ");");
     }
 
     /**

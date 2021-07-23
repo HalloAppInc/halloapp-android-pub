@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.FileStore;
+import com.halloapp.content.tables.ArchiveTable;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.PostsTable;
@@ -81,6 +82,14 @@ public class MediaDb {
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         for (Media mediaItem : post.media) {
             addMediaItem(db, PostsTable.TABLE_NAME, post.rowId, mediaItem);
+        }
+    }
+
+    @WorkerThread
+    public void addArchiveMedia(@NonNull Post post) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        for (Media mediaItem : post.media) {
+            addMediaItem(db, ArchiveTable.TABLE_NAME, post.rowId, mediaItem);
         }
     }
 
