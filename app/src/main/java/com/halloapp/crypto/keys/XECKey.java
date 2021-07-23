@@ -3,8 +3,6 @@ package com.halloapp.crypto.keys;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 
-import java.security.InvalidKeyException;
-
 public abstract class XECKey extends Key {
     private static final int KEY_SIZE_BYTES = 32;
 
@@ -16,7 +14,7 @@ public abstract class XECKey extends Key {
         }
     }
 
-    public static PublicXECKey publicFromPrivate(PrivateXECKey privateECKey) throws InvalidKeyException, CryptoException {
+    public static PublicXECKey publicFromPrivate(PrivateXECKey privateECKey) throws CryptoException {
         return new PublicXECKey(CryptoUtils.publicX25519FromPrivate(privateECKey.getKeyMaterial()));
     }
 

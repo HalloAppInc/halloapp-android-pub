@@ -20,7 +20,6 @@ import com.halloapp.util.logs.Log;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -236,7 +235,7 @@ public class EncryptedKeyStore {
     public PublicXECKey getMyPublicSignedPreKey() {
         try {
             return XECKey.publicFromPrivate(getMyPrivateSignedPreKey());
-        } catch (InvalidKeyException | CryptoException e) {
+        } catch (CryptoException e) {
             Log.w("Failed to get public identity key", e);
         }
         return null;
@@ -253,7 +252,7 @@ public class EncryptedKeyStore {
                 OneTimePreKey otpk = new OneTimePreKey(XECKey.publicFromPrivate(privateKey), id);
                 storeCurve25519PrivateKey(getOneTimePreKeyPrefKey(id), privateKey.getKeyMaterial());
                 ret.add(otpk);
-            } catch (InvalidKeyException | CryptoException e) {
+            } catch (CryptoException e) {
                 Log.w("Invalid X25519 private key for conversion", e);
             }
         }

@@ -19,7 +19,6 @@ import com.halloapp.util.logs.Log;
 
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
 import java.util.Arrays;
 
 public class CryptoUtils {
@@ -68,7 +67,7 @@ public class CryptoUtils {
         }
     }
 
-    public static byte[] ecdh(@NonNull PrivateXECKey a, @NonNull PublicXECKey b) throws InvalidKeyException {
+    public static byte[] ecdh(@NonNull PrivateXECKey a, @NonNull PublicXECKey b) {
         byte[] sharedSecret = new byte[DiffieHellman.SCALARMULT_CURVE25519_BYTES];
         dh.cryptoScalarMult(sharedSecret, a.getKeyMaterial(), b.getKeyMaterial());
         return sharedSecret;
