@@ -338,22 +338,39 @@ public class ConnectionImpl extends Connection {
 
     @Override
     public Observable<ContactSyncResult> syncContacts(@Nullable Collection<String> addPhones, @Nullable Collection<String> deletePhones, boolean fullSync, @Nullable String syncId, int index, boolean lastBatch) {
+        final MutableObservable<ContactSyncResult> result = new MutableObservable<>();
         final ContactsSyncRequestIq contactsSyncIq = new ContactsSyncRequestIq(
                 addPhones, deletePhones, fullSync, syncId, index, lastBatch);
 
-        return sendIqRequestAsync(contactsSyncIq).map(response -> {
-            if (response.hasContactSyncError()) {
-                ContactSyncError error = response.getContactSyncError();
-                return ContactSyncResult.failure(error.getRetryAfterSecs());
-            } else {
-                List<Contact> contacts = response.getContactList().getContactsList();
-                List<ContactInfo> ret = new ArrayList<>();
-                for (Contact contact : contacts) {
-                    ret.add(new ContactInfo(contact));
-                }
-                return ContactSyncResult.success(ret);
-            }
-        });
+        sendIqRequestAsync(contactsSyncIq)
+                .onResponse(response -> {
+                    List<Contact> contacts = response.getContactList().getContactsList();
+                    List<ContactInfo> ret = new ArrayList<>();
+                    for (Contact contact : contacts) {
+                        ret.add(new ContactInfo(contact));
+                    }
+                    result.setResponse(ContactSyncResult.success(ret));
+                })
+                .onError(exception -> {
+                    if (!(exception instanceof IqErrorException)) {
+                        result.setException(exception);
+                        return;
+                    }
+                    IqErrorException iqErrorException = (IqErrorException) exception;
+                    if (iqErrorException.getErrorIq() == null) {
+                        result.setException(exception);
+                        return;
+                    }
+                    Iq errorIq = iqErrorException.getErrorIq();
+                    if (!errorIq.hasContactSyncError()) {
+                        result.setException(exception);
+                        return;
+                    }
+                    ContactSyncError syncError = errorIq.getContactSyncError();
+                    result.setResponse(ContactSyncResult.failure(syncError.getRetryAfterSecs()));
+                });
+
+        return result;
     }
 
     @Override
@@ -1352,8 +1369,7 @@ public class ConnectionImpl extends Connection {
             if (iq.getType().equals(Iq.Type.RESULT)) {
                 iqRouter.onResponse(iq.getId(), iq);
             } else if (iq.getType().equals(Iq.Type.ERROR)) {
-                ErrorStanza errorStanza = iq.getErrorStanza();
-                iqRouter.onError(iq.getId(), errorStanza.getReason());
+                iqRouter.onError(iq.getId(), iq);
             } else if (iq.getType().equals(Iq.Type.GET)) {
                 if (iq.hasPing()) {
                     Iq ping = Iq.newBuilder().setId(iq.getId()).setType(Iq.Type.RESULT).setPing(Ping.newBuilder().build()).build();
@@ -1504,11 +1520,20 @@ public class ConnectionImpl extends Connection {
             }
         }
 
-        public void onError(String id, String reason) {
-            Log.d("IqRouter: got error for id " + id + " with reason " + reason);
+        public void onError(String id, Iq errorIq) {
+            Exception e;
+            if (errorIq.hasErrorStanza()) {
+                ErrorStanza errorStanza = errorIq.getErrorStanza();
+                String reason = errorStanza.getReason();
+                Log.d("IqRouter: got error for id " + id + " with reason " + reason);
+                e = new IqErrorException(id, reason);
+            } else {
+                Log.d("IqRouter: got error for id " + id);
+                e = new IqErrorException(id, errorIq);
+            }
             ExceptionHandler callback = fetchFailureCallback(id);
             if (callback != null) {
-                callback.handleException(new IqErrorException(id, reason));
+                callback.handleException(e);
             } else {
                 Log.w("IqRouter: no error callback for " + id);
             }
