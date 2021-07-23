@@ -5,11 +5,11 @@ import androidx.annotation.Nullable;
 
 import com.google.android.gms.common.util.Hex;
 import com.google.crypto.tink.subtle.Hkdf;
-import com.google.crypto.tink.subtle.X25519;
 import com.goterl.lazysodium.LazySodiumAndroid;
 import com.goterl.lazysodium.SodiumAndroid;
 import com.goterl.lazysodium.interfaces.Auth;
 import com.goterl.lazysodium.interfaces.Box;
+import com.goterl.lazysodium.interfaces.DiffieHellman;
 import com.goterl.lazysodium.interfaces.Sign;
 import com.halloapp.crypto.keys.PrivateEdECKey;
 import com.halloapp.crypto.keys.PrivateXECKey;
@@ -30,6 +30,7 @@ public class CryptoUtils {
     private static final Sign.Native sign = lazySodium;
     private static final Auth.Native auth = lazySodium;
     private static final Box.Native box = lazySodium;
+    private static final DiffieHellman.Native dh = lazySodium;
 
     public static byte[] concat(byte[] first, byte[]... rest) {
         int len = first.length;
@@ -68,12 +69,9 @@ public class CryptoUtils {
     }
 
     public static byte[] ecdh(@NonNull PrivateXECKey a, @NonNull PublicXECKey b) throws InvalidKeyException {
-        try {
-            return X25519.computeSharedSecret(a.getKeyMaterial(), b.getKeyMaterial());
-        } catch (InvalidKeyException e) {
-            Log.e("Invalid key during ECDH");
-            throw e;
-        }
+        byte[] sharedSecret = new byte[DiffieHellman.SCALARMULT_CURVE25519_BYTES];
+        dh.cryptoScalarMult(sharedSecret, a.getKeyMaterial(), b.getKeyMaterial());
+        return sharedSecret;
     }
 
     public static byte[] hmac(byte[] key, byte[] input) {
