@@ -3,7 +3,6 @@ package com.halloapp.crypto;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.crypto.tink.subtle.Hkdf;
 import com.goterl.lazysodium.LazySodiumAndroid;
 import com.goterl.lazysodium.SodiumAndroid;
 import com.goterl.lazysodium.interfaces.Auth;
@@ -30,12 +29,7 @@ public class CryptoUtils {
     private static final DiffieHellman.Native dh = lazySodium;
 
     public static byte[] hkdf(@NonNull byte[] ikm, @Nullable byte[] salt, @Nullable byte[] info, int len) throws GeneralSecurityException {
-        try {
-            return Hkdf.computeHkdf("HMACSHA256", ikm, salt, info, len);
-        } catch (GeneralSecurityException e) {
-            Log.e("Hkdf security exception during computation");
-            throw e;
-        }
+        return Hkdf.getHmacSha256().compute(ikm, salt, info, len);
     }
 
     public static byte[] ecdh(@NonNull PrivateXECKey a, @NonNull PublicXECKey b) {
