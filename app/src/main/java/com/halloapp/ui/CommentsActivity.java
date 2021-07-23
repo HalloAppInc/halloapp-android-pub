@@ -343,12 +343,12 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
                 replyIndicator.setVisibility(View.GONE);
                 final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
                 imm.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
+                showKeyboardAfterEnter = false;
             } else {
                 footer.setVisibility(View.VISIBLE);
                 membershipNotice.setVisibility(View.INVISIBLE);
                 editText.setFocusableInTouchMode(true);
                 editText.setFocusable(true);
-                showKeyboard();
             }
         });
 
