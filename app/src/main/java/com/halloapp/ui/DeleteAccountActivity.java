@@ -22,9 +22,14 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.ContentDb;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FileUtils;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
 import com.hbb20.CountryCodePicker;
+
+import io.michaelrocks.libphonenumber.android.NumberParseException;
+import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
+import io.michaelrocks.libphonenumber.android.Phonenumber;
 
 public class DeleteAccountActivity extends HalloActivity {
 
@@ -72,7 +77,7 @@ public class DeleteAccountActivity extends HalloActivity {
     }
 
     private void deleteAccount() {
-        if (!countryCodePicker.isValidFullNumber()) {
+        if (!isPhoneOkayLength()) {
             SnackbarHelper.showWarning(this, R.string.invalid_phone_number);
             loadingProgressBar.setVisibility(View.INVISIBLE);
             nextButton.setEnabled(true);
@@ -82,6 +87,18 @@ public class DeleteAccountActivity extends HalloActivity {
 
         String phone = countryCodePicker.getFullNumberWithPlus();
         viewModel.deleteAccount(phone);
+    }
+
+    private boolean isPhoneOkayLength() {
+        boolean phoneOkayLength = false;
+        PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.createInstance(this);
+        try {
+            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(countryCodePicker.getFormattedFullNumber(), countryCodePicker.getSelectedCountryNameCode());
+            phoneOkayLength = phoneNumberUtil.isPossibleNumberWithReason(phoneNumber) == PhoneNumberUtil.ValidationResult.IS_POSSIBLE;
+        } catch (NumberParseException e) {
+            Log.i("Failed to parse number: " + e);
+        }
+        return phoneOkayLength;
     }
 
     public static class DeleteAccountViewModel extends AndroidViewModel {

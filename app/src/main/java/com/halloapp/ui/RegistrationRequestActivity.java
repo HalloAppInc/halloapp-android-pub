@@ -213,6 +213,12 @@ public class RegistrationRequestActivity extends HalloActivity {
     private void updateNextButton() {
         boolean nameValid = isReverification || !TextUtils.isEmpty(nameEditText.getText().toString());
 
+        boolean phoneOkayLength = isPhoneOkayLength();
+
+        nextButton.setEnabled(nameValid && phoneOkayLength);
+    }
+
+    private boolean isPhoneOkayLength() {
         boolean phoneOkayLength = false;
         PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.createInstance(this);
         try {
@@ -221,8 +227,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         } catch (NumberParseException e) {
             Log.i("Failed to parse number: " + e);
         }
-
-        nextButton.setEnabled(nameValid && phoneOkayLength);
+        return phoneOkayLength;
     }
 
     @Override
@@ -269,7 +274,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                 return;
             }
         }
-        if (!countryCodePicker.isValidFullNumber()) {
+        if (!isPhoneOkayLength()) {
             SnackbarHelper.showInfo(this, R.string.invalid_phone_number);
             phoneNumberEditText.requestFocus();
             return;
