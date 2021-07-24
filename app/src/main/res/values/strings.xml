@@ -96,8 +96,8 @@
     <string name="not_now">Not now</string>
     <string name="continue_button">Continue</string>
     <plurals name="max_post_media_items">
-        <item quantity="one">You can select up to %d item per post</item>
-        <item quantity="other">You can select up to %d items per post</item>
+        <item quantity="one">You can select up to %d media item per post</item>
+        <item quantity="other">You can select up to %d media items per post</item>
     </plurals>
 
     <!-- Rationale for when requesting microphone permission for voice notes-->
