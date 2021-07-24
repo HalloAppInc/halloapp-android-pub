@@ -276,8 +276,7 @@ public class Notifications {
                         .setGroup(MESSAGE_NOTIFICATION_GROUP_KEY)
                         .setGroupSummary(false)
                         .setStyle(style);
-                final Intent contentIntent = new Intent(context, ChatActivity.class);
-                contentIntent.putExtra(ChatActivity.EXTRA_CHAT_ID, chatId);
+                final Intent contentIntent = ChatActivity.open(context, chatId);
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
                 final Intent parentIntent = new Intent(context, MainActivity.class);
                 parentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -308,8 +307,7 @@ public class Notifications {
                 builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE_MESSAGES, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
             } else {
                 final ChatId chatId = chatsIds.get(0);
-                final Intent contentIntent = new Intent(context, ChatActivity.class);
-                contentIntent.putExtra(ChatActivity.EXTRA_CHAT_ID, chatId);
+                final Intent contentIntent = ChatActivity.open(context, chatId);
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
                 final Intent parentIntent = new Intent(context, MainActivity.class);
                 parentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -527,8 +525,7 @@ public class Notifications {
                 .setContentText(context.getString(R.string.invite_notification_text, contact.getShortName()))
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        final Intent contentIntent = new Intent(context, ChatActivity.class);
-        contentIntent.putExtra(ChatActivity.EXTRA_CHAT_ID, contact.userId);
+        final Intent contentIntent = ChatActivity.open(context, Preconditions.checkNotNull(contact.userId));
         builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(id, builder.build());

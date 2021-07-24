@@ -384,8 +384,7 @@ public class ContentComposerActivity extends HalloActivity {
                 setResult(RESULT_OK);
                 finish();
                 if (chatId != null) {
-                    final Intent intent = new Intent(this, ChatActivity.class);
-                    intent.putExtra(ChatActivity.EXTRA_CHAT_ID, chatId);
+                    final Intent intent = ChatActivity.open(this, chatId);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 } else if (groupId != null) {

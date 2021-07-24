@@ -95,9 +95,8 @@ public class ReactionsPopupWindow extends PopupWindow {
                 post.senderUserId,
                 0);
         message.addToStorage(contentDb);
-        final Intent intent = new Intent(context, ChatActivity.class);
+        final Intent intent = ChatActivity.open(context, post.senderUserId);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra(ChatActivity.EXTRA_CHAT_ID, post.senderUserId);
         intent.putExtra(ChatActivity.EXTRA_OPEN_KEYBOARD, true);
         context.startActivity(intent);
         dismiss();

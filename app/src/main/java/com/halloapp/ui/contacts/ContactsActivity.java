@@ -228,8 +228,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
                         break;
                     }
                     GroupId groupId = data.getParcelableExtra(CreateGroupActivity.RESULT_GROUP_ID);
-                    final Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-                    intent.putExtra(ChatActivity.EXTRA_CHAT_ID, groupId);
+                    final Intent intent = ChatActivity.open(this, groupId);
                     startActivity(intent);
                     finish();
                 } else {

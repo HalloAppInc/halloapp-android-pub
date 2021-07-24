@@ -470,7 +470,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 });
                 itemView.setOnClickListener(v -> {
                     if (actionMode == null) {
-                        startActivityForResult(new Intent(getContext(), ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, chat.chatId), REQUEST_CODE_OPEN_CHAT);
+                        startActivityForResult(ChatActivity.open(requireContext(), chat.chatId), REQUEST_CODE_OPEN_CHAT);
                     } else {
                         updateChatSelection(chat.chatId);
                     }

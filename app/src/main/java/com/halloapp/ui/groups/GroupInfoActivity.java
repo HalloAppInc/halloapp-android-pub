@@ -409,8 +409,7 @@ public class GroupInfoActivity extends HalloActivity {
         }
 
         private void openChat(UserId userId) {
-            final Intent contentIntent = new Intent(getBaseContext(), ChatActivity.class);
-            contentIntent.putExtra(ChatActivity.EXTRA_CHAT_ID, userId);
+            final Intent contentIntent = ChatActivity.open(GroupInfoActivity.this, userId);
             startActivity(contentIntent);
         }
 

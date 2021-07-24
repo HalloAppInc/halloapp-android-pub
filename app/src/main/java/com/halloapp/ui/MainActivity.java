@@ -495,7 +495,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             case REQUEST_CODE_SELECT_CONTACT:
                 if (result == RESULT_OK) {
                     String rawId = data.getStringExtra(ContactsActivity.RESULT_SELECTED_ID);
-                    startActivity(new Intent(this, ChatActivity.class).putExtra(ChatActivity.EXTRA_CHAT_ID, ChatId.fromNullable(rawId)));
+                    startActivity(ChatActivity.open(this, ChatId.fromNullable(rawId)));
                 }
                 break;
         }

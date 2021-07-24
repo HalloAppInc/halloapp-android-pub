@@ -55,9 +55,8 @@ public class ContactMenuBottomSheetDialogFragment extends HalloBottomSheetDialog
             message.setVisibility(View.VISIBLE);
         }
         message.setOnClickListener(v ->{
-            final Intent intent = new Intent(requireContext(), ChatActivity.class);
+            final Intent intent = ChatActivity.open(requireContext(), contact.userId);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra(ChatActivity.EXTRA_CHAT_ID, contact.userId);
             if (postId != null) {
                 intent.putExtra(ChatActivity.EXTRA_REPLY_POST_ID, postId);
                 intent.putExtra(ChatActivity.EXTRA_REPLY_POST_SENDER_ID, UserId.ME);

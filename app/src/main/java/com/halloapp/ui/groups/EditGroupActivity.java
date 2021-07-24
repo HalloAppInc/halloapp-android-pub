@@ -48,7 +48,7 @@ public class EditGroupActivity extends HalloActivity {
     private TextView nameView;
     private ImageView avatarView;
 
-    public static Intent openEditGroup(Context context, @NonNull GroupId groupId) {
+    public static Intent openEditGroup(@NonNull Context context, @NonNull GroupId groupId) {
         Intent intent = new Intent(context, EditGroupActivity.class);
         intent.putExtra(EXTRA_GROUP_ID, groupId.rawId());
         return intent;

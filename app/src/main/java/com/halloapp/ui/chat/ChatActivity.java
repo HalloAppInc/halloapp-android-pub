@@ -2,6 +2,7 @@ package com.halloapp.ui.chat;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -110,7 +111,6 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class ChatActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
-    public static final String EXTRA_CHAT_ID = "chat_id";
     public static final String EXTRA_REPLY_POST_SENDER_ID = "reply_post_sender_id";
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
@@ -118,6 +118,20 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     public static final String EXTRA_SELECTED_MESSAGE_SENDER_ID = "selected_message_sender_id";
     public static final String EXTRA_COPY_TEXT = "copy_text";
     public static final String EXTRA_OPEN_KEYBOARD = "open_keyboard";
+
+    private static final String EXTRA_CHAT_ID = "chat_id";
+
+    public static Intent open(@NonNull Context context, @NonNull ChatId chatId) {
+        //noinspection ConstantConditions
+        if (chatId == null) {
+            throw new IllegalArgumentException("Trying to open ChatActivity for null chatId");
+        } else if (chatId instanceof GroupId) {
+            throw new IllegalArgumentException("Trying to open ChatActivity for group");
+        }
+        Intent intent = new Intent(context, ChatActivity.class);
+        intent.putExtra(EXTRA_CHAT_ID, chatId);
+        return intent;
+    }
 
     private static final int REQUEST_CODE_COMPOSE = 1;
     private static final int REQUEST_CODE_VIEW_GROUP_INFO = 2;

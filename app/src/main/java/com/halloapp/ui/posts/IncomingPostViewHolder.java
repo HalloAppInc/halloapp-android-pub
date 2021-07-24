@@ -44,9 +44,8 @@ public class IncomingPostViewHolder extends PostViewHolder {
             parent.startActivity(intent);
         });
         message.setOnClickListener(view -> {
-            final Intent intent = new Intent(itemView.getContext(), ChatActivity.class);
+            final Intent intent = ChatActivity.open(itemView.getContext(), post.senderUserId);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra(ChatActivity.EXTRA_CHAT_ID, post.senderUserId);
             intent.putExtra(ChatActivity.EXTRA_REPLY_POST_ID, post.id);
             intent.putExtra(ChatActivity.EXTRA_REPLY_POST_SENDER_ID, post.senderUserId);
             final Integer selPos = parent.getMediaPagerPositionMap().get(post.rowId);

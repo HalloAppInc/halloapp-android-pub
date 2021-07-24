@@ -162,9 +162,8 @@ public class ProfileFragment extends PostsFragment {
             unBlockContact();
         });
         messageView.setOnClickListener(v -> {
-            final Intent intent = new Intent(getContext(), ChatActivity.class);
+            final Intent intent = ChatActivity.open(requireContext(), profileUserId);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra(ChatActivity.EXTRA_CHAT_ID, profileUserId);
             startActivity(intent);
         });
         addToContactsView.setOnClickListener(v -> {
