@@ -43,11 +43,12 @@ public class Post extends ContentItem {
     public static final int TRANSFERRED_YES = 1;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TYPE_USER, TYPE_SYSTEM, TYPE_FUTURE_PROOF})
+    @IntDef({TYPE_USER, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_RETRACTED})
     public @interface Type {}
     public static final int TYPE_USER = 0;
     public static final int TYPE_SYSTEM = 1;
     public static final int TYPE_FUTURE_PROOF = 2;
+    public static final int TYPE_RETRACTED = 3;
 
     public int commentCount;
     public int unseenCommentCount;
@@ -197,7 +198,7 @@ public class Post extends ContentItem {
 
     @Override
     public boolean isRetracted() {
-        return type == TYPE_USER && super.isRetracted();
+        return (type == TYPE_USER && super.isRetracted()) || type == TYPE_RETRACTED;
     }
 
     @Override

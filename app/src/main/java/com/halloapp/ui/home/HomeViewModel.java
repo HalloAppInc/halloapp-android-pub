@@ -59,7 +59,7 @@ public class HomeViewModel extends AndroidViewModel {
                 pendingOutgoing.set(true);
                 mainHandler.post(() -> reloadPostsAt(Long.MAX_VALUE));
             } else {
-                if (post.type == Post.TYPE_USER) {
+                if (post.type != Post.TYPE_SYSTEM) {
                     pendingIncoming.set(true);
                 }
                 invalidatePosts();

@@ -1248,6 +1248,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
                 case Comment.TYPE_VOICE_NOTE:
                     return ITEM_TYPE_VOICE_NOTE;
                 case Comment.TYPE_USER:
+                case Comment.TYPE_RETRACTED:
                 default:
                     return ITEM_TYPE_COMMENT;
             }

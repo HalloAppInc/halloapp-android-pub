@@ -47,12 +47,13 @@ public class Message extends ContentItem {
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TYPE_CHAT, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_VOICE_NOTE})
+    @IntDef({TYPE_CHAT, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_VOICE_NOTE, TYPE_RETRACTED})
     public @interface Type {}
     public static final int TYPE_CHAT = 0;
     public static final int TYPE_SYSTEM = 1;
     public static final int TYPE_FUTURE_PROOF = 2;
     public static final int TYPE_VOICE_NOTE = 3;
+    public static final int TYPE_RETRACTED = 4;
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
@@ -216,7 +217,7 @@ public class Message extends ContentItem {
     }
 
     public boolean isRetracted() {
-        return type == TYPE_CHAT && super.isRetracted();
+        return (type == TYPE_CHAT && super.isRetracted()) || type == TYPE_RETRACTED;
     }
 
     public boolean isMeMessageSender() {

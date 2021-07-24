@@ -60,7 +60,7 @@ public class SubtlePostViewHolder extends ViewHolderWithLifecycle {
             itemView.setPadding(itemView.getPaddingLeft(), 0, itemView.getPaddingRight(), itemView.getPaddingBottom());
         }
         parent.getContactLoader().cancel(textView);
-        if (post.type == Post.TYPE_USER) {
+        if (post.type == Post.TYPE_USER || post.type == Post.TYPE_RETRACTED) {
             textView.setTextColor(ContextCompat.getColor(textView.getContext(), R.color.secondary_text));
             textView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(textView.getContext(), theme == 0 ? R.color.deleted_post_bg : R.color.deleted_post_themed_bg)));
             if (post.isOutgoing()) {

@@ -169,6 +169,7 @@ class PostsDb {
         final ContentValues values = new ContentValues();
         values.put(PostsTable.COLUMN_TRANSFERRED, !post.senderUserId.isMe());
         values.put(PostsTable.COLUMN_TEXT, (String)null);
+        values.put(PostsTable.COLUMN_TYPE, Post.TYPE_RETRACTED);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
@@ -188,6 +189,7 @@ class PostsDb {
                 values.put(PostsTable.COLUMN_POST_ID, post.id);
                 values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
                 values.put(PostsTable.COLUMN_SEEN, false);
+                values.put(PostsTable.COLUMN_TYPE, Post.TYPE_RETRACTED);
                 post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
             } else {
                 db.delete(CommentsTable.TABLE_NAME, CommentsTable.COLUMN_POST_ID + "=?",
@@ -570,6 +572,7 @@ class PostsDb {
         final ContentValues values = new ContentValues();
         values.put(CommentsTable.COLUMN_TRANSFERRED, !comment.senderUserId.isMe());
         values.put(CommentsTable.COLUMN_TEXT, (String)null);
+        values.put(CommentsTable.COLUMN_TYPE, Comment.TYPE_RETRACTED);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {

@@ -357,6 +357,10 @@ public class PostContentActivity extends HalloActivity {
                     type = post.media.isEmpty() ? POST_TYPE_TEXT : POST_TYPE_MEDIA;
                     break;
                 }
+                case Post.TYPE_RETRACTED: {
+                    type = POST_TYPE_RETRACTED;
+                    break;
+                }
             }
             if (post.isRetracted()) {
                 type = POST_TYPE_RETRACTED;

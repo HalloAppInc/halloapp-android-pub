@@ -788,6 +788,7 @@ class MessagesDb {
         final ContentValues values = new ContentValues();
         values.put(MessagesTable.COLUMN_STATE, message.isOutgoing() ? Message.STATE_INITIAL : Message.STATE_INCOMING_RECEIVED);
         values.put(MessagesTable.COLUMN_TEXT, (String)null);
+        values.put(MessagesTable.COLUMN_TYPE, Message.TYPE_RETRACTED);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
@@ -800,6 +801,7 @@ class MessagesDb {
                 values.put(MessagesTable.COLUMN_SENDER_USER_ID, message.senderUserId.rawId());
                 values.put(MessagesTable.COLUMN_MESSAGE_ID, message.id);
                 values.put(MessagesTable.COLUMN_TIMESTAMP, message.timestamp);
+                values.put(MessagesTable.COLUMN_TYPE, Message.TYPE_RETRACTED);
                 message.rowId = db.insertWithOnConflict(MessagesTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
             } else {
                 if (message.rowId == 0) {

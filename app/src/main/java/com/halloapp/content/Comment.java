@@ -31,11 +31,12 @@ public class Comment extends ContentItem {
     public final List<Mention> mentions = new ArrayList<>();
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TYPE_USER, TYPE_FUTURE_PROOF, TYPE_VOICE_NOTE})
+    @IntDef({TYPE_USER, TYPE_FUTURE_PROOF, TYPE_VOICE_NOTE, TYPE_RETRACTED})
     public @interface Type {}
     public static final int TYPE_USER = 0;
     public static final int TYPE_FUTURE_PROOF = 1;
     public static final int TYPE_VOICE_NOTE = 2;
+    public static final int TYPE_RETRACTED = 3;
 
     public @Type int type;
 
@@ -130,7 +131,7 @@ public class Comment extends ContentItem {
     }
 
     public boolean isRetracted() {
-        return type == TYPE_USER && super.isRetracted();
+        return (type == TYPE_USER && super.isRetracted()) || type == TYPE_RETRACTED;
     }
 
     public boolean canBeRetracted() {
