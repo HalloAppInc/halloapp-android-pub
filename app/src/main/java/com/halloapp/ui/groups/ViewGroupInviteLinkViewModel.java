@@ -12,16 +12,23 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Me;
 import com.halloapp.Preferences;
+import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.groups.GroupInfo;
+import com.halloapp.groups.MemberInfo;
 import com.halloapp.registration.CheckRegistration;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.xmpp.groups.GroupsApi;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ViewGroupInviteLinkViewModel extends AndroidViewModel{
 
     private final Me me = Me.getInstance();
     private final GroupsApi groupsApi = GroupsApi.getInstance();
+    private final ContactsDb contactsDb = ContactsDb.getInstance();
     private final Preferences preferences = Preferences.getInstance();
 
     private final String linkCode;
@@ -31,9 +38,11 @@ public class ViewGroupInviteLinkViewModel extends AndroidViewModel{
 
     public static class InviteLinkResult {
         public final GroupInfo groupInfo;
+        public final List<Contact> contactList;
 
-        private InviteLinkResult(@Nullable GroupInfo groupInfo) {
+        private InviteLinkResult(@Nullable GroupInfo groupInfo, @Nullable List<Contact> contacts) {
             this.groupInfo = groupInfo;
+            this.contactList = contacts;
         }
     }
 
@@ -68,9 +77,19 @@ public class ViewGroupInviteLinkViewModel extends AndroidViewModel{
 
     private void fetchInvitePreview() {
         groupsApi.previewGroupInviteLink(linkCode).onResponse(info -> {
-            inviteLinkPreview.postValue(new InviteLinkResult(info));
+            List<Contact> contacts = null;
+            if (info != null && info.members != null) {
+                contacts = new ArrayList<>();
+                for (MemberInfo member : info.members) {
+                    Contact contact = contactsDb.getContact(member.userId);
+                    contact.halloName = member.name;
+                    contacts.add(contact);
+                }
+                Contact.sort(contacts);
+            }
+            inviteLinkPreview.postValue(new InviteLinkResult(info, contacts));
         }).onError(e -> {
-            inviteLinkPreview.postValue(new InviteLinkResult(null));
+            inviteLinkPreview.postValue(new InviteLinkResult(null, null));
         });
     }
 

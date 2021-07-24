@@ -130,14 +130,12 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
         viewModel.getInvitePreview().observe(this, inviteLinkResult -> {
             if (inviteLinkResult.groupInfo != null) {
                 GroupInfo groupInfo = inviteLinkResult.groupInfo;
-                List<UserId> userIds = new ArrayList<>();
                 for (MemberInfo memberInfo : groupInfo.members) {
                     if (memberInfo.userId.isMe()) {
                         startActivity(ViewGroupFeedActivity.viewFeed(this, groupInfo.groupId));
                         finish();
                         return;
                     }
-                    userIds.add(memberInfo.userId);
                 }
                 joinGroup.setVisibility(View.VISIBLE);
                 linkPreviewContainer.setVisibility(View.VISIBLE);
@@ -147,7 +145,7 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
                 groupDescriptionTv.setText(groupInfo.description);
                 avatarLoader.load(groupAvatarView, groupInfo.groupId, groupInfo.avatar);
                 participantHeader.setText(getResources().getQuantityString(R.plurals.group_feed_members, groupInfo.members.size(), groupInfo.members.size()));
-                contactsAdapter.setContactList(userIds);
+                contactsAdapter.setContactList(inviteLinkResult.contactList);
             } else {
                 progressContainer.setVisibility(View.INVISIBLE);
                 errorMessage.setVisibility(View.VISIBLE);
@@ -168,29 +166,22 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
             name = itemView.findViewById(R.id.name);
         }
 
-        void bindTo(@NonNull UserId userId) {
-            avatarLoader.load(avatar, userId, false);
-            contactLoader.load(name, userId, new ViewDataLoader.Displayer<TextView, Contact>() {
-                @Override
-                public void showResult(@NonNull TextView view, @Nullable Contact result) {
-                    if (result != null) {
-                        view.setText(result.getShortName());
-                    }
-                }
-
-                @Override
-                public void showLoading(@NonNull TextView view) {
-                    view.setText("");
-                }
-            });
+        void bindTo(@NonNull Contact contact) {
+            if (contact.userId == null) {
+                avatarLoader.cancel(avatar);
+                name.setText("");
+                return;
+            }
+            avatarLoader.load(avatar, contact.userId, false);
+            name.setText(contact.getShortName());
         }
     }
 
     private class ContactsAdapter extends RecyclerView.Adapter<ContactViewHolder> {
 
-        private List<UserId> contactList;
+        private List<Contact> contactList;
 
-        public void setContactList(@Nullable List<UserId> contactList) {
+        public void setContactList(@Nullable List<Contact> contactList) {
             this.contactList = contactList;
             notifyDataSetChanged();
         }
