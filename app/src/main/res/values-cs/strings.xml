@@ -10,7 +10,7 @@
     <string name="message">"Zpráva"</string>
     <string name="add_post">"Přidat příspěvek"</string>
     <string name="new_chat">"Nová konverzace"</string>
-    <string name="new_group">"New group"</string>
+    <string name="new_group">"Nová skupina"</string>
     <string name="notifications">"Oznámení"</string>
     <string name="feed_notifications_channel_name">"Oznámení kanálu"</string>
     <string name="message_notifications_channel_name">"Oznámení zpráv"</string>
@@ -300,17 +300,17 @@ verze:% 2 $ s
     <string name="system_post_member_left">"%s opustil/a skupinu"</string>
     <string name="system_post_member_you_left">"Opustil/a jsi skupinu"</string>
     <string name="system_post_members_promoted">"%1$s povýšil/a uživatele %2$s na administrátora"</string>
-    <string name="system_post_members_promoted_by_you">"Povýšil(a) jsi %s na správce"</string>
-    <string name="system_post_members_demoted">"%1$s odebral(a) %2$s funkci správce"</string>
-    <string name="system_post_members_demoted_by_you">"Odebral(a) jsi %s funkci správce"</string>
+    <string name="system_post_members_promoted_by_you">"Povýšil/a jsi %s na správce"</string>
+    <string name="system_post_members_demoted">"%1$s odebral/a %2$s funkci správce"</string>
+    <string name="system_post_members_demoted_by_you">"Odebral/a jsi %s funkci správce"</string>
     <string name="system_post_member_auto_promoted">"Uživatel %s byl automaticky povýšen na správce"</string>
-    <string name="system_post_member_auto_promoted_you">"Byl(a) jsi automaticky povýšen(a) na správce"</string>
-    <string name="system_post_group_name_changed">"%1$s změnil(a) jméno skupiny na %2$s"</string>
-    <string name="system_post_group_name_changed_by_you">"Změnil(a) jsi jméno skupiny na %s"</string>
-    <string name="system_post_group_avatar_changed">"%s změnil(a) avatara skupiny"</string>
-    <string name="system_post_group_avatar_changed_by_you">"Změnil(a) jsi avatara skupiny"</string>
-    <string name="system_post_group_deleted">"%s smazal(a) skupinu"</string>
-    <string name="system_post_group_deleted_by_you">"Smazal(a) jsi skupinu"</string>
+    <string name="system_post_member_auto_promoted_you">"Byl/a jsi automaticky povýšen/a na správce"</string>
+    <string name="system_post_group_name_changed">"%1$s změnil/a jméno skupiny na %2$s"</string>
+    <string name="system_post_group_name_changed_by_you">"Změnil/a jsi jméno skupiny na %s"</string>
+    <string name="system_post_group_avatar_changed">"%s změnil/a avatara skupiny"</string>
+    <string name="system_post_group_avatar_changed_by_you">"Změnil/a jsi avatara skupiny"</string>
+    <string name="system_post_group_deleted">"%s smazal/a skupinu"</string>
+    <string name="system_post_group_deleted_by_you">"Smazal/a jsi skupinu"</string>
     <string name="group_info_title">"Informace o skupině"</string>
     <string name="admin">"Správce"</string>
     <string name="save">"Uložit"</string>
@@ -435,7 +435,7 @@ verze:% 2 $ s
         <item quantity="few">"Sdílím s %d z mých kontaktů"</item>
         <item quantity="other">"Sdílím s %d z mých kontaktů"</item>
     </plurals>
-    <string name="post_preview_no_caption">"%s sdílel(a) příspěvek"</string>
+    <string name="post_preview_no_caption">"%s sdílel/a příspěvek"</string>
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
     <string name="composer_sharing_message">"Posílání %s"</string>
     <string name="composer_sharing_post">"Sdílení s %s"</string>
