@@ -15,6 +15,18 @@ fun isEmpty(str: String?): Boolean {
     return false
 }
 
+fun getTempStringFile(id: String?): File {
+    if (id == null) {
+        return File("../app/src/main/res/values/strings-temp.xml")
+    }
+    var id = id
+    if (id.contains("-")) {
+        val parts = id.split("-")
+        id = "${parts[0]}-r${parts[1].toUpperCase(Locale.ROOT)}"
+    }
+    return File("../app/src/main/res/values-$id/strings-temp.xml")
+}
+
 fun getStringFile(id: String?): File {
     if (id == null) {
         return File("../app/src/main/res/values/strings.xml")

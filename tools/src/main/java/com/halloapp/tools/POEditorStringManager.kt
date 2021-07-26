@@ -26,7 +26,13 @@ object POEditorStringManager {
     fun updateStrings() {
         runBlocking {
             uploadStringsToPOEditor()
-            importStringsFromPOEditor()
+            importStringsFromPOEditor(false)
+        }
+    }
+
+    fun pullStrings() {
+        runBlocking {
+            importStringsFromPOEditor(true)
         }
     }
 
@@ -60,7 +66,7 @@ object POEditorStringManager {
         }
     }
 
-    suspend fun importStringsFromPOEditor() {
+    suspend fun importStringsFromPOEditor(merge : Boolean) {
         val token = getPOEditorToken()
 
         val languages = POEditorApi.listLanguages(token, PROJECT_ID)
@@ -80,7 +86,11 @@ object POEditorStringManager {
                     8192)
             var stringFile = getStringFile(language.code)
             stringFile.parentFile.mkdirs()
-            val output: OutputStream = FileOutputStream(getStringFile(language.code))
+            val shouldMerge = merge && stringFile.exists();
+            if (shouldMerge) {
+                stringFile = getTempStringFile(language.code);
+            }
+            val output: OutputStream = FileOutputStream(stringFile)
 
             val data = ByteArray(1024)
 
@@ -96,8 +106,73 @@ object POEditorStringManager {
             output.close()
             input.close()
 
-            processStrings(getStringFile(language.code))
+            if (shouldMerge) {
+                merge(stringFile, getStringFile(language.code))
+                getStringFile(language.code).delete()
+                stringFile.renameTo(getStringFile(language.code))
+            } else {
+                processStrings(getStringFile(language.code))
+            }
         }
+    }
+
+    private fun merge(baseFile : File, additions : File) {
+        val ignoreSet = HashSet<String>()
+        val dbFactory = DocumentBuilderFactory.newInstance()
+        val dBuilder = dbFactory.newDocumentBuilder()
+        val doc = dBuilder.parse(baseFile)
+        doc.documentElement.normalize()
+
+        findNames("string", doc, ignoreSet)
+        findNames("plurals", doc, ignoreSet)
+
+        val oldDoc = dBuilder.parse(additions)
+        importElements("string", doc, oldDoc, ignoreSet)
+        importElements("plurals", doc, oldDoc, ignoreSet)
+
+        processNodes(doc, "string")
+        processNodes(doc, "item")
+
+        outputXml(doc, baseFile)
+    }
+
+    private fun forEachTranslatableElement(element : String, doc : Document, execute : (node : Node, name : String) -> Unit) {
+        val stringList = doc.getElementsByTagName(element)
+        for (i in 0 until stringList.length) {
+            val stringNode: Node = stringList.item(i)
+
+            if (stringNode.nodeType != Node.ELEMENT_NODE) {
+                continue
+            }
+            var strName: String? = null
+            var translatable: String? = null
+            for (j in 0 until stringNode.attributes.length) {
+                val node = stringNode.attributes.item(j)
+                when (node.nodeName) {
+                    "name" -> strName = node.nodeValue
+                    "translatable" -> translatable = node.nodeValue
+                }
+            }
+            if (strName == null || translatable == "false") {
+                continue
+            }
+            execute(stringNode, strName)
+        }
+    }
+
+    private fun importElements(element : String, toDoc : Document, fromDoc : Document, ignoreSet : HashSet<String>) {
+        forEachTranslatableElement(element, fromDoc)  { node: Node, s: String ->
+            if (!ignoreSet.contains(s)) {
+                val importedNode: Node = toDoc.importNode(node, true)
+                toDoc.firstChild.appendChild(importedNode)
+            }
+        };
+    }
+
+    private fun findNames(element : String, doc : Document, set: HashSet<String>) {
+        forEachTranslatableElement(element, doc) { _: Node, s: String ->
+            set.add(s)
+        };
     }
 
     fun processStrings(stringsFile : File) {

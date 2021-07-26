@@ -25,6 +25,13 @@ task syncStrings(type: JavaExec) {
     main = "com.halloapp.tools.POEditorStringManagerKt"
 }
 
+task pullStrings(type: JavaExec) {
+    description = "Syncs strings with POEditor. Updates terms and marks other locales fuzzy. Also reimports"
+    group = "Localization"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.halloapp.tools.POEditorStringPullerKt"
+}
+
 task uploadStrings(type: JavaExec) {
     description = "Upload strings to POEditor. Updates terms and marks other locales fuzzy"
     group = "Localization"
