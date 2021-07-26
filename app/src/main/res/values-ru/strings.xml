@@ -92,7 +92,7 @@
     <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; упомянул(а) вас в своем посте"</string>
     <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; упомянул(а) вас в комментарии к вашему посту"</string>
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; упомянул(а) вас в комментарии к своему посту"</string>
-    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%s&lt;/b&gt; упомянул(а) вас в комментарии к посту пользователя &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; упомянул(а) вас в комментарии к посту пользователя &lt;b&gt;%2$s&lt;/b&gt;"</string>
     <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; прокомментировал(а) ваш пост"</string>
     <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; прокомментировали ваш пост"</string>
     <string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и &lt;b&gt;%3$s&lt;/b&gt; прокомментировали ваш пост"</string>
