@@ -747,37 +747,36 @@ Abre la pantalla de ajustes de la aplicación para modificar los permisos."</str
 Abre la pantalla de configuración para modificar los permisos de la aplicación."</string>
 
     <!-- Activity center item when someone replies. %1$s is the person, %2$s is their comment preview -->
-    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; respondió: %2$s"</string>
+    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; replied: %2$s"</string>
 
     <!-- Activity center item when someone comments. %1$s is the person, %2$s is their comment preview -->
-    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; comentó: %2$s
-"</string>
+    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; commented: %2$s"</string>
 
     <!-- Activity center item when non-contacts comment on your post -->
     <plurals name="commented_on_your_post_grouped">
-        <item quantity="one">"Otro &lt;b&gt;%1$s&lt;/b&gt; comentó en tu publicación"</item>
-        <item quantity="other">"Otros &lt;b&gt;%1$s&lt;/b&gt; comentaron en tu publicación"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
     </plurals>
 
     <!-- Activity center item when non-contacts comment on someones post -->
     <plurals name="commented_on_someones_post_grouped">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;  persona más comentó en la publicación de &lt;b&gt;%2$s&lt;/b&gt;"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;  otras personas más comentaron en la publicación de &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
     </plurals>
 
     <!-- Shown when an archived post's photo thumbnail can't be loaded -->
-    <string name="couldnt_load_thumbnail">"No se pudo cargar imagen en miniatura"</string>
+    <string name="couldnt_load_thumbnail">"Couldn't load thumbnail"</string>
 
     <!-- Button for user to re-share old posts which have expired -->
-    <string name="reshare_post">"Compartir de nuevo la publicación"</string>
+    <string name="reshare_post">"Reshare post"</string>
 
     <!-- Button for going to utility for viewing expired posts -->
-    <string name="archived_posts">"Publicaciones archivadas"</string>
+    <string name="archived_posts">"Archived Posts"</string>
 
     <!-- Title of utility for viewing expired posts -->
-    <string name="archive">"Archivo"</string>
+    <string name="archive">"Archive"</string>
 
     <!-- Label displaying the date when a post expired -->
-    <string name="archived_on">"Archivo %s"</string>
+    <string name="archived_on">"Archived %s"</string>
 </resources>
 
