@@ -210,6 +210,12 @@ public class ActivityCenterActivity extends HalloActivity {
                     postThumbnailLoader.load(thumbnailView, socialEvent.postSenderUserId, socialEvent.postId);
                 }
 
+                if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_WELCOME) {
+                    thumbnailView.setVisibility(View.GONE);
+                } else {
+                    thumbnailView.setVisibility(View.VISIBLE);
+                }
+
                 unseenIndicatorView.setVisibility(socialEvent.seen ? View.INVISIBLE : View.VISIBLE);
                 itemView.setBackgroundColor(socialEvent.seen ? 0 : ContextCompat.getColor(itemView.getContext(), R.color.color_secondary_10_alpha));
 
