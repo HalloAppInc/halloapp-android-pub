@@ -145,6 +145,8 @@ public class RegistrationRequestActivity extends HalloActivity {
                     intent.putExtra(RegistrationVerificationActivity.EXTRA_RETRY_WAIT_TIME, result.retryWaitTimeSeconds);
                     intent.putExtra(RegistrationVerificationActivity.EXTRA_GROUP_INVITE_TOKEN, registrationRequestViewModel.groupInviteToken);
                     startActivityForResult(intent, REQUEST_CODE_VERIFICATION);
+                } else if (result.result == Registration.RegistrationRequestResult.RESULT_FAILED_INVALID_PHONE_NUMBER) {
+                    SnackbarHelper.showWarning(this, R.string.invalid_phone_number);
                 } else {
                     SnackbarHelper.showInfo(this, R.string.registration_failed);
                 }
