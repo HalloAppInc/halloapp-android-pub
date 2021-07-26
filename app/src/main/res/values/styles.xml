@@ -3,7 +3,7 @@
     <style name="AppThemeBase" parent="Theme.MaterialComponents.DayNight">
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
-        <item name="colorAccent">@color/color_accent</item>
+        <item name="colorAccent">@color/color_secondary</item>
         <item name="android:textColorLink">@color/color_link</item>
         <item name="android:windowBackground">@color/window_background</item>
         <item name="android:navigationBarColor">@color/color_primary_dark</item>
