@@ -261,7 +261,7 @@
     <string name="action_save">"Сохранить"</string>
     <string name="invite_friends">"Пригласить друзей и семью"</string>
     <string name="invite_friend_chooser_title">"Пригласить %s"</string>
-    <string name="invite_text_with_name_and_number">"Привет, %1$s, приглашаю тебя присоединиться ко мне в HalloApp (простое социальное приложение для того, чтобы делиться повседневными впечатлениями). Используй %2$ для регистрации. Скачай на halloapp.com/dl"</string>
+    <string name="invite_text_with_name_and_number">"Привет, %1$s, приглашаю тебя присоединиться ко мне в HalloApp (простое социальное приложение для того, чтобы делиться повседневными впечатлениями). Используй %2$s для регистрации. Скачай на halloapp.com/dl"</string>
     <string name="name_hint">"Твое имя"</string>
     <string name="name_must_be_specified">"Нужно указать имя"</string>
     <string name="counter">"%1$d/%2$d"</string>
