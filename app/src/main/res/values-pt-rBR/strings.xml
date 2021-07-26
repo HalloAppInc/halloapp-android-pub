@@ -5,7 +5,7 @@
     <string name="title_messages">"Conversas"</string>
     <string name="title_profile">"Perfil"</string>
     <string name="title_groups">"Grupos"</string>
-    <string name="comment">"Comentário"</string>
+    <string name="comment">"Comentar"</string>
     <string name="next">"Próximo"</string>
     <string name="message">"Mensagem"</string>
     <string name="add_post">"Postar"</string>
@@ -58,6 +58,8 @@ Sujeito a cobrança da operadora."</string>
     <string name="invalid_phone_number">"Número de telefone inválido"</string>
     <string name="share_option_post">"Publicação"</string>
     <string name="share_option_message">"Mensagem"</string>
+
+    <!-- Fuzzy -->
     <plurals name="max_post_media_items">
         <item quantity="one">"Você pode selecionar até %d item por publicação"</item>
         <item quantity="other">"Você pode selecionar até %d itens por publicação"</item>
@@ -187,11 +189,11 @@ Abra as configurações do aplicativo para modificar as permissões do aplicativ
     <string name="retract_comment_confirmation">"Deseja apagar o seu comentário?"</string>
     <plurals name="delete_chats_confirmation">
         <item quantity="one">"Deseja apagar esta conversa?"</item>
-        <item quantity="other">"Deseja apagar %d conversas selecionadas?"</item>
+        <item quantity="other">"Deseja apagar as %d conversas selecionadas?"</item>
     </plurals>
     <plurals name="delete_groups_confirmation">
         <item quantity="one">"Deseja apagar este grupo?"</item>
-        <item quantity="other">"Deseja remover %d grupos selecionados?"</item>
+        <item quantity="other">"Deseja apagar os %d grupos selecionados?"</item>
     </plurals>
     <string name="delete_chat_confirmation">"Deseja apagar esta conversa?"</string>
     <string name="yes">"Sim"</string>
@@ -664,5 +666,38 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="voice_note_record_audio_permission_rationale_denied">"Para gravar anotações de voz, nós precisamos de permissão para acessar o microfone.
 
 Abra a tela de configurações do aplicativo para modificar as permissões do aplicativo."</string>
+
+    <!-- Activity center item when someone replies. %1$s is the person, %2$s is their comment preview -->
+    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; replied: %2$s"</string>
+
+    <!-- Activity center item when someone comments. %1$s is the person, %2$s is their comment preview -->
+    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; commented: %2$s"</string>
+
+    <!-- Activity center item when non-contacts comment on your post -->
+    <plurals name="commented_on_your_post_grouped">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
+    </plurals>
+
+    <!-- Activity center item when non-contacts comment on someones post -->
+    <plurals name="commented_on_someones_post_grouped">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
+    </plurals>
+
+    <!-- Shown when an archived post's photo thumbnail can't be loaded -->
+    <string name="couldnt_load_thumbnail">"Couldn't load thumbnail"</string>
+
+    <!-- Button for user to re-share old posts which have expired -->
+    <string name="reshare_post">"Reshare post"</string>
+
+    <!-- Button for going to utility for viewing expired posts -->
+    <string name="archived_posts">"Archived Posts"</string>
+
+    <!-- Title of utility for viewing expired posts -->
+    <string name="archive">"Archive"</string>
+
+    <!-- Label displaying the date when a post expired -->
+    <string name="archived_on">"Archived %s"</string>
 </resources>
 

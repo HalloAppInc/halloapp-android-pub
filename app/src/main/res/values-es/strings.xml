@@ -28,14 +28,14 @@
     <string name="request_registration_title">"¡HalloApp te da la bienvenida!"</string>
     <string name="reverify_registration_title">"Por favor, vuelve a verificar tu número de teléfono"</string>
     <string name="request_registration_subtitle">"Recibirás un código de verificación.
-Se pueden aplicar cargos por servicios de telefonía móvil."</string>
+El servidor de telefonía móvil podría aplicar cargos."</string>
     <string name="verify_registration_title">"Ingresa el código que te envíamos a
 %s"</string>
     <string name="contact_permission_title">"Por último"</string>
     <string name="registration_code_invalid">"Código inválido de inscripción, inténtalo de nuevo"</string>
     <string name="registration_failed">"No se pudo registrar el número de teléfono, inténtalo de nuevo"</string>
     <string name="registration_failed_no_friends">"Por el momento Hallo App solo se puede usar con invitación. Si tienes un amigo o un familiar que use HalloApp, diles que te inviten usando tu número de teléfono."</string>
-    <string name="registration_failed_no_friends_title">"¿Necesitas una invitación?"</string>
+    <string name="registration_failed_no_friends_title">"¡Caramba!"</string>
     <string name="type_a_message_hint">"Escribe un mensaje"</string>
     <string name="write_a_description">"Escribe una descripción"</string>
     <string name="write_a_post">"Crea una publicación"</string>
@@ -62,6 +62,8 @@ Se pueden aplicar cargos por servicios de telefonía móvil."</string>
     <string name="invalid_phone_number">"Número de teléfono inválido"</string>
     <string name="share_option_post">"Comentar"</string>
     <string name="share_option_message">"Enviar mensaje"</string>
+
+    <!-- Fuzzy -->
     <plurals name="max_post_media_items">
         <item quantity="one">"Puedes seleccionar hasta %d fotos o videos por publicación"</item>
         <item quantity="other">"Puedes selecciones hasta %d fotos o videos por publicación"</item>
@@ -122,7 +124,7 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
         <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; y %3$d comentaron en la publicación de &lt;b&gt;%4$s&lt;/b&gt;\"</item>
     </plurals>
     <string name="contact_hashing_faq_dialog_title">"Tu privacidad es nuestra prioridad"</string>
-    <string name="contact_hashing_faq_dialog_info">"HalloApp solo usa el número de teléfono para conectarte con tus amigos en HalloApp, y no captura ninguna otra información adicional de tu libreta de contactos. "</string>
+    <string name="contact_hashing_faq_dialog_info">"HalloApp solo usa el número de teléfono para conectarte con tus amigos en HalloApp, y no captura ninguna otra información adicional de tu agenda de contactos. "</string>
     <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt;comentó en su publicación"</string>
 
     <!-- Fuzzy -->
@@ -152,7 +154,7 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="about">"Acerca de"</string>
     <string name="notify_posts">"Publicaciones"</string>
     <string name="notify_comments">"Comentarios"</string>
-    <string name="read_more">"Leer más"</string>
+    <string name="read_more">"leer más"</string>
     <string name="no_photos_or_videos_found">"No se encontraron fotos o videos"</string>
     <string name="gallery">"Galería de fotos"</string>
     <string name="avatar_picker_title">"Foto de perfil"</string>
@@ -162,7 +164,7 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
 
     <!-- Fuzzy -->
     <string name="seen_by">"Visto por"</string>
-    <string name="empty_viewed_by">"Nadie ha visto tu publicación todavía"</string>
+    <string name="empty_viewed_by">"Nadie ha visto aún tu publicación "</string>
     <string name="options">"Opciones"</string>
     <string name="block">"Bloquear"</string>
     <string name="play">"Jugar"</string>
@@ -225,10 +227,10 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     </plurals>
 
     <!-- Fuzzy -->
-    <string name="delete_chat_confirmation">"¿Te gustaría eliminar este grupo?"</string>
+    <string name="delete_chat_confirmation">"¿Te gustaría eliminar esta conversación?"</string>
     <string name="yes">"Sí"</string>
     <string name="no">"No"</string>
-    <string name="ok">"Ok"</string>
+    <string name="ok">"De acuerdo"</string>
     <string name="activity">"Actividad"</string>
 
     <!-- In activity center, mark all comments/mentions as read -->
@@ -272,7 +274,7 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="invite_friend_chooser_title">"Invita a %s"</string>
 
     <!-- Fuzzy -->
-    <string name="invite_text_with_name_and_number">"Hola %1$s, tengo una invitación para que te unas a mí en HalloApp (una aplicación social sencilla para compartir los momentos cotidianos). Usa %2$s para registrarte. Obténla en halloapp.com/dl"</string>
+    <string name="invite_text_with_name_and_number">"Hola %1$s, tengo una invitación para que te unas a mí en HalloApp - una red social con relaciones reales para los más cercanos a mí. Usa %2$s para registrarte. Obténla en https://halloapp.com/dl"</string>
     <string name="name_hint">"Tu nombre"</string>
     <string name="name_must_be_specified">"Debes especificar tu nombre"</string>
 
@@ -281,7 +283,7 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
     <string name="invite_pending">"Pendiente"</string>
     <string name="failed_update_profile">"Tu perfil no se pudo actualizar, trata de nuevo más tarde"</string>
     <string name="profile_updated">"Tu perfil ha sido actualizado"</string>
-    <string name="flip">"Girar"</string>
+    <string name="flip">"Voltear"</string>
 
     <!-- Fuzzy -->
     <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
@@ -375,7 +377,7 @@ versión: %2$s
     <string name="setting_feed_only">"Solo compartir con…"</string>
     <string name="setting_feed_except">"Mis contactos excepto…"</string>
     <string name="feed_privacy_fail_to_load">"La configuración de privacidad no se pudo ejecutar"</string>
-    <string name="feed_privacy_update_success">"La configuración fue actualizada satisfactoriamente"</string>
+    <string name="feed_privacy_update_success">"La configuración fue actualizada con éxito"</string>
     <string name="feed_privacy_update_failure">"No se pudo actualizar esa configuración"</string>
     <string name="invite_failed_internet">"No se pudo enviar la invitación, revisa tu conexión de Internet e inténtalo de nuevo"</string>
     <string name="invite_failed_no_invites">"Lo sentimos, ya no tienes más invitaciones, inténtalo de nuevo más tarde"</string>
@@ -403,7 +405,7 @@ versión: %2$s
     <string name="done">"Listo"</string>
     <string name="members_header">"Participantes (%s)"</string>
     <string name="add_members">"Añadir participantes"</string>
-    <string name="add_members_in_progress">"Añadir participantes…"</string>
+    <string name="add_members_in_progress">"Añadiendo participantes…"</string>
     <string name="failed_add_members">"No se pudo añadir participantes, inténtalo más tarde"</string>
     <string name="create_group_in_progress">"Creando grupo %s…"</string>
     <string name="new_group_title">"Dale un nombre a tu grupo"</string>
@@ -413,10 +415,10 @@ versión: %2$s
     <string name="failed_create_group">"No se pudo crear el grupo, inténtalo más tarde"</string>
     <string name="group_remove_member">"Eliminar"</string>
     <string name="group_promote_to_admin">"Designar como administrador"</string>
-    <string name="promote_admin_in_progress">"Designando como administrador"</string>
+    <string name="promote_admin_in_progress">"Designando como administrador…"</string>
     <string name="failed_promote_admin">"No se pudo designar como administrador, inténtalo más tarde"</string>
     <string name="group_demote_from_admin">"Descartar como administrador"</string>
-    <string name="demote_admin_in_progress">"Descartando al administrador"</string>
+    <string name="demote_admin_in_progress">"Descartando al administrador…"</string>
     <string name="failed_demote_admin">"No se pudo descartar al administrador, inténtalo más tarde"</string>
     <string name="remove_member_in_progress">"Eliminando a un participante…"</string>
     <string name="failed_remove_member">"No se pudo eliminar al participante, inténtalo más tarde"</string>
@@ -465,7 +467,7 @@ versión: %2$s
     <string name="blocking_user_successful">"Has bloqueado a %s"</string>
     <string name="blocking_user_in_progress">"Bloqueando a %s…"</string>
     <string name="unblocking_user_successful">"Desbloqueado %s"</string>
-    <string name="unblocking_user_failed_check_internet">"No pudiste desbloquear a %s. Revisa tu Internet e inténtalo de nuevo."</string>
+    <string name="unblocking_user_failed_check_internet">"No pudiste desbloquear a %s. Revisa tu conexión a Internet e inténtalo de nuevo."</string>
     <string name="unblocking_user_in_progress">"Desbloqueando a %s…"</string>
     <string name="are_you_sure_dialog_title">"¿Estás seguro?"</string>
     <string name="hide_future_posts_confirmation">"¿Estás seguro que quieres ocultar todas tus publicaciones futuras de %s? Siempre puedes cambiar esto después."</string>
@@ -579,7 +581,7 @@ versión: %2$s
     <string name="group_invite_via_link">"Invitar al grupo mediante enlace"</string>
 
     <!-- Shown below on seen by to explain that posts disappear -->
-    <string name="seen_by_post_expiration_notice">"Tus publicaciones desaparecerán después de 30 días."</string>
+    <string name="seen_by_post_expiration_notice">"Tus publicaciones se borrarán después de 30 días."</string>
 
     <!-- Frequently asked questions option in help menu -->
     <string name="faq">"Preguntas frecuentes"</string>
@@ -602,7 +604,7 @@ versión: %2$s
     <string name="manage_storage_button">"Gestionar almacenamiento"</string>
 
     <!-- Message that's displayed if user has low storage -->
-    <string name="low_storage_msg">"Tu teléfono se está quedando sin almacenamiento. Para poder usar HalloApp libera algo de espacio en el teléfono"</string>
+    <string name="low_storage_msg">"Tu teléfono se está quedando sin almacenamiento. Para poder usar HalloApp libera algo de espacio en este teléfono."</string>
     <plurals name="seen_by_people">
         <item quantity="one">"Visto por %d persona"</item>
         <item quantity="other">"Visto por %d personas"</item>
@@ -683,13 +685,13 @@ Abre la pantalla de ajustes de la aplicación para modificar los permisos."</str
     <string name="e2e_notice">"Las conversaciones están encriptadas de extremo a extremo y HalloApp no tiene acceso a ellas. Selecciona para saber más."</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
-    <string name="view_safety_number">"Ver cifras de seguridad"</string>
+    <string name="view_safety_number">"Ver claves de seguridad"</string>
 
     <!-- Shown as title of key verification activity -->
-    <string name="verify_safety_number">"Verificar cifras de seguridad"</string>
+    <string name="verify_safety_number">"Verificar claves de seguridad"</string>
 
     <!-- Shown when user has contact permissions disabled on the home feed -->
-    <string name="enable_contacts_rationale">"Consigue actualizaciones de amigos y familia al conectar los permisos"</string>
+    <string name="enable_contacts_rationale">"Consigue actualizaciones de amigos y familia al conectar los permisos de contactos"</string>
 
     <!-- Button that takes users to system settings -->
     <string name="go_to_settings">"Ir a configuración"</string>
@@ -743,5 +745,39 @@ Abre la pantalla de ajustes de la aplicación para modificar los permisos."</str
     <string name="voice_note_record_audio_permission_rationale_denied">"Para grabar notas de voz necesitamos permiso para acceder a tu micrófono.
 
 Abre la pantalla de configuración para modificar los permisos de la aplicación."</string>
+
+    <!-- Activity center item when someone replies. %1$s is the person, %2$s is their comment preview -->
+    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; respondió: %2$s"</string>
+
+    <!-- Activity center item when someone comments. %1$s is the person, %2$s is their comment preview -->
+    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; comentó: %2$s
+"</string>
+
+    <!-- Activity center item when non-contacts comment on your post -->
+    <plurals name="commented_on_your_post_grouped">
+        <item quantity="one">"Otro &lt;b&gt;%1$s&lt;/b&gt; comentó en tu publicación"</item>
+        <item quantity="other">"Otros &lt;b&gt;%1$s&lt;/b&gt; comentaron en tu publicación"</item>
+    </plurals>
+
+    <!-- Activity center item when non-contacts comment on someones post -->
+    <plurals name="commented_on_someones_post_grouped">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;  persona más comentó en la publicación de &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;  otras personas más comentaron en la publicación de &lt;b&gt;%2$s&lt;/b&gt;"</item>
+    </plurals>
+
+    <!-- Shown when an archived post's photo thumbnail can't be loaded -->
+    <string name="couldnt_load_thumbnail">"No se pudo cargar imagen en miniatura"</string>
+
+    <!-- Button for user to re-share old posts which have expired -->
+    <string name="reshare_post">"Compartir de nuevo la publicación"</string>
+
+    <!-- Button for going to utility for viewing expired posts -->
+    <string name="archived_posts">"Publicaciones archivadas"</string>
+
+    <!-- Title of utility for viewing expired posts -->
+    <string name="archive">"Archivo"</string>
+
+    <!-- Label displaying the date when a post expired -->
+    <string name="archived_on">"Archivo %s"</string>
 </resources>
 

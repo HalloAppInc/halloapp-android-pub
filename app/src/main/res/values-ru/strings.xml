@@ -58,6 +58,8 @@
     <string name="invalid_phone_number">"Неверный номер телефона"</string>
     <string name="share_option_post">"Пост"</string>
     <string name="share_option_message">"Сообщение"</string>
+
+    <!-- Fuzzy -->
     <plurals name="max_post_media_items">
         <item quantity="one">"Вы можете выбрать до %d элемента в сообщении"</item>
         <item quantity="few">"Вы можете выбрать до %d элементов в сообщении"</item>
@@ -90,12 +92,12 @@
     <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; упомянул(а) вас в своем посте"</string>
     <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; упомянул(а) вас в комментарии к вашему посту"</string>
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; упомянул(а) вас в комментарии к своему посту"</string>
-    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; упомянул(а) вас в комментарии к посту пользователя &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%s&lt;/b&gt; упомянул(а) вас в комментарии к посту пользователя &lt;b&gt;%2$s&lt;/b&gt;"</string>
     <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; прокомментировал(а) ваш пост"</string>
     <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; прокомментировали ваш пост"</string>
     <string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и &lt;b&gt;%3$s&lt;/b&gt; прокомментировали ваш пост"</string>
     <plurals name="commented_on_your_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и еще   %3$d человек прокомментировали ваш пост"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человек прокомментировали ваш пост"</item>
         <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и еще   %3$d человека прокомментировали ваш пост"</item>
         <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и еще   %3$d человек прокомментировали ваш пост"</item>
         <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и еще   %3$d человек прокомментировали ваш пост"</item>
@@ -204,13 +206,13 @@
     <string name="retract_post_confirmation">"Хочешь удалить свой пост?"</string>
     <string name="retract_comment_confirmation">"Хочешь удалить свой комментарий?"</string>
     <plurals name="delete_chats_confirmation">
-        <item quantity="one">"Хочешь удалить этот чат?"</item>
+        <item quantity="one">"Хотите удалить этот чат?"</item>
         <item quantity="few">"Хочешь удалить %d выбранных чата?"</item>
         <item quantity="many">"Хочешь удалить %d выбранных чатов?"</item>
         <item quantity="other">"Хочешь удалить %d выбранных чатов?"</item>
     </plurals>
     <plurals name="delete_groups_confirmation">
-        <item quantity="one">"Хочешь удалить эту группу?"</item>
+        <item quantity="one">"Хотите удалить эту группу?"</item>
         <item quantity="few">"Хочешь удалить %d выбранные группы?"</item>
         <item quantity="many">"Хочешь удалить %d выбранных групп?"</item>
         <item quantity="other">"Хочешь удалить %d выбранных групп?"</item>
@@ -259,9 +261,7 @@
     <string name="action_save">"Сохранить"</string>
     <string name="invite_friends">"Пригласить друзей и семью"</string>
     <string name="invite_friend_chooser_title">"Пригласить %s"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_text_with_name_and_number">"Привет, %1$s, приглашаю тебя присоединиться ко мне в HalloApp (простое социальное приложение для того, чтобы делиться повседневными впечатлениями). Используй %2$s для регистрации. Скачай на halloapp.com/dl"</string>
+    <string name="invite_text_with_name_and_number">"Привет, %1$s, приглашаю тебя присоединиться ко мне в HalloApp (простое социальное приложение для того, чтобы делиться повседневными впечатлениями). Используй %2$ для регистрации. Скачай на halloapp.com/dl"</string>
     <string name="name_hint">"Твое имя"</string>
     <string name="name_must_be_specified">"Нужно указать имя"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -714,5 +714,42 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="voice_note_record_audio_permission_rationale_denied">"Для записи голосовых заметок нам нужно разрешение на доступ к микрофону.
 
 Откройте экран настроек приложения, чтобы изменить разрешения приложения."</string>
+
+    <!-- Activity center item when someone replies. %1$s is the person, %2$s is their comment preview -->
+    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; replied: %2$s"</string>
+
+    <!-- Activity center item when someone comments. %1$s is the person, %2$s is their comment preview -->
+    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; commented: %2$s"</string>
+
+    <!-- Activity center item when non-contacts comment on your post -->
+    <plurals name="commented_on_your_post_grouped">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
+    </plurals>
+
+    <!-- Activity center item when non-contacts comment on someones post -->
+    <plurals name="commented_on_someones_post_grouped">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
+        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
+        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
+    </plurals>
+
+    <!-- Shown when an archived post's photo thumbnail can't be loaded -->
+    <string name="couldnt_load_thumbnail">"Couldn't load thumbnail"</string>
+
+    <!-- Button for user to re-share old posts which have expired -->
+    <string name="reshare_post">"Reshare post"</string>
+
+    <!-- Button for going to utility for viewing expired posts -->
+    <string name="archived_posts">"Archived Posts"</string>
+
+    <!-- Title of utility for viewing expired posts -->
+    <string name="archive">"Archive"</string>
+
+    <!-- Label displaying the date when a post expired -->
+    <string name="archived_on">"Archived %s"</string>
 </resources>
 

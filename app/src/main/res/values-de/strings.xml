@@ -69,6 +69,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="share_option_message">"Nachricht"</string>
 
     <!-- pls provide more details -->
+    <!-- Fuzzy -->
     <plurals name="max_post_media_items">
         <item quantity="one">"Du kannst %d Objekt pro Beitrag auswählen"</item>
         <item quantity="other">"Du kannst bis zu %d Objekte pro Beitrag auswählen"</item>
@@ -111,10 +112,8 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; hat deinen Beitrag kommentiert"</string>
     <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; und &lt;b&gt;%2$s&lt;/b&gt; haben deinen Beitrag kommentiert"</string>
     <string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und &lt;b&gt;%3$s&lt;/b&gt; haben deinen Beitrag kommentiert"</string>
-
-    <!-- Fuzzy -->
     <plurals name="commented_on_your_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und  %3$d weitere Person haben deinen Beitrag kommentiert"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und %3$d weitere Person haben deinen Beitrag kommentiert"</item>
         <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; und %3$d weitere Personen haben deinen Beitrag kommentiert"</item>
     </plurals>
     <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; hat &lt;b&gt;%2$s&lt;/b&gt;'s Beitrag kommentiert"</string>
@@ -221,7 +220,6 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     </plurals>
 
     <!-- Changed group to chat -->
-    <!-- Fuzzy -->
     <string name="delete_chat_confirmation">"Möchtest du diesen Chat löschen?"</string>
     <string name="yes">"Ja"</string>
     <string name="no">"Nein"</string>
@@ -272,8 +270,6 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="action_save">"Speichern"</string>
     <string name="invite_friends">"Freunde &amp; Familie einladen"</string>
     <string name="invite_friend_chooser_title">"%s einladen"</string>
-
-    <!-- Fuzzy -->
     <string name="invite_text_with_name_and_number">"Hallo %1$s, ich lade dich ein, dich auch bei HalloApp anzumelden. Eine einfache Social-App, um alltägliche Momente zu teilen. Nutze %2$s zur Registrierung und hol sie dir auf halloapp.com/dl"</string>
     <string name="name_hint">"Dein Name"</string>
     <string name="name_must_be_specified">"Name muss angegeben werden"</string>
@@ -284,12 +280,9 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="failed_update_profile">"Fehler bei der Aktualisierung des Profils, probiere es später noch einmal"</string>
     <string name="profile_updated">"Profil wurde aktualisiert"</string>
     <string name="flip">"Drehen"</string>
-
-    <!-- Fuzzy -->
     <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
 
     <!-- How will it look like? Text will be above the dotted line? -->
-    <!-- Fuzzy -->
     <string name="email_logs_text">"
 ----------------------------------------
 Bitte oberhalb das Problem beschreiben.
@@ -563,7 +556,7 @@ Version: %2$s
 
     <!-- Shown below on seen by to explain that posts disappear -->
     <!-- Fuzzy -->
-    <string name="seen_by_post_expiration_notice">"Deine Beiträge werden nach 30 Tagen gelöscht."</string>
+    <string name="seen_by_post_expiration_notice">"Deine Beiträge sind 30 Tage sichtbar."</string>
 
     <!-- Frequently asked questions option in help menu -->
     <string name="faq">"FAQ"</string>
@@ -722,12 +715,45 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="no_longer_group_member">"Du bist kein Mitglied dieser Gruppe mehr"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes -->
-    <string name="voice_note_record_audio_permission_rationale">"Um Sprachnotizen aufzunehmen, benötigen wir die Erlaubnis, auf das Mikrofon zuzugreifen"</string>
+    <string name="voice_note_record_audio_permission_rationale">"Zur Aufnahme von Sprachnotizen benötigen wir deine Erlaubnis, um auf das Mikrofon zugreifen zu können"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
     <string name="voice_note_record_audio_permission_rationale_denied">"Zur Aufnahme von Sprachnotizen benötigen wir deine Erlaubnis, um auf das Mikrofon zugreifen zu können.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern.
 "</string>
+
+    <!-- Activity center item when someone replies. %1$s is the person, %2$s is their comment preview -->
+    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; antwortete: %2$s"</string>
+
+    <!-- Activity center item when someone comments. %1$s is the person, %2$s is their comment preview -->
+    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; kommentierte: %2$s"</string>
+
+    <!-- Activity center item when non-contacts comment on your post -->
+    <plurals name="commented_on_your_post_grouped">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; andere Person hat deinen Beitrag kommentiert"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; andere Personen haben deinen Beitrag kommentiert"</item>
+    </plurals>
+
+    <!-- Activity center item when non-contacts comment on someones post -->
+    <plurals name="commented_on_someones_post_grouped">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; andere Personen hat &lt;b&gt;%2$s&lt;/b&gt;'s Beitrag kommentiert"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; andere Personen haben &lt;b&gt;%2$s&lt;/b&gt;'s Beitrag kommentiert"</item>
+    </plurals>
+
+    <!-- Shown when an archived post's photo thumbnail can't be loaded -->
+    <string name="couldnt_load_thumbnail">"Miniaturansicht konnte nicht geladen werden"</string>
+
+    <!-- Button for user to re-share old posts which have expired -->
+    <string name="reshare_post">"Beitrag erneut teilen"</string>
+
+    <!-- Button for going to utility for viewing expired posts -->
+    <string name="archived_posts">"Archivierte Beiträge"</string>
+
+    <!-- Title of utility for viewing expired posts -->
+    <string name="archive">"Archiv"</string>
+
+    <!-- Label displaying the date when a post expired -->
+    <string name="archived_on">"Archiviert %s"</string>
 </resources>
 

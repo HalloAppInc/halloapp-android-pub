@@ -62,6 +62,8 @@
     <string name="invalid_phone_number">"अवैध फोन नंबर"</string>
     <string name="share_option_post">"पोस्ट"</string>
     <string name="share_option_message">"संदेश"</string>
+
+    <!-- Fuzzy -->
     <plurals name="max_post_media_items">
         <item quantity="one">"आप प्रति पोस्ट पर %d आइटम का चयन कर सकते हैं "</item>
         <item quantity="other">"आप प्रति पोस्ट पर %d आइटम का चयन कर सकते हैं"</item>
@@ -672,5 +674,38 @@ Open the app settings screen to modify app permissions."</string>
     <string name="voice_note_record_audio_permission_rationale_denied">"To record voice notes we need permission to access the microphone.
 
 Open the app settings screen to modify app permissions."</string>
+
+    <!-- Activity center item when someone replies. %1$s is the person, %2$s is their comment preview -->
+    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; replied: %2$s"</string>
+
+    <!-- Activity center item when someone comments. %1$s is the person, %2$s is their comment preview -->
+    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; commented: %2$s"</string>
+
+    <!-- Activity center item when non-contacts comment on your post -->
+    <plurals name="commented_on_your_post_grouped">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
+    </plurals>
+
+    <!-- Activity center item when non-contacts comment on someones post -->
+    <plurals name="commented_on_someones_post_grouped">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
+    </plurals>
+
+    <!-- Shown when an archived post's photo thumbnail can't be loaded -->
+    <string name="couldnt_load_thumbnail">"Couldn't load thumbnail"</string>
+
+    <!-- Button for user to re-share old posts which have expired -->
+    <string name="reshare_post">"Reshare post"</string>
+
+    <!-- Button for going to utility for viewing expired posts -->
+    <string name="archived_posts">"Archived Posts"</string>
+
+    <!-- Title of utility for viewing expired posts -->
+    <string name="archive">"Archive"</string>
+
+    <!-- Label displaying the date when a post expired -->
+    <string name="archived_on">"Archived %s"</string>
 </resources>
 
