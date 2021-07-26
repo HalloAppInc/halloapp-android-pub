@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="app_name">"HalloAppli"</string>
+    <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Accueil"</string>
     <string name="title_messages">"Discussions"</string>
     <string name="title_profile">"Profil"</string>
