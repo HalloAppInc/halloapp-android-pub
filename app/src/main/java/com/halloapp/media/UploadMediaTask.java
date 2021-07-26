@@ -376,9 +376,12 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                 Log.e("Resumable Uploader Task convert: failed to rename " + file.getAbsolutePath() + " to " + media.file.getAbsolutePath());
             }
         }
-        if (media.type == Media.MEDIA_TYPE_VIDEO) {
-            MediaUtils.reconstructVideoContainer(media.file);
-        }
+
+        // Temporary disable until #647 and #654 are fixed and streaming uploads are ready for testing.
+        //
+        // if (media.type == Media.MEDIA_TYPE_VIDEO) {
+        //     MediaUtils.reconstructVideoContainer(media.file);
+        // }
     }
 
     public static void restartUpload(@NonNull ContentItem contentItem, @NonNull FileStore fileStore, @NonNull ContentDb contentDb, @NonNull Connection connection){
