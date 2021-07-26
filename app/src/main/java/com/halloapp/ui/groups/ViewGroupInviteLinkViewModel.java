@@ -16,9 +16,12 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
+import com.halloapp.proto.server.GroupInviteLink;
 import com.halloapp.registration.CheckRegistration;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.xmpp.IqErrorException;
 import com.halloapp.xmpp.groups.GroupsApi;
+import com.halloapp.xmpp.util.IqResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,10 +70,14 @@ public class ViewGroupInviteLinkViewModel extends AndroidViewModel{
         return inviteLinkPreview;
     }
 
-    public LiveData<Boolean> joinGroup() {
-        MutableLiveData<Boolean> requestLiveData = new MutableLiveData<>();
+    public LiveData<IqResult<GroupInviteLink>> joinGroup() {
+        MutableLiveData<IqResult<GroupInviteLink>> requestLiveData = new MutableLiveData<>();
         groupsApi.joinGroupViaInviteLink(linkCode).onResponse(requestLiveData::postValue).onError(e -> {
-            requestLiveData.postValue(false);
+            if (e instanceof IqErrorException) {
+                requestLiveData.postValue(new IqResult<>(((IqErrorException) e).getReason()));
+            } else {
+                requestLiveData.postValue(new IqResult<>());
+            }
         });
         return requestLiveData;
     }

@@ -12,8 +12,10 @@ import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.server.GroupInviteLink;
 import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
+import com.halloapp.proto.server.Iq;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.HalloIq;
+import com.halloapp.xmpp.util.IqResult;
 import com.halloapp.xmpp.util.Observable;
 
 import java.util.ArrayList;
@@ -145,15 +147,15 @@ public class GroupsApi {
         return connection.sendIqRequest(requestIq).map(response -> response.getGroupStanza() != null);
     }
 
-    public Observable<Boolean> joinGroupViaInviteLink(@NonNull String code) {
+    public Observable<IqResult<GroupInviteLink>> joinGroupViaInviteLink(@NonNull String code) {
         final JoinGroupInviteLinkIq requestIq = new JoinGroupInviteLinkIq(code);
 
         return connection.sendIqRequest(requestIq).map(response -> {
             GroupInviteLink groupInviteLink = response.getGroupInviteLink();
             if (groupInviteLink == null) {
-                return false;
+                return new IqResult<>();
             }
-            return true;
+            return new IqResult<>(groupInviteLink);
         });
     }
 

@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,20 +21,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
-import com.halloapp.contacts.ContactLoader;
 import com.halloapp.groups.GroupInfo;
+import com.halloapp.groups.GroupsSync;
 import com.halloapp.groups.MemberInfo;
-import com.halloapp.id.UserId;
+import com.halloapp.id.GroupId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.InitialSyncActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.CenterToast;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -42,15 +41,12 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
     private ViewGroupInviteLinkViewModel viewModel;
 
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
-    private ContactLoader contactLoader;
 
     private ContactsAdapter contactsAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        contactLoader = new ContactLoader();
 
         getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
 
@@ -94,6 +90,11 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
 
         View linkPreviewContainer = findViewById(R.id.link_preview_container);
 
+        Button cancel = findViewById(R.id.cancel);
+        cancel.setOnClickListener(v -> {
+            finish();
+        });
+
         View joinGroup = findViewById(R.id.join_group);
         joinGroup.setOnClickListener(v -> {
             progressContainer.setVisibility(View.VISIBLE);
@@ -104,18 +105,28 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
                 if (result == null) {
                     return;
                 }
-                if (result) {
-                    startActivity(ViewGroupFeedActivity.viewFeed(this, viewModel.getInvitePreview().getValue().groupInfo.groupId));
+                if (result.isSuccess()) {
                     finish();
+                    startActivity(ViewGroupFeedActivity.viewFeed(this, new GroupId(result.getResult().getGid())));
                 } else {
-                    CenterToast.show(this, R.string.invite_link_failed_to_join);
-                    finish();
+                    progressContainer.setVisibility(View.INVISIBLE);
+                    errorMessage.setVisibility(View.VISIBLE);
+                    cancel.setText(getString(R.string.ok));
+                    if ("max_group_size".equals(result.getError())) {
+                        errorMessage.setText(getString(R.string.invite_link_failed_to_join_full));
+                    } else if ("invalid_invite".equals(result.getError())) {
+                        errorMessage.setText(getString(R.string.invite_link_failed_to_join_invalid));
+                    } else if ("already_member".equals(result.getError())) {
+                        GroupsSync.getInstance(this).forceGroupSync();
+                        startActivity(ViewGroupFeedActivity.viewFeed(this, viewModel.getInvitePreview().getValue().groupInfo.groupId));
+                    } else if ("admin_removed".equals(result.getError())) {
+                        errorMessage.setText(getString(R.string.invite_link_failed_to_join_removed));
+                    } else {
+                        CenterToast.show(this, R.string.invite_link_failed_to_join);
+                        finish();
+                    }
                 }
             });
-        });
-        View cancel = findViewById(R.id.cancel);
-        cancel.setOnClickListener(v -> {
-            finish();
         });
 
 
