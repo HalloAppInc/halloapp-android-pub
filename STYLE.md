@@ -85,12 +85,17 @@ the code they describe
 - Wildcard imports are not allowed
 - Generated code and written code should not be updated in the same commit
 - Strings with more than one argument must use positional placeholders (e.g. "%1$s: %2$d")
+- Prefer static methods for intent creation
+  - These methods should verify all arguments
+  - Prefer extras declared as `private static final`
+  - Mandatory arguments must be passed in through static methods
 
 ## Samples
 
 ```java
 package com.halloapp.test;
 
+import android.content.Context;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
@@ -100,12 +105,23 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.util.logs.Log;
 
 public abstract class TestActivity extends HalloActivity {
+
+    public static Intent open(@NonNull Context context, String testValue) {
+        Intent intent = new Intent(context, TestActivity.class);
+        intent.putExtra(EXTRA_TEST_VALUE, testValue);
+        return intent;
+    }
+
+    private static final String EXTRA_TEST_VALUE = "test_value";
+
     private static final int REQUEST_CODE_TEST = 1;
 
     private final String input;
 
     private final SingletonFoo singletonFoo = SingletonFoo.getInstance();
     private final SingletonFooTwo singletonFooTwo = SingletonFooTwo.getInstance();
+
+    private String testValue;
 
     public TestActivity(String input) {
         this.input = input;
@@ -114,6 +130,8 @@ public abstract class TestActivity extends HalloActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        testValue = getIntent().getStringExtra(EXTRA_TEST_VALUE);
     }
 
     public static final Boolean wayTooManyArgs(
