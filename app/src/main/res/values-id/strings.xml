@@ -1,0 +1,677 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">"HalloApp"</string>
+    <string name="title_home">"Home"</string>
+    <string name="title_messages">"Chats"</string>
+    <string name="title_profile">"Profile"</string>
+    <string name="title_groups">"Groups"</string>
+    <string name="comment">"Comment"</string>
+    <string name="next">"Next"</string>
+    <string name="message">"Message"</string>
+    <string name="add_post">"Add post"</string>
+    <string name="new_chat">"New chat"</string>
+    <string name="new_group">"New group"</string>
+    <string name="notifications">"Notifications"</string>
+    <string name="feed_notifications_channel_name">"Feed notifications"</string>
+    <string name="message_notifications_channel_name">"Message notifications"</string>
+    <string name="critical_notifications_channel_name">"Critical app alerts"</string>
+    <string name="invite_notifications_channel_name">"Invite notifications"</string>
+    <string name="invite_notification_text">"%s just accepted your invite to join HalloApp &#x1f389;"</string>
+    <string name="me">"Me"</string>
+    <string name="you">"You"</string>
+    <string name="camera_post">"Camera"</string>
+    <string name="gallery_post">"Gallery"</string>
+    <string name="text_post">"Text"</string>
+    <string name="bad_image">"Unsupported media type"</string>
+    <string name="time_diff_now">"Now"</string>
+    <string name="phone_number_hint">"Phone number"</string>
+    <string name="request_registration_title">"Welcome!"</string>
+    <string name="reverify_registration_title">"Please, re-verify your phone number"</string>
+    <string name="request_registration_subtitle">"You will receive a verification code.
+Carrier rates may apply."</string>
+    <string name="verify_registration_title">"Enter the code we sent to
+%s"</string>
+    <string name="contact_permission_title">"One last thing"</string>
+    <string name="registration_code_invalid">"Invalid registration code, try again"</string>
+    <string name="registration_failed">"Failed to register phone number, try again"</string>
+    <string name="registration_failed_no_friends">"We are currently invite only. If you have a friend or family member who uses HalloApp, ask them to invite you using your phone number."</string>
+    <string name="registration_failed_no_friends_title">"Shucks!"</string>
+    <string name="type_a_message_hint">"Type a message"</string>
+    <string name="write_a_description">"Write a description"</string>
+    <string name="write_a_post">"Write a post"</string>
+    <string name="send">"Send"</string>
+    <string name="set_avatar_done">"Done"</string>
+    <string name="set_avatar_reset">"Reset"</string>
+    <string name="new_post">"New post"</string>
+    <string name="new_message">"New message"</string>
+    <string name="chat_message_attribution">"%1$s: %2$s"</string>
+    <string name="empty_chat_with_name_placeholder">"%s is on HalloApp."</string>
+    <string name="new_chat_name_placeholder">"%s is using HalloApp! &#x1f389;"</string>
+    <string name="posts_empty">"Your posts will appear here"</string>
+    <string name="posts_exchange_numbers">"To connect you must exchange phone numbers"</string>
+    <string name="home_page_empty">"Posts from your contacts will appear here"</string>
+    <string name="chats_page_empty">"Contacts and messages will appear here"</string>
+    <string name="chats_search_empty">"No chats found for '%s'"</string>
+    <string name="groups_page_empty">"Your groups will appear here"</string>
+    <string name="groups_search_empty">"No groups found for '%s'"</string>
+    <string name="contact_profile_empty">"%s's posts will appear here"</string>
+    <string name="invalid_phone_number">"Invalid phone number"</string>
+    <string name="share_option_post">"Post"</string>
+    <string name="share_option_message">"Message"</string>
+    <plurals name="max_post_media_items">
+        <item quantity="other">"You can select up to %d media item per post"</item>
+    </plurals>
+    <string name="camera_record_audio_permission_rationale">"To take photos and record videos we need permission to access the camera and record audio on your device"</string>
+    <string name="camera_record_audio_permission_rationale_denied">"To take photos and record videos we need permission to access the camera and record audio on your device.
+
+Open the app settings screen to modify app permissions."</string>
+    <string name="contacts_permission_rationale">"To connect with your friends and family we need permission to access contacts on your device"</string>
+    <string name="contacts_permission_rationale_denied">"To connect with your friends and family we need permission to access contacts on your device.
+
+Open the app settings screen to modify app permissions."</string>
+    <string name="storage_permission_rationale">"To pick media we need permission to access your device storage"</string>
+    <string name="storage_permission_rationale_denied">"To pick media we need permission to access your device storage.
+
+Open the app settings screen to modify app permissions."</string>
+    <string name="retry">"Retry"</string>
+    <string name="contact_rationale_upload">"In order to connect you with your friends and family we’ll need your permission to access your contacts. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
+    <string name="failed_to_initialize">"Failed to initialize"</string>
+    <string name="type_a_comment_hint">"Add a comment"</string>
+    <string name="comments">"Comments"</string>
+    <string name="reply">"Reply"</string>
+    <string name="close">"Close"</string>
+    <string name="reply_to_self">"Reply to myself"</string>
+    <string name="reply_to_contact">"Reply to %s"</string>
+    <string name="reply_original_not_found">"Original message not found"</string>
+    <string name="reply_original_post_not_found">"Original post not found"</string>
+    <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in their post"</string>
+    <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in a comment on your post"</string>
+    <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in a comment on their post"</string>
+    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; mentioned you in a comment on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string>
+    <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; commented on your post"</string>
+    <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string>
+    <string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on your post"</string>
+    <plurals name="commented_on_your_post_4">
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
+    </plurals>
+    <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string>
+    <string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
+    <string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</string>
+    <plurals name="commented_on_someones_post_4">
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
+    </plurals>
+    <string name="contact_hashing_faq_dialog_title">"Your privacy is our priority"</string>
+    <string name="contact_hashing_faq_dialog_info">"HalloApp only uses the phone number field to match you with your friends on HalloApp, and does not capture any additional data from your contact book."</string>
+    <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; commented on their post"</string>
+    <string name="list_of_two">"%1$s and %2$s"</string>
+    <string name="list_of_many_start">"%s"</string>
+    <string name="list_of_many_middle">", %s"</string>
+    <string name="list_of_many_end">", and %s"</string>
+    <string name="no_activity">"No activity"</string>
+    <string name="failed_to_load_media">"Failed to load media"</string>
+    <string name="settings">"Settings"</string>
+    <string name="send_logs">"Share feedback &amp; logs"</string>
+    <string name="terms_of_service">"Terms of service"</string>
+    <string name="privacy_policy">"Privacy policy"</string>
+    <string name="settings_block_list">"Blocked contacts"</string>
+    <string name="settings_feed_privacy">"Posts"</string>
+    <string name="settings_privacy">"Privacy"</string>
+    <plurals name="contact_selection_subtitle">
+        <item quantity="other">"%d contact selected"</item>
+    </plurals>
+    <plurals name="contact_maximum_selection">
+        <item quantity="other">"You may select at most %d contact"</item>
+    </plurals>
+    <string name="no_contacts_selected_subtitle">"No contacts selected"</string>
+    <string name="help">"Help"</string>
+    <string name="about">"About"</string>
+    <string name="notify_posts">"Posts"</string>
+    <string name="notify_comments">"Comments"</string>
+    <string name="read_more">"read more"</string>
+    <string name="no_photos_or_videos_found">"No photos or videos found"</string>
+    <string name="gallery">"Gallery"</string>
+    <string name="avatar_picker_title">"Profile photo"</string>
+    <string name="group_avatar_picker_title">"Group avatar"</string>
+    <string name="other_media">"Other media"</string>
+    <string name="rotate">"Rotate"</string>
+    <string name="seen_by">"Seen by"</string>
+    <string name="empty_viewed_by">"No one has seen your post yet"</string>
+    <string name="options">"Options"</string>
+    <string name="block">"Block"</string>
+    <string name="play">"Play"</string>
+    <string name="new_posts">"New posts"</string>
+
+    <!-- Confirmation dialog message when user tries to exit with unsaved changes. Options are cancel (keep editing) and discard (exit). -->
+    <string name="alert_discard_changes_message">"Discard changes?"</string>
+
+    <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
+    <string name="action_discard">"Discard"</string>
+    <string name="new_post_notification">"New post from %s"</string>
+    <plurals name="new_posts_notification">
+        <item quantity="other">"%1$d new post from %2$s"</item>
+    </plurals>
+    <plurals name="new_messages_notification">
+        <item quantity="other">"%1$d message from %2$s"</item>
+    </plurals>
+    <plurals name="new_messages_separator">
+        <item quantity="other">"%d new message"</item>
+    </plurals>
+    <string name="new_comments_notification">"%s commented on your post"</string>
+    <string name="new_comments_on_multiple_posts_notification">"%s commented on your posts"</string>
+    <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
+    <string name="notification_app_expired_title">"HalloApp has expired"</string>
+    <string name="notification_app_expiration_body">"Please download the latest release"</string>
+    <plurals name="notification_app_expiration_days_left_title">
+        <item quantity="other">"HalloApp expires in %d day"</item>
+    </plurals>
+    <string name="app_expiration_download_button">"Download update"</string>
+    <string name="app_expired_explanation">"This version of HalloApp is too old and can no longer be used. Please go to the Google Play Store and download the latest release."</string>
+    <string name="app_expiration_no_play_store">"Google Play not installed"</string>
+    <string name="refresh_contacts">"Refresh contacts"</string>
+    <string name="post_retracted_with_name">"%s deleted their post"</string>
+    <string name="post_retracted_by_me">"You deleted your post"</string>
+    <string name="post_retracted_placeholder">"This post has been deleted"</string>
+    <string name="message_retracted_placeholder">"This message has been deleted"</string>
+    <string name="comment_retracted_placeholder">"This comment has been deleted"</string>
+    <string name="retract">"Delete"</string>
+    <string name="retract_post_confirmation">"Would you like to delete your post?"</string>
+    <string name="retract_comment_confirmation">"Would you like to delete your comment?"</string>
+    <plurals name="delete_chats_confirmation">
+        <item quantity="other">"Would you like to delete this chat?"</item>
+    </plurals>
+    <plurals name="delete_groups_confirmation">
+        <item quantity="other">"Would you like to delete this group?"</item>
+    </plurals>
+    <string name="delete_chat_confirmation">"Would you like to delete this chat?"</string>
+    <string name="yes">"Yes"</string>
+    <string name="no">"No"</string>
+    <string name="ok">"OK"</string>
+    <string name="activity">"Activity"</string>
+
+    <!-- In activity center, mark all comments/mentions as read -->
+    <string name="mark_all_read">"Read all"</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="login_failed_explanation">"Please, re-verify your phone number"</string>
+    <plurals name="app_expiration_days_left">
+        <item quantity="other">"This version of HalloApp will expire in %d day. Please go to the Google Play Store and download the latest release."</item>
+    </plurals>
+    <string name="could_not_set_avatar">"Please try a different image"</string>
+    <string name="pick_media">"Pick media"</string>
+    <string name="video">"Video"</string>
+    <string name="photo">"Photo"</string>
+    <string name="album">"Album"</string>
+    <string name="new_messages">"New messages"</string>
+    <string name="delete">"Delete"</string>
+    <string name="clear_chat">"Clear chat"</string>
+    <string name="view_profile">"View profile"</string>
+    <string name="action_hide">"Hide"</string>
+    <string name="hide_my_posts">"Hide my posts"</string>
+    <string name="my_posts">"My posts"</string>
+    <string name="last_seen">"Last seen %s"</string>
+    <string name="last_seen_less_minute">"Last seen less than a minute ago"</string>
+    <string name="online">"online"</string>
+    <string name="today">"Today"</string>
+    <string name="today_at_time">"Today at %s"</string>
+    <string name="yesterday">"Yesterday"</string>
+    <string name="yesterday_at_time">"Yesterday at %s"</string>
+    <string name="day_of_week_at_time">"%1$s at %2$s"</string>
+    <string name="unknown_contact">"Unknown contact"</string>
+    <string name="select_contact">"New message"</string>
+    <string name="search_contacts">"Search contacts"</string>
+    <string name="search">"Search"</string>
+    <string name="contact_search_empty">"Nothing found for '%s'"</string>
+    <string name="action_save">"Save"</string>
+    <string name="invite_friends">"Invite friends &amp; family"</string>
+    <string name="invite_friend_chooser_title">"Invite %s"</string>
+    <string name="invite_text_with_name_and_number">"Hey %1$s, I have an invite for you to join me on HalloApp - a real-relationship network for those closest to me. Use %2$s to register. Get it at https://halloapp.com/dl"</string>
+    <string name="name_hint">"Your name"</string>
+    <string name="name_must_be_specified">"Name must be specified"</string>
+    <string name="counter">"%1$d/%2$d"</string>
+    <string name="invite_pending">"Pending"</string>
+    <string name="failed_update_profile">"Failed to update profile, try again later"</string>
+    <string name="profile_updated">"Profile updated"</string>
+    <string name="flip">"Flip"</string>
+    <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
+    <string name="email_logs_text">"
+----------------------------------------
+Please describe the issue above.
+uid: %1$s
+version: %2$s
+----------------------------------------
+"</string>
+    <string name="share">"Share"</string>
+    <string name="unblock">"Unblock"</string>
+    <string name="unblock_user_confirmation">"Would you like to unblock %s?"</string>
+    <string name="menu_item_block_user">"Block user"</string>
+    <string name="picker_title_block_user">"Block user"</string>
+    <string name="cancel">"Cancel"</string>
+    <string name="group_subtitle">"tap here for group info"</string>
+    <string name="empty_block_list">"No blocked contacts"</string>
+    <string name="block_notification">"You blocked this contact. Tap to unblock"</string>
+    <string name="unblock_notification">"You unblocked this contact"</string>
+    <string name="system_message_group_created">"This group was created by %s"</string>
+    <string name="system_message_group_created_by_you">"This group was created by you"</string>
+    <string name="system_message_members_added">"%1$s added %2$s"</string>
+    <string name="system_message_members_added_by_you">"You added %s"</string>
+    <string name="system_message_members_removed">"%1$s removed %2$s"</string>
+    <string name="system_message_members_removed_by_you">"You removed %s"</string>
+    <string name="system_message_member_left">"%s left"</string>
+    <string name="system_message_member_you_left">"You left"</string>
+    <string name="system_message_members_promoted">"%1$s promoted %2$s to admin"</string>
+    <string name="system_message_members_promoted_by_you">"You promoted %s to admin"</string>
+    <string name="system_message_members_demoted">"%1$s demoted %2$s from admin"</string>
+    <string name="system_message_members_demoted_by_you">"You demoted %s from admin"</string>
+    <string name="system_message_member_auto_promoted">"%s was auto-promoted to admin"</string>
+    <string name="system_message_member_auto_promoted_you">"You were auto-promoted to admin"</string>
+    <string name="system_message_group_name_changed">"%1$s changed the group name to %2$s"</string>
+    <string name="system_message_group_name_changed_by_you">"You changed the group name to %s"</string>
+    <string name="system_message_group_avatar_changed">"%s changed the group avatar"</string>
+    <string name="system_message_group_avatar_changed_by_you">"You changed the group avatar"</string>
+    <string name="system_message_group_deleted">"%s deleted the group"</string>
+    <string name="system_message_group_deleted_by_you">"You deleted the group"</string>
+    <string name="system_post_group_created">"This group was created by %s"</string>
+    <string name="system_post_group_created_by_you">"This group was created by you"</string>
+    <string name="system_post_members_added">"%1$s added %2$s"</string>
+    <string name="system_post_members_added_by_you">"You added %s"</string>
+    <string name="system_post_members_removed">"%1$s removed %2$s"</string>
+    <string name="system_post_members_removed_by_you">"You removed %s"</string>
+    <string name="system_post_member_left">"%s left"</string>
+    <string name="system_post_member_you_left">"You left"</string>
+    <string name="system_post_members_promoted">"%1$s promoted %2$s to admin"</string>
+    <string name="system_post_members_promoted_by_you">"You promoted %s to admin"</string>
+    <string name="system_post_members_demoted">"%1$s demoted %2$s from admin"</string>
+    <string name="system_post_members_demoted_by_you">"You demoted %s from admin"</string>
+    <string name="system_post_member_auto_promoted">"%s was auto-promoted to admin"</string>
+    <string name="system_post_member_auto_promoted_you">"You were auto-promoted to admin"</string>
+    <string name="system_post_group_name_changed">"%1$s changed the group name to %2$s"</string>
+    <string name="system_post_group_name_changed_by_you">"You changed the group name to %s"</string>
+    <string name="system_post_group_avatar_changed">"%s changed the group avatar"</string>
+    <string name="system_post_group_avatar_changed_by_you">"You changed the group avatar"</string>
+    <string name="system_post_group_deleted">"%s deleted the group"</string>
+    <string name="system_post_group_deleted_by_you">"You deleted the group"</string>
+    <string name="group_info_title">"Group info"</string>
+    <string name="admin">"Admin"</string>
+    <string name="save">"Save"</string>
+    <string name="contact_picker_feed_except_title">"Hide posts from…"</string>
+    <string name="contact_picker_feed_only_title">"Share posts with…"</string>
+    <string name="setting_feed_privacy_title">"Who can see my posts"</string>
+    <string name="setting_feed_all">"My contacts"</string>
+    <string name="setting_feed_only">"Only share with…"</string>
+    <string name="setting_feed_except">"My contacts except…"</string>
+    <string name="feed_privacy_fail_to_load">"Failed to load privacy settings"</string>
+    <string name="feed_privacy_update_success">"Setting updated successfully"</string>
+    <string name="feed_privacy_update_failure">"Failed to update setting"</string>
+    <string name="invite_failed_internet">"Failed to send invite, check your internet and try again"</string>
+    <string name="invite_failed_no_invites">"Sorry you're out of invites, try again later"</string>
+    <string name="invite_failed_invalid_number">"That phone number is invalid"</string>
+    <string name="invite_failed_existing_user">"Your friend is already on HalloApp!"</string>
+    <string name="invite_failed_unknown">"Failed to send invite"</string>
+    <string name="invite_creation_in_progress">"Creating invite…"</string>
+    <string name="invite_info_fetch_internet">"Failed to retrieve invite info, check your internet and try again"</string>
+    <plurals name="invites_remaining">
+        <item quantity="other">"You have %s invite remaining this week"</item>
+    </plurals>
+    <string name="invite_friends_title">"Invite friends &amp; family"</string>
+    <string name="invite_title">"Invite"</string>
+    <string name="settings_invite_option">"Invite to HalloApp"</string>
+    <string name="invite_already_on_halloapp">"Already on HalloApp"</string>
+    <string name="invite_invalid_phone_number">"Invalid phone number"</string>
+    <string name="edit">"Edit"</string>
+    <string name="done">"Done"</string>
+    <string name="members_header">"Members (%s)"</string>
+    <string name="add_members">"Add members"</string>
+    <string name="add_members_in_progress">"Adding members…"</string>
+    <string name="failed_add_members">"Failed to add members, try again later"</string>
+    <string name="create_group_in_progress">"Creating group %s…"</string>
+    <string name="new_group_title">"Name your group"</string>
+    <string name="group_picker_title">"New group"</string>
+    <string name="button_create_group">"Create"</string>
+    <string name="group_name_hint">"Group name"</string>
+    <string name="failed_create_group">"Failed to create group, try again later"</string>
+    <string name="group_remove_member">"Remove"</string>
+    <string name="group_promote_to_admin">"Promote to admin"</string>
+    <string name="promote_admin_in_progress">"Promoting to admin…"</string>
+    <string name="failed_promote_admin">"Failed to promote admin, try again later"</string>
+    <string name="group_demote_from_admin">"Demote admin"</string>
+    <string name="demote_admin_in_progress">"Demoting admin…"</string>
+    <string name="failed_demote_admin">"Failed to demote admin, try again later"</string>
+    <string name="remove_member_in_progress">"Removing member…"</string>
+    <string name="failed_remove_member">"Failed to remove member, try again later"</string>
+    <string name="leave_group">"Leave group"</string>
+    <plurals name="leave_group_plural">
+        <item quantity="other">"Leave group"</item>
+    </plurals>
+    <string name="leave_group_confirmation">"Would you like to leave this group?"</string>
+    <plurals name="leave_multiple_groups_confirmation">
+        <item quantity="other">"Would you like to leave this group?"</item>
+    </plurals>
+    <string name="leave_group_in_progress">"Leaving group…"</string>
+    <plurals name="leave_groups_progress">
+        <item quantity="other">"Leaving group…"</item>
+    </plurals>
+    <string name="failed_leave_group">"Failed to leave group, try again later"</string>
+    <string name="delete_group">"Delete group"</string>
+    <plurals name="friends_on_halloapp">
+        <item quantity="other">"%d contact on HalloApp"</item>
+    </plurals>
+    <plurals name="settings_block_list_summary">
+        <item quantity="other">"%d contact"</item>
+    </plurals>
+    <string name="settings_block_list_none_summary">"None"</string>
+    <string name="settings_feed_contacts_summary">"My phone contacts"</string>
+    <plurals name="settings_feed_excluded_summary">
+        <item quantity="other">"%d contact excluded"</item>
+    </plurals>
+    <plurals name="settings_feed_selected">
+        <item quantity="other">"%d contact selected"</item>
+    </plurals>
+    <string name="settings_feed_selected_empty">"No contacts selected"</string>
+    <string name="settings_version_footer">"HalloApp Version %s"</string>
+    <string name="connectivity_info_airplane_mode">"Airplane mode on"</string>
+    <string name="connectivity_info_not_connected">"No network"</string>
+    <string name="blocking_user_failed_check_internet">"Couldn't block %s. Check your internet and try again."</string>
+    <string name="blocking_user_successful">"Blocked %s"</string>
+    <string name="blocking_user_in_progress">"Blocking %s…"</string>
+    <string name="unblocking_user_successful">"Unblocked %s"</string>
+    <string name="unblocking_user_failed_check_internet">"Couldn't unblock %s. Check your internet and try again."</string>
+    <string name="unblocking_user_in_progress">"Unblocking %s…"</string>
+    <string name="are_you_sure_dialog_title">"Are you sure?"</string>
+    <string name="hide_future_posts_confirmation">"Are you sure you want to hide all your future posts from %s? You can always change this later."</string>
+    <string name="feed_privacy_hide_success">"Feed privacy updated. Hiding posts from %s"</string>
+    <string name="feed_privacy_hide_failure">"Failed to update feed privacy, check your internet and try again"</string>
+    <string name="user_typing">"typing…"</string>
+    <string name="group_user_typing">"%s is typing…"</string>
+    <string name="group_many_users_typing">"multiple users typing…"</string>
+    <string name="camera_error_generic">"Camera failure."</string>
+    <string name="camera_error_photo">"Could not take a photo."</string>
+    <string name="camera_error_video">"Could not record a video."</string>
+    <plurals name="group_feed_members">
+        <item quantity="other">"%d member"</item>
+    </plurals>
+    <string name="composer_sharing_all_summary">"Sharing with my contacts"</string>
+    <string name="composer_sharing_except_summary">"Sharing with some of my contacts"</string>
+    <plurals name="composer_sharing_only_summary">
+        <item quantity="other">"Sharing with %d of my contacts"</item>
+    </plurals>
+    <string name="post_preview_no_caption">"%s shared a post"</string>
+    <string name="post_preview_with_caption">"%1$s: %2$s"</string>
+    <string name="composer_sharing_message">"Sending to %s"</string>
+    <string name="composer_sharing_post">"Sharing with %s"</string>
+    <plurals name="max_video_length">
+        <item quantity="other">"Your video is over %d second long. Please select another video or edit it."</item>
+    </plurals>
+    <string name="mute">"Mute"</string>
+    <string name="share_link">"Share link"</string>
+    <string name="copy_link">"Copy link"</string>
+    <string name="reset_link">"Reset link"</string>
+    <string name="view_group_invite_link_action">"View group invite"</string>
+    <string name="invite_link_resetting_progress">"Resetting link…"</string>
+    <string name="invite_link_reset">"Link reset"</string>
+    <string name="invite_link_reset_failed">"Failed to reset link"</string>
+    <string name="reset_invite_link_confirmation">"Would you like to reset the group invite link?"</string>
+    <string name="invite_link_joining">"Joining group…"</string>
+    <string name="invite_link_loading">"Loading group…"</string>
+    <string name="invite_link_copied">"Link copied!"</string>
+    <string name="invite_link_title">"Invite link"</string>
+    <string name="invite_link_summary">"Anyone with HalloApp can use this link to join this group."</string>
+    <string name="invite_link_failed_to_join">"Failed to join the group"</string>
+    <string name="join_group_action">"Join group"</string>
+    <string name="system_message_you_joined">"You joined the group via invite link"</string>
+    <string name="system_message_joined">"%s joined the group via invite link"</string>
+    <string name="post_preview_retracted">"%s deleted a post"</string>
+    <string name="system_message_group_bg_changed">"%s changed the background color"</string>
+    <string name="system_message_group_bg_changed_by_you">"You changed the background color"</string>
+    <string name="group_background_hint">"Background"</string>
+    <string name="group_background_saving_dialog">"Setting background…"</string>
+    <string name="group_background_save_failed">"Failed to set group background"</string>
+    <string name="group_background_save_success">"Group background updated"</string>
+    <string name="group_background_color">"Color"</string>
+    <string name="group_background_default">"Default"</string>
+    <string name="group_info_members">"Members (%d)"</string>
+    <string name="delete_message_confirmation">"Delete selected message?"</string>
+    <string name="retract_message_option">"Delete for everyone"</string>
+    <string name="delete_message_option">"Delete for me"</string>
+    <string name="contact_permissions_dialog_title">"Contacts"</string>
+    <string name="not_now">"Not now"</string>
+    <string name="continue_button">"Continue"</string>
+    <string name="invite_link_load_failed">"Failed to open group invite link"</string>
+    <string name="message_tombstone_placeholder">"Waiting for this message. This may take a while. &lt;a href=\"https://halloapp.com/help/\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="failed_no_longer_member">"You are no longer a member of this group"</string>
+
+    <!-- Placeholder when we do not understand the received message -->
+    <string name="message_upgrade_placeholder">"Your version of HalloApp does not support this type of message. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+
+    <!-- Placeholder when we do not understand the received post -->
+    <string name="post_upgrade_placeholder">"Your version of HalloApp does not support this type of post. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+
+    <!-- Placeholder when we do not understand the received comment -->
+    <string name="comment_upgrade_placeholder">"Your version of HalloApp does not support this type of comment. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+
+    <!-- message when user requests another SMS during registration -->
+    <string name="registration_sms_retry_progress">"Requesting new SMS code…"</string>
+
+    <!-- message when user requests a voice call -->
+    <string name="registration_phone_code_progress">"Requesting code via phone call…"</string>
+
+    <!-- button to request another sms code -->
+    <string name="resend_sms">"Resend SMS Code"</string>
+
+    <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
+    <string name="key_verification_success">"Verification succeeded"</string>
+
+    <!-- Shown when the information scanned from the QR code does not match what was expected, indicating the keys do not match -->
+    <string name="key_verification_failure">"Verification failed"</string>
+
+    <!-- Shown on the key verification screen indicating tapping on the QR code will open the scanner -->
+    <string name="key_verification_tap_to_scan">"Tap to scan"</string>
+
+    <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
+    <string name="key_verification_explanation">"To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. "<![CDATA[<a href="https://halloapp.com/help/">Learn more</a>]]>"."</string>
+
+    <!-- Button to expand seen by list to see more -->
+    <string name="view_more">"More"</string>
+
+    <!-- Button to manage your feed privacy settings -->
+    <string name="manage_feed_privacy">"Manage privacy"</string>
+
+    <!-- Button to invite a contact to a group with an invite link -->
+    <string name="group_invite_via_link">"Invite to group via link"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear -->
+    <string name="seen_by_post_expiration_notice">"Your posts will disappear after 30 days."</string>
+
+    <!-- Frequently asked questions option in help menu -->
+    <string name="faq">"FAQ"</string>
+
+    <!-- Shown in progress dialog when loading key verification info -->
+    <string name="key_verification_fetching_keys">"Fetching keys…"</string>
+
+    <!-- Shown when we fail to get key verification info -->
+    <string name="key_verification_key_fetch_failed">"Failed to fetch keys"</string>
+
+    <!-- Shown inline in a chat when the e2e keys securing the messages have changed, i.e. if the other user changes phones or reinstalls -->
+    <string name="system_message_keys_changed">"Security keys with %s changed"</string>
+
+    <!-- Shown on the key verification activity next to a switch where the user can keep track of whether they verified the identity of the other user -->
+    <string name="key_verification_switch_label">"Verified"</string>
+    <string name="action_add">"Add"</string>
+    <string name="video_countdown_message">"Recording will end in %s"</string>
+
+    <!-- Button takes user to settings to manage their storage -->
+    <string name="manage_storage_button">"Manage Storage"</string>
+
+    <!-- Message that's displayed if user has low storage -->
+    <string name="low_storage_msg">"Your phone is running low on storage.
+In order to use HalloApp please free some storage on this phone."</string>
+    <plurals name="seen_by_people">
+        <item quantity="other">"Seen by %d person"</item>
+    </plurals>
+
+    <!-- Text that provides context for a group invite link being shared -->
+    <string name="group_invite_link_context">"Click on this link to join my HalloApp group: %s"</string>
+    <string name="voice_note">"Voice note"</string>
+
+    <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
+This string is used in InviteContactsActivity.java line 160 to show the time that invites will be refreshed after invite count is 0
+example: More invites coming on [Saturday, June 19, 7:59 PM], where content in the brackets is displayed by %s -->
+    <string name="server_invite_refresh_time">"More invites coming on %s"</string>
+
+    <!-- Button text on profile of a user not in the user's contacts; tapping takes the user to the contacts app with data prefilled -->
+    <string name="add_to_contacts">"Add to contacts"</string>
+
+    <!-- Title shown when a user starts the account deletion process under 'account' -->
+    <string name="delete_account_title">"Delete account"</string>
+
+    <!-- Button text at bottom for user to confirm account deletion -->
+    <string name="delete_account_button">"Delete"</string>
+
+    <!-- Note at bottom of account deletion activity -->
+    <string name="delete_account_note">"This cannot be undone."</string>
+
+    <!-- Error message at bottom of account deletion screen when deletion fails -->
+    <string name="delete_account_failed">"Failed to delete account"</string>
+
+    <!-- Category in the top-level settings -->
+    <string name="settings_account">"Account"</string>
+
+    <!-- Shown for when a user wants to request to download all of their data in a GDPR-compliant manner -->
+    <string name="request_data_title">"Request my data"</string>
+
+    <!-- Explanation for why we need storage permissions when using save to gallery feature -->
+    <string name="save_to_gallery_storage_permission_rationale">"To save the media to the gallery we need permission to access your device storage"</string>
+
+    <!-- Explanation for why we need storage permissions when using save to gallery feature. This is used when the user needs to manually go to their settings -->
+    <string name="save_to_gallery_storage_permission_rationale_denied">"To save the media to the gallery we need permission to access your device storage.
+
+Open the app settings screen to modify app permissions."</string>
+
+    <!-- Message when we successfully save post media to gallery -->
+    <string name="media_saved_to_gallery">"Saved to gallery"</string>
+
+    <!-- Message when we failed to save post media to gallery -->
+    <string name="media_save_to_gallery_failed">"Failed to save to gallery"</string>
+
+    <!-- Menu option to delete a post -->
+    <string name="delete_post">"Delete post"</string>
+
+    <!-- Option to save a photo/video to the user's gallery -->
+    <string name="save_to_gallery">"Save to gallery"</string>
+
+    <!-- Title for the user's post -->
+    <string name="my_post">"My post"</string>
+
+    <!-- button to request registration code via phone call -->
+    <string name="request_call">"Request a Call"</string>
+
+    <!-- Shown on request page when there is not a known active request -->
+    <string name="request_data_button">"Request data"</string>
+
+    <!-- Shown as settings option title after the user has requested their data but before it is available for download; string param is date -->
+    <string name="data_available_at">"Data will be available on %s"</string>
+
+    <!-- Shown at top of data request page explaining the process -->
+    <string name="export_data_explanation">"Download a copy of all your user data stored on HalloApp's servers. This does not contain message or post content. &lt;a href=\"https://halloapp.com/help/\"&gt;Learn more&lt;/a&gt;"</string>
+
+    <!-- Shown when a request to the server for data export fails -->
+    <string name="request_export_data_failed">"Request failed"</string>
+
+    <!-- Button for exporting account information requested for download -->
+    <string name="export_account_data">"Export my data"</string>
+
+    <!-- Notification shown as if it were the first message in a chat -->
+    <string name="e2e_notice">"Chats are end-to-end encrypted and HalloApp does not have access to them. Tap to learn more."</string>
+
+    <!-- Shown on buttons for opening up the key verification activity -->
+    <string name="view_safety_number">"View safety number"</string>
+
+    <!-- Shown as title of key verification activity -->
+    <string name="verify_safety_number">"Verify safety number"</string>
+
+    <!-- Shown when user has contact permissions disabled on the home feed -->
+    <string name="enable_contacts_rationale">"Get updates from friends &amp; family by turning on contact permissions"</string>
+
+    <!-- Button that takes users to system settings -->
+    <string name="go_to_settings">"Go to settings"</string>
+
+    <!-- Text shown in activity center upon successful registration -->
+    <string name="welcome_notification">"Welcome to HalloApp! &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</string>
+
+    <!-- added new option for sharing -->
+    <string name="share_option_group">"Post to Group"</string>
+
+    <!-- A new label used as the title/label of the GroupPickerActivity -->
+    <string name="select_group">"Select group"</string>
+
+    <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
+    <string name="search_groups">"Search groups"</string>
+
+    <!-- Button for user to remove their profile photo and reset it to the default -->
+    <string name="remove_photo">"Remove Photo"</string>
+
+    <!-- Button for user to take a new photo to replace their profile photo -->
+    <string name="take_photo">"Take Photo"</string>
+
+    <!-- Button for user to select a new photo from their gallery to replace their profile photo -->
+    <string name="choose_photo">"Choose Photo"</string>
+
+    <!-- Label above the options for changing the profile photo -->
+    <string name="your_profile_photo">"Your profile photo"</string>
+
+    <!-- Text shown under progress bar when first setting up HalloApp -->
+    <string name="app_initializing">"Setting up HalloApp"</string>
+
+    <!-- Shown on a button in settings which shares text with a link to download HalloApp into any other app -->
+    <string name="settings_share_option">"Share HalloApp"</string>
+
+    <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
+    <string name="share_halloapp_text">"Join me on HalloApp, download for free at halloapp.com/dl"</string>
+
+    <!-- Dialog shown to user before requesting contact permissions -->
+    <string name="contact_permissions_request">"Allow HalloApp access to your contacts so you can send and receive updates"</string>
+
+    <!-- Dialog shown to user before requesting contact permissions, but user has previously denied them, so they must go to settings -->
+    <string name="contact_permissions_request_permanently_denied">"Allow HalloApp access to your contacts so you can send and receive updates. Tap Settings &gt; Permissions, and turn Contacts on"</string>
+
+    <!-- Banner explaining why user can't leave a comment in a group they've left -->
+    <string name="no_longer_group_member">"You're no longer a member of this group"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice notes -->
+    <string name="voice_note_record_audio_permission_rationale">"To record voice notes we need permission to access the microphone"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
+    <string name="voice_note_record_audio_permission_rationale_denied">"To record voice notes we need permission to access the microphone.
+
+Open the app settings screen to modify app permissions."</string>
+
+    <!-- Activity center item when someone replies. %1$s is the person, %2$s is their comment preview -->
+    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; replied: %2$s"</string>
+
+    <!-- Activity center item when someone comments. %1$s is the person, %2$s is their comment preview -->
+    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; commented: %2$s"</string>
+
+    <!-- Activity center item when non-contacts comment on your post -->
+    <plurals name="commented_on_your_post_grouped">
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
+    </plurals>
+
+    <!-- Activity center item when non-contacts comment on someones post -->
+    <plurals name="commented_on_someones_post_grouped">
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
+    </plurals>
+
+    <!-- Shown when an archived post's photo thumbnail can't be loaded -->
+    <string name="couldnt_load_thumbnail">"Couldn't load thumbnail"</string>
+
+    <!-- Button for user to re-share old posts which have expired -->
+    <string name="reshare_post">"Reshare post"</string>
+
+    <!-- Button for going to utility for viewing expired posts -->
+    <string name="archived_posts">"Archived Posts"</string>
+
+    <!-- Title of utility for viewing expired posts -->
+    <string name="archive">"Archive"</string>
+
+    <!-- Label displaying the date when a post expired -->
+    <string name="archived_on">"Archived %s"</string>
+</resources>
+
