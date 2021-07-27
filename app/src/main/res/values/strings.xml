@@ -617,4 +617,8 @@
     <string name="archive">Archive</string>
     <!-- Label displaying the date when a post expired -->
     <string name="archived_on">Archived %s</string>
+    <!-- Message that's displayed after a user deletes their account -->
+    <string name="deletion_confirmation_message">Your halloapp account has been successfully deleted.</string>
+    <!-- Button that allows the user to return to registration after deleting their account -->
+    <string name="return_to_registration">Return to registration</string>
 </resources>

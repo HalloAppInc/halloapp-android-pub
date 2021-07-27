@@ -119,8 +119,9 @@ public class DeleteAccountActivity extends HalloActivity {
             connection.deleteAccount(phone).onResponse(iq -> {
                 deleteAllUserData();
                 result.postValue(true);
-                final Intent intent = new Intent(getApplication(), MainActivity.class);
+                final Intent intent = new Intent(getApplication(), DeletionConfirmationActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 getApplication().startActivity(intent);
                 Runtime.getRuntime().exit(0);
             }).onError(e -> {

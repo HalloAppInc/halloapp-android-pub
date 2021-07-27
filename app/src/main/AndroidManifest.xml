@@ -54,6 +54,9 @@
         <activity android:name=".ui.LowStorageActivity"
             android:label=""/>
 
+        <activity android:name=".ui.DeletionConfirmationActivity"
+            android:label=""/>
+
         <activity
             android:name=".ui.RegistrationVerificationActivity"
             android:label=""
