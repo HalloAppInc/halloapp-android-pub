@@ -699,8 +699,8 @@ public class EncryptedKeyStore {
             sb.append("CryptoException");
         }
 
-        sb.append("; MICK:").append(CryptoByteUtils.obfuscate(getInboundChainKey(userId)));
-        sb.append("; MOCK:").append(CryptoByteUtils.obfuscate(getOutboundChainKey(userId)));
+        sb.append("; MICKH:").append(CryptoByteUtils.obfuscate(getInboundChainKey(userId)));
+        sb.append("; MOCKH:").append(CryptoByteUtils.obfuscate(getOutboundChainKey(userId)));
 
         return sb.toString();
     }

@@ -3,7 +3,10 @@ package com.halloapp.crypto;
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.common.util.Hex;
+import com.halloapp.util.logs.Log;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class CryptoByteUtils {
@@ -39,23 +42,18 @@ public class CryptoByteUtils {
             return "null";
         }
 
-        StringBuilder sb = new StringBuilder();
-
         if (bytes.length < 32) {
-            for (int i=0; i<bytes.length; i++) {
-                sb.append("*");
-            }
-            return sb.toString();
+            return "TooShort" + bytes.length;
         }
 
-        for (int i=0; i<bytes.length; i++) {
-            if (i >= 1 && i < bytes.length - 1) {
-                sb.append("*");
-            } else {
-                sb.append(Hex.bytesToStringLowercase(new byte[] {bytes[i]}));
-            }
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = messageDigest.digest(bytes);
+            String hex = Hex.bytesToStringLowercase(hash);
+            return hex.substring(0, 4);
+        } catch (NoSuchAlgorithmException e) {
+            Log.e("Failed to get sha256 for obfuscation", e);
+            return "NoAlgo";
         }
-
-        return sb.toString();
     }
 }
