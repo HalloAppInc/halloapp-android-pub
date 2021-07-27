@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
-import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -44,7 +42,6 @@ import com.halloapp.content.Message;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
-import com.halloapp.props.ServerProps;
 import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloFragment;
@@ -102,6 +99,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case REQUEST_CODE_OPEN_CHAT: {
                 if (resultCode == Activity.RESULT_OK) {
@@ -150,11 +148,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             @Override
             public boolean onQueryTextChange(final String text) {
                 adapter.getFilter().filter(text);
-                if (!TextUtils.isEmpty(text)) {
-                    closeMenuItem.setVisible(true);
-                } else {
-                    closeMenuItem.setVisible(false);
-                }
+                closeMenuItem.setVisible(!TextUtils.isEmpty(text));
                 return false;
             }
         });
@@ -319,11 +313,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             Log.e("ChatsFragment/updateChatSelection null actionmode");
             return;
         }
-        if (selectedChats.size() == 1) {
-            actionMode.getMenu().findItem(R.id.view_profile).setVisible(true);
-        } else {
-            actionMode.getMenu().findItem(R.id.view_profile).setVisible(false);
-        }
+        actionMode.getMenu().findItem(R.id.view_profile).setVisible(selectedChats.size() == 1);
         actionMode.setTitle(Integer.toString(selectedChats.size()));
     }
 
@@ -448,8 +438,8 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             private LiveData<PresenceLoader.PresenceState> presenceLiveData;
             private LiveData<PresenceLoader.GroupChatState> groupChatStateLiveData;
 
-            private Observer<PresenceLoader.PresenceState> presenceObserver;
-            private Observer<PresenceLoader.GroupChatState> groupChatStateObserver;
+            private final Observer<PresenceLoader.PresenceState> presenceObserver;
+            private final Observer<PresenceLoader.GroupChatState> groupChatStateObserver;
 
             ViewHolder(@NonNull View itemView) {
                 super(itemView);

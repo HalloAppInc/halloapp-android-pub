@@ -87,7 +87,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     private HashSet<UserId> initialSelectedContacts;
     protected LinkedHashSet<UserId> selectedContacts;
     private Map<UserId, Contact> contactMap = new HashMap<>();
-    private ArrayList<UserId> disabledContacts = new ArrayList<>();
+    private final ArrayList<UserId> disabledContacts = new ArrayList<>();
 
     private @DrawableRes int selectionIcon;
     private int maxSelection = -1;
@@ -221,10 +221,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
                 return true;
             }
         }
-        if (initialSelectedContacts.size() != selectedContacts.size()) {
-            return true;
-        }
-        return false;
+        return initialSelectedContacts.size() != selectedContacts.size();
     }
 
     @Override
@@ -546,7 +543,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
 
     private class SelectedAdapter extends RecyclerView.Adapter<ViewHolder> {
         private List<Contact> contacts = new ArrayList<>();
-        private HashMap<String, Long> userIdMap = new HashMap<>();
+        private final HashMap<String, Long> userIdMap = new HashMap<>();
 
         private long idIndex = 0;
 

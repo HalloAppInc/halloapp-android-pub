@@ -68,7 +68,6 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
     private RecyclerView listView;
 
     private TextView bannerView;
-    private Snackbar banner;
 
     private boolean sendingEnabled;
 
@@ -161,27 +160,6 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
             }
         });
         loadContacts();
-    }
-
-    private void addBannerCallback() {
-        if (banner == null) {
-            return;
-        }
-        banner.addCallback(new Snackbar.Callback() {
-
-            @Override
-            public void onShown(Snackbar sb) {
-                super.onShown(sb);
-                listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), banner.getView().getHeight());
-            }
-
-            @Override
-            public void onDismissed(Snackbar transientBottomBar, int event) {
-                super.onDismissed(transientBottomBar, event);
-                listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), 0);
-                banner.removeCallback(this);
-            }
-        });
     }
 
     private void setSendingEnabled(boolean enabled) {

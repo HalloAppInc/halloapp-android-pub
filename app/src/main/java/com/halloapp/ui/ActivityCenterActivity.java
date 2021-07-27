@@ -33,7 +33,6 @@ import com.halloapp.id.UserId;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
-import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
