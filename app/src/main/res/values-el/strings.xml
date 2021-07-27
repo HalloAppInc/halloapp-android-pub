@@ -440,6 +440,8 @@ uid: %1$s
     <string name="invite_link_copied">"Σύνδεσμος αντιγράφηκε!"</string>
     <string name="invite_link_title">"Σύνδεσμος πρόσκλησης"</string>
     <string name="invite_link_summary">"Οποιοσδήποτε διαθέτει το HalloApp μπορεί να χρησιμοποιήσει αυτόν τον σύνδεσμο για να συμμετάσχει σε αυτήν την ομάδα."</string>
+
+    <!-- Generic error message when user fails to join a group via invite link -->
     <string name="invite_link_failed_to_join">"Αποτυχία συμμετοχής στην ομάδα"</string>
     <string name="join_group_action">"Συμμετοχή σε ομάδα"</string>
     <string name="system_message_you_joined">"Συμμετέχετε στην ομάδα μέσω συνδέσμου πρόσκλησης"</string>
@@ -702,5 +704,20 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Label displaying the date when a post expired -->
     <string name="archived_on">"Archived %s"</string>
+
+    <!-- Error message when the group is full -->
+    <string name="invite_link_failed_to_join_full">"You cannot join the group because it is full"</string>
+
+    <!-- Error message when the invite link is invalid -->
+    <string name="invite_link_failed_to_join_invalid">"The invite link is invalid"</string>
+
+    <!-- Error message when user cannot join a group because they were previously removed by an admin -->
+    <string name="invite_link_failed_to_join_removed">"You were removed and cannot rejoin via invite link"</string>
+
+    <!-- Message that's displayed after a user deletes their account -->
+    <string name="deletion_confirmation_message">"Your halloapp account has been successfully deleted."</string>
+
+    <!-- Button that allows the user to return to registration after deleting their account -->
+    <string name="return_to_registration">"Return to registration"</string>
 </resources>
 

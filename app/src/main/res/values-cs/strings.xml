@@ -463,6 +463,8 @@ verze: %2$s
     <string name="invite_link_copied">"Odkaz zkopírován!"</string>
     <string name="invite_link_title">"Zvací odkaz"</string>
     <string name="invite_link_summary">"Kdokoli s aplikací HalloApp se může pomocí tohoto odkazu připojit k této skupině."</string>
+
+    <!-- Generic error message when user fails to join a group via invite link -->
     <string name="invite_link_failed_to_join">"Připojení ke skupině se nezdařilo"</string>
     <string name="join_group_action">"Připojit se ke skupině"</string>
     <string name="system_message_you_joined">"Připojil/a ses do skupiny pomocí zvacího odkazu"</string>
@@ -728,5 +730,20 @@ Otevři nastavení aplikace a uprav oprávnění aplikace."</string>
 
     <!-- Label displaying the date when a post expired -->
     <string name="archived_on">"Archived %s"</string>
+
+    <!-- Error message when the group is full -->
+    <string name="invite_link_failed_to_join_full">"You cannot join the group because it is full"</string>
+
+    <!-- Error message when the invite link is invalid -->
+    <string name="invite_link_failed_to_join_invalid">"The invite link is invalid"</string>
+
+    <!-- Error message when user cannot join a group because they were previously removed by an admin -->
+    <string name="invite_link_failed_to_join_removed">"You were removed and cannot rejoin via invite link"</string>
+
+    <!-- Message that's displayed after a user deletes their account -->
+    <string name="deletion_confirmation_message">"Your halloapp account has been successfully deleted."</string>
+
+    <!-- Button that allows the user to return to registration after deleting their account -->
+    <string name="return_to_registration">"Return to registration"</string>
 </resources>
 

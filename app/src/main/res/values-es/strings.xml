@@ -517,6 +517,8 @@ versión: %2$s
     <string name="invite_link_copied">"¡El enlace ha sido copiado!"</string>
     <string name="invite_link_title">"Enlace de invitación"</string>
     <string name="invite_link_summary">"Cualquier persona en HalloApp puede usar este enlace para unirse a este grupo."</string>
+
+    <!-- Generic error message when user fails to join a group via invite link -->
     <string name="invite_link_failed_to_join">"No se pudo unir a este grupo."</string>
     <string name="join_group_action">"Unirse al grupo"</string>
     <string name="system_message_you_joined">"Te has unido el grupo con el enlace de invitación"</string>
@@ -747,36 +749,51 @@ Abre la pantalla de ajustes de la aplicación para modificar los permisos."</str
 Abre la pantalla de configuración para modificar los permisos de la aplicación."</string>
 
     <!-- Activity center item when someone replies. %1$s is the person, %2$s is their comment preview -->
-    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; replied: %2$s"</string>
+    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; contestó: %2$s"</string>
 
     <!-- Activity center item when someone comments. %1$s is the person, %2$s is their comment preview -->
-    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; commented: %2$s"</string>
+    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; comentó: %2$s"</string>
 
     <!-- Activity center item when non-contacts comment on your post -->
     <plurals name="commented_on_your_post_grouped">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; comentó en tu publicación"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; comentaron en tu publicación"</item>
     </plurals>
 
     <!-- Activity center item when non-contacts comment on someones post -->
     <plurals name="commented_on_someones_post_grouped">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; comentó en la publicación de  &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; comentaron en la publicación de &lt;b&gt;%2$s&lt;/b&gt;"</item>
     </plurals>
 
     <!-- Shown when an archived post's photo thumbnail can't be loaded -->
-    <string name="couldnt_load_thumbnail">"Couldn't load thumbnail"</string>
+    <string name="couldnt_load_thumbnail">"No se pudo cargar la foto en miniatura"</string>
 
     <!-- Button for user to re-share old posts which have expired -->
-    <string name="reshare_post">"Reshare post"</string>
+    <string name="reshare_post">"Compartir de nuevo la publicación"</string>
 
     <!-- Button for going to utility for viewing expired posts -->
-    <string name="archived_posts">"Archived Posts"</string>
+    <string name="archived_posts">"Publicaciones archivadas"</string>
 
     <!-- Title of utility for viewing expired posts -->
-    <string name="archive">"Archive"</string>
+    <string name="archive">"Archivos"</string>
 
     <!-- Label displaying the date when a post expired -->
-    <string name="archived_on">"Archived %s"</string>
+    <string name="archived_on">"Archivado %s"</string>
+
+    <!-- Error message when the group is full -->
+    <string name="invite_link_failed_to_join_full">"No te puedes unir al grupo porque está lleno"</string>
+
+    <!-- Error message when the invite link is invalid -->
+    <string name="invite_link_failed_to_join_invalid">"Este enlace de invitación es incorrecto"</string>
+
+    <!-- Error message when user cannot join a group because they were previously removed by an admin -->
+    <string name="invite_link_failed_to_join_removed">"Fuiste eliminado y no te puedes volver a unir a través de enlace de invitación"</string>
+
+    <!-- Message that's displayed after a user deletes their account -->
+    <string name="deletion_confirmation_message">"Your halloapp account has been successfully deleted."</string>
+
+    <!-- Button that allows the user to return to registration after deleting their account -->
+    <string name="return_to_registration">"Return to registration"</string>
 </resources>
 
