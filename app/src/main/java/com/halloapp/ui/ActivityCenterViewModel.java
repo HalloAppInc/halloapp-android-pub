@@ -400,6 +400,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             activity.timestamp = post.timestamp;
             activity.seen = post.seen != Post.SEEN_NO;
             activity.involvedUsers.add(post.senderUserId);
+            activity.contentItem = post;
             return activity;
         }
 
@@ -413,6 +414,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             activity.timestamp = comment.timestamp;
             activity.seen = comment.seen;
             activity.involvedUsers.add(comment.senderUserId);
+            activity.contentItem = comment;
             return activity;
         }
 
