@@ -30,7 +30,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -69,7 +68,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     protected static final String EXTRA_TITLE_RES = "title_res";
     protected static final String EXTRA_ACTION_RES = "action_res";
     protected static final String EXTRA_SELECTED_IDS = "selected_ids";
-    protected static final String EXTRA_EXCLUDED_IDS = "excluded_ids";
+    protected static final String EXTRA_DISABLED_IDS = "disabled_ids";
     protected static final String EXTRA_MAX_SELECTION = "max_selection";
     protected static final String EXTRA_ONLY_FRIENDS = "only_friends";
     protected static final String EXTRA_ALLOW_EMPTY_SELECTION = "allow_empty_selection";
@@ -88,6 +87,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     private HashSet<UserId> initialSelectedContacts;
     protected LinkedHashSet<UserId> selectedContacts;
     private Map<UserId, Contact> contactMap = new HashMap<>();
+    private ArrayList<UserId> disabledContacts = new ArrayList<>();
 
     private @DrawableRes int selectionIcon;
     private int maxSelection = -1;
@@ -100,10 +100,10 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         intent.putExtra(EXTRA_ALLOW_EMPTY_SELECTION, true);
         return intent;
     }
-    public static Intent newPickerIntentExclude(@NonNull Context context, @Nullable Collection<UserId> excludeIds, @Nullable Integer maxSelection, @StringRes int title, @StringRes int action) {
+    public static Intent newPickerIntentAddOnly(@NonNull Context context, @Nullable Collection<UserId> disabledIds, @Nullable Integer maxSelection, @StringRes int title, @StringRes int action) {
         Intent intent = newPickerIntent(context, null, title, action, maxSelection);
-        if (excludeIds != null) {
-            intent.putParcelableArrayListExtra(EXTRA_EXCLUDED_IDS, new ArrayList<>(excludeIds));
+        if (disabledIds != null) {
+            intent.putParcelableArrayListExtra(EXTRA_DISABLED_IDS, new ArrayList<>(disabledIds));
         }
         return intent;
     }
@@ -186,24 +186,17 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
 
         viewModel = new ViewModelProvider(this, new ContactsViewModel.Factory(getApplication(), initialSelectedContacts)).get(ContactsViewModel.class);
 
-        ArrayList<UserId> excluded = new ArrayList<>();
-        ArrayList<UserId> excludedInput = getIntent().getParcelableArrayListExtra(EXTRA_EXCLUDED_IDS);
-        if (excludedInput != null) {
-            excluded.addAll(excludedInput);
+        ArrayList<UserId> disabledInput = getIntent().getParcelableArrayListExtra(EXTRA_DISABLED_IDS);
+        if (disabledInput != null) {
+            disabledContacts.addAll(disabledInput);
         }
         viewModel.contactList.getLiveData().observe(this, allContacts -> {
-            List<Contact> contacts = new ArrayList<>();
-            for (Contact contact : allContacts) {
-                if (!excluded.contains(contact.userId)) {
-                    contacts.add(contact);
-                }
-            }
             Map<UserId, Contact> map = new HashMap<>();
-            for (Contact contact : contacts) {
+            for (Contact contact : allContacts) {
                 map.put(contact.userId, contact);
             }
             this.contactMap = map;
-            adapter.setContacts(contacts);
+            adapter.setContacts(allContacts);
             avatarsAdapter.setUserIds(selectedContacts);
         });
 
@@ -368,7 +361,8 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         @Override
         public void onBindViewHolder(@NonNull ContactsActivity.ViewHolder holder, int position) {
             if (position < getFilteredContactsCount()) {
-                holder.bindTo(filteredContacts.get(position), filterTokens);
+                Contact contact = filteredContacts.get(position);
+                holder.bindTo(contact, filterTokens);
             }
         }
 
@@ -445,6 +439,9 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
                 if (contact == null) {
                     return;
                 }
+                if (disabledContacts.contains(contact.userId)) {
+                    return;
+                }
                 if (selectedContacts.contains(contact.userId)) {
                     selectedContacts.remove(contact.userId);
                     avatarsAdapter.removeUserId(contact.userId);
@@ -462,7 +459,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         }
 
         private void updateSelectionIcon() {
-            boolean selected = selectedContacts.contains(contact.userId);
+            boolean selected = selectedContacts.contains(contact.userId) || disabledContacts.contains(contact.userId);
             if (selected) {
                 selectionView.setImageResource(selectionIcon);
             } else {
@@ -472,6 +469,14 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         }
 
         void bindTo(@NonNull Contact contact, List<String> filterTokens) {
+            boolean disabled = disabledContacts.contains(contact.userId);
+            if (disabled) {
+                itemView.setAlpha(0.54f);
+                itemView.setClickable(false);
+            } else {
+                itemView.setAlpha(1);
+                itemView.setClickable(true);
+            }
             this.contact = contact;
             updateSelectionIcon();
             avatarLoader.load(avatarView, Preconditions.checkNotNull(contact.userId), false);
