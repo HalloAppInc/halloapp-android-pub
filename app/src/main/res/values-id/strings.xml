@@ -29,8 +29,8 @@
     <string name="reverify_registration_title">"Harap verifikasi ulang nomor telepon kamu"</string>
     <string name="request_registration_subtitle">"Kamu akan menerima kode verifikasi.
 Dapat dikenakan tarif oleh operator"</string>
-    <string name="verify_registration_title">"Masukkan kode yang kami kirim ke
-%"</string>
+    <string name="verify_registration_title">"Masukkan kode yang kami kirim ke 
+%s"</string>
     <string name="contact_permission_title">"Satu hal lagi"</string>
     <string name="registration_code_invalid">"Kode pendaftaran tidak valid, coba lagi"</string>
     <string name="registration_failed">"Gagal mendaftarkan nomor telepon, coba lagi"</string>
@@ -211,9 +211,9 @@ Buka layar pengaturan aplikasi untuk mengubah izin app."</string>
     <string name="last_seen_less_minute">"Terakhir dilihat kurang dari satu menit yang lalu"</string>
     <string name="online">"online"</string>
     <string name="today">"Hari ini"</string>
-    <string name="today_at_time">"Hari ini pada"</string>
+    <string name="today_at_time">"Hari ini pada %s"</string>
     <string name="yesterday">"Kemarin"</string>
-    <string name="yesterday_at_time">"Kemarin pada"</string>
+    <string name="yesterday_at_time">"Kemarin pada %s"</string>
     <string name="day_of_week_at_time">"%1$s pada %2$s"</string>
     <string name="unknown_contact">"Kontak tidak dikenal"</string>
     <string name="select_contact">"Pesan baru"</string>
