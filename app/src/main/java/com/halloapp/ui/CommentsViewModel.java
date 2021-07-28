@@ -145,7 +145,8 @@ class CommentsViewModel extends AndroidViewModel {
 
         @Override
         public void onGroupMembersChanged(@NonNull GroupId groupId) {
-            if (CommentsViewModel.this.post.getValue().getParentGroup().equals(groupId)) {
+            Post post = CommentsViewModel.this.post.getValue();
+            if (post == null || groupId.equals(post.getParentGroup())) {
                 isMember.invalidate();
             }
         }
