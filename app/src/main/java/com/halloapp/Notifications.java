@@ -234,6 +234,7 @@ public class Notifications {
             final List<ChatId> chatsIds = new ArrayList<>();
             for (Message message : messages) {
                 if (message.isOutgoing() || message.isRetracted() || foregroundChat.isForegroundChatId(message.chatId)) {
+                    Log.i("Notifications.updateMessageNotifications skipping " + message.id + " outgoing? " + message.isOutgoing() + " retracted? " + message.isRetracted());
                     continue;
                 }
                 List<Message> chatMessages = chatsMessages.get(message.chatId);
