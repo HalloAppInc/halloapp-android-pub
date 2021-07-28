@@ -8,6 +8,8 @@ import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 import Select from '@material-ui/core/Select';
 
 import CloseIcon from '@material-ui/icons/Close'
@@ -46,6 +48,7 @@ interface State {
   logs: LogLine[],
   filteredLogs: LogLine[],
   filterText: string,
+  filterRegex: boolean,
   findText: string,
   findError: boolean,
   highlightedLine: number,
@@ -122,6 +125,7 @@ class Log extends React.Component<Props, State>  {
       logs: [],
       filteredLogs: [],
       filterText: "",
+      filterRegex: false,
       findText: "",
       findError: false,
       highlightedLine: -1,
@@ -131,9 +135,13 @@ class Log extends React.Component<Props, State>  {
     this.onKeyDown = this.onKeyDown.bind(this)
   }
 
-  runFilter(logs: LogLine[], filterText: string) {
+  runFilter(logs: LogLine[], filterText: string, filterRegex: boolean) {
     if (filterText === undefined || filterText.length === 0) {
       return logs
+    }
+    if (filterRegex) {
+      let re = new RegExp(filterText)
+      return logs.filter(log => re.test(log.flat))
     }
     return logs.filter(log => log.flat.includes(filterText))
   }
@@ -279,7 +287,7 @@ class Log extends React.Component<Props, State>  {
     }
     logs.push(prev)
 
-    let filtered = this.runFilter(logs, this.state.filterText)
+    let filtered = this.runFilter(logs, this.state.filterText, this.state.filterRegex)
     this.setState({
       logs: logs,
       filteredLogs: filtered,
@@ -468,10 +476,20 @@ class Log extends React.Component<Props, State>  {
 
   onFilterChange(event: any) {
     let value = event.target.value
-    let filtered = this.runFilter(this.state.logs, value)
+    let filtered = this.runFilter(this.state.logs, value, this.state.filterRegex)
     this.setState({
       filterText: value,
       filteredLogs: filtered,
+    })
+  }
+
+  onFilterRegexChange(event: any) {
+    this.setState((state, props) => {
+      let filtered = this.runFilter(state.logs, state.filterText, !state.filterRegex)
+      return {
+        filteredLogs: filtered,
+        filterRegex: !state.filterRegex,
+      }
     })
   }
 
@@ -562,24 +580,30 @@ class Log extends React.Component<Props, State>  {
         </div>
         <div style={{ height: Constants.LOG_HEADER_HEIGHT, display: 'flex', flexDirection: 'column', justifyContent: 'space-around', color: '#eee', backgroundColor: Constants.COLOR_SECONDARY.light }}>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-            <TextField
-              inputRef={input => this.filterText = input ?? undefined}
-              label="Filter"
-              margin="normal"
-              variant="filled"
-              color="secondary"
-              value={this.state.filterText}
-              onChange={ev => this.onFilterChange(ev)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => this.clearFilter()}>
-                      <CloseIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
+              <TextField
+                inputRef={input => this.filterText = input ?? undefined}
+                label="Filter"
+                margin="normal"
+                variant="filled"
+                color="secondary"
+                value={this.state.filterText}
+                onChange={ev => this.onFilterChange(ev)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => this.clearFilter()}>
+                        <CloseIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <FormControlLabel style={{ paddingLeft: 15, }}
+                control={<Checkbox checked={this.state.filterRegex} onChange={ev => this.onFilterRegexChange(ev)} name="checkedA" />}
+                label="Regex"
+              />
+            </div>
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <FormControl>
                 <InputLabel id="day_label">Day</InputLabel>
