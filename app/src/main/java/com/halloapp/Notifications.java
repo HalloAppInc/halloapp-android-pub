@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -89,6 +90,9 @@ public class Notifications {
     private final Executor executor = Executors.newSingleThreadExecutor();
 
     private long feedNotificationTimeCutoff;
+
+    private Set<String> localPostIds = new HashSet<>();
+    private Set<String> localCommentIds = new HashSet<>();
 
     private boolean enabled = true;
 
@@ -144,6 +148,8 @@ public class Notifications {
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             notificationManager.cancel(FEED_NOTIFICATION_ID);
         });
+        localPostIds.clear();
+        localCommentIds.clear();
     }
 
     public void updateFeedNotifications() {
@@ -180,6 +186,18 @@ public class Notifications {
                 showFeedNotification(context.getString(R.string.app_name), Preconditions.checkNotNull(text), unseenPosts, unseenComments);
             }
         });
+    }
+
+    public void updateFeedNotifications(Post post) {
+        if (isNewPostRetracted(post)) {
+            updateFeedNotifications();
+        }
+    }
+
+    public void updateFeedNotifications(Comment comment) {
+        if (isNewCommentRetracted(comment)) {
+            updateFeedNotifications();
+        }
     }
 
     public void clearMessageNotifications(@NonNull ChatId chatId) {
@@ -380,10 +398,39 @@ public class Notifications {
             return null;
         }
         final List<Post> unseenPosts = ContentDb.getInstance().getUnseenPosts(preferences.getFeedNotificationTimeCutoff(), UNSEEN_POSTS_LIMIT);
+
+        ListIterator<Post> iterator = unseenPosts.listIterator();
+        while(iterator.hasNext()){
+            if (iterator.next().isRetracted()) {
+                iterator.remove();
+            }
+        }
+
         if (unseenPosts.isEmpty()) {
             return null;
         }
+
         return unseenPosts;
+    }
+
+    private boolean isNewPostRetracted(Post post){
+        if (post == null) {
+            return false;
+        }
+        if (localPostIds.contains(post.id)){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isNewCommentRetracted(Comment comment){
+        if (comment == null) {
+            return false;
+        }
+        if (localCommentIds.contains(comment.id)){
+            return true;
+        }
+        return false;
     }
 
     @Nullable
@@ -392,6 +439,15 @@ public class Notifications {
             return null;
         }
         final List<Comment> unseenComments = ContentDb.getInstance().getUnseenCommentsOnMyPosts(preferences.getFeedNotificationTimeCutoff(), UNSEEN_COMMENTS_LIMIT);
+
+        ListIterator<Comment> iterator = unseenComments.listIterator();
+        while(iterator.hasNext()){
+            Comment comment = iterator.next();
+            if (comment.isRetracted() || comment.getParentPost().isRetracted()) {
+                iterator.remove();
+            }
+        }
+
         if (unseenComments.isEmpty()) {
             return null;
         }
@@ -400,9 +456,11 @@ public class Notifications {
 
     private String getNewPostsNotificationText(@NonNull List<Post> unseenPosts) {
         final Set<UserId> userIds = new HashSet<>();
+        localPostIds.clear();
         for (Post post : unseenPosts) {
             Log.d("Notifications.update: " + post);
             userIds.add(post.senderUserId);
+            localPostIds.add(post.id);
             if (post.timestamp > feedNotificationTimeCutoff) {
                 feedNotificationTimeCutoff = post.timestamp;
             }
@@ -424,10 +482,12 @@ public class Notifications {
     private String getNewCommentsNotificationText(@NonNull List<Comment> unseenComments) {
         final Set<UserId> userIds = new HashSet<>();
         final Set<String> postIds = new HashSet<>();
+        localCommentIds.clear();
         for (Comment comment : unseenComments) {
             Log.d("Notifications.update: " + comment);
             userIds.add(comment.senderUserId);
             postIds.add(comment.postId);
+            localCommentIds.add(comment.id);
             if (comment.timestamp > feedNotificationTimeCutoff) {
                 feedNotificationTimeCutoff = comment.timestamp;
             }

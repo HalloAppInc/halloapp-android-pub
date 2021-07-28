@@ -79,6 +79,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
                 connection.retractGroupPost(post.getParentGroup(), post.id);
             }
         }
+        notifications.updateFeedNotifications(post);
     }
 
     @Override
@@ -126,6 +127,8 @@ public class MainContentDbObserver implements ContentDb.Observer {
                 connection.retractGroupComment(comment.getParentPost().getParentGroup(), comment.getParentPost().senderUserId, comment.postId, comment.id);
             }
         }
+        notifications.updateFeedNotifications(comment);
+
     }
 
     @Override
@@ -135,6 +138,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
     @Override
     public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
     }
+
 
     @Override
     public void onMessageAdded(@NonNull Message message) {
