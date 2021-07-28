@@ -90,6 +90,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     @Override
     public void resetScrollPosition() {
         layoutManager.scrollToPosition(0);
+        restoreStateOnDataLoaded = false;
     }
 
     @Override
