@@ -52,10 +52,6 @@ public class ExportDataActivity extends HalloActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        TextView explanationText = findViewById(R.id.explanation);
-        explanationText.setText(Html.fromHtml(getString(R.string.export_data_explanation)));
-        explanationText.setMovementMethod(LinkMovementMethod.getInstance());
-
         viewModel = new ViewModelProvider(this).get(ExportDataViewModel.class);
 
         viewModel.exportDataState.getLiveData().observe(this, state -> {

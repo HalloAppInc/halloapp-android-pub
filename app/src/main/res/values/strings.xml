@@ -43,7 +43,7 @@
     <!-- Shown as settings option title after the user has requested their data but before it is available for download; string param is date -->
     <string name="data_available_at">Data will be available on %s</string>
     <!-- Shown at top of data request page explaining the process -->
-    <string name="export_data_explanation">Download a copy of all your user data stored on HalloApp\'s servers. This does not contain message or post content. <a href="https://halloapp.com/help/">Learn more</a> </string>
+    <string name="export_data_explanation">Download a copy of all your user data stored on HalloApp\'s servers. This does not contain message or post content.</string>
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">Request failed</string>
     <!-- Button for exporting account information requested for download -->
