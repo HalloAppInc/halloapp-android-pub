@@ -10,6 +10,10 @@
             app:title="@string/settings_block_list"
             app:summary=" "/>
 
+        <Preference app:key="privacy_policy"
+            app:title="@string/privacy_policy"
+            app:summary=" "/>
+
     </com.halloapp.widget.HAPreferenceCategory>
 
     <com.halloapp.widget.HAPreferenceCategory app:key="debug" app:title="Debug" app:isPreferenceVisible="false">

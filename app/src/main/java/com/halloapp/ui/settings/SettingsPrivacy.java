@@ -3,6 +3,7 @@ package com.halloapp.ui.settings;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 
 import com.halloapp.BuildConfig;
+import com.halloapp.Constants;
 import com.halloapp.Debug;
 import com.halloapp.DebugActivity;
 import com.halloapp.Preferences;
@@ -72,6 +74,7 @@ public class SettingsPrivacy extends HalloActivity {
 
         private Preference blocklistPreference;
         private Preference feedPrivacyPreference;
+        private Preference privacyPolicyPreference;
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -95,6 +98,13 @@ public class SettingsPrivacy extends HalloActivity {
             feedPrivacyPreference = Preconditions.checkNotNull((findPreference("feed_privacy")));
             feedPrivacyPreference.setOnPreferenceClickListener(preference -> {
                 Intent intent = new Intent(requireContext(), FeedPrivacyActivity.class);
+                startActivity(intent);
+                return false;
+            });
+
+            privacyPolicyPreference = Preconditions.checkNotNull(findPreference("privacy_policy"));
+            privacyPolicyPreference.setOnPreferenceClickListener(preference -> {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.PRIVACY_POLICY_URL));
                 startActivity(intent);
                 return false;
             });
