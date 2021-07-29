@@ -14,6 +14,8 @@ import androidx.lifecycle.LiveData;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactsDb;
@@ -100,6 +102,13 @@ public class HomeViewModel extends AndroidViewModel {
         @Override
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
             invalidatePosts();
+        }
+
+        @Override
+        public void onChatDeleted(@NonNull ChatId chatId) {
+            if (chatId instanceof GroupId) {
+                invalidatePosts();
+            }
         }
 
         @Override
