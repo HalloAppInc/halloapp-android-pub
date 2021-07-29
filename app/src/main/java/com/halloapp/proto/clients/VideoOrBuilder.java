@@ -29,4 +29,15 @@ public interface VideoOrBuilder extends
    * @return The height.
    */
   int getHeight();
+
+  /**
+   * <code>.clients.StreamingInfo streaming_info = 4;</code>
+   * @return Whether the streamingInfo field is set.
+   */
+  boolean hasStreamingInfo();
+  /**
+   * <code>.clients.StreamingInfo streaming_info = 4;</code>
+   * @return The streamingInfo.
+   */
+  com.halloapp.proto.clients.StreamingInfo getStreamingInfo();
 }

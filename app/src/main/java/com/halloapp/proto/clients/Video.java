@@ -111,6 +111,52 @@ public  final class Video extends
     height_ = 0;
   }
 
+  public static final int STREAMING_INFO_FIELD_NUMBER = 4;
+  private com.halloapp.proto.clients.StreamingInfo streamingInfo_;
+  /**
+   * <code>.clients.StreamingInfo streaming_info = 4;</code>
+   */
+  @java.lang.Override
+  public boolean hasStreamingInfo() {
+    return streamingInfo_ != null;
+  }
+  /**
+   * <code>.clients.StreamingInfo streaming_info = 4;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.StreamingInfo getStreamingInfo() {
+    return streamingInfo_ == null ? com.halloapp.proto.clients.StreamingInfo.getDefaultInstance() : streamingInfo_;
+  }
+  /**
+   * <code>.clients.StreamingInfo streaming_info = 4;</code>
+   */
+  private void setStreamingInfo(com.halloapp.proto.clients.StreamingInfo value) {
+    value.getClass();
+  streamingInfo_ = value;
+    
+    }
+  /**
+   * <code>.clients.StreamingInfo streaming_info = 4;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeStreamingInfo(com.halloapp.proto.clients.StreamingInfo value) {
+    value.getClass();
+  if (streamingInfo_ != null &&
+        streamingInfo_ != com.halloapp.proto.clients.StreamingInfo.getDefaultInstance()) {
+      streamingInfo_ =
+        com.halloapp.proto.clients.StreamingInfo.newBuilder(streamingInfo_).mergeFrom(value).buildPartial();
+    } else {
+      streamingInfo_ = value;
+    }
+    
+  }
+  /**
+   * <code>.clients.StreamingInfo streaming_info = 4;</code>
+   */
+  private void clearStreamingInfo() {  streamingInfo_ = null;
+    
+  }
+
   public static com.halloapp.proto.clients.Video parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -309,6 +355,53 @@ public  final class Video extends
       return this;
     }
 
+    /**
+     * <code>.clients.StreamingInfo streaming_info = 4;</code>
+     */
+    @java.lang.Override
+    public boolean hasStreamingInfo() {
+      return instance.hasStreamingInfo();
+    }
+    /**
+     * <code>.clients.StreamingInfo streaming_info = 4;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.StreamingInfo getStreamingInfo() {
+      return instance.getStreamingInfo();
+    }
+    /**
+     * <code>.clients.StreamingInfo streaming_info = 4;</code>
+     */
+    public Builder setStreamingInfo(com.halloapp.proto.clients.StreamingInfo value) {
+      copyOnWrite();
+      instance.setStreamingInfo(value);
+      return this;
+      }
+    /**
+     * <code>.clients.StreamingInfo streaming_info = 4;</code>
+     */
+    public Builder setStreamingInfo(
+        com.halloapp.proto.clients.StreamingInfo.Builder builderForValue) {
+      copyOnWrite();
+      instance.setStreamingInfo(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.clients.StreamingInfo streaming_info = 4;</code>
+     */
+    public Builder mergeStreamingInfo(com.halloapp.proto.clients.StreamingInfo value) {
+      copyOnWrite();
+      instance.mergeStreamingInfo(value);
+      return this;
+    }
+    /**
+     * <code>.clients.StreamingInfo streaming_info = 4;</code>
+     */
+    public Builder clearStreamingInfo() {  copyOnWrite();
+      instance.clearStreamingInfo();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.Video)
   }
   @java.lang.Override
@@ -328,10 +421,11 @@ public  final class Video extends
             "video_",
             "width_",
             "height_",
+            "streamingInfo_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\t\u0002\u0004" +
-              "\u0003\u0004";
+              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\t\u0002\u0004" +
+              "\u0003\u0004\u0004\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

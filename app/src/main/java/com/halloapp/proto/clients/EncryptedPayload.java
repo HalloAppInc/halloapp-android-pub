@@ -59,6 +59,14 @@ public  final class EncryptedPayload extends
   public static final int SENDER_STATE_ENCRYPTED_PAYLOAD_FIELD_NUMBER = 1;
   /**
    * <code>bytes sender_state_encrypted_payload = 1;</code>
+   * @return Whether the senderStateEncryptedPayload field is set.
+   */
+  @java.lang.Override
+  public boolean hasSenderStateEncryptedPayload() {
+    return payloadCase_ == 1;
+  }
+  /**
+   * <code>bytes sender_state_encrypted_payload = 1;</code>
    * @return The senderStateEncryptedPayload.
    */
   @java.lang.Override
@@ -88,6 +96,14 @@ public  final class EncryptedPayload extends
   }
 
   public static final int ONE_TO_ONE_ENCRYPTED_PAYLOAD_FIELD_NUMBER = 2;
+  /**
+   * <code>bytes one_to_one_encrypted_payload = 2;</code>
+   * @return Whether the oneToOneEncryptedPayload field is set.
+   */
+  @java.lang.Override
+  public boolean hasOneToOneEncryptedPayload() {
+    return payloadCase_ == 2;
+  }
   /**
    * <code>bytes one_to_one_encrypted_payload = 2;</code>
    * @return The oneToOneEncryptedPayload.
@@ -227,6 +243,14 @@ public  final class EncryptedPayload extends
 
     /**
      * <code>bytes sender_state_encrypted_payload = 1;</code>
+     * @return Whether the senderStateEncryptedPayload field is set.
+     */
+    @java.lang.Override
+    public boolean hasSenderStateEncryptedPayload() {
+      return instance.hasSenderStateEncryptedPayload();
+    }
+    /**
+     * <code>bytes sender_state_encrypted_payload = 1;</code>
      * @return The senderStateEncryptedPayload.
      */
     @java.lang.Override
@@ -253,6 +277,14 @@ public  final class EncryptedPayload extends
       return this;
     }
 
+    /**
+     * <code>bytes one_to_one_encrypted_payload = 2;</code>
+     * @return Whether the oneToOneEncryptedPayload field is set.
+     */
+    @java.lang.Override
+    public boolean hasOneToOneEncryptedPayload() {
+      return instance.hasOneToOneEncryptedPayload();
+    }
     /**
      * <code>bytes one_to_one_encrypted_payload = 2;</code>
      * @return The oneToOneEncryptedPayload.
