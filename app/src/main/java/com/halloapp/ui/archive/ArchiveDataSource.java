@@ -10,23 +10,13 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.util.logs.Log;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
-public class ArchiveDataSource extends ItemKeyedDataSource<Pair<Long, Long>, ArchiveItem> {
+public class ArchiveDataSource extends ItemKeyedDataSource<Pair<Long, String>, Post> {
 
     private final ContentDb contentDb;
 
-    private final SimpleDateFormat monthFormatNoYear = new SimpleDateFormat("MMMM", Locale.getDefault());
-    private final SimpleDateFormat monthFormatWithYear = new SimpleDateFormat("MMMM, y", Locale.getDefault());
-
-    private long prevFetchLastTimestamp;
-
-    public static class Factory extends DataSource.Factory<Pair<Long, Long>, ArchiveItem> {
+    public static class Factory extends DataSource.Factory<Pair<Long, String>, Post> {
         private final ContentDb contentDb;
         private ArchiveDataSource latestSource;
 
@@ -37,7 +27,7 @@ public class ArchiveDataSource extends ItemKeyedDataSource<Pair<Long, Long>, Arc
 
         @NonNull
         @Override
-        public DataSource<Pair<Long, Long>, ArchiveItem> create() {
+        public DataSource<Pair<Long, String>, Post> create() {
             if (latestSource.isInvalid()) {
                 latestSource = new ArchiveDataSource(contentDb);
             }
@@ -60,60 +50,25 @@ public class ArchiveDataSource extends ItemKeyedDataSource<Pair<Long, Long>, Arc
 
     @NonNull
     @Override
-    public Pair<Long, Long> getKey(@NonNull ArchiveItem archiveItem) {
-        return archiveItem.key;
+    public Pair<Long, String> getKey(@NonNull Post post) {
+        return new Pair(post.timestamp, post.id);
     }
 
     @Override
-    public void loadInitial(@NonNull LoadInitialParams<Pair<Long, Long>> params, @NonNull LoadInitialCallback<ArchiveItem> callback) {
+    public void loadInitial(@NonNull LoadInitialParams<Pair<Long, String>> params, @NonNull LoadInitialCallback<Post> callback) {
         final List<Post> posts = contentDb.getArchivedPosts(null, params.requestedLoadSize, false);
-        callback.onResult(setupHeaders(posts, true));
-        prevFetchLastTimestamp = posts.isEmpty() ? -1L : posts.get(posts.size() - 1).timestamp;
+        callback.onResult(posts);
     }
 
     @Override
-    public void loadAfter(@NonNull LoadParams<Pair<Long, Long>> params, @NonNull LoadCallback<ArchiveItem> callback) {
+    public void loadAfter(@NonNull LoadParams<Pair<Long, String>> params, @NonNull LoadCallback<Post> callback) {
         final List<Post> posts = contentDb.getArchivedPosts(params.key.first, params.requestedLoadSize, false);
-        callback.onResult(setupHeaders(posts, false));
-        prevFetchLastTimestamp = posts.isEmpty() ? prevFetchLastTimestamp : posts.get(posts.size() - 1).timestamp;
+        callback.onResult(posts);
     }
 
     @Override
-    public void loadBefore(@NonNull LoadParams<Pair<Long, Long>> params, @NonNull LoadCallback<ArchiveItem> callback) {
+    public void loadBefore(@NonNull LoadParams<Pair<Long, String>> params, @NonNull LoadCallback<Post> callback) {
         final List<Post> posts = contentDb.getArchivedPosts(params.key.first, params.requestedLoadSize, true);
-        callback.onResult(setupHeaders(posts, false));
-        prevFetchLastTimestamp = posts.isEmpty() ? prevFetchLastTimestamp : posts.get(posts.size() - 1).timestamp;
-    }
-
-    private List<ArchiveItem> setupHeaders(List<Post> posts, boolean isInitialLoad) {
-
-        List<ArchiveItem> retList = new ArrayList<>();
-
-        for (int i = 0; i < posts.size(); i++) {
-            if ((i == 0 && isInitialLoad) ||
-                    (i == 0 && shouldAddHeader(posts.get(i).timestamp, prevFetchLastTimestamp)) ||
-                    (i >= 1 && shouldAddHeader(posts.get(i).timestamp, posts.get(i - 1).timestamp))) {
-                long key = (i == 0) ? Long.MAX_VALUE : posts.get(i).timestamp;
-                Calendar itemCal = Calendar.getInstance();
-                itemCal.setTimeInMillis(posts.get(i).timestamp);
-                if (Calendar.getInstance().get(Calendar.YEAR) == itemCal.get(Calendar.YEAR)) {
-                    retList.add(new ArchiveItem(monthFormatNoYear.format(new Date(posts.get(i).timestamp)), key));
-                } else {
-                    retList.add(new ArchiveItem(monthFormatWithYear.format(new Date(posts.get(i).timestamp)), key));
-                }
-            }
-            retList.add(new ArchiveItem(posts.get(i)));
-        }
-        return retList;
-    }
-
-    private boolean shouldAddHeader(long curr, long prev) {
-
-        Calendar currCal = Calendar.getInstance();
-        currCal.setTimeInMillis(curr);
-        Calendar prevCal = Calendar.getInstance();
-        prevCal.setTimeInMillis(prev);
-
-        return currCal.get(Calendar.MONTH) != prevCal.get(Calendar.MONTH);
+        callback.onResult(posts);
     }
 }

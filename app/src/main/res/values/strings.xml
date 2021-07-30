@@ -621,4 +621,6 @@
     <string name="deletion_confirmation_message">Your halloapp account has been successfully deleted.</string>
     <!-- Button that allows the user to return to registration after deleting their account -->
     <string name="return_to_registration">Return to registration</string>
+    <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
+    <string name="archive_empty">Your expired posts will appear here</string>
 </resources>

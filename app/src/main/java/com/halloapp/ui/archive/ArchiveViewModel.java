@@ -13,7 +13,7 @@ import com.halloapp.content.Post;
 
 public class ArchiveViewModel extends AndroidViewModel {
 
-    final LiveData<PagedList<ArchiveItem>> archiveItemList;
+    final LiveData<PagedList<Post>> archiveItemList;
     private ArchiveDataSource.Factory dataSourceFactory;
     ContentDb contentDb;
 

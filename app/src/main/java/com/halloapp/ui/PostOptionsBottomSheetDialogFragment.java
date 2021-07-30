@@ -64,7 +64,6 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
 
         final View saveToGallery = view.findViewById(R.id.save_to_gallery);
         final View deletePost = view.findViewById(R.id.delete_post);
-        final View resharePost = view.findViewById(R.id.reshare_post);
         viewModel.post.getLiveData().observe(this, post -> {
             if (post == null) {
                 saveToGallery.setVisibility(View.INVISIBLE);
@@ -84,7 +83,6 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
             } else {
                 saveToGallery.setVisibility(View.VISIBLE);
             }
-            resharePost.setVisibility(post.isArchived ? View.VISIBLE : View.GONE);
         });
 
         viewModel.postDeleted.observe(this, deleted -> {
@@ -128,16 +126,6 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
                         .setNegativeButton(R.string.no, null)
                         .show();
             }
-        });
-        resharePost.setOnClickListener(v -> {
-            BgWorkers.getInstance().execute(() -> {
-                viewModel.resharePost(ActivityUtils.supportsWideColor(this.getActivity()));
-                Intent intent = new Intent(v.getContext(), MainActivity.class);
-                intent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
-                dismiss();
-                this.getActivity().finish();
-                startActivity(intent);
-            });
         });
         return view;
     }

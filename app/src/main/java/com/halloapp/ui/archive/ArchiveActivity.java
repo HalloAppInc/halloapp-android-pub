@@ -1,14 +1,8 @@
 package com.halloapp.ui.archive;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.ThumbnailUtils;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.format.DateUtils;
-import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,11 +29,8 @@ import com.halloapp.ui.PostContentActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.logs.Log;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.SquareImageView;
-
-import java.io.IOException;
 
 public class ArchiveActivity extends HalloActivity  {
 
@@ -99,22 +90,9 @@ public class ArchiveActivity extends HalloActivity  {
             this.recyclerView = (RecyclerView) view;
         }
 
-        private ArchiveRecyclerAdapter getAdapter() {
-            return (ArchiveRecyclerAdapter) recyclerView.getAdapter();
-        }
-        private GridLayoutManager getLayoutManager() {
-            return (GridLayoutManager) recyclerView.getLayoutManager();
-        }
         @Override
         public int getSpanSize(int position) {
-            final ArchiveRecyclerAdapter adapter = getAdapter();
-            final int count = getLayoutManager().getSpanCount();
-
-            if (adapter.getItemViewType(position) == ArchiveItem.TYPE_HEADER) {
-                return count;
-            } else {
-                return 1;
-            }
+            return 1;
         }
     }
 
@@ -128,6 +106,8 @@ public class ArchiveActivity extends HalloActivity  {
         TextView durationText;
         SquareImageView imageView;
 
+        Post post;
+
         public ArchiveRecyclerViewHolder(@NonNull View itemView) {
             super(itemView);
             titleView = itemView.findViewById(R.id.title);
@@ -137,74 +117,57 @@ public class ArchiveActivity extends HalloActivity  {
             imageView = itemView.findViewById(R.id.archive_thumbnail);
 
             textContentLoader = new TextContentLoader(itemView.getContext());
+
+            View.OnClickListener clickListener = view -> {
+                Intent intent = new Intent(view.getContext(), PostContentActivity.class);
+                intent.putExtra(PostContentActivity.EXTRA_POST_ID, post.id);
+                intent.putExtra(PostContentActivity.EXTRA_IS_ARCHIVED, true);
+                startActivity(intent);
+            };
+            itemView.setOnClickListener(clickListener);
+            name.setOnClickListener(clickListener);
+            pictureFrameLayout.setOnClickListener(clickListener);
         }
-        public void bindTo(ArchiveItem archiveItem) {
-            if (archiveItem.type == ArchiveItem.TYPE_HEADER) {
-                titleView.setText(archiveItem.title);
-            } else {
-                Post post = archiveItem.post;
-                View.OnClickListener clickListener = view -> {
-                    Intent intent = new Intent(view.getContext(), PostContentActivity.class);
-                    intent.putExtra(PostContentActivity.EXTRA_POST_ID, post.id);
-                    intent.putExtra(PostContentActivity.EXTRA_IS_ARCHIVED, true);
-                    startActivity(intent);
-                };
-
-                name.setText(getString(R.string.post_retracted_by_me));
-                itemView.setOnClickListener(clickListener);
-                if (post.text != null) {
-                    name.setLineLimit(TEXTVIEW_LINE_LIMIT);
-                    name.setOnClickListener(clickListener);
-                    pictureFrameLayout.setVisibility(View.INVISIBLE);
-                    textContentLoader.load(name, post);
-                }
-                if (post.media.size() > 0) {
-                    Media media = post.media.get(0);
-                    pictureFrameLayout.setVisibility(View.VISIBLE);
-                    pictureFrameLayout.setOnClickListener(clickListener);
-                    if (media.type == Media.MEDIA_TYPE_IMAGE) {
-                        mediaThumbnailLoader.load(imageView, post.media.get(0));
-                    } else if (media.type == Media.MEDIA_TYPE_VIDEO) {
-                        bgWorkers.execute(() -> {
-                            Long duration = MediaUtils.getVideoDuration(media.file);
-                            durationText.post(() -> {
-                                durationText.setVisibility(View.VISIBLE);
-                                durationText.setText(DateUtils.formatElapsedTime(duration / 1000));
-                            });
+        public void bindTo(Post post) {
+            this.post = post;
+            name.setText(getString(R.string.post_retracted_by_me));
+            if (post.text != null) {
+                name.setLineLimit(TEXTVIEW_LINE_LIMIT);
+                pictureFrameLayout.setVisibility(View.INVISIBLE);
+                textContentLoader.load(name, post);
+            }
+            if (post.media.size() > 0) {
+                Media media = post.media.get(0);
+                pictureFrameLayout.setVisibility(View.VISIBLE);
+                if (media.type == Media.MEDIA_TYPE_IMAGE) {
+                    mediaThumbnailLoader.load(imageView, post.media.get(0));
+                } else if (media.type == Media.MEDIA_TYPE_VIDEO) {
+                    bgWorkers.execute(() -> {
+                        Long duration = MediaUtils.getVideoDuration(media.file);
+                        durationText.post(() -> {
+                            durationText.setVisibility(View.VISIBLE);
+                            durationText.setText(DateUtils.formatElapsedTime(duration / 1000));
                         });
-                        mediaThumbnailLoader.load(imageView, media);
-                    }
-                    name.setText(R.string.couldnt_load_thumbnail);
+                    });
+                    mediaThumbnailLoader.load(imageView, media);
                 }
-
+                name.setText(R.string.couldnt_load_thumbnail);
             }
         }
     }
 
-    public class ArchiveRecyclerAdapter extends PagedListAdapter<ArchiveItem, ArchiveRecyclerViewHolder> {
+    public class ArchiveRecyclerAdapter extends PagedListAdapter<Post, ArchiveRecyclerViewHolder> {
 
         protected ArchiveRecyclerAdapter() {
-            super(new DiffUtil.ItemCallback<ArchiveItem>() {
+            super(new DiffUtil.ItemCallback<Post>() {
                 @Override
-                public boolean areItemsTheSame(@NonNull ArchiveItem oldItem, @NonNull ArchiveItem newItem) {
-                    if (oldItem.type != newItem.type) {
-                        return false;
-                    } else if (oldItem.type == ArchiveItem.TYPE_ITEM) {
-                        return oldItem.post.equals(newItem.post);
-                    } else {
-                        return oldItem.title.equals(newItem.title);
-                    }
+                public boolean areItemsTheSame(@NonNull Post oldPost, @NonNull Post newPost) {
+                    return oldPost == newPost;
                 }
 
                 @Override
-                public boolean areContentsTheSame(@NonNull ArchiveItem oldItem, @NonNull ArchiveItem newItem) {
-                    if (oldItem.type != newItem.type) {
-                        return false;
-                    } else if (oldItem.type == ArchiveItem.TYPE_ITEM) {
-                        return oldItem.post.equals(newItem.post);
-                    } else {
-                        return oldItem.title.equals(newItem.title);
-                    }
+                public boolean areContentsTheSame(@NonNull Post oldPost, @NonNull Post newPost) {
+                    return oldPost.equals(newPost);
                 }
             });
         }
@@ -212,24 +175,12 @@ public class ArchiveActivity extends HalloActivity  {
         @NonNull
         @Override
         public ArchiveRecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            switch(viewType) {
-                case ArchiveItem.TYPE_HEADER:
-                    return new ArchiveRecyclerViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.archive_header, parent, false));
-                case ArchiveItem.TYPE_ITEM:
-                    return new ArchiveRecyclerViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.archive_item, parent, false));
-                default:
-                    throw new java.lang.IllegalArgumentException("Can't get layout for unknown archive item type");
-            }
+            return new ArchiveRecyclerViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.archive_item, parent, false));
         }
 
         @Override
         public void onBindViewHolder(@NonNull ArchiveRecyclerViewHolder holder, int position) {
             holder.bindTo(getItem(position));
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return getItem(position).type;
         }
     }
 }
