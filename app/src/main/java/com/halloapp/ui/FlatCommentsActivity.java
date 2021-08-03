@@ -3,9 +3,7 @@ package com.halloapp.ui;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Outline;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -13,12 +11,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.text.style.StyleSpan;
+import android.text.style.TextAppearanceSpan;
 import android.text.style.URLSpan;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -38,12 +40,10 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.cardview.widget.CardView;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.app.SharedElementCallback;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
@@ -61,27 +61,36 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.Chat;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
+import com.halloapp.groups.ChatLoader;
+import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.groups.GroupTheme;
+import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.mediaedit.MediaEditActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerViewModel;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.MentionPickerView;
+import com.halloapp.ui.mentions.MentionsFormatter;
 import com.halloapp.ui.mentions.TextContentLoader;
+import com.halloapp.ui.posts.PostAttributionLayout;
+import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.ActivityUtils;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
+import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.ItemSwipeHelper;
@@ -93,7 +102,6 @@ import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.widget.SwipeListItemHelper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -101,7 +109,7 @@ import java.util.Map;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class CommentsActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
+public class FlatCommentsActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
     public static final String EXTRA_POST_SENDER_USER_ID = "post_sender_user_id";
     public static final String EXTRA_POST_ID = "post_id";
@@ -119,35 +127,16 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
 
     private static final int VOICE_RECORDING_ANIMATION_DURATION = 1000;
 
-    public static Intent viewComments(@NonNull Context context, String postId, @Nullable UserId senderUserId) {
-        final Intent intent;
-        if (ServerProps.getInstance().getIsInternalUser()) {
-            intent = new Intent(context, FlatCommentsActivity.class);
-        } else {
-            intent = new Intent(context, CommentsActivity.class);
-        }
-        if (senderUserId != null) {
-            intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, senderUserId.rawId());
-        }
-        intent.putExtra(CommentsActivity.EXTRA_POST_ID, postId);
-        intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, false);
-
-        return intent;
-    }
-
-    public static Intent viewComments(@NonNull Context context, String postId) {
-        return viewComments(context, postId, null);
-    }
-
     private final ServerProps serverProps = ServerProps.getInstance();
 
     private final CommentsAdapter adapter = new CommentsAdapter();
     private MediaThumbnailLoader mediaThumbnailLoader;
+    private ChatLoader chatLoader;
     private AvatarLoader avatarLoader;
     private ContactLoader contactLoader;
     private TextContentLoader textContentLoader;
 
-    private CommentsViewModel viewModel;
+    private FlatCommentsViewModel viewModel;
 
     private String replyCommentId;
     private UserId replyUserId;
@@ -251,7 +240,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
         final TextView replyIndicatorText = findViewById(R.id.reply_indicator_text);
         final View replyIndicatorCloseButton = findViewById(R.id.reply_indicator_close);
 
-        viewModel = new ViewModelProvider(this, new CommentsViewModel.Factory(getApplication(), postId)).get(CommentsViewModel.class);
+        viewModel = new ViewModelProvider(this, new FlatCommentsViewModel.Factory(getApplication(), postId)).get(FlatCommentsViewModel.class);
         viewModel.commentList.observe(this, comments -> {
             adapter.submitList(comments, new Runnable() {
                 @Override
@@ -421,6 +410,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
         contactLoader = new ContactLoader();
         avatarLoader = AvatarLoader.getInstance();
+        chatLoader = new ChatLoader();
         textContentLoader = new TextContentLoader(this);
 
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
@@ -497,7 +487,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
             if (millis == null) {
                 return;
             }
-            recordingTime.setText(StringUtils.formatVoiceNoteDuration(CommentsActivity.this, millis));
+            recordingTime.setText(StringUtils.formatVoiceNoteDuration(FlatCommentsActivity.this, millis));
         });
 
         itemSwipeHelper = new ItemSwipeHelper(new SwipeListItemHelper(
@@ -530,7 +520,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
                 if (comment == null || !comment.senderUserId.isMe() || comment.isRetracted()) {
                     return;
                 }
-                final AlertDialog.Builder builder = new AlertDialog.Builder(CommentsActivity.this);
+                final AlertDialog.Builder builder = new AlertDialog.Builder(FlatCommentsActivity.this);
                 builder.setMessage(getBaseContext().getString(R.string.retract_comment_confirmation));
                 builder.setCancelable(true);
                 builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance().retractComment(comment));
@@ -543,8 +533,8 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
 
     private void updateVoiceNoteSending() {
         if (allowVoiceNoteSending) {
-            sendButton.setColorFilter(ContextCompat.getColor(CommentsActivity.this, R.color.color_secondary));
-            mediaPickerView.setColorFilter(ContextCompat.getColor(CommentsActivity.this, R.color.color_secondary));
+            sendButton.setColorFilter(ContextCompat.getColor(FlatCommentsActivity.this, R.color.color_secondary));
+            mediaPickerView.setColorFilter(ContextCompat.getColor(FlatCommentsActivity.this, R.color.color_secondary));
         } else {
             sendButton.clearColorFilter();
             mediaPickerView.clearColorFilter();
@@ -563,7 +553,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
                 sendButton.setVisibility(View.VISIBLE);
                 recordBtn.setVisibility(View.INVISIBLE);
             } else {
-                sendButton.setColorFilter(ContextCompat.getColor(CommentsActivity.this, R.color.color_secondary));
+                sendButton.setColorFilter(ContextCompat.getColor(FlatCommentsActivity.this, R.color.color_secondary));
             }
         } else {
             if (allowVoiceNoteSending ) {
@@ -757,6 +747,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
         }
 
         void bindTo(final @NonNull Comment comment, long lastSeencommentRowId, int position) {
+            this.comment = comment;
             bindCommon(comment, lastSeencommentRowId, position);
             if (comment.media != null && !comment.media.isEmpty()) {
                 Media media = comment.media.get(0);
@@ -864,21 +855,17 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
         }
 
         void bindTo(final @NonNull Comment comment, long lastSeenCommentRowId, int position) {
-
             this.comment = comment;
             bindCommon(comment, lastSeenCommentRowId, position);
 
             avatarLoader.load(avatarView, comment.senderUserId);
-            contactLoader.load(nameView, comment.senderUserId);
 
             progressView.setVisibility(comment.transferred ? View.GONE : View.VISIBLE);
             TimeFormatter.setTimePostsFormat(timeView, comment.timestamp);
             timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
 
             replyButton.setVisibility(View.VISIBLE);
-            retractButton.setVisibility(comment.canBeRetracted() ? View.VISIBLE : View.GONE);
 
-            cardView.setCardBackgroundColor(ContextCompat.getColor(cardView.getContext(), comment.rowId <= lastSeenCommentRowId ? R.color.seen_comment_background : R.color.card_background));
             replyButton.setOnClickListener(v -> {
                 keyboardScrollHelper.setAnchorForKeyboardChange(position);
                 updateReplyIndicator(comment.senderUserId, comment.id);
@@ -886,22 +873,12 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
                 final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
                 imm.showSoftInput(editText,0);
             });
-            retractButton.setOnClickListener(v -> {
-                final Context context = itemView.getContext();
-                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage(context.getString(R.string.retract_comment_confirmation));
-                builder.setCancelable(true);
-                builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance().retractComment(comment));
-                builder.setNegativeButton(R.string.no, null);
-                builder.show();
-            });
         }
     }
 
     private class ViewHolder extends ViewHolderWithLifecycle {
 
         final ImageView avatarView;
-        final TextView nameView;
         final View commentMediaContainer;
         final ImageView commentMedia;
         final ImageView commentVideoIndicator;
@@ -909,16 +886,20 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
         final TextView timeView;
         final View progressView;
         final View replyButton;
-        final View retractButton;
         final RecyclerView mediaGallery;
-        final CardView cardView;
+        final View cardView;
+        final View replyArrow;
+        final View replyBubble;
+        final TextView replyTextView;
+        final TextView nameView;
+        final TextView groupView;
+        final PostAttributionLayout attributionLayout;
 
         Comment comment;
 
         ViewHolder(final @NonNull View v) {
             super(v);
             avatarView = v.findViewById(R.id.avatar);
-            nameView = v.findViewById(R.id.name);
             commentMediaContainer = v.findViewById(R.id.comment_media_container);
             commentMedia = v.findViewById(R.id.comment_media);
             commentVideoIndicator = v.findViewById(R.id.comment_video_indicator);
@@ -926,9 +907,15 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
             timeView = v.findViewById(R.id.time);
             progressView = v.findViewById(R.id.progress);
             replyButton = v.findViewById(R.id.reply);
-            retractButton = v.findViewById(R.id.retract);
             mediaGallery = v.findViewById(R.id.media);
             cardView = v.findViewById(R.id.comment);
+            replyBubble = v.findViewById(R.id.reply_bubble);
+            replyArrow = v.findViewById(R.id.reply_arrow);
+            replyTextView = v.findViewById(R.id.reply_text);
+            nameView = itemView.findViewById(R.id.name);
+            groupView = itemView.findViewById(R.id.group_name);
+            attributionLayout = itemView.findViewById(R.id.post_header);
+
             if (mediaGallery != null) {
                 final LinearLayoutManager layoutManager = new LinearLayoutManager(mediaGallery.getContext(), RecyclerView.HORIZONTAL, false);
                 mediaGallery.setLayoutManager(layoutManager);
@@ -949,89 +936,60 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
             this.comment = comment;
             bindCommon(comment, lastSeenCommentRowId, position);
 
-            final Integer textLimit = textLimits.get(comment.rowId);
-            commentView.setLineLimit(textLimit != null ? textLimit : Constants.TEXT_POST_LINE_LIMIT);
-            commentView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
-            if (comment.isRetracted()) {
-                commentView.setVisibility(View.VISIBLE);
-                commentView.setText(getString(R.string.comment_retracted_placeholder));
-                commentView.setTextAppearance(commentView.getContext(), R.style.CommentTextAppearanceRetracted);
-            } else {
-                textContentLoader.load(commentView, comment);
-
-                commentView.setVisibility(TextUtils.isEmpty(comment.text) ? View.GONE : View.VISIBLE);
-
-                if (StringUtils.isFewEmoji(comment.text)) {
-                    commentView.setTextAppearance(commentView.getContext(), R.style.CommentTextAppearanceFewEmoji);
+            if (commentMediaContainer != null) {
+                if (comment.media.isEmpty()) {
+                    commentMediaContainer.setVisibility(View.GONE);
                 } else {
-                    commentView.setTextAppearance(commentView.getContext(), R.style.CommentTextAppearanceNormal);
+                    commentMediaContainer.setVisibility(View.VISIBLE);
+                    Media media = comment.media.get(0);
+                    mediaThumbnailLoader.load(commentMedia, media);
+                    commentVideoIndicator.setVisibility(media.type == Media.MEDIA_TYPE_VIDEO ? View.VISIBLE : View.GONE);
+                    commentMedia.setOnClickListener(v -> {
+                        commentsFsePosition = position;
+
+                        Intent intent = new Intent(commentMedia.getContext(), MediaExplorerActivity.class);
+                        intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, MediaExplorerViewModel.MediaModel.fromMedia(Collections.singletonList(media)));
+                        intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, 0);
+                        intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, comment.id);
+
+                        if (commentMedia.getContext() instanceof Activity) {
+                            final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(FlatCommentsActivity.this, commentMedia, commentMedia.getTransitionName());
+                            startActivity(intent, options.toBundle());
+                        } else {
+                            startActivity(intent);
+                        }
+                    });
+                    commentMedia.setTransitionName(MediaPagerAdapter.getTransitionName(comment.id, 0));
                 }
-            }
-            commentView.setOnReadMoreListener((view, limit) -> {
-                textLimits.put(comment.rowId, limit);
-                return false;
-            });
-
-            if (comment.media.isEmpty()) {
-                commentMediaContainer.setVisibility(View.GONE);
-            } else {
-                commentMediaContainer.setVisibility(View.VISIBLE);
-                Media media = comment.media.get(0);
-                mediaThumbnailLoader.load(commentMedia, media);
-                commentVideoIndicator.setVisibility(media.type == Media.MEDIA_TYPE_VIDEO ? View.VISIBLE : View.GONE);
-                commentMedia.setOnClickListener(v -> {
-                    commentsFsePosition = position;
-
-                    Intent intent = new Intent(commentMedia.getContext(), MediaExplorerActivity.class);
-                    intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, MediaExplorerViewModel.MediaModel.fromMedia(Collections.singletonList(media)));
-                    intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, 0);
-                    intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, comment.id);
-
-                    if (commentMedia.getContext() instanceof Activity) {
-                        final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(CommentsActivity.this, commentMedia, commentMedia.getTransitionName());
-                        startActivity(intent, options.toBundle());
-                    } else {
-                        startActivity(intent);
-                    }
-                });
-                commentMedia.setTransitionName(MediaPagerAdapter.getTransitionName(comment.id, 0));
             }
         }
 
         void bindCommon(@NonNull Comment comment, long lastSeenCommentRowId, int position) {
             avatarLoader.load(avatarView, comment.senderUserId);
-            contactLoader.load(nameView, comment.senderUserId);
 
-            Resources resources = avatarView.getResources();
-            int avatarSize;
-            int avatarSpacing;
-            int startPadding;
-            if (comment.parentCommentId != null) {
-                avatarSize = resources.getDimensionPixelSize(R.dimen.reply_comment_avatar_size);
-                avatarSpacing = resources.getDimensionPixelSize(R.dimen.reply_comment_avatar_spacing);
-                startPadding = resources.getDimensionPixelSize(R.dimen.reply_comment_start_padding);
-            } else {
-                avatarSize = resources.getDimensionPixelSize(R.dimen.parent_comment_avatar_size);
-                avatarSpacing = resources.getDimensionPixelSize(R.dimen.parent_comment_avatar_spacing);
-                startPadding = resources.getDimensionPixelSize(R.dimen.parent_comment_start_padding);
+            final Integer textLimit = textLimits.get(comment.rowId);
+            commentView.setLineLimit(textLimit != null ? textLimit : Constants.TEXT_POST_LINE_LIMIT);
+            commentView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
+            commentView.setText(getCommentText(comment, false));
+            commentView.setOnReadMoreListener((view, limit) -> {
+                textLimits.put(comment.rowId, limit);
+                return false;
+            });
+
+            boolean hasParent = comment.parentCommentId != null;
+            if (replyArrow != null) {
+                replyArrow.setVisibility(hasParent ? View.VISIBLE : View.GONE);
             }
-            ViewGroup.LayoutParams params = avatarView.getLayoutParams();
-            params.width = avatarSize;
-            params.height = avatarSize;
-            if (Rtl.isRtl(avatarView.getContext())) {
-                avatarView.setPadding(avatarSpacing, avatarView.getPaddingTop(), avatarView.getPaddingRight(), avatarSpacing);
-                itemView.setPadding(itemView.getPaddingLeft(), itemView.getPaddingTop(), startPadding, itemView.getPaddingBottom());
-            } else {
-                avatarView.setPadding(avatarView.getPaddingLeft(), avatarView.getPaddingTop(), avatarSpacing,avatarSpacing);
-                itemView.setPadding(startPadding, itemView.getPaddingTop(), itemView.getPaddingRight(), itemView.getPaddingBottom());
+            if (replyBubble != null) {
+                replyBubble.setVisibility(hasParent ? View.VISIBLE : View.GONE);
             }
-            avatarView.setLayoutParams(params);
+            if (hasParent) {
+                replyTextView.setText(getCommentText(comment.parentComment, true));
+            }
 
             progressView.setVisibility(comment.transferred ? View.GONE : View.VISIBLE);
             TimeFormatter.setTimePostsFormat(timeView, comment.timestamp);
             timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
-
-            cardView.setCardBackgroundColor(ContextCompat.getColor(cardView.getContext(), comment.rowId <= lastSeenCommentRowId ? R.color.seen_comment_background : R.color.card_background));
 
             replyButton.setOnClickListener(v -> {
                 keyboardScrollHelper.setAnchorForKeyboardChange(position);
@@ -1041,23 +999,11 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
                 imm.showSoftInput(editText,0);
             });
 
-            retractButton.setOnClickListener(v -> {
-                final Context context = itemView.getContext();
-                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage(context.getString(R.string.retract_comment_confirmation));
-                builder.setCancelable(true);
-                builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance().retractComment(comment));
-                builder.setNegativeButton(R.string.no, null);
-                builder.show();
-            });
-
             // TODO(jack): Make this more reliable
             if (comment.isRetracted() || Boolean.FALSE.equals(viewModel.isMember.getLiveData().getValue())) {
                 replyButton.setVisibility(View.GONE);
-                retractButton.setVisibility(View.GONE);
             } else {
                 replyButton.setVisibility(View.VISIBLE);
-                retractButton.setVisibility(comment.canBeRetracted() ? View.VISIBLE : View.GONE);
             }
         }
 
@@ -1070,7 +1016,36 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
             }
             avatarLoader.load(avatarView, post.senderUserId);
             contactLoader.load(nameView, post.senderUserId);
+            chatLoader.cancel(groupView);
+            if (attributionLayout != null) {
+                attributionLayout.setGroupAttributionVisible(post.getParentGroup() != null);
+            }
+            if (post.getParentGroup() != null) {
+                chatLoader.load(groupView, new ViewDataLoader.Displayer<View, Chat>() {
+                    @Override
+                    public void showResult(@NonNull View view, @Nullable Chat result) {
+                        if (result != null) {
+                            GroupTheme theme = GroupTheme.getTheme(result.theme);
+                            groupView.setText(result.name);
+                            groupView.setOnClickListener(v -> {
+                                ChatId chatId = result.chatId;
+                                if (!(chatId instanceof GroupId)) {
+                                    Log.w("Cannot open group feed for non-group " + chatId);
+                                    return;
+                                }
+                                startActivity(ViewGroupFeedActivity.viewFeed(groupView.getContext(), (GroupId)chatId));
+                            });
+                        } else {
+                            Log.e("PostViewHolder/bind failed to load chat " + post.getParentGroup());
+                        }
+                    }
 
+                    @Override
+                    public void showLoading(@NonNull View view) {
+                        groupView.setText("");
+                    }
+                }, post.getParentGroup());
+            }
             progressView.setVisibility(post.transferred != Post.TRANSFERRED_NO ? View.GONE : View.VISIBLE);
             TimeFormatter.setTimePostsFormat(timeView, post.timestamp);
             timestampRefresher.scheduleTimestampRefresh(post.timestamp);
@@ -1150,7 +1125,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
                     intent.putExtra(MediaExplorerActivity.EXTRA_ALLOW_SAVING, post.parentGroup != null);
 
                     if (imageView.getContext() instanceof Activity) {
-                        final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(CommentsActivity.this, imageView, imageView.getTransitionName());
+                        final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(FlatCommentsActivity.this, imageView, imageView.getTransitionName());
                         startActivity(intent, options.toBundle());
                     } else {
                         startActivity(intent);
@@ -1277,15 +1252,15 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
         private @LayoutRes int getLayoutId(int viewType) {
             switch (viewType) {
                 case ITEM_TYPE_FUTURE_PROOF_POST:
-                    return R.layout.comment_future_proof_post_item;
+                    return R.layout.flat_comment_future_proof_post_item;
                 case ITEM_TYPE_POST:
-                    return R.layout.comment_post_item;
+                    return R.layout.flat_comment_post_item;
                 case ITEM_TYPE_COMMENT:
-                    return R.layout.comment_item;
+                    return R.layout.flat_comment_item;
                 case ITEM_TYPE_COMMENT_FUTURE_PROOF:
-                    return R.layout.comment_future_proof;
+                    return R.layout.flat_comment_future_proof;
                 case ITEM_TYPE_VOICE_NOTE:
-                    return R.layout.comment_voice_note;
+                    return R.layout.flat_comment_voice_note;
             }
             throw new IllegalArgumentException("unknown view type " + viewType);
         }
@@ -1309,6 +1284,100 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
             } else {
                 holder.bindTo(Preconditions.checkNotNull(getItem(position)), lastSeenCommentRowId, position);
             }
+        }
+    }
+
+    private CharSequence getCommentText(@NonNull Comment comment, boolean isReply) {
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+        builder.append(createAuthorSpan(comment.senderContact, (v) -> v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), comment.senderContact.userId))));
+        CharSequence commentText = "";
+        switch (comment.type) {
+            case Comment.TYPE_FUTURE_PROOF: {
+                if (isReply) {
+                    commentText = getString(R.string.unsupported_content);
+                }
+                break;
+            }
+            case Comment.TYPE_RETRACTED: {
+                SpannableString s = new SpannableString(getString(R.string.comment_retracted_placeholder));
+                Object span;
+                if (isReply) {
+                    span = new StyleSpan(Typeface.ITALIC);
+                } else {
+                    span = new TextAppearanceSpan(this, R.style.FlatCommentTextAppearanceRetracted);
+                }
+                s.setSpan(span, 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                commentText = s;
+                break;
+            }
+            case Comment.TYPE_USER: {
+                if (!TextUtils.isEmpty(comment.text)) {
+                    commentText = MentionsFormatter.insertMentions(comment.getText(), comment.mentions, (v, mention) -> {
+                        v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), mention.userId));
+                    });
+                } else if (!comment.media.isEmpty()) {
+                    switch (comment.media.get(0).type) {
+                        case Media.MEDIA_TYPE_IMAGE: {
+                            commentText = getString(R.string.photo);
+                            break;
+                        }
+                        case Media.MEDIA_TYPE_VIDEO: {
+                            commentText = getString(R.string.video);
+                            break;
+                        }
+                        case Media.MEDIA_TYPE_AUDIO: {
+                            commentText = getString(R.string.voice_note);
+                            break;
+                        }
+                        default: {
+                            commentText = "";
+                        }
+                    }
+                }
+                break;
+            }
+            case Comment.TYPE_VOICE_NOTE: {
+                if (isReply) {
+                    commentText = getString(R.string.voice_note);
+                }
+                break;
+            }
+            default:
+                commentText = "";
+        }
+        if (!TextUtils.isEmpty(commentText)) {
+            builder.append(": ");
+            builder.append(commentText);
+        }
+        return builder;
+    }
+
+    private CharSequence createAuthorSpan(Contact contact, @Nullable View.OnClickListener listener) {
+        CharSequence name = contact.userId.isMe() ? getString(R.string.me) : contact.getDisplayName();
+        SpannableString mentionString = new SpannableString(name);
+        mentionString.setSpan(new AuthorSpan(listener), 0, mentionString.length(),  Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return mentionString;
+    }
+
+    static class AuthorSpan extends ClickableSpan {
+
+        private @Nullable View.OnClickListener listener;
+
+        public AuthorSpan(@Nullable View.OnClickListener listener){
+            this.listener = listener;
+        }
+
+        @Override
+        public void onClick(@NonNull View widget) {
+            if (listener != null) {
+                listener.onClick(widget);
+            }
+        }
+
+        @Override
+        public void updateDrawState(@NonNull TextPaint ds) {
+            ds.setUnderlineText(false);
+            ds.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         }
     }
 }

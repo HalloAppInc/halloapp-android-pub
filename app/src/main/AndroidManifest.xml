@@ -256,6 +256,11 @@
             android:windowSoftInputMode="adjustResize"/>
 
         <activity
+            android:name=".ui.FlatCommentsActivity"
+            android:label="@string/comments"
+            android:windowSoftInputMode="adjustResize"/>
+
+        <activity
             android:name=".ui.settings.SettingsPrivacy"
             android:theme="@style/AppTheme"
             android:label="@string/settings_privacy"/>

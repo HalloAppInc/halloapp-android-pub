@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
+import com.halloapp.contacts.Contact;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.CommentContainer;
 import com.halloapp.xmpp.Connection;
@@ -27,6 +28,11 @@ public class Comment extends ContentItem {
 
     public final boolean transferred;
     public boolean seen;
+
+    @Nullable
+    public Contact senderContact;
+
+    public Comment parentComment;
 
     public final List<Mention> mentions = new ArrayList<>();
 

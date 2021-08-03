@@ -232,6 +232,12 @@
         <item name="android:textStyle">italic</item>
     </style>
 
+    <style name="FlatCommentTextAppearanceRetracted" parent="@style/TextAppearance.AppCompat.Subhead">
+        <item name="android:textColor">?android:textColorSecondary</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
     <style name="MediaPreviewAnimation">
         <item name="android:windowEnterAnimation">@anim/fade_in_medium</item>
         <item name="android:windowExitAnimation">@anim/fade_out_short</item>

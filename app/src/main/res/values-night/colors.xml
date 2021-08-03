@@ -40,6 +40,9 @@
 
     <color name="reaction_bar_bg">#FF525252</color>
 
+    <color name="comment_reply_bg">#3F464E</color>
+    <color name="comment_reply_text">#A6FFFFFF</color>
+
     <color name="seen_by_divider">@color/white_20</color>
 
     <color name="message_state_sent">#66C3DDFF</color>

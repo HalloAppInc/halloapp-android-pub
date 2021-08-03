@@ -521,6 +521,11 @@ public class ContentDb {
         return postsDb.getPostSeenByInfos(postId);
     }
 
+    @WorkerThread
+    public @Nullable Comment getComment(@NonNull String commentId) {
+        return postsDb.getComment(commentId);
+    }
+
     public void addComment(@NonNull Comment comment) {
         addFeedItems(new ArrayList<>(), Collections.singletonList(comment), null);
     }
@@ -589,6 +594,12 @@ public class ContentDb {
     @WorkerThread
     @NonNull List<Comment> getComments(@NonNull String postId, int start, int count) {
         return postsDb.getComments(postId, start, count);
+    }
+
+
+    @WorkerThread
+    @NonNull List<Comment> getCommentsFlat(@NonNull String postId, int start, int count) {
+        return postsDb.getCommentsFlat(postId, start, count);
     }
 
     /*

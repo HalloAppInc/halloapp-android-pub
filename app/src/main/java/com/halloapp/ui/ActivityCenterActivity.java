@@ -98,10 +98,7 @@ public class ActivityCenterActivity extends HalloActivity {
         clickListener = commentsGroup -> {
             final ActivityCenterViewModel.SocialHistory commentHistoryData = viewModel.socialHistory.getLiveData().getValue();
             if (commentHistoryData != null) {
-                final Intent intent = new Intent(this, CommentsActivity.class);
-                intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, commentsGroup.postSenderUserId.rawId());
-                intent.putExtra(CommentsActivity.EXTRA_POST_ID, commentsGroup.postId);
-                intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, false);
+                final Intent intent = CommentsActivity.viewComments(this, commentsGroup.postId, commentsGroup.postSenderUserId);
                 startActivity(intent);
             }
         };

@@ -37,9 +37,7 @@ public class IncomingPostViewHolder extends PostViewHolder {
         message = itemView.findViewById(R.id.message);
 
         itemView.findViewById(R.id.comment).setOnClickListener(view -> {
-            final Intent intent = new Intent(itemView.getContext(), CommentsActivity.class);
-            intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, post.senderUserId.rawId());
-            intent.putExtra(CommentsActivity.EXTRA_POST_ID, post.id);
+            final Intent intent = CommentsActivity.viewComments(itemView.getContext(), post.id, post.senderUserId);
             intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, post.commentCount == 0);
             parent.startActivity(intent);
         });
