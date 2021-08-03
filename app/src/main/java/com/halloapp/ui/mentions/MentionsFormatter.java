@@ -19,7 +19,7 @@ import java.util.List;
 
 public class MentionsFormatter {
 
-    interface MentionClickListener {
+    public interface MentionClickListener {
         void onMentionClick(View v, Mention mention);
     }
 
