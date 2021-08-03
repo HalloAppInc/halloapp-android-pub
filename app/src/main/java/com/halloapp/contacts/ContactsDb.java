@@ -185,8 +185,6 @@ public class ContactsDb {
                     values.put(ContactsTable.COLUMN_USER_ID, updateContact.getRawUserId());
                     values.put(ContactsTable.COLUMN_NORMALIZED_PHONE, updateContact.normalizedPhone);
                     values.put(ContactsTable.COLUMN_AVATAR_ID, updateContact.avatarId);
-                    values.put(ContactsTable.COLUMN_NEW_CONNECTION, updateContact.newConnection);
-                    values.put(ContactsTable.COLUMN_CONNECTION_TIME, updateContact.connectionTime);
                     values.put(ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS, updateContact.numPotentialFriends);
                     final int updatedContactRows = db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
                             ContactsTable._ID + "=? ",
@@ -194,6 +192,9 @@ public class ContactsDb {
                             SQLiteDatabase.CONFLICT_ABORT);
                     Log.i("ContactsDb.updateContactsServerData: " + updatedContactRows + " rows updated for " + updateContact.getDisplayName() + " " + updateContact.normalizedPhone + " " + updateContact.userId + " " + updateContact.avatarId + " " + updateContact.connectionTime);
                     updatedRows += updatedContactRows;
+                    if (updateContact.getRawUserId() != null) {
+                        addChatPlaceholderForContact(db, updateContact.getRawUserId(), updateContact.connectionTime, true);
+                    }
                 }
                 Log.i("ContactsDb.updateContactsServerData: " + updatedRows + " rows updated for " + updatedContacts.size() + " contacts");
                 db.setTransactionSuccessful();
@@ -224,8 +225,7 @@ public class ContactsDb {
                             !Objects.equals(normalizedPhoneData.userId.rawId(), existing.userId == null ? null : existing.userId.rawId());
                     final ContentValues values = new ContentValues();
                     if (newContact) {
-                        values.put(ContactsTable.COLUMN_CONNECTION_TIME, syncTime);
-                        values.put(ContactsTable.COLUMN_NEW_CONNECTION, true);
+                        addChatPlaceholderForContact(db, normalizedPhoneData.userId.rawId(), syncTime, true);
                     }
                     values.put(ContactsTable.COLUMN_USER_ID, normalizedPhoneData.userId.rawId());
                     values.put(ContactsTable.COLUMN_AVATAR_ID, normalizedPhoneData.avatarId);
@@ -252,12 +252,23 @@ public class ContactsDb {
         });
     }
 
+    @WorkerThread
+    private void addChatPlaceholderForContact(@NonNull SQLiteDatabase db, @NonNull String rawUserId, long timestamp, boolean unseen) {
+        final ContentValues values = new ContentValues();
+        values.put(ChatsPlaceholderTable.COLUMN_USER_ID, rawUserId);
+        values.put(ChatsPlaceholderTable.COLUMN_TIMESTAMP, timestamp);
+        values.put(ChatsPlaceholderTable.COLUMN_UNSEEN, unseen);
+        values.put(ChatsPlaceholderTable.COLUMN_HIDDEN, false);
+        final long rowId = db.insertWithOnConflict(ChatsPlaceholderTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        Log.i("ContactsDb.addChatPlaceholderForContact added placeholder: " + rowId);
+    }
+
     public void markContactSeen(@NonNull UserId userId) {
         databaseWriteExecutor.submit(() -> {
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
             final ContentValues values = new ContentValues();
-            values.put(ContactsTable.COLUMN_NEW_CONNECTION, false);
-            int updatedRows = db.update(ContactsTable.TABLE_NAME, values, ContactsTable.COLUMN_USER_ID + "=?", new String[] {userId.rawId()});
+            values.put(ChatsPlaceholderTable.COLUMN_UNSEEN, false);
+            int updatedRows = db.update(ChatsPlaceholderTable.TABLE_NAME, values, ChatsPlaceholderTable.COLUMN_USER_ID + "=?", new String[] {userId.rawId()});
             Log.i("ContactsDb.markContactSeen " + updatedRows + " rows updated");
             if (updatedRows > 0) {
                 notifyContactsChanged();
@@ -482,10 +493,7 @@ public class ContactsDb {
                         ContactsTable.COLUMN_NORMALIZED_PHONE,
                         ContactsTable.COLUMN_AVATAR_ID,
                         ContactsTable.COLUMN_USER_ID,
-                        ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS,
-                        ContactsTable.COLUMN_NEW_CONNECTION,
-                        ContactsTable.COLUMN_CONNECTION_TIME,
-                        ContactsTable.COLUMN_HIDE_CHAT
+                        ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS
                 },
                 ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL", null, null, null, null, null)) {
             while (cursor.moveToNext()) {
@@ -498,9 +506,6 @@ public class ContactsDb {
                         cursor.getString(4),
                         cursor.getString(5),
                         userIdStr == null ? null : new UserId(userIdStr));
-                contact.numPotentialFriends = cursor.getLong(7);
-                contact.newConnection = cursor.getInt(8) == 1;
-                contact.connectionTime = cursor.getLong(9);
                 contacts.add(contact);
             }
         }
@@ -510,9 +515,9 @@ public class ContactsDb {
 
     public void hideEmptyChat(UserId userId) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ContactsTable.COLUMN_HIDE_CHAT, true);
+        contentValues.put(ChatsPlaceholderTable.COLUMN_HIDDEN, true);
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        db.update(ContactsTable.TABLE_NAME, contentValues, ContactsTable.COLUMN_USER_ID + "=?", new String[] {userId.rawId()});
+        db.update(ChatsPlaceholderTable.TABLE_NAME, contentValues, ChatsPlaceholderTable.COLUMN_USER_ID + "=?", new String[] {userId.rawId()});
     }
 
     public void markInvited(Contact contact) {
@@ -578,10 +583,7 @@ public class ContactsDb {
                         ContactsTable.COLUMN_ADDRESS_BOOK_PHONE,
                         ContactsTable.COLUMN_NORMALIZED_PHONE,
                         ContactsTable.COLUMN_AVATAR_ID,
-                        ContactsTable.COLUMN_USER_ID,
-                        ContactsTable.COLUMN_NEW_CONNECTION,
-                        ContactsTable.COLUMN_CONNECTION_TIME,
-                        ContactsTable.COLUMN_HIDE_CHAT
+                        ContactsTable.COLUMN_USER_ID
                 },
                 ContactsTable.COLUMN_USER_ID + " IS NOT NULL AND " + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL",
                 null, null, null, null)) {
@@ -597,9 +599,6 @@ public class ContactsDb {
                             cursor.getString(4),
                             cursor.getString(5),
                             new UserId(userIdStr));
-                    contact.newConnection = cursor.getInt(7) == 1;
-                    contact.connectionTime = cursor.getLong(8);
-                    contact.hideChat = cursor.getInt(9) == 1;
                     contacts.add(contact);
                 }
             }
@@ -789,6 +788,52 @@ public class ContactsDb {
         return blocklist;
     }
 
+    @WorkerThread
+    @NonNull
+    public List<Contact> getPlaceholderChats() {
+        final List<Contact> contacts = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+
+        final String sql = "SELECT " +
+                ContactsTable.TABLE_NAME + "." + ContactsTable._ID + "," +
+                ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_ADDRESS_BOOK_ID + "," +
+                ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_ADDRESS_BOOK_NAME + "," +
+                ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_ADDRESS_BOOK_PHONE + "," +
+                ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_NORMALIZED_PHONE + "," +
+                ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_AVATAR_ID + "," +
+                ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_USER_ID + "," +
+                " p." + ChatsPlaceholderTable.COLUMN_UNSEEN + "," +
+                " p." + ChatsPlaceholderTable.COLUMN_TIMESTAMP + "," +
+                " p." + ChatsPlaceholderTable.COLUMN_HIDDEN +
+                " FROM " + ContactsTable.TABLE_NAME + " JOIN " + ChatsPlaceholderTable.TABLE_NAME + " AS p ON "
+                + ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_USER_ID + "=p." + ChatsPlaceholderTable.COLUMN_USER_ID +
+                " WHERE p." + ChatsPlaceholderTable.COLUMN_HIDDEN + "=0 AND "
+                + ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_USER_ID + " IS NOT NULL AND " + ContactsTable.TABLE_NAME + "." + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL";
+
+        try (final Cursor cursor = db.rawQuery(sql, null)) {
+            final Set<String> userIds = new HashSet<>();
+            while (cursor.moveToNext()) {
+                final String userIdStr = cursor.getString(6);
+                if (userIdStr != null && userIds.add(userIdStr) && !userIdStr.equals(Me.getInstance().getUser())) {
+                    final Contact contact = new Contact(
+                            cursor.getLong(0),
+                            cursor.getLong(1),
+                            cursor.getString(2),
+                            cursor.getString(3),
+                            cursor.getString(4),
+                            cursor.getString(5),
+                            new UserId(userIdStr));
+                    contact.newConnection = cursor.getInt(7) == 1;
+                    contact.connectionTime = cursor.getLong(8);
+                    contact.hideChat = cursor.getInt(9) == 1;
+                    contacts.add(contact);
+                }
+            }
+        }
+        Log.i("ContactsDb.getUsers: " + contacts.size());
+        return contacts;
+    }
+
     private void notifyNewContacts(@NonNull Collection<UserId> newContacts) {
         synchronized (observers) {
             for (Observer observer : observers) {
@@ -833,10 +878,7 @@ public class ContactsDb {
         static final String COLUMN_AVATAR_ID = "avatar_id";
         static final String COLUMN_USER_ID = "user_id";
         static final String COLUMN_FRIEND = "friend";
-        static final String COLUMN_NEW_CONNECTION = "new_connection";
-        static final String COLUMN_CONNECTION_TIME = "connection_time";
         static final String COLUMN_NUM_POTENTIAL_FRIENDS = "num_potential_friends";
-        static final String COLUMN_HIDE_CHAT = "hide_chat";
         static final String COLUMN_INVITED = "invited";
     }
 
@@ -878,6 +920,19 @@ public class ContactsDb {
         static final String COLUMN_PHONE = "phone";
     }
 
+    private static final class ChatsPlaceholderTable implements BaseColumns {
+        private ChatsPlaceholderTable() {}
+
+        static final String TABLE_NAME = "placeholder_chats";
+
+        static final String INDEX_USER_ID = "chats_user_id_index";
+
+        static final String COLUMN_USER_ID = "user_id";
+        static final String COLUMN_TIMESTAMP = "timestamp";
+        static final String COLUMN_UNSEEN = "unseen";
+        static final String COLUMN_HIDDEN = "hidden";
+    }
+
     private static final class BlocklistTable implements BaseColumns {
         private BlocklistTable() { }
 
@@ -911,7 +966,7 @@ public class ContactsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "contacts.db";
-        private static final int DATABASE_VERSION = 14;
+        private static final int DATABASE_VERSION = 15;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -929,10 +984,7 @@ public class ContactsDb {
                     + ContactsTable.COLUMN_NORMALIZED_PHONE + " TEXT,"
                     + ContactsTable.COLUMN_AVATAR_ID + " TEXT,"
                     + ContactsTable.COLUMN_USER_ID + " TEXT,"
-                    + ContactsTable.COLUMN_NEW_CONNECTION + " INTEGER,"
-                    + ContactsTable.COLUMN_CONNECTION_TIME + " INTEGER,"
                     + ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS + " INTEGER,"
-                    + ContactsTable.COLUMN_HIDE_CHAT + " INTEGER,"
                     + ContactsTable.COLUMN_INVITED + " INTEGER"
                     + ");");
 
@@ -991,6 +1043,18 @@ public class ContactsDb {
 
             upgradeFromVersion7(db);
 
+            db.execSQL("DROP TABLE IF EXISTS " + ChatsPlaceholderTable.TABLE_NAME);
+            db.execSQL("CREATE TABLE " + ChatsPlaceholderTable.TABLE_NAME + " ("
+                    + ChatsPlaceholderTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + ChatsPlaceholderTable.COLUMN_USER_ID + " TEXT NOT NULL UNIQUE,"
+                    + ChatsPlaceholderTable.COLUMN_TIMESTAMP + " INTEGER,"
+                    + ChatsPlaceholderTable.COLUMN_UNSEEN + " INTEGER DEFAULT 0,"
+                    + ChatsPlaceholderTable.COLUMN_HIDDEN + " INTEGER DEFAULT 0"
+                    + ");");
+
+            db.execSQL("DROP INDEX IF EXISTS " + ChatsPlaceholderTable.INDEX_USER_ID);
+            db.execSQL("CREATE UNIQUE INDEX " + ChatsPlaceholderTable.INDEX_USER_ID + " ON " + ChatsPlaceholderTable.TABLE_NAME + "("
+                    + ChatsPlaceholderTable.COLUMN_USER_ID + ");");
         }
 
         @Override
@@ -1028,6 +1092,9 @@ public class ContactsDb {
                 }
                 case 13: {
                     upgradeFromVersion13(db);
+                }
+                case 14: {
+                    upgradeFromVersion14(db);
                 }
                 break;
                 default: {
@@ -1158,8 +1225,8 @@ public class ContactsDb {
         }
 
         private void upgradeFromVersion8(SQLiteDatabase db) {
-            db.execSQL("ALTER TABLE " + ContactsTable.TABLE_NAME + " ADD COLUMN " + ContactsTable.COLUMN_NEW_CONNECTION + " INTEGER");
-            db.execSQL("ALTER TABLE " + ContactsTable.TABLE_NAME + " ADD COLUMN " + ContactsTable.COLUMN_CONNECTION_TIME + " INTEGER");
+            db.execSQL("ALTER TABLE " + ContactsTable.TABLE_NAME + " ADD COLUMN " + "new_connection" + " INTEGER");
+            db.execSQL("ALTER TABLE " + ContactsTable.TABLE_NAME + " ADD COLUMN " + "connection_time" + " INTEGER");
         }
 
         private void upgradeFromVersion9(SQLiteDatabase db) {
@@ -1167,7 +1234,7 @@ public class ContactsDb {
         }
 
         private void upgradeFromVersion10(SQLiteDatabase db) {
-            db.execSQL("ALTER TABLE " + ContactsTable.TABLE_NAME + " ADD COLUMN " + ContactsTable.COLUMN_HIDE_CHAT + " INTEGER");
+            db.execSQL("ALTER TABLE " + ContactsTable.TABLE_NAME + " ADD COLUMN " + "hide_chat" + " INTEGER");
         }
 
         private void upgradeFromVersion11(SQLiteDatabase db) {
@@ -1197,11 +1264,51 @@ public class ContactsDb {
                     ContactsTable.COLUMN_NORMALIZED_PHONE + " TEXT",
                     ContactsTable.COLUMN_AVATAR_ID + " TEXT",
                     ContactsTable.COLUMN_USER_ID + " TEXT",
-                    ContactsTable.COLUMN_NEW_CONNECTION + " INTEGER",
-                    ContactsTable.COLUMN_CONNECTION_TIME + " INTEGER",
+                    "new_connection" + " INTEGER",
+                    "connection_time" + " INTEGER",
                     ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS + " INTEGER",
-                    ContactsTable.COLUMN_HIDE_CHAT + " INTEGER",
+                    "hide_chat" + " INTEGER",
                     ContactsTable.COLUMN_INVITED + " INTEGER",
+            });
+
+            db.execSQL("DROP INDEX IF EXISTS " + ContactsTable.INDEX_USER_ID);
+            db.execSQL("CREATE INDEX " + ContactsTable.INDEX_USER_ID + " ON " + ContactsTable.TABLE_NAME + " ("
+                    + ContactsTable.COLUMN_USER_ID
+                    + ");");
+        }
+
+        private void upgradeFromVersion14(SQLiteDatabase db) {
+            db.execSQL("DROP TABLE IF EXISTS " + ChatsPlaceholderTable.TABLE_NAME);
+            db.execSQL("CREATE TABLE " + ChatsPlaceholderTable.TABLE_NAME + " ("
+                    + ChatsPlaceholderTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + ChatsPlaceholderTable.COLUMN_USER_ID + " TEXT NOT NULL UNIQUE,"
+                    + ChatsPlaceholderTable.COLUMN_TIMESTAMP + " INTEGER,"
+                    + ChatsPlaceholderTable.COLUMN_UNSEEN + " INTEGER DEFAULT 0,"
+                    + ChatsPlaceholderTable.COLUMN_HIDDEN + " INTEGER DEFAULT 0"
+                    + ");");
+
+            db.execSQL("DROP INDEX IF EXISTS " + ChatsPlaceholderTable.INDEX_USER_ID);
+            db.execSQL("CREATE UNIQUE INDEX " + ChatsPlaceholderTable.INDEX_USER_ID + " ON " + ChatsPlaceholderTable.TABLE_NAME + "("
+                    + ChatsPlaceholderTable.COLUMN_USER_ID + ");");
+
+            db.execSQL("INSERT OR IGNORE INTO " + ChatsPlaceholderTable.TABLE_NAME + " ("
+                    + ChatsPlaceholderTable.COLUMN_USER_ID + ","
+                    + ChatsPlaceholderTable.COLUMN_HIDDEN + ","
+                    + ChatsPlaceholderTable.COLUMN_TIMESTAMP + ","
+                    + ChatsPlaceholderTable.COLUMN_UNSEEN
+                    + ") SELECT "
+                    + ContactsTable.COLUMN_USER_ID + ",COALESCE(hide_chat,0),connection_time,new_connection FROM " + ContactsTable.TABLE_NAME + " WHERE " + ContactsTable.COLUMN_USER_ID + " IS NOT NULL AND " + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL");
+
+            recreateTable(db, ContactsTable.TABLE_NAME, new String[]{
+                    ContactsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT",
+                    ContactsTable.COLUMN_ADDRESS_BOOK_ID + " INTEGER NOT NULL",
+                    ContactsTable.COLUMN_ADDRESS_BOOK_NAME + " TEXT",
+                    ContactsTable.COLUMN_ADDRESS_BOOK_PHONE + " TEXT",
+                    ContactsTable.COLUMN_NORMALIZED_PHONE + " TEXT",
+                    ContactsTable.COLUMN_AVATAR_ID + " TEXT",
+                    ContactsTable.COLUMN_USER_ID + " TEXT",
+                    ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS + " INTEGER",
+                    ContactsTable.COLUMN_INVITED + " INTEGER"
             });
 
             db.execSQL("DROP INDEX IF EXISTS " + ContactsTable.INDEX_USER_ID);

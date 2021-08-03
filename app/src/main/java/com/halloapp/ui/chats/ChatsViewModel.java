@@ -138,12 +138,12 @@ public class ChatsViewModel extends AndroidViewModel {
             @Override
             protected List<Chat> compute() {
 
-                final List<Chat> chats = ContentDb.getInstance().getChats(false);
+                final List<Chat> chats = contentDb.getChats(false);
                 Map<ChatId, Chat> chatsMap = new HashMap<>();
                 for (Chat chat : chats) {
                     chatsMap.put(chat.chatId, chat);
                 }
-                final List<Contact> contacts = ContactsDb.getInstance().getUsers();
+                final List<Contact> contacts = ContactsDb.getInstance().getPlaceholderChats();
                 final Collator collator = java.text.Collator.getInstance(Locale.getDefault());
                 Collections.sort(contacts, (obj1, obj2) -> collator.compare(obj1.getDisplayName(), obj2.getDisplayName()));
                 final List<Chat> contactChats = new ArrayList<>();
