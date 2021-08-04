@@ -479,7 +479,7 @@
     <!-- Shown on a button in settings which shares text with a link to download HalloApp into any other app -->
     <string name="settings_share_option">Share HalloApp</string>
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <string name="share_halloapp_text">Join me on HalloApp, download for free at halloapp.com/dl</string>
+    <string name="share_halloapp_text">Join my real-relationship network on HalloApp. Download for free at halloapp.com/dl</string>
     <string name="edit">Edit</string>
     <string name="done">Done</string>
     <string name="members_header">Members (%s)</string>
