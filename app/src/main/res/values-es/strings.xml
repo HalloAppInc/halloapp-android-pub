@@ -675,6 +675,7 @@ Abre la pantalla de ajustes de la aplicación para modificar los permisos."</str
     <string name="data_available_at">"Los datos estarán disponibles el %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
+    <!-- Fuzzy -->
     <string name="export_data_explanation">"Descarga una copia de todos tus datos almacenados en los servidores de HalloApp. Esto no contiene mensajes o contenido de publicaciones. &lt;a href=\"https://halloapp.com/help/\"&gt;Saber más&lt;/a&gt;"</string>
 
     <!-- Shown when a request to the server for data export fails -->
@@ -729,6 +730,7 @@ Abre la pantalla de ajustes de la aplicación para modificar los permisos."</str
     <string name="settings_share_option">"Compartir HalloApp"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
+    <!-- Fuzzy -->
     <string name="share_halloapp_text">"Únete a mí en HalloApp, descárgala gratis en halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
@@ -791,9 +793,16 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="invite_link_failed_to_join_removed">"Fuiste eliminado y no te puedes volver a unir a través de enlace de invitación"</string>
 
     <!-- Message that's displayed after a user deletes their account -->
-    <string name="deletion_confirmation_message">"Your halloapp account has been successfully deleted."</string>
+    <!-- Fuzzy -->
+    <string name="deletion_confirmation_message">"Tu cuenta de HalloApp ha sido eliminada satisfactoriamente."</string>
 
     <!-- Button that allows the user to return to registration after deleting their account -->
-    <string name="return_to_registration">"Return to registration"</string>
+    <string name="return_to_registration">"Volver a inscripción"</string>
+
+    <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
+    <string name="archive_empty">"Tus publicaciones caducadas aparecerán aquí"</string>
+
+    <!-- Futureproof content we dont understand yet -->
+    <string name="unsupported_content">"Unsupported content"</string>
 </resources>
 

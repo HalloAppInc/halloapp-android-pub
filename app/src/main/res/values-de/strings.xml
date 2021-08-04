@@ -69,10 +69,9 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="share_option_message">"Nachricht"</string>
 
     <!-- pls provide more details -->
-    <!-- Fuzzy -->
     <plurals name="max_post_media_items">
-        <item quantity="one">"Du kannst %d Objekt pro Beitrag auswählen"</item>
-        <item quantity="other">"Du kannst bis zu %d Objekte pro Beitrag auswählen"</item>
+        <item quantity="one">"Du kannst pro Beitrag maximal %d Medienobjekt auswählen"</item>
+        <item quantity="other">"Du kannst pro Beitrag bis zu %d Medienobjekte auswählen"</item>
     </plurals>
     <string name="camera_record_audio_permission_rationale">"Um Fotos und Videos aufzunehmen, benötigen wir deine Erlaubnis, damit wir auf deine Kamera zugreifen und Audio aufnehmen können."</string>
     <string name="camera_record_audio_permission_rationale_denied">"Um Fotos und Videos aufzunehmen, benötigen wir deine Erlaubnis, damit wir auf deine Kamera zugreifen und Audio aufnehmen können.
@@ -144,8 +143,8 @@ Kosten deines Service-Providers könnten anfallen."</string>
         <item quantity="other">"%d Kontakte ausgewählt"</item>
     </plurals>
     <plurals name="contact_maximum_selection">
-        <item quantity="one">"Du kannst höchstens %d Kontakt auswählen"</item>
-        <item quantity="other">"Du kannst höchstens %d Kontakte auswählen"</item>
+        <item quantity="one">"Du kannst maximal %d Kontakt auswählen"</item>
+        <item quantity="other">"Du kannst maximal %d Kontakte auswählen"</item>
     </plurals>
     <string name="no_contacts_selected_subtitle">"Keine Kontakte ausgewählt"</string>
     <string name="help">"Hilfe"</string>
@@ -270,7 +269,7 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="action_save">"Speichern"</string>
     <string name="invite_friends">"Freunde &amp; Familie einladen"</string>
     <string name="invite_friend_chooser_title">"%s einladen"</string>
-    <string name="invite_text_with_name_and_number">"Hallo %1$s, ich lade dich ein, dich auch bei HalloApp anzumelden. Eine einfache Social-App, um alltägliche Momente zu teilen. Nutze %2$s zur Registrierung und hol sie dir auf halloapp.com/dl"</string>
+    <string name="invite_text_with_name_and_number">"Hey %1$s, ich lade dich ein, dich auch bei HalloApp anzumelden. Ein Netzwerk für echte Beziehungen und diejenigen, die einem am nächsten stehen. Nutze %2$s zur Registrierung und hol sie dir auf halloapp.com/dl"</string>
     <string name="name_hint">"Dein Name"</string>
     <string name="name_must_be_specified">"Name muss angegeben werden"</string>
 
@@ -362,11 +361,9 @@ Version: %2$s
     <string name="invite_failed_unknown">"Fehler beim Versenden der Einladung"</string>
     <string name="invite_creation_in_progress">"Einladung wird erstellt…"</string>
     <string name="invite_info_fetch_internet">"Fehler beim Abrufen der Einladungs-Info, überprüfe deine Internetverbindung und versuche es noch einmal"</string>
-
-    <!-- Fuzzy -->
     <plurals name="invites_remaining">
-        <item quantity="one">"Du hast noch %s Einladung"</item>
-        <item quantity="other">"Du hast noch %s Einladungen"</item>
+        <item quantity="one">"Du hast diese Woche noch %s Einladung"</item>
+        <item quantity="other">"Du hast diese Woche noch %s Einladungen"</item>
     </plurals>
     <string name="invite_friends_title">"Freunde &amp; Familie einladen"</string>
     <string name="invite_title">"Einladung"</string>
@@ -532,8 +529,7 @@ Version: %2$s
     <string name="registration_phone_code_progress">"Code via Anruf angefordert…"</string>
 
     <!-- button to request another sms code -->
-    <!-- Fuzzy -->
-    <string name="resend_sms">"SMS erneut senden"</string>
+    <string name="resend_sms">"SMS-Code erneut senden"</string>
 
     <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
     <string name="key_verification_success">"Verifikation erfolgreich"</string>
@@ -650,7 +646,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="data_available_at">"Daten sind verfügbar am %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
-    <string name="export_data_explanation">"Lade eine Kopie aller deiner Benutzerdaten herunter, die auf den Servern von HalloApp gespeichert sind. Die Kopie enthält keine Nachrichten- oder Beitragsinhalte. &lt;a href=\"https://halloapp.com/help/\"&gt;Mehr erfahren&lt;/a&gt;"</string>
+    <string name="export_data_explanation">"Lade eine Kopie aller deiner Benutzerdaten herunter, die auf den Servern von HalloApp gespeichert sind. Die Kopie enthält keine Nachrichten- oder Beitragsinhalte."</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"Anfrage ist fehlgeschlagen"</string>
@@ -704,6 +700,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="settings_share_option">"HalloApp teilen"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
+    <!-- Fuzzy -->
     <string name="share_halloapp_text">"Mach mit bei HalloApp! Kostenlos herunterladen auf halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
@@ -767,9 +764,15 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="invite_link_failed_to_join_removed">"Ein Beitritt über den Einladungslink ist nicht mehr möglich, da du aus der Gruppe entfernt wurdest"</string>
 
     <!-- Message that's displayed after a user deletes their account -->
-    <string name="deletion_confirmation_message">"Your halloapp account has been successfully deleted."</string>
+    <string name="deletion_confirmation_message">"Dein HalloApp Account wurde erfolgreich gelöscht."</string>
 
     <!-- Button that allows the user to return to registration after deleting their account -->
-    <string name="return_to_registration">"Return to registration"</string>
+    <string name="return_to_registration">"Zurück zur Registrierung"</string>
+
+    <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
+    <string name="archive_empty">"Deine abgelaufenen Beiträge werden hier angezeigt"</string>
+
+    <!-- Futureproof content we dont understand yet -->
+    <string name="unsupported_content">"Nicht unterstützter Inhalt"</string>
 </resources>
 

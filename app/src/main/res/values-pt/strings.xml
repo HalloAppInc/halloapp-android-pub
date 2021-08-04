@@ -596,6 +596,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="data_available_at">"Os dados estarão disponíveis em %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
+    <!-- Fuzzy -->
     <string name="export_data_explanation">"Faça o download de uma cópia de todos os seus dados de usuário armazenados nos servidores do HalloApp. Não contém mensagens ou conteúdos de posts. &lt;a href=\"https://halloapp.com/help/\"&gt;Saiba mais&lt;/a&gt;"</string>
 
     <!-- Shown when a request to the server for data export fails -->
@@ -650,6 +651,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="settings_share_option">"Compartilhar o HalloApp"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
+    <!-- Fuzzy -->
     <string name="share_halloapp_text">"Junte-se a mim no HalloApp, faça o download gratuitamente em halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
@@ -712,9 +714,15 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="invite_link_failed_to_join_removed">"You were removed and cannot rejoin via invite link"</string>
 
     <!-- Message that's displayed after a user deletes their account -->
-    <string name="deletion_confirmation_message">"Your halloapp account has been successfully deleted."</string>
+    <string name="deletion_confirmation_message">"Your HalloApp account has been successfully deleted."</string>
 
     <!-- Button that allows the user to return to registration after deleting their account -->
     <string name="return_to_registration">"Return to registration"</string>
+
+    <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
+    <string name="archive_empty">"Your expired posts will appear here"</string>
+
+    <!-- Futureproof content we dont understand yet -->
+    <string name="unsupported_content">"Unsupported content"</string>
 </resources>
 

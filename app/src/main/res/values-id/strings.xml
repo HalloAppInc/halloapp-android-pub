@@ -570,6 +570,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi"</string>
     <string name="data_available_at">"Data akan tersedia pada %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
+    <!-- Fuzzy -->
     <string name="export_data_explanation">"Unduh salinan semua data pengguna Anda pada server HalloApp. Ini tidak berisi pesan atau konten kiriman. &lt;a href=\"https://halloapp.com/help/\"&gt;Pelajari lebih lanjut&lt;/a&gt;"</string>
 
     <!-- Shown when a request to the server for data export fails -->
@@ -624,6 +625,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi"</string>
     <string name="settings_share_option">"Bagikan HalloApp"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
+    <!-- Fuzzy -->
     <string name="share_halloapp_text">"Bergabung dengan saya di HalloApp, unduh gratis di halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
@@ -684,9 +686,15 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi."</string>
     <string name="invite_link_failed_to_join_removed">"You were removed and cannot rejoin via invite link"</string>
 
     <!-- Message that's displayed after a user deletes their account -->
-    <string name="deletion_confirmation_message">"Your halloapp account has been successfully deleted."</string>
+    <string name="deletion_confirmation_message">"Your HalloApp account has been successfully deleted."</string>
 
     <!-- Button that allows the user to return to registration after deleting their account -->
     <string name="return_to_registration">"Return to registration"</string>
+
+    <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
+    <string name="archive_empty">"Your expired posts will appear here"</string>
+
+    <!-- Futureproof content we dont understand yet -->
+    <string name="unsupported_content">"Unsupported content"</string>
 </resources>
 

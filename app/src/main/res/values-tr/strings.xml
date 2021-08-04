@@ -678,6 +678,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</str
     <string name="data_available_at">"Veriler, %s tarihinde mevcut olacak"</string>
 
     <!-- Shown at top of data request page explaining the process -->
+    <!-- Fuzzy -->
     <string name="export_data_explanation">"HalloApp sunucularında depolanan tüm kullanıcı verilerinin bir kopyasını indir. Mesajlar ve gönderiler buna dahil değildir. &lt;a href=\"https://halloapp.com/help/\"&gt;Daha fazla bilgi edinin&lt;/a&gt;"</string>
 
     <!-- Shown when a request to the server for data export fails -->
@@ -733,6 +734,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</str
     <string name="settings_share_option">"HalloApp'i paylaş"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
+    <!-- Fuzzy -->
     <string name="share_halloapp_text">"HalloApp'te bana katıl, halloapp.com/dl üzerinden ücretsiz indir"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
@@ -795,9 +797,15 @@ Open the app settings screen to modify app permissions."</string>
     <string name="invite_link_failed_to_join_removed">"You were removed and cannot rejoin via invite link"</string>
 
     <!-- Message that's displayed after a user deletes their account -->
-    <string name="deletion_confirmation_message">"Your halloapp account has been successfully deleted."</string>
+    <string name="deletion_confirmation_message">"Your HalloApp account has been successfully deleted."</string>
 
     <!-- Button that allows the user to return to registration after deleting their account -->
     <string name="return_to_registration">"Return to registration"</string>
+
+    <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
+    <string name="archive_empty">"Your expired posts will appear here"</string>
+
+    <!-- Futureproof content we dont understand yet -->
+    <string name="unsupported_content">"Unsupported content"</string>
 </resources>
 

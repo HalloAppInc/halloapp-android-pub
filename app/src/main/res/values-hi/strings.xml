@@ -604,7 +604,7 @@ Open the app settings screen to modify app permissions."</string>
     <string name="data_available_at">"Data will be available on %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
-    <string name="export_data_explanation">"Download a copy of all your user data stored on HalloApp's servers. This does not contain message or post content. &lt;a href=\"https://halloapp.com/help/\"&gt;Learn more&lt;/a&gt;"</string>
+    <string name="export_data_explanation">"Download a copy of all your user data stored on HalloApp's servers. This does not contain message or post content."</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"Request failed"</string>
@@ -658,7 +658,7 @@ Open the app settings screen to modify app permissions."</string>
     <string name="settings_share_option">"Share HalloApp"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <string name="share_halloapp_text">"Join me on HalloApp, download for free at halloapp.com/dl"</string>
+    <string name="share_halloapp_text">"Join my real-relationship network on HalloApp. Download for free at halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
     <string name="contact_permissions_request">"Allow HalloApp access to your contacts so you can send and receive updates"</string>
@@ -720,9 +720,15 @@ Open the app settings screen to modify app permissions."</string>
     <string name="invite_link_failed_to_join_removed">"You were removed and cannot rejoin via invite link"</string>
 
     <!-- Message that's displayed after a user deletes their account -->
-    <string name="deletion_confirmation_message">"Your halloapp account has been successfully deleted."</string>
+    <string name="deletion_confirmation_message">"Your HalloApp account has been successfully deleted."</string>
 
     <!-- Button that allows the user to return to registration after deleting their account -->
     <string name="return_to_registration">"Return to registration"</string>
+
+    <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
+    <string name="archive_empty">"Your expired posts will appear here"</string>
+
+    <!-- Futureproof content we dont understand yet -->
+    <string name="unsupported_content">"Unsupported content"</string>
 </resources>
 
