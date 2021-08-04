@@ -69,26 +69,36 @@ public class FlatCommentsDataSource extends PositionalDataSource<Comment> {
         }
 
         for (Comment comment : comments) {
-            if (contactMap.containsKey(comment.senderUserId)) {
-                comment.senderContact = contactMap.get(comment.senderUserId);
-            } else {
-                comment.senderContact = contactsDb.getContact(comment.senderUserId);
-                contactMap.put(comment.senderUserId, comment.senderContact);
-            }
-            if (!comment.mentions.isEmpty()) {
-                List<Mention> mentions = MentionsLoader.loadMentionNames(Me.getInstance(), contactsDb, comment.mentions);
-                comment.mentions.clear();
-                comment.mentions.addAll(mentions);
-            }
+            fillComment(comment, contactMap);
 
             if (comment.parentCommentId != null) {
                 if (commentMap.containsKey(comment.parentCommentId)) {
                     comment.parentComment = commentMap.get(comment.parentCommentId);
                 } else {
                     comment.parentComment = contentDb.getComment(comment.parentCommentId);
-                    commentMap.put(comment.parentCommentId, comment.parentComment);
+                    if (comment.parentComment != null) {
+                        fillComment(comment.parentComment, contactMap);
+                    }
                 }
             }
+        }
+    }
+
+    private void fillComment(@NonNull Comment comment, @NonNull HashMap<UserId, Contact> contactMap) {
+        fillSenderContact(comment, contactMap);
+        if (!comment.mentions.isEmpty()) {
+            List<Mention> mentions = MentionsLoader.loadMentionNames(Me.getInstance(), contactsDb, comment.mentions);
+            comment.mentions.clear();
+            comment.mentions.addAll(mentions);
+        }
+    }
+
+    private void fillSenderContact(@NonNull Comment comment, @NonNull HashMap<UserId, Contact> contactMap) {
+        if (contactMap.containsKey(comment.senderUserId)) {
+            comment.senderContact = contactMap.get(comment.senderUserId);
+        } else {
+            comment.senderContact = contactsDb.getContact(comment.senderUserId);
+            contactMap.put(comment.senderUserId, comment.senderContact);
         }
     }
 
