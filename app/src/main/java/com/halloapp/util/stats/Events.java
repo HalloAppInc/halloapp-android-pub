@@ -1,23 +1,16 @@
 package com.halloapp.util.stats;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.WorkerThread;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Me;
 import com.halloapp.proto.log_events.DecryptionReport;
 import com.halloapp.proto.log_events.EventData;
-import com.halloapp.proto.log_events.EventDataOrBuilder;
 import com.halloapp.proto.log_events.MediaComposeLoad;
 import com.halloapp.proto.log_events.MediaDownload;
 import com.halloapp.proto.log_events.MediaUpload;
-import com.halloapp.proto.log_events.MediaUploadOrBuilder;
 import com.halloapp.proto.log_events.Platform;
 import com.halloapp.proto.log_events.PushReceived;
-import com.halloapp.proto.server.ClientLog;
-import com.halloapp.proto.server.Event;
-import com.halloapp.proto.server.EventOrBuilder;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;

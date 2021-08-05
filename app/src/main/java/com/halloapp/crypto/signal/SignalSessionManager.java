@@ -19,7 +19,7 @@ import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
-import com.halloapp.proto.clients.IdentityKey;
+import com.halloapp.proto.server.IdentityKey;
 import com.halloapp.proto.clients.SignedPreKey;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;

@@ -1336,6 +1336,96 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a ContactSyncError. */
+    interface IContactSyncError {
+
+        /** ContactSyncError retryAfterSecs */
+        retryAfterSecs?: (number|null);
+    }
+
+    /** Represents a ContactSyncError. */
+    class ContactSyncError implements IContactSyncError {
+
+        /**
+         * Constructs a new ContactSyncError.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IContactSyncError);
+
+        /** ContactSyncError retryAfterSecs. */
+        public retryAfterSecs: number;
+
+        /**
+         * Creates a new ContactSyncError instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ContactSyncError instance
+         */
+        public static create(properties?: server.IContactSyncError): server.ContactSyncError;
+
+        /**
+         * Encodes the specified ContactSyncError message. Does not implicitly {@link server.ContactSyncError.verify|verify} messages.
+         * @param message ContactSyncError message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IContactSyncError, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ContactSyncError message, length delimited. Does not implicitly {@link server.ContactSyncError.verify|verify} messages.
+         * @param message ContactSyncError message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IContactSyncError, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ContactSyncError message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ContactSyncError
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.ContactSyncError;
+
+        /**
+         * Decodes a ContactSyncError message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ContactSyncError
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.ContactSyncError;
+
+        /**
+         * Verifies a ContactSyncError message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ContactSyncError message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ContactSyncError
+         */
+        public static fromObject(object: { [k: string]: any }): server.ContactSyncError;
+
+        /**
+         * Creates a plain object from a ContactSyncError message. Also converts values to other types if specified.
+         * @param message ContactSyncError
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.ContactSyncError, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ContactSyncError to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an Audience. */
     interface IAudience {
 
@@ -4416,9 +4506,6 @@ export namespace server {
         /** HistoryResend senderUid */
         senderUid?: (number|Long|null);
 
-        /** HistoryResend receiverUids */
-        receiverUids?: ((number|Long)[]|null);
-
         /** HistoryResend payload */
         payload?: (Uint8Array|null);
 
@@ -4452,9 +4539,6 @@ export namespace server {
 
         /** HistoryResend senderUid. */
         public senderUid: (number|Long);
-
-        /** HistoryResend receiverUids. */
-        public receiverUids: (number|Long)[];
 
         /** HistoryResend payload. */
         public payload: Uint8Array;
@@ -4634,6 +4718,9 @@ export namespace server {
 
         /** Iq exportData */
         exportData?: (server.IExportData|null);
+
+        /** Iq contactSyncError */
+        contactSyncError?: (server.IContactSyncError|null);
     }
 
     /** Represents an Iq. */
@@ -4735,8 +4822,11 @@ export namespace server {
         /** Iq exportData. */
         public exportData?: (server.IExportData|null);
 
+        /** Iq contactSyncError. */
+        public contactSyncError?: (server.IContactSyncError|null);
+
         /** Iq payload. */
-        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData");
+        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError");
 
         /**
          * Creates a new Iq instance using the specified properties.
@@ -7933,6 +8023,96 @@ export namespace server {
 
         /**
          * Converts this Inviter to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an IdentityKey. */
+    interface IIdentityKey {
+
+        /** IdentityKey publicKey */
+        publicKey?: (Uint8Array|null);
+    }
+
+    /** Represents an IdentityKey. */
+    class IdentityKey implements IIdentityKey {
+
+        /**
+         * Constructs a new IdentityKey.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IIdentityKey);
+
+        /** IdentityKey publicKey. */
+        public publicKey: Uint8Array;
+
+        /**
+         * Creates a new IdentityKey instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns IdentityKey instance
+         */
+        public static create(properties?: server.IIdentityKey): server.IdentityKey;
+
+        /**
+         * Encodes the specified IdentityKey message. Does not implicitly {@link server.IdentityKey.verify|verify} messages.
+         * @param message IdentityKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IIdentityKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified IdentityKey message, length delimited. Does not implicitly {@link server.IdentityKey.verify|verify} messages.
+         * @param message IdentityKey message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IIdentityKey, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an IdentityKey message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns IdentityKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.IdentityKey;
+
+        /**
+         * Decodes an IdentityKey message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns IdentityKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.IdentityKey;
+
+        /**
+         * Verifies an IdentityKey message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an IdentityKey message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns IdentityKey
+         */
+        public static fromObject(object: { [k: string]: any }): server.IdentityKey;
+
+        /**
+         * Creates a plain object from an IdentityKey message. Also converts values to other types if specified.
+         * @param message IdentityKey
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.IdentityKey, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this IdentityKey to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };

@@ -38,24 +38,7 @@ public interface HistoryResendOrBuilder extends
   long getSenderUid();
 
   /**
-   * <code>repeated int64 receiver_uids = 4;</code>
-   * @return A list containing the receiverUids.
-   */
-  java.util.List<java.lang.Long> getReceiverUidsList();
-  /**
-   * <code>repeated int64 receiver_uids = 4;</code>
-   * @return The count of receiverUids.
-   */
-  int getReceiverUidsCount();
-  /**
-   * <code>repeated int64 receiver_uids = 4;</code>
-   * @param index The index of the element to return.
-   * @return The receiverUids at the given index.
-   */
-  long getReceiverUids(int index);
-
-  /**
-   * <code>bytes payload = 5;</code>
+   * <code>bytes payload = 4;</code>
    * @return The payload.
    */
   com.google.protobuf.ByteString getPayload();
@@ -65,7 +48,7 @@ public interface HistoryResendOrBuilder extends
    * Encrypted payload using the group feed channel.
    * </pre>
    *
-   * <code>bytes enc_payload = 6;</code>
+   * <code>bytes enc_payload = 5;</code>
    * @return The encPayload.
    */
   com.google.protobuf.ByteString getEncPayload();
@@ -75,7 +58,7 @@ public interface HistoryResendOrBuilder extends
    * Sent by the sender.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
    */
   java.util.List<com.halloapp.proto.server.SenderStateBundle> 
       getSenderStateBundlesList();
@@ -84,7 +67,7 @@ public interface HistoryResendOrBuilder extends
    * Sent by the sender.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
    */
   com.halloapp.proto.server.SenderStateBundle getSenderStateBundles(int index);
   /**
@@ -92,7 +75,7 @@ public interface HistoryResendOrBuilder extends
    * Sent by the sender.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
    */
   int getSenderStateBundlesCount();
 
@@ -101,13 +84,13 @@ public interface HistoryResendOrBuilder extends
    * Meant for the receiver, selected by the server from `sender_state_bundles`.
    * </pre>
    *
-   * <code>bytes enc_sender_state = 8;</code>
+   * <code>bytes enc_sender_state = 7;</code>
    * @return The encSenderState.
    */
   com.google.protobuf.ByteString getEncSenderState();
 
   /**
-   * <code>bytes audience_hash = 9;</code>
+   * <code>bytes audience_hash = 8;</code>
    * @return The audienceHash.
    */
   com.google.protobuf.ByteString getAudienceHash();

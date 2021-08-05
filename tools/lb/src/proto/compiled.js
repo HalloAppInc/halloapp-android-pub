@@ -3293,6 +3293,193 @@ $root.server = (function() {
         return ContactHash;
     })();
 
+    server.ContactSyncError = (function() {
+
+        /**
+         * Properties of a ContactSyncError.
+         * @memberof server
+         * @interface IContactSyncError
+         * @property {number|null} [retryAfterSecs] ContactSyncError retryAfterSecs
+         */
+
+        /**
+         * Constructs a new ContactSyncError.
+         * @memberof server
+         * @classdesc Represents a ContactSyncError.
+         * @implements IContactSyncError
+         * @constructor
+         * @param {server.IContactSyncError=} [properties] Properties to set
+         */
+        function ContactSyncError(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ContactSyncError retryAfterSecs.
+         * @member {number} retryAfterSecs
+         * @memberof server.ContactSyncError
+         * @instance
+         */
+        ContactSyncError.prototype.retryAfterSecs = 0;
+
+        /**
+         * Creates a new ContactSyncError instance using the specified properties.
+         * @function create
+         * @memberof server.ContactSyncError
+         * @static
+         * @param {server.IContactSyncError=} [properties] Properties to set
+         * @returns {server.ContactSyncError} ContactSyncError instance
+         */
+        ContactSyncError.create = function create(properties) {
+            return new ContactSyncError(properties);
+        };
+
+        /**
+         * Encodes the specified ContactSyncError message. Does not implicitly {@link server.ContactSyncError.verify|verify} messages.
+         * @function encode
+         * @memberof server.ContactSyncError
+         * @static
+         * @param {server.IContactSyncError} message ContactSyncError message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ContactSyncError.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.retryAfterSecs != null && Object.hasOwnProperty.call(message, "retryAfterSecs"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.retryAfterSecs);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ContactSyncError message, length delimited. Does not implicitly {@link server.ContactSyncError.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.ContactSyncError
+         * @static
+         * @param {server.IContactSyncError} message ContactSyncError message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ContactSyncError.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a ContactSyncError message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.ContactSyncError
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.ContactSyncError} ContactSyncError
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ContactSyncError.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.ContactSyncError();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.retryAfterSecs = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a ContactSyncError message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.ContactSyncError
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.ContactSyncError} ContactSyncError
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ContactSyncError.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a ContactSyncError message.
+         * @function verify
+         * @memberof server.ContactSyncError
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ContactSyncError.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.retryAfterSecs != null && message.hasOwnProperty("retryAfterSecs"))
+                if (!$util.isInteger(message.retryAfterSecs))
+                    return "retryAfterSecs: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates a ContactSyncError message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.ContactSyncError
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.ContactSyncError} ContactSyncError
+         */
+        ContactSyncError.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.ContactSyncError)
+                return object;
+            var message = new $root.server.ContactSyncError();
+            if (object.retryAfterSecs != null)
+                message.retryAfterSecs = object.retryAfterSecs | 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a ContactSyncError message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.ContactSyncError
+         * @static
+         * @param {server.ContactSyncError} message ContactSyncError
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ContactSyncError.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.retryAfterSecs = 0;
+            if (message.retryAfterSecs != null && message.hasOwnProperty("retryAfterSecs"))
+                object.retryAfterSecs = message.retryAfterSecs;
+            return object;
+        };
+
+        /**
+         * Converts this ContactSyncError to JSON.
+         * @function toJSON
+         * @memberof server.ContactSyncError
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ContactSyncError.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ContactSyncError;
+    })();
+
     server.Audience = (function() {
 
         /**
@@ -11438,7 +11625,6 @@ $root.server = (function() {
          * @property {string|null} [gid] HistoryResend gid
          * @property {string|null} [id] HistoryResend id
          * @property {number|Long|null} [senderUid] HistoryResend senderUid
-         * @property {Array.<number|Long>|null} [receiverUids] HistoryResend receiverUids
          * @property {Uint8Array|null} [payload] HistoryResend payload
          * @property {Uint8Array|null} [encPayload] HistoryResend encPayload
          * @property {Array.<server.ISenderStateBundle>|null} [senderStateBundles] HistoryResend senderStateBundles
@@ -11455,7 +11641,6 @@ $root.server = (function() {
          * @param {server.IHistoryResend=} [properties] Properties to set
          */
         function HistoryResend(properties) {
-            this.receiverUids = [];
             this.senderStateBundles = [];
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
@@ -11486,14 +11671,6 @@ $root.server = (function() {
          * @instance
          */
         HistoryResend.prototype.senderUid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
-
-        /**
-         * HistoryResend receiverUids.
-         * @member {Array.<number|Long>} receiverUids
-         * @memberof server.HistoryResend
-         * @instance
-         */
-        HistoryResend.prototype.receiverUids = $util.emptyArray;
 
         /**
          * HistoryResend payload.
@@ -11565,23 +11742,17 @@ $root.server = (function() {
                 writer.uint32(/* id 2, wireType 2 =*/18).string(message.id);
             if (message.senderUid != null && Object.hasOwnProperty.call(message, "senderUid"))
                 writer.uint32(/* id 3, wireType 0 =*/24).int64(message.senderUid);
-            if (message.receiverUids != null && message.receiverUids.length) {
-                writer.uint32(/* id 4, wireType 2 =*/34).fork();
-                for (var i = 0; i < message.receiverUids.length; ++i)
-                    writer.int64(message.receiverUids[i]);
-                writer.ldelim();
-            }
             if (message.payload != null && Object.hasOwnProperty.call(message, "payload"))
-                writer.uint32(/* id 5, wireType 2 =*/42).bytes(message.payload);
+                writer.uint32(/* id 4, wireType 2 =*/34).bytes(message.payload);
             if (message.encPayload != null && Object.hasOwnProperty.call(message, "encPayload"))
-                writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.encPayload);
+                writer.uint32(/* id 5, wireType 2 =*/42).bytes(message.encPayload);
             if (message.senderStateBundles != null && message.senderStateBundles.length)
                 for (var i = 0; i < message.senderStateBundles.length; ++i)
-                    $root.server.SenderStateBundle.encode(message.senderStateBundles[i], writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
+                    $root.server.SenderStateBundle.encode(message.senderStateBundles[i], writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
             if (message.encSenderState != null && Object.hasOwnProperty.call(message, "encSenderState"))
-                writer.uint32(/* id 8, wireType 2 =*/66).bytes(message.encSenderState);
+                writer.uint32(/* id 7, wireType 2 =*/58).bytes(message.encSenderState);
             if (message.audienceHash != null && Object.hasOwnProperty.call(message, "audienceHash"))
-                writer.uint32(/* id 9, wireType 2 =*/74).bytes(message.audienceHash);
+                writer.uint32(/* id 8, wireType 2 =*/66).bytes(message.audienceHash);
             return writer;
         };
 
@@ -11626,30 +11797,20 @@ $root.server = (function() {
                     message.senderUid = reader.int64();
                     break;
                 case 4:
-                    if (!(message.receiverUids && message.receiverUids.length))
-                        message.receiverUids = [];
-                    if ((tag & 7) === 2) {
-                        var end2 = reader.uint32() + reader.pos;
-                        while (reader.pos < end2)
-                            message.receiverUids.push(reader.int64());
-                    } else
-                        message.receiverUids.push(reader.int64());
-                    break;
-                case 5:
                     message.payload = reader.bytes();
                     break;
-                case 6:
+                case 5:
                     message.encPayload = reader.bytes();
                     break;
-                case 7:
+                case 6:
                     if (!(message.senderStateBundles && message.senderStateBundles.length))
                         message.senderStateBundles = [];
                     message.senderStateBundles.push($root.server.SenderStateBundle.decode(reader, reader.uint32()));
                     break;
-                case 8:
+                case 7:
                     message.encSenderState = reader.bytes();
                     break;
-                case 9:
+                case 8:
                     message.audienceHash = reader.bytes();
                     break;
                 default:
@@ -11696,13 +11857,6 @@ $root.server = (function() {
             if (message.senderUid != null && message.hasOwnProperty("senderUid"))
                 if (!$util.isInteger(message.senderUid) && !(message.senderUid && $util.isInteger(message.senderUid.low) && $util.isInteger(message.senderUid.high)))
                     return "senderUid: integer|Long expected";
-            if (message.receiverUids != null && message.hasOwnProperty("receiverUids")) {
-                if (!Array.isArray(message.receiverUids))
-                    return "receiverUids: array expected";
-                for (var i = 0; i < message.receiverUids.length; ++i)
-                    if (!$util.isInteger(message.receiverUids[i]) && !(message.receiverUids[i] && $util.isInteger(message.receiverUids[i].low) && $util.isInteger(message.receiverUids[i].high)))
-                        return "receiverUids: integer|Long[] expected";
-            }
             if (message.payload != null && message.hasOwnProperty("payload"))
                 if (!(message.payload && typeof message.payload.length === "number" || $util.isString(message.payload)))
                     return "payload: buffer expected";
@@ -11752,20 +11906,6 @@ $root.server = (function() {
                     message.senderUid = object.senderUid;
                 else if (typeof object.senderUid === "object")
                     message.senderUid = new $util.LongBits(object.senderUid.low >>> 0, object.senderUid.high >>> 0).toNumber();
-            if (object.receiverUids) {
-                if (!Array.isArray(object.receiverUids))
-                    throw TypeError(".server.HistoryResend.receiverUids: array expected");
-                message.receiverUids = [];
-                for (var i = 0; i < object.receiverUids.length; ++i)
-                    if ($util.Long)
-                        (message.receiverUids[i] = $util.Long.fromValue(object.receiverUids[i])).unsigned = false;
-                    else if (typeof object.receiverUids[i] === "string")
-                        message.receiverUids[i] = parseInt(object.receiverUids[i], 10);
-                    else if (typeof object.receiverUids[i] === "number")
-                        message.receiverUids[i] = object.receiverUids[i];
-                    else if (typeof object.receiverUids[i] === "object")
-                        message.receiverUids[i] = new $util.LongBits(object.receiverUids[i].low >>> 0, object.receiverUids[i].high >>> 0).toNumber();
-            }
             if (object.payload != null)
                 if (typeof object.payload === "string")
                     $util.base64.decode(object.payload, message.payload = $util.newBuffer($util.base64.length(object.payload)), 0);
@@ -11812,10 +11952,8 @@ $root.server = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.arrays || options.defaults) {
-                object.receiverUids = [];
+            if (options.arrays || options.defaults)
                 object.senderStateBundles = [];
-            }
             if (options.defaults) {
                 object.gid = "";
                 object.id = "";
@@ -11862,14 +12000,6 @@ $root.server = (function() {
                     object.senderUid = options.longs === String ? String(message.senderUid) : message.senderUid;
                 else
                     object.senderUid = options.longs === String ? $util.Long.prototype.toString.call(message.senderUid) : options.longs === Number ? new $util.LongBits(message.senderUid.low >>> 0, message.senderUid.high >>> 0).toNumber() : message.senderUid;
-            if (message.receiverUids && message.receiverUids.length) {
-                object.receiverUids = [];
-                for (var j = 0; j < message.receiverUids.length; ++j)
-                    if (typeof message.receiverUids[j] === "number")
-                        object.receiverUids[j] = options.longs === String ? String(message.receiverUids[j]) : message.receiverUids[j];
-                    else
-                        object.receiverUids[j] = options.longs === String ? $util.Long.prototype.toString.call(message.receiverUids[j]) : options.longs === Number ? new $util.LongBits(message.receiverUids[j].low >>> 0, message.receiverUids[j].high >>> 0).toNumber() : message.receiverUids[j];
-            }
             if (message.payload != null && message.hasOwnProperty("payload"))
                 object.payload = options.bytes === String ? $util.base64.encode(message.payload, 0, message.payload.length) : options.bytes === Array ? Array.prototype.slice.call(message.payload) : message.payload;
             if (message.encPayload != null && message.hasOwnProperty("encPayload"))
@@ -11936,6 +12066,7 @@ $root.server = (function() {
          * @property {server.IGroupInviteLink|null} [groupInviteLink] Iq groupInviteLink
          * @property {server.IHistoryResend|null} [historyResend] Iq historyResend
          * @property {server.IExportData|null} [exportData] Iq exportData
+         * @property {server.IContactSyncError|null} [contactSyncError] Iq contactSyncError
          */
 
         /**
@@ -12193,17 +12324,25 @@ $root.server = (function() {
          */
         Iq.prototype.exportData = null;
 
+        /**
+         * Iq contactSyncError.
+         * @member {server.IContactSyncError|null|undefined} contactSyncError
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.contactSyncError = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * Iq payload.
-         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|undefined} payload
+         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|undefined} payload
          * @memberof server.Iq
          * @instance
          */
         Object.defineProperty(Iq.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData"]),
+            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -12291,6 +12430,8 @@ $root.server = (function() {
                 $root.server.HistoryResend.encode(message.historyResend, writer.uint32(/* id 32, wireType 2 =*/258).fork()).ldelim();
             if (message.exportData != null && Object.hasOwnProperty.call(message, "exportData"))
                 $root.server.ExportData.encode(message.exportData, writer.uint32(/* id 33, wireType 2 =*/266).fork()).ldelim();
+            if (message.contactSyncError != null && Object.hasOwnProperty.call(message, "contactSyncError"))
+                $root.server.ContactSyncError.encode(message.contactSyncError, writer.uint32(/* id 34, wireType 2 =*/274).fork()).ldelim();
             return writer;
         };
 
@@ -12414,6 +12555,9 @@ $root.server = (function() {
                     break;
                 case 33:
                     message.exportData = $root.server.ExportData.decode(reader, reader.uint32());
+                    break;
+                case 34:
+                    message.contactSyncError = $root.server.ContactSyncError.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -12742,6 +12886,16 @@ $root.server = (function() {
                         return "exportData." + error;
                 }
             }
+            if (message.contactSyncError != null && message.hasOwnProperty("contactSyncError")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.ContactSyncError.verify(message.contactSyncError);
+                    if (error)
+                        return "contactSyncError." + error;
+                }
+            }
             return null;
         };
 
@@ -12917,6 +13071,11 @@ $root.server = (function() {
                     throw TypeError(".server.Iq.exportData: object expected");
                 message.exportData = $root.server.ExportData.fromObject(object.exportData);
             }
+            if (object.contactSyncError != null) {
+                if (typeof object.contactSyncError !== "object")
+                    throw TypeError(".server.Iq.contactSyncError: object expected");
+                message.contactSyncError = $root.server.ContactSyncError.fromObject(object.contactSyncError);
+            }
             return message;
         };
 
@@ -13080,6 +13239,11 @@ $root.server = (function() {
                 object.exportData = $root.server.ExportData.toObject(message.exportData, options);
                 if (options.oneofs)
                     object.payload = "exportData";
+            }
+            if (message.contactSyncError != null && message.hasOwnProperty("contactSyncError")) {
+                object.contactSyncError = $root.server.ContactSyncError.toObject(message.contactSyncError, options);
+                if (options.oneofs)
+                    object.payload = "contactSyncError";
             }
             return object;
         };
@@ -21395,6 +21559,202 @@ $root.server = (function() {
         };
 
         return Inviter;
+    })();
+
+    server.IdentityKey = (function() {
+
+        /**
+         * Properties of an IdentityKey.
+         * @memberof server
+         * @interface IIdentityKey
+         * @property {Uint8Array|null} [publicKey] IdentityKey publicKey
+         */
+
+        /**
+         * Constructs a new IdentityKey.
+         * @memberof server
+         * @classdesc Represents an IdentityKey.
+         * @implements IIdentityKey
+         * @constructor
+         * @param {server.IIdentityKey=} [properties] Properties to set
+         */
+        function IdentityKey(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * IdentityKey publicKey.
+         * @member {Uint8Array} publicKey
+         * @memberof server.IdentityKey
+         * @instance
+         */
+        IdentityKey.prototype.publicKey = $util.newBuffer([]);
+
+        /**
+         * Creates a new IdentityKey instance using the specified properties.
+         * @function create
+         * @memberof server.IdentityKey
+         * @static
+         * @param {server.IIdentityKey=} [properties] Properties to set
+         * @returns {server.IdentityKey} IdentityKey instance
+         */
+        IdentityKey.create = function create(properties) {
+            return new IdentityKey(properties);
+        };
+
+        /**
+         * Encodes the specified IdentityKey message. Does not implicitly {@link server.IdentityKey.verify|verify} messages.
+         * @function encode
+         * @memberof server.IdentityKey
+         * @static
+         * @param {server.IIdentityKey} message IdentityKey message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IdentityKey.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.publicKey != null && Object.hasOwnProperty.call(message, "publicKey"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.publicKey);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified IdentityKey message, length delimited. Does not implicitly {@link server.IdentityKey.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.IdentityKey
+         * @static
+         * @param {server.IIdentityKey} message IdentityKey message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IdentityKey.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an IdentityKey message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.IdentityKey
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.IdentityKey} IdentityKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IdentityKey.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.IdentityKey();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.publicKey = reader.bytes();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an IdentityKey message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.IdentityKey
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.IdentityKey} IdentityKey
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IdentityKey.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an IdentityKey message.
+         * @function verify
+         * @memberof server.IdentityKey
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        IdentityKey.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.publicKey != null && message.hasOwnProperty("publicKey"))
+                if (!(message.publicKey && typeof message.publicKey.length === "number" || $util.isString(message.publicKey)))
+                    return "publicKey: buffer expected";
+            return null;
+        };
+
+        /**
+         * Creates an IdentityKey message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.IdentityKey
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.IdentityKey} IdentityKey
+         */
+        IdentityKey.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.IdentityKey)
+                return object;
+            var message = new $root.server.IdentityKey();
+            if (object.publicKey != null)
+                if (typeof object.publicKey === "string")
+                    $util.base64.decode(object.publicKey, message.publicKey = $util.newBuffer($util.base64.length(object.publicKey)), 0);
+                else if (object.publicKey.length)
+                    message.publicKey = object.publicKey;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an IdentityKey message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.IdentityKey
+         * @static
+         * @param {server.IdentityKey} message IdentityKey
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        IdentityKey.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                if (options.bytes === String)
+                    object.publicKey = "";
+                else {
+                    object.publicKey = [];
+                    if (options.bytes !== Array)
+                        object.publicKey = $util.newBuffer(object.publicKey);
+                }
+            if (message.publicKey != null && message.hasOwnProperty("publicKey"))
+                object.publicKey = options.bytes === String ? $util.base64.encode(message.publicKey, 0, message.publicKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.publicKey) : message.publicKey;
+            return object;
+        };
+
+        /**
+         * Converts this IdentityKey to JSON.
+         * @function toJSON
+         * @memberof server.IdentityKey
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        IdentityKey.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return IdentityKey;
     })();
 
     server.EventData = (function() {

@@ -14,7 +14,6 @@ public  final class HistoryResend extends
   private HistoryResend() {
     gid_ = "";
     id_ = "";
-    receiverUids_ = emptyLongList();
     payload_ = com.google.protobuf.ByteString.EMPTY;
     encPayload_ = com.google.protobuf.ByteString.EMPTY;
     senderStateBundles_ = emptyProtobufList();
@@ -141,81 +140,10 @@ public  final class HistoryResend extends
     senderUid_ = 0L;
   }
 
-  public static final int RECEIVER_UIDS_FIELD_NUMBER = 4;
-  private com.google.protobuf.Internal.LongList receiverUids_;
-  /**
-   * <code>repeated int64 receiver_uids = 4;</code>
-   * @return A list containing the receiverUids.
-   */
-  @java.lang.Override
-  public java.util.List<java.lang.Long>
-      getReceiverUidsList() {
-    return receiverUids_;
-  }
-  /**
-   * <code>repeated int64 receiver_uids = 4;</code>
-   * @return The count of receiverUids.
-   */
-  @java.lang.Override
-  public int getReceiverUidsCount() {
-    return receiverUids_.size();
-  }
-  /**
-   * <code>repeated int64 receiver_uids = 4;</code>
-   * @param index The index of the element to return.
-   * @return The receiverUids at the given index.
-   */
-  @java.lang.Override
-  public long getReceiverUids(int index) {
-    return receiverUids_.getLong(index);
-  }
-  private int receiverUidsMemoizedSerializedSize = -1;
-  private void ensureReceiverUidsIsMutable() {
-    com.google.protobuf.Internal.LongList tmp = receiverUids_;
-    if (!tmp.isModifiable()) {
-      receiverUids_ =
-          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-     }
-  }
-  /**
-   * <code>repeated int64 receiver_uids = 4;</code>
-   * @param index The index to set the value at.
-   * @param value The receiverUids to set.
-   */
-  private void setReceiverUids(
-      int index, long value) {
-    ensureReceiverUidsIsMutable();
-    receiverUids_.setLong(index, value);
-  }
-  /**
-   * <code>repeated int64 receiver_uids = 4;</code>
-   * @param value The receiverUids to add.
-   */
-  private void addReceiverUids(long value) {
-    ensureReceiverUidsIsMutable();
-    receiverUids_.addLong(value);
-  }
-  /**
-   * <code>repeated int64 receiver_uids = 4;</code>
-   * @param values The receiverUids to add.
-   */
-  private void addAllReceiverUids(
-      java.lang.Iterable<? extends java.lang.Long> values) {
-    ensureReceiverUidsIsMutable();
-    com.google.protobuf.AbstractMessageLite.addAll(
-        values, receiverUids_);
-  }
-  /**
-   * <code>repeated int64 receiver_uids = 4;</code>
-   */
-  private void clearReceiverUids() {
-    receiverUids_ = emptyLongList();
-  }
-
-  public static final int PAYLOAD_FIELD_NUMBER = 5;
+  public static final int PAYLOAD_FIELD_NUMBER = 4;
   private com.google.protobuf.ByteString payload_;
   /**
-   * <code>bytes payload = 5;</code>
+   * <code>bytes payload = 4;</code>
    * @return The payload.
    */
   @java.lang.Override
@@ -223,7 +151,7 @@ public  final class HistoryResend extends
     return payload_;
   }
   /**
-   * <code>bytes payload = 5;</code>
+   * <code>bytes payload = 4;</code>
    * @param value The payload to set.
    */
   private void setPayload(com.google.protobuf.ByteString value) {
@@ -232,21 +160,21 @@ public  final class HistoryResend extends
     payload_ = value;
   }
   /**
-   * <code>bytes payload = 5;</code>
+   * <code>bytes payload = 4;</code>
    */
   private void clearPayload() {
     
     payload_ = getDefaultInstance().getPayload();
   }
 
-  public static final int ENC_PAYLOAD_FIELD_NUMBER = 6;
+  public static final int ENC_PAYLOAD_FIELD_NUMBER = 5;
   private com.google.protobuf.ByteString encPayload_;
   /**
    * <pre>
    * Encrypted payload using the group feed channel.
    * </pre>
    *
-   * <code>bytes enc_payload = 6;</code>
+   * <code>bytes enc_payload = 5;</code>
    * @return The encPayload.
    */
   @java.lang.Override
@@ -258,7 +186,7 @@ public  final class HistoryResend extends
    * Encrypted payload using the group feed channel.
    * </pre>
    *
-   * <code>bytes enc_payload = 6;</code>
+   * <code>bytes enc_payload = 5;</code>
    * @param value The encPayload to set.
    */
   private void setEncPayload(com.google.protobuf.ByteString value) {
@@ -271,21 +199,21 @@ public  final class HistoryResend extends
    * Encrypted payload using the group feed channel.
    * </pre>
    *
-   * <code>bytes enc_payload = 6;</code>
+   * <code>bytes enc_payload = 5;</code>
    */
   private void clearEncPayload() {
     
     encPayload_ = getDefaultInstance().getEncPayload();
   }
 
-  public static final int SENDER_STATE_BUNDLES_FIELD_NUMBER = 7;
+  public static final int SENDER_STATE_BUNDLES_FIELD_NUMBER = 6;
   private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.SenderStateBundle> senderStateBundles_;
   /**
    * <pre>
    * Sent by the sender.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
    */
   @java.lang.Override
   public java.util.List<com.halloapp.proto.server.SenderStateBundle> getSenderStateBundlesList() {
@@ -296,7 +224,7 @@ public  final class HistoryResend extends
    * Sent by the sender.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
    */
   public java.util.List<? extends com.halloapp.proto.server.SenderStateBundleOrBuilder> 
       getSenderStateBundlesOrBuilderList() {
@@ -307,7 +235,7 @@ public  final class HistoryResend extends
    * Sent by the sender.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
    */
   @java.lang.Override
   public int getSenderStateBundlesCount() {
@@ -318,7 +246,7 @@ public  final class HistoryResend extends
    * Sent by the sender.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
    */
   @java.lang.Override
   public com.halloapp.proto.server.SenderStateBundle getSenderStateBundles(int index) {
@@ -329,7 +257,7 @@ public  final class HistoryResend extends
    * Sent by the sender.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
    */
   public com.halloapp.proto.server.SenderStateBundleOrBuilder getSenderStateBundlesOrBuilder(
       int index) {
@@ -348,7 +276,7 @@ public  final class HistoryResend extends
    * Sent by the sender.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
    */
   private void setSenderStateBundles(
       int index, com.halloapp.proto.server.SenderStateBundle value) {
@@ -361,7 +289,7 @@ public  final class HistoryResend extends
    * Sent by the sender.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
    */
   private void addSenderStateBundles(com.halloapp.proto.server.SenderStateBundle value) {
     value.getClass();
@@ -373,7 +301,7 @@ public  final class HistoryResend extends
    * Sent by the sender.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
    */
   private void addSenderStateBundles(
       int index, com.halloapp.proto.server.SenderStateBundle value) {
@@ -386,7 +314,7 @@ public  final class HistoryResend extends
    * Sent by the sender.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
    */
   private void addAllSenderStateBundles(
       java.lang.Iterable<? extends com.halloapp.proto.server.SenderStateBundle> values) {
@@ -399,7 +327,7 @@ public  final class HistoryResend extends
    * Sent by the sender.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
    */
   private void clearSenderStateBundles() {
     senderStateBundles_ = emptyProtobufList();
@@ -409,21 +337,21 @@ public  final class HistoryResend extends
    * Sent by the sender.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
    */
   private void removeSenderStateBundles(int index) {
     ensureSenderStateBundlesIsMutable();
     senderStateBundles_.remove(index);
   }
 
-  public static final int ENC_SENDER_STATE_FIELD_NUMBER = 8;
+  public static final int ENC_SENDER_STATE_FIELD_NUMBER = 7;
   private com.google.protobuf.ByteString encSenderState_;
   /**
    * <pre>
    * Meant for the receiver, selected by the server from `sender_state_bundles`.
    * </pre>
    *
-   * <code>bytes enc_sender_state = 8;</code>
+   * <code>bytes enc_sender_state = 7;</code>
    * @return The encSenderState.
    */
   @java.lang.Override
@@ -435,7 +363,7 @@ public  final class HistoryResend extends
    * Meant for the receiver, selected by the server from `sender_state_bundles`.
    * </pre>
    *
-   * <code>bytes enc_sender_state = 8;</code>
+   * <code>bytes enc_sender_state = 7;</code>
    * @param value The encSenderState to set.
    */
   private void setEncSenderState(com.google.protobuf.ByteString value) {
@@ -448,17 +376,17 @@ public  final class HistoryResend extends
    * Meant for the receiver, selected by the server from `sender_state_bundles`.
    * </pre>
    *
-   * <code>bytes enc_sender_state = 8;</code>
+   * <code>bytes enc_sender_state = 7;</code>
    */
   private void clearEncSenderState() {
     
     encSenderState_ = getDefaultInstance().getEncSenderState();
   }
 
-  public static final int AUDIENCE_HASH_FIELD_NUMBER = 9;
+  public static final int AUDIENCE_HASH_FIELD_NUMBER = 8;
   private com.google.protobuf.ByteString audienceHash_;
   /**
-   * <code>bytes audience_hash = 9;</code>
+   * <code>bytes audience_hash = 8;</code>
    * @return The audienceHash.
    */
   @java.lang.Override
@@ -466,7 +394,7 @@ public  final class HistoryResend extends
     return audienceHash_;
   }
   /**
-   * <code>bytes audience_hash = 9;</code>
+   * <code>bytes audience_hash = 8;</code>
    * @param value The audienceHash to set.
    */
   private void setAudienceHash(com.google.protobuf.ByteString value) {
@@ -475,7 +403,7 @@ public  final class HistoryResend extends
     audienceHash_ = value;
   }
   /**
-   * <code>bytes audience_hash = 9;</code>
+   * <code>bytes audience_hash = 8;</code>
    */
   private void clearAudienceHash() {
     
@@ -704,76 +632,7 @@ public  final class HistoryResend extends
     }
 
     /**
-     * <code>repeated int64 receiver_uids = 4;</code>
-     * @return A list containing the receiverUids.
-     */
-    @java.lang.Override
-    public java.util.List<java.lang.Long>
-        getReceiverUidsList() {
-      return java.util.Collections.unmodifiableList(
-          instance.getReceiverUidsList());
-    }
-    /**
-     * <code>repeated int64 receiver_uids = 4;</code>
-     * @return The count of receiverUids.
-     */
-    @java.lang.Override
-    public int getReceiverUidsCount() {
-      return instance.getReceiverUidsCount();
-    }
-    /**
-     * <code>repeated int64 receiver_uids = 4;</code>
-     * @param index The index of the element to return.
-     * @return The receiverUids at the given index.
-     */
-    @java.lang.Override
-    public long getReceiverUids(int index) {
-      return instance.getReceiverUids(index);
-    }
-    /**
-     * <code>repeated int64 receiver_uids = 4;</code>
-     * @param value The receiverUids to set.
-     * @return This builder for chaining.
-     */
-    public Builder setReceiverUids(
-        int index, long value) {
-      copyOnWrite();
-      instance.setReceiverUids(index, value);
-      return this;
-    }
-    /**
-     * <code>repeated int64 receiver_uids = 4;</code>
-     * @param value The receiverUids to add.
-     * @return This builder for chaining.
-     */
-    public Builder addReceiverUids(long value) {
-      copyOnWrite();
-      instance.addReceiverUids(value);
-      return this;
-    }
-    /**
-     * <code>repeated int64 receiver_uids = 4;</code>
-     * @param values The receiverUids to add.
-     * @return This builder for chaining.
-     */
-    public Builder addAllReceiverUids(
-        java.lang.Iterable<? extends java.lang.Long> values) {
-      copyOnWrite();
-      instance.addAllReceiverUids(values);
-      return this;
-    }
-    /**
-     * <code>repeated int64 receiver_uids = 4;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearReceiverUids() {
-      copyOnWrite();
-      instance.clearReceiverUids();
-      return this;
-    }
-
-    /**
-     * <code>bytes payload = 5;</code>
+     * <code>bytes payload = 4;</code>
      * @return The payload.
      */
     @java.lang.Override
@@ -781,7 +640,7 @@ public  final class HistoryResend extends
       return instance.getPayload();
     }
     /**
-     * <code>bytes payload = 5;</code>
+     * <code>bytes payload = 4;</code>
      * @param value The payload to set.
      * @return This builder for chaining.
      */
@@ -791,7 +650,7 @@ public  final class HistoryResend extends
       return this;
     }
     /**
-     * <code>bytes payload = 5;</code>
+     * <code>bytes payload = 4;</code>
      * @return This builder for chaining.
      */
     public Builder clearPayload() {
@@ -805,7 +664,7 @@ public  final class HistoryResend extends
      * Encrypted payload using the group feed channel.
      * </pre>
      *
-     * <code>bytes enc_payload = 6;</code>
+     * <code>bytes enc_payload = 5;</code>
      * @return The encPayload.
      */
     @java.lang.Override
@@ -817,7 +676,7 @@ public  final class HistoryResend extends
      * Encrypted payload using the group feed channel.
      * </pre>
      *
-     * <code>bytes enc_payload = 6;</code>
+     * <code>bytes enc_payload = 5;</code>
      * @param value The encPayload to set.
      * @return This builder for chaining.
      */
@@ -831,7 +690,7 @@ public  final class HistoryResend extends
      * Encrypted payload using the group feed channel.
      * </pre>
      *
-     * <code>bytes enc_payload = 6;</code>
+     * <code>bytes enc_payload = 5;</code>
      * @return This builder for chaining.
      */
     public Builder clearEncPayload() {
@@ -845,7 +704,7 @@ public  final class HistoryResend extends
      * Sent by the sender.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
      */
     @java.lang.Override
     public java.util.List<com.halloapp.proto.server.SenderStateBundle> getSenderStateBundlesList() {
@@ -857,7 +716,7 @@ public  final class HistoryResend extends
      * Sent by the sender.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
      */
     @java.lang.Override
     public int getSenderStateBundlesCount() {
@@ -867,7 +726,7 @@ public  final class HistoryResend extends
      * Sent by the sender.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
      */
     @java.lang.Override
     public com.halloapp.proto.server.SenderStateBundle getSenderStateBundles(int index) {
@@ -878,7 +737,7 @@ public  final class HistoryResend extends
      * Sent by the sender.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
      */
     public Builder setSenderStateBundles(
         int index, com.halloapp.proto.server.SenderStateBundle value) {
@@ -891,7 +750,7 @@ public  final class HistoryResend extends
      * Sent by the sender.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
      */
     public Builder setSenderStateBundles(
         int index, com.halloapp.proto.server.SenderStateBundle.Builder builderForValue) {
@@ -905,7 +764,7 @@ public  final class HistoryResend extends
      * Sent by the sender.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
      */
     public Builder addSenderStateBundles(com.halloapp.proto.server.SenderStateBundle value) {
       copyOnWrite();
@@ -917,7 +776,7 @@ public  final class HistoryResend extends
      * Sent by the sender.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
      */
     public Builder addSenderStateBundles(
         int index, com.halloapp.proto.server.SenderStateBundle value) {
@@ -930,7 +789,7 @@ public  final class HistoryResend extends
      * Sent by the sender.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
      */
     public Builder addSenderStateBundles(
         com.halloapp.proto.server.SenderStateBundle.Builder builderForValue) {
@@ -943,7 +802,7 @@ public  final class HistoryResend extends
      * Sent by the sender.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
      */
     public Builder addSenderStateBundles(
         int index, com.halloapp.proto.server.SenderStateBundle.Builder builderForValue) {
@@ -957,7 +816,7 @@ public  final class HistoryResend extends
      * Sent by the sender.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
      */
     public Builder addAllSenderStateBundles(
         java.lang.Iterable<? extends com.halloapp.proto.server.SenderStateBundle> values) {
@@ -970,7 +829,7 @@ public  final class HistoryResend extends
      * Sent by the sender.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
      */
     public Builder clearSenderStateBundles() {
       copyOnWrite();
@@ -982,7 +841,7 @@ public  final class HistoryResend extends
      * Sent by the sender.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 6;</code>
      */
     public Builder removeSenderStateBundles(int index) {
       copyOnWrite();
@@ -995,7 +854,7 @@ public  final class HistoryResend extends
      * Meant for the receiver, selected by the server from `sender_state_bundles`.
      * </pre>
      *
-     * <code>bytes enc_sender_state = 8;</code>
+     * <code>bytes enc_sender_state = 7;</code>
      * @return The encSenderState.
      */
     @java.lang.Override
@@ -1007,7 +866,7 @@ public  final class HistoryResend extends
      * Meant for the receiver, selected by the server from `sender_state_bundles`.
      * </pre>
      *
-     * <code>bytes enc_sender_state = 8;</code>
+     * <code>bytes enc_sender_state = 7;</code>
      * @param value The encSenderState to set.
      * @return This builder for chaining.
      */
@@ -1021,7 +880,7 @@ public  final class HistoryResend extends
      * Meant for the receiver, selected by the server from `sender_state_bundles`.
      * </pre>
      *
-     * <code>bytes enc_sender_state = 8;</code>
+     * <code>bytes enc_sender_state = 7;</code>
      * @return This builder for chaining.
      */
     public Builder clearEncSenderState() {
@@ -1031,7 +890,7 @@ public  final class HistoryResend extends
     }
 
     /**
-     * <code>bytes audience_hash = 9;</code>
+     * <code>bytes audience_hash = 8;</code>
      * @return The audienceHash.
      */
     @java.lang.Override
@@ -1039,7 +898,7 @@ public  final class HistoryResend extends
       return instance.getAudienceHash();
     }
     /**
-     * <code>bytes audience_hash = 9;</code>
+     * <code>bytes audience_hash = 8;</code>
      * @param value The audienceHash to set.
      * @return This builder for chaining.
      */
@@ -1049,7 +908,7 @@ public  final class HistoryResend extends
       return this;
     }
     /**
-     * <code>bytes audience_hash = 9;</code>
+     * <code>bytes audience_hash = 8;</code>
      * @return This builder for chaining.
      */
     public Builder clearAudienceHash() {
@@ -1077,7 +936,6 @@ public  final class HistoryResend extends
             "gid_",
             "id_",
             "senderUid_",
-            "receiverUids_",
             "payload_",
             "encPayload_",
             "senderStateBundles_",
@@ -1086,8 +944,8 @@ public  final class HistoryResend extends
             "audienceHash_",
           };
           java.lang.String info =
-              "\u0000\t\u0000\u0000\u0001\t\t\u0000\u0002\u0000\u0001\u0208\u0002\u0208\u0003\u0002" +
-              "\u0004%\u0005\n\u0006\n\u0007\u001b\b\n\t\n";
+              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0001\u0000\u0001\u0208\u0002\u0208\u0003\u0002" +
+              "\u0004\n\u0005\n\u0006\u001b\u0007\n\b\n";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

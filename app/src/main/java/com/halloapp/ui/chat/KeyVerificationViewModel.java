@@ -25,7 +25,7 @@ import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.id.UserId;
-import com.halloapp.proto.clients.IdentityKey;
+import com.halloapp.proto.server.IdentityKey;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;

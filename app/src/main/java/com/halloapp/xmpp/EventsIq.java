@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.server.ClientLog;
-import com.halloapp.proto.server.Event;
 import com.halloapp.proto.server.Iq;
 
 import java.util.Collection;

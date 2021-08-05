@@ -18,7 +18,7 @@ import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.OneTimePreKey;
 import com.halloapp.crypto.keys.PrivateEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
-import com.halloapp.proto.clients.IdentityKey;
+import com.halloapp.proto.server.IdentityKey;
 import com.halloapp.proto.clients.SignedPreKey;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.LanguageUtils;
