@@ -66,7 +66,7 @@ class PostsDb {
     @WorkerThread
     void addPostToArchive(@NonNull Post post) {
         Log.i("ContentDb.addPostToArchive " + post);
-        if (post.isRetracted()) {
+        if (post.isRetracted() || post.type != Post.TYPE_USER) {
             return;
         }
         final ContentValues values = new ContentValues();
@@ -1988,7 +1988,7 @@ class PostsDb {
 
         String archiveSql = "SELECT " + PostsTable.COLUMN_POST_ID +
                 " FROM " + PostsTable.TABLE_NAME +
-                " WHERE " + PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime() + " AND " + PostsTable.COLUMN_SENDER_USER_ID + " = ''";
+                " WHERE " + PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime() + " AND " + PostsTable.COLUMN_SENDER_USER_ID + " = ''  AND " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_USER;
         int archivedPostsCount = 0;
         try (final Cursor cursor = db.rawQuery(archiveSql, null)) {
             while (cursor.moveToNext()) {
@@ -2000,7 +2000,7 @@ class PostsDb {
         Log.i("ContentDb.cleanup: " + archivedPostsCount + " posts archived");
 
         final int deletedPostsCount = db.delete(PostsTable.TABLE_NAME,
-                PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime() + " AND " + PostsTable.COLUMN_SENDER_USER_ID + "!= ''",
+                PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime(),
                 null);
         Log.i("ContentDb.cleanup: " + deletedPostsCount + " posts deleted");
 
@@ -2023,11 +2023,12 @@ class PostsDb {
     @WorkerThread
     void archivePosts() {
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        Cursor cursor = db.query(PostsTable.TABLE_NAME, new String[]{PostsTable.COLUMN_POST_ID}, PostsTable.COLUMN_SENDER_USER_ID + " =?", new String[]{UserId.ME.rawId()}, null, null, null, null);
+        Cursor cursor = db.query(PostsTable.TABLE_NAME, new String[]{PostsTable.COLUMN_POST_ID},
+                PostsTable.COLUMN_SENDER_USER_ID + " =? AND " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_USER,
+                new String[]{UserId.ME.rawId()}, null, null, null, null);
         while (cursor.moveToNext()) {
             Post post = getPost(cursor.getString(0));
             addPostToArchive(post);
-            db.delete(PostsTable.TABLE_NAME,PostsTable.COLUMN_POST_ID + "=?",new String[]{post.id});
         }
     }
 
