@@ -10,7 +10,7 @@ import java.util.Collection;
 
 public class EventsIq extends HalloIq {
 
-    private Collection<EventData> events;
+    private final Collection<EventData> events;
 
     EventsIq(@NonNull Collection<EventData> events) {
         this.events = events;

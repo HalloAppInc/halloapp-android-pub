@@ -86,12 +86,12 @@ class CommentsViewModel extends AndroidViewModel {
     private LoadUserTask loadUserTask;
     private LoadMediaUriTask loadMediaUriTask;
 
-    private Observer<Post> postObserver;
+    private final Observer<Post> postObserver;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private VoiceNoteRecorder voiceNoteRecorder;
-    private VoiceNotePlayer voiceNotePlayer;
+    private final VoiceNoteRecorder voiceNoteRecorder;
+    private final VoiceNotePlayer voiceNotePlayer;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 

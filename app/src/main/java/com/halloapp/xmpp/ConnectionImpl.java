@@ -133,7 +133,7 @@ public class ConnectionImpl extends Connection {
     private final PacketReader packetReader = new PacketReader();
     private final IqRouter iqRouter = new IqRouter();
 
-    private FeedContentParser feedContentParser;
+    private final FeedContentParser feedContentParser;
 
     private int iqShortId;
 

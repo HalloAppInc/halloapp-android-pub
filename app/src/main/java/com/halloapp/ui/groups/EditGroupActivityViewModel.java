@@ -30,8 +30,8 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.groups.GroupsApi;
 import com.halloapp.xmpp.util.ObservableErrorException;
@@ -41,18 +41,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class EditGroupActivityViewModel extends AndroidViewModel {
 
-    private BgWorkers bgWorkers;
+    private final BgWorkers bgWorkers;
 
-    private WorkManager workManager;
+    private final WorkManager workManager;
 
-    private MutableLiveData<Bitmap> tempAvatarLiveData;
-    private MutableLiveData<Boolean> nameChangedLiveData = new MutableLiveData<>(false);
-    private MediatorLiveData<Boolean> canSave;
-    private ComputableLiveData<String> groupNameLiveData;
+    private final MutableLiveData<Bitmap> tempAvatarLiveData;
+    private final MutableLiveData<Boolean> nameChangedLiveData = new MutableLiveData<>(false);
+    private final MediatorLiveData<Boolean> canSave;
+    private final ComputableLiveData<String> groupNameLiveData;
 
     private final GroupId groupId;
 

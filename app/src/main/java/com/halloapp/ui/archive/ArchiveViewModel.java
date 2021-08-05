@@ -14,7 +14,7 @@ import com.halloapp.content.Post;
 public class ArchiveViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Post>> archiveItemList;
-    private ArchiveDataSource.Factory dataSourceFactory;
+    private final ArchiveDataSource.Factory dataSourceFactory;
     ContentDb contentDb;
 
     public ArchiveViewModel(@NonNull Application application) {

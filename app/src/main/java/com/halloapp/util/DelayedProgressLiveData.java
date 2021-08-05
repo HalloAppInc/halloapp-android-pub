@@ -11,7 +11,7 @@ import java.lang.ref.WeakReference;
 
 public class DelayedProgressLiveData<T> extends MutableLiveData<T> {
 
-    private GlobalUI globalUI = GlobalUI.getInstance();
+    private final GlobalUI globalUI = GlobalUI.getInstance();
 
     @Override
     public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<? super T> observer) {

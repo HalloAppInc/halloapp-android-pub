@@ -7,8 +7,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.halloapp.Preferences;
-import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.UserId;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.privacy.FeedPrivacyManager;
@@ -22,10 +20,10 @@ import java.util.List;
 
 public class FeedPrivacyViewModel extends AndroidViewModel {
 
-    private BgWorkers bgWorkers;
-    private FeedPrivacyManager feedPrivacyManager;
+    private final BgWorkers bgWorkers;
+    private final FeedPrivacyManager feedPrivacyManager;
 
-    private ComputableLiveData<FeedPrivacy> feedPrivacyLiveData;
+    private final ComputableLiveData<FeedPrivacy> feedPrivacyLiveData;
 
     private final FeedPrivacyManager.Observer feedPrivacyObserver = new FeedPrivacyManager.Observer() {
         @Override

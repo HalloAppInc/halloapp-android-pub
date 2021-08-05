@@ -25,14 +25,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
-import com.halloapp.contacts.ContactsSync;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.contacts.ContactsActivity;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 
 import java.util.ArrayList;
@@ -50,12 +49,13 @@ public class BlockListActivity extends HalloActivity implements EasyPermissions.
 
     private AvatarLoader avatarLoader;
 
-    private List<UserId> blockedUsers = new ArrayList<>();
+    private final List<UserId> blockedUsers = new ArrayList<>();
 
     private View emptyContainer;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case REQUEST_CHOOSE_BLOCKED_CONTACT:
                 if (resultCode == RESULT_OK && data != null) {

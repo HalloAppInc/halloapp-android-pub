@@ -23,7 +23,7 @@ public class BgWorkers {
     private static final int CORE_POOL_SIZE = 8;
     private static final int MAXIMUM_POOL_SIZE = 128;
 
-    private ThreadPoolExecutor threadPool;
+    private final ThreadPoolExecutor threadPool;
 
     private static BgWorkers instance;
 

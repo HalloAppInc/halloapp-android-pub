@@ -17,11 +17,11 @@ import androidx.lifecycle.Observer;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.content.ContentItem;
-import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.Post;
+import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
@@ -44,7 +44,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
     final ComputableLiveData<Map<UserId, Contact>> contacts;
 
-    private LiveData<Boolean> contactPermissionLiveData;
+    private final LiveData<Boolean> contactPermissionLiveData;
 
     private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
@@ -53,7 +53,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
     private final Preferences preferences;
     private final PermissionWatcher permissionWatcher;
 
-    private InvitesApi invitesApi;
+    private final InvitesApi invitesApi;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 

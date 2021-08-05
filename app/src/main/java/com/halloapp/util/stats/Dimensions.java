@@ -67,7 +67,7 @@ public class Dimensions {
     public int hashCode() {
         int prime = 31;
         int result = 1;
-        List<String> keys = new ArrayList(getKeys());
+        List<String> keys = new ArrayList<>(getKeys());
         Collections.sort(keys);
         for (String key : keys) {
             result = prime * prime * result + prime * key.hashCode() + get(key).hashCode();
@@ -77,7 +77,7 @@ public class Dimensions {
 
     public static class Builder {
 
-        private Map<String, String> map = new HashMap<>();
+        private final Map<String, String> map = new HashMap<>();
 
         public Builder put(String key, String value) {
             map.put(key, value);

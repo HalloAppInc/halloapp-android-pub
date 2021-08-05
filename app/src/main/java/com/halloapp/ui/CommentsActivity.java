@@ -43,7 +43,6 @@ import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.app.SharedElementCallback;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
@@ -58,7 +57,6 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.Debug;
 import com.halloapp.R;
-import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Comment;
@@ -93,7 +91,6 @@ import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.widget.SwipeListItemHelper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -595,6 +592,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case REQUEST_CODE_PICK_MEDIA: {
                 if (resultCode == RESULT_OK) {
@@ -722,11 +720,9 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
 
     private class VoiceNoteViewHolder extends ViewHolder {
 
-        Comment comment;
-
-        private SeekBar seekBar;
-        private ImageView controlButton;
-        private TextView seekTime;
+        private final SeekBar seekBar;
+        private final ImageView controlButton;
+        private final TextView seekTime;
 
         private boolean playing;
 

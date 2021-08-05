@@ -2,7 +2,6 @@ package com.halloapp.ui;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -13,15 +12,14 @@ import com.halloapp.R;
 
 public class DragDownToDismissHelper {
 
-    private PhotoView avatarView;
-    private View main;
+    private final PhotoView avatarView;
+    private final View main;
 
-    private int swipeExitStartThreshold;
-    private float swipeExitTransDistance;
+    private final int swipeExitStartThreshold;
+    private final float swipeExitTransDistance;
 
     private MotionEvent swipeExitStart;
     private boolean isSwipeExitInProgress = false;
-    private boolean isExiting = false;
 
     public interface DragDismissListener {
         void onDismiss();
