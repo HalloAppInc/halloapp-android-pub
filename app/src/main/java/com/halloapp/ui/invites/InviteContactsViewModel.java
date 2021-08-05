@@ -10,10 +10,12 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.AddressBookContacts;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.id.UserId;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
@@ -25,6 +27,7 @@ import com.halloapp.xmpp.invites.InvitesResponseIq;
 import java.text.Collator;
 import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Set;
 
@@ -36,6 +39,8 @@ public class InviteContactsViewModel extends AndroidViewModel {
     private Preferences preferences;
 
     private final InvitesApi invitesApi;
+
+    private final Me me = Me.getInstance();
 
     MutableLiveData<InviteCountAndRefreshTime> inviteAndTimeData;
 
@@ -76,6 +81,15 @@ public class InviteContactsViewModel extends AndroidViewModel {
             @Override
             protected List<Contact> compute() {
                 List<Contact> contacts = Contact.sort(ContactsDb.getInstance().getUniqueContactsWithPhones());
+
+                ListIterator<Contact> iterator = contacts.listIterator();
+                String myUserId = me.getUser();
+                while(iterator.hasNext()){
+                    UserId userId = iterator.next().userId;
+                    if (userId != null && userId.rawId().equals(myUserId)) {
+                        iterator.remove();
+                   }
+                }
                 Collator collator = Collator.getInstance(Locale.getDefault());
                 Collections.sort(contacts, (o1, o2) -> {
                     if (o1.userId != null || o2.userId != null) {
