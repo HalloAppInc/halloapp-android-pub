@@ -25,10 +25,9 @@ import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
@@ -98,8 +97,10 @@ import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.widget.SwipeListItemHelper;
+import com.halloapp.widget.VoiceNoteRecorderControlView;
 import com.halloapp.xmpp.PresenceLoader;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -143,6 +144,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private static final int RECORDING_BLINK_ANIMATION_DURATION = 1000;
 
     public static Map<ChatId, String> messageDrafts = new HashMap<>();
+    public static Map<ChatId, File> audioDrafts = new HashMap<>();
 
     private final ChatAdapter adapter = new ChatAdapter();
     private ChatViewModel viewModel;
@@ -188,11 +190,20 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
     private ImageView recordBtn;
     private ImageView sendButton;
-    private View recordingIndicator;
     private TextView recordingTime;
     private View deleteRecording;
     private ImageView media;
 
+    private View deleteVoiceDraft;
+    private View voiceDraftInfo;
+
+    private TextView draftSeekTime;
+    private ImageView draftControlButton;
+    private SeekBar draftSeekbar;
+
+    private File audioDraft;
+
+    private VoiceNoteRecorderControlView voiceNoteRecorderControlView;
     private ItemSwipeHelper itemSwipeHelper;
     private LinearLayoutManager layoutManager;
     private DrawDelegateView drawDelegateView;
@@ -207,6 +218,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
     private boolean showKeyboardOnResume;
     private boolean allowVoiceNoteSending;
+
+    private boolean playing;
+    private boolean wasPlaying;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -254,9 +268,37 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         sendButton = findViewById(R.id.send);
 
         recordBtn = findViewById(R.id.record_voice);
-        deleteRecording = findViewById(R.id.delete_voice_note);
-        recordingIndicator = findViewById(R.id.recording_icon);
+        deleteRecording = findViewById(R.id.cancel_voice_note);
+        deleteRecording.setOnClickListener(v -> {
+            if (viewModel.checkIsRecording()) {
+                viewModel.finishRecording(0, true);
+            }
+        });
         recordingTime = findViewById(R.id.recording_time);
+
+        voiceNoteRecorderControlView = findViewById(R.id.recording_ui);
+
+        draftControlButton = findViewById(R.id.control_btn);
+        draftSeekbar = findViewById(R.id.voice_note_seekbar);
+        draftSeekTime = findViewById(R.id.seek_time);
+        deleteVoiceDraft = findViewById(R.id.delete_voice_draft);
+        voiceDraftInfo = findViewById(R.id.voice_draft_info);
+
+        deleteVoiceDraft.setOnClickListener(v -> {
+            audioDrafts.remove(chatId);
+            audioDraft = null;
+            updateSendButton(editText.getText());
+            if (playing) {
+                viewModel.getVoiceNotePlayer().pause();
+            }
+        });
+        draftControlButton.setOnClickListener(v -> {
+            if (playing) {
+                viewModel.getVoiceNotePlayer().pause();
+            } else if (audioDraft != null) {
+                viewModel.getVoiceNotePlayer().playFile(audioDraft.getAbsolutePath(), draftSeekbar.getProgress());
+            }
+        });
 
         mentionPickerView = findViewById(R.id.mention_picker_view);
         editText = findViewById(R.id.entry_card);
@@ -319,22 +361,45 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         });
 
         sendButton.setOnClickListener(v -> {
-            sendMessage();
-        });
-        recordBtn.setOnClickListener(v -> {
-            Boolean isRecording = viewModel.isRecording().getValue();
-            if (isRecording == null || !isRecording) {
-                if (EasyPermissions.hasPermissions(this, Manifest.permission.RECORD_AUDIO)) {
-                    viewModel.startRecording();
-                } else {
-                    EasyPermissions.requestPermissions(this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSIONS_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
-                }
-            } else {
+            if (audioDraft != null) {
+                viewModel.sendVoiceNote(replyPostMediaIndex, audioDraft);
+                audioDraft = null;
+                audioDrafts.remove(chatId);
+                updateSendButton(editText.getText());
+            } else if (viewModel.checkIsRecording() && Boolean.TRUE.equals(viewModel.isLocked().getValue())) {
                 viewModel.finishRecording(replyPostMediaIndex, false);
+            } else {
+                sendMessage();
             }
         });
-        deleteRecording.setOnClickListener(v -> {
-            viewModel.finishRecording(replyPostMediaIndex, true);
+        voiceNoteRecorderControlView.setRecordingListener(new VoiceNoteRecorderControlView.RecordingListener() {
+            @Override
+            public void onCancel() {
+                viewModel.finishRecording(replyPostMediaIndex, true);
+            }
+
+            @Override
+            public void onSend() {
+                viewModel.finishRecording(replyPostMediaIndex, false);
+            }
+
+            @Override
+            public void onLock() {
+                viewModel.lockRecording();
+            }
+        });
+        recordBtn.setOnTouchListener((v, event) -> {
+            final int action = event.getActionMasked();
+            if (action == MotionEvent.ACTION_DOWN) {
+                if (!EasyPermissions.hasPermissions(ChatActivity.this, Manifest.permission.RECORD_AUDIO)) {
+                    EasyPermissions.requestPermissions(ChatActivity.this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSIONS_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
+                    return false;
+                }
+                viewModel.startRecording();
+
+            }
+            voiceNoteRecorderControlView.onTouch(event);
+            return true;
         });
         media.setOnClickListener(v -> pickMedia());
 
@@ -377,36 +442,32 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             media.setColorFilter(ContextCompat.getColor(ChatActivity.this, R.color.color_secondary));
             viewModel.isRecording().observe(this, isRecording -> {
                 if (isRecording == null || !isRecording) {
-                    deleteRecording.setVisibility(View.GONE);
                     recordingTime.setVisibility(View.GONE);
-                    if (recordingIndicator.getAnimation() != null) {
-                        recordingIndicator.getAnimation().cancel();
-                    }
-                    recordingIndicator.setVisibility(View.GONE);
                     media.setVisibility(View.VISIBLE);
                     editText.setVisibility(View.VISIBLE);
-                    recordBtn.setImageResource(R.drawable.ic_keyboard_voice);
                     updateSendButton(editText.getText());
+                    voiceNoteRecorderControlView.setVisibility(View.GONE);
                 } else {
                     editText.setVisibility(View.INVISIBLE);
-                    deleteRecording.setVisibility(View.VISIBLE);
                     recordingTime.setVisibility(View.VISIBLE);
-                    recordingIndicator.setVisibility(View.VISIBLE);
-                    recordBtn.setImageResource(R.drawable.ic_send);
-                    if (recordingIndicator.getAnimation() == null) {
-                        Animation anim = new AlphaAnimation(1.0f, 0.0f);
-                        anim.setDuration(RECORDING_BLINK_ANIMATION_DURATION);
-                        anim.setRepeatMode(Animation.RESTART);
-                        anim.setRepeatCount(Animation.INFINITE);
-                        recordingIndicator.startAnimation(anim);
-                    }
                     media.setVisibility(View.GONE);
+                    voiceNoteRecorderControlView.setVisibility(View.VISIBLE);
                 }
             });
+
+            viewModel.isLocked().observe(this, isLocked -> {
+                updateSendButton(editText.getText());
+            });
         } else {
+            deleteRecording.setVisibility(View.GONE);
             recordBtn.setVisibility(View.GONE);
             sendButton.setVisibility(View.VISIBLE);
         }
+
+        viewModel.getRecordingAmplitude().observe(this, amplitude -> {
+            Log.e("AMPLIDUTE" + amplitude);
+            voiceNoteRecorderControlView.updateAmplitude(amplitude);
+        });
 
         viewModel.getRecordingTime().observe(this, millis -> {
             if (millis == null) {
@@ -705,23 +766,97 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         }
     }
 
+    private void loadVoiceDraft() {
+        audioDraft = audioDrafts.get(chatId);
+        if (audioDraft != null) {
+            audioDurationLoader.load(draftSeekTime, audioDraft);
+            final String audioPath = audioDraft.getAbsolutePath();
+            viewModel.getVoiceNotePlayer().getPlaybackState().observe(this, state -> {
+                if (state == null || !audioPath.equals(state.playingTag)) {
+                    return;
+                }
+                playing = state.playing;
+                if (state.playing) {
+                    draftControlButton.setImageResource(R.drawable.ic_pause);
+                    draftSeekTime.setText(StringUtils.formatVoiceNoteDuration(this, state.seek));
+                } else {
+                    draftControlButton.setImageResource(R.drawable.ic_play_arrow);
+                    draftSeekTime.setText(StringUtils.formatVoiceNoteDuration(draftSeekTime.getContext(), state.seekMax));
+                }
+                draftSeekbar.setMax(state.seekMax);
+                draftSeekbar.setProgress(state.seek);
+                draftSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                        wasPlaying = playing;
+                        if (playing) {
+                            viewModel.getVoiceNotePlayer().pause();
+                        }
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        if (wasPlaying) {
+                            viewModel.getVoiceNotePlayer().playFile(audioPath, seekBar.getProgress());
+                        }
+                    }
+                });
+            });
+        }
+        updateSendButton(editText.getText());
+    }
+
+    private void hideVoiceDraft() {
+        voiceDraftInfo.setVisibility(View.GONE);
+        deleteVoiceDraft.setVisibility(View.GONE);
+    }
+
     private void updateSendButton(Editable s) {
         boolean currentlyRecording = viewModel.checkIsRecording();
-
-        if (s == null || TextUtils.isEmpty(s.toString()) || currentlyRecording) {
-            messageDrafts.remove(chatId);
+        boolean currentlyLocked = Boolean.TRUE.equals(viewModel.isLocked().getValue());
+        boolean emptyText = s == null || TextUtils.isEmpty(s.toString());
+        if (audioDraft != null) {
+            voiceDraftInfo.setVisibility(View.VISIBLE);
+            deleteVoiceDraft.setVisibility(View.VISIBLE);
+            sendButton.setVisibility(View.VISIBLE);
+            recordBtn.setVisibility(View.INVISIBLE);
+            deleteRecording.setVisibility(View.GONE);
+            editText.setVisibility(View.INVISIBLE);
+            media.setVisibility(View.GONE);
+            sendButton.setColorFilter(ContextCompat.getColor(ChatActivity.this, R.color.color_secondary));
+        } else if (emptyText || currentlyRecording) {
+            hideVoiceDraft();
+            if (emptyText) {
+                messageDrafts.remove(chatId);
+            }
             if (allowVoiceNoteSending) {
-                sendButton.setVisibility(View.INVISIBLE);
-                recordBtn.setVisibility(View.VISIBLE);
+                if (currentlyLocked) {
+                    sendButton.setVisibility(View.VISIBLE);
+                    recordBtn.setVisibility(View.INVISIBLE);
+                    deleteRecording.setVisibility(View.VISIBLE);
+                    sendButton.setColorFilter(ContextCompat.getColor(ChatActivity.this, R.color.color_secondary));
+                } else {
+                    sendButton.setVisibility(View.INVISIBLE);
+                    recordBtn.setVisibility(View.VISIBLE);
+                    deleteRecording.setVisibility(View.GONE);
+                }
             } else {
                 sendButton.clearColorFilter();
             }
+            editText.setVisibility(currentlyRecording ? View.INVISIBLE : View.VISIBLE);
             media.setVisibility(currentlyRecording ? View.GONE : View.VISIBLE);
         } else {
+            hideVoiceDraft();
             messageDrafts.put(chatId, s.toString());
             if (allowVoiceNoteSending) {
                 sendButton.setVisibility(View.VISIBLE);
                 recordBtn.setVisibility(View.INVISIBLE);
+                deleteRecording.setVisibility(View.GONE);
             } else {
                 sendButton.setColorFilter(ContextCompat.getColor(ChatActivity.this, R.color.color_secondary));
             }
@@ -743,6 +878,17 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         if (showKeyboardOnResume) {
             editText.postDelayed(this::showKeyboard, Constants.KEYBOARD_SHOW_DELAY);
             showKeyboardOnResume = false;
+        }
+
+        loadVoiceDraft();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (viewModel.checkIsRecording()) {
+            File draft = viewModel.stopRecordingSaveDraft();
+            audioDrafts.put(chatId, draft);
         }
     }
 

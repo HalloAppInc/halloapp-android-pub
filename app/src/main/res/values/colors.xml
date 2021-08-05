@@ -90,6 +90,10 @@
     <color name="comment_reply_bg">@color/color_secondary_15_alpha</color>
     <color name="comment_reply_text">@color/black_54</color>
 
+    <color name="voice_note_circle">#E6CAE3FF</color>
+    <color name="voice_note_droplet_bg">@color/color_secondary</color>
+    <color name="voice_draft_button">#777260</color>
+
     <color name="selected_chat_highlight">@color/color_secondary_10_alpha</color>
 
     <color name="rippleColor">@color/black_5</color>

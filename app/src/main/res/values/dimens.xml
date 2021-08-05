@@ -89,4 +89,13 @@
     <dimen name="message_bubble_corner_radius">15dp</dimen>
     <dimen name="message_vertical_separator_sequence">4dp</dimen>
     <dimen name="message_vertical_separator">6dp</dimen>
+
+    <dimen name="voice_note_cancel_distance">140dp</dimen>
+    <dimen name="voice_note_lock_distance">120dp</dimen>
+    <dimen name="voice_note_fade_distance">30dp</dimen>
+    <dimen name="voice_note_state_lock_distance">35dp</dimen>
+    <dimen name="voice_note_circle_max_radius">160dp</dimen>
+    <dimen name="voice_note_circle_min_radius">120dp</dimen>
+    <dimen name="voice_note_circle_offset">24dp</dimen>
+
 </resources>

@@ -9,9 +9,11 @@ import androidx.annotation.UiThread;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.halloapp.AppContext;
 import com.halloapp.FileStore;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.VibrationUtils;
 import com.halloapp.util.logs.Log;
 
 import java.io.File;
@@ -23,6 +25,7 @@ public class VoiceNoteRecorder {
 
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final FileStore fileStore = FileStore.getInstance();
+    private final AppContext appContext = AppContext.getInstance();
 
     private int state;
 
@@ -38,7 +41,9 @@ public class VoiceNoteRecorder {
     private File recordingLocation;
 
     private final MutableLiveData<Boolean> isRecording;
+    private final MutableLiveData<Boolean> isLocked;
     private final MutableLiveData<Long> recordingDuration = new MutableLiveData<>();
+    private final MutableLiveData<Integer> recordingAmplitude = new MutableLiveData<>();
 
     private Handler recorderHandler;
     private HandlerThread recorderThread;
@@ -47,6 +52,7 @@ public class VoiceNoteRecorder {
 
     public VoiceNoteRecorder() {
         isRecording = new MutableLiveData<>(false);
+        isLocked = new MutableLiveData<>(false);
 
         recorderThread = new HandlerThread("VoiceNoteRecorder");
         recorderThread.start();
@@ -54,9 +60,21 @@ public class VoiceNoteRecorder {
         recorderHandler = new Handler(recorderThread.getLooper());
     }
 
+    private int skip = 0;
+
     private final Runnable updatePlayback = () -> {
         recordingDuration.postValue(System.currentTimeMillis() - recordStartTime);
         if (state == STATE_RECORDING) {
+            synchronized (VoiceNoteRecorder.this) {
+                if (state == STATE_RECORDING) {
+                    skip++;
+                    if (skip >= 2) {
+                        int lastAmp = mediaRecorder.getMaxAmplitude();
+                        skip = 0;
+                        recordingAmplitude.postValue(lastAmp);
+                    }
+                }
+            }
             schedulePlaybackUpdate();
         }
     };
@@ -104,12 +122,18 @@ public class VoiceNoteRecorder {
         });
     }
 
+    public void lockRecording() {
+        isLocked.postValue(true);
+    }
+
     private void startRecording() {
+        VibrationUtils.quickVibration(appContext.get());
+        state = STATE_RECORDING;
         mediaRecorder.start();
         recordStartTime = System.currentTimeMillis();
         updatePlayback.run();
-        state = STATE_RECORDING;
         isRecording.postValue(true);
+        isLocked.postValue(false);
         schedulePlaybackUpdate();
     }
 
@@ -126,16 +150,29 @@ public class VoiceNoteRecorder {
         return isRecording;
     }
 
+    public LiveData<Boolean> isLocked() {
+        return isLocked;
+    }
+
     public LiveData<Long> getRecordingTime() {
         return recordingDuration;
     }
 
+    public LiveData<Integer> getRecordingAmplitude() {
+        return recordingAmplitude;
+    }
+
     @Nullable
-    public File finishRecording() {
+    public synchronized File finishRecording() {
         if (state != STATE_RECORDING) {
+            startRecordingOnPrepare = false;
+            if (state == STATE_PREPARING) {
+                recorderHandler.post(this::finishRecording);
+            }
             Log.w("VoiceNoteRecording/finishRecording not currently recording");
             return null;
         }
+        state = STATE_NOT_READY;
         RuntimeException error = null;
         try {
             mediaRecorder.stop();
@@ -145,9 +182,10 @@ public class VoiceNoteRecorder {
             Log.e("VoiceNoteRecorder/finishRecording failed to finish");
             error = e;
         }
+        VibrationUtils.quickVibration(appContext.get());
         mediaRecorder = null;
-        state = STATE_NOT_READY;
         isRecording.postValue(false);
+        isLocked.postValue(false);
         recorderHandler.removeCallbacks(updatePlayback);
         if (error != null) {
             final File loc = recordingLocation;

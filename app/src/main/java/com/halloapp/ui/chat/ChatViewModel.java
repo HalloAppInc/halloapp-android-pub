@@ -310,12 +310,20 @@ public class ChatViewModel extends AndroidViewModel {
         return voiceNoteRecorder.isRecording();
     }
 
+    public LiveData<Boolean> isLocked() {
+        return voiceNoteRecorder.isLocked();
+    }
+
     public boolean checkIsRecording() {
         Boolean isRecording = voiceNoteRecorder.isRecording().getValue();
         if (isRecording == null) {
             return false;
         }
         return isRecording;
+    }
+
+    public LiveData<Integer> getRecordingAmplitude() {
+        return voiceNoteRecorder.getRecordingAmplitude();
     }
 
     public LiveData<Long> getRecordingTime() {
@@ -326,9 +334,12 @@ public class ChatViewModel extends AndroidViewModel {
         voiceNoteRecorder.record();
     }
 
-    public void finishRecording(int replyPostMediaIndex, boolean canceled) {
-        File recording = voiceNoteRecorder.finishRecording();
-        if (canceled || recording == null) {
+    public void lockRecording() {
+        voiceNoteRecorder.lockRecording();
+    }
+
+    public void sendVoiceNote(int replyPostMediaIndex, @Nullable File recording) {
+        if (recording == null) {
             return;
         }
         bgWorkers.execute(() -> {
@@ -343,6 +354,18 @@ public class ChatViewModel extends AndroidViewModel {
             contentItem.media.add(sendMedia);
             contentItem.addToStorage(contentDb);
         });
+    }
+
+    public void finishRecording(int replyPostMediaIndex, boolean canceled) {
+        File recording = voiceNoteRecorder.finishRecording();
+        if (canceled || recording == null) {
+            return;
+        }
+        sendVoiceNote(replyPostMediaIndex, recording);
+    }
+
+    public File stopRecordingSaveDraft() {
+        return voiceNoteRecorder.finishRecording();
     }
 
     public void updateMessageRowId(long rowId) {

@@ -35,6 +35,11 @@ public class AudioDurationLoader extends ViewDataLoader<TextView, Long, File> {
 
     @MainThread
     public void load(@NonNull TextView view, @NonNull Media media) {
+        load(view, media.file);
+    }
+
+    @MainThread
+    public void load(@NonNull TextView view, @Nullable File file) {
         final ViewDataLoader.Displayer<TextView, Long> displayer = new ViewDataLoader.Displayer<TextView, Long>() {
 
             @Override
@@ -51,27 +56,25 @@ public class AudioDurationLoader extends ViewDataLoader<TextView, Long, File> {
                 view.setText("");
             }
         };
-        load(view, media, displayer);
+        load(view, file, displayer);
     }
 
     @MainThread
-    public void load(@NonNull TextView view, @NonNull Media media, @NonNull ViewDataLoader.Displayer<TextView, Long> displayer) {
-        if (media.file == null) {
+    public void load(@NonNull TextView view, @Nullable File file, @NonNull ViewDataLoader.Displayer<TextView, Long> displayer) {
+        if (file == null) {
             view.setText("");
             return;
         }
         final Callable<Long> loader = () -> {
             Long duration = null;
-            if (media.file != null) {
-                if (media.file.exists()) {
-                    duration = MediaUtils.getAudioDuration(media.file);
+                if (file.exists()) {
+                    duration = MediaUtils.getAudioDuration(file);
                 } else {
-                    Log.i("AudioDurationLoader:load file " + media.file.getAbsolutePath() + " doesn't exist");
+                    Log.i("AudioDurationLoader:load file " + file.getAbsolutePath() + " doesn't exist");
                 }
-            }
             return duration;
         };
-        load(view, loader, displayer, media.file, cache);
+        load(view, loader, displayer, file, cache);
     }
 
 }

@@ -36,7 +36,7 @@
 
     <color name="media_content_outline">#696969</color>
 
-    <color name="chat_background">@android:color/black</color>
+    <color name="chat_background">#1E1E1B</color>
 
     <color name="reaction_bar_bg">#FF525252</color>
 
@@ -44,6 +44,10 @@
     <color name="comment_reply_text">#A6FFFFFF</color>
 
     <color name="seen_by_divider">@color/white_20</color>
+
+    <color name="voice_note_circle">#E6435A7B</color>
+    <color name="voice_note_droplet_bg">#69A1FF</color>
+    <color name="voice_draft_button">#dbdbdb</color>
 
     <color name="message_state_sent">#66C3DDFF</color>
     <color name="message_state_read">#C3DDFF</color>
