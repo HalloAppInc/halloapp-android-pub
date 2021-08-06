@@ -306,8 +306,8 @@ public class ChatViewModel extends AndroidViewModel {
         mainHandler.postDelayed(resetComposingRunnable, 3000);
     }
 
-    public LiveData<Boolean> isRecording() {
-        return voiceNoteRecorder.isRecording();
+    public VoiceNoteRecorder getVoiceNoteRecorder() {
+        return voiceNoteRecorder;
     }
 
     public LiveData<Boolean> isLocked() {
@@ -322,20 +322,8 @@ public class ChatViewModel extends AndroidViewModel {
         return isRecording;
     }
 
-    public LiveData<Integer> getRecordingAmplitude() {
-        return voiceNoteRecorder.getRecordingAmplitude();
-    }
-
-    public LiveData<Long> getRecordingTime() {
-        return voiceNoteRecorder.getRecordingTime();
-    }
-
     public void startRecording() {
         voiceNoteRecorder.record();
-    }
-
-    public void lockRecording() {
-        voiceNoteRecorder.lockRecording();
     }
 
     public void sendVoiceNote(int replyPostMediaIndex, @Nullable File recording) {

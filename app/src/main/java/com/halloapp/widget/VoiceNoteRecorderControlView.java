@@ -10,6 +10,8 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
 
 import com.halloapp.R;
 
@@ -58,13 +60,16 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
     private static final int STATE_LOCKED = 3;
     private static final int STATE_DONE = 4;
 
+    private ValueAnimator enterAnimator;
+
     public void onTouch(MotionEvent event) {
         final int action = event.getActionMasked();
         if (action == MotionEvent.ACTION_DOWN) {
-            state = STATE_DEFAULT;
             getLocationInWindow(pos);
+            state = STATE_DEFAULT;
             fadeInElements();
         } else if (action == MotionEvent.ACTION_UP) {
+            onDone();
             if (state != STATE_DONE && state != STATE_LOCKED) {
                 if (listener != null) {
                     listener.onSend();
@@ -76,21 +81,24 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
     }
 
     private void fadeInElements() {
+        if (enterAnimator != null) {
+            enterAnimator.cancel();
+        }
         voiceDelete.setTranslationX(0);
         voiceLock.setTranslationY(0);
         voiceDelete.setAlpha(0);
         voiceLock.setAlpha(0);
         voiceVisualizerView.setAlpha(1);
 
-        ValueAnimator enter = ValueAnimator.ofFloat(0.1f, 1.0f);
-        enter.setDuration(200);
-        enter.addUpdateListener(animation -> {
+        enterAnimator = ValueAnimator.ofFloat(0.1f, 1.0f);
+        enterAnimator.setDuration(150);
+        enterAnimator.addUpdateListener(animation -> {
             float value = (Float) animation.getAnimatedValue();
             voiceVisualizerView.setScale(value);
             voiceLock.setAlpha(value);
             voiceDelete.setAlpha(value);
         });
-        enter.start();
+        enterAnimator.start();
     }
 
     public void setRecordingListener(@Nullable RecordingListener listener) {
@@ -152,7 +160,7 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
             }
             case STATE_LOCKED:
             case STATE_DONE: {
-                setVisibility(View.GONE);
+                onDone();
                 break;
             }
             default:
@@ -161,6 +169,17 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
                 break;
             }
         }
+    }
+
+    private void onDone() {
+        if (enterAnimator != null) {
+            enterAnimator.cancel();
+            enterAnimator = null;
+        }
+
+        voiceDelete.setAlpha(0);
+        voiceLock.setAlpha(0);
+        voiceVisualizerView.setAlpha(0);
     }
 
     private void updateButtonsDefault() {
@@ -246,5 +265,9 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
     public void updateAmplitude(Integer amplitude) {
         int amp = amplitude == null ? 0 : amplitude;
         voiceVisualizerView.updateAmplitude(amp);
+    }
+
+    public void bindAmplitude(@NonNull LifecycleOwner owner, @NonNull LiveData<Integer> amplitude) {
+        amplitude.observe(owner, this::updateAmplitude);
     }
 }

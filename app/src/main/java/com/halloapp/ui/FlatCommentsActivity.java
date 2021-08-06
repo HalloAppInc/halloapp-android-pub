@@ -29,8 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -56,6 +54,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
+import com.halloapp.ContentDraftManager;
 import com.halloapp.Debug;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
@@ -93,6 +92,7 @@ import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.widget.ChatInputView;
 import com.halloapp.widget.ItemSwipeHelper;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.LinearSpacingItemDecoration;
@@ -101,6 +101,7 @@ import com.halloapp.widget.RecyclerViewKeyboardScrollHelper;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.widget.SwipeListItemHelper;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -125,9 +126,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
     private static final int REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE = 1;
 
-    private static final int VOICE_RECORDING_ANIMATION_DURATION = 1000;
-
     private final ServerProps serverProps = ServerProps.getInstance();
+    private final ContentDraftManager contentDraftManager = ContentDraftManager.getInstance();
 
     private final CommentsAdapter adapter = new CommentsAdapter();
     private MediaThumbnailLoader mediaThumbnailLoader;
@@ -143,9 +143,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
     private MentionableEntry editText;
     private MentionPickerView mentionPickerView;
-    private ImageView sendButton;
-    private ImageView recordBtn;
-    private View footer;
     private View membershipNotice;
 
     private ItemSwipeHelper itemSwipeHelper;
@@ -171,12 +168,13 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private boolean scrollToComment = false;
     private int commentsFsePosition;
 
-    private boolean allowVoiceNoteSending;
     private boolean isInternalGroup;
 
-    private ImageView mediaPickerView;
-
     private AudioDurationLoader audioDurationLoader;
+
+    private ChatInputView chatInputView;
+
+    private String postId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -234,14 +232,14 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         keyboardScrollHelper = new RecyclerViewKeyboardScrollHelper(commentsView);
 
-        final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
+        postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
 
         final View replyIndicator = findViewById(R.id.reply_indicator);
         final TextView replyIndicatorText = findViewById(R.id.reply_indicator_text);
         final View replyIndicatorCloseButton = findViewById(R.id.reply_indicator_close);
 
         viewModel = new ViewModelProvider(this, new FlatCommentsViewModel.Factory(getApplication(), postId)).get(FlatCommentsViewModel.class);
-        viewModel.commentList.observe(this, comments -> {
+        viewModel.getCommentList().observe(this, comments -> {
             adapter.submitList(comments, new Runnable() {
                 @Override
                 public void run() {
@@ -291,6 +289,48 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             }
         });
 
+        chatInputView = findViewById(R.id.chat_input);
+        chatInputView.setVoiceNoteControlView(findViewById(R.id.recording_ui));
+        chatInputView.setInputParent(new ChatInputView.InputParent() {
+            @Override
+            public void onSendText() {
+                final Pair<String, List<Mention>> textWithMentions = editText.getTextWithMentions();
+                final String postText = StringUtils.preparePostText(textWithMentions.first);
+                if (TextUtils.isEmpty(postText) && viewModel.commentMedia.getValue() == null) {
+                    Log.w("CommentsActivity: cannot send empty comment");
+                    return;
+                }
+                viewModel.sendComment(postText, textWithMentions.second, replyCommentId, ActivityUtils.supportsWideColor(FlatCommentsActivity.this));
+                editText.setText(null);
+                final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
+                imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                resetReplyIndicator();
+                scrollToComment = true;
+            }
+
+            @Override
+            public void onSendVoiceNote() {
+                viewModel.finishRecording(replyCommentId, false);
+            }
+
+            @Override
+            public void onSendVoiceDraft(File draft) {
+                viewModel.sendVoiceNote(replyCommentId, draft);
+            }
+
+            @Override
+            public void onChooseMedia() {
+                pickMedia();
+            }
+
+            @Override
+            public void requestVoicePermissions() {
+                EasyPermissions.requestPermissions(FlatCommentsActivity.this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
+            }
+        });
+        chatInputView.bindVoicePlayer(this, viewModel.getVoiceNotePlayer());
+        chatInputView.bindVoiceRecorder(this, viewModel.getVoiceNoteRecorder());
+
         View mediaContainer = findViewById(R.id.media_container);
         ImageView imageView = findViewById(R.id.media_preview);
         imageView.setOutlineProvider(new ViewOutlineProvider() {
@@ -325,27 +365,22 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             mentionPickerView.setMentionableContacts(contacts);
         });
 
-        mediaPickerView = findViewById(R.id.media);
-        mediaPickerView.setOnClickListener(v -> pickMedia());
-
         viewModel.post.observe(this, post -> {
             adapter.notifyDataSetChanged();
             viewModel.mentionableContacts.invalidate();
             isInternalGroup = serverProps.getIsInternalUser() &&
                     post != null &&
                     post.getParentGroup() != null;
-            allowVoiceNoteSending = serverProps.getVoiceNoteSendingEnabled() && isInternalGroup;
-            updateMediaPickerVisibility();
-            updateVoiceNoteSending();
+            chatInputView.setAllowMedia(isInternalGroup);
+            chatInputView.setAllowVoiceNoteRecording(serverProps.getVoiceNoteSendingEnabled() && isInternalGroup);
         });
         viewModel.loadPost(postId);
 
-        footer = findViewById(R.id.footer);
         membershipNotice = findViewById(R.id.membership_layout);
         viewModel.isMember.getLiveData().observe(this, isMember -> {
             adapter.notifyDataSetChanged();
             if (!isMember) {
-                footer.setVisibility(View.INVISIBLE);
+                chatInputView.setVisibility(View.INVISIBLE);
                 membershipNotice.setVisibility(View.VISIBLE);
                 editText.setFocusableInTouchMode(false);
                 editText.setFocusable(false);
@@ -354,7 +389,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 imm.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
                 showKeyboardAfterEnter = false;
             } else {
-                footer.setVisibility(View.VISIBLE);
+                chatInputView.setVisibility(View.VISIBLE);
                 membershipNotice.setVisibility(View.INVISIBLE);
                 editText.setFocusableInTouchMode(true);
                 editText.setFocusable(true);
@@ -366,21 +401,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         commentsView.setAdapter(adapter);
         editText = findViewById(R.id.entry_card);
         editText.setMentionPickerView(mentionPickerView);
-        sendButton = findViewById(R.id.send);
-        sendButton.setOnClickListener(v -> {
-            final Pair<String, List<Mention>> textWithMentions = editText.getTextWithMentions();
-            final String postText = StringUtils.preparePostText(textWithMentions.first);
-            if (TextUtils.isEmpty(postText) && viewModel.commentMedia.getValue() == null) {
-                Log.w("CommentsActivity: cannot send empty comment");
-                return;
-            }
-            viewModel.sendComment(postText, textWithMentions.second, replyCommentId, ActivityUtils.supportsWideColor(this));
-            editText.setText(null);
-            final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
-            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-            resetReplyIndicator();
-            scrollToComment = true;
-        });
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -433,63 +453,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             updateReplyIndicator(new UserId(replyUser), replyCommentId);
         }
 
-        recordBtn = findViewById(R.id.record_voice);
-        recordBtn.setOnClickListener(v -> {
-            Boolean isRecording = viewModel.isRecording().getValue();
-            if (isRecording == null || !isRecording) {
-                if (EasyPermissions.hasPermissions(this, Manifest.permission.RECORD_AUDIO)) {
-                    viewModel.startRecording();
-                } else {
-                    EasyPermissions.requestPermissions(this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
-                }
-            } else {
-                viewModel.finishRecording(this.replyCommentId, false);
-            }
-        });
-
-        final View recordingIndicator = findViewById(R.id.recording_icon);
-        final View deleteRecording = findViewById(R.id.delete_voice_note);
-        deleteRecording.setOnClickListener(v -> {
-            viewModel.cancelRecording();
-        });
-        final TextView recordingTime = findViewById(R.id.recording_time);
-
-        updateVoiceNoteSending();
-
-        viewModel.isRecording().observe(this, isRecording -> {
-            if (isRecording == null || !isRecording) {
-                deleteRecording.setVisibility(View.GONE);
-                recordingTime.setVisibility(View.GONE);
-                if (recordingIndicator.getAnimation() != null) {
-                    recordingIndicator.getAnimation().cancel();
-                }
-                recordingIndicator.setVisibility(View.GONE);
-                editText.setVisibility(View.VISIBLE);
-                recordBtn.setImageResource(R.drawable.ic_keyboard_voice);
-            } else {
-                editText.setVisibility(View.INVISIBLE);
-                deleteRecording.setVisibility(View.VISIBLE);
-                recordingTime.setVisibility(View.VISIBLE);
-                recordingIndicator.setVisibility(View.VISIBLE);
-                recordBtn.setImageResource(R.drawable.ic_send);
-                if (recordingIndicator.getAnimation() == null) {
-                    Animation anim = new AlphaAnimation(1.0f, 0.0f);
-                    anim.setDuration(VOICE_RECORDING_ANIMATION_DURATION);
-                    anim.setRepeatMode(Animation.RESTART);
-                    anim.setRepeatCount(Animation.INFINITE);
-                    recordingIndicator.startAnimation(anim);
-                }
-            }
-            updateMediaPickerVisibility();
-        });
-
-        viewModel.getRecordingTime().observe(this, millis -> {
-            if (millis == null) {
-                return;
-            }
-            recordingTime.setText(StringUtils.formatVoiceNoteDuration(FlatCommentsActivity.this, millis));
-        });
-
         itemSwipeHelper = new ItemSwipeHelper(new SwipeListItemHelper(
                 Preconditions.checkNotNull(ContextCompat.getDrawable(this, R.drawable.ic_delete_white)),
                 ContextCompat.getColor(this, R.color.swipe_delete_background),
@@ -531,50 +494,30 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         itemSwipeHelper.attachToRecyclerView(commentsView);
     }
 
-    private void updateVoiceNoteSending() {
-        if (allowVoiceNoteSending) {
-            sendButton.setColorFilter(ContextCompat.getColor(FlatCommentsActivity.this, R.color.color_secondary));
-            mediaPickerView.setColorFilter(ContextCompat.getColor(FlatCommentsActivity.this, R.color.color_secondary));
-        } else {
-            sendButton.clearColorFilter();
-            mediaPickerView.clearColorFilter();
-            recordBtn.setVisibility(View.GONE);
-            sendButton.setVisibility(View.VISIBLE);
-        }
-        updateSendButton();
-    }
-
     private void updateSendButton() {
         Editable e = editText.getText();
         String s = e == null ? null : e.toString();
         Media m = viewModel.commentMedia.getValue();
-        if (m != null || !TextUtils.isEmpty(s)) {
-            if (allowVoiceNoteSending) {
-                sendButton.setVisibility(View.VISIBLE);
-                recordBtn.setVisibility(View.INVISIBLE);
-            } else {
-                sendButton.setColorFilter(ContextCompat.getColor(FlatCommentsActivity.this, R.color.color_secondary));
-            }
-        } else {
-            if (allowVoiceNoteSending ) {
-                sendButton.setVisibility(View.INVISIBLE);
-                recordBtn.setVisibility(View.VISIBLE);
-            } else {
-                sendButton.clearColorFilter();
-            }
+        boolean canSend = m != null || !TextUtils.isEmpty(s);
+        chatInputView.setCanSend(canSend);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        File audioDraft = contentDraftManager.getCommentAudioDraft(postId);
+        if (audioDraft != null) {
+            chatInputView.bindAudioDraft(audioDurationLoader, audioDraft);
         }
     }
 
-    private void updateMediaPickerVisibility() {
-        Boolean isRecording = viewModel.isRecording().getValue();
-        if (isRecording == null) {
-            isRecording = false;
-        }
-        if (isInternalGroup && !isRecording) {
-            mediaPickerView.setVisibility(View.VISIBLE);
-        } else {
-            mediaPickerView.setVisibility(View.GONE);
-        }
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        File draft = chatInputView.getAudioDraft();
+        contentDraftManager.setCommentAudioDraft(postId, draft);
     }
 
     private void pickMedia() {

@@ -66,7 +66,7 @@ import java.util.Map;
 
 class CommentsViewModel extends AndroidViewModel {
 
-    final LiveData<PagedList<Comment>> commentList;
+    private LiveData<PagedList<Comment>> commentList;
     final ComputableLiveData<Long> lastSeenCommentRowId;
     final ComputableLiveData<List<Contact>> mentionableContacts;
     final ComputableLiveData<Boolean> isMember;
@@ -81,7 +81,8 @@ class CommentsViewModel extends AndroidViewModel {
     private final ContactsDb contactsDb = ContactsDb.getInstance();
 
     private final String postId;
-    private final CommentsDataSource.Factory dataSourceFactory;
+
+    private CommentsDataSource.Factory dataSourceFactory;
 
     private LoadUserTask loadUserTask;
     private LoadMediaUriTask loadMediaUriTask;
@@ -140,7 +141,7 @@ class CommentsViewModel extends AndroidViewModel {
         }
 
         private void invalidateDataSource() {
-            mainHandler.post(dataSourceFactory::invalidateLatestDataSource);
+            mainHandler.post(CommentsViewModel.this::invalidateLatestDataSource);
         }
 
         @Override
@@ -163,7 +164,11 @@ class CommentsViewModel extends AndroidViewModel {
         return voiceNotePlayer;
     }
 
-    private CommentsViewModel(@NonNull Application application, @NonNull String postId) {
+    public VoiceNoteRecorder getVoiceNoteRecorder() {
+        return voiceNoteRecorder;
+    }
+
+    CommentsViewModel(@NonNull Application application, @NonNull String postId) {
         super(application);
         this.postId = postId;
 
@@ -198,8 +203,6 @@ class CommentsViewModel extends AndroidViewModel {
             }
         };
 
-        dataSourceFactory = new CommentsDataSource.Factory(contentDb, postId);
-        commentList = new LivePagedListBuilder<>(dataSourceFactory, new PagedList.Config.Builder().setPageSize(50).setEnablePlaceholders(false).build()).build();
         mentionableContacts = new ComputableLiveData<List<Contact>>() {
             @Override
             protected List<Contact> compute() {
@@ -269,7 +272,7 @@ class CommentsViewModel extends AndroidViewModel {
                     }
                 }
                 // Allow mentioning everyone who has commented on the post
-                PagedList<Comment> comments = commentList.getValue();
+                PagedList<Comment> comments = commentList == null ? null : commentList.getValue();
                 if (comments != null) {
                     for (Comment comment : comments) {
                         if (!comment.senderUserId.isMe()) {
@@ -292,6 +295,23 @@ class CommentsViewModel extends AndroidViewModel {
         postObserver = post -> mentionableContacts.invalidate();
         post.observeForever(postObserver);
         contactsDb.addObserver(contactsObserver);
+    }
+
+    protected LiveData<PagedList<Comment>> createCommentsList() {
+        dataSourceFactory = new CommentsDataSource.Factory(contentDb, postId);
+
+        return new LivePagedListBuilder<>(dataSourceFactory, new PagedList.Config.Builder().setPageSize(50).setEnablePlaceholders(false).build()).build();
+    }
+
+    protected void invalidateLatestDataSource() {
+        dataSourceFactory.invalidateLatestDataSource();
+    }
+
+    public LiveData<PagedList<Comment>> getCommentList() {
+        if (commentList == null) {
+            commentList = createCommentsList();
+        }
+        return commentList;
     }
 
     @Override
@@ -347,17 +367,8 @@ class CommentsViewModel extends AndroidViewModel {
         voiceNoteRecorder.record();
     }
 
-    public void cancelRecording() {
-        finishRecording(null, true);
-    }
-
-    public LiveData<Long> getRecordingTime() {
-        return voiceNoteRecorder.getRecordingTime();
-    }
-
-    public void finishRecording(@Nullable String replyCommentId, boolean canceled) {
-        final File recording = voiceNoteRecorder.finishRecording();
-        if (canceled || recording == null) {
+    public void sendVoiceNote(@Nullable String replyCommentId, @Nullable File recording) {
+        if (recording == null) {
             return;
         }
         bgWorkers.execute(() -> {
@@ -382,6 +393,14 @@ class CommentsViewModel extends AndroidViewModel {
             comment.media.add(sendMedia);
             contentDb.addComment(comment);
         });
+    }
+
+    public void finishRecording(@Nullable String replyCommentId, boolean canceled) {
+        final File recording = voiceNoteRecorder.finishRecording();
+        if (canceled || recording == null) {
+            return;
+        }
+        sendVoiceNote(replyCommentId, recording);
     }
 
     void sendComment(@Nullable String postText, List<Mention> mentions, @Nullable String replyCommentId, boolean supportsWideColor) {
