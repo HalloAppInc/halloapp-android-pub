@@ -1686,7 +1686,8 @@ class PostsDb {
                         CommentsTable.COLUMN_TIMESTAMP,
                         CommentsTable.COLUMN_TRANSFERRED,
                         CommentsTable.COLUMN_SEEN,
-                        CommentsTable.COLUMN_TEXT},
+                        CommentsTable.COLUMN_TEXT,
+                        CommentsTable.COLUMN_TYPE},
                 CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "='' AND " + CommentsTable.COLUMN_TRANSFERRED + "=0 AND " + CommentsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime(),
                 null, null, null, null)) {
             while (cursor.moveToNext()) {
@@ -1707,6 +1708,7 @@ class PostsDb {
                         posts.put(comment.postId, parentPost);
                     }
                 }
+                comment.type = cursor.getInt(9);
                 mentionsDb.fillMentions(comment);
                 fillMedia(comment);
                 comment.setParentPost(posts.get(comment.postId));
