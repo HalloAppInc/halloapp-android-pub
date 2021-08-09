@@ -1,5 +1,7 @@
 package com.halloapp.xmpp;
 
+import android.text.TextUtils;
+
 import androidx.annotation.Nullable;
 
 import com.halloapp.proto.server.Contact;
@@ -38,6 +40,9 @@ public class ContactsSyncRequestIq extends HalloIq {
         }
         if (deletePhones != null) {
             for (String phone : deletePhones) {
+                if (TextUtils.isEmpty(phone)) {
+                    continue;
+                }
                 Contact contact = Contact.newBuilder()
                         .setAction(Contact.Action.DELETE)
                         .setNormalized(phone)
@@ -47,6 +52,9 @@ public class ContactsSyncRequestIq extends HalloIq {
         }
         if (addPhones != null) {
             for (String phone : addPhones) {
+                if (TextUtils.isEmpty(phone)) {
+                    continue;
+                }
                 Contact contact = Contact.newBuilder()
                         .setAction(Contact.Action.ADD)
                         .setRaw(phone)
