@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
@@ -361,46 +362,7 @@ public class GroupInfoActivity extends HalloActivity {
             contactLoader.load(name, member.userId, false);
             avatarLoader.load(avatar, member.userId, false);
             itemView.setOnClickListener(v -> {
-                Context context = getBaseContext();
-                List<String> optionsList = new ArrayList<>();
-                optionsList.add(context.getString(R.string.view_profile));
-                boolean allowMessage = groupMember.contact.addressBookName != null;
-                if (allowMessage) {
-                    optionsList.add(context.getString(R.string.message));
-                }
-                if (getUserIsAdmin() && getChatIsActive()) {
-                    optionsList.add(context.getString(R.string.group_remove_member));
-                    optionsList.add(context.getString(MemberElement.Type.ADMIN.equals(member.type) ? R.string.group_demote_from_admin : R.string.group_promote_to_admin));
-                }
-                String[] options = new String[optionsList.size()];
-                optionsList.toArray(options);
-                AlertDialog dialog =
-                        new AlertDialog.Builder(v.getContext())
-                        .setItems(options, (d, which) -> {
-                            UserId userId = member.userId;
-                            if (which > 0 && !allowMessage) {
-                                which += 1;
-                            }
-                            switch (which) {
-                                case 0: {
-                                    viewProfile(userId);
-                                    break;
-                                }
-                                case 1: {
-                                    openChat(userId);
-                                    break;
-                                }
-                                case 2: {
-                                    removeMember(userId);
-                                    break;
-                                }
-                                case 3: {
-                                    promoteDemoteAdmin(member);
-                                    break;
-                                }
-                            }
-                        }).create();
-                dialog.show();
+                showGroupMemberOptionsDialog(itemView.getContext(), groupMember);
             });
         }
 
@@ -443,6 +405,48 @@ public class GroupInfoActivity extends HalloActivity {
                     }
                 });
             }
+        }
+
+        private void showGroupMemberOptionsDialog(Context context, GroupViewModel.GroupMember member) {
+            final BottomSheetDialog dialog = new BottomSheetDialog(context);
+            dialog.setContentView(R.layout.group_info_member_bottom_sheet);
+
+            TextView memberName = dialog.findViewById(R.id.member_name);
+            TextView makeAdminText = dialog.findViewById(R.id.make_admin_text);
+            View viewProfileLayout = dialog.findViewById(R.id.view_profile);
+            View messageMemberLayout = dialog.findViewById(R.id.message);
+            View makeAdminLayout = dialog.findViewById(R.id.make_admin);
+            View removeMemberLayout = dialog.findViewById(R.id.remove_member);
+
+            contactLoader.load(memberName, member.memberInfo.userId, false);
+            boolean allowMessage = member.contact.addressBookName != null;
+            messageMemberLayout.setVisibility(allowMessage ? View.VISIBLE : View.GONE);
+
+            if (getUserIsAdmin() && getChatIsActive()) {
+                removeMemberLayout.setVisibility(View.VISIBLE);
+                makeAdminLayout.setVisibility(View.VISIBLE);
+                makeAdminText.setText(getResources().getString(MemberElement.Type.ADMIN.equals(member.memberInfo.type) ? R.string.group_demote_from_admin : R.string.group_promote_to_admin));
+            } else {
+                removeMemberLayout.setVisibility(View.GONE);
+                makeAdminLayout.setVisibility(View.GONE);
+            }
+            viewProfileLayout.setOnClickListener(v -> {
+                viewProfile(member.memberInfo.userId);
+                dialog.dismiss();
+            });
+            messageMemberLayout.setOnClickListener(v -> {
+                openChat(member.memberInfo.userId);
+                dialog.dismiss();
+            });
+            removeMemberLayout.setOnClickListener(v -> {
+                removeMember(member.memberInfo.userId);
+                dialog.dismiss();
+            });
+            makeAdminLayout.setOnClickListener(v -> {
+                promoteDemoteAdmin(member.memberInfo);
+                dialog.dismiss();
+            });
+            dialog.show();
         }
     }
 }

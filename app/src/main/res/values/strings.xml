@@ -498,11 +498,13 @@
     <string name="group_background_color">Color</string>
     <string name="group_background_default">Default</string>
     <string name="failed_create_group">Failed to create group, try again later</string>
-    <string name="group_remove_member">Remove</string>
+    <!-- Shown in options menu to remove a member of group -->
+    <string name="group_remove_member">Remove from group</string>
     <string name="group_promote_to_admin">Promote to admin</string>
     <string name="promote_admin_in_progress">Promoting to admin…</string>
     <string name="failed_promote_admin">Failed to promote admin, try again later</string>
-    <string name="group_demote_from_admin">Demote admin</string>
+    <!-- Option for removing a user from the list of admins of a group -->
+    <string name="group_demote_from_admin">Dismiss as admin</string>
     <string name="demote_admin_in_progress">Demoting admin…</string>
     <string name="failed_demote_admin">Failed to demote admin, try again later</string>
     <string name="remove_member_in_progress">Removing member…</string>
@@ -625,4 +627,6 @@
     <string name="return_to_registration">Return to registration</string>
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
     <string name="archive_empty">Your expired posts will appear here</string>
+    <!-- Button opens up the chat to directly chat with another group member -->
+    <string name="send_message">Send message</string>
 </resources>
