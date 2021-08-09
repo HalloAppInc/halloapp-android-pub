@@ -63,6 +63,26 @@ public interface EventDataOrBuilder extends
   long getTimestampMs();
 
   /**
+   * <pre>
+   * 2 letter country code
+   * </pre>
+   *
+   * <code>string cc = 5;</code>
+   * @return The cc.
+   */
+  java.lang.String getCc();
+  /**
+   * <pre>
+   * 2 letter country code
+   * </pre>
+   *
+   * <code>string cc = 5;</code>
+   * @return The bytes for cc.
+   */
+  com.google.protobuf.ByteString
+      getCcBytes();
+
+  /**
    * <code>.server.MediaUpload media_upload = 10;</code>
    * @return Whether the mediaUpload field is set.
    */
@@ -127,6 +147,17 @@ public interface EventDataOrBuilder extends
    * @return The permissions.
    */
   com.halloapp.proto.log_events.Permissions getPermissions();
+
+  /**
+   * <code>.server.MediaObjectDownload media_object_download = 16;</code>
+   * @return Whether the mediaObjectDownload field is set.
+   */
+  boolean hasMediaObjectDownload();
+  /**
+   * <code>.server.MediaObjectDownload media_object_download = 16;</code>
+   * @return The mediaObjectDownload.
+   */
+  com.halloapp.proto.log_events.MediaObjectDownload getMediaObjectDownload();
 
   public com.halloapp.proto.log_events.EventData.EdataCase getEdataCase();
 }

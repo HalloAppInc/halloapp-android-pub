@@ -8,10 +8,15 @@ public interface SenderStateBundleOrBuilder extends
     com.google.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>bytes enc_sender_state = 1;</code>
-   * @return The encSenderState.
+   * <code>.server.SenderStateWithKeyInfo sender_state = 1;</code>
+   * @return Whether the senderState field is set.
    */
-  com.google.protobuf.ByteString getEncSenderState();
+  boolean hasSenderState();
+  /**
+   * <code>.server.SenderStateWithKeyInfo sender_state = 1;</code>
+   * @return The senderState.
+   */
+  com.halloapp.proto.server.SenderStateWithKeyInfo getSenderState();
 
   /**
    * <code>int64 uid = 2;</code>

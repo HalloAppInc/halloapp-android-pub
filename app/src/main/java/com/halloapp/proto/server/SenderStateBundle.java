@@ -12,33 +12,51 @@ public  final class SenderStateBundle extends
     // @@protoc_insertion_point(message_implements:server.SenderStateBundle)
     SenderStateBundleOrBuilder {
   private SenderStateBundle() {
-    encSenderState_ = com.google.protobuf.ByteString.EMPTY;
   }
-  public static final int ENC_SENDER_STATE_FIELD_NUMBER = 1;
-  private com.google.protobuf.ByteString encSenderState_;
+  public static final int SENDER_STATE_FIELD_NUMBER = 1;
+  private com.halloapp.proto.server.SenderStateWithKeyInfo senderState_;
   /**
-   * <code>bytes enc_sender_state = 1;</code>
-   * @return The encSenderState.
+   * <code>.server.SenderStateWithKeyInfo sender_state = 1;</code>
    */
   @java.lang.Override
-  public com.google.protobuf.ByteString getEncSenderState() {
-    return encSenderState_;
+  public boolean hasSenderState() {
+    return senderState_ != null;
   }
   /**
-   * <code>bytes enc_sender_state = 1;</code>
-   * @param value The encSenderState to set.
+   * <code>.server.SenderStateWithKeyInfo sender_state = 1;</code>
    */
-  private void setEncSenderState(com.google.protobuf.ByteString value) {
+  @java.lang.Override
+  public com.halloapp.proto.server.SenderStateWithKeyInfo getSenderState() {
+    return senderState_ == null ? com.halloapp.proto.server.SenderStateWithKeyInfo.getDefaultInstance() : senderState_;
+  }
+  /**
+   * <code>.server.SenderStateWithKeyInfo sender_state = 1;</code>
+   */
+  private void setSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
     value.getClass();
-  
-    encSenderState_ = value;
+  senderState_ = value;
+    
+    }
+  /**
+   * <code>.server.SenderStateWithKeyInfo sender_state = 1;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
+    value.getClass();
+  if (senderState_ != null &&
+        senderState_ != com.halloapp.proto.server.SenderStateWithKeyInfo.getDefaultInstance()) {
+      senderState_ =
+        com.halloapp.proto.server.SenderStateWithKeyInfo.newBuilder(senderState_).mergeFrom(value).buildPartial();
+    } else {
+      senderState_ = value;
+    }
+    
   }
   /**
-   * <code>bytes enc_sender_state = 1;</code>
+   * <code>.server.SenderStateWithKeyInfo sender_state = 1;</code>
    */
-  private void clearEncSenderState() {
+  private void clearSenderState() {  senderState_ = null;
     
-    encSenderState_ = getDefaultInstance().getEncSenderState();
   }
 
   public static final int UID_FIELD_NUMBER = 2;
@@ -163,30 +181,49 @@ public  final class SenderStateBundle extends
 
 
     /**
-     * <code>bytes enc_sender_state = 1;</code>
-     * @return The encSenderState.
+     * <code>.server.SenderStateWithKeyInfo sender_state = 1;</code>
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getEncSenderState() {
-      return instance.getEncSenderState();
+    public boolean hasSenderState() {
+      return instance.hasSenderState();
     }
     /**
-     * <code>bytes enc_sender_state = 1;</code>
-     * @param value The encSenderState to set.
-     * @return This builder for chaining.
+     * <code>.server.SenderStateWithKeyInfo sender_state = 1;</code>
      */
-    public Builder setEncSenderState(com.google.protobuf.ByteString value) {
+    @java.lang.Override
+    public com.halloapp.proto.server.SenderStateWithKeyInfo getSenderState() {
+      return instance.getSenderState();
+    }
+    /**
+     * <code>.server.SenderStateWithKeyInfo sender_state = 1;</code>
+     */
+    public Builder setSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
       copyOnWrite();
-      instance.setEncSenderState(value);
+      instance.setSenderState(value);
+      return this;
+      }
+    /**
+     * <code>.server.SenderStateWithKeyInfo sender_state = 1;</code>
+     */
+    public Builder setSenderState(
+        com.halloapp.proto.server.SenderStateWithKeyInfo.Builder builderForValue) {
+      copyOnWrite();
+      instance.setSenderState(builderForValue.build());
       return this;
     }
     /**
-     * <code>bytes enc_sender_state = 1;</code>
-     * @return This builder for chaining.
+     * <code>.server.SenderStateWithKeyInfo sender_state = 1;</code>
      */
-    public Builder clearEncSenderState() {
+    public Builder mergeSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
       copyOnWrite();
-      instance.clearEncSenderState();
+      instance.mergeSenderState(value);
+      return this;
+    }
+    /**
+     * <code>.server.SenderStateWithKeyInfo sender_state = 1;</code>
+     */
+    public Builder clearSenderState() {  copyOnWrite();
+      instance.clearSenderState();
       return this;
     }
 
@@ -234,11 +271,11 @@ public  final class SenderStateBundle extends
       }
       case BUILD_MESSAGE_INFO: {
           java.lang.Object[] objects = new java.lang.Object[] {
-            "encSenderState_",
+            "senderState_",
             "uid_",
           };
           java.lang.String info =
-              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\n\u0002\u0002" +
+              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\t\u0002\u0002" +
               "";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }

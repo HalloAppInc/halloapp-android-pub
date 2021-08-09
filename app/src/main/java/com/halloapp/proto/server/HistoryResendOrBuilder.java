@@ -84,10 +84,19 @@ public interface HistoryResendOrBuilder extends
    * Meant for the receiver, selected by the server from `sender_state_bundles`.
    * </pre>
    *
-   * <code>bytes enc_sender_state = 7;</code>
-   * @return The encSenderState.
+   * <code>.server.SenderStateWithKeyInfo sender_state = 7;</code>
+   * @return Whether the senderState field is set.
    */
-  com.google.protobuf.ByteString getEncSenderState();
+  boolean hasSenderState();
+  /**
+   * <pre>
+   * Meant for the receiver, selected by the server from `sender_state_bundles`.
+   * </pre>
+   *
+   * <code>.server.SenderStateWithKeyInfo sender_state = 7;</code>
+   * @return The senderState.
+   */
+  com.halloapp.proto.server.SenderStateWithKeyInfo getSenderState();
 
   /**
    * <code>bytes audience_hash = 8;</code>

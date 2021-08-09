@@ -2115,11 +2115,113 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a SenderStateWithKeyInfo. */
+    interface ISenderStateWithKeyInfo {
+
+        /** SenderStateWithKeyInfo publicKey */
+        publicKey?: (Uint8Array|null);
+
+        /** SenderStateWithKeyInfo oneTimePreKeyId */
+        oneTimePreKeyId?: (number|Long|null);
+
+        /** SenderStateWithKeyInfo encSenderState */
+        encSenderState?: (Uint8Array|null);
+    }
+
+    /** Represents a SenderStateWithKeyInfo. */
+    class SenderStateWithKeyInfo implements ISenderStateWithKeyInfo {
+
+        /**
+         * Constructs a new SenderStateWithKeyInfo.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.ISenderStateWithKeyInfo);
+
+        /** SenderStateWithKeyInfo publicKey. */
+        public publicKey: Uint8Array;
+
+        /** SenderStateWithKeyInfo oneTimePreKeyId. */
+        public oneTimePreKeyId: (number|Long);
+
+        /** SenderStateWithKeyInfo encSenderState. */
+        public encSenderState: Uint8Array;
+
+        /**
+         * Creates a new SenderStateWithKeyInfo instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SenderStateWithKeyInfo instance
+         */
+        public static create(properties?: server.ISenderStateWithKeyInfo): server.SenderStateWithKeyInfo;
+
+        /**
+         * Encodes the specified SenderStateWithKeyInfo message. Does not implicitly {@link server.SenderStateWithKeyInfo.verify|verify} messages.
+         * @param message SenderStateWithKeyInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.ISenderStateWithKeyInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SenderStateWithKeyInfo message, length delimited. Does not implicitly {@link server.SenderStateWithKeyInfo.verify|verify} messages.
+         * @param message SenderStateWithKeyInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.ISenderStateWithKeyInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SenderStateWithKeyInfo message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SenderStateWithKeyInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.SenderStateWithKeyInfo;
+
+        /**
+         * Decodes a SenderStateWithKeyInfo message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SenderStateWithKeyInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.SenderStateWithKeyInfo;
+
+        /**
+         * Verifies a SenderStateWithKeyInfo message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SenderStateWithKeyInfo message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SenderStateWithKeyInfo
+         */
+        public static fromObject(object: { [k: string]: any }): server.SenderStateWithKeyInfo;
+
+        /**
+         * Creates a plain object from a SenderStateWithKeyInfo message. Also converts values to other types if specified.
+         * @param message SenderStateWithKeyInfo
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.SenderStateWithKeyInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SenderStateWithKeyInfo to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a SenderStateBundle. */
     interface ISenderStateBundle {
 
-        /** SenderStateBundle encSenderState */
-        encSenderState?: (Uint8Array|null);
+        /** SenderStateBundle senderState */
+        senderState?: (server.ISenderStateWithKeyInfo|null);
 
         /** SenderStateBundle uid */
         uid?: (number|Long|null);
@@ -2134,8 +2236,8 @@ export namespace server {
          */
         constructor(properties?: server.ISenderStateBundle);
 
-        /** SenderStateBundle encSenderState. */
-        public encSenderState: Uint8Array;
+        /** SenderStateBundle senderState. */
+        public senderState?: (server.ISenderStateWithKeyInfo|null);
 
         /** SenderStateBundle uid. */
         public uid: (number|Long);
@@ -2235,8 +2337,8 @@ export namespace server {
         /** GroupFeedItem senderStateBundles */
         senderStateBundles?: (server.ISenderStateBundle[]|null);
 
-        /** GroupFeedItem encSenderState */
-        encSenderState?: (Uint8Array|null);
+        /** GroupFeedItem senderState */
+        senderState?: (server.ISenderStateWithKeyInfo|null);
 
         /** GroupFeedItem audienceHash */
         audienceHash?: (Uint8Array|null);
@@ -2272,8 +2374,8 @@ export namespace server {
         /** GroupFeedItem senderStateBundles. */
         public senderStateBundles: server.ISenderStateBundle[];
 
-        /** GroupFeedItem encSenderState. */
-        public encSenderState: Uint8Array;
+        /** GroupFeedItem senderState. */
+        public senderState?: (server.ISenderStateWithKeyInfo|null);
 
         /** GroupFeedItem audienceHash. */
         public audienceHash: Uint8Array;
@@ -4515,8 +4617,8 @@ export namespace server {
         /** HistoryResend senderStateBundles */
         senderStateBundles?: (server.ISenderStateBundle[]|null);
 
-        /** HistoryResend encSenderState */
-        encSenderState?: (Uint8Array|null);
+        /** HistoryResend senderState */
+        senderState?: (server.ISenderStateWithKeyInfo|null);
 
         /** HistoryResend audienceHash */
         audienceHash?: (Uint8Array|null);
@@ -4549,8 +4651,8 @@ export namespace server {
         /** HistoryResend senderStateBundles. */
         public senderStateBundles: server.ISenderStateBundle[];
 
-        /** HistoryResend encSenderState. */
-        public encSenderState: Uint8Array;
+        /** HistoryResend senderState. */
+        public senderState?: (server.ISenderStateWithKeyInfo|null);
 
         /** HistoryResend audienceHash. */
         public audienceHash: Uint8Array;
@@ -8133,6 +8235,9 @@ export namespace server {
         /** EventData timestampMs */
         timestampMs?: (number|Long|null);
 
+        /** EventData cc */
+        cc?: (string|null);
+
         /** EventData mediaUpload */
         mediaUpload?: (server.IMediaUpload|null);
 
@@ -8150,6 +8255,9 @@ export namespace server {
 
         /** EventData permissions */
         permissions?: (server.IPermissions|null);
+
+        /** EventData mediaObjectDownload */
+        mediaObjectDownload?: (server.IMediaObjectDownload|null);
     }
 
     /** Represents an EventData. */
@@ -8173,6 +8281,9 @@ export namespace server {
         /** EventData timestampMs. */
         public timestampMs: (number|Long);
 
+        /** EventData cc. */
+        public cc: string;
+
         /** EventData mediaUpload. */
         public mediaUpload?: (server.IMediaUpload|null);
 
@@ -8191,8 +8302,11 @@ export namespace server {
         /** EventData permissions. */
         public permissions?: (server.IPermissions|null);
 
+        /** EventData mediaObjectDownload. */
+        public mediaObjectDownload?: (server.IMediaObjectDownload|null);
+
         /** EventData edata. */
-        public edata?: ("mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport"|"permissions");
+        public edata?: ("mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport"|"permissions"|"mediaObjectDownload");
 
         /**
          * Creates a new EventData instance using the specified properties.
@@ -8270,6 +8384,205 @@ export namespace server {
         UNKNOWN = 0,
         IOS = 1,
         ANDROID = 2
+    }
+
+    /** Properties of a MediaObjectDownload. */
+    interface IMediaObjectDownload {
+
+        /** MediaObjectDownload id */
+        id?: (string|null);
+
+        /** MediaObjectDownload index */
+        index?: (number|Long|null);
+
+        /** MediaObjectDownload type */
+        type?: (server.MediaObjectDownload.Type|null);
+
+        /** MediaObjectDownload mediaType */
+        mediaType?: (server.MediaObjectDownload.MediaType|null);
+
+        /** MediaObjectDownload durationMs */
+        durationMs?: (number|Long|null);
+
+        /** MediaObjectDownload size */
+        size?: (number|Long|null);
+
+        /** MediaObjectDownload progressBytes */
+        progressBytes?: (number|Long|null);
+
+        /** MediaObjectDownload cdn */
+        cdn?: (server.MediaObjectDownload.Cdn|null);
+
+        /** MediaObjectDownload cdnPop */
+        cdnPop?: (string|null);
+
+        /** MediaObjectDownload cdnId */
+        cdnId?: (string|null);
+
+        /** MediaObjectDownload cdnCache */
+        cdnCache?: (server.MediaObjectDownload.CdnCache|null);
+
+        /** MediaObjectDownload status */
+        status?: (server.MediaObjectDownload.Status|null);
+
+        /** MediaObjectDownload retryCount */
+        retryCount?: (number|Long|null);
+    }
+
+    /** Represents a MediaObjectDownload. */
+    class MediaObjectDownload implements IMediaObjectDownload {
+
+        /**
+         * Constructs a new MediaObjectDownload.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IMediaObjectDownload);
+
+        /** MediaObjectDownload id. */
+        public id: string;
+
+        /** MediaObjectDownload index. */
+        public index: (number|Long);
+
+        /** MediaObjectDownload type. */
+        public type: server.MediaObjectDownload.Type;
+
+        /** MediaObjectDownload mediaType. */
+        public mediaType: server.MediaObjectDownload.MediaType;
+
+        /** MediaObjectDownload durationMs. */
+        public durationMs: (number|Long);
+
+        /** MediaObjectDownload size. */
+        public size: (number|Long);
+
+        /** MediaObjectDownload progressBytes. */
+        public progressBytes: (number|Long);
+
+        /** MediaObjectDownload cdn. */
+        public cdn: server.MediaObjectDownload.Cdn;
+
+        /** MediaObjectDownload cdnPop. */
+        public cdnPop: string;
+
+        /** MediaObjectDownload cdnId. */
+        public cdnId: string;
+
+        /** MediaObjectDownload cdnCache. */
+        public cdnCache: server.MediaObjectDownload.CdnCache;
+
+        /** MediaObjectDownload status. */
+        public status: server.MediaObjectDownload.Status;
+
+        /** MediaObjectDownload retryCount. */
+        public retryCount: (number|Long);
+
+        /**
+         * Creates a new MediaObjectDownload instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns MediaObjectDownload instance
+         */
+        public static create(properties?: server.IMediaObjectDownload): server.MediaObjectDownload;
+
+        /**
+         * Encodes the specified MediaObjectDownload message. Does not implicitly {@link server.MediaObjectDownload.verify|verify} messages.
+         * @param message MediaObjectDownload message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IMediaObjectDownload, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified MediaObjectDownload message, length delimited. Does not implicitly {@link server.MediaObjectDownload.verify|verify} messages.
+         * @param message MediaObjectDownload message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IMediaObjectDownload, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a MediaObjectDownload message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns MediaObjectDownload
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.MediaObjectDownload;
+
+        /**
+         * Decodes a MediaObjectDownload message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns MediaObjectDownload
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.MediaObjectDownload;
+
+        /**
+         * Verifies a MediaObjectDownload message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a MediaObjectDownload message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns MediaObjectDownload
+         */
+        public static fromObject(object: { [k: string]: any }): server.MediaObjectDownload;
+
+        /**
+         * Creates a plain object from a MediaObjectDownload message. Also converts values to other types if specified.
+         * @param message MediaObjectDownload
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.MediaObjectDownload, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this MediaObjectDownload to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace MediaObjectDownload {
+
+        /** Type enum. */
+        enum Type {
+            POST = 0,
+            MESSAGE = 1,
+            COMMENT = 2
+        }
+
+        /** MediaType enum. */
+        enum MediaType {
+            PHOTO = 0,
+            VIDEO = 1,
+            AUDIO = 2
+        }
+
+        /** Cdn enum. */
+        enum Cdn {
+            UNKNOWN = 0,
+            CLOUDFRONT = 1
+        }
+
+        /** CdnCache enum. */
+        enum CdnCache {
+            HIT = 0,
+            MISS = 1,
+            REFRESH_HIT = 2,
+            REFRESH_MISS = 3
+        }
+
+        /** Status enum. */
+        enum Status {
+            OK = 0,
+            FAIL = 1
+        }
     }
 
     /** Properties of a MediaUpload. */

@@ -5393,13 +5393,277 @@ $root.server = (function() {
         return FeedItems;
     })();
 
+    server.SenderStateWithKeyInfo = (function() {
+
+        /**
+         * Properties of a SenderStateWithKeyInfo.
+         * @memberof server
+         * @interface ISenderStateWithKeyInfo
+         * @property {Uint8Array|null} [publicKey] SenderStateWithKeyInfo publicKey
+         * @property {number|Long|null} [oneTimePreKeyId] SenderStateWithKeyInfo oneTimePreKeyId
+         * @property {Uint8Array|null} [encSenderState] SenderStateWithKeyInfo encSenderState
+         */
+
+        /**
+         * Constructs a new SenderStateWithKeyInfo.
+         * @memberof server
+         * @classdesc Represents a SenderStateWithKeyInfo.
+         * @implements ISenderStateWithKeyInfo
+         * @constructor
+         * @param {server.ISenderStateWithKeyInfo=} [properties] Properties to set
+         */
+        function SenderStateWithKeyInfo(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SenderStateWithKeyInfo publicKey.
+         * @member {Uint8Array} publicKey
+         * @memberof server.SenderStateWithKeyInfo
+         * @instance
+         */
+        SenderStateWithKeyInfo.prototype.publicKey = $util.newBuffer([]);
+
+        /**
+         * SenderStateWithKeyInfo oneTimePreKeyId.
+         * @member {number|Long} oneTimePreKeyId
+         * @memberof server.SenderStateWithKeyInfo
+         * @instance
+         */
+        SenderStateWithKeyInfo.prototype.oneTimePreKeyId = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * SenderStateWithKeyInfo encSenderState.
+         * @member {Uint8Array} encSenderState
+         * @memberof server.SenderStateWithKeyInfo
+         * @instance
+         */
+        SenderStateWithKeyInfo.prototype.encSenderState = $util.newBuffer([]);
+
+        /**
+         * Creates a new SenderStateWithKeyInfo instance using the specified properties.
+         * @function create
+         * @memberof server.SenderStateWithKeyInfo
+         * @static
+         * @param {server.ISenderStateWithKeyInfo=} [properties] Properties to set
+         * @returns {server.SenderStateWithKeyInfo} SenderStateWithKeyInfo instance
+         */
+        SenderStateWithKeyInfo.create = function create(properties) {
+            return new SenderStateWithKeyInfo(properties);
+        };
+
+        /**
+         * Encodes the specified SenderStateWithKeyInfo message. Does not implicitly {@link server.SenderStateWithKeyInfo.verify|verify} messages.
+         * @function encode
+         * @memberof server.SenderStateWithKeyInfo
+         * @static
+         * @param {server.ISenderStateWithKeyInfo} message SenderStateWithKeyInfo message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SenderStateWithKeyInfo.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.publicKey != null && Object.hasOwnProperty.call(message, "publicKey"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.publicKey);
+            if (message.oneTimePreKeyId != null && Object.hasOwnProperty.call(message, "oneTimePreKeyId"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int64(message.oneTimePreKeyId);
+            if (message.encSenderState != null && Object.hasOwnProperty.call(message, "encSenderState"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.encSenderState);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified SenderStateWithKeyInfo message, length delimited. Does not implicitly {@link server.SenderStateWithKeyInfo.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.SenderStateWithKeyInfo
+         * @static
+         * @param {server.ISenderStateWithKeyInfo} message SenderStateWithKeyInfo message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SenderStateWithKeyInfo.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a SenderStateWithKeyInfo message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.SenderStateWithKeyInfo
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.SenderStateWithKeyInfo} SenderStateWithKeyInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SenderStateWithKeyInfo.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.SenderStateWithKeyInfo();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.publicKey = reader.bytes();
+                    break;
+                case 2:
+                    message.oneTimePreKeyId = reader.int64();
+                    break;
+                case 3:
+                    message.encSenderState = reader.bytes();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a SenderStateWithKeyInfo message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.SenderStateWithKeyInfo
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.SenderStateWithKeyInfo} SenderStateWithKeyInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SenderStateWithKeyInfo.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a SenderStateWithKeyInfo message.
+         * @function verify
+         * @memberof server.SenderStateWithKeyInfo
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        SenderStateWithKeyInfo.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.publicKey != null && message.hasOwnProperty("publicKey"))
+                if (!(message.publicKey && typeof message.publicKey.length === "number" || $util.isString(message.publicKey)))
+                    return "publicKey: buffer expected";
+            if (message.oneTimePreKeyId != null && message.hasOwnProperty("oneTimePreKeyId"))
+                if (!$util.isInteger(message.oneTimePreKeyId) && !(message.oneTimePreKeyId && $util.isInteger(message.oneTimePreKeyId.low) && $util.isInteger(message.oneTimePreKeyId.high)))
+                    return "oneTimePreKeyId: integer|Long expected";
+            if (message.encSenderState != null && message.hasOwnProperty("encSenderState"))
+                if (!(message.encSenderState && typeof message.encSenderState.length === "number" || $util.isString(message.encSenderState)))
+                    return "encSenderState: buffer expected";
+            return null;
+        };
+
+        /**
+         * Creates a SenderStateWithKeyInfo message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.SenderStateWithKeyInfo
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.SenderStateWithKeyInfo} SenderStateWithKeyInfo
+         */
+        SenderStateWithKeyInfo.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.SenderStateWithKeyInfo)
+                return object;
+            var message = new $root.server.SenderStateWithKeyInfo();
+            if (object.publicKey != null)
+                if (typeof object.publicKey === "string")
+                    $util.base64.decode(object.publicKey, message.publicKey = $util.newBuffer($util.base64.length(object.publicKey)), 0);
+                else if (object.publicKey.length)
+                    message.publicKey = object.publicKey;
+            if (object.oneTimePreKeyId != null)
+                if ($util.Long)
+                    (message.oneTimePreKeyId = $util.Long.fromValue(object.oneTimePreKeyId)).unsigned = false;
+                else if (typeof object.oneTimePreKeyId === "string")
+                    message.oneTimePreKeyId = parseInt(object.oneTimePreKeyId, 10);
+                else if (typeof object.oneTimePreKeyId === "number")
+                    message.oneTimePreKeyId = object.oneTimePreKeyId;
+                else if (typeof object.oneTimePreKeyId === "object")
+                    message.oneTimePreKeyId = new $util.LongBits(object.oneTimePreKeyId.low >>> 0, object.oneTimePreKeyId.high >>> 0).toNumber();
+            if (object.encSenderState != null)
+                if (typeof object.encSenderState === "string")
+                    $util.base64.decode(object.encSenderState, message.encSenderState = $util.newBuffer($util.base64.length(object.encSenderState)), 0);
+                else if (object.encSenderState.length)
+                    message.encSenderState = object.encSenderState;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SenderStateWithKeyInfo message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.SenderStateWithKeyInfo
+         * @static
+         * @param {server.SenderStateWithKeyInfo} message SenderStateWithKeyInfo
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SenderStateWithKeyInfo.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.publicKey = "";
+                else {
+                    object.publicKey = [];
+                    if (options.bytes !== Array)
+                        object.publicKey = $util.newBuffer(object.publicKey);
+                }
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.oneTimePreKeyId = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.oneTimePreKeyId = options.longs === String ? "0" : 0;
+                if (options.bytes === String)
+                    object.encSenderState = "";
+                else {
+                    object.encSenderState = [];
+                    if (options.bytes !== Array)
+                        object.encSenderState = $util.newBuffer(object.encSenderState);
+                }
+            }
+            if (message.publicKey != null && message.hasOwnProperty("publicKey"))
+                object.publicKey = options.bytes === String ? $util.base64.encode(message.publicKey, 0, message.publicKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.publicKey) : message.publicKey;
+            if (message.oneTimePreKeyId != null && message.hasOwnProperty("oneTimePreKeyId"))
+                if (typeof message.oneTimePreKeyId === "number")
+                    object.oneTimePreKeyId = options.longs === String ? String(message.oneTimePreKeyId) : message.oneTimePreKeyId;
+                else
+                    object.oneTimePreKeyId = options.longs === String ? $util.Long.prototype.toString.call(message.oneTimePreKeyId) : options.longs === Number ? new $util.LongBits(message.oneTimePreKeyId.low >>> 0, message.oneTimePreKeyId.high >>> 0).toNumber() : message.oneTimePreKeyId;
+            if (message.encSenderState != null && message.hasOwnProperty("encSenderState"))
+                object.encSenderState = options.bytes === String ? $util.base64.encode(message.encSenderState, 0, message.encSenderState.length) : options.bytes === Array ? Array.prototype.slice.call(message.encSenderState) : message.encSenderState;
+            return object;
+        };
+
+        /**
+         * Converts this SenderStateWithKeyInfo to JSON.
+         * @function toJSON
+         * @memberof server.SenderStateWithKeyInfo
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SenderStateWithKeyInfo.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return SenderStateWithKeyInfo;
+    })();
+
     server.SenderStateBundle = (function() {
 
         /**
          * Properties of a SenderStateBundle.
          * @memberof server
          * @interface ISenderStateBundle
-         * @property {Uint8Array|null} [encSenderState] SenderStateBundle encSenderState
+         * @property {server.ISenderStateWithKeyInfo|null} [senderState] SenderStateBundle senderState
          * @property {number|Long|null} [uid] SenderStateBundle uid
          */
 
@@ -5419,12 +5683,12 @@ $root.server = (function() {
         }
 
         /**
-         * SenderStateBundle encSenderState.
-         * @member {Uint8Array} encSenderState
+         * SenderStateBundle senderState.
+         * @member {server.ISenderStateWithKeyInfo|null|undefined} senderState
          * @memberof server.SenderStateBundle
          * @instance
          */
-        SenderStateBundle.prototype.encSenderState = $util.newBuffer([]);
+        SenderStateBundle.prototype.senderState = null;
 
         /**
          * SenderStateBundle uid.
@@ -5458,8 +5722,8 @@ $root.server = (function() {
         SenderStateBundle.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.encSenderState != null && Object.hasOwnProperty.call(message, "encSenderState"))
-                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.encSenderState);
+            if (message.senderState != null && Object.hasOwnProperty.call(message, "senderState"))
+                $root.server.SenderStateWithKeyInfo.encode(message.senderState, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             if (message.uid != null && Object.hasOwnProperty.call(message, "uid"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int64(message.uid);
             return writer;
@@ -5497,7 +5761,7 @@ $root.server = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.encSenderState = reader.bytes();
+                    message.senderState = $root.server.SenderStateWithKeyInfo.decode(reader, reader.uint32());
                     break;
                 case 2:
                     message.uid = reader.int64();
@@ -5537,9 +5801,11 @@ $root.server = (function() {
         SenderStateBundle.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.encSenderState != null && message.hasOwnProperty("encSenderState"))
-                if (!(message.encSenderState && typeof message.encSenderState.length === "number" || $util.isString(message.encSenderState)))
-                    return "encSenderState: buffer expected";
+            if (message.senderState != null && message.hasOwnProperty("senderState")) {
+                var error = $root.server.SenderStateWithKeyInfo.verify(message.senderState);
+                if (error)
+                    return "senderState." + error;
+            }
             if (message.uid != null && message.hasOwnProperty("uid"))
                 if (!$util.isInteger(message.uid) && !(message.uid && $util.isInteger(message.uid.low) && $util.isInteger(message.uid.high)))
                     return "uid: integer|Long expected";
@@ -5558,11 +5824,11 @@ $root.server = (function() {
             if (object instanceof $root.server.SenderStateBundle)
                 return object;
             var message = new $root.server.SenderStateBundle();
-            if (object.encSenderState != null)
-                if (typeof object.encSenderState === "string")
-                    $util.base64.decode(object.encSenderState, message.encSenderState = $util.newBuffer($util.base64.length(object.encSenderState)), 0);
-                else if (object.encSenderState.length)
-                    message.encSenderState = object.encSenderState;
+            if (object.senderState != null) {
+                if (typeof object.senderState !== "object")
+                    throw TypeError(".server.SenderStateBundle.senderState: object expected");
+                message.senderState = $root.server.SenderStateWithKeyInfo.fromObject(object.senderState);
+            }
             if (object.uid != null)
                 if ($util.Long)
                     (message.uid = $util.Long.fromValue(object.uid)).unsigned = false;
@@ -5589,21 +5855,15 @@ $root.server = (function() {
                 options = {};
             var object = {};
             if (options.defaults) {
-                if (options.bytes === String)
-                    object.encSenderState = "";
-                else {
-                    object.encSenderState = [];
-                    if (options.bytes !== Array)
-                        object.encSenderState = $util.newBuffer(object.encSenderState);
-                }
+                object.senderState = null;
                 if ($util.Long) {
                     var long = new $util.Long(0, 0, false);
                     object.uid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.uid = options.longs === String ? "0" : 0;
             }
-            if (message.encSenderState != null && message.hasOwnProperty("encSenderState"))
-                object.encSenderState = options.bytes === String ? $util.base64.encode(message.encSenderState, 0, message.encSenderState.length) : options.bytes === Array ? Array.prototype.slice.call(message.encSenderState) : message.encSenderState;
+            if (message.senderState != null && message.hasOwnProperty("senderState"))
+                object.senderState = $root.server.SenderStateWithKeyInfo.toObject(message.senderState, options);
             if (message.uid != null && message.hasOwnProperty("uid"))
                 if (typeof message.uid === "number")
                     object.uid = options.longs === String ? String(message.uid) : message.uid;
@@ -5639,7 +5899,7 @@ $root.server = (function() {
          * @property {server.IPost|null} [post] GroupFeedItem post
          * @property {server.IComment|null} [comment] GroupFeedItem comment
          * @property {Array.<server.ISenderStateBundle>|null} [senderStateBundles] GroupFeedItem senderStateBundles
-         * @property {Uint8Array|null} [encSenderState] GroupFeedItem encSenderState
+         * @property {server.ISenderStateWithKeyInfo|null} [senderState] GroupFeedItem senderState
          * @property {Uint8Array|null} [audienceHash] GroupFeedItem audienceHash
          */
 
@@ -5716,12 +5976,12 @@ $root.server = (function() {
         GroupFeedItem.prototype.senderStateBundles = $util.emptyArray;
 
         /**
-         * GroupFeedItem encSenderState.
-         * @member {Uint8Array} encSenderState
+         * GroupFeedItem senderState.
+         * @member {server.ISenderStateWithKeyInfo|null|undefined} senderState
          * @memberof server.GroupFeedItem
          * @instance
          */
-        GroupFeedItem.prototype.encSenderState = $util.newBuffer([]);
+        GroupFeedItem.prototype.senderState = null;
 
         /**
          * GroupFeedItem audienceHash.
@@ -5784,8 +6044,8 @@ $root.server = (function() {
             if (message.senderStateBundles != null && message.senderStateBundles.length)
                 for (var i = 0; i < message.senderStateBundles.length; ++i)
                     $root.server.SenderStateBundle.encode(message.senderStateBundles[i], writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
-            if (message.encSenderState != null && Object.hasOwnProperty.call(message, "encSenderState"))
-                writer.uint32(/* id 8, wireType 2 =*/66).bytes(message.encSenderState);
+            if (message.senderState != null && Object.hasOwnProperty.call(message, "senderState"))
+                $root.server.SenderStateWithKeyInfo.encode(message.senderState, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
             if (message.audienceHash != null && Object.hasOwnProperty.call(message, "audienceHash"))
                 writer.uint32(/* id 9, wireType 2 =*/74).bytes(message.audienceHash);
             return writer;
@@ -5846,7 +6106,7 @@ $root.server = (function() {
                     message.senderStateBundles.push($root.server.SenderStateBundle.decode(reader, reader.uint32()));
                     break;
                 case 8:
-                    message.encSenderState = reader.bytes();
+                    message.senderState = $root.server.SenderStateWithKeyInfo.decode(reader, reader.uint32());
                     break;
                 case 9:
                     message.audienceHash = reader.bytes();
@@ -5932,9 +6192,11 @@ $root.server = (function() {
                         return "senderStateBundles." + error;
                 }
             }
-            if (message.encSenderState != null && message.hasOwnProperty("encSenderState"))
-                if (!(message.encSenderState && typeof message.encSenderState.length === "number" || $util.isString(message.encSenderState)))
-                    return "encSenderState: buffer expected";
+            if (message.senderState != null && message.hasOwnProperty("senderState")) {
+                var error = $root.server.SenderStateWithKeyInfo.verify(message.senderState);
+                if (error)
+                    return "senderState." + error;
+            }
             if (message.audienceHash != null && message.hasOwnProperty("audienceHash"))
                 if (!(message.audienceHash && typeof message.audienceHash.length === "number" || $util.isString(message.audienceHash)))
                     return "audienceHash: buffer expected";
@@ -5993,11 +6255,11 @@ $root.server = (function() {
                     message.senderStateBundles[i] = $root.server.SenderStateBundle.fromObject(object.senderStateBundles[i]);
                 }
             }
-            if (object.encSenderState != null)
-                if (typeof object.encSenderState === "string")
-                    $util.base64.decode(object.encSenderState, message.encSenderState = $util.newBuffer($util.base64.length(object.encSenderState)), 0);
-                else if (object.encSenderState.length)
-                    message.encSenderState = object.encSenderState;
+            if (object.senderState != null) {
+                if (typeof object.senderState !== "object")
+                    throw TypeError(".server.GroupFeedItem.senderState: object expected");
+                message.senderState = $root.server.SenderStateWithKeyInfo.fromObject(object.senderState);
+            }
             if (object.audienceHash != null)
                 if (typeof object.audienceHash === "string")
                     $util.base64.decode(object.audienceHash, message.audienceHash = $util.newBuffer($util.base64.length(object.audienceHash)), 0);
@@ -6026,13 +6288,7 @@ $root.server = (function() {
                 object.gid = "";
                 object.name = "";
                 object.avatarId = "";
-                if (options.bytes === String)
-                    object.encSenderState = "";
-                else {
-                    object.encSenderState = [];
-                    if (options.bytes !== Array)
-                        object.encSenderState = $util.newBuffer(object.encSenderState);
-                }
+                object.senderState = null;
                 if (options.bytes === String)
                     object.audienceHash = "";
                 else {
@@ -6064,8 +6320,8 @@ $root.server = (function() {
                 for (var j = 0; j < message.senderStateBundles.length; ++j)
                     object.senderStateBundles[j] = $root.server.SenderStateBundle.toObject(message.senderStateBundles[j], options);
             }
-            if (message.encSenderState != null && message.hasOwnProperty("encSenderState"))
-                object.encSenderState = options.bytes === String ? $util.base64.encode(message.encSenderState, 0, message.encSenderState.length) : options.bytes === Array ? Array.prototype.slice.call(message.encSenderState) : message.encSenderState;
+            if (message.senderState != null && message.hasOwnProperty("senderState"))
+                object.senderState = $root.server.SenderStateWithKeyInfo.toObject(message.senderState, options);
             if (message.audienceHash != null && message.hasOwnProperty("audienceHash"))
                 object.audienceHash = options.bytes === String ? $util.base64.encode(message.audienceHash, 0, message.audienceHash.length) : options.bytes === Array ? Array.prototype.slice.call(message.audienceHash) : message.audienceHash;
             return object;
@@ -11628,7 +11884,7 @@ $root.server = (function() {
          * @property {Uint8Array|null} [payload] HistoryResend payload
          * @property {Uint8Array|null} [encPayload] HistoryResend encPayload
          * @property {Array.<server.ISenderStateBundle>|null} [senderStateBundles] HistoryResend senderStateBundles
-         * @property {Uint8Array|null} [encSenderState] HistoryResend encSenderState
+         * @property {server.ISenderStateWithKeyInfo|null} [senderState] HistoryResend senderState
          * @property {Uint8Array|null} [audienceHash] HistoryResend audienceHash
          */
 
@@ -11697,12 +11953,12 @@ $root.server = (function() {
         HistoryResend.prototype.senderStateBundles = $util.emptyArray;
 
         /**
-         * HistoryResend encSenderState.
-         * @member {Uint8Array} encSenderState
+         * HistoryResend senderState.
+         * @member {server.ISenderStateWithKeyInfo|null|undefined} senderState
          * @memberof server.HistoryResend
          * @instance
          */
-        HistoryResend.prototype.encSenderState = $util.newBuffer([]);
+        HistoryResend.prototype.senderState = null;
 
         /**
          * HistoryResend audienceHash.
@@ -11749,8 +12005,8 @@ $root.server = (function() {
             if (message.senderStateBundles != null && message.senderStateBundles.length)
                 for (var i = 0; i < message.senderStateBundles.length; ++i)
                     $root.server.SenderStateBundle.encode(message.senderStateBundles[i], writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
-            if (message.encSenderState != null && Object.hasOwnProperty.call(message, "encSenderState"))
-                writer.uint32(/* id 7, wireType 2 =*/58).bytes(message.encSenderState);
+            if (message.senderState != null && Object.hasOwnProperty.call(message, "senderState"))
+                $root.server.SenderStateWithKeyInfo.encode(message.senderState, writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
             if (message.audienceHash != null && Object.hasOwnProperty.call(message, "audienceHash"))
                 writer.uint32(/* id 8, wireType 2 =*/66).bytes(message.audienceHash);
             return writer;
@@ -11808,7 +12064,7 @@ $root.server = (function() {
                     message.senderStateBundles.push($root.server.SenderStateBundle.decode(reader, reader.uint32()));
                     break;
                 case 7:
-                    message.encSenderState = reader.bytes();
+                    message.senderState = $root.server.SenderStateWithKeyInfo.decode(reader, reader.uint32());
                     break;
                 case 8:
                     message.audienceHash = reader.bytes();
@@ -11872,9 +12128,11 @@ $root.server = (function() {
                         return "senderStateBundles." + error;
                 }
             }
-            if (message.encSenderState != null && message.hasOwnProperty("encSenderState"))
-                if (!(message.encSenderState && typeof message.encSenderState.length === "number" || $util.isString(message.encSenderState)))
-                    return "encSenderState: buffer expected";
+            if (message.senderState != null && message.hasOwnProperty("senderState")) {
+                var error = $root.server.SenderStateWithKeyInfo.verify(message.senderState);
+                if (error)
+                    return "senderState." + error;
+            }
             if (message.audienceHash != null && message.hasOwnProperty("audienceHash"))
                 if (!(message.audienceHash && typeof message.audienceHash.length === "number" || $util.isString(message.audienceHash)))
                     return "audienceHash: buffer expected";
@@ -11926,11 +12184,11 @@ $root.server = (function() {
                     message.senderStateBundles[i] = $root.server.SenderStateBundle.fromObject(object.senderStateBundles[i]);
                 }
             }
-            if (object.encSenderState != null)
-                if (typeof object.encSenderState === "string")
-                    $util.base64.decode(object.encSenderState, message.encSenderState = $util.newBuffer($util.base64.length(object.encSenderState)), 0);
-                else if (object.encSenderState.length)
-                    message.encSenderState = object.encSenderState;
+            if (object.senderState != null) {
+                if (typeof object.senderState !== "object")
+                    throw TypeError(".server.HistoryResend.senderState: object expected");
+                message.senderState = $root.server.SenderStateWithKeyInfo.fromObject(object.senderState);
+            }
             if (object.audienceHash != null)
                 if (typeof object.audienceHash === "string")
                     $util.base64.decode(object.audienceHash, message.audienceHash = $util.newBuffer($util.base64.length(object.audienceHash)), 0);
@@ -11976,13 +12234,7 @@ $root.server = (function() {
                     if (options.bytes !== Array)
                         object.encPayload = $util.newBuffer(object.encPayload);
                 }
-                if (options.bytes === String)
-                    object.encSenderState = "";
-                else {
-                    object.encSenderState = [];
-                    if (options.bytes !== Array)
-                        object.encSenderState = $util.newBuffer(object.encSenderState);
-                }
+                object.senderState = null;
                 if (options.bytes === String)
                     object.audienceHash = "";
                 else {
@@ -12009,8 +12261,8 @@ $root.server = (function() {
                 for (var j = 0; j < message.senderStateBundles.length; ++j)
                     object.senderStateBundles[j] = $root.server.SenderStateBundle.toObject(message.senderStateBundles[j], options);
             }
-            if (message.encSenderState != null && message.hasOwnProperty("encSenderState"))
-                object.encSenderState = options.bytes === String ? $util.base64.encode(message.encSenderState, 0, message.encSenderState.length) : options.bytes === Array ? Array.prototype.slice.call(message.encSenderState) : message.encSenderState;
+            if (message.senderState != null && message.hasOwnProperty("senderState"))
+                object.senderState = $root.server.SenderStateWithKeyInfo.toObject(message.senderState, options);
             if (message.audienceHash != null && message.hasOwnProperty("audienceHash"))
                 object.audienceHash = options.bytes === String ? $util.base64.encode(message.audienceHash, 0, message.audienceHash.length) : options.bytes === Array ? Array.prototype.slice.call(message.audienceHash) : message.audienceHash;
             return object;
@@ -21767,12 +22019,14 @@ $root.server = (function() {
          * @property {server.Platform|null} [platform] EventData platform
          * @property {string|null} [version] EventData version
          * @property {number|Long|null} [timestampMs] EventData timestampMs
+         * @property {string|null} [cc] EventData cc
          * @property {server.IMediaUpload|null} [mediaUpload] EventData mediaUpload
          * @property {server.IMediaDownload|null} [mediaDownload] EventData mediaDownload
          * @property {server.IMediaComposeLoad|null} [mediaComposeLoad] EventData mediaComposeLoad
          * @property {server.IPushReceived|null} [pushReceived] EventData pushReceived
          * @property {server.IDecryptionReport|null} [decryptionReport] EventData decryptionReport
          * @property {server.IPermissions|null} [permissions] EventData permissions
+         * @property {server.IMediaObjectDownload|null} [mediaObjectDownload] EventData mediaObjectDownload
          */
 
         /**
@@ -21823,6 +22077,14 @@ $root.server = (function() {
         EventData.prototype.timestampMs = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
 
         /**
+         * EventData cc.
+         * @member {string} cc
+         * @memberof server.EventData
+         * @instance
+         */
+        EventData.prototype.cc = "";
+
+        /**
          * EventData mediaUpload.
          * @member {server.IMediaUpload|null|undefined} mediaUpload
          * @memberof server.EventData
@@ -21870,17 +22132,25 @@ $root.server = (function() {
          */
         EventData.prototype.permissions = null;
 
+        /**
+         * EventData mediaObjectDownload.
+         * @member {server.IMediaObjectDownload|null|undefined} mediaObjectDownload
+         * @memberof server.EventData
+         * @instance
+         */
+        EventData.prototype.mediaObjectDownload = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * EventData edata.
-         * @member {"mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport"|"permissions"|undefined} edata
+         * @member {"mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport"|"permissions"|"mediaObjectDownload"|undefined} edata
          * @memberof server.EventData
          * @instance
          */
         Object.defineProperty(EventData.prototype, "edata", {
-            get: $util.oneOfGetter($oneOfFields = ["mediaUpload", "mediaDownload", "mediaComposeLoad", "pushReceived", "decryptionReport", "permissions"]),
+            get: $util.oneOfGetter($oneOfFields = ["mediaUpload", "mediaDownload", "mediaComposeLoad", "pushReceived", "decryptionReport", "permissions", "mediaObjectDownload"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -21916,6 +22186,8 @@ $root.server = (function() {
                 writer.uint32(/* id 3, wireType 2 =*/26).string(message.version);
             if (message.timestampMs != null && Object.hasOwnProperty.call(message, "timestampMs"))
                 writer.uint32(/* id 4, wireType 0 =*/32).uint64(message.timestampMs);
+            if (message.cc != null && Object.hasOwnProperty.call(message, "cc"))
+                writer.uint32(/* id 5, wireType 2 =*/42).string(message.cc);
             if (message.mediaUpload != null && Object.hasOwnProperty.call(message, "mediaUpload"))
                 $root.server.MediaUpload.encode(message.mediaUpload, writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
             if (message.mediaDownload != null && Object.hasOwnProperty.call(message, "mediaDownload"))
@@ -21928,6 +22200,8 @@ $root.server = (function() {
                 $root.server.DecryptionReport.encode(message.decryptionReport, writer.uint32(/* id 14, wireType 2 =*/114).fork()).ldelim();
             if (message.permissions != null && Object.hasOwnProperty.call(message, "permissions"))
                 $root.server.Permissions.encode(message.permissions, writer.uint32(/* id 15, wireType 2 =*/122).fork()).ldelim();
+            if (message.mediaObjectDownload != null && Object.hasOwnProperty.call(message, "mediaObjectDownload"))
+                $root.server.MediaObjectDownload.encode(message.mediaObjectDownload, writer.uint32(/* id 16, wireType 2 =*/130).fork()).ldelim();
             return writer;
         };
 
@@ -21974,6 +22248,9 @@ $root.server = (function() {
                 case 4:
                     message.timestampMs = reader.uint64();
                     break;
+                case 5:
+                    message.cc = reader.string();
+                    break;
                 case 10:
                     message.mediaUpload = $root.server.MediaUpload.decode(reader, reader.uint32());
                     break;
@@ -21991,6 +22268,9 @@ $root.server = (function() {
                     break;
                 case 15:
                     message.permissions = $root.server.Permissions.decode(reader, reader.uint32());
+                    break;
+                case 16:
+                    message.mediaObjectDownload = $root.server.MediaObjectDownload.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -22046,6 +22326,9 @@ $root.server = (function() {
             if (message.timestampMs != null && message.hasOwnProperty("timestampMs"))
                 if (!$util.isInteger(message.timestampMs) && !(message.timestampMs && $util.isInteger(message.timestampMs.low) && $util.isInteger(message.timestampMs.high)))
                     return "timestampMs: integer|Long expected";
+            if (message.cc != null && message.hasOwnProperty("cc"))
+                if (!$util.isString(message.cc))
+                    return "cc: string expected";
             if (message.mediaUpload != null && message.hasOwnProperty("mediaUpload")) {
                 properties.edata = 1;
                 {
@@ -22104,6 +22387,16 @@ $root.server = (function() {
                         return "permissions." + error;
                 }
             }
+            if (message.mediaObjectDownload != null && message.hasOwnProperty("mediaObjectDownload")) {
+                if (properties.edata === 1)
+                    return "edata: multiple values";
+                properties.edata = 1;
+                {
+                    var error = $root.server.MediaObjectDownload.verify(message.mediaObjectDownload);
+                    if (error)
+                        return "mediaObjectDownload." + error;
+                }
+            }
             return null;
         };
 
@@ -22153,6 +22446,8 @@ $root.server = (function() {
                     message.timestampMs = object.timestampMs;
                 else if (typeof object.timestampMs === "object")
                     message.timestampMs = new $util.LongBits(object.timestampMs.low >>> 0, object.timestampMs.high >>> 0).toNumber(true);
+            if (object.cc != null)
+                message.cc = String(object.cc);
             if (object.mediaUpload != null) {
                 if (typeof object.mediaUpload !== "object")
                     throw TypeError(".server.EventData.mediaUpload: object expected");
@@ -22183,6 +22478,11 @@ $root.server = (function() {
                     throw TypeError(".server.EventData.permissions: object expected");
                 message.permissions = $root.server.Permissions.fromObject(object.permissions);
             }
+            if (object.mediaObjectDownload != null) {
+                if (typeof object.mediaObjectDownload !== "object")
+                    throw TypeError(".server.EventData.mediaObjectDownload: object expected");
+                message.mediaObjectDownload = $root.server.MediaObjectDownload.fromObject(object.mediaObjectDownload);
+            }
             return message;
         };
 
@@ -22212,6 +22512,7 @@ $root.server = (function() {
                     object.timestampMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.timestampMs = options.longs === String ? "0" : 0;
+                object.cc = "";
             }
             if (message.uid != null && message.hasOwnProperty("uid"))
                 if (typeof message.uid === "number")
@@ -22227,6 +22528,8 @@ $root.server = (function() {
                     object.timestampMs = options.longs === String ? String(message.timestampMs) : message.timestampMs;
                 else
                     object.timestampMs = options.longs === String ? $util.Long.prototype.toString.call(message.timestampMs) : options.longs === Number ? new $util.LongBits(message.timestampMs.low >>> 0, message.timestampMs.high >>> 0).toNumber(true) : message.timestampMs;
+            if (message.cc != null && message.hasOwnProperty("cc"))
+                object.cc = message.cc;
             if (message.mediaUpload != null && message.hasOwnProperty("mediaUpload")) {
                 object.mediaUpload = $root.server.MediaUpload.toObject(message.mediaUpload, options);
                 if (options.oneofs)
@@ -22256,6 +22559,11 @@ $root.server = (function() {
                 object.permissions = $root.server.Permissions.toObject(message.permissions, options);
                 if (options.oneofs)
                     object.edata = "permissions";
+            }
+            if (message.mediaObjectDownload != null && message.hasOwnProperty("mediaObjectDownload")) {
+                object.mediaObjectDownload = $root.server.MediaObjectDownload.toObject(message.mediaObjectDownload, options);
+                if (options.oneofs)
+                    object.edata = "mediaObjectDownload";
             }
             return object;
         };
@@ -22288,6 +22596,691 @@ $root.server = (function() {
         values[valuesById[1] = "IOS"] = 1;
         values[valuesById[2] = "ANDROID"] = 2;
         return values;
+    })();
+
+    server.MediaObjectDownload = (function() {
+
+        /**
+         * Properties of a MediaObjectDownload.
+         * @memberof server
+         * @interface IMediaObjectDownload
+         * @property {string|null} [id] MediaObjectDownload id
+         * @property {number|Long|null} [index] MediaObjectDownload index
+         * @property {server.MediaObjectDownload.Type|null} [type] MediaObjectDownload type
+         * @property {server.MediaObjectDownload.MediaType|null} [mediaType] MediaObjectDownload mediaType
+         * @property {number|Long|null} [durationMs] MediaObjectDownload durationMs
+         * @property {number|Long|null} [size] MediaObjectDownload size
+         * @property {number|Long|null} [progressBytes] MediaObjectDownload progressBytes
+         * @property {server.MediaObjectDownload.Cdn|null} [cdn] MediaObjectDownload cdn
+         * @property {string|null} [cdnPop] MediaObjectDownload cdnPop
+         * @property {string|null} [cdnId] MediaObjectDownload cdnId
+         * @property {server.MediaObjectDownload.CdnCache|null} [cdnCache] MediaObjectDownload cdnCache
+         * @property {server.MediaObjectDownload.Status|null} [status] MediaObjectDownload status
+         * @property {number|Long|null} [retryCount] MediaObjectDownload retryCount
+         */
+
+        /**
+         * Constructs a new MediaObjectDownload.
+         * @memberof server
+         * @classdesc Represents a MediaObjectDownload.
+         * @implements IMediaObjectDownload
+         * @constructor
+         * @param {server.IMediaObjectDownload=} [properties] Properties to set
+         */
+        function MediaObjectDownload(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * MediaObjectDownload id.
+         * @member {string} id
+         * @memberof server.MediaObjectDownload
+         * @instance
+         */
+        MediaObjectDownload.prototype.id = "";
+
+        /**
+         * MediaObjectDownload index.
+         * @member {number|Long} index
+         * @memberof server.MediaObjectDownload
+         * @instance
+         */
+        MediaObjectDownload.prototype.index = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * MediaObjectDownload type.
+         * @member {server.MediaObjectDownload.Type} type
+         * @memberof server.MediaObjectDownload
+         * @instance
+         */
+        MediaObjectDownload.prototype.type = 0;
+
+        /**
+         * MediaObjectDownload mediaType.
+         * @member {server.MediaObjectDownload.MediaType} mediaType
+         * @memberof server.MediaObjectDownload
+         * @instance
+         */
+        MediaObjectDownload.prototype.mediaType = 0;
+
+        /**
+         * MediaObjectDownload durationMs.
+         * @member {number|Long} durationMs
+         * @memberof server.MediaObjectDownload
+         * @instance
+         */
+        MediaObjectDownload.prototype.durationMs = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * MediaObjectDownload size.
+         * @member {number|Long} size
+         * @memberof server.MediaObjectDownload
+         * @instance
+         */
+        MediaObjectDownload.prototype.size = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * MediaObjectDownload progressBytes.
+         * @member {number|Long} progressBytes
+         * @memberof server.MediaObjectDownload
+         * @instance
+         */
+        MediaObjectDownload.prototype.progressBytes = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * MediaObjectDownload cdn.
+         * @member {server.MediaObjectDownload.Cdn} cdn
+         * @memberof server.MediaObjectDownload
+         * @instance
+         */
+        MediaObjectDownload.prototype.cdn = 0;
+
+        /**
+         * MediaObjectDownload cdnPop.
+         * @member {string} cdnPop
+         * @memberof server.MediaObjectDownload
+         * @instance
+         */
+        MediaObjectDownload.prototype.cdnPop = "";
+
+        /**
+         * MediaObjectDownload cdnId.
+         * @member {string} cdnId
+         * @memberof server.MediaObjectDownload
+         * @instance
+         */
+        MediaObjectDownload.prototype.cdnId = "";
+
+        /**
+         * MediaObjectDownload cdnCache.
+         * @member {server.MediaObjectDownload.CdnCache} cdnCache
+         * @memberof server.MediaObjectDownload
+         * @instance
+         */
+        MediaObjectDownload.prototype.cdnCache = 0;
+
+        /**
+         * MediaObjectDownload status.
+         * @member {server.MediaObjectDownload.Status} status
+         * @memberof server.MediaObjectDownload
+         * @instance
+         */
+        MediaObjectDownload.prototype.status = 0;
+
+        /**
+         * MediaObjectDownload retryCount.
+         * @member {number|Long} retryCount
+         * @memberof server.MediaObjectDownload
+         * @instance
+         */
+        MediaObjectDownload.prototype.retryCount = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * Creates a new MediaObjectDownload instance using the specified properties.
+         * @function create
+         * @memberof server.MediaObjectDownload
+         * @static
+         * @param {server.IMediaObjectDownload=} [properties] Properties to set
+         * @returns {server.MediaObjectDownload} MediaObjectDownload instance
+         */
+        MediaObjectDownload.create = function create(properties) {
+            return new MediaObjectDownload(properties);
+        };
+
+        /**
+         * Encodes the specified MediaObjectDownload message. Does not implicitly {@link server.MediaObjectDownload.verify|verify} messages.
+         * @function encode
+         * @memberof server.MediaObjectDownload
+         * @static
+         * @param {server.IMediaObjectDownload} message MediaObjectDownload message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MediaObjectDownload.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.id != null && Object.hasOwnProperty.call(message, "id"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
+            if (message.index != null && Object.hasOwnProperty.call(message, "index"))
+                writer.uint32(/* id 2, wireType 0 =*/16).uint64(message.index);
+            if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.type);
+            if (message.mediaType != null && Object.hasOwnProperty.call(message, "mediaType"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.mediaType);
+            if (message.durationMs != null && Object.hasOwnProperty.call(message, "durationMs"))
+                writer.uint32(/* id 5, wireType 0 =*/40).uint64(message.durationMs);
+            if (message.size != null && Object.hasOwnProperty.call(message, "size"))
+                writer.uint32(/* id 6, wireType 0 =*/48).uint64(message.size);
+            if (message.progressBytes != null && Object.hasOwnProperty.call(message, "progressBytes"))
+                writer.uint32(/* id 7, wireType 0 =*/56).uint64(message.progressBytes);
+            if (message.cdn != null && Object.hasOwnProperty.call(message, "cdn"))
+                writer.uint32(/* id 8, wireType 0 =*/64).int32(message.cdn);
+            if (message.cdnPop != null && Object.hasOwnProperty.call(message, "cdnPop"))
+                writer.uint32(/* id 9, wireType 2 =*/74).string(message.cdnPop);
+            if (message.cdnId != null && Object.hasOwnProperty.call(message, "cdnId"))
+                writer.uint32(/* id 10, wireType 2 =*/82).string(message.cdnId);
+            if (message.cdnCache != null && Object.hasOwnProperty.call(message, "cdnCache"))
+                writer.uint32(/* id 11, wireType 0 =*/88).int32(message.cdnCache);
+            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                writer.uint32(/* id 12, wireType 0 =*/96).int32(message.status);
+            if (message.retryCount != null && Object.hasOwnProperty.call(message, "retryCount"))
+                writer.uint32(/* id 13, wireType 0 =*/104).uint64(message.retryCount);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified MediaObjectDownload message, length delimited. Does not implicitly {@link server.MediaObjectDownload.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.MediaObjectDownload
+         * @static
+         * @param {server.IMediaObjectDownload} message MediaObjectDownload message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MediaObjectDownload.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a MediaObjectDownload message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.MediaObjectDownload
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.MediaObjectDownload} MediaObjectDownload
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MediaObjectDownload.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.MediaObjectDownload();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.id = reader.string();
+                    break;
+                case 2:
+                    message.index = reader.uint64();
+                    break;
+                case 3:
+                    message.type = reader.int32();
+                    break;
+                case 4:
+                    message.mediaType = reader.int32();
+                    break;
+                case 5:
+                    message.durationMs = reader.uint64();
+                    break;
+                case 6:
+                    message.size = reader.uint64();
+                    break;
+                case 7:
+                    message.progressBytes = reader.uint64();
+                    break;
+                case 8:
+                    message.cdn = reader.int32();
+                    break;
+                case 9:
+                    message.cdnPop = reader.string();
+                    break;
+                case 10:
+                    message.cdnId = reader.string();
+                    break;
+                case 11:
+                    message.cdnCache = reader.int32();
+                    break;
+                case 12:
+                    message.status = reader.int32();
+                    break;
+                case 13:
+                    message.retryCount = reader.uint64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a MediaObjectDownload message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.MediaObjectDownload
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.MediaObjectDownload} MediaObjectDownload
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MediaObjectDownload.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a MediaObjectDownload message.
+         * @function verify
+         * @memberof server.MediaObjectDownload
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        MediaObjectDownload.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.id != null && message.hasOwnProperty("id"))
+                if (!$util.isString(message.id))
+                    return "id: string expected";
+            if (message.index != null && message.hasOwnProperty("index"))
+                if (!$util.isInteger(message.index) && !(message.index && $util.isInteger(message.index.low) && $util.isInteger(message.index.high)))
+                    return "index: integer|Long expected";
+            if (message.type != null && message.hasOwnProperty("type"))
+                switch (message.type) {
+                default:
+                    return "type: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.mediaType != null && message.hasOwnProperty("mediaType"))
+                switch (message.mediaType) {
+                default:
+                    return "mediaType: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.durationMs != null && message.hasOwnProperty("durationMs"))
+                if (!$util.isInteger(message.durationMs) && !(message.durationMs && $util.isInteger(message.durationMs.low) && $util.isInteger(message.durationMs.high)))
+                    return "durationMs: integer|Long expected";
+            if (message.size != null && message.hasOwnProperty("size"))
+                if (!$util.isInteger(message.size) && !(message.size && $util.isInteger(message.size.low) && $util.isInteger(message.size.high)))
+                    return "size: integer|Long expected";
+            if (message.progressBytes != null && message.hasOwnProperty("progressBytes"))
+                if (!$util.isInteger(message.progressBytes) && !(message.progressBytes && $util.isInteger(message.progressBytes.low) && $util.isInteger(message.progressBytes.high)))
+                    return "progressBytes: integer|Long expected";
+            if (message.cdn != null && message.hasOwnProperty("cdn"))
+                switch (message.cdn) {
+                default:
+                    return "cdn: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.cdnPop != null && message.hasOwnProperty("cdnPop"))
+                if (!$util.isString(message.cdnPop))
+                    return "cdnPop: string expected";
+            if (message.cdnId != null && message.hasOwnProperty("cdnId"))
+                if (!$util.isString(message.cdnId))
+                    return "cdnId: string expected";
+            if (message.cdnCache != null && message.hasOwnProperty("cdnCache"))
+                switch (message.cdnCache) {
+                default:
+                    return "cdnCache: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    break;
+                }
+            if (message.status != null && message.hasOwnProperty("status"))
+                switch (message.status) {
+                default:
+                    return "status: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.retryCount != null && message.hasOwnProperty("retryCount"))
+                if (!$util.isInteger(message.retryCount) && !(message.retryCount && $util.isInteger(message.retryCount.low) && $util.isInteger(message.retryCount.high)))
+                    return "retryCount: integer|Long expected";
+            return null;
+        };
+
+        /**
+         * Creates a MediaObjectDownload message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.MediaObjectDownload
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.MediaObjectDownload} MediaObjectDownload
+         */
+        MediaObjectDownload.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.MediaObjectDownload)
+                return object;
+            var message = new $root.server.MediaObjectDownload();
+            if (object.id != null)
+                message.id = String(object.id);
+            if (object.index != null)
+                if ($util.Long)
+                    (message.index = $util.Long.fromValue(object.index)).unsigned = true;
+                else if (typeof object.index === "string")
+                    message.index = parseInt(object.index, 10);
+                else if (typeof object.index === "number")
+                    message.index = object.index;
+                else if (typeof object.index === "object")
+                    message.index = new $util.LongBits(object.index.low >>> 0, object.index.high >>> 0).toNumber(true);
+            switch (object.type) {
+            case "POST":
+            case 0:
+                message.type = 0;
+                break;
+            case "MESSAGE":
+            case 1:
+                message.type = 1;
+                break;
+            case "COMMENT":
+            case 2:
+                message.type = 2;
+                break;
+            }
+            switch (object.mediaType) {
+            case "PHOTO":
+            case 0:
+                message.mediaType = 0;
+                break;
+            case "VIDEO":
+            case 1:
+                message.mediaType = 1;
+                break;
+            case "AUDIO":
+            case 2:
+                message.mediaType = 2;
+                break;
+            }
+            if (object.durationMs != null)
+                if ($util.Long)
+                    (message.durationMs = $util.Long.fromValue(object.durationMs)).unsigned = true;
+                else if (typeof object.durationMs === "string")
+                    message.durationMs = parseInt(object.durationMs, 10);
+                else if (typeof object.durationMs === "number")
+                    message.durationMs = object.durationMs;
+                else if (typeof object.durationMs === "object")
+                    message.durationMs = new $util.LongBits(object.durationMs.low >>> 0, object.durationMs.high >>> 0).toNumber(true);
+            if (object.size != null)
+                if ($util.Long)
+                    (message.size = $util.Long.fromValue(object.size)).unsigned = true;
+                else if (typeof object.size === "string")
+                    message.size = parseInt(object.size, 10);
+                else if (typeof object.size === "number")
+                    message.size = object.size;
+                else if (typeof object.size === "object")
+                    message.size = new $util.LongBits(object.size.low >>> 0, object.size.high >>> 0).toNumber(true);
+            if (object.progressBytes != null)
+                if ($util.Long)
+                    (message.progressBytes = $util.Long.fromValue(object.progressBytes)).unsigned = true;
+                else if (typeof object.progressBytes === "string")
+                    message.progressBytes = parseInt(object.progressBytes, 10);
+                else if (typeof object.progressBytes === "number")
+                    message.progressBytes = object.progressBytes;
+                else if (typeof object.progressBytes === "object")
+                    message.progressBytes = new $util.LongBits(object.progressBytes.low >>> 0, object.progressBytes.high >>> 0).toNumber(true);
+            switch (object.cdn) {
+            case "UNKNOWN":
+            case 0:
+                message.cdn = 0;
+                break;
+            case "CLOUDFRONT":
+            case 1:
+                message.cdn = 1;
+                break;
+            }
+            if (object.cdnPop != null)
+                message.cdnPop = String(object.cdnPop);
+            if (object.cdnId != null)
+                message.cdnId = String(object.cdnId);
+            switch (object.cdnCache) {
+            case "HIT":
+            case 0:
+                message.cdnCache = 0;
+                break;
+            case "MISS":
+            case 1:
+                message.cdnCache = 1;
+                break;
+            case "REFRESH_HIT":
+            case 2:
+                message.cdnCache = 2;
+                break;
+            case "REFRESH_MISS":
+            case 3:
+                message.cdnCache = 3;
+                break;
+            }
+            switch (object.status) {
+            case "OK":
+            case 0:
+                message.status = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.status = 1;
+                break;
+            }
+            if (object.retryCount != null)
+                if ($util.Long)
+                    (message.retryCount = $util.Long.fromValue(object.retryCount)).unsigned = true;
+                else if (typeof object.retryCount === "string")
+                    message.retryCount = parseInt(object.retryCount, 10);
+                else if (typeof object.retryCount === "number")
+                    message.retryCount = object.retryCount;
+                else if (typeof object.retryCount === "object")
+                    message.retryCount = new $util.LongBits(object.retryCount.low >>> 0, object.retryCount.high >>> 0).toNumber(true);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a MediaObjectDownload message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.MediaObjectDownload
+         * @static
+         * @param {server.MediaObjectDownload} message MediaObjectDownload
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        MediaObjectDownload.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.id = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.index = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.index = options.longs === String ? "0" : 0;
+                object.type = options.enums === String ? "POST" : 0;
+                object.mediaType = options.enums === String ? "PHOTO" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.durationMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.durationMs = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.size = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.size = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.progressBytes = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.progressBytes = options.longs === String ? "0" : 0;
+                object.cdn = options.enums === String ? "UNKNOWN" : 0;
+                object.cdnPop = "";
+                object.cdnId = "";
+                object.cdnCache = options.enums === String ? "HIT" : 0;
+                object.status = options.enums === String ? "OK" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.retryCount = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.retryCount = options.longs === String ? "0" : 0;
+            }
+            if (message.id != null && message.hasOwnProperty("id"))
+                object.id = message.id;
+            if (message.index != null && message.hasOwnProperty("index"))
+                if (typeof message.index === "number")
+                    object.index = options.longs === String ? String(message.index) : message.index;
+                else
+                    object.index = options.longs === String ? $util.Long.prototype.toString.call(message.index) : options.longs === Number ? new $util.LongBits(message.index.low >>> 0, message.index.high >>> 0).toNumber(true) : message.index;
+            if (message.type != null && message.hasOwnProperty("type"))
+                object.type = options.enums === String ? $root.server.MediaObjectDownload.Type[message.type] : message.type;
+            if (message.mediaType != null && message.hasOwnProperty("mediaType"))
+                object.mediaType = options.enums === String ? $root.server.MediaObjectDownload.MediaType[message.mediaType] : message.mediaType;
+            if (message.durationMs != null && message.hasOwnProperty("durationMs"))
+                if (typeof message.durationMs === "number")
+                    object.durationMs = options.longs === String ? String(message.durationMs) : message.durationMs;
+                else
+                    object.durationMs = options.longs === String ? $util.Long.prototype.toString.call(message.durationMs) : options.longs === Number ? new $util.LongBits(message.durationMs.low >>> 0, message.durationMs.high >>> 0).toNumber(true) : message.durationMs;
+            if (message.size != null && message.hasOwnProperty("size"))
+                if (typeof message.size === "number")
+                    object.size = options.longs === String ? String(message.size) : message.size;
+                else
+                    object.size = options.longs === String ? $util.Long.prototype.toString.call(message.size) : options.longs === Number ? new $util.LongBits(message.size.low >>> 0, message.size.high >>> 0).toNumber(true) : message.size;
+            if (message.progressBytes != null && message.hasOwnProperty("progressBytes"))
+                if (typeof message.progressBytes === "number")
+                    object.progressBytes = options.longs === String ? String(message.progressBytes) : message.progressBytes;
+                else
+                    object.progressBytes = options.longs === String ? $util.Long.prototype.toString.call(message.progressBytes) : options.longs === Number ? new $util.LongBits(message.progressBytes.low >>> 0, message.progressBytes.high >>> 0).toNumber(true) : message.progressBytes;
+            if (message.cdn != null && message.hasOwnProperty("cdn"))
+                object.cdn = options.enums === String ? $root.server.MediaObjectDownload.Cdn[message.cdn] : message.cdn;
+            if (message.cdnPop != null && message.hasOwnProperty("cdnPop"))
+                object.cdnPop = message.cdnPop;
+            if (message.cdnId != null && message.hasOwnProperty("cdnId"))
+                object.cdnId = message.cdnId;
+            if (message.cdnCache != null && message.hasOwnProperty("cdnCache"))
+                object.cdnCache = options.enums === String ? $root.server.MediaObjectDownload.CdnCache[message.cdnCache] : message.cdnCache;
+            if (message.status != null && message.hasOwnProperty("status"))
+                object.status = options.enums === String ? $root.server.MediaObjectDownload.Status[message.status] : message.status;
+            if (message.retryCount != null && message.hasOwnProperty("retryCount"))
+                if (typeof message.retryCount === "number")
+                    object.retryCount = options.longs === String ? String(message.retryCount) : message.retryCount;
+                else
+                    object.retryCount = options.longs === String ? $util.Long.prototype.toString.call(message.retryCount) : options.longs === Number ? new $util.LongBits(message.retryCount.low >>> 0, message.retryCount.high >>> 0).toNumber(true) : message.retryCount;
+            return object;
+        };
+
+        /**
+         * Converts this MediaObjectDownload to JSON.
+         * @function toJSON
+         * @memberof server.MediaObjectDownload
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        MediaObjectDownload.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Type enum.
+         * @name server.MediaObjectDownload.Type
+         * @enum {number}
+         * @property {number} POST=0 POST value
+         * @property {number} MESSAGE=1 MESSAGE value
+         * @property {number} COMMENT=2 COMMENT value
+         */
+        MediaObjectDownload.Type = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "POST"] = 0;
+            values[valuesById[1] = "MESSAGE"] = 1;
+            values[valuesById[2] = "COMMENT"] = 2;
+            return values;
+        })();
+
+        /**
+         * MediaType enum.
+         * @name server.MediaObjectDownload.MediaType
+         * @enum {number}
+         * @property {number} PHOTO=0 PHOTO value
+         * @property {number} VIDEO=1 VIDEO value
+         * @property {number} AUDIO=2 AUDIO value
+         */
+        MediaObjectDownload.MediaType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "PHOTO"] = 0;
+            values[valuesById[1] = "VIDEO"] = 1;
+            values[valuesById[2] = "AUDIO"] = 2;
+            return values;
+        })();
+
+        /**
+         * Cdn enum.
+         * @name server.MediaObjectDownload.Cdn
+         * @enum {number}
+         * @property {number} UNKNOWN=0 UNKNOWN value
+         * @property {number} CLOUDFRONT=1 CLOUDFRONT value
+         */
+        MediaObjectDownload.Cdn = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN"] = 0;
+            values[valuesById[1] = "CLOUDFRONT"] = 1;
+            return values;
+        })();
+
+        /**
+         * CdnCache enum.
+         * @name server.MediaObjectDownload.CdnCache
+         * @enum {number}
+         * @property {number} HIT=0 HIT value
+         * @property {number} MISS=1 MISS value
+         * @property {number} REFRESH_HIT=2 REFRESH_HIT value
+         * @property {number} REFRESH_MISS=3 REFRESH_MISS value
+         */
+        MediaObjectDownload.CdnCache = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "HIT"] = 0;
+            values[valuesById[1] = "MISS"] = 1;
+            values[valuesById[2] = "REFRESH_HIT"] = 2;
+            values[valuesById[3] = "REFRESH_MISS"] = 3;
+            return values;
+        })();
+
+        /**
+         * Status enum.
+         * @name server.MediaObjectDownload.Status
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        MediaObjectDownload.Status = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        return MediaObjectDownload;
     })();
 
     server.MediaUpload = (function() {

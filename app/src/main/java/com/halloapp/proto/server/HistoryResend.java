@@ -17,7 +17,6 @@ public  final class HistoryResend extends
     payload_ = com.google.protobuf.ByteString.EMPTY;
     encPayload_ = com.google.protobuf.ByteString.EMPTY;
     senderStateBundles_ = emptyProtobufList();
-    encSenderState_ = com.google.protobuf.ByteString.EMPTY;
     audienceHash_ = com.google.protobuf.ByteString.EMPTY;
   }
   public static final int GID_FIELD_NUMBER = 1;
@@ -344,43 +343,70 @@ public  final class HistoryResend extends
     senderStateBundles_.remove(index);
   }
 
-  public static final int ENC_SENDER_STATE_FIELD_NUMBER = 7;
-  private com.google.protobuf.ByteString encSenderState_;
+  public static final int SENDER_STATE_FIELD_NUMBER = 7;
+  private com.halloapp.proto.server.SenderStateWithKeyInfo senderState_;
   /**
    * <pre>
    * Meant for the receiver, selected by the server from `sender_state_bundles`.
    * </pre>
    *
-   * <code>bytes enc_sender_state = 7;</code>
-   * @return The encSenderState.
+   * <code>.server.SenderStateWithKeyInfo sender_state = 7;</code>
    */
   @java.lang.Override
-  public com.google.protobuf.ByteString getEncSenderState() {
-    return encSenderState_;
+  public boolean hasSenderState() {
+    return senderState_ != null;
   }
   /**
    * <pre>
    * Meant for the receiver, selected by the server from `sender_state_bundles`.
    * </pre>
    *
-   * <code>bytes enc_sender_state = 7;</code>
-   * @param value The encSenderState to set.
+   * <code>.server.SenderStateWithKeyInfo sender_state = 7;</code>
    */
-  private void setEncSenderState(com.google.protobuf.ByteString value) {
+  @java.lang.Override
+  public com.halloapp.proto.server.SenderStateWithKeyInfo getSenderState() {
+    return senderState_ == null ? com.halloapp.proto.server.SenderStateWithKeyInfo.getDefaultInstance() : senderState_;
+  }
+  /**
+   * <pre>
+   * Meant for the receiver, selected by the server from `sender_state_bundles`.
+   * </pre>
+   *
+   * <code>.server.SenderStateWithKeyInfo sender_state = 7;</code>
+   */
+  private void setSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
     value.getClass();
-  
-    encSenderState_ = value;
+  senderState_ = value;
+    
+    }
+  /**
+   * <pre>
+   * Meant for the receiver, selected by the server from `sender_state_bundles`.
+   * </pre>
+   *
+   * <code>.server.SenderStateWithKeyInfo sender_state = 7;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
+    value.getClass();
+  if (senderState_ != null &&
+        senderState_ != com.halloapp.proto.server.SenderStateWithKeyInfo.getDefaultInstance()) {
+      senderState_ =
+        com.halloapp.proto.server.SenderStateWithKeyInfo.newBuilder(senderState_).mergeFrom(value).buildPartial();
+    } else {
+      senderState_ = value;
+    }
+    
   }
   /**
    * <pre>
    * Meant for the receiver, selected by the server from `sender_state_bundles`.
    * </pre>
    *
-   * <code>bytes enc_sender_state = 7;</code>
+   * <code>.server.SenderStateWithKeyInfo sender_state = 7;</code>
    */
-  private void clearEncSenderState() {
+  private void clearSenderState() {  senderState_ = null;
     
-    encSenderState_ = getDefaultInstance().getEncSenderState();
   }
 
   public static final int AUDIENCE_HASH_FIELD_NUMBER = 8;
@@ -854,25 +880,46 @@ public  final class HistoryResend extends
      * Meant for the receiver, selected by the server from `sender_state_bundles`.
      * </pre>
      *
-     * <code>bytes enc_sender_state = 7;</code>
-     * @return The encSenderState.
+     * <code>.server.SenderStateWithKeyInfo sender_state = 7;</code>
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getEncSenderState() {
-      return instance.getEncSenderState();
+    public boolean hasSenderState() {
+      return instance.hasSenderState();
     }
     /**
      * <pre>
      * Meant for the receiver, selected by the server from `sender_state_bundles`.
      * </pre>
      *
-     * <code>bytes enc_sender_state = 7;</code>
-     * @param value The encSenderState to set.
-     * @return This builder for chaining.
+     * <code>.server.SenderStateWithKeyInfo sender_state = 7;</code>
      */
-    public Builder setEncSenderState(com.google.protobuf.ByteString value) {
+    @java.lang.Override
+    public com.halloapp.proto.server.SenderStateWithKeyInfo getSenderState() {
+      return instance.getSenderState();
+    }
+    /**
+     * <pre>
+     * Meant for the receiver, selected by the server from `sender_state_bundles`.
+     * </pre>
+     *
+     * <code>.server.SenderStateWithKeyInfo sender_state = 7;</code>
+     */
+    public Builder setSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
       copyOnWrite();
-      instance.setEncSenderState(value);
+      instance.setSenderState(value);
+      return this;
+      }
+    /**
+     * <pre>
+     * Meant for the receiver, selected by the server from `sender_state_bundles`.
+     * </pre>
+     *
+     * <code>.server.SenderStateWithKeyInfo sender_state = 7;</code>
+     */
+    public Builder setSenderState(
+        com.halloapp.proto.server.SenderStateWithKeyInfo.Builder builderForValue) {
+      copyOnWrite();
+      instance.setSenderState(builderForValue.build());
       return this;
     }
     /**
@@ -880,12 +927,22 @@ public  final class HistoryResend extends
      * Meant for the receiver, selected by the server from `sender_state_bundles`.
      * </pre>
      *
-     * <code>bytes enc_sender_state = 7;</code>
-     * @return This builder for chaining.
+     * <code>.server.SenderStateWithKeyInfo sender_state = 7;</code>
      */
-    public Builder clearEncSenderState() {
+    public Builder mergeSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
       copyOnWrite();
-      instance.clearEncSenderState();
+      instance.mergeSenderState(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Meant for the receiver, selected by the server from `sender_state_bundles`.
+     * </pre>
+     *
+     * <code>.server.SenderStateWithKeyInfo sender_state = 7;</code>
+     */
+    public Builder clearSenderState() {  copyOnWrite();
+      instance.clearSenderState();
       return this;
     }
 
@@ -940,12 +997,12 @@ public  final class HistoryResend extends
             "encPayload_",
             "senderStateBundles_",
             com.halloapp.proto.server.SenderStateBundle.class,
-            "encSenderState_",
+            "senderState_",
             "audienceHash_",
           };
           java.lang.String info =
               "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0001\u0000\u0001\u0208\u0002\u0208\u0003\u0002" +
-              "\u0004\n\u0005\n\u0006\u001b\u0007\n\b\n";
+              "\u0004\n\u0005\n\u0006\u001b\u0007\t\b\n";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

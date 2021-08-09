@@ -13,6 +13,7 @@ public  final class EventData extends
     EventDataOrBuilder {
   private EventData() {
     version_ = "";
+    cc_ = "";
   }
   private int edataCase_ = 0;
   private java.lang.Object edata_;
@@ -23,6 +24,7 @@ public  final class EventData extends
     PUSH_RECEIVED(13),
     DECRYPTION_REPORT(14),
     PERMISSIONS(15),
+    MEDIA_OBJECT_DOWNLOAD(16),
     EDATA_NOT_SET(0);
     private final int value;
     private EdataCase(int value) {
@@ -44,6 +46,7 @@ public  final class EventData extends
         case 13: return PUSH_RECEIVED;
         case 14: return DECRYPTION_REPORT;
         case 15: return PERMISSIONS;
+        case 16: return MEDIA_OBJECT_DOWNLOAD;
         case 0: return EDATA_NOT_SET;
         default: return null;
       }
@@ -256,6 +259,73 @@ public  final class EventData extends
   private void clearTimestampMs() {
     
     timestampMs_ = 0L;
+  }
+
+  public static final int CC_FIELD_NUMBER = 5;
+  private java.lang.String cc_;
+  /**
+   * <pre>
+   * 2 letter country code
+   * </pre>
+   *
+   * <code>string cc = 5;</code>
+   * @return The cc.
+   */
+  @java.lang.Override
+  public java.lang.String getCc() {
+    return cc_;
+  }
+  /**
+   * <pre>
+   * 2 letter country code
+   * </pre>
+   *
+   * <code>string cc = 5;</code>
+   * @return The bytes for cc.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getCcBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(cc_);
+  }
+  /**
+   * <pre>
+   * 2 letter country code
+   * </pre>
+   *
+   * <code>string cc = 5;</code>
+   * @param value The cc to set.
+   */
+  private void setCc(
+      java.lang.String value) {
+    value.getClass();
+  
+    cc_ = value;
+  }
+  /**
+   * <pre>
+   * 2 letter country code
+   * </pre>
+   *
+   * <code>string cc = 5;</code>
+   */
+  private void clearCc() {
+    
+    cc_ = getDefaultInstance().getCc();
+  }
+  /**
+   * <pre>
+   * 2 letter country code
+   * </pre>
+   *
+   * <code>string cc = 5;</code>
+   * @param value The bytes for cc to set.
+   */
+  private void setCcBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    cc_ = value.toStringUtf8();
+    
   }
 
   public static final int MEDIA_UPLOAD_FIELD_NUMBER = 10;
@@ -553,6 +623,56 @@ public  final class EventData extends
    */
   private void clearPermissions() {
     if (edataCase_ == 15) {
+      edataCase_ = 0;
+      edata_ = null;
+    }
+  }
+
+  public static final int MEDIA_OBJECT_DOWNLOAD_FIELD_NUMBER = 16;
+  /**
+   * <code>.server.MediaObjectDownload media_object_download = 16;</code>
+   */
+  @java.lang.Override
+  public boolean hasMediaObjectDownload() {
+    return edataCase_ == 16;
+  }
+  /**
+   * <code>.server.MediaObjectDownload media_object_download = 16;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.log_events.MediaObjectDownload getMediaObjectDownload() {
+    if (edataCase_ == 16) {
+       return (com.halloapp.proto.log_events.MediaObjectDownload) edata_;
+    }
+    return com.halloapp.proto.log_events.MediaObjectDownload.getDefaultInstance();
+  }
+  /**
+   * <code>.server.MediaObjectDownload media_object_download = 16;</code>
+   */
+  private void setMediaObjectDownload(com.halloapp.proto.log_events.MediaObjectDownload value) {
+    value.getClass();
+  edata_ = value;
+    edataCase_ = 16;
+  }
+  /**
+   * <code>.server.MediaObjectDownload media_object_download = 16;</code>
+   */
+  private void mergeMediaObjectDownload(com.halloapp.proto.log_events.MediaObjectDownload value) {
+    value.getClass();
+  if (edataCase_ == 16 &&
+        edata_ != com.halloapp.proto.log_events.MediaObjectDownload.getDefaultInstance()) {
+      edata_ = com.halloapp.proto.log_events.MediaObjectDownload.newBuilder((com.halloapp.proto.log_events.MediaObjectDownload) edata_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      edata_ = value;
+    }
+    edataCase_ = 16;
+  }
+  /**
+   * <code>.server.MediaObjectDownload media_object_download = 16;</code>
+   */
+  private void clearMediaObjectDownload() {
+    if (edataCase_ == 16) {
       edataCase_ = 0;
       edata_ = null;
     }
@@ -869,6 +989,75 @@ public  final class EventData extends
     }
 
     /**
+     * <pre>
+     * 2 letter country code
+     * </pre>
+     *
+     * <code>string cc = 5;</code>
+     * @return The cc.
+     */
+    @java.lang.Override
+    public java.lang.String getCc() {
+      return instance.getCc();
+    }
+    /**
+     * <pre>
+     * 2 letter country code
+     * </pre>
+     *
+     * <code>string cc = 5;</code>
+     * @return The bytes for cc.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getCcBytes() {
+      return instance.getCcBytes();
+    }
+    /**
+     * <pre>
+     * 2 letter country code
+     * </pre>
+     *
+     * <code>string cc = 5;</code>
+     * @param value The cc to set.
+     * @return This builder for chaining.
+     */
+    public Builder setCc(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setCc(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * 2 letter country code
+     * </pre>
+     *
+     * <code>string cc = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearCc() {
+      copyOnWrite();
+      instance.clearCc();
+      return this;
+    }
+    /**
+     * <pre>
+     * 2 letter country code
+     * </pre>
+     *
+     * <code>string cc = 5;</code>
+     * @param value The bytes for cc to set.
+     * @return This builder for chaining.
+     */
+    public Builder setCcBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setCcBytes(value);
+      return this;
+    }
+
+    /**
      * <code>.server.MediaUpload media_upload = 10;</code>
      */
     @java.lang.Override
@@ -1156,6 +1345,54 @@ public  final class EventData extends
       return this;
     }
 
+    /**
+     * <code>.server.MediaObjectDownload media_object_download = 16;</code>
+     */
+    @java.lang.Override
+    public boolean hasMediaObjectDownload() {
+      return instance.hasMediaObjectDownload();
+    }
+    /**
+     * <code>.server.MediaObjectDownload media_object_download = 16;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.log_events.MediaObjectDownload getMediaObjectDownload() {
+      return instance.getMediaObjectDownload();
+    }
+    /**
+     * <code>.server.MediaObjectDownload media_object_download = 16;</code>
+     */
+    public Builder setMediaObjectDownload(com.halloapp.proto.log_events.MediaObjectDownload value) {
+      copyOnWrite();
+      instance.setMediaObjectDownload(value);
+      return this;
+    }
+    /**
+     * <code>.server.MediaObjectDownload media_object_download = 16;</code>
+     */
+    public Builder setMediaObjectDownload(
+        com.halloapp.proto.log_events.MediaObjectDownload.Builder builderForValue) {
+      copyOnWrite();
+      instance.setMediaObjectDownload(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.MediaObjectDownload media_object_download = 16;</code>
+     */
+    public Builder mergeMediaObjectDownload(com.halloapp.proto.log_events.MediaObjectDownload value) {
+      copyOnWrite();
+      instance.mergeMediaObjectDownload(value);
+      return this;
+    }
+    /**
+     * <code>.server.MediaObjectDownload media_object_download = 16;</code>
+     */
+    public Builder clearMediaObjectDownload() {
+      copyOnWrite();
+      instance.clearMediaObjectDownload();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.EventData)
   }
   @java.lang.Override
@@ -1178,16 +1415,19 @@ public  final class EventData extends
             "platform_",
             "version_",
             "timestampMs_",
+            "cc_",
             com.halloapp.proto.log_events.MediaUpload.class,
             com.halloapp.proto.log_events.MediaDownload.class,
             com.halloapp.proto.log_events.MediaComposeLoad.class,
             com.halloapp.proto.log_events.PushReceived.class,
             com.halloapp.proto.log_events.DecryptionReport.class,
             com.halloapp.proto.log_events.Permissions.class,
+            com.halloapp.proto.log_events.MediaObjectDownload.class,
           };
           java.lang.String info =
-              "\u0000\n\u0001\u0000\u0001\u000f\n\u0000\u0000\u0000\u0001\u0003\u0002\f\u0003\u0208" +
-              "\u0004\u0003\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000";
+              "\u0000\f\u0001\u0000\u0001\u0010\f\u0000\u0000\u0000\u0001\u0003\u0002\f\u0003\u0208" +
+              "\u0004\u0003\u0005\u0208\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f" +
+              "<\u0000\u0010<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

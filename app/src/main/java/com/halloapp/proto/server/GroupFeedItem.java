@@ -16,7 +16,6 @@ public  final class GroupFeedItem extends
     name_ = "";
     avatarId_ = "";
     senderStateBundles_ = emptyProtobufList();
-    encSenderState_ = com.google.protobuf.ByteString.EMPTY;
     audienceHash_ = com.google.protobuf.ByteString.EMPTY;
   }
   /**
@@ -581,43 +580,70 @@ public  final class GroupFeedItem extends
     senderStateBundles_.remove(index);
   }
 
-  public static final int ENC_SENDER_STATE_FIELD_NUMBER = 8;
-  private com.google.protobuf.ByteString encSenderState_;
+  public static final int SENDER_STATE_FIELD_NUMBER = 8;
+  private com.halloapp.proto.server.SenderStateWithKeyInfo senderState_;
   /**
    * <pre>
    * Meant for the receiver, computed by the server using `sender_state_bundles`.
    * </pre>
    *
-   * <code>bytes enc_sender_state = 8;</code>
-   * @return The encSenderState.
+   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
    */
   @java.lang.Override
-  public com.google.protobuf.ByteString getEncSenderState() {
-    return encSenderState_;
+  public boolean hasSenderState() {
+    return senderState_ != null;
   }
   /**
    * <pre>
    * Meant for the receiver, computed by the server using `sender_state_bundles`.
    * </pre>
    *
-   * <code>bytes enc_sender_state = 8;</code>
-   * @param value The encSenderState to set.
+   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
    */
-  private void setEncSenderState(com.google.protobuf.ByteString value) {
+  @java.lang.Override
+  public com.halloapp.proto.server.SenderStateWithKeyInfo getSenderState() {
+    return senderState_ == null ? com.halloapp.proto.server.SenderStateWithKeyInfo.getDefaultInstance() : senderState_;
+  }
+  /**
+   * <pre>
+   * Meant for the receiver, computed by the server using `sender_state_bundles`.
+   * </pre>
+   *
+   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+   */
+  private void setSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
     value.getClass();
-  
-    encSenderState_ = value;
+  senderState_ = value;
+    
+    }
+  /**
+   * <pre>
+   * Meant for the receiver, computed by the server using `sender_state_bundles`.
+   * </pre>
+   *
+   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
+    value.getClass();
+  if (senderState_ != null &&
+        senderState_ != com.halloapp.proto.server.SenderStateWithKeyInfo.getDefaultInstance()) {
+      senderState_ =
+        com.halloapp.proto.server.SenderStateWithKeyInfo.newBuilder(senderState_).mergeFrom(value).buildPartial();
+    } else {
+      senderState_ = value;
+    }
+    
   }
   /**
    * <pre>
    * Meant for the receiver, computed by the server using `sender_state_bundles`.
    * </pre>
    *
-   * <code>bytes enc_sender_state = 8;</code>
+   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
    */
-  private void clearEncSenderState() {
+  private void clearSenderState() {  senderState_ = null;
     
-    encSenderState_ = getDefaultInstance().getEncSenderState();
   }
 
   public static final int AUDIENCE_HASH_FIELD_NUMBER = 9;
@@ -1198,25 +1224,46 @@ public  final class GroupFeedItem extends
      * Meant for the receiver, computed by the server using `sender_state_bundles`.
      * </pre>
      *
-     * <code>bytes enc_sender_state = 8;</code>
-     * @return The encSenderState.
+     * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getEncSenderState() {
-      return instance.getEncSenderState();
+    public boolean hasSenderState() {
+      return instance.hasSenderState();
     }
     /**
      * <pre>
      * Meant for the receiver, computed by the server using `sender_state_bundles`.
      * </pre>
      *
-     * <code>bytes enc_sender_state = 8;</code>
-     * @param value The encSenderState to set.
-     * @return This builder for chaining.
+     * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
      */
-    public Builder setEncSenderState(com.google.protobuf.ByteString value) {
+    @java.lang.Override
+    public com.halloapp.proto.server.SenderStateWithKeyInfo getSenderState() {
+      return instance.getSenderState();
+    }
+    /**
+     * <pre>
+     * Meant for the receiver, computed by the server using `sender_state_bundles`.
+     * </pre>
+     *
+     * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+     */
+    public Builder setSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
       copyOnWrite();
-      instance.setEncSenderState(value);
+      instance.setSenderState(value);
+      return this;
+      }
+    /**
+     * <pre>
+     * Meant for the receiver, computed by the server using `sender_state_bundles`.
+     * </pre>
+     *
+     * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+     */
+    public Builder setSenderState(
+        com.halloapp.proto.server.SenderStateWithKeyInfo.Builder builderForValue) {
+      copyOnWrite();
+      instance.setSenderState(builderForValue.build());
       return this;
     }
     /**
@@ -1224,12 +1271,22 @@ public  final class GroupFeedItem extends
      * Meant for the receiver, computed by the server using `sender_state_bundles`.
      * </pre>
      *
-     * <code>bytes enc_sender_state = 8;</code>
-     * @return This builder for chaining.
+     * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
      */
-    public Builder clearEncSenderState() {
+    public Builder mergeSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
       copyOnWrite();
-      instance.clearEncSenderState();
+      instance.mergeSenderState(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Meant for the receiver, computed by the server using `sender_state_bundles`.
+     * </pre>
+     *
+     * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+     */
+    public Builder clearSenderState() {  copyOnWrite();
+      instance.clearSenderState();
       return this;
     }
 
@@ -1287,12 +1344,12 @@ public  final class GroupFeedItem extends
             com.halloapp.proto.server.Comment.class,
             "senderStateBundles_",
             com.halloapp.proto.server.SenderStateBundle.class,
-            "encSenderState_",
+            "senderState_",
             "audienceHash_",
           };
           java.lang.String info =
               "\u0000\t\u0001\u0000\u0001\t\t\u0000\u0001\u0000\u0001\f\u0002\u0208\u0003\u0208" +
-              "\u0004\u0208\u0005<\u0000\u0006<\u0000\u0007\u001b\b\n\t\n";
+              "\u0004\u0208\u0005<\u0000\u0006<\u0000\u0007\u001b\b\t\t\n";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
