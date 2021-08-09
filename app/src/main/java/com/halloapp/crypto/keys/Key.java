@@ -34,6 +34,6 @@ public abstract class Key {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        destroyKeyMaterial();
+//        destroyKeyMaterial(); // TODO(jack): reconsider how to do this without causing issues
     }
 }
