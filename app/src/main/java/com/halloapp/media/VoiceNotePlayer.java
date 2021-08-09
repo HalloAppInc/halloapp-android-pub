@@ -23,7 +23,7 @@ import java.io.IOException;
 
 public class VoiceNotePlayer implements SensorEventListener {
 
-    private static final int SEEKBAR_UPDATE_INTERVAL_MS = 100;
+    private static final int SEEKBAR_UPDATE_INTERVAL_MS = 10;
 
     private MediaPlayer mediaPlayer;
 
