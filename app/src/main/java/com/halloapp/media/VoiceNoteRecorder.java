@@ -9,6 +9,7 @@ import androidx.annotation.UiThread;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.halloapp.AndroidHallOfShame;
 import com.halloapp.AppContext;
 import com.halloapp.FileStore;
 import com.halloapp.util.BgWorkers;
@@ -29,7 +30,8 @@ public class VoiceNoteRecorder {
 
     private int state;
 
-    private static final int VOICE_RECORDING_BIT_RATE = 64 * 1024;
+    private static final int AAC_VOICE_RECORDING_BIT_RATE = 128 * 1024;
+    private static final int HE_AAC_VOICE_RECORDING_BIT_RATE = 64 * 1024;
 
     private static final int STATE_NOT_READY = 0;
     private static final int STATE_PREPARING = 1;
@@ -50,6 +52,8 @@ public class VoiceNoteRecorder {
 
     private long recordStartTime;
 
+    private boolean useHeAacEncoder = true;
+
     public VoiceNoteRecorder() {
         isRecording = new MutableLiveData<>(false);
         isLocked = new MutableLiveData<>(false);
@@ -58,6 +62,8 @@ public class VoiceNoteRecorder {
         recorderThread.start();
 
         recorderHandler = new Handler(recorderThread.getLooper());
+
+        useHeAacEncoder = !AndroidHallOfShame.brokenHEAACEncoder();
     }
 
     private int skip = 0;
@@ -99,9 +105,14 @@ public class VoiceNoteRecorder {
         recordingLocation = fileStore.getTmpFile(RandomId.create() + ".aac");
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC);
+        if (useHeAacEncoder) {
+            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC);
+            mediaRecorder.setAudioEncodingBitRate(HE_AAC_VOICE_RECORDING_BIT_RATE);
+        } else {
+            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+            mediaRecorder.setAudioEncodingBitRate(AAC_VOICE_RECORDING_BIT_RATE);
+        }
         mediaRecorder.setOutputFile(recordingLocation.getPath());
-        mediaRecorder.setAudioEncodingBitRate(VOICE_RECORDING_BIT_RATE);
         recorderHandler.post(() -> {
             try {
                 mediaRecorder.prepare();

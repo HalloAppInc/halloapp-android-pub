@@ -10,4 +10,11 @@ public class AndroidHallOfShame {
         }
         return false;
     }
+
+    public static boolean brokenHEAACEncoder() {
+        if ("samsung".equalsIgnoreCase(Build.BRAND)) {
+            return "SM-G930U".equalsIgnoreCase(Build.MODEL);
+        }
+        return false;
+    }
 }
