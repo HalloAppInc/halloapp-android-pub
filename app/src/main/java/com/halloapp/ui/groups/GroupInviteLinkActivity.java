@@ -13,7 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.GroupId;
 import com.halloapp.ui.HalloActivity;
@@ -60,14 +59,19 @@ public class GroupInviteLinkActivity extends HalloActivity {
         View shareLink = findViewById(R.id.share_link);
         View copyLink = findViewById(R.id.copy_link);
         View inviteLinkContainer = findViewById(R.id.invite_link_container);
+        View qrCode = findViewById(R.id.qr_code);
+
+        qrCode.setOnClickListener((v -> {
+            String url = viewModel.getInviteLink().getValue();
+            Intent intent = GroupInviteLinkQrActivity.newIntent(this, url, groupId);
+            startActivity(intent);
+        }));
 
         copyLink.setOnClickListener(v -> {
             ClipUtils.copyToClipboard(getInviteLinkText());
             CenterToast.show(this, R.string.invite_link_copied);
         });
-        viewModel.getInviteLink().observe(this, link -> {
-            inviteText.setText(Constants.GROUP_INVITE_BASE_URL + link);
-        });
+        viewModel.getInviteLink().observe(this, inviteText::setText);
 
         resetLink.setOnClickListener(v -> {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -117,11 +121,7 @@ public class GroupInviteLinkActivity extends HalloActivity {
 
     @Nullable
     private String getInviteLinkText() {
-        String inviteCode = viewModel.getInviteLink().getValue();
-        if (TextUtils.isEmpty(inviteCode)) {
-            return null;
-        }
-        String url = Constants.GROUP_INVITE_BASE_URL + inviteCode;
+        String url = viewModel.getInviteLink().getValue();
         return getString(R.string.group_invite_link_context, url);
     }
 }

@@ -57,6 +57,9 @@
         <activity android:name=".ui.DeletionConfirmationActivity"
             android:label=""/>
 
+        <activity android:name=".ui.groups.GroupInviteLinkQrActivity"
+            android:label=""/>
+
         <activity
             android:name=".ui.RegistrationVerificationActivity"
             android:label=""

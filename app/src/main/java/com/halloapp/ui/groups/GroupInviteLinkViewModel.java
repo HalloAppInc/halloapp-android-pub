@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.halloapp.Constants;
 import com.halloapp.id.GroupId;
 import com.halloapp.xmpp.groups.GroupsApi;
 
@@ -47,7 +48,7 @@ public class GroupInviteLinkViewModel extends AndroidViewModel {
 
     private void fetchInviteLink() {
         groupsApi.getGroupInviteLink(groupId).onResponse(s -> {
-            inviteLink.postValue(s);
+            inviteLink.postValue(Constants.GROUP_INVITE_BASE_URL + s);
         });
     }
 

@@ -633,4 +633,10 @@
     <string name="added_to_group">%1$s added you to the group %2$s</string>
     <!-- Name of channel of notifications for being added to a new group which is displayed in settings -->
     <string name="group_notifications_channel_name">Group membership notifications</string>
+    <!-- Button that brings user to QR code for joining a group -->
+    <string name="qr_code">QR Code</string>
+    <!-- Explains QR code that allows users to automatically join a group -->
+    <string name="scan_qr_instructions">Scan the QR code to join this HalloApp group</string>
+    <!-- Banner below the name of a HalloApp group -->
+    <string name="halloapp_group">HalloApp Group</string>
 </resources>

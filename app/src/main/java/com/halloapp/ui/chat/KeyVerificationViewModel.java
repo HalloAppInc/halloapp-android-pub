@@ -2,7 +2,6 @@ package com.halloapp.ui.chat;
 
 import android.app.Application;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
@@ -12,10 +11,6 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
 import com.halloapp.Me;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.crypto.CryptoByteUtils;
@@ -29,6 +24,7 @@ import com.halloapp.proto.server.IdentityKey;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.QrUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
@@ -44,8 +40,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class KeyVerificationViewModel extends AndroidViewModel {
-
-    private static final int QR_MATRIX_SIZE = 1000;
 
     private final UserId userId;
 
@@ -123,17 +117,8 @@ public class KeyVerificationViewModel extends AndroidViewModel {
 
                 byte[] contents = CryptoByteUtils.concat(new byte[] {0}, uidToBytes(me.getUser()), uidToBytes(userId.rawId()), myIdentityKey.getKeyMaterial(), peerIdentityKey.getKeyMaterial());
                 String s = bytesToString(contents);
-
-                try {
-                    BitMatrix bm = new QRCodeWriter().encode(s, BarcodeFormat.QR_CODE, QR_MATRIX_SIZE, QR_MATRIX_SIZE);
-                    Bitmap qrCode = bitMatrixToBitmap(bm);
-
-                    return new KeyVerificationData(qrCode, safetyNumber);
-                } catch (WriterException e) {
-                    Log.e("KeyVerification failed to encode QR", e);
-                }
-
-                return null;
+                Bitmap qrCode = QrUtils.encode(s);
+                return new KeyVerificationData(qrCode, safetyNumber);
             }
         };
     }
@@ -278,19 +263,6 @@ public class KeyVerificationViewModel extends AndroidViewModel {
         buffer.put(bytes);
         buffer.flip();
         return Long.toString(buffer.getLong());
-    }
-
-    private static Bitmap bitMatrixToBitmap(@NonNull BitMatrix bitMatrix) {
-        int width = bitMatrix.getWidth();
-        int height = bitMatrix.getHeight();
-        int[] pixels = new int[width * height];
-        for (int i=0; i<height; i++) {
-            for (int j=0; j<width; j++) {
-                pixels[i*height + j] = bitMatrix.get(j, i) ? Color.BLACK : Color.WHITE;
-            }
-        }
-
-        return Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
     }
 
     public static final class KeyVerificationData {
