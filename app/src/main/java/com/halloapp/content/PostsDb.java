@@ -134,6 +134,7 @@ class PostsDb {
         }
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+        Log.i("ContentDb.addPost got rowid " + post.rowId + " for " + post);
 
         mediaDb.addMedia(post);
 

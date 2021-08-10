@@ -862,6 +862,37 @@ public class ContactsDb {
         databaseHelper.deleteDb();
     }
 
+    public void checkIndexes() {
+        String[] indexNames = new String[] {
+                AvatarsTable.INDEX_USER_ID,
+                BlocklistTable.INDEX_USER_ID,
+                ChatsPlaceholderTable.INDEX_USER_ID,
+                ContactsTable.INDEX_USER_ID,
+                FeedExcludedTable.INDEX_USER_ID,
+                FeedSelectedTable.INDEX_USER_ID,
+                NamesTable.INDEX_USER_ID,
+                PhonesTable.INDEX_USER_ID,
+        };
+
+        for (String name : indexNames) {
+            Log.i("ContactsDb.checkIndexes checking for index " + name);
+            if (!hasIndex(name)) {
+                Log.sendErrorReport("ContactsDb.checkIndexes missing expected index " + name);
+            }
+        }
+    }
+
+    private boolean hasIndex(String name) {
+        try (Cursor postIndexCountCursor = databaseHelper.getReadableDatabase().rawQuery("SELECT COUNT(*) FROM sqlite_master WHERE type=? AND name=?", new String[]{"index", name})) {
+            if (postIndexCountCursor.moveToNext()) {
+                if (postIndexCountCursor.getInt(0) <= 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     // dont't store anything other than address book contacts in this table
     private static final class ContactsTable implements BaseColumns {
 

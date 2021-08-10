@@ -1,6 +1,7 @@
 package com.halloapp.content;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -13,6 +14,21 @@ import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
+import com.halloapp.content.tables.ArchiveTable;
+import com.halloapp.content.tables.AudienceTable;
+import com.halloapp.content.tables.ChatsTable;
+import com.halloapp.content.tables.CommentsTable;
+import com.halloapp.content.tables.DeletedGroupNameTable;
+import com.halloapp.content.tables.FutureProofTable;
+import com.halloapp.content.tables.GroupMembersTable;
+import com.halloapp.content.tables.MediaTable;
+import com.halloapp.content.tables.MentionsTable;
+import com.halloapp.content.tables.MessagesTable;
+import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
+import com.halloapp.content.tables.PostsTable;
+import com.halloapp.content.tables.RepliesTable;
+import com.halloapp.content.tables.SeenTable;
+import com.halloapp.content.tables.SilentMessagesTable;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
@@ -1052,5 +1068,43 @@ public class ContentDb {
 
     public void deleteDb() {
         databaseHelper.deleteDb();
+    }
+
+    public void checkIndexes() {
+        String[] indexNames = new String[] {
+                ArchiveTable.INDEX_POST_KEY,
+                ArchiveTable.INDEX_TIMESTAMP,
+                AudienceTable.INDEX_AUDIENCE_KEY,
+                CommentsTable.INDEX_COMMENT_KEY,
+                FutureProofTable.INDEX_FUTURE_PROOF_KEY,
+                GroupMembersTable.INDEX_GROUP_USER,
+                MediaTable.INDEX_DEC_HASH_KEY,
+                MediaTable.INDEX_MEDIA_KEY,
+                MentionsTable.INDEX_MENTION_KEY,
+                MessagesTable.INDEX_MESSAGE_KEY,
+                OutgoingSeenReceiptsTable.INDEX_OUTGOING_RECEIPT_KEY,
+                PostsTable.INDEX_POST_KEY,
+                PostsTable.INDEX_TIMESTAMP,
+                RepliesTable.INDEX_MESSAGE_KEY,
+                SeenTable.INDEX_SEEN_KEY,
+        };
+
+        for (String name : indexNames) {
+            Log.i("ContentDb.checkIndexes checking for index " + name);
+            if (!hasIndex(name)) {
+                Log.sendErrorReport("ContentDb.checkIndexes missing expected index " + name);
+            }
+        }
+    }
+
+    private boolean hasIndex(String name) {
+        try (Cursor postIndexCountCursor = databaseHelper.getReadableDatabase().rawQuery("SELECT COUNT(*) FROM sqlite_master WHERE type=? AND name=?", new String[]{"index", name})) {
+            if (postIndexCountCursor.moveToNext()) {
+                if (postIndexCountCursor.getInt(0) <= 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
