@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.Constants;
+import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
@@ -119,6 +120,8 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
         textContentLoader = new TextContentLoader(requireContext());
         unseenGroupPostsLoader = new UnseenGroupPostsLoader();
         systemMessageTextResolver = new SystemMessageTextResolver(contactLoader);
+
+        Notifications.getInstance(getContext()).clearNewGroupNotification();
     }
 
     @Override

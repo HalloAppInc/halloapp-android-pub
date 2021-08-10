@@ -39,6 +39,7 @@ import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
+import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.mentions.MentionsFormatter;
 import com.halloapp.ui.mentions.MentionsLoader;
 import com.halloapp.util.ListFormatter;
@@ -66,6 +67,7 @@ public class Notifications {
     private static final String MESSAGE_NOTIFICATION_CHANNEL_ID = "message_notifications";
     private static final String CRITICAL_NOTIFICATION_CHANNEL_ID = "critical_notifications";
     private static final String INVITE_NOTIFICATION_CHANNEL_ID = "invite_notifications";
+    private static final String GROUPS_NOTIFICATION_CHANNEL_ID = "group_notifications";
 
     private static final String MESSAGE_NOTIFICATION_GROUP_KEY = "message_notification";
 
@@ -73,6 +75,7 @@ public class Notifications {
     private static final int MESSAGE_NOTIFICATION_ID = 1;
     private static final int EXPIRATION_NOTIFICATION_ID = 2;
     private static final int LOGIN_FAILED_NOTIFICATION_ID = 3;
+    private static final int GROUP_NOTIFICATION_ID = 4;
 
     public static final int FIRST_DYNAMIC_NOTIFICATION_ID = 2000;
 
@@ -127,12 +130,14 @@ public class Notifications {
             criticalNotificationsChannel.enableLights(true);
             criticalNotificationsChannel.enableVibration(true);
             final NotificationChannel inviteNotificationsChannel = new NotificationChannel(INVITE_NOTIFICATION_CHANNEL_ID, context.getString(R.string.invite_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
+            final NotificationChannel groupNotificationsChannel = new NotificationChannel(GROUPS_NOTIFICATION_CHANNEL_ID, context.getString(R.string.group_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
 
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             notificationManager.createNotificationChannel(feedNotificationsChannel);
             notificationManager.createNotificationChannel(messageNotificationsChannel);
             notificationManager.createNotificationChannel(criticalNotificationsChannel);
             notificationManager.createNotificationChannel(inviteNotificationsChannel);
+            notificationManager.createNotificationChannel(groupNotificationsChannel);
         }
     }
 
@@ -541,6 +546,29 @@ public class Notifications {
         builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0 , deleteIntent, PendingIntent. FLAG_CANCEL_CURRENT));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(FEED_NOTIFICATION_ID, builder.build());
+    }
+
+    public void showNewGroupNotification(GroupId groupId, String inviterName, String groupName) {
+        String body = String.format(context.getResources().getString(R.string.added_to_group), inviterName, groupName);
+        String title = context.getResources().getString(R.string.app_name);
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, GROUPS_NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(title)
+                .setColor(ContextCompat.getColor(context, R.color.color_accent))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                .setContentText(body);
+        final Intent groupIntent = ViewGroupFeedActivity.viewFeed(context, groupId);
+        builder.setContentIntent(PendingIntent.getActivity(context, 0, groupIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(GROUP_NOTIFICATION_ID, builder.build());
+    }
+
+    public void clearNewGroupNotification() {
+        executor.execute(() -> {
+            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            notificationManager.cancel(GROUP_NOTIFICATION_ID);
+        });
     }
 
     public void showExpirationNotification(int daysLeft) {

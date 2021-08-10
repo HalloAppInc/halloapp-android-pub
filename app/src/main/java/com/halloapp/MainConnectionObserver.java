@@ -390,6 +390,7 @@ public class MainConnectionObserver extends Connection.Observer {
 
     @Override
     public void onGroupCreated(@NonNull GroupId groupId, @NonNull String name, @Nullable String avatarId, @NonNull List<MemberElement> memberElements, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        notifications.showNewGroupNotification(groupId, senderName, name);
         List<MemberInfo> members = new ArrayList<>();
         for (MemberElement memberElement : memberElements) {
             members.add(new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name));
@@ -409,6 +410,9 @@ public class MainConnectionObserver extends Connection.Observer {
             MemberInfo memberInfo = new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name);
             if (MemberElement.Action.ADD.equals(memberElement.action)) {
                 added.add(memberInfo);
+                if (memberInfo.userId.isMe()) {
+                    notifications.showNewGroupNotification(groupId, senderName, groupName);
+                }
             } else if (MemberElement.Action.REMOVE.equals(memberElement.action)) {
                 removed.add(memberInfo);
             }
