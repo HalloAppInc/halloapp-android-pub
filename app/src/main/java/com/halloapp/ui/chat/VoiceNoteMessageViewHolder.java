@@ -1,13 +1,11 @@
 package com.halloapp.ui.chat;
 
-import android.media.MediaPlayer;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.halloapp.R;
 import com.halloapp.content.Media;
@@ -120,8 +118,8 @@ public class VoiceNoteMessageViewHolder extends MessageViewHolder {
     }
 
     @Override
-    public void markDetach() {
-        parent.getVoiceNotePlayer().getPlaybackState().removeObservers(this);
-        this.audioPath = null;
+    public void markRecycled() {
+        super.markRecycled();
+        audioPath = null;
     }
 }

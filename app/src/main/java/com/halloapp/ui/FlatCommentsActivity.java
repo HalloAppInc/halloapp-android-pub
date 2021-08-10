@@ -683,10 +683,9 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         }
 
         @Override
-        public void markDetach() {
-            super.markDetach();
-            viewModel.getVoiceNotePlayer().getPlaybackState().removeObservers(this);
-            this.audioPath = null;
+        public void markRecycled() {
+            super.markRecycled();
+            audioPath = null;
         }
 
         void bindTo(final @NonNull Comment comment, long lastSeencommentRowId, int position) {

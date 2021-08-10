@@ -1149,6 +1149,12 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         }
 
         @Override
+        public void onViewRecycled(@NonNull MessageViewHolder holder) {
+            super.onViewRecycled(holder);
+            holder.markRecycled();
+        }
+
+        @Override
         public void onViewAttachedToWindow(@NonNull MessageViewHolder holder) {
             super.onViewAttachedToWindow(holder);
             holder.markAttach();

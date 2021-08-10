@@ -6,6 +6,12 @@ import androidx.recyclerview.widget.RecyclerView;
 public abstract class AdapterWithLifecycle<T extends ViewHolderWithLifecycle> extends RecyclerView.Adapter<T> {
 
     @Override
+    public void onViewRecycled(@NonNull T holder) {
+        super.onViewRecycled(holder);
+        holder.markRecycled();
+    }
+
+    @Override
     public void onViewAttachedToWindow(@NonNull T holder) {
         super.onViewAttachedToWindow(holder);
         holder.markAttach();
