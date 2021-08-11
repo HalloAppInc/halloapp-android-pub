@@ -58,6 +58,7 @@ import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.Packet;
 import com.halloapp.proto.server.Ping;
+import com.halloapp.proto.server.PlayedReceipt;
 import com.halloapp.proto.server.Presence;
 import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.SeenReceipt;
@@ -815,6 +816,30 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public void sendMessagePlayedReceipt(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || socket == null) {
+                Log.e("connection: cannot send message seen receipt, no connection");
+                return;
+            }
+            String id = RandomId.create();
+
+            PlayedReceipt playedReceipt = PlayedReceipt.newBuilder()
+                    .setId(messageId)
+                    .setThreadId(senderUserId.equals(chatId) ? "" : chatId.rawId())
+                    .build();
+            Msg msg = Msg.newBuilder()
+                    .setId(id)
+                    .setPlayedReceipt(playedReceipt)
+                    .setToUid(Long.parseLong(senderUserId.rawId()))
+                    .build();
+            ackHandlers.put(id, () -> connectionObservers.notifyIncomingMessagePlayedReceiptSent(chatId, senderUserId, messageId));
+            sendPacket(Packet.newBuilder().setMsg(msg).build());
+            Log.i("connection: sending message seen receipt " + messageId + " to " + senderUserId);
+        });
+    }
+
+    @Override
     public Observable<Iq> deleteAccount(@NonNull String phone) {
         return sendIqRequestAsync(new DeleteAccountRequestIq(phone)).map(response -> {
             Log.d("connection: response after deleting account " + ProtoPrinter.toString(response));
@@ -1051,6 +1076,17 @@ public class ConnectionImpl extends Connection {
                         connectionObservers.notifyOutgoingPostSeen(userId, seenReceipt.getId(), timestamp, msg.getId());
                     } else {
                         connectionObservers.notifyOutgoingMessageSeen(TextUtils.isEmpty(threadId) ? userId : ChatId.fromNullable(threadId), userId, seenReceipt.getId(), timestamp, msg.getId());
+                    }
+                    handled = true;
+                } else if (msg.hasPlayedReceipt()) {
+                    PlayedReceipt playedReceipt = msg.getPlayedReceipt();
+                    final String threadId = playedReceipt.getThreadId();
+                    final UserId userId = getUserId(Long.toString(msg.getFromUid()));
+                    final long timestamp = playedReceipt.getTimestamp() * 1000L;
+                    if (FEED_THREAD_ID.equals(threadId)) {
+                        Log.w("connection: received played receipt for a feed post");
+                    } else {
+                        connectionObservers.notifyOutgoingMessagePlayed(TextUtils.isEmpty(threadId) ? userId : ChatId.fromNullable(threadId), userId, playedReceipt.getId(), timestamp, msg.getId());
                     }
                     handled = true;
                 } else if (msg.hasContactHash()) {

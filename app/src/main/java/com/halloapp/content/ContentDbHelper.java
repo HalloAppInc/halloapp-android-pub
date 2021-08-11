@@ -18,6 +18,7 @@ import com.halloapp.content.tables.GroupMembersTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.MessagesTable;
+import com.halloapp.content.tables.OutgoingPlayedReceiptsTable;
 import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.RepliesTable;
@@ -29,7 +30,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 46;
+    private static final int DATABASE_VERSION = 47;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -282,6 +283,21 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + OutgoingSeenReceiptsTable.COLUMN_CONTENT_ITEM_ID
                 + ");");
 
+        db.execSQL("DROP TABLE IF EXISTS " + OutgoingPlayedReceiptsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + OutgoingPlayedReceiptsTable.TABLE_NAME + " ("
+                + OutgoingPlayedReceiptsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + OutgoingPlayedReceiptsTable.COLUMN_CHAT_ID + " TEXT NOT NULL,"
+                + OutgoingPlayedReceiptsTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
+                + OutgoingPlayedReceiptsTable.COLUMN_CONTENT_ITEM_ID + " TEXT NOT NULL"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + OutgoingPlayedReceiptsTable.INDEX_OUTGOING_RECEIPT_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + OutgoingPlayedReceiptsTable.INDEX_OUTGOING_RECEIPT_KEY + " ON " + OutgoingPlayedReceiptsTable.TABLE_NAME + "("
+                + OutgoingPlayedReceiptsTable.COLUMN_CHAT_ID + ", "
+                + OutgoingPlayedReceiptsTable.COLUMN_SENDER_USER_ID + ", "
+                + OutgoingPlayedReceiptsTable.COLUMN_CONTENT_ITEM_ID
+                + ");");
+
         db.execSQL("DROP TABLE IF EXISTS " + FutureProofTable.TABLE_NAME);
         db.execSQL("CREATE TABLE " + FutureProofTable.TABLE_NAME + " ("
                 + FutureProofTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -446,6 +462,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 45: {
                 upgradeFromVersion45(db);
+            }
+            case 46: {
+                upgradeFromVersion46(db);
             }
             break;
             default: {
@@ -905,6 +924,23 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP INDEX IF EXISTS " + ArchiveTable.INDEX_TIMESTAMP);
         db.execSQL("CREATE INDEX " + ArchiveTable.INDEX_TIMESTAMP + " ON " + ArchiveTable.TABLE_NAME + "("
                 + ArchiveTable.COLUMN_TIMESTAMP
+                + ");");
+    }
+
+    private void upgradeFromVersion46(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + OutgoingPlayedReceiptsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + OutgoingPlayedReceiptsTable.TABLE_NAME + " ("
+                + OutgoingPlayedReceiptsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + OutgoingPlayedReceiptsTable.COLUMN_CHAT_ID + " TEXT NOT NULL,"
+                + OutgoingPlayedReceiptsTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
+                + OutgoingPlayedReceiptsTable.COLUMN_CONTENT_ITEM_ID + " TEXT NOT NULL"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + OutgoingPlayedReceiptsTable.INDEX_OUTGOING_RECEIPT_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + OutgoingPlayedReceiptsTable.INDEX_OUTGOING_RECEIPT_KEY + " ON " + OutgoingPlayedReceiptsTable.TABLE_NAME + "("
+                + OutgoingPlayedReceiptsTable.COLUMN_CHAT_ID + ", "
+                + OutgoingPlayedReceiptsTable.COLUMN_SENDER_USER_ID + ", "
+                + OutgoingPlayedReceiptsTable.COLUMN_CONTENT_ITEM_ID
                 + ");");
     }
 

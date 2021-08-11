@@ -25,6 +25,7 @@ import com.halloapp.content.tables.DeletedGroupNameTable;
 import com.halloapp.content.tables.GroupMembersTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MessagesTable;
+import com.halloapp.content.tables.OutgoingPlayedReceiptsTable;
 import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.RepliesTable;
 import com.halloapp.groups.GroupInfo;
@@ -767,11 +768,28 @@ class MessagesDb {
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         try {
             db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
-                    MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "='' AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?",
+                    MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "='' AND " + MessagesTable.COLUMN_MESSAGE_ID + "=? AND " + MessagesTable.COLUMN_STATE + " !=" + Message.STATE_OUTGOING_PLAYED,
                     new String [] {chatId.rawId(), messageId},
                     SQLiteDatabase.CONFLICT_ABORT);
         } catch (SQLException ex) {
             Log.e("ContentDb.setOutgoingMessageSeen: failed");
+            throw ex;
+        }
+    }
+
+    @WorkerThread
+    void setOutgoingMessagePlayed(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp /*TODO (ds): use timestamp in receipts table*/) {
+        Log.i("ContentDb.setOutgoingMessagePlayed: chatId=" + chatId + " recipientUserId=" + recipientUserId + " messageId=" + messageId);
+        final ContentValues values = new ContentValues();
+        values.put(MessagesTable.COLUMN_STATE, Message.STATE_OUTGOING_PLAYED);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
+                    MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "='' AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?",
+                    new String [] {chatId.rawId(), messageId},
+                    SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLException ex) {
+            Log.e("ContentDb.setOutgoingMessagePlayed: failed");
             throw ex;
         }
     }
@@ -1848,6 +1866,38 @@ class MessagesDb {
     }
 
     @WorkerThread
+    boolean setMessagePlayed(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        Log.i("ContentDb.setMessagePlayed: chatId=" + chatId + " senderUserId=" + senderUserId + " messageId=" + messageId);
+        final ContentValues msgValues = new ContentValues();
+        msgValues.put(MessagesTable.COLUMN_STATE, Message.STATE_INCOMING_PLAYED);
+        try {
+            db.updateWithOnConflict(MessagesTable.TABLE_NAME, msgValues,
+                    MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "='' AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?",
+                    new String [] {chatId.rawId(), messageId},
+                    SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLException ex) {
+            Log.e("ContentDb.setIncomingMessageSeen: failed");
+            throw ex;
+        }
+
+        final ContentValues receiptValues = new ContentValues();
+        receiptValues.put(OutgoingPlayedReceiptsTable.COLUMN_CHAT_ID, chatId.rawId());
+        receiptValues.put(OutgoingPlayedReceiptsTable.COLUMN_SENDER_USER_ID, senderUserId.rawId());
+        receiptValues.put(OutgoingPlayedReceiptsTable.COLUMN_CONTENT_ITEM_ID, messageId);
+        Log.i("ContentDb.setMessagePlayed: " + chatId + " " + senderUserId + " " + messageId);
+        return -1 != db.insert(OutgoingPlayedReceiptsTable.TABLE_NAME, null, receiptValues);
+    }
+
+    @WorkerThread
+    void setMessagePlayedReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        final int deleteCount = databaseHelper.getWritableDatabase().delete(OutgoingPlayedReceiptsTable.TABLE_NAME,
+                OutgoingPlayedReceiptsTable.COLUMN_CHAT_ID + "=? AND " + OutgoingPlayedReceiptsTable.COLUMN_SENDER_USER_ID + "=? AND " + OutgoingPlayedReceiptsTable.COLUMN_CONTENT_ITEM_ID + "=?",
+                new String [] {chatId.rawId(), senderUserId.rawId(), messageId});
+        Log.i("ContentDb.setMessagePlayedReceiptSent: delete " + deleteCount + " rows for " + chatId + " " + senderUserId + " " + messageId);
+    }
+
+    @WorkerThread
     @NonNull List<Chat> getChats(boolean includeGroups) {
         final List<Chat> chats = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
@@ -2034,6 +2084,28 @@ class MessagesDb {
             }
         }
         Log.i("ContentDb.getPendingMessageSeenReceipts: receipts.size=" + receipts.size());
+        return receipts;
+    }
+
+    @WorkerThread
+    List<PlayedReceipt> getPendingMessagePlayedReceipts() {
+        final List<PlayedReceipt> receipts = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(OutgoingPlayedReceiptsTable.TABLE_NAME,
+                new String [] {
+                        OutgoingPlayedReceiptsTable.COLUMN_CHAT_ID,
+                        OutgoingPlayedReceiptsTable.COLUMN_SENDER_USER_ID,
+                        OutgoingPlayedReceiptsTable.COLUMN_CONTENT_ITEM_ID},
+                null, null, null, null, null)) {
+            while (cursor.moveToNext()) {
+                final PlayedReceipt receipt = new PlayedReceipt(
+                        ChatId.fromNullable(cursor.getString(0)),
+                        new UserId(cursor.getString(1)),
+                        cursor.getString(2));
+                receipts.add(receipt);
+            }
+        }
+        Log.i("ContentDb.getPendingMessagePlayedReceipts: receipts.size=" + receipts.size());
         return receipts;
     }
 

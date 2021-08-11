@@ -248,6 +248,11 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
+    public void onOutgoingMessagePlayed(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {
+        contentDb.setOutgoingMessagePlayed(chatId, userId, id, timestamp, () -> connection.sendAck(stanzaId));
+    }
+
+    @Override
     public void onIncomingMessageReceived(@NonNull Message message) {
         final boolean isMessageForForegroundChat = foregroundChat.isForegroundChatId(message.chatId);
         final Runnable completionRunnable = () -> {
@@ -266,6 +271,11 @@ public class MainConnectionObserver extends Connection.Observer {
     @Override
     public void onIncomingMessageSeenReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         contentDb.setMessageSeenReceiptSent(chatId, senderUserId, messageId);
+    }
+
+    @Override
+    public void onIncomingMessagePlayedReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        contentDb.setMessagePlayedReceiptSent(chatId, senderUserId, messageId);
     }
 
     @Override

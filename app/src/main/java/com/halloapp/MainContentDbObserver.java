@@ -176,6 +176,11 @@ public class MainContentDbObserver implements ContentDb.Observer {
     }
 
     @Override
+    public void onIncomingMessagePlayed(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        connection.sendMessagePlayedReceipt(chatId, senderUserId, messageId);
+    }
+
+    @Override
     public void onGroupChatAdded(@NonNull GroupId groupId) {
 
     }

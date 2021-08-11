@@ -114,6 +114,12 @@
                         tools:text="11:49 PM"/>
 
                     <ImageView
+                        android:id="@+id/played_status"
+                        android:layout_width="13dp"
+                        android:layout_height="13dp"
+                        android:src="@drawable/ic_keyboard_voice"/>
+
+                    <ImageView
                         android:id="@+id/status"
                         android:layout_width="14dp"
                         android:layout_height="10dp"

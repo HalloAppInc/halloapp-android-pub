@@ -24,6 +24,7 @@ import com.halloapp.content.tables.GroupMembersTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.MessagesTable;
+import com.halloapp.content.tables.OutgoingPlayedReceiptsTable;
 import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.RepliesTable;
@@ -81,6 +82,7 @@ public class ContentDb {
         void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onMessageDeleted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onMessageUpdated(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
+        void onIncomingMessagePlayed(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onGroupChatAdded(@NonNull GroupId groupId);
         void onGroupMetadataChanged(@NonNull GroupId groupId);
         void onGroupMembersChanged(@NonNull GroupId groupId);
@@ -110,6 +112,7 @@ public class ContentDb {
         public void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onMessageDeleted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onMessageUpdated(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
+        public void onIncomingMessagePlayed(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onGroupChatAdded(@NonNull GroupId groupId) {}
         public void onGroupMetadataChanged(@NonNull GroupId groupId) {}
         public void onGroupMembersChanged(@NonNull GroupId groupId) {}
@@ -855,6 +858,14 @@ public class ContentDb {
         });
     }
 
+    public void setOutgoingMessagePlayed(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp, @NonNull Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            messagesDb.setOutgoingMessagePlayed(chatId, recipientUserId, messageId, timestamp);
+            observers.notifyOutgoingMessageSeen(chatId, recipientUserId, messageId);
+            completionRunnable.run();
+        });
+    }
+
     public void processFutureProofContent() {
         databaseWriteExecutor.execute(() -> {
             messagesDb.processFutureProofMessages(observers::notifyMessageUpdated);
@@ -967,8 +978,20 @@ public class ContentDb {
         });
     }
 
+    public void setMessagePlayed(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        databaseWriteExecutor.execute(() -> {
+            if (messagesDb.setMessagePlayed(chatId, senderUserId, messageId)) {
+                observers.notifyIncomingMessagePlayed(chatId, senderUserId, messageId);
+            }
+        });
+    }
+
     public void setMessageSeenReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         databaseWriteExecutor.execute(() -> messagesDb.setMessageSeenReceiptSent(chatId, senderUserId, messageId));
+    }
+
+    public void setMessagePlayedReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        databaseWriteExecutor.execute(() -> messagesDb.setMessagePlayedReceiptSent(chatId, senderUserId, messageId));
     }
 
     @WorkerThread
@@ -979,6 +1002,11 @@ public class ContentDb {
     @WorkerThread
     @NonNull List<SeenReceipt> getPendingMessageSeenReceipts() {
         return messagesDb.getPendingMessageSeenReceipts();
+    }
+
+    @WorkerThread
+    @NonNull List<PlayedReceipt> getPendingMessagePlayedReceipts() {
+        return messagesDb.getPendingMessagePlayedReceipts();
     }
 
     @WorkerThread
@@ -1087,6 +1115,7 @@ public class ContentDb {
                 PostsTable.INDEX_TIMESTAMP,
                 RepliesTable.INDEX_MESSAGE_KEY,
                 SeenTable.INDEX_SEEN_KEY,
+                OutgoingPlayedReceiptsTable.INDEX_OUTGOING_RECEIPT_KEY,
         };
 
         for (String name : indexNames) {

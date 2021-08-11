@@ -1,13 +1,17 @@
 package com.halloapp.ui.chat;
 
+import android.graphics.PorterDuff;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import com.halloapp.R;
+import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.media.AudioDurationLoader;
@@ -21,6 +25,7 @@ public class VoiceNoteMessageViewHolder extends MessageViewHolder {
     private SeekBar seekBar;
     private ImageView controlButton;
     private ImageView avatarView;
+    private ImageView playedStatus;
     private TextView seekTime;
     private View loading;
 
@@ -39,6 +44,8 @@ public class VoiceNoteMessageViewHolder extends MessageViewHolder {
         avatarView = itemView.findViewById(R.id.ptt_avatar);
         seekTime = itemView.findViewById(R.id.seek_time);
         loading = itemView.findViewById(R.id.loading);
+
+        playedStatus = itemView.findViewById(R.id.played_status);
 
         voiceNotePlayer = parent.getVoiceNotePlayer();
         audioDurationLoader = parent.getAudioDurationLoader();
@@ -61,6 +68,9 @@ public class VoiceNoteMessageViewHolder extends MessageViewHolder {
             if (state.playing) {
                 controlButton.setImageResource(R.drawable.ic_pause);
                 seekTime.setText(StringUtils.formatVoiceNoteDuration(seekTime.getContext(), state.seek));
+                if (message.isIncoming() && message.state != Message.STATE_INCOMING_PLAYED) {
+                    ContentDb.getInstance().setMessagePlayed(message.chatId, message.senderUserId, message.id);
+                }
             } else {
                 controlButton.setImageResource(R.drawable.ic_play_arrow);
                 seekTime.setText(StringUtils.formatVoiceNoteDuration(seekTime.getContext(), state.seekMax));
@@ -114,6 +124,15 @@ public class VoiceNoteMessageViewHolder extends MessageViewHolder {
                 controlButton.setVisibility(View.INVISIBLE);
                 loading.setVisibility(View.VISIBLE);
             }
+        }
+        if (playedStatus != null) {
+            @ColorRes int statusColor;
+            if (message.state == Message.STATE_OUTGOING_PLAYED) {
+                statusColor = R.color.message_state_read;
+            } else {
+                statusColor = R.color.message_state_sent;
+            }
+            playedStatus.setColorFilter(ContextCompat.getColor(playedStatus.getContext(), statusColor), PorterDuff.Mode.SRC_IN);
         }
     }
 

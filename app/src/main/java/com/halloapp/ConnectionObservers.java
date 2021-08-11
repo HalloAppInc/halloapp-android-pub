@@ -156,6 +156,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyOutgoingMessagePlayed(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onOutgoingMessagePlayed(chatId, userId, id, timestamp, stanzaId);
+            }
+        }
+    }
+
     public void notifyMessageRetracted(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String msgId, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
@@ -176,6 +184,14 @@ public class ConnectionObservers {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onIncomingMessageSeenReceiptSent(chatId, senderUserId, messageId);
+            }
+        }
+    }
+
+    public void notifyIncomingMessagePlayedReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onIncomingMessagePlayedReceiptSent(chatId, senderUserId, messageId);
             }
         }
     }

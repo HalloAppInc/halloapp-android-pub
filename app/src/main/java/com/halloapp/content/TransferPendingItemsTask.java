@@ -108,6 +108,12 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
         for (SeenReceipt receipt : messageSeenReceipts) {
             connection.sendMessageSeenReceipt(receipt.chatId, receipt.senderUserId, receipt.itemId);
         }
+
+        final List<PlayedReceipt> messagePlayedReceipts = contentDb.getPendingMessagePlayedReceipts();
+        Log.i("TransferPendingItemsTask: " + messagePlayedReceipts.size() + " message played receipts");
+        for (PlayedReceipt receipt : messagePlayedReceipts) {
+            connection.sendMessagePlayedReceipt(receipt.chatId, receipt.senderUserId, receipt.itemId);
+        }
         return null;
     }
 }

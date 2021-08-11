@@ -110,6 +110,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                 return R.drawable.ic_messaging_sent;
             case Message.STATE_OUTGOING_DELIVERED:
                 return R.drawable.ic_messaging_delivered;
+            case Message.STATE_OUTGOING_PLAYED:
             case Message.STATE_OUTGOING_SEEN:
                 return R.drawable.ic_messaging_seen;
             case Message.STATE_INITIAL:

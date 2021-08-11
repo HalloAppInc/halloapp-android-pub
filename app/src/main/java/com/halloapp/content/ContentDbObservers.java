@@ -161,6 +161,14 @@ class ContentDbObservers {
         }
     }
 
+    void notifyIncomingMessagePlayed(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onIncomingMessagePlayed(chatId, senderUserId,  messageId);
+            }
+        }
+    }
+
     void notifyOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {

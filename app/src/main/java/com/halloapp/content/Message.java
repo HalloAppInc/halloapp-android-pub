@@ -76,7 +76,7 @@ public class Message extends ContentItem {
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({STATE_INITIAL, STATE_INCOMING_RECEIVED, STATE_OUTGOING_SENT, STATE_OUTGOING_DELIVERED, STATE_OUTGOING_SEEN, STATE_INCOMING_DECRYPT_FAILED})
+    @IntDef({STATE_INITIAL, STATE_INCOMING_RECEIVED, STATE_OUTGOING_SENT, STATE_OUTGOING_DELIVERED, STATE_OUTGOING_SEEN, STATE_INCOMING_DECRYPT_FAILED, STATE_OUTGOING_PLAYED, STATE_INCOMING_PLAYED})
     public @interface State {}
     public static final int STATE_INITIAL = 0;
     public static final int STATE_INCOMING_RECEIVED = 1;
@@ -84,6 +84,9 @@ public class Message extends ContentItem {
     public static final int STATE_OUTGOING_DELIVERED = 2;
     public static final int STATE_OUTGOING_SEEN = 3;
     public static final int STATE_INCOMING_DECRYPT_FAILED = 4;
+    public static final int STATE_OUTGOING_PLAYED = 5;
+    public static final int STATE_INCOMING_PLAYED = 6;
+
 
     public Message(
             long rowId,
