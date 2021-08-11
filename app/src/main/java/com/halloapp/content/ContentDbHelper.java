@@ -22,7 +22,6 @@ import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.RepliesTable;
 import com.halloapp.content.tables.SeenTable;
-import com.halloapp.content.tables.SilentMessagesTable;
 import com.halloapp.util.logs.Log;
 
 import java.io.File;
@@ -747,18 +746,18 @@ class ContentDbHelper extends SQLiteOpenHelper {
     }
 
     private void upgradeFromVersion36(@NonNull SQLiteDatabase db) {
-        db.execSQL("DROP TABLE IF EXISTS " + SilentMessagesTable.TABLE_NAME);
-        db.execSQL("CREATE TABLE " + SilentMessagesTable.TABLE_NAME + " ("
-                + SilentMessagesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + SilentMessagesTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
-                + SilentMessagesTable.COLUMN_MESSAGE_ID + " TEXT NOT NULL,"
-                + SilentMessagesTable.COLUMN_REREQUEST_COUNT + " INTEGER"
+        db.execSQL("DROP TABLE IF EXISTS " + "silent_messages");
+        db.execSQL("CREATE TABLE " + "silent_messages" + " ("
+                + "_id" + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "sender_user_id" + " TEXT NOT NULL,"
+                + "message_id" + " TEXT NOT NULL,"
+                + "rerequest_count" + " INTEGER"
                 + ");");
 
-        db.execSQL("DROP INDEX IF EXISTS " + SilentMessagesTable.INDEX_SILENT_MESSAGE_KEY);
-        db.execSQL("CREATE UNIQUE INDEX " + SilentMessagesTable.INDEX_SILENT_MESSAGE_KEY + " ON " + SilentMessagesTable.TABLE_NAME + "("
-                + MessagesTable.COLUMN_SENDER_USER_ID + ", "
-                + MessagesTable.COLUMN_MESSAGE_ID
+        db.execSQL("DROP INDEX IF EXISTS " + "silent_message_key");
+        db.execSQL("CREATE UNIQUE INDEX " + "silent_message_key" + " ON " + "silent_messages" + "("
+                + "sender_user_id" + ", "
+                + "message_id"
                 + ");");
     }
 
@@ -772,12 +771,12 @@ class ContentDbHelper extends SQLiteOpenHelper {
     }
 
     private void upgradeFromVersion38(@NonNull SQLiteDatabase db) {
-        db.execSQL("ALTER TABLE " + SilentMessagesTable.TABLE_NAME + " ADD COLUMN " + SilentMessagesTable.COLUMN_FAILURE_REASON + " TEXT");
-        db.execSQL("ALTER TABLE " + SilentMessagesTable.TABLE_NAME + " ADD COLUMN " + SilentMessagesTable.COLUMN_CLIENT_VERSION + " TEXT");
-        db.execSQL("ALTER TABLE " + SilentMessagesTable.TABLE_NAME + " ADD COLUMN " + SilentMessagesTable.COLUMN_SENDER_PLATFORM + " TEXT");
-        db.execSQL("ALTER TABLE " + SilentMessagesTable.TABLE_NAME + " ADD COLUMN " + SilentMessagesTable.COLUMN_SENDER_VERSION + " TEXT");
-        db.execSQL("ALTER TABLE " + SilentMessagesTable.TABLE_NAME + " ADD COLUMN " + SilentMessagesTable.COLUMN_RECEIVE_TIME + " INTEGER");
-        db.execSQL("ALTER TABLE " + SilentMessagesTable.TABLE_NAME + " ADD COLUMN " + SilentMessagesTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER");
+        db.execSQL("ALTER TABLE " + "silent_messages" + " ADD COLUMN " + "failure_reason" + " TEXT");
+        db.execSQL("ALTER TABLE " + "silent_messages" + " ADD COLUMN " + "client_version" + " TEXT");
+        db.execSQL("ALTER TABLE " + "silent_messages" + " ADD COLUMN " + "sender_platform" + " TEXT");
+        db.execSQL("ALTER TABLE " + "silent_messages" + " ADD COLUMN " + "sender_version" + " TEXT");
+        db.execSQL("ALTER TABLE " + "silent_messages" + " ADD COLUMN " + "receive_time" + " INTEGER");
+        db.execSQL("ALTER TABLE " + "silent_messages" + " ADD COLUMN " + "result_update_time" + " INTEGER");
     }
 
     private void upgradeFromVersion39(@NonNull SQLiteDatabase db) {
@@ -840,8 +839,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
     }
 
     private void upgradeFromVersion42(@NonNull SQLiteDatabase db) {
-        db.execSQL("DROP INDEX IF EXISTS " + SilentMessagesTable.INDEX_SILENT_MESSAGE_KEY);
-        db.execSQL("DROP TABLE IF EXISTS " + SilentMessagesTable.TABLE_NAME);
+        db.execSQL("DROP INDEX IF EXISTS " + "silent_message_key");
+        db.execSQL("DROP TABLE IF EXISTS " + "silent_messages");
     }
 
     private void upgradeFromVersion43(@NonNull SQLiteDatabase db) {
