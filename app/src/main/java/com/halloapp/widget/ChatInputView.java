@@ -147,7 +147,7 @@ public class ChatInputView extends ConstraintLayout {
             if (audioDraft != null) {
                 inputParent.onSendVoiceDraft(audioDraft);
                 audioDraft = null;
-            } else if (Boolean.TRUE.equals(voiceNoteRecorder.isLocked().getValue())) {
+            } else if (voiceNoteRecorder != null && Boolean.TRUE.equals(voiceNoteRecorder.isLocked().getValue())) {
                 inputParent.onSendVoiceNote();
             } else {
                 inputParent.onSendText();
