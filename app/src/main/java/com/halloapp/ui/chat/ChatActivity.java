@@ -797,7 +797,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         getMenuInflater().inflate(R.menu.chat_menu, menu);
         blockMenuItem = menu.findItem(R.id.block);
         blockMenuItem.setVisible(chatId instanceof UserId);
-        menu.findItem(R.id.verify).setVisible(chatId instanceof UserId && ServerProps.getInstance().getIsInternalUser());
+        menu.findItem(R.id.verify).setVisible(chatId instanceof UserId);
         viewModel.getBlockList().observe(this, userIds -> {
             blocked = updateBlockedContact(userIds);
             Log.i("ChatActivity: blocked = " + blocked);

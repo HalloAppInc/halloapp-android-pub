@@ -282,7 +282,6 @@ public class ProfileFragment extends PostsFragment {
             inflater.inflate(R.menu.other_profile_menu, menu);
             blockMenuItem = menu.findItem(R.id.block);
             viewModel.getIsBlocked().observe(this, this::updateMenu);
-            menu.findItem(R.id.verify).setVisible(serverProps.getIsInternalUser());
         }
         super.onCreateOptionsMenu(menu,inflater);
     }
