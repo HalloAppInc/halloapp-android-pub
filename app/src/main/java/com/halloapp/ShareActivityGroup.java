@@ -18,6 +18,7 @@ import java.util.Collections;
 public class ShareActivityGroup extends HalloActivity {
 
     private static final int REQUEST_SELECT_GROUP = 1;
+    private static final int REQUEST_CONTENT_COMPOSER = 2;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -45,8 +46,10 @@ public class ShareActivityGroup extends HalloActivity {
                     contentComposer.putExtra(MediaEditActivity.EXTRA_MEDIA, uris);
                     contentComposer.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, groupId);
                     contentComposer.putExtra(Intent.EXTRA_TEXT, getIntent().getStringExtra(Intent.EXTRA_TEXT));
-                    startActivity(contentComposer);
+                    startActivityForResult(contentComposer, REQUEST_CONTENT_COMPOSER);
                 }
+                break;
+            default:
                 finish();
         }
         super.onActivityResult(requestCode, resultCode, data);

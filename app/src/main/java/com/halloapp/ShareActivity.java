@@ -18,6 +18,7 @@ import java.util.Collections;
 public class ShareActivity extends HalloActivity {
 
     private static final int REQUEST_SELECT_CHAT = 1;
+    private static final int REQUEST_CONTENT_COMPOSER = 2;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -45,9 +46,12 @@ public class ShareActivity extends HalloActivity {
                     contentComposer.putExtra(MediaEditActivity.EXTRA_MEDIA, uris);
                     contentComposer.putExtra(ContentComposerActivity.EXTRA_CHAT_ID, chatId);
                     contentComposer.putExtra(Intent.EXTRA_TEXT, getIntent().getStringExtra(Intent.EXTRA_TEXT));
-                    startActivity(contentComposer);
+                    startActivityForResult(contentComposer, REQUEST_CONTENT_COMPOSER);
                 }
+                break;
+            default: {
                 finish();
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
