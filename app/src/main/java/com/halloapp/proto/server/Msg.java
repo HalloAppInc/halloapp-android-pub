@@ -164,6 +164,7 @@ public  final class Msg extends
     INVITEE_NOTICE(27),
     GROUP_FEED_REREQUEST(28),
     HISTORY_RESEND(29),
+    PLAYED_RECEIPT(30),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -202,6 +203,7 @@ public  final class Msg extends
         case 27: return INVITEE_NOTICE;
         case 28: return GROUP_FEED_REREQUEST;
         case 29: return HISTORY_RESEND;
+        case 30: return PLAYED_RECEIPT;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -1509,6 +1511,56 @@ public  final class Msg extends
    */
   private void clearHistoryResend() {
     if (payloadCase_ == 29) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int PLAYED_RECEIPT_FIELD_NUMBER = 30;
+  /**
+   * <code>.server.PlayedReceipt played_receipt = 30;</code>
+   */
+  @java.lang.Override
+  public boolean hasPlayedReceipt() {
+    return payloadCase_ == 30;
+  }
+  /**
+   * <code>.server.PlayedReceipt played_receipt = 30;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.PlayedReceipt getPlayedReceipt() {
+    if (payloadCase_ == 30) {
+       return (com.halloapp.proto.server.PlayedReceipt) payload_;
+    }
+    return com.halloapp.proto.server.PlayedReceipt.getDefaultInstance();
+  }
+  /**
+   * <code>.server.PlayedReceipt played_receipt = 30;</code>
+   */
+  private void setPlayedReceipt(com.halloapp.proto.server.PlayedReceipt value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 30;
+  }
+  /**
+   * <code>.server.PlayedReceipt played_receipt = 30;</code>
+   */
+  private void mergePlayedReceipt(com.halloapp.proto.server.PlayedReceipt value) {
+    value.getClass();
+  if (payloadCase_ == 30 &&
+        payload_ != com.halloapp.proto.server.PlayedReceipt.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.PlayedReceipt.newBuilder((com.halloapp.proto.server.PlayedReceipt) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 30;
+  }
+  /**
+   * <code>.server.PlayedReceipt played_receipt = 30;</code>
+   */
+  private void clearPlayedReceipt() {
+    if (payloadCase_ == 30) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -2929,6 +2981,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.PlayedReceipt played_receipt = 30;</code>
+     */
+    @java.lang.Override
+    public boolean hasPlayedReceipt() {
+      return instance.hasPlayedReceipt();
+    }
+    /**
+     * <code>.server.PlayedReceipt played_receipt = 30;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.PlayedReceipt getPlayedReceipt() {
+      return instance.getPlayedReceipt();
+    }
+    /**
+     * <code>.server.PlayedReceipt played_receipt = 30;</code>
+     */
+    public Builder setPlayedReceipt(com.halloapp.proto.server.PlayedReceipt value) {
+      copyOnWrite();
+      instance.setPlayedReceipt(value);
+      return this;
+    }
+    /**
+     * <code>.server.PlayedReceipt played_receipt = 30;</code>
+     */
+    public Builder setPlayedReceipt(
+        com.halloapp.proto.server.PlayedReceipt.Builder builderForValue) {
+      copyOnWrite();
+      instance.setPlayedReceipt(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.PlayedReceipt played_receipt = 30;</code>
+     */
+    public Builder mergePlayedReceipt(com.halloapp.proto.server.PlayedReceipt value) {
+      copyOnWrite();
+      instance.mergePlayedReceipt(value);
+      return this;
+    }
+    /**
+     * <code>.server.PlayedReceipt played_receipt = 30;</code>
+     */
+    public Builder clearPlayedReceipt() {
+      copyOnWrite();
+      instance.clearPlayedReceipt();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -3031,13 +3131,15 @@ public  final class Msg extends
             com.halloapp.proto.server.InviteeNotice.class,
             com.halloapp.proto.server.GroupFeedRerequest.class,
             com.halloapp.proto.server.HistoryResend.class,
+            com.halloapp.proto.server.PlayedReceipt.class,
           };
           java.lang.String info =
-              "\u0000\u001d\u0001\u0000\u0001\u001d\u001d\u0000\u0000\u0000\u0001\u0208\u0002\f" +
+              "\u0000\u001e\u0001\u0000\u0001\u001e\u001e\u0000\u0000\u0000\u0001\u0208\u0002\f" +
               "\u0003\u0002\u0004\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000" +
               "\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011" +
               "<\u0000\u0012<\u0000\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000" +
-              "\u0018<\u0000\u0019\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000";
+              "\u0018<\u0000\u0019\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e" +
+              "<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

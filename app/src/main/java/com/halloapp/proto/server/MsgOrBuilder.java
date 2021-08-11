@@ -296,6 +296,17 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.HistoryResend getHistoryResend();
 
   /**
+   * <code>.server.PlayedReceipt played_receipt = 30;</code>
+   * @return Whether the playedReceipt field is set.
+   */
+  boolean hasPlayedReceipt();
+  /**
+   * <code>.server.PlayedReceipt played_receipt = 30;</code>
+   * @return The playedReceipt.
+   */
+  com.halloapp.proto.server.PlayedReceipt getPlayedReceipt();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */
