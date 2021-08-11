@@ -358,6 +358,9 @@ public class ChatInputView extends ConstraintLayout {
     }
 
     public File getAudioDraft() {
+        if (voiceNoteRecorder == null) {
+            return null;
+        }
         File draft = voiceNoteRecorder.finishRecording();
         if (draft != null) {
             return draft;
