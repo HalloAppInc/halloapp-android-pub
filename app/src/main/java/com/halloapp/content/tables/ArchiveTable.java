@@ -8,8 +8,8 @@ public final class ArchiveTable implements BaseColumns {
 
     public static final String TABLE_NAME = "archived_posts";
 
-    public static final String INDEX_POST_KEY = "post_key";
-    public static final String INDEX_TIMESTAMP = "timestamp";
+    public static final String INDEX_POST_KEY = "archive_post_key";
+    public static final String INDEX_TIMESTAMP = "archive_timestamp";
 
     public static final String COLUMN_POST_ID = "post_id";
     public static final String COLUMN_TIMESTAMP = "timestamp";

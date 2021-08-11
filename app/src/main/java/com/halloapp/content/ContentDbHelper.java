@@ -29,7 +29,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 45;
+    private static final int DATABASE_VERSION = 46;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -443,6 +443,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 44: {
                 upgradeFromVersion44(db);
+            }
+            case 45: {
+                upgradeFromVersion45(db);
             }
             break;
             default: {
@@ -870,6 +873,38 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + DeletedGroupNameTable.TABLE_NAME + " ("
                 + DeletedGroupNameTable.COLUMN_CHAT_ID + " TEXT NOT NULL UNIQUE,"
                 + DeletedGroupNameTable.COLUMN_CHAT_NAME + " TEXT"
+                + ")");
+    }
+
+    private void upgradeFromVersion45(@NonNull SQLiteDatabase db) {
+        // ArchiveTable's indexes overwrote PostsTable's, allowing constraint violations; restore indexes
+
+        db.execSQL("DELETE FROM " + PostsTable.TABLE_NAME + " WHERE " + PostsTable._ID + " NOT IN ("
+                + "SELECT MIN(_id) FROM " + PostsTable.TABLE_NAME + " GROUP BY " + PostsTable.COLUMN_SENDER_USER_ID + "," + PostsTable.COLUMN_POST_ID
+                + ");");
+        db.execSQL("DELETE FROM " + ArchiveTable.TABLE_NAME + " WHERE " + ArchiveTable._ID + " NOT IN ("
+                + "SELECT MIN(_id) FROM " + ArchiveTable.TABLE_NAME + " GROUP BY " + ArchiveTable.COLUMN_POST_ID
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_POST_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + PostsTable.INDEX_POST_KEY + " ON " + PostsTable.TABLE_NAME + "("
+                + PostsTable.COLUMN_SENDER_USER_ID + ", "
+                + PostsTable.COLUMN_POST_ID
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + PostsTable.INDEX_TIMESTAMP);
+        db.execSQL("CREATE INDEX " + PostsTable.INDEX_TIMESTAMP + " ON " + PostsTable.TABLE_NAME + "("
+                + PostsTable.COLUMN_TIMESTAMP
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + ArchiveTable.INDEX_POST_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + ArchiveTable.INDEX_POST_KEY + " ON " + ArchiveTable.TABLE_NAME + "("
+                + ArchiveTable.COLUMN_POST_ID
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + ArchiveTable.INDEX_TIMESTAMP);
+        db.execSQL("CREATE INDEX " + ArchiveTable.INDEX_TIMESTAMP + " ON " + ArchiveTable.TABLE_NAME + "("
+                + ArchiveTable.COLUMN_TIMESTAMP
                 + ");");
     }
 
