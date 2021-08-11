@@ -123,6 +123,8 @@
     <string name="failed_to_initialize">Failed to initialize</string>
     <string name="type_a_comment_hint">Add a comment</string>
     <string name="comments">Comments</string>
+    <!-- Button on others' posts that allows the user to message them about their post in 1-1 messaging -->
+    <string name="reply_privately">Reply privately</string>
     <string name="reply">Reply</string>
     <string name="close">Close</string>
     <!-- Dialog shown to user before requesting contact permissions -->
