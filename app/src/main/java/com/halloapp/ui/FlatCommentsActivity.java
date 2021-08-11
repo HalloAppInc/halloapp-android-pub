@@ -926,7 +926,13 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 replyBubble.setVisibility(hasParent ? View.VISIBLE : View.GONE);
             }
             if (hasParent) {
-                replyTextView.setText(getCommentText(comment.parentComment, true));
+                /*if (comment.parentComment != null) {
+                    replyTextView.setText(getCommentText(comment.parentComment, true));
+                } else {*/
+                    SpannableString s = new SpannableString(getString(R.string.reply_original_comment_not_found));
+                    s.setSpan(new StyleSpan(Typeface.ITALIC), 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    replyTextView.setText(s);
+                //}
             }
 
             progressView.setVisibility(comment.transferred ? View.GONE : View.VISIBLE);
