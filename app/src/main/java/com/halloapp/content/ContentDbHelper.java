@@ -12,6 +12,7 @@ import com.halloapp.content.tables.ArchiveTable;
 import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.CommentsTable;
+import com.halloapp.content.tables.DeletedGroupNameTable;
 import com.halloapp.content.tables.FutureProofTable;
 import com.halloapp.content.tables.GroupMembersTable;
 import com.halloapp.content.tables.MediaTable;
@@ -29,7 +30,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 44;
+    private static final int DATABASE_VERSION = 45;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -130,6 +131,12 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + ChatsTable.COLUMN_GROUP_DESCRIPTION + " TEXT,"
                 + ChatsTable.COLUMN_GROUP_AVATAR_ID + " TEXT,"
                 + ChatsTable.COLUMN_THEME + " INTEGER DEFAULT 0"
+                + ");");
+
+        db.execSQL("DROP TABLE IF EXISTS " + DeletedGroupNameTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + DeletedGroupNameTable.TABLE_NAME + " ("
+                + DeletedGroupNameTable.COLUMN_CHAT_ID + " TEXT NOT NULL UNIQUE,"
+                + DeletedGroupNameTable.COLUMN_CHAT_NAME + " TEXT"
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + GroupMembersTable.TABLE_NAME);
@@ -434,6 +441,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 43: {
                 upgradeFromVersion43(db);
+            }
+            case 44: {
+                upgradeFromVersion44(db);
             }
             break;
             default: {
@@ -853,6 +863,14 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP INDEX IF EXISTS " + ArchiveTable.INDEX_TIMESTAMP);
         db.execSQL("CREATE INDEX " + ArchiveTable.INDEX_TIMESTAMP + " ON " + ArchiveTable.TABLE_NAME + "("
                 + ArchiveTable.COLUMN_TIMESTAMP
+                + ");");
+    }
+
+    private void upgradeFromVersion44(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + DeletedGroupNameTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + DeletedGroupNameTable.TABLE_NAME + " ("
+                + DeletedGroupNameTable.COLUMN_CHAT_ID + " TEXT NOT NULL UNIQUE,"
+                + DeletedGroupNameTable.COLUMN_CHAT_NAME + " TEXT"
                 + ");");
     }
 

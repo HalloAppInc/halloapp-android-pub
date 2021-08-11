@@ -86,6 +86,7 @@
     <color name="seen_by_divider">@color/black_20</color>
     <color name="settings_header_background">@color/color_secondary</color>
     <color name="group_bg_ring_stroke">@color/black_20</color>
+    <color name="post_group_left">#C1C0B8</color>
 
     <color name="comment_reply_bg">@color/color_secondary_15_alpha</color>
     <color name="comment_reply_text">@color/black_54</color>

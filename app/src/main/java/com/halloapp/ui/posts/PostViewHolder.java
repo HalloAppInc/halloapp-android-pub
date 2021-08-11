@@ -32,9 +32,7 @@ import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.PostOptionsBottomSheetDialogFragment;
 import com.halloapp.ui.ViewHolderWithLifecycle;
-import com.halloapp.ui.groups.GroupTheme;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
-import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
@@ -198,18 +196,18 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                     @Override
                     public void showResult(@NonNull View view, @Nullable Chat result) {
                         if (result != null) {
-                            GroupTheme theme = GroupTheme.getTheme(result.theme);
                             groupView.setText(result.name);
-                            groupView.setOnClickListener(v -> {
-                                ChatId chatId = result.chatId;
-                                if (!(chatId instanceof GroupId)) {
-                                    Log.w("Cannot open group feed for non-group " + chatId);
-                                    return;
-                                }
-                                parent.startActivity(ViewGroupFeedActivity.viewFeed(groupView.getContext(), (GroupId)chatId));
-                            });
-                        } else {
-                            Log.e("PostViewHolder/bind failed to load chat " + post.getParentGroup());
+                            groupView.setTextColor(result.rowId != -1 ? itemView.getResources().getColor(R.color.primary_text) : itemView.getResources().getColor(R.color.post_group_left));
+                            if (result.rowId != -1) {
+                                groupView.setOnClickListener(v -> {
+                                    ChatId chatId = post.getParentGroup();
+                                    if (!(chatId instanceof GroupId)) {
+                                        Log.w("Cannot open group feed for non-group " + chatId);
+                                        return;
+                                    }
+                                    parent.startActivity(ViewGroupFeedActivity.viewFeed(groupView.getContext(), (GroupId)chatId));
+                                });
+                            }
                         }
                     }
 

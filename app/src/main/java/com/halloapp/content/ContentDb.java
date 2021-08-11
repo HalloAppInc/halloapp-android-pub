@@ -918,6 +918,11 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public @Nullable String getDeletedChatName(@NonNull ChatId chatId) {
+        return messagesDb.getDeletedChatName(chatId);
+    }
+
+    @WorkerThread
     public @NonNull List<MemberInfo> getGroupMembers(@NonNull GroupId groupId) {
         return messagesDb.getGroupMembers(groupId);
     }

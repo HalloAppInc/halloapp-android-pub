@@ -21,6 +21,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.AppContext;
 import com.halloapp.FileStore;
 import com.halloapp.content.tables.ChatsTable;
+import com.halloapp.content.tables.DeletedGroupNameTable;
 import com.halloapp.content.tables.GroupMembersTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MessagesTable;
@@ -298,7 +299,7 @@ class MessagesDb {
                     db.insertWithOnConflict(GroupMembersTable.TABLE_NAME, null, memberValues, SQLiteDatabase.CONFLICT_ABORT);
                 }
             }
-
+            db.delete(DeletedGroupNameTable.TABLE_NAME, DeletedGroupNameTable.COLUMN_CHAT_ID + "=?", new String[]{groupInfo.groupId.rawId()});
             db.setTransactionSuccessful();
             Log.i("ContentDb.addGroupChat: added " + groupInfo.groupId);
         } catch (SQLiteConstraintException ex) {
@@ -1775,6 +1776,19 @@ class MessagesDb {
             }
         }
         final int messagesDeleted = db.delete(MessagesTable.TABLE_NAME, MessagesTable.COLUMN_CHAT_ID + "=?", new String []{chatId.rawId()});
+
+        final String nameSaveSql =
+                "SELECT " + ChatsTable.COLUMN_CHAT_NAME +
+                        " FROM " + ChatsTable.TABLE_NAME +
+                        " WHERE " + ChatsTable.COLUMN_CHAT_ID + "='" + chatId.rawId() + "'";
+        try (final Cursor cursor = db.rawQuery(nameSaveSql, null)) {
+            while (cursor.moveToNext()) {
+                ContentValues values = new ContentValues();
+                values.put(DeletedGroupNameTable.COLUMN_CHAT_NAME, cursor.getString(0));
+                values.put(DeletedGroupNameTable.COLUMN_CHAT_ID, chatId.rawId());
+                db.insert(DeletedGroupNameTable.TABLE_NAME, null, values);
+            }
+        }
         final int chatsDeleted = db.delete(ChatsTable.TABLE_NAME, ChatsTable.COLUMN_CHAT_ID + "=?", new String []{chatId.rawId()});
         db.setTransactionSuccessful();
         db.endTransaction();
@@ -1950,6 +1964,20 @@ class MessagesDb {
                         cursor.getString(9),
                         cursor.getInt(10) == 1,
                         cursor.getInt(11));
+            }
+        }
+        return null;
+    }
+
+    @WorkerThread
+    @Nullable String getDeletedChatName(@NonNull ChatId chatId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(DeletedGroupNameTable.TABLE_NAME,
+                new String [] {DeletedGroupNameTable.COLUMN_CHAT_NAME},
+                DeletedGroupNameTable.COLUMN_CHAT_ID + "=?",
+                new String [] {chatId.rawId()}, null, null, null)) {
+            if (cursor.moveToNext()) {
+                return cursor.getString(0);
             }
         }
         return null;

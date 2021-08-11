@@ -967,16 +967,17 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     @Override
                     public void showResult(@NonNull View view, @Nullable Chat result) {
                         if (result != null) {
-                            GroupTheme theme = GroupTheme.getTheme(result.theme);
                             groupView.setText(result.name);
-                            groupView.setOnClickListener(v -> {
-                                ChatId chatId = result.chatId;
-                                if (!(chatId instanceof GroupId)) {
-                                    Log.w("Cannot open group feed for non-group " + chatId);
-                                    return;
-                                }
-                                startActivity(ViewGroupFeedActivity.viewFeed(groupView.getContext(), (GroupId)chatId));
-                            });
+                            if (result.rowId != -1) {
+                                groupView.setOnClickListener(v -> {
+                                    ChatId chatId = result.chatId;
+                                    if (!(chatId instanceof GroupId)) {
+                                        Log.w("Cannot open group feed for non-group " + chatId);
+                                        return;
+                                    }
+                                    startActivity(ViewGroupFeedActivity.viewFeed(groupView.getContext(), (GroupId)chatId));
+                                });
+                            }
                         } else {
                             Log.e("PostViewHolder/bind failed to load chat " + post.getParentGroup());
                         }
