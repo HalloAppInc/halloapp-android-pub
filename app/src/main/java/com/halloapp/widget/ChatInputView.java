@@ -158,13 +158,13 @@ public class ChatInputView extends ConstraintLayout {
         recordBtn.setOnTouchListener((v, event) -> {
             final int action = event.getActionMasked();
             if (action == MotionEvent.ACTION_DOWN) {
-                controlView.setVisibility(View.VISIBLE);
                 if (!EasyPermissions.hasPermissions(getContext(), Manifest.permission.RECORD_AUDIO)) {
                     if (inputParent != null) {
                         inputParent.requestVoicePermissions();
                     }
                     return false;
                 }
+                controlView.setVisibility(View.VISIBLE);
                 voiceNoteRecorder.record();
             }
             controlView.onTouch(event);

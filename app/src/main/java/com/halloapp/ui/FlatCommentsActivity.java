@@ -639,18 +639,10 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-        if (requestCode == REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE) {
-            viewModel.startRecording();
-        }
     }
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        if (requestCode == REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE) {
-            new AppSettingsDialog.Builder(this)
-                    .setRationale(getString(R.string.voice_note_record_audio_permission_rationale_denied))
-                    .build().show();
-        }
     }
 
     private class VoiceNoteViewHolder extends ViewHolder {

@@ -77,6 +77,12 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
             }
         } else if (action == MotionEvent.ACTION_MOVE) {
             updateUI(event.getRawX() - pos[0], event.getRawY() - pos[1]);
+        } else if (action == MotionEvent.ACTION_CANCEL) {
+            if (state != STATE_DONE && state != STATE_LOCKED) {
+                listener.onCancel();
+                state = STATE_DONE;
+                onDone();
+            }
         }
     }
 
