@@ -182,12 +182,19 @@ class MessagesDb {
                         final Media replyMedia = (mediaIndex >= 0 && mediaIndex < replyItem.media.size()) ? replyItem.media.get(mediaIndex) : null;
                         if (replyMedia != null && replyMedia.file != null) {
                             replyValues.put(RepliesTable.COLUMN_MEDIA_TYPE, replyMedia.type);
-                            final File replyThumbFile = fileStore.getMediaFile(RandomId.create() + "." + Media.getFileExt(replyMedia.type));
-                            try {
-                                MediaUtils.createThumb(replyMedia.file, replyThumbFile, replyMedia.type, 320);
-                                replyValues.put(RepliesTable.COLUMN_MEDIA_PREVIEW_FILE, replyThumbFile.getName());
-                            } catch (IOException e) {
-                                Log.e("ContentDb.addMessage: cannot create reply preview", e);
+                            if (replyMedia.type == Media.MEDIA_TYPE_AUDIO) {
+                                long duration = MediaUtils.getAudioDuration(replyMedia.file);
+                                if (duration != 0) {
+                                    replyValues.put(RepliesTable.COLUMN_TEXT, duration);
+                                }
+                            } else {
+                                final File replyThumbFile = fileStore.getMediaFile(RandomId.create() + "." + Media.getFileExt(replyMedia.type));
+                                try {
+                                    MediaUtils.createThumb(replyMedia.file, replyThumbFile, replyMedia.type, 320);
+                                    replyValues.put(RepliesTable.COLUMN_MEDIA_PREVIEW_FILE, replyThumbFile.getName());
+                                } catch (IOException e) {
+                                    Log.e("ContentDb.addMessage: cannot create reply preview", e);
+                                }
                             }
                         }
                     }

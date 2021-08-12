@@ -90,6 +90,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
+import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ChatInputView;
 import com.halloapp.widget.DrawDelegateView;
@@ -967,7 +968,10 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             final ImageView replyMediaThumbView = replyContainer.findViewById(R.id.reply_media_thumb);
             if (replyMessageMediaIndexMap.containsKey(replyMessageRowId)) {
                 replyMessageMediaIndex = replyMessageMediaIndexMap.get(replyMessageRowId);
+            } else if (message.type == Message.TYPE_VOICE_NOTE) {
+                replyMessageMediaIndex = 0;
             }
+            audioDurationLoader.cancel(replyTextView);
             if (replyMessageMediaIndex >= 0 && replyMessageMediaIndex < message.media.size()) {
                 replyMediaThumbView.setVisibility(View.VISIBLE);
                 replyMediaThumbView.setOutlineProvider(new ViewOutlineProvider() {
@@ -993,6 +997,25 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                         if (TextUtils.isEmpty(message.text)) {
                             replyTextView.setText(R.string.video);
                         }
+                        break;
+                    }
+                    case Media.MEDIA_TYPE_AUDIO: {
+                        replyMediaIconView.setImageResource(R.drawable.ic_keyboard_voice);
+                        replyMediaThumbView.setVisibility(View.GONE);
+                        final String voiceNote = getString(R.string.voice_note);
+                        audioDurationLoader.load(replyTextView, message.media.get(0).file, new ViewDataLoader.Displayer<TextView, Long>() {
+                            @Override
+                            public void showResult(@NonNull TextView view, @Nullable Long result) {
+                                if (result != null) {
+                                    replyTextView.setText(getString(R.string.voice_note_preview, StringUtils.formatVoiceNoteDuration(ChatActivity.this, result)));
+                                }
+                            }
+
+                            @Override
+                            public void showLoading(@NonNull TextView view) {
+                                replyTextView.setText(voiceNote);
+                            }
+                        });
                         break;
                     }
                     case Media.MEDIA_TYPE_UNKNOWN:

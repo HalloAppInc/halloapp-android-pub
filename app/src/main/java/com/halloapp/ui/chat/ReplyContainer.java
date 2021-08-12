@@ -23,7 +23,9 @@ import com.halloapp.id.UserId;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.PostContentActivity;
 import com.halloapp.ui.groups.GroupParticipants;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.util.logs.Log;
 
 class ReplyContainer {
 
@@ -115,6 +117,23 @@ class ReplyContainer {
                             mediaIconView.setImageResource(R.drawable.ic_video);
                             if (TextUtils.isEmpty(result.text)) {
                                 textView.setText(R.string.video);
+                            }
+                            textView.setMaxLines(1);
+                            break;
+                        }
+                        case Media.MEDIA_TYPE_AUDIO: {
+                            mediaIconView.setVisibility(View.VISIBLE);
+                            mediaIconView.setImageResource(R.drawable.ic_keyboard_voice);
+                            Long duration = null;
+                            try {
+                                duration = Long.parseLong(result.text);
+                            } catch (NumberFormatException e) {
+                                Log.e("ReplyContainer invalid duration " + result.text);
+                            }
+                            if (duration != null) {
+                                textView.setText(textView.getContext().getString(R.string.voice_note_preview, StringUtils.formatVoiceNoteDuration(textView.getContext(), duration)));
+                            } else {
+                                textView.setText(R.string.voice_note);
                             }
                             textView.setMaxLines(1);
                             break;

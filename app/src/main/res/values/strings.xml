@@ -315,6 +315,8 @@
     <string name="pick_media">Pick media</string>
     <string name="video">Video</string>
     <string name="voice_note">Voice note</string>
+    <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
+    <string name="voice_note_preview">Voice note (%s)</string>
     <string name="photo">Photo</string>
     <string name="album">Album</string>
     <!-- Futureproof content we dont understand yet -->
