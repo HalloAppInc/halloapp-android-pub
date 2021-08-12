@@ -280,12 +280,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 } else {
                     replyIndicatorText.setText(getString(R.string.reply_to_contact, contact.getDisplayName()));
                 }
-                if (editText != null) {
-                    editText.getText().clear();
-                }
-                if (editText != null && !contact.userId.isMe()) {
-                    editText.appendMention(contact);
-                }
             }
         });
 
