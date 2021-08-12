@@ -443,11 +443,15 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
             @Override
             public void onSendVoiceNote() {
                 viewModel.finishRecording(replyCommentId, false);
+                resetReplyIndicator();
+                scrollToComment = true;
             }
 
             @Override
             public void onSendVoiceDraft(File draft) {
                 viewModel.sendVoiceNote(replyCommentId, draft);
+                resetReplyIndicator();
+                scrollToComment = true;
             }
 
             @Override
