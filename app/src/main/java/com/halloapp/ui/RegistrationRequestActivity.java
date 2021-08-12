@@ -337,6 +337,8 @@ public class RegistrationRequestActivity extends HalloActivity {
             timer.schedule(timerTask, INSTALL_REFERRER_TIMEOUT_MS);
 
             referrerClient.startConnection(new InstallReferrerStateListener() {
+                private static final String INVITE_TAG = "ginvite-";
+
                 @Override
                 public void onInstallReferrerSetupFinished(int responseCode) {
                     String inviteCode = null;
@@ -344,9 +346,12 @@ public class RegistrationRequestActivity extends HalloActivity {
                         case InstallReferrerClient.InstallReferrerResponse.OK:
                             try {
                                 ReferrerDetails details = referrerClient.getInstallReferrer();
-                                inviteCode = details.getInstallReferrer();
-                                if (!TextUtils.isEmpty(inviteCode) && inviteCode.startsWith("ginvite-")) {
-                                    inviteCode = inviteCode.substring(8);
+                                String referrerUrl = details.getInstallReferrer();
+                                Log.i("RegistrationRequestActivity/requestRegistration got referrerUrl " + referrerUrl);
+                                if (!TextUtils.isEmpty(referrerUrl) && referrerUrl.contains(INVITE_TAG)) {
+                                    int start = referrerUrl.indexOf(INVITE_TAG) + INVITE_TAG.length();
+                                    int end = referrerUrl.indexOf("&", start);
+                                    inviteCode = referrerUrl.substring(start, Math.max(referrerUrl.length(), end));
                                 } else {
                                     Log.w("RegistrationRequestActivity/requestRegistration no referrer invite");
                                 }
