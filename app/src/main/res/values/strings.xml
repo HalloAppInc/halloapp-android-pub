@@ -621,7 +621,7 @@
     <!-- Button for user to re-share old posts which have expired -->
     <string name="reshare_post">Reshare post</string>
     <!-- Button for going to utility for viewing expired posts -->
-    <string name="archived_posts">Archived Posts</string>
+    <string name="archived_posts">Archive</string>
     <!-- Title of utility for viewing expired posts -->
     <string name="archive">Archive</string>
     <!-- Label displaying the date when a post expired -->
