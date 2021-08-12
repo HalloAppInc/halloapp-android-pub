@@ -377,11 +377,9 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             }
         }
 
-        // Temporary disable until #647 and #654 are fixed and streaming uploads are ready for testing.
-        //
-        // if (media.type == Media.MEDIA_TYPE_VIDEO) {
-        //     MediaUtils.reconstructVideoContainer(media.file);
-        // }
+        if (media.type == Media.MEDIA_TYPE_VIDEO) {
+            MediaUtils.zeroMp4Timestamps(media.file);
+        }
     }
 
     public static void restartUpload(@NonNull ContentItem contentItem, @NonNull FileStore fileStore, @NonNull ContentDb contentDb, @NonNull Connection connection){

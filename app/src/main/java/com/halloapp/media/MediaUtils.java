@@ -65,6 +65,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -625,6 +627,7 @@ public class MediaUtils {
         }
     }
 
+    @WorkerThread
     public static void reconstructVideoContainer(@NonNull File videoFile) throws IOException {
         Log.i("MediaUtils.reconstructVideoContainer file " + videoFile.getAbsolutePath() + " of size " + videoFile.length());
         final Date zeroDate = new Date(0);
@@ -684,6 +687,192 @@ public class MediaUtils {
                 } else {
                     tempFile.delete();
                 }
+            }
+        }
+    }
+
+    @WorkerThread
+    public static void zeroMp4Timestamps(@NonNull File mp4File) throws IOException {
+        final File tempFile = FileStore.getInstance().getTmpFile(RandomId.create());
+        FileUtils.copyFile(mp4File, tempFile);
+
+        try (final RandomAccessFile raFile = new RandomAccessFile(tempFile, "rw");
+             final FileChannel fileChannel = raFile.getChannel()) {
+            clearMp4AtomTimestamps(fileChannel);
+
+            if (!mp4File.delete()) {
+                Log.e("MediaUtils.zeroMp4Timestamps: failed to delete " + mp4File.getAbsolutePath());
+            }
+            if (!tempFile.renameTo(mp4File)) {
+                Log.e("MediaUtils.zeroMp4Timestamps: failed to rename " + tempFile.getAbsolutePath() + " to " + mp4File.getAbsolutePath());
+            }
+        } catch (Mp4FormatException e) {
+            Log.e("MediaUtils.zeroMp4Timestamps: " + e);
+        } finally {
+            tempFile.delete();
+        }
+    }
+
+    private static final int MP4_ATOM_PREAMBLE_SIZE = 8;
+    private static final int MP4_ATOM_FLAG_VERSION_SIZE = 4;
+    private static final int MP4_ATOM_CREATION_DATE_SIZE = 4;
+    private static final int MP4_ATOM_MODIFICATION_DATE_SIZE = 4;
+
+    private static final int MP4_ATOM_SIZE_TO_END = 0;
+    private static final int MP4_ATOM_SIZE_EXTENDED_NEXT_BYTES = 1;
+
+    private static final class Mp4Atom {
+        int type;
+        long start;
+        long size;
+
+        public Mp4Atom(int type, long start, long size) {
+            this.type = type;
+            this.start = start;
+            this.size = size;
+        }
+
+        @Override
+        public String toString() {
+            final ByteBuffer buffer = ByteBuffer.allocate(4).putInt(type);
+            return "Mp4Atom {type:" + new String(buffer.array(), StandardCharsets.US_ASCII) + " start:" + start + " size:" + size + "}";
+        }
+    }
+
+    private static class Mp4FormatException extends Exception {
+        public Mp4FormatException(String message) {
+            super(message);
+        }
+    }
+
+    private static class Mp4AtomFormatException extends Mp4FormatException {
+        private final Mp4Atom mp4Atom;
+
+        public Mp4AtomFormatException(Mp4Atom mp4Atom, String message) {
+            super(mp4Atom + " " + message);
+            this.mp4Atom = mp4Atom;
+        }
+
+        public Mp4Atom getMp4Atom() {
+            return mp4Atom;
+        }
+    }
+
+    private static long unsignedIntToLong(int unsignedInt) {
+        return unsignedInt & 0xffffffffL;
+    }
+
+    private static int getMp4AtomTypeInt(@NonNull String atomTypeString) {
+        return ByteBuffer.wrap(atomTypeString.getBytes(StandardCharsets.US_ASCII)).getInt();
+    }
+
+    private static List<Mp4Atom> filterMp4AtomsByType(@NonNull List<Mp4Atom> atomList, int atomType) {
+        ArrayList<Mp4Atom> filteredList = new ArrayList<>();
+        for (Mp4Atom atom : atomList) {
+            if (atom.type == atomType) {
+                filteredList.add(atom);
+            }
+        }
+        return filteredList;
+    }
+
+    @WorkerThread
+    private static List<Mp4Atom> getChildMp4Atoms(@NonNull FileChannel fileChannel, @NonNull Mp4Atom parentAtom) throws IOException, Mp4FormatException {
+        return getLevelMp4Atoms(fileChannel, parentAtom.start + MP4_ATOM_PREAMBLE_SIZE, parentAtom.size - MP4_ATOM_PREAMBLE_SIZE);
+    }
+
+    @WorkerThread
+    private static List<Mp4Atom> getLevelMp4Atoms(@NonNull FileChannel fileChannel, long start, long size) throws IOException, Mp4FormatException {
+        // Useful documentation about the mp4 atom layout:
+        // https://developer.apple.com/library/archive/documentation/QuickTime/QTFF/QTFFChap1/qtff1.html#//apple_ref/doc/uid/TP40000939-CH203-38190
+        final List<Mp4Atom> atomBoxList = new ArrayList<>();
+        final ByteBuffer buffer = ByteBuffer.allocate(MP4_ATOM_PREAMBLE_SIZE);
+
+        int atomType;
+        long atomStart, atomSize;
+
+        fileChannel.position(start);
+        while (fileChannel.position() < start + size) {
+            if (fileChannel.read(buffer) != buffer.capacity()) {
+                throw new Mp4FormatException("End of file reached before atom preamble could be fully read");
+            }
+            buffer.flip();
+            atomStart = fileChannel.position() - MP4_ATOM_PREAMBLE_SIZE;
+            atomSize = unsignedIntToLong(buffer.getInt());
+            atomType = buffer.getInt();
+            buffer.clear();
+
+            if (atomSize == MP4_ATOM_SIZE_TO_END) {
+                atomSize = fileChannel.size() - atomStart;
+            } else if (atomSize == MP4_ATOM_SIZE_EXTENDED_NEXT_BYTES) {
+                if (fileChannel.read(buffer) != buffer.capacity()) {
+                    throw new Mp4FormatException("End of file reached before atom extended size could be fully read");
+                }
+                buffer.flip();
+                atomSize = buffer.getLong();
+                buffer.clear();
+            }
+
+            final Mp4Atom atom = new Mp4Atom(atomType, atomStart, atomSize);
+            atomBoxList.add(atom);
+            if (atomStart + atomSize >= fileChannel.position()) {
+                fileChannel.position(atomStart + atomSize);
+            } else {
+                throw new Mp4AtomFormatException(atom, "Atom size is less than " + MP4_ATOM_PREAMBLE_SIZE + " bytes");
+            }
+        }
+
+        return atomBoxList;
+    }
+
+    @WorkerThread
+    private static void zeroMp4HeaderAtomTimestamp(@NonNull FileChannel fileChannel, @NonNull Mp4Atom atom) throws IOException, Mp4AtomFormatException {
+        if (atom.size < MP4_ATOM_PREAMBLE_SIZE + MP4_ATOM_FLAG_VERSION_SIZE + MP4_ATOM_CREATION_DATE_SIZE + MP4_ATOM_MODIFICATION_DATE_SIZE) {
+            throw new Mp4AtomFormatException(atom, "Atom header is too short to attempt to zero timestamps");
+        }
+        final ByteBuffer zeroBuffer = ByteBuffer.wrap(new byte[MP4_ATOM_CREATION_DATE_SIZE + MP4_ATOM_MODIFICATION_DATE_SIZE]);
+        fileChannel.position(atom.start + MP4_ATOM_PREAMBLE_SIZE + MP4_ATOM_FLAG_VERSION_SIZE);
+        fileChannel.write(zeroBuffer);
+    }
+
+    @WorkerThread
+    private static void clearMp4AtomTimestamps(@NonNull FileChannel fileChannel) throws IOException, Mp4FormatException {
+        // Useful documentation about the mp4 hierarchy:
+        // https://openmp4file.com/format.html
+        // https://developer.apple.com/library/archive/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-55265
+        final int moovAtomType = getMp4AtomTypeInt("moov");
+        final int mvhdAtomType = getMp4AtomTypeInt("mvhd");
+        final int trakAtomType = getMp4AtomTypeInt("trak");
+        final int tkhdAtomType = getMp4AtomTypeInt("tkhd");
+        final int mdiaAtomType = getMp4AtomTypeInt("mdia");
+        final int mdhdAtomType = getMp4AtomTypeInt("mdhd");
+
+        final List<Mp4Atom> moovAtomList = filterMp4AtomsByType(getLevelMp4Atoms(fileChannel, 0, fileChannel.size()), moovAtomType);
+        if (moovAtomList.size() > 0) {
+            final List<Mp4Atom> moovChildAtomList = getChildMp4Atoms(fileChannel, moovAtomList.get(0));
+
+            final List<Mp4Atom> mvhdAtomList = filterMp4AtomsByType(moovChildAtomList, mvhdAtomType);
+            if (mvhdAtomList.size() > 0) {
+                zeroMp4HeaderAtomTimestamp(fileChannel, mvhdAtomList.get(0));
+            }
+
+            final List<Mp4Atom> trakAtomList = filterMp4AtomsByType(moovChildAtomList, trakAtomType);
+            for (Mp4Atom trakAtom : trakAtomList) {
+                final List<Mp4Atom> trakChildAtomList = getChildMp4Atoms(fileChannel, trakAtom);
+
+                final List<Mp4Atom> tkhdAtomList = filterMp4AtomsByType(trakChildAtomList, tkhdAtomType);
+                if (tkhdAtomList.size() > 0) {
+                    zeroMp4HeaderAtomTimestamp(fileChannel, tkhdAtomList.get(0));
+                }
+
+                final List<Mp4Atom> mdiaAtomList = filterMp4AtomsByType(trakChildAtomList, mdiaAtomType);
+                if (mdiaAtomList.size() > 0) {
+                    final List<Mp4Atom> mdhdAtomList = filterMp4AtomsByType(getChildMp4Atoms(fileChannel, mdiaAtomList.get(0)), mdhdAtomType);
+                    if (mdhdAtomList.size() > 0) {
+                        zeroMp4HeaderAtomTimestamp(fileChannel, mdhdAtomList.get(0));
+                    }
+                }
+
             }
         }
     }
@@ -756,22 +945,5 @@ public class MediaUtils {
 
         extractor.release();
         muxer.release();
-    }
-
-    @WorkerThread
-    public static void copyFile(File src, File dest) {
-        try {
-            InputStream in = new FileInputStream(src);
-            OutputStream out = new FileOutputStream(dest);
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-            in.close();
-            out.close();
-        } catch (Exception e) {
-            Log.e("MediaUtils: could not copy files " + e);
-        }
     }
 }
