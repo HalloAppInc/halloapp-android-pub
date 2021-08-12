@@ -66,6 +66,7 @@ import com.halloapp.xmpp.PresenceLoader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 
 import pub.devrel.easypermissions.EasyPermissions;
@@ -377,6 +378,12 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
         void setFilteredChats(@NonNull List<Chat> contacts, CharSequence filterText) {
             this.filteredChats = contacts;
+            ListIterator<Chat> iterator = filteredChats.listIterator();
+            while (iterator.hasNext()) {
+                if (iterator.next().name == null) {
+                    iterator.remove();
+                }
+            }
             this.filterText = filterText;
             this.filterTokens = FilterUtils.getFilterTokens(filterText);
             notifyDataSetChanged();
