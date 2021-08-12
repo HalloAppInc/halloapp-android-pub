@@ -642,4 +642,6 @@
     <string name="scan_qr_instructions">Scan the QR code to join this HalloApp group</string>
     <!-- Banner below the name of a HalloApp group -->
     <string name="halloapp_group">HalloApp Group</string>
+    <!-- Shown as title for a dialog explaining why permissions are needed when the user has rejected a necessary permission request at least twice but still tries to use the feature -->
+    <string name="title_settings_dialog">Permissions required</string>
 </resources>
