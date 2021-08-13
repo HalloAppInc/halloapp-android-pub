@@ -406,12 +406,12 @@ class Log extends React.Component<Props, State>  {
           let msg = messageType.decode(Base64.toByteArray(b64))
           let obj = msg.toJSON()
           if (flat) {
-            return before + this.messageObjectToString(obj, messageTypeName) + after
+            return before + this.messageObjectToElement(obj, messageTypeName) + after
           }
           return (
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start' }}>
               <div>{before}</div>
-              <div style={{ backgroundColor: "#ccc" }}>{this.messageObjectToString(obj, messageTypeName)}</div>
+              <div style={{ backgroundColor: "#ccc" }}>{this.messageObjectToElement(obj, messageTypeName)}</div>
               <div>{after}</div>
             </div>
           )
@@ -425,7 +425,7 @@ class Log extends React.Component<Props, State>  {
     return s
   }
 
-  messageObjectToString(obj: any, name: string) {
+  messageObjectToElement(obj: any, name: string) {
     let keys = Object.keys(obj)
     let attributes = new Map<string, string>()
     let children: any[][] = []
@@ -439,26 +439,46 @@ class Log extends React.Component<Props, State>  {
       }
     }
 
-    let ret = "<" + name
+    let nameColor = "#982234"
+    let keyColor = "#8a9400"
+    let valueColor = "#178934"
 
-    if (attributes.size > 0) {
-      let keySet = attributes.keys()
-      let next = keySet.next()
-      while (!next.done) {
-        let key = next.value
-        ret += " " + key + "='" + attributes.get(key) + "'"
-        next = keySet.next()
-      }
+    let attrs = []
+    let keySet = attributes.keys()
+    let next = keySet.next()
+    while (!next.done) {
+      let key = next.value
+      attrs.push(<span key={"spc-" + key} dangerouslySetInnerHTML={{ __html: "&nbsp;"}}/>)
+      attrs.push(<span key={"key-" + key} style={{ color: keyColor, }}>{key}</span>)
+      attrs.push("='")
+      attrs.push(<span key={"val-" + key} style={{ color: valueColor, }}>{attributes.get(key)}</span>)
+      attrs.push("'")
+      next = keySet.next()
     }
-
     if (children.length <= 0) {
-      ret += "/>"
+      return (
+        <span key={obj} style={{ display: 'inline-block', }}>
+          {"<"}
+          <span key="name" style={{ color: nameColor, }}>{name}</span>
+          {attrs}
+          {"/>"}
+        </span>
+      )
     } else {
-      let childStrings = children.map(c => this.messageObjectToString(c[1], c[0]))
-      ret += ">" + childStrings.reduce((p, c) => p + c) + "</" + name + ">"
+      let childElems = children.map(c => this.messageObjectToElement(c[1], c[0]))
+      return (
+        <span key={obj} style={{ display: 'inline-block', }}>
+          {"<"}
+          <span key="name-start" style={{ color: nameColor, }}>{name}</span>
+          {attrs}
+          {">"}
+          {childElems}
+          {"</"}
+          <span key="name-end" style={{ color: nameColor, }}>{name}</span>
+          {">"}
+        </span>
+      )
     }
-
-    return ret
   }
 
   renderRow(index: number, key: string, style: React.CSSProperties) {
@@ -467,10 +487,10 @@ class Log extends React.Component<Props, State>  {
     let count = this.state.filteredLogs[index].count
     let linkified = this.linkify(line)
     return (
-      <div key={key} style={{ ...style, display: "flex", flexDirection: "row", justifyContent: "start", justifyItems: "center", fontFamily: "monospace", backgroundColor: index === this.state.highlightedLine ? "#ECFF38" : index % 2 === 0 ? "#fff" : "#eee", paddingLeft: 5 }}>
-        {count === 1 ? null : <div style={{ borderRadius: 7, backgroundColor: Constants.COLOR_PRIMARY.main, height: "75%", padding: "1px" }}>x{count}</div>}
+      <span key={key} style={{ ...style, display: "flex", flexDirection: "row", justifyContent: "start", justifyItems: "center", fontFamily: "monospace", backgroundColor: index === this.state.highlightedLine ? "#ECFF38" : index % 2 === 0 ? "#fff" : "#eee", paddingLeft: 5 }}>
+        {count === 1 ? null : <span style={{ borderRadius: 7, backgroundColor: Constants.COLOR_PRIMARY.main, height: "75%", padding: "1px" }}>x{count}</span>}
         <pre style={{ position: "relative", top: /*hack*/ -10, color: color }}>{linkified}</pre>
-      </div>
+      </span>
     )
   }
 
