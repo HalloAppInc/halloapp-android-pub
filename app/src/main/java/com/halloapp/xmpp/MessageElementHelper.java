@@ -11,6 +11,7 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.proto.clients.Album;
 import com.halloapp.proto.clients.AlbumMedia;
+import com.halloapp.proto.clients.BlobVersion;
 import com.halloapp.proto.clients.ChatContainer;
 import com.halloapp.proto.clients.ChatContext;
 import com.halloapp.proto.clients.ChatMessage;
@@ -18,6 +19,7 @@ import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.EncryptedResource;
 import com.halloapp.proto.clients.Image;
 import com.halloapp.proto.clients.MediaType;
+import com.halloapp.proto.clients.StreamingInfo;
 import com.halloapp.proto.clients.Text;
 import com.halloapp.proto.clients.Video;
 import com.halloapp.proto.clients.VoiceNote;
@@ -35,6 +37,18 @@ public class MessageElementHelper {
         return Media.MEDIA_TYPE_UNKNOWN;
     }
 
+    public static @Media.BlobVersion int fromProtoBlobVersion(@NonNull BlobVersion blobVersion) {
+        switch (blobVersion) {
+            case BLOB_VERSION_DEFAULT:
+                return Media.BLOB_VERSION_DEFAULT;
+
+            case BLOB_VERSION_CHUNKED:
+                return Media.BLOB_VERSION_CHUNKED;
+        }
+        Log.w("Unrecognized BlobVersion " + blobVersion);
+        return Media.BLOB_VERSION_UNKNOWN;
+    }
+
     private static MediaType getProtoMediaType(@Media.MediaType int type) {
         if (type == Media.MEDIA_TYPE_IMAGE) {
             return MediaType.MEDIA_TYPE_IMAGE;
@@ -43,6 +57,13 @@ public class MessageElementHelper {
         }
         Log.w("Unrecognized media type " + type);
         return MediaType.MEDIA_TYPE_UNSPECIFIED;
+    }
+
+    public static BlobVersion getProtoBlobVersion(@NonNull @Media.BlobVersion int blobVersion) {
+        if (blobVersion == Media.BLOB_VERSION_CHUNKED) {
+            return BlobVersion.BLOB_VERSION_CHUNKED;
+        }
+        return BlobVersion.BLOB_VERSION_DEFAULT;
     }
 
     public static ChatMessage readEncodedEntry(byte[] entry) {
@@ -91,6 +112,9 @@ public class MessageElementHelper {
             mediaBuilder.setEncryptionKey(ByteString.copyFrom(media.encKey));
             mediaBuilder.setCiphertextHash(ByteString.copyFrom(media.encSha256hash));
             mediaBuilder.setDownloadUrl(media.url);
+            mediaBuilder.setBlobVersion(getProtoBlobVersion(media.blobVersion));
+            mediaBuilder.setBlobSize(media.blobSize);
+            mediaBuilder.setChunkSize(media.chunkSize);
             chatMessageBuilder.addMedia(mediaBuilder.build());
         }
         for (Mention mention : message.mentions) {
@@ -148,10 +172,16 @@ public class MessageElementHelper {
                             .setWidth(media.width)
                             .setHeight(media.height));
                 } else if (media.type == Media.MEDIA_TYPE_VIDEO) {
+                    StreamingInfo streamingInfo = StreamingInfo.newBuilder()
+                            .setBlobVersion(MessageElementHelper.getProtoBlobVersion(media.blobVersion))
+                            .setChunkSize(media.chunkSize)
+                            .setBlobSize(media.blobSize)
+                            .build();
                     mediaBuilder.setVideo(Video.newBuilder()
                             .setVideo(resource)
                             .setHeight(media.height)
-                            .setWidth(media.width));
+                            .setWidth(media.width)
+                            .setStreamingInfo(streamingInfo));
                 }
                 albumBuilder.addMedia(mediaBuilder.build());
             }

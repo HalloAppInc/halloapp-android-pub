@@ -5,6 +5,7 @@ import com.halloapp.media.MediaEncryptOutputStream;
 import com.halloapp.content.Media;
 import com.halloapp.util.TailInputStream;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -20,20 +21,23 @@ import java.nio.file.StandardOpenOption;
 import java.security.SecureRandom;
 
 public class EncryptDecryptMediaTest {
+    final File srcFile = new File("test.txt");
+    final File encFile = new File("test.txt.enc");
+    final File dstFile = new File("test.txt.enc.txt");
+
+    @After
+    public void clearFiles() {
+        srcFile.delete();
+        encFile.delete();
+        dstFile.delete();
+    }
 
     @Test
     public void test() throws IOException {
 
         final String CONTENT = "Testing shows the presence, not the absence of bugs.\n\n  Edsger W. Dijkstra";
 
-        final File srcFile = new File("test.txt");
         Files.write(Paths.get(srcFile.getAbsolutePath()), CONTENT.getBytes(), StandardOpenOption.CREATE);
-
-        String expected = new String(Files.readAllBytes(Paths.get(srcFile.getAbsolutePath())));
-        Assert.assertEquals(CONTENT, expected);
-
-        final File encFile = new File("test.txt.enc");
-        final File dstFile = new File("test.txt.enc.txt");
 
         final SecureRandom random = new SecureRandom();
         final byte[] key = new byte[32];

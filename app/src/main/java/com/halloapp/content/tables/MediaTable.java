@@ -26,5 +26,8 @@ public final class MediaTable implements BaseColumns {
     public static final String COLUMN_UPLOAD_PROGRESS = "upload_progress";
     public static final String COLUMN_RETRY_COUNT = "retry_count";
     public static final String COLUMN_DEC_SHA256_HASH = "dec_sha256_hash";
+    public static final String COLUMN_BLOB_VERSION = "blob_version";
+    public static final String COLUMN_CHUNK_SIZE = "chunk_size";
+    public static final String COLUMN_BLOB_SIZE = "blob_size";
 }
 

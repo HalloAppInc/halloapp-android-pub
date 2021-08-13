@@ -15,11 +15,13 @@ import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.EncryptedResource;
 import com.halloapp.proto.clients.Image;
 import com.halloapp.proto.clients.PostContainer;
+import com.halloapp.proto.clients.StreamingInfo;
 import com.halloapp.proto.clients.Text;
 import com.halloapp.proto.clients.Video;
 import com.halloapp.proto.clients.VoiceNote;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.MessageElementHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,10 +131,16 @@ public class FeedContentEncoder {
                         .setHeight(item.height)
                         .setImg(encryptedResource).build());
             } else if (item.type == Media.MEDIA_TYPE_VIDEO) {
+                StreamingInfo streamingInfo = StreamingInfo.newBuilder()
+                        .setBlobVersion(MessageElementHelper.getProtoBlobVersion(item.blobVersion))
+                        .setChunkSize(item.chunkSize)
+                        .setBlobSize(item.blobSize)
+                        .build();
                 albumMediaBuilder.setVideo(Video.newBuilder()
                         .setWidth(item.width)
                         .setHeight(item.height)
-                        .setVideo(encryptedResource).build());
+                        .setVideo(encryptedResource)
+                        .setStreamingInfo(streamingInfo).build());
             } else {
                 continue;
             }

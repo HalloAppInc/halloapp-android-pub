@@ -12,6 +12,7 @@ import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -42,14 +43,14 @@ public class Downloader {
     }
 
     @WorkerThread
-    private static void decrypt(@NonNull InputStream inStream, long contentLength, @Nullable byte [] mediaKey, @Nullable byte [] sha256hash, @Media.MediaType int type, @NonNull File localFile, @Nullable DownloadListener listener) throws IOException, GeneralSecurityException {
+    private static void decrypt(@NonNull InputStream inStream, long contentLength, @NonNull File unencryptedFile, @Nullable byte[] mediaKey, @Nullable byte[] encSha256Hash, @Media.MediaType int type, @Nullable DownloadListener listener) throws IOException, GeneralSecurityException {
         OutputStream outStream = null;
         try {
-            outStream = new BufferedOutputStream(new FileOutputStream(localFile));
+            outStream = new BufferedOutputStream(new FileOutputStream(unencryptedFile));
             MessageDigest digest = null;
             if (mediaKey != null) {
-                if (sha256hash == null) {
-                    throw new GeneralSecurityException("no received sha256hash");
+                if (encSha256Hash == null) {
+                    throw new GeneralSecurityException("no received encSha256Hash");
                 }
                 try {
                     digest = MessageDigest.getInstance("SHA-256");
@@ -78,9 +79,85 @@ public class Downloader {
                 if (!Arrays.equals(receivedHmac, calculatedHmac)) {
                     throw new GeneralSecurityException("received hmac doesn't match calculated one");
                 }
-                if (!Arrays.equals(sha256hash, digest.digest())) {
-                    throw new GeneralSecurityException("received sha256hash doesn't match calculated one");
+                if (!Arrays.equals(encSha256Hash, digest.digest())) {
+                    throw new GeneralSecurityException("received encSha256Hash doesn't match calculated one");
                 }
+            }
+        } finally {
+            FileUtils.closeSilently(inStream);
+            FileUtils.closeSilently(outStream);
+        }
+    }
+
+    @WorkerThread
+    public static void decryptChunkedFile(@NonNull ChunkedMediaParameters chunkedParameters, @NonNull InputStream inStream, long contentLength, @NonNull File unencryptedFile, @NonNull byte[] mediaKey, @NonNull byte[] encSha256hash, @Media.MediaType int type, @Nullable DownloadListener listener) throws IOException, GeneralSecurityException {
+        OutputStream outStream = null;
+        try {
+            outStream = new BufferedOutputStream(new FileOutputStream(unencryptedFile));
+
+            MessageDigest digest;
+            try {
+                digest = MessageDigest.getInstance("SHA-256");
+                inStream = new DigestInputStream(inStream, digest);
+            } catch (NoSuchAlgorithmException e) {
+                throw new GeneralSecurityException(e);
+            }
+
+            long byteWritten = 0L;
+            boolean cancelled = false;
+            final byte[] buffer = new byte[1024];
+            final ByteArrayOutputStream chunkBufferStream = new ByteArrayOutputStream(chunkedParameters.chunkSize);
+            for (int i = 0; i <= chunkedParameters.regularChunkCount; ++i) {
+                if (i == chunkedParameters.regularChunkCount && chunkedParameters.estimatedTrailingChunkPtSize == 0) {
+                    break;
+                }
+
+                chunkBufferStream.reset();
+                MediaDecryptOutputStream mediaDecryptOutputStream = null;
+                byte[] receivedHmac = null;
+                try {
+                    mediaDecryptOutputStream = new MediaDecryptOutputStream(mediaKey, type, i, chunkBufferStream);
+                    int chunkInputSize = i < chunkedParameters.regularChunkCount ?
+                            chunkedParameters.chunkSize : chunkedParameters.trailingChunkSize;
+                    int toCopySize = chunkInputSize - ChunkedMediaParameters.MAC_SIZE;
+                    int byteRead;
+                    while (!cancelled && toCopySize > 0 && (byteRead = inStream.read(buffer, 0, Math.min(buffer.length, toCopySize))) > 0) {
+                        toCopySize -= byteRead;
+                        mediaDecryptOutputStream.write(buffer, 0, byteRead);
+                        byteWritten += byteRead;
+
+                        if (contentLength != 0 && listener != null) {
+                            cancelled = !listener.onProgress((int) (byteWritten * 100 / contentLength));
+                        }
+                    }
+
+                    if (!cancelled) {
+                        receivedHmac = new byte[ChunkedMediaParameters.MAC_SIZE];
+                        toCopySize = ChunkedMediaParameters.MAC_SIZE;
+                        while (toCopySize > 0 && (byteRead = inStream.read(receivedHmac, ChunkedMediaParameters.MAC_SIZE - toCopySize, toCopySize)) > 0) {
+                            toCopySize -= byteRead;
+                        }
+                        if (toCopySize > 0) {
+                            throw new IOException("stream ended before chunk hmac could be read");
+                        }
+                    }
+                } finally {
+                    FileUtils.closeSilently(mediaDecryptOutputStream);
+                }
+
+                byte[] calculatedHmac = mediaDecryptOutputStream.getHmac();
+                if (!Arrays.equals(receivedHmac, calculatedHmac)) {
+                    throw new GeneralSecurityException("received chunk hmac doesn't match calculated one");
+                }
+
+                outStream.write(chunkBufferStream.toByteArray());
+                if (cancelled) {
+                    break;
+                }
+            }
+
+            if (!Arrays.equals(encSha256hash, digest.digest())) {
+                throw new GeneralSecurityException("received encSha256hash doesn't match calculated one");
             }
         } finally {
             FileUtils.closeSilently(inStream);
@@ -113,7 +190,11 @@ public class Downloader {
         }
     }
 
-    public static void run(@NonNull String remotePath, @Nullable byte [] mediaKey, @Nullable byte [] sha256hash, @Media.MediaType int type, @Nullable File partialEnc, @NonNull File localFile, @Nullable DownloadListener listener, @NonNull String mediaLogId) throws IOException, GeneralSecurityException {
+    public static void run(@NonNull String remotePath, @Nullable byte [] mediaKey, @Nullable byte [] encSha256hash, @Media.MediaType int type, @Nullable File partialEnc, @NonNull File localFile, @Nullable DownloadListener listener, @NonNull String mediaLogId) throws IOException, GeneralSecurityException, ChunkedMediaParametersException {
+        run(remotePath, mediaKey, encSha256hash, type, Media.BLOB_VERSION_DEFAULT, 0, 0, partialEnc, localFile, listener, mediaLogId);
+    }
+
+    public static void run(@NonNull String remotePath, @Nullable byte [] mediaKey, @Nullable byte [] encSha256hash, @Media.MediaType int type, @Media.BlobVersion int blobVersion, int chunkSize, long blobSize, @Nullable File partialEnc, @NonNull File localFile, @Nullable DownloadListener listener, @NonNull String mediaLogId) throws IOException, GeneralSecurityException, ChunkedMediaParametersException {
         ThreadUtils.setSocketTag();
         Log.i("Downloader starting download of " + mediaLogId + " from " + remotePath);
         InputStream inStream = null;
@@ -149,7 +230,20 @@ public class Downloader {
                 inStream = new FileInputStream(partialEnc);
             }
             try {
-                decrypt(inStream, connection.getContentLength(), mediaKey, sha256hash, type, localFile, listener);
+                if (blobVersion == Media.BLOB_VERSION_DEFAULT) {
+                    decrypt(inStream, connection.getContentLength(), localFile, mediaKey, encSha256hash, type, listener);
+                } else if (blobVersion == Media.BLOB_VERSION_CHUNKED) {
+                    if (mediaKey != null && encSha256hash != null) {
+                        final ChunkedMediaParameters chunkedParameters = ChunkedMediaParameters.computeFromBlobSize(blobSize, chunkSize);
+                        Log.d("Downloader chunkedParameters = " + chunkedParameters);
+                        decryptChunkedFile(chunkedParameters, inStream, connection.getContentLength(), localFile, mediaKey, encSha256hash, type, listener);
+                    } else {
+                        throw new GeneralSecurityException("Downloader: cannot decrypt BLOB_VERSION_CHUNKED file when mediaKey or encSha256hash are null.");
+                    }
+                } else {
+                    Log.e("Downloader: Unrecognized blob version for " + mediaLogId);
+                    throw new GeneralSecurityException("Downloader: cannot process media with BLOB_VERSION_UNSPECIFIED.");
+                }
             } catch (IOException e) {
                 if (e.getCause() instanceof GeneralSecurityException) {
                     throw (GeneralSecurityException) e.getCause();

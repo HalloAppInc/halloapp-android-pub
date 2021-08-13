@@ -87,7 +87,7 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                     final File file = fileStore.getMediaFile(RandomId.create() + "." + Media.getFileExt(media.type));
                     media.encFile = encFile;
                     contentItem.setMediaTransferred(media, contentDb);
-                    Downloader.run(media.url, media.encKey, media.encSha256hash, media.type, encFile, file, downloadListener, mediaLogId);
+                    Downloader.run(media.url, media.encKey, media.encSha256hash, media.type, media.blobVersion, media.chunkSize, media.blobSize, encFile, file, downloadListener, mediaLogId);
                     if (!file.setLastModified(contentItem.timestamp)) {
                         Log.w("DownloadMediaTask: failed to set last modified to " + file.getAbsolutePath() + " for " + mediaLogId);
                     }
@@ -101,6 +101,10 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                     Log.i("DownloadMediaTask: transfer status for " + mediaLogId + " set to " + Media.getMediaTransferStateString(media.transferred));
                     totalSize += file.length();
                     success = true;
+                } catch (ChunkedMediaParametersException e) {
+                    Log.e("DownloadMediaTask: CMPE downloading " + media.url + " for " + mediaLogId, e);
+                    media.transferred = Media.TRANSFERRED_FAILURE;
+                    contentItem.setMediaTransferred(media, contentDb);
                 } catch (Downloader.DownloadException e) {
                     Log.e("DownloadMediaTask: download exception for " + media.url + " for " + mediaLogId, e);
                     if (media.encFile != null && e.code == 416) {

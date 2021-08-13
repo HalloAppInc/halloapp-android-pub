@@ -30,7 +30,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 47;
+    private static final int DATABASE_VERSION = 48;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -189,7 +189,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + MediaTable.COLUMN_HEIGHT + " INTEGER,"
                 + MediaTable.COLUMN_UPLOAD_PROGRESS + " INTEGER DEFAULT 0,"
                 + MediaTable.COLUMN_RETRY_COUNT + " INTEGER DEFAULT 0,"
-                + MediaTable.COLUMN_DEC_SHA256_HASH + " BLOB"
+                + MediaTable.COLUMN_DEC_SHA256_HASH + " BLOB,"
+                + MediaTable.COLUMN_BLOB_VERSION + " INTEGER DEFAULT 0,"
+                + MediaTable.COLUMN_CHUNK_SIZE + " INTEGER DEFAULT 0,"
+                + MediaTable.COLUMN_BLOB_SIZE + " INTEGER DEFAULT 0"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + MediaTable.INDEX_MEDIA_KEY);
@@ -465,6 +468,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 46: {
                 upgradeFromVersion46(db);
+            }
+            case 47: {
+                upgradeFromVersion47(db);
             }
             break;
             default: {
@@ -942,6 +948,12 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + OutgoingPlayedReceiptsTable.COLUMN_SENDER_USER_ID + ", "
                 + OutgoingPlayedReceiptsTable.COLUMN_CONTENT_ITEM_ID
                 + ");");
+    }
+
+    private void upgradeFromVersion47(@NonNull SQLiteDatabase db){
+        db.execSQL("ALTER TABLE " + MediaTable.TABLE_NAME + " ADD COLUMN " + MediaTable.COLUMN_BLOB_VERSION + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + MediaTable.TABLE_NAME + " ADD COLUMN " + MediaTable.COLUMN_CHUNK_SIZE + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + MediaTable.TABLE_NAME + " ADD COLUMN " + MediaTable.COLUMN_BLOB_SIZE + " INTEGER DEFAULT 0");
     }
 
     /**

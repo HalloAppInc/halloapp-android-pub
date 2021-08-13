@@ -10,19 +10,14 @@ import androidx.annotation.StringDef;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
-import com.halloapp.props.ServerProps;
-import com.halloapp.proto.clients.Album;
 import com.halloapp.proto.clients.AlbumMedia;
+import com.halloapp.proto.clients.BlobVersion;
 import com.halloapp.proto.clients.Comment;
-import com.halloapp.proto.clients.CommentContainer;
-import com.halloapp.proto.clients.CommentContext;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.EncryptedResource;
 import com.halloapp.proto.clients.Image;
 import com.halloapp.proto.clients.MediaType;
 import com.halloapp.proto.clients.Post;
-import com.halloapp.proto.clients.PostContainer;
-import com.halloapp.proto.clients.Text;
 import com.halloapp.proto.clients.Video;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
@@ -62,20 +57,37 @@ public class PublishedEntry {
         static final String MEDIA_TYPE_IMAGE = "image";
         static final String MEDIA_TYPE_VIDEO = "video";
 
+        @Retention(RetentionPolicy.SOURCE)
+        @IntDef({
+                BLOB_VERSION_UNKNOWN,
+                BLOB_VERSION_DEFAULT,
+                BLOB_VERSION_CHUNKED
+        })
+        public @interface BlobVersion {}
+        public static final int BLOB_VERSION_UNKNOWN = -1;
+        public static final int BLOB_VERSION_DEFAULT = 0;
+        public static final int BLOB_VERSION_CHUNKED = 1;
+
         final String type;
         final String url;
         final byte [] encKey;
         final byte [] encSha256hash;
         int width;
         int height;
+        public @BlobVersion int blobVersion;
+        public int chunkSize;
+        public long blobSize;
 
-        public Media(@MediaType String type, String url, byte [] encKey, byte [] encSha256hash, int width, int height) {
+        public Media(@MediaType String type, String url, byte [] encKey, byte [] encSha256hash, int width, int height, @BlobVersion int blobVersion, int chunkSize, long blobSize) {
             this.type = type;
             this.url = url;
             this.encKey = encKey;
             this.encSha256hash = encSha256hash;
             this.width = width;
             this.height = height;
+            this.blobVersion = blobVersion;
+            this.chunkSize = chunkSize;
+            this.blobSize = blobSize;
         }
     }
 
@@ -216,6 +228,9 @@ public class PublishedEntry {
             mediaBuilder.setEncryptionKey(ByteString.copyFrom(item.encKey));
             mediaBuilder.setCiphertextHash(ByteString.copyFrom(item.encSha256hash));
             mediaBuilder.setDownloadUrl(item.url);
+            mediaBuilder.setBlobVersion(getProtoBlobVersion(item.blobVersion));
+            mediaBuilder.setChunkSize(item.chunkSize);
+            mediaBuilder.setBlobSize(item.blobSize);
             mediaList.add(mediaBuilder.build());
         }
         return mediaList;
@@ -231,7 +246,14 @@ public class PublishedEntry {
         return MediaType.MEDIA_TYPE_UNSPECIFIED;
     }
 
-    private static String fromProtoMediaType(@NonNull MediaType type) {
+    private BlobVersion getProtoBlobVersion(@NonNull @Media.BlobVersion int blobVersion) {
+        if (blobVersion == Media.BLOB_VERSION_CHUNKED) {
+            return BlobVersion.BLOB_VERSION_CHUNKED;
+        }
+        return BlobVersion.BLOB_VERSION_DEFAULT;
+    }
+
+    private static @Media.MediaType String fromProtoMediaType(@NonNull MediaType type) {
         if (type == MediaType.MEDIA_TYPE_IMAGE) {
             return Media.MEDIA_TYPE_IMAGE;
         } else if (type == MediaType.MEDIA_TYPE_VIDEO) {
@@ -239,6 +261,18 @@ public class PublishedEntry {
         }
         Log.w("Unrecognized MediaType " + type);
         return null;
+    }
+
+    private static @Media.BlobVersion int fromProtoBlobVersion(@NonNull BlobVersion blobVersion) {
+        switch (blobVersion) {
+            case BLOB_VERSION_DEFAULT:
+                return Media.BLOB_VERSION_DEFAULT;
+
+            case BLOB_VERSION_CHUNKED:
+                return Media.BLOB_VERSION_CHUNKED;
+        }
+        Log.w("Unrecognized BlobVersion " + blobVersion);
+        return Media.BLOB_VERSION_UNKNOWN;
     }
 
     private static List<Media> fromMediaProtos(List<com.halloapp.proto.clients.Media> mediaList) {
@@ -250,7 +284,10 @@ public class PublishedEntry {
                     item.getEncryptionKey().toByteArray(),
                     item.getCiphertextHash().toByteArray(),
                     item.getWidth(),
-                    item.getHeight()));
+                    item.getHeight(),
+                    fromProtoBlobVersion(item.getBlobVersion()),
+                    item.getChunkSize(),
+                    item.getBlobSize()));
         }
         return ret;
     }

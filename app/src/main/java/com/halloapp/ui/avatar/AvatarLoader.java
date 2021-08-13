@@ -29,6 +29,7 @@ import com.halloapp.content.Media;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.media.ChunkedMediaParametersException;
 import com.halloapp.media.Downloader;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.props.ServerProps;
@@ -234,7 +235,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 }
 
                 contactAvatarInfo.avatarCheckTimestamp = System.currentTimeMillis();
-            } catch (InterruptedException | IOException | GeneralSecurityException | ObservableErrorException e) {
+            } catch (InterruptedException | IOException | GeneralSecurityException | ObservableErrorException | ChunkedMediaParametersException e) {
                 Log.w("AvatarLoader: Failed getting avatar for " + chatId + "; resetting values", e);
                 contactAvatarInfo.avatarCheckTimestamp = 0;
                 contactAvatarInfo.avatarId = null;

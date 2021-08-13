@@ -9,9 +9,11 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.proto.clients.AlbumMedia;
 import com.halloapp.proto.clients.EncryptedResource;
 import com.halloapp.proto.clients.Image;
+import com.halloapp.proto.clients.StreamingInfo;
 import com.halloapp.proto.clients.Video;
 import com.halloapp.proto.clients.VoiceNote;
-import com.halloapp.xmpp.PublishedEntry;
+import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.MessageElementHelper;
 
 import java.io.File;
 import java.lang.annotation.Retention;
@@ -39,6 +41,13 @@ public class Media {
     public static final int TRANSFERRED_FAILURE = 2;
     public static final int TRANSFERRED_RESUME = 3;
 
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({BLOB_VERSION_UNKNOWN, BLOB_VERSION_DEFAULT, BLOB_VERSION_CHUNKED})
+    public @interface BlobVersion {}
+    public static final int BLOB_VERSION_UNKNOWN = -1;
+    public static final int BLOB_VERSION_DEFAULT = 0;
+    public static final int BLOB_VERSION_CHUNKED = 1;
+
     public long rowId;
     public final @MediaType int type;
     public String url;
@@ -49,6 +58,9 @@ public class Media {
     public byte [] encKey;
     public byte [] encSha256hash;
     public byte [] decSha256hash;
+    public @BlobVersion int blobVersion;
+    public int chunkSize;
+    public long blobSize;
     private boolean initialState = false;
 
     public @TransferredState int transferred;
@@ -65,32 +77,34 @@ public class Media {
             }
         }
 
-        return new Media(0, type, null, file, generateEncKey(), null, null, width, height, TRANSFERRED_NO);
+        return new Media(0, type, null, file, generateEncKey(), null, null, width, height, TRANSFERRED_NO, BLOB_VERSION_DEFAULT, 0, 0);
     }
 
-    public static Media createFromUrl(@MediaType int type, String url, byte [] encKey, byte [] encSha256hash, int width, int height) {
-        return new Media(0, type, url, null, encKey, encSha256hash, null, width, height, TRANSFERRED_NO);
+    public static Media createFromUrl(@MediaType int type, String url, byte [] encKey, byte [] encSha256hash, int width, int height, @BlobVersion int blobVersion, int chunkSize, long blobSize) {
+        return new Media(0, type, url, null, encKey, encSha256hash, null, width, height, TRANSFERRED_NO, blobVersion, chunkSize, blobSize);
     }
 
     public static Media parseFromProto(Image image) {
         EncryptedResource resource = image.getImg();
         return createFromUrl(MEDIA_TYPE_IMAGE, resource.getDownloadUrl(),
                 resource.getEncryptionKey().toByteArray(), resource.getCiphertextHash().toByteArray(),
-                image.getWidth(), image.getHeight());
+                image.getWidth(), image.getHeight(), BLOB_VERSION_DEFAULT, 0, 0);
     }
 
     public static Media parseFromProto(Video video) {
         EncryptedResource resource = video.getVideo();
+        StreamingInfo streamingInfo = video.getStreamingInfo();
+        @BlobVersion int blobVersion = MessageElementHelper.fromProtoBlobVersion(streamingInfo.getBlobVersion());
         return createFromUrl(MEDIA_TYPE_VIDEO, resource.getDownloadUrl(),
                 resource.getEncryptionKey().toByteArray(), resource.getCiphertextHash().toByteArray(),
-                video.getWidth(), video.getHeight());
+                video.getWidth(), video.getHeight(), blobVersion, streamingInfo.getChunkSize(), streamingInfo.getBlobSize());
     }
 
     public static Media parseFromProto(VoiceNote voiceNote) {
         EncryptedResource resource = voiceNote.getAudio();
         return createFromUrl(MEDIA_TYPE_AUDIO, resource.getDownloadUrl(),
                 resource.getEncryptionKey().toByteArray(), resource.getCiphertextHash().toByteArray(),
-                0, 0);
+                0, 0, BLOB_VERSION_DEFAULT, 0, 0);
     }
 
     public static Media parseFromProto(AlbumMedia albumMedia) {
@@ -167,7 +181,7 @@ public class Media {
         }
     }
 
-    public Media(long rowId, @MediaType int type, String url, File file, byte[] encKey, byte [] encSha256hash, byte [] decSha256hash, int width, int height, @TransferredState int transferred) {
+    public Media(long rowId, @MediaType int type, String url, File file, byte[] encKey, byte [] encSha256hash, byte [] decSha256hash, int width, int height, @TransferredState int transferred, @BlobVersion int blobVersion, int chunkSize, long blobSize) {
         this.rowId = rowId;
         this.type = type;
         this.url = url;
@@ -178,6 +192,9 @@ public class Media {
         this.width = width;
         this.height = height;
         this.transferred = transferred;
+        this.blobVersion = blobVersion;
+        this.chunkSize = chunkSize;
+        this.blobSize = blobSize;
     }
 
     private static byte [] generateEncKey() {

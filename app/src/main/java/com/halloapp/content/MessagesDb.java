@@ -146,6 +146,11 @@ class MessagesDb {
                     if (mediaItem.decSha256hash != null) {
                         mediaItemValues.put(MediaTable.COLUMN_DEC_SHA256_HASH, mediaItem.decSha256hash);
                     }
+                    mediaItemValues.put(MediaTable.COLUMN_BLOB_VERSION, mediaItem.blobVersion);
+                    if (mediaItem.blobVersion == Media.BLOB_VERSION_CHUNKED) {
+                        mediaItemValues.put(MediaTable.COLUMN_CHUNK_SIZE, mediaItem.chunkSize);
+                        mediaItemValues.put(MediaTable.COLUMN_BLOB_SIZE, mediaItem.blobSize);
+                    }
                     mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
                 }
                 mentionsDb.addMentions(message);
@@ -563,6 +568,11 @@ class MessagesDb {
                 values.put(MediaTable.COLUMN_HEIGHT, dimensions.getHeight());
             }
         }
+        values.put(MediaTable.COLUMN_BLOB_VERSION, media.blobVersion);
+        if (media.blobVersion == Media.BLOB_VERSION_CHUNKED) {
+            values.put(MediaTable.COLUMN_CHUNK_SIZE, media.chunkSize);
+            values.put(MediaTable.COLUMN_BLOB_SIZE, media.blobSize);
+        }
         values.put(MediaTable.COLUMN_TRANSFERRED, media.transferred);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         try {
@@ -936,6 +946,11 @@ class MessagesDb {
                 if (mediaItem.decSha256hash != null) {
                     mediaItemValues.put(MediaTable.COLUMN_DEC_SHA256_HASH, mediaItem.decSha256hash);
                 }
+                mediaItemValues.put(MediaTable.COLUMN_BLOB_VERSION, mediaItem.blobVersion);
+                if (mediaItem.blobVersion == Media.BLOB_VERSION_CHUNKED) {
+                    mediaItemValues.put(MediaTable.COLUMN_CHUNK_SIZE, mediaItem.chunkSize);
+                    mediaItemValues.put(MediaTable.COLUMN_BLOB_SIZE, mediaItem.blobSize);
+                }
                 mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
             }
             mentionsDb.addMentions(replacement);
@@ -1152,7 +1167,10 @@ class MessagesDb {
                             null,
                             cursor.getInt(15),
                             cursor.getInt(16),
-                            cursor.getInt(17));
+                            cursor.getInt(17),
+                            Media.BLOB_VERSION_UNKNOWN,
+                            0,
+                            0);
                     media.encFile = fileStore.getTmpFile(cursor.getString(14));
                     Preconditions.checkNotNull(message).media.add(media);
                 }
@@ -1267,7 +1285,10 @@ class MessagesDb {
                             null,
                             cursor.getInt(15),
                             cursor.getInt(16),
-                            cursor.getInt(17));
+                            cursor.getInt(17),
+                            Media.BLOB_VERSION_UNKNOWN,
+                            0,
+                            0);
                     media.encFile = fileStore.getTmpFile(cursor.getString(14));
                     Preconditions.checkNotNull(message).media.add(media);
                 }
@@ -1302,6 +1323,9 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_ENC_KEY + ", " +
                 "m." + MediaTable.COLUMN_SHA256_HASH + "," +
                 "m." + MediaTable.COLUMN_DEC_SHA256_HASH + "," +
+                "m." + MediaTable.COLUMN_BLOB_VERSION + ", " +
+                "m." + MediaTable.COLUMN_CHUNK_SIZE + "," +
+                "m." + MediaTable.COLUMN_BLOB_SIZE + "," +
                 "r." + RepliesTable.COLUMN_POST_ID + ", " +
                 "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + ", " +
                 "r." + RepliesTable.COLUMN_REPLY_MESSAGE_ID + ", " +
@@ -1322,7 +1346,10 @@ class MessagesDb {
                     MediaTable.COLUMN_ENC_KEY + ", " +
                     MediaTable.COLUMN_SHA256_HASH + "," +
                     MediaTable.COLUMN_DEC_SHA256_HASH + "," +
-                    MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                    MediaTable.COLUMN_TRANSFERRED + "," +
+                    MediaTable.COLUMN_BLOB_VERSION + "," +
+                    MediaTable.COLUMN_CHUNK_SIZE + "," +
+                    MediaTable.COLUMN_BLOB_SIZE + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                 "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
             "LEFT JOIN (" +
                 "SELECT " +
@@ -1340,7 +1367,7 @@ class MessagesDb {
         try (final Cursor cursor = db.rawQuery(sql, null)) {
             while (cursor.moveToNext()) {
                 if (message == null) {
-                    String rawReplySenderId = cursor.getString(25);
+                    String rawReplySenderId = cursor.getString(28);
                     message = new Message(
                             cursor.getLong(0),
                             ChatId.fromNullable(cursor.getString(1)),
@@ -1351,10 +1378,10 @@ class MessagesDb {
                             cursor.getInt(6),
                             cursor.getInt(7),
                             cursor.getString(8),
-                            cursor.getString(21),
-                            cursor.getInt(22),
-                            cursor.getString(23),
-                            cursor.getInt(24),
+                            cursor.getString(24),
+                            cursor.getInt(25),
+                            cursor.getString(26),
+                            cursor.getInt(27),
                             rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
@@ -1370,7 +1397,10 @@ class MessagesDb {
                             cursor.getBlob(20),
                             cursor.getInt(15),
                             cursor.getInt(16),
-                            cursor.getInt(17));
+                            cursor.getInt(17),
+                            cursor.getInt(21),
+                            cursor.getInt(22),
+                            cursor.getLong(23));
                     media.encFile = fileStore.getTmpFile(cursor.getString(14));
                     Preconditions.checkNotNull(message).media.add(media);
                 }
@@ -1520,7 +1550,10 @@ class MessagesDb {
                             null,
                             cursor.getInt(15),
                             cursor.getInt(16),
-                            cursor.getInt(17));
+                            cursor.getInt(17),
+                            Media.BLOB_VERSION_UNKNOWN,
+                            0,
+                            0);
                     media.encFile = fileStore.getTmpFile(cursor.getString(14));
                     Preconditions.checkNotNull(message).media.add(media);
                 }
@@ -1576,7 +1609,10 @@ class MessagesDb {
                     null,
                     cursor.getInt(5),
                     cursor.getInt(6),
-                    cursor.getInt(7));
+                    cursor.getInt(7),
+                    Media.BLOB_VERSION_UNKNOWN,
+                    0,
+                    0);
                 media.encFile = fileStore.getTmpFile(cursor.getString(4));
 
                 items.add(media);
@@ -1641,6 +1677,9 @@ class MessagesDb {
                     "m." + MediaTable.COLUMN_WIDTH + "," +
                     "m." + MediaTable.COLUMN_HEIGHT + "," +
                     "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
+                    "m." + MediaTable.COLUMN_BLOB_VERSION + "," +
+                    "m." + MediaTable.COLUMN_CHUNK_SIZE + "," +
+                    "m." + MediaTable.COLUMN_BLOB_SIZE + "," +
                     "r." + RepliesTable.COLUMN_POST_ID + ", " +
                     "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + ", " +
                     "r." + RepliesTable.COLUMN_REPLY_MESSAGE_ID + ", " +
@@ -1661,7 +1700,10 @@ class MessagesDb {
                         MediaTable.COLUMN_DEC_SHA256_HASH + "," +
                         MediaTable.COLUMN_WIDTH + "," +
                         MediaTable.COLUMN_HEIGHT + "," +
-                        MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                        MediaTable.COLUMN_TRANSFERRED + "," +
+                        MediaTable.COLUMN_BLOB_VERSION + "," +
+                        MediaTable.COLUMN_CHUNK_SIZE + "," +
+                        MediaTable.COLUMN_BLOB_SIZE + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                     "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
                 "LEFT JOIN (" +
                     "SELECT " +
@@ -1687,7 +1729,7 @@ class MessagesDb {
                     if (message != null) {
                         messages.add(message);
                     }
-                    String rawReplySenderId = cursor.getString(25);
+                    String rawReplySenderId = cursor.getString(28);
                     message = new Message(
                             rowId,
                             ChatId.fromNullable(cursor.getString(1)),
@@ -1698,10 +1740,10 @@ class MessagesDb {
                             cursor.getInt(6),
                             cursor.getInt(7),
                             cursor.getString(8),
-                            cursor.getString(21),
-                            cursor.getInt(22),
-                            cursor.getString(23),
-                            cursor.getInt(24),
+                            cursor.getString(24),
+                            cursor.getInt(25),
+                            cursor.getString(26),
+                            cursor.getInt(27),
                             rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
@@ -1717,7 +1759,10 @@ class MessagesDb {
                             cursor.getBlob(17),
                             cursor.getInt(18),
                             cursor.getInt(19),
-                            cursor.getInt(20));
+                            cursor.getInt(20),
+                            cursor.getInt(21),
+                            cursor.getInt(22),
+                            cursor.getLong(23));
                     media.encFile = fileStore.getTmpFile(cursor.getString(14));
                     Preconditions.checkNotNull(message).media.add(media);
                 }

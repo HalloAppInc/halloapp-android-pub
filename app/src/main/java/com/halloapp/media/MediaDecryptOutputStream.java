@@ -32,9 +32,13 @@ public class MediaDecryptOutputStream extends FilterOutputStream {
     private boolean closed;
 
     public MediaDecryptOutputStream(@NonNull byte[] mediaKey, @Media.MediaType int type, @NonNull OutputStream os) throws IOException {
+        this(mediaKey, type, -1, os);
+    }
+
+    public MediaDecryptOutputStream(@NonNull byte[] mediaKey, @Media.MediaType int type, int chunkNumber, @NonNull OutputStream os) throws IOException {
         super(os);
 
-        final MediaKeys keys = new MediaKeys(mediaKey, type);
+        final MediaKeys keys = new MediaKeys(mediaKey, type, chunkNumber);
 
         try {
             cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");

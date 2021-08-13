@@ -5,6 +5,7 @@ import android.util.Size;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 
 import com.dstukalov.videoconverter.BadMediaException;
 import com.dstukalov.videoconverter.MediaConversionException;
@@ -27,6 +28,7 @@ import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.MediaUploadIq;
 import com.halloapp.xmpp.util.ObservableErrorException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -125,7 +127,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             Media existingHashedMedia = null;
             try {
                 decSha256hash = FileUtils.getFileSha256(media.file);
-                existingHashedMedia = contentDb.getLatestMediaWithHash(decSha256hash);
+                existingHashedMedia = contentDb.getLatestMediaWithHash(decSha256hash, media.blobVersion);
                 Log.d("Resumable Uploader: existing upload = " + existingHashedMedia + " with id " + mediaLogId);
             } catch (IOException e) {
                 Log.e("Resumable Uploader: could not compute hash for " + media.file.getAbsolutePath() + " with id " + mediaLogId, e);
@@ -137,9 +139,25 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
 
             File encryptedFile;
             try {
-                encryptedFile = encryptFile(media.file, media.encKey, media.type, contentItem.id);
-            } catch (IOException e) {
-                Log.e("Resumable Uploader Fail to encrypt file for " + mediaLogId);
+                if (media.blobVersion == Media.BLOB_VERSION_DEFAULT) {
+                    encryptedFile = encryptFile(media.file, media.encKey, media.type, contentItem.id);
+                } else if (media.blobVersion == Media.BLOB_VERSION_CHUNKED) {
+                    if (media.encKey != null) {
+                        ChunkedMediaParameters chunkedParameters = ChunkedMediaParameters.computeFromPlaintextSize(media.file.length(), ChunkedMediaParameters.DEFAULT_CHUNK_SIZE);
+                        Log.d("Resumable Uploader chunkedParameters = " + chunkedParameters);
+                        encryptedFile = encryptChunkedFile(chunkedParameters, media.file, media.encKey, media.type, contentItem.id);
+                        media.blobSize = chunkedParameters.blobSize;
+                        media.chunkSize = chunkedParameters.chunkSize;
+                    } else {
+                        Log.e("Resumable Uploader Cannot decrypt BLOB_VERSION_CHUNKED file when mediaKey is null.");
+                        break;
+                    }
+                } else {
+                    Log.e("Resumable Uploader Unrecognized blob version for " + mediaLogId);
+                    break;
+                }
+            } catch (IOException | ChunkedMediaParametersException e) {
+                Log.e("Resumable Uploader Fail to encrypt file for " + mediaLogId, e);
                 break;
             }
             long fileSize = encryptedFile.length();
@@ -310,23 +328,87 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         } else {
             encryptedFile = new File(fileStore.getTmpDir(), unfinishedEncryptedFileName);
         }
-        OutputStream out = new FileOutputStream(encryptedFile);
-        if (mediaKey != null) {
-            out = new MediaEncryptOutputStream(mediaKey, type, out);
+
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            out = new FileOutputStream(encryptedFile);
+            if (mediaKey != null) {
+                out = new MediaEncryptOutputStream(mediaKey, type, out);
+            }
+
+            in = new FileInputStream(file);
+            final int bufferSize = 1024;
+            final byte[] bytes = new byte[bufferSize];
+            while (true) {
+                final int count = in.read(bytes, 0, bufferSize);
+                if (count == -1) {
+                    break;
+                }
+                out.write(bytes, 0, count);
+            }
+        } finally {
+            FileUtils.closeSilently(in);
+            FileUtils.closeSilently(out);
         }
 
-        final InputStream in = new FileInputStream(file);
-        final int bufferSize = 1024;
-        final byte[] bytes = new byte[bufferSize];
-        while (true) {
-            final int count = in.read(bytes, 0, bufferSize);
-            if (count == -1) {
-                break;
-            }
-            out.write(bytes, 0, count);
+        File newEncryptedFile = new File(fileStore.getTmpDir(), finishedEncryptedFileName);
+        if (!encryptedFile.renameTo(newEncryptedFile)) {
+            Log.e("Resumable Uploader Task convert: failed to rename " + encryptedFile.getAbsolutePath() + " to " + newEncryptedFile.getAbsolutePath());
         }
-        in.close();
-        out.close();
+        return newEncryptedFile;
+    }
+
+    @WorkerThread
+    public static void encryptChunkedFile(@NonNull ChunkedMediaParameters chunkedParameters, @NonNull File plaintextFile, @NonNull File encryptedFile, @NonNull byte[] mediaKey, @Media.MediaType int type) throws IOException {
+        OutputStream outStream = null;
+        InputStream inStream = null;
+        try {
+            outStream = new FileOutputStream(encryptedFile);
+            inStream = new FileInputStream(plaintextFile);
+            final ByteArrayOutputStream chunkBufferStream = new ByteArrayOutputStream(chunkedParameters.chunkSize);
+            final byte[] buffer = new byte[1024];
+
+            for (int i = 0; i <= chunkedParameters.regularChunkCount; i++) {
+                if (i == chunkedParameters.regularChunkCount && chunkedParameters.estimatedTrailingChunkPtSize == 0) {
+                    break;
+                }
+
+                chunkBufferStream.reset();
+                try (OutputStream encryptedChunkOutStream = new MediaEncryptOutputStream(mediaKey, type, i, chunkBufferStream)) {
+                    int toCopySize = i < chunkedParameters.regularChunkCount ?
+                            chunkedParameters.regularChunkPtSize : chunkedParameters.estimatedTrailingChunkPtSize;
+
+                    while (toCopySize > 0) {
+                        final int count = inStream.read(buffer, 0, Math.min(buffer.length, toCopySize));
+                        if (count == -1) {
+                            break;
+                        } else {
+                            toCopySize -= count;
+                        }
+                        encryptedChunkOutStream.write(buffer, 0, count);
+                    }
+                }
+                outStream.write(chunkBufferStream.toByteArray());
+            }
+        } finally {
+            FileUtils.closeSilently(inStream);
+            FileUtils.closeSilently(outStream);
+        }
+    }
+
+    private File encryptChunkedFile(@NonNull ChunkedMediaParameters chunkedParameters, @NonNull File unencryptedFile, @NonNull byte[] mediaKey, @Media.MediaType int type, @NonNull String postId) throws IOException {
+        final String finishedEncryptedFileName = "encrypted-" + unencryptedFile.getName() + "-" + postId + "-finished";
+        final String unfinishedEncryptedFileName = "encrypted-" + unencryptedFile.getName() + "-" + postId + "-unfinished";
+
+        File encryptedFile = new File(fileStore.getTmpDir(), finishedEncryptedFileName);
+        if (encryptedFile.exists()) {
+            return encryptedFile;
+        } else {
+            encryptedFile = new File(fileStore.getTmpDir(), unfinishedEncryptedFileName);
+        }
+
+        encryptChunkedFile(chunkedParameters, unencryptedFile, encryptedFile, mediaKey, type);
 
         File newEncryptedFile = new File(fileStore.getTmpDir(), finishedEncryptedFileName);
         if (!encryptedFile.renameTo(newEncryptedFile)) {

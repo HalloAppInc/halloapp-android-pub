@@ -526,7 +526,7 @@ public class ConnectionImpl extends Connection {
                 null,
                 null);
         for (Media media : post.media) {
-            entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.encSha256hash, media.width, media.height));
+            entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.encSha256hash, media.width, media.height, media.blobVersion, media.chunkSize, media.blobSize));
         }
         for (Mention mention : post.mentions) {
             entry.mentions.add(Mention.toProto(mention));
@@ -588,7 +588,7 @@ public class ConnectionImpl extends Connection {
                     comment.postId,
                     comment.parentCommentId);
             for (Media media : comment.media) {
-                entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.encSha256hash, media.width, media.height));
+                entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.encSha256hash, media.width, media.height, media.blobVersion, media.chunkSize, media.blobSize));
             }
             for (Mention mention : comment.mentions) {
                 entry.mentions.add(Mention.toProto(mention));
@@ -1290,7 +1290,8 @@ public class ConnectionImpl extends Connection {
                 for (PublishedEntry.Media entryMedia : publishedEntry.media) {
                     np.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
                             entryMedia.encKey, entryMedia.encSha256hash,
-                            entryMedia.width, entryMedia.height));
+                            entryMedia.width, entryMedia.height,
+                            entryMedia.blobVersion, entryMedia.chunkSize, entryMedia.blobSize));
                 }
                 for (com.halloapp.proto.clients.Mention mentionProto : publishedEntry.mentions) {
                     Mention mention = Mention.parseFromProto(mentionProto);
@@ -1338,7 +1339,8 @@ public class ConnectionImpl extends Connection {
                 for (PublishedEntry.Media entryMedia : publishedEntry.media) {
                     comment.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
                             entryMedia.encKey, entryMedia.encSha256hash,
-                            entryMedia.width, entryMedia.height));
+                            entryMedia.width, entryMedia.height,
+                            entryMedia.blobVersion, entryMedia.chunkSize, entryMedia.blobSize));
                 }
                 for (com.halloapp.proto.clients.Mention mentionProto : publishedEntry.mentions) {
                     Mention mention = Mention.parseFromProto(mentionProto);

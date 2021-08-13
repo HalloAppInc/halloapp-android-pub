@@ -20,6 +20,7 @@ import com.halloapp.FileStore;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.content.Media;
+import com.halloapp.media.ChunkedMediaParametersException;
 import com.halloapp.media.Downloader;
 import com.halloapp.proto.server.ExportData;
 import com.halloapp.util.BgWorkers;
@@ -179,7 +180,7 @@ public class ExportDataActivity extends HalloActivity {
                 if (!file.exists()) {
                     try {
                         Downloader.run(url, null, null, Media.MEDIA_TYPE_UNKNOWN, null, file, p -> true, "export-data");
-                    } catch (IOException | GeneralSecurityException e) {
+                    } catch (IOException | GeneralSecurityException | ChunkedMediaParametersException e) {
                         Log.w("Failed to save export data", e);
                     }
                 }

@@ -347,9 +347,9 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public @Nullable Media getLatestMediaWithHash(@NonNull byte[] decSha256hash) {
+    public @Nullable Media getLatestMediaWithHash(@NonNull byte[] decSha256hash, @Media.BlobVersion int blobVersion) {
         Log.i("Get latest media with a given data hash");
-        return mediaDb.getLatestMediaWithHash(decSha256hash);
+        return mediaDb.getLatestMediaWithHash(decSha256hash, blobVersion);
     }
 
     @WorkerThread

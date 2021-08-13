@@ -1,3 +1,4 @@
+
 package com.halloapp.media;
 
 import androidx.annotation.NonNull;
@@ -32,9 +33,13 @@ public class MediaEncryptOutputStream extends FilterOutputStream {
     private boolean closed;
 
     public MediaEncryptOutputStream(@NonNull byte[] mediaKey, @Media.MediaType int type, @NonNull OutputStream os) throws IOException {
+        this(mediaKey, type, -1, os);
+    }
+
+    public MediaEncryptOutputStream(@NonNull byte[] mediaKey, @Media.MediaType int type, int chunkNumber, @NonNull OutputStream os) throws IOException {
         super(os);
 
-        final MediaKeys keys = new MediaKeys(mediaKey, type);
+        final MediaKeys keys = new MediaKeys(mediaKey, type, chunkNumber);
 
         try {
             cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");

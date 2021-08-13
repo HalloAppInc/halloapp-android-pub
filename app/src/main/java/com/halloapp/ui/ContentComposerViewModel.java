@@ -46,6 +46,7 @@ import com.halloapp.xmpp.privacy.PrivacyList;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -460,6 +461,16 @@ public class ContentComposerViewModel extends AndroidViewModel {
                 Post contentPost = (Post) contentItem;
                 if (groupId != null) {
                     contentPost.setParentGroup(groupId);
+
+                    Log.d("ContentComposerViewModel: PrepareContentTask groupId: " + groupId);
+                    GroupId[] testChunkGroups = {new GroupId("gmYchx3MBOXerd7QTmWqsO")};
+                    if (Arrays.asList(testChunkGroups).contains(groupId)) {
+                        for (Media mediaItem : contentPost.media) {
+                            if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
+                                mediaItem.blobVersion = Media.BLOB_VERSION_CHUNKED;
+                            }
+                        }
+                    }
                 } else {
                     FeedPrivacy feedPrivacy = feedPrivacyManager.getFeedPrivacy();
                     List<UserId> audienceList;

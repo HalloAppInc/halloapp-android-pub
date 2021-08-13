@@ -354,6 +354,11 @@ class PostsDb {
                 values.put(MediaTable.COLUMN_HEIGHT, dimensions.getHeight());
             }
         }
+        values.put(MediaTable.COLUMN_BLOB_VERSION, media.blobVersion);
+        if (media.blobVersion == Media.BLOB_VERSION_CHUNKED) {
+            values.put(MediaTable.COLUMN_CHUNK_SIZE, media.chunkSize);
+            values.put(MediaTable.COLUMN_BLOB_SIZE, media.blobSize);
+        }
         values.put(MediaTable.COLUMN_TRANSFERRED, media.transferred);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         try {
@@ -386,6 +391,11 @@ class PostsDb {
                 values.put(MediaTable.COLUMN_WIDTH, dimensions.getWidth());
                 values.put(MediaTable.COLUMN_HEIGHT, dimensions.getHeight());
             }
+        }
+        values.put(MediaTable.COLUMN_BLOB_VERSION, media.blobVersion);
+        if (media.blobVersion == Media.BLOB_VERSION_CHUNKED) {
+            values.put(MediaTable.COLUMN_CHUNK_SIZE, media.chunkSize);
+            values.put(MediaTable.COLUMN_BLOB_SIZE, media.blobSize);
         }
         values.put(MediaTable.COLUMN_TRANSFERRED, media.transferred);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -876,7 +886,10 @@ class PostsDb {
                             null,
                             cursor.getInt(16),
                             cursor.getInt(17),
-                            cursor.getInt(18));
+                            cursor.getInt(18),
+                            Media.BLOB_VERSION_UNKNOWN,
+                            0,
+                            0);
                     media.encFile = fileStore.getTmpFile(cursor.getString(15));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
@@ -978,7 +991,10 @@ class PostsDb {
                             null,
                             cursor.getInt(15),
                             cursor.getInt(16),
-                            cursor.getInt(17));
+                            cursor.getInt(17),
+                            Media.BLOB_VERSION_UNKNOWN,
+                            0,
+                            0);
                     media.encFile = fileStore.getTmpFile(cursor.getString(14));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
@@ -1058,7 +1074,10 @@ class PostsDb {
                             null,
                             cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13));
+                            cursor.getInt(13),
+                            Media.BLOB_VERSION_UNKNOWN,
+                            0,
+                            0);
                     media.encFile = fileStore.getTmpFile(cursor.getString(10));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
@@ -1169,7 +1188,10 @@ class PostsDb {
                     MediaTable.COLUMN_TRANSFERRED + "," +
                     MediaTable.COLUMN_ENC_KEY + "," +
                     MediaTable.COLUMN_SHA256_HASH + "," +
-                    MediaTable.COLUMN_DEC_SHA256_HASH + " " +
+                    MediaTable.COLUMN_DEC_SHA256_HASH + "," +
+                    MediaTable.COLUMN_BLOB_VERSION + "," +
+                    MediaTable.COLUMN_CHUNK_SIZE + "," +
+                    MediaTable.COLUMN_BLOB_SIZE + " " +
                 "FROM " + MediaTable.TABLE_NAME + " " +
                 "WHERE " + MediaTable.TABLE_NAME + "." + MediaTable.COLUMN_PARENT_ROW_ID + " = ? AND " + MediaTable.TABLE_NAME + "." + MediaTable.COLUMN_PARENT_TABLE + " = ?" +
                 "ORDER BY " + MediaTable._ID + " ASC";
@@ -1187,7 +1209,10 @@ class PostsDb {
                         cursor.getBlob(10),
                         cursor.getInt(5),
                         cursor.getInt(6),
-                        cursor.getInt(7));
+                        cursor.getInt(7),
+                        cursor.getInt(11),
+                        cursor.getInt(12),
+                        cursor.getLong(13));
                 media.encFile = fileStore.getTmpFile(cursor.getString(4));
                 ret.add(media);
             }
@@ -1264,7 +1289,10 @@ class PostsDb {
                             null,
                             cursor.getInt(15),
                             cursor.getInt(16),
-                            cursor.getInt(17));
+                            cursor.getInt(17),
+                            Media.BLOB_VERSION_UNKNOWN,
+                            0,
+                            0);
                     media.encFile = fileStore.getTmpFile(cursor.getString(14));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
@@ -1546,7 +1574,10 @@ class PostsDb {
                     "m." + MediaTable.COLUMN_DEC_SHA256_HASH + "," +
                     "m." + MediaTable.COLUMN_WIDTH + "," +
                     "m." + MediaTable.COLUMN_HEIGHT + "," +
-                    "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+                    "m." + MediaTable.COLUMN_TRANSFERRED + "," +
+                    "m." + MediaTable.COLUMN_BLOB_VERSION + ", " +
+                    "m." + MediaTable.COLUMN_CHUNK_SIZE + "," +
+                    "m." + MediaTable.COLUMN_BLOB_SIZE + " " +
                 "FROM " + PostsTable.TABLE_NAME + " " +
                 "LEFT JOIN (" +
                     "SELECT " +
@@ -1562,7 +1593,10 @@ class PostsDb {
                         MediaTable.COLUMN_DEC_SHA256_HASH + "," +
                         MediaTable.COLUMN_WIDTH + "," +
                         MediaTable.COLUMN_HEIGHT + "," +
-                        MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                        MediaTable.COLUMN_TRANSFERRED + "," +
+                        MediaTable.COLUMN_BLOB_VERSION + "," +
+                        MediaTable.COLUMN_CHUNK_SIZE + "," +
+                        MediaTable.COLUMN_BLOB_SIZE + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                     "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
                 "WHERE " +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "=0 AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime() + " " +
@@ -1611,7 +1645,10 @@ class PostsDb {
                             cursor.getBlob(18),
                             cursor.getInt(19),
                             cursor.getInt(20),
-                            cursor.getInt(21));
+                            cursor.getInt(21),
+                            cursor.getInt(22),
+                            cursor.getInt(23),
+                            cursor.getLong(24));
                     media.encFile = fileStore.getTmpFile(cursor.getString(15));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
@@ -1843,7 +1880,10 @@ class PostsDb {
                             null,
                             cursor.getInt(11),
                             cursor.getInt(12),
-                            cursor.getInt(13));
+                            cursor.getInt(13),
+                            Media.BLOB_VERSION_UNKNOWN,
+                            0,
+                            0);
                     media.encFile = fileStore.getTmpFile(cursor.getString(10));
                     Preconditions.checkNotNull(post).media.add(media);
                 }

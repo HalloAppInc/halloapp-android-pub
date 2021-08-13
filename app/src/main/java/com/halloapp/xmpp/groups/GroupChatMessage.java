@@ -70,7 +70,10 @@ public class GroupChatMessage {
                     item.getEncryptionKey().toByteArray(),
                     item.getCiphertextHash().toByteArray(),
                     item.getWidth(),
-                    item.getHeight()));
+                    item.getHeight(),
+                    MessageElementHelper.fromProtoBlobVersion(item.getBlobVersion()),
+                    item.getChunkSize(),
+                    item.getBlobSize()));
         }
         for (com.halloapp.proto.clients.Mention item : chatMessage.getMentionsList()) {
             message.mentions.add(Mention.parseFromProto(item));

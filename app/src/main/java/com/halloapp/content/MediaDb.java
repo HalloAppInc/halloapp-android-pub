@@ -28,17 +28,18 @@ public class MediaDb {
     }
 
     @WorkerThread
-    @Nullable Media getLatestMediaWithHash(@NonNull byte[] decSha256hash) {
+    @Nullable Media getLatestMediaWithHash(@NonNull byte[] decSha256hash, @Media.BlobVersion int blobVersion) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final String rowQuerySql =
                 "SELECT " + MediaTable._ID + " "
                         + "FROM " + MediaTable.TABLE_NAME + " "
-                        + "WHERE " + MediaTable.COLUMN_DEC_SHA256_HASH + "=? "
+                        + "WHERE " + MediaTable.COLUMN_DEC_SHA256_HASH + "=? AND " + MediaTable.COLUMN_BLOB_VERSION + "=? "
                         + "ORDER BY " + MediaTable._ID + " DESC "
                         + "LIMIT " + 1;
         final long rowId;
         try (final SQLiteStatement statement = db.compileStatement(rowQuerySql)) {
             statement.bindBlob(1, decSha256hash);
+            statement.bindLong(2, blobVersion);
             try {
                 rowId = statement.simpleQueryForLong();
             } catch (SQLiteDoneException e) {
@@ -56,7 +57,10 @@ public class MediaDb {
                         MediaTable.COLUMN_DEC_SHA256_HASH + "," +
                         MediaTable.COLUMN_WIDTH + "," +
                         MediaTable.COLUMN_HEIGHT + "," +
-                        MediaTable.COLUMN_TRANSFERRED + " " +
+                        MediaTable.COLUMN_TRANSFERRED + "," +
+                        MediaTable.COLUMN_BLOB_VERSION + "," +
+                        MediaTable.COLUMN_CHUNK_SIZE + "," +
+                        MediaTable.COLUMN_BLOB_SIZE + " " +
                         "FROM " + MediaTable.TABLE_NAME + " " +
                         "WHERE " + MediaTable._ID + "=?";
         try (final Cursor cursor = db.rawQuery(uploadQuerySql, new String[]{Long.toString(rowId)})) {
@@ -71,7 +75,10 @@ public class MediaDb {
                         cursor.getBlob(5),
                         cursor.getInt(6),
                         cursor.getInt(7),
-                        cursor.getInt(8));
+                        cursor.getInt(8),
+                        cursor.getInt(9),
+                        cursor.getInt(10),
+                        cursor.getLong(11));
             }
         }
         return null;
@@ -135,6 +142,11 @@ public class MediaDb {
         }
         if (mediaItem.decSha256hash != null) {
             mediaItemValues.put(MediaTable.COLUMN_DEC_SHA256_HASH, mediaItem.decSha256hash);
+        }
+        mediaItemValues.put(MediaTable.COLUMN_BLOB_VERSION, mediaItem.blobVersion);
+        if (mediaItem.blobVersion == Media.BLOB_VERSION_CHUNKED) {
+            mediaItemValues.put(MediaTable.COLUMN_CHUNK_SIZE, mediaItem.chunkSize);
+            mediaItemValues.put(MediaTable.COLUMN_BLOB_SIZE, mediaItem.blobSize);
         }
         mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
     }
