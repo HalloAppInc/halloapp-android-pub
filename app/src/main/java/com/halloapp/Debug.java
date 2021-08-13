@@ -152,7 +152,7 @@ public class Debug {
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
-                            AvatarLoader avatarLoader = AvatarLoader.getInstance();
+                            AvatarLoader avatarLoader = AvatarLoader.getInstance(activity);
                             avatarLoader.removeMyAvatar();
                             return null;
                         }

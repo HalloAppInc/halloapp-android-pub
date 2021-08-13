@@ -40,7 +40,7 @@ public class ViewAvatarActivity extends HalloActivity {
         activity.startActivity(i, options.toBundle());
     }
 
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(this);
 
     private DragDownToDismissHelper dragDownToDismissHelper;
 

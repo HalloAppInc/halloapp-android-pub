@@ -74,13 +74,12 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
 
     private final GroupsAdapter adapter = new GroupsAdapter();
 
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
-
     private GlobalUI globalUI;
     private ContactLoader contactLoader;
     private TextContentLoader textContentLoader;
     private UnseenGroupPostsLoader unseenGroupPostsLoader;
     private SystemMessageTextResolver systemMessageTextResolver;
+    private AvatarLoader avatarLoader;
 
     private GroupListViewModel viewModel;
 
@@ -115,6 +114,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        avatarLoader = AvatarLoader.getInstance(this.getActivity());
         globalUI = GlobalUI.getInstance();
         contactLoader = new ContactLoader();
         textContentLoader = new TextContentLoader(requireContext());

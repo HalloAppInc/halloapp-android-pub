@@ -15,6 +15,7 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.collection.LruCache;
 import androidx.core.content.ContextCompat;
 
@@ -32,12 +33,11 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.ChunkedMediaParametersException;
 import com.halloapp.media.Downloader;
 import com.halloapp.media.MediaUtils;
-import com.halloapp.props.ServerProps;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.util.ObservableErrorException;
 
@@ -53,7 +53,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     private static AvatarLoader instance;
 
-    private final Context context;
+    private Context context;
     private final Connection connection;
     private final ContactsDb contactsDb;
     private final LruCache<String, Bitmap> cache;
@@ -63,7 +63,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     private boolean isDarkMode;
 
-    public static AvatarLoader getInstance() {
+    public static AvatarLoader getInstance(Context context) {
         if (instance == null) {
             synchronized (AvatarLoader.class) {
                 if (instance == null) {
@@ -71,6 +71,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 }
             }
         }
+        instance.context = context;
         return instance;
     }
 
@@ -267,7 +268,9 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     }
 
     @NonNull private Drawable getDefaultAvatar(@NonNull ChatId chatId) {
-        boolean darkMode = (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        int localMode = AppCompatDelegate.getDefaultNightMode();
+        boolean darkMode = localMode == AppCompatDelegate.MODE_NIGHT_YES ||
+                ((localMode == AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM) && (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES);
         if (darkMode != isDarkMode) {
             isDarkMode = darkMode;
             defaultGroupAvatar = null;

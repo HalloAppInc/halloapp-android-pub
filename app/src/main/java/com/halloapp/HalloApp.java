@@ -11,6 +11,7 @@ import android.os.StrictMode;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
@@ -42,6 +43,10 @@ public class HalloApp extends Application {
         if (ServerProps.getInstance().getIsInternalUser() || BuildConfig.DEBUG) {
             Preferences.getInstance().loadVideoOverride();
         }
+
+        BgWorkers.getInstance().execute(() -> {
+            AppCompatDelegate.setDefaultNightMode(Preferences.getInstance().getNightMode());
+        });
 
         if (!BuildConfig.DEBUG) {
             Log.uploadUnsentReports();

@@ -74,7 +74,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
             setCanSave();
         });
         bgWorkers.execute(() -> {
-            hasAvatarSet.postValue(AvatarLoader.getInstance().hasAvatar());
+            hasAvatarSet.postValue(AvatarLoader.getInstance(application).hasAvatar());
         });
 
     }
@@ -162,8 +162,11 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         private static final String WORKER_PARAM_NAME = "name";
         private static final String WORKER_PARAM_AVATAR_REMOVAL = "avatar_removal";
 
+        AvatarLoader avatarLoader;
+
         public UpdateProfileWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
             super(context, workerParams);
+            avatarLoader = AvatarLoader.getInstance(context);
         }
 
         @Override
@@ -195,7 +198,6 @@ public class SettingsProfileViewModel extends AndroidViewModel {
                         }
                         final File outFile = FileStore.getInstance().getAvatarFile(UserId.ME.rawId());
                         FileUtils.copyFile(avatarFile, outFile);
-                        AvatarLoader avatarLoader = AvatarLoader.getInstance();
                         avatarLoader.reportMyAvatarChanged(avatarId);
                     } catch (IOException e) {
                         Log.e("Failed to get base64", e);
@@ -206,7 +208,6 @@ public class SettingsProfileViewModel extends AndroidViewModel {
                     }
                 }
                 if (avatarDeleted) {
-                    AvatarLoader avatarLoader = AvatarLoader.getInstance();
                     avatarLoader.removeMyAvatar();
                     Connection.getInstance().removeAvatar();
                 }

@@ -77,11 +77,11 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
     private final ChatsAdapter adapter = new ChatsAdapter();
 
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
     private final PresenceLoader presenceLoader = PresenceLoader.getInstance();
 
     private ContactLoader contactLoader;
     private TextContentLoader textContentLoader;
+    private AvatarLoader avatarLoader;
 
     private ChatsViewModel viewModel;
 
@@ -116,7 +116,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        avatarLoader = AvatarLoader.getInstance(this.getActivity());
         contactLoader = new ContactLoader();
         textContentLoader = new TextContentLoader(requireContext());
     }

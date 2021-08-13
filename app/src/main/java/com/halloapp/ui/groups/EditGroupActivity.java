@@ -85,7 +85,7 @@ public class EditGroupActivity extends HalloActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        avatarLoader = AvatarLoader.getInstance();
+        avatarLoader = AvatarLoader.getInstance(this);
 
         groupId = new GroupId(Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_GROUP_ID)));
         viewModel = new ViewModelProvider(this, new EditGroupActivityViewModel.Factory(getApplication(), groupId)).get(EditGroupActivityViewModel.class);

@@ -94,7 +94,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             GroupsSync.getInstance(context),
                             KeyManager.getInstance(),
                             Preferences.getInstance(),
-                            AvatarLoader.getInstance(),
+                            AvatarLoader.getInstance(context),
                             PostsManager.getInstance(),
                             Notifications.getInstance(context),
                             ForegroundChat.getInstance(),

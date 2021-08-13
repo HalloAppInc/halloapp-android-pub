@@ -49,7 +49,6 @@ public class ProfileFragment extends PostsFragment {
 
     private final Me me = Me.getInstance();
     private final ContactsDb contactsDb = ContactsDb.getInstance();
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
     private final ServerProps serverProps = ServerProps.getInstance();
 
     private ImageView avatarView;
@@ -59,6 +58,8 @@ public class ProfileFragment extends PostsFragment {
     private View unblockView;
     private View addToContactsView;
     private RecyclerView postsView;
+
+    private AvatarLoader avatarLoader;
 
     private MenuItem blockMenuItem;
 
@@ -88,6 +89,7 @@ public class ProfileFragment extends PostsFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("ProfileFragment: onCreate");
+        avatarLoader = AvatarLoader.getInstance(getActivity());
     }
 
     @Override

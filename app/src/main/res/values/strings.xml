@@ -646,4 +646,16 @@
     <string name="halloapp_group">HalloApp Group</string>
     <!-- Shown as title for a dialog explaining why permissions are needed when the user has rejected a necessary permission request at least twice but still tries to use the feature -->
     <string name="title_settings_dialog">Permissions required</string>
+    <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
+    <string name="dark_mode_dialog_title">Select Theme</string>
+    <!-- Name of mode where screens are darker -->
+    <string name="dark_mode">Dark</string>
+    <!-- Name of mode where screens are lighter -->
+    <string name="light_mode">Light</string>
+    <!-- Name of mode where screens default to system default -->
+    <string name="system_default">System default</string>
+    <!-- Name of mode where screens default to system default for earlier phones that don't have a concept of system dark mode -->
+    <string name="default_setting">Default</string>
+    <!-- Name of setting where user can change between dark/light mode -->
+    <string name="dark_mode_setting_title">Theme</string>
 </resources>

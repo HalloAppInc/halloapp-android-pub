@@ -159,8 +159,11 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
         private static final String WORKER_PARAM_NAME = "name";
         private static final String WORKER_PARAM_GROUP_ID = "group_id";
 
+        private AvatarLoader avatarLoader;
+
         public UpdateGroupWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
             super(context, workerParams);
+            avatarLoader = AvatarLoader.getInstance(context);
         }
 
         @Override
@@ -199,7 +202,6 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
                         }
                         final File outFile = FileStore.getInstance().getAvatarFile(groupId.rawId());
                         FileUtils.copyFile(avatarFile, outFile);
-                        AvatarLoader avatarLoader = AvatarLoader.getInstance();
                         avatarLoader.reportAvatarUpdate(groupId, avatarId);
                     } catch (IOException e) {
                         Log.e("Failed to get base64", e);

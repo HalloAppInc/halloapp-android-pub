@@ -70,7 +70,7 @@ public class GroupPickerActivity extends HalloActivity {
     public static final String RESULT_SELECTED_ID = "selected_id";
 
     private final GroupPickerActivity.GroupsAdapter adapter = new GroupPickerActivity.GroupsAdapter();
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(this);
     private final ServerProps serverProps = ServerProps.getInstance();
 
     public static Intent createSharePicker(@NonNull Context context) {

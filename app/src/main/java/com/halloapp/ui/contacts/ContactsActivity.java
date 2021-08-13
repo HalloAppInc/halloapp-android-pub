@@ -68,7 +68,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
     public static final String RESULT_SELECTED_CONTACT = "selected_contact";
 
     private final ContactsAdapter adapter = new ContactsAdapter();
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(this);
     private final ServerProps serverProps = ServerProps.getInstance();
 
     private ContactsViewModel viewModel;

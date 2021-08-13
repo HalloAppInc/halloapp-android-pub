@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
@@ -38,7 +37,7 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
 
     private MyProfileViewModel viewModel;
 
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
+    private AvatarLoader avatarLoader;
 
     private ImageView avatarView;
     private NestedScrollView scrollView;
@@ -52,6 +51,7 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(requireActivity()).get(MyProfileViewModel.class);
 
+        avatarLoader = AvatarLoader.getInstance(getContext());
         View root = inflater.inflate(R.layout.fragment_settings_home, container, false);
         scrollView = root.findViewById(R.id.container);
 
@@ -105,6 +105,11 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
         View privacy = root.findViewById(R.id.privacy);
         privacy.setOnClickListener(v -> {
             startActivity(new Intent(v.getContext(), SettingsPrivacy.class));
+        });
+        View darkMode = root.findViewById(R.id.darkmode);
+        darkMode.setOnClickListener(v -> {
+            DarkModeDialog dialog = new DarkModeDialog(getContext());
+            dialog.show();
         });
 
         View notifications = root.findViewById(R.id.notifications);

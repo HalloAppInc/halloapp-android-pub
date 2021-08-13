@@ -40,7 +40,7 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
 
     private ViewGroupInviteLinkViewModel viewModel;
 
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(this);
 
     private ContactsAdapter contactsAdapter;
 

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.halloapp.ui.ExportDataActivity;
 import com.halloapp.ui.mediapicker.MediaPickerViewModel;
@@ -57,6 +58,7 @@ public class Preferences {
     private static final String PREF_KEY_H264_RES = "h264_res";
     private static final String PREF_KEY_H265_RES = "h265_res";
     private static final String PREF_KEY_PICKER_LAYOUT = "picker_layout";
+    private static final String PREF_KEY_NIGHT_MODE = "night_mode";
     private static final String PREF_KEY_EXPORT_DATA_STATE = "export_data_state";
     private static final String PREF_KEY_LAST_SEEN_POST_TIME = "last_seen_post_time";
 
@@ -125,6 +127,7 @@ public class Preferences {
     private final IntPreference prefH264Res = createPref(false, PREF_KEY_H264_RES, Constants.VIDEO_RESOLUTION_H264);
     private final IntPreference prefH265Res = createPref(false, PREF_KEY_H265_RES, Constants.VIDEO_RESOLUTION_H265);
     private final IntPreference prefPickerLayout = createPref(false, PREF_KEY_PICKER_LAYOUT, MediaPickerViewModel.LAYOUT_DAY_SMALL);
+    private final IntPreference prefNightMode = createPref(false, PREF_KEY_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
 
     private final IntPreference prefExportDataState = createPref(true, PREF_KEY_EXPORT_DATA_STATE, ExportDataActivity.EXPORT_STATE_INITIAL);
     private final BooleanPreference prefNotifyPosts = createPref(true, PREF_KEY_NOTIFY_POSTS, true);
@@ -553,5 +556,15 @@ public class Preferences {
     @WorkerThread
     public void setExportDataState(int state) {
         prefExportDataState.set(state);
+    }
+
+    @WorkerThread
+    public int getNightMode() {
+        return prefNightMode.get();
+    }
+
+    @WorkerThread
+    public void setNightMode(int nightMode) {
+        prefNightMode.set(nightMode);
     }
 }

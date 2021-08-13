@@ -66,7 +66,7 @@ public class ViewGroupFeedActivity extends HalloActivity {
         return intent;
     }
 
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(this);
 
     private GroupFeedViewModel viewModel;
 
@@ -124,6 +124,7 @@ public class ViewGroupFeedActivity extends HalloActivity {
         viewModel.chat.getLiveData().observe(this, chat -> {
             if (chat != null) {
                 titleView.setText(chat.name);
+                avatarLoader.load(avatarView, groupId, false);
             } else {
                 titleView.setText(null);
             }
