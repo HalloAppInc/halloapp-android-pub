@@ -8,6 +8,9 @@ public class AndroidHallOfShame {
         if ("OnePlus".equalsIgnoreCase(Build.BRAND)) {
             return "KB2005".equalsIgnoreCase(Build.MODEL);
         }
+        if ("samsung".equalsIgnoreCase(Build.BRAND)) {
+            return "SM-G960F".equalsIgnoreCase(Build.MODEL);
+        }
         return false;
     }
 }
