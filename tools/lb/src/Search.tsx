@@ -42,7 +42,7 @@ class Search extends React.Component<Props, State>  {
   }
 
   onInputChange(event: object, value: string, reason: string) {
-    if (reason === 'reset') {
+    if (reason === 'reset' && value !== undefined && value.length > 0) {
       this.setState({
         redirectId: value,
       })
