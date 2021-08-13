@@ -16,7 +16,7 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.ContentDb;
@@ -132,14 +132,14 @@ public class HalloApp extends Application {
     }
 
     public static void updateFirebasePushTokenIfNeeded() {
-        FirebaseInstanceId.getInstance().getInstanceId()
+        FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {
                         Log.e( "halloapp: getInstanceId failed", task.getException());
                         return;
                     }
                     // Get the Instance ID token.
-                    final String pushToken = task.getResult() == null ? null : task.getResult().getToken();
+                    final String pushToken = task.getResult();
                     if (TextUtils.isEmpty(pushToken)) {
                         Log.e("halloapp: error getting push token");
                     } else {
