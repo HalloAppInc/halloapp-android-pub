@@ -406,7 +406,7 @@ class Log extends React.Component<Props, State>  {
           let msg = messageType.decode(Base64.toByteArray(b64))
           let obj = msg.toJSON()
           if (flat) {
-            return before + this.messageObjectToElement(obj, messageTypeName) + after
+            return before + this.messageObjectToString(obj, messageTypeName) + after
           }
           return (
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start' }}>
@@ -423,6 +423,42 @@ class Log extends React.Component<Props, State>  {
     }
 
     return s
+  }
+
+  messageObjectToString(obj: any, name: string) {
+    let keys = Object.keys(obj)
+    let attributes = new Map<string, string>()
+    let children: any[][] = []
+    for (let i = 0; i < keys.length; i++) {
+      let key = keys[i]
+      let val = obj[key]
+      if (val instanceof Object) {
+        children.push([camelCaseToKebabCase(key), val])
+      } else {
+        attributes.set(camelCaseToKebabCase(key), val)
+      }
+    }
+
+    let ret = "<" + name
+
+    if (attributes.size > 0) {
+      let keySet = attributes.keys()
+      let next = keySet.next()
+      while (!next.done) {
+        let key = next.value
+        ret += " " + key + "='" + attributes.get(key) + "'"
+        next = keySet.next()
+      }
+    }
+
+    if (children.length <= 0) {
+      ret += "/>"
+    } else {
+      let childStrings = children.map(c => this.messageObjectToString(c[1], c[0]))
+      ret += ">" + childStrings.reduce((p, c) => p + c) + "</" + name + ">"
+    }
+
+    return ret
   }
 
   messageObjectToElement(obj: any, name: string) {
