@@ -1,14 +1,19 @@
 package com.halloapp.ui.mediaexplorer;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Outline;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.transition.Transition;
+import android.util.Size;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,10 +21,13 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
+import androidx.annotation.Keep;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +41,7 @@ import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.github.chrisbanes.photoview.PhotoView;
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -77,6 +86,7 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
     private int swipeExitStartThreshold;
     private int swipeExitFinishThreshold;
     private float swipeExitTransDistance;
+    private float animatedCornerRadius;
 
     private MediaExplorerViewModel viewModel;
     private ViewPager2 pager;
@@ -136,6 +146,7 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
         swipeExitStartThreshold = getResources().getDimensionPixelSize(R.dimen.swipe_exit_start_threshold);
         swipeExitFinishThreshold = getResources().getDimensionPixelSize(R.dimen.swipe_exit_finish_threshold);
         swipeExitTransDistance = getResources().getDimension(R.dimen.swipe_exit_transition_distance);
+        animatedCornerRadius = getResources().getDimension(R.dimen.post_media_radius);
 
         if (Build.VERSION.SDK_INT >= 28) {
             getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
@@ -163,6 +174,7 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
         indicator = findViewById(R.id.media_pager_indicator);
 
         findViewById(R.id.main).setOnClickListener(v -> toggleSystemUI());
+        toggleSystemUI();
 
         ArrayList<MediaExplorerViewModel.MediaModel> media = getIntent().getParcelableArrayListExtra(EXTRA_MEDIA);
         if (media == null || media.size() == 0) {
@@ -212,6 +224,26 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
         }
     }
 
+    @Nullable
+    private Size computeFinalPlayerViewFinalSize(@NonNull PlayerView playerView) {
+            if (playerView.getPlayer() instanceof SimpleExoPlayer) {
+                SimpleExoPlayer player = (SimpleExoPlayer) playerView.getPlayer();
+                Format format = player.getVideoFormat();
+
+                if (format == null) {
+                    return null;
+                }
+
+                float vw = playerView.getWidth();
+                float vh = playerView.getHeight();
+                float scale = Math.min(vw / format.width, vh / format.height);
+
+                return new Size((int) (format.width * scale), (int) (format.height * scale));
+            }
+
+            return null;
+    }
+
     @MainThread
     private void finishEnterTransitionWhenReady() {
         pager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -233,16 +265,32 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
                 getWindow().getSharedElementEnterTransition().addListener(transitionListener);
 
                 if (view instanceof PlayerView) {
+                    view.setBackgroundColor(getResources().getColor(android.R.color.holo_red_dark));
                     PlayerView playerView = (PlayerView) view;
                     playerView.hideController();
 
-                    Player player = playerView.getPlayer();
+                    SimpleExoPlayer player = (SimpleExoPlayer) playerView.getPlayer();
                     if (player != null) {
+                        player.prepare();
                         player.addListener(new Player.EventListener() {
                             @Override
                             public void onPlaybackStateChanged(int state) {
                                 if (state == Player.STATE_READY) {
                                     player.removeListener(this);
+
+                                    AnimatedOutlineProvider outlineProvider = new AnimatedOutlineProvider(animatedCornerRadius);
+                                    view.setOutlineProvider(outlineProvider);
+                                    view.setClipToOutline(true);
+                                    outlineProvider.animate(0, () -> view.setClipToOutline(false));
+
+                                    Size size = computeFinalPlayerViewFinalSize(playerView);
+
+                                    if (size != null) {
+                                        ViewGroup.LayoutParams layoutParams = playerView.getLayoutParams();
+                                        layoutParams.width = size.getWidth();
+                                        layoutParams.height = size.getHeight();
+                                    }
+
                                     startPostponedEnterTransition();
                                 }
                             }
@@ -251,6 +299,11 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
                         startPostponedEnterTransition();
                     }
                 } else {
+                    AnimatedOutlineProvider outlineProvider = new AnimatedOutlineProvider(animatedCornerRadius);
+                    view.setOutlineProvider(outlineProvider);
+                    view.setClipToOutline(true);
+                    outlineProvider.animate(0, () -> view.setClipToOutline(false));
+
                     startPostponedEnterTransition();
                 }
             }
@@ -541,6 +594,11 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
                     }
 
                     view.setTransitionName(MediaPagerAdapter.getTransitionName(contentId, selected));
+
+                    AnimatedOutlineProvider outlineProvider = new AnimatedOutlineProvider(0);
+                    view.setOutlineProvider(outlineProvider);
+                    view.setClipToOutline(true);
+                    outlineProvider.animate(animatedCornerRadius, null);
                 }
 
                 Intent intent = new Intent();
@@ -734,6 +792,90 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
             if (model != null) {
                 holder.bindTo(model, position);
             }
+        }
+    }
+
+    private static class AnimatedOutlineProvider extends ViewOutlineProvider {
+
+        private static final int ANIMATION_DURATION_MS = 300;
+
+        private float cornerRadius;
+
+        public AnimatedOutlineProvider(float cornerRadius) {
+            this.cornerRadius = cornerRadius;
+        }
+
+        @Keep
+        public void setCornerRadius(float cornerRadius) {
+            this.cornerRadius = cornerRadius;
+        }
+
+        @Keep
+        public float getCornerRadius() {
+            return cornerRadius;
+        }
+
+        public void animate(float finalCornerRadius, @Nullable Runnable onComplete) {
+            ObjectAnimator animator = ObjectAnimator.ofFloat(this, "cornerRadius", finalCornerRadius);
+            animator.setDuration(ANIMATION_DURATION_MS);
+            animator.start();
+
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    if (onComplete != null) {
+                        onComplete.run();
+                    }
+                }
+            });
+        }
+
+        @Nullable
+        private Size getMediaSize(@NonNull View view) {
+            if (view instanceof ImageView) {
+                ImageView imageView = (ImageView) view;
+                Drawable drawable = imageView.getDrawable();
+
+                if (drawable == null) {
+                    return null;
+                }
+
+                return new Size(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+            } else if (view instanceof PlayerView) {
+                PlayerView playerView = (PlayerView) view;
+
+                if (playerView.getPlayer() instanceof SimpleExoPlayer) {
+                    SimpleExoPlayer player = (SimpleExoPlayer) playerView.getPlayer();
+                    Format format = player.getVideoFormat();
+
+                    if (format == null) {
+                        return null;
+                    }
+
+                    return new Size(format.width, format.height);
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public void getOutline(View view, Outline outline) {
+            Size size = getMediaSize(view);
+
+            if (size == null) {
+                return;
+            }
+
+            float vw = view.getWidth();
+            float vh = view.getHeight();
+            float scale = Math.min(vw / size.getWidth(), vh / size.getHeight());
+            float sw = size.getWidth() * scale;
+            float sh = size.getHeight() * scale;
+
+            outline.setRoundRect((int) (vw - sw) / 2, (int) (vh - sh) / 2, (int) (vw + sw) / 2, (int) (vh + sh) / 2, cornerRadius);
         }
     }
 }
