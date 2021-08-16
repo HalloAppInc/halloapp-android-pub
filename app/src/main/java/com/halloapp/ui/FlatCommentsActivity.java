@@ -74,7 +74,6 @@ import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.groups.GroupTheme;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.mediaedit.MediaEditActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
@@ -107,7 +106,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class FlatCommentsActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
@@ -438,17 +436,10 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         ContactsDb.getInstance().addObserver(contactsObserver);
 
-        final String replyUser;
-        final String replyCommentId;
         if (savedInstanceState != null) {
-            replyUser = savedInstanceState.getString(KEY_REPLY_USER_ID);
-            replyCommentId = savedInstanceState.getString(KEY_REPLY_COMMENT_ID);
+            updateReplyIndicator(savedInstanceState.getString(KEY_REPLY_USER_ID), savedInstanceState.getString(KEY_REPLY_COMMENT_ID));
         } else {
-            replyUser = getIntent().getStringExtra(EXTRA_REPLY_USER_ID);
-            replyCommentId = getIntent().getStringExtra(EXTRA_REPLY_COMMENT_ID);
-        }
-        if (replyUser != null && replyCommentId != null) {
-            updateReplyIndicator(new UserId(replyUser), replyCommentId);
+            updateReplyIndicator(getIntent().getStringExtra(EXTRA_REPLY_USER_ID), getIntent().getStringExtra(EXTRA_REPLY_COMMENT_ID));
         }
 
         itemSwipeHelper = new ItemSwipeHelper(new SwipeListItemHelper(
@@ -620,6 +611,15 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             return true;
         }
         return super.onKeyLongPress(keyCode, event);
+    }
+
+    private void updateReplyIndicator(@Nullable String rawUserId, @Nullable String commentId) {
+        if (rawUserId == null || commentId == null) {
+            return;
+        }
+        replyUserId = new UserId(rawUserId);
+        replyCommentId = commentId;
+        viewModel.loadReplyUser(replyUserId);
     }
 
     private void updateReplyIndicator(@NonNull UserId userId, @NonNull String commentId) {

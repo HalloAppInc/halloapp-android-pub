@@ -410,17 +410,10 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
 
         ContactsDb.getInstance().addObserver(contactsObserver);
 
-        final String replyUser;
-        final String replyCommentId;
         if (savedInstanceState != null) {
-            replyUser = savedInstanceState.getString(KEY_REPLY_USER_ID);
-            replyCommentId = savedInstanceState.getString(KEY_REPLY_COMMENT_ID);
+            updateReplyIndicator(savedInstanceState.getString(KEY_REPLY_USER_ID), savedInstanceState.getString(KEY_REPLY_COMMENT_ID));
         } else {
-            replyUser = getIntent().getStringExtra(EXTRA_REPLY_USER_ID);
-            replyCommentId = getIntent().getStringExtra(EXTRA_REPLY_COMMENT_ID);
-        }
-        if (replyUser != null && replyCommentId != null) {
-            updateReplyIndicator(new UserId(replyUser), replyCommentId);
+            updateReplyIndicator(getIntent().getStringExtra(EXTRA_REPLY_USER_ID), getIntent().getStringExtra(EXTRA_REPLY_COMMENT_ID));
         }
 
         chatInputView.setInputParent(new ChatInputView.InputParent() {
@@ -637,6 +630,15 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
             return true;
         }
         return super.onKeyLongPress(keyCode, event);
+    }
+
+    private void updateReplyIndicator(@Nullable String rawUserId, @Nullable String commentId) {
+        if (rawUserId == null || commentId == null) {
+            return;
+        }
+        replyUserId = new UserId(rawUserId);
+        replyCommentId = commentId;
+        viewModel.loadReplyUser(replyUserId);
     }
 
     private void updateReplyIndicator(@NonNull UserId userId, @NonNull String commentId) {
