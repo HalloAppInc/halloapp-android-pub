@@ -40,6 +40,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_gravity="center"
             android:orientation="vertical"
             android:paddingStart="9dp"
             android:paddingEnd="16dp">
@@ -50,6 +51,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?textAppearanceSmallPopupMenu"
                 android:maxLines="2"
+                android:ellipsize="end"
                 android:clickable="false"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/thumbnail"
