@@ -59,8 +59,6 @@
     <string name="invalid_phone_number">"Μη έγκυρος αριθμός τηλεφώνου"</string>
     <string name="share_option_post">"Δημοσίευση"</string>
     <string name="share_option_message">"Μήνυμα"</string>
-
-    <!-- Fuzzy -->
     <plurals name="max_post_media_items">
         <item quantity="one">"Μπορείτε να επιλέξετε έως %d αντικείμενο ανά δημοσίευση"</item>
         <item quantity="other">"Μπορείτε να επιλέξετε έως %d αντικείμενα ανά δημοσίευση"</item>
@@ -238,8 +236,6 @@
     <string name="action_save">"Αποθήκευση"</string>
     <string name="invite_friends">"Προσκάλεσε φίλους και οικογένεια"</string>
     <string name="invite_friend_chooser_title">"Πρόσκληση σε %s"</string>
-
-    <!-- Fuzzy -->
     <string name="invite_text_with_name_and_number">"Γεια σου %1$s, σε προσκαλώ να με βρεις στο HalloApp (μια απλή κοινωνική εφαρμογή κοινοποίησης καθημερινών στιγμών). Χρησιμοποίησε το %2$s για να εγγραφείς. Κάνε λήψη στο halloapp.com/dl"</string>
     <string name="name_hint">"Το όνομά σου"</string>
     <string name="name_must_be_specified">"Πρέπει να οριστεί το όνομα"</string>
@@ -344,10 +340,16 @@ uid: %1$s
     <string name="button_create_group">"Δημιουργία"</string>
     <string name="group_name_hint">"Όνομα ομάδας"</string>
     <string name="failed_create_group">"Αποτυχία δημιουργίας ομάδας, δοκιμάστε ξανά αργότερα"</string>
+
+    <!-- Shown in options menu to remove a member of group -->
+    <!-- Fuzzy -->
     <string name="group_remove_member">"Κατάργηση"</string>
     <string name="group_promote_to_admin">"Προώθηση σε διαχειριστή"</string>
     <string name="promote_admin_in_progress">"Προωθήθηκε σε διαχειριστή…"</string>
     <string name="failed_promote_admin">"Αποτυχία προώθησης διαχειριστή, δοκιμάστε ξανά αργότερα"</string>
+
+    <!-- Option for removing a user from the list of admins of a group -->
+    <!-- Fuzzy -->
     <string name="group_demote_from_admin">"Υποβιβασμός διαχειριστή"</string>
     <string name="demote_admin_in_progress">"Υποβιβασμός διαχειριστή…"</string>
     <string name="failed_demote_admin">"Αποτυχία υποβιβασμού διαχειριστή, δοκιμάστε ξανά αργότερα"</string>
@@ -599,8 +601,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="data_available_at">"Τα δεδομένα θα είναι διαθέσιμα στις %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
-    <!-- Fuzzy -->
-    <string name="export_data_explanation">"Κατεβάστε ένα αντίγραφο όλων των δεδομένων χρήστη που είναι αποθηκευμένα στους διακομιστές του HalloApp. Αυτό δεν περιέχει περιεχόμενο μηνυμάτων ή δημοσιεύσεων. &lt;a href=\"https://halloapp.com/help/\"&gt;Learn more&lt;/a&gt;"</string>
+    <string name="export_data_explanation">"Κατεβάστε ένα αντίγραφο όλων των δεδομένων χρήστη που είναι αποθηκευμένα στους διακομιστές του HalloApp. Δεν περιλαμβάνεται περιεχόμενο μηνυμάτων ή δημοσιεύσεων. &lt;a href=\"https://halloapp.com/help/\"&gt;Learn more&lt;/a&gt;"</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"Αίτημα απέτυχε"</string>
@@ -682,8 +683,8 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Activity center item when non-contacts comment on your post -->
     <plurals name="commented_on_your_post_grouped">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; χρήστης εκτός επαφών σχολίασε στη δημοσίευσή σας"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; χρήστες εκτός επαφών σχολίασαν στη δημοσίευσή σας"</item>
     </plurals>
 
     <!-- Activity center item when non-contacts comment on someones post -->
@@ -699,33 +700,80 @@ Open the app settings screen to modify app permissions."</string>
     <string name="reshare_post">"Reshare post"</string>
 
     <!-- Button for going to utility for viewing expired posts -->
-    <string name="archived_posts">"Archived Posts"</string>
+    <!-- Fuzzy -->
+    <string name="archived_posts">"Αρχειοθετημένες Δημοσιεύσεις"</string>
 
     <!-- Title of utility for viewing expired posts -->
-    <string name="archive">"Archive"</string>
+    <string name="archive">"Αρχείο"</string>
 
     <!-- Label displaying the date when a post expired -->
-    <string name="archived_on">"Archived %s"</string>
+    <string name="archived_on">"Αρχειοθετημένα %s"</string>
 
     <!-- Error message when the group is full -->
     <string name="invite_link_failed_to_join_full">"You cannot join the group because it is full"</string>
 
     <!-- Error message when the invite link is invalid -->
-    <string name="invite_link_failed_to_join_invalid">"The invite link is invalid"</string>
+    <string name="invite_link_failed_to_join_invalid">"Μη αποδεκτός σύνδεσμος πρόσκλησης"</string>
 
     <!-- Error message when user cannot join a group because they were previously removed by an admin -->
     <string name="invite_link_failed_to_join_removed">"You were removed and cannot rejoin via invite link"</string>
 
     <!-- Message that's displayed after a user deletes their account -->
-    <string name="deletion_confirmation_message">"Your HalloApp account has been successfully deleted."</string>
+    <string name="deletion_confirmation_message">"Ο HalloApp λογαριασμός σας έχει διαγραφεί επιτυχώς."</string>
 
     <!-- Button that allows the user to return to registration after deleting their account -->
-    <string name="return_to_registration">"Return to registration"</string>
+    <string name="return_to_registration">"Eπανεγγραφή"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
     <string name="archive_empty">"Your expired posts will appear here"</string>
 
     <!-- Futureproof content we dont understand yet -->
-    <string name="unsupported_content">"Unsupported content"</string>
+    <string name="unsupported_content">"Το περιεχόμενο δεν υποστηρίζεται"</string>
+
+    <!-- Button opens up the chat to directly chat with another group member -->
+    <string name="send_message">"Send message"</string>
+
+    <!-- Body of a notification indicating that user has been added to a new group -->
+    <string name="added_to_group">"%1$s added you to the group %2$s"</string>
+
+    <!-- Name of channel of notifications for being added to a new group which is displayed in settings -->
+    <string name="group_notifications_channel_name">"Group membership notifications"</string>
+
+    <!-- Button that brings user to QR code for joining a group -->
+    <string name="qr_code">"QR Code"</string>
+
+    <!-- Explains QR code that allows users to automatically join a group -->
+    <string name="scan_qr_instructions">"Scan the QR code to join this HalloApp group"</string>
+
+    <!-- Banner below the name of a HalloApp group -->
+    <string name="halloapp_group">"HalloApp Group"</string>
+    <string name="reply_original_comment_not_found">"Original comment not found"</string>
+
+    <!-- Button on others' posts that allows the user to message them about their post in 1-1 messaging -->
+    <string name="reply_privately">"Reply privately"</string>
+
+    <!-- Shown as title for a dialog explaining why permissions are needed when the user has rejected a necessary permission request at least twice but still tries to use the feature -->
+    <string name="title_settings_dialog">"Permissions required"</string>
+
+    <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
+    <string name="voice_note_preview">"Voice note (%s)"</string>
+
+    <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
+    <string name="dark_mode_dialog_title">"Select Theme"</string>
+
+    <!-- Name of mode where screens are darker -->
+    <string name="dark_mode">"Dark"</string>
+
+    <!-- Name of mode where screens are lighter -->
+    <string name="light_mode">"Light"</string>
+
+    <!-- Name of mode where screens default to system default -->
+    <string name="system_default">"System default"</string>
+
+    <!-- Name of mode where screens default to system default for earlier phones that don't have a concept of system dark mode -->
+    <string name="default_setting">"Default"</string>
+
+    <!-- Name of setting where user can change between dark/light mode -->
+    <string name="dark_mode_setting_title">"Theme"</string>
 </resources>
 

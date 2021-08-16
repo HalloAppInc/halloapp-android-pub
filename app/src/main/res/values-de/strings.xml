@@ -15,7 +15,7 @@
     <string name="new_group">"Neue Gruppe"</string>
     <string name="notifications">"Mitteilungen"</string>
     <string name="feed_notifications_channel_name">"Feed-Mitteilungen"</string>
-    <string name="message_notifications_channel_name">"Benachrichtigungen"</string>
+    <string name="message_notifications_channel_name">"Mitteilungen für Nachrichten"</string>
     <string name="critical_notifications_channel_name">"Wichtige App-Warnmeldungen"</string>
     <string name="invite_notifications_channel_name">"Einladungs-Mitteilungen"</string>
     <string name="invite_notification_text">"%s hat deine Einladung zu HalloApp &#x1f389; angenommen"</string>
@@ -52,7 +52,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
 
     <!-- Fuzzy translation?  Pls. provide more details -->
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
-    <string name="empty_chat_with_name_placeholder">"%s ist auf HalloApp."</string>
+    <string name="empty_chat_with_name_placeholder">"%s nutzt HalloApp."</string>
     <string name="new_chat_name_placeholder">"%s ist jetzt aktiv auf HalloApp! &#x1f389;"</string>
     <string name="posts_empty">"Deine Beiträge erscheinen hier"</string>
     <string name="posts_exchange_numbers">"Um den Kontakt herzustellen, müsst ihr eure Handynummern austauschen"</string>
@@ -357,7 +357,7 @@ Version: %2$s
     <string name="invite_failed_internet">"Fehler beim Versenden der Einladung. Überprüfe dein Internetverbindung und versuche es noch einmal"</string>
     <string name="invite_failed_no_invites">"Sorry, du hast keine weiteren Einladungen mehr. Versuche es später noch einmal"</string>
     <string name="invite_failed_invalid_number">"Diese Handynummer ist ungültig"</string>
-    <string name="invite_failed_existing_user">"Dein Kontakt ist bereits auf HalloApp!"</string>
+    <string name="invite_failed_existing_user">"Dein Kontakt nutzt bereits HalloApp!"</string>
     <string name="invite_failed_unknown">"Fehler beim Versenden der Einladung"</string>
     <string name="invite_creation_in_progress">"Einladung wird erstellt…"</string>
     <string name="invite_info_fetch_internet">"Fehler beim Abrufen der Einladungs-Info, überprüfe deine Internetverbindung und versuche es noch einmal"</string>
@@ -368,7 +368,7 @@ Version: %2$s
     <string name="invite_friends_title">"Freunde &amp; Familie einladen"</string>
     <string name="invite_title">"Einladung"</string>
     <string name="settings_invite_option">"Zu HalloApp einladen"</string>
-    <string name="invite_already_on_halloapp">"Ist bereits auf HalloApp"</string>
+    <string name="invite_already_on_halloapp">"Nutzt HalloApp"</string>
     <string name="invite_invalid_phone_number">"Ungültige Handynummer"</string>
     <string name="edit">"Bearbeiten"</string>
     <string name="done">"Fertig"</string>
@@ -382,11 +382,17 @@ Version: %2$s
     <string name="button_create_group">"Erstellen"</string>
     <string name="group_name_hint">"Gruppenname"</string>
     <string name="failed_create_group">"Fehler bei der Gruppenerstellung, probiere es später noch einmal"</string>
-    <string name="group_remove_member">"Entfernen"</string>
+
+    <!-- Shown in options menu to remove a member of group -->
+    <!-- Fuzzy -->
+    <string name="group_remove_member">"Aus der Gruppe entfernen"</string>
     <string name="group_promote_to_admin">"Zum Admin machen"</string>
     <string name="promote_admin_in_progress">"Admin-Übertragung läuft"</string>
     <string name="failed_promote_admin">"Fehler bei Vergabe von Admin-Rechten, probiere es später noch einmal"</string>
-    <string name="group_demote_from_admin">"Admin entfernen"</string>
+
+    <!-- Option for removing a user from the list of admins of a group -->
+    <!-- Fuzzy -->
+    <string name="group_demote_from_admin">"Adminstatus entfernen"</string>
     <string name="demote_admin_in_progress">"Admin wird entfernt…"</string>
     <string name="failed_demote_admin">"Fehler bei der Admin-Entfernung, probiere es später noch einmal"</string>
     <string name="remove_member_in_progress">"Mitglied entfernen…"</string>
@@ -565,7 +571,7 @@ Version: %2$s
     <string name="key_verification_key_fetch_failed">"Schlüsseldaten können nicht abgerufen werden…"</string>
 
     <!-- Shown inline in a chat when the e2e keys securing the messages have changed, i.e. if the other user changes phones or reinstalls -->
-    <string name="system_message_keys_changed">"Der Sicherheitsschlüssel von %s hat sich geändert"</string>
+    <string name="system_message_keys_changed">"Sicherheitsschlüssel mit %s haben sich geändert"</string>
 
     <!-- Shown on the key verification activity next to a switch where the user can keep track of whether they verified the identity of the other user -->
     <string name="key_verification_switch_label">"Verifiziert"</string>
@@ -701,7 +707,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
     <!-- Fuzzy -->
-    <string name="share_halloapp_text">"Mach mit bei HalloApp! Kostenlos herunterladen auf halloapp.com/dl"</string>
+    <string name="share_halloapp_text">"Mach mit bei meinem HalloApp-Netzwerk für echte Beziehungen! Kostenlos herunterladen auf halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
     <string name="contact_permissions_request">"Erlaube HalloApp den Zugriff auf deine Kontakte, damit du Updates senden und empfangen kannst."</string>
@@ -746,6 +752,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="reshare_post">"Beitrag erneut teilen"</string>
 
     <!-- Button for going to utility for viewing expired posts -->
+    <!-- Fuzzy -->
     <string name="archived_posts">"Archivierte Beiträge"</string>
 
     <!-- Title of utility for viewing expired posts -->
@@ -764,15 +771,61 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="invite_link_failed_to_join_removed">"Ein Beitritt über den Einladungslink ist nicht mehr möglich, da du aus der Gruppe entfernt wurdest"</string>
 
     <!-- Message that's displayed after a user deletes their account -->
-    <string name="deletion_confirmation_message">"Dein HalloApp Account wurde erfolgreich gelöscht."</string>
+    <string name="deletion_confirmation_message">"Dein HalloApp-Account wurde erfolgreich gelöscht."</string>
 
     <!-- Button that allows the user to return to registration after deleting their account -->
     <string name="return_to_registration">"Zurück zur Registrierung"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <string name="archive_empty">"Deine abgelaufenen Beiträge werden hier angezeigt"</string>
+    <string name="archive_empty">"Deine nicht mehr sichtbaren Beiträge werden hier angezeigt"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"Nicht unterstützter Inhalt"</string>
+
+    <!-- Button opens up the chat to directly chat with another group member -->
+    <string name="send_message">"Nachricht senden"</string>
+
+    <!-- Body of a notification indicating that user has been added to a new group -->
+    <string name="added_to_group">"%1$s hat dich zur Gruppe %2$s hinzugefügt"</string>
+
+    <!-- Name of channel of notifications for being added to a new group which is displayed in settings -->
+    <string name="group_notifications_channel_name">"Gruppen-Mitteilungen"</string>
+
+    <!-- Button that brings user to QR code for joining a group -->
+    <string name="qr_code">"QR Code"</string>
+
+    <!-- Explains QR code that allows users to automatically join a group -->
+    <string name="scan_qr_instructions">"Scanne den QR-Code, um dieser HalloApp-Gruppe beizutreten"</string>
+
+    <!-- Banner below the name of a HalloApp group -->
+    <string name="halloapp_group">"HalloApp Gruppe"</string>
+    <string name="reply_original_comment_not_found">"Original-Kommentar nicht gefunden"</string>
+
+    <!-- Button on others' posts that allows the user to message them about their post in 1-1 messaging -->
+    <string name="reply_privately">"Privat antworten"</string>
+
+    <!-- Shown as title for a dialog explaining why permissions are needed when the user has rejected a necessary permission request at least twice but still tries to use the feature -->
+    <string name="title_settings_dialog">"Zustimmung erforderlich"</string>
+
+    <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
+    <string name="voice_note_preview">"Sprachnotiz (%s)"</string>
+
+    <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
+    <string name="dark_mode_dialog_title">"Select Theme"</string>
+
+    <!-- Name of mode where screens are darker -->
+    <string name="dark_mode">"Dunkel"</string>
+
+    <!-- Name of mode where screens are lighter -->
+    <string name="light_mode">"Hell"</string>
+
+    <!-- Name of mode where screens default to system default -->
+    <string name="system_default">"Systemstandard"</string>
+
+    <!-- Name of mode where screens default to system default for earlier phones that don't have a concept of system dark mode -->
+    <string name="default_setting">"Standardeinstellung"</string>
+
+    <!-- Name of setting where user can change between dark/light mode -->
+    <string name="dark_mode_setting_title">"Theme"</string>
 </resources>
 

@@ -367,10 +367,16 @@ uid: %1$s
     <string name="button_create_group">"Создать"</string>
     <string name="group_name_hint">"Название группы"</string>
     <string name="failed_create_group">"Не удалось создать группу, повторите попытку позже"</string>
+
+    <!-- Shown in options menu to remove a member of group -->
+    <!-- Fuzzy -->
     <string name="group_remove_member">"Удалить"</string>
     <string name="group_promote_to_admin">"Повысить до администратора"</string>
     <string name="promote_admin_in_progress">"Повышение до администратора…"</string>
     <string name="failed_promote_admin">"Не удалось повысить до администратора, повторите попытку позже"</string>
+
+    <!-- Option for removing a user from the list of admins of a group -->
+    <!-- Fuzzy -->
     <string name="group_demote_from_admin">"Отменить админство"</string>
     <string name="demote_admin_in_progress">"Отмена админства"</string>
     <string name="failed_demote_admin">"Не удалось отменить админство, повторите попытку позже"</string>
@@ -748,7 +754,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="reshare_post">"Reshare post"</string>
 
     <!-- Button for going to utility for viewing expired posts -->
-    <string name="archived_posts">"Archived Posts"</string>
+    <string name="archived_posts">"Archive"</string>
 
     <!-- Title of utility for viewing expired posts -->
     <string name="archive">"Archive"</string>
@@ -776,5 +782,51 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"Unsupported content"</string>
+
+    <!-- Button opens up the chat to directly chat with another group member -->
+    <string name="send_message">"Send message"</string>
+
+    <!-- Body of a notification indicating that user has been added to a new group -->
+    <string name="added_to_group">"%1$s added you to the group %2$s"</string>
+
+    <!-- Name of channel of notifications for being added to a new group which is displayed in settings -->
+    <string name="group_notifications_channel_name">"Group membership notifications"</string>
+
+    <!-- Button that brings user to QR code for joining a group -->
+    <string name="qr_code">"QR Code"</string>
+
+    <!-- Explains QR code that allows users to automatically join a group -->
+    <string name="scan_qr_instructions">"Scan the QR code to join this HalloApp group"</string>
+
+    <!-- Banner below the name of a HalloApp group -->
+    <string name="halloapp_group">"HalloApp Group"</string>
+    <string name="reply_original_comment_not_found">"Original comment not found"</string>
+
+    <!-- Button on others' posts that allows the user to message them about their post in 1-1 messaging -->
+    <string name="reply_privately">"Reply privately"</string>
+
+    <!-- Shown as title for a dialog explaining why permissions are needed when the user has rejected a necessary permission request at least twice but still tries to use the feature -->
+    <string name="title_settings_dialog">"Permissions required"</string>
+
+    <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
+    <string name="voice_note_preview">"Voice note (%s)"</string>
+
+    <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
+    <string name="dark_mode_dialog_title">"Select Theme"</string>
+
+    <!-- Name of mode where screens are darker -->
+    <string name="dark_mode">"Dark"</string>
+
+    <!-- Name of mode where screens are lighter -->
+    <string name="light_mode">"Light"</string>
+
+    <!-- Name of mode where screens default to system default -->
+    <string name="system_default">"System default"</string>
+
+    <!-- Name of mode where screens default to system default for earlier phones that don't have a concept of system dark mode -->
+    <string name="default_setting">"Default"</string>
+
+    <!-- Name of setting where user can change between dark/light mode -->
+    <string name="dark_mode_setting_title">"Theme"</string>
 </resources>
 

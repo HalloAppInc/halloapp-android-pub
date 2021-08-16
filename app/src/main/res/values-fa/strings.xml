@@ -1,700 +1,768 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="app_name">"HalloApp"</string>
-    <string name="title_home">"Home"</string>
-    <string name="title_messages">"Chats"</string>
-    <string name="title_profile">"Profile"</string>
-    <string name="title_groups">"Groups"</string>
-    <string name="comment">"Comment"</string>
-    <string name="next">"Next"</string>
-    <string name="message">"Message"</string>
-    <string name="add_post">"Add post"</string>
-    <string name="new_chat">"New chat"</string>
-    <string name="new_group">"New group"</string>
-    <string name="notifications">"Notifications"</string>
-    <string name="feed_notifications_channel_name">"Feed notifications"</string>
-    <string name="message_notifications_channel_name">"Message notifications"</string>
+    <string name="app_name">"هالواپ"</string>
+    <string name="title_home">"صفحه اصلی"</string>
+    <string name="title_messages">"گفتگوها"</string>
+    <string name="title_profile">"حساب کاربری"</string>
+    <string name="title_groups">"گروه‌ها"</string>
+    <string name="comment">"نظر"</string>
+    <string name="next">"بعدی"</string>
+    <string name="message">"پیام"</string>
+    <string name="add_post">"افزودن پست"</string>
+    <string name="new_chat">"گفتگو جدید"</string>
+    <string name="new_group">"گروه جدید"</string>
+    <string name="notifications">"اعلان‌ها"</string>
+    <string name="feed_notifications_channel_name">"اعلان خبرها"</string>
+    <string name="message_notifications_channel_name">"اعلان پیام‌ها"</string>
     <string name="critical_notifications_channel_name">"Critical app alerts"</string>
-    <string name="invite_notifications_channel_name">"Invite notifications"</string>
-    <string name="invite_notification_text">"%s just accepted your invite to join HalloApp &#x1f389;"</string>
-    <string name="me">"Me"</string>
-    <string name="you">"You"</string>
-    <string name="camera_post">"Camera"</string>
-    <string name="gallery_post">"Gallery"</string>
-    <string name="text_post">"Text"</string>
-    <string name="bad_image">"Unsupported media type"</string>
-    <string name="time_diff_now">"Now"</string>
-    <string name="phone_number_hint">"Phone number"</string>
-    <string name="request_registration_title">"Welcome!"</string>
-    <string name="reverify_registration_title">"Please, re-verify your phone number"</string>
-    <string name="request_registration_subtitle">"You will receive a verification code.
-Carrier rates may apply."</string>
-    <string name="verify_registration_title">"Enter the code we sent to
-%s"</string>
-    <string name="contact_permission_title">"One last thing"</string>
-    <string name="registration_code_invalid">"Invalid registration code, try again"</string>
-    <string name="registration_failed">"Failed to register phone number, try again"</string>
-    <string name="registration_failed_no_friends">"We are currently invite only. If you have a friend or family member who uses HalloApp, ask them to invite you using your phone number."</string>
-    <string name="registration_failed_no_friends_title">"Shucks!"</string>
-    <string name="type_a_message_hint">"Type a message"</string>
-    <string name="write_a_description">"Write a description"</string>
-    <string name="write_a_post">"Write a post"</string>
-    <string name="send">"Send"</string>
-    <string name="set_avatar_done">"Done"</string>
-    <string name="set_avatar_reset">"Reset"</string>
-    <string name="new_post">"New post"</string>
-    <string name="new_message">"New message"</string>
+    <string name="invite_notifications_channel_name">"اعلان دعوت‌ها"</string>
+    <string name="invite_notification_text">"%s دعوت شما را برای پیوستن به هالواپ پذیرفت  &#x1f389;"</string>
+    <string name="me">"من"</string>
+    <string name="you">"شما"</string>
+    <string name="camera_post">"دوربین"</string>
+    <string name="gallery_post">"گالری"</string>
+    <string name="text_post">"متن"</string>
+    <string name="bad_image">"عکس یا فیلم قبول نیست"</string>
+    <string name="time_diff_now">"الآن"</string>
+    <string name="phone_number_hint">"شماره تلفن"</string>
+    <string name="request_registration_title">"خوش‌آمدید!"</string>
+    <string name="reverify_registration_title">"لطفاً شماره تلفن خود را دوباره بررسی کنید"</string>
+    <string name="request_registration_subtitle">"کد تأیید را دریافت خواهید کرد.
+ممکن است اپراتور شما نرخی تحمیل کند."</string>
+    <string name="verify_registration_title">"کدی که به %s ارسال شده را وارد کنید"</string>
+    <string name="contact_permission_title">"نکته آخر"</string>
+    <string name="registration_code_invalid">"کد ثبتنام غلط است، لطفاً دوباره امتحان کنید"</string>
+    <string name="registration_failed">"شماره تلفن ثبت نشد، لطفاً دوباره امتحان کنید"</string>
+    <string name="registration_failed_no_friends">"درحال حاضر فقط با دعوتنامه به هالواپ میتوانید دسترسی داشته باشید. اگر آشنایی دارید که از آن استفاده میکند، از او بخواهید شما را با شماره تلفنتان دعوت کند."</string>
+    <string name="registration_failed_no_friends_title">"آخ!"</string>
+    <string name="type_a_message_hint">"پیام بنویسید"</string>
+    <string name="write_a_description">"توضیحات بنویسید"</string>
+    <string name="write_a_post">"پست بنویسید"</string>
+    <string name="send">"ارسال"</string>
+    <string name="set_avatar_done">"تأیید"</string>
+    <string name="set_avatar_reset">"بازنشانی"</string>
+    <string name="new_post">"پست جدید"</string>
+    <string name="new_message">"پیام جدید"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
-    <string name="empty_chat_with_name_placeholder">"%s is on HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s is using HalloApp! &#x1f389;"</string>
-    <string name="posts_empty">"Your posts will appear here"</string>
-    <string name="posts_exchange_numbers">"To connect you must exchange phone numbers"</string>
-    <string name="home_page_empty">"Posts from your contacts will appear here"</string>
-    <string name="chats_page_empty">"Contacts and messages will appear here"</string>
-    <string name="chats_search_empty">"No chats found for '%s'"</string>
-    <string name="groups_page_empty">"Your groups will appear here"</string>
-    <string name="groups_search_empty">"No groups found for '%s'"</string>
-    <string name="contact_profile_empty">"%s's posts will appear here"</string>
-    <string name="invalid_phone_number">"Invalid phone number"</string>
-    <string name="share_option_post">"Post"</string>
-    <string name="share_option_message">"Message"</string>
+    <string name="empty_chat_with_name_placeholder">"%s در هالواپ است."</string>
+    <string name="new_chat_name_placeholder">"%s از هالواپ استفاده میکند! &#x1f389;"</string>
+    <string name="posts_empty">"پست‌های شما اینجا خواهند بود"</string>
+    <string name="posts_exchange_numbers">"برای ارتباط باید شماره تلفن رد و بدل کنید"</string>
+    <string name="home_page_empty">"پست مخاطب‌هایتان اینجا خواهند بود"</string>
+    <string name="chats_page_empty">"مخاطب‌ها و پیام‌ها اینجا خواهند بود"</string>
+    <string name="chats_search_empty">"هیچ گفتگویی از %s پیدا نشد"</string>
+    <string name="groups_page_empty">"گروه‌های شما اینجا خواهند بود"</string>
+    <string name="groups_search_empty">"هیچ گروهی از %s پیدا نشد"</string>
+    <string name="contact_profile_empty">"پست‌های %s اینجا خواهند بود"</string>
+    <string name="invalid_phone_number">"شماره تلفن اشتباه"</string>
+    <string name="share_option_post">"پست"</string>
+    <string name="share_option_message">"پیام"</string>
     <plurals name="max_post_media_items">
-        <item quantity="other">"You can select up to %d media item per post"</item>
+        <item quantity="one">"میتوانید d% مورد انتخاب کنید"</item>
+        <item quantity="other">"میتوانید d% مورد انتخاب کنید"</item>
     </plurals>
-    <string name="camera_record_audio_permission_rationale">"To take photos and record videos we need permission to access the camera and record audio on your device"</string>
-    <string name="camera_record_audio_permission_rationale_denied">"To take photos and record videos we need permission to access the camera and record audio on your device.
-
-Open the app settings screen to modify app permissions."</string>
-    <string name="contacts_permission_rationale">"To connect with your friends and family we need permission to access contacts on your device"</string>
-    <string name="contacts_permission_rationale_denied">"To connect with your friends and family we need permission to access contacts on your device.
-
-Open the app settings screen to modify app permissions."</string>
-    <string name="storage_permission_rationale">"To pick media we need permission to access your device storage"</string>
-    <string name="storage_permission_rationale_denied">"To pick media we need permission to access your device storage.
-
-Open the app settings screen to modify app permissions."</string>
-    <string name="retry">"Retry"</string>
-    <string name="contact_rationale_upload">"In order to connect you with your friends and family we’ll need your permission to access your contacts. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
-    <string name="failed_to_initialize">"Failed to initialize"</string>
-    <string name="type_a_comment_hint">"Add a comment"</string>
-    <string name="comments">"Comments"</string>
-    <string name="reply">"Reply"</string>
-    <string name="close">"Close"</string>
-    <string name="reply_to_self">"Reply to myself"</string>
-    <string name="reply_to_contact">"Reply to %s"</string>
-    <string name="reply_original_not_found">"Original message not found"</string>
-    <string name="reply_original_post_not_found">"Original post not found"</string>
-    <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in their post"</string>
-    <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in a comment on your post"</string>
-    <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in a comment on their post"</string>
-    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; mentioned you in a comment on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string>
-    <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; commented on your post"</string>
-    <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string>
-    <string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on your post"</string>
+    <string name="camera_record_audio_permission_rationale">"برای عکس گرفتن و فیلمبرداری کردن، هالواپ نیاز دسترسی به دوربین و صدای دستگاه شما دارد"</string>
+    <string name="camera_record_audio_permission_rationale_denied">"برای عکس گرفتن و فیلمبرداری کردن، هالواپ نیاز دسترسی به دوربین و صدای دستگاه شما دارد.
+برای تغییر اجازه‌ها تنظیمات برنامه را باز کنید."</string>
+    <string name="contacts_permission_rationale">"برای ارتباط با دوستان و آشنایانتان نیاز به دسترسی به مخاطب‌های دستگاه‌تان داریم"</string>
+    <string name="contacts_permission_rationale_denied">"برای ارتباط با دوستان و آشنایانتان نیاز به دسترسی به مخاطب‌های دستگاه‌تان داریم.
+برای تغییر اجازه‌ها تنظیمات برنامه را باز کنید."</string>
+    <string name="storage_permission_rationale">"برای انتخاب عکس و ویدیو نیاز به دسترسی به حافظه دستگاهتان داریم"</string>
+    <string name="storage_permission_rationale_denied">"برای انتخاب عکس و ویدیو نیاز به دسترسی به حافظه دستگاهتان داریم.
+برای تغییر اجازه‌ها تنظیمات برنامه را باز کنید."</string>
+    <string name="retry">"تلاش مجدد"</string>
+    <string name="contact_rationale_upload">"برای ارتباط با دوستان و آشنایانتان نیاز به دسترسی به مخاطب‌های دستگاه‌تان داریم. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
+    <string name="failed_to_initialize">"خطا در شروع"</string>
+    <string name="type_a_comment_hint">"افزودن نظر"</string>
+    <string name="comments">"نظرها"</string>
+    <string name="reply">"پاسخ"</string>
+    <string name="close">"بستن"</string>
+    <string name="reply_to_self">"پاسخ به خود"</string>
+    <string name="reply_to_contact">"پاسخ به %s"</string>
+    <string name="reply_original_not_found">"پیام اصلی پیدا نشد"</string>
+    <string name="reply_original_post_not_found">"پست اصلی پیدا نشد"</string>
+    <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; در پستش از شما نام برد"</string>
+    <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; زیر پستتان در نظری که نوشت از شما نام برد"</string>
+    <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; زیر پستشان در نظری که نوشت از شما نام برد"</string>
+    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; زیر پست &lt;b&gt;%2$s&lt;/b&gt; در نظری که نوشت از شما نام برد"</string>
+    <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; زیر پست شما نظری نوشت"</string>
+    <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; و &lt;b&gt;%2$s&lt;/b&gt; زیر پست شما نظری نوشتند"</string>
+    <string name="commented_on_your_post_3">"&lt;b&gt;%2$s&lt;/b&gt; ،&lt;b&gt;%1$s&lt;/b&gt; و &lt;b&gt;%3$s&lt;/b&gt; زیر پست شما نظر نوشتند"</string>
     <plurals name="commented_on_your_post_4">
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
+        <item quantity="one">"&lt;b&gt;%2$s&lt;/b&gt; ،&lt;b&gt;%1$s&lt;/b&gt; و %3$d نفر دیگر زیر پست شما نظر نوشتند"</item>
+        <item quantity="other">"&lt;b&gt;%2$s&lt;/b&gt; ،&lt;b&gt;%1$s&lt;/b&gt; و %3$d نفر دیگر زیر پست شما نظر نوشتند"</item>
     </plurals>
-    <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string>
-    <string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
-    <string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</string>
+    <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; زیر پست &lt;b&gt;%2$s&lt;/b&gt; نظری نوشت"</string>
+    <string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; و &lt;b&gt;%2$s&lt;/b&gt; زیر پست &lt;b&gt;%3$s&lt;/b&gt; نظری نوشتند"</string>
+    <string name="commented_on_someones_post_3">"&lt;b&gt;%2$s&lt;/b&gt; ،&lt;b&gt;%1$s&lt;/b&gt; و &lt;b&gt;%3$s&lt;/b&gt; زیر پست &lt;b&gt;%4$s&lt;/b&gt; نظری نوشتند"</string>
     <plurals name="commented_on_someones_post_4">
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
+        <item quantity="one">"&lt;b&gt;%2$s&lt;/b&gt; ،&lt;b&gt;%1$s&lt;/b&gt; و %3$d نفر دیگر زیر پست &lt;b&gt;%4$s&lt;/b&gt; نظر نوشتند"</item>
+        <item quantity="other">"&lt;b&gt;%2$s&lt;/b&gt; ،&lt;b&gt;%1$s&lt;/b&gt; و %3$d نفر دیگر زیر پست &lt;b&gt;%4$s&lt;/b&gt; نظر نوشتند"</item>
     </plurals>
-    <string name="contact_hashing_faq_dialog_title">"Your privacy is our priority"</string>
-    <string name="contact_hashing_faq_dialog_info">"HalloApp only uses the phone number field to match you with your friends on HalloApp, and does not capture any additional data from your contact book."</string>
-    <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; commented on their post"</string>
-    <string name="list_of_two">"%1$s and %2$s"</string>
+    <string name="contact_hashing_faq_dialog_title">"حریم خصوصی شما اولویت ماست"</string>
+    <string name="contact_hashing_faq_dialog_info">"هالواپ فقط از شماره تلفن شما برای وصل کردن شما با دوستانتان استفاده میکند و هیچ داده دیگری از لیست مخاطب‌های شما ذخیره نمیکند."</string>
+    <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; زیر پستش نظری نوشت"</string>
+    <string name="list_of_two">"%1$s و %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
-    <string name="list_of_many_middle">", %s"</string>
-    <string name="list_of_many_end">", and %s"</string>
-    <string name="no_activity">"No activity"</string>
-    <string name="failed_to_load_media">"Failed to load media"</string>
-    <string name="settings">"Settings"</string>
-    <string name="send_logs">"Share feedback &amp; logs"</string>
-    <string name="terms_of_service">"Terms of service"</string>
-    <string name="privacy_policy">"Privacy policy"</string>
-    <string name="settings_block_list">"Blocked contacts"</string>
-    <string name="settings_feed_privacy">"Posts"</string>
-    <string name="settings_privacy">"Privacy"</string>
+    <string name="list_of_many_middle">"، %s"</string>
+    <string name="list_of_many_end">"، و %s"</string>
+    <string name="no_activity">"فاقد فعالیت"</string>
+    <string name="failed_to_load_media">"خطا در بارگذاری عکس یا ویدیو"</string>
+    <string name="settings">"تنظیمات"</string>
+    <string name="send_logs">"ارسال بازخوردها و داده‌ها"</string>
+    <string name="terms_of_service">"شرایط استفاده از خدمات"</string>
+    <string name="privacy_policy">"حریم خصوصی"</string>
+    <string name="settings_block_list">"مخاطب‌های مسدود شده"</string>
+    <string name="settings_feed_privacy">"پست‌ها"</string>
+    <string name="settings_privacy">"حریم خصوصی"</string>
     <plurals name="contact_selection_subtitle">
-        <item quantity="other">"%d contact selected"</item>
+        <item quantity="one">"%d مخاطب انتخاب شده است"</item>
+        <item quantity="other">"%d مخاطب انتخاب شده‌اند"</item>
     </plurals>
     <plurals name="contact_maximum_selection">
-        <item quantity="other">"You may select at most %d contact"</item>
+        <item quantity="one">"میتوانید حداکثر %d مخاطب انتخاب کنید"</item>
+        <item quantity="other">"میتوانید حداکثر %d مخاطب انتخاب کنید"</item>
     </plurals>
-    <string name="no_contacts_selected_subtitle">"No contacts selected"</string>
-    <string name="help">"Help"</string>
-    <string name="about">"About"</string>
-    <string name="notify_posts">"Posts"</string>
-    <string name="notify_comments">"Comments"</string>
-    <string name="read_more">"read more"</string>
-    <string name="no_photos_or_videos_found">"No photos or videos found"</string>
-    <string name="gallery">"Gallery"</string>
-    <string name="avatar_picker_title">"Profile photo"</string>
-    <string name="group_avatar_picker_title">"Group avatar"</string>
-    <string name="other_media">"Other media"</string>
-    <string name="rotate">"Rotate"</string>
-    <string name="seen_by">"Seen by"</string>
-    <string name="empty_viewed_by">"No one has seen your post yet"</string>
-    <string name="options">"Options"</string>
-    <string name="block">"Block"</string>
-    <string name="play">"Play"</string>
-    <string name="new_posts">"New posts"</string>
+    <string name="no_contacts_selected_subtitle">"هیچ مخاطبی انتخاب نشده است"</string>
+    <string name="help">"کمک"</string>
+    <string name="about">"درباره"</string>
+    <string name="notify_posts">"پست‌ها"</string>
+    <string name="notify_comments">"نظرها"</string>
+    <string name="read_more">"بیشتر بخوانید"</string>
+    <string name="no_photos_or_videos_found">"هیچ عکس یا ویدیویی پیدا نشد"</string>
+    <string name="gallery">"گالری"</string>
+    <string name="avatar_picker_title">"عکس حساب کاربری"</string>
+    <string name="group_avatar_picker_title">"عکس گروه"</string>
+    <string name="other_media">"دیگر فایل‌ها"</string>
+    <string name="rotate">"چرخاندن"</string>
+    <string name="seen_by">"دیده شد توسط"</string>
+    <string name="empty_viewed_by">"هیچکس تا الآن پست شما را ندیده است"</string>
+    <string name="options">"گزینه‌ها"</string>
+    <string name="block">"مسدود کردن"</string>
+    <string name="play">"پخش"</string>
+    <string name="new_posts">"پست جدید"</string>
 
     <!-- Confirmation dialog message when user tries to exit with unsaved changes. Options are cancel (keep editing) and discard (exit). -->
-    <string name="alert_discard_changes_message">"Discard changes?"</string>
+    <string name="alert_discard_changes_message">"لغو تغییرات؟"</string>
 
     <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
-    <string name="action_discard">"Discard"</string>
-    <string name="new_post_notification">"New post from %s"</string>
+    <string name="action_discard">"لغو"</string>
+    <string name="new_post_notification">"پست جدید از %s"</string>
     <plurals name="new_posts_notification">
-        <item quantity="other">"%1$d new post from %2$s"</item>
+        <item quantity="one">"%1$d پست جدید از %2$s"</item>
+        <item quantity="other">"%1$d پست جدید از %2$s"</item>
     </plurals>
     <plurals name="new_messages_notification">
-        <item quantity="other">"%1$d message from %2$s"</item>
+        <item quantity="one">"%1$d پیام جدید از %2$s"</item>
+        <item quantity="other">"%1$d پیام جدید از %2$s"</item>
     </plurals>
     <plurals name="new_messages_separator">
-        <item quantity="other">"%d new message"</item>
+        <item quantity="one">"%d پیام جدید"</item>
+        <item quantity="other">"%d پیام جدید"</item>
     </plurals>
-    <string name="new_comments_notification">"%s commented on your post"</string>
-    <string name="new_comments_on_multiple_posts_notification">"%s commented on your posts"</string>
+    <string name="new_comments_notification">"%s زیر پست شما نظر نوشت"</string>
+    <string name="new_comments_on_multiple_posts_notification">"%s زیر پست‌های شما نظر نوشت"</string>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
-    <string name="notification_app_expired_title">"HalloApp has expired"</string>
-    <string name="notification_app_expiration_body">"Please download the latest release"</string>
+    <string name="notification_app_expired_title">"هالواپ تمام شده است"</string>
+    <string name="notification_app_expiration_body">"لطفاً ورژن آخر را دانلود کنید"</string>
     <plurals name="notification_app_expiration_days_left_title">
-        <item quantity="other">"HalloApp expires in %d day"</item>
+        <item quantity="one">"هالواپ %d روز دیگر تمام میشود"</item>
+        <item quantity="other">"هالواپ %d روز دیگر تمام میشود"</item>
     </plurals>
-    <string name="app_expiration_download_button">"Download update"</string>
-    <string name="app_expired_explanation">"This version of HalloApp is too old and can no longer be used. Please go to the Google Play Store and download the latest release."</string>
-    <string name="app_expiration_no_play_store">"Google Play not installed"</string>
-    <string name="refresh_contacts">"Refresh contacts"</string>
-    <string name="post_retracted_with_name">"%s deleted their post"</string>
-    <string name="post_retracted_by_me">"You deleted your post"</string>
-    <string name="post_retracted_placeholder">"This post has been deleted"</string>
-    <string name="message_retracted_placeholder">"This message has been deleted"</string>
-    <string name="comment_retracted_placeholder">"This comment has been deleted"</string>
-    <string name="retract">"Delete"</string>
-    <string name="retract_post_confirmation">"Would you like to delete your post?"</string>
-    <string name="retract_comment_confirmation">"Would you like to delete your comment?"</string>
+    <string name="app_expiration_download_button">"دانلود ورژن جدید"</string>
+    <string name="app_expired_explanation">"این ورژن هالواپ خیلی قدیمی است و نمیشود از آن استفاده کرد. لطفاً به گوگل پلی استور بروید و ورژن جدید را دانلود کنید."</string>
+    <string name="app_expiration_no_play_store">"گوگل پلی نصب نشده است"</string>
+    <string name="refresh_contacts">"مخاطب‌ها را به روز رسانی کنید"</string>
+    <string name="post_retracted_with_name">"%s پست خود را حذف کرد"</string>
+    <string name="post_retracted_by_me">"شما پست خود را حذف کردید"</string>
+    <string name="post_retracted_placeholder">"این پست حذف شده است"</string>
+    <string name="message_retracted_placeholder">"این پیام حذف شده است"</string>
+    <string name="comment_retracted_placeholder">"این نظر حذف شده است"</string>
+    <string name="retract">"حذف"</string>
+    <string name="retract_post_confirmation">"میخواهید پست خود را حذف کنید؟"</string>
+    <string name="retract_comment_confirmation">"میخواهید نظر خود را حذف کنید؟"</string>
     <plurals name="delete_chats_confirmation">
-        <item quantity="other">"Would you like to delete this chat?"</item>
+        <item quantity="one">"میخواهید این گفتگو را حذف کنید؟"</item>
+        <item quantity="other">"میخواهید %d گفتگو که انتخاب کرده‌اید را حذف کنید؟"</item>
     </plurals>
     <plurals name="delete_groups_confirmation">
-        <item quantity="other">"Would you like to delete this group?"</item>
+        <item quantity="one">"میخواهید این گروه را حذف کنید؟"</item>
+        <item quantity="other">"میخواهید %d گروه که انتخاب کرده‌اید را حذف کنید؟"</item>
     </plurals>
-    <string name="delete_chat_confirmation">"Would you like to delete this chat?"</string>
-    <string name="yes">"Yes"</string>
-    <string name="no">"No"</string>
-    <string name="ok">"OK"</string>
-    <string name="activity">"Activity"</string>
+    <string name="delete_chat_confirmation">"میخواهید این گفتگو را حذف کنید؟"</string>
+    <string name="yes">"بله"</string>
+    <string name="no">"خیر"</string>
+    <string name="ok">"تأیید"</string>
+    <string name="activity">"فعالیت‌"</string>
 
     <!-- In activity center, mark all comments/mentions as read -->
-    <string name="mark_all_read">"Read all"</string>
-    <string name="login_failed">"Login failed"</string>
-    <string name="login_failed_explanation">"Please, re-verify your phone number"</string>
+    <string name="mark_all_read">"همه را خوانده شده علامت بزن"</string>
+    <string name="login_failed">"خطا در ورود"</string>
+    <string name="login_failed_explanation">"لطفاً شماره تلفن خود را بررسی کنید"</string>
     <plurals name="app_expiration_days_left">
-        <item quantity="other">"This version of HalloApp will expire in %d day. Please go to the Google Play Store and download the latest release."</item>
+        <item quantity="one">"این ورژن هالواپ %d روز دیگر تمام میشود. لطفاً به گوگل پلی استور بروید و ورژن جدید را دانلود کنید."</item>
+        <item quantity="other">"این ورژن هالواپ %d روز دیگر تمام میشود. لطفاً به گوگل پلی استور بروید و ورژن جدید را دانلود کنید."</item>
     </plurals>
-    <string name="could_not_set_avatar">"Please try a different image"</string>
-    <string name="pick_media">"Pick media"</string>
-    <string name="video">"Video"</string>
-    <string name="photo">"Photo"</string>
-    <string name="album">"Album"</string>
-    <string name="new_messages">"New messages"</string>
-    <string name="delete">"Delete"</string>
-    <string name="clear_chat">"Clear chat"</string>
-    <string name="view_profile">"View profile"</string>
-    <string name="action_hide">"Hide"</string>
-    <string name="hide_my_posts">"Hide my posts"</string>
-    <string name="my_posts">"My posts"</string>
-    <string name="last_seen">"Last seen %s"</string>
-    <string name="last_seen_less_minute">"Last seen less than a minute ago"</string>
-    <string name="online">"online"</string>
-    <string name="today">"Today"</string>
-    <string name="today_at_time">"Today at %s"</string>
-    <string name="yesterday">"Yesterday"</string>
-    <string name="yesterday_at_time">"Yesterday at %s"</string>
-    <string name="day_of_week_at_time">"%1$s at %2$s"</string>
-    <string name="unknown_contact">"Unknown contact"</string>
-    <string name="select_contact">"New message"</string>
-    <string name="search_contacts">"Search contacts"</string>
-    <string name="search">"Search"</string>
-    <string name="contact_search_empty">"Nothing found for '%s'"</string>
-    <string name="action_save">"Save"</string>
-    <string name="invite_friends">"Invite friends &amp; family"</string>
-    <string name="invite_friend_chooser_title">"Invite %s"</string>
-    <string name="invite_text_with_name_and_number">"Hey %1$s, I have an invite for you to join me on HalloApp - a real-relationship network for those closest to me. Use %2$s to register. Get it at https://halloapp.com/dl"</string>
-    <string name="name_hint">"Your name"</string>
-    <string name="name_must_be_specified">"Name must be specified"</string>
+    <string name="could_not_set_avatar">"لطفاً عکس دیگری امتحان کنید"</string>
+    <string name="pick_media">"انتخاب کردن فایل"</string>
+    <string name="video">"ویدیو"</string>
+    <string name="photo">"عکس"</string>
+    <string name="album">"آلبوم"</string>
+    <string name="new_messages">"پیام‌های جدید"</string>
+    <string name="delete">"حذف"</string>
+    <string name="clear_chat">"پاک کردن گفتگو"</string>
+    <string name="view_profile">"مشاهده صفحه کاربری"</string>
+    <string name="action_hide">"پنهان کردن"</string>
+    <string name="hide_my_posts">"پست‌های من را پنهان کن"</string>
+    <string name="my_posts">"پست‌های من"</string>
+    <string name="last_seen">"آخرین بازدید %s"</string>
+    <string name="last_seen_less_minute">"آخرین بازدید کمتر از یک دقیقه پیش"</string>
+    <string name="online">"آنلاین"</string>
+    <string name="today">"امروز"</string>
+    <string name="today_at_time">"امروز ساعت %s"</string>
+    <string name="yesterday">"دیروز"</string>
+    <string name="yesterday_at_time">"دیروز ساعت %s"</string>
+    <string name="day_of_week_at_time">"%1$s ساعت %2$s"</string>
+    <string name="unknown_contact">"مخاطب ناشناخته"</string>
+    <string name="select_contact">"پیام جدید"</string>
+    <string name="search_contacts">"جستجوی مخاطب‌ها"</string>
+    <string name="search">"جستجو"</string>
+    <string name="contact_search_empty">"«%s» یافت نشد"</string>
+    <string name="action_save">"ذخیره"</string>
+    <string name="invite_friends">"دعوت دوستان و آشنایان"</string>
+    <string name="invite_friend_chooser_title">"دعوت %s"</string>
+    <string name="invite_text_with_name_and_number">"سلام %1$s، شما را دعوت میکنم به من در هالواپ ملحق شوید - یک شبکه برای آشنایانم. از %2$s برای ثبتنام استفاده کنید. آن را از https://halloapp.com/dl دانلود کنید"</string>
+    <string name="name_hint">"نام شما"</string>
+    <string name="name_must_be_specified">"نام باید مشخص شود"</string>
     <string name="counter">"%1$d/%2$d"</string>
-    <string name="invite_pending">"Pending"</string>
-    <string name="failed_update_profile">"Failed to update profile, try again later"</string>
-    <string name="profile_updated">"Profile updated"</string>
-    <string name="flip">"Flip"</string>
-    <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
-    <string name="email_logs_text">"
-----------------------------------------
+    <string name="invite_pending">"در انتظار"</string>
+    <string name="failed_update_profile">"خطا در به روز رسانی صفحه کاربری، لطفاً بعداً امتحان کنید"</string>
+    <string name="profile_updated">"صفحه کاربری به روز رسانی شد"</string>
+    <string name="flip">"چرخش"</string>
+    <string name="email_logs_subject">"هالواپ اندروید %1$s %2$s"</string>
+    <string name="email_logs_text">"----------------------------------------
 Please describe the issue above.
 uid: %1$s
 version: %2$s
-----------------------------------------
-"</string>
-    <string name="share">"Share"</string>
-    <string name="unblock">"Unblock"</string>
-    <string name="unblock_user_confirmation">"Would you like to unblock %s?"</string>
-    <string name="menu_item_block_user">"Block user"</string>
-    <string name="picker_title_block_user">"Block user"</string>
-    <string name="cancel">"Cancel"</string>
-    <string name="group_subtitle">"tap here for group info"</string>
-    <string name="empty_block_list">"No blocked contacts"</string>
-    <string name="block_notification">"You blocked this contact. Tap to unblock"</string>
-    <string name="unblock_notification">"You unblocked this contact"</string>
-    <string name="system_message_group_created">"This group was created by %s"</string>
-    <string name="system_message_group_created_by_you">"This group was created by you"</string>
-    <string name="system_message_members_added">"%1$s added %2$s"</string>
-    <string name="system_message_members_added_by_you">"You added %s"</string>
-    <string name="system_message_members_removed">"%1$s removed %2$s"</string>
-    <string name="system_message_members_removed_by_you">"You removed %s"</string>
-    <string name="system_message_member_left">"%s left"</string>
-    <string name="system_message_member_you_left">"You left"</string>
-    <string name="system_message_members_promoted">"%1$s promoted %2$s to admin"</string>
-    <string name="system_message_members_promoted_by_you">"You promoted %s to admin"</string>
-    <string name="system_message_members_demoted">"%1$s demoted %2$s from admin"</string>
-    <string name="system_message_members_demoted_by_you">"You demoted %s from admin"</string>
-    <string name="system_message_member_auto_promoted">"%s was auto-promoted to admin"</string>
-    <string name="system_message_member_auto_promoted_you">"You were auto-promoted to admin"</string>
-    <string name="system_message_group_name_changed">"%1$s changed the group name to %2$s"</string>
-    <string name="system_message_group_name_changed_by_you">"You changed the group name to %s"</string>
-    <string name="system_message_group_avatar_changed">"%s changed the group avatar"</string>
-    <string name="system_message_group_avatar_changed_by_you">"You changed the group avatar"</string>
-    <string name="system_message_group_deleted">"%s deleted the group"</string>
-    <string name="system_message_group_deleted_by_you">"You deleted the group"</string>
-    <string name="system_post_group_created">"This group was created by %s"</string>
-    <string name="system_post_group_created_by_you">"This group was created by you"</string>
-    <string name="system_post_members_added">"%1$s added %2$s"</string>
-    <string name="system_post_members_added_by_you">"You added %s"</string>
-    <string name="system_post_members_removed">"%1$s removed %2$s"</string>
-    <string name="system_post_members_removed_by_you">"You removed %s"</string>
-    <string name="system_post_member_left">"%s left"</string>
-    <string name="system_post_member_you_left">"You left"</string>
-    <string name="system_post_members_promoted">"%1$s promoted %2$s to admin"</string>
-    <string name="system_post_members_promoted_by_you">"You promoted %s to admin"</string>
-    <string name="system_post_members_demoted">"%1$s demoted %2$s from admin"</string>
-    <string name="system_post_members_demoted_by_you">"You demoted %s from admin"</string>
-    <string name="system_post_member_auto_promoted">"%s was auto-promoted to admin"</string>
-    <string name="system_post_member_auto_promoted_you">"You were auto-promoted to admin"</string>
-    <string name="system_post_group_name_changed">"%1$s changed the group name to %2$s"</string>
-    <string name="system_post_group_name_changed_by_you">"You changed the group name to %s"</string>
-    <string name="system_post_group_avatar_changed">"%s changed the group avatar"</string>
-    <string name="system_post_group_avatar_changed_by_you">"You changed the group avatar"</string>
-    <string name="system_post_group_deleted">"%s deleted the group"</string>
-    <string name="system_post_group_deleted_by_you">"You deleted the group"</string>
-    <string name="group_info_title">"Group info"</string>
-    <string name="admin">"Admin"</string>
-    <string name="save">"Save"</string>
-    <string name="contact_picker_feed_except_title">"Hide posts from…"</string>
-    <string name="contact_picker_feed_only_title">"Share posts with…"</string>
-    <string name="setting_feed_privacy_title">"Who can see my posts"</string>
-    <string name="setting_feed_all">"My contacts"</string>
-    <string name="setting_feed_only">"Only share with…"</string>
-    <string name="setting_feed_except">"My contacts except…"</string>
-    <string name="feed_privacy_fail_to_load">"Failed to load privacy settings"</string>
-    <string name="feed_privacy_update_success">"Setting updated successfully"</string>
-    <string name="feed_privacy_update_failure">"Failed to update setting"</string>
-    <string name="invite_failed_internet">"Failed to send invite, check your internet and try again"</string>
-    <string name="invite_failed_no_invites">"Sorry you're out of invites, try again later"</string>
-    <string name="invite_failed_invalid_number">"That phone number is invalid"</string>
-    <string name="invite_failed_existing_user">"Your friend is already on HalloApp!"</string>
-    <string name="invite_failed_unknown">"Failed to send invite"</string>
-    <string name="invite_creation_in_progress">"Creating invite…"</string>
-    <string name="invite_info_fetch_internet">"Failed to retrieve invite info, check your internet and try again"</string>
+----------------------------------------"</string>
+    <string name="share">"به اشتراک گذاشتن"</string>
+    <string name="unblock">"رفع مسدودیت"</string>
+    <string name="unblock_user_confirmation">"میخواهید %s را رفع مسدودیت کنید؟"</string>
+    <string name="menu_item_block_user">"مسدود کردن کاربر"</string>
+    <string name="picker_title_block_user">"مسدود کردن کاربر"</string>
+    <string name="cancel">"لغو"</string>
+    <string name="group_subtitle">"برای اطلاعات گروه اینجا کلیک کنید"</string>
+    <string name="empty_block_list">"فاقد مخاطب مسدود شده"</string>
+    <string name="block_notification">"شما این مخاطب را مسدود کردید. برای رفع مسدودیت کلیک کنید"</string>
+    <string name="unblock_notification">"شما این مخاطب را رفع مسدودیت کردید"</string>
+    <string name="system_message_group_created">"این گروه توسط %s ایجاد شده است"</string>
+    <string name="system_message_group_created_by_you">"این گروه توسط شما ایجاد شده است"</string>
+    <string name="system_message_members_added">"%2$s %1$s را افزود"</string>
+    <string name="system_message_members_added_by_you">"شما %s را افزودید"</string>
+    <string name="system_message_members_removed">"%2$s %1$s را حذف کرد"</string>
+    <string name="system_message_members_removed_by_you">"شما %s را حذف کردید"</string>
+    <string name="system_message_member_left">"%s ترک کرد"</string>
+    <string name="system_message_member_you_left">"شما ترک کردید"</string>
+    <string name="system_message_members_promoted">"%2$s %1$s را مدیر گروه کرد"</string>
+    <string name="system_message_members_promoted_by_you">"شما %s را مدیر گروه کردید"</string>
+    <string name="system_message_members_demoted">"%2$s %1$s را از سمت مدیر حذف کرد"</string>
+    <string name="system_message_members_demoted_by_you">"شما %s را از سمت مدیر حذف کردید"</string>
+    <string name="system_message_member_auto_promoted">"%s به صورت اتوماتیک مدیر گروه شد"</string>
+    <string name="system_message_member_auto_promoted_you">"شما به صورت اتوماتیک مدیر گروه شدید"</string>
+    <string name="system_message_group_name_changed">"%1$s نام گروه را به %2$s تغییر داد"</string>
+    <string name="system_message_group_name_changed_by_you">"شما نام گروه را به %s تغییر دادید"</string>
+    <string name="system_message_group_avatar_changed">"%s عکس گروه را تغییر داد"</string>
+    <string name="system_message_group_avatar_changed_by_you">"شما عکس گروه را تغییر دادید"</string>
+    <string name="system_message_group_deleted">"%s گروه را حذف کرد"</string>
+    <string name="system_message_group_deleted_by_you">"شما گروه را حذف کردید"</string>
+    <string name="system_post_group_created">"این گروه توسط %s ایجاد شده است"</string>
+    <string name="system_post_group_created_by_you">"این گروه توسط شما ایجاد شده است"</string>
+    <string name="system_post_members_added">"%2$s %1$s را افزود"</string>
+    <string name="system_post_members_added_by_you">"شما %s را افزودید"</string>
+    <string name="system_post_members_removed">"%2$s %1$s را حذف کرد"</string>
+    <string name="system_post_members_removed_by_you">"شما %s را حذف کردید"</string>
+    <string name="system_post_member_left">"%s ترک کرد"</string>
+    <string name="system_post_member_you_left">"شما ترک کردید"</string>
+    <string name="system_post_members_promoted">"%2$s %1$s را مدیر گروه کرد"</string>
+    <string name="system_post_members_promoted_by_you">"شما %s را مدیر گروه کردید"</string>
+    <string name="system_post_members_demoted">"%2$s %1$s را از سمت مدیر حذف کرد"</string>
+    <string name="system_post_members_demoted_by_you">"شما %s را از سمت مدیر حذف کردید"</string>
+    <string name="system_post_member_auto_promoted">"%s به صورت اتوماتیک مدیر گروه شد"</string>
+    <string name="system_post_member_auto_promoted_you">"شما به صورت اتوماتیک مدیر گروه شدید"</string>
+    <string name="system_post_group_name_changed">"%1$s نام گروه را به %2$s تغییر داد"</string>
+    <string name="system_post_group_name_changed_by_you">"شما نام گروه را به %s تغییر دادید"</string>
+    <string name="system_post_group_avatar_changed">"%s عکس گروه را تغییر داد"</string>
+    <string name="system_post_group_avatar_changed_by_you">"شما عکس گروه را تغییر دادید"</string>
+    <string name="system_post_group_deleted">"%s گروه را حذف کرد"</string>
+    <string name="system_post_group_deleted_by_you">"شما گروه را حذف کردید"</string>
+    <string name="group_info_title">"اطلاعات گروه"</string>
+    <string name="admin">"مدیر"</string>
+    <string name="save">"ذخیره"</string>
+    <string name="contact_picker_feed_except_title">"پنهان کردن پست‌ها از…"</string>
+    <string name="contact_picker_feed_only_title">"به اشتراک گذاشتن پست‌ها با"</string>
+    <string name="setting_feed_privacy_title">"کسانی که میتوانند پست‌هایم را ببینند"</string>
+    <string name="setting_feed_all">"مخاطب‌هایم"</string>
+    <string name="setting_feed_only">"به اشتراک گذاشتن با…"</string>
+    <string name="setting_feed_except">"مخاطب‌هایم غیر از…"</string>
+    <string name="feed_privacy_fail_to_load">"خطا در بارگذاری تنظیمات حریم خصوصی"</string>
+    <string name="feed_privacy_update_success">"تنظیمات با موفقیت به روز رسانی شد"</string>
+    <string name="feed_privacy_update_failure">"خطا در به روز رسانی تنظیمات"</string>
+    <string name="invite_failed_internet">"خطا در ارسال دعوتنامه، ارتباط اینترنت خود را بررسی کنید و دوباره امتحان کنید"</string>
+    <string name="invite_failed_no_invites">"با عرض پوزش شما دعوتنامه دیگر ندارید، بعداً دوباره امتحان کنید"</string>
+    <string name="invite_failed_invalid_number">"شماره تلفن غلط است"</string>
+    <string name="invite_failed_existing_user">"دوست شما در هالواپ است!"</string>
+    <string name="invite_failed_unknown">"خطا در ارسال دعوتنامه"</string>
+    <string name="invite_creation_in_progress">"ایجاد دعوتنامه…"</string>
+    <string name="invite_info_fetch_internet">"خطا در بازیابی اطلاعات دعوتنامه، ارتباط اینترنتی خود را بررسی کنید و دوباره امتحان کنید"</string>
     <plurals name="invites_remaining">
-        <item quantity="other">"You have %s invite remaining this week"</item>
+        <item quantity="one">"شما %s دعوتنامه برای این هفته دارید"</item>
+        <item quantity="other">"شما %s دعوتنامه برای این هفته دارید"</item>
     </plurals>
-    <string name="invite_friends_title">"Invite friends &amp; family"</string>
-    <string name="invite_title">"Invite"</string>
-    <string name="settings_invite_option">"Invite to HalloApp"</string>
-    <string name="invite_already_on_halloapp">"Already on HalloApp"</string>
-    <string name="invite_invalid_phone_number">"Invalid phone number"</string>
-    <string name="edit">"Edit"</string>
-    <string name="done">"Done"</string>
-    <string name="members_header">"Members (%s)"</string>
-    <string name="add_members">"Add members"</string>
-    <string name="add_members_in_progress">"Adding members…"</string>
-    <string name="failed_add_members">"Failed to add members, try again later"</string>
-    <string name="create_group_in_progress">"Creating group %s…"</string>
-    <string name="new_group_title">"Name your group"</string>
-    <string name="group_picker_title">"New group"</string>
-    <string name="button_create_group">"Create"</string>
-    <string name="group_name_hint">"Group name"</string>
-    <string name="failed_create_group">"Failed to create group, try again later"</string>
-    <string name="group_remove_member">"Remove"</string>
-    <string name="group_promote_to_admin">"Promote to admin"</string>
-    <string name="promote_admin_in_progress">"Promoting to admin…"</string>
-    <string name="failed_promote_admin">"Failed to promote admin, try again later"</string>
-    <string name="group_demote_from_admin">"Demote admin"</string>
-    <string name="demote_admin_in_progress">"Demoting admin…"</string>
-    <string name="failed_demote_admin">"Failed to demote admin, try again later"</string>
-    <string name="remove_member_in_progress">"Removing member…"</string>
-    <string name="failed_remove_member">"Failed to remove member, try again later"</string>
-    <string name="leave_group">"Leave group"</string>
+    <string name="invite_friends_title">"دعوت دوستان و آشنایان"</string>
+    <string name="invite_title">"دعوت"</string>
+    <string name="settings_invite_option">"دعوت به هالواپ"</string>
+    <string name="invite_already_on_halloapp">"در هالواپ است"</string>
+    <string name="invite_invalid_phone_number">"شماره تلفن غلط"</string>
+    <string name="edit">"ویرایش"</string>
+    <string name="done">"تأیید"</string>
+    <string name="members_header">"اعضا (%s)"</string>
+    <string name="add_members">"افزودن اعضا"</string>
+    <string name="add_members_in_progress">"در حال افزودن اعضا…"</string>
+    <string name="failed_add_members">"خطا در افزودن اعضا، لطفاً بعداً دوباره امتحان کنید"</string>
+    <string name="create_group_in_progress">"در حال ایجاد گروه %s…"</string>
+    <string name="new_group_title">"نامگذاری گروه"</string>
+    <string name="group_picker_title">"گروه جدید"</string>
+    <string name="button_create_group">"ایجاد"</string>
+    <string name="group_name_hint">"نام گروه"</string>
+    <string name="failed_create_group">"خطا در ایجاد گروه، لطفاً بعداً امتحان کنید"</string>
+
+    <!-- Shown in options menu to remove a member of group -->
+    <string name="group_remove_member">"حذف از این گروه"</string>
+    <string name="group_promote_to_admin">"ترفیع به مدیر گروه"</string>
+    <string name="promote_admin_in_progress">"در حال ترفیع به مدیر…"</string>
+    <string name="failed_promote_admin">"خطا در ترفیع دادن، لطفاً بعداً امتحان کنید"</string>
+
+    <!-- Option for removing a user from the list of admins of a group -->
+    <string name="group_demote_from_admin">"حذف از مدیر گروه"</string>
+    <string name="demote_admin_in_progress">"در حال حذف مدیر گروه…"</string>
+    <string name="failed_demote_admin">"خطا در تنزل، لطفاً بعداً امتحان کنید"</string>
+    <string name="remove_member_in_progress">"در حال حذف عضو…"</string>
+    <string name="failed_remove_member">"خطا در حذف عضو، لطفاً بعداً امتحان کنید"</string>
+    <string name="leave_group">"ترک گروه"</string>
     <plurals name="leave_group_plural">
-        <item quantity="other">"Leave group"</item>
+        <item quantity="one">"ترک گروه"</item>
+        <item quantity="other">"ترک گروه‌ها"</item>
     </plurals>
-    <string name="leave_group_confirmation">"Would you like to leave this group?"</string>
+    <string name="leave_group_confirmation">"میخواهید این گروه را ترک کنید؟"</string>
     <plurals name="leave_multiple_groups_confirmation">
-        <item quantity="other">"Would you like to leave this group?"</item>
+        <item quantity="one">"میخواهید این گروه را ترک کنید؟"</item>
+        <item quantity="other">"میخواهید %d گروهی که انتخاب کردید را ترک کنید؟"</item>
     </plurals>
-    <string name="leave_group_in_progress">"Leaving group…"</string>
+    <string name="leave_group_in_progress">"در حال ترک گروه…"</string>
     <plurals name="leave_groups_progress">
-        <item quantity="other">"Leaving group…"</item>
+        <item quantity="one">"در حال ترک گروه…"</item>
+        <item quantity="other">"در حال ترک گروه‌ها…"</item>
     </plurals>
-    <string name="failed_leave_group">"Failed to leave group, try again later"</string>
-    <string name="delete_group">"Delete group"</string>
+    <string name="failed_leave_group">"خطا در ترک گروه، بعداً امتحان کنید"</string>
+    <string name="delete_group">"حذف گروه"</string>
     <plurals name="friends_on_halloapp">
-        <item quantity="other">"%d contact on HalloApp"</item>
+        <item quantity="one">"%d مخاطب در هالواپ"</item>
+        <item quantity="other">"%d مخاطب در هالواپ"</item>
     </plurals>
     <plurals name="settings_block_list_summary">
-        <item quantity="other">"%d contact"</item>
+        <item quantity="one">"%d مخاطب"</item>
+        <item quantity="other">"%d مخاطب"</item>
     </plurals>
-    <string name="settings_block_list_none_summary">"None"</string>
-    <string name="settings_feed_contacts_summary">"My phone contacts"</string>
+    <string name="settings_block_list_none_summary">"هیچکس"</string>
+    <string name="settings_feed_contacts_summary">"مخاطب‌های تلفنم"</string>
     <plurals name="settings_feed_excluded_summary">
-        <item quantity="other">"%d contact excluded"</item>
+        <item quantity="one">"%d مخاطب حذف شده است"</item>
+        <item quantity="other">"%d مخاطب حذف شده‌اند"</item>
     </plurals>
     <plurals name="settings_feed_selected">
-        <item quantity="other">"%d contact selected"</item>
+        <item quantity="one">"%d مخاطب انتخاب شده است"</item>
+        <item quantity="other">"%d مخاطب انتخاب شده‌اند"</item>
     </plurals>
-    <string name="settings_feed_selected_empty">"No contacts selected"</string>
-    <string name="settings_version_footer">"HalloApp Version %s"</string>
-    <string name="connectivity_info_airplane_mode">"Airplane mode on"</string>
-    <string name="connectivity_info_not_connected">"No network"</string>
-    <string name="blocking_user_failed_check_internet">"Couldn't block %s. Check your internet and try again."</string>
-    <string name="blocking_user_successful">"Blocked %s"</string>
-    <string name="blocking_user_in_progress">"Blocking %s…"</string>
-    <string name="unblocking_user_successful">"Unblocked %s"</string>
-    <string name="unblocking_user_failed_check_internet">"Couldn't unblock %s. Check your internet and try again."</string>
-    <string name="unblocking_user_in_progress">"Unblocking %s…"</string>
-    <string name="are_you_sure_dialog_title">"Are you sure?"</string>
-    <string name="hide_future_posts_confirmation">"Are you sure you want to hide all your future posts from %s? You can always change this later."</string>
-    <string name="feed_privacy_hide_success">"Feed privacy updated. Hiding posts from %s"</string>
-    <string name="feed_privacy_hide_failure">"Failed to update feed privacy, check your internet and try again"</string>
-    <string name="user_typing">"typing…"</string>
-    <string name="group_user_typing">"%s is typing…"</string>
-    <string name="group_many_users_typing">"multiple users typing…"</string>
-    <string name="camera_error_generic">"Camera failure."</string>
-    <string name="camera_error_photo">"Could not take a photo."</string>
-    <string name="camera_error_video">"Could not record a video."</string>
+    <string name="settings_feed_selected_empty">"هیچ مخاطبی انتخاب نشده است"</string>
+    <string name="settings_version_footer">"هالواپ ورژن %s"</string>
+    <string name="connectivity_info_airplane_mode">"حالت پرواز روشن است"</string>
+    <string name="connectivity_info_not_connected">"فاقد اینترنت"</string>
+    <string name="blocking_user_failed_check_internet">"خطا در مسدود کردن %s. اینترنت خود را بررسی کنید و دوباره امتحان کنید."</string>
+    <string name="blocking_user_successful">"%s مسدود شد"</string>
+    <string name="blocking_user_in_progress">"در حال مسدود کردن %s…"</string>
+    <string name="unblocking_user_successful">"%s رفع مسدودیت شد"</string>
+    <string name="unblocking_user_failed_check_internet">"خطا در رفع مسدودیت %s. اینترنت خود را بررسی کنید و دوباره امتحان کنید."</string>
+    <string name="unblocking_user_in_progress">"در حال رفع مسدودیت %s…"</string>
+    <string name="are_you_sure_dialog_title">"مطمئنید؟"</string>
+    <string name="hide_future_posts_confirmation">"مطمئنید میخواهید تمام پست‌های آینده‌ خود را از %s پنهان کنید؟ شما میتوانید بعداً این را تغییر دهید."</string>
+    <string name="feed_privacy_hide_success">"حریم خصوصیتان به روز رسانی شد. پست‌هایتان از %s پنهان میشوند"</string>
+    <string name="feed_privacy_hide_failure">"خطا در به روز رسانی حریم خصوصی، لطفاً اینترنت خود را بررسی کنید و دوباره امتحان کنید"</string>
+    <string name="user_typing">"در حال نوشتن…"</string>
+    <string name="group_user_typing">"%s درحال نوشتن است…"</string>
+    <string name="group_many_users_typing">"تعدادی کاربر در حال نوشتن هستند…"</string>
+    <string name="camera_error_generic">"مشکل دوربین."</string>
+    <string name="camera_error_photo">"خطا در عکس گرفتن."</string>
+    <string name="camera_error_video">"خطا در فیلمبرداری."</string>
     <plurals name="group_feed_members">
-        <item quantity="other">"%d member"</item>
+        <item quantity="one">"%d عضو"</item>
+        <item quantity="other">"%d عضو"</item>
     </plurals>
-    <string name="composer_sharing_all_summary">"Sharing with my contacts"</string>
-    <string name="composer_sharing_except_summary">"Sharing with some of my contacts"</string>
+    <string name="composer_sharing_all_summary">"به اشتراک گذاشتن با مخاطب‌هایم"</string>
+    <string name="composer_sharing_except_summary">"به اشتراک گذاشتن با بعضی از مخاطب‌هایم"</string>
     <plurals name="composer_sharing_only_summary">
-        <item quantity="other">"Sharing with %d of my contacts"</item>
+        <item quantity="one">"به اشتراک گذاشتن با %d مخاطب"</item>
+        <item quantity="other">"به اشتراک گذاشتن با %d مخاطب"</item>
     </plurals>
-    <string name="post_preview_no_caption">"%s shared a post"</string>
+    <string name="post_preview_no_caption">"%s یک پست به اشتراک گذاشت"</string>
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
-    <string name="composer_sharing_message">"Sending to %s"</string>
-    <string name="composer_sharing_post">"Sharing with %s"</string>
+    <string name="composer_sharing_message">"ارسال به %s"</string>
+    <string name="composer_sharing_post">"به اشتراک گذاشتن با %s"</string>
     <plurals name="max_video_length">
-        <item quantity="other">"Your video is over %d second long. Please select another video or edit it."</item>
+        <item quantity="one">"ویدیو شما بیشتر از %d ثانیه است. لطفاً ویدیوی دیگری انتخاب کنید یا آن را ویرایش کنید."</item>
+        <item quantity="other">"ویدیو شما بیشتر از %d ثانیه است. لطفاً ویدیوی دیگری انتخاب کنید یا آن را ویرایش کنید."</item>
     </plurals>
-    <string name="mute">"Mute"</string>
-    <string name="share_link">"Share link"</string>
-    <string name="copy_link">"Copy link"</string>
-    <string name="reset_link">"Reset link"</string>
-    <string name="view_group_invite_link_action">"View group invite"</string>
-    <string name="invite_link_resetting_progress">"Resetting link…"</string>
-    <string name="invite_link_reset">"Link reset"</string>
-    <string name="invite_link_reset_failed">"Failed to reset link"</string>
-    <string name="reset_invite_link_confirmation">"Would you like to reset the group invite link?"</string>
-    <string name="invite_link_joining">"Joining group…"</string>
-    <string name="invite_link_loading">"Loading group…"</string>
-    <string name="invite_link_copied">"Link copied!"</string>
-    <string name="invite_link_title">"Invite link"</string>
-    <string name="invite_link_summary">"Anyone with HalloApp can use this link to join this group."</string>
+    <string name="mute">"بی صدا کردن"</string>
+    <string name="share_link">"به اشتراک گذاشتن لینک"</string>
+    <string name="copy_link">"کپی لینک"</string>
+    <string name="reset_link">"بازنشانی لینک"</string>
+    <string name="view_group_invite_link_action">"مشاهده دعوت گروهی"</string>
+    <string name="invite_link_resetting_progress">"در حال بازنشانی لینک…"</string>
+    <string name="invite_link_reset">"بازنشانی لینک"</string>
+    <string name="invite_link_reset_failed">"خطا در بازنشانی لینک"</string>
+    <string name="reset_invite_link_confirmation">"میخواهید لینک گروه را بازنشانی کنید؟"</string>
+    <string name="invite_link_joining">"در حال پیوستن به گروه…"</string>
+    <string name="invite_link_loading">"بارگذاری گروه…"</string>
+    <string name="invite_link_copied">"لینک کپی شد!"</string>
+    <string name="invite_link_title">"لینک دعوتنامه"</string>
+    <string name="invite_link_summary">"هرکسی که هالواپ داشته باشد با این لینک میتواند به این گروه بپیوندد."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->
-    <string name="invite_link_failed_to_join">"Failed to join the group"</string>
-    <string name="join_group_action">"Join group"</string>
-    <string name="system_message_you_joined">"You joined the group via invite link"</string>
-    <string name="system_message_joined">"%s joined the group via invite link"</string>
-    <string name="post_preview_retracted">"%s deleted a post"</string>
-    <string name="system_message_group_bg_changed">"%s changed the background color"</string>
-    <string name="system_message_group_bg_changed_by_you">"You changed the background color"</string>
-    <string name="group_background_hint">"Background"</string>
-    <string name="group_background_saving_dialog">"Setting background…"</string>
-    <string name="group_background_save_failed">"Failed to set group background"</string>
-    <string name="group_background_save_success">"Group background updated"</string>
-    <string name="group_background_color">"Color"</string>
-    <string name="group_background_default">"Default"</string>
-    <string name="group_info_members">"Members (%d)"</string>
-    <string name="delete_message_confirmation">"Delete selected message?"</string>
-    <string name="retract_message_option">"Delete for everyone"</string>
-    <string name="delete_message_option">"Delete for me"</string>
-    <string name="contact_permissions_dialog_title">"Contacts"</string>
-    <string name="not_now">"Not now"</string>
-    <string name="continue_button">"Continue"</string>
-    <string name="invite_link_load_failed">"Failed to open group invite link"</string>
-    <string name="message_tombstone_placeholder">"Waiting for this message. This may take a while. &lt;a href=\"https://halloapp.com/help/\"&gt;Learn more&lt;/a&gt;."</string>
-    <string name="failed_no_longer_member">"You are no longer a member of this group"</string>
+    <string name="invite_link_failed_to_join">"خطا در پیوستن به گروه"</string>
+    <string name="join_group_action">"پیوستن به گروه"</string>
+    <string name="system_message_you_joined">"شما با لینک به گروه پیوستید"</string>
+    <string name="system_message_joined">"%s با لینک دعوتنامه به گروه پیوست"</string>
+    <string name="post_preview_retracted">"%s پست را حذف کرد"</string>
+    <string name="system_message_group_bg_changed">"%s رنگ زمینه را تغییر داد"</string>
+    <string name="system_message_group_bg_changed_by_you">"شما رنگ زمینه را تغییر دادید"</string>
+    <string name="group_background_hint">"زمینه"</string>
+    <string name="group_background_saving_dialog">"در حال ذخیره زمینه…"</string>
+    <string name="group_background_save_failed">"خطا در تغییر زمینه"</string>
+    <string name="group_background_save_success">"زمینه گروه تغییر کرد"</string>
+    <string name="group_background_color">"رنگ"</string>
+    <string name="group_background_default">"پیش فرض"</string>
+    <string name="group_info_members">"اعضا (%d)"</string>
+    <string name="delete_message_confirmation">"حذف پیام‌های انتخاب شده؟"</string>
+    <string name="retract_message_option">"حذف برای همه"</string>
+    <string name="delete_message_option">"حذف برای من"</string>
+    <string name="contact_permissions_dialog_title">"مخاطب‌ها"</string>
+    <string name="not_now">"الآن نه"</string>
+    <string name="continue_button">"ادامه"</string>
+    <string name="invite_link_load_failed">"خطا در باز کردن لینک دعوت گروه"</string>
+    <string name="message_tombstone_placeholder">"در انتظار این پیام. ممکن است مدتی طول بکشد. &lt;a href=\"https://halloapp.com/help/\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="failed_no_longer_member">"شما دیگر عضو این گروه نیستید"</string>
 
     <!-- Placeholder when we do not understand the received message -->
-    <string name="message_upgrade_placeholder">"Your version of HalloApp does not support this type of message. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+    <string name="message_upgrade_placeholder">"ورژن هالواپ شما این نوع پیام را نمیپذیرد. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received post -->
-    <string name="post_upgrade_placeholder">"Your version of HalloApp does not support this type of post. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+    <string name="post_upgrade_placeholder">"ورژن هالواپ شما این نوع پست را نمیپذیرد. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received comment -->
-    <string name="comment_upgrade_placeholder">"Your version of HalloApp does not support this type of comment. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+    <string name="comment_upgrade_placeholder">"ورژن هالواپ شما این نوع نظر را نمیپذیرد. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
-    <string name="registration_sms_retry_progress">"Requesting new SMS code…"</string>
+    <string name="registration_sms_retry_progress">"در حال درخواست پیامک جدید…"</string>
 
     <!-- message when user requests a voice call -->
-    <string name="registration_phone_code_progress">"Requesting code via phone call…"</string>
+    <string name="registration_phone_code_progress">"در حال درخواست کد از طریق تماس تلفنی…"</string>
 
     <!-- button to request another sms code -->
-    <string name="resend_sms">"Resend SMS Code"</string>
+    <string name="resend_sms">"ارسال دوباره کد پیامک"</string>
 
     <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
-    <string name="key_verification_success">"Verification succeeded"</string>
+    <string name="key_verification_success">"تأیید با موفقیت"</string>
 
     <!-- Shown when the information scanned from the QR code does not match what was expected, indicating the keys do not match -->
-    <string name="key_verification_failure">"Verification failed"</string>
+    <string name="key_verification_failure">"خطا در تأیید"</string>
 
     <!-- Shown on the key verification screen indicating tapping on the QR code will open the scanner -->
-    <string name="key_verification_tap_to_scan">"Tap to scan"</string>
+    <string name="key_verification_tap_to_scan">"برای اسکن کردن کلیک کنید"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. "<![CDATA[<a href="https://halloapp.com/help/">Learn more</a>]]>"."</string>
+    <string name="key_verification_explanation">"برای تأیید ایمنی ارتباطتان با %s، شماره بالا را با شماره‌ای که در دستگاه ایشان است تطبیق دهید یا کد کیو آر دستگاه ایشان را اسکن کنید. "<![CDATA[<a href="https://halloapp.com/help/">Learn more</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
-    <string name="view_more">"More"</string>
+    <string name="view_more">"بیشتر"</string>
 
     <!-- Button to manage your feed privacy settings -->
-    <string name="manage_feed_privacy">"Manage privacy"</string>
+    <string name="manage_feed_privacy">"مدیریت حریم خصوصی"</string>
 
     <!-- Button to invite a contact to a group with an invite link -->
-    <string name="group_invite_via_link">"Invite to group via link"</string>
+    <string name="group_invite_via_link">"دعوت به گروه از طریق لینک"</string>
 
     <!-- Shown below on seen by to explain that posts disappear -->
-    <string name="seen_by_post_expiration_notice">"Your posts will disappear after 30 days."</string>
+    <string name="seen_by_post_expiration_notice">"پست‌های شما پس از ۳۰ روز ناپدید میشوند."</string>
 
     <!-- Frequently asked questions option in help menu -->
-    <string name="faq">"FAQ"</string>
+    <string name="faq">"سؤال‌های متداول"</string>
 
     <!-- Shown in progress dialog when loading key verification info -->
-    <string name="key_verification_fetching_keys">"Fetching keys…"</string>
+    <string name="key_verification_fetching_keys">"در حال بدست آوردن کد…"</string>
 
     <!-- Shown when we fail to get key verification info -->
-    <string name="key_verification_key_fetch_failed">"Failed to fetch keys"</string>
+    <string name="key_verification_key_fetch_failed">"خطا در بدست آوردن کد"</string>
 
     <!-- Shown inline in a chat when the e2e keys securing the messages have changed, i.e. if the other user changes phones or reinstalls -->
-    <string name="system_message_keys_changed">"Security keys with %s changed"</string>
+    <string name="system_message_keys_changed">"کد امنیتی با %s تغییر کرد"</string>
 
     <!-- Shown on the key verification activity next to a switch where the user can keep track of whether they verified the identity of the other user -->
-    <string name="key_verification_switch_label">"Verified"</string>
-    <string name="action_add">"Add"</string>
-    <string name="video_countdown_message">"Recording will end in %s"</string>
+    <string name="key_verification_switch_label">"تأیید شد"</string>
+    <string name="action_add">"افزودن"</string>
+    <string name="video_countdown_message">"ضبط تا %s دیگر تمام میشود"</string>
 
     <!-- Button takes user to settings to manage their storage -->
-    <string name="manage_storage_button">"Manage Storage"</string>
+    <string name="manage_storage_button">"مدیریت حافظه"</string>
 
     <!-- Message that's displayed if user has low storage -->
-    <string name="low_storage_msg">"Your phone is running low on storage.
-In order to use HalloApp please free some storage on this phone."</string>
+    <string name="low_storage_msg">"حافظه تلفن شما رو به پایان است.
+برای استفاده از هالواپ لطفاً فضای بیشتری آزاد کنید."</string>
     <plurals name="seen_by_people">
-        <item quantity="other">"Seen by %d person"</item>
+        <item quantity="one">"توسط %d نفر دیده شد"</item>
+        <item quantity="other">"توسط %d نفر دیده شد"</item>
     </plurals>
 
     <!-- Text that provides context for a group invite link being shared -->
-    <string name="group_invite_link_context">"Click on this link to join my HalloApp group: %s"</string>
-    <string name="voice_note">"Voice note"</string>
+    <string name="group_invite_link_context">"برای پیوستن به گروه هالواپ من روی این لینک کلیک کنید: %s"</string>
+    <string name="voice_note">"پیام صوتی"</string>
 
     <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
 This string is used in InviteContactsActivity.java line 160 to show the time that invites will be refreshed after invite count is 0
 example: More invites coming on [Saturday, June 19, 7:59 PM], where content in the brackets is displayed by %s -->
-    <string name="server_invite_refresh_time">"More invites coming on %s"</string>
+    <string name="server_invite_refresh_time">"دعوتنامه‌های بیشتری روز %s خواهید داشت"</string>
 
     <!-- Button text on profile of a user not in the user's contacts; tapping takes the user to the contacts app with data prefilled -->
-    <string name="add_to_contacts">"Add to contacts"</string>
+    <string name="add_to_contacts">"افزودن به مخاطب‌ها"</string>
 
     <!-- Title shown when a user starts the account deletion process under 'account' -->
-    <string name="delete_account_title">"Delete account"</string>
+    <string name="delete_account_title">"حذف حساب کاربری"</string>
 
     <!-- Button text at bottom for user to confirm account deletion -->
-    <string name="delete_account_button">"Delete"</string>
+    <string name="delete_account_button">"حذف"</string>
 
     <!-- Note at bottom of account deletion activity -->
-    <string name="delete_account_note">"This cannot be undone."</string>
+    <string name="delete_account_note">"این کار برگشت ناپذیر است."</string>
 
     <!-- Error message at bottom of account deletion screen when deletion fails -->
-    <string name="delete_account_failed">"Failed to delete account"</string>
+    <string name="delete_account_failed">"خطا در حذف حساب کاربری"</string>
 
     <!-- Category in the top-level settings -->
-    <string name="settings_account">"Account"</string>
+    <string name="settings_account">"حساب کاربری"</string>
 
     <!-- Shown for when a user wants to request to download all of their data in a GDPR-compliant manner -->
-    <string name="request_data_title">"Request my data"</string>
+    <string name="request_data_title">"درخواست داده‌هایم"</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature -->
-    <string name="save_to_gallery_storage_permission_rationale">"To save the media to the gallery we need permission to access your device storage"</string>
+    <string name="save_to_gallery_storage_permission_rationale">"برای ذخیره کردن فایل در گالری نیاز به دسترسی به حافظه دستگاه‌تان داریم"</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature. This is used when the user needs to manually go to their settings -->
-    <string name="save_to_gallery_storage_permission_rationale_denied">"To save the media to the gallery we need permission to access your device storage.
-
-Open the app settings screen to modify app permissions."</string>
+    <string name="save_to_gallery_storage_permission_rationale_denied">"برای ذخیره کردن فایل در گالری نیاز به دسترسی به حافظه دستگاه‌تان داریم.
+تنظیمات برنامه را باز کنید و اجازه دسترسی را تغییر دهید."</string>
 
     <!-- Message when we successfully save post media to gallery -->
-    <string name="media_saved_to_gallery">"Saved to gallery"</string>
+    <string name="media_saved_to_gallery">"در گالری ذخیره شد"</string>
 
     <!-- Message when we failed to save post media to gallery -->
-    <string name="media_save_to_gallery_failed">"Failed to save to gallery"</string>
+    <string name="media_save_to_gallery_failed">"خطا در زخیره در گالری"</string>
 
     <!-- Menu option to delete a post -->
-    <string name="delete_post">"Delete post"</string>
+    <string name="delete_post">"حذف پست"</string>
 
     <!-- Option to save a photo/video to the user's gallery -->
-    <string name="save_to_gallery">"Save to gallery"</string>
+    <string name="save_to_gallery">"ذخیره در گالری"</string>
 
     <!-- Title for the user's post -->
-    <string name="my_post">"My post"</string>
+    <string name="my_post">"پست من"</string>
 
     <!-- button to request registration code via phone call -->
-    <string name="request_call">"Request a Call"</string>
+    <string name="request_call">"درخواست تماس تلفنی"</string>
 
     <!-- Shown on request page when there is not a known active request -->
-    <string name="request_data_button">"Request data"</string>
+    <string name="request_data_button">"درخواست داده‌ها"</string>
 
     <!-- Shown as settings option title after the user has requested their data but before it is available for download; string param is date -->
-    <string name="data_available_at">"Data will be available on %s"</string>
+    <string name="data_available_at">"داده‌ها %s قابل دسترسی خواهند بود"</string>
 
     <!-- Shown at top of data request page explaining the process -->
-    <string name="export_data_explanation">"Download a copy of all your user data stored on HalloApp's servers. This does not contain message or post content."</string>
+    <string name="export_data_explanation">"دانلود نسخه داده‌های ذخیره شده کاربر از سرور هالواپ. این نسخه فاقد پیام‌ها یا پست‌ها است."</string>
 
     <!-- Shown when a request to the server for data export fails -->
-    <string name="request_export_data_failed">"Request failed"</string>
+    <string name="request_export_data_failed">"خطا در درخواست"</string>
 
     <!-- Button for exporting account information requested for download -->
-    <string name="export_account_data">"Export my data"</string>
+    <string name="export_account_data">"استخراج داده‌هایم"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
-    <string name="e2e_notice">"Chats are end-to-end encrypted and HalloApp does not have access to them. Tap to learn more."</string>
+    <string name="e2e_notice">"گفتگوها رمزگذاری سرتاسری شده‌اند و هالواپ به آن‌ها دسترسی ندارد. برای اطلاعات بیشتر کلیک کنید."</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
-    <string name="view_safety_number">"View safety number"</string>
+    <string name="view_safety_number">"مشاهده کد امنیتی"</string>
 
     <!-- Shown as title of key verification activity -->
-    <string name="verify_safety_number">"Verify safety number"</string>
+    <string name="verify_safety_number">"تأیید کد امنیتی"</string>
 
     <!-- Shown when user has contact permissions disabled on the home feed -->
-    <string name="enable_contacts_rationale">"Get updates from friends &amp; family by turning on contact permissions"</string>
+    <string name="enable_contacts_rationale">"برای دریافت خبرها از دوستان و آشنایانتان اجازه دسترسی به مخاطب‌ها را فعال کنید"</string>
 
     <!-- Button that takes users to system settings -->
-    <string name="go_to_settings">"Go to settings"</string>
+    <string name="go_to_settings">"رفتن به تنظیمات"</string>
 
     <!-- Text shown in activity center upon successful registration -->
-    <string name="welcome_notification">"Welcome to HalloApp! &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</string>
+    <string name="welcome_notification">"به هالواپ خوش‌آمدید! &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</string>
 
     <!-- added new option for sharing -->
-    <string name="share_option_group">"Post to Group"</string>
+    <string name="share_option_group">"پست به گروه"</string>
 
     <!-- A new label used as the title/label of the GroupPickerActivity -->
-    <string name="select_group">"Select group"</string>
+    <string name="select_group">"انتخاب گروه"</string>
 
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
-    <string name="search_groups">"Search groups"</string>
+    <string name="search_groups">"جستجوی گروه"</string>
 
     <!-- Button for user to remove their profile photo and reset it to the default -->
-    <string name="remove_photo">"Remove Photo"</string>
+    <string name="remove_photo">"حذف عکس"</string>
 
     <!-- Button for user to take a new photo to replace their profile photo -->
-    <string name="take_photo">"Take Photo"</string>
+    <string name="take_photo">"گرفتن عکس"</string>
 
     <!-- Button for user to select a new photo from their gallery to replace their profile photo -->
-    <string name="choose_photo">"Choose Photo"</string>
+    <string name="choose_photo">"انتخاب عکس"</string>
 
     <!-- Label above the options for changing the profile photo -->
-    <string name="your_profile_photo">"Your profile photo"</string>
+    <string name="your_profile_photo">"عکس کاربری"</string>
 
     <!-- Text shown under progress bar when first setting up HalloApp -->
-    <string name="app_initializing">"Setting up HalloApp"</string>
+    <string name="app_initializing">"در حال تنظیم هالواپ"</string>
 
     <!-- Shown on a button in settings which shares text with a link to download HalloApp into any other app -->
-    <string name="settings_share_option">"Share HalloApp"</string>
+    <string name="settings_share_option">"به اشتراک گذاشتن هالواپ"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <string name="share_halloapp_text">"Join my real-relationship network on HalloApp. Download for free at halloapp.com/dl"</string>
+    <string name="share_halloapp_text">"به شبکه ارتباطی هالواپ بپیوندید. آن را از halloapp.com/dl رایگان دانلود کنید"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
-    <string name="contact_permissions_request">"Allow HalloApp access to your contacts so you can send and receive updates"</string>
+    <string name="contact_permissions_request">"به هالواپ اجازه دسترسی به مخاطب‌هایتان دهید تا بتوانید خبر بفرستید و دریافت کنید"</string>
 
     <!-- Dialog shown to user before requesting contact permissions, but user has previously denied them, so they must go to settings -->
-    <string name="contact_permissions_request_permanently_denied">"Allow HalloApp access to your contacts so you can send and receive updates. Tap Settings &gt; Permissions, and turn Contacts on"</string>
+    <string name="contact_permissions_request_permanently_denied">"به هالواپ اجازه دسترسی به مخاطب‌هایتان دهید تا بتوانید خبر بفرستید و دریافت کنید. تنظیمات &gt; اجازه دسترسی، و مخاطب‌ها را روشن کنید"</string>
 
     <!-- Banner explaining why user can't leave a comment in a group they've left -->
-    <string name="no_longer_group_member">"You're no longer a member of this group"</string>
+    <string name="no_longer_group_member">"شما دیگر عضو این گروه نیستید"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes -->
-    <string name="voice_note_record_audio_permission_rationale">"To record voice notes we need permission to access the microphone"</string>
+    <string name="voice_note_record_audio_permission_rationale">"برای ضبط صدا نیاز به دسترسی به میکروفون داریم"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
-    <string name="voice_note_record_audio_permission_rationale_denied">"To record voice notes we need permission to access the microphone.
-
-Open the app settings screen to modify app permissions."</string>
+    <string name="voice_note_record_audio_permission_rationale_denied">"برای ضبط صدا نیاز به دسترسی به میکروفون داریم.
+تنظیمات برنامه را باز کنید و اجازه دسترسی را تغییر دهید."</string>
 
     <!-- Activity center item when someone replies. %1$s is the person, %2$s is their comment preview -->
-    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; replied: %2$s"</string>
+    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; پاسخ داد: %2$s"</string>
 
     <!-- Activity center item when someone comments. %1$s is the person, %2$s is their comment preview -->
-    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; commented: %2$s"</string>
+    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; نظر نوشت: %2$s"</string>
 
     <!-- Activity center item when non-contacts comment on your post -->
     <plurals name="commented_on_your_post_grouped">
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; نفر دیگر زیر پست شما نظر نوشت"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; نفر دیگر زیر پست شما نظر نوشتند"</item>
     </plurals>
 
     <!-- Activity center item when non-contacts comment on someones post -->
     <plurals name="commented_on_someones_post_grouped">
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; نفر دیگر زیر پست &lt;b&gt;%2$s&lt;/b&gt; نظر نوشت"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; نفر دیگر زیر پست &lt;b&gt;%2$s&lt;/b&gt; نظر نوشتند"</item>
     </plurals>
 
     <!-- Shown when an archived post's photo thumbnail can't be loaded -->
-    <string name="couldnt_load_thumbnail">"Couldn't load thumbnail"</string>
+    <string name="couldnt_load_thumbnail">"تصویر بارگذاری نشد"</string>
 
     <!-- Button for user to re-share old posts which have expired -->
-    <string name="reshare_post">"Reshare post"</string>
+    <string name="reshare_post">"دوباره به اشتراک گذاشتن پست"</string>
 
     <!-- Button for going to utility for viewing expired posts -->
-    <string name="archived_posts">"Archived Posts"</string>
+    <string name="archived_posts">"بایگانی"</string>
 
     <!-- Title of utility for viewing expired posts -->
-    <string name="archive">"Archive"</string>
+    <string name="archive">"بایگانی"</string>
 
     <!-- Label displaying the date when a post expired -->
-    <string name="archived_on">"Archived %s"</string>
+    <string name="archived_on">"بایگانی %s"</string>
 
     <!-- Error message when the group is full -->
-    <string name="invite_link_failed_to_join_full">"You cannot join the group because it is full"</string>
+    <string name="invite_link_failed_to_join_full">"شما به این گروه نمیتوانید بپیوندید چون ظرفیت تکمیل است"</string>
 
     <!-- Error message when the invite link is invalid -->
-    <string name="invite_link_failed_to_join_invalid">"The invite link is invalid"</string>
+    <string name="invite_link_failed_to_join_invalid">"لینک دعوتنامه غلط است"</string>
 
     <!-- Error message when user cannot join a group because they were previously removed by an admin -->
-    <string name="invite_link_failed_to_join_removed">"You were removed and cannot rejoin via invite link"</string>
+    <string name="invite_link_failed_to_join_removed">"شما حذف شده‌اید و با لینک دعوتنامه نمیتوانید بپیوندید"</string>
 
     <!-- Message that's displayed after a user deletes their account -->
-    <string name="deletion_confirmation_message">"Your HalloApp account has been successfully deleted."</string>
+    <string name="deletion_confirmation_message">"حساب کاربری هالواپ شما با موفقیت حذف شد."</string>
 
     <!-- Button that allows the user to return to registration after deleting their account -->
-    <string name="return_to_registration">"Return to registration"</string>
+    <string name="return_to_registration">"برگشت به ثبتنام"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <string name="archive_empty">"Your expired posts will appear here"</string>
+    <string name="archive_empty">"پست‌های منقضی شده شما اینجا خواهند بود"</string>
 
     <!-- Futureproof content we dont understand yet -->
-    <string name="unsupported_content">"Unsupported content"</string>
+    <string name="unsupported_content">"محتوا پذیرفته نیست"</string>
+
+    <!-- Button opens up the chat to directly chat with another group member -->
+    <string name="send_message">"ارسال پیام"</string>
+
+    <!-- Body of a notification indicating that user has been added to a new group -->
+    <string name="added_to_group">"%1$s شما را به گروه %2$s دعوت کرد"</string>
+
+    <!-- Name of channel of notifications for being added to a new group which is displayed in settings -->
+    <string name="group_notifications_channel_name">"اعلان‌های عضویت گروه"</string>
+
+    <!-- Button that brings user to QR code for joining a group -->
+    <string name="qr_code">"کد کیو آر"</string>
+
+    <!-- Explains QR code that allows users to automatically join a group -->
+    <string name="scan_qr_instructions">"کد کیو آر را اسکن کنید تا به گروه هالواپ بپیوندید"</string>
+
+    <!-- Banner below the name of a HalloApp group -->
+    <string name="halloapp_group">"گروه هالواپ"</string>
+    <string name="reply_original_comment_not_found">"نظر اصلی پیدا نشد"</string>
+
+    <!-- Button on others' posts that allows the user to message them about their post in 1-1 messaging -->
+    <string name="reply_privately">"به صورت خصوصی پاسخ دهید"</string>
+
+    <!-- Shown as title for a dialog explaining why permissions are needed when the user has rejected a necessary permission request at least twice but still tries to use the feature -->
+    <string name="title_settings_dialog">"اجازه نیاز است"</string>
+
+    <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
+    <string name="voice_note_preview">"پیام صوتی (%s)"</string>
+
+    <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
+    <string name="dark_mode_dialog_title">"انتخاب تم"</string>
+
+    <!-- Name of mode where screens are darker -->
+    <string name="dark_mode">"تاریک"</string>
+
+    <!-- Name of mode where screens are lighter -->
+    <string name="light_mode">"روشن"</string>
+
+    <!-- Name of mode where screens default to system default -->
+    <string name="system_default">"پیش فرض سیستم"</string>
+
+    <!-- Name of mode where screens default to system default for earlier phones that don't have a concept of system dark mode -->
+    <string name="default_setting">"پیش فرض"</string>
+
+    <!-- Name of setting where user can change between dark/light mode -->
+    <string name="dark_mode_setting_title">"تم"</string>
 </resources>
 
