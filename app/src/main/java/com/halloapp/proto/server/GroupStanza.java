@@ -19,6 +19,7 @@ public  final class GroupStanza extends
     members_ = emptyProtobufList();
     background_ = "";
     audienceHash_ = com.google.protobuf.ByteString.EMPTY;
+    description_ = "";
   }
   /**
    * Protobuf enum {@code server.GroupStanza.Action}
@@ -85,6 +86,10 @@ public  final class GroupStanza extends
      * <code>GET_MEMBER_IDENTITY_KEYS = 14;</code>
      */
     GET_MEMBER_IDENTITY_KEYS(14),
+    /**
+     * <code>CHANGE_DESCRIPTION = 15;</code>
+     */
+    CHANGE_DESCRIPTION(15),
     UNRECOGNIZED(-1),
     ;
 
@@ -148,6 +153,10 @@ public  final class GroupStanza extends
      * <code>GET_MEMBER_IDENTITY_KEYS = 14;</code>
      */
     public static final int GET_MEMBER_IDENTITY_KEYS_VALUE = 14;
+    /**
+     * <code>CHANGE_DESCRIPTION = 15;</code>
+     */
+    public static final int CHANGE_DESCRIPTION_VALUE = 15;
 
 
     @java.lang.Override
@@ -186,6 +195,7 @@ public  final class GroupStanza extends
         case 12: return PREVIEW;
         case 13: return SET_BACKGROUND;
         case 14: return GET_MEMBER_IDENTITY_KEYS;
+        case 15: return CHANGE_DESCRIPTION;
         default: return null;
       }
     }
@@ -660,6 +670,53 @@ public  final class GroupStanza extends
   private void clearAudienceHash() {
     
     audienceHash_ = getDefaultInstance().getAudienceHash();
+  }
+
+  public static final int DESCRIPTION_FIELD_NUMBER = 10;
+  private java.lang.String description_;
+  /**
+   * <code>string description = 10;</code>
+   * @return The description.
+   */
+  @java.lang.Override
+  public java.lang.String getDescription() {
+    return description_;
+  }
+  /**
+   * <code>string description = 10;</code>
+   * @return The bytes for description.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getDescriptionBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(description_);
+  }
+  /**
+   * <code>string description = 10;</code>
+   * @param value The description to set.
+   */
+  private void setDescription(
+      java.lang.String value) {
+    value.getClass();
+  
+    description_ = value;
+  }
+  /**
+   * <code>string description = 10;</code>
+   */
+  private void clearDescription() {
+    
+    description_ = getDefaultInstance().getDescription();
+  }
+  /**
+   * <code>string description = 10;</code>
+   * @param value The bytes for description to set.
+   */
+  private void setDescriptionBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    description_ = value.toStringUtf8();
+    
   }
 
   public static com.halloapp.proto.server.GroupStanza parseFrom(
@@ -1218,6 +1275,55 @@ public  final class GroupStanza extends
       return this;
     }
 
+    /**
+     * <code>string description = 10;</code>
+     * @return The description.
+     */
+    @java.lang.Override
+    public java.lang.String getDescription() {
+      return instance.getDescription();
+    }
+    /**
+     * <code>string description = 10;</code>
+     * @return The bytes for description.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getDescriptionBytes() {
+      return instance.getDescriptionBytes();
+    }
+    /**
+     * <code>string description = 10;</code>
+     * @param value The description to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDescription(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setDescription(value);
+      return this;
+    }
+    /**
+     * <code>string description = 10;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearDescription() {
+      copyOnWrite();
+      instance.clearDescription();
+      return this;
+    }
+    /**
+     * <code>string description = 10;</code>
+     * @param value The bytes for description to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDescriptionBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setDescriptionBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.GroupStanza)
   }
   @java.lang.Override
@@ -1244,10 +1350,11 @@ public  final class GroupStanza extends
             com.halloapp.proto.server.GroupMember.class,
             "background_",
             "audienceHash_",
+            "description_",
           };
           java.lang.String info =
-              "\u0000\t\u0000\u0000\u0001\t\t\u0000\u0001\u0000\u0001\f\u0002\u0208\u0003\u0208" +
-              "\u0004\u0208\u0005\u0002\u0006\u0208\u0007\u001b\b\u0208\t\n";
+              "\u0000\n\u0000\u0000\u0001\n\n\u0000\u0001\u0000\u0001\f\u0002\u0208\u0003\u0208" +
+              "\u0004\u0208\u0005\u0002\u0006\u0208\u0007\u001b\b\u0208\t\n\n\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

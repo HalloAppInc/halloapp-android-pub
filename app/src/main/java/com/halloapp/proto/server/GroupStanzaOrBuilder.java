@@ -107,4 +107,16 @@ public interface GroupStanzaOrBuilder extends
    * @return The audienceHash.
    */
   com.google.protobuf.ByteString getAudienceHash();
+
+  /**
+   * <code>string description = 10;</code>
+   * @return The description.
+   */
+  java.lang.String getDescription();
+  /**
+   * <code>string description = 10;</code>
+   * @return The bytes for description.
+   */
+  com.google.protobuf.ByteString
+      getDescriptionBytes();
 }
