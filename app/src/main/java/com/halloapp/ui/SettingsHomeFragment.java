@@ -31,6 +31,8 @@ import com.halloapp.ui.settings.SettingsProfile;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 
+import java.util.Locale;
+
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class SettingsHomeFragment extends HalloFragment implements MainNavFragment {
@@ -62,7 +64,8 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
 
         View about = root.findViewById(R.id.about);
         about.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.ABOUT_PAGE_URL));
+            Uri uri = Uri.parse("de".equals(Locale.getDefault().getLanguage()) ? Constants.GERMAN_ABOUT_URL : Constants.ABOUT_PAGE_URL);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(intent);
         });
         View myPosts = root.findViewById(R.id.my_posts);
