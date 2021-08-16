@@ -316,6 +316,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyGroupDescriptionChanged(@NonNull GroupId groupId, @NonNull String description, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onGroupDescriptionChanged(groupId, description, sender, senderName, ackId);
+            }
+        }
+    }
+
     public void notifyGroupAdminAutoPromoteReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {

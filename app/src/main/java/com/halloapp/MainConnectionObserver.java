@@ -554,6 +554,13 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
+    public void onGroupDescriptionChanged(@NonNull GroupId groupId, @NonNull String description, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        contentDb.setGroupDescription(groupId, description, () -> {
+            addSystemPost(groupId, sender, Post.USAGE_GROUP_DESCRIPTION_CHANGED, description, () -> connection.sendAck(ackId));
+        });
+    }
+
+    @Override
     public void onGroupAdminAutoPromoteReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
         List<MemberInfo> promoted = new ArrayList<>();
         for (MemberElement memberElement : members) {

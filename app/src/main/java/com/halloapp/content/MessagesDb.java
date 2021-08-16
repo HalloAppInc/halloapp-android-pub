@@ -404,6 +404,27 @@ class MessagesDb {
     }
 
     @WorkerThread
+    boolean setGroupDescription(@NonNull GroupId groupId, @Nullable String description) {
+        Log.i("MessagesDb.setGroupDescription " + groupId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            final ContentValues chatValues = new ContentValues();
+            chatValues.put(ChatsTable.COLUMN_GROUP_DESCRIPTION, description);
+            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()});
+
+            db.setTransactionSuccessful();
+            Log.i("ContentDb.setGroupDescription: success " + groupId);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("ContentDb.setGroupDescription: " + ex.getMessage() + " " + groupId);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    @WorkerThread
     boolean setGroupInactive(@NonNull GroupId groupId) {
         Log.i("MessagesDb.setGroupInactive " + groupId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();

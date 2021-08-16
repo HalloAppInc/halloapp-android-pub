@@ -165,6 +165,9 @@
             android:name=".ui.groups.EditGroupActivity" />
 
         <activity
+            android:name=".ui.groups.EditGroupDescriptionActivity" />
+
+        <activity
             android:name=".DebugActivity" />
 
         <activity android:name=".ui.invites.InviteContactsActivity"

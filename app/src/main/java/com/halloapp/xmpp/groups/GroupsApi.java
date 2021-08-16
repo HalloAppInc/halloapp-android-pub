@@ -147,6 +147,12 @@ public class GroupsApi {
         return connection.sendIqRequest(requestIq).map(response -> response.getGroupStanza() != null);
     }
 
+    public Observable<Boolean> setGroupDescription(@NonNull GroupId groupId, @NonNull String description) {
+        final SetGroupDescriptionIq requestIq = new SetGroupDescriptionIq(description, groupId);
+
+        return connection.sendIqRequest(requestIq).map(response -> response.getGroupStanza() != null);
+    }
+
     public Observable<IqResult<GroupInviteLink>> joinGroupViaInviteLink(@NonNull String code) {
         final JoinGroupInviteLinkIq requestIq = new JoinGroupInviteLinkIq(code);
 

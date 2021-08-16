@@ -42,6 +42,14 @@ public class StringUtils {
         return postText.length() < Constants.MAX_TEXT_LENGTH ? postText : postText.substring(0, Constants.MAX_TEXT_LENGTH);
     }
 
+    public static String prepareGroupDescriptionText(final String text) {
+        if (TextUtils.isEmpty(text)) {
+            return text;
+        }
+        String postText = text.trim();
+        return postText.length() < Constants.MAX_GROUP_DESCRIPTION_LENGTH ? postText : postText.substring(0, Constants.MAX_GROUP_DESCRIPTION_LENGTH);
+    }
+
     public static String bytesToHexString(byte[] bytes) {
         StringBuilder hexString = new StringBuilder();
         for (byte aByte : bytes) {

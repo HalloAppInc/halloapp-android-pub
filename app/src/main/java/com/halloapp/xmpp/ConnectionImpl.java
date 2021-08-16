@@ -1184,7 +1184,8 @@ public class ConnectionImpl extends Connection {
                             Log.e("connection: invalid background received", e);
                         }
                         connectionObservers.notifyGroupBackgroundChangeReceived(groupId, background == null ? 0 : background.getTheme(), senderUserId, senderName, ackId);
-
+                    } else if (groupStanza.getAction().equals(GroupStanza.Action.CHANGE_DESCRIPTION)) {
+                        connectionObservers.notifyGroupDescriptionChanged(groupId, groupStanza.getDescription(), Preconditions.checkNotNull(senderUserId), senderName, ackId);
                     } else {
                         handled = false;
                         Log.w("Unrecognized group stanza action " + groupStanza.getAction());

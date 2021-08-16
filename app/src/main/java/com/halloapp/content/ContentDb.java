@@ -711,6 +711,17 @@ public class ContentDb {
         });
     }
 
+    public void setGroupDescription(@NonNull GroupId groupId, @NonNull String name, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (messagesDb.setGroupDescription(groupId, name)) {
+                observers.notifyGroupMetadataChanged(groupId);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
     public void setGroupTheme(@NonNull GroupId groupId, int theme, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
             if (messagesDb.setGroupTheme(groupId, theme)) {

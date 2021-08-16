@@ -186,6 +186,10 @@ public class SystemMessageTextResolver {
                 systemMessageSingleUser(textView, post.senderUserId, R.string.system_message_group_bg_changed_by_you, R.string.system_message_group_bg_changed);
                 break;
             }
+            case Post.USAGE_GROUP_DESCRIPTION_CHANGED: {
+                systemMessageSingleUser(textView, post.senderUserId, R.string.system_message_group_description_changed_by_you, R.string.system_message_group_description_changed);
+                break;
+            }
             case Post.USAGE_POST:
             default: {
                 Log.w("Unrecognized system message usage " + post.usage);

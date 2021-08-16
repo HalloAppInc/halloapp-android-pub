@@ -382,6 +382,10 @@
     <string name="invite_pending">Pending</string>
     <string name="failed_update_profile">Failed to update profile, try again later</string>
     <string name="profile_updated">Profile updated</string>
+    <!-- General error message shown when fail to update group description -->
+    <string name="failed_update_group_description">Failed to update the group description</string>
+    <!-- Success message shown when user updates group description -->
+    <string name="group_description_updated">Group description updated</string>
     <string name="flip">Flip</string>
     <string name="email_logs_subject">HalloApp Android %1$s %2$s</string>
     <string name="email_logs_text">\n----------------------------------------\nPlease describe the issue above.\nuid: %1$s\nversion: %2$s\n----------------------------------------\n</string>
@@ -419,6 +423,10 @@
     <string name="system_message_group_bg_changed_by_you">You changed the background color</string>
     <string name="system_message_you_joined">You joined the group via invite link</string>
     <string name="system_message_joined">%s joined the group via invite link</string>
+    <!-- System message shown when someone else changes the group description, %s will be replaced with their name -->
+    <string name="system_message_group_description_changed">%s changed the group description</string>
+    <!-- System message shown when you change the group description -->
+    <string name="system_message_group_description_changed_by_you">You changed the group description</string>
     <!-- Shown inline in a chat when the e2e keys securing the messages have changed, i.e. if the other user changes phones or reinstalls -->
     <string name="system_message_keys_changed">Security keys with %s changed</string>
 
@@ -497,6 +505,12 @@
     <string name="button_create_group">Create</string>
     <string name="group_name_hint">Group name</string>
     <string name="group_background_hint">Background</string>
+    <!-- Hint text for the group description field -->
+    <string name="group_description_hint">Group description</string>
+    <!-- Title text for the view to edit the group description -->
+    <string name="group_description_title">Group description</string>
+    <!-- Text telling the user they can add a group description -->
+    <string name="add_group_description">Add group description</string>
     <string name="group_background_saving_dialog">Setting background…</string>
     <string name="group_background_save_failed">Failed to set group background</string>
     <string name="group_background_save_success">Group background updated</string>

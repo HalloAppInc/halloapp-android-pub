@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -149,6 +150,9 @@ public class GroupInfoActivity extends HalloActivity {
         avatarView.setOnClickListener(openEditGroupListener);
 
         leaveGroup = findViewById(R.id.leave_group);
+        View descriptionContainer = findViewById(R.id.description_container);
+        TextView descriptionTv = findViewById(R.id.description);
+        View descriptionPlaceholder = findViewById(R.id.description_placeholder);
         View nameContainer = findViewById(R.id.name_container);
         View bgContainer = findViewById(R.id.group_background);
         CircleImageView bgColorPreview = findViewById(R.id.bg_color_preview);
@@ -166,6 +170,13 @@ public class GroupInfoActivity extends HalloActivity {
             }
         });
         nameContainer.setOnClickListener(openEditGroupListener);
+        descriptionContainer.setOnClickListener(v -> {
+            if (getChatIsActive()) {
+                startActivity(EditGroupDescriptionActivity.openEditGroupDescription(this, groupId));
+            } else {
+                SnackbarHelper.showWarning(avatarView, R.string.failed_no_longer_member);
+            }
+        });
 
         leaveGroup.setOnClickListener(v -> {
             askLeaveGroup();
@@ -176,6 +187,14 @@ public class GroupInfoActivity extends HalloActivity {
             groupBgDesc.setText(chat.theme == 0 ? R.string.group_background_default : R.string.group_background_color);
             GroupTheme theme = GroupTheme.getTheme(chat.theme);
             bgColorPreview.setImageDrawable(new ColorDrawable(ContextCompat.getColor(this, theme.bgColor)));
+            if (TextUtils.isEmpty(chat.groupDescription)) {
+                descriptionTv.setVisibility(View.GONE);
+                descriptionPlaceholder.setVisibility(View.VISIBLE);
+            } else {
+                descriptionTv.setVisibility(View.VISIBLE);
+                descriptionPlaceholder.setVisibility(View.GONE);
+                descriptionTv.setText(chat.groupDescription);
+            }
         });
 
         viewModel.getMembers().observe(this, members -> {
