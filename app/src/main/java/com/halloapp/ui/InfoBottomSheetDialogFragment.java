@@ -9,11 +9,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.halloapp.R;
-import com.halloapp.contacts.Contact;
 
 public abstract class InfoBottomSheetDialogFragment extends HalloBottomSheetDialogFragment {
 

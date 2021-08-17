@@ -11,7 +11,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.id.UserId;

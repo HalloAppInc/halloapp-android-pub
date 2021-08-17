@@ -23,6 +23,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.HalloBottomSheetDialog;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.ui.camera.CameraActivity;
@@ -180,7 +181,7 @@ public class SettingsProfile extends HalloActivity {
     };
 
     final View.OnClickListener avatarOptionsListener = v -> {
-        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        final BottomSheetDialog bottomSheetDialog = new HalloBottomSheetDialog(this);
         bottomSheetDialog.setContentView(R.layout.profile_avatar_change);
         View cameraButton = bottomSheetDialog.findViewById(R.id.profile_avatar_take_photo);
         cameraButton.setOnClickListener(view -> {

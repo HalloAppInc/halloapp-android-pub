@@ -33,6 +33,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.HalloBottomSheetDialog;
 import com.halloapp.ui.HeaderFooterAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -430,7 +431,7 @@ public class GroupInfoActivity extends HalloActivity {
         }
 
         private void showGroupMemberOptionsDialog(Context context, GroupViewModel.GroupMember member) {
-            final BottomSheetDialog dialog = new BottomSheetDialog(context);
+            final BottomSheetDialog dialog = new HalloBottomSheetDialog(context);
             dialog.setContentView(R.layout.group_info_member_bottom_sheet);
 
             TextView memberName = dialog.findViewById(R.id.member_name);

@@ -8,9 +8,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.text.Html;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.halloapp.AppContext;
 import com.halloapp.BuildConfig;
 import com.halloapp.R;
-import com.halloapp.contacts.ContactsSync;
 import com.halloapp.ui.HalloBottomSheetDialogFragment;
 import com.halloapp.util.DialogFragmentUtils;
 
@@ -56,8 +50,6 @@ public class ContactPermissionBottomSheetDialog extends HalloBottomSheetDialogFr
 
     private static final String[] permissions = new String[] { Manifest.permission.READ_CONTACTS };
 
-    private final AppContext appContext = AppContext.getInstance();
-
     private EasyPermissions.PermissionCallbacks permissionCallbacks;
 
     private TextView info;
@@ -76,6 +68,7 @@ public class ContactPermissionBottomSheetDialog extends HalloBottomSheetDialogFr
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case REQUEST_CODE_CONTACT_PERMISSIONS: {
                 if (grantResults.length > 0 &&
