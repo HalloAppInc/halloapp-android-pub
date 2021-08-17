@@ -1,6 +1,9 @@
 package com.halloapp.ui;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -174,6 +177,9 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
     private String postId;
 
+    private RecyclerView.LayoutManager commentsLayoutManager;
+    private long highlightedComment = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -223,8 +229,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         mentionPickerView = findViewById(R.id.mention_picker_view);
 
-        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        commentsView.setLayoutManager(layoutManager);
+        commentsLayoutManager = new LinearLayoutManager(this);
+        commentsView.setLayoutManager(commentsLayoutManager);
 
         commentsView.addOnScrollListener(new ActionBarShadowOnScrollListener(this));
 
@@ -608,6 +614,21 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         return super.onKeyLongPress(keyCode, event);
     }
 
+    private void scrollToOriginal(@Nullable Comment comment) {
+        if (comment == null) {
+            return;
+        }
+        int c = adapter.getItemCount();
+        for (int i=0; i<c; i++) {
+            if (adapter.getItemId(i) == comment.rowId) {
+                highlightedComment = comment.rowId;
+                commentsLayoutManager.scrollToPosition(i);
+                adapter.notifyDataSetChanged();
+                break;
+            }
+        }
+    }
+
     private void updateReplyIndicator(@Nullable String rawUserId, @Nullable String commentId) {
         if (rawUserId == null || commentId == null) {
             return;
@@ -840,6 +861,14 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             groupView = itemView.findViewById(R.id.group_name);
             attributionLayout = itemView.findViewById(R.id.post_header);
 
+            if (replyTextView != null) {
+                replyTextView.setOnClickListener(view -> {
+                    if (comment != null) {
+                        scrollToOriginal(comment.parentComment);
+                    }
+                });
+            }
+
             if (mediaGallery != null) {
                 final LinearLayoutManager layoutManager = new LinearLayoutManager(mediaGallery.getContext(), RecyclerView.HORIZONTAL, false);
                 mediaGallery.setLayoutManager(layoutManager);
@@ -890,6 +919,35 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         void bindCommon(@NonNull Comment comment, long lastSeenCommentRowId, int position) {
             avatarLoader.load(avatarView, comment.senderUserId);
+
+            if (highlightedComment == comment.rowId) {
+                AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(itemView.getContext(), R.animator.comment_highlight);
+                set.setTarget(itemView);
+                set.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        highlightedComment = -1;
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+                        highlightedComment = -1;
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                set.start();
+            } else {
+                itemView.setBackgroundColor(0);
+            }
 
             final Integer textLimit = textLimits.get(comment.rowId);
             commentView.setLineLimit(textLimit != null ? textLimit : Constants.TEXT_POST_LINE_LIMIT);
