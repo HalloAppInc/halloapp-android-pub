@@ -369,7 +369,7 @@ class CommentsViewModel extends AndroidViewModel {
         }
         bgWorkers.execute(() -> {
             final File targetFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_AUDIO));
-            if (MediaUtils.getAudioDuration(targetFile) < Constants.MINIMUM_AUDIO_NOTE_DURATION_MS) {
+            if (MediaUtils.getAudioDuration(recording) < Constants.MINIMUM_AUDIO_NOTE_DURATION_MS) {
                 Log.i("CommentsViewMode/sendVoiceNote duration too short");
                 return;
             }
