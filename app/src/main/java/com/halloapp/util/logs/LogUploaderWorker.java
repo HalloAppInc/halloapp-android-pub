@@ -34,9 +34,9 @@ public class LogUploaderWorker extends Worker {
 
     private static final String LOG_UPLOAD_WORK_ID = "log-upload";
 
-    private Me me = Me.getInstance();
-    private FileStore fileStore = FileStore.getInstance();
-    private LogManager logManager = LogManager.getInstance();
+    private final Me me = Me.getInstance();
+    private final FileStore fileStore = FileStore.getInstance();
+    private final LogManager logManager = LogManager.getInstance();
 
     public static void uploadLogs(@NonNull Context context) {
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(LogUploaderWorker.class).build();

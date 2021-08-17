@@ -1,19 +1,13 @@
 package com.halloapp.ui.groups;
 
-import com.halloapp.content.Chat;
-import com.halloapp.ui.HalloActivity;
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -24,41 +18,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.contacts.Contact;
-import com.halloapp.contacts.ContactsSync;
-import com.halloapp.id.GroupId;
-import com.halloapp.id.UserId;
-import com.halloapp.props.ServerProps;
+import com.halloapp.content.Chat;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.chat.ChatActivity;
-import com.halloapp.ui.contacts.ContactsActivity;
 import com.halloapp.ui.contacts.ContactsSectionItemDecoration;
-import com.halloapp.ui.contacts.ContactsViewModel;
-import com.halloapp.ui.groups.CreateGroupActivity;
-import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.logs.Log;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-
-import pub.devrel.easypermissions.EasyPermissions;
 
 public class GroupPickerActivity extends HalloActivity {
 
@@ -71,11 +48,9 @@ public class GroupPickerActivity extends HalloActivity {
 
     private final GroupPickerActivity.GroupsAdapter adapter = new GroupPickerActivity.GroupsAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance(this);
-    private final ServerProps serverProps = ServerProps.getInstance();
 
     public static Intent createSharePicker(@NonNull Context context) {
-        Intent intent = new Intent(context, GroupPickerActivity.class);
-        return intent;
+        return new Intent(context, GroupPickerActivity.class);
     }
 
     @Override

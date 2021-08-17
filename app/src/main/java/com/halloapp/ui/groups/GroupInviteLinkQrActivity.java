@@ -43,7 +43,7 @@ public class GroupInviteLinkQrActivity extends HalloActivity {
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         String url = getIntent().getStringExtra(EXTRA_URL_FOR_QR);
-        GroupId groupId = getIntent().getParcelableExtra(EXTRA_GROUP_ID);
+        GroupId groupId = Preconditions.checkNotNull(getIntent().getParcelableExtra(EXTRA_GROUP_ID));
         GroupInviteQRViewModel viewModel = new GroupInviteQRViewModel(this.getApplication(), url, groupId);
 
         ImageView qrImage = findViewById(R.id.qr_image);
@@ -64,9 +64,9 @@ public class GroupInviteLinkQrActivity extends HalloActivity {
 
     private static class GroupInviteQRViewModel extends AndroidViewModel {
 
-        private String url;
-        private GroupId groupId;
-        private ContentDb contentDb;
+        private final String url;
+        private final GroupId groupId;
+        private final ContentDb contentDb;
 
         private final ComputableLiveData<Bitmap> qrBitMap = new ComputableLiveData<Bitmap>() {
             @Override

@@ -159,7 +159,7 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
         private static final String WORKER_PARAM_NAME = "name";
         private static final String WORKER_PARAM_GROUP_ID = "group_id";
 
-        private AvatarLoader avatarLoader;
+        private final AvatarLoader avatarLoader;
 
         public UpdateGroupWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
             super(context, workerParams);

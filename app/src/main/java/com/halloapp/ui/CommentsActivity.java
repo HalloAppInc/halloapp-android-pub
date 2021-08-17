@@ -96,7 +96,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class CommentsActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
@@ -401,7 +400,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
         contactLoader = new ContactLoader();
         avatarLoader = AvatarLoader.getInstance(this);
-        textContentLoader = new TextContentLoader(this);
+        textContentLoader = new TextContentLoader();
 
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());

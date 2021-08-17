@@ -9,8 +9,8 @@ import com.halloapp.xmpp.HalloIq;
 
 public class SetGroupDescriptionIq extends HalloIq {
 
-    private GroupId groupId;
-    private String description;
+    private final GroupId groupId;
+    private final String description;
 
     protected SetGroupDescriptionIq(@NonNull  String description, @NonNull GroupId groupId) {
         this.groupId = groupId;

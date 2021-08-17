@@ -118,7 +118,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         super.onCreate(savedInstanceState);
         avatarLoader = AvatarLoader.getInstance(this.getActivity());
         contactLoader = new ContactLoader();
-        textContentLoader = new TextContentLoader(requireContext());
+        textContentLoader = new TextContentLoader();
     }
 
     @Override

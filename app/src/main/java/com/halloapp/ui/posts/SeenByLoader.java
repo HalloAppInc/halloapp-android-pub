@@ -20,14 +20,14 @@ public class SeenByLoader extends ViewDataLoader<AvatarsLayout, List<UserId>, St
     private final LruCache<String, List<UserId>> cache = new LruCache<>(512);
     private final ContentDb contentDb;
 
-    private ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
+    private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
         @Override
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
             cache.remove(postId);
         }
     };
 
-    public SeenByLoader(@NonNull Context context) {
+    public SeenByLoader() {
         contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
     }

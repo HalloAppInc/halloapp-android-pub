@@ -82,13 +82,8 @@ public class GroupInviteLinkActivity extends HalloActivity {
             builder.show();
         });
 
-        inviteLinkContainer.setOnClickListener(v -> {
-            shareInviteLink();
-        });
-
-        shareLink.setOnClickListener(v -> {
-            shareInviteLink();
-        });
+        inviteLinkContainer.setOnClickListener(v -> shareInviteLink());
+        shareLink.setOnClickListener(v -> shareInviteLink());
     }
 
     private void resetInviteLink() {

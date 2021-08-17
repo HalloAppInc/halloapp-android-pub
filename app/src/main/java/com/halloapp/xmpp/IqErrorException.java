@@ -6,15 +6,16 @@ import com.halloapp.proto.server.Iq;
 
 public class IqErrorException extends Exception {
 
-    private String id;
-    private String reason;
-    private Iq errorIq;
+    private final String id;
+    private final String reason;
+    private final Iq errorIq;
 
     public IqErrorException(String id, String reason) {
         super("Server returned error response for " + id + ": " + reason);
 
         this.id = id;
         this.reason = reason;
+        this.errorIq = null;
     }
 
     public IqErrorException(String id, Iq errorIq) {

@@ -21,7 +21,6 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.content.Mention;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.logs.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -147,7 +146,7 @@ public class MentionableEntry extends PostEditText implements MentionPickerView.
         }
         int atIndex = -1;
         for (int i = selStart - 1; i >= 0; i--) {
-            char character = text.charAt(i);
+            char character = Preconditions.checkNotNull(text).charAt(i);
             if (Character.isWhitespace(character)) {
                 break;
             }
@@ -253,9 +252,9 @@ public class MentionableEntry extends PostEditText implements MentionPickerView.
 
     private static class MentionSpan extends ClickableSpan {
 
-        private Contact contact;
+        private final Contact contact;
 
-        private String mentionText;
+        private final String mentionText;
 
         MentionSpan(@NonNull String mentionText, @NonNull Contact contact) {
             this.contact = contact;

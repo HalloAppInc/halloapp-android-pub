@@ -14,13 +14,13 @@ import com.halloapp.xmpp.groups.GroupsApi;
 
 public class GroupBackgroundViewModel extends ViewModel {
 
-    private GroupId groupId;
+    private final GroupId groupId;
 
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final ContentDb contentDb = ContentDb.getInstance();
     private final GroupsApi groupsApi = GroupsApi.getInstance();
 
-    private MutableLiveData<Integer> selectedBackground = new MutableLiveData<>();
+    private final MutableLiveData<Integer> selectedBackground = new MutableLiveData<>();
 
     public GroupBackgroundViewModel(@NonNull GroupId groupId) {
         this.groupId = groupId;

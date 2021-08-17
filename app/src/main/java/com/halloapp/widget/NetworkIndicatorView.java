@@ -16,7 +16,7 @@ import com.halloapp.R;
 
 public class NetworkIndicatorView extends FrameLayout {
 
-    private NetworkConnectivityManager networkConnectivityManager = NetworkConnectivityManager.getInstance();
+    private final NetworkConnectivityManager networkConnectivityManager = NetworkConnectivityManager.getInstance();
 
     private TextView statusTextView;
 

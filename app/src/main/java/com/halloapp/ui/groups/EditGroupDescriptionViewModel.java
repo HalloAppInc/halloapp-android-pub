@@ -20,7 +20,6 @@ import androidx.work.WorkerParameters;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.id.GroupId;
-import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;

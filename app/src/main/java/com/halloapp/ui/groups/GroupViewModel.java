@@ -26,8 +26,6 @@ import com.halloapp.xmpp.groups.MemberElement;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
 public class GroupViewModel extends AndroidViewModel {
@@ -124,25 +122,22 @@ public class GroupViewModel extends AndroidViewModel {
                 for (MemberInfo memberInfo : members) {
                     groupMembers.add(new GroupMember(memberInfo, contactsDb.getContact(memberInfo.userId)));
                 }
-                Collections.sort(groupMembers, new Comparator<GroupMember>() {
-                    @Override
-                    public int compare(GroupMember m1, GroupMember m2) {
-                        if (m1.memberInfo.userId.isMe()) {
-                            return -1;
-                        } else if (m2.memberInfo.userId.isMe()) {
-                            return 1;
-                        } else if (m1.memberInfo.isAdmin() && !m2.memberInfo.isAdmin()) {
-                            return -1;
-                        } else if (m2.memberInfo.isAdmin() && !m1.memberInfo.isAdmin()) {
-                            return 1;
-                        }
-                        if (m1.contact.addressBookName != null && m2.contact.addressBookName == null) {
-                            return -1;
-                        } else if (m2.contact.addressBookName != null && m1.contact.addressBookName == null) {
-                            return 1;
-                        }
-                        return m1.contact.getDisplayName().compareTo(m2.contact.getDisplayName());
+                Collections.sort(groupMembers, (m1, m2) -> {
+                    if (m1.memberInfo.userId.isMe()) {
+                        return -1;
+                    } else if (m2.memberInfo.userId.isMe()) {
+                        return 1;
+                    } else if (m1.memberInfo.isAdmin() && !m2.memberInfo.isAdmin()) {
+                        return -1;
+                    } else if (m2.memberInfo.isAdmin() && !m1.memberInfo.isAdmin()) {
+                        return 1;
                     }
+                    if (m1.contact.addressBookName != null && m2.contact.addressBookName == null) {
+                        return -1;
+                    } else if (m2.contact.addressBookName != null && m1.contact.addressBookName == null) {
+                        return 1;
+                    }
+                    return m1.contact.getDisplayName().compareTo(m2.contact.getDisplayName());
                 });
                 return groupMembers;
             }

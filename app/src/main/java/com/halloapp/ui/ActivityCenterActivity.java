@@ -86,7 +86,7 @@ public class ActivityCenterActivity extends HalloActivity {
             }
         });
 
-        textContentLoader = new TextContentLoader(this);
+        textContentLoader = new TextContentLoader();
         postThumbnailLoader = new PostThumbnailLoader(this, getResources().getDimensionPixelSize(R.dimen.comment_history_thumbnail_size));
 
         ActionBar actionBar = getSupportActionBar();

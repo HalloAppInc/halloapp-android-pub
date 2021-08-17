@@ -12,7 +12,7 @@ import com.halloapp.util.logs.Log;
 
 public class SmsVerificationReceiver extends BroadcastReceiver {
 
-    private SmsVerificationManager smsVerificationManager = SmsVerificationManager.getInstance();
+    private final SmsVerificationManager smsVerificationManager = SmsVerificationManager.getInstance();
 
     @Override
     public void onReceive(Context context, Intent intent) {

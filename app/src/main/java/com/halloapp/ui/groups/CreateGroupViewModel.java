@@ -30,8 +30,8 @@ import com.halloapp.id.UserId;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.groups.GroupsApi;
 import com.halloapp.xmpp.util.ObservableErrorException;
@@ -42,7 +42,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class CreateGroupViewModel extends AndroidViewModel {
 

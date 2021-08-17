@@ -25,7 +25,7 @@ import com.halloapp.widget.SnackbarHelper;
 
 public class FutureProofPostViewHolder extends IncomingPostViewHolder {
 
-    private TextView futureProofMessage;
+    private final TextView futureProofMessage;
 
     public FutureProofPostViewHolder(@NonNull View itemView, @NonNull PostViewHolder.PostViewHolderParent parent) {
         super(itemView, parent);

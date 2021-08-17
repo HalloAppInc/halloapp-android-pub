@@ -26,11 +26,11 @@ public class FileLogger {
 
     private final FileStore fileStore;
 
-    private LinkedBlockingQueue<LogLine> logQueue;
+    private final LinkedBlockingQueue<LogLine> logQueue;
 
     private boolean logging;
 
-    private LoggingThread loggingThread;
+    private final LoggingThread loggingThread;
 
     public FileLogger(@NonNull FileStore fileStore) {
         this.fileStore = fileStore;
@@ -92,8 +92,8 @@ public class FileLogger {
         private String fileDate;
         private FileWriter outputStream;
 
-        private SimpleDateFormat logDateFormatter;
-        private SimpleDateFormat logTimeFormatter;
+        private final SimpleDateFormat logDateFormatter;
+        private final SimpleDateFormat logTimeFormatter;
 
         private LoggingThread() {
             logDateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());

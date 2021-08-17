@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.R;
 import com.halloapp.id.GroupId;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.util.Preconditions;
 import com.halloapp.widget.GridAutofitLayoutManager;
 import com.halloapp.widget.SnackbarHelper;
 
@@ -55,7 +56,7 @@ public class GroupBackgroundActivity extends HalloActivity {
 
         View container = findViewById(R.id.container);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.group_bg_picker_background));
 
@@ -114,8 +115,8 @@ public class GroupBackgroundActivity extends HalloActivity {
 
     class ColorBgViewHolder extends RecyclerView.ViewHolder {
 
-        private FrameLayout bgColorView;
-        private View selectedRing;
+        private final FrameLayout bgColorView;
+        private final View selectedRing;
 
         private int position;
 
@@ -125,9 +126,7 @@ public class GroupBackgroundActivity extends HalloActivity {
             bgColorView = itemView.findViewById(R.id.bg_color);
             selectedRing = itemView.findViewById(R.id.selected_ring);
 
-            itemView.setOnClickListener(v -> {
-                viewModel.setBackground(position);
-            });
+            itemView.setOnClickListener(v -> viewModel.setBackground(position));
         }
 
         public void bind(int position, boolean selected) {

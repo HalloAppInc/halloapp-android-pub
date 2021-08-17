@@ -20,7 +20,7 @@ public class GlobalUI {
         return instance;
     }
 
-    private Handler mainHandler;
+    private final Handler mainHandler;
 
     private GlobalUI() {
         mainHandler = new Handler(Looper.getMainLooper());

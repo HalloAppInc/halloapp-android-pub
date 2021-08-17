@@ -33,10 +33,10 @@ import java.util.Set;
 
 public class InviteContactsViewModel extends AndroidViewModel {
 
-    private BgWorkers bgWorkers;
-    private Connection connection;
-    private ContactsDb contactsDb;
-    private Preferences preferences;
+    private final BgWorkers bgWorkers;
+    private final Connection connection;
+    private final ContactsDb contactsDb;
+    private final Preferences preferences;
 
     private final InvitesApi invitesApi;
 

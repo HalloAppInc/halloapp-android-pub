@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.CallSuper;
-import androidx.annotation.ColorRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,7 +34,6 @@ import com.halloapp.content.Post;
 import com.halloapp.groups.ChatLoader;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
-import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.FutureProofPostViewHolder;
@@ -53,7 +51,6 @@ public class PostsFragment extends HalloFragment {
     protected final PostsAdapter adapter = new PostsAdapter();
     protected ViewGroup parentViewGroup;
 
-    private ServerProps serverProps = ServerProps.getInstance();
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ChatLoader chatLoader;
     private ContactLoader contactLoader;
@@ -89,10 +86,10 @@ public class PostsFragment extends HalloFragment {
         mediaThumbnailLoader = new MediaThumbnailLoader(requireContext(), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         chatLoader = new ChatLoader();
         contactLoader = new ContactLoader();
-        seenByLoader = new SeenByLoader(requireContext());
+        seenByLoader = new SeenByLoader();
         avatarLoader = AvatarLoader.getInstance(getActivity());
         audioDurationLoader = new AudioDurationLoader(requireContext());
-        textContentLoader = new TextContentLoader(requireContext());
+        textContentLoader = new TextContentLoader();
         ContactsDb.getInstance().addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());

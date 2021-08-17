@@ -20,8 +20,8 @@ import java.util.Collections;
 
 public class HideFuturePostsViewModel extends ViewModel {
 
-    private BgWorkers bgWorkers;
-    private FeedPrivacyManager feedPrivacyManager;
+    private final BgWorkers bgWorkers;
+    private final FeedPrivacyManager feedPrivacyManager;
 
     private final MutableLiveData<Boolean> hiding;
 

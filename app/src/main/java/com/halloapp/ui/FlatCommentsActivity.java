@@ -188,9 +188,9 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 String name = names.get(0);
 
                 if (commentsFsePosition == 0) {
-                    Post post = viewModel.post.getValue();
+                    Post post = Preconditions.checkNotNull(viewModel.post.getValue());
                     RecyclerView gallery = comments.findViewWithTag(post);
-                    RecyclerView.LayoutManager layoutManager = gallery.getLayoutManager();
+                    RecyclerView.LayoutManager layoutManager = Preconditions.checkNotNull(gallery.getLayoutManager());
 
                     for (int i = 0; i < post.media.size(); ++i) {
                         View view = layoutManager.findViewByPosition(i);
@@ -201,7 +201,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                         }
                     }
                 } else {
-                    RecyclerView.LayoutManager commentsLayoutManager = comments.getLayoutManager();
+                    RecyclerView.LayoutManager commentsLayoutManager = Preconditions.checkNotNull(comments.getLayoutManager());
                     View row = commentsLayoutManager.getChildAt(commentsFsePosition);
 
                     if (row != null) {
@@ -238,32 +238,24 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         viewModel = new ViewModelProvider(this, new FlatCommentsViewModel.Factory(getApplication(), postId)).get(FlatCommentsViewModel.class);
         viewModel.getCommentList().observe(this, comments -> {
-            adapter.submitList(comments, new Runnable() {
-                @Override
-                public void run() {
-                    commentsView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!scrollToComment) {
-                                return;
-                            }
-                            scrollToComment = false;
-                            long currentOldest = 0;
-                            int commentPosition = -1;
-                            for (int i = 0; i < comments.size(); i++) {
-                                Comment comment = comments.get(i);
-                                if (comment.senderUserId.isMe() && comment.timestamp > currentOldest) {
-                                    commentPosition = i;
-                                    currentOldest = comment.timestamp;
-                                }
-                            }
-                            if (commentPosition != -1) {
-                                commentsView.smoothScrollToPosition(commentPosition+1);
-                            }
-                        }
-                    });
+            adapter.submitList(comments, () -> commentsView.post(() -> {
+                if (!scrollToComment) {
+                    return;
                 }
-            });
+                scrollToComment = false;
+                long currentOldest = 0;
+                int commentPosition = -1;
+                for (int i = 0; i < comments.size(); i++) {
+                    Comment comment = Preconditions.checkNotNull(comments.get(i));
+                    if (comment.senderUserId.isMe() && comment.timestamp > currentOldest) {
+                        commentPosition = i;
+                        currentOldest = comment.timestamp;
+                    }
+                }
+                if (commentPosition != -1) {
+                    commentsView.smoothScrollToPosition(commentPosition+1);
+                }
+            }));
         });
 
         viewModel.lastSeenCommentRowId.getLiveData().observe(this, rowId -> adapter.setLastSeenCommentRowId(rowId == null ? -1 : rowId));
@@ -427,7 +419,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         contactLoader = new ContactLoader();
         avatarLoader = AvatarLoader.getInstance(this);
         chatLoader = new ChatLoader();
-        textContentLoader = new TextContentLoader(this);
+        textContentLoader = new TextContentLoader();
 
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
@@ -517,12 +509,15 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case REQUEST_CODE_PICK_MEDIA: {
                 if (resultCode == RESULT_OK) {
                     if (data != null) {
                         final ArrayList<Uri> uris = data.getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA);
-                        if (uris.size() == 1) {
+                        if (uris == null) {
+                            Log.e("CommentsActivity: Got null media");
+                        } else if (uris.size() == 1) {
                             viewModel.loadCommentMediaUri(uris.get(0));
                         } else {
                             Log.w("CommentsActivity: Invalid comment media count " + uris.size());
@@ -566,7 +561,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             }
 
             RecyclerView gallery = findViewById(R.id.comments).findViewWithTag(post);
-            RecyclerView.LayoutManager layoutManager = gallery.getLayoutManager();
+            RecyclerView.LayoutManager layoutManager = Preconditions.checkNotNull(gallery.getLayoutManager());
             View view = layoutManager.findViewByPosition(position);
 
             if (view == null || layoutManager.isViewPartiallyVisible(view, false, true)) {
@@ -647,9 +642,9 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         Comment comment;
 
-        private SeekBar seekBar;
-        private ImageView controlButton;
-        private TextView seekTime;
+        private final SeekBar seekBar;
+        private final ImageView controlButton;
+        private final TextView seekTime;
 
         private boolean playing;
 
@@ -1300,7 +1295,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
     static class AuthorSpan extends ClickableSpan {
 
-        private @Nullable View.OnClickListener listener;
+        private @Nullable
+        final View.OnClickListener listener;
 
         public AuthorSpan(@Nullable View.OnClickListener listener){
             this.listener = listener;

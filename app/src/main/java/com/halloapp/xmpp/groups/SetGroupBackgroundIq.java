@@ -10,8 +10,8 @@ import com.halloapp.xmpp.HalloIq;
 
 public class SetGroupBackgroundIq extends HalloIq {
 
-    private GroupId groupId;
-    private int background;
+    private final GroupId groupId;
+    private final int background;
 
     protected SetGroupBackgroundIq(int background, @NonNull GroupId groupId) {
         this.groupId = groupId;

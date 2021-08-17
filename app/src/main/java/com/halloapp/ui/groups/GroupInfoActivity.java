@@ -125,9 +125,7 @@ public class GroupInfoActivity extends HalloActivity {
         avatarLoader.load(avatarView, groupId, false);
 
         inviteLinkView = findViewById(R.id.invite_link_container);
-        inviteLinkView.setOnClickListener(v -> {
-            startActivity(GroupInviteLinkActivity.newIntent(this, groupId));
-        });
+        inviteLinkView.setOnClickListener(v -> startActivity(GroupInviteLinkActivity.newIntent(this, groupId)));
 
         addMembersView = findViewById(R.id.add_members);
         addMembersView.setOnClickListener(v -> {
@@ -182,9 +180,7 @@ public class GroupInfoActivity extends HalloActivity {
             }
         });
 
-        leaveGroup.setOnClickListener(v -> {
-            askLeaveGroup();
-        });
+        leaveGroup.setOnClickListener(v -> askLeaveGroup());
 
         viewModel.getChat().observe(this, chat -> {
             groupNameView.setText(chat.name);
@@ -384,9 +380,7 @@ public class GroupInfoActivity extends HalloActivity {
 
             contactLoader.load(name, member.userId, false);
             avatarLoader.load(avatar, member.userId, false);
-            itemView.setOnClickListener(v -> {
-                showGroupMemberOptionsDialog(itemView.getContext(), groupMember);
-            });
+            itemView.setOnClickListener(v -> showGroupMemberOptionsDialog(itemView.getContext(), groupMember));
         }
 
         private void viewProfile(UserId userId) {
@@ -436,19 +430,19 @@ public class GroupInfoActivity extends HalloActivity {
 
             TextView memberName = dialog.findViewById(R.id.member_name);
             TextView makeAdminText = dialog.findViewById(R.id.make_admin_text);
-            View viewProfileLayout = dialog.findViewById(R.id.view_profile);
-            View messageMemberLayout = dialog.findViewById(R.id.message);
-            View makeAdminLayout = dialog.findViewById(R.id.make_admin);
-            View removeMemberLayout = dialog.findViewById(R.id.remove_member);
+            View viewProfileLayout = Preconditions.checkNotNull(dialog.findViewById(R.id.view_profile));
+            View messageMemberLayout = Preconditions.checkNotNull(dialog.findViewById(R.id.message));
+            View makeAdminLayout = Preconditions.checkNotNull(dialog.findViewById(R.id.make_admin));
+            View removeMemberLayout = Preconditions.checkNotNull(dialog.findViewById(R.id.remove_member));
 
-            contactLoader.load(memberName, member.memberInfo.userId, false);
+            contactLoader.load(Preconditions.checkNotNull(memberName), member.memberInfo.userId, false);
             boolean allowMessage = member.contact.addressBookName != null;
             messageMemberLayout.setVisibility(allowMessage ? View.VISIBLE : View.GONE);
 
             if (getUserIsAdmin() && getChatIsActive()) {
                 removeMemberLayout.setVisibility(View.VISIBLE);
                 makeAdminLayout.setVisibility(View.VISIBLE);
-                makeAdminText.setText(getResources().getString(MemberElement.Type.ADMIN.equals(member.memberInfo.type) ? R.string.group_demote_from_admin : R.string.group_promote_to_admin));
+                Preconditions.checkNotNull(makeAdminText).setText(getResources().getString(MemberElement.Type.ADMIN.equals(member.memberInfo.type) ? R.string.group_demote_from_admin : R.string.group_promote_to_admin));
             } else {
                 removeMemberLayout.setVisibility(View.GONE);
                 makeAdminLayout.setVisibility(View.GONE);

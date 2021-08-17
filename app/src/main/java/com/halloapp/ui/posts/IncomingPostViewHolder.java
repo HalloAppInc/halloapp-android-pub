@@ -1,11 +1,7 @@
 package com.halloapp.ui.posts;
 
 import android.content.Intent;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.text.TextPaint;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
@@ -15,11 +11,8 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
-import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Post;
-import com.halloapp.props.ServerProps;
 import com.halloapp.ui.CommentsActivity;
-import com.halloapp.ui.ReactionsPopupWindow;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.util.ViewDataLoader;
 

@@ -27,7 +27,6 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
@@ -100,7 +99,6 @@ import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.widget.SwipeListItemHelper;
-import com.halloapp.widget.VoiceNoteRecorderControlView;
 import com.halloapp.xmpp.PresenceLoader;
 
 import java.io.File;
@@ -110,7 +108,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class ChatActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
@@ -237,7 +234,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         replyLoader = new ReplyLoader(getResources().getDimensionPixelSize(R.dimen.reply_thumb_size));
         avatarLoader = AvatarLoader.getInstance(this);
         presenceLoader = PresenceLoader.getInstance();
-        textContentLoader = new TextContentLoader(this);
+        textContentLoader = new TextContentLoader();
         audioDurationLoader = new AudioDurationLoader(this);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());

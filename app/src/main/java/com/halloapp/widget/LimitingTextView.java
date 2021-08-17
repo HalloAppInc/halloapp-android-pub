@@ -161,7 +161,8 @@ public class LimitingTextView extends AppCompatTextView {
 
     class ReadMoreSpan extends ClickableSpan {
 
-        private @ColorInt int spanColor;
+        private @ColorInt
+        final int spanColor;
 
         public ReadMoreSpan(@ColorInt int color) {
             this.spanColor = color;

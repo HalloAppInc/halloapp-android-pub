@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
@@ -39,7 +38,6 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
-import com.halloapp.id.UserId;
 import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloFragment;
@@ -47,23 +45,18 @@ import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.SystemMessageTextResolver;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
-import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.GlobalUI;
-import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 
-import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -93,10 +86,11 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
 
     private MenuItem searchMenuItem;
 
-    private HashMap<ChatId, Chat> selectedChats = new HashMap<>();
+    private final HashMap<ChatId, Chat> selectedChats = new HashMap<>();
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case REQUEST_CODE_OPEN_GROUP: {
                 if (resultCode == Activity.RESULT_OK) {
@@ -117,11 +111,11 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
         avatarLoader = AvatarLoader.getInstance(this.getActivity());
         globalUI = GlobalUI.getInstance();
         contactLoader = new ContactLoader();
-        textContentLoader = new TextContentLoader(requireContext());
+        textContentLoader = new TextContentLoader();
         unseenGroupPostsLoader = new UnseenGroupPostsLoader();
         systemMessageTextResolver = new SystemMessageTextResolver(contactLoader);
 
-        Notifications.getInstance(getContext()).clearNewGroupNotification();
+        Notifications.getInstance(requireContext()).clearNewGroupNotification();
     }
 
     @Override
@@ -149,11 +143,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
             @Override
             public boolean onQueryTextChange(final String text) {
                 adapter.getFilter().filter(text);
-                if (!TextUtils.isEmpty(text)) {
-                    closeMenuItem.setVisible(true);
-                } else {
-                    closeMenuItem.setVisible(false);
-                }
+                closeMenuItem.setVisible(!TextUtils.isEmpty(text));
                 return false;
             }
         });
@@ -226,7 +216,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
             return;
         }
         if (actionMode == null) {
-            actionMode = ((HalloActivity) getActivity()).startSupportActionMode(new ActionMode.Callback() {
+            actionMode = ((HalloActivity) requireActivity()).startSupportActionMode(new ActionMode.Callback() {
 
                 private int statusBarColor;
                 private int previousVisibility;
@@ -234,12 +224,12 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                 @Override
                 public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                     mode.getMenuInflater().inflate(R.menu.groups_menu, menu);
-                    statusBarColor = getActivity().getWindow().getStatusBarColor();
+                    statusBarColor = requireActivity().getWindow().getStatusBarColor();
 
-                    getActivity().getWindow().setStatusBarColor(getContext().getResources().getColor(R.color.color_secondary));
-                    previousVisibility = getActivity().getWindow().getDecorView().getSystemUiVisibility();
+                    requireActivity().getWindow().setStatusBarColor(requireContext().getResources().getColor(R.color.color_secondary));
+                    previousVisibility = requireActivity().getWindow().getDecorView().getSystemUiVisibility();
                     //noinspection InlinedApi
-                    getActivity().getWindow().getDecorView().setSystemUiVisibility(previousVisibility & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                    requireActivity().getWindow().getDecorView().setSystemUiVisibility(previousVisibility & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
                     return true;
                 }
 
@@ -253,8 +243,8 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                 @Override
                 public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                     if (item.getItemId() == R.id.delete) {
-                        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                        builder.setMessage(getContext().getResources().getQuantityString(R.plurals.delete_groups_confirmation, selectedChats.size(), selectedChats.size()));
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                        builder.setMessage(requireContext().getResources().getQuantityString(R.plurals.delete_groups_confirmation, selectedChats.size(), selectedChats.size()));
                         builder.setCancelable(true);
                         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
                             for (Chat chat : selectedChats.values()) {
@@ -268,7 +258,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                     } else if (item.getItemId() == R.id.view_group_info) {
                         for (ChatId chat : selectedChats.keySet()) {
                             if (chat instanceof GroupId) {
-                                startActivity(GroupInfoActivity.viewGroup(getContext(), (GroupId) chat));
+                                startActivity(GroupInfoActivity.viewGroup(requireContext(), (GroupId) chat));
                                 break;
                             }
                         }
@@ -280,8 +270,8 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                                 selectedGroups.add((GroupId) chatId);
                             }
                         }
-                        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                        builder.setMessage(getContext().getResources().getQuantityString(R.plurals.leave_multiple_groups_confirmation, selectedGroups.size(), selectedGroups.size()));
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                        builder.setMessage(requireContext().getResources().getQuantityString(R.plurals.leave_multiple_groups_confirmation, selectedGroups.size(), selectedGroups.size()));
                         builder.setCancelable(true);
                         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
                             endActionMode();
@@ -298,8 +288,8 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                     adapter.notifyDataSetChanged();
                     selectedChats.clear();
                     actionMode = null;
-                    getActivity().getWindow().setStatusBarColor(statusBarColor);
-                    getActivity().getWindow().getDecorView().setSystemUiVisibility(previousVisibility);
+                    requireActivity().getWindow().setStatusBarColor(statusBarColor);
+                    requireActivity().getWindow().getDecorView().setSystemUiVisibility(previousVisibility);
                 }
             });
         }
@@ -317,11 +307,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
         actionMode.getMenu().findItem(R.id.delete).setVisible(!hasActiveGroup);
         actionMode.getMenu().findItem(R.id.leave_group).setVisible(hasActiveGroup);
 
-        if (selectedChats.size() == 1) {
-            actionMode.getMenu().findItem(R.id.view_group_info).setVisible(true);
-        } else {
-            actionMode.getMenu().findItem(R.id.view_group_info).setVisible(false);
-        }
+        actionMode.getMenu().findItem(R.id.view_group_info).setVisible(selectedChats.size() == 1);
         actionMode.setTitle(Integer.toString(selectedChats.size()));
     }
 

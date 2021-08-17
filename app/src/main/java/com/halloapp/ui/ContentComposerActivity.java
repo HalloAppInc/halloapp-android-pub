@@ -193,7 +193,7 @@ public class ContentComposerActivity extends HalloActivity {
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
         fullThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
-        textContentLoader = new TextContentLoader(this);
+        textContentLoader = new TextContentLoader();
 
         mentionPickerView = findViewById(R.id.mention_picker_view);
 

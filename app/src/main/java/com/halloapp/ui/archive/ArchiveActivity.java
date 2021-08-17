@@ -116,7 +116,7 @@ public class ArchiveActivity extends HalloActivity  {
             durationText = itemView.findViewById(R.id.archive_duration);
             imageView = itemView.findViewById(R.id.archive_thumbnail);
 
-            textContentLoader = new TextContentLoader(itemView.getContext());
+            textContentLoader = new TextContentLoader();
 
             View.OnClickListener clickListener = view -> {
                 Intent intent = new Intent(view.getContext(), PostContentActivity.class);

@@ -20,7 +20,7 @@ class FlatCommentsViewModel extends CommentsViewModel {
 
     private FlatCommentsDataSource.Factory dataSourceFactory;
 
-    private String postId;
+    private final String postId;
 
     FlatCommentsViewModel(@NonNull Application application, @NonNull String postId) {
         super(application, postId);

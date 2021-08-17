@@ -229,9 +229,9 @@ public class PostContentActivity extends HalloActivity {
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         chatLoader = new ChatLoader();
         contactLoader = new ContactLoader();
-        seenByLoader = new SeenByLoader(this);
+        seenByLoader = new SeenByLoader();
         avatarLoader = AvatarLoader.getInstance(this);
-        textContentLoader = new TextContentLoader(this);
+        textContentLoader = new TextContentLoader();
         audioDurationLoader = new AudioDurationLoader(this);
         ContactsDb.getInstance().addObserver(contactsObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);

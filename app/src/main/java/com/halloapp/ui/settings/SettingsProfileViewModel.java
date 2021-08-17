@@ -39,15 +39,15 @@ import java.util.List;
 
 public class SettingsProfileViewModel extends AndroidViewModel {
 
-    private Me me;
-    private BgWorkers bgWorkers;
+    private final Me me;
+    private final BgWorkers bgWorkers;
 
-    private WorkManager workManager;
+    private final WorkManager workManager;
 
-    private MutableLiveData<Bitmap> tempAvatarLiveData;
-    private MutableLiveData<Boolean> nameChangedLiveData = new MutableLiveData<>(false);
-    private MediatorLiveData<Boolean> canSave;
-    private MutableLiveData<Boolean> hasAvatarSet = new MutableLiveData<>();
+    private final MutableLiveData<Bitmap> tempAvatarLiveData;
+    private final MutableLiveData<Boolean> nameChangedLiveData = new MutableLiveData<>(false);
+    private final MediatorLiveData<Boolean> canSave;
+    private final MutableLiveData<Boolean> hasAvatarSet = new MutableLiveData<>();
 
     private String tempName;
 
@@ -65,14 +65,10 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         workManager = WorkManager.getInstance(application);
 
         tempAvatarLiveData = new MutableLiveData<>();
-        bgWorkers.execute(() -> me.getName());
+        bgWorkers.execute(me::getName);
         canSave = new MediatorLiveData<>();
-        canSave.addSource(nameChangedLiveData, nameChanged -> {
-            setCanSave();
-        });
-        canSave.addSource(tempAvatarLiveData, bitmap -> {
-            setCanSave();
-        });
+        canSave.addSource(nameChangedLiveData, nameChanged -> setCanSave());
+        canSave.addSource(tempAvatarLiveData, bitmap -> setCanSave());
         bgWorkers.execute(() -> {
             hasAvatarSet.postValue(AvatarLoader.getInstance(application).hasAvatar());
         });

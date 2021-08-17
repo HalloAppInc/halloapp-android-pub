@@ -91,9 +91,7 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
         View linkPreviewContainer = findViewById(R.id.link_preview_container);
 
         Button cancel = findViewById(R.id.cancel);
-        cancel.setOnClickListener(v -> {
-            finish();
-        });
+        cancel.setOnClickListener(v -> finish());
 
         View joinGroup = findViewById(R.id.join_group);
         joinGroup.setOnClickListener(v -> {

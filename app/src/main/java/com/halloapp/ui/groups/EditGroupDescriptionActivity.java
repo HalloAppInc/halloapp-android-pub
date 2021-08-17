@@ -63,13 +63,7 @@ public class EditGroupDescriptionActivity extends HalloActivity {
         viewModel = new ViewModelProvider(this, new EditGroupDescriptionViewModel.Factory(getApplication(), groupId)).get(EditGroupDescriptionViewModel.class);
 
         viewModel.getName().observe(this, descriptionField::setText);
-        viewModel.canSave().observe(this, canSave -> {
-            if (Boolean.TRUE.equals(canSave)) {
-                saveBtn.setEnabled(true);
-            } else {
-                saveBtn.setEnabled(false);
-            }
-        });
+        viewModel.canSave().observe(this, canSave -> saveBtn.setEnabled(Boolean.TRUE.equals(canSave)));
 
         descriptionField.setFilters(new InputFilter[] {new InputFilter.LengthFilter(Constants.MAX_GROUP_DESCRIPTION_LENGTH)});
         descriptionField.addTextChangedListener(new TextWatcher() {
@@ -124,8 +118,6 @@ public class EditGroupDescriptionActivity extends HalloActivity {
             }
         });
 
-        saveBtn.setOnClickListener(v -> {
-            viewModel.saveGroup();
-        });
+        saveBtn.setOnClickListener(v -> viewModel.saveGroup());
     }
 }

@@ -8,9 +8,9 @@ import com.halloapp.util.ComputableLiveData;
 
 public class MyProfileViewModel extends ViewModel {
 
-    private Me me = Me.getInstance();
+    private final Me me = Me.getInstance();
 
-    private ComputableLiveData<String> phoneNumberLiveData;
+    private final ComputableLiveData<String> phoneNumberLiveData;
 
     public MyProfileViewModel() {
         phoneNumberLiveData = new ComputableLiveData<String>() {

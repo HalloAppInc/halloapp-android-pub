@@ -11,7 +11,6 @@ import com.halloapp.R;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
-import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
 import com.halloapp.util.logs.Log;
 
@@ -51,6 +50,7 @@ public class GroupCreationPickerActivity extends MultipleContactPickerActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case REQUEST_CODE_SELECT_CONTACTS:
                 if (resultCode == RESULT_OK) {

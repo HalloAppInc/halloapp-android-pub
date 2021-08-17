@@ -24,10 +24,10 @@ public class ContentDraftManager {
         return instance;
     }
 
-    private Map<ChatId, String> messageDrafts = new HashMap<>();
-    private Map<ChatId, File> audioDrafts = new HashMap<>();
+    private final Map<ChatId, String> messageDrafts = new HashMap<>();
+    private final Map<ChatId, File> audioDrafts = new HashMap<>();
 
-    private Map<String, File> postAudioDrafts = new HashMap<>();
+    private final Map<String, File> postAudioDrafts = new HashMap<>();
 
     public File getCommentAudioDraft(@NonNull String postId) {
         return postAudioDrafts.remove(postId);

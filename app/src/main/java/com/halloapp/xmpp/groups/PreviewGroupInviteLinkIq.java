@@ -8,7 +8,7 @@ import com.halloapp.xmpp.HalloIq;
 
 public class PreviewGroupInviteLinkIq extends HalloIq {
 
-    private String inviteCode;
+    private final String inviteCode;
 
     protected PreviewGroupInviteLinkIq(@NonNull String inviteCode) {
         this.inviteCode = inviteCode;

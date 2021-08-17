@@ -20,16 +20,16 @@ import com.halloapp.util.StringUtils;
 
 public class VoiceNoteMessageViewHolder extends MessageViewHolder {
 
-    private AudioDurationLoader audioDurationLoader;
+    private final AudioDurationLoader audioDurationLoader;
 
-    private SeekBar seekBar;
-    private ImageView controlButton;
-    private ImageView avatarView;
-    private ImageView playedStatus;
-    private TextView seekTime;
-    private View loading;
+    private final SeekBar seekBar;
+    private final ImageView controlButton;
+    private final ImageView avatarView;
+    private final ImageView playedStatus;
+    private final TextView seekTime;
+    private final View loading;
 
-    private VoiceNotePlayer voiceNotePlayer;
+    private final VoiceNotePlayer voiceNotePlayer;
 
     private boolean playing;
     private boolean wasPlaying;

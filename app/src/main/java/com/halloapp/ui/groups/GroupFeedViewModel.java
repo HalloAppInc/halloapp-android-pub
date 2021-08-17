@@ -34,7 +34,6 @@ public class GroupFeedViewModel extends ViewModel {
     private static final int ADAPTER_PAGE_SIZE = 50;
 
     final LiveData<PagedList<Post>> postList;
-    private final Me me = Me.getInstance();
     private final ContentDb contentDb = ContentDb.getInstance();
     private final ContactsDb contactsDb = ContactsDb.getInstance();
     private final AtomicBoolean loadedOutgoingPost = new AtomicBoolean(false);
@@ -172,7 +171,7 @@ public class GroupFeedViewModel extends ViewModel {
     }
 
     void reloadPostsAt(long timestamp) {
-        final PagedList pagedList = postList.getValue();
+        final PagedList<?> pagedList = postList.getValue();
         if (pagedList != null) {
             ((PostsDataSource)pagedList.getDataSource()).reloadAt(timestamp);
         }

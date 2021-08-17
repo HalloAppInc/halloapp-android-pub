@@ -2,24 +2,26 @@ package com.halloapp.xmpp.util;
 
 public class IqResult<T> {
 
-    private boolean success;
-
-    private T result;
-    private String error;
+    private final boolean success;
+    private final T result;
+    private final String error;
 
     public IqResult() {
+        this.success = false;
+        this.result = null;
         this.error = null;
-        success = false;
     }
 
     public IqResult(String error) {
         this.success = false;
+        this.result = null;
         this.error = error;
     }
 
     public IqResult(T res) {
-        this.result = res;
         this.success = true;
+        this.result = res;
+        this.error = null;
     }
 
     public String getError() {

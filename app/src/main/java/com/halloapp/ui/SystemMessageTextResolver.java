@@ -25,7 +25,7 @@ public class SystemMessageTextResolver {
 
     private final Me me = Me.getInstance();
 
-    private ContactLoader contactLoader;
+    private final ContactLoader contactLoader;
 
     public SystemMessageTextResolver(@NonNull ContactLoader contactLoader) {
         this.contactLoader = contactLoader;

@@ -1,6 +1,5 @@
 package com.halloapp.ui.mentions;
 
-import android.content.Context;
 import android.widget.TextView;
 
 import androidx.annotation.MainThread;
@@ -22,9 +21,9 @@ public class TextContentLoader extends ViewDataLoader<TextView, List<Mention>, T
     private final Me me;
     private final ContactsDb contactsDb;
 
-    private LruCache<TextContent, List<Mention>> cache = new LruCache<>(512);
+    private final LruCache<TextContent, List<Mention>> cache = new LruCache<>(512);
 
-    public TextContentLoader(@NonNull Context context) {
+    public TextContentLoader() {
         me = Me.getInstance();
         contactsDb = ContactsDb.getInstance();
     }

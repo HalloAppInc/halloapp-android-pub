@@ -94,8 +94,8 @@ public class Notifications {
 
     private long feedNotificationTimeCutoff;
 
-    private Set<String> localPostIds = new HashSet<>();
-    private Set<String> localCommentIds = new HashSet<>();
+    private final Set<String> localPostIds = new HashSet<>();
+    private final Set<String> localCommentIds = new HashSet<>();
 
     private boolean enabled = true;
 
@@ -423,20 +423,14 @@ public class Notifications {
         if (post == null) {
             return false;
         }
-        if (localPostIds.contains(post.id)){
-            return true;
-        }
-        return false;
+        return localPostIds.contains(post.id);
     }
 
     private boolean isNewCommentRetracted(Comment comment){
         if (comment == null) {
             return false;
         }
-        if (localCommentIds.contains(comment.id)){
-            return true;
-        }
-        return false;
+        return localCommentIds.contains(comment.id);
     }
 
     @Nullable

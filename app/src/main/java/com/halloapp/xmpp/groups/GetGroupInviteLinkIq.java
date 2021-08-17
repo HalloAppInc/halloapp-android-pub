@@ -9,7 +9,7 @@ import com.halloapp.xmpp.HalloIq;
 
 public class GetGroupInviteLinkIq extends HalloIq {
 
-    private GroupId groupId;
+    private final GroupId groupId;
 
     protected GetGroupInviteLinkIq(@NonNull GroupId groupId) {
         this.groupId = groupId;

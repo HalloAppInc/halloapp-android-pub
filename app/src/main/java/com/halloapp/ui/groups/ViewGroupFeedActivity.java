@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,10 +19,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionManager;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.id.GroupId;
@@ -74,12 +71,10 @@ public class ViewGroupFeedActivity extends HalloActivity {
 
     private SpeedDialView fabView;
 
-    private boolean scrollUpOnDataLoaded;
-
     private TextView titleView;
     private TextView subtitleView;
 
-    private Runnable hideSubtitle = () -> {
+    private final Runnable hideSubtitle = () -> {
         if (subtitleView != null) {
             TransitionManager.beginDelayedTransition((ViewGroup) subtitleView.getParent());
             subtitleView.setVisibility(View.GONE);
@@ -164,10 +159,7 @@ public class ViewGroupFeedActivity extends HalloActivity {
         });
 
         final View newPostsView = findViewById(R.id.new_posts);
-        newPostsView.setOnClickListener(v -> {
-            scrollUpOnDataLoaded = true;
-            viewModel.reloadPostsAt(Long.MAX_VALUE);
-        });
+        newPostsView.setOnClickListener(v -> viewModel.reloadPostsAt(Long.MAX_VALUE));
 
         titleView.postDelayed(this::markUserInteracted, INTERACTION_TIMEOUT_MS);
     }

@@ -9,19 +9,14 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
-import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
-import com.halloapp.content.Message;
 import com.halloapp.content.Post;
-import com.halloapp.content.SeenReceipt;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
-import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
 import com.halloapp.util.logs.Log;
@@ -30,7 +25,6 @@ import com.halloapp.xmpp.groups.GroupsApi;
 import java.text.Collator;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -41,11 +35,9 @@ public class GroupListViewModel extends AndroidViewModel {
     final ComputableLiveData<List<Chat>> groupsList;
     final MutableLiveData<Boolean> groupPostUpdated;
 
-    private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
     private final GroupsApi groupsApi;
     private final ContactsDb contactsDb;
-    private final Preferences preferences;
     final GroupPostLoader groupPostLoader;
 
     private Parcelable savedScrollState;
@@ -106,15 +98,12 @@ public class GroupListViewModel extends AndroidViewModel {
     public GroupListViewModel(@NonNull Application application) {
         super(application);
 
-        bgWorkers = BgWorkers.getInstance();
         contactsDb = ContactsDb.getInstance();
         contactsDb.addObserver(contactsObserver);
         groupsApi = GroupsApi.getInstance();
 
         contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
-
-        preferences = Preferences.getInstance();
 
         groupPostLoader = new GroupPostLoader();
         groupsList = new ComputableLiveData<List<Chat>>() {

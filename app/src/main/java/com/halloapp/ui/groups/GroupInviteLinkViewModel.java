@@ -15,11 +15,11 @@ import com.halloapp.xmpp.groups.GroupsApi;
 
 public class GroupInviteLinkViewModel extends AndroidViewModel {
 
-    private GroupsApi groupsApi;
+    private final GroupsApi groupsApi;
 
-    private MutableLiveData<String> inviteLink;
+    private final MutableLiveData<String> inviteLink;
 
-    private GroupId groupId;
+    private final GroupId groupId;
 
     public GroupInviteLinkViewModel(@NonNull Application application, @NonNull GroupId groupId) {
         super(application);
@@ -47,9 +47,7 @@ public class GroupInviteLinkViewModel extends AndroidViewModel {
     }
 
     private void fetchInviteLink() {
-        groupsApi.getGroupInviteLink(groupId).onResponse(s -> {
-            inviteLink.postValue(Constants.GROUP_INVITE_BASE_URL + s);
-        });
+        groupsApi.getGroupInviteLink(groupId).onResponse(s -> inviteLink.postValue(Constants.GROUP_INVITE_BASE_URL + s));
     }
 
     public static class Factory implements ViewModelProvider.Factory {

@@ -50,10 +50,7 @@ public class MentionsFormatter {
         if (mention.index < 0 || mention.index >= str.length()) {
             return false;
         }
-        if (str.charAt(mention.index) != MENTION_CHARACTER) {
-            return false;
-        }
-        return true;
+        return str.charAt(mention.index) == MENTION_CHARACTER;
     }
 
     private static CharSequence createSpan(@NonNull Mention mention, @Nullable MentionClickListener mentionClickListener) {
@@ -65,7 +62,7 @@ public class MentionsFormatter {
     static class MentionSpan extends ClickableSpan {
 
         private final Mention mention;
-        private @Nullable MentionClickListener listener;
+        private @Nullable final MentionClickListener listener;
 
         public MentionSpan(@NonNull Mention mention, @Nullable MentionClickListener mentionClickListener){
             this.mention = mention;
