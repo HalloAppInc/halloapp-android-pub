@@ -41,6 +41,8 @@ import com.halloapp.ui.contacts.MultipleContactPickerActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.ClickableMovementMethod;
+import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.groups.MemberElement;
 
@@ -151,7 +153,7 @@ public class GroupInfoActivity extends HalloActivity {
 
         leaveGroup = findViewById(R.id.leave_group);
         View descriptionContainer = findViewById(R.id.description_container);
-        TextView descriptionTv = findViewById(R.id.description);
+        LimitingTextView descriptionTv = findViewById(R.id.description);
         View descriptionPlaceholder = findViewById(R.id.description_placeholder);
         View nameContainer = findViewById(R.id.name_container);
         View bgContainer = findViewById(R.id.group_background);
@@ -159,7 +161,6 @@ public class GroupInfoActivity extends HalloActivity {
 
         TextView groupBgDesc = findViewById(R.id.group_background_description);
         TextView memberTitle = findViewById(R.id.member_title);
-
         bgContainer.setVisibility(View.VISIBLE);
         bgContainer.setOnClickListener(v -> {
             if (getChatIsActive()) {
@@ -170,6 +171,8 @@ public class GroupInfoActivity extends HalloActivity {
             }
         });
         nameContainer.setOnClickListener(openEditGroupListener);
+        descriptionTv.setOnReadMoreListener((view, limit) -> false);
+        ClickableMovementMethod.apply(descriptionTv);
         descriptionContainer.setOnClickListener(v -> {
             if (getChatIsActive()) {
                 startActivity(EditGroupDescriptionActivity.openEditGroupDescription(this, groupId));
