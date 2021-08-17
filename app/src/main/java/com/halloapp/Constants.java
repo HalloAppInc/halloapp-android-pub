@@ -36,6 +36,7 @@ public class Constants {
     public static final int MAX_GROUP_NAME_LENGTH = 25;
     public static final int MAX_GROUP_DESCRIPTION_LENGTH = 500;
     public static final int SEND_LOGS_BUTTON_DELAY_MS = 15000;
+    public static final int MINIMUM_AUDIO_NOTE_DURATION_MS = 1000;
 
     public static final int BUILD_EXPIRES_SOON_THRESHOLD_DAYS = 7;
     public static final int SECONDS_PER_DAY = 60 * 60 * 24;

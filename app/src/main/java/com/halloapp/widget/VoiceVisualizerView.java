@@ -10,6 +10,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import com.halloapp.R;
+import com.halloapp.media.VoiceNoteRecorder;
 
 public class VoiceVisualizerView extends View {
 
@@ -67,7 +68,7 @@ public class VoiceVisualizerView extends View {
             amplitudeAnimator.cancel();
         }
         amplitudeAnimator = ValueAnimator.ofInt(currentAmplitude, amplitude);
-        amplitudeAnimator.setDuration(100);
+        amplitudeAnimator.setDuration(VoiceNoteRecorder.PLAYBACK_UPDATE_TIME);
         amplitudeAnimator.addUpdateListener(animation -> {
             currentAmplitude = (Integer)animation.getAnimatedValue();
             invalidate();

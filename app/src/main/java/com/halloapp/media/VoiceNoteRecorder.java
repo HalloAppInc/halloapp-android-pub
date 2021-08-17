@@ -1,6 +1,8 @@
 package com.halloapp.media;
 
 import android.media.MediaRecorder;
+import android.os.Build;
+import android.os.FileObserver;
 import android.os.Handler;
 import android.os.HandlerThread;
 
@@ -29,6 +31,8 @@ public class VoiceNoteRecorder {
 
     private int state;
 
+    public static final int PLAYBACK_UPDATE_TIME = 50;
+
     private static final int VOICE_RECORDING_BIT_RATE = 64 * 1024;
     private static final int VOICE_RECORDING_SAMPLE_RATE = 48_000; //in cycles per second
 
@@ -51,6 +55,9 @@ public class VoiceNoteRecorder {
 
     private long recordStartTime;
 
+    // Observe the recording IO as MediaRecorder has a random delay before starting
+    private FileObserver fileObserver;
+
     public VoiceNoteRecorder() {
         isRecording = new MutableLiveData<>(false);
         isLocked = new MutableLiveData<>(false);
@@ -61,27 +68,21 @@ public class VoiceNoteRecorder {
         recorderHandler = new Handler(recorderThread.getLooper());
     }
 
-    private int skip = 0;
-
     private final Runnable updatePlayback = () -> {
         recordingDuration.postValue(System.currentTimeMillis() - recordStartTime);
         if (state == STATE_RECORDING) {
             synchronized (VoiceNoteRecorder.this) {
                 if (state == STATE_RECORDING) {
-                    skip++;
-                    if (skip >= 2) {
-                        int lastAmp = mediaRecorder.getMaxAmplitude();
-                        skip = 0;
-                        recordingAmplitude.postValue(lastAmp);
-                    }
+                    int lastAmp = mediaRecorder.getMaxAmplitude();
+                    recordingAmplitude.postValue(lastAmp);
+                    schedulePlaybackUpdate();
                 }
             }
-            schedulePlaybackUpdate();
         }
     };
 
     private void schedulePlaybackUpdate() {
-        recorderHandler.postDelayed(updatePlayback, 100);
+        recorderHandler.postDelayed(updatePlayback, PLAYBACK_UPDATE_TIME);
     }
 
     @UiThread
@@ -132,10 +133,42 @@ public class VoiceNoteRecorder {
         VibrationUtils.quickVibration(appContext.get());
         state = STATE_RECORDING;
         mediaRecorder.start();
-        recordStartTime = System.currentTimeMillis();
-        updatePlayback.run();
+
+        if (fileObserver != null) {
+            fileObserver.stopWatching();
+            fileObserver = null;
+        }
+        if (Build.VERSION.SDK_INT >= 29) {
+            fileObserver = new FileObserver(recordingLocation) {
+                @Override
+                public void onEvent(int event, @Nullable String path) {
+                    if (event == 2) {
+                        fileObserver.stopWatching();
+                        onRecordingStarted();
+                    }
+                }
+            };
+        } else {
+            fileObserver = new FileObserver(recordingLocation.getAbsolutePath()) {
+                @Override
+                public void onEvent(int event, @Nullable String path) {
+                    if (event == 2) {
+                        fileObserver.stopWatching();
+                        onRecordingStarted();
+                    }
+                }
+            };
+        }
+        recorderHandler.removeCallbacks(updatePlayback);
+        recordingDuration.postValue(0L);
+        recordingAmplitude.postValue(0);
+        fileObserver.startWatching();
         isRecording.postValue(true);
         isLocked.postValue(false);
+    }
+
+    private void onRecordingStarted() {
+        recordStartTime = System.currentTimeMillis();
         schedulePlaybackUpdate();
     }
 
@@ -184,10 +217,15 @@ public class VoiceNoteRecorder {
             Log.e("VoiceNoteRecorder/finishRecording failed to finish");
             error = e;
         }
+        if (fileObserver != null) {
+            fileObserver.stopWatching();
+            fileObserver = null;
+        }
         VibrationUtils.quickVibration(appContext.get());
         mediaRecorder = null;
         isRecording.postValue(false);
         isLocked.postValue(false);
+        recordingAmplitude.postValue(0);
         recorderHandler.removeCallbacks(updatePlayback);
         if (error != null) {
             final File loc = recordingLocation;

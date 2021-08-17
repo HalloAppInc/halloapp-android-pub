@@ -363,16 +363,16 @@ class CommentsViewModel extends AndroidViewModel {
         commentMedia.setValue(null);
     }
 
-    public void startRecording() {
-        voiceNoteRecorder.record();
-    }
-
     public void sendVoiceNote(@Nullable String replyCommentId, @Nullable File recording) {
         if (recording == null) {
             return;
         }
         bgWorkers.execute(() -> {
             final File targetFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_AUDIO));
+            if (MediaUtils.getAudioDuration(targetFile) < Constants.MINIMUM_AUDIO_NOTE_DURATION_MS) {
+                Log.i("CommentsViewMode/sendVoiceNote duration too short");
+                return;
+            }
             if (!recording.renameTo(targetFile)) {
                 Log.e("failed to rename " + recording.getAbsolutePath() + " to " + targetFile.getAbsolutePath());
                 return;

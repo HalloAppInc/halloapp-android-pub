@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
-import android.util.Pair;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
@@ -18,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
@@ -33,10 +33,10 @@ import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.media.MediaUtils;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.media.VoiceNoteRecorder;
 import com.halloapp.privacy.BlockListManager;
-import com.halloapp.props.ServerProps;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
@@ -310,10 +310,6 @@ public class ChatViewModel extends AndroidViewModel {
         return voiceNoteRecorder;
     }
 
-    public LiveData<Boolean> isLocked() {
-        return voiceNoteRecorder.isLocked();
-    }
-
     public boolean checkIsRecording() {
         Boolean isRecording = voiceNoteRecorder.isRecording().getValue();
         if (isRecording == null) {
@@ -322,15 +318,15 @@ public class ChatViewModel extends AndroidViewModel {
         return isRecording;
     }
 
-    public void startRecording() {
-        voiceNoteRecorder.record();
-    }
-
     public void sendVoiceNote(int replyPostMediaIndex, @Nullable File recording) {
         if (recording == null) {
             return;
         }
         bgWorkers.execute(() -> {
+            if (MediaUtils.getAudioDuration(recording) < Constants.MINIMUM_AUDIO_NOTE_DURATION_MS) {
+                Log.i("ChatViewModel/sendVoiceNote duration too short");
+                return;
+            }
             final File targetFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_AUDIO));
             if (!recording.renameTo(targetFile)) {
                 Log.e("failed to rename " + recording.getAbsolutePath() + " to " + targetFile.getAbsolutePath());
@@ -350,10 +346,6 @@ public class ChatViewModel extends AndroidViewModel {
             return;
         }
         sendVoiceNote(replyPostMediaIndex, recording);
-    }
-
-    public File stopRecordingSaveDraft() {
-        return voiceNoteRecorder.finishRecording();
     }
 
     public void updateMessageRowId(long rowId) {
