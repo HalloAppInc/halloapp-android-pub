@@ -105,6 +105,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
                 try {
                      mediaIndex = Integer.parseInt(transitionName.substring(split + 1));
                 } catch (NumberFormatException e) {
+                    Log.e("MediaPagerAdapter/getTransitionView: media index not number", e);
                     return null;
                 }
 

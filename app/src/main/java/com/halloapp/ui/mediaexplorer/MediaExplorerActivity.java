@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Outline;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -225,7 +226,7 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
     }
 
     @Nullable
-    private Size computeFinalPlayerViewFinalSize(@NonNull PlayerView playerView) {
+    private Size computePlayerViewFinalSize(@NonNull PlayerView playerView) {
             if (playerView.getPlayer() instanceof SimpleExoPlayer) {
                 SimpleExoPlayer player = (SimpleExoPlayer) playerView.getPlayer();
                 Format format = player.getVideoFormat();
@@ -283,7 +284,7 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
                                     view.setClipToOutline(true);
                                     outlineProvider.animate(0, () -> view.setClipToOutline(false));
 
-                                    Size size = computeFinalPlayerViewFinalSize(playerView);
+                                    Size size = computePlayerViewFinalSize(playerView);
 
                                     if (size != null) {
                                         ViewGroup.LayoutParams layoutParams = playerView.getLayoutParams();
@@ -831,7 +832,7 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
         }
 
         @Nullable
-        private Size getMediaSize(@NonNull View view) {
+        private Size getOriginalMediaSize(@NonNull View view) {
             if (view instanceof ImageView) {
                 ImageView imageView = (ImageView) view;
                 Drawable drawable = imageView.getDrawable();
@@ -861,21 +862,35 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
             }
         }
 
-        @Override
-        public void getOutline(View view, Outline outline) {
-            Size size = getMediaSize(view);
+        @Nullable
+        private Rect getMediaPositionInsideView(@NonNull View view) {
+            Size mediaSize = getOriginalMediaSize(view);
 
-            if (size == null) {
-                return;
+            if (mediaSize == null) {
+                return null;
             }
 
-            float vw = view.getWidth();
-            float vh = view.getHeight();
-            float scale = Math.min(vw / size.getWidth(), vh / size.getHeight());
-            float sw = size.getWidth() * scale;
-            float sh = size.getHeight() * scale;
+            float viewWidth = view.getWidth();
+            float viewHeight = view.getHeight();
+            float scale = Math.min(viewWidth / mediaSize.getWidth(), viewHeight / mediaSize.getHeight());
+            float scaledWidth = mediaSize.getWidth() * scale;
+            float scaledHeight = mediaSize.getHeight() * scale;
 
-            outline.setRoundRect((int) (vw - sw) / 2, (int) (vh - sh) / 2, (int) (vw + sw) / 2, (int) (vh + sh) / 2, cornerRadius);
+            int left = (int) (viewWidth - scaledWidth) / 2;
+            int top = (int) (viewHeight - scaledHeight) / 2;
+            int right = (int) (viewWidth + scaledWidth) / 2;
+            int bottom = (int) (viewHeight + scaledHeight) / 2;
+
+            return new Rect(left, top, right, bottom);
+        }
+
+        @Override
+        public void getOutline(View view, Outline outline) {
+            Rect frame = getMediaPositionInsideView(view);
+
+            if (frame != null) {
+                outline.setRoundRect(frame, cornerRadius);
+            }
         }
     }
 }
