@@ -19,10 +19,8 @@ import com.halloapp.util.ComputableLiveData;
 
 import java.text.Collator;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
 
 public class GroupsViewModel extends AndroidViewModel {
 
@@ -95,18 +93,8 @@ public class GroupsViewModel extends AndroidViewModel {
             groupsList = new ComputableLiveData<List<Chat>>() {
                 @Override
                 protected List<Chat> compute() {
-
                     final List<Chat> chats = ContentDb.getInstance().getGroups();
                     final Collator collator = Collator.getInstance(Locale.getDefault());
-                    final HashMap<ChatId, String> postsNames = new HashMap<>();
-                    for (Chat chat : chats) {
-                        if (chat.chatId instanceof GroupId) {
-                            String postName = chat.name;
-                            if (postName != null) {
-                                postsNames.put(chat.chatId, postName);
-                            }
-                        }
-                    }
                     Collections.sort(chats, (obj1, obj2) -> collator.compare(obj1.name, obj2.name));
                     return chats;
                 }
