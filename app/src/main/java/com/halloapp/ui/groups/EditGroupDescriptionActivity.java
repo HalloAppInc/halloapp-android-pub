@@ -20,6 +20,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.GroupId;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.SnackbarHelper;
@@ -52,6 +53,8 @@ public class EditGroupDescriptionActivity extends HalloActivity {
         setTitle(R.string.group_description_title);
 
         setContentView(R.layout.activity_edit_group_description);
+
+        Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         ProgressBar progressBar = findViewById(R.id.progress);
         EditText descriptionField = findViewById(R.id.edit_description);
