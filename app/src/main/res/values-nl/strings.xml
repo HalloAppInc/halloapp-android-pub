@@ -1,0 +1,775 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">"HalloApp"</string>
+    <string name="title_home">"Home"</string>
+    <string name="title_messages">"Chats"</string>
+    <string name="title_profile">"Profiel"</string>
+    <string name="title_groups">"Groepen"</string>
+    <string name="comment">"Reageren"</string>
+    <string name="next">"Volgende"</string>
+    <string name="message">"Bericht sturen"</string>
+    <string name="add_post">"Post toevoegen"</string>
+    <string name="new_chat">"Nieuwe chat"</string>
+    <string name="new_group">"Nieuwe groep"</string>
+    <string name="notifications">"Meldingen"</string>
+    <string name="feed_notifications_channel_name">"Feedmeldingen"</string>
+    <string name="message_notifications_channel_name">"Berichtmeldingen"</string>
+    <string name="critical_notifications_channel_name">"Kritieke appmeldingen"</string>
+    <string name="invite_notifications_channel_name">"Uitnodigingsmeldingen"</string>
+    <string name="invite_notification_text">"%s heeft je uitnodiging voor HalloApp geaccepteerd &#x1f389;"</string>
+    <string name="me">"Ik"</string>
+    <string name="you">"Jij"</string>
+    <string name="camera_post">"Camera"</string>
+    <string name="gallery_post">"Galerij"</string>
+    <string name="text_post">"Tekst"</string>
+    <string name="bad_image">"Niet-ondersteund mediatype"</string>
+    <string name="time_diff_now">"Nu"</string>
+    <string name="phone_number_hint">"Telefoonnummer"</string>
+    <string name="request_registration_title">"Welkom!"</string>
+    <string name="reverify_registration_title">"Verifieer je telefoonnummer opnieuw alsjeblieft"</string>
+    <string name="request_registration_subtitle">"Je ontvangt een verificatiecode.
+Je provider kan kosten in rekening brengen."</string>
+    <string name="verify_registration_title">"Voer de code in die we naar %s hebben verzonden"</string>
+    <string name="contact_permission_title">"Nog één ding"</string>
+    <string name="registration_code_invalid">"Ongeldige registratiecode, probeer opnieuw"</string>
+    <string name="registration_failed">"Registratie telefoonnummer mislukt, probeer opnieuw"</string>
+    <string name="registration_failed_no_friends">"Op dit moment is onze app alleen op uitnodiging beschikbaar. Als je een vriend of familielid hebt die HalloApp gebruikt, vraag hun dan om je uit te nodigen met je telefoonnummer."</string>
+    <string name="registration_failed_no_friends_title">"Oeps!"</string>
+    <string name="type_a_message_hint">"Typ een bericht"</string>
+    <string name="write_a_description">"Voeg een omschrijving toe"</string>
+    <string name="write_a_post">"Schrijf een post"</string>
+    <string name="send">"Verzenden"</string>
+    <string name="set_avatar_done">"Klaar"</string>
+    <string name="set_avatar_reset">"Resetten"</string>
+    <string name="new_post">"Nieuwe post"</string>
+    <string name="new_message">"Nieuw bericht"</string>
+    <string name="chat_message_attribution">"%1$s: %2$s"</string>
+    <string name="empty_chat_with_name_placeholder">"%s gebruikt HalloApp."</string>
+    <string name="new_chat_name_placeholder">"%s gebruikt HalloApp! &#x1f389;"</string>
+    <string name="posts_empty">"Je posts verschijnen hier"</string>
+    <string name="posts_exchange_numbers">"Om connectie te maken, moeten jullie telefoonnummers uitwisselen"</string>
+    <string name="home_page_empty">"Posts van je contacten verschijnen hier"</string>
+    <string name="chats_page_empty">"Contacten en berichten verschijnen hier"</string>
+    <string name="chats_search_empty">"Geen chats gevonden voor '%s'"</string>
+    <string name="groups_page_empty">"Je groepen verschijnen hier"</string>
+    <string name="groups_search_empty">"Geen groepen gevonden voor '%s'"</string>
+    <string name="contact_profile_empty">"%s's posts verschijnen hier"</string>
+    <string name="invalid_phone_number">"Ongeldig telefoonnummer"</string>
+    <string name="share_option_post">"Post"</string>
+    <string name="share_option_message">"Bericht"</string>
+    <plurals name="max_post_media_items">
+        <item quantity="one">"Je kunt maximaal %d media-item per post selecteren"</item>
+        <item quantity="other">"Je kunt maximaal %d media-items per post selecteren"</item>
+    </plurals>
+    <string name="camera_record_audio_permission_rationale">"Om foto's en video's te maken, hebben we je toestemming nodig om de camera te gebruiken en om geluid op te nemen op je apparaat"</string>
+    <string name="camera_record_audio_permission_rationale_denied">"Om foto's en video's te maken, hebben we je toestemming nodig om de camera te gebruiken en om geluid op te nemen op je apparaat.
+
+Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
+    <string name="contacts_permission_rationale">"Om je te kunnen verbinden met je vrienden en familie hebben we je toestemming nodig voor toegang tot de contacten op je apparaat"</string>
+    <string name="contacts_permission_rationale_denied">"Om je te kunnen verbinden met je vrienden en familie hebben we je toestemming nodig voor toegang tot de contacten op je apparaat.
+
+Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
+    <string name="storage_permission_rationale">"Om media te selecteren hebben we toegang nodig tot de opslag van je apparaat"</string>
+    <string name="storage_permission_rationale_denied">"Om media te selecteren hebben we toegang nodig tot de opslag van je apparaat.
+
+Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
+    <string name="retry">"Opnieuw proberen"</string>
+    <string name="contact_rationale_upload">"Om je te kunnen verbinden met je vrienden en familie hebben we je toestemming nodig voor toegang tot je contacten. &lt;a href=\"learn-more\"&gt;Meer informatie&lt;/a&gt;"</string>
+    <string name="failed_to_initialize">"Initialiseren mislukt"</string>
+    <string name="type_a_comment_hint">"Voeg een reactie toe"</string>
+    <string name="comments">"Reacties"</string>
+    <string name="reply">"Beantwoorden"</string>
+    <string name="close">"Sluiten"</string>
+    <string name="reply_to_self">"Antwoord op mezelf"</string>
+    <string name="reply_to_contact">"Antwoord op %s"</string>
+    <string name="reply_original_not_found">"Origineel bericht niet gevonden"</string>
+    <string name="reply_original_post_not_found">"Originele post niet gevonden"</string>
+    <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; heeft je in een post genoemd"</string>
+    <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; heeft je in een reactie op je post genoemd"</string>
+    <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; heeft je in een reactie op een post genoemd"</string>
+    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; heeft je in een reactie op &lt;b&gt;%2$s&lt;/b&gt;'s post genoemd"</string>
+    <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; reageerde op je post"</string>
+    <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; reageerden op je post"</string>
+    <string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, en &lt;b&gt;%3$s&lt;/b&gt; reageerden op je post"</string>
+    <plurals name="commented_on_your_post_4">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, en %3$d ander reageerden op je post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, en %3$d anderen reageerden op je post"</item>
+    </plurals>
+    <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; reageerde op &lt;b&gt;%2$s&lt;/b&gt;'s post"</string>
+    <string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; reageerden op &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
+    <string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, en &lt;b&gt;%3$s&lt;/b&gt; reageerden op &lt;b&gt;%4$s&lt;/b&gt;'s post"</string>
+    <plurals name="commented_on_someones_post_4">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, en %3$d ander reageerden op &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, en %3$d anderen reageerden op &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
+    </plurals>
+    <string name="contact_hashing_faq_dialog_title">"Jouw privacy is onze prioriteit"</string>
+    <string name="contact_hashing_faq_dialog_info">"HalloApp gebruikt alleen het telefoonnummer om je te kunnen matchen met je vrienden op HalloApp en legt geen andere gegevens uit je contactenlijst vast."</string>
+    <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; reageerde op een eigen post"</string>
+    <string name="list_of_two">"%1$s en %2$s"</string>
+    <string name="list_of_many_start">"%s"</string>
+    <string name="list_of_many_middle">", %s"</string>
+    <string name="list_of_many_end">", en %s"</string>
+    <string name="no_activity">"Geen activiteit"</string>
+    <string name="failed_to_load_media">"Laden media mislukt"</string>
+    <string name="settings">"Instellingen"</string>
+    <string name="send_logs">"Feedback &amp; logs delen"</string>
+    <string name="terms_of_service">"Gebruiksvoorwaarden"</string>
+    <string name="privacy_policy">"Privacybeleid"</string>
+    <string name="settings_block_list">"Geblokkeerde contacten"</string>
+    <string name="settings_feed_privacy">"Posts"</string>
+    <string name="settings_privacy">"Privacy"</string>
+    <plurals name="contact_selection_subtitle">
+        <item quantity="one">"%d contact geselecteerd"</item>
+        <item quantity="other">"%d contacten geselecteerd"</item>
+    </plurals>
+    <plurals name="contact_maximum_selection">
+        <item quantity="one">"Je kunt maximaal %d contact selecteren"</item>
+        <item quantity="other">"Je kunt maximaal %d contacten selecteren"</item>
+    </plurals>
+    <string name="no_contacts_selected_subtitle">"Geen contacten geselecteerd"</string>
+    <string name="help">"Help"</string>
+    <string name="about">"Over"</string>
+    <string name="notify_posts">"Posts"</string>
+    <string name="notify_comments">"Reacties"</string>
+    <string name="read_more">"lees meer"</string>
+    <string name="no_photos_or_videos_found">"Geen foto's of video's gevonden"</string>
+    <string name="gallery">"Galerij"</string>
+    <string name="avatar_picker_title">"Profielfoto"</string>
+    <string name="group_avatar_picker_title">"Groepsafbeelding"</string>
+    <string name="other_media">"Andere media"</string>
+    <string name="rotate">"Draaien"</string>
+    <string name="seen_by">"Gezien door"</string>
+    <string name="empty_viewed_by">"Niemand heeft je post nog gezien"</string>
+    <string name="options">"Opties"</string>
+    <string name="block">"Blokkeren"</string>
+    <string name="play">"Afspelen"</string>
+    <string name="new_posts">"Nieuwe posts"</string>
+
+    <!-- Confirmation dialog message when user tries to exit with unsaved changes. Options are cancel (keep editing) and discard (exit). -->
+    <string name="alert_discard_changes_message">"Wijzigingen weggooien?"</string>
+
+    <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
+    <string name="action_discard">"Weggooien"</string>
+    <string name="new_post_notification">"Nieuwe post van %s"</string>
+    <plurals name="new_posts_notification">
+        <item quantity="one">"%1$d nieuwe post van %2$s"</item>
+        <item quantity="other">"%1$d nieuwe posts van %2$s"</item>
+    </plurals>
+    <plurals name="new_messages_notification">
+        <item quantity="one">"1$d bericht van %2$s"</item>
+        <item quantity="other">"%1$d berichten van %2$s"</item>
+    </plurals>
+    <plurals name="new_messages_separator">
+        <item quantity="one">"%d nieuw bericht"</item>
+        <item quantity="other">"%d nieuwe berichten"</item>
+    </plurals>
+    <string name="new_comments_notification">"%s reageerde op je post"</string>
+    <string name="new_comments_on_multiple_posts_notification">"%s reageerde op je posts"</string>
+    <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
+    <string name="notification_app_expired_title">"HalloApp is verlopen"</string>
+    <string name="notification_app_expiration_body">"Download de nieuwste versie alsjeblieft"</string>
+    <plurals name="notification_app_expiration_days_left_title">
+        <item quantity="one">"HalloApp verloopt in %d dag"</item>
+        <item quantity="other">"HalloApp verloopt in %d dagen"</item>
+    </plurals>
+    <string name="app_expiration_download_button">"Update downloaden"</string>
+    <string name="app_expired_explanation">"Deze versie van HalloApp is verouderd en kan niet langer worden gebruikt. Ga naar de Google Play Store en download de nieuwste versie alsjeblieft."</string>
+    <string name="app_expiration_no_play_store">"Google Play is niet geïnstalleerd"</string>
+    <string name="refresh_contacts">"Contacten verversen"</string>
+    <string name="post_retracted_with_name">"%s heeft een post verwijderd"</string>
+    <string name="post_retracted_by_me">"Je hebt je post verwijderd"</string>
+    <string name="post_retracted_placeholder">"Deze post is verwijderd"</string>
+    <string name="message_retracted_placeholder">"Dit bericht is verwijderd"</string>
+    <string name="comment_retracted_placeholder">"Deze reactie is verwijderd"</string>
+    <string name="retract">"Verwijderen"</string>
+    <string name="retract_post_confirmation">"Wil je je post verwijderen?"</string>
+    <string name="retract_comment_confirmation">"Wil je je reactie verwijderen?"</string>
+    <plurals name="delete_chats_confirmation">
+        <item quantity="one">"Wil je deze chat verwijderen?"</item>
+        <item quantity="other">"Wil je deze %d geselecteerde chats verwijderen?"</item>
+    </plurals>
+    <plurals name="delete_groups_confirmation">
+        <item quantity="one">"Wil je deze groep verwijderen?"</item>
+        <item quantity="other">"Wil je deze %d geselecteerde groepen verwijderen?"</item>
+    </plurals>
+    <string name="delete_chat_confirmation">"Wil je deze chat verwijderen?"</string>
+    <string name="yes">"Ja"</string>
+    <string name="no">"Nee"</string>
+    <string name="ok">"OK"</string>
+    <string name="activity">"Activiteit"</string>
+
+    <!-- In activity center, mark all comments/mentions as read -->
+    <string name="mark_all_read">"Alles gelezen"</string>
+    <string name="login_failed">"Inloggen mislukt"</string>
+    <string name="login_failed_explanation">"Verifieer je telefoonnummer opnieuw alsjeblieft"</string>
+    <plurals name="app_expiration_days_left">
+        <item quantity="one">"Deze versie van HalloApp verloopt in %d dag. Ga naar de Google Play Store en download de nieuwste versie alsjeblieft."</item>
+        <item quantity="other">"Deze versie van HalloApp verloopt in %d dagen. Ga naar de Google Play Store en download de nieuwste versie alsjeblieft."</item>
+    </plurals>
+    <string name="could_not_set_avatar">"Probeer een andere afbeelding alsjeblieft"</string>
+    <string name="pick_media">"Kies media"</string>
+    <string name="video">"Video"</string>
+    <string name="photo">"Foto"</string>
+    <string name="album">"Album"</string>
+    <string name="new_messages">"Nieuwe berichten"</string>
+    <string name="delete">"Verwijderen"</string>
+    <string name="clear_chat">"Chat wissen"</string>
+    <string name="view_profile">"Profiel bekijken"</string>
+    <string name="action_hide">"Verbergen"</string>
+    <string name="hide_my_posts">"Mijn posts verbergen"</string>
+    <string name="my_posts">"Mijn posts"</string>
+    <string name="last_seen">"Laatst gezien %s"</string>
+    <string name="last_seen_less_minute">"Laatst gezien zojuist"</string>
+    <string name="online">"online"</string>
+    <string name="today">"Vandaag"</string>
+    <string name="today_at_time">"Vandaag om %s"</string>
+    <string name="yesterday">"Gisteren"</string>
+    <string name="yesterday_at_time">"Gisteren om %s"</string>
+    <string name="day_of_week_at_time">"%1$s om %2$s"</string>
+    <string name="unknown_contact">"Onbekend contact"</string>
+    <string name="select_contact">"Nieuw bericht"</string>
+    <string name="search_contacts">"Zoek contacten"</string>
+    <string name="search">"Zoeken"</string>
+    <string name="contact_search_empty">"Niets gevonden voor '%s'"</string>
+    <string name="action_save">"Opslaan"</string>
+    <string name="invite_friends">"Vrienden &amp; familie uitnodigen"</string>
+    <string name="invite_friend_chooser_title">"%s uitnodigen"</string>
+    <string name="invite_text_with_name_and_number">"Hey %1$s, ik heb een uitnodiging voor je om ook HalloApp te gaan gebruiken. Een simpel netwerk voor je échte relaties en degenen die het dichtst bij je staan. Gebruik %2$s om je te registreren. Download de app op https://halloapp.com/dl"</string>
+    <string name="name_hint">"Jouw naam"</string>
+    <string name="name_must_be_specified">"Naam moet opgegeven worden"</string>
+    <string name="counter">"%1$d/%2$d"</string>
+    <string name="invite_pending">"In afwachting"</string>
+    <string name="failed_update_profile">"Bijwerken van profiel mislukt, probeer later opnieuw"</string>
+    <string name="profile_updated">"Profiel bijgewerkt"</string>
+    <string name="flip">"Omdraaien"</string>
+    <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
+    <string name="email_logs_text">"
+----------------------------------------
+Beschrijf het probleem hierboven alsjeblieft.
+uid: %1$s
+versie: %2$s
+----------------------------------------
+"</string>
+    <string name="share">"Delen"</string>
+    <string name="unblock">"Deblokkeren"</string>
+    <string name="unblock_user_confirmation">"Wil je %s deblokkeren?"</string>
+    <string name="menu_item_block_user">"Gebruiker blokkeren"</string>
+    <string name="picker_title_block_user">"Gebruiker blokkeren"</string>
+    <string name="cancel">"Annuleren"</string>
+    <string name="group_subtitle">"Tik hier voor groepsinformatie"</string>
+    <string name="empty_block_list">"Geen geblokkeerde contacten"</string>
+    <string name="block_notification">"Je hebt dit contact geblokkeerd. Tik om te deblokkeren"</string>
+    <string name="unblock_notification">"Je hebt dit contact gedeblokkeerd"</string>
+    <string name="system_message_group_created">"Deze groep is aangemaakt door %s"</string>
+    <string name="system_message_group_created_by_you">"Je hebt deze groep aangemaakt"</string>
+    <string name="system_message_members_added">"%1$s heeft %2$s toegevoegd"</string>
+    <string name="system_message_members_added_by_you">"Je hebt %s toegevoegd"</string>
+    <string name="system_message_members_removed">"%1$s heeft %2$s verwijderd"</string>
+    <string name="system_message_members_removed_by_you">"Je hebt %s verwijderd"</string>
+    <string name="system_message_member_left">"%s heeft de groep verlaten"</string>
+    <string name="system_message_member_you_left">"Je hebt de groep verlaten"</string>
+    <string name="system_message_members_promoted">"%1$s heeft %2$s beheerder gemaakt"</string>
+    <string name="system_message_members_promoted_by_you">"Je hebt %s beheerder gemaakt"</string>
+    <string name="system_message_members_demoted">"%1$s heeft %2$s als beheerder verwijderd"</string>
+    <string name="system_message_members_demoted_by_you">"Je hebt %s als beheerder verwijderd"</string>
+    <string name="system_message_member_auto_promoted">"%s is automatisch beheerder geworden"</string>
+    <string name="system_message_member_auto_promoted_you">"Je bent automatisch beheerder geworden"</string>
+    <string name="system_message_group_name_changed">"%1$s heeft de groepsnaam gewijzigd in %2$s"</string>
+    <string name="system_message_group_name_changed_by_you">"Je hebt de groepsnaam gewijzigd in %s"</string>
+    <string name="system_message_group_avatar_changed">"%s heeft de groepsafbeelding gewijzigd"</string>
+    <string name="system_message_group_avatar_changed_by_you">"Je hebt de groepsafbeelding gewijzigd"</string>
+    <string name="system_message_group_deleted">"%s heeft de groep verwijderd"</string>
+    <string name="system_message_group_deleted_by_you">"Je hebt de groep verwijderd"</string>
+    <string name="system_post_group_created">"Deze groep is aangemaakt door %s"</string>
+    <string name="system_post_group_created_by_you">"Je hebt deze groep aangemaakt"</string>
+    <string name="system_post_members_added">"%1$s heeft %2$s toegevoegd"</string>
+    <string name="system_post_members_added_by_you">"Je hebt %s toegevoegd"</string>
+    <string name="system_post_members_removed">"%1$s heeft %2$s verwijderd"</string>
+    <string name="system_post_members_removed_by_you">"Je hebt %s verwijderd"</string>
+    <string name="system_post_member_left">"%s heeft de groep verlaten"</string>
+    <string name="system_post_member_you_left">"Je hebt de groep verlaten"</string>
+    <string name="system_post_members_promoted">"%1$s heeft %2$s beheerder gemaakt"</string>
+    <string name="system_post_members_promoted_by_you">"Je hebt %s beheerder gemaakt"</string>
+    <string name="system_post_members_demoted">"%1$s heeft %2$s als beheerder verwijderd"</string>
+    <string name="system_post_members_demoted_by_you">"Je hebt %s als beheerder verwijderd"</string>
+    <string name="system_post_member_auto_promoted">"%s is automatisch beheerder geworden"</string>
+    <string name="system_post_member_auto_promoted_you">"Je bent automatisch beheerder geworden"</string>
+    <string name="system_post_group_name_changed">"%1$s heeft de groepsnaam gewijzigd in %2$s"</string>
+    <string name="system_post_group_name_changed_by_you">"Je hebt de groepsnaam gewijzigd in %s"</string>
+    <string name="system_post_group_avatar_changed">"%s heeft de groepsafbeelding gewijzigd"</string>
+    <string name="system_post_group_avatar_changed_by_you">"Je hebt de groepsafbeelding gewijzigd"</string>
+    <string name="system_post_group_deleted">"%s heeft de groep verwijderd"</string>
+    <string name="system_post_group_deleted_by_you">"Je hebt de groep verwijderd"</string>
+    <string name="group_info_title">"Groepsinformatie"</string>
+    <string name="admin">"Beheerder"</string>
+    <string name="save">"Opslaan"</string>
+    <string name="contact_picker_feed_except_title">"Verberg posts voor…"</string>
+    <string name="contact_picker_feed_only_title">"Deel posts met…"</string>
+    <string name="setting_feed_privacy_title">"Wie kan mijn posts zien"</string>
+    <string name="setting_feed_all">"Mijn contacten"</string>
+    <string name="setting_feed_only">"Alleen delen met…"</string>
+    <string name="setting_feed_except">"Mijn contacten, behalve…"</string>
+    <string name="feed_privacy_fail_to_load">"Laden privacyinstellingen mislukt"</string>
+    <string name="feed_privacy_update_success">"Instelling succesvol bijgewerkt"</string>
+    <string name="feed_privacy_update_failure">"Bijwerken instelling mislukt"</string>
+    <string name="invite_failed_internet">"Uitnodiging verzenden mislukt, controleer je internetverbinding en probeer opnieuw"</string>
+    <string name="invite_failed_no_invites">"Sorry, je uitnodigingen zijn op, probeer later opnieuw"</string>
+    <string name="invite_failed_invalid_number">"Dit telefoonnummer is ongeldig"</string>
+    <string name="invite_failed_existing_user">"Dit contact gebruikt HalloApp al!"</string>
+    <string name="invite_failed_unknown">"Verzenden van uitnodiging mislukt"</string>
+    <string name="invite_creation_in_progress">"Uitnodiging wordt aangemaakt…"</string>
+    <string name="invite_info_fetch_internet">"Ophalen van uitnodigingsinformatie mislukt, controleer je internetverbinding en probeer opnieuw"</string>
+    <plurals name="invites_remaining">
+        <item quantity="one">"Je hebt deze week nog %s uitnodiging over"</item>
+        <item quantity="other">"Je hebt deze week nog %s uitnodigingen over"</item>
+    </plurals>
+    <string name="invite_friends_title">"Vrienden &amp; familie uitnodigen"</string>
+    <string name="invite_title">"Uitnodigen"</string>
+    <string name="settings_invite_option">"Uitnodigen voor HalloApp"</string>
+    <string name="invite_already_on_halloapp">"Al op HalloApp"</string>
+    <string name="invite_invalid_phone_number">"Ongeldig telefoonnummer"</string>
+    <string name="edit">"Bewerken"</string>
+    <string name="done">"Klaar"</string>
+    <string name="members_header">"Leden (%s)"</string>
+    <string name="add_members">"Leden toevoegen"</string>
+    <string name="add_members_in_progress">"Leden worden toegevoegd…"</string>
+    <string name="failed_add_members">"Toevoegen van leden mislukt, probeer later opnieuw"</string>
+    <string name="create_group_in_progress">"Groep %s wordt aangemaakt…"</string>
+    <string name="new_group_title">"Groepsnaam invoeren"</string>
+    <string name="group_picker_title">"Nieuwe groep"</string>
+    <string name="button_create_group">"Aanmaken"</string>
+    <string name="group_name_hint">"Groepsnaam"</string>
+    <string name="failed_create_group">"Aanmaken van groep mislukt, probeer later opnieuw"</string>
+
+    <!-- Shown in options menu to remove a member of group -->
+    <string name="group_remove_member">"Verwijderen uit groep"</string>
+    <string name="group_promote_to_admin">"Groepsbeheerder maken"</string>
+    <string name="promote_admin_in_progress">"Beheerder wordt gemaakt…"</string>
+    <string name="failed_promote_admin">"Maken van beheerder mislukt, probeer later opnieuw"</string>
+
+    <!-- Option for removing a user from the list of admins of a group -->
+    <string name="group_demote_from_admin">"Verwijderen als beheerder"</string>
+    <string name="demote_admin_in_progress">"Beheerder wordt verwijderd…"</string>
+    <string name="failed_demote_admin">"Verwijderen van beheerder mislukt, probeer later opnieuw"</string>
+    <string name="remove_member_in_progress">"Lid wordt verwijderd…"</string>
+    <string name="failed_remove_member">"Verwijderen van lid mislukt, probeer later opnieuw"</string>
+    <string name="leave_group">"Groep verlaten"</string>
+    <plurals name="leave_group_plural">
+        <item quantity="one">"Groep verlaten"</item>
+        <item quantity="other">"Groepen verlaten"</item>
+    </plurals>
+    <string name="leave_group_confirmation">"Wil je deze groep verlaten?"</string>
+    <plurals name="leave_multiple_groups_confirmation">
+        <item quantity="one">"Wil je deze groep verlaten?"</item>
+        <item quantity="other">"Wil je de %d geselecteerde groepen verlaten?"</item>
+    </plurals>
+    <string name="leave_group_in_progress">"Groep wordt verlaten…"</string>
+    <plurals name="leave_groups_progress">
+        <item quantity="one">"Groep wordt verlaten…"</item>
+        <item quantity="other">"Groepen worden verlaten…"</item>
+    </plurals>
+    <string name="failed_leave_group">"Verlaten van groep mislukt, probeer later opnieuw"</string>
+    <string name="delete_group">"Groep verwijderen"</string>
+    <plurals name="friends_on_halloapp">
+        <item quantity="one">"%d contact op HalloApp"</item>
+        <item quantity="other">"%d contacten op HalloApp"</item>
+    </plurals>
+    <plurals name="settings_block_list_summary">
+        <item quantity="one">"%d contact"</item>
+        <item quantity="other">"%d contacten"</item>
+    </plurals>
+    <string name="settings_block_list_none_summary">"Geen"</string>
+    <string name="settings_feed_contacts_summary">"Mijn contacten"</string>
+    <plurals name="settings_feed_excluded_summary">
+        <item quantity="one">"%d contact uitgesloten"</item>
+        <item quantity="other">"%d contacten uitgesloten"</item>
+    </plurals>
+    <plurals name="settings_feed_selected">
+        <item quantity="one">"%d contact geselecteerd"</item>
+        <item quantity="other">"%d contacten geselecteerd"</item>
+    </plurals>
+    <string name="settings_feed_selected_empty">"Geen contacten geselecteerd"</string>
+    <string name="settings_version_footer">"HalloApp Versie %s"</string>
+    <string name="connectivity_info_airplane_mode">"Vliegtuigstand aan"</string>
+    <string name="connectivity_info_not_connected">"Geen netwerk"</string>
+    <string name="blocking_user_failed_check_internet">"Kon %s niet blokkeren. Controleer je internetverbinding en probeer opnieuw."</string>
+    <string name="blocking_user_successful">"%s is geblokkeerd"</string>
+    <string name="blocking_user_in_progress">"%s wordt geblokkeerd…"</string>
+    <string name="unblocking_user_successful">"%s gedeblokkeerd"</string>
+    <string name="unblocking_user_failed_check_internet">"Kon %s niet deblokkeren. Controleer je internetverbinding en probeer opnieuw."</string>
+    <string name="unblocking_user_in_progress">"%s wordt gedeblokkeerd…"</string>
+    <string name="are_you_sure_dialog_title">"Weet je het zeker?"</string>
+    <string name="hide_future_posts_confirmation">"Weet je zeker dat je al je toekomstige posts wilt verbergen voor %s? Je kunt dit later altijd weer aanpassen."</string>
+    <string name="feed_privacy_hide_success">"Privacy feed bijgewerkt. Posts verborgen voor %s"</string>
+    <string name="feed_privacy_hide_failure">"Bijwerken privacy feed mislukt, controleer je internetverbinding en probeer opnieuw"</string>
+    <string name="user_typing">"aan het typen…"</string>
+    <string name="group_user_typing">"%s is aan het typen…"</string>
+    <string name="group_many_users_typing">"meerdere gebruikers zijn aan het typen…"</string>
+    <string name="camera_error_generic">"Camerafout."</string>
+    <string name="camera_error_photo">"Kon geen foto nemen."</string>
+    <string name="camera_error_video">"Kon geen video opnemen."</string>
+    <plurals name="group_feed_members">
+        <item quantity="one">"%d lid"</item>
+        <item quantity="other">"%d leden"</item>
+    </plurals>
+    <string name="composer_sharing_all_summary">"Delen met mijn contacten"</string>
+    <string name="composer_sharing_except_summary">"Delen met geselecteerde contacten"</string>
+    <plurals name="composer_sharing_only_summary">
+        <item quantity="one">"Delen met %d van mijn contacten"</item>
+        <item quantity="other">"Delen met %d van mijn contacten"</item>
+    </plurals>
+    <string name="post_preview_no_caption">"%s heeft een post gedeeld"</string>
+    <string name="post_preview_with_caption">"%1$s: %2$s"</string>
+    <string name="composer_sharing_message">"Wordt verzonden naar %s"</string>
+    <string name="composer_sharing_post">"Wordt gedeeld met %s"</string>
+    <plurals name="max_video_length">
+        <item quantity="one">"Je video is langer dan %d seconde. Selecteer alsjeblieft een andere video of bewerk deze."</item>
+        <item quantity="other">"Je video is langer dan %d seconden. Selecteer alsjeblieft een andere video of bewerk deze."</item>
+    </plurals>
+    <string name="mute">"Dempen"</string>
+    <string name="share_link">"Link delen"</string>
+    <string name="copy_link">"Link kopiëren"</string>
+    <string name="reset_link">"Link resetten"</string>
+    <string name="view_group_invite_link_action">"Groepsuitnodiging bekijken"</string>
+    <string name="invite_link_resetting_progress">"Link wordt gereset…"</string>
+    <string name="invite_link_reset">"Link gereset"</string>
+    <string name="invite_link_reset_failed">"Resetten link mislukt"</string>
+    <string name="reset_invite_link_confirmation">"Wil je de uitnodigingslink voor de groep resetten?"</string>
+    <string name="invite_link_joining">"Aan groep deelnemen…"</string>
+    <string name="invite_link_loading">"Groep wordt geladen…"</string>
+    <string name="invite_link_copied">"Link gekopieerd!"</string>
+    <string name="invite_link_title">"Uitnodigingslink"</string>
+    <string name="invite_link_summary">"Iedereen met HalloApp kan deze link gebruiken om deel te nemen aan deze groep."</string>
+
+    <!-- Generic error message when user fails to join a group via invite link -->
+    <string name="invite_link_failed_to_join">"Deelnemen aan de groep mislukt"</string>
+    <string name="join_group_action">"Deelnemen aan groep"</string>
+    <string name="system_message_you_joined">"Je neemt deel aan de groep via een uitnodigingslink"</string>
+    <string name="system_message_joined">"%s neemt deel aan de groep via een uitnodigingslink"</string>
+    <string name="post_preview_retracted">"%s heeft een post verwijderd"</string>
+    <string name="system_message_group_bg_changed">"%s heeft de achtergrondkleur gewijzigd"</string>
+    <string name="system_message_group_bg_changed_by_you">"Je hebt de achtergrondkleur gewijzigd"</string>
+    <string name="group_background_hint">"Achtergrond"</string>
+    <string name="group_background_saving_dialog">"Achtergrond wordt ingesteld…"</string>
+    <string name="group_background_save_failed">"Instellen achtergrond mislukt"</string>
+    <string name="group_background_save_success">"Groepsachtergrond is bijgewerkt"</string>
+    <string name="group_background_color">"Kleur"</string>
+    <string name="group_background_default">"Standaard"</string>
+    <string name="group_info_members">"Leden (%d)"</string>
+    <string name="delete_message_confirmation">"Geselecteerd bericht verwijderen?"</string>
+    <string name="retract_message_option">"Verwijderen voor iedereen"</string>
+    <string name="delete_message_option">"Verwijderen voor mezelf"</string>
+    <string name="contact_permissions_dialog_title">"Contacten"</string>
+    <string name="not_now">"Niet nu"</string>
+    <string name="continue_button">"Doorgaan"</string>
+    <string name="invite_link_load_failed">"Openen van uitnodigingslink voor de groep mislukt"</string>
+    <string name="message_tombstone_placeholder">"Wachten op dit bericht. Dit kan even duren. &lt;a href=\"https://halloapp.com/help/\"&gt;Meer informatie&lt;/a&gt;."</string>
+    <string name="failed_no_longer_member">"Je bent niet langer lid van deze groep"</string>
+
+    <!-- Placeholder when we do not understand the received message -->
+    <string name="message_upgrade_placeholder">"Je versie van HalloApp ondersteunt dit type bericht niet. &lt;a href=\"update-app\"&gt;Update je app&lt;/a&gt;"</string>
+
+    <!-- Placeholder when we do not understand the received post -->
+    <string name="post_upgrade_placeholder">"Je versie van HalloApp ondersteunt dit type post niet. &lt;a href=\"update-app\"&gt;Update je app&lt;/a&gt;"</string>
+
+    <!-- Placeholder when we do not understand the received comment -->
+    <string name="comment_upgrade_placeholder">"Je versie van HalloApp ondersteunt dit type reactie niet. &lt;a href=\"update-app\"&gt;Update je app&lt;/a&gt;"</string>
+
+    <!-- message when user requests another SMS during registration -->
+    <string name="registration_sms_retry_progress">"Nieuwe sms-code wordt aangevraagd…"</string>
+
+    <!-- message when user requests a voice call -->
+    <string name="registration_phone_code_progress">"Code via telefoonoproep wordt aangevraagd…"</string>
+
+    <!-- button to request another sms code -->
+    <string name="resend_sms">"Sms-code opnieuw verzenden"</string>
+
+    <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
+    <string name="key_verification_success">"Verificatie voltooid"</string>
+
+    <!-- Shown when the information scanned from the QR code does not match what was expected, indicating the keys do not match -->
+    <string name="key_verification_failure">"Verificatie mislukt"</string>
+
+    <!-- Shown on the key verification screen indicating tapping on the QR code will open the scanner -->
+    <string name="key_verification_tap_to_scan">"Tik om te scannen"</string>
+
+    <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
+    <string name="key_verification_explanation">"Om de beveiliging van je verbinding met %s te verifiëren, controleer of bovenstaande nummers overeenkomen met die op het andere apparaat of scan de QR-code op de andere telefoon. "<![CDATA[<a href="https://halloapp.com/help/">Meer informatie</a>]]>"."</string>
+
+    <!-- Button to expand seen by list to see more -->
+    <string name="view_more">"Meer"</string>
+
+    <!-- Button to manage your feed privacy settings -->
+    <string name="manage_feed_privacy">"Privacy beheren"</string>
+
+    <!-- Button to invite a contact to a group with an invite link -->
+    <string name="group_invite_via_link">"Uitnodigen voor groep via link"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear -->
+    <string name="seen_by_post_expiration_notice">"Je posts verdwijnen na 30 dagen."</string>
+
+    <!-- Frequently asked questions option in help menu -->
+    <string name="faq">"FAQ"</string>
+
+    <!-- Shown in progress dialog when loading key verification info -->
+    <string name="key_verification_fetching_keys">"Sleutels ophalen…"</string>
+
+    <!-- Shown when we fail to get key verification info -->
+    <string name="key_verification_key_fetch_failed">"Ophalen sleutels mislukt"</string>
+
+    <!-- Shown inline in a chat when the e2e keys securing the messages have changed, i.e. if the other user changes phones or reinstalls -->
+    <string name="system_message_keys_changed">"Beveiligingssleutels met %s zijn gewijzigd"</string>
+
+    <!-- Shown on the key verification activity next to a switch where the user can keep track of whether they verified the identity of the other user -->
+    <string name="key_verification_switch_label">"Geverifieerd"</string>
+    <string name="action_add">"Toevoegen"</string>
+    <string name="video_countdown_message">"Opname eindigt in %s"</string>
+
+    <!-- Button takes user to settings to manage their storage -->
+    <string name="manage_storage_button">"Opslag beheren"</string>
+
+    <!-- Message that's displayed if user has low storage -->
+    <string name="low_storage_msg">"Je telefoonopslag zit bijna vol.
+Om HalloApp te gebruiken verzoeken we je wat opslagruimte vrij te maken."</string>
+    <plurals name="seen_by_people">
+        <item quantity="one">"Gezien door %d persoon"</item>
+        <item quantity="other">"Gezien door %d personen"</item>
+    </plurals>
+
+    <!-- Text that provides context for a group invite link being shared -->
+    <string name="group_invite_link_context">"Klik op deze link om deel te nemen aan mijn HalloApp-groep: %s"</string>
+    <string name="voice_note">"Spraakbericht"</string>
+
+    <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
+This string is used in InviteContactsActivity.java line 160 to show the time that invites will be refreshed after invite count is 0
+example: More invites coming on [Saturday, June 19, 7:59 PM], where content in the brackets is displayed by %s -->
+    <string name="server_invite_refresh_time">"Meer uitnodigingen komen op %s"</string>
+
+    <!-- Button text on profile of a user not in the user's contacts; tapping takes the user to the contacts app with data prefilled -->
+    <string name="add_to_contacts">"Toevoegen aan contacten"</string>
+
+    <!-- Title shown when a user starts the account deletion process under 'account' -->
+    <string name="delete_account_title">"Account verwijderen"</string>
+
+    <!-- Button text at bottom for user to confirm account deletion -->
+    <string name="delete_account_button">"Verwijderen"</string>
+
+    <!-- Note at bottom of account deletion activity -->
+    <string name="delete_account_note">"Dit kan niet ongedaan worden gemaakt."</string>
+
+    <!-- Error message at bottom of account deletion screen when deletion fails -->
+    <string name="delete_account_failed">"Verwijderen account mislukt"</string>
+
+    <!-- Category in the top-level settings -->
+    <string name="settings_account">"Account"</string>
+
+    <!-- Shown for when a user wants to request to download all of their data in a GDPR-compliant manner -->
+    <string name="request_data_title">"Mijn gegevens opvragen"</string>
+
+    <!-- Explanation for why we need storage permissions when using save to gallery feature -->
+    <string name="save_to_gallery_storage_permission_rationale">"Om media op te slaan in de galerij hebben we toegang nodig tot de opslag van je apparaat"</string>
+
+    <!-- Explanation for why we need storage permissions when using save to gallery feature. This is used when the user needs to manually go to their settings -->
+    <string name="save_to_gallery_storage_permission_rationale_denied">"Om media op te slaan in de galerij hebben we toegang nodig tot de opslag van je apparaat.
+
+Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
+
+    <!-- Message when we successfully save post media to gallery -->
+    <string name="media_saved_to_gallery">"Opgeslagen in galerij"</string>
+
+    <!-- Message when we failed to save post media to gallery -->
+    <string name="media_save_to_gallery_failed">"Opslaan in galerij mislukt"</string>
+
+    <!-- Menu option to delete a post -->
+    <string name="delete_post">"Post verwijderen"</string>
+
+    <!-- Option to save a photo/video to the user's gallery -->
+    <string name="save_to_gallery">"Opslaan in galerij"</string>
+
+    <!-- Title for the user's post -->
+    <string name="my_post">"Mijn post"</string>
+
+    <!-- button to request registration code via phone call -->
+    <string name="request_call">"Bel me"</string>
+
+    <!-- Shown on request page when there is not a known active request -->
+    <string name="request_data_button">"Gegevens opvragen"</string>
+
+    <!-- Shown as settings option title after the user has requested their data but before it is available for download; string param is date -->
+    <string name="data_available_at">"Gegevens zijn beschikbaar op %s"</string>
+
+    <!-- Shown at top of data request page explaining the process -->
+    <string name="export_data_explanation">"Download een kopie van al je gebruikersgegevens op HalloApp's servers. Dit bevat geen berichten of inhoud van posts."</string>
+
+    <!-- Shown when a request to the server for data export fails -->
+    <string name="request_export_data_failed">"Verzoek mislukt"</string>
+
+    <!-- Button for exporting account information requested for download -->
+    <string name="export_account_data">"Mijn gegevens exporteren"</string>
+
+    <!-- Notification shown as if it were the first message in a chat -->
+    <string name="e2e_notice">"Chats zijn end-to-end versleuteld en HalloApp heeft hiertoe geen toegang. Tik voor meer informatie."</string>
+
+    <!-- Shown on buttons for opening up the key verification activity -->
+    <string name="view_safety_number">"Veiligheidsnummer bekijken"</string>
+
+    <!-- Shown as title of key verification activity -->
+    <string name="verify_safety_number">"Veiligheidsnummer verifiëren"</string>
+
+    <!-- Shown when user has contact permissions disabled on the home feed -->
+    <string name="enable_contacts_rationale">"Geef toegang tot je contacten om updates van vrienden &amp; familie te zien"</string>
+
+    <!-- Button that takes users to system settings -->
+    <string name="go_to_settings">"Ga naar instellingen"</string>
+
+    <!-- Text shown in activity center upon successful registration -->
+    <string name="welcome_notification">"Welkom op HalloApp! &lt;a href=\"invite-friend\"&gt;Nodig een vriend uit&lt;/a&gt;"</string>
+
+    <!-- added new option for sharing -->
+    <string name="share_option_group">"Post in groep"</string>
+
+    <!-- A new label used as the title/label of the GroupPickerActivity -->
+    <string name="select_group">"Selecteer groep"</string>
+
+    <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
+    <string name="search_groups">"Zoek groepen"</string>
+
+    <!-- Button for user to remove their profile photo and reset it to the default -->
+    <string name="remove_photo">"Foto verwijderen"</string>
+
+    <!-- Button for user to take a new photo to replace their profile photo -->
+    <string name="take_photo">"Neem foto"</string>
+
+    <!-- Button for user to select a new photo from their gallery to replace their profile photo -->
+    <string name="choose_photo">"Kies foto"</string>
+
+    <!-- Label above the options for changing the profile photo -->
+    <string name="your_profile_photo">"Jouw profielfoto"</string>
+
+    <!-- Text shown under progress bar when first setting up HalloApp -->
+    <string name="app_initializing">"HalloApp wordt ingesteld"</string>
+
+    <!-- Shown on a button in settings which shares text with a link to download HalloApp into any other app -->
+    <string name="settings_share_option">"Deel HalloApp"</string>
+
+    <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
+    <string name="share_halloapp_text">"Word lid van mijn netwerk voor échte relaties op HalloApp. Download gratis op halloapp.com/dl"</string>
+
+    <!-- Dialog shown to user before requesting contact permissions -->
+    <string name="contact_permissions_request">"Geef HalloApp toegang tot je contacten, zodat je updates kunt verzenden en ontvangen"</string>
+
+    <!-- Dialog shown to user before requesting contact permissions, but user has previously denied them, so they must go to settings -->
+    <string name="contact_permissions_request_permanently_denied">"Geef HalloApp toegang tot je contacten, zodat je updates kunt verzenden en ontvangen. Tik op Instellingen &gt; Rechten, en schakel Contacten in"</string>
+
+    <!-- Banner explaining why user can't leave a comment in a group they've left -->
+    <string name="no_longer_group_member">"Je bent niet langer lid van deze groep"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice notes -->
+    <string name="voice_note_record_audio_permission_rationale">"Om spraakberichten op te nemen hebben we toegang nodig tot de microfoon"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
+    <string name="voice_note_record_audio_permission_rationale_denied">"Om spraakberichten op te nemen hebben we toegang nodig tot de microfoon.
+
+Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
+
+    <!-- Activity center item when someone replies. %1$s is the person, %2$s is their comment preview -->
+    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; antwoordde: %2$s"</string>
+
+    <!-- Activity center item when someone comments. %1$s is the person, %2$s is their comment preview -->
+    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; reageerde: %2$s"</string>
+
+    <!-- Activity center item when non-contacts comment on your post -->
+    <plurals name="commented_on_your_post_grouped">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; ander reageerde op je post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; anderen reageerden op je posts"</item>
+    </plurals>
+
+    <!-- Activity center item when non-contacts comment on someones post -->
+    <plurals name="commented_on_someones_post_grouped">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; ander persoon reageerde op &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; anderen reageerden op &lt;b&gt;%2$s&lt;/b&gt;'s posts"</item>
+    </plurals>
+
+    <!-- Shown when an archived post's photo thumbnail can't be loaded -->
+    <string name="couldnt_load_thumbnail">"Kon voorvertoning niet laden"</string>
+
+    <!-- Button for user to re-share old posts which have expired -->
+    <string name="reshare_post">"Post opnieuw delen"</string>
+
+    <!-- Button for going to utility for viewing expired posts -->
+    <string name="archived_posts">"Archief"</string>
+
+    <!-- Title of utility for viewing expired posts -->
+    <string name="archive">"Archief"</string>
+
+    <!-- Label displaying the date when a post expired -->
+    <string name="archived_on">"Gearchiveerd %s"</string>
+
+    <!-- Error message when the group is full -->
+    <string name="invite_link_failed_to_join_full">"Je kunt niet deelnemen aan deze groep omdat het maximaal aantal deelnemers is bereikt"</string>
+
+    <!-- Error message when the invite link is invalid -->
+    <string name="invite_link_failed_to_join_invalid">"De uitnodigingslink is ongeldig"</string>
+
+    <!-- Error message when user cannot join a group because they were previously removed by an admin -->
+    <string name="invite_link_failed_to_join_removed">"Je bent uit de groep verwijderd en kunt niet opnieuw deelnemen via de uitnodigingslink"</string>
+
+    <!-- Message that's displayed after a user deletes their account -->
+    <string name="deletion_confirmation_message">"Je HalloApp account is succesvol verwijderd."</string>
+
+    <!-- Button that allows the user to return to registration after deleting their account -->
+    <string name="return_to_registration">"Terug naar registratie"</string>
+
+    <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
+    <string name="archive_empty">"Je verlopen posts verschijnen hier"</string>
+
+    <!-- Futureproof content we dont understand yet -->
+    <string name="unsupported_content">"Niet-ondersteunde inhoud"</string>
+
+    <!-- Button opens up the chat to directly chat with another group member -->
+    <string name="send_message">"Bericht sturen"</string>
+
+    <!-- Body of a notification indicating that user has been added to a new group -->
+    <string name="added_to_group">"%1$s heeft je toegevoegd aan de groep %2$s"</string>
+
+    <!-- Name of channel of notifications for being added to a new group which is displayed in settings -->
+    <string name="group_notifications_channel_name">"Meldingen nieuwe groepsleden"</string>
+
+    <!-- Button that brings user to QR code for joining a group -->
+    <string name="qr_code">"QR-Code"</string>
+
+    <!-- Explains QR code that allows users to automatically join a group -->
+    <string name="scan_qr_instructions">"Scan de QR-code om aan deze HalloApp-groep deel te nemen"</string>
+
+    <!-- Banner below the name of a HalloApp group -->
+    <string name="halloapp_group">"HalloApp-groep"</string>
+    <string name="reply_original_comment_not_found">"Originele reactie niet gevonden"</string>
+
+    <!-- Button on others' posts that allows the user to message them about their post in 1-1 messaging -->
+    <string name="reply_privately">"Privé beantwoorden"</string>
+
+    <!-- Shown as title for a dialog explaining why permissions are needed when the user has rejected a necessary permission request at least twice but still tries to use the feature -->
+    <string name="title_settings_dialog">"Toestemmingen vereist"</string>
+
+    <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
+    <string name="voice_note_preview">"Spraakbericht (%s)"</string>
+
+    <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
+    <string name="dark_mode_dialog_title">"Thema kiezen"</string>
+
+    <!-- Name of mode where screens are darker -->
+    <string name="dark_mode">"Donker"</string>
+
+    <!-- Name of mode where screens are lighter -->
+    <string name="light_mode">"Licht"</string>
+
+    <!-- Name of mode where screens default to system default -->
+    <string name="system_default">"Systeemstandaard"</string>
+
+    <!-- Name of mode where screens default to system default for earlier phones that don't have a concept of system dark mode -->
+    <string name="default_setting">"Standaard"</string>
+
+    <!-- Name of setting where user can change between dark/light mode -->
+    <string name="dark_mode_setting_title">"Thema"</string>
+</resources>
+
