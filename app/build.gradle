@@ -23,7 +23,6 @@ android {
         versionCode 184
         versionName "0.184"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
