@@ -161,7 +161,6 @@ public class ConnectionImpl extends Connection {
     @WorkerThread
     private void connectInBackground() {
         ThreadUtils.setSocketTag();
-        // noinspection ConstantConditions
         if (me == null) {
             Log.i("connection: me is null");
             return;
@@ -251,7 +250,6 @@ public class ConnectionImpl extends Connection {
         if (socket != null && isConnected() && isAuthenticated()) {
             return true;
         }
-        // noinspection ConstantConditions
         if (me == null) {
             Log.e("connection: cannot reconnect, me is null");
             return false;

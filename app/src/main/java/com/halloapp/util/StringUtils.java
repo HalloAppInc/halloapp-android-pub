@@ -5,15 +5,11 @@ import android.graphics.Typeface;
 import android.telephony.PhoneNumberUtils;
 import android.text.BidiFormatter;
 import android.text.Html;
-import android.text.Selection;
-import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.SpannedString;
 import android.text.TextPaint;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.text.style.CharacterStyle;
 import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
@@ -24,7 +20,6 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.ui.contacts.ContactHashInfoBottomSheetDialogFragment;
 
 import java.text.BreakIterator;
 import java.util.List;
@@ -68,20 +63,6 @@ public class StringUtils {
         return ret;
     }
 
-    public static CharSequence parseBoldMedium(@NonNull String src) {
-        Spanned html = Html.fromHtml(src);
-        SpannableString res = new SpannableString(html);
-        StyleSpan[] styleSpans = html.getSpans(0, src.length(), StyleSpan.class);
-        for (int i = styleSpans.length - 1; i >= 0; i--) {
-            StyleSpan span = styleSpans[i];
-            int start = res.getSpanStart(span);
-            int end = res.getSpanEnd(span);
-            MediumSpan mediumSpan = new MediumSpan();
-            res.setSpan(mediumSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-        return res;
-    }
-
     public static Spanned replaceLink(@NonNull Context context, @NonNull CharSequence str, String url, Runnable onClick) {
         SpannableStringBuilder current = new SpannableStringBuilder(str);
         URLSpan[] spans = current.getSpans(0, str.length(), URLSpan.class);
@@ -111,13 +92,6 @@ public class StringUtils {
         return current;
     }
 
-    private static class MediumSpan extends CharacterStyle {
-        @Override
-        public void updateDrawState(@NonNull TextPaint ds) {
-            ds.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-        }
-    }
-
     public static String formatVoiceNoteDuration(Context context, long millis) {
         long hours = TimeUnit.MILLISECONDS.toHours(millis);
         long minutes =  TimeUnit.MILLISECONDS.toMinutes(millis) -
@@ -139,7 +113,7 @@ public class StringUtils {
         if (stringList.isEmpty()) {
             return "";
         }
-        StringBuilder sb = new StringBuilder("");
+        StringBuilder sb = new StringBuilder();
         sb.append(stringList.get(0));
         for (int i = 1; i < stringList.size(); i++) {
             sb.append(", ");

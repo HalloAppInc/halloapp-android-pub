@@ -82,7 +82,7 @@ public class ArchiveActivity extends HalloActivity  {
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * (int) getResources().getDimension(R.dimen.media_gallery_grid_size));
     }
 
-    public class ArchiveSpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
+    public static class ArchiveSpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
 
         RecyclerView recyclerView;
 

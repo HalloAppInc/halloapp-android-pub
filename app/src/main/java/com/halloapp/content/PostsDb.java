@@ -2066,12 +2066,13 @@ class PostsDb {
     @WorkerThread
     void archivePosts() {
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        Cursor cursor = db.query(PostsTable.TABLE_NAME, new String[]{PostsTable.COLUMN_POST_ID},
+        try (Cursor cursor = db.query(PostsTable.TABLE_NAME, new String[]{PostsTable.COLUMN_POST_ID},
                 PostsTable.COLUMN_SENDER_USER_ID + " =? AND " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_USER,
-                new String[]{UserId.ME.rawId()}, null, null, null, null);
-        while (cursor.moveToNext()) {
-            Post post = getPost(cursor.getString(0));
-            addPostToArchive(post);
+                new String[]{UserId.ME.rawId()}, null, null, null, null)) {
+            while (cursor.moveToNext()) {
+                Post post = getPost(cursor.getString(0));
+                addPostToArchive(post);
+            }
         }
     }
 

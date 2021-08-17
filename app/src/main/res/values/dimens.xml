@@ -54,8 +54,8 @@
     <dimen name="composer_text_size_large">20sp</dimen>
     <dimen name="message_text_size">16sp</dimen>
     <dimen name="message_text_size_few_emoji">32sp</dimen>
-    <dimen name="design_bottom_navigation_height" tools:override="true">54dp</dimen>
-    <dimen name="mtrl_badge_radius" tools:override="true">3dp</dimen>
+    <dimen name="design_bottom_navigation_height" tools:override="true" tools:ignore="UnusedResources">54dp</dimen>
+    <dimen name="mtrl_badge_radius" tools:override="true" tools:ignore="UnusedResources">3dp</dimen>
     <dimen name="media_pager_child_padding">8dp</dimen>
     <dimen name="explorer_pager_margin">16dp</dimen>
     <dimen name="content_composer_button_size">36dp</dimen>

@@ -96,7 +96,7 @@
             android:paddingBottom="8dp"
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
-            android:text="Pick a color"/>
+            android:text="@string/group_background_color_pick"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/bg_colors"

@@ -243,7 +243,7 @@
         <activity android:name=".ui.groups.ViewGroupInviteLinkActivity"
             android:label="@string/invite_link_title"
             android:theme="@style/AppTheme.Transparent">
-            <intent-filter android:autoVerify="true" android:label="@string/view_group_invite_link_action">
+            <intent-filter android:autoVerify="true" tools:ignore="UnusedAttribute" android:label="@string/view_group_invite_link_action">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -329,9 +329,9 @@
         </receiver>
 
         <receiver
-            android:name = ".Notifications$DeleteNotificationReceiver"
-            android:enabled = "true"
-            android:exported = "true" >
+            android:name=".Notifications$DeleteNotificationReceiver"
+            android:enabled="true"
+            android:exported="false">
         </receiver>
 
         <provider
