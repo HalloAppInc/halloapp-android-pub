@@ -662,7 +662,6 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
     }
 
     private class VoiceNoteViewHolder extends ViewHolder {
-
         private final SeekBar seekBar;
         private final ImageView controlButton;
         private final TextView seekTime;
@@ -695,6 +694,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
         }
 
         void bindTo(final @NonNull Comment comment, long lastSeencommentRowId, int position) {
+            this.comment = comment;
             bindCommon(comment, lastSeencommentRowId, position);
             if (comment.media != null && !comment.media.isEmpty()) {
                 Media media = comment.media.get(0);

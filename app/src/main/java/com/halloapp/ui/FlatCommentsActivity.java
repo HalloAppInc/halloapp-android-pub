@@ -639,9 +639,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     }
 
     private class VoiceNoteViewHolder extends ViewHolder {
-
-        Comment comment;
-
         private final SeekBar seekBar;
         private final ImageView controlButton;
         private final TextView seekTime;
