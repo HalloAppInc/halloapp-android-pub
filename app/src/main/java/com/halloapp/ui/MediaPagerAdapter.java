@@ -30,7 +30,6 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.ui.PlayerControlView;
-import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.halloapp.Constants;
@@ -93,6 +92,49 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         return "image-transition-" + contentId + "-" + mediaIndex;
     }
 
+    @Nullable
+    public static View getTransitionView(@NonNull View root, @NonNull String transitionName) {
+        final String prefix = "image-transition-";
+
+        if (transitionName.startsWith(prefix)) {
+            int split = transitionName.lastIndexOf("-");
+
+            if (split != -1 && prefix.length() < split && (split + 1) < transitionName.length()) {
+                String contentId = transitionName.substring(prefix.length(), split);
+                int mediaIndex;
+                try {
+                     mediaIndex = Integer.parseInt(transitionName.substring(split + 1));
+                } catch (NumberFormatException e) {
+                    return null;
+                }
+
+                ViewPager2 pager = root.findViewWithTag(getPagerTag(contentId));
+                if (pager == null) {
+                    return null;
+                }
+
+                MediaPagerAdapter adapter = (MediaPagerAdapter) pager.getAdapter();
+                if (adapter == null) {
+                    return null;
+                }
+
+                Media media = adapter.media.get(mediaIndex);
+                View container = pager.findViewWithTag(media);
+                if (container == null) {
+                    return null;
+                }
+
+                if (media.type == Media.MEDIA_TYPE_IMAGE) {
+                    return container.findViewById(R.id.image);
+                } else if (media.type == Media.MEDIA_TYPE_VIDEO) {
+                    return container.findViewById(R.id.video);
+                }
+            }
+        }
+
+        return null;
+    }
+
     public static void preparePagerForTransition(@NonNull View root, @NonNull String contentId, int mediaIndex, @NonNull Runnable runnable) {
         ViewPager2 pager = root.findViewWithTag(getPagerTag(contentId));
 
@@ -108,10 +150,14 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
                         return true;
                     }
 
-                    View view = pager.findViewWithTag(adapter.media.get(mediaIndex));
+                    Media media = adapter.media.get(mediaIndex);
+                    View container = pager.findViewWithTag(media);
+                    if (container == null) {
+                        return true;
+                    }
 
-                    if (view instanceof ContentPhotoView) {
-                        ContentPhotoView photoView = (ContentPhotoView) view;
+                    if (media.type == Media.MEDIA_TYPE_IMAGE) {
+                        ContentPhotoView photoView = container.findViewById(R.id.image);
 
                         if (photoView.getDrawable() == null) {
                             photoView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -125,8 +171,8 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
                         } else {
                             root.post(runnable);
                         }
-                    } else if (view instanceof PlayerView) {
-                        ContentPlayerView playerView = (ContentPlayerView) view;
+                    } else if (media.type == Media.MEDIA_TYPE_VIDEO) {
+                        ContentPlayerView playerView = container.findViewById(R.id.video);
                         Player player = playerView.getPlayer();
 
                         if (player != null && player.getPlaybackState() == Player.STATE_READY) {
@@ -270,14 +316,13 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         holder.playerView.setTransitionName("");
         holder.imageView.setVisibility(View.GONE);
         holder.playerView.setVisibility(View.GONE);
-        holder.imageView.setTag(null);
-        holder.playerView.setTag(null);
 
         if (overrideMediaPadding) {
             holder.itemView.setPadding(mediaInsetLeft, mediaInsetTop, mediaInsetRight, mediaInsetBottom);
         }
         final Media mediaItem = media.get(Rtl.isRtl(holder.itemView.getContext()) ? media.size() - 1 - position : position);
         holder.mediaItem = mediaItem;
+        holder.container.setTag(mediaItem);
         holder.container.setAspectRatio(fixedAspectRatio);
 
         int displayHeight = holder.container.getContext().getResources().getDisplayMetrics().heightPixels;
@@ -300,7 +345,6 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
             initPlayer(mediaItem, holder.playerView);
         } else {
             holder.imageView.setTransitionName(transitionName);
-            holder.imageView.setTag(mediaItem);
             holder.imageView.setVisibility(View.VISIBLE);
 
             parent.getMediaThumbnailLoader().load(holder.imageView, mediaItem);
@@ -386,9 +430,13 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
 
         if (media != null) {
             for (Media mediaItem : media) {
-                final View view = recyclerView.findViewWithTag(mediaItem);
-                final ContentPlayerView playerView = view instanceof  ContentPlayerView ? (ContentPlayerView) view : null;
-                releasePlayer(mediaItem, playerView);
+                if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
+                    View container = recyclerView.findViewWithTag(mediaItem);
+
+                    if (container != null) {
+                        releasePlayer(mediaItem, container.findViewById(R.id.video));
+                    }
+                }
             }
         }
     }
@@ -402,12 +450,17 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         if (media != null) {
             for (int position = 0; position < media.size(); position++) {
                 final Media mediaItem = getMediaForPosition(position);
-                if (mediaItem != null) {
-                    final View view = recyclerView.findViewWithTag(mediaItem);
-                    final ContentPlayerView playerView = view instanceof ContentPlayerView ? (ContentPlayerView) view : null;
+                if (mediaItem != null && mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
+                    final View container = recyclerView.findViewWithTag(mediaItem);
+                    if (container == null) {
+                        continue;
+                    }
+
+                    final ContentPlayerView playerView = container.findViewById(R.id.video);
                     final WrappedPlayer wrappedPlayer = playerMap.get(mediaItem);
+
                     if (Math.abs(currentPosition - position) > offscreenPlayerLimit) {
-                        releasePlayer(mediaItem, playerView, true);
+                        releasePlayer(mediaItem, playerView);
                     } else {
                         if (playerView != null && wrappedPlayer == null) {
                             initPlayer(mediaItem, playerView);
@@ -429,7 +482,6 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         if (mediaItem.file != null) {
             Log.d("MediaPagerAdapter.initPlayer " + mediaItem);
             playerView.setPauseHiddenPlayerOnScroll(true);
-            playerView.setTag(mediaItem);
             playerView.setControllerAutoShow(true);
 
             final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(playerView.getContext(), Constants.USER_AGENT);
@@ -469,7 +521,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
 
                 @Override
                 public boolean dispatchSetPlayWhenReady(@NonNull Player player, boolean playWhenReady) {
-                    exploreMedia(playerView, mediaItem, player != null ? player.getCurrentPosition() : 0);
+                    exploreMedia(playerView, mediaItem, player.getCurrentPosition());
                     return false;
                 }
 
@@ -566,19 +618,12 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         }
     }
 
-    private void releasePlayer(@NonNull Media mediaItem, @Nullable ContentPlayerView playerView) {
-        releasePlayer(mediaItem, playerView, false);
-    }
-
     @SuppressLint("ClickableViewAccessibility")
-    private void releasePlayer(@NonNull Media mediaItem, @Nullable ContentPlayerView playerView, boolean keepTag) {
+    private void releasePlayer(@NonNull Media mediaItem, @Nullable ContentPlayerView playerView) {
         if (playerView != null) {
             playerView.setPauseHiddenPlayerOnScroll(false);
             playerView.setPlayer(null);
             playerView.setOnTouchListener(null);
-            if (!keepTag) {
-                playerView.setTag(null);
-            }
         }
         final WrappedPlayer wrappedPlayer = playerMap.get(mediaItem);
         if (wrappedPlayer != null) {

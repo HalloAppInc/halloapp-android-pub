@@ -1,4 +1,4 @@
-package com.halloapp.ui.groups;
+    package com.halloapp.ui.groups;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.SharedElementCallback;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionManager;
@@ -39,6 +41,8 @@ import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class ViewGroupFeedActivity extends HalloActivity {
 
@@ -82,11 +86,25 @@ public class ViewGroupFeedActivity extends HalloActivity {
         }
     };
 
+    private final SharedElementCallback sharedElementCallback = new SharedElementCallback() {
+        @Override
+        public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+            if (names.size() > 0) {
+                View view = MediaPagerAdapter.getTransitionView(findViewById(R.id.profile_fragment_placeholder), names.get(0));
+                sharedElements.put(names.get(0), view);
+            }
+        }
+    };
+
     private boolean userInteracted = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        setExitSharedElementCallback(sharedElementCallback);
 
         setTitle("");
         groupId = getIntent().getParcelableExtra(EXTRA_GROUP_ID);

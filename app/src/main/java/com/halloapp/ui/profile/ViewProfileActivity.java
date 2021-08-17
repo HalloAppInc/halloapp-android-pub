@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.core.app.SharedElementCallback;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.Constants;
@@ -19,6 +21,9 @@ import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+
+import java.util.List;
+import java.util.Map;
 
 public class ViewProfileActivity extends HalloActivity {
 
@@ -31,9 +36,23 @@ public class ViewProfileActivity extends HalloActivity {
         return intent;
     }
 
+    private final SharedElementCallback sharedElementCallback = new SharedElementCallback() {
+        @Override
+        public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+            if (names.size() > 0) {
+                View view = MediaPagerAdapter.getTransitionView(findViewById(R.id.profile_fragment_placeholder), names.get(0));
+                sharedElements.put(names.get(0), view);
+            }
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        setExitSharedElementCallback(sharedElementCallback);
 
         UserId userId = getIntent().getParcelableExtra(EXTRA_USER_ID);
         if (userId == null) {

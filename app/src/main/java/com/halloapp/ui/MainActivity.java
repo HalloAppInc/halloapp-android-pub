@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.annotation.DrawableRes;
@@ -17,6 +18,7 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.SharedElementCallback;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -34,7 +36,6 @@ import com.halloapp.Debug;
 import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.contacts.ContactsSync;
 import com.halloapp.id.ChatId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.props.ServerProps;
@@ -46,6 +47,7 @@ import com.halloapp.ui.groups.GroupCreationPickerActivity;
 import com.halloapp.ui.home.HomeViewModel;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
+import com.halloapp.ui.mediaexplorer.MediaExplorerViewModel;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
@@ -59,6 +61,7 @@ import com.leinardi.android.speeddial.SpeedDialView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -104,9 +107,23 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         }
     };
 
+    private final SharedElementCallback sharedElementCallback = new SharedElementCallback() {
+        @Override
+        public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+            if (names.size() > 0) {
+                View view = MediaPagerAdapter.getTransitionView(findViewById(R.id.container), names.get(0));
+                sharedElements.put(names.get(0), view);
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        setExitSharedElementCallback(sharedElementCallback);
 
         bgWorkers.execute(new Runnable() {
             @Override
