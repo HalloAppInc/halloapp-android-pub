@@ -23,6 +23,8 @@ fun getTempStringFile(id: String?): File {
     if (id.contains("-")) {
         val parts = id.split("-")
         id = "${parts[0]}-r${parts[1].toUpperCase(Locale.ROOT)}"
+    } else if (id.equals("id")) {
+        id = "in"
     }
     return File("../app/src/main/res/values-$id/strings-temp.xml")
 }
@@ -35,6 +37,8 @@ fun getStringFile(id: String?): File {
     if (id.contains("-")) {
         val parts = id.split("-")
         id = "${parts[0]}-r${parts[1].toUpperCase(Locale.ROOT)}"
+    } else if (id.equals("id")) {
+        id = "in"
     }
     return File("../app/src/main/res/values-$id/strings.xml")
 }
