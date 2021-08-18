@@ -217,6 +217,7 @@ public class SettingsProfile extends HalloActivity {
             tempAvatarView.setOnClickListener(setAvatarListener);
         }
     }
+
     @Override
     public void onBackPressed() {
         if (!viewModel.hasChanges()) {

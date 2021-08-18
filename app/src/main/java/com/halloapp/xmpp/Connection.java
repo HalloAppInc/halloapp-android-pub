@@ -127,6 +127,8 @@ public abstract class Connection {
 
     public abstract Observable<String> setGroupAvatar(GroupId groupId, String base64);
 
+    public abstract Observable<String> removeGroupAvatar(GroupId groupId);
+
     public abstract Observable<String> getAvatarId(UserId userId);
 
     public abstract Observable<String> getMyAvatarId();

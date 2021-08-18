@@ -51,6 +51,7 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
     private final MutableLiveData<Bitmap> tempAvatarLiveData;
     private final MutableLiveData<Boolean> nameChangedLiveData = new MutableLiveData<>(false);
     private final MediatorLiveData<Boolean> canSave;
+    private final MutableLiveData<Boolean> hasAvatarSet = new MutableLiveData<>();
     private final ComputableLiveData<String> groupNameLiveData;
 
     private final GroupId groupId;
@@ -60,6 +61,7 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
     private String avatarFile;
     private Integer avatarWidth;
     private Integer avatarHeight;
+    private boolean avatarDeleted = false;
 
     public EditGroupActivityViewModel(@NonNull Application application, @NonNull GroupId groupId) {
         super(application);
@@ -80,18 +82,10 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
 
         tempAvatarLiveData = new MutableLiveData<>();
         canSave = new MediatorLiveData<>();
-        canSave.addSource(nameChangedLiveData, nameChanged -> {
-            boolean avatarChanged = tempAvatarLiveData.getValue() != null;
-            canSave.setValue(avatarChanged || nameChanged);
-        });
-        canSave.addSource(tempAvatarLiveData, bitmap -> {
-            Boolean nameChanged = nameChangedLiveData.getValue();
-            boolean avatarChanged = bitmap != null;
-            if (nameChanged != null) {
-                canSave.setValue(nameChanged || avatarChanged);
-            } else {
-                canSave.setValue(avatarChanged);
-            }
+        canSave.addSource(nameChangedLiveData, nameChanged -> setCanSave());
+        canSave.addSource(tempAvatarLiveData, bitmap -> setCanSave());
+        bgWorkers.execute(() -> {
+            hasAvatarSet.postValue(AvatarLoader.getInstance(application).hasAvatar(groupId));
         });
     }
 
@@ -114,6 +108,9 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
             builder.putInt(UpdateGroupWorker.WORKER_PARAM_AVATAR_WIDTH, avatarWidth);
             builder.putString(UpdateGroupWorker.WORKER_PARAM_AVATAR_FILE, avatarFile);
         }
+        if (avatarDeleted) {
+            builder.putBoolean(UpdateGroupWorker.WORKER_PARAM_AVATAR_REMOVAL, true);
+        }
         final Data data = builder.build();
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(UpdateGroupWorker.class).setInputData(data).build();
         workManager.enqueueUniqueWork(UpdateGroupWorker.WORK_NAME, ExistingWorkPolicy.REPLACE, workRequest);
@@ -132,10 +129,22 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
         this.avatarHeight = height;
         this.avatarFile = filepath;
         bgWorkers.execute(() -> tempAvatarLiveData.postValue(BitmapFactory.decodeFile(filepath)));
+        hasAvatarSet.setValue(true);
+        avatarDeleted = false;
     }
 
     public LiveData<Boolean> canSave() {
         return canSave;
+    }
+
+    public LiveData<Boolean> getHasAvatarSet() {
+        return hasAvatarSet;
+    }
+
+    private void setCanSave() {
+        boolean nameChanged = nameChangedLiveData.getValue() != null ? nameChangedLiveData.getValue() : false;
+        boolean avatarChanged = tempAvatarLiveData.getValue() != null;
+        canSave.setValue(nameChanged || avatarChanged || avatarDeleted);
     }
 
     public boolean hasChanges() {
@@ -148,6 +157,12 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
         nameChangedLiveData.setValue(!tempName.equals(groupNameLiveData.getLiveData().getValue()));
     }
 
+    public void removeAvatar() {
+        avatarDeleted = true;
+        tempAvatarLiveData.setValue(null);
+        hasAvatarSet.setValue(false);
+    }
+
 
     public static class UpdateGroupWorker extends Worker {
 
@@ -157,6 +172,7 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
         private static final String WORKER_PARAM_AVATAR_WIDTH = "avatar_width";
         private static final String WORKER_PARAM_AVATAR_HEIGHT = "avatar_height";
         private static final String WORKER_PARAM_NAME = "name";
+        private static final String WORKER_PARAM_AVATAR_REMOVAL = "avatar_removal";
         private static final String WORKER_PARAM_GROUP_ID = "group_id";
 
         private final AvatarLoader avatarLoader;
@@ -171,6 +187,7 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
             final String name = getInputData().getString(WORKER_PARAM_NAME);
             final GroupId groupId = new GroupId(Preconditions.checkNotNull(getInputData().getString(WORKER_PARAM_GROUP_ID)));
             final String avatarFilePath = getInputData().getString(WORKER_PARAM_AVATAR_FILE);
+            final boolean avatarDeleted = getInputData().getBoolean(WORKER_PARAM_AVATAR_REMOVAL,false);
             int avatarWidth = getInputData().getInt(WORKER_PARAM_AVATAR_WIDTH, -1);
             int avatarHeight = getInputData().getInt(WORKER_PARAM_AVATAR_HEIGHT, -1);
             try {
@@ -210,6 +227,10 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
                         Log.e("Avatar upload interrupted", e);
                         return Result.failure();
                     }
+                }
+                if (avatarDeleted) {
+                    avatarLoader.removeAvatar(groupId);
+                    Connection.getInstance().removeGroupAvatar(groupId);
                 }
                 return Result.success();
             } catch (InterruptedException e) {

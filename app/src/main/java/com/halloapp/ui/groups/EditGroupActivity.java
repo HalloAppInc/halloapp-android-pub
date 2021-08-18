@@ -19,12 +19,15 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.work.WorkInfo;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.GroupId;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.HalloBottomSheetDialog;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
+import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
@@ -47,6 +50,10 @@ public class EditGroupActivity extends HalloActivity {
 
     private TextView nameView;
     private ImageView avatarView;
+    private View changeAvatarView;
+    private View saveButton;
+    private View progressBar;
+    private ImageView tempAvatarView;
 
     public static Intent openEditGroup(@NonNull Context context, @NonNull GroupId groupId) {
         Intent intent = new Intent(context, EditGroupActivity.class);
@@ -92,20 +99,21 @@ public class EditGroupActivity extends HalloActivity {
 
         nameView = findViewById(R.id.edit_name);
         avatarView = findViewById(R.id.avatar);
-        ImageView tempAvatarView = findViewById(R.id.temp_avatar);
-        final View changeAvatarView = findViewById(R.id.change_avatar);
-        final View saveButton = findViewById(R.id.save);
-        final View progressBar = findViewById(R.id.progress);
+        tempAvatarView = findViewById(R.id.temp_avatar);
+        changeAvatarView = findViewById(R.id.change_avatar);
+        saveButton = findViewById(R.id.save);
+        progressBar = findViewById(R.id.progress);
 
         viewModel.getName().observe(this, text -> nameView.setText(text));
 
         viewModel.canSave().observe(this, saveButton::setEnabled);
         viewModel.getTempAvatar().observe(this, avatar -> {
-            tempAvatarView.setImageBitmap(avatar);
+            avatarView.setVisibility(View.INVISIBLE);
+            tempAvatarView.setVisibility(View.VISIBLE);
             if (avatar != null) {
-                tempAvatarView.setVisibility(View.VISIBLE);
+                tempAvatarView.setImageBitmap(avatar);
             } else {
-                tempAvatarView.setVisibility(View.GONE);
+                tempAvatarView.setImageResource(R.drawable.avatar_groups_placeholder);
             }
         });
 
@@ -132,13 +140,12 @@ public class EditGroupActivity extends HalloActivity {
             }
         });
 
-        final View.OnClickListener changeAvatarListener = v -> {
-            Log.d("EditGroupActivity request change avatar");
-            final Intent intent = MediaPickerActivity.pickGroupAvatar(this);
-            startActivityForResult(intent, CODE_CHANGE_AVATAR);
-        };
-        changeAvatarView.setOnClickListener(changeAvatarListener);
-        avatarView.setOnClickListener(changeAvatarListener);
+        viewModel.getHasAvatarSet().observe(this, (avatarSet) -> {
+            setPhotoSelectOptions(avatarSet);
+        });
+
+        changeAvatarView.setOnClickListener(avatarOptionsListener);
+        avatarView.setOnClickListener(avatarOptionsListener);
 
         viewModel.getSaveProfileWorkInfo().observe(this, new Observer<List<WorkInfo>>() {
 
@@ -200,5 +207,48 @@ public class EditGroupActivity extends HalloActivity {
     protected void onResume() {
         super.onResume();
         avatarLoader.load(avatarView, groupId, false);
+    }
+
+    final View.OnClickListener setAvatarListener = v -> {
+        final Intent intent = MediaPickerActivity.pickAvatar(this);
+        startActivityForResult(intent, CODE_CHANGE_AVATAR);
+    };
+
+    final View.OnClickListener avatarOptionsListener = v -> {
+        final BottomSheetDialog bottomSheetDialog = new HalloBottomSheetDialog(this);
+        bottomSheetDialog.setContentView(R.layout.profile_avatar_change);
+        View cameraButton = bottomSheetDialog.findViewById(R.id.profile_avatar_take_photo);
+        cameraButton.setOnClickListener(view -> {
+            final Intent intent = new Intent(this, CameraActivity.class);
+            intent.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_AVATAR);
+            startActivityForResult(intent, CODE_CHANGE_AVATAR);
+            bottomSheetDialog.hide();
+        });
+        View mediaButton = bottomSheetDialog.findViewById(R.id.profile_avatar_picture_select);
+        mediaButton.setOnClickListener(view -> {
+            final Intent intent = MediaPickerActivity.pickGroupAvatar(this);
+            startActivityForResult(intent, CODE_CHANGE_AVATAR);
+            bottomSheetDialog.hide();
+        });
+        View removeAvatar = bottomSheetDialog.findViewById(R.id.profile_avatar_remove_avatar);
+        removeAvatar.setOnClickListener(view -> {
+            viewModel.removeAvatar();
+            bottomSheetDialog.hide();
+        });
+        bottomSheetDialog.show();
+    };
+
+    private void setPhotoSelectOptions(boolean hasAvatar) {
+        if (hasAvatar) {
+            changeAvatarView.setVisibility(View.GONE);
+            changeAvatarView.setOnClickListener(avatarOptionsListener);
+            avatarView.setOnClickListener(avatarOptionsListener);
+            tempAvatarView.setOnClickListener(avatarOptionsListener);
+        } else {
+            changeAvatarView.setVisibility(View.VISIBLE);
+            changeAvatarView.setOnClickListener(setAvatarListener);
+            avatarView.setOnClickListener(setAvatarListener);
+            tempAvatarView.setOnClickListener(setAvatarListener);
+        }
     }
 }

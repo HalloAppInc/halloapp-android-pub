@@ -483,6 +483,11 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public Observable<String> removeGroupAvatar(GroupId groupId) {
+        return setGroupAvatar(groupId, "");
+    }
+
+    @Override
     public Observable<String> getAvatarId(UserId userId) {
         final AvatarIq setAvatarIq = new AvatarIq(userId);
         return sendIqRequestAsync(setAvatarIq).map(res -> AvatarIq.fromProto(res.getAvatar()).avatarId);

@@ -156,7 +156,12 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     @WorkerThread
     public boolean hasAvatar() {
-        return cache.get(UserId.ME.rawId()) != null || getAvatarImpl(UserId.ME) != null;
+        return hasAvatar(UserId.ME);
+    }
+
+    @WorkerThread
+    public boolean hasAvatar(ChatId chatId) {
+        return cache.get(chatId.rawId()) != null || getAvatarImpl(chatId) != null;
     }
 
     @WorkerThread
@@ -312,6 +317,11 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     }
 
     @WorkerThread
+    public void removeAvatar(@NonNull ChatId chatId) {
+        reportAvatarUpdate(chatId, null);
+    }
+
+    @WorkerThread
     public void reportMyAvatarChanged(String avatarId) {
         ContactsDb.ContactAvatarInfo contactAvatarInfo = getContactAvatarInfo(UserId.ME);
         contactAvatarInfo.avatarId = avatarId;
@@ -328,7 +338,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         cache.remove(UserId.ME.rawId());
     }
 
-    public void reportAvatarUpdate(@NonNull ChatId chatId, @NonNull String avatarId) {
+    public void reportAvatarUpdate(@NonNull ChatId chatId, @Nullable String avatarId) {
         FileStore fileStore = FileStore.getInstance();
         File avatarFile = fileStore.getAvatarFile(chatId.rawId());
         if (avatarFile.exists()) {
