@@ -33,6 +33,7 @@ import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -93,7 +94,6 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
-import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.ChatInputView;
 import com.halloapp.widget.ItemSwipeHelper;
 import com.halloapp.widget.LimitingTextView;
@@ -180,12 +180,23 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private RecyclerView.LayoutManager commentsLayoutManager;
     private long highlightedComment = -1;
 
+    private ImageView postAvatarView;
+    private TextView postNameView;
+    private TextView postGroupView;
+
+    private PostAttributionLayout postAttributionLayout;
+
+    private View postProgressView;
+    private TextView postTimeView;
+
+    private FrameLayout postContentContainer;
+
+    private int postType = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_comments);
-
-        Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        setContentView(R.layout.activity_flat_comments);
 
         setExitSharedElementCallback(new SharedElementCallback() {
             @Override
@@ -231,8 +242,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         commentsLayoutManager = new LinearLayoutManager(this);
         commentsView.setLayoutManager(commentsLayoutManager);
-
-        commentsView.addOnScrollListener(new ActionBarShadowOnScrollListener(this));
 
         keyboardScrollHelper = new RecyclerViewKeyboardScrollHelper(commentsView);
 
@@ -325,6 +334,14 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         chatInputView.bindVoicePlayer(this, viewModel.getVoiceNotePlayer());
         chatInputView.bindVoiceRecorder(this, viewModel.getVoiceNoteRecorder());
 
+        postContentContainer = findViewById(R.id.post_content_placeholder);
+        postAvatarView = findViewById(R.id.post_avatar);
+        postTimeView = findViewById(R.id.post_time);
+        postAttributionLayout = findViewById(R.id.post_header);
+        postNameView = postAttributionLayout.findViewById(R.id.name);
+        postGroupView = postAttributionLayout.findViewById(R.id.group_name);
+        postProgressView = findViewById(R.id.post_progress);
+
         View mediaContainer = findViewById(R.id.media_container);
         ImageView imageView = findViewById(R.id.media_preview);
         imageView.setOutlineProvider(new ViewOutlineProvider() {
@@ -367,6 +384,9 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     post.getParentGroup() != null;
             chatInputView.setAllowMedia(isInternalGroup);
             chatInputView.setAllowVoiceNoteRecording(serverProps.getVoiceNoteSendingEnabled() && isInternalGroup);
+            if (post != null) {
+                bindPost(post);
+            }
         });
         viewModel.loadPost(postId);
 
@@ -487,6 +507,91 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         Media m = viewModel.commentMedia.getValue();
         boolean canSend = m != null || !TextUtils.isEmpty(s);
         chatInputView.setCanSend(canSend);
+    }
+
+    private void bindPost(@NonNull Post post) {
+        avatarLoader.load(postAvatarView, post.senderUserId);
+        contactLoader.load(postNameView, post.senderUserId);
+        chatLoader.cancel(postGroupView);
+        if (postAttributionLayout != null) {
+            postAttributionLayout.setGroupAttributionVisible(post.getParentGroup() != null);
+        }
+        if (post.getParentGroup() != null) {
+            chatLoader.load(postGroupView, new ViewDataLoader.Displayer<View, Chat>() {
+                @Override
+                public void showResult(@NonNull View view, @Nullable Chat result) {
+                    if (result != null) {
+                        postGroupView.setText(result.name);
+                        if (result.rowId != -1) {
+                            postGroupView.setOnClickListener(v -> {
+                                ChatId chatId = result.chatId;
+                                if (!(chatId instanceof GroupId)) {
+                                    Log.w("Cannot open group feed for non-group " + chatId);
+                                    return;
+                                }
+                                startActivity(ViewGroupFeedActivity.viewFeed(postGroupView.getContext(), (GroupId) chatId));
+                            });
+                        }
+                    } else {
+                        Log.e("PostViewHolder/bind failed to load chat " + post.getParentGroup());
+                    }
+                }
+
+                @Override
+                public void showLoading(@NonNull View view) {
+                    postGroupView.setText("");
+                }
+            }, post.getParentGroup());
+        }
+        postProgressView.setVisibility(post.transferred != Post.TRANSFERRED_NO ? View.GONE : View.VISIBLE);
+        TimeFormatter.setTimePostsFormat(postTimeView, post.timestamp);
+        timestampRefresher.scheduleTimestampRefresh(post.timestamp);
+
+        if (postType != post.type) {
+            postContentContainer.removeAllViews();
+
+            @LayoutRes int layout = R.layout.flat_comment_post_item;
+            if (post.type == Post.TYPE_FUTURE_PROOF) {
+                layout = R.layout.flat_comment_future_proof_post_item;
+            }
+            LayoutInflater.from(postContentContainer.getContext()).inflate(layout, postContentContainer, true);
+            postType = post.type;
+
+            if (postType != Post.TYPE_FUTURE_PROOF) {
+                RecyclerView postMediaGallery = postContentContainer.findViewById(R.id.media);
+                if (postMediaGallery != null) {
+                    final LinearLayoutManager layoutManager = new LinearLayoutManager(postMediaGallery.getContext(), RecyclerView.HORIZONTAL, false);
+                    postMediaGallery.setLayoutManager(layoutManager);
+                    postMediaGallery.addItemDecoration(new LinearSpacingItemDecoration(layoutManager, getResources().getDimensionPixelSize(R.dimen.comment_media_list_spacing)));
+                }
+            }
+        }
+        if (postType == Post.TYPE_FUTURE_PROOF) {
+            TextView futureProofMessage = postContentContainer.findViewById(R.id.future_proof_text);
+            linkifyFutureProof(futureProofMessage);
+            return;
+        }
+        RecyclerView postMediaGallery = postContentContainer.findViewById(R.id.media);
+        postMediaGallery.setTag(post);
+        if (post.media.isEmpty()) {
+            postMediaGallery.setVisibility(View.GONE);
+        } else {
+            postMediaGallery.setVisibility(View.VISIBLE);
+            postMediaGallery.setAdapter(new MediaAdapter(post));
+        }
+
+        LimitingTextView postCommentView = postContentContainer.findViewById(R.id.comment_text);
+
+        final Integer textLimit = textLimits.get(POST_TEXT_LIMITS_ID);
+        postCommentView.setLineLimit(textLimit != null ? textLimit : Constants.TEXT_POST_LINE_LIMIT);
+        postCommentView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
+        postCommentView.setOnReadMoreListener((view, limit) -> {
+            textLimits.put(POST_TEXT_LIMITS_ID, limit);
+            return false;
+        });
+
+        postCommentView.setVisibility(TextUtils.isEmpty(post.text) ? View.GONE : View.VISIBLE);
+        textContentLoader.load(postCommentView, post);
     }
 
     @Override
@@ -761,42 +866,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             super(itemView);
 
             TextView futureProofMessage = itemView.findViewById(R.id.future_proof_text);
-
-            SpannableStringBuilder current= new SpannableStringBuilder(futureProofMessage.getText());
-            URLSpan[] spans= current.getSpans(0, current.length(), URLSpan.class);
-
-            int linkColor = ContextCompat.getColor(futureProofMessage.getContext(), R.color.color_link);
-
-            for (URLSpan span : spans) {
-                int start = current.getSpanStart(span);
-                int end = current.getSpanEnd(span);
-                current.removeSpan(span);
-
-                ClickableSpan learnMoreSpan = new ClickableSpan() {
-                    @Override
-                    public void updateDrawState(@NonNull TextPaint ds) {
-                        ds.setUnderlineText(false);
-                        ds.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-                        ds.setColor(linkColor);
-                    }
-
-                    @Override
-                    public void onClick(@NonNull View widget) {
-                        try {
-                            final Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID));
-                            intent.setPackage("com.android.vending");
-                            startActivity(intent);
-                        } catch (ActivityNotFoundException e) {
-                            Log.i("CommentsActivity Play Store Not Installed", e);
-                            SnackbarHelper.showWarning(futureProofMessage,  R.string.app_expiration_no_play_store);
-                        }
-                    }
-                };
-                current.setSpan(learnMoreSpan, start, end, 0);
-            }
-            futureProofMessage.setText(current);
-            futureProofMessage.setMovementMethod(LinkMovementMethod.getInstance());
+            linkifyFutureProof(futureProofMessage);
         }
 
         void bindTo(final @NonNull Comment comment, long lastSeenCommentRowId, int position) {
@@ -819,6 +889,44 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 imm.showSoftInput(editText,0);
             });
         }
+    }
+
+    private void linkifyFutureProof(@NonNull TextView futureProofMessage) {
+        SpannableStringBuilder current= new SpannableStringBuilder(futureProofMessage.getText());
+        URLSpan[] spans= current.getSpans(0, current.length(), URLSpan.class);
+
+        int linkColor = ContextCompat.getColor(futureProofMessage.getContext(), R.color.color_link);
+
+        for (URLSpan span : spans) {
+            int start = current.getSpanStart(span);
+            int end = current.getSpanEnd(span);
+            current.removeSpan(span);
+
+            ClickableSpan learnMoreSpan = new ClickableSpan() {
+                @Override
+                public void updateDrawState(@NonNull TextPaint ds) {
+                    ds.setUnderlineText(false);
+                    ds.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+                    ds.setColor(linkColor);
+                }
+
+                @Override
+                public void onClick(@NonNull View widget) {
+                    try {
+                        final Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID));
+                        intent.setPackage("com.android.vending");
+                        startActivity(intent);
+                    } catch (ActivityNotFoundException e) {
+                        Log.i("CommentsActivity Play Store Not Installed", e);
+                        SnackbarHelper.showWarning(futureProofMessage,  R.string.app_expiration_no_play_store);
+                    }
+                }
+            };
+            current.setSpan(learnMoreSpan, start, end, 0);
+        }
+        futureProofMessage.setText(current);
+        futureProofMessage.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     private class ViewHolder extends ViewHolderWithLifecycle {
@@ -994,140 +1102,74 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 replyButton.setVisibility(View.VISIBLE);
             }
         }
+    }
 
-        void bindTo(final @Nullable Post post) {
+    private static class PostMediaItemViewHolder extends RecyclerView.ViewHolder {
 
-            this.comment = null;
+        final public ImageView previewImage;
+        final public ImageView videoIcon;
 
-            if (post == null) {
-                return;
-            }
-            avatarLoader.load(avatarView, post.senderUserId);
-            contactLoader.load(nameView, post.senderUserId);
-            chatLoader.cancel(groupView);
-            if (attributionLayout != null) {
-                attributionLayout.setGroupAttributionVisible(post.getParentGroup() != null);
-            }
-            if (post.getParentGroup() != null) {
-                chatLoader.load(groupView, new ViewDataLoader.Displayer<View, Chat>() {
-                    @Override
-                    public void showResult(@NonNull View view, @Nullable Chat result) {
-                        if (result != null) {
-                            groupView.setText(result.name);
-                            if (result.rowId != -1) {
-                                groupView.setOnClickListener(v -> {
-                                    ChatId chatId = result.chatId;
-                                    if (!(chatId instanceof GroupId)) {
-                                        Log.w("Cannot open group feed for non-group " + chatId);
-                                        return;
-                                    }
-                                    startActivity(ViewGroupFeedActivity.viewFeed(groupView.getContext(), (GroupId)chatId));
-                                });
-                            }
-                        } else {
-                            Log.e("PostViewHolder/bind failed to load chat " + post.getParentGroup());
-                        }
-                    }
+        PostMediaItemViewHolder(@NonNull View itemView) {
+            super(itemView);
+            previewImage = itemView.findViewById(R.id.media_thumbnail);
+            videoIcon = itemView.findViewById(R.id.video_icon);
+        }
+    }
 
-                    @Override
-                    public void showLoading(@NonNull View view) {
-                        groupView.setText("");
-                    }
-                }, post.getParentGroup());
-            }
-            progressView.setVisibility(post.transferred != Post.TRANSFERRED_NO ? View.GONE : View.VISIBLE);
-            TimeFormatter.setTimePostsFormat(timeView, post.timestamp);
-            timestampRefresher.scheduleTimestampRefresh(post.timestamp);
+    private class MediaAdapter extends RecyclerView.Adapter<PostMediaItemViewHolder> {
 
-            if (post.type != Post.TYPE_FUTURE_PROOF) {
-                mediaGallery.setTag(post);
-                if (post.media.isEmpty()) {
-                    mediaGallery.setVisibility(View.GONE);
-                } else {
-                    mediaGallery.setVisibility(View.VISIBLE);
-                    mediaGallery.setAdapter(new MediaAdapter(post));
+        final List<Media> media;
+        final Post post;
+
+        MediaAdapter(Post post) {
+            this.post = post;
+            this.media = post.media;
+            Log.i("CommentsActivity.MediaAdapter: post " + post.id + " has " + media.size() + " media: " + media);
+        }
+
+        @NonNull
+        @Override
+        public PostMediaItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            PostMediaItemViewHolder holder = new PostMediaItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.post_media_item, parent, false));
+            holder.itemView.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.comment_media_list_corner_radius));
                 }
-
-                final Integer textLimit = textLimits.get(POST_TEXT_LIMITS_ID);
-                commentView.setLineLimit(textLimit != null ? textLimit : Constants.TEXT_POST_LINE_LIMIT);
-                commentView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
-                commentView.setOnReadMoreListener((view, limit) -> {
-                    textLimits.put(POST_TEXT_LIMITS_ID, limit);
-                    return false;
-                });
-
-                commentView.setVisibility(TextUtils.isEmpty(post.text) ? View.GONE : View.VISIBLE);
-                textContentLoader.load(commentView, post);
-            }
+            });
+            holder.itemView.setClipToOutline(true);
+            return holder;
         }
 
-        private class PostMediaItemViewHolder extends RecyclerView.ViewHolder {
+        @Override
+        public void onBindViewHolder(@NonNull PostMediaItemViewHolder holder, int position) {
+            final ImageView imageView = holder.previewImage;
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            imageView.setAdjustViewBounds(true);
+            mediaThumbnailLoader.load(imageView, media.get(position));
+            imageView.setOnClickListener(v -> {
+                commentsFsePosition = 0;
 
-            final public ImageView previewImage;
-            final public ImageView videoIcon;
+                Intent intent = new Intent(imageView.getContext(), MediaExplorerActivity.class);
+                intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, MediaExplorerViewModel.MediaModel.fromMedia(media));
+                intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, position);
+                intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, post.id);
+                intent.putExtra(MediaExplorerActivity.EXTRA_ALLOW_SAVING, post.parentGroup != null);
 
-            PostMediaItemViewHolder(@NonNull View itemView) {
-                super(itemView);
-                previewImage = itemView.findViewById(R.id.media_thumbnail);
-                videoIcon = itemView.findViewById(R.id.video_icon);
-            }
+                if (imageView.getContext() instanceof Activity) {
+                    final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(FlatCommentsActivity.this, imageView, imageView.getTransitionName());
+                    startActivity(intent, options.toBundle());
+                } else {
+                    startActivity(intent);
+                }
+            });
+            holder.videoIcon.setVisibility(media.get(position).type == Media.MEDIA_TYPE_VIDEO ? View.VISIBLE : View.GONE);
+            imageView.setTransitionName(MediaPagerAdapter.getTransitionName(post.id, position));
         }
 
-        private class MediaAdapter extends RecyclerView.Adapter<PostMediaItemViewHolder> {
-
-            final List<Media> media;
-            final Post post;
-
-            MediaAdapter(Post post) {
-                this.post = post;
-                this.media = post.media;
-                Log.i("CommentsActivity.MediaAdapter: post " + post.id + " has " + media.size() + " media: " + media);
-            }
-
-            @NonNull
-            @Override
-            public PostMediaItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                PostMediaItemViewHolder holder = new PostMediaItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.post_media_item, parent, false));
-                holder.itemView.setOutlineProvider(new ViewOutlineProvider() {
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.comment_media_list_corner_radius));
-                    }
-                });
-                holder.itemView.setClipToOutline(true);
-                return holder;
-            }
-
-            @Override
-            public void onBindViewHolder(@NonNull PostMediaItemViewHolder holder, int position) {
-                final ImageView imageView = holder.previewImage;
-                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                imageView.setAdjustViewBounds(true);
-                mediaThumbnailLoader.load(imageView, media.get(position));
-                imageView.setOnClickListener(v -> {
-                    commentsFsePosition = 0;
-
-                    Intent intent = new Intent(imageView.getContext(), MediaExplorerActivity.class);
-                    intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, MediaExplorerViewModel.MediaModel.fromMedia(media));
-                    intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, position);
-                    intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, post.id);
-                    intent.putExtra(MediaExplorerActivity.EXTRA_ALLOW_SAVING, post.parentGroup != null);
-
-                    if (imageView.getContext() instanceof Activity) {
-                        final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(FlatCommentsActivity.this, imageView, imageView.getTransitionName());
-                        startActivity(intent, options.toBundle());
-                    } else {
-                        startActivity(intent);
-                    }
-                });
-                holder.videoIcon.setVisibility(media.get(position).type == Media.MEDIA_TYPE_VIDEO ? View.VISIBLE : View.GONE);
-                imageView.setTransitionName(MediaPagerAdapter.getTransitionName(post.id, position));
-            }
-
-            @Override
-            public int getItemCount() {
-                return media.size();
-            }
+        @Override
+        public int getItemCount() {
+            return media.size();
         }
     }
 
@@ -1204,27 +1246,20 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         @Override
         public long getItemId(int position) {
-            return position == 0 ? -1 : Preconditions.checkNotNull(getItem(position)).rowId;
+            return Preconditions.checkNotNull(getItem(position)).rowId;
         }
 
         @Override
         public int getItemCount() {
-            return 1 + differ.getItemCount();
+            return differ.getItemCount();
         }
 
         @Nullable Comment getItem(int position) {
-            return position == 0 ? null : differ.getItem(position - 1);
+            return differ.getItem(position);
         }
 
         @Override
         public int getItemViewType(int position) {
-            if (position == 0) {
-                Post post = viewModel.post.getValue();
-                if (post != null && post.type == Post.TYPE_FUTURE_PROOF) {
-                    return ITEM_TYPE_FUTURE_PROOF_POST;
-                }
-                return ITEM_TYPE_POST;
-            }
             final Comment comment = Preconditions.checkNotNull(getItem(position));
             switch (comment.type) {
                 case Comment.TYPE_FUTURE_PROOF:
@@ -1268,11 +1303,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            if (position == 0) {
-                holder.bindTo(viewModel.post.getValue());
-            } else {
-                holder.bindTo(Preconditions.checkNotNull(getItem(position)), lastSeenCommentRowId, position);
-            }
+            holder.bindTo(Preconditions.checkNotNull(getItem(position)), lastSeenCommentRowId, position);
         }
     }
 

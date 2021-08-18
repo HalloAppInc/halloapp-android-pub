@@ -1,126 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/future_proof_content"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="0dp"
-    android:layout_marginBottom="12dp"
-    android:orientation="vertical">
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp"
+    app:layout_constraintBottom_toTopOf="@+id/footer"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toEndOf="@+id/avatar"
+    app:layout_constraintTop_toBottomOf="@+id/post_header">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <ImageView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="16dp">
+        android:layout_gravity="center"
+        android:src="@drawable/ic_future_proof_upgrade"
+        app:tint="@color/secondary_text" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/avatar"
-            android:layout_width="37dp"
-            android:layout_height="30dp"
-            android:paddingStart="0dp"
-            android:paddingEnd="7dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@color/color_primary_dark" />
-
-        <com.halloapp.ui.posts.PostAttributionLayout
-            android:id="@+id/post_header"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/future_proof_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/avatar"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <LinearLayout
-            app:layout_constraintBottom_toTopOf="@+id/footer"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/avatar"
-            app:layout_constraintTop_toBottomOf="@+id/post_header"
-            android:id="@+id/future_proof_content"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
-            >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_future_proof_upgrade"
-                app:tint="@color/secondary_text"/>
-
-            <TextView
-                android:id="@+id/future_proof_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@+id/time_icon"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:paddingTop="9dp"
-                android:paddingBottom="9dp"
-                android:textColorLink="@color/color_link"
-                android:text="@string/post_upgrade_placeholder"
-                android:textStyle="italic" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/footer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            app:layout_constraintStart_toEndOf="@+id/avatar"
-            app:layout_constraintTop_toBottomOf="@id/future_proof_content">
-
-            <TextView
-                android:id="@+id/time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="0dp"
-                android:paddingTop="4dp"
-                android:paddingEnd="4dp"
-                android:paddingBottom="4dp"
-                android:singleLine="true"
-                android:textColor="?android:attr/textColorSecondary"
-                tools:text="1h" />
-
-            <ProgressBar
-                android:id="@+id/progress"
-                android:layout_width="16sp"
-                android:layout_height="16sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/reply"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?selectableItemBackground"
-                android:paddingStart="16dp"
-                android:paddingTop="4dp"
-                android:paddingEnd="16dp"
-                android:paddingBottom="4dp"
-                android:singleLine="true"
-                android:text="@string/reply"
-                android:textColor="?android:attr/textColorSecondary"
-                android:visibility="gone" />
-        </LinearLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/post_actions_separator"
-        app:layout_constraintTop_toBottomOf="@id/footer" />
+    <TextView
+        android:id="@+id/future_proof_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:paddingTop="9dp"
+        android:paddingBottom="9dp"
+        android:text="@string/post_upgrade_placeholder"
+        android:textColorLink="@color/color_link"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/time_icon"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </LinearLayout>
+
