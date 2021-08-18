@@ -91,23 +91,8 @@ Ouvre l'écran des paramètres de l'application pour modifier les autorisations 
     <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; a parlé de toi dans un commentaire sur ta publication."</string>
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; a parlé de toi dans un commentaire sur sa publication."</string>
     <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; a parlé de toi dans un commentaire sur la publication de &lt;b&gt;%2$s&lt;/b&gt;."</string>
-    <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; a commenté ta publication."</string>
-    <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; et &lt;b&gt;%2$s&lt;/b&gt; ont commenté ta publication."</string>
-    <string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, et &lt;b&gt;%3$s&lt;/b&gt; ont commenté ta publication."</string>
-    <plurals name="commented_on_your_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, et %3$d autre personne ont commenté ta publication."</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, et %3$d autres personnes ont commenté ta publication."</item>
-    </plurals>
-    <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; a commenté la publication de &lt;b&gt;%2$s&lt;/b&gt;."</string>
-    <string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; et &lt;b&gt;%2$s&lt;/b&gt; ont commenté la publication de &lt;b&gt;%3$s&lt;/b&gt;."</string>
-    <string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, et &lt;b&gt;%3$s&lt;/b&gt; ont commenté la publication de &lt;b&gt;%4$s&lt;/b&gt;."</string>
-    <plurals name="commented_on_someones_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, et %3$d autre personne ont commenté la publication de &lt;b&gt;%4$s&lt;/b&gt;."</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, et %3$d autres personnes ont commenté la publication de &lt;b&gt;%4$s&lt;/b&gt;."</item>
-    </plurals>
     <string name="contact_hashing_faq_dialog_title">"Ta vie privée est notre priorité."</string>
     <string name="contact_hashing_faq_dialog_info">"HalloAppli n'utilise le champ du numéro de téléphone que pour t'associer à tes amis sur l'application, et ne capte pas de données supplémentaires dans ton répertoire de contacts."</string>
-    <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; a commenté sa publication."</string>
     <string name="list_of_two">"%1$s et %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
     <string name="list_of_many_middle">", %s"</string>
@@ -272,7 +257,7 @@ version : %2$s
     <string name="system_message_members_promoted">"%1$s a promu %2$s au poste d'administrateur"</string>
     <string name="system_message_members_promoted_by_you">"Vous avez promu %s au poste d'administrateur"</string>
     <string name="system_message_members_demoted">"%1$s a rétrogradé %2$s de son poste d'administrateur"</string>
-    <string name="system_message_members_demoted_by_you">"Vous avez rétrogradé %2$s de son poste d'administrateur"</string>
+    <string name="system_message_members_demoted_by_you">"Vous avez rétrogradé %s de son poste d'administrateur"</string>
     <string name="system_message_member_auto_promoted">"%s a été promu automatiquement au rang d'administrateur"</string>
     <string name="system_message_member_auto_promoted_you">"Vous avez été promu automatiquement au rang d'administrateur"</string>
     <string name="system_message_group_name_changed">"%1$s a changé le nom du groupe en %2$s"</string>
@@ -372,7 +357,6 @@ version : %2$s
         <item quantity="other">"Départ des groupes…"</item>
     </plurals>
     <string name="failed_leave_group">"Impossible de quitter le groupe, réessaie plus tard"</string>
-    <string name="delete_group">"Supprimer le groupe"</string>
     <plurals name="friends_on_halloapp">
         <item quantity="one">"%d contact sur HalloApp"</item>
         <item quantity="other">"%d contacts sur HalloApp"</item>
@@ -776,5 +760,36 @@ Ouvrez la page des paramètres de l'application pour modifier les permissions de
 
     <!-- Name of setting where user can change between dark/light mode -->
     <string name="dark_mode_setting_title">"Theme"</string>
-</resources>
+
+    <!-- General error message shown when fail to update group description -->
+    <string name="failed_update_group_description">"Failed to update the group description"</string>
+
+    <!-- Success message shown when user updates group description -->
+    <string name="group_description_updated">"Group description updated"</string>
+
+    <!-- System message shown when someone else changes the group description, %s will be replaced with their name -->
+    <string name="system_message_group_description_changed">"%s changed the group description"</string>
+
+    <!-- System message shown when you change the group description -->
+    <string name="system_message_group_description_changed_by_you">"You changed the group description"</string>
+
+    <!-- Hint text for the group description field -->
+    <string name="group_description_hint">"Group description"</string>
+
+    <!-- Title text for the view to edit the group description -->
+    <string name="group_description_title">"Group description"</string>
+
+    <!-- Text telling the user they can add a group description -->
+    <string name="add_group_description">"Add group description"</string>
+    <string name="action_clear_search">"Clear"</string>
+
+    <!-- Shown above options when picking a new background color for a group -->
+    <string name="group_background_color_pick">"Pick a color"</string>
+<string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; a commenté ta publication."</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; et &lt;b&gt;%2$s&lt;/b&gt; ont commenté ta publication."</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, et &lt;b&gt;%3$s&lt;/b&gt; ont commenté ta publication."</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; a commenté la publication de &lt;b&gt;%2$s&lt;/b&gt;."</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; et &lt;b&gt;%2$s&lt;/b&gt; ont commenté la publication de &lt;b&gt;%3$s&lt;/b&gt;."</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, et &lt;b&gt;%3$s&lt;/b&gt; ont commenté la publication de &lt;b&gt;%4$s&lt;/b&gt;."</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; a commenté sa publication."</string><string name="delete_group">"Supprimer le groupe"</string><plurals name="commented_on_your_post_4">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, et %3$d autre personne ont commenté ta publication."</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, et %3$d autres personnes ont commenté ta publication."</item>
+    </plurals><plurals name="commented_on_someones_post_4">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, et %3$d autre personne ont commenté la publication de &lt;b&gt;%4$s&lt;/b&gt;."</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, et %3$d autres personnes ont commenté la publication de &lt;b&gt;%4$s&lt;/b&gt;."</item>
+    </plurals></resources>
 

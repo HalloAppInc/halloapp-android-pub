@@ -97,23 +97,8 @@
     <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in a comment on your post"</string>
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in a comment on their post"</string>
     <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; mentioned you in a comment on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string>
-    <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; commented on your post"</string>
-    <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string>
-    <string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on your post"</string>
-    <plurals name="commented_on_your_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
-    </plurals>
-    <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string>
-    <string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
-    <string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</string>
-    <plurals name="commented_on_someones_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
-    </plurals>
     <string name="contact_hashing_faq_dialog_title">"Your privacy is our priority"</string>
     <string name="contact_hashing_faq_dialog_info">"HalloApp only uses the phone number field to match you with your friends on HalloApp, and does not capture any additional data from your contact book."</string>
-    <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; commented on their post"</string>
     <string name="list_of_two">"%1$s and %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
     <string name="list_of_many_middle">", %s"</string>
@@ -378,7 +363,6 @@ version: %2$s
         <item quantity="other">"Leaving group…"</item>
     </plurals>
     <string name="failed_leave_group">"Failed to leave group, try again later"</string>
-    <string name="delete_group">"Delete group"</string>
     <plurals name="friends_on_halloapp">
         <item quantity="one">"%d contact on HalloApp"</item>
         <item quantity="other">"%d contact on HalloApp"</item>
@@ -780,5 +764,36 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Name of setting where user can change between dark/light mode -->
     <string name="dark_mode_setting_title">"Theme"</string>
-</resources>
+
+    <!-- General error message shown when fail to update group description -->
+    <string name="failed_update_group_description">"Failed to update the group description"</string>
+
+    <!-- Success message shown when user updates group description -->
+    <string name="group_description_updated">"Group description updated"</string>
+
+    <!-- System message shown when someone else changes the group description, %s will be replaced with their name -->
+    <string name="system_message_group_description_changed">"%s changed the group description"</string>
+
+    <!-- System message shown when you change the group description -->
+    <string name="system_message_group_description_changed_by_you">"You changed the group description"</string>
+
+    <!-- Hint text for the group description field -->
+    <string name="group_description_hint">"Group description"</string>
+
+    <!-- Title text for the view to edit the group description -->
+    <string name="group_description_title">"Group description"</string>
+
+    <!-- Text telling the user they can add a group description -->
+    <string name="add_group_description">"Add group description"</string>
+    <string name="action_clear_search">"Clear"</string>
+
+    <!-- Shown above options when picking a new background color for a group -->
+    <string name="group_background_color_pick">"Pick a color"</string>
+<string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; commented on your post"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on your post"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; commented on their post"</string><string name="delete_group">"Delete group"</string><plurals name="commented_on_your_post_4">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
+    </plurals><plurals name="commented_on_someones_post_4">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
+    </plurals></resources>
 

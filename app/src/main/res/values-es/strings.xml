@@ -103,29 +103,8 @@ Para modificar los permisos abre la pantalla de configuración de la aplicación
 
     <!-- Fuzzy -->
     <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; te mencionó en un comentario en algo que publicó &lt;b&gt;%2$s&lt;/b&gt;"</string>
-    <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; hizo un comentario en tu publicación"</string>
-
-    <!-- Fuzzy -->
-    <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; y &lt;b&gt;%2$s&lt;/b&gt; comentaron en tu publicación"</string>
-
-    <!-- Fuzzy -->
-    <string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; y &lt;b&gt;%3$s&lt;/b&gt; comentaron en tu publicación"</string>
-
-    <!-- Fuzzy -->
-    <plurals name="commented_on_your_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; y %3$d comentaron en tu publicación"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; y %3$d otros comentaron en tu publicación"</item>
-    </plurals>
-    <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; comentó en la publicación de &lt;b&gt;%2$s&lt;/b&gt;"</string>
-    <string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; y &lt;b&gt;%2$s&lt;/b&gt; comentaron en la publicación de &lt;b&gt;%3$s&lt;/b&gt;"</string>
-    <string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, y &lt;b&gt;%3$s&lt;/b&gt; comentaron en la publicación de &lt;b&gt;%4$s&lt;/b&gt;"</string>
-    <plurals name="commented_on_someones_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; y %3$d otros comentaron en la publicación de &lt;b&gt;%4$s&lt;/b&gt;\"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; y %3$d comentaron en la publicación de &lt;b&gt;%4$s&lt;/b&gt;\"</item>
-    </plurals>
     <string name="contact_hashing_faq_dialog_title">"Tu privacidad es nuestra prioridad"</string>
     <string name="contact_hashing_faq_dialog_info">"HalloApp solo usa el número de teléfono para conectarte con tus amigos en HalloApp, y no captura ninguna otra información adicional de tu agenda de contactos. "</string>
-    <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt;comentó en su publicación"</string>
 
     <!-- Fuzzy -->
     <string name="list_of_two">"%1$s y %2$s"</string>
@@ -444,7 +423,6 @@ versión: %2$s
         <item quantity="other">"Saliendo de los grupos"</item>
     </plurals>
     <string name="failed_leave_group">"No se pudo salir del grupo, inténtalo más tarde"</string>
-    <string name="delete_group">"Eliminar el grupo"</string>
 
     <!-- Fuzzy -->
     <plurals name="friends_on_halloapp">
@@ -857,5 +835,36 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
 
     <!-- Name of setting where user can change between dark/light mode -->
     <string name="dark_mode_setting_title">"Theme"</string>
-</resources>
+
+    <!-- General error message shown when fail to update group description -->
+    <string name="failed_update_group_description">"Failed to update the group description"</string>
+
+    <!-- Success message shown when user updates group description -->
+    <string name="group_description_updated">"Group description updated"</string>
+
+    <!-- System message shown when someone else changes the group description, %s will be replaced with their name -->
+    <string name="system_message_group_description_changed">"%s changed the group description"</string>
+
+    <!-- System message shown when you change the group description -->
+    <string name="system_message_group_description_changed_by_you">"You changed the group description"</string>
+
+    <!-- Hint text for the group description field -->
+    <string name="group_description_hint">"Group description"</string>
+
+    <!-- Title text for the view to edit the group description -->
+    <string name="group_description_title">"Group description"</string>
+
+    <!-- Text telling the user they can add a group description -->
+    <string name="add_group_description">"Add group description"</string>
+    <string name="action_clear_search">"Clear"</string>
+
+    <!-- Shown above options when picking a new background color for a group -->
+    <string name="group_background_color_pick">"Pick a color"</string>
+<string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; hizo un comentario en tu publicación"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; y &lt;b&gt;%2$s&lt;/b&gt; comentaron en tu publicación"</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; y &lt;b&gt;%3$s&lt;/b&gt; comentaron en tu publicación"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; comentó en la publicación de &lt;b&gt;%2$s&lt;/b&gt;"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; y &lt;b&gt;%2$s&lt;/b&gt; comentaron en la publicación de &lt;b&gt;%3$s&lt;/b&gt;"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, y &lt;b&gt;%3$s&lt;/b&gt; comentaron en la publicación de &lt;b&gt;%4$s&lt;/b&gt;"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt;comentó en su publicación"</string><string name="delete_group">"Eliminar el grupo"</string><plurals name="commented_on_your_post_4">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; y %3$d comentaron en tu publicación"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; y %3$d otros comentaron en tu publicación"</item>
+    </plurals><plurals name="commented_on_someones_post_4">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; y %3$d otros comentaron en la publicación de &lt;b&gt;%4$s&lt;/b&gt;\"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; y %3$d comentaron en la publicación de &lt;b&gt;%4$s&lt;/b&gt;\"</item>
+    </plurals></resources>
 

@@ -108,23 +108,8 @@ Kosten deines Service-Providers könnten anfallen."</string>
 
     <!-- Fuzzy translation? Pls. provide more details -->
     <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; hat dich in einem Kommentar zu &lt;b&gt;%2$s&lt;/b&gt;'s Beitrag erwähnt"</string>
-    <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; hat deinen Beitrag kommentiert"</string>
-    <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; und &lt;b&gt;%2$s&lt;/b&gt; haben deinen Beitrag kommentiert"</string>
-    <string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und &lt;b&gt;%3$s&lt;/b&gt; haben deinen Beitrag kommentiert"</string>
-    <plurals name="commented_on_your_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und %3$d weitere Person haben deinen Beitrag kommentiert"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; und %3$d weitere Personen haben deinen Beitrag kommentiert"</item>
-    </plurals>
-    <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; hat &lt;b&gt;%2$s&lt;/b&gt;'s Beitrag kommentiert"</string>
-    <string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; und &lt;b&gt;%2$s&lt;/b&gt; haben &lt;b&gt;%3$s&lt;/b&gt;'s Beitrag kommentiert"</string>
-    <string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und &lt;b&gt;%3$s&lt;/b&gt; haben &lt;b&gt;%4$s&lt;/b&gt;'s Beitrag kommentiert"</string>
-    <plurals name="commented_on_someones_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und %3$d andere Person haben &lt;b&gt;%4$s&lt;/b&gt;'s Beitrag kommentiert"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und %3$d andere Personen haben &lt;b&gt;%4$s&lt;/b&gt;'s Beitrag kommentiert"</item>
-    </plurals>
     <string name="contact_hashing_faq_dialog_title">"Deine Privatsphäre ist unsere Priorität"</string>
     <string name="contact_hashing_faq_dialog_info">"HalloApp verwendet nur das Feld für die Handynummer, um den Kontakt zu deinen Freunden auf HalloApp herzustellen. Darüber hinaus werden keine weiteren Daten aus deinen Kontakten erfasst."</string>
-    <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; hat einen eigenen Beitrag kommentiert"</string>
     <string name="list_of_two">"%1$s und %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
     <string name="list_of_many_middle">", %s"</string>
@@ -368,7 +353,7 @@ Version: %2$s
     <string name="invite_friends_title">"Freunde &amp; Familie einladen"</string>
     <string name="invite_title">"Einladung"</string>
     <string name="settings_invite_option">"Zu HalloApp einladen"</string>
-    <string name="invite_already_on_halloapp">"Nutzt HalloApp"</string>
+    <string name="invite_already_on_halloapp">"Nutzt bereits HalloApp"</string>
     <string name="invite_invalid_phone_number">"Ungültige Handynummer"</string>
     <string name="edit">"Bearbeiten"</string>
     <string name="done">"Fertig"</string>
@@ -413,7 +398,6 @@ Version: %2$s
         <item quantity="other">"Gruppen werden verlassen…"</item>
     </plurals>
     <string name="failed_leave_group">"Fehler beim Verlassen der Gruppe, probiere es später noch einmal"</string>
-    <string name="delete_group">"Gruppe löschen"</string>
     <plurals name="friends_on_halloapp">
         <item quantity="one">"%d Kontakt auf HalloApp"</item>
         <item quantity="other">"%d Kontakte auf HalloApp"</item>
@@ -450,8 +434,8 @@ Version: %2$s
     <string name="group_user_typing">"%s schreibt…"</string>
     <string name="group_many_users_typing">"mehrere Benutzer schreiben…"</string>
     <string name="camera_error_generic">"Kamerafehler."</string>
-    <string name="camera_error_photo">"Foto konnte nicht gemacht werden."</string>
-    <string name="camera_error_video">"Video konnte nicht aufgenommen werden."</string>
+    <string name="camera_error_photo">"Das Foto konnte nicht gemacht werden."</string>
+    <string name="camera_error_video">"Das Video konnte nicht aufgenommen werden."</string>
     <plurals name="group_feed_members">
         <item quantity="one">"%d Mitglied"</item>
         <item quantity="other">"%d Mitglieder"</item>
@@ -811,7 +795,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="voice_note_preview">"Sprachnotiz (%s)"</string>
 
     <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
-    <string name="dark_mode_dialog_title">"Select Theme"</string>
+    <string name="dark_mode_dialog_title">"Design auswählen"</string>
 
     <!-- Name of mode where screens are darker -->
     <string name="dark_mode">"Dunkel"</string>
@@ -826,6 +810,37 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="default_setting">"Standardeinstellung"</string>
 
     <!-- Name of setting where user can change between dark/light mode -->
-    <string name="dark_mode_setting_title">"Theme"</string>
-</resources>
+    <string name="dark_mode_setting_title">"Design"</string>
+
+    <!-- General error message shown when fail to update group description -->
+    <string name="failed_update_group_description">"Die Gruppenbeschreibung konnte nicht aktualisiert werden"</string>
+
+    <!-- Success message shown when user updates group description -->
+    <string name="group_description_updated">"Gruppenbeschreibung wurde aktualisiert"</string>
+
+    <!-- System message shown when someone else changes the group description, %s will be replaced with their name -->
+    <string name="system_message_group_description_changed">"%s hat die Gruppenbeschreibung geändert"</string>
+
+    <!-- System message shown when you change the group description -->
+    <string name="system_message_group_description_changed_by_you">"Du hast die Gruppenbeschreibung geändert"</string>
+
+    <!-- Hint text for the group description field -->
+    <string name="group_description_hint">"Gruppenbeschreibung"</string>
+
+    <!-- Title text for the view to edit the group description -->
+    <string name="group_description_title">"Gruppenbeschreibung"</string>
+
+    <!-- Text telling the user they can add a group description -->
+    <string name="add_group_description">"Gruppenbeschreibung hinzufügen"</string>
+    <string name="action_clear_search">"Suche löschen"</string>
+
+    <!-- Shown above options when picking a new background color for a group -->
+    <string name="group_background_color_pick">"Hintergrundfarbe auswählen"</string>
+<string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; hat deinen Beitrag kommentiert"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; und &lt;b&gt;%2$s&lt;/b&gt; haben deinen Beitrag kommentiert"</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und &lt;b&gt;%3$s&lt;/b&gt; haben deinen Beitrag kommentiert"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; hat &lt;b&gt;%2$s&lt;/b&gt;'s Beitrag kommentiert"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; und &lt;b&gt;%2$s&lt;/b&gt; haben &lt;b&gt;%3$s&lt;/b&gt;'s Beitrag kommentiert"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und &lt;b&gt;%3$s&lt;/b&gt; haben &lt;b&gt;%4$s&lt;/b&gt;'s Beitrag kommentiert"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; hat einen eigenen Beitrag kommentiert"</string><string name="delete_group">"Gruppe löschen"</string><plurals name="commented_on_your_post_4">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und %3$d weitere Person haben deinen Beitrag kommentiert"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; und %3$d weitere Personen haben deinen Beitrag kommentiert"</item>
+    </plurals><plurals name="commented_on_someones_post_4">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und %3$d andere Person haben &lt;b&gt;%4$s&lt;/b&gt;'s Beitrag kommentiert"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und %3$d andere Personen haben &lt;b&gt;%4$s&lt;/b&gt;'s Beitrag kommentiert"</item>
+    </plurals></resources>
 

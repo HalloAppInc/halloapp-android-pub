@@ -21,8 +21,8 @@
     <string name="you">"أنت"</string>
     <string name="camera_post">"الكاميرا"</string>
     <string name="gallery_post">"المعرض"</string>
-    <string name="text_post">"Text"</string>
-    <string name="bad_image">"Unsupported media type"</string>
+    <string name="text_post">"نص"</string>
+    <string name="bad_image">"ملف الوسائط غير متوافق مع التطبيق"</string>
     <string name="time_diff_now">"الآن"</string>
     <string name="phone_number_hint">"رقم الهاتف"</string>
     <string name="request_registration_title">"أهلاً!"</string>
@@ -33,7 +33,7 @@
     <string name="contact_permission_title">"أمر آخير"</string>
     <string name="registration_code_invalid">"رمز التحقق غير صحيح، حاول مجدداً"</string>
     <string name="registration_failed">"تعذَر التحقق من رقم الهاتف، حاول مجدداً"</string>
-    <string name="registration_failed_no_friends">"We are currently invite only. If you have a friend or family member who uses HalloApp, ask them to invite you using your phone number."</string>
+    <string name="registration_failed_no_friends">"لا يمكن استخدام التطبيق الآن إلا إذا تمت دعوتك إليه. إذا كان أصدقاؤك أو أفراد أسرتك يستخدمون هالوآب، اطلب منهم دعوتك من خلال استعمال رقم هاتفك."</string>
     <string name="registration_failed_no_friends_title">"عذراً!"</string>
     <string name="type_a_message_hint">"اطبع رسالة"</string>
     <string name="write_a_description">"اكتب وصفاً"</string>
@@ -41,24 +41,24 @@
     <string name="send">"إرسال"</string>
     <string name="set_avatar_done">"تم"</string>
     <string name="set_avatar_reset">"إعادة التعيين"</string>
-    <string name="new_post">"New post"</string>
-    <string name="new_message">"New message"</string>
+    <string name="new_post">"منشور جديد"</string>
+    <string name="new_message">"رسالة جديدة"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
-    <string name="empty_chat_with_name_placeholder">"%s is on HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s is using HalloApp! &#x1f389;"</string>
-    <string name="posts_empty">"Your posts will appear here"</string>
-    <string name="posts_exchange_numbers">"To connect you must exchange phone numbers"</string>
-    <string name="home_page_empty">"Posts from your contacts will appear here"</string>
-    <string name="chats_page_empty">"Contacts and messages will appear here"</string>
-    <string name="chats_search_empty">"No chats found for '%s'"</string>
-    <string name="groups_page_empty">"Your groups will appear here"</string>
-    <string name="groups_search_empty">"No groups found for '%s'"</string>
-    <string name="contact_profile_empty">"%s's posts will appear here"</string>
-    <string name="invalid_phone_number">"Invalid phone number"</string>
+    <string name="empty_chat_with_name_placeholder">"%s من مستخدمي هالوآب."</string>
+    <string name="new_chat_name_placeholder">"%s يستخدم هالوآب!&#x1f389;"</string>
+    <string name="posts_empty">"ستظهر منشوراتك هنا"</string>
+    <string name="posts_exchange_numbers">"للتواصل عليك تبادل أرقام الهاتف"</string>
+    <string name="home_page_empty">"ستظهر منشورات جهات اتصالك هنا"</string>
+    <string name="chats_page_empty">"ستظهر جهات الاتصال والرسائل هنا"</string>
+    <string name="chats_search_empty">"لم يتم العثور على دردشات لـ '%s'"</string>
+    <string name="groups_page_empty">"ستظهر مجموعاتك هنا"</string>
+    <string name="groups_search_empty">"لم يتم العثور على مجموعات لـ '%s'"</string>
+    <string name="contact_profile_empty">"ستظهر منشورات %s هنا"</string>
+    <string name="invalid_phone_number">"رقم الهاتف غير صالح"</string>
     <string name="share_option_post">"Post"</string>
     <string name="share_option_message">"Message"</string>
     <plurals name="max_post_media_items">
-        <item quantity="zero">"You can select up to %d media item per post"</item>
+        <item quantity="zero">" "</item>
         <item quantity="one">"You can select up to %d media item per post"</item>
         <item quantity="two">"You can select up to %d media item per post"</item>
         <item quantity="few">"You can select up to %d media item per post"</item>
@@ -92,31 +92,8 @@ Open the app settings screen to modify app permissions."</string>
     <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in a comment on your post"</string>
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in a comment on their post"</string>
     <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; mentioned you in a comment on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string>
-    <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; commented on your post"</string>
-    <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string>
-    <string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on your post"</string>
-    <plurals name="commented_on_your_post_4">
-        <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
-        <item quantity="two">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
-        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
-        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
-    </plurals>
-    <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string>
-    <string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
-    <string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</string>
-    <plurals name="commented_on_someones_post_4">
-        <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
-        <item quantity="two">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
-        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
-        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
-    </plurals>
     <string name="contact_hashing_faq_dialog_title">"Your privacy is our priority"</string>
     <string name="contact_hashing_faq_dialog_info">"HalloApp only uses the phone number field to match you with your friends on HalloApp, and does not capture any additional data from your contact book."</string>
-    <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; commented on their post"</string>
     <string name="list_of_two">"%1$s and %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
     <string name="list_of_many_middle">", %s"</string>
@@ -433,7 +410,6 @@ version: %2$s
         <item quantity="other">"Leaving group…"</item>
     </plurals>
     <string name="failed_leave_group">"Failed to leave group, try again later"</string>
-    <string name="delete_group">"Delete group"</string>
     <plurals name="friends_on_halloapp">
         <item quantity="zero">"%d contact on HalloApp"</item>
         <item quantity="one">"%d contact on HalloApp"</item>
@@ -875,5 +851,44 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Name of setting where user can change between dark/light mode -->
     <string name="dark_mode_setting_title">"Theme"</string>
-</resources>
+
+    <!-- General error message shown when fail to update group description -->
+    <string name="failed_update_group_description">"Failed to update the group description"</string>
+
+    <!-- Success message shown when user updates group description -->
+    <string name="group_description_updated">"Group description updated"</string>
+
+    <!-- System message shown when someone else changes the group description, %s will be replaced with their name -->
+    <string name="system_message_group_description_changed">"%s changed the group description"</string>
+
+    <!-- System message shown when you change the group description -->
+    <string name="system_message_group_description_changed_by_you">"You changed the group description"</string>
+
+    <!-- Hint text for the group description field -->
+    <string name="group_description_hint">"Group description"</string>
+
+    <!-- Title text for the view to edit the group description -->
+    <string name="group_description_title">"Group description"</string>
+
+    <!-- Text telling the user they can add a group description -->
+    <string name="add_group_description">"Add group description"</string>
+    <string name="action_clear_search">"Clear"</string>
+
+    <!-- Shown above options when picking a new background color for a group -->
+    <string name="group_background_color_pick">"Pick a color"</string>
+<string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; commented on your post"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on your post"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; commented on their post"</string><string name="delete_group">"Delete group"</string><plurals name="commented_on_your_post_4">
+        <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
+        <item quantity="two">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
+        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
+        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
+    </plurals><plurals name="commented_on_someones_post_4">
+        <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
+        <item quantity="two">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
+        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
+        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
+    </plurals></resources>
 

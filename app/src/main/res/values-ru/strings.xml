@@ -93,27 +93,8 @@
     <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; упомянул(-а) вас в комментарии к вашему посту"</string>
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; упомянул(-а) вас в комментарии к своему посту"</string>
     <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; упомянул(-а) вас в комментарии к посту пользователя &lt;b&gt;%2$s&lt;/b&gt;"</string>
-    <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; прокомментировал(-а) ваш пост"</string>
-    <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; прокомментировали ваш пост"</string>
-    <string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и &lt;b&gt;%3$s&lt;/b&gt; прокомментировали ваш пост"</string>
-    <plurals name="commented_on_your_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человек прокомментировали ваш пост"</item>
-        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человека прокомментировали ваш пост"</item>
-        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человек прокомментировали ваш пост"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человек прокомментировали ваш пост"</item>
-    </plurals>
-    <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; прокомментировал(-а) пост &lt;b&gt;%2$s&lt;/b&gt;"</string>
-    <string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; прокомментировали пост &lt;b&gt;%3$s&lt;/b&gt;"</string>
-    <string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и &lt;b&gt;%3$s&lt;/b&gt; прокомментировали пост &lt;b&gt;%4$s&lt;/b&gt;"</string>
-    <plurals name="commented_on_someones_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человек прокомментировали пост &lt;b&gt;%4$s&lt;/b&gt;"</item>
-        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человека прокомментировали пост &lt;b&gt;%4$s&lt;/b&gt;"</item>
-        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человек прокомментировали пост &lt;b&gt;%4$s&lt;/b&gt;"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человек прокомментировали пост &lt;b&gt;%4$s&lt;/b&gt;"</item>
-    </plurals>
     <string name="contact_hashing_faq_dialog_title">"Ваша конфиденциальность — наш главный приоритет"</string>
     <string name="contact_hashing_faq_dialog_info">"HalloApp использует поле номера телефона только для того, чтобы связать вас с вашими друзьями в HalloApp, и не собирает никаких дополнительных данных из вашей контактной книги."</string>
-    <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; прокомментировал(-а) свой пост"</string>
     <string name="list_of_two">"%1$s и %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
     <string name="list_of_many_middle">", %s"</string>
@@ -404,7 +385,6 @@ uid: %1$s
         <item quantity="other">"Выход из групп…"</item>
     </plurals>
     <string name="failed_leave_group">"Не удалось покинуть группу, повторите попытку позже"</string>
-    <string name="delete_group">"Удалить группу"</string>
     <plurals name="friends_on_halloapp">
         <item quantity="one">"%d контакт в HalloApp"</item>
         <item quantity="few">"%d контактов в HalloApp"</item>
@@ -828,5 +808,40 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Name of setting where user can change between dark/light mode -->
     <string name="dark_mode_setting_title">"Theme"</string>
-</resources>
+
+    <!-- General error message shown when fail to update group description -->
+    <string name="failed_update_group_description">"Failed to update the group description"</string>
+
+    <!-- Success message shown when user updates group description -->
+    <string name="group_description_updated">"Group description updated"</string>
+
+    <!-- System message shown when someone else changes the group description, %s will be replaced with their name -->
+    <string name="system_message_group_description_changed">"%s changed the group description"</string>
+
+    <!-- System message shown when you change the group description -->
+    <string name="system_message_group_description_changed_by_you">"You changed the group description"</string>
+
+    <!-- Hint text for the group description field -->
+    <string name="group_description_hint">"Group description"</string>
+
+    <!-- Title text for the view to edit the group description -->
+    <string name="group_description_title">"Group description"</string>
+
+    <!-- Text telling the user they can add a group description -->
+    <string name="add_group_description">"Add group description"</string>
+    <string name="action_clear_search">"Clear"</string>
+
+    <!-- Shown above options when picking a new background color for a group -->
+    <string name="group_background_color_pick">"Pick a color"</string>
+<string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; прокомментировал(-а) ваш пост"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; прокомментировали ваш пост"</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и &lt;b&gt;%3$s&lt;/b&gt; прокомментировали ваш пост"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; прокомментировал(-а) пост &lt;b&gt;%2$s&lt;/b&gt;"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; прокомментировали пост &lt;b&gt;%3$s&lt;/b&gt;"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и &lt;b&gt;%3$s&lt;/b&gt; прокомментировали пост &lt;b&gt;%4$s&lt;/b&gt;"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; прокомментировал(-а) свой пост"</string><string name="delete_group">"Удалить группу"</string><plurals name="commented_on_your_post_4">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человек прокомментировали ваш пост"</item>
+        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человека прокомментировали ваш пост"</item>
+        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человек прокомментировали ваш пост"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человек прокомментировали ваш пост"</item>
+    </plurals><plurals name="commented_on_someones_post_4">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человек прокомментировали пост &lt;b&gt;%4$s&lt;/b&gt;"</item>
+        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человека прокомментировали пост &lt;b&gt;%4$s&lt;/b&gt;"</item>
+        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человек прокомментировали пост &lt;b&gt;%4$s&lt;/b&gt;"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и еще %3$d человек прокомментировали пост &lt;b&gt;%4$s&lt;/b&gt;"</item>
+    </plurals></resources>
 

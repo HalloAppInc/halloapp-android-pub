@@ -92,25 +92,8 @@ Otevřete obrazovku nastavení aplikace a upravte povolení aplikace."</string>
     <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; vás zmínil/a v komentáři u vašeho příspěvku"</string>
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; vás zmínil/a v komentáři u svého příspěvku"</string>
     <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; vás zmínil/a v komentáři u příspěvku uživatele &lt;b&gt;%2$s&lt;/b&gt;"</string>
-    <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; okomentoval/a váš příspěvek"</string>
-    <string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; a &lt;b&gt;%2$s&lt;/b&gt; okomentovali váš příspěvek"</string>
-    <string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; a &lt;b&gt;%3$s&lt;/b&gt; okomentovali váš příspěvek"</string>
-    <plurals name="commented_on_your_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; a %3$d další okomentovali váš příspěvek"</item>
-        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; a %3$d další okomentovali váš příspěvek"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; a %3$d další okomentovali váš příspěvek"</item>
-    </plurals>
-    <string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; okomentoval/a příspěvek uživatele &lt;b&gt;%2$s&lt;/b&gt;"</string>
-    <string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; a &lt;b&gt;%2$s&lt;/b&gt; okomentovali příspěvek uživatele &lt;b&gt;%3$s&lt;/b&gt;"</string>
-    <string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; a &lt;b&gt;%3$s&lt;/b&gt; okomentovali příspěvek uživatele &lt;b&gt;%4$s&lt;/b&gt;"</string>
-    <plurals name="commented_on_someones_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; a %3$d další okomentovali příspěvek uživatele &lt;b&gt;%4$s&lt;/b&gt;"</item>
-        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; a %3$d další okomentovali příspěvek uživatele &lt;b&gt;%4$s&lt;/b&gt;"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; a %3$d další okomentovali příspěvek uživatele &lt;b&gt;%4$s&lt;/b&gt;"</item>
-    </plurals>
     <string name="contact_hashing_faq_dialog_title">"Vaše soukromí je naší prioritou"</string>
     <string name="contact_hashing_faq_dialog_info">"HalloApp používá pole telefonního čísla pouze k tomu, aby vás spojila s přáteli na HalloApp, a neukládá žádné další údaje z vašeho seznamu kontaktů."</string>
-    <string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; okomentoval/a svůj příspěvek"</string>
     <string name="list_of_two">"%1$s a %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
     <string name="list_of_many_middle">", %s"</string>
@@ -391,7 +374,6 @@ verze: %2$s
         <item quantity="other">"Opouštění skupin…"</item>
     </plurals>
     <string name="failed_leave_group">"Opuštění skupiny se nezdařilo, zkuste to znovu později"</string>
-    <string name="delete_group">"Smazat skupinu"</string>
     <plurals name="friends_on_halloapp">
         <item quantity="one">"%d kontakt v HalloApp"</item>
         <item quantity="few">"%d kontaktů v HalloApp"</item>
@@ -805,5 +787,38 @@ Otevři nastavení aplikace a uprav oprávnění aplikace."</string>
 
     <!-- Name of setting where user can change between dark/light mode -->
     <string name="dark_mode_setting_title">"Theme"</string>
-</resources>
+
+    <!-- General error message shown when fail to update group description -->
+    <string name="failed_update_group_description">"Failed to update the group description"</string>
+
+    <!-- Success message shown when user updates group description -->
+    <string name="group_description_updated">"Group description updated"</string>
+
+    <!-- System message shown when someone else changes the group description, %s will be replaced with their name -->
+    <string name="system_message_group_description_changed">"%s changed the group description"</string>
+
+    <!-- System message shown when you change the group description -->
+    <string name="system_message_group_description_changed_by_you">"You changed the group description"</string>
+
+    <!-- Hint text for the group description field -->
+    <string name="group_description_hint">"Group description"</string>
+
+    <!-- Title text for the view to edit the group description -->
+    <string name="group_description_title">"Group description"</string>
+
+    <!-- Text telling the user they can add a group description -->
+    <string name="add_group_description">"Add group description"</string>
+    <string name="action_clear_search">"Clear"</string>
+
+    <!-- Shown above options when picking a new background color for a group -->
+    <string name="group_background_color_pick">"Pick a color"</string>
+<string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; okomentoval/a váš příspěvek"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; a &lt;b&gt;%2$s&lt;/b&gt; okomentovali váš příspěvek"</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; a &lt;b&gt;%3$s&lt;/b&gt; okomentovali váš příspěvek"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; okomentoval/a příspěvek uživatele &lt;b&gt;%2$s&lt;/b&gt;"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; a &lt;b&gt;%2$s&lt;/b&gt; okomentovali příspěvek uživatele &lt;b&gt;%3$s&lt;/b&gt;"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; a &lt;b&gt;%3$s&lt;/b&gt; okomentovali příspěvek uživatele &lt;b&gt;%4$s&lt;/b&gt;"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; okomentoval/a svůj příspěvek"</string><string name="delete_group">"Smazat skupinu"</string><plurals name="commented_on_your_post_4">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; a %3$d další okomentovali váš příspěvek"</item>
+        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; a %3$d další okomentovali váš příspěvek"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; a %3$d další okomentovali váš příspěvek"</item>
+    </plurals><plurals name="commented_on_someones_post_4">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; a %3$d další okomentovali příspěvek uživatele &lt;b&gt;%4$s&lt;/b&gt;"</item>
+        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; a %3$d další okomentovali příspěvek uživatele &lt;b&gt;%4$s&lt;/b&gt;"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; a %3$d další okomentovali příspěvek uživatele &lt;b&gt;%4$s&lt;/b&gt;"</item>
+    </plurals></resources>
 

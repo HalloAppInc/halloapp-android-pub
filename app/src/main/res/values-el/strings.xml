@@ -90,23 +90,8 @@
     <string name="mentioned_you_in_comment_on_your_post">"Ο χρήστης &lt;b&gt;%s&lt;/b&gt; σας ανέφερε σε σχόλιο στη δημοσίευσή σας"</string>
     <string name="mentioned_you_in_comment_on_own_post">"Ο χρήστης &lt;b&gt;%s&lt;/b&gt; σας ανέφερε σε σχόλιο σε  δημοσίευση του"</string>
     <string name="mentioned_you_in_comment_on_someones_post">"Ο χρήστης &lt;b&gt;%1$s&lt;/b&gt; σας ανέφερε σε ένα σχόλιο της δημοσίευσης του &lt;b&gt;%2$s&lt;/b&gt;"</string>
-    <string name="commented_on_your_post_1">"Ο χρήστης &lt;b&gt;%s&lt;/b&gt; σχολίασε σε δημοσίευσή σας"</string>
-    <string name="commented_on_your_post_2">"Οι χρήστες &lt;b&gt;%1$s&lt;/b&gt; και &lt;b&gt;%2$s&lt;/b&gt; σχολίασαν σε δημοσίευσή σας"</string>
-    <string name="commented_on_your_post_3">"Οι χρήστες &lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; και &lt;b&gt;%3$s&lt;/b&gt; σχολίασαν σε δημοσίευσή σας"</string>
-    <plurals name="commented_on_your_post_4">
-        <item quantity="one">"Οι χρήστες &lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; και %3$d άλλος σχολίασε σε δημοσίευσή σας"</item>
-        <item quantity="other">"Οι χρήστες &lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; και %3$d άλλοι σχολίασαν σε δημοσίευσή σας"</item>
-    </plurals>
-    <string name="commented_on_someones_post_1">"Ο χρήστης &lt;b&gt;%1$s&lt;/b&gt; σχολίασε σε δημοσίευση του χρήστη &lt;b&gt;%2$s&lt;/b&gt;"</string>
-    <string name="commented_on_someones_post_2">"Οι χρήστες &lt;b&gt;%1$s&lt;/b&gt; και &lt;b&gt;%2$s&lt;/b&gt; σχολίασαν σε δημοσίευση του χρήστη &lt;b&gt;%3$s&lt;/b&gt;"</string>
-    <string name="commented_on_someones_post_3">"Οι χρήστες &lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; και &lt;b&gt;%3$s&lt;/b&gt; σχολίασαν σε δημοσίευση του χρήστη &lt;b&gt;%4$s&lt;/b&gt;"</string>
-    <plurals name="commented_on_someones_post_4">
-        <item quantity="one">"Οι χρήστες &lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; και %3$d άλλος σχολίασαν σε δημοσίευση του χρήστη &lt;b&gt;%4$s&lt;/b&gt;"</item>
-        <item quantity="other">"Οι χρήστες &lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; και %3$d άλλοι σχολίασαν σε δημοσίευση του χρήστη &lt;b&gt;%4$s&lt;/b&gt;"</item>
-    </plurals>
     <string name="contact_hashing_faq_dialog_title">"Το απόρρητό σας είναι η προτεραιότητά μας"</string>
     <string name="contact_hashing_faq_dialog_info">"Το HalloApp χρησιμοποιεί μόνο τον αριθμού τηλεφώνου σας για να σας ταιριάξει με τους φίλους σας στο HalloApp και δεν καταγράφει επιπλέον δεδομένα από τη λίστα επαφών σας."</string>
-    <string name="commented_on_own_post">"Ο χρήστης &lt;b&gt;%1s&lt;/b&gt; σχολίασε στη δημοσίευσή τους"</string>
     <string name="list_of_two">"%1$s και %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
     <string name="list_of_many_middle">", %s"</string>
@@ -371,7 +356,6 @@ uid: %1$s
         <item quantity="other">"Αποχώρηση από ομάδες"</item>
     </plurals>
     <string name="failed_leave_group">"Αποτυχία αποχώρησης από ομάδα, δοκιμάστε ξανά αργότερα"</string>
-    <string name="delete_group">"Διαγραφή ομάδας"</string>
     <plurals name="friends_on_halloapp">
         <item quantity="one">"%d επαφή στο HalloApp"</item>
         <item quantity="other">"%d επαφές στο HalloApp"</item>
@@ -775,5 +759,36 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Name of setting where user can change between dark/light mode -->
     <string name="dark_mode_setting_title">"Theme"</string>
-</resources>
+
+    <!-- General error message shown when fail to update group description -->
+    <string name="failed_update_group_description">"Failed to update the group description"</string>
+
+    <!-- Success message shown when user updates group description -->
+    <string name="group_description_updated">"Group description updated"</string>
+
+    <!-- System message shown when someone else changes the group description, %s will be replaced with their name -->
+    <string name="system_message_group_description_changed">"%s changed the group description"</string>
+
+    <!-- System message shown when you change the group description -->
+    <string name="system_message_group_description_changed_by_you">"You changed the group description"</string>
+
+    <!-- Hint text for the group description field -->
+    <string name="group_description_hint">"Group description"</string>
+
+    <!-- Title text for the view to edit the group description -->
+    <string name="group_description_title">"Group description"</string>
+
+    <!-- Text telling the user they can add a group description -->
+    <string name="add_group_description">"Add group description"</string>
+    <string name="action_clear_search">"Clear"</string>
+
+    <!-- Shown above options when picking a new background color for a group -->
+    <string name="group_background_color_pick">"Pick a color"</string>
+<string name="commented_on_your_post_1">"Ο χρήστης &lt;b&gt;%s&lt;/b&gt; σχολίασε σε δημοσίευσή σας"</string><string name="commented_on_your_post_2">"Οι χρήστες &lt;b&gt;%1$s&lt;/b&gt; και &lt;b&gt;%2$s&lt;/b&gt; σχολίασαν σε δημοσίευσή σας"</string><string name="commented_on_your_post_3">"Οι χρήστες &lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; και &lt;b&gt;%3$s&lt;/b&gt; σχολίασαν σε δημοσίευσή σας"</string><string name="commented_on_someones_post_1">"Ο χρήστης &lt;b&gt;%1$s&lt;/b&gt; σχολίασε σε δημοσίευση του χρήστη &lt;b&gt;%2$s&lt;/b&gt;"</string><string name="commented_on_someones_post_2">"Οι χρήστες &lt;b&gt;%1$s&lt;/b&gt; και &lt;b&gt;%2$s&lt;/b&gt; σχολίασαν σε δημοσίευση του χρήστη &lt;b&gt;%3$s&lt;/b&gt;"</string><string name="commented_on_someones_post_3">"Οι χρήστες &lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; και &lt;b&gt;%3$s&lt;/b&gt; σχολίασαν σε δημοσίευση του χρήστη &lt;b&gt;%4$s&lt;/b&gt;"</string><string name="commented_on_own_post">"Ο χρήστης &lt;b&gt;%1s&lt;/b&gt; σχολίασε στη δημοσίευσή τους"</string><string name="delete_group">"Διαγραφή ομάδας"</string><plurals name="commented_on_your_post_4">
+        <item quantity="one">"Οι χρήστες &lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; και %3$d άλλος σχολίασε σε δημοσίευσή σας"</item>
+        <item quantity="other">"Οι χρήστες &lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; και %3$d άλλοι σχολίασαν σε δημοσίευσή σας"</item>
+    </plurals><plurals name="commented_on_someones_post_4">
+        <item quantity="one">"Οι χρήστες &lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; και %3$d άλλος σχολίασαν σε δημοσίευση του χρήστη &lt;b&gt;%4$s&lt;/b&gt;"</item>
+        <item quantity="other">"Οι χρήστες &lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; και %3$d άλλοι σχολίασαν σε δημοσίευση του χρήστη &lt;b&gt;%4$s&lt;/b&gt;"</item>
+    </plurals></resources>
 
