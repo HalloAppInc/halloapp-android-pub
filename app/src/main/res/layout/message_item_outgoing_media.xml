@@ -90,7 +90,7 @@
                         android:paddingStart="0dp"
                         android:paddingEnd="5dp"
                         android:layout_gravity="center_vertical"
-                        android:textColor="@color/message_timestamp"
+                        android:textColor="@color/message_timestamp_outgoing"
                         android:textSize="10sp"
                         tools:text="11:49 PM"/>
 

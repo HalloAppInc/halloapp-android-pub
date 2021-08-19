@@ -86,6 +86,7 @@
     <color name="hint_text">@color/white_30</color>
 
     <color name="message_timestamp">#C3DDFF</color>
+    <color name="message_timestamp_outgoing">@color/secondary_text</color>
 
     <color name="group_me">#C3DDFF</color>
     <color name="group_me_bg">#495D78</color>
