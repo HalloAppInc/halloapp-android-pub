@@ -42,6 +42,8 @@ public class VoiceNotePlayer implements SensorEventListener {
     private final PowerManager powerManager;
     private PowerManager.WakeLock wakeLock;
 
+    private int currentAudioStream;
+
 
     public VoiceNotePlayer(@NonNull Application application) {
         sensorManager = (SensorManager) application.getSystemService(Context.SENSOR_SERVICE);
@@ -88,12 +90,16 @@ public class VoiceNotePlayer implements SensorEventListener {
     }
 
     private void switchAudioStream(int stream) {
+        if (currentAudioStream == stream) {
+            return;
+        }
         if (mediaPlayer != null && mediaPlayer.isPlaying())  {
             mediaPlayer.pause();
             int seek = mediaPlayer.getCurrentPosition() - 1000;
             seek = Math.max(seek, 0);
             mediaPlayer.stop();
             mediaPlayer.setAudioStreamType(stream);
+            currentAudioStream = stream;
             try {
                 mediaPlayer.prepare();
                 mediaPlayer.seekTo(seek);
@@ -160,6 +166,7 @@ public class VoiceNotePlayer implements SensorEventListener {
             if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                 mediaPlayer.pause();
                 playbackState.playing = false;
+                playbackState.seek = mediaPlayer.getCurrentPosition();
                 playbackStateLiveData.postValue(playbackState);
                 unregisterProximityListener();
             }
@@ -206,6 +213,7 @@ public class VoiceNotePlayer implements SensorEventListener {
                     releaseWakeLock();
                 }
             });
+            currentAudioStream = AudioManager.STREAM_MUSIC;
             playbackStateLiveData.postValue(playbackState);
             voiceNoteHandler.removeCallbacks(updatePlayback);
 
