@@ -1229,19 +1229,19 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             ListUpdateCallback listUpdateCallback = new ListUpdateCallback() {
 
                 public void onInserted(int position, int count) {
-                    adapterCallback.onInserted(position + 1, count);
+                    adapterCallback.onInserted(position, count);
                 }
 
                 public void onRemoved(int position, int count) {
-                    adapterCallback.onRemoved(position + 1, count);
+                    adapterCallback.onRemoved(position, count);
                 }
 
                 public void onMoved(int fromPosition, int toPosition) {
-                    adapterCallback.onMoved(fromPosition + 1, toPosition + 1);
+                    adapterCallback.onMoved(fromPosition, toPosition);
                 }
 
                 public void onChanged(int position, int count, @Nullable Object payload) {
-                    adapterCallback.onChanged(position + 1, count, payload);
+                    adapterCallback.onChanged(position, count, payload);
                 }
             };
 
