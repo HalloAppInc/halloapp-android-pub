@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
@@ -36,6 +37,8 @@ public class VoiceNoteMessageViewHolder extends MessageViewHolder {
 
     private String audioPath;
 
+    private final Observer<VoiceNotePlayer.PlaybackState> playbackStateObserver;
+
     VoiceNoteMessageViewHolder(@NonNull View itemView, @NonNull MessageViewHolderParent parent) {
         super(itemView, parent);
 
@@ -57,10 +60,8 @@ public class VoiceNoteMessageViewHolder extends MessageViewHolder {
                 voiceNotePlayer.playFile(audioPath, seekBar.getProgress());
             }
         });
-    }
 
-    private void startObservingPlayback() {
-        parent.getVoiceNotePlayer().getPlaybackState().observe(this, state -> {
+        playbackStateObserver = state -> {
             if (state == null || audioPath == null || !audioPath.equals(state.playingTag)) {
                 return;
             }
@@ -98,13 +99,20 @@ public class VoiceNoteMessageViewHolder extends MessageViewHolder {
                     }
                 }
             });
-        });
+        };
+    }
+
+    private void startObservingPlayback() {
+        parent.getVoiceNotePlayer().getPlaybackState().observe(this, playbackStateObserver);
+    }
+
+    private void stopObservingPlayback() {
+        parent.getVoiceNotePlayer().getPlaybackState().removeObservers(this);
     }
 
     @Override
     protected void fillView(@NonNull Message message, boolean changed) {
         if (changed) {
-            this.audioPath = null;
             parent.getAvatarLoader().load(avatarView, message.senderUserId, false);
         }
         if (message.media != null && !message.media.isEmpty()) {
@@ -115,7 +123,6 @@ public class VoiceNoteMessageViewHolder extends MessageViewHolder {
                     if (!newPath.equals(audioPath)) {
                         this.audioPath = media.file.getAbsolutePath();
                         audioDurationLoader.load(seekTime, media);
-                        startObservingPlayback();
                     }
                 }
                 controlButton.setVisibility(View.VISIBLE);
@@ -137,8 +144,23 @@ public class VoiceNoteMessageViewHolder extends MessageViewHolder {
     }
 
     @Override
+    public void markAttach() {
+        super.markAttach();
+        startObservingPlayback();
+    }
+
+    @Override
+    public void markDetach() {
+        super.markDetach();
+        stopObservingPlayback();
+    }
+
+    @Override
     public void markRecycled() {
         super.markRecycled();
-        audioPath = null;
+        this.audioPath = null;
+        playing = false;
+        seekBar.setProgress(0);
+        controlButton.setImageResource(R.drawable.ic_play_arrow);
     }
 }

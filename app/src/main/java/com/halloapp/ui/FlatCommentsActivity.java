@@ -46,6 +46,7 @@ import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.app.SharedElementCallback;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
@@ -76,6 +77,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
@@ -774,6 +776,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         private String audioPath;
         private boolean wasPlaying;
 
+        private final Observer<VoiceNotePlayer.PlaybackState> playbackStateObserver;
+
         public VoiceNoteViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -788,37 +792,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     viewModel.getVoiceNotePlayer().playFile(audioPath, seekBar.getProgress());
                 }
             });
-        }
 
-        @Override
-        public void markRecycled() {
-            super.markRecycled();
-            audioPath = null;
-        }
-
-        void bindTo(final @NonNull Comment comment, long lastSeencommentRowId, int position) {
-            this.comment = comment;
-            bindCommon(comment, lastSeencommentRowId, position);
-            if (comment.media != null && !comment.media.isEmpty()) {
-                Media media = comment.media.get(0);
-                if (media.transferred == Media.TRANSFERRED_YES) {
-                    if (media.file != null) {
-                        String newPath = media.file.getAbsolutePath();
-                        if (!newPath.equals(audioPath)) {
-                            this.audioPath = media.file.getAbsolutePath();
-                            audioDurationLoader.load(seekTime, media);
-                            startObservingPlayback();
-                        }
-                    }
-                    controlButton.setVisibility(View.VISIBLE);
-                } else {
-                    controlButton.setVisibility(View.INVISIBLE);
-                }
-            }
-        }
-
-        private void startObservingPlayback() {
-            viewModel.getVoiceNotePlayer().getPlaybackState().observe(this, state -> {
+            playbackStateObserver = state -> {
                 if (state == null || audioPath == null || !audioPath.equals(state.playingTag)) {
                     return;
                 }
@@ -853,7 +828,56 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                         }
                     }
                 });
-            });
+            };
+        }
+
+        @Override
+        public void markAttach() {
+            super.markAttach();
+            startObservingPlayback();
+        }
+
+        @Override
+        public void markDetach() {
+            super.markDetach();
+            stopObservingPlayback();
+        }
+
+        @Override
+        public void markRecycled() {
+            super.markRecycled();
+            audioPath = null;
+            playing = false;
+            seekBar.setProgress(0);
+            controlButton.setImageResource(R.drawable.ic_play_arrow);
+        }
+
+        void bindTo(final @NonNull Comment comment, long lastSeencommentRowId, int position) {
+            this.comment = comment;
+            bindCommon(comment, lastSeencommentRowId, position);
+            if (comment.media != null && !comment.media.isEmpty()) {
+                Media media = comment.media.get(0);
+                if (media.transferred == Media.TRANSFERRED_YES) {
+                    if (media.file != null) {
+                        String newPath = media.file.getAbsolutePath();
+                        if (!newPath.equals(audioPath)) {
+                            this.audioPath = media.file.getAbsolutePath();
+                            audioDurationLoader.load(seekTime, media);
+                        }
+                    }
+                    controlButton.setVisibility(View.VISIBLE);
+                } else {
+                    controlButton.setVisibility(View.INVISIBLE);
+                }
+            }
+        }
+
+        private void startObservingPlayback() {
+            viewModel.getVoiceNotePlayer().getPlaybackState().observe(this, playbackStateObserver);
+        }
+
+        private void stopObservingPlayback() {
+            viewModel.getVoiceNotePlayer().getPlaybackState().removeObservers(this);
         }
 
     }
