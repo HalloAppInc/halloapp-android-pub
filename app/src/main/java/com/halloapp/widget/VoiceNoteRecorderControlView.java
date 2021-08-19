@@ -29,6 +29,8 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
     private int stateLockDistance;
     private int fadeDistance;
 
+    private int levitateDistance;
+
     private RecordingListener listener;
 
     public interface RecordingListener {
@@ -61,6 +63,9 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
     private static final int STATE_DONE = 4;
 
     private ValueAnimator enterAnimator;
+    private ValueAnimator levitateAnimator;
+
+    private float currentOffset;
 
     public void onTouch(MotionEvent event) {
         final int action = event.getActionMasked();
@@ -90,6 +95,9 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
         if (enterAnimator != null) {
             enterAnimator.cancel();
         }
+        if (levitateAnimator != null) {
+            levitateAnimator.cancel();
+        }
         voiceDelete.setTranslationX(0);
         voiceLock.setTranslationY(0);
         voiceDelete.setAlpha(0);
@@ -105,6 +113,21 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
             voiceDelete.setAlpha(value);
         });
         enterAnimator.start();
+
+        currentOffset = 0;
+        levitateAnimator = ValueAnimator.ofFloat(-1.0f, 0.5f);
+        levitateAnimator.setStartDelay(150);
+        levitateAnimator.setDuration(600);
+        levitateAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        levitateAnimator.setRepeatMode(ValueAnimator.REVERSE);
+        levitateAnimator.addUpdateListener(animation -> {
+            float value = (Float) animation.getAnimatedValue();
+            if (state == STATE_DEFAULT) {
+                currentOffset = value * levitateDistance;
+                voiceLock.setTranslationY(currentOffset);
+            }
+        });
+        levitateAnimator.start();
     }
 
     public void setRecordingListener(@Nullable RecordingListener listener) {
@@ -182,6 +205,10 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
             enterAnimator.cancel();
             enterAnimator = null;
         }
+        if (levitateAnimator != null) {
+            levitateAnimator.cancel();
+            levitateAnimator = null;
+        }
 
         voiceDelete.setAlpha(0);
         voiceLock.setAlpha(0);
@@ -189,8 +216,8 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
     }
 
     private void updateButtonsDefault() {
-        voiceLock.setTranslationY(0);
-        voiceDelete.setTranslationY(0);
+        voiceLock.setTranslationY(currentOffset);
+        voiceDelete.setTranslationX(0);
         voiceDelete.setAlpha(1);
         voiceLock.setAlpha(1);
         voiceVisualizerView.setAlpha(1);
@@ -266,6 +293,7 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
 
         fadeDistance = getContext().getResources().getDimensionPixelSize(R.dimen.voice_note_fade_distance);
         stateLockDistance = getContext().getResources().getDimensionPixelSize(R.dimen.voice_note_state_lock_distance);
+        levitateDistance = getContext().getResources().getDimensionPixelSize(R.dimen.voice_note_levitate_distance);
     }
 
     public void updateAmplitude(Integer amplitude) {

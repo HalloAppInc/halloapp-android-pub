@@ -97,5 +97,6 @@
     <dimen name="voice_note_circle_max_radius">160dp</dimen>
     <dimen name="voice_note_circle_min_radius">120dp</dimen>
     <dimen name="voice_note_circle_offset">24dp</dimen>
+    <dimen name="voice_note_levitate_distance">10dp</dimen>
 
 </resources>
