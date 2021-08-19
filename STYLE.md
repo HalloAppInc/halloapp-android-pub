@@ -103,10 +103,12 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.util.logs.Log;
+import com.halloapp.util.Preconditions;
 
 public abstract class TestActivity extends HalloActivity {
 
-    public static Intent open(@NonNull Context context, String testValue) {
+    public static Intent open(@NonNull Context context, @NonNull String testValue) {
+        Preconditions.checkNotNull(testValue);
         Intent intent = new Intent(context, TestActivity.class);
         intent.putExtra(EXTRA_TEST_VALUE, testValue);
         return intent;

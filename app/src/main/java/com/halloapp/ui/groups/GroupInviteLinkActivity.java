@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
@@ -25,12 +26,11 @@ public class GroupInviteLinkActivity extends HalloActivity {
 
     private static final String EXTRA_GROUP_ID = "group_id";
 
-    public static Intent newIntent(Context context, GroupId groupId) {
-        Intent i = new Intent(context, GroupInviteLinkActivity.class);
-
-        i.putExtra(EXTRA_GROUP_ID, groupId);
-
-        return i;
+    public static Intent newIntent(@NonNull Context context, @NonNull GroupId groupId) {
+        Preconditions.checkNotNull(groupId);
+        Intent intent = new Intent(context, GroupInviteLinkActivity.class);
+        intent.putExtra(EXTRA_GROUP_ID, groupId);
+        return intent;
     }
 
     private GroupInviteLinkViewModel viewModel;

@@ -61,6 +61,7 @@ public class GroupInfoActivity extends HalloActivity {
     private static final int REQUEST_CODE_ADD_MEMBERS = 1;
 
     public static Intent viewGroup(@NonNull Context context, @NonNull GroupId groupId) {
+        Preconditions.checkNotNull(groupId);
         Intent intent = new Intent(context, GroupInfoActivity.class);
         intent.putExtra(GROUP_ID, groupId);
         return intent;

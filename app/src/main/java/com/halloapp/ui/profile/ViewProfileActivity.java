@@ -17,6 +17,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 
 public class ViewProfileActivity extends HalloActivity {
@@ -24,6 +25,7 @@ public class ViewProfileActivity extends HalloActivity {
     private static final String EXTRA_USER_ID = "user_id";
 
     public static Intent viewProfile(@NonNull Context context, @NonNull UserId userId) {
+        Preconditions.checkNotNull(userId);
         Intent intent = new Intent(context, ViewProfileActivity.class);
         intent.putExtra(EXTRA_USER_ID, userId);
         return intent;

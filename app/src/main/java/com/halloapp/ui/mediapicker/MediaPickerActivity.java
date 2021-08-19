@@ -81,6 +81,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     }
 
     public static Intent pickForMessage(@NonNull Context context, @NonNull ChatId chatId, @Nullable String replyPostId, int replyPostMediaIndex) {
+        Preconditions.checkNotNull(chatId);
         final Intent intent = new Intent(context, MediaPickerActivity.class);
         intent.putExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_SEND);
         intent.putExtra(EXTRA_CHAT_ID, chatId);

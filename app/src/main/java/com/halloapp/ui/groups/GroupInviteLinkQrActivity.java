@@ -24,7 +24,9 @@ import com.halloapp.util.QrUtils;
 
 public class GroupInviteLinkQrActivity extends HalloActivity {
 
-    public static Intent newIntent(@NonNull Context context, String url, GroupId groupId) {
+    public static Intent newIntent(@NonNull Context context, @NonNull String url, @NonNull GroupId groupId) {
+        Preconditions.checkNotNull(url);
+        Preconditions.checkNotNull(groupId);
         Intent intent = new Intent(context, GroupInviteLinkQrActivity.class);
         intent.putExtra(EXTRA_URL_FOR_QR, url);
         intent.putExtra(EXTRA_GROUP_ID, groupId);
@@ -82,7 +84,7 @@ public class GroupInviteLinkQrActivity extends HalloActivity {
             }
         };
 
-        public GroupInviteQRViewModel(@NonNull Application application, String url, GroupId groupId) {
+        public GroupInviteQRViewModel(@NonNull Application application, @NonNull String url, @NonNull GroupId groupId) {
             super(application);
             this.url = url;
             this.groupId = groupId;

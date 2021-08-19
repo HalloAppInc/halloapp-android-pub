@@ -32,6 +32,7 @@ public class EditGroupDescriptionActivity extends HalloActivity {
     private static final String EXTRA_GROUP_ID = "group_id";
 
     public static Intent openEditGroupDescription(@NonNull Context context, @NonNull GroupId groupId) {
+        Preconditions.checkNotNull(groupId);
         Intent intent = new Intent(context, EditGroupDescriptionActivity.class);
         intent.putExtra(EXTRA_GROUP_ID, groupId);
         return intent;

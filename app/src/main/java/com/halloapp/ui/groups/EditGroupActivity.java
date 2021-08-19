@@ -56,6 +56,7 @@ public class EditGroupActivity extends HalloActivity {
     private ImageView tempAvatarView;
 
     public static Intent openEditGroup(@NonNull Context context, @NonNull GroupId groupId) {
+        Preconditions.checkNotNull(groupId);
         Intent intent = new Intent(context, EditGroupActivity.class);
         intent.putExtra(EXTRA_GROUP_ID, groupId.rawId());
         return intent;

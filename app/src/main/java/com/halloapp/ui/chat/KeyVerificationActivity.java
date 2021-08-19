@@ -41,6 +41,7 @@ import java.util.List;
 public class KeyVerificationActivity extends HalloActivity {
 
     public static Intent openKeyVerification(@NonNull Context context, @NonNull UserId userId) {
+        Preconditions.checkNotNull(userId);
         Intent intent = new Intent(context, KeyVerificationActivity.class);
         intent.putExtra(EXTRA_USER_ID, userId);
         return intent;

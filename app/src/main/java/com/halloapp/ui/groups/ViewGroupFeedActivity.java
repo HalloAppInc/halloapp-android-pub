@@ -52,6 +52,7 @@ public class ViewGroupFeedActivity extends HalloActivity {
     private static final String EXTRA_FROM_CONTENT_COMPOSER = "from_content_composer";
 
     public static Intent viewFeed(@NonNull Context context, @NonNull GroupId groupId) {
+        Preconditions.checkNotNull(groupId);
         Intent intent = new Intent(context, ViewGroupFeedActivity.class);
         intent.putExtra(EXTRA_GROUP_ID, groupId);
         return intent;

@@ -32,6 +32,7 @@ public class IntentUtils {
     private static final String WHATSAPP_BUSINESS_PACKAGE = "com.whatsapp.w4b";
 
     public static Intent createSmsIntent(@NonNull String phoneNumber, @Nullable String text) {
+        Preconditions.checkNotNull(phoneNumber);
         Uri smsUri = Uri.parse("smsto:" + phoneNumber);
         Intent smsIntent = new Intent(Intent.ACTION_SENDTO, smsUri);
         smsIntent.putExtra(Intent.EXTRA_TEXT, text);
@@ -41,6 +42,7 @@ public class IntentUtils {
     }
 
     public static Intent createWhatsAppIntent(@NonNull String phoneNumber, @Nullable String text, boolean forBusiness) {
+        Preconditions.checkNotNull(phoneNumber);
         Uri.Builder builder = Uri.parse("https://wa.me/" + phoneNumber).buildUpon();
         if (text != null) {
             builder.appendQueryParameter("text", text);
@@ -89,6 +91,7 @@ public class IntentUtils {
 
     // Create a chooser intent for app's that rely on phone numbers to identify people
     public static Intent createSmsChooserIntent(@NonNull Context context, @NonNull String title, @NonNull String phoneNumber, @Nullable String text) {
+        Preconditions.checkNotNull(title);
         String defaultSmsPackage = Telephony.Sms.getDefaultSmsPackage(context);
         boolean fbIsDefaultSms = FB_MESSENGER_PACKAGE.equals(defaultSmsPackage);
 

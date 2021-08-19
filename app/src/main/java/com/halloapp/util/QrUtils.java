@@ -26,7 +26,7 @@ public class QrUtils {
         return Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
     }
 
-    public static Bitmap encode(String url) {
+    public static Bitmap encode(@NonNull String url) {
         try {
             BitMatrix bitMatrix = new QRCodeWriter().encode(url, BarcodeFormat.QR_CODE, QR_CODE_DIMENSION, QR_CODE_DIMENSION);
             return bitMatrixToBitmap(bitMatrix);
