@@ -361,9 +361,6 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             }
         }
         Collections.sort(socialActionEvents, ((o1, o2) -> {
-            if (o1.seen != o2.seen) {
-                return o1.seen ? 1 : -1;
-            }
             return -Long.compare(o1.timestamp, o2.timestamp);
         }));
 
