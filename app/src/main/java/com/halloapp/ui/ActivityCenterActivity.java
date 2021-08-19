@@ -52,6 +52,7 @@ public class ActivityCenterActivity extends HalloActivity {
     private PostThumbnailLoader postThumbnailLoader;
     private RecyclerView listView;
     private View emptyView;
+    private MenuItem markAllReadMenuItem;
 
     private ActivityCenterViewModel viewModel;
 
@@ -79,7 +80,10 @@ public class ActivityCenterActivity extends HalloActivity {
 
         viewModel = new ViewModelProvider(this).get(ActivityCenterViewModel.class);
 
-        viewModel.socialHistory.getLiveData().observe(this, this::setSocialHistory);
+        viewModel.socialHistory.getLiveData().observe(this, history -> {
+            updateMenu(history.unseenCount > 0);
+            setSocialHistory(history);
+        });
         viewModel.contacts.getLiveData().observe(this, c -> {
             if (c != null) {
                 adapter.setContacts(c);
@@ -107,11 +111,16 @@ public class ActivityCenterActivity extends HalloActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_center_menu, menu);
-        MenuItem menuItem = menu.findItem(R.id.mark_all_read);
-        SpannableString ss = new SpannableString(getString(R.string.mark_all_read));
-        ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), R.color.color_secondary)), 0, ss.length(), 0);
-        menuItem.setTitle(ss);
+        markAllReadMenuItem = menu.findItem(R.id.mark_all_read);
+        updateMenu(false);
         return true;
+    }
+
+    private void updateMenu(boolean unseenContent) {
+        SpannableString ss = new SpannableString(getString(R.string.mark_all_read));
+        ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), unseenContent ? R.color.color_secondary : R.color.disabled_text)), 0, ss.length(), 0);
+        markAllReadMenuItem.setTitle(ss);
+        markAllReadMenuItem.setEnabled(unseenContent);
     }
 
     @Override
