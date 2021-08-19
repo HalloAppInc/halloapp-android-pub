@@ -615,10 +615,14 @@ public class ContentDb {
         return postsDb.getComments(postId, start, count);
     }
 
-
     @WorkerThread
     @NonNull List<Comment> getCommentsFlat(@NonNull String postId, int start, int count) {
         return postsDb.getCommentsFlat(postId, start, count);
+    }
+
+    @WorkerThread
+    @NonNull int getCommentCount(@NonNull String postId) {
+        return postsDb.getCommentCount(postId);
     }
 
     /*

@@ -1167,6 +1167,18 @@ class PostsDb {
         return comments;
     }
 
+    @WorkerThread
+    @NonNull int getCommentCount(@NonNull String postId) {
+        final String sql = "SELECT 0 FROM " + CommentsTable.TABLE_NAME +" WHERE " + CommentsTable.COLUMN_POST_ID + "=?";
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        int count = 0;
+        try (final Cursor cursor = db.rawQuery(sql, new String [] {postId})) {
+            count = cursor.getCount();
+        }
+        Log.i("ContentDb.getCommentCount: count=" + count);
+        return count;
+    }
+
     // TODO(jack): Switch to this style for loading media everywhere and move to MediaDb (Terlici team adding)
     @WorkerThread
     private void fillMedia(@NonNull Comment comment) {

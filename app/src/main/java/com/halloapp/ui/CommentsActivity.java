@@ -250,33 +250,25 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
         final View replyIndicatorCloseButton = findViewById(R.id.reply_indicator_close);
 
         viewModel = new ViewModelProvider(this, new CommentsViewModel.Factory(getApplication(), postId)).get(CommentsViewModel.class);
-        viewModel.getCommentList().observe(this, comments -> {
-            adapter.submitList(comments, new Runnable() {
-                @Override
-                public void run() {
-                    commentsView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!scrollToComment) {
-                                return;
-                            }
-                            scrollToComment = false;
-                            long currentOldest = 0;
-                            int commentPosition = -1;
-                            for (int i = 0; i < comments.size(); i++) {
-                                Comment comment = comments.get(i);
-                                if (comment.senderUserId.isMe() && comment.timestamp > currentOldest) {
-                                    commentPosition = i;
-                                    currentOldest = comment.timestamp;
-                                }
-                            }
-                            if (commentPosition != -1) {
-                                commentsView.smoothScrollToPosition(commentPosition+1);
+
+        viewModel.getCommentList().observe(this,  comments -> {
+            if (viewModel.initialCommentListLoad) {
+                viewModel.initialCommentListLoad = false;
+                adapter.submitList(comments, () -> commentsView.scrollToPosition(comments.size()));
+            } else {
+                adapter.submitList(comments, () -> {
+                    if (viewModel.newComment != null) {
+                        for (int i = 0; i < comments.size(); i++) {
+                            if (comments.get(i).rowId == viewModel.newComment.rowId) {
+                                comments.loadAround(i);
+                                final int scrollIndex = i + 1;
+                                commentsView.postDelayed(() -> commentsView.smoothScrollToPosition(scrollIndex), Constants.COMMENTS_SCROLL_DELAY);
                             }
                         }
-                    });
-                }
-            });
+                        viewModel.newComment = null;
+                    }
+                });
+            }
         });
 
         viewModel.lastSeenCommentRowId.getLiveData().observe(this, rowId -> adapter.setLastSeenCommentRowId(rowId == null ? -1 : rowId));

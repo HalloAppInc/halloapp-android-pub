@@ -94,6 +94,9 @@ class CommentsViewModel extends AndroidViewModel {
     private final VoiceNoteRecorder voiceNoteRecorder;
     private final VoiceNotePlayer voiceNotePlayer;
 
+    public Comment newComment = null;
+    public boolean initialCommentListLoad = true;
+
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
         @Override
@@ -116,6 +119,9 @@ class CommentsViewModel extends AndroidViewModel {
                 Post parentPost = comment.getParentPost();
                 if (parentPost != null) {
                     contentDb.setCommentsSeen(comment.postId);
+                }
+                if (comment.senderUserId.isMe()) {
+                    newComment = comment;
                 }
                 invalidateDataSource();
             }
