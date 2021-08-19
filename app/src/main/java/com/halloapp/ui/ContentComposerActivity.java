@@ -317,7 +317,7 @@ public class ContentComposerActivity extends HalloActivity {
             mediaVerticalScrollView.setShouldScrollToBottom(hasFocus);
         });
 
-        if (replyPostId != null) {
+        if (replyPostId != null || !isMediaPost) {
             editText.requestFocus();
         }
 
