@@ -94,6 +94,7 @@
     <color name="voice_note_circle">#E6CAE3FF</color>
     <color name="voice_note_droplet_bg">@color/color_secondary</color>
     <color name="voice_draft_button">#777260</color>
+    <color name="voice_draft_bg">@color/black_10</color>
 
     <color name="selected_chat_highlight">@color/color_secondary_10_alpha</color>
 
