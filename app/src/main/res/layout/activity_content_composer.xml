@@ -210,7 +210,7 @@
                                 <com.halloapp.widget.MentionableEntry
                                     android:id="@+id/entry_card"
                                     android:layout_width="match_parent"
-                                    android:layout_height="0dp"
+                                    android:layout_height="wrap_content"
                                     android:minHeight="@dimen/entry_card_min_height"
                                     android:layout_weight="1"
                                     android:background="@null"
@@ -344,7 +344,7 @@
             <com.halloapp.widget.MentionableEntry
                 android:id="@+id/entry_bottom"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:minHeight="@dimen/entry_bottom_unfocused_min_height"
                 android:maxHeight="@dimen/entry_bottom_max_height"
                 android:scrollbars="vertical"
