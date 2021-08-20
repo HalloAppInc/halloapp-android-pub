@@ -537,7 +537,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                     });
                 } else {
                     contactLoader.cancel(infoView);
-                    bindPostCaption(getString(R.string.you), post);
+                    bindOwnPostCaption(post);
                 }
             }
 
@@ -551,6 +551,26 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                             infoView.setText(getString(R.string.post_preview_no_caption, sender));
                         } else {
                             infoView.setText(getString(R.string.post_preview_with_caption, sender, text));
+                        }
+                    }
+
+                    @Override
+                    public void showPreview(TextView tv, CharSequence text) {
+                        infoView.setText("");
+                    }
+                });
+            }
+
+            private void bindOwnPostCaption(@NonNull Post post) {
+                textContentLoader.load(infoView, post, new TextContentLoader.TextDisplayer() {
+                    @Override
+                    public void showResult(TextView tv, CharSequence text) {
+                        if (post.isRetracted()) {
+                            infoView.setText(getString(R.string.post_preview_retracted_by_you));
+                        } else if (TextUtils.isEmpty(post.text) || post.type == Post.TYPE_FUTURE_PROOF) {
+                            infoView.setText(getString(R.string.post_preview_no_caption_by_you));
+                        } else {
+                            infoView.setText(getString(R.string.post_preview_with_caption_by_you, text));
                         }
                     }
 

@@ -587,6 +587,9 @@
     <string name="post_preview_no_caption">%s shared a post</string>
     <string name="post_preview_retracted">%s deleted a post</string>
     <string name="post_preview_with_caption">%1$s: %2$s</string>
+    <string name="post_preview_no_caption_by_you">You shared a post</string>
+    <string name="post_preview_retracted_by_you">You deleted a post</string>
+    <string name="post_preview_with_caption_by_you">You: %s</string>
     <string name="composer_sharing_message">Sending to %s</string>
     <string name="composer_sharing_post">Sharing with %s</string>
     <plurals name="max_video_length">
