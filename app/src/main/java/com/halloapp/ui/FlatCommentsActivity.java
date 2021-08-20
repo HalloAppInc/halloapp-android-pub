@@ -200,6 +200,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flat_comments);
 
+        Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
         setExitSharedElementCallback(new SharedElementCallback() {
             @Override
             public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {

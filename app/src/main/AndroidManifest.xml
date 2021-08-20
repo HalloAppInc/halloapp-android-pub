@@ -264,7 +264,7 @@
         <activity
             android:name=".ui.FlatCommentsActivity"
             android:label="@string/comments"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize"/>
 
         <activity
