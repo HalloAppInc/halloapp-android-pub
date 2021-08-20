@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/reply_bubble"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:paddingStart="12dp"
+    android:paddingEnd="6dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="5dp"
+    app:layout_constraintStart_toEndOf="@id/avatar"
+    app:layout_constraintTop_toTopOf="parent"
+    android:layout_marginEnd="60dp"
+    android:background="@drawable/comment_reply_bubble"
+    android:layout_marginTop="8dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintWidth_default="wrap"
+    app:layout_constraintHorizontal_bias="0"
+    android:orientation="horizontal"
+    tools:visibility="visible"
+    tools:layout_width="wrap_content"
+    android:visibility="gone">
+
+    <TextView
+        android:id="@+id/reply_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="12sp"
+        android:textColor="@color/comment_reply_text"
+        android:paddingStart="0dp"
+        android:paddingEnd="6dp"
+        android:layout_gravity="center_vertical"
+        tools:text="Whaaaaaaat?"/>
+
+    <ImageView
+        android:id="@+id/reply_thumbnail"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:scaleType="centerCrop"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="1dp"
+        android:visibility="gone"/>
+
+</LinearLayout>

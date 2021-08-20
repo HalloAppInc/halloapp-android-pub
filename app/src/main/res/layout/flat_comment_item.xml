@@ -20,36 +20,7 @@
         app:layout_constraintTop_toTopOf="@+id/comment"
         tools:src="@color/color_primary_dark"/>
 
-    <FrameLayout
-        android:id="@+id/reply_bubble"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        app:layout_constraintStart_toEndOf="@id/avatar"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginEnd="60dp"
-        android:background="@drawable/comment_reply_bubble"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_default="wrap"
-        app:layout_constraintHorizontal_bias="0"
-        tools:visibility="visible"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/reply_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:textSize="12sp"
-            android:textColor="@color/comment_reply_text"
-            tools:text="Whaaaaaaat?"/>
-
-    </FrameLayout>
+    <include layout="@layout/flat_comment_reply_bubble" />
 
     <LinearLayout
         android:id="@+id/comment"

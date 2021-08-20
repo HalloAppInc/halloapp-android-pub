@@ -9,11 +9,13 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Outline;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
+import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -22,6 +24,8 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.text.style.DynamicDrawableSpan;
+import android.text.style.ImageSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TextAppearanceSpan;
 import android.text.style.URLSpan;
@@ -38,6 +42,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -91,6 +96,7 @@ import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.PostAttributionLayout;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.ActivityUtils;
+import com.halloapp.util.DrawableUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
@@ -142,7 +148,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private FlatCommentsViewModel viewModel;
 
     private String replyCommentId;
-    private UserId replyUserId;
 
     private MentionableEntry editText;
     private MentionPickerView mentionPickerView;
@@ -253,8 +258,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
 
         final View replyIndicator = findViewById(R.id.reply_indicator);
-        final TextView replyIndicatorText = findViewById(R.id.reply_indicator_text);
-        final View replyIndicatorCloseButton = findViewById(R.id.reply_indicator_close);
+        final TextView replyNameView = replyIndicator.findViewById(R.id.reply_name);
+        final View replyIndicatorCloseButton = findViewById(R.id.reply_close);
 
         viewModel = new ViewModelProvider(this, new FlatCommentsViewModel.Factory(getApplication(), postId)).get(FlatCommentsViewModel.class);
         viewModel.getCommentList().observe(this, comments -> {
@@ -280,16 +285,75 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         viewModel.lastSeenCommentRowId.getLiveData().observe(this, rowId -> adapter.setLastSeenCommentRowId(rowId == null ? -1 : rowId));
 
-        viewModel.replyContact.observe(this, contact -> {
-            if (contact == null) {
+        viewModel.getReply().observe(this, reply -> {
+            if (reply == null) {
                 replyIndicator.setVisibility(View.GONE);
-            } else {
-                replyIndicator.setVisibility(View.VISIBLE);
-                if (contact.userId != null && contact.userId.isMe()) {
-                    replyIndicatorText.setText(R.string.reply_to_self);
-                } else {
-                    replyIndicatorText.setText(getString(R.string.reply_to_contact, contact.getDisplayName()));
+                return;
+            }
+            replyIndicator.setVisibility(View.VISIBLE);
+            contactLoader.load(replyNameView, reply.comment.senderUserId);
+            TextView replyTextView = replyIndicator.findViewById(R.id.reply_text);
+            textContentLoader.load(replyTextView, reply.comment);
+            final ImageView replyMediaIconView = replyIndicator.findViewById(R.id.reply_media_icon);
+            final ImageView replyMediaThumbView = replyIndicator.findViewById(R.id.reply_media_thumb);
+
+            audioDurationLoader.cancel(replyTextView);
+            if (0 < reply.comment.media.size()) {
+                replyMediaThumbView.setVisibility(View.VISIBLE);
+                replyMediaThumbView.setOutlineProvider(new ViewOutlineProvider() {
+                    @Override
+                    public void getOutline(View view, Outline outline) {
+                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.comment_media_list_corner_radius));
+                    }
+                });
+                replyMediaThumbView.setClipToOutline(true);
+                final Media media = reply.comment.media.get(0);
+                mediaThumbnailLoader.load(replyMediaThumbView, media);
+                replyMediaIconView.setVisibility(View.VISIBLE);
+                switch (media.type) {
+                    case Media.MEDIA_TYPE_IMAGE: {
+                        replyMediaIconView.setImageResource(R.drawable.ic_camera);
+                        if (TextUtils.isEmpty(reply.comment.text)) {
+                            replyTextView.setText(R.string.photo);
+                        }
+                        break;
+                    }
+                    case Media.MEDIA_TYPE_VIDEO: {
+                        replyMediaIconView.setImageResource(R.drawable.ic_video);
+                        if (TextUtils.isEmpty(reply.comment.text)) {
+                            replyTextView.setText(R.string.video);
+                        }
+                        break;
+                    }
+                    case Media.MEDIA_TYPE_AUDIO: {
+                        replyMediaIconView.setImageResource(R.drawable.ic_keyboard_voice);
+                        replyMediaThumbView.setVisibility(View.GONE);
+                        final String voiceNote = getString(R.string.voice_note);
+                        audioDurationLoader.load(replyTextView, reply.comment.media.get(0).file, new ViewDataLoader.Displayer<TextView, Long>() {
+                            @Override
+                            public void showResult(@NonNull TextView view, @Nullable Long result) {
+                                if (result != null) {
+                                    replyTextView.setText(getString(R.string.voice_note_preview, StringUtils.formatVoiceNoteDuration(FlatCommentsActivity.this, result)));
+                                }
+                            }
+
+                            @Override
+                            public void showLoading(@NonNull TextView view) {
+                                replyTextView.setText(voiceNote);
+                            }
+                        });
+                        break;
+                    }
+                    case Media.MEDIA_TYPE_UNKNOWN:
+                    default: {
+                        replyMediaIconView.setImageResource(R.drawable.ic_media_collection);
+                        replyTextView.setText(reply.comment.text);
+                        break;
+                    }
                 }
+            } else {
+                replyMediaThumbView.setVisibility(View.GONE);
+                replyMediaIconView.setVisibility(View.GONE);
             }
         });
 
@@ -709,7 +773,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(KEY_REPLY_USER_ID, replyUserId == null ? null : replyUserId.rawId());
         outState.putString(KEY_REPLY_COMMENT_ID, replyCommentId);
     }
 
@@ -743,21 +806,18 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         if (rawUserId == null || commentId == null) {
             return;
         }
-        replyUserId = new UserId(rawUserId);
         replyCommentId = commentId;
-        viewModel.loadReplyUser(replyUserId);
+        viewModel.loadReply(commentId);
     }
 
     private void updateReplyIndicator(@NonNull UserId userId, @NonNull String commentId) {
-        replyUserId = userId;
         replyCommentId = commentId;
-        viewModel.loadReplyUser(userId);
+        viewModel.loadReply(commentId);
     }
 
     private void resetReplyIndicator() {
-        replyUserId = null;
         replyCommentId = null;
-        viewModel.resetReplyUser();
+        viewModel.loadReply(null);
         viewModel.resetCommentMediaUri();
     }
 
@@ -971,6 +1031,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         final View replyArrow;
         final View replyBubble;
         final TextView replyTextView;
+        final ImageView replyThumbView;
         final TextView nameView;
         final TextView groupView;
         final PostAttributionLayout attributionLayout;
@@ -992,6 +1053,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             replyBubble = v.findViewById(R.id.reply_bubble);
             replyArrow = v.findViewById(R.id.reply_arrow);
             replyTextView = v.findViewById(R.id.reply_text);
+            replyThumbView = v.findViewById(R.id.reply_thumbnail);
             nameView = itemView.findViewById(R.id.name);
             groupView = itemView.findViewById(R.id.group_name);
             attributionLayout = itemView.findViewById(R.id.post_header);
@@ -1087,28 +1149,13 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             final Integer textLimit = textLimits.get(comment.rowId);
             commentView.setLineLimit(textLimit != null ? textLimit : Constants.TEXT_POST_LINE_LIMIT);
             commentView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
-            commentView.setText(getCommentText(comment, false));
+            setCommentText(commentView, comment, false);
             commentView.setOnReadMoreListener((view, limit) -> {
                 textLimits.put(comment.rowId, limit);
                 return false;
             });
 
-            boolean hasParent = comment.parentCommentId != null;
-            if (replyArrow != null) {
-                replyArrow.setVisibility(hasParent ? View.VISIBLE : View.GONE);
-            }
-            if (replyBubble != null) {
-                replyBubble.setVisibility(hasParent ? View.VISIBLE : View.GONE);
-            }
-            if (hasParent) {
-                if (comment.parentComment != null) {
-                    replyTextView.setText(getCommentText(comment.parentComment, true));
-                } else {
-                    SpannableString s = new SpannableString(getString(R.string.reply_original_comment_not_found));
-                    s.setSpan(new StyleSpan(Typeface.ITALIC), 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    replyTextView.setText(s);
-                }
-            }
+            bindParentComment(comment.parentCommentId != null, comment.parentComment);
 
             progressView.setVisibility(comment.transferred ? View.GONE : View.VISIBLE);
             TimeFormatter.setTimePostsFormat(timeView, comment.timestamp);
@@ -1127,6 +1174,43 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 replyButton.setVisibility(View.GONE);
             } else {
                 replyButton.setVisibility(View.VISIBLE);
+            }
+        }
+
+        void bindParentComment(boolean hasParent, @Nullable Comment parentComment) {
+            if (replyArrow != null) {
+                replyArrow.setVisibility(hasParent ? View.VISIBLE : View.GONE);
+            }
+            if (replyBubble != null) {
+                replyBubble.setVisibility(hasParent ? View.VISIBLE : View.GONE);
+            }
+            mediaThumbnailLoader.cancel(replyThumbView);
+            if (hasParent) {
+                if (parentComment != null) {
+                    setCommentText(replyTextView, parentComment, true);
+                    if (parentComment.media.size() > 0) {
+                        Media media = parentComment.media.get(0);
+                        if (media.type != Media.MEDIA_TYPE_AUDIO) {
+                            replyThumbView.setVisibility(View.VISIBLE);
+                            replyThumbView.setOutlineProvider(new ViewOutlineProvider() {
+                                @Override
+                                public void getOutline(View view, Outline outline) {
+                                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.comment_media_list_corner_radius));
+                                }
+                            });
+                            replyThumbView.setClipToOutline(true);
+                            mediaThumbnailLoader.load(replyThumbView, media);
+                        } else {
+                            replyThumbView.setVisibility(View.GONE);
+                        }
+                    } else {
+                        replyThumbView.setVisibility(View.GONE);
+                    }
+                } else {
+                    SpannableString s = new SpannableString(getString(R.string.reply_original_comment_not_found));
+                    s.setSpan(new StyleSpan(Typeface.ITALIC), 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    replyTextView.setText(s);
+                }
             }
         }
     }
@@ -1334,10 +1418,16 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         }
     }
 
-    private CharSequence getCommentText(@NonNull Comment comment, boolean isReply) {
+    private void setCommentText(@NonNull TextView textView, @NonNull Comment comment, boolean isReply) {
         SpannableStringBuilder builder = new SpannableStringBuilder();
         builder.append(createAuthorSpan(comment.senderContact, (v) -> v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), comment.senderContact.userId))));
         CharSequence commentText = "";
+        boolean separateWithColon = true;
+        audioDurationLoader.cancel(textView);
+        boolean setCommentText = true;
+        if (isReply) {
+            textView.setMaxLines(1);
+        }
         switch (comment.type) {
             case Comment.TYPE_FUTURE_PROOF: {
                 if (isReply) {
@@ -1358,34 +1448,59 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 break;
             }
             case Comment.TYPE_USER: {
+                SpannableStringBuilder mediaText = new SpannableStringBuilder();
+                boolean showMediaIcon = isReply && !comment.media.isEmpty();
+                if (showMediaIcon) {
+                    textView.setMaxLines(2);
+                    separateWithColon = false;
+                    mediaText.append("\n");
+                    mediaText.append(getMediaIconSpan(comment.media.get(0).type, textView.getLineHeight()));
+                }
                 if (!TextUtils.isEmpty(comment.text)) {
-                    commentText = MentionsFormatter.insertMentions(comment.getText(), comment.mentions, (v, mention) -> {
+                    mediaText.append(MentionsFormatter.insertMentions(comment.getText(), comment.mentions, (v, mention) -> {
                         v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), mention.userId));
-                    });
-                } else if (!comment.media.isEmpty()) {
+                    }));
+                } else if (showMediaIcon){
                     switch (comment.media.get(0).type) {
                         case Media.MEDIA_TYPE_IMAGE: {
-                            commentText = getString(R.string.photo);
+                            mediaText.append(getString(R.string.photo));
                             break;
                         }
                         case Media.MEDIA_TYPE_VIDEO: {
-                            commentText = getString(R.string.video);
+                            mediaText.append(getString(R.string.video));
                             break;
                         }
                         case Media.MEDIA_TYPE_AUDIO: {
-                            commentText = getString(R.string.voice_note);
                             break;
                         }
-                        default: {
-                            commentText = "";
-                        }
+                        default:
+                            break;
                     }
                 }
+                commentText = mediaText;
                 break;
             }
             case Comment.TYPE_VOICE_NOTE: {
                 if (isReply) {
-                    commentText = getString(R.string.voice_note);
+                    setCommentText = false;
+                    builder.append(": ");
+                    builder.append(getMediaIconSpan(Media.MEDIA_TYPE_AUDIO, textView.getLineHeight()));
+                    audioDurationLoader.load(textView, comment.media.get(0).file, new ViewDataLoader.Displayer<TextView, Long>() {
+                        @Override
+                        public void showResult(@NonNull TextView view, @Nullable Long result) {
+                            if (result != null) {
+                                builder.append(getString(R.string.voice_note_preview, StringUtils.formatVoiceNoteDuration(view.getContext(), result)));
+                                view.setText(builder);
+                            }
+                        }
+
+                        @Override
+                        public void showLoading(@NonNull TextView view) {
+                            SpannableStringBuilder loading = new SpannableStringBuilder(builder);
+                            loading.append(getString(R.string.voice_note));
+                            view.setText(loading);
+                        }
+                    });
                 }
                 break;
             }
@@ -1393,10 +1508,40 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 commentText = "";
         }
         if (!TextUtils.isEmpty(commentText)) {
-            builder.append(": ");
+            if (separateWithColon) {
+                builder.append(": ");
+            }
             builder.append(commentText);
         }
-        return builder;
+        if (setCommentText) {
+            textView.setText(builder);
+        }
+    }
+
+    private CharSequence getMediaIconSpan(@Media.MediaType int mediaType, int size) {
+        int alignment = DynamicDrawableSpan.ALIGN_BOTTOM;
+        @DrawableRes int drawableRes;
+        switch (mediaType) {
+            case Media.MEDIA_TYPE_AUDIO: {
+                drawableRes = R.drawable.ic_keyboard_voice;
+                break;
+            }
+            case Media.MEDIA_TYPE_IMAGE: {
+                drawableRes = R.drawable.ic_image;
+                break;
+            }
+            case Media.MEDIA_TYPE_VIDEO: {
+                drawableRes = R.drawable.ic_video;
+                break;
+            }
+            default:
+                return "";
+        }
+        SpannableString spannableString = new SpannableString("i");
+        Drawable icon = DrawableUtils.getTintedDrawable(this, drawableRes, R.color.comment_reply_text);
+        icon.setBounds(0, 0, size, size);
+        spannableString.setSpan(new ImageSpan(icon, DynamicDrawableSpan.ALIGN_BOTTOM), 0, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannableString;
     }
 
     private CharSequence createAuthorSpan(Contact contact, @Nullable View.OnClickListener listener) {

@@ -37,6 +37,7 @@
     <dimen name="contacts_list_item_height">72dp</dimen>
     <dimen name="groups_list_item_height">72dp</dimen>
     <dimen name="code_edit_box_size">50dp</dimen>
+    <dimen name="comment_media_icon_size">12sp</dimen>
     <dimen name="contacts_list_item_header_text_size">20sp</dimen>
     <dimen name="groups_list_item_header_text_size">20sp</dimen>
     <dimen name="contacts_list_item_header_width">56dp</dimen>
