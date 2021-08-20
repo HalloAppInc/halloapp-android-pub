@@ -90,6 +90,9 @@
 
     <color name="message_timestamp">#C3DDFF</color>
     <color name="message_timestamp_outgoing">@color/secondary_text</color>
+    <color name="e2e_message_bg">#736F4F</color>
+    <color name="e2e_message_text">@color/white_80</color>
+    <color name="new_messages">#686D74</color>
 
     <color name="group_me">#C3DDFF</color>
     <color name="group_me_bg">#495D78</color>

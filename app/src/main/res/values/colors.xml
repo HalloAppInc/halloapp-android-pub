@@ -52,10 +52,12 @@
     <color name="card_background">@color/cardview_light_background</color>
     <color name="dummy_post_background">@color/cardview_light_background</color>
     <color name="dummy_post_content_background">#DBD7CA</color>
-    <color name="date_separator">#1A73E8</color>
-    <color name="date_separator_text">@color/white_70</color>
-    <color name="new_messages">#FDE79B</color>
-    <color name="new_messages_text">#B99515</color>
+    <color name="date_separator">@color/message_background_incoming</color>
+    <color name="date_separator_text">@color/secondary_text</color>
+    <color name="new_messages">#DFDFD7</color>
+    <color name="e2e_message_bg">#FDE79B</color>
+    <color name="e2e_message_text">@color/black_80</color>
+    <color name="new_messages_text">@color/secondary_text</color>
     <color name="reply_indicator_background">#cccccc</color>
     <color name="text_post_thumbnail_color">#ff000000</color>
     <color name="fab_background">#ff4500</color>

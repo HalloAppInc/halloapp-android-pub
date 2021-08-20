@@ -7,15 +7,19 @@
 
     <TextView
         android:id="@+id/new_messages"
-        android:layout_width="wrap_content"
-        android:layout_height="22sp"
+        android:layout_width="match_parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="6dp"
         android:gravity="center"
         android:paddingStart="18dp"
         android:paddingEnd="18dp"
-        android:textAppearance="?textAppearanceBody1"
+        android:paddingTop="7dp"
+        android:paddingBottom="7dp"
+        android:textSize="15sp"
         android:background="@drawable/new_messages_separator_background"
         android:textColor="@color/new_messages_text"
         android:singleLine="true"
@@ -28,33 +32,24 @@
         android:layout_height="wrap_content"
         android:gravity="center">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintWidth_percent=".6"
-            app:layout_constraintHorizontal_bias=".5"
+            app:layout_constraintWidth_max="280sp"
             android:orientation="horizontal"
-            android:background="@drawable/new_messages_separator_background"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
+            android:background="@drawable/e2e_message_background"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:layout_marginStart="44dp"
             android:layout_marginEnd="44dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="6dp">
-
-            <ImageView
-                android:id="@+id/lock"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:src="@drawable/ic_settings_privacy"
-                app:tint="@color/black_54"/>
 
             <TextView
                 android:id="@+id/e2e_text"
@@ -63,10 +58,10 @@
                 android:textAppearance="?textAppearanceBody1"
                 android:textSize="12sp"
                 android:gravity="center"
-                android:textColor="@color/new_messages_text"
+                android:textColor="@color/e2e_message_text"
                 android:text="@string/e2e_notice"/>
 
-        </LinearLayout>
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -78,6 +73,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="6dp"
         android:gravity="center"
+        android:textSize="12sp"
         android:paddingStart="18dp"
         android:paddingEnd="18dp"
         android:background="@drawable/date_separator_background"

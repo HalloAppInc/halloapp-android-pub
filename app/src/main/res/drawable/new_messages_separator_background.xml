@@ -2,7 +2,7 @@
     android:shape="rectangle">
 
     <corners
-        android:radius="14sp"/>
+        android:radius="10dp"/>
 
     <solid
         android:color="@color/new_messages" />

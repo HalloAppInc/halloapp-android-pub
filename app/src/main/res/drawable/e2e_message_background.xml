@@ -5,7 +5,7 @@
         android:radius="7dp"/>
 
     <solid
-        android:color="@color/date_separator" />
+        android:color="@color/e2e_message_bg" />
 
     <stroke android:width="0.5dp"
         android:color="@color/message_background_border"/>
