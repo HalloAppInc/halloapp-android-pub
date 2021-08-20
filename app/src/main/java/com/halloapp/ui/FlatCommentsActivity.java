@@ -206,9 +206,10 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 RecyclerView comments = findViewById(R.id.comments);
                 String name = names.get(0);
 
-                if (commentsFsePosition == 0) {
+                if (commentsFsePosition == 0 && postContentContainer != null) {
+
                     Post post = Preconditions.checkNotNull(viewModel.post.getValue());
-                    RecyclerView gallery = comments.findViewWithTag(post);
+                    RecyclerView gallery = postContentContainer.findViewById(R.id.media);
                     RecyclerView.LayoutManager layoutManager = Preconditions.checkNotNull(gallery.getLayoutManager());
 
                     for (int i = 0; i < post.media.size(); ++i) {
@@ -669,11 +670,11 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             int position = data.getIntExtra(MediaExplorerActivity.EXTRA_SELECTED, 0);
             Post post = viewModel.post.getValue();
 
-            if (!post.id.equals(contentId)) {
+            if (!post.id.equals(contentId) || postContentContainer == null) {
                 return;
             }
 
-            RecyclerView gallery = findViewById(R.id.comments).findViewWithTag(post);
+            RecyclerView gallery = postContentContainer.findViewById(R.id.media);
             RecyclerView.LayoutManager layoutManager = Preconditions.checkNotNull(gallery.getLayoutManager());
             View view = layoutManager.findViewByPosition(position);
 
