@@ -66,6 +66,7 @@
     <color name="message_background_border">@color/black_10</color>
     <color name="message_background_reply_incoming">#F3F2EF</color>
     <color name="message_background_reply_outgoing">#DBE6F1</color>
+    <color name="chat_entry_background">#FFFFFF</color>
     <color name="message_text_incoming">#de000000</color>
     <color name="message_text_outgoing">@color/color_secondary</color>
     <color name="contacts_list_item_header_text_color">@color/color_secondary</color>

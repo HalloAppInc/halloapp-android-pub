@@ -266,7 +266,7 @@
                     app:layout_constraintEnd_toStartOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:elevation="3dp"
-                    android:background="@color/card_background"
+                    android:background="@color/chat_entry_background"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 

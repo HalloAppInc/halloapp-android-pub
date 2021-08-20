@@ -967,7 +967,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
     private void updateReplyColors(@NonNull UserId userId) {
         replyPreviewContainer.setBackgroundResource(R.drawable.reply_frame_background);
-        replyPreviewContainer.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.message_background_reply_outgoing)));
+        replyPreviewContainer.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.message_background_reply_incoming)));
         replyNameView.setTextColor(ContextCompat.getColor(this, R.color.secondary_text));
     }
 
