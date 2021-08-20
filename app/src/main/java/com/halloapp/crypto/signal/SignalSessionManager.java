@@ -13,7 +13,6 @@ import com.halloapp.crypto.AutoCloseLock;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
-import com.halloapp.crypto.keys.KeyManager;
 import com.halloapp.crypto.keys.OneTimePreKey;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
@@ -43,7 +42,7 @@ public class SignalSessionManager {
     private static final long MIN_TIME_BETWEEN_KEY_DOWNLOAD_ATTEMPTS = 5 * DateUtils.SECOND_IN_MILLIS;
 
     private final Connection connection;
-    private final KeyManager keyManager;
+    private final SignalKeyManager signalKeyManager;
     private final EncryptedKeyStore encryptedKeyStore;
     private final SignalMessageCipher signalMessageCipher;
     private final ConcurrentMap<UserId, AutoCloseLock> lockMap = new ConcurrentHashMap<>();
@@ -54,19 +53,19 @@ public class SignalSessionManager {
         if (instance == null) {
             synchronized (SignalSessionManager.class) {
                 if (instance == null) {
-                    instance = new SignalSessionManager(Connection.getInstance(), KeyManager.getInstance(), EncryptedKeyStore.getInstance());
+                    instance = new SignalSessionManager(Connection.getInstance(), SignalKeyManager.getInstance(), EncryptedKeyStore.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private SignalSessionManager(Connection connection, KeyManager keyManager, EncryptedKeyStore encryptedKeyStore) {
+    private SignalSessionManager(Connection connection, SignalKeyManager signalKeyManager, EncryptedKeyStore encryptedKeyStore) {
         this.connection = connection;
-        this.keyManager = keyManager;
+        this.signalKeyManager = signalKeyManager;
         this.encryptedKeyStore = encryptedKeyStore;
 
-        this.signalMessageCipher = new SignalMessageCipher(keyManager, encryptedKeyStore);
+        this.signalMessageCipher = new SignalMessageCipher(signalKeyManager, encryptedKeyStore);
     }
 
     // Should be used in a try-with-resources block for auto-release
@@ -89,7 +88,7 @@ public class SignalSessionManager {
                 if (sessionSetupInfo == null || sessionSetupInfo.identityKey == null) {
                     throw new CryptoException("no_identity_key");
                 }
-                keyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
+                signalKeyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
                 encryptedKeyStore.setPeerResponded(peerUserId, true);
             } else if (sessionSetupInfo != null && sessionSetupInfo.identityKey != null) {
                 PublicEdECKey peerIdentityKey = encryptedKeyStore.getPeerPublicIdentityKey(peerUserId);
@@ -108,7 +107,7 @@ public class SignalSessionManager {
                 Log.i("Teardown key matched; skipping session reset");
             } else {
                 Log.i("Resetting session because teardown key did not match");
-                keyManager.tearDownSession(peerUserId);
+                signalKeyManager.tearDownSession(peerUserId);
                 setUpSession(peerUserId);
             }
             throw e;
@@ -140,7 +139,7 @@ public class SignalSessionManager {
 
     public void tearDownSession(final @NonNull UserId peerUserId) {
         try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
-            keyManager.tearDownSession(peerUserId);
+            signalKeyManager.tearDownSession(peerUserId);
         } catch (InterruptedException e) {
             Log.e("Interrupted trying to tear down session", e);
         }
@@ -208,7 +207,7 @@ public class SignalSessionManager {
                     }
                 }
 
-                keyManager.setUpSession(peerUserId, peerIdentityKey, peerSignedPreKey, oneTimePreKey);
+                signalKeyManager.setUpSession(peerUserId, peerIdentityKey, peerSignedPreKey, oneTimePreKey);
             } catch (InvalidProtocolBufferException e) {
                 throw new CryptoException("invalid_protobuf", e);
             } catch (InterruptedException | ObservableErrorException e) {

@@ -20,7 +20,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
-import com.halloapp.crypto.keys.KeyManager;
+import com.halloapp.crypto.signal.SignalKeyManager;
 import com.halloapp.crypto.keys.PrivateXECKey;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
@@ -300,7 +300,7 @@ public class Debug {
                     case DEBUG_MENU_SKIP_OUTBOUND_MESSAGE_KEY: {
                         bgWorkers.execute(() -> {
                             try {
-                                KeyManager.getInstance().getNextOutboundMessageKey((UserId)chatId);
+                                SignalKeyManager.getInstance().getNextOutboundMessageKey((UserId)chatId);
                             } catch (Exception e) {
                                 Log.w("DEBUG error skipping outbound message key", e);
                             }

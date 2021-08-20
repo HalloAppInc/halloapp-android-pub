@@ -4,7 +4,6 @@ import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
-import com.halloapp.crypto.keys.KeyManager;
 import com.halloapp.crypto.keys.MessageKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.crypto.keys.XECKey;
@@ -22,11 +21,11 @@ import javax.crypto.spec.SecretKeySpec;
 class SignalMessageCipher {
     private static final int COUNTER_SIZE_BYTES = 4;
 
-    private final KeyManager keyManager;
+    private final SignalKeyManager signalKeyManager;
     private final EncryptedKeyStore encryptedKeyStore;
 
-    SignalMessageCipher(KeyManager keyManager, EncryptedKeyStore encryptedKeyStore) {
-        this.keyManager = keyManager;
+    SignalMessageCipher(SignalKeyManager signalKeyManager, EncryptedKeyStore encryptedKeyStore) {
+        this.signalKeyManager = signalKeyManager;
         this.encryptedKeyStore = encryptedKeyStore;
     }
 
@@ -43,7 +42,7 @@ class SignalMessageCipher {
         int previousChainLength = ByteBuffer.wrap(previousChainLengthBytes).getInt();
         int currentChainIndex = ByteBuffer.wrap(currentChainIndexBytes).getInt();
 
-        byte[] inboundMessageKey = keyManager.getInboundMessageKey(peerUserId, ephemeralKey, ephemeralKeyId, previousChainLength, currentChainIndex);
+        byte[] inboundMessageKey = signalKeyManager.getInboundMessageKey(peerUserId, ephemeralKey, ephemeralKeyId, previousChainLength, currentChainIndex);
 
         byte[] aesKey = Arrays.copyOfRange(inboundMessageKey, 0, 32);
         byte[] hmacKey = Arrays.copyOfRange(inboundMessageKey, 32, 64);
@@ -82,13 +81,13 @@ class SignalMessageCipher {
         boolean match = Arrays.equals(lastTeardownKey, newTeardownKey);
         if (!match) {
             encryptedKeyStore.setOutboundTeardownKey(peerUserId, newTeardownKey);
-            keyManager.tearDownSession(peerUserId);
+            signalKeyManager.tearDownSession(peerUserId);
         }
         throw new CryptoException(reason, match, newTeardownKey);
     }
 
     byte[] convertForWire(byte[] message, UserId peerUserId) throws CryptoException {
-        MessageKey messageKey = keyManager.getNextOutboundMessageKey(peerUserId);
+        MessageKey messageKey = signalKeyManager.getNextOutboundMessageKey(peerUserId);
         byte[] outboundMessageKey = messageKey.getKeyMaterial();
 
         byte[] aesKey = Arrays.copyOfRange(outboundMessageKey, 0, 32);

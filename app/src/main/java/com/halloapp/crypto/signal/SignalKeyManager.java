@@ -1,4 +1,4 @@
-package com.halloapp.crypto.keys;
+package com.halloapp.crypto.signal;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -6,7 +6,13 @@ import androidx.annotation.Nullable;
 import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
-import com.halloapp.crypto.signal.SessionSetupInfo;
+import com.halloapp.crypto.keys.EncryptedKeyStore;
+import com.halloapp.crypto.keys.MessageKey;
+import com.halloapp.crypto.keys.OneTimePreKey;
+import com.halloapp.crypto.keys.PrivateXECKey;
+import com.halloapp.crypto.keys.PublicEdECKey;
+import com.halloapp.crypto.keys.PublicXECKey;
+import com.halloapp.crypto.keys.XECKey;
 import com.halloapp.id.UserId;
 import com.halloapp.util.logs.Log;
 
@@ -15,9 +21,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 
-public class KeyManager {
+public class SignalKeyManager {
 
-    private static KeyManager instance;
+    private static SignalKeyManager instance;
 
     private static final byte[] HKDF_ROOT_KEY_INFO = "HalloApp".getBytes(StandardCharsets.UTF_8);
     private static final byte[] HKDF_INPUT_MESSAGE_KEY = new byte[]{1};
@@ -25,23 +31,23 @@ public class KeyManager {
 
     private final EncryptedKeyStore encryptedKeyStore;
 
-    public static KeyManager getInstance() {
+    public static SignalKeyManager getInstance() {
         if (instance == null) {
-            synchronized (KeyManager.class) {
+            synchronized (SignalKeyManager.class) {
                 if (instance == null) {
-                    instance = new KeyManager(EncryptedKeyStore.getInstance());
+                    instance = new SignalKeyManager(EncryptedKeyStore.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private KeyManager(EncryptedKeyStore encryptedKeyStore) {
+    private SignalKeyManager(EncryptedKeyStore encryptedKeyStore) {
         this.encryptedKeyStore = encryptedKeyStore;
     }
 
     public void tearDownSession(UserId peerUserId) {
-        Log.i("KeyManager tearing down session with user " + peerUserId);
+        Log.i("SignalKeyManager tearing down session with user " + peerUserId);
         encryptedKeyStore.clearPeerVerified(peerUserId);
         encryptedKeyStore.clearSessionAlreadySetUp(peerUserId);
         encryptedKeyStore.clearLastDownloadAttempt(peerUserId);
@@ -193,7 +199,7 @@ public class KeyManager {
         int latestStoredChainIndex = encryptedKeyStore.getInboundCurrentChainIndex(peerUserId);
 
         if (ephemeralKeyId < latestStoredEphemeralKeyId || (ephemeralKeyId == latestStoredEphemeralKeyId && currentChainIndex < latestStoredChainIndex)) {
-            Log.i("KeyManager retrieving stored message key");
+            Log.i("SignalKeyManager retrieving stored message key");
             byte[] messageKey = encryptedKeyStore.removeSkippedMessageKey(peerUserId, ephemeralKeyId, currentChainIndex);
             if (messageKey == null) {
                 throw new CryptoException("old_message_key_not_found");

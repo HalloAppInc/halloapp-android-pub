@@ -14,7 +14,7 @@ import com.halloapp.content.PostsManager;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.signal.SessionSetupInfo;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
-import com.halloapp.crypto.keys.KeyManager;
+import com.halloapp.crypto.signal.SignalKeyManager;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.crypto.signal.SignalSessionManager;
@@ -66,7 +66,7 @@ public class MainConnectionObserver extends Connection.Observer {
     private final Connection connection;
     private final ContactsDb contactsDb;
     private final GroupsSync groupsSync;
-    private final KeyManager keyManager;
+    private final SignalKeyManager signalKeyManager;
     private final Preferences preferences;
     private final AvatarLoader avatarLoader;
     private final PostsManager postsManager;
@@ -92,7 +92,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             Connection.getInstance(),
                             ContactsDb.getInstance(),
                             GroupsSync.getInstance(context),
-                            KeyManager.getInstance(),
+                            SignalKeyManager.getInstance(),
                             Preferences.getInstance(),
                             AvatarLoader.getInstance(context),
                             PostsManager.getInstance(),
@@ -120,7 +120,7 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull Connection connection,
             @NonNull ContactsDb contactsDb,
             @NonNull GroupsSync groupsSync,
-            @NonNull KeyManager keyManager,
+            @NonNull SignalKeyManager signalKeyManager,
             @NonNull Preferences preferences,
             @NonNull AvatarLoader avatarLoader,
             @NonNull PostsManager postsManager,
@@ -141,7 +141,7 @@ public class MainConnectionObserver extends Connection.Observer {
         this.connection = connection;
         this.contactsDb = contactsDb;
         this.groupsSync = groupsSync;
-        this.keyManager = keyManager;
+        this.signalKeyManager = signalKeyManager;
         this.preferences = preferences;
         this.avatarLoader = avatarLoader;
         this.postsManager = postsManager;
@@ -284,12 +284,12 @@ public class MainConnectionObserver extends Connection.Observer {
              byte[] lastMessageEphemeralKey = encryptedKeyStore.getInboundTeardownKey(peerUserId);
              if (!Arrays.equals(lastMessageEphemeralKey, messageEphemeralKey)) {
                  encryptedKeyStore.setInboundTeardownKey(peerUserId, messageEphemeralKey);
-                 keyManager.tearDownSession(peerUserId);
+                 signalKeyManager.tearDownSession(peerUserId);
                  if (sessionSetupKey.length == 0) {
                     Log.i("Got empty session setup key; cannot process rereq session setup from older client");
                  } else {
                      try {
-                         keyManager.receiveSessionSetup(peerUserId, new PublicXECKey(sessionSetupKey), 1, new SessionSetupInfo(peerIdentityKey, otpkId));
+                         signalKeyManager.receiveSessionSetup(peerUserId, new PublicXECKey(sessionSetupKey), 1, new SessionSetupInfo(peerIdentityKey, otpkId));
                          encryptedKeyStore.setPeerResponded(peerUserId, true);
                      } catch (CryptoException e) {
                          Log.e("Failed to reset session on message rerequest", e);
