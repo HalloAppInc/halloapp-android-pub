@@ -7,6 +7,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.text.TextUtils;
@@ -23,7 +24,6 @@ import android.widget.TextView;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -32,33 +32,25 @@ import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.R;
-import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.id.GroupId;
-import com.halloapp.id.UserId;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.groups.GroupParticipants;
-import com.halloapp.util.ListFormatter;
-import com.halloapp.util.Preconditions;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.TimeUtils;
-import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.MessageTextLayout;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import me.relex.circleindicator.CircleIndicator3;
 
@@ -138,6 +130,10 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         decryptStatusView = itemView.findViewById(R.id.decrypt_status);
         newMessagesSeparator = itemView.findViewById(R.id.new_messages);
         e2eNoticeView = itemView.findViewById(R.id.e2e_notice);
+        if (e2eNoticeView != null) {
+            TextView e2eText = e2eNoticeView.findViewById(R.id.e2e_text);
+            e2eText.setText(StringUtils.replaceBoldWithMedium(Html.fromHtml(itemView.getContext().getString(R.string.e2e_notice))));
+        }
         nameView = itemView.findViewById(R.id.name);
         textView = itemView.findViewById(R.id.text);
         mediaPagerView = itemView.findViewById(R.id.media_pager);

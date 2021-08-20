@@ -4,15 +4,13 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.telephony.PhoneNumberUtils;
 import android.text.BidiFormatter;
-import android.text.Html;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
-import android.text.style.CharacterStyle;
 import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
+import android.text.style.TypefaceSpan;
 import android.text.style.URLSpan;
 import android.view.View;
 
@@ -61,6 +59,20 @@ public class StringUtils {
             ret[i] = (byte)Integer.parseInt(b, 16);
         }
         return ret;
+    }
+
+    public static Spanned replaceBoldWithMedium(@NonNull CharSequence str) {
+        SpannableStringBuilder current = new SpannableStringBuilder(str);
+        StyleSpan[] spans = current.getSpans(0, str.length(), StyleSpan.class);
+        for (StyleSpan span : spans) {
+            int start = current.getSpanStart(span);
+            int end = current.getSpanEnd(span);
+            current.removeSpan(span);
+
+            TypefaceSpan typefaceSpan = new TypefaceSpan("sans-serif-medium");
+            current.setSpan(typefaceSpan, start, end, 0);
+        }
+        return current;
     }
 
     public static Spanned replaceLink(@NonNull Context context, @NonNull CharSequence str, String url, Runnable onClick) {
