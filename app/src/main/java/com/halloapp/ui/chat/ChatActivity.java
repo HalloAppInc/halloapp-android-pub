@@ -152,6 +152,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private MentionableEntry editText;
     private MentionPickerView mentionPickerView;
     private View replyContainer;
+    private View replyPreviewContainer;
     private RecyclerView chatView;
 
     private TextView titleView;
@@ -526,6 +527,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         });
 
         replyContainer = findViewById(R.id.reply_container);
+        replyPreviewContainer = findViewById(R.id.reply_preview_container);
         viewModel.reply.getLiveData().observe(this, reply -> {
             if (reply == null) {
                 replyContainer.setVisibility(View.GONE);
@@ -964,9 +966,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void updateReplyColors(@NonNull UserId userId) {
-        replyContainer.setBackgroundResource(R.drawable.reply_frame_background);
-        replyContainer.setBackgroundTintList(ColorStateList.valueOf(GroupParticipants.getParticipantReplyBgColor(this, userId)));
-        replyNameView.setTextColor(GroupParticipants.getParticipantNameColor(this, userId));
+        replyPreviewContainer.setBackgroundResource(R.drawable.reply_frame_background);
+        replyPreviewContainer.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.message_background_reply_outgoing)));
+        replyNameView.setTextColor(ContextCompat.getColor(this, R.color.secondary_text));
     }
 
     private void updateMessageReply(@Nullable Message message) {
