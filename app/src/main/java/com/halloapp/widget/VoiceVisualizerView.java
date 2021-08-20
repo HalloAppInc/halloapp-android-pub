@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.R;
 import com.halloapp.media.VoiceNoteRecorder;
+import com.halloapp.util.Rtl;
 
 public class VoiceVisualizerView extends View {
 
@@ -25,6 +26,8 @@ public class VoiceVisualizerView extends View {
     private int currentAmplitude;
 
     private ValueAnimator amplitudeAnimator;
+
+    private boolean rtl;
 
     public VoiceVisualizerView(Context context) {
         super(context);
@@ -51,6 +54,8 @@ public class VoiceVisualizerView extends View {
         maxCircleRadius = getResources().getDimensionPixelSize(R.dimen.voice_note_circle_max_radius);
 
         centerOffset = getResources().getDimensionPixelSize(R.dimen.voice_note_circle_offset);
+
+        rtl = Rtl.isRtl(getContext());
     }
 
     @Override
@@ -60,7 +65,8 @@ public class VoiceVisualizerView extends View {
         radius = Math.min(maxCircleRadius, radius);
         radius *= scale;
 
-        canvas.drawCircle(getWidth() - centerOffset, getHeight() - centerOffset, radius , paint);
+        float centerX = rtl ? centerOffset : getWidth() - centerOffset;
+        canvas.drawCircle(centerX, getHeight() - centerOffset, radius, paint);
     }
 
     public void updateAmplitude(int amplitude) {

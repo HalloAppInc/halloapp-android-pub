@@ -14,6 +14,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 
 import com.halloapp.R;
+import com.halloapp.util.Rtl;
 
 public class VoiceNoteRecorderControlView extends FrameLayout {
 
@@ -67,6 +68,8 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
 
     private float currentOffset;
 
+    private boolean rtl;
+
     public void onTouch(MotionEvent event) {
         final int action = event.getActionMasked();
         if (action == MotionEvent.ACTION_DOWN) {
@@ -81,7 +84,11 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
                 }
             }
         } else if (action == MotionEvent.ACTION_MOVE) {
-            updateUI(event.getRawX() - pos[0], event.getRawY() - pos[1]);
+            float adjustedX = event.getRawX() - pos[0];
+            if (rtl) {
+                adjustedX = getWidth() - adjustedX;
+            }
+            updateUI(adjustedX, event.getRawY() - pos[1]);
         } else if (action == MotionEvent.ACTION_CANCEL) {
             if (state != STATE_DONE && state != STATE_LOCKED) {
                 listener.onCancel();
@@ -249,7 +256,7 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
         } else {
             voiceLock.setAlpha(1.0f - Math.max(0, dX  / fadeDistance));
         }
-        voiceDelete.setTranslationX(-dX);
+        voiceDelete.setTranslationX(rtl ? dX : -dX);
     }
 
     private void updateButtonsLocking(float x, float y) {
@@ -287,6 +294,8 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
         voiceDelete = findViewById(R.id.voice_delete);
 
         voiceVisualizerView = findViewById(R.id.visualizer);
+
+        rtl = Rtl.isRtl(getContext());
 
         swipeToCancelDistance = getContext().getResources().getDimensionPixelSize(R.dimen.voice_note_cancel_distance);
         swipeToLockDistance = getContext().getResources().getDimensionPixelSize(R.dimen.voice_note_lock_distance);
