@@ -1944,16 +1944,19 @@ class MessagesDb {
         Log.i("ContentDb.setMessagePlayed: chatId=" + chatId + " senderUserId=" + senderUserId + " messageId=" + messageId);
         final ContentValues msgValues = new ContentValues();
         msgValues.put(MessagesTable.COLUMN_STATE, Message.STATE_INCOMING_PLAYED);
+        int rowsUpdated;
         try {
-            db.updateWithOnConflict(MessagesTable.TABLE_NAME, msgValues,
-                    MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "='' AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?",
-                    new String [] {chatId.rawId(), messageId},
+            rowsUpdated = db.updateWithOnConflict(MessagesTable.TABLE_NAME, msgValues,
+                    MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "=? AND " + MessagesTable.COLUMN_MESSAGE_ID + "=? AND " + MessagesTable.COLUMN_STATE + "!=" + Message.STATE_INCOMING_PLAYED,
+                    new String [] {chatId.rawId(), senderUserId.rawId(), messageId},
                     SQLiteDatabase.CONFLICT_ABORT);
         } catch (SQLException ex) {
             Log.e("ContentDb.setIncomingMessageSeen: failed");
             throw ex;
         }
-
+        if (rowsUpdated == 0) {
+            return false;
+        }
         final ContentValues receiptValues = new ContentValues();
         receiptValues.put(OutgoingPlayedReceiptsTable.COLUMN_CHAT_ID, chatId.rawId());
         receiptValues.put(OutgoingPlayedReceiptsTable.COLUMN_SENDER_USER_ID, senderUserId.rawId());
