@@ -109,6 +109,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -143,6 +145,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
     private static final int ADD_ANIMATION_DURATION = 60;
     private static final int MOVE_ANIMATION_DURATION = 125;
+    private static final int LAST_SEEN_MARQUEE_DELAY = 2000;
 
     private final ContentDraftManager contentDraftManager = ContentDraftManager.getInstance();
 
@@ -197,6 +200,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private boolean scrollUpOnDataLoaded;
     private boolean scrollToNewMessageOnDataLoaded = true;
     private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
+    private Timer lastSeenMarqueeTimer;
 
     private MenuItem blockMenuItem;
     private final Map<Long, Integer> replyMessageMediaIndexMap = new HashMap<>();
@@ -736,6 +740,18 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private void setSubtitle(@Nullable CharSequence subtitle) {
         subtitleView.setVisibility(subtitle == null ? View.GONE : View.VISIBLE);
         subtitleView.setText(subtitle);
+
+        if (lastSeenMarqueeTimer != null) {
+            lastSeenMarqueeTimer.cancel();
+        }
+        lastSeenMarqueeTimer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                subtitleView.post(() -> subtitleView.setSelected(true));
+            }
+        };
+        lastSeenMarqueeTimer.schedule(timerTask, LAST_SEEN_MARQUEE_DELAY);
     }
 
     @Override
