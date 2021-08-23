@@ -181,12 +181,12 @@ Kosten deines Service-Providers könnten anfallen."</string>
         <item quantity="one">"HalloApp läuft in %d Tag ab"</item>
         <item quantity="other">"HalloApp läuft in %d Tagen ab"</item>
     </plurals>
-    <string name="app_expiration_download_button">"Aktualisierung herunterladen"</string>
+    <string name="app_expiration_download_button">"Update herunterladen"</string>
     <string name="app_expired_explanation">"Diese HalloApp-Version ist veraltet und kann nicht länger genutzt werden. 
 Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="app_expiration_no_play_store">"Google Play ist nicht installiert"</string>
     <string name="refresh_contacts">"Kontakte aktualisieren"</string>
-    <string name="post_retracted_with_name">"%s hat den Beitrag gelöscht"</string>
+    <string name="post_retracted_with_name">"%s hat einen Beitrag gelöscht"</string>
     <string name="post_retracted_by_me">"Du hast deinen Beitrag gelöscht"</string>
     <string name="post_retracted_placeholder">"Dieser Beitrag wurde gelöscht"</string>
     <string name="message_retracted_placeholder">"Diese Nachricht wurde gelöscht"</string>
@@ -351,7 +351,7 @@ Version: %2$s
         <item quantity="other">"Du hast diese Woche noch %s Einladungen"</item>
     </plurals>
     <string name="invite_friends_title">"Freunde &amp; Familie einladen"</string>
-    <string name="invite_title">"Einladung"</string>
+    <string name="invite_title">"Einladen"</string>
     <string name="settings_invite_option">"Zu HalloApp einladen"</string>
     <string name="invite_already_on_halloapp">"Nutzt bereits HalloApp"</string>
     <string name="invite_invalid_phone_number">"Ungültige Handynummer"</string>
@@ -372,20 +372,20 @@ Version: %2$s
     <!-- Fuzzy -->
     <string name="group_remove_member">"Aus der Gruppe entfernen"</string>
     <string name="group_promote_to_admin">"Zum Admin machen"</string>
-    <string name="promote_admin_in_progress">"Admin-Übertragung läuft"</string>
-    <string name="failed_promote_admin">"Fehler bei Vergabe von Admin-Rechten, probiere es später noch einmal"</string>
+    <string name="promote_admin_in_progress">"Admin-Status wird hinzugefügt…"</string>
+    <string name="failed_promote_admin">"Admin-Status kann nicht geändert werden, probiere es später noch einmal"</string>
 
     <!-- Option for removing a user from the list of admins of a group -->
     <!-- Fuzzy -->
-    <string name="group_demote_from_admin">"Adminstatus entfernen"</string>
-    <string name="demote_admin_in_progress">"Admin wird entfernt…"</string>
-    <string name="failed_demote_admin">"Fehler bei der Admin-Entfernung, probiere es später noch einmal"</string>
+    <string name="group_demote_from_admin">"Admin-Status entfernen"</string>
+    <string name="demote_admin_in_progress">"Admin-Status wird entfernt…"</string>
+    <string name="failed_demote_admin">"Admin-Status kann nicht entfernt werden, probiere es später noch einmal"</string>
     <string name="remove_member_in_progress">"Mitglied entfernen…"</string>
-    <string name="failed_remove_member">"Fehler bei Löschung des Mitglieds, probiere es später noch einmal"</string>
+    <string name="failed_remove_member">"Das Mitglied kann nicht entfernt werden, probiere es später noch einmal"</string>
     <string name="leave_group">"Gruppe verlassen"</string>
     <plurals name="leave_group_plural">
-        <item quantity="one">"Verlasse die Gruppe"</item>
-        <item quantity="other">"Verlasse die Gruppen"</item>
+        <item quantity="one">"Gruppe verlassen"</item>
+        <item quantity="other">"Gruppen verlassen"</item>
     </plurals>
     <string name="leave_group_confirmation">"Möchtest du diese Gruppe verlassen?"</string>
     <plurals name="leave_multiple_groups_confirmation">
@@ -645,6 +645,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="export_account_data">"Meine Daten exportieren"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
+    <!-- Fuzzy -->
     <string name="e2e_notice">"Die Chats sind Ende-zu-Ende verschlüsselt und HalloApp hat keinen Zugriff darauf. Tippe hier, um mehr zu erfahren."</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
@@ -836,6 +837,9 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Shown above options when picking a new background color for a group -->
     <string name="group_background_color_pick">"Hintergrundfarbe auswählen"</string>
+    <string name="post_preview_no_caption_by_you">"You shared a post"</string>
+    <string name="post_preview_retracted_by_you">"You deleted a post"</string>
+    <string name="post_preview_with_caption_by_you">"You: %s"</string>
 <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; hat deinen Beitrag kommentiert"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; und &lt;b&gt;%2$s&lt;/b&gt; haben deinen Beitrag kommentiert"</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und &lt;b&gt;%3$s&lt;/b&gt; haben deinen Beitrag kommentiert"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; hat &lt;b&gt;%2$s&lt;/b&gt;'s Beitrag kommentiert"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; und &lt;b&gt;%2$s&lt;/b&gt; haben &lt;b&gt;%3$s&lt;/b&gt;'s Beitrag kommentiert"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und &lt;b&gt;%3$s&lt;/b&gt; haben &lt;b&gt;%4$s&lt;/b&gt;'s Beitrag kommentiert"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; hat einen eigenen Beitrag kommentiert"</string><string name="delete_group">"Gruppe löschen"</string><plurals name="commented_on_your_post_4">
         <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und %3$d weitere Person haben deinen Beitrag kommentiert"</item>
         <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; und %3$d weitere Personen haben deinen Beitrag kommentiert"</item>

@@ -672,6 +672,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</str
     <string name="export_account_data">"Verilerimi dışa aktar"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
+    <!-- Fuzzy -->
     <string name="e2e_notice">"Sohbetler uçtan uca şifrelenir ve HalloApp'in bunlara erişimi yoktur. Daha fazlasını öğrenmek için dokun."</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
@@ -862,6 +863,9 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Shown above options when picking a new background color for a group -->
     <string name="group_background_color_pick">"Pick a color"</string>
+    <string name="post_preview_no_caption_by_you">"You shared a post"</string>
+    <string name="post_preview_retracted_by_you">"You deleted a post"</string>
+    <string name="post_preview_with_caption_by_you">"You: %s"</string>
 <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt;, gönderine yorum yaptı"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; ve  &lt;b&gt;%2$s&lt;/b&gt; gönderine yorum yaptılar"</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; ve &lt;b&gt;%3$s&lt;/b&gt; gönderine yorum yaptılar"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt;,  &lt;b&gt;%2$s&lt;/b&gt; kişisinin gönderisine yorum yaptı"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; ve &lt;b&gt;%2$s&lt;/b&gt;,  &lt;b&gt;%3$s&lt;/b&gt; kişisinin gönderisine yorum yaptılar"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; ve &lt;b&gt;%3$s&lt;/b&gt;,  &lt;b&gt;%4$s&lt;/b&gt; kişisinin gönderisine yorum yaptılar"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt;, kendi gönderisine yorum yaptı"</string><string name="delete_group">"Grubu sil"</string><plurals name="commented_on_your_post_4">
         <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; ve %3$d farklı kişi, gönderine yorum yaptı"</item>
         <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; ve %3$d farklı kişi, gönderine yorum yaptı"</item>

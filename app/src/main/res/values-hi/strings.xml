@@ -601,7 +601,7 @@ Open the app settings screen to modify app permissions."</string>
     <string name="export_account_data">"Export my data"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
-    <string name="e2e_notice">"Chats are end-to-end encrypted and HalloApp does not have access to them. Tap to learn more."</string>
+    <string name="e2e_notice">"All messages on HalloApp are end-to-end encrypted. &lt;b&gt;Tap to learn more&lt;/b&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"View safety number"</string>
@@ -789,6 +789,9 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Shown above options when picking a new background color for a group -->
     <string name="group_background_color_pick">"Pick a color"</string>
+    <string name="post_preview_no_caption_by_you">"You shared a post"</string>
+    <string name="post_preview_retracted_by_you">"You deleted a post"</string>
+    <string name="post_preview_with_caption_by_you">"You: %s"</string>
 <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; commented on your post"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on your post"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; commented on their post"</string><string name="delete_group">"Delete group"</string><plurals name="commented_on_your_post_4">
         <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
         <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>

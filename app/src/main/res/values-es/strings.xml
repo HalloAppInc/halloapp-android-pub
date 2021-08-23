@@ -669,7 +669,8 @@ Abre la pantalla de ajustes de la aplicación para modificar los permisos."</str
     <string name="export_account_data">"Exportar mis datos"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
-    <string name="e2e_notice">"Las conversaciones están encriptadas de extremo a extremo y HalloApp no tiene acceso a ellas. Selecciona para saber más."</string>
+    <!-- Fuzzy -->
+    <string name="e2e_notice">"Las conversaciones están encriptadas de extremo a extremo y HalloApp no tiene acceso a ellas. &lt;b&gt;Selecciona para saber más&lt;/b&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"Ver claves de seguridad"</string>
@@ -860,6 +861,9 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
 
     <!-- Shown above options when picking a new background color for a group -->
     <string name="group_background_color_pick">"Pick a color"</string>
+    <string name="post_preview_no_caption_by_you">"You shared a post"</string>
+    <string name="post_preview_retracted_by_you">"You deleted a post"</string>
+    <string name="post_preview_with_caption_by_you">"You: %s"</string>
 <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; hizo un comentario en tu publicación"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; y &lt;b&gt;%2$s&lt;/b&gt; comentaron en tu publicación"</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; y &lt;b&gt;%3$s&lt;/b&gt; comentaron en tu publicación"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; comentó en la publicación de &lt;b&gt;%2$s&lt;/b&gt;"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; y &lt;b&gt;%2$s&lt;/b&gt; comentaron en la publicación de &lt;b&gt;%3$s&lt;/b&gt;"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, y &lt;b&gt;%3$s&lt;/b&gt; comentaron en la publicación de &lt;b&gt;%4$s&lt;/b&gt;"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt;comentó en su publicación"</string><string name="delete_group">"Eliminar el grupo"</string><plurals name="commented_on_your_post_4">
         <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; y %3$d comentaron en tu publicación"</item>
         <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; y %3$d otros comentaron en tu publicación"</item>

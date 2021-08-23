@@ -572,6 +572,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi"</string>
     <string name="export_account_data">"Ekspor data saya"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
+    <!-- Fuzzy -->
     <string name="e2e_notice">"Obrolan dienkripsi secara end-to-end dan HalloApp tidak memiliki akses terhadapnya. Ketuk untuk mempelajari lebih lanjut."</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
@@ -760,6 +761,9 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi."</string>
 
     <!-- Shown above options when picking a new background color for a group -->
     <string name="group_background_color_pick">"Pick a color"</string>
+    <string name="post_preview_no_caption_by_you">"You shared a post"</string>
+    <string name="post_preview_retracted_by_you">"You deleted a post"</string>
+    <string name="post_preview_with_caption_by_you">"You: %s"</string>
 <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; berkomentar di posting kamu"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; dan &lt;b&gt;%2$s&lt;/b&gt; berkomentar di posting kamu"</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, dan &lt;b&gt;%3$s&lt;/b&gt; berkomentar di posting kamu"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; berkomentar pada posting &lt;b&gt;%2$s&lt;/b&gt;"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; dan &lt;b&gt;%2$s&lt;/b&gt; berkomentar pada posting &lt;b&gt;%3$s&lt;/b&gt;"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, dan &lt;b&gt;%3$s&lt;/b&gt; berkomentar pada posting &lt;b&gt;%4$s&lt;/b&gt;"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; berkomentar di posting mereka"</string><string name="delete_group">"Hapus grup"</string><plurals name="commented_on_your_post_4">
         <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, dan %3$d lainnya berkomentar di posting kamu"</item>
     </plurals><plurals name="commented_on_someones_post_4">

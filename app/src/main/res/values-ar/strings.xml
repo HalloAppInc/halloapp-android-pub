@@ -34,6 +34,8 @@
     <string name="registration_code_invalid">"رمز التحقق غير صحيح، حاول مجدداً"</string>
     <string name="registration_failed">"تعذَر التحقق من رقم الهاتف، حاول مجدداً"</string>
     <string name="registration_failed_no_friends">"لا يمكن استخدام التطبيق الآن إلا إذا تمت دعوتك إليه. إذا كان أصدقاؤك أو أفراد أسرتك يستخدمون هالوآب، اطلب منهم دعوتك من خلال استعمال رقم هاتفك."</string>
+
+    <!-- can you use something that is international, i live in the US and had to google "Shucks" -->
     <string name="registration_failed_no_friends_title">"عذراً!"</string>
     <string name="type_a_message_hint">"اطبع رسالة"</string>
     <string name="write_a_description">"اكتب وصفاً"</string>
@@ -55,86 +57,87 @@
     <string name="groups_search_empty">"لم يتم العثور على مجموعات لـ '%s'"</string>
     <string name="contact_profile_empty">"ستظهر منشورات %s هنا"</string>
     <string name="invalid_phone_number">"رقم الهاتف غير صالح"</string>
-    <string name="share_option_post">"Post"</string>
-    <string name="share_option_message">"Message"</string>
+    <string name="share_option_post">"منشور"</string>
+    <string name="share_option_message">"رسالة"</string>
     <plurals name="max_post_media_items">
-        <item quantity="zero">" "</item>
-        <item quantity="one">"You can select up to %d media item per post"</item>
-        <item quantity="two">"You can select up to %d media item per post"</item>
-        <item quantity="few">"You can select up to %d media item per post"</item>
-        <item quantity="many">"You can select up to %d media item per post"</item>
-        <item quantity="other">"You can select up to %d media item per post"</item>
+        <item quantity="zero">"يمكنك اختيار %d من الوسائط لكل منشور "</item>
+        <item quantity="one">"يمكنك اختيار ملف وسائط %d لكل منشور "</item>
+        <item quantity="two">"يمكنك اختيار ملفي وسائط %d لكل منشور"</item>
+        <item quantity="few">"يمكنك اختيار %d ملفات وسائط لكل منشور"</item>
+        <item quantity="many">"يمكنك اختيار %d ملف وسائط لكل منشور"</item>
+        <item quantity="other">"يمكنك اختيار %d من ملفات الوسائط لكل منشور"</item>
     </plurals>
-    <string name="camera_record_audio_permission_rationale">"To take photos and record videos we need permission to access the camera and record audio on your device"</string>
-    <string name="camera_record_audio_permission_rationale_denied">"To take photos and record videos we need permission to access the camera and record audio on your device.
+    <string name="camera_record_audio_permission_rationale">"لالتقاط الصور ومقاطع الفيديو يجب أن تمنح التطبيق إذن الوصول إلى الكاميرا وتسجيل الصوت على جهازك"</string>
+    <string name="camera_record_audio_permission_rationale_denied">"لالتقاط الصور ومقاطع الفيديو يجب أن تمنح التطبيق إذن الوصول إلى الكاميرا وتسجيل الصوت على جهازك.
 
-Open the app settings screen to modify app permissions."</string>
-    <string name="contacts_permission_rationale">"To connect with your friends and family we need permission to access contacts on your device"</string>
-    <string name="contacts_permission_rationale_denied">"To connect with your friends and family we need permission to access contacts on your device.
+افتح شاشة إعدادات التطبيق لتعديل أذونات التطبيق."</string>
+    <string name="contacts_permission_rationale">"للتواصل مع أصدقائك وأفراد أسرتك يجب أن تمنح التطبيق إذن الوصول إلى جهات الاتصال على جهازك"</string>
+    <string name="contacts_permission_rationale_denied">"للتواصل مع أصدقائك وأفراد أسرتك يجب أن تمنح التطبيق إذن الوصول إلى جهات الاتصال على جهازك. 
 
-Open the app settings screen to modify app permissions."</string>
-    <string name="storage_permission_rationale">"To pick media we need permission to access your device storage"</string>
-    <string name="storage_permission_rationale_denied">"To pick media we need permission to access your device storage.
+افتح شاشة إعدادات التطبيق لتعديل أذونات التطبيق."</string>
+    <string name="storage_permission_rationale">"لاختيار الوسائط يجب أن تمنح التطبيق إذن الوصول إلى وحدة تخزين جهازك"</string>
+    <string name="storage_permission_rationale_denied">"لاختيار الوسائط يجب أن تمنح التطبيق إذن الوصول إلى وحدة تخزين جهازك.
 
-Open the app settings screen to modify app permissions."</string>
-    <string name="retry">"Retry"</string>
-    <string name="contact_rationale_upload">"In order to connect you with your friends and family we’ll need your permission to access your contacts. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
-    <string name="failed_to_initialize">"Failed to initialize"</string>
-    <string name="type_a_comment_hint">"Add a comment"</string>
-    <string name="comments">"Comments"</string>
-    <string name="reply">"Reply"</string>
-    <string name="close">"Close"</string>
-    <string name="reply_to_self">"Reply to myself"</string>
-    <string name="reply_to_contact">"Reply to %s"</string>
-    <string name="reply_original_not_found">"Original message not found"</string>
-    <string name="reply_original_post_not_found">"Original post not found"</string>
-    <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in their post"</string>
-    <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in a comment on your post"</string>
-    <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; mentioned you in a comment on their post"</string>
-    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; mentioned you in a comment on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string>
-    <string name="contact_hashing_faq_dialog_title">"Your privacy is our priority"</string>
-    <string name="contact_hashing_faq_dialog_info">"HalloApp only uses the phone number field to match you with your friends on HalloApp, and does not capture any additional data from your contact book."</string>
-    <string name="list_of_two">"%1$s and %2$s"</string>
+افتح شاشة إعدادات التطبيق لتعديل أذونات التطبيق."</string>
+    <string name="retry">"حاول مجدداً"</string>
+    <string name="contact_rationale_upload">"لنتمكن من وصلك بأصدقائك وأفراد أسرتك يجب أن تمنح التطبيق إذن الوصول إلى جهات اتصالك. &lt;a href=\"learn-more\"&gt;تعرّف على المزيد&lt;/a&gt; 
+"</string>
+    <string name="failed_to_initialize">"تعذّر بدء التهيئة"</string>
+    <string name="type_a_comment_hint">"إضافة تعليق"</string>
+    <string name="comments">"التعليقات"</string>
+    <string name="reply">"الرد"</string>
+    <string name="close">"إغلاق"</string>
+    <string name="reply_to_self">"الرد على نفسي"</string>
+    <string name="reply_to_contact">"الرد على %s"</string>
+    <string name="reply_original_not_found">"لم يتم العثور على الرسالة الأصلية"</string>
+    <string name="reply_original_post_not_found">"لم يتم العثور على المنشور الأصلي"</string>
+    <string name="mentioned_you_in_their_post">"تمت الإشارة إليك في منشور &lt;b&gt;%s&lt;/b&gt;"</string>
+    <string name="mentioned_you_in_comment_on_your_post">"تمت الإشارة إليك في ملاحظة &lt;b&gt;%s&lt;/b&gt; على منشورك"</string>
+    <string name="mentioned_you_in_comment_on_own_post">"تمت الإشارة إليك في ملاحظة &lt;b&gt;%s&lt;/b&gt; على منشورهم"</string>
+    <string name="mentioned_you_in_comment_on_someones_post">"تمت الإشارة إليك في ملاحظة &lt;b&gt;%s&lt;/b&gt; على منشور &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="contact_hashing_faq_dialog_title">"خصوصيتك من أولوياتنا"</string>
+    <string name="contact_hashing_faq_dialog_info">"يستخدم هالوآب فقط حقل رقم الهاتف لمطابقتك بأصدقائك على هالوآب، ولا يسجل أي بيانات إضافية من سجل جهات الاتصال الخاص بك."</string>
+    <string name="list_of_two">"%1$s من أصل %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
-    <string name="list_of_many_middle">", %s"</string>
-    <string name="list_of_many_end">", and %s"</string>
-    <string name="no_activity">"No activity"</string>
-    <string name="failed_to_load_media">"Failed to load media"</string>
-    <string name="settings">"Settings"</string>
-    <string name="send_logs">"Share feedback &amp; logs"</string>
-    <string name="terms_of_service">"Terms of service"</string>
-    <string name="privacy_policy">"Privacy policy"</string>
-    <string name="settings_block_list">"Blocked contacts"</string>
-    <string name="settings_feed_privacy">"Posts"</string>
-    <string name="settings_privacy">"Privacy"</string>
+    <string name="list_of_many_middle">"%s، "</string>
+    <string name="list_of_many_end">"، و%s"</string>
+    <string name="no_activity">"لا يوجد نشاط"</string>
+    <string name="failed_to_load_media">"تعذّر تحميل الوسائط"</string>
+    <string name="settings">"الإعدادات"</string>
+    <string name="send_logs">"إرسال التعليقات وسجلات الأداء"</string>
+    <string name="terms_of_service">"شروط الخدمة"</string>
+    <string name="privacy_policy">"سياسة الخصوصية"</string>
+    <string name="settings_block_list">"جهات الاتصال المحظورة"</string>
+    <string name="settings_feed_privacy">"المنشورات"</string>
+    <string name="settings_privacy">"الخصوصية"</string>
     <plurals name="contact_selection_subtitle">
-        <item quantity="zero">"%d contact selected"</item>
-        <item quantity="one">"%d contact selected"</item>
-        <item quantity="two">"%d contact selected"</item>
-        <item quantity="few">"%d contact selected"</item>
-        <item quantity="many">"%d contact selected"</item>
-        <item quantity="other">"%d contact selected"</item>
+        <item quantity="zero">"تم اختيار %d من جهات الاتصال"</item>
+        <item quantity="one">"تم اختيار جهة اتصال %d"</item>
+        <item quantity="two">"تم اختيار جهتي اتصال %d"</item>
+        <item quantity="few">"تم اختيار %d جهات اتصال"</item>
+        <item quantity="many">"تم اختيار %d جهة اتصال"</item>
+        <item quantity="other">"تم اختيار %d جهات اتصال "</item>
     </plurals>
     <plurals name="contact_maximum_selection">
-        <item quantity="zero">"You may select at most %d contact"</item>
-        <item quantity="one">"You may select at most %d contact"</item>
-        <item quantity="two">"You may select at most %d contact"</item>
-        <item quantity="few">"You may select at most %d contact"</item>
-        <item quantity="many">"You may select at most %d contact"</item>
-        <item quantity="other">"You may select at most %d contact"</item>
+        <item quantity="zero">"يمكنك اختيار %d من جهات الاتصال كحد أقصى"</item>
+        <item quantity="one">"يمكنك اختيار جهة اتصال %d كحد أقصى"</item>
+        <item quantity="two">"يمكنك اختيار جهتي اتصال %d كحد أقصى"</item>
+        <item quantity="few">"يمكنك اختيار %d جهات اتصال كحد أقصى"</item>
+        <item quantity="many">"يمكنك اختيار %d جهة اتصال كحد أقصى"</item>
+        <item quantity="other">"يمكنك اختيار %d جهة اتصال كحد أقصى"</item>
     </plurals>
-    <string name="no_contacts_selected_subtitle">"No contacts selected"</string>
-    <string name="help">"Help"</string>
-    <string name="about">"About"</string>
-    <string name="notify_posts">"Posts"</string>
-    <string name="notify_comments">"Comments"</string>
-    <string name="read_more">"read more"</string>
-    <string name="no_photos_or_videos_found">"No photos or videos found"</string>
-    <string name="gallery">"Gallery"</string>
-    <string name="avatar_picker_title">"Profile photo"</string>
-    <string name="group_avatar_picker_title">"Group avatar"</string>
-    <string name="other_media">"Other media"</string>
-    <string name="rotate">"Rotate"</string>
+    <string name="no_contacts_selected_subtitle">"لم يتم اختيار أي جهة اتصال"</string>
+    <string name="help">"المساعدة"</string>
+    <string name="about">"حول"</string>
+    <string name="notify_posts">"المنشورات"</string>
+    <string name="notify_comments">"التعليقات"</string>
+    <string name="read_more">"قراءة المزيد"</string>
+    <string name="no_photos_or_videos_found">"لم يتم العثور على أي صور أو مقاطع فيديو"</string>
+    <string name="gallery">"المعرض"</string>
+    <string name="avatar_picker_title">"صورة الملف الشخصي"</string>
+    <string name="group_avatar_picker_title">"صورة المجموعة"</string>
+    <string name="other_media">"وسائط أخرى"</string>
+    <string name="rotate">"تدوير"</string>
     <string name="seen_by">"Seen by"</string>
     <string name="empty_viewed_by">"No one has seen your post yet"</string>
     <string name="options">"Options"</string>
@@ -680,7 +683,7 @@ Open the app settings screen to modify app permissions."</string>
     <string name="export_account_data">"Export my data"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
-    <string name="e2e_notice">"Chats are end-to-end encrypted and HalloApp does not have access to them. Tap to learn more."</string>
+    <string name="e2e_notice">"All messages on HalloApp are end-to-end encrypted. &lt;b&gt;Tap to learn more&lt;/b&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"View safety number"</string>
@@ -876,6 +879,9 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Shown above options when picking a new background color for a group -->
     <string name="group_background_color_pick">"Pick a color"</string>
+    <string name="post_preview_no_caption_by_you">"You shared a post"</string>
+    <string name="post_preview_retracted_by_you">"You deleted a post"</string>
+    <string name="post_preview_with_caption_by_you">"You: %s"</string>
 <string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; commented on your post"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on your post"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; commented on their post"</string><string name="delete_group">"Delete group"</string><plurals name="commented_on_your_post_4">
         <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
         <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
