@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.paging.DataSource;
 import androidx.paging.ItemKeyedDataSource;
 
+import com.halloapp.AppContext;
 import com.halloapp.util.logs.Log;
 
 import java.io.FileDescriptor;
@@ -116,23 +117,13 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
 
         try {
-            ParcelFileDescriptor pfd = contentResolver.openFileDescriptor(uri, "r");
-            if (pfd == null) {
-                Log.w("GalleryDataSource.getDuration got null file descriptor");
-                return 0;
-            }
-            FileDescriptor fd = pfd.getFileDescriptor();
-            retriever.setDataSource(fd);
+            retriever.setDataSource(AppContext.getInstance().get(), uri);
             String durationString = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            pfd.close();
             if (durationString == null) {
                 Log.w("GalleryDataSource.getDuration got null duration");
                 return 0;
             }
             return Long.parseLong(durationString);
-        } catch (IOException e) {
-            Log.w("GalleryDataSource.getDuration IO failed", e);
-            return 0;
         } finally  {
             retriever.release();
         }
