@@ -31,7 +31,7 @@ jobs:
           for i in $(ls app/src/main/res/values*/strings.xml)
           do
             echo "Checking $i"
-            HAS_PROBLEM=$(cat $i | grep "%.*%" | grep -v "%1\\$" | wc -l)
+            HAS_PROBLEM=$(cat $i | grep ">.*%.*%.*<" | grep "%[^0-9]" | wc -l)
             if [ "$HAS_PROBLEM" -ne "0" ]
             then
               echo "File $i has non-positional format args"
