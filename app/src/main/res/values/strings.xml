@@ -156,6 +156,25 @@
         <item quantity="other">&lt;b>%1$s&lt;/b> others commented on &lt;b>%2$s&lt;/b>\'s post</item>
     </plurals>
 
+    <!-- Activity center item when non-contacts comment on your post %1$s is the first person name
+         %2$s is the number of other people -->
+    <plurals name="commented_on_your_post_grouped_with_others">
+        <item quantity="one">&lt;b>%1$s&lt;/b> and &lt;b>%2$s&lt;/b> other commented on your post</item>
+        <item quantity="other">&lt;b>%1$s&lt;/b> and &lt;b>%2$s&lt;/b> others commented on your post</item>
+    </plurals>
+    <!-- Activity center item when non-contacts comment on someones post %1$s is the first person name
+         %2$s is the number of other people, %3$s is the post author's name  -->
+    <plurals name="commented_on_someones_post_grouped_with_others">
+        <item quantity="one">&lt;b>%1$s&lt;/b> and &lt;b>%2$s&lt;/b> other person commented on &lt;b>%3$s&lt;/b>\'s post</item>
+        <item quantity="other">&lt;b>%1$s&lt;/b> and &lt;b>%2$s&lt;/b> others commented on &lt;b>%3$s&lt;/b>\'s post</item>
+    </plurals>
+    <!-- Activity center item when two non-contacts comment on your post %1$s is the first person name
+         %2$s second persons name  -->
+    <string name="two_unknown_contacts_commented_on_your_post">&lt;b>%1$s&lt;/b> and &lt;b>%2$s&lt;/b> commented on your post</string>
+    <!-- Activity center item when two non-contacts comment on someones post %1$s is the first person name
+         %2$s second persons name, %3$s is the poster's name -->
+    <string name="two_unknown_contacts_commented_on_someones_post">&lt;b>%1$s&lt;/b> and &lt;b>%2$s&lt;/b> commented on &lt;b>%3$s&lt;/b>\'s post</string>
+
     <!-- Text shown in activity center upon successful registration -->
     <string name="welcome_notification">Welcome to HalloApp! &lt;a href="invite-friend">Invite a friend&lt;/a></string>
     <string name="contact_hashing_faq_dialog_title">Your privacy is our priority</string>

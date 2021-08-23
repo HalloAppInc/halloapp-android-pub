@@ -259,13 +259,20 @@ public class ActivityCenterActivity extends HalloActivity {
                                 infoView.setText(Html.fromHtml(getResources().getString(commentString, names.get(0), "")));
                             }
                         });
-                    } else {
-                        int commenters = socialEvent.involvedUsers.size();
+                    } else if (socialEvent.involvedUsers.size() == 2){
                         if (socialEvent.postSenderUserId.isMe()) {
-                            infoView.setText(Html.fromHtml(getResources().getQuantityString(R.plurals.commented_on_your_post_grouped, commenters, commenters)));
+                            infoView.setText(Html.fromHtml(getResources().getString(R.string.two_unknown_contacts_commented_on_your_post, names.get(0), names.get(1))));
                         } else {
                             final Contact contact = Preconditions.checkNotNull(contacts.get(socialEvent.postSenderUserId));
-                            infoView.setText(Html.fromHtml(getResources().getQuantityString(R.plurals.commented_on_someones_post_grouped, commenters, commenters, contact.getDisplayName())));
+                            infoView.setText(Html.fromHtml(getResources().getString(R.string.two_unknown_contacts_commented_on_someones_post, names.get(0), names.get(1), contact.getDisplayName())));
+                        }
+                    } else {
+                        int commenters = socialEvent.involvedUsers.size() - 1;
+                        if (socialEvent.postSenderUserId.isMe()) {
+                            infoView.setText(Html.fromHtml(getResources().getQuantityString(R.plurals.commented_on_your_post_grouped_with_others, commenters, names.get(0), commenters)));
+                        } else {
+                            final Contact contact = Preconditions.checkNotNull(contacts.get(socialEvent.postSenderUserId));
+                            infoView.setText(Html.fromHtml(getResources().getQuantityString(R.plurals.commented_on_someones_post_grouped_with_others, commenters, names.get(0), commenters, contact.getDisplayName())));
                         }
                     }
                 } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_MENTION_IN_POST) {
