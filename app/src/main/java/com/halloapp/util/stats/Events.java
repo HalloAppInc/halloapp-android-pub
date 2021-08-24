@@ -8,6 +8,7 @@ import com.halloapp.proto.log_events.DecryptionReport;
 import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.log_events.MediaComposeLoad;
 import com.halloapp.proto.log_events.MediaDownload;
+import com.halloapp.proto.log_events.MediaObjectDownload;
 import com.halloapp.proto.log_events.MediaUpload;
 import com.halloapp.proto.log_events.Platform;
 import com.halloapp.proto.log_events.PushReceived;
@@ -59,6 +60,10 @@ public class Events {
 
     public void sendEvent(@NonNull MediaDownload mediaDownload) {
         sendEvent(EventData.newBuilder().setMediaDownload(mediaDownload));
+    }
+
+    public void sendEvent(@NonNull MediaObjectDownload mediaObjectDownload) {
+        sendEvent(EventData.newBuilder().setMediaObjectDownload(mediaObjectDownload));
     }
 
     public void sendEvent(@NonNull MediaComposeLoad mediaComposeLoad) {

@@ -29,8 +29,9 @@ import java.util.Arrays;
 
 public class Downloader {
 
-    public interface DownloadListener {
-        boolean onProgress(int percent);
+    public abstract static class DownloadListener {
+        public abstract boolean onProgress(long bytes);
+        public void onLogInfo(int contentLength, String cdnPop, String cdnId, String cdnCache) {}
     }
 
     public static class DownloadException extends IOException {
@@ -68,7 +69,7 @@ public class Downloader {
                 outStream.write(buffer, 0, byteRead);
                 byteWritten += byteRead;
                 if (contentLength != 0 && listener != null) {
-                    cancelled = !listener.onProgress((int) (byteWritten * 100 / contentLength));
+                    cancelled = !listener.onProgress(byteWritten);
                 }
             }
             inStream.close();
@@ -127,7 +128,7 @@ public class Downloader {
                         byteWritten += byteRead;
 
                         if (contentLength != 0 && listener != null) {
-                            cancelled = !listener.onProgress((int) (byteWritten * 100 / contentLength));
+                            cancelled = !listener.onProgress(byteWritten);
                         }
                     }
 
@@ -182,7 +183,7 @@ public class Downloader {
                         downloadPercent = newUploadPercent;
                         Log.i("Downloader progress for " + mediaLogId + ":" + downloadPercent + "%");
                     }
-                    cancelled = !listener.onProgress((int) (byteWritten * 100 / contentLength));
+                    cancelled = !listener.onProgress(byteWritten);
                 }
             }
         } finally {
@@ -225,6 +226,12 @@ public class Downloader {
             int contentLength = connection.getContentLength();
             Log.i("Downloader: content length for " + mediaLogId + ": " + contentLength);
             Log.i("Downloader: full headers for " + mediaLogId + ": " + connection.getHeaderFields());
+            if (listener != null) {
+                String cdnPop = connection.getHeaderField("x-amz-cf-pop");
+                String cdnId = connection.getHeaderField("x-amz-cf-id");
+                String cdnCache = connection.getHeaderField("x-cache");
+                listener.onLogInfo(contentLength, cdnPop, cdnId, cdnCache);
+            }
             if (partialEnc != null) {
                 download(inStream, contentLength, partialEnc, listener, mediaLogId);
                 inStream = new FileInputStream(partialEnc);

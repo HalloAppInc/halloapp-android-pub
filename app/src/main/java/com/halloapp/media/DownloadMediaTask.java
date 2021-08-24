@@ -12,6 +12,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.proto.log_events.MediaDownload;
+import com.halloapp.proto.log_events.MediaObjectDownload;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.RandomId;
@@ -22,6 +23,11 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
+
+    private static final String CLOUD_FRONT_CDN = "u-cdn.halloapp.net";
+    private static final String CDN_HIT = "Hit";
+    private static final String CDN_MISS = "Miss";
+    private static final String CDN_REFRESH = "Refresh";
 
     private static final int MAX_RETRY_ATTEMPTS = 3;
 
@@ -42,12 +48,16 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
         long startTime = System.currentTimeMillis();
         MediaDownload.Builder mediaDownloadEvent = MediaDownload.newBuilder();
         mediaDownloadEvent.setId(contentItem.id);
+        MediaObjectDownload.Type downloadType = MediaObjectDownload.Type.POST;
         if (contentItem instanceof Post) {
             mediaDownloadEvent.setType(MediaDownload.Type.POST);
+            downloadType = MediaObjectDownload.Type.POST;
         } else if (contentItem instanceof Message) {
             mediaDownloadEvent.setType(MediaDownload.Type.MESSAGE);
+            downloadType = MediaObjectDownload.Type.MESSAGE;
         } else if (contentItem instanceof Comment) {
             mediaDownloadEvent.setType(MediaDownload.Type.COMMENT);
+            downloadType = MediaObjectDownload.Type.COMMENT;
         }
         long totalSize = 0;
         int numPhotos = 0;
@@ -57,15 +67,23 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
         boolean hasFailure = false;
         int index = 0;
         for (Media media : contentItem.media) {
+            MediaObjectDownload.Cdn cdn = MediaObjectDownload.Cdn.UNKNOWN_CDN;
+            if (media.url != null && media.url.contains(CLOUD_FRONT_CDN)) {
+                cdn = MediaObjectDownload.Cdn.CLOUDFRONT;
+            }
+            MediaObjectDownload.MediaType mediaType = MediaObjectDownload.MediaType.UNRECOGNIZED;
             String mediaLogId = contentItem.id + "." + index++;
             switch (media.type) {
                 case Media.MEDIA_TYPE_IMAGE:
                     numPhotos++;
+                    mediaType = MediaObjectDownload.MediaType.PHOTO;
                     break;
                 case Media.MEDIA_TYPE_VIDEO:
                     numVideos++;
+                    mediaType = MediaObjectDownload.MediaType.VIDEO;
                     break;
                 case Media.MEDIA_TYPE_AUDIO:
+                    mediaType = MediaObjectDownload.MediaType.AUDIO;
                     numAudio++;
                     break;
                 case Media.MEDIA_TYPE_UNKNOWN:
@@ -74,14 +92,57 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
             if (media.transferred == Media.TRANSFERRED_YES || media.transferred == Media.TRANSFERRED_FAILURE) {
                 continue;
             }
-            final Downloader.DownloadListener downloadListener = percent -> true;
             int attempts = 0;
             boolean retry;
             boolean success;
             do {
+                MediaObjectDownload.Builder downloadStatBuilder = MediaObjectDownload.newBuilder();
+                downloadStatBuilder.setId(contentItem.id);
+                downloadStatBuilder.setIndex(index);
+                downloadStatBuilder.setType(downloadType);
+                downloadStatBuilder.setCdn(cdn);
+                downloadStatBuilder.setMediaType(mediaType);
+                final Downloader.DownloadListener downloadListener = new Downloader.DownloadListener() {
+                    @Override
+                    public boolean onProgress(long bytesWritten) {
+                        downloadStatBuilder.setProgressBytes(bytesWritten);
+                        return true;
+                    }
+
+                    @Override
+                    public void onLogInfo(int contentLength, String cdnPop, String cdnId, String cdnCache) {
+                        downloadStatBuilder.setCdnPop(cdnPop);
+                        downloadStatBuilder.setCdnId(cdnId);
+                        downloadStatBuilder.setSize(contentLength);
+                        if (cdnCache != null) {
+                            boolean refresh = false;
+                            Boolean miss = null;
+                            if (cdnCache.contains(CDN_REFRESH)) {
+                                refresh = true;
+                            }
+                            if (cdnCache.contains(CDN_MISS)) {
+                                miss = true;
+                            }
+                            if (cdnCache.contains(CDN_HIT)) {
+                                miss = false;
+                            }
+                            if (miss == null) {
+                                Log.e("DownloadMediaTask/onCdnInfo invalid cdncache: " + cdnCache);
+                                return;
+                            }
+                            if (refresh) {
+                                downloadStatBuilder.setCdnCache(miss ? MediaObjectDownload.CdnCache.REFRESH_MISS : MediaObjectDownload.CdnCache.REFRESH_HIT);
+                            } else {
+                                downloadStatBuilder.setCdnCache(miss ? MediaObjectDownload.CdnCache.MISS : MediaObjectDownload.CdnCache.HIT);
+                            }
+                        }
+                    }
+                };
                 attempts++;
+                downloadStatBuilder.setRetryCount(attempts);
                 retry = false;
                 success = false;
+                long attemptStartTime = System.currentTimeMillis();
                 try {
                     final File encFile = media.encFile != null ? media.encFile : fileStore.getTmpFile(RandomId.create() + ".enc");
                     final File file = fileStore.getMediaFile(RandomId.create() + "." + Media.getFileExt(media.type));
@@ -130,6 +191,13 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                         }
                     }
                 }
+                downloadStatBuilder.setDurationMs(System.currentTimeMillis() - attemptStartTime);
+                if (success) {
+                    downloadStatBuilder.setStatus(MediaObjectDownload.Status.OK);
+                } else {
+                    downloadStatBuilder.setStatus(MediaObjectDownload.Status.FAIL);
+                }
+                Events.getInstance().sendEvent(downloadStatBuilder.build());
             } while (retry && attempts < MAX_RETRY_ATTEMPTS);
             if (attempts > 1) {
                 totalRetries += attempts - 1;
