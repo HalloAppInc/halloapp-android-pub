@@ -497,8 +497,8 @@ public class Notifications {
             final Contact contact = ContactsDb.getInstance().getContact(userId);
             names.add(contact.getDisplayName());
         }
-        return postIds.size() == 1 ? context.getString(R.string.new_comments_notification, ListFormatter.format(context, names)) :
-                context.getString(R.string.new_comments_on_multiple_posts_notification, ListFormatter.format(context, names));
+        return postIds.size() == 1 ? context.getResources().getQuantityString(R.plurals.new_comments_notification, names.size(), ListFormatter.format(context, names)) :
+                context.getResources().getQuantityString(R.plurals.new_comments_on_multiple_posts_notification, names.size(), ListFormatter.format(context, names));
     }
 
     private void showFeedNotification(@NonNull String title, @NonNull String body, @Nullable List<Post> unseenPosts, @Nullable List<Comment> unseenComments) {

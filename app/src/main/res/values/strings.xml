@@ -235,8 +235,12 @@
         <item quantity="one">%d new message</item>
         <item quantity="other">%d new messages</item>
     </plurals>
-    <string name="new_comments_notification">%s commented on your post</string>
-    <string name="new_comments_on_multiple_posts_notification">%s commented on your posts</string>
+    <plurals name="new_comments_notification">
+        <item quantity="other">%s commented on your post</item>
+    </plurals>
+    <plurals name="new_comments_on_multiple_posts_notification">
+        <item quantity="other">%s commented on your posts</item>
+    </plurals>
     <string name="new_posts_and_comments_notification">%1$s. %2$s.</string>
     <plurals name="seen_by_people">
         <item quantity="one">Seen by %d person</item>
