@@ -175,8 +175,22 @@
         <item quantity="many">"%d new message"</item>
         <item quantity="other">"%d new message"</item>
     </plurals>
-    <string name="new_comments_notification">"%s commented on your post"</string>
-    <string name="new_comments_on_multiple_posts_notification">"%s commented on your posts"</string>
+    <plurals name="new_comments_notification">
+        <item quantity="zero">"%s commented on your post"</item>
+        <item quantity="one">"%s commented on your post"</item>
+        <item quantity="two">"%s commented on your post"</item>
+        <item quantity="few">"%s commented on your post"</item>
+        <item quantity="many">"%s commented on your post"</item>
+        <item quantity="other">"%s commented on your post"</item>
+    </plurals>
+    <plurals name="new_comments_on_multiple_posts_notification">
+        <item quantity="zero">"%s commented on your posts"</item>
+        <item quantity="one">"%s commented on your posts"</item>
+        <item quantity="two">"%s commented on your posts"</item>
+        <item quantity="few">"%s commented on your posts"</item>
+        <item quantity="many">"%s commented on your posts"</item>
+        <item quantity="other">"%s commented on your posts"</item>
+    </plurals>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"HalloApp has expired"</string>
     <string name="notification_app_expiration_body">"Please download the latest release"</string>
@@ -882,19 +896,35 @@ Open the app settings screen to modify app permissions."</string>
     <string name="post_preview_no_caption_by_you">"You shared a post"</string>
     <string name="post_preview_retracted_by_you">"You deleted a post"</string>
     <string name="post_preview_with_caption_by_you">"You: %s"</string>
-<string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; commented on your post"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on your post"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and &lt;b&gt;%3$s&lt;/b&gt; commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; commented on their post"</string><string name="delete_group">"Delete group"</string><plurals name="commented_on_your_post_4">
-        <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
-        <item quantity="two">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
-        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
-        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on your post"</item>
-    </plurals><plurals name="commented_on_someones_post_4">
-        <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
-        <item quantity="two">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
-        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
-        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, and %3$d other commented on &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
-    </plurals></resources>
+
+    <!-- Activity center item when non-contacts comment on your post %1$s is the first person name
+         %2$s is the number of other people -->
+    <plurals name="commented_on_your_post_grouped_with_others">
+        <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="two">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
+    </plurals>
+
+    <!-- Activity center item when non-contacts comment on someones post %1$s is the first person name
+         %2$s is the number of other people, %3$s is the post author's name -->
+    <plurals name="commented_on_someones_post_grouped_with_others">
+        <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+        <item quantity="two">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+    </plurals>
+
+    <!-- Activity center item when two non-contacts comment on your post %1$s is the first person name
+         %2$s second persons name -->
+    <string name="two_unknown_contacts_commented_on_your_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string>
+
+    <!-- Activity center item when two non-contacts comment on someones post %1$s is the first person name
+         %2$s second persons name, %3$s is the poster's name -->
+    <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
+</resources>
 

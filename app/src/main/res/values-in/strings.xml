@@ -143,8 +143,16 @@ Buka layar pengaturan aplikasi untuk mengubah izin app."</string>
     <plurals name="new_messages_separator">
         <item quantity="other">"%d pesan baru"</item>
     </plurals>
-    <string name="new_comments_notification">"%s berkomentar pada posting kamu"</string>
-    <string name="new_comments_on_multiple_posts_notification">"%s mengomentari postingan Anda"</string>
+
+    <!-- Fuzzy -->
+    <plurals name="new_comments_notification">
+        <item quantity="other">"%s berkomentar pada posting kamu"</item>
+    </plurals>
+
+    <!-- Fuzzy -->
+    <plurals name="new_comments_on_multiple_posts_notification">
+        <item quantity="other">"%s mengomentari postingan Anda"</item>
+    </plurals>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"HalloApp telah kedaluwarsa"</string>
     <string name="notification_app_expiration_body">"Silakan unduh rilis terbaru"</string>
@@ -563,7 +571,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi"</string>
 
     <!-- Shown at top of data request page explaining the process -->
     <!-- Fuzzy -->
-    <string name="export_data_explanation">"Unduh salinan semua data pengguna Anda pada server HalloApp. Ini tidak berisi pesan atau konten kiriman. &lt;a href=\"https://halloapp.com/help/\"&gt;Pelajari lebih lanjut&lt;/a&gt;"</string>
+    <string name="export_data_explanation">"Unduh salinan semua data pengguna Anda pada server HalloApp. Ini tidak berisi pesan atau konten kiriman."</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"Permintaan gagal"</string>
@@ -573,7 +581,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
     <!-- Fuzzy -->
-    <string name="e2e_notice">"Obrolan dienkripsi secara end-to-end dan HalloApp tidak memiliki akses terhadapnya. Ketuk untuk mempelajari lebih lanjut."</string>
+    <string name="e2e_notice">"Obrolan dienkripsi secara end-to-end dan HalloApp tidak memiliki akses terhadapnya. &lt;b&gt;Ketuk untuk mempelajari lebih lanjut&lt;/b&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"Lihat nomor keamanan"</string>
@@ -764,9 +772,25 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi."</string>
     <string name="post_preview_no_caption_by_you">"You shared a post"</string>
     <string name="post_preview_retracted_by_you">"You deleted a post"</string>
     <string name="post_preview_with_caption_by_you">"You: %s"</string>
-<string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; berkomentar di posting kamu"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; dan &lt;b&gt;%2$s&lt;/b&gt; berkomentar di posting kamu"</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, dan &lt;b&gt;%3$s&lt;/b&gt; berkomentar di posting kamu"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; berkomentar pada posting &lt;b&gt;%2$s&lt;/b&gt;"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; dan &lt;b&gt;%2$s&lt;/b&gt; berkomentar pada posting &lt;b&gt;%3$s&lt;/b&gt;"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, dan &lt;b&gt;%3$s&lt;/b&gt; berkomentar pada posting &lt;b&gt;%4$s&lt;/b&gt;"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; berkomentar di posting mereka"</string><string name="delete_group">"Hapus grup"</string><plurals name="commented_on_your_post_4">
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, dan %3$d lainnya berkomentar di posting kamu"</item>
-    </plurals><plurals name="commented_on_someones_post_4">
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s &lt;/b&gt;, dan %3$d lainnya berkomentar pada posting &lt;b&gt;%4$s&lt;/b&gt;"</item>
-    </plurals></resources>
+
+    <!-- Activity center item when non-contacts comment on your post %1$s is the first person name
+         %2$s is the number of other people -->
+    <plurals name="commented_on_your_post_grouped_with_others">
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
+    </plurals>
+
+    <!-- Activity center item when non-contacts comment on someones post %1$s is the first person name
+         %2$s is the number of other people, %3$s is the post author's name -->
+    <plurals name="commented_on_someones_post_grouped_with_others">
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+    </plurals>
+
+    <!-- Activity center item when two non-contacts comment on your post %1$s is the first person name
+         %2$s second persons name -->
+    <string name="two_unknown_contacts_commented_on_your_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string>
+
+    <!-- Activity center item when two non-contacts comment on someones post %1$s is the first person name
+         %2$s second persons name, %3$s is the poster's name -->
+    <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
+</resources>
 

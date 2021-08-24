@@ -170,8 +170,18 @@ Kosten deines Service-Providers könnten anfallen."</string>
         <item quantity="one">"%d neue Nachricht"</item>
         <item quantity="other">"%d neue Nachrichten"</item>
     </plurals>
-    <string name="new_comments_notification">"%s hat deinen Beitrag kommentiert"</string>
-    <string name="new_comments_on_multiple_posts_notification">"%s hat deine Beiträge kommentiert"</string>
+
+    <!-- Fuzzy -->
+    <plurals name="new_comments_notification">
+        <item quantity="one">"%s hat deinen Beitrag kommentiert"</item>
+        <item quantity="other">"%s hat deinen Beitrag kommentiert"</item>
+    </plurals>
+
+    <!-- Fuzzy -->
+    <plurals name="new_comments_on_multiple_posts_notification">
+        <item quantity="one">"%s hat deine Beiträge kommentiert"</item>
+        <item quantity="other">"%s hat deine Beiträge kommentiert"</item>
+    </plurals>
 
     <!-- can you provide more details please? -->
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
@@ -425,14 +435,14 @@ Version: %2$s
     <string name="blocking_user_in_progress">"%s wird geblockt…"</string>
     <string name="unblocking_user_successful">"%s ist freigegeben"</string>
     <string name="unblocking_user_failed_check_internet">"%s kann nicht freigegeben werden. Überprüfe deine Internetverbindung und versuche es später noch einmal."</string>
-    <string name="unblocking_user_in_progress">"Freigabe von %s"</string>
+    <string name="unblocking_user_in_progress">"%s wird freigegeben…"</string>
     <string name="are_you_sure_dialog_title">"Bist du dir sicher?"</string>
     <string name="hide_future_posts_confirmation">"Bist du dir sicher, dass du alle deine zukünftigen Beiträge vor %s verbergen möchtest? Du kannst dies später jederzeit ändern."</string>
     <string name="feed_privacy_hide_success">"Privatsphäre-Feed wurde aktualisiert. Beiträge von %s werden ausgeblendet"</string>
     <string name="feed_privacy_hide_failure">"Fehler bei der Aktualisierung des Privatsphäre-Feeds. Überprüfe deine Internetverbindung und versuche es noch einmal"</string>
     <string name="user_typing">"schreibt…"</string>
     <string name="group_user_typing">"%s schreibt…"</string>
-    <string name="group_many_users_typing">"mehrere Benutzer schreiben…"</string>
+    <string name="group_many_users_typing">"mehrere Nutzer schreiben…"</string>
     <string name="camera_error_generic">"Kamerafehler."</string>
     <string name="camera_error_photo">"Das Foto konnte nicht gemacht werden."</string>
     <string name="camera_error_video">"Das Video konnte nicht aufgenommen werden."</string>
@@ -531,7 +541,7 @@ Version: %2$s
     <string name="key_verification_tap_to_scan">"Zum Scannen hier tippen"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"Um die Sicherheit deiner Verbindung mit %s zu verifizieren, prüfe bitte, ob die obige Nummer mit der auf dem Gerät angezeigten übereinstimmt oder scanne den QR-Code auf dem Handy. "<![CDATA[<a href="https://halloapp.com/help/">Mehr erfahren</a>]]>"."</string>
+    <string name="key_verification_explanation">"Um die Sicherheit deiner Verbindung mit %s zu verifizieren, prüfe bitte, ob die obigen Nummern mit denen auf dem anderen Mobilgerät angezeigten übereinstimmen oder scanne den QR-Code. "<![CDATA[<a href="https://halloapp.com/help/">Mehr erfahren</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Mehr"</string>
@@ -552,7 +562,7 @@ Version: %2$s
     <string name="key_verification_fetching_keys">"Schlüsseldaten werden abgerufen…"</string>
 
     <!-- Shown when we fail to get key verification info -->
-    <string name="key_verification_key_fetch_failed">"Schlüsseldaten können nicht abgerufen werden…"</string>
+    <string name="key_verification_key_fetch_failed">"Schlüsseldaten können nicht abgerufen werden"</string>
 
     <!-- Shown inline in a chat when the e2e keys securing the messages have changed, i.e. if the other user changes phones or reinstalls -->
     <string name="system_message_keys_changed">"Sicherheitsschlüssel mit %s haben sich geändert"</string>
@@ -574,7 +584,7 @@ Bitte mehr Speicherplatz freigeben, damit du HalloApp weiterhin nutzen kannst."<
     </plurals>
 
     <!-- Text that provides context for a group invite link being shared -->
-    <string name="group_invite_link_context">"Über diesen Link kannst du meiner HalloApp-Gruppe beitreten: %s"</string>
+    <string name="group_invite_link_context">"Klicke auf diesen Link, um meiner HalloApp-Gruppe beizutreten: %s"</string>
     <string name="voice_note">"Sprachnotiz"</string>
 
     <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
@@ -646,7 +656,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Notification shown as if it were the first message in a chat -->
     <!-- Fuzzy -->
-    <string name="e2e_notice">"Die Chats sind Ende-zu-Ende verschlüsselt und HalloApp hat keinen Zugriff darauf. Tippe hier, um mehr zu erfahren."</string>
+    <string name="e2e_notice">"Alle Nachrichten auf HalloApp sind Ende-zu-Ende verschlüsselt. &lt;b&gt;Tippe hier, um mehr zu erfahren&lt;/b&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"Sicherheitsnummer anzeigen"</string>
@@ -685,7 +695,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="your_profile_photo">"Dein Profilbild"</string>
 
     <!-- Text shown under progress bar when first setting up HalloApp -->
-    <string name="app_initializing">"HalloApp wird vorbereitet"</string>
+    <string name="app_initializing">"HalloApp wird eingerichtet"</string>
 
     <!-- Shown on a button in settings which shares text with a link to download HalloApp into any other app -->
     <string name="settings_share_option">"HalloApp teilen"</string>
@@ -837,14 +847,30 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Shown above options when picking a new background color for a group -->
     <string name="group_background_color_pick">"Hintergrundfarbe auswählen"</string>
-    <string name="post_preview_no_caption_by_you">"You shared a post"</string>
-    <string name="post_preview_retracted_by_you">"You deleted a post"</string>
-    <string name="post_preview_with_caption_by_you">"You: %s"</string>
-<string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; hat deinen Beitrag kommentiert"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; und &lt;b&gt;%2$s&lt;/b&gt; haben deinen Beitrag kommentiert"</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und &lt;b&gt;%3$s&lt;/b&gt; haben deinen Beitrag kommentiert"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; hat &lt;b&gt;%2$s&lt;/b&gt;'s Beitrag kommentiert"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; und &lt;b&gt;%2$s&lt;/b&gt; haben &lt;b&gt;%3$s&lt;/b&gt;'s Beitrag kommentiert"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und &lt;b&gt;%3$s&lt;/b&gt; haben &lt;b&gt;%4$s&lt;/b&gt;'s Beitrag kommentiert"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; hat einen eigenen Beitrag kommentiert"</string><string name="delete_group">"Gruppe löschen"</string><plurals name="commented_on_your_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und %3$d weitere Person haben deinen Beitrag kommentiert"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2s&lt;/b&gt; und %3$d weitere Personen haben deinen Beitrag kommentiert"</item>
-    </plurals><plurals name="commented_on_someones_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und %3$d andere Person haben &lt;b&gt;%4$s&lt;/b&gt;'s Beitrag kommentiert"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; und %3$d andere Personen haben &lt;b&gt;%4$s&lt;/b&gt;'s Beitrag kommentiert"</item>
-    </plurals></resources>
+    <string name="post_preview_no_caption_by_you">"Du hast einen Beitrag geteilt"</string>
+    <string name="post_preview_retracted_by_you">"Du hast einen Beitrag gelöscht"</string>
+    <string name="post_preview_with_caption_by_you">"Du: %s"</string>
+
+    <!-- Activity center item when non-contacts comment on your post %1$s is the first person name
+         %2$s is the number of other people -->
+    <plurals name="commented_on_your_post_grouped_with_others">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
+    </plurals>
+
+    <!-- Activity center item when non-contacts comment on someones post %1$s is the first person name
+         %2$s is the number of other people, %3$s is the post author's name -->
+    <plurals name="commented_on_someones_post_grouped_with_others">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+    </plurals>
+
+    <!-- Activity center item when two non-contacts comment on your post %1$s is the first person name
+         %2$s second persons name -->
+    <string name="two_unknown_contacts_commented_on_your_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string>
+
+    <!-- Activity center item when two non-contacts comment on someones post %1$s is the first person name
+         %2$s second persons name, %3$s is the poster's name -->
+    <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
+</resources>
 

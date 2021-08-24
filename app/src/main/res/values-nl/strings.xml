@@ -7,7 +7,7 @@
     <string name="title_groups">"Groepen"</string>
     <string name="comment">"Reageren"</string>
     <string name="next">"Volgende"</string>
-    <string name="message">"Bericht sturen"</string>
+    <string name="message">"Stuur bericht"</string>
     <string name="add_post">"Post toevoegen"</string>
     <string name="new_chat">"Nieuwe chat"</string>
     <string name="new_group">"Nieuwe groep"</string>
@@ -113,7 +113,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     </plurals>
     <string name="no_contacts_selected_subtitle">"Geen contacten geselecteerd"</string>
     <string name="help">"Help"</string>
-    <string name="about">"Over HalloApp"</string>
+    <string name="about">"Over"</string>
     <string name="notify_posts">"Posts"</string>
     <string name="notify_comments">"Reacties"</string>
     <string name="read_more">"lees meer"</string>
@@ -148,8 +148,20 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
         <item quantity="one">"%d nieuw bericht"</item>
         <item quantity="other">"%d nieuwe berichten"</item>
     </plurals>
-    <string name="new_comments_notification">"%s heeft gereageerd op je post"</string>
-    <string name="new_comments_on_multiple_posts_notification">"%s heeft gereageerd op je posts"</string>
+
+    <!-- Please add string for multiple users (plural) commented on your post (single) -->
+    <!-- Fuzzy -->
+    <plurals name="new_comments_notification">
+        <item quantity="one">"%s heeft gereageerd op je post"</item>
+        <item quantity="other">"%s hebben gereageerd op je post"</item>
+    </plurals>
+
+    <!-- Please add string for multiple users (plural) commented on your posts (plural) -->
+    <!-- Fuzzy -->
+    <plurals name="new_comments_on_multiple_posts_notification">
+        <item quantity="one">"%s heeft gereageerd op je posts"</item>
+        <item quantity="other">"%s hebben gereageerd op je posts"</item>
+    </plurals>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"HalloApp is verlopen"</string>
     <string name="notification_app_expiration_body">"Download de nieuwste versie alsjeblieft"</string>
@@ -219,7 +231,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="action_save">"Opslaan"</string>
     <string name="invite_friends">"Vrienden &amp; familie uitnodigen"</string>
     <string name="invite_friend_chooser_title">"%s uitnodigen"</string>
-    <string name="invite_text_with_name_and_number">"Hey %1$s, ik wil je graag uitnodigen voor HalloApp - een netwerk voor je échte relaties. Gebruik %2$s om je te registreren. Download de app op https://halloapp.com/dl"</string>
+    <string name="invite_text_with_name_and_number">"Hey %1$s, ik wil je graag uitnodigen voor HalloApp - een netwerk voor échte relaties die het dichtst bij me staan. Gebruik %2$s om je te registreren. Download de app op https://halloapp.com/dl"</string>
     <string name="name_hint">"Jouw naam"</string>
     <string name="name_must_be_specified">"Naam moet opgegeven worden"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -783,11 +795,27 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="post_preview_no_caption_by_you">"Je hebt een post gedeeld"</string>
     <string name="post_preview_retracted_by_you">"Je hebt een post verwijderd"</string>
     <string name="post_preview_with_caption_by_you">"Jij: %s"</string>
-<string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; reageerde op je post"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; reageerden op je post"</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, en &lt;b&gt;%3$s&lt;/b&gt; reageerden op je post"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; reageerde op &lt;b&gt;%2$s&lt;/b&gt;'s post"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; reageerden op &lt;b&gt;%3$s&lt;/b&gt;'s post"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, en &lt;b&gt;%3$s&lt;/b&gt; reageerden op &lt;b&gt;%4$s&lt;/b&gt;'s post"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; reageerde op een eigen post"</string><string name="delete_group">"Groep verwijderen"</string><plurals name="commented_on_your_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, en %3$d ander reageerden op je post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, en %3$d anderen reageerden op je post"</item>
-    </plurals><plurals name="commented_on_someones_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, en %3$d ander reageerden op &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, en %3$d anderen reageerden op &lt;b&gt;%4$s&lt;/b&gt;'s post"</item>
-    </plurals></resources>
+
+    <!-- Activity center item when non-contacts comment on your post %1$s is the first person name
+         %2$s is the number of other people -->
+    <plurals name="commented_on_your_post_grouped_with_others">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; ander hebben gereageerd op je post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; anderen hebben gereageerd op je post"</item>
+    </plurals>
+
+    <!-- Activity center item when non-contacts comment on someones post %1$s is the first person name
+         %2$s is the number of other people, %3$s is the post author's name -->
+    <plurals name="commented_on_someones_post_grouped_with_others">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; ander persoon hebben gereageerd op &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; andere personen hebben gereageerd op &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+    </plurals>
+
+    <!-- Activity center item when two non-contacts comment on your post %1$s is the first person name
+         %2$s second persons name -->
+    <string name="two_unknown_contacts_commented_on_your_post">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; hebben gereageerd op je post"</string>
+
+    <!-- Activity center item when two non-contacts comment on someones post %1$s is the first person name
+         %2$s second persons name, %3$s is the poster's name -->
+    <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; hebben gereageerd op &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
+</resources>
 

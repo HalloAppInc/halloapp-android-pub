@@ -145,8 +145,18 @@
         <item quantity="one">"%d پیام جدید"</item>
         <item quantity="other">"%d پیام جدید"</item>
     </plurals>
-    <string name="new_comments_notification">"%s زیر پست شما نظر نوشت"</string>
-    <string name="new_comments_on_multiple_posts_notification">"%s زیر پست‌های شما نظر نوشت"</string>
+
+    <!-- Fuzzy -->
+    <plurals name="new_comments_notification">
+        <item quantity="one">"%s زیر پست شما نظر نوشت"</item>
+        <item quantity="other">"%s زیر پست شما نظر نوشتند"</item>
+    </plurals>
+
+    <!-- Fuzzy -->
+    <plurals name="new_comments_on_multiple_posts_notification">
+        <item quantity="one">"%s زیر پست‌های شما نظر نوشت"</item>
+        <item quantity="other">"%s زیر پست شما نظر نوشتند"</item>
+    </plurals>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"هالواپ تمام شده است"</string>
     <string name="notification_app_expiration_body">"لطفاً ورژن آخر را دانلود کنید"</string>
@@ -587,7 +597,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Notification shown as if it were the first message in a chat -->
     <!-- Fuzzy -->
-    <string name="e2e_notice">"گفتگوها رمزگذاری سرتاسری شده‌اند و هالواپ به آن‌ها دسترسی ندارد. برای اطلاعات بیشتر کلیک کنید."</string>
+    <string name="e2e_notice">"گفتگوها رمزگذاری سرتاسری شده‌اند و هالواپ به آن‌ها دسترسی ندارد. &lt;b/&gt;برای اطلاعات بیشتر کلیک کنید&lt;b/&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"مشاهده کد امنیتی"</string>
@@ -777,11 +787,27 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="post_preview_no_caption_by_you">"شما یک پست به اشتراک گذاشتید"</string>
     <string name="post_preview_retracted_by_you">"شما یک پست حذف کردید"</string>
     <string name="post_preview_with_caption_by_you">"شما: %s"</string>
-<string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; زیر پست شما نظری نوشت"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; و &lt;b&gt;%2$s&lt;/b&gt; زیر پست شما نظری نوشتند"</string><string name="commented_on_your_post_3">"&lt;b&gt;%2$s&lt;/b&gt; ،&lt;b&gt;%1$s&lt;/b&gt; و &lt;b&gt;%3$s&lt;/b&gt; زیر پست شما نظر نوشتند"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; زیر پست &lt;b&gt;%2$s&lt;/b&gt; نظری نوشت"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; و &lt;b&gt;%2$s&lt;/b&gt; زیر پست &lt;b&gt;%3$s&lt;/b&gt; نظری نوشتند"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%2$s&lt;/b&gt; ،&lt;b&gt;%1$s&lt;/b&gt; و &lt;b&gt;%3$s&lt;/b&gt; زیر پست &lt;b&gt;%4$s&lt;/b&gt; نظری نوشتند"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; زیر پستش نظری نوشت"</string><string name="delete_group">"حذف گروه"</string><plurals name="commented_on_your_post_4">
-        <item quantity="one">"&lt;b&gt;%2$s&lt;/b&gt; ،&lt;b&gt;%1$s&lt;/b&gt; و %3$d نفر دیگر زیر پست شما نظر نوشتند"</item>
-        <item quantity="other">"&lt;b&gt;%2$s&lt;/b&gt; ،&lt;b&gt;%1$s&lt;/b&gt; و %3$d نفر دیگر زیر پست شما نظر نوشتند"</item>
-    </plurals><plurals name="commented_on_someones_post_4">
-        <item quantity="one">"&lt;b&gt;%2$s&lt;/b&gt; ،&lt;b&gt;%1$s&lt;/b&gt; و %3$d نفر دیگر زیر پست &lt;b&gt;%4$s&lt;/b&gt; نظر نوشتند"</item>
-        <item quantity="other">"&lt;b&gt;%2$s&lt;/b&gt; ،&lt;b&gt;%1$s&lt;/b&gt; و %3$d نفر دیگر زیر پست &lt;b&gt;%4$s&lt;/b&gt; نظر نوشتند"</item>
-    </plurals></resources>
+
+    <!-- Activity center item when non-contacts comment on your post %1$s is the first person name
+         %2$s is the number of other people -->
+    <plurals name="commented_on_your_post_grouped_with_others">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; و &lt;b&gt;%2$s&lt;/b&gt; زیر پست شما نظر نوشتند"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; و &lt;b&gt;%2$s&lt;/b&gt; زیر پست شما نظر نوشتند"</item>
+    </plurals>
+
+    <!-- Activity center item when non-contacts comment on someones post %1$s is the first person name
+         %2$s is the number of other people, %3$s is the post author's name -->
+    <plurals name="commented_on_someones_post_grouped_with_others">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; و &lt;b&gt;%2$s&lt;/b&gt; زیر پست &lt;b&gt;%3$s&lt;/b&gt; نظر نوشتند"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; و &lt;b&gt;%2$s&lt;/b&gt; زیر پست &lt;b&gt;%3$s&lt;/b&gt; نظر نوشتند"</item>
+    </plurals>
+
+    <!-- Activity center item when two non-contacts comment on your post %1$s is the first person name
+         %2$s second persons name -->
+    <string name="two_unknown_contacts_commented_on_your_post">"&lt;b&gt;%1$s&lt;/b&gt; و &lt;b&gt;%2$s&lt;/b&gt; زیر پست شما نظر نوشتند"</string>
+
+    <!-- Activity center item when two non-contacts comment on someones post %1$s is the first person name
+         %2$s second persons name, %3$s is the poster's name -->
+    <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; و &lt;b&gt;%2$s&lt;/b&gt; زیر پست &lt;b&gt;%3$s&lt;/b&gt; نظر نوشتند"</string>
+</resources>
 

@@ -175,8 +175,18 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
         <item quantity="one">"%d yeni mesaj"</item>
         <item quantity="other">"%d yeni mesaj"</item>
     </plurals>
-    <string name="new_comments_notification">"%s, gönderine yorum yaptı"</string>
-    <string name="new_comments_on_multiple_posts_notification">"%s, gönderilerine yorum yaptı"</string>
+
+    <!-- Fuzzy -->
+    <plurals name="new_comments_notification">
+        <item quantity="one">"%s, gönderine yorum yaptı"</item>
+        <item quantity="other">"%s, gönderine yorum yaptı"</item>
+    </plurals>
+
+    <!-- Fuzzy -->
+    <plurals name="new_comments_on_multiple_posts_notification">
+        <item quantity="one">"%s, gönderilerine yorum yaptı"</item>
+        <item quantity="other">"%s, gönderilerine yorum yaptı"</item>
+    </plurals>
 
     <!-- Fuzzy -->
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
@@ -663,7 +673,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</str
 
     <!-- Shown at top of data request page explaining the process -->
     <!-- Fuzzy -->
-    <string name="export_data_explanation">"HalloApp sunucularında depolanan tüm kullanıcı verilerinin bir kopyasını indir. Mesajlar ve gönderiler buna dahil değildir. &lt;a href=\"https://halloapp.com/help/\"&gt;Daha fazla bilgi edinin&lt;/a&gt;"</string>
+    <string name="export_data_explanation">"HalloApp sunucularında depolanan tüm kullanıcı verilerinin bir kopyasını indir. Mesajlar ve gönderiler buna dahil değildir."</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"İstek başarısız"</string>
@@ -673,7 +683,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</str
 
     <!-- Notification shown as if it were the first message in a chat -->
     <!-- Fuzzy -->
-    <string name="e2e_notice">"Sohbetler uçtan uca şifrelenir ve HalloApp'in bunlara erişimi yoktur. Daha fazlasını öğrenmek için dokun."</string>
+    <string name="e2e_notice">"Sohbetler uçtan uca şifrelenir ve HalloApp'in bunlara erişimi yoktur. &lt;b&gt;Daha fazlasını öğrenmek için dokun&lt;/b&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"Güvenlik numarasını gör"</string>
@@ -866,11 +876,27 @@ Open the app settings screen to modify app permissions."</string>
     <string name="post_preview_no_caption_by_you">"You shared a post"</string>
     <string name="post_preview_retracted_by_you">"You deleted a post"</string>
     <string name="post_preview_with_caption_by_you">"You: %s"</string>
-<string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt;, gönderine yorum yaptı"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; ve  &lt;b&gt;%2$s&lt;/b&gt; gönderine yorum yaptılar"</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; ve &lt;b&gt;%3$s&lt;/b&gt; gönderine yorum yaptılar"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt;,  &lt;b&gt;%2$s&lt;/b&gt; kişisinin gönderisine yorum yaptı"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; ve &lt;b&gt;%2$s&lt;/b&gt;,  &lt;b&gt;%3$s&lt;/b&gt; kişisinin gönderisine yorum yaptılar"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; ve &lt;b&gt;%3$s&lt;/b&gt;,  &lt;b&gt;%4$s&lt;/b&gt; kişisinin gönderisine yorum yaptılar"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt;, kendi gönderisine yorum yaptı"</string><string name="delete_group">"Grubu sil"</string><plurals name="commented_on_your_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; ve %3$d farklı kişi, gönderine yorum yaptı"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; ve %3$d farklı kişi, gönderine yorum yaptı"</item>
-    </plurals><plurals name="commented_on_someones_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, ve %3$d farklı kişi, &lt;b&gt;%4$s&lt;/b&gt; kişisinin gönderisine yorum yaptı"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, ve %3$d farklı kişi, &lt;b&gt;%4$s&lt;/b&gt; kişisinin gönderisine yorum yaptı"</item>
-    </plurals></resources>
+
+    <!-- Activity center item when non-contacts comment on your post %1$s is the first person name
+         %2$s is the number of other people -->
+    <plurals name="commented_on_your_post_grouped_with_others">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
+    </plurals>
+
+    <!-- Activity center item when non-contacts comment on someones post %1$s is the first person name
+         %2$s is the number of other people, %3$s is the post author's name -->
+    <plurals name="commented_on_someones_post_grouped_with_others">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+    </plurals>
+
+    <!-- Activity center item when two non-contacts comment on your post %1$s is the first person name
+         %2$s second persons name -->
+    <string name="two_unknown_contacts_commented_on_your_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string>
+
+    <!-- Activity center item when two non-contacts comment on someones post %1$s is the first person name
+         %2$s second persons name, %3$s is the poster's name -->
+    <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
+</resources>
 

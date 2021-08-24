@@ -158,8 +158,18 @@
         <item quantity="one">"%d ново съобщение"</item>
         <item quantity="other">"%d нови съобщения"</item>
     </plurals>
-    <string name="new_comments_notification">"%s коментираха вашата публикация"</string>
-    <string name="new_comments_on_multiple_posts_notification">"%s коментираха вашите публикации"</string>
+
+    <!-- Fuzzy -->
+    <plurals name="new_comments_notification">
+        <item quantity="one">"%s коментираха вашата публикация"</item>
+        <item quantity="other">"%s коментираха вашата публикация"</item>
+    </plurals>
+
+    <!-- Fuzzy -->
+    <plurals name="new_comments_on_multiple_posts_notification">
+        <item quantity="one">"%s коментираха вашите публикации"</item>
+        <item quantity="other">"%s коментираха вашите публикации"</item>
+    </plurals>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"Срокът на валидност на HalloApp е изтекъл"</string>
     <string name="notification_app_expiration_body">"Моля, свалете последната версия"</string>
@@ -596,7 +606,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Shown at top of data request page explaining the process -->
     <!-- Fuzzy -->
-    <string name="export_data_explanation">"Изтеглете копие на всички Ваши потребителски данни, съхранявани на сървърите на HalloApp. Това не съдържа съдържание на съобщения или публикации. &lt;a href=\"https://halloapp.com/help/\"&gt;Научете повече &lt;/a&gt;"</string>
+    <string name="export_data_explanation">"Изтеглете копие на всички Ваши потребителски данни, съхранявани на сървърите на HalloApp. Това не съдържа съдържание на съобщения или публикации."</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"Заявката не беше успешна"</string>
@@ -798,11 +808,27 @@ Open the app settings screen to modify app permissions."</string>
     <string name="post_preview_no_caption_by_you">"You shared a post"</string>
     <string name="post_preview_retracted_by_you">"You deleted a post"</string>
     <string name="post_preview_with_caption_by_you">"You: %s"</string>
-<string name="commented_on_your_post_1">"&lt;b&gt;%s&lt;/b&gt; коментира вашата публикация"</string><string name="commented_on_your_post_2">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; коментираха вашата публикация"</string><string name="commented_on_your_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, и &lt;b&gt;%3$s&lt;/b&gt; коментираха вашата публикация"</string><string name="commented_on_someones_post_1">"&lt;b&gt;%1$s&lt;/b&gt; коментираха публикацията на &lt;b&gt;%2$s&lt;/b&gt;"</string><string name="commented_on_someones_post_2">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; коментираха публикацията на &lt;b&gt;%3$s&lt;/b&gt;"</string><string name="commented_on_someones_post_3">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt;, и &lt;b&gt;%3$s&lt;/b&gt; коментираха публикацията на &lt;b&gt;%4$s&lt;/b&gt;"</string><string name="commented_on_own_post">"&lt;b&gt;%1s&lt;/b&gt; коментира своята публикация"</string><string name="delete_group">"Изтриване на групата"</string><plurals name="commented_on_your_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и още %3$d други коментираха вашата публикация"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и %3$d други коментираха вашата публикация"</item>
-    </plurals><plurals name="commented_on_someones_post_4">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и %3$d други коментираха публикацията на &lt;b&gt;%4$s&lt;/b&gt;"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; и %3$d друи коментираха публикацията на &lt;b&gt;%4$s&lt;/b&gt;"</item>
-    </plurals></resources>
+
+    <!-- Activity center item when non-contacts comment on your post %1$s is the first person name
+         %2$s is the number of other people -->
+    <plurals name="commented_on_your_post_grouped_with_others">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
+    </plurals>
+
+    <!-- Activity center item when non-contacts comment on someones post %1$s is the first person name
+         %2$s is the number of other people, %3$s is the post author's name -->
+    <plurals name="commented_on_someones_post_grouped_with_others">
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+    </plurals>
+
+    <!-- Activity center item when two non-contacts comment on your post %1$s is the first person name
+         %2$s second persons name -->
+    <string name="two_unknown_contacts_commented_on_your_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string>
+
+    <!-- Activity center item when two non-contacts comment on someones post %1$s is the first person name
+         %2$s second persons name, %3$s is the poster's name -->
+    <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
+</resources>
 
