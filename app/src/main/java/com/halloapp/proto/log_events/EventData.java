@@ -25,6 +25,7 @@ public  final class EventData extends
     DECRYPTION_REPORT(14),
     PERMISSIONS(15),
     MEDIA_OBJECT_DOWNLOAD(16),
+    GROUP_DECRYPTION_REPORT(17),
     EDATA_NOT_SET(0);
     private final int value;
     private EdataCase(int value) {
@@ -47,6 +48,7 @@ public  final class EventData extends
         case 14: return DECRYPTION_REPORT;
         case 15: return PERMISSIONS;
         case 16: return MEDIA_OBJECT_DOWNLOAD;
+        case 17: return GROUP_DECRYPTION_REPORT;
         case 0: return EDATA_NOT_SET;
         default: return null;
       }
@@ -673,6 +675,56 @@ public  final class EventData extends
    */
   private void clearMediaObjectDownload() {
     if (edataCase_ == 16) {
+      edataCase_ = 0;
+      edata_ = null;
+    }
+  }
+
+  public static final int GROUP_DECRYPTION_REPORT_FIELD_NUMBER = 17;
+  /**
+   * <code>.server.GroupDecryptionReport group_decryption_report = 17;</code>
+   */
+  @java.lang.Override
+  public boolean hasGroupDecryptionReport() {
+    return edataCase_ == 17;
+  }
+  /**
+   * <code>.server.GroupDecryptionReport group_decryption_report = 17;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.log_events.GroupDecryptionReport getGroupDecryptionReport() {
+    if (edataCase_ == 17) {
+       return (com.halloapp.proto.log_events.GroupDecryptionReport) edata_;
+    }
+    return com.halloapp.proto.log_events.GroupDecryptionReport.getDefaultInstance();
+  }
+  /**
+   * <code>.server.GroupDecryptionReport group_decryption_report = 17;</code>
+   */
+  private void setGroupDecryptionReport(com.halloapp.proto.log_events.GroupDecryptionReport value) {
+    value.getClass();
+  edata_ = value;
+    edataCase_ = 17;
+  }
+  /**
+   * <code>.server.GroupDecryptionReport group_decryption_report = 17;</code>
+   */
+  private void mergeGroupDecryptionReport(com.halloapp.proto.log_events.GroupDecryptionReport value) {
+    value.getClass();
+  if (edataCase_ == 17 &&
+        edata_ != com.halloapp.proto.log_events.GroupDecryptionReport.getDefaultInstance()) {
+      edata_ = com.halloapp.proto.log_events.GroupDecryptionReport.newBuilder((com.halloapp.proto.log_events.GroupDecryptionReport) edata_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      edata_ = value;
+    }
+    edataCase_ = 17;
+  }
+  /**
+   * <code>.server.GroupDecryptionReport group_decryption_report = 17;</code>
+   */
+  private void clearGroupDecryptionReport() {
+    if (edataCase_ == 17) {
       edataCase_ = 0;
       edata_ = null;
     }
@@ -1393,6 +1445,54 @@ public  final class EventData extends
       return this;
     }
 
+    /**
+     * <code>.server.GroupDecryptionReport group_decryption_report = 17;</code>
+     */
+    @java.lang.Override
+    public boolean hasGroupDecryptionReport() {
+      return instance.hasGroupDecryptionReport();
+    }
+    /**
+     * <code>.server.GroupDecryptionReport group_decryption_report = 17;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.log_events.GroupDecryptionReport getGroupDecryptionReport() {
+      return instance.getGroupDecryptionReport();
+    }
+    /**
+     * <code>.server.GroupDecryptionReport group_decryption_report = 17;</code>
+     */
+    public Builder setGroupDecryptionReport(com.halloapp.proto.log_events.GroupDecryptionReport value) {
+      copyOnWrite();
+      instance.setGroupDecryptionReport(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupDecryptionReport group_decryption_report = 17;</code>
+     */
+    public Builder setGroupDecryptionReport(
+        com.halloapp.proto.log_events.GroupDecryptionReport.Builder builderForValue) {
+      copyOnWrite();
+      instance.setGroupDecryptionReport(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.GroupDecryptionReport group_decryption_report = 17;</code>
+     */
+    public Builder mergeGroupDecryptionReport(com.halloapp.proto.log_events.GroupDecryptionReport value) {
+      copyOnWrite();
+      instance.mergeGroupDecryptionReport(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupDecryptionReport group_decryption_report = 17;</code>
+     */
+    public Builder clearGroupDecryptionReport() {
+      copyOnWrite();
+      instance.clearGroupDecryptionReport();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.EventData)
   }
   @java.lang.Override
@@ -1423,11 +1523,12 @@ public  final class EventData extends
             com.halloapp.proto.log_events.DecryptionReport.class,
             com.halloapp.proto.log_events.Permissions.class,
             com.halloapp.proto.log_events.MediaObjectDownload.class,
+            com.halloapp.proto.log_events.GroupDecryptionReport.class,
           };
           java.lang.String info =
-              "\u0000\f\u0001\u0000\u0001\u0010\f\u0000\u0000\u0000\u0001\u0003\u0002\f\u0003\u0208" +
+              "\u0000\r\u0001\u0000\u0001\u0011\r\u0000\u0000\u0000\u0001\u0003\u0002\f\u0003\u0208" +
               "\u0004\u0003\u0005\u0208\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f" +
-              "<\u0000\u0010<\u0000";
+              "<\u0000\u0010<\u0000\u0011<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

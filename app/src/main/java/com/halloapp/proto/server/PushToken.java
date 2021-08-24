@@ -31,6 +31,10 @@ public  final class PushToken extends
      * <code>IOS_DEV = 2;</code>
      */
     IOS_DEV(2),
+    /**
+     * <code>IOS_APPCLIP = 3;</code>
+     */
+    IOS_APPCLIP(3),
     UNRECOGNIZED(-1),
     ;
 
@@ -46,6 +50,10 @@ public  final class PushToken extends
      * <code>IOS_DEV = 2;</code>
      */
     public static final int IOS_DEV_VALUE = 2;
+    /**
+     * <code>IOS_APPCLIP = 3;</code>
+     */
+    public static final int IOS_APPCLIP_VALUE = 3;
 
 
     @java.lang.Override
@@ -72,6 +80,7 @@ public  final class PushToken extends
         case 0: return ANDROID;
         case 1: return IOS;
         case 2: return IOS_DEV;
+        case 3: return IOS_APPCLIP;
         default: return null;
       }
     }

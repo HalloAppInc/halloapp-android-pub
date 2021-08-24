@@ -159,5 +159,16 @@ public interface EventDataOrBuilder extends
    */
   com.halloapp.proto.log_events.MediaObjectDownload getMediaObjectDownload();
 
+  /**
+   * <code>.server.GroupDecryptionReport group_decryption_report = 17;</code>
+   * @return Whether the groupDecryptionReport field is set.
+   */
+  boolean hasGroupDecryptionReport();
+  /**
+   * <code>.server.GroupDecryptionReport group_decryption_report = 17;</code>
+   * @return The groupDecryptionReport.
+   */
+  com.halloapp.proto.log_events.GroupDecryptionReport getGroupDecryptionReport();
+
   public com.halloapp.proto.log_events.EventData.EdataCase getEdataCase();
 }

@@ -218,9 +218,9 @@ public  final class MediaObjectDownload extends
   public enum Cdn
       implements com.google.protobuf.Internal.EnumLite {
     /**
-     * <code>UNKNOWN = 0;</code>
+     * <code>UNKNOWN_CDN = 0;</code>
      */
-    UNKNOWN(0),
+    UNKNOWN_CDN(0),
     /**
      * <code>CLOUDFRONT = 1;</code>
      */
@@ -229,9 +229,9 @@ public  final class MediaObjectDownload extends
     ;
 
     /**
-     * <code>UNKNOWN = 0;</code>
+     * <code>UNKNOWN_CDN = 0;</code>
      */
-    public static final int UNKNOWN_VALUE = 0;
+    public static final int UNKNOWN_CDN_VALUE = 0;
     /**
      * <code>CLOUDFRONT = 1;</code>
      */
@@ -259,7 +259,7 @@ public  final class MediaObjectDownload extends
 
     public static Cdn forNumber(int value) {
       switch (value) {
-        case 0: return UNKNOWN;
+        case 0: return UNKNOWN_CDN;
         case 1: return CLOUDFRONT;
         default: return null;
       }
@@ -307,40 +307,48 @@ public  final class MediaObjectDownload extends
   public enum CdnCache
       implements com.google.protobuf.Internal.EnumLite {
     /**
-     * <code>HIT = 0;</code>
+     * <code>UNKNOWN_CACHE = 0;</code>
      */
-    HIT(0),
+    UNKNOWN_CACHE(0),
     /**
-     * <code>MISS = 1;</code>
+     * <code>HIT = 1;</code>
      */
-    MISS(1),
+    HIT(1),
     /**
-     * <code>REFRESH_HIT = 2;</code>
+     * <code>MISS = 2;</code>
      */
-    REFRESH_HIT(2),
+    MISS(2),
     /**
-     * <code>REFRESH_MISS = 3;</code>
+     * <code>REFRESH_HIT = 3;</code>
      */
-    REFRESH_MISS(3),
+    REFRESH_HIT(3),
+    /**
+     * <code>REFRESH_MISS = 4;</code>
+     */
+    REFRESH_MISS(4),
     UNRECOGNIZED(-1),
     ;
 
     /**
-     * <code>HIT = 0;</code>
+     * <code>UNKNOWN_CACHE = 0;</code>
      */
-    public static final int HIT_VALUE = 0;
+    public static final int UNKNOWN_CACHE_VALUE = 0;
     /**
-     * <code>MISS = 1;</code>
+     * <code>HIT = 1;</code>
      */
-    public static final int MISS_VALUE = 1;
+    public static final int HIT_VALUE = 1;
     /**
-     * <code>REFRESH_HIT = 2;</code>
+     * <code>MISS = 2;</code>
      */
-    public static final int REFRESH_HIT_VALUE = 2;
+    public static final int MISS_VALUE = 2;
     /**
-     * <code>REFRESH_MISS = 3;</code>
+     * <code>REFRESH_HIT = 3;</code>
      */
-    public static final int REFRESH_MISS_VALUE = 3;
+    public static final int REFRESH_HIT_VALUE = 3;
+    /**
+     * <code>REFRESH_MISS = 4;</code>
+     */
+    public static final int REFRESH_MISS_VALUE = 4;
 
 
     @java.lang.Override
@@ -364,10 +372,11 @@ public  final class MediaObjectDownload extends
 
     public static CdnCache forNumber(int value) {
       switch (value) {
-        case 0: return HIT;
-        case 1: return MISS;
-        case 2: return REFRESH_HIT;
-        case 3: return REFRESH_MISS;
+        case 0: return UNKNOWN_CACHE;
+        case 1: return HIT;
+        case 2: return MISS;
+        case 3: return REFRESH_HIT;
+        case 4: return REFRESH_MISS;
         default: return null;
       }
     }
