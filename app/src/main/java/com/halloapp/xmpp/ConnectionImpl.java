@@ -22,6 +22,7 @@ import com.halloapp.content.Post;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.group.GroupFeedKeyManager;
 import com.halloapp.crypto.group.GroupFeedSessionManager;
+import com.halloapp.crypto.group.GroupSetupInfo;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.signal.SessionSetupInfo;
@@ -572,9 +573,9 @@ public class ConnectionImpl extends Connection {
 
             if (Constants.GROUP_FEED_ENC_ENABLED) {
                 try {
-                    GroupFeedKeyManager.GroupSetupResult groupSetupResult = GroupFeedKeyManager.getInstance().ensureGroupSetUp(groupId);
-                    senderStateBundles = groupSetupResult.senderStateBundles;
-                    audienceHash = groupSetupResult.audienceHash;
+                    GroupSetupInfo groupSetupInfo = GroupFeedKeyManager.getInstance().ensureGroupSetUp(groupId);
+                    senderStateBundles = groupSetupInfo.senderStateBundles;
+                    audienceHash = groupSetupInfo.audienceHash;
                     encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
                 } catch (CryptoException e) {
                     Log.e("Failed to encrypt group post", e);

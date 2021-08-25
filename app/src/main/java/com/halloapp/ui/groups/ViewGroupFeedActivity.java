@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.halloapp.BuildConfig;
+import com.halloapp.Debug;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.id.GroupId;
@@ -305,4 +308,12 @@ public class ViewGroupFeedActivity extends HalloActivity {
         return super.dispatchTouchEvent(ev);
     }
 
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        if (BuildConfig.DEBUG && keyCode == KeyEvent.KEYCODE_BACK) {
+            Debug.showGroupDebugMenu(this, fabView, groupId);
+            return true;
+        }
+        return super.onKeyLongPress(keyCode, event);
+    }
 }

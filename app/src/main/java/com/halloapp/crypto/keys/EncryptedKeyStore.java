@@ -10,12 +10,12 @@ import androidx.annotation.Nullable;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
-import com.google.crypto.tink.subtle.Hex;
 import com.halloapp.AppContext;
 import com.halloapp.Me;
 import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
+import com.halloapp.crypto.group.GroupFeedMessageKey;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.util.Preconditions;
@@ -83,6 +83,8 @@ public class EncryptedKeyStore {
     private static final String PREF_KEY_PEER_GROUP_CHAIN_KEY = "peer_group_chain_key";
     private static final String PREF_KEY_MY_GROUP_SIGNING_KEY = "my_group_signing_key";
     private static final String PREF_KEY_PEER_GROUP_SIGNING_KEY = "peer_group_signing_key";
+    private static final String PREF_KEY_SKIPPED_GROUP_FEED_KEYS_SET = "skipped_group_feed_keys_set";
+    private static final String PREF_KEY_SKIPPED_GROUP_FEED_KEY = "skipped_group_feed_key";
 
     private static final int CURVE_25519_PRIVATE_KEY_LENGTH = 32;
 
@@ -859,6 +861,67 @@ public class EncryptedKeyStore {
     public void clearPeerGroupSigningKey(GroupId groupId, UserId peerUserId) {
         if (!getPreferences().edit().remove(getPeerGroupSigningKeyPrefKey(groupId, peerUserId)).commit()) {
             Log.e("EncryptedKeyStore: failed to clear peer group signing key");
+        }
+    }
+
+    private String getGroupFeedKeySetPrefKey(GroupId groupId, UserId peerUserId) {
+        return groupId.rawId() + "/" + PREF_KEY_SKIPPED_GROUP_FEED_KEYS_SET + "/" + peerUserId.rawId();
+    }
+
+    private String getGroupFeedKeyPrefKey(GroupId groupId, UserId peerUserId, int currentChainIndex) {
+        return groupId.rawId() + "/" + PREF_KEY_SKIPPED_GROUP_FEED_KEY + "/" + peerUserId.rawId() + "/" + currentChainIndex;
+    }
+
+    public byte[] removeSkippedGroupFeedKey(GroupId groupId, UserId peerUserId, int chainIndex) {
+        String messageKeySetPrefKey = getGroupFeedKeySetPrefKey(groupId, peerUserId);
+        Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
+
+        String prefKey = getGroupFeedKeyPrefKey(groupId, peerUserId, chainIndex);
+        if (!messageKeyPrefKeys.remove(prefKey)) {
+            Log.e("Group feed key for " + prefKey + " not found in set");
+            return null;
+        }
+
+        String messageKeyString = getPreferences().getString(prefKey, null);
+        if (messageKeyString == null) {
+            Log.e("Failed to retrieve group feed key for " + prefKey);
+            return null;
+        }
+
+        if (!getPreferences().edit().putStringSet(messageKeySetPrefKey, messageKeyPrefKeys).commit()) {
+            Log.e("EncryptedKeyStore: failed to rewrite skipped group feed key set");
+        }
+
+        return stringToBytes(messageKeyString);
+    }
+
+    // TODO(jack): Clear out old keys after some threshold
+    public void storeSkippedGroupFeedKey(GroupId groupId, UserId peerUserId, GroupFeedMessageKey messageKey) {
+        Log.i("Storing skipped group feed key " + messageKey + " for " + groupId + " member " + peerUserId);
+        String messageKeySetPrefKey = getGroupFeedKeySetPrefKey(groupId, peerUserId);
+        Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
+
+        String keyPrefKey = getGroupFeedKeyPrefKey(groupId, peerUserId, messageKey.getCurrentChainIndex());
+        messageKeyPrefKeys.add(keyPrefKey);
+
+        if (!getPreferences().edit().putString(keyPrefKey, bytesToString(messageKey.getKeyMaterial())).putStringSet(messageKeySetPrefKey, messageKeyPrefKeys).commit()) {
+            Log.e("EncryptedKeyStore: failed to store skipped group feed key");
+        }
+    }
+
+    public void clearSkippedGroupFeedKeys(GroupId groupId, UserId peerUserId) {
+        String messageKeySetPrefKey = getGroupFeedKeySetPrefKey(groupId, peerUserId);
+        Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
+
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.remove(messageKeySetPrefKey);
+
+        for (String prefKey : messageKeyPrefKeys) {
+            editor.remove(prefKey);
+        }
+
+        if (!editor.commit()) {
+            Log.e("EncryptedKeyStore: failed to clear skipped group feed keys");
         }
     }
 

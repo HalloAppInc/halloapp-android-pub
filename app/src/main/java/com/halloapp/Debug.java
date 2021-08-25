@@ -19,12 +19,15 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.CryptoException;
+import com.halloapp.crypto.group.GroupFeedKeyManager;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PrivateXECKey;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.crypto.signal.SignalKeyManager;
+import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.AppExpirationActivity;
@@ -68,6 +71,8 @@ public class Debug {
     private static final String DEBUG_MENU_NORMAL_USER_MODE = "Normal user mode";
     private static final String DEBUG_MENU_ADD_TO_ARCHIVE = "Add to archive";
     private static final String DEBUG_MENU_REMOVE_ARCHIVE = "Remove archive";
+    private static final String DEBUG_MENU_SKIP_OUTBOUND_GROUP_FEED_KEY = "Skip outbound key";
+    private static final String DEBUG_MENU_SKIP_INBOUND_GROUP_FEED_KEY = "Skip inbound key";
 
     private static final BgWorkers bgWorkers = BgWorkers.getInstance();
 
@@ -315,6 +320,61 @@ public class Debug {
                 return false;
             });
         }
+        menu.show();
+    }
+
+    public static void showGroupDebugMenu(@NonNull Activity activity, View anchor, GroupId groupId) {
+        PopupMenu menu = new PopupMenu(activity, anchor);
+
+        menu.getMenu().add(DEBUG_MENU_SKIP_OUTBOUND_GROUP_FEED_KEY);
+        menu.getMenu().add(DEBUG_MENU_SKIP_INBOUND_GROUP_FEED_KEY);
+        menu.setOnMenuItemClickListener(item -> {
+            SnackbarHelper.showInfo(activity, item.getTitle());
+            switch (item.getTitle().toString()) {
+                case DEBUG_MENU_SKIP_OUTBOUND_GROUP_FEED_KEY: {
+                    bgWorkers.execute(() -> {
+                        try {
+                            GroupFeedKeyManager.getInstance().getNextOutboundMessageKey(groupId);
+                        } catch (Exception e) {
+                            Log.w("DEBUG error skipping outbound group key", e);
+                        }
+                    });
+                    break;
+                }
+                case DEBUG_MENU_SKIP_INBOUND_GROUP_FEED_KEY: {
+                    bgWorkers.execute(() -> {
+                        List<MemberInfo> members = ContentDb.getInstance().getGroupMembers(groupId);
+                        List<MemberInfo> otherMembers = new ArrayList<>();
+                        List<CharSequence> names = new ArrayList<>();
+                        for (MemberInfo member : members) {
+                            if (member.userId.isMe()) {
+                                continue;
+                            }
+                            otherMembers.add(member);
+                            names.add(member.userId.rawId());
+                        }
+                        CharSequence[] arr = new CharSequence[0];
+                        activity.runOnUiThread(() -> {
+                            AlertDialog.Builder selectUserBuilder = new AlertDialog.Builder(activity);
+                            selectUserBuilder.setTitle("Pick user")
+                                    .setItems(names.toArray(arr), (dialog, whichUser) -> {
+                                        MemberInfo member = otherMembers.get(whichUser);
+                                        UserId peerUserId = member.userId;
+                                        Log.d("Debug selected: " + whichUser + " -> " + member);
+                                        try {
+                                            GroupFeedKeyManager.getInstance().getInboundMessageKey(groupId, peerUserId);
+                                        } catch (CryptoException e) {
+                                            e.printStackTrace();
+                                        }
+                                    });
+                            selectUserBuilder.create().show();
+                        });
+                    });
+                    break;
+                }
+            }
+            return false;
+        });
         menu.show();
     }
 

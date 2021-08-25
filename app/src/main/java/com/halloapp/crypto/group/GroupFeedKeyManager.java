@@ -1,9 +1,11 @@
 package com.halloapp.crypto.group;
 
+import com.google.crypto.tink.subtle.Hex;
 import com.google.protobuf.ByteString;
 import com.goterl.lazysodium.interfaces.Sign;
 import com.halloapp.Me;
 import com.halloapp.content.ContentDb;
+import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
@@ -56,17 +58,7 @@ public class GroupFeedKeyManager {
         this.signalSessionManager = signalSessionManager;
     }
 
-    public static class GroupSetupResult {
-        public final byte[] audienceHash;
-        public final List<SenderStateBundle> senderStateBundles;
-
-        public GroupSetupResult(byte[] audienceHash, List<SenderStateBundle> senderStateBundles) {
-            this.audienceHash = audienceHash;
-            this.senderStateBundles = senderStateBundles;
-        }
-    }
-
-    public GroupSetupResult ensureGroupSetUp(GroupId groupId) throws CryptoException, NoSuchAlgorithmException {
+    public GroupSetupInfo ensureGroupSetUp(GroupId groupId) throws CryptoException, NoSuchAlgorithmException {
         Map<UserId, SessionSetupInfo> setupInfoMap = new HashMap<>();
         List<MemberInfo> members = new ArrayList<>();
         for (MemberInfo memberInfo : ContentDb.getInstance().getGroupMembers(groupId)) {
@@ -165,16 +157,37 @@ public class GroupFeedKeyManager {
         byte[] fullHash = digest.digest(xor);
         byte[] audienceHash = Arrays.copyOfRange(fullHash, 0, 6);
 
-        return new GroupSetupResult(audienceHash, senderStateBundles);
+        return new GroupSetupInfo(audienceHash, senderStateBundles);
     }
 
     public byte[] getNextInboundMessageKey(GroupId groupId, UserId peerUserId, int currentChainIndex) throws CryptoException {
+        int storedCurrentChainIndex = encryptedKeyStore.getPeerGroupCurrentChainIndex(groupId, peerUserId);
+        Log.i("GroupFeedKeyManager.getNextInboundMessageKey for " + groupId + " member " + peerUserId + " receivedIndex " + currentChainIndex + " storedIndex " + storedCurrentChainIndex);
+
+        if (currentChainIndex < storedCurrentChainIndex) {
+            Log.i("GroupFeedKeyManager retrieving stored group feed key");
+            byte[] messageKey = encryptedKeyStore.removeSkippedGroupFeedKey(groupId, peerUserId, currentChainIndex);
+            if (messageKey == null) {
+                throw new CryptoException("old_grp_key_not_found");
+            }
+            return messageKey;
+        }
+
+        skipInboundKeys(groupId, peerUserId, currentChainIndex - storedCurrentChainIndex - 1, storedCurrentChainIndex);
+        encryptedKeyStore.setPeerGroupCurrentChainIndex(groupId, peerUserId, currentChainIndex);
+
+        return getInboundMessageKey(groupId, peerUserId);
+    }
+
+    public byte[] getInboundMessageKey(GroupId groupId, UserId peerUserId) throws CryptoException {
+        Log.i("GroupFeedKeyManager.getInboundMessageKey for " + groupId + " member " + peerUserId);
         try {
-            // TODO(jack): out of order messages
             byte[] chainKey = encryptedKeyStore.getPeerGroupChainKey(groupId, peerUserId);
             byte[] messageKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_MESSAGE_KEY, 80);
             byte[] updatedChainKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_CHAIN_KEY, 32);
             encryptedKeyStore.setPeerGroupChainKey(groupId, peerUserId, updatedChainKey);
+            Log.i("GroupFeedKeyManager.getInboundMessageKey chain key " + Hex.encode(chainKey) + " -> " + Hex.encode(updatedChainKey));
+            CryptoByteUtils.nullify(chainKey, updatedChainKey);
             return messageKey;
         } catch (GeneralSecurityException e) {
             throw new CryptoException("group_inbound_key_fail", e);
@@ -182,14 +195,34 @@ public class GroupFeedKeyManager {
     }
 
     public byte[] getNextOutboundMessageKey(GroupId groupId) throws CryptoException {
+        Log.i("GroupFeedKeyManager.getNextOutboundMessageKey for " + groupId);
         byte[] chainKey = encryptedKeyStore.getMyGroupChainKey(groupId);
         try {
+            int currentChainIndex = encryptedKeyStore.getMyGroupCurrentChainIndex(groupId);
+            int nextChainIndex = currentChainIndex + 1;
             byte[] messageKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_MESSAGE_KEY, 80);
             byte[] updatedChainKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_CHAIN_KEY, 32);
             encryptedKeyStore.setMyGroupChainKey(groupId, updatedChainKey);
+            encryptedKeyStore.setMyGroupCurrentChainIndex(groupId, nextChainIndex);
+            Log.i("GroupFeedKeyManager.getOutboundMessageKey chain key " + Hex.encode(chainKey) + " -> " + Hex.encode(updatedChainKey));
+            CryptoByteUtils.nullify(chainKey, updatedChainKey);
             return messageKey;
         } catch (GeneralSecurityException e) {
             throw new CryptoException("group_outbound_key_fail", e);
+        }
+    }
+
+    private void skipInboundKeys(GroupId groupId, UserId peerUserId, int count, int startIndex) throws CryptoException {
+        Log.i("GroupFeedKeyManager: skipping " + count + " inbound keys");
+        for (int i=0; i<count; i++) {
+            byte[] inboundMessageKey = getInboundMessageKey(groupId, peerUserId);
+            try {
+                GroupFeedMessageKey messageKey = new GroupFeedMessageKey(startIndex + i, inboundMessageKey);
+                encryptedKeyStore.storeSkippedGroupFeedKey(groupId, peerUserId, messageKey);
+            } catch (CryptoException e) {
+                Log.e("Cannot store invalid incoming group feed key for later use", e);
+                throw new CryptoException("skip_grp_key_" + e.getMessage());
+            }
         }
     }
 

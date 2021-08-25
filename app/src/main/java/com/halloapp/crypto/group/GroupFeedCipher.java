@@ -6,6 +6,7 @@ import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
+import com.halloapp.crypto.keys.MessageKey;
 import com.halloapp.crypto.keys.PrivateEdECKey;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -19,11 +20,6 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-/**
- * TODO:
- * 1. Store message key on decrypt failure
- * 2. Need a special GroupFeedMessageKey class since no ephemeral key etc
- */
 public class GroupFeedCipher {
     private static final int COUNTER_SIZE_BYTES = 4;
 
@@ -37,11 +33,9 @@ public class GroupFeedCipher {
 
     public byte[] convertForWire(byte[] payload, GroupId groupId) throws CryptoException {
         byte[] messageKey = GroupFeedKeyManager.getInstance().getNextOutboundMessageKey(groupId);
-
-        int currentChainIndex = encryptedKeyStore.getMyGroupCurrentChainIndex(groupId);
         PrivateEdECKey privateSignatureKey = encryptedKeyStore.getMyPrivateGroupSigningKey(groupId);
-        int nextChainIndex = currentChainIndex + 1;
-        encryptedKeyStore.setMyGroupCurrentChainIndex(groupId, nextChainIndex);
+        int nextChainIndex = encryptedKeyStore.getMyGroupCurrentChainIndex(groupId);
+
         byte[] signature = CryptoUtils.verifyDetached(payload, privateSignatureKey);
         byte[] signedPayload = CryptoByteUtils.concat(payload, signature);
 
@@ -75,18 +69,17 @@ public class GroupFeedCipher {
 
         int currentChainIndex = ByteBuffer.wrap(currentChainIndexBytes).getInt();
 
-        byte[] messageKey = groupFeedKeyManager.getNextInboundMessageKey(groupId, peerUserId, currentChainIndex);
+        byte[] inboundMessageKey = groupFeedKeyManager.getNextInboundMessageKey(groupId, peerUserId, currentChainIndex);
 
-        byte[] aesKey = Arrays.copyOfRange(messageKey, 0, 32);
-        byte[] hmacKey = Arrays.copyOfRange(messageKey, 32, 64);
-        byte[] iv = Arrays.copyOfRange(messageKey, 64, 80);
+        byte[] aesKey = Arrays.copyOfRange(inboundMessageKey, 0, 32);
+        byte[] hmacKey = Arrays.copyOfRange(inboundMessageKey, 32, 64);
+        byte[] iv = Arrays.copyOfRange(inboundMessageKey, 64, 80);
 
         byte[] calculatedHmac = CryptoUtils.hmac(hmacKey, encryptedMessage);
         if (!Arrays.equals(calculatedHmac, receivedHmac)) {
             Log.e("Expected HMAC " + Hex.encode(receivedHmac) + " but calculated " + Hex.encode(calculatedHmac));
-            throw new CryptoException("group_hmac_mismatch");
-//            MessageKey messageKey = new MessageKey(ephemeralKeyId, previousChainLength, currentChainIndex, inboundMessageKey);
-//            onDecryptFailure("hmac_mismatch", peerUserId, messageKey);
+            GroupFeedMessageKey messageKey = new GroupFeedMessageKey(currentChainIndex, inboundMessageKey);
+            onDecryptFailure("group_hmac_mismatch", groupId, peerUserId, messageKey);
         }
 
         try {
@@ -96,7 +89,7 @@ public class GroupFeedCipher {
             c.init(Cipher.DECRYPT_MODE, secretKeySpec, ivSpec);
             byte[] signedPayload = c.doFinal(encryptedMessage);
 
-            CryptoByteUtils.nullify(messageKey, aesKey, hmacKey, iv);
+            CryptoByteUtils.nullify(inboundMessageKey, aesKey, hmacKey, iv);
 
             byte[] decPayload = Arrays.copyOfRange(signedPayload, 0, signedPayload.length - Sign.ED25519_BYTES);
             byte[] signature = Arrays.copyOfRange(signedPayload, signedPayload.length - Sign.ED25519_BYTES, signedPayload.length);
@@ -111,11 +104,23 @@ public class GroupFeedCipher {
             return decPayload;
         } catch (GeneralSecurityException e) {
             Log.w("Decryption failed, storing message key", e);
-            throw new CryptoException("group_dec_failed", e);
-//            MessageKey messageKey = new MessageKey(ephemeralKeyId, previousChainLength, currentChainIndex, inboundMessageKey);
-//            onDecryptFailure("cipher_dec_failure", peerUserId, messageKey);
+            GroupFeedMessageKey messageKey = new GroupFeedMessageKey(currentChainIndex, inboundMessageKey);
+            onDecryptFailure("grp_cipher_dec_failure", groupId, peerUserId, messageKey);
         }
 
-//        throw new IllegalStateException("Unreachable");
+        throw new IllegalStateException("Unreachable");
+    }
+
+    void onDecryptFailure(String reason, GroupId groupId, UserId peerUserId, GroupFeedMessageKey messageKey) throws CryptoException {
+        encryptedKeyStore.storeSkippedGroupFeedKey(groupId, peerUserId, messageKey);
+//        byte[] lastTeardownKey = encryptedKeyStore.getOutboundTeardownKey(peerUserId);
+//        byte[] newTeardownKey = messageKey.getKeyMaterial();
+//        boolean match = Arrays.equals(lastTeardownKey, newTeardownKey);
+//        if (!match) {
+//            encryptedKeyStore.setOutboundTeardownKey(peerUserId, newTeardownKey);
+//            signalKeyManager.tearDownSession(peerUserId);
+//        }
+//        throw new CryptoException(reason, match, newTeardownKey);
+        throw new CryptoException(reason);
     }
 }
