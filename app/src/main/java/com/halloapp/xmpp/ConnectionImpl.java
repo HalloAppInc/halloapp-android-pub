@@ -571,7 +571,9 @@ public class ConnectionImpl extends Connection {
 
             if (Constants.GROUP_FEED_ENC_ENABLED) {
                 try {
-                    audienceHash = GroupFeedKeyManager.getInstance().ensureGroupSetUp(groupId, senderStateBundles);
+                    GroupFeedKeyManager.GroupSetupResult groupSetupResult = GroupFeedKeyManager.getInstance().ensureGroupSetUp(groupId);
+                    senderStateBundles = groupSetupResult.senderStateBundles;
+                    audienceHash = groupSetupResult.audienceHash;
                     encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
                 } catch (CryptoException e) {
                     Log.e("Failed to encrypt group post", e);

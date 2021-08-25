@@ -24,7 +24,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GroupFeedKeyManager {
     private static GroupFeedKeyManager instance;
@@ -53,20 +55,31 @@ public class GroupFeedKeyManager {
         this.signalSessionManager = signalSessionManager;
     }
 
-    public byte[] ensureGroupSetUp(GroupId groupId, List<SenderStateBundle> senderStateBundles) throws CryptoException, NoSuchAlgorithmException {
+    public static class GroupSetupResult {
+        public final byte[] audienceHash;
+        public final List<SenderStateBundle> senderStateBundles;
+
+        public GroupSetupResult(byte[] audienceHash, List<SenderStateBundle> senderStateBundles) {
+            this.audienceHash = audienceHash;
+            this.senderStateBundles = senderStateBundles;
+        }
+    }
+
+    public GroupSetupResult ensureGroupSetUp(GroupId groupId) throws CryptoException, NoSuchAlgorithmException {
+        Map<UserId, SessionSetupInfo> setupInfoMap = new HashMap<>();
         List<MemberInfo> members = new ArrayList<>();
         for (MemberInfo memberInfo : ContentDb.getInstance().getGroupMembers(groupId)) {
             UserId userId = memberInfo.userId;
             if (userId.isMe()) {
                 members.add(new MemberInfo(-1, new UserId(Me.getInstance().getUser()), memberInfo.type, memberInfo.name));
             } else {
-                // TODO: Include session setup info in case users have not messaged
-                SessionSetupInfo sessionSetupInfo = null;
+                SessionSetupInfo sessionSetupInfo;
                 try {
                     sessionSetupInfo = signalSessionManager.getSessionSetupInfo(userId);
                 } catch (Exception e) {
                     throw new CryptoException("failed_get_session_setup_info", e);
                 }
+                setupInfoMap.put(userId, sessionSetupInfo);
 
                 members.add(memberInfo);
             }
@@ -86,6 +99,7 @@ public class GroupFeedKeyManager {
             }
         }
 
+        List<SenderStateBundle> senderStateBundles = new ArrayList<>();
         if (!EncryptedKeyStore.getInstance().getGroupSendAlreadySetUp(groupId)) {
             Log.i("connection: Group send not yet set up for " + groupId + "; setting up now");
             SecureRandom r = new SecureRandom();
@@ -111,9 +125,15 @@ public class GroupFeedKeyManager {
                 UserId peerUserId = memberInfo.userId;
                 byte[] senderKeyBytes = senderKey.toByteArray();
                 byte[] encSenderKey = SignalSessionManager.getInstance().encryptMessage(senderKeyBytes, peerUserId);
-                SenderStateWithKeyInfo info = SenderStateWithKeyInfo.newBuilder()
-                        .setEncSenderState(ByteString.copyFrom(encSenderKey))
-                        .build();
+                SenderStateWithKeyInfo.Builder info = SenderStateWithKeyInfo.newBuilder()
+                        .setEncSenderState(ByteString.copyFrom(encSenderKey));
+                SessionSetupInfo sessionSetupInfo = setupInfoMap.get(peerUserId);
+                if (sessionSetupInfo != null) {
+                    info.setPublicKey(ByteString.copyFrom(sessionSetupInfo.identityKey.getKeyMaterial()));
+                    if (sessionSetupInfo.oneTimePreKeyId != null) {
+                        info.setOneTimePreKeyId(sessionSetupInfo.oneTimePreKeyId);
+                    }
+                }
                 SenderStateBundle senderStateBundle = SenderStateBundle.newBuilder()
                         .setSenderState(info)
                         .setUid(Long.parseLong(peerUserId.rawId()))
@@ -137,7 +157,9 @@ public class GroupFeedKeyManager {
 
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] fullHash = digest.digest(xor);
-        return Arrays.copyOfRange(fullHash, 0, 6);
+        byte[] audienceHash = Arrays.copyOfRange(fullHash, 0, 6);
+
+        return new GroupSetupResult(audienceHash, senderStateBundles);
     }
 
     public byte[] getNextInboundMessageKey(GroupId groupId, UserId peerUserId, int currentChainIndex) throws CryptoException {
