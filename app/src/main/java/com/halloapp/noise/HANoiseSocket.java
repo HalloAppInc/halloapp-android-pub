@@ -46,6 +46,8 @@ public class HANoiseSocket extends Socket {
     private static final String XX_PROTOCOL = "Noise_XX_25519_AESGCM_SHA256";
     private static final String IK_PROTOCOL = "Noise_IK_25519_AESGCM_SHA256";
 
+    private static final int NOISE_EXTRA_SIZE = 128; // Noise actually only needs 96 extra bytes, but using 128 just in case
+
     /** First byte of packet size reserved for future use */
     private static final int PACKET_SIZE_MASK = 0xFFFFFF;
 
@@ -73,7 +75,7 @@ public class HANoiseSocket extends Socket {
     }
 
     @WorkerThread
-    public void authenticate(@NonNull AuthRequest authRequest) throws IOException, NoiseException {
+    public void initialize(@NonNull byte[] initializationBytes) throws IOException, NoiseException {
         byte[] noiseKey = me.getMyEd25519NoiseKey();
         if (noiseKey == null) {
            throw new NoiseException("Missing registered key for noise authentication");
@@ -82,7 +84,7 @@ public class HANoiseSocket extends Socket {
         if (serverStaticKey == null) {
             Log.i("NoiseSocket/authenticate no saved server static key, doing XX handshake");
             try {
-                performXXHandshake(authRequest, noiseKey);
+                performXXHandshake(initializationBytes, noiseKey);
                 me.setServerStaticKey(getServerStaticKey());
             } catch (NoSuchAlgorithmException | ShortBufferException | BadPaddingException | CryptoException e) {
                 throw new NoiseException(e);
@@ -90,14 +92,14 @@ public class HANoiseSocket extends Socket {
         } else {
             Log.i("NoiseSocket/authenticate trying IK handshake");
             try {
-                performIKHandshake(authRequest, noiseKey, serverStaticKey);
+                performIKHandshake(initializationBytes, noiseKey, serverStaticKey);
             } catch (NoSuchAlgorithmException | ShortBufferException | BadPaddingException | CryptoException e) {
                 throw new NoiseException(e);
             }
         }
     }
 
-    private void performIKHandshake(@NonNull AuthRequest authRequest, byte[] localKeypair, PublicEdECKey remoteStaticKey) throws NoSuchAlgorithmException, IOException, ShortBufferException, BadPaddingException, CryptoException, NoiseException {
+    private void performIKHandshake(@NonNull byte[] initializationBytes, byte[] localKeypair, PublicEdECKey remoteStaticKey) throws NoSuchAlgorithmException, IOException, ShortBufferException, BadPaddingException, CryptoException, NoiseException {
         writeHandshakeSignature();
         handshakeState = new HandshakeState(IK_PROTOCOL, HandshakeState.INITIATOR);
 
@@ -108,10 +110,8 @@ public class HANoiseSocket extends Socket {
 
         handshakeState.start();
 
-        byte[] clientConfig = authRequest.toByteArray();
-
-        byte[] msgBuf = new byte[BUFFER_SIZE];
-        int msgALen = handshakeState.writeMessage(msgBuf, 0, clientConfig, 0, clientConfig.length);
+        byte[] msgBuf = createMsgBuffer(initializationBytes.length);
+        int msgALen = handshakeState.writeMessage(msgBuf, 0, initializationBytes, 0, initializationBytes.length);
         writeNoiseMessage(NoiseMessage.MessageType.IK_A, msgBuf, msgALen);
 
         NoiseMessage msgB = readNextNoiseMessage();
@@ -129,7 +129,7 @@ public class HANoiseSocket extends Socket {
             if (!correctCert) {
                 throw new NoiseException("Certificate received does not match!");
             }
-            int msgCLen = handshakeState.writeMessage(msgBuf, 0, clientConfig,0, clientConfig.length);
+            int msgCLen = handshakeState.writeMessage(msgBuf, 0, initializationBytes,0, initializationBytes.length);
             writeNoiseMessage(NoiseMessage.MessageType.XX_FALLBACK_B, msgBuf, msgCLen);
         } else if(NoiseMessage.MessageType.IK_B.equals(msgB.getMessageType())) {
             handshakeState.readMessage(msgBContent, 0, msgBContent.length, msgBuf, 0);
@@ -146,7 +146,7 @@ public class HANoiseSocket extends Socket {
         }
     }
 
-    private void performXXHandshake(@NonNull AuthRequest authRequest, byte[] localKeypair) throws NoSuchAlgorithmException, IOException, ShortBufferException, BadPaddingException, CryptoException, NoiseException {
+    private void performXXHandshake(@NonNull byte[] initializationBytes, byte[] localKeypair) throws NoSuchAlgorithmException, IOException, ShortBufferException, BadPaddingException, CryptoException, NoiseException {
         writeHandshakeSignature();
         handshakeState = new HandshakeState(XX_PROTOCOL, HandshakeState.INITIATOR);
 
@@ -155,7 +155,7 @@ public class HANoiseSocket extends Socket {
 
         handshakeState.start();
 
-        byte[] msgBuf = new byte[BUFFER_SIZE];
+        byte[] msgBuf = createMsgBuffer(initializationBytes.length);
         int msgALen = handshakeState.writeMessage(msgBuf, 0, null, 0, 0);
         writeNoiseMessage(NoiseMessage.MessageType.XX_A, msgBuf, msgALen);
 
@@ -170,12 +170,14 @@ public class HANoiseSocket extends Socket {
             throw new NoiseException("Certificate received does not match!");
         }
 
-        byte[] clientConfig = authRequest.toByteArray();
-
-        int msgCLen = handshakeState.writeMessage(msgBuf, 0, clientConfig, 0, clientConfig.length);
+        int msgCLen = handshakeState.writeMessage(msgBuf, 0, initializationBytes, 0, initializationBytes.length);
         writeNoiseMessage(NoiseMessage.MessageType.XX_C, msgBuf, msgCLen);
 
         finishHandshake();
+    }
+
+    private byte[] createMsgBuffer(int initLength) {
+        return new byte[Math.max(initLength + NOISE_EXTRA_SIZE, BUFFER_SIZE)];
     }
 
     private void finishHandshake() throws NoiseException {

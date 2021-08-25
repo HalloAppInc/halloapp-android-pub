@@ -207,7 +207,7 @@ public class ConnectionImpl extends Connection {
                 Log.i("connection: noise migration successful");
             }
             HANoiseSocket noiseSocket = new HANoiseSocket(me, address, NOISE_PORT);
-            noiseSocket.authenticate(createAuthRequest());
+            noiseSocket.initialize(createAuthRequest().toByteArray());
             this.socket = noiseSocket;
             isAuthenticated = true;
 
