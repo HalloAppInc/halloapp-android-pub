@@ -1,5 +1,7 @@
 package com.halloapp.media;
 
+import android.annotation.SuppressLint;
+
 import com.halloapp.content.Media;
 import com.halloapp.media.ChunkedMediaParameters;
 import com.halloapp.media.ChunkedMediaParametersException;
@@ -189,6 +191,7 @@ public class EncryptDecryptChunkedMediaTest {
         ChunkedMediaParameters.computeFromBlobSize(65536 + 32, 65536);
     }
 
+    @SuppressLint("NewApi")
     @Test
     public void test() throws IOException, GeneralSecurityException, ChunkedMediaParametersException {
         final int CHUNK_SIZE = 128;
