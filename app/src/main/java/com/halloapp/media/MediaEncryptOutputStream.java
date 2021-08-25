@@ -4,6 +4,7 @@ package com.halloapp.media;
 import androidx.annotation.NonNull;
 
 import com.halloapp.content.Media;
+import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.util.logs.Log;
 
 import java.io.FilterOutputStream;
@@ -38,6 +39,8 @@ public class MediaEncryptOutputStream extends FilterOutputStream {
 
     public MediaEncryptOutputStream(@NonNull byte[] mediaKey, @Media.MediaType int type, int chunkNumber, @NonNull OutputStream os) throws IOException {
         super(os);
+
+        Log.i("MediaEncryptOutputStream using media key hash " + CryptoByteUtils.obfuscate(mediaKey));
 
         final MediaKeys keys = new MediaKeys(mediaKey, type, chunkNumber);
 
