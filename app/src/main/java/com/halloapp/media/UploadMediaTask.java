@@ -363,8 +363,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     }
 
     @WorkerThread
-    public static void encryptChunkedFile(@NonNull ChunkedMediaParameters chunkedParameters, @NonNull File plaintextFile, @NonNull File encryptedFile, @NonNull byte[] mediaKey, @Media.MediaType int type) throws IOException {
-        Log.i("UploadMediaTask.encryptChunkedFile using media key hash " + CryptoByteUtils.obfuscate(mediaKey));
+    static void encryptChunkedFile(@NonNull ChunkedMediaParameters chunkedParameters, @NonNull File plaintextFile, @NonNull File encryptedFile, @NonNull byte[] mediaKey, @Media.MediaType int type) throws IOException {
 
         OutputStream outStream = null;
         InputStream inStream = null;
@@ -403,6 +402,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     }
 
     private File encryptChunkedFile(@NonNull ChunkedMediaParameters chunkedParameters, @NonNull File unencryptedFile, @NonNull byte[] mediaKey, @Media.MediaType int type, @NonNull String postId) throws IOException {
+        Log.i("UploadMediaTask.encryptChunkedFile using media key hash " + CryptoByteUtils.obfuscate(mediaKey));
         final String finishedEncryptedFileName = "encrypted-" + unencryptedFile.getName() + "-" + postId + "-finished";
         final String unfinishedEncryptedFileName = "encrypted-" + unencryptedFile.getName() + "-" + postId + "-unfinished";
 

@@ -1,4 +1,4 @@
-package com.halloapp;
+package com.halloapp.media;
 
 import com.halloapp.content.Media;
 import com.halloapp.media.ChunkedMediaParameters;
