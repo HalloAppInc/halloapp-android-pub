@@ -37,6 +37,7 @@ import com.halloapp.proto.clients.CommentContainer;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.clients.SenderKey;
+import com.halloapp.proto.clients.SenderState;
 import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.server.Ack;
 import com.halloapp.proto.server.AuthRequest;
@@ -1452,17 +1453,15 @@ public class ConnectionImpl extends Connection {
                     SessionSetupInfo sessionSetupInfo = peerPublicIdentityKey == null || peerPublicIdentityKey.length == 0 ? null : new SessionSetupInfo(new PublicEdECKey(peerPublicIdentityKey), (int) oneTimePreKeyId);
                     try {
                         byte[] senderStateDec = SignalSessionManager.getInstance().decryptMessage(encSenderState, publisherUserId, sessionSetupInfo);
-                        SenderKey senderKey = SenderKey.parseFrom(senderStateDec);
-
-//                        int currentChainIndex = senderState.getCurrentChainIndex();
-//                        SenderKey senderKey = senderState.getSenderKey();
+                        SenderState senderState = SenderState.parseFrom(senderStateDec);
+                        SenderKey senderKey = senderState.getSenderKey();
+                        int currentChainIndex = senderState.getCurrentChainIndex();
                         byte[] chainKey = senderKey.getChainKey().toByteArray();
                         byte[] publicSignatureKeyBytes = senderKey.getPublicSignatureKey().toByteArray();
                         PublicEdECKey publicSignatureKey = new PublicEdECKey(publicSignatureKeyBytes);
 
                         EncryptedKeyStore encryptedKeyStore = EncryptedKeyStore.getInstance();
-                        // TODO(jack): Figure out where current chain index is supposed to be stored, don't see a protobuf field
-//                        encryptedKeyStore.setPeerGroupCurrentChainIndex(groupId, publisherUserId, currentChainIndex);
+                        encryptedKeyStore.setPeerGroupCurrentChainIndex(groupId, publisherUserId, currentChainIndex);
                         encryptedKeyStore.setPeerGroupChainKey(groupId, publisherUserId, chainKey);
                         encryptedKeyStore.setPeerGroupSigningKey(groupId, publisherUserId, publicSignatureKey);
                     } catch (CryptoException e) {

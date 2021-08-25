@@ -14,6 +14,7 @@ import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.SenderKey;
+import com.halloapp.proto.clients.SenderState;
 import com.halloapp.proto.server.SenderStateBundle;
 import com.halloapp.proto.server.SenderStateWithKeyInfo;
 import com.halloapp.util.logs.Log;
@@ -118,13 +119,18 @@ public class GroupFeedKeyManager {
                     .setPublicSignatureKey(ByteString.copyFrom(publicSignatureKeyBytes))
                     .build();
 
+            SenderState senderState = SenderState.newBuilder()
+                    .setSenderKey(senderKey)
+                    .setCurrentChainIndex(currentChainIndex)
+                    .build();
+
             for (MemberInfo memberInfo : members) {
                 if (me.getUser().equals(memberInfo.userId.rawId())) {
                     continue;
                 }
                 UserId peerUserId = memberInfo.userId;
-                byte[] senderKeyBytes = senderKey.toByteArray();
-                byte[] encSenderKey = SignalSessionManager.getInstance().encryptMessage(senderKeyBytes, peerUserId);
+                byte[] senderStateBytes = senderState.toByteArray();
+                byte[] encSenderKey = SignalSessionManager.getInstance().encryptMessage(senderStateBytes, peerUserId);
                 SenderStateWithKeyInfo.Builder info = SenderStateWithKeyInfo.newBuilder()
                         .setEncSenderState(ByteString.copyFrom(encSenderKey));
                 SessionSetupInfo sessionSetupInfo = setupInfoMap.get(peerUserId);
@@ -191,7 +197,8 @@ public class GroupFeedKeyManager {
         Log.i("GroupFeedKeyManager tearing down outbound session for " + groupId);
         encryptedKeyStore.clearMyGroupChainKey(groupId);
         encryptedKeyStore.clearMyGroupCurrentChainIndex(groupId);
-        encryptedKeyStore.clearMyGroupSigningKey(groupId); // TODO(jack): Are we sure this should be reset?
+        encryptedKeyStore.clearMyGroupSigningKey(groupId);
+        encryptedKeyStore.clearGroupSendAlreadySetUp(groupId);
     }
 
     public void tearDownInboundSession(GroupId groupId, UserId peerUserId) {
