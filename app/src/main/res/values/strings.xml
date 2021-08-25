@@ -19,7 +19,7 @@
     <string name="invite_notifications_channel_name">Invite notifications</string>
     <string name="invite_notification_text">%s just accepted your invite to join HalloApp 🎉</string>
     <string name="me">Me</string>
-    <string name="you">You</string>
+    <string name="you">you</string>
     <string name="camera_post">Camera</string>
     <string name="gallery_post">Gallery</string>
     <string name="text_post">Text</string>
