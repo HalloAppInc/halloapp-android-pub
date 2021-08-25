@@ -18,6 +18,8 @@
     <string name="invite_notifications_channel_name">"إشعارات الدعوة"</string>
     <string name="invite_notification_text">"%s قبل دعوتك للانضمام إلى هالوآب&#x1f389;"</string>
     <string name="me">"أنا"</string>
+
+    <!-- Fuzzy -->
     <string name="you">"أنت"</string>
     <string name="camera_post">"الكاميرا"</string>
     <string name="gallery_post">"المعرض"</string>

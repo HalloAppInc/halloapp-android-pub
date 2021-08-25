@@ -18,6 +18,8 @@
     <string name="invite_notifications_channel_name">"Pemberitahuan undangan"</string>
     <string name="invite_notification_text">"%s baru saja menerima undanganmu untuk bergabung di HalloApp &#x1f389;"</string>
     <string name="me">"Saya"</string>
+
+    <!-- Fuzzy -->
     <string name="you">"Kamu"</string>
     <string name="camera_post">"Kamera"</string>
     <string name="gallery_post">"Galeri"</string>

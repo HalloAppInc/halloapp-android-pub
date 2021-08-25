@@ -18,6 +18,8 @@
     <string name="invite_notifications_channel_name">"Notifications d'invitation"</string>
     <string name="invite_notification_text">"%s vient d'accepter ton invitation à rejoindre HalloAppli &#x1f389;"</string>
     <string name="me">"Moi"</string>
+
+    <!-- Fuzzy -->
     <string name="you">"Toi"</string>
     <string name="camera_post">"Caméra"</string>
     <string name="gallery_post">"Galerie"</string>

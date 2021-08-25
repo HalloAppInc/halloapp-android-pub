@@ -18,6 +18,8 @@
     <string name="invite_notifications_channel_name">"सूचनाएं आमंत्रित करें"</string>
     <string name="invite_notification_text">"%s ने HalloApp में शामिल होने के लिए आपके निमंत्रण को अभी स्वीकार किया है &#x1f389;"</string>
     <string name="me">"मैं"</string>
+
+    <!-- Fuzzy -->
     <string name="you">"आप"</string>
     <string name="camera_post">"कैमरा"</string>
     <string name="gallery_post">"गेलरी"</string>

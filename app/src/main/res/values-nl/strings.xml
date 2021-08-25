@@ -18,7 +18,13 @@
     <string name="invite_notifications_channel_name">"Uitnodigingsmeldingen"</string>
     <string name="invite_notification_text">"%s heeft je uitnodiging voor HalloApp geaccepteerd &#x1f389;"</string>
     <string name="me">"Ik"</string>
-    <string name="you">"Je"</string>
+
+    <!-- I think You also need you without capitals. See attached example.
+
+(iOS already has two strings for this, named user.you & user.you.capitalized) 
+
+https://s3.eu-west-1.amazonaws.com/po-pub/i/Q5dePwegWIHB6wAEgLPduTNg.jpg -->
+    <string name="you">"je"</string>
     <string name="camera_post">"Camera"</string>
     <string name="gallery_post">"Galerij"</string>
     <string name="text_post">"Tekst"</string>
@@ -150,14 +156,12 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     </plurals>
 
     <!-- Please add string for multiple users (plural) commented on your post (single) -->
-    <!-- Fuzzy -->
     <plurals name="new_comments_notification">
         <item quantity="one">"%s heeft gereageerd op je post"</item>
         <item quantity="other">"%s hebben gereageerd op je post"</item>
     </plurals>
 
     <!-- Please add string for multiple users (plural) commented on your posts (plural) -->
-    <!-- Fuzzy -->
     <plurals name="new_comments_on_multiple_posts_notification">
         <item quantity="one">"%s heeft gereageerd op je posts"</item>
         <item quantity="other">"%s hebben gereageerd op je posts"</item>
@@ -702,7 +706,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="archived_on">"Gearchiveerd %s"</string>
 
     <!-- Error message when the group is full -->
-    <string name="invite_link_failed_to_join_full">"Je kunt niet deelnemen aan deze groep omdat het maximaalaantal deelnemers is bereikt"</string>
+    <string name="invite_link_failed_to_join_full">"Je kunt niet deelnemen aan deze groep omdat het maximumaantal deelnemers is bereikt"</string>
 
     <!-- Error message when the invite link is invalid -->
     <string name="invite_link_failed_to_join_invalid">"De uitnodigingslink is ongeldig"</string>

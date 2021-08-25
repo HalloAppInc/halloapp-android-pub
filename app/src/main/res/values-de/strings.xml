@@ -20,7 +20,9 @@
     <string name="invite_notifications_channel_name">"Einladungs-Mitteilungen"</string>
     <string name="invite_notification_text">"%s hat deine Einladung zu HalloApp &#x1f389; angenommen"</string>
     <string name="me">"Ich"</string>
-    <string name="you">"Du"</string>
+
+    <!-- Fuzzy -->
+    <string name="you">"dich"</string>
     <string name="camera_post">"Kamera"</string>
     <string name="gallery_post">"Galerie"</string>
     <string name="text_post">"Text"</string>
@@ -174,13 +176,13 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <!-- Fuzzy -->
     <plurals name="new_comments_notification">
         <item quantity="one">"%s hat deinen Beitrag kommentiert"</item>
-        <item quantity="other">"%s hat deinen Beitrag kommentiert"</item>
+        <item quantity="other">"%s haben deinen Beitrag kommentiert"</item>
     </plurals>
 
     <!-- Fuzzy -->
     <plurals name="new_comments_on_multiple_posts_notification">
         <item quantity="one">"%s hat deine Beiträge kommentiert"</item>
-        <item quantity="other">"%s hat deine Beiträge kommentiert"</item>
+        <item quantity="other">"%s haben deine Beiträge kommentiert"</item>
     </plurals>
 
     <!-- can you provide more details please? -->
@@ -854,23 +856,23 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Activity center item when non-contacts comment on your post %1$s is the first person name
          %2$s is the number of other people -->
     <plurals name="commented_on_your_post_grouped_with_others">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; und &lt;b&gt;%2$s&lt;/b&gt; weitere Person haben deinen Beitrag kommentiert"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; und &lt;b&gt;%2$s&lt;/b&gt; weitere Personen haben deinen Beitrag kommentiert"</item>
     </plurals>
 
     <!-- Activity center item when non-contacts comment on someones post %1$s is the first person name
          %2$s is the number of other people, %3$s is the post author's name -->
     <plurals name="commented_on_someones_post_grouped_with_others">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; und &lt;b&gt;%2$s&lt;/b&gt; weitere Person haben &lt;b&gt;%3$s&lt;/b&gt;'s Beitrag kommentiert"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; und &lt;b&gt;%2$s&lt;/b&gt; weitere Personen haben &lt;b&gt;%3$s&lt;/b&gt;'s Beitrag kommentiert"</item>
     </plurals>
 
     <!-- Activity center item when two non-contacts comment on your post %1$s is the first person name
          %2$s second persons name -->
-    <string name="two_unknown_contacts_commented_on_your_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string>
+    <string name="two_unknown_contacts_commented_on_your_post">"&lt;b&gt;%1$s&lt;/b&gt; und &lt;b&gt;%2$s&lt;/b&gt; haben deinen Beitrag kommentiert"</string>
 
     <!-- Activity center item when two non-contacts comment on someones post %1$s is the first person name
          %2$s second persons name, %3$s is the poster's name -->
-    <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
+    <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; und &lt;b&gt;%2$s&lt;/b&gt; haben &lt;b&gt;%3$s&lt;/b&gt;'s Beitrag kommentiert"</string>
 </resources>
 

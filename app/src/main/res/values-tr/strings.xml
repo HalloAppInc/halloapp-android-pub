@@ -20,6 +20,8 @@
     <string name="invite_notifications_channel_name">"Davet bildirimleri"</string>
     <string name="invite_notification_text">"%s, HalloApp'e katılma davetini kabul etti &#x1f389;"</string>
     <string name="me">"Ben"</string>
+
+    <!-- Fuzzy -->
     <string name="you">"Sen"</string>
     <string name="camera_post">"Kamera"</string>
     <string name="gallery_post">"Galeri"</string>

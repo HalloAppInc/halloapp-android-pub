@@ -18,6 +18,8 @@
     <string name="invite_notifications_channel_name">"Ειδοποιήσεις προσκλήσεων"</string>
     <string name="invite_notification_text">"%s μόλις αποδέχτηκε την πρόσκλησή σας να συμμετέχει στο HalloApp &#x1f389;"</string>
     <string name="me">"Εγώ"</string>
+
+    <!-- Fuzzy -->
     <string name="you">"Εσύ"</string>
     <string name="camera_post">"Κάμερα"</string>
     <string name="gallery_post">"Συλλογή"</string>

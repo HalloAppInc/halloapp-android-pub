@@ -18,6 +18,8 @@
     <string name="invite_notifications_channel_name">"اعلان دعوت‌ها"</string>
     <string name="invite_notification_text">"%s دعوت شما را برای پیوستن به هالواپ پذیرفت  &#x1f389;"</string>
     <string name="me">"من"</string>
+
+    <!-- Fuzzy -->
     <string name="you">"شما"</string>
     <string name="camera_post">"دوربین"</string>
     <string name="gallery_post">"گالری"</string>

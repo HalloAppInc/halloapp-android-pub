@@ -18,6 +18,8 @@
     <string name="invite_notifications_channel_name">"Уведомления о приглашениях"</string>
     <string name="invite_notification_text">"%s только что принял(-а) ваше приглашение присоединиться к HalloApp &#x1f389;"</string>
     <string name="me">"Я"</string>
+
+    <!-- Fuzzy -->
     <string name="you">"Вы"</string>
     <string name="camera_post">"Камера"</string>
     <string name="gallery_post">"Галерея"</string>

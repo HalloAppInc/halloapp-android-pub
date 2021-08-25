@@ -24,6 +24,8 @@
     <string name="invite_notifications_channel_name">"Известия за покани"</string>
     <string name="invite_notification_text">"%s току-що прие вашата покана да се присъедини към HalloApp &#x1f389;"</string>
     <string name="me">"Аз"</string>
+
+    <!-- Fuzzy -->
     <string name="you">"Ти"</string>
     <string name="camera_post">"Камера"</string>
     <string name="gallery_post">"Галерия"</string>
