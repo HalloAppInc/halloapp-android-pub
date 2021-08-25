@@ -121,8 +121,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        supportRequestWindowFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+        supportRequestWindowFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setExitSharedElementCallback(sharedElementCallback);
 
         bgWorkers.execute(new Runnable() {

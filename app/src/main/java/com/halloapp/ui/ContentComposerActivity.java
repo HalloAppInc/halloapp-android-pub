@@ -142,7 +142,7 @@ public class ContentComposerActivity extends HalloActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        supportRequestWindowFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         getWindow().setExitTransition(new Fade());
 
         setExitSharedElementCallback(new SharedElementCallback() {

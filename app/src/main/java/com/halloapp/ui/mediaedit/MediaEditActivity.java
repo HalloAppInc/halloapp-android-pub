@@ -59,7 +59,7 @@ public class MediaEditActivity extends HalloActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        supportRequestWindowFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         postponeEnterTransition();
 
         setContentView(R.layout.activity_media_edit);

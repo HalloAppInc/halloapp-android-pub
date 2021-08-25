@@ -224,8 +224,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        supportRequestWindowFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+        supportRequestWindowFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setExitSharedElementCallback(sharedElementCallback);
 
         if (Build.VERSION.SDK_INT >= 28) {

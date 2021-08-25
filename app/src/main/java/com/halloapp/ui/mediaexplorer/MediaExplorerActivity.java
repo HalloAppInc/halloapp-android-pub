@@ -139,8 +139,8 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        supportRequestWindowFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+        supportRequestWindowFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setEnterSharedElementCallback(sharedElementCallback);
         postponeEnterTransition();
 
