@@ -117,10 +117,12 @@ public class ActivityCenterActivity extends HalloActivity {
     }
 
     private void updateMenu(boolean unseenContent) {
-        SpannableString ss = new SpannableString(getString(R.string.mark_all_read));
-        ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), unseenContent ? R.color.color_secondary : R.color.disabled_text)), 0, ss.length(), 0);
-        markAllReadMenuItem.setTitle(ss);
-        markAllReadMenuItem.setEnabled(unseenContent);
+        if (markAllReadMenuItem != null) {
+            SpannableString ss = new SpannableString(getString(R.string.mark_all_read));
+            ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), unseenContent ? R.color.color_secondary : R.color.disabled_text)), 0, ss.length(), 0);
+            markAllReadMenuItem.setTitle(ss);
+            markAllReadMenuItem.setEnabled(unseenContent);
+        }
     }
 
     @Override
