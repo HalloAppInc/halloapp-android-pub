@@ -6,6 +6,7 @@ import androidx.annotation.WorkerThread;
 
 import com.halloapp.Constants;
 import com.halloapp.content.Media;
+import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
 
@@ -37,6 +38,8 @@ public class Uploader {
     @WorkerThread
     public static byte [] run(@NonNull File file, @Nullable byte [] mediaKey, @Media.MediaType int type, @NonNull String url, @Nullable UploadListener listener, @NonNull String mediaLogId) throws IOException {
         ThreadUtils.setSocketTag();
+
+        Log.i("Uploader.run using media key hash " + CryptoByteUtils.obfuscate(mediaKey));
 
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 

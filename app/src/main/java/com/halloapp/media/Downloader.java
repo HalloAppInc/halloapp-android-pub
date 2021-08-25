@@ -6,6 +6,7 @@ import androidx.annotation.WorkerThread;
 
 import com.halloapp.Constants;
 import com.halloapp.content.Media;
+import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.TailInputStream;
 import com.halloapp.util.ThreadUtils;
@@ -45,6 +46,8 @@ public class Downloader {
 
     @WorkerThread
     private static void decrypt(@NonNull InputStream inStream, long contentLength, @NonNull File unencryptedFile, @Nullable byte[] mediaKey, @Nullable byte[] encSha256Hash, @Media.MediaType int type, @Nullable DownloadListener listener) throws IOException, GeneralSecurityException {
+        Log.i("Downloader.decrypt using media key hash " + CryptoByteUtils.obfuscate(mediaKey));
+
         OutputStream outStream = null;
         try {
             outStream = new BufferedOutputStream(new FileOutputStream(unencryptedFile));
@@ -92,6 +95,8 @@ public class Downloader {
 
     @WorkerThread
     public static void decryptChunkedFile(@NonNull ChunkedMediaParameters chunkedParameters, @NonNull InputStream inStream, long contentLength, @NonNull File unencryptedFile, @NonNull byte[] mediaKey, @NonNull byte[] encSha256hash, @Media.MediaType int type, @Nullable DownloadListener listener) throws IOException, GeneralSecurityException {
+        Log.i("Downloader.decryptChunkedFile using media key hash " + CryptoByteUtils.obfuscate(mediaKey));
+
         OutputStream outStream = null;
         try {
             outStream = new BufferedOutputStream(new FileOutputStream(unencryptedFile));

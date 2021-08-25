@@ -18,6 +18,7 @@ import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.log_events.MediaUpload;
 import com.halloapp.util.FileUtils;
@@ -319,6 +320,8 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     }
 
     private File encryptFile(@NonNull File file, @Nullable byte[] mediaKey, @Media.MediaType int type, @NonNull String postId) throws IOException {
+        Log.i("UploadMediaTask.encryptFile using media key hash " + CryptoByteUtils.obfuscate(mediaKey));
+
         final String finishedEncryptedFileName = "encrypted-" + file.getName() + "-" + postId + "-finished";
         final String unfinishedEncryptedFileName = "encrypted-" + file.getName() + "-" + postId + "-unfinished";
 
@@ -361,6 +364,8 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
 
     @WorkerThread
     public static void encryptChunkedFile(@NonNull ChunkedMediaParameters chunkedParameters, @NonNull File plaintextFile, @NonNull File encryptedFile, @NonNull byte[] mediaKey, @Media.MediaType int type) throws IOException {
+        Log.i("UploadMediaTask.encryptChunkedFile using media key hash " + CryptoByteUtils.obfuscate(mediaKey));
+
         OutputStream outStream = null;
         InputStream inStream = null;
         try {

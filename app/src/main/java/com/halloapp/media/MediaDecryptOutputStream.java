@@ -39,8 +39,6 @@ public class MediaDecryptOutputStream extends FilterOutputStream {
     public MediaDecryptOutputStream(@NonNull byte[] mediaKey, @Media.MediaType int type, int chunkNumber, @NonNull OutputStream os) throws IOException {
         super(os);
 
-        Log.i("MediaDecryptOutputStream using media key hash " + CryptoByteUtils.obfuscate(mediaKey));
-
         final MediaKeys keys = new MediaKeys(mediaKey, type, chunkNumber);
 
         try {
