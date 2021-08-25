@@ -18,8 +18,16 @@ import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.OneTimePreKey;
 import com.halloapp.crypto.keys.PrivateEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
+import com.halloapp.noise.HANoiseSocket;
+import com.halloapp.noise.NoiseException;
 import com.halloapp.proto.server.IdentityKey;
 import com.halloapp.proto.clients.SignedPreKey;
+import com.halloapp.proto.server.OtpRequest;
+import com.halloapp.proto.server.OtpResponse;
+import com.halloapp.proto.server.RegisterRequest;
+import com.halloapp.proto.server.RegisterResponse;
+import com.halloapp.proto.server.VerifyOtpRequest;
+import com.halloapp.proto.server.VerifyOtpResponse;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.LanguageUtils;
 import com.halloapp.util.Preconditions;
@@ -36,15 +44,21 @@ import java.io.InputStream;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.ShortBufferException;
 import javax.net.ssl.HttpsURLConnection;
 
 public class Registration {
 
+    private static final String NOISE_HOST = "s.halloapp.net";
+    private static final String DEBUG_NOISE_HOST = "s-test.halloapp.net";
+    private static final int NOISE_PORT = 5208;
     private static final String HOST = "api.halloapp.net";
     private static final int RETRY_DEFAULT_WAIT_TIME_SECONDS = 15;
 
@@ -81,7 +95,65 @@ public class Registration {
     }
 
     @WorkerThread
+    private @NonNull RegistrationRequestResult requestRegistrationTypeViaNoise(@NonNull String phone, @Nullable String groupInviteToken, boolean phoneCall) {
+        final String host = preferences.getUseDebugHost() ? DEBUG_NOISE_HOST : NOISE_HOST;
+        OtpRequest.Builder otpRequestBuilder = OtpRequest.newBuilder();
+        otpRequestBuilder.setPhone(phone);
+        otpRequestBuilder.setLangId(LanguageUtils.getLocaleIdentifier());
+        otpRequestBuilder.setMethod(phoneCall ? OtpRequest.Method.VOICE_CALL : OtpRequest.Method.SMS);
+        otpRequestBuilder.setUserAgent(Constants.USER_AGENT);
+        if (groupInviteToken != null) {
+            otpRequestBuilder.setGroupInviteToken(groupInviteToken);
+        }
+        me.saveNoiseKey(CryptoUtils.generateEd25519KeyPair());
+        HANoiseSocket noiseSocket = null;
+        try {
+            final InetAddress address = InetAddress.getByName(host);
+            noiseSocket = new HANoiseSocket(me, address, NOISE_PORT);
+            noiseSocket.initialize(RegisterRequest.newBuilder()
+                    .setOtpRequest(otpRequestBuilder)
+                    .build().toByteArray());
+
+            RegisterResponse packet = RegisterResponse.parseFrom(noiseSocket.readPacket());
+            if (!packet.hasOtpResponse()) {
+                Log.e("Registration/requestRegistrationTypeViaNoise no otp response received");
+                return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_SERVER, RETRY_DEFAULT_WAIT_TIME_SECONDS);
+            }
+            OtpResponse response = packet.getOtpResponse();
+            final OtpResponse.Result result = response.getResult();
+            final String normalizedPhone = response.getPhone();
+            final OtpResponse.Reason error = response.getReason();
+            final int retryTime = (int) response.getRetryAfterSecs();
+            Log.i("Registration.requestRegistration result=" + result + " error=" + error + " phone=" + normalizedPhone);
+            if (!OtpResponse.Result.SUCCESS.equals(result)) {
+                return new RegistrationRequestResult(phone, RegistrationRequestResult.translateServerErrorCode(error), retryTime);
+            }
+            if (TextUtils.isEmpty(phone)) {
+                return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_SERVER, retryTime);
+            }
+            return new RegistrationRequestResult(phone, retryTime);
+        } catch (IOException e) {
+            Log.e("Registration.requestRegistration", e);
+            return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_NETWORK, 0);
+        } catch (NoiseException | BadPaddingException | ShortBufferException e) {
+            Log.e("Registration.requestRegistration", e);
+            return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_SERVER, RETRY_DEFAULT_WAIT_TIME_SECONDS);
+        } finally {
+            if (noiseSocket != null && !noiseSocket.isClosed()) {
+                try {
+                    noiseSocket.close();
+                } catch (IOException e) {
+                    Log.w("Registration/Failed to close socket", e);
+                }
+            }
+        }
+    }
+
+    @WorkerThread
     private @NonNull RegistrationRequestResult requestRegistrationType(@NonNull String phone, @Nullable String groupInviteToken, boolean phoneCall) {
+        if (Constants.USE_NOISE_FOR_REGISTRATION) {
+            return requestRegistrationTypeViaNoise(phone, groupInviteToken, phoneCall);
+        }
         Log.i("Registration.requestRegistration phone=" + phone);
         ThreadUtils.setSocketTag();
 
@@ -161,7 +233,9 @@ public class Registration {
 
     @WorkerThread
     public @NonNull RegistrationVerificationResult verifyPhoneNumber(@NonNull String phone, @NonNull String code) {
-        RegistrationVerificationResult verificationResult = verifyRegistrationNoise(phone, code, me.getName());
+        RegistrationVerificationResult verificationResult = Constants.USE_NOISE_FOR_REGISTRATION
+                ? verifyRegistrationViaNoise(phone, code, me.getName())
+                : verifyRegistrationNoise(phone, code, me.getName());
 
         if (verificationResult.result == RegistrationVerificationResult.RESULT_OK) {
             String uid = me.getUser();
@@ -234,6 +308,80 @@ public class Registration {
             FileUtils.closeSilently(inStream);
             if (connection != null) {
                 connection.disconnect();
+            }
+        }
+    }
+
+    @WorkerThread
+    private @NonNull RegistrationVerificationResult verifyRegistrationViaNoise(@NonNull String phone, @NonNull String code, @NonNull String name) {
+        ThreadUtils.setSocketTag();
+        encryptedKeyStore.generateClientPrivateKeys();
+        IdentityKey identityKeyProto = IdentityKey.newBuilder()
+                .setPublicKey(ByteString.copyFrom(encryptedKeyStore.getMyPublicEd25519IdentityKey().getKeyMaterial()))
+                .build();
+        PublicXECKey signedPreKey = encryptedKeyStore.getMyPublicSignedPreKey();
+        byte[] signature = CryptoUtils.verifyDetached(signedPreKey.getKeyMaterial(), encryptedKeyStore.getMyPrivateEd25519IdentityKey());
+        SignedPreKey signedPreKeyProto = SignedPreKey.newBuilder()
+                .setPublicKey(ByteString.copyFrom(signedPreKey.getKeyMaterial()))
+                .setSignature(ByteString.copyFrom(signature))
+                // TODO(jack): ID
+                .build();
+        List<ByteString> oneTimePreKeys = new ArrayList<>();
+        for (OneTimePreKey otpk : encryptedKeyStore.getNewBatchOfOneTimePreKeys()) {
+            com.halloapp.proto.clients.OneTimePreKey toAdd = com.halloapp.proto.clients.OneTimePreKey.newBuilder()
+                    .setId(otpk.id)
+                    .setPublicKey(ByteString.copyFrom(otpk.publicXECKey.getKeyMaterial()))
+                    .build();
+            oneTimePreKeys.add(toAdd.toByteString());
+        }
+
+        Log.i("Registration.verifyRegistration phone=" + phone + " code=" + code);
+
+        final String host = preferences.getUseDebugHost() ? DEBUG_NOISE_HOST : NOISE_HOST;
+        VerifyOtpRequest.Builder verifyOtpRequestBuilder = VerifyOtpRequest.newBuilder();
+        verifyOtpRequestBuilder.setPhone(phone);
+        verifyOtpRequestBuilder.setName(name);
+        verifyOtpRequestBuilder.setCode(code);
+        verifyOtpRequestBuilder.setIdentityKey(identityKeyProto.toByteString());
+        verifyOtpRequestBuilder.setSignedKey(signedPreKeyProto.toByteString());
+        verifyOtpRequestBuilder.addAllOneTimeKeys(oneTimePreKeys);
+        verifyOtpRequestBuilder.setUserAgent(Constants.USER_AGENT);
+
+        byte[] keypair = me.getMyEd25519NoiseKey();
+        byte[] pub = Arrays.copyOfRange(keypair, 0, 32);
+        byte[] priv = Arrays.copyOfRange(keypair, 32, 96);
+        verifyOtpRequestBuilder.setStaticKey(ByteString.copyFrom(pub));
+        byte[] sign = CryptoUtils.sign("HALLO".getBytes(), new PrivateEdECKey(priv));
+        verifyOtpRequestBuilder.setSignedPhrase(ByteString.copyFrom(sign));
+        HANoiseSocket noiseSocket = null;
+        try {
+            final InetAddress address = InetAddress.getByName(host);
+            noiseSocket = new HANoiseSocket(me, address, NOISE_PORT);
+            noiseSocket.initialize(RegisterRequest.newBuilder().setVerifyRequest(verifyOtpRequestBuilder).build().toByteArray());
+
+            RegisterResponse packet = RegisterResponse.parseFrom(noiseSocket.readPacket());
+            final VerifyOtpResponse response = packet.getVerifyResponse();
+            VerifyOtpResponse.Result result = response.getResult();
+
+            final String uid = Long.toString(response.getUid());
+            if (!VerifyOtpResponse.Result.SUCCESS.equals(result) || TextUtils.isEmpty(phone) || TextUtils.isEmpty(uid)) {
+                return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
+            }
+            me.saveNoiseKey(keypair);
+            return new RegistrationVerificationResult(uid, null, phone);
+        } catch (IOException e) {
+            Log.e("Registration.verifyRegistration", e);
+            return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_NETWORK);
+        } catch (BadPaddingException | NoiseException | ShortBufferException e) {
+            Log.e("Registration.verifyRegistration", e);
+            return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
+        } finally {
+            if (noiseSocket != null && !noiseSocket.isClosed()) {
+                try {
+                    noiseSocket.close();
+                } catch (IOException e) {
+                    Log.w("Registration/Failed to close socket", e);
+                }
             }
         }
     }
@@ -385,6 +533,21 @@ public class Registration {
             } else if ("retried_too_soon".equals(error)) {
                 return RESULT_FAILED_RETRIED_TOO_SOON;
             } else if ("invalid_phone_number".equals(error)) {
+                return RESULT_FAILED_INVALID_PHONE_NUMBER;
+            }
+            return RESULT_FAILED_SERVER;
+        }
+
+        static @Result int translateServerErrorCode(OtpResponse.Reason reason) {
+            if (OtpResponse.Reason.OTP_FAIL.equals(reason)) {
+                return RESULT_FAILED_SERVER_SMS_FAIL;
+            } else if (OtpResponse.Reason.NOT_INVITED.equals(reason)) {
+                return RESULT_FAILED_SERVER_NOT_INVITED;
+            } else if (OtpResponse.Reason.INVALID_CLIENT_VERSION.equals(reason)) {
+                return RESULT_FAILED_CLIENT_EXPIRED;
+            } else if (OtpResponse.Reason.RETRIED_TOO_SOON.equals(reason)) {
+                return RESULT_FAILED_RETRIED_TOO_SOON;
+            } else if (OtpResponse.Reason.INVALID_PHONE_NUMBER.equals(reason)) {
                 return RESULT_FAILED_INVALID_PHONE_NUMBER;
             }
             return RESULT_FAILED_SERVER;
