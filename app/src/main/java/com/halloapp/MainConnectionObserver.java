@@ -12,6 +12,7 @@ import com.halloapp.contacts.ContactsSync;
 
 import com.halloapp.content.PostsManager;
 import com.halloapp.crypto.CryptoException;
+import com.halloapp.crypto.group.GroupFeedKeyManager;
 import com.halloapp.crypto.signal.SessionSetupInfo;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.signal.SignalKeyManager;
@@ -78,6 +79,7 @@ public class MainConnectionObserver extends Connection.Observer {
     private final FeedPrivacyManager feedPrivacyManager;
     private final ForegroundObserver foregroundObserver;
     private final DecryptReportStats decryptReportStats;
+    private final GroupFeedKeyManager groupFeedKeyManager;
     private final SignalSessionManager signalSessionManager;
 
     public static MainConnectionObserver getInstance(@NonNull Context context) {
@@ -104,6 +106,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             FeedPrivacyManager.getInstance(),
                             ForegroundObserver.getInstance(),
                             DecryptReportStats.getInstance(),
+                            GroupFeedKeyManager.getInstance(),
                             SignalSessionManager.getInstance());
                 }
             }
@@ -132,6 +135,7 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull FeedPrivacyManager feedPrivacyManager,
             @NonNull ForegroundObserver foregroundObserver,
             @NonNull DecryptReportStats decryptReportStats,
+            @NonNull GroupFeedKeyManager groupFeedKeyManager,
             @NonNull SignalSessionManager signalSessionManager) {
         this.context = context.getApplicationContext();
 
@@ -153,6 +157,7 @@ public class MainConnectionObserver extends Connection.Observer {
         this.feedPrivacyManager = feedPrivacyManager;
         this.foregroundObserver = foregroundObserver;
         this.decryptReportStats = decryptReportStats;
+        this.groupFeedKeyManager = groupFeedKeyManager;
         this.signalSessionManager = signalSessionManager;
     }
 
@@ -432,11 +437,13 @@ public class MainConnectionObserver extends Connection.Observer {
             if (!added.isEmpty()) {
                 String idList = toUserIdList(added);
                 addSystemPost(groupId, sender, Post.USAGE_ADD_MEMBERS, idList, null);
+                encryptedKeyStore.clearGroupSendAlreadySetUp(groupId);
             }
 
             if (!removed.isEmpty()) {
                 String idList = toUserIdList(removed);
                 addSystemPost(groupId, sender, Post.USAGE_REMOVE_MEMBER, idList, null);
+                groupFeedKeyManager.tearDownOutboundSession(groupId);
             }
 
             for (MemberInfo member : removed) {
