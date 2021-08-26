@@ -50,7 +50,7 @@ public class CryptoByteUtils {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
             byte[] hash = messageDigest.digest(bytes);
             String hex = Hex.bytesToStringLowercase(hash);
-            return hex.substring(0, 4);
+            return hex.substring(0, 4) + ":" + bytes.length;
         } catch (NoSuchAlgorithmException e) {
             Log.e("Failed to get sha256 for obfuscation", e);
             return "NoAlgo";
