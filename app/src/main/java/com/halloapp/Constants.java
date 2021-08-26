@@ -56,5 +56,5 @@ public class Constants {
     public static final boolean SEND_CONTAINER = BuildConfig.DEBUG;
 
     public static final boolean GROUP_FEED_ENC_ENABLED = BuildConfig.DEBUG;
-    public static final boolean USE_NOISE_FOR_REGISTRATION = BuildConfig.DEBUG;
+    public static final boolean USE_NOISE_FOR_REGISTRATION = true;
 }
