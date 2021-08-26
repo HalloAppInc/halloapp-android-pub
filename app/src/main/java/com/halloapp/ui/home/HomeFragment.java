@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -28,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.BuildConfig;
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.ui.ActivityCenterActivity;
@@ -67,6 +67,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     private View contactsNag;
     private Button contactsSettingsButton;
     private TextView contactsNagTextView;
+    private View contactsLearnMore;
 
     private View inviteView;
 
@@ -175,6 +176,12 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         contactsNag = root.findViewById(R.id.contacts_nag);
         contactsNag.setOnClickListener(v -> {}); // Don't let touches pass through
         contactsNagTextView = contactsNag.findViewById(R.id.contact_permissions_nag);
+        contactsLearnMore = contactsNag.findViewById(R.id.learn_more);
+        contactsLearnMore.setOnClickListener(v -> {
+            Uri uri = Uri.parse(Constants.CONTACT_PERMISSIONS_LEARN_MORE_URL);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+        });
         contactsSettingsButton = contactsNag.findViewById(R.id.settings_btn);
         contactsSettingsButton.setOnClickListener(v -> {
             if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)) {

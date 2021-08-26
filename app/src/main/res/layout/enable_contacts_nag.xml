@@ -32,4 +32,15 @@
         android:layout_height="wrap_content"
         android:text="@string/go_to_settings"/>
 
+    <TextView
+        android:id="@+id/learn_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:layout_marginTop="4dp"
+        android:background="?selectableItemBackground"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/color_link"
+        android:text="@string/learn_more"/>
+
 </LinearLayout>
