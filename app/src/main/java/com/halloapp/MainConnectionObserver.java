@@ -6,48 +6,52 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.crypto.tink.subtle.Hex;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
-
-import com.halloapp.content.PostsManager;
-import com.halloapp.crypto.CryptoException;
-import com.halloapp.crypto.group.GroupFeedKeyManager;
-import com.halloapp.crypto.signal.SessionSetupInfo;
-import com.halloapp.crypto.keys.EncryptedKeyStore;
-import com.halloapp.crypto.signal.SignalKeyManager;
-import com.halloapp.crypto.keys.PublicEdECKey;
-import com.halloapp.crypto.keys.PublicXECKey;
-import com.halloapp.crypto.signal.SignalSessionManager;
-import com.halloapp.groups.GroupInfo;
-import com.halloapp.groups.MemberInfo;
-import com.halloapp.id.ChatId;
-import com.halloapp.id.GroupId;
-import com.halloapp.id.UserId;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.content.PostsManager;
 import com.halloapp.content.TransferPendingItemsTask;
+import com.halloapp.crypto.CryptoException;
+import com.halloapp.crypto.group.GroupFeedKeyManager;
+import com.halloapp.crypto.keys.EncryptedKeyStore;
+import com.halloapp.crypto.keys.PublicEdECKey;
+import com.halloapp.crypto.keys.PublicXECKey;
+import com.halloapp.crypto.signal.SessionSetupInfo;
+import com.halloapp.crypto.signal.SignalKeyManager;
+import com.halloapp.crypto.signal.SignalSessionManager;
+import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.GroupsSync;
+import com.halloapp.groups.MemberInfo;
+import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
 import com.halloapp.privacy.BlockListManager;
 import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.proto.clients.Background;
+import com.halloapp.proto.server.IdentityKey;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.DeleteAccountActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptReportStats;
 import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
 import com.halloapp.xmpp.PresenceLoader;
 import com.halloapp.xmpp.WhisperKeysMessage;
+import com.halloapp.xmpp.WhisperKeysResponseIq;
 import com.halloapp.xmpp.groups.MemberElement;
+import com.halloapp.xmpp.util.ObservableErrorException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -230,6 +234,47 @@ public class MainConnectionObserver extends Connection.Observer {
     @Override
     public void onOutgoingCommentSent(@NonNull String postId, @NonNull String commentId) {
         contentDb.setCommentTransferred(postId, UserId.ME, commentId);
+    }
+
+    @Override
+    public void onAudienceHashMismatch(@NonNull Post post) {
+        GroupId groupId = post.getParentGroup();
+
+        boolean foundMismatch = GroupsSync.getInstance(context).performSingleGroupSync(Preconditions.checkNotNull(groupId));
+        List<MemberInfo> localMembers = contentDb.getGroupMembers(groupId);
+        try {
+            for (MemberInfo member : localMembers) {
+                if (me.getUser().equals(member.userId.rawId()) || member.userId.isMe()) {
+                    continue;
+                }
+                UserId peerUserId = member.userId;
+                WhisperKeysResponseIq keysIq = connection.downloadKeys(peerUserId).await();
+                IdentityKey identityKeyProto = IdentityKey.parseFrom(keysIq.identityKey);
+                byte[] remoteIdentityKey = identityKeyProto.getPublicKey().toByteArray();
+                byte[] localIdentityKey = null;
+                try {
+                    localIdentityKey = encryptedKeyStore.getPeerPublicIdentityKey(peerUserId).getKeyMaterial();
+                } catch (CryptoException e) {
+                    Log.w("Failed to get local copy of peer identity key for " + peerUserId, e);
+                }
+
+                if (!Arrays.equals(remoteIdentityKey, localIdentityKey)) {
+                    Log.i("Remote and local identity key do not match for " + peerUserId + "; remote: " + Hex.encode(remoteIdentityKey) + "; local: " + Hex.encode(localIdentityKey));
+                    encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, new PublicEdECKey(remoteIdentityKey));
+                    foundMismatch = true;
+                }
+            }
+        } catch (ObservableErrorException | InterruptedException | InvalidProtocolBufferException e) {
+            Log.e("Failed to get identity key on audience hash mismatch", e);
+        }
+
+        if (foundMismatch) {
+            GroupFeedKeyManager.getInstance().tearDownOutboundSession(groupId);
+            connection.sendPost(post);
+        } else {
+            Log.w("Server said audience does not match but failed to find mismatch; not re-sending");
+            Log.sendErrorReport("no_local_audience_mismatch");
+        }
     }
 
     @Override

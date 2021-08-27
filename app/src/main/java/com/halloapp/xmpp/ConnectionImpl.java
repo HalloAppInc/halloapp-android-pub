@@ -588,7 +588,15 @@ public class ConnectionImpl extends Connection {
         }
         sendIqRequestAsync(publishIq)
                 .onResponse(response -> connectionObservers.notifyOutgoingPostSent(post.id))
-                .onError(e -> Log.e("connection: cannot send post", e));
+                .onError(e -> {
+                    Log.e("connection: cannot send post", e);
+                    if (e instanceof IqErrorException) {
+                        String reason = ((IqErrorException) e).getReason();
+                        if ("audience_hash_mismatch".equals(reason)) {
+                            connectionObservers.notifyAudienceHashMismatch(post);
+                        }
+                    }
+                });
     }
 
     @Override

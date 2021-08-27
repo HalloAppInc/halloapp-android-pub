@@ -54,6 +54,7 @@ public abstract class Connection {
         public void onOutgoingPostSent(@NonNull String postId) {}
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId) {}
         public void onOutgoingCommentSent(@NonNull String postId, @NonNull String commentId) {}
+        public void onAudienceHashMismatch(@NonNull Post post) {}
         public void onIncomingFeedItemsReceived(@NonNull List<Post> posts, @NonNull List<Comment> comment, @NonNull String ackId) {}
         public void onIncomingPostSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onOutgoingMessageSent(@NonNull ChatId chatId, @NonNull String messageId) {}

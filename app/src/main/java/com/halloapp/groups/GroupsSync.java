@@ -5,7 +5,9 @@ import android.text.TextUtils;
 import android.text.format.DateUtils;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
+import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.ListenableWorker;
 import androidx.work.OneTimeWorkRequest;
@@ -19,6 +21,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.Background;
@@ -29,6 +32,7 @@ import com.halloapp.xmpp.groups.GroupsApi;
 import com.halloapp.xmpp.util.ObservableErrorException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,6 +82,18 @@ public class GroupsSync {
         WorkManager.getInstance(context).enqueueUniqueWork(GROUPS_SYNC_WORK_ID, ExistingWorkPolicy.REPLACE, workRequest);
     }
 
+    public boolean performSingleGroupSync(@NonNull GroupId groupId) {
+        Log.d("GroupsSync.performSingleGroupSync " + groupId);
+        try {
+            return syncGroup(groupId, null);
+        } catch (ObservableErrorException e) {
+            Log.e("GroupsSync.performSingleGroupSync Observable error syncing single group " + groupId, e);
+        } catch (InterruptedException e) {
+            Log.e("GroupsSync.performSingleGroupSync interrupted syncing single group " + groupId, e);
+        }
+        return false;
+    }
+
     @WorkerThread
     private ListenableWorker.Result performGroupSync() {
         Log.i("GroupsSync.performGroupSync");
@@ -92,7 +108,7 @@ public class GroupsSync {
         try {
             List<GroupInfo> groups = groupsApi.getGroupsList().await();
             List<Chat> chats = contentDb.getGroups();
-
+            
             Map<ChatId, Chat> chatMap = new HashMap<>();
             for (Chat chat : chats) {
                 chatMap.put(chat.chatId, chat);
@@ -125,34 +141,7 @@ public class GroupsSync {
 
             Map<UserId, String> nameMap = new HashMap<>();
             for (GroupInfo groupInfo : groups) {
-                List<MemberInfo> serverMembers = groupsApi.getGroupInfo(groupInfo.groupId).await().members;
-                List<MemberInfo> localMembers = contentDb.getGroupMembers(groupInfo.groupId);
-
-                Map<UserId, MemberInfo> memberMap = new HashMap<>();
-                for (MemberInfo member : localMembers) {
-                    memberMap.put(member.userId, member);
-                }
-                for (MemberInfo member : serverMembers) {
-                    nameMap.put(member.userId, member.name);
-                }
-
-                List<MemberInfo> addedMembers = new ArrayList<>();
-                List<MemberInfo> updatedMembers = new ArrayList<>();
-                for (MemberInfo member : serverMembers) {
-                    MemberInfo local = memberMap.remove(member.userId);
-                    if (local == null) {
-                        addedMembers.add(member);
-                    } else if (!haveSameMetadata(member, local)) {
-                        updatedMembers.add(member);
-                    }
-                }
-
-                List<MemberInfo> deletedMembers = new ArrayList<>(memberMap.values());
-
-                // TODO(jack): handle admin change (member updates)
-
-                Log.d("GroupsSync.performGroupSync adding " + addedMembers.size() + " and removing " + deletedMembers.size() + " for group " + groupInfo.groupId);
-                contentDb.addRemoveGroupMembers(groupInfo.groupId, null, null, addedMembers, deletedMembers, null);
+                syncGroup(groupInfo.groupId, nameMap);
             }
 
             contactsDb.updateUserNames(nameMap);
@@ -165,6 +154,41 @@ public class GroupsSync {
             Log.e("GroupsSync.perfromGroupSync interrupted", e);
         }
         return ListenableWorker.Result.failure();
+    }
+
+    private boolean syncGroup(@NonNull GroupId groupId, @Nullable Map<UserId, String> nameMap) throws ObservableErrorException, InterruptedException {
+        List<MemberInfo> serverMembers = groupsApi.getGroupInfo(groupId).await().members;
+        List<MemberInfo> localMembers = contentDb.getGroupMembers(groupId);
+
+        Map<UserId, MemberInfo> memberMap = new HashMap<>();
+        for (MemberInfo member : localMembers) {
+            memberMap.put(member.userId, member);
+        }
+        if (nameMap != null) {
+            for (MemberInfo member : serverMembers) {
+                nameMap.put(member.userId, member.name);
+            }
+        }
+
+        List<MemberInfo> addedMembers = new ArrayList<>();
+        List<MemberInfo> updatedMembers = new ArrayList<>();
+        for (MemberInfo member : serverMembers) {
+            MemberInfo local = memberMap.remove(member.userId);
+            if (local == null) {
+                addedMembers.add(member);
+            } else if (!haveSameMetadata(member, local)) {
+                updatedMembers.add(member);
+            }
+        }
+
+        List<MemberInfo> deletedMembers = new ArrayList<>(memberMap.values());
+
+        // TODO(jack): handle admin change (member updates)
+
+        Log.d("GroupsSync.syncGroup adding " + addedMembers.size() + " and removing " + deletedMembers.size() + " for group " + groupId);
+        contentDb.addRemoveGroupMembers(groupId, null, null, addedMembers, deletedMembers, null);
+
+        return !addedMembers.isEmpty() || !deletedMembers.isEmpty();
     }
 
     private boolean haveSameMetadata(@NonNull GroupInfo groupInfo, @NonNull Chat chat) {

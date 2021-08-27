@@ -124,6 +124,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyAudienceHashMismatch(@NonNull Post post) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onAudienceHashMismatch(post);
+            }
+        }
+    }
+
     public void notifyIncomingPostSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
