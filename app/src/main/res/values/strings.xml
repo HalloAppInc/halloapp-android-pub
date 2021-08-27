@@ -359,6 +359,8 @@
     <!-- Option to save a photo/video to the user's gallery -->
     <string name="save_to_gallery">Save to gallery</string>
     <string name="view_profile">View profile</string>
+    <!-- Open up the group info page showing name, members, etc -->
+    <string name="view_group_info">View group info</string>
     <string name="action_hide">Hide</string>
     <string name="hide_my_posts">Hide my posts</string>
     <string name="my_posts">My posts</string>
@@ -393,6 +395,10 @@
     <string name="invite_pending">Pending</string>
     <string name="failed_update_profile">Failed to update profile, try again later</string>
     <string name="profile_updated">Profile updated</string>
+    <!-- Shown when changing the group avatar or name fails -->
+    <string name="failed_update_group">Failed to update group, try again later</string>
+    <!-- Shown when the group avatar or name has been successfully updated -->
+    <string name="group_updated">Group updated</string>
     <!-- General error message shown when fail to update group description -->
     <string name="failed_update_group_description">Failed to update the group description</string>
     <!-- Success message shown when user updates group description -->

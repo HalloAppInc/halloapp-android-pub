@@ -165,12 +165,12 @@ public class EditGroupActivity extends HalloActivity {
                     } else if (running) {
                         progressBar.setVisibility(View.GONE);
                         if (state == WorkInfo.State.FAILED) {
-                            SnackbarHelper.showWarning(EditGroupActivity.this, R.string.failed_update_profile);
+                            SnackbarHelper.showWarning(EditGroupActivity.this, R.string.failed_update_group);
                             nameView.setEnabled(true);
                             nameView.requestFocus();
                             saveButton.setVisibility(View.VISIBLE);
                         } else if (state == WorkInfo.State.SUCCEEDED) {
-                            CenterToast.show(getBaseContext(), R.string.profile_updated);
+                            CenterToast.show(getBaseContext(), R.string.group_updated);
                             setResult(RESULT_OK);
                             finish();
                         }
@@ -218,6 +218,8 @@ public class EditGroupActivity extends HalloActivity {
     final View.OnClickListener avatarOptionsListener = v -> {
         final BottomSheetDialog bottomSheetDialog = new HalloBottomSheetDialog(this);
         bottomSheetDialog.setContentView(R.layout.profile_avatar_change);
+        TextView titleView = bottomSheetDialog.findViewById(R.id.avatar_change_title);
+        Preconditions.checkNotNull(titleView).setText(R.string.group_avatar_picker_title);
         View cameraButton = bottomSheetDialog.findViewById(R.id.profile_avatar_take_photo);
         cameraButton.setOnClickListener(view -> {
             final Intent intent = new Intent(this, CameraActivity.class);

@@ -14,7 +14,7 @@
 
     <item
         android:id="@+id/view_group_info"
-        android:title="@string/view_profile"
+        android:title="@string/view_group_info"
         app:showAsAction="never"/>
 
 </menu>
