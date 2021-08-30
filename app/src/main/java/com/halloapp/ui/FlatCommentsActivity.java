@@ -1028,7 +1028,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         final View replyButton;
         final RecyclerView mediaGallery;
         final View cardView;
-        final View replyArrow;
         final View replyBubble;
         final TextView replyTextView;
         final ImageView replyThumbView;
@@ -1051,7 +1050,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             mediaGallery = v.findViewById(R.id.media);
             cardView = v.findViewById(R.id.comment);
             replyBubble = v.findViewById(R.id.reply_bubble);
-            replyArrow = v.findViewById(R.id.reply_arrow);
             replyTextView = v.findViewById(R.id.reply_text);
             replyThumbView = v.findViewById(R.id.reply_thumbnail);
             nameView = itemView.findViewById(R.id.name);
@@ -1178,12 +1176,12 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         }
 
         void bindParentComment(boolean hasParent, @Nullable Comment parentComment) {
-            if (replyArrow != null) {
-                replyArrow.setVisibility(hasParent ? View.VISIBLE : View.GONE);
-            }
             if (replyBubble != null) {
                 replyBubble.setVisibility(hasParent ? View.VISIBLE : View.GONE);
             }
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) avatarView.getLayoutParams();
+            params.topMargin = hasParent ? avatarView.getContext().getResources().getDimensionPixelSize(R.dimen.reply_comment_avatar_offset) : 0;
+            avatarView.setLayoutParams(params);
             mediaThumbnailLoader.cancel(replyThumbView);
             if (hasParent) {
                 if (parentComment != null) {

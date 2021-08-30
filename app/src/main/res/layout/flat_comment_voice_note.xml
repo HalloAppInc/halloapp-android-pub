@@ -35,22 +35,14 @@
         android:clipToPadding="false"
         android:clipChildren="false">
 
-        <ImageView
-            android:id="@+id/reply_arrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_comment_reply_arrow"
-            app:tint="@color/comment_reply_bg"
-            android:paddingEnd="3dp"
-            android:paddingStart="6dp"
-            android:visibility="gone"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:clipToPadding="false"
-            android:clipChildren="false">
+            android:clipChildren="false"
+            android:paddingStart="1dp"
+            android:paddingEnd="0dp">
 
             <com.halloapp.widget.LimitingTextView
                 android:id="@+id/comment_text"
