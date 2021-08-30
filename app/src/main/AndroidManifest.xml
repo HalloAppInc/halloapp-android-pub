@@ -107,6 +107,11 @@
             android:label="@string/select_group"/>
 
         <activity
+            android:name=".ui.GroupsInCommonActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/groups_in_common"/>
+
+        <activity
             android:name=".ui.contacts.MultipleContactPickerActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize"/>

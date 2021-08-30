@@ -26,6 +26,7 @@ import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostsDataSource;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.privacy.BlockListManager;
 import com.halloapp.util.BgWorkers;
@@ -53,6 +54,7 @@ public class ProfileViewModel extends ViewModel {
 
     private final ComputableLiveData<String> subtitleLiveData;
     private final ComputableLiveData<Contact> contactLiveData;
+    private final ComputableLiveData<Boolean> hasGroupsInCommonLiveData;
     private final MutableLiveData<Boolean> isBlocked;
 
     private final UserId userId;
@@ -110,6 +112,11 @@ public class ProfileViewModel extends ViewModel {
         }
 
         @Override
+        public void onGroupMembersChanged(@NonNull GroupId groupId) {
+            hasGroupsInCommonLiveData.invalidate();
+        }
+
+        @Override
         public void onFeedCleanup() {
             invalidatePosts();
         }
@@ -139,6 +146,12 @@ public class ProfileViewModel extends ViewModel {
 
         dataSourceFactory = new PostsDataSource.Factory(contentDb, userId);
 
+        hasGroupsInCommonLiveData = new ComputableLiveData<Boolean>() {
+            @Override
+            protected Boolean compute() {
+                return !ContentDb.getInstance().getGroupsInCommon(userId).isEmpty();
+            }
+        };
         subtitleLiveData = new ComputableLiveData<String>() {
             @Override
             protected String compute() {
@@ -194,6 +207,10 @@ public class ProfileViewModel extends ViewModel {
 
     public LiveData<Boolean> getIsBlocked() {
         return isBlocked;
+    }
+
+    public LiveData<Boolean> getHasGroupsInCommon() {
+        return hasGroupsInCommonLiveData.getLiveData();
     }
 
     @MainThread

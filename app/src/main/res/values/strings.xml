@@ -83,6 +83,8 @@
     <string name="chats_search_empty">No chats found for \'%s\'</string>
     <string name="groups_page_empty">Your groups will appear here</string>
     <string name="groups_search_empty">No groups found for \'%s\'</string>
+    <!-- Text shown when the user has no groups in common -->
+    <string name="groups_in_common_empty">You have no groups in common</string>
     <string name="delete_message_confirmation">Delete selected message?</string>
     <string name="retract_message_option">Delete for everyone</string>
     <string name="delete_message_option">Delete for me</string>
@@ -394,6 +396,8 @@
     <string name="counter">%1$d/%2$d</string>
     <string name="invite_pending">Pending</string>
     <string name="failed_update_profile">Failed to update profile, try again later</string>
+    <!-- Title for page showing groups in common -->
+    <string name="groups_in_common">Groups in common</string>
     <string name="profile_updated">Profile updated</string>
     <!-- Shown when changing the group avatar or name fails -->
     <string name="failed_update_group">Failed to update group, try again later</string>

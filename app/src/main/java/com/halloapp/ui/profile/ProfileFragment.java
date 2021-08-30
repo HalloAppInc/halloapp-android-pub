@@ -29,6 +29,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Message;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
+import com.halloapp.ui.GroupsInCommonActivity;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.ViewAvatarActivity;
@@ -62,6 +63,7 @@ public class ProfileFragment extends PostsFragment {
     private AvatarLoader avatarLoader;
 
     private MenuItem blockMenuItem;
+    private MenuItem groupsInCommonMenuItem;
 
     private UserId profileUserId;
 
@@ -283,7 +285,9 @@ public class ProfileFragment extends PostsFragment {
         if (!profileUserId.isMe()) {
             inflater.inflate(R.menu.other_profile_menu, menu);
             blockMenuItem = menu.findItem(R.id.block);
+            groupsInCommonMenuItem = menu.findItem(R.id.groups_in_common);
             viewModel.getIsBlocked().observe(this, this::updateMenu);
+            viewModel.getHasGroupsInCommon().observe(this, hasGroups -> groupsInCommonMenuItem.setVisible(hasGroups != null && hasGroups));
         }
         super.onCreateOptionsMenu(menu,inflater);
     }
@@ -303,6 +307,8 @@ public class ProfileFragment extends PostsFragment {
             return true;
         } else if (item.getItemId() == R.id.verify) {
             startActivity(KeyVerificationActivity.openKeyVerification(requireContext(), profileUserId));
+        } else if (item.getItemId() == R.id.groups_in_common) {
+            startActivity(GroupsInCommonActivity.viewGroupsInCommon(requireContext(), profileUserId));
         }
         return super.onOptionsItemSelected(item);
     }

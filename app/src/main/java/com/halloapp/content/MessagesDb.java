@@ -2017,6 +2017,22 @@ class MessagesDb {
     }
 
     @WorkerThread
+    @NonNull List<ChatId> getGroupsInCommon(@NonNull UserId userId) {
+        final List<ChatId> chats = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(GroupMembersTable.TABLE_NAME,
+                new String [] {
+                        GroupMembersTable.COLUMN_GROUP_ID},
+                GroupMembersTable.COLUMN_USER_ID + "=? OR " + GroupMembersTable.COLUMN_USER_ID + "=?",
+                new String[]{"", userId.rawId()}, GroupMembersTable.COLUMN_GROUP_ID, "COUNT(DISTINCT " + GroupMembersTable.COLUMN_USER_ID + ") > 1", null)) {
+            while (cursor.moveToNext()) {
+                chats.add(ChatId.fromNullable(cursor.getString(0)));
+            }
+        }
+        return chats;
+    }
+
+    @WorkerThread
     @NonNull List<Chat> getGroups() {
         final List<Chat> chats = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();

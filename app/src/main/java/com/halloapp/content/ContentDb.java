@@ -950,6 +950,11 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public @NonNull List<ChatId> getGroupsInCommon(UserId userId) {
+        return messagesDb.getGroupsInCommon(userId);
+    }
+
+    @WorkerThread
     public @NonNull List<Chat> getGroups() {
         return messagesDb.getGroups();
     }

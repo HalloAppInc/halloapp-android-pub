@@ -13,4 +13,10 @@
         app:showAsAction="never"
         />
 
+    <item
+        android:id="@+id/groups_in_common"
+        android:title="@string/groups_in_common"
+        app:showAsAction="never"
+        />
+
 </menu>
