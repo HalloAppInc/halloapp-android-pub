@@ -71,8 +71,8 @@ Je aanbieder kan hiervoor kosten in rekening brengen."</string>
     <string name="camera_record_audio_permission_rationale_denied">"Om foto's en video's te maken, hebben we je toestemming nodig om de camera te gebruiken en om geluid op te nemen op je apparaat.
 
 Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
-    <string name="contacts_permission_rationale">"Om je te kunnen verbinden met je vrienden en familie hebben we je toestemming nodig voor toegang tot de contacten op je apparaat"</string>
-    <string name="contacts_permission_rationale_denied">"Om je te kunnen verbinden met je vrienden en familie hebben we je toestemming nodig voor toegang tot de contacten op je apparaat.
+    <string name="contacts_permission_rationale">"Om je te kunnen verbinden met je vrienden en familie hebben we toestemming nodig voor toegang tot de contacten op je apparaat"</string>
+    <string name="contacts_permission_rationale_denied">"Om je te kunnen verbinden met je vrienden en familie hebben we toestemming nodig voor toegang tot de contacten op je apparaat.
 
 Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="storage_permission_rationale">"Om media te selecteren hebben we toegang nodig tot de opslag van je apparaat"</string>
@@ -95,7 +95,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; heeft je vermeld in een reactie op een post"</string>
     <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; heeft je vermeld in een reactie op &lt;b&gt;%2$s&lt;/b&gt;'s post"</string>
     <string name="contact_hashing_faq_dialog_title">"Jouw privacy is onze prioriteit"</string>
-    <string name="contact_hashing_faq_dialog_info">"HalloApp gebruikt alleen het telefoonnummer om je te kunnen matchen met je vrienden op HalloApp en legt geen andere gegevens uit je contactenlijst vast."</string>
+    <string name="contact_hashing_faq_dialog_info">"HalloApp gebruikt alleen het telefoonnummer om je te kunnen koppelen met je vrienden op HalloApp en legt geen andere gegevens uit je contactenlijst vast."</string>
     <string name="list_of_two">"%1$s en %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
     <string name="list_of_many_middle">", %s"</string>
@@ -223,9 +223,9 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="last_seen_less_minute">"Laatst gezien zojuist"</string>
     <string name="online">"online"</string>
     <string name="today">"Vandaag"</string>
-    <string name="today_at_time">"Vandaag om %s"</string>
+    <string name="today_at_time">"vandaag om %s"</string>
     <string name="yesterday">"Gisteren"</string>
-    <string name="yesterday_at_time">"Gisteren om %s"</string>
+    <string name="yesterday_at_time">"gisteren om %s"</string>
     <string name="day_of_week_at_time">"%1$s om %2$s"</string>
     <string name="unknown_contact">"Onbekend contact"</string>
     <string name="select_contact">"Nieuw bericht"</string>
@@ -443,7 +443,7 @@ versie: %2$s
 
     <!-- Generic error message when user fails to join a group via invite link -->
     <string name="invite_link_failed_to_join">"Deelnemen aan de groep mislukt"</string>
-    <string name="join_group_action">"Deelnemen aan groep"</string>
+    <string name="join_group_action">"Deelnemen"</string>
     <string name="system_message_you_joined">"Je neemt deel aan de groep via een uitnodigingslink"</string>
     <string name="system_message_joined">"%s neemt deel aan de groep via een uitnodigingslink"</string>
     <string name="post_preview_retracted">"%s heeft een post verwijderd"</string>
@@ -599,7 +599,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="data_available_at">"Gegevens zijn beschikbaar op %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
-    <string name="export_data_explanation">"Download een kopie van al je gebruikersgegevens die zijn opgeslagen op HalloApp's servers. Dit bevat geen berichten of inhoud van posts."</string>
+    <string name="export_data_explanation">"Download een kopie van al je gebruikersgegevens die zijn opgeslagen op de servers van HalloApp. Dit bevat geen berichten of inhoud van posts."</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"Verzoek mislukt"</string>
@@ -821,5 +821,23 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <!-- Activity center item when two non-contacts comment on someones post %1$s is the first person name
          %2$s second persons name, %3$s is the poster's name -->
     <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; hebben gereageerd op &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
+
+    <!-- String that links the user to learn more info -->
+    <string name="learn_more">"Meer informatie"</string>
+
+    <!-- Open up the group info page showing name, members, etc -->
+    <string name="view_group_info">"Groepsinformatie bekijken"</string>
+
+    <!-- Shown when changing the group avatar or name fails -->
+    <string name="failed_update_group">"Bijwerken van groep mislukt, probeer later opnieuw"</string>
+
+    <!-- Shown when the group avatar or name has been successfully updated -->
+    <string name="group_updated">"Groep bijgewerkt"</string>
+
+    <!-- Text shown when the user has no groups in common -->
+    <string name="groups_in_common_empty">"Jullie hebben geen gemeenschappelijke groepen"</string>
+
+    <!-- Title for page showing groups in common -->
+    <string name="groups_in_common">"Gemeenschappelijke groepen"</string>
 </resources>
 

@@ -222,9 +222,13 @@ Abra as configurações do aplicativo para modificar as permissões do aplicativ
     <string name="last_seen_less_minute">"Visto por último: menos de 1 min"</string>
     <string name="online">"online"</string>
     <string name="today">"Hoje"</string>
-    <string name="today_at_time">"Hoje às %s"</string>
+
+    <!-- Fuzzy -->
+    <string name="today_at_time">"hoje às %s"</string>
     <string name="yesterday">"Ontem"</string>
-    <string name="yesterday_at_time">"Ontem às %s"</string>
+
+    <!-- Fuzzy -->
+    <string name="yesterday_at_time">"ontem às %s"</string>
     <string name="day_of_week_at_time">"%1$s às %2$s"</string>
     <string name="unknown_contact">"Contato desconhecido"</string>
     <string name="select_contact">"Nova mensagem"</string>
@@ -823,5 +827,23 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <!-- Activity center item when two non-contacts comment on someones post %1$s is the first person name
          %2$s second persons name, %3$s is the poster's name -->
     <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
+
+    <!-- String that links the user to learn more info -->
+    <string name="learn_more">"Learn more"</string>
+
+    <!-- Open up the group info page showing name, members, etc -->
+    <string name="view_group_info">"View group info"</string>
+
+    <!-- Shown when changing the group avatar or name fails -->
+    <string name="failed_update_group">"Failed to update group, try again later"</string>
+
+    <!-- Shown when the group avatar or name has been successfully updated -->
+    <string name="group_updated">"Group updated"</string>
+
+    <!-- Text shown when the user has no groups in common -->
+    <string name="groups_in_common_empty">"You have no groups in common"</string>
+
+    <!-- Title for page showing groups in common -->
+    <string name="groups_in_common">"Groups in common"</string>
 </resources>
 

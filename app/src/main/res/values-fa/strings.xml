@@ -216,8 +216,12 @@
     <string name="last_seen_less_minute">"آخرین بازدید کمتر از یک دقیقه پیش"</string>
     <string name="online">"آنلاین"</string>
     <string name="today">"امروز"</string>
+
+    <!-- Fuzzy -->
     <string name="today_at_time">"امروز ساعت %s"</string>
     <string name="yesterday">"دیروز"</string>
+
+    <!-- Fuzzy -->
     <string name="yesterday_at_time">"دیروز ساعت %s"</string>
     <string name="day_of_week_at_time">"%1$s ساعت %2$s"</string>
     <string name="unknown_contact">"مخاطب ناشناخته"</string>
@@ -811,5 +815,23 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Activity center item when two non-contacts comment on someones post %1$s is the first person name
          %2$s second persons name, %3$s is the poster's name -->
     <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; و &lt;b&gt;%2$s&lt;/b&gt; زیر پست &lt;b&gt;%3$s&lt;/b&gt; نظر نوشتند"</string>
+
+    <!-- String that links the user to learn more info -->
+    <string name="learn_more">"بیشتر بدانید"</string>
+
+    <!-- Open up the group info page showing name, members, etc -->
+    <string name="view_group_info">"توضیحات گروه"</string>
+
+    <!-- Shown when changing the group avatar or name fails -->
+    <string name="failed_update_group">"خطا در به روز رسانی گروه، لطفاً‌ بعداً امتحان کنید"</string>
+
+    <!-- Shown when the group avatar or name has been successfully updated -->
+    <string name="group_updated">"گروه به روز رسانی شد"</string>
+
+    <!-- Text shown when the user has no groups in common -->
+    <string name="groups_in_common_empty">"You have no groups in common"</string>
+
+    <!-- Title for page showing groups in common -->
+    <string name="groups_in_common">"Groups in common"</string>
 </resources>
 

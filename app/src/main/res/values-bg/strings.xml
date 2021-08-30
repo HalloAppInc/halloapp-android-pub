@@ -229,8 +229,12 @@
     <string name="last_seen_less_minute">"Последно видян преди по-малко от минута"</string>
     <string name="online">"онлайн"</string>
     <string name="today">"Днес"</string>
+
+    <!-- Fuzzy -->
     <string name="today_at_time">"Днес в %s"</string>
     <string name="yesterday">"Вчера"</string>
+
+    <!-- Fuzzy -->
     <string name="yesterday_at_time">"Вчера в %s"</string>
     <string name="day_of_week_at_time">"%1$s в %2$s"</string>
     <string name="unknown_contact">"Непознат контакт"</string>
@@ -832,5 +836,23 @@ Open the app settings screen to modify app permissions."</string>
     <!-- Activity center item when two non-contacts comment on someones post %1$s is the first person name
          %2$s second persons name, %3$s is the poster's name -->
     <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
+
+    <!-- String that links the user to learn more info -->
+    <string name="learn_more">"Learn more"</string>
+
+    <!-- Open up the group info page showing name, members, etc -->
+    <string name="view_group_info">"View group info"</string>
+
+    <!-- Shown when changing the group avatar or name fails -->
+    <string name="failed_update_group">"Failed to update group, try again later"</string>
+
+    <!-- Shown when the group avatar or name has been successfully updated -->
+    <string name="group_updated">"Group updated"</string>
+
+    <!-- Text shown when the user has no groups in common -->
+    <string name="groups_in_common_empty">"You have no groups in common"</string>
+
+    <!-- Title for page showing groups in common -->
+    <string name="groups_in_common">"Groups in common"</string>
 </resources>
 

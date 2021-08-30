@@ -208,7 +208,7 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="retract_comment_confirmation">"Möchtest du deinen Kommentar löschen?"</string>
     <plurals name="delete_chats_confirmation">
         <item quantity="one">"Möchtest du diesen Chat löschen?"</item>
-        <item quantity="other">"Möchtest Du die %d ausgewählten Chats löschen?"</item>
+        <item quantity="other">"Möchtest du die %d ausgewählten Chats löschen?"</item>
     </plurals>
     <plurals name="delete_groups_confirmation">
         <item quantity="one">"Möchtest du diese Gruppe löschen?"</item>
@@ -254,9 +254,14 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
 
     <!-- Capital or lower case? -->
     <string name="today">"heute"</string>
-    <string name="today_at_time">"Heute um %s"</string>
+
+    <!-- changed to lower case since this is in connection with "last_seen"-String. Last seen Today at %s - Last seen today at %s -->
+    <!-- Fuzzy -->
+    <string name="today_at_time">"heute um %s"</string>
     <string name="yesterday">"Gestern"</string>
-    <string name="yesterday_at_time">"Gestern um %s"</string>
+
+    <!-- Fuzzy -->
+    <string name="yesterday_at_time">"gestern um %s"</string>
     <string name="day_of_week_at_time">"%1$s um %2$s"</string>
     <string name="unknown_contact">"Kontakt unbekannt"</string>
     <string name="select_contact">"Neue Nachricht"</string>
@@ -402,7 +407,7 @@ Version: %2$s
     <string name="leave_group_confirmation">"Möchtest du diese Gruppe verlassen?"</string>
     <plurals name="leave_multiple_groups_confirmation">
         <item quantity="one">"Möchtest du diese Gruppe verlassen?"</item>
-        <item quantity="other">"Möchtest Du die %d ausgewählten Gruppen verlassen?"</item>
+        <item quantity="other">"Möchtest du die %d ausgewählten Gruppen verlassen?"</item>
     </plurals>
     <string name="leave_group_in_progress">"Gruppe wird verlassen…"</string>
     <plurals name="leave_groups_progress">
@@ -534,10 +539,10 @@ Version: %2$s
     <string name="resend_sms">"SMS-Code erneut senden"</string>
 
     <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
-    <string name="key_verification_success">"Verifikation erfolgreich"</string>
+    <string name="key_verification_success">"Verifiziert"</string>
 
     <!-- Shown when the information scanned from the QR code does not match what was expected, indicating the keys do not match -->
-    <string name="key_verification_failure">"Verifikation fehlgeschlagen"</string>
+    <string name="key_verification_failure">"Verifizierung fehlgeschlagen"</string>
 
     <!-- Shown on the key verification screen indicating tapping on the QR code will open the scanner -->
     <string name="key_verification_tap_to_scan">"Zum Scannen hier tippen"</string>
@@ -874,5 +879,23 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Activity center item when two non-contacts comment on someones post %1$s is the first person name
          %2$s second persons name, %3$s is the poster's name -->
     <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; und &lt;b&gt;%2$s&lt;/b&gt; haben &lt;b&gt;%3$s&lt;/b&gt;'s Beitrag kommentiert"</string>
+
+    <!-- String that links the user to learn more info -->
+    <string name="learn_more">"Mehr erfahren"</string>
+
+    <!-- Open up the group info page showing name, members, etc -->
+    <string name="view_group_info">"Gruppen-Info ansehen"</string>
+
+    <!-- Shown when changing the group avatar or name fails -->
+    <string name="failed_update_group">"Fehler beim Aktualisieren der Gruppe, versuche es später noch einmal"</string>
+
+    <!-- Shown when the group avatar or name has been successfully updated -->
+    <string name="group_updated">"Gruppe aktualisiert"</string>
+
+    <!-- Text shown when the user has no groups in common -->
+    <string name="groups_in_common_empty">"You have no groups in common"</string>
+
+    <!-- Title for page showing groups in common -->
+    <string name="groups_in_common">"Groups in common"</string>
 </resources>
 
