@@ -73,7 +73,7 @@
     <string name="storage_permission_rationale_denied">"برای انتخاب عکس و ویدیو نیاز به دسترسی به حافظه دستگاهتان داریم.
 برای تغییر اجازه‌ها تنظیمات برنامه را باز کنید."</string>
     <string name="retry">"تلاش مجدد"</string>
-    <string name="contact_rationale_upload">"برای ارتباط با دوستان و آشنایانتان نیاز به دسترسی به مخاطب‌های دستگاه‌تان داریم. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
+    <string name="contact_rationale_upload">"برای ارتباط با دوستان و آشنایانتان نیاز به دسترسی به مخاطب‌های دستگاه‌تان داریم. &lt;a href=\"learn-more\"&gt;بیشتر بدانید&lt;/a&gt;"</string>
     <string name="failed_to_initialize">"خطا در شروع"</string>
     <string name="type_a_comment_hint">"افزودن نظر"</string>
     <string name="comments">"نظرها"</string>
@@ -458,17 +458,17 @@ version: %2$s
     <string name="not_now">"الآن نه"</string>
     <string name="continue_button">"ادامه"</string>
     <string name="invite_link_load_failed">"خطا در باز کردن لینک دعوت گروه"</string>
-    <string name="message_tombstone_placeholder">"در انتظار این پیام. ممکن است مدتی طول بکشد. &lt;a href=\"https://halloapp.com/help/\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="message_tombstone_placeholder">"در انتظار این پیام. ممکن است مدتی طول بکشد. &lt;a href=\"https://halloapp.com/help/\"&gt;بیشتر بدانید&lt;/a&gt;."</string>
     <string name="failed_no_longer_member">"شما دیگر عضو این گروه نیستید"</string>
 
     <!-- Placeholder when we do not understand the received message -->
-    <string name="message_upgrade_placeholder">"ورژن هالواپ شما این نوع پیام را نمیپذیرد. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+    <string name="message_upgrade_placeholder">"ورژن هالواپ شما این نوع پیام را نمیپذیرد. &lt;a href=\"update-app\"&gt;به روز رسانی برنامه&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received post -->
-    <string name="post_upgrade_placeholder">"ورژن هالواپ شما این نوع پست را نمیپذیرد. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+    <string name="post_upgrade_placeholder">"ورژن هالواپ شما این نوع پست را نمیپذیرد. &lt;a href=\"update-app\"&gt;به روز رسانی برنامه&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received comment -->
-    <string name="comment_upgrade_placeholder">"ورژن هالواپ شما این نوع نظر را نمیپذیرد. &lt;a href=\"update-app\"&gt;Update your app&lt;/a&gt;"</string>
+    <string name="comment_upgrade_placeholder">"ورژن هالواپ شما این نوع نظر را نمیپذیرد. &lt;a href=\"update-app\"&gt;برنامه را به روز رسانی کنید&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
     <string name="registration_sms_retry_progress">"در حال درخواست پیامک جدید…"</string>
@@ -489,7 +489,7 @@ version: %2$s
     <string name="key_verification_tap_to_scan">"برای اسکن کردن کلیک کنید"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"برای تأیید ایمنی ارتباطتان با %s، شماره بالا را با شماره‌ای که در دستگاه ایشان است تطبیق دهید یا کد کیو آر دستگاه ایشان را اسکن کنید. "<![CDATA[<a href="https://halloapp.com/help/">Learn more</a>]]>"."</string>
+    <string name="key_verification_explanation">"برای تأیید ایمنی ارتباطتان با %s، شماره بالا را با شماره‌ای که در دستگاه ایشان است تطبیق دهید یا کد کیو آر دستگاه ایشان را اسکن کنید. "<![CDATA[<a href="https://halloapp.com/help/">بیشتر بدانید</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"بیشتر"</string>
@@ -618,7 +618,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="go_to_settings">"رفتن به تنظیمات"</string>
 
     <!-- Text shown in activity center upon successful registration -->
-    <string name="welcome_notification">"به هالواپ خوش‌آمدید! &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</string>
+    <string name="welcome_notification">"به هالواپ خوش‌آمدید! &lt;a href=\"invite-friend\"&gt;دوست خود را دعوت کنید&lt;/a&gt;"</string>
 
     <!-- added new option for sharing -->
     <string name="share_option_group">"پست به گروه"</string>
@@ -829,9 +829,9 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="group_updated">"گروه به روز رسانی شد"</string>
 
     <!-- Text shown when the user has no groups in common -->
-    <string name="groups_in_common_empty">"You have no groups in common"</string>
+    <string name="groups_in_common_empty">"شما هیچ گروه مشترکی ندارید"</string>
 
     <!-- Title for page showing groups in common -->
-    <string name="groups_in_common">"Groups in common"</string>
+    <string name="groups_in_common">"گروه‌های مشترک"</string>
 </resources>
 
