@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
+import android.provider.Settings;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -38,6 +39,9 @@ public class HalloApp extends Application {
     public void onCreate() {
         super.onCreate();
         Log.i("halloapp: onCreate");
+        // https://firebase.google.com/docs/test-lab/android/android-studio#modify_instrumented_test_behavior_for
+        String runningInFirebaseTestLab = Settings.System.getString(getContentResolver(), "firebase.test.lab");
+        Log.i("halloapp: running in firebase test lab? " + runningInFirebaseTestLab);
         initSync();
 
         if (ServerProps.getInstance().getIsInternalUser() || BuildConfig.DEBUG) {
