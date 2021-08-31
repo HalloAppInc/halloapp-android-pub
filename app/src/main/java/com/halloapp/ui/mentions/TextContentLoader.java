@@ -10,6 +10,7 @@ import androidx.collection.LruCache;
 import com.halloapp.Me;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Mention;
+import com.halloapp.ui.markdown.MarkdownUtils;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.ViewDataLoader;
 
@@ -53,10 +54,9 @@ public class TextContentLoader extends ViewDataLoader<TextView, List<Mention>, T
         List<Mention> mentions = textContent.getMentions();
         String text = textContent.getText();
         if (mentions.isEmpty()) {
-            textDisplayer.showResult(view, text);
+            textDisplayer.showResult(view, MarkdownUtils.formatMarkdownWithMentions(view.getContext(), text, mentions));
             return;
         }
-
         final Callable<List<Mention>> loader = () -> MentionsLoader.loadMentionNames(me, contactsDb, mentions);
         final ViewDataLoader.Displayer<TextView, List<Mention>> displayer = new ViewDataLoader.Displayer<TextView, List<Mention>>() {
 
@@ -66,14 +66,14 @@ public class TextContentLoader extends ViewDataLoader<TextView, List<Mention>, T
                     textDisplayer.showResult(view, text);
                     return;
                 }
-                textDisplayer.showResult(view, MentionsFormatter.insertMentions(text, result, ((v, mention) -> {
+                textDisplayer.showResult(view, MarkdownUtils.formatMarkdownWithMentions(view.getContext(), text, result, (v, mention) -> {
                     v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), mention.userId));
-                })));
+                }));
             }
 
             @Override
             public void showLoading(@NonNull TextView view) {
-                textDisplayer.showPreview(view, MentionsFormatter.insertMentions(text, mentions));
+                textDisplayer.showPreview(view, MarkdownUtils.formatMarkdownWithMentions(view.getContext(), text, mentions));
             }
         };
         load(view, loader, displayer, textContent, cache);

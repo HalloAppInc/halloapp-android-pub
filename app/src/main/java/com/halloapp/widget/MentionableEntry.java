@@ -19,12 +19,16 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.contacts.Contact;
 import com.halloapp.content.Mention;
+import com.halloapp.ui.markdown.MarkdownUtils;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.util.Preconditions;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import io.noties.markwon.editor.MarkwonEditor;
+import io.noties.markwon.editor.MarkwonEditorTextWatcher;
 
 public class MentionableEntry extends PostEditText implements MentionPickerView.OnMentionListener {
 
@@ -44,6 +48,9 @@ public class MentionableEntry extends PostEditText implements MentionPickerView.
     }
 
     private void init() {
+        final MarkwonEditor editor = MarkdownUtils.createMarkwonEditor(getContext());
+
+        addTextChangedListener(MarkwonEditorTextWatcher.withProcess(editor));
         addTextChangedListener(new TextWatcher() {
 
             @Override

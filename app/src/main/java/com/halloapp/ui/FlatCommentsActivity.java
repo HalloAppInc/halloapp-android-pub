@@ -86,6 +86,7 @@ import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
+import com.halloapp.ui.markdown.MarkdownUtils;
 import com.halloapp.ui.mediaedit.MediaEditActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerViewModel;
@@ -1455,7 +1456,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     mediaText.append(getMediaIconSpan(comment.media.get(0).type, textView.getLineHeight()));
                 }
                 if (!TextUtils.isEmpty(comment.text)) {
-                    mediaText.append(MentionsFormatter.insertMentions(comment.getText(), comment.mentions, (v, mention) -> {
+                    mediaText.append(MarkdownUtils.formatMarkdownWithMentions(this, comment.getText(), comment.mentions, (v, mention) -> {
                         v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), mention.userId));
                     }));
                 } else if (showMediaIcon){

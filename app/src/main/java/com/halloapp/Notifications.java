@@ -40,6 +40,7 @@ import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
+import com.halloapp.ui.markdown.MarkdownUtils;
 import com.halloapp.ui.mentions.MentionsFormatter;
 import com.halloapp.ui.mentions.MentionsLoader;
 import com.halloapp.util.ListFormatter;
@@ -369,7 +370,7 @@ public class Notifications {
             }
         } else {
             List<Mention> mentions = MentionsLoader.loadMentionNames(Me.getInstance(), contactsDb, message.mentions);
-            return MentionsFormatter.insertMentions(message.text, mentions);
+            return MarkdownUtils.formatMarkdownWithMentions(context, message.text, mentions);
         }
     }
 
