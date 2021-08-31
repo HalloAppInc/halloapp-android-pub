@@ -44,7 +44,7 @@
             android:layout_weight="1"
             android:textSize="17sp"
             android:textColor="@color/secondary_text_button"
-            android:text="@string/message"/>
+            android:text="@string/send_message"/>
 
     </LinearLayout>
 
