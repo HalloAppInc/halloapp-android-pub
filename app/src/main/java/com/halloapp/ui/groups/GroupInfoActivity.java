@@ -184,6 +184,10 @@ public class GroupInfoActivity extends HalloActivity {
         leaveGroup.setOnClickListener(v -> askLeaveGroup());
 
         viewModel.getChat().observe(this, chat -> {
+            if (chat == null) {
+                Log.w("GroupInfoActivity got null chat for " + groupId);
+                return;
+            }
             groupNameView.setText(chat.name);
             groupBgDesc.setText(chat.theme == 0 ? R.string.group_background_default : R.string.group_background_color);
             GroupTheme theme = GroupTheme.getTheme(chat.theme);
