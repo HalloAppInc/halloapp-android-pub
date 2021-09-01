@@ -96,9 +96,9 @@ public class GroupFeedCipher {
                 CryptoUtils.verify(signature, decPayload, EncryptedKeyStore.getInstance().getPeerGroupSigningKey(groupId, peerUserId));
             } catch (GeneralSecurityException e) {
                 Log.e("Group Feed Encryption signature verification failed", e);
-                throw new CryptoException("group_dec_invalid_signature", e);
+                GroupFeedMessageKey messageKey = new GroupFeedMessageKey(currentChainIndex, inboundMessageKey);
+                onDecryptFailure("group_dec_invalid_signature", groupId, peerUserId, messageKey);
             }
-
 
             return decPayload;
         } catch (GeneralSecurityException e) {
@@ -112,14 +112,6 @@ public class GroupFeedCipher {
 
     void onDecryptFailure(String reason, GroupId groupId, UserId peerUserId, GroupFeedMessageKey messageKey) throws CryptoException {
         encryptedKeyStore.storeSkippedGroupFeedKey(groupId, peerUserId, messageKey);
-//        byte[] lastTeardownKey = encryptedKeyStore.getOutboundTeardownKey(peerUserId);
-//        byte[] newTeardownKey = messageKey.getKeyMaterial();
-//        boolean match = Arrays.equals(lastTeardownKey, newTeardownKey);
-//        if (!match) {
-//            encryptedKeyStore.setOutboundTeardownKey(peerUserId, newTeardownKey);
-//            signalKeyManager.tearDownSession(peerUserId);
-//        }
-//        throw new CryptoException(reason, match, newTeardownKey);
         throw new CryptoException(reason);
     }
 }

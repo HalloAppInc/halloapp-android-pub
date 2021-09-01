@@ -357,6 +357,34 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
+    public void onGroupFeedRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {
+        bgWorkers.execute(() -> {
+            Post post = contentDb.getPost(contentId);
+            if (post != null && groupId.equals(post.getParentGroup())) {
+                if (post.rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
+                    Log.w("Reached rerequest limit for post " + contentId);
+                } else {
+                    contentDb.setPostRerequestCount(groupId, UserId.ME, contentId, post.rerequestCount + 1);
+                    connection.sendPost(post);
+                }
+            } else {
+                Comment comment = contentDb.getComment(contentId);
+                if (comment != null) {
+                    if (comment.rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
+                        Log.w("Reached rerequest limit for comment " + contentId);
+                    } else {
+                        contentDb.setCommentRerequestCount(groupId, UserId.ME, contentId, comment.rerequestCount + 1);
+                        connection.sendComment(comment);
+                    }
+                } else {
+                    Log.e("Could not find group feed content " + contentId + " to satisfy rerequest");
+                }
+            }
+            connection.sendAck(stanzaId);
+        });
+    }
+
+    @Override
     public void onContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull List<String> contactHashes, @NonNull String ackId) {
         final List<ContactsDb.NormalizedPhoneData> normalizedPhoneDataList = new ArrayList<>(protocolContacts.size());
         for (ContactInfo contact : protocolContacts) {

@@ -8,7 +8,6 @@ import androidx.annotation.Nullable;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.BuildConfig;
-import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
@@ -158,15 +157,13 @@ public class ChatMessageProtocol {
                 Log.sendErrorReport("Decryption failure: " + failureReason);
                 stats.reportDecryptError(failureReason, senderPlatform, senderVersion);
 
-                if (Constants.REREQUEST_SEND_ENABLED) {
-                    Log.i("Rerequesting message " + id);
-                    int count;
-                    count = contentDb.getMessageRerequestCount(fromUserId, fromUserId, id);
-                    count += 1;
-                    contentDb.setMessageRerequestCount(fromUserId, fromUserId, id, count);
-                    byte[] teardownKey = e instanceof CryptoException ? ((CryptoException) e).teardownKey : null;
-                    signalSessionManager.sendRerequest(fromUserId, id, count, teardownKey);
-                }
+                Log.i("Rerequesting message " + id);
+                int count;
+                count = contentDb.getMessageRerequestCount(fromUserId, fromUserId, id);
+                count += 1;
+                contentDb.setMessageRerequestCount(fromUserId, fromUserId, id, count);
+                byte[] teardownKey = e instanceof CryptoException ? ((CryptoException) e).teardownKey : null;
+                signalSessionManager.sendRerequest(fromUserId, id, count, teardownKey);
             }
         }
 

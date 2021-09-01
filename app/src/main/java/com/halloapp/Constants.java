@@ -51,7 +51,6 @@ public class Constants {
     public static int VIDEO_RESOLUTION_H265 = 480;
     public static int AUDIO_BITRATE = 96000;
 
-    public static final boolean REREQUEST_SEND_ENABLED = true;
     public static final int MAX_REREQUESTS_PER_MESSAGE = 5;
 
     public static final boolean SEND_CONTAINER = BuildConfig.DEBUG;

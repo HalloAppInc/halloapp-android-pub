@@ -1,5 +1,7 @@
 package com.halloapp.crypto.group;
 
+import androidx.annotation.NonNull;
+
 import com.google.crypto.tink.subtle.Hex;
 import com.google.protobuf.ByteString;
 import com.goterl.lazysodium.interfaces.Sign;
@@ -20,6 +22,7 @@ import com.halloapp.proto.clients.SenderState;
 import com.halloapp.proto.server.SenderStateBundle;
 import com.halloapp.proto.server.SenderStateWithKeyInfo;
 import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.Connection;
 
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -224,6 +227,14 @@ public class GroupFeedKeyManager {
                 throw new CryptoException("skip_grp_key_" + e.getMessage());
             }
         }
+    }
+
+    public void sendPostRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String postId, boolean senderStateIssue) {
+        Connection.getInstance().sendGroupPostRerequest(senderUserId, groupId, postId, senderStateIssue);
+    }
+
+    public void sendCommentRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String commentId, boolean senderStateIssue) {
+        Connection.getInstance().sendGroupPostRerequest(senderUserId, groupId, commentId, senderStateIssue);
     }
 
     public void tearDownOutboundSession(GroupId groupId) {

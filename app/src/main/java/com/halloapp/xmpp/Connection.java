@@ -65,6 +65,7 @@ public abstract class Connection {
         public void onIncomingMessageSeenReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onIncomingMessagePlayedReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onMessageRerequest(@NonNull UserId senderUserId, @NonNull String messageId, @NonNull PublicEdECKey peerIdentityKey, @Nullable Integer otpkId, @NonNull byte[] sessionSetupKey, @NonNull byte[] messageEphemeralKey, @NonNull String stanzaId) {}
+        public void onGroupFeedRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {}
         public void onContactsChanged(@NonNull List<ContactInfo> contacts, @NonNull List<String> contactHashes, @NonNull String ackId) {}
         public void onInvitesAccepted(@NonNull List<ContactInfo> contacts, @NonNull String ackId) {}
         public void onWhisperKeysMessage(@NonNull WhisperKeysMessage message, @NonNull String ackId) {}
@@ -159,6 +160,10 @@ public abstract class Connection {
     public abstract <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq);
 
     public abstract void sendRerequest(final @NonNull UserId senderUserId, final @NonNull String messageId, int rerequestCount, @Nullable byte[] teardownKey);
+
+    public abstract void sendGroupPostRerequest(final @NonNull UserId senderUserId, final @NonNull GroupId groupId, final @NonNull String contentId, boolean senderStateIssue);
+
+    public abstract void sendGroupCommentRerequest(final @NonNull UserId senderUserId, final @NonNull GroupId groupId, final @NonNull String contentId, boolean senderStateIssue);
 
     public abstract void sendAck(final @NonNull String id);
 

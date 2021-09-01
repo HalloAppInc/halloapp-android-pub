@@ -15,6 +15,7 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactSyncResult;
 import com.halloapp.content.Comment;
+import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
@@ -59,6 +60,7 @@ import com.halloapp.proto.server.ExportData;
 import com.halloapp.proto.server.FeedItems;
 import com.halloapp.proto.server.GroupFeedItem;
 import com.halloapp.proto.server.GroupFeedItems;
+import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.HaError;
@@ -803,6 +805,34 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public void sendGroupPostRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String postId, boolean senderStateIssue) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || socket == null) {
+                Log.e("connection: cannot send group post rerequest, no connection");
+                return;
+            }
+            int rerequestCount = ContentDb.getInstance().getPostRerequestCount(groupId, senderUserId, postId);
+            GroupRerequestElement groupRerequestElement = new GroupRerequestElement(senderUserId, groupId, postId, senderStateIssue, rerequestCount);
+            Log.i("connection: sending group post rerequest for " + postId + " in " + groupId + " to " + senderUserId);
+            sendPacket(Packet.newBuilder().setMsg(groupRerequestElement.toProto()).build());
+        });
+    }
+
+    @Override
+    public void sendGroupCommentRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String commentId, boolean senderStateIssue) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || socket == null) {
+                Log.e("connection: cannot send group comment rerequest, no connection");
+                return;
+            }
+            int rerequestCount = ContentDb.getInstance().getCommentRerequestCount(groupId, senderUserId, commentId);
+            GroupRerequestElement groupRerequestElement = new GroupRerequestElement(senderUserId, groupId, commentId, senderStateIssue, rerequestCount);
+            Log.i("connection: sending group comment rerequest for " + commentId + " in " + groupId + " to " + senderUserId);
+            sendPacket(Packet.newBuilder().setMsg(groupRerequestElement.toProto()).build());
+        });
+    }
+
+    @Override
     public void sendAck(@NonNull String id) {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || socket == null) {
@@ -1246,6 +1276,17 @@ public class ConnectionImpl extends Connection {
 
                     connectionObservers.notifyMessageRerequest(userId, rerequest.getId(), peerIdentityKey, otpkId, sessionSetupKey, messageEphemeralKey, msg.getId());
                     handled = true;
+                } else if (msg.hasGroupFeedRerequest()) {
+                    Log.i("connection: got group rerequest message " + ProtoPrinter.toString(msg));
+                    UserId userId = getUserId(Long.toString(msg.getFromUid()));
+                    GroupFeedRerequest groupFeedRerequest = msg.getGroupFeedRerequest();
+
+                    String contentId = groupFeedRerequest.getId();
+                    String rawGroupId = groupFeedRerequest.getGid();
+                    boolean senderStateIssue = GroupFeedRerequest.RerequestType.SENDER_STATE == groupFeedRerequest.getRerequestType();
+
+                    connectionObservers.notifyGroupFeedRerequest(userId, new GroupId(rawGroupId), contentId, senderStateIssue, msg.getId());
+                    handled = true;
                 }
             }
             if (!handled) {
@@ -1327,9 +1368,17 @@ public class ConnectionImpl extends Connection {
                         byte[] decPayload = GroupFeedSessionManager.getInstance().decryptMessage(encPayload, groupId, publisherUserId);
                         if (!Arrays.equals(payload, decPayload)) {
                             Log.e("Group Feed Encryption plaintext and decrypted differ");
+                            Log.sendErrorReport("grp_payload_differs");
                         }
                     } catch (CryptoException e) {
                         Log.e("Failed to decrypt encrypted group payload", e);
+                        Log.i("Rerequesting post " + protoPost.getId());
+                        ContentDb contentDb = ContentDb.getInstance();
+                        int count;
+                        count = contentDb.getPostRerequestCount(groupId, publisherUserId, protoPost.getId());
+                        count += 1;
+                        contentDb.setPostRerequestCount(groupId, publisherUserId, protoPost.getId(), count);
+                        GroupFeedKeyManager.getInstance().sendPostRerequest(publisherUserId, groupId, protoPost.getId(), false);
                     }
                 }
             }
@@ -1388,6 +1437,13 @@ public class ConnectionImpl extends Connection {
                         }
                     } catch (CryptoException e) {
                         Log.e("Failed to decrypt encrypted group payload", e);
+                        Log.i("Rerequesting comment " + protoComment.getId());
+                        ContentDb contentDb = ContentDb.getInstance();
+                        int count;
+                        count = contentDb.getCommentRerequestCount(groupId, publisherUserId, protoComment.getId());
+                        count += 1;
+                        contentDb.setCommentRerequestCount(groupId, publisherUserId, protoComment.getId(), count);
+                        GroupFeedKeyManager.getInstance().sendCommentRerequest(publisherUserId, groupId, protoComment.getId(), false);
                     }
                 }
             }
