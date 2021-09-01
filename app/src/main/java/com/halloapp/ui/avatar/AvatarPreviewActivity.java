@@ -25,9 +25,6 @@ import com.halloapp.widget.SnackbarHelper;
 
 public class AvatarPreviewActivity extends HalloActivity {
 
-    public static final int AVATAR_FORM_CIRCLE = 1;
-    public static final int AVATAR_FORM_SQUARE = 2;
-
     public static final String RESULT_AVATAR_WIDTH = "avatar_width";
     public static final String RESULT_AVATAR_HEIGHT = "avatar_height";
     public static final String RESULT_AVATAR_HASH = "avatar_hash";
@@ -36,11 +33,14 @@ public class AvatarPreviewActivity extends HalloActivity {
     public static Intent open(@NonNull Context context, @NonNull Uri uri, boolean forGroup) {
         final Intent intent = new Intent(context, AvatarPreviewActivity.class);
         intent.setData(uri);
-        intent.putExtra(AvatarPreviewActivity.EXTRA_AVATAR_FORM, forGroup ? AVATAR_FORM_SQUARE : AVATAR_FORM_CIRCLE);
+        intent.putExtra(AvatarPreviewActivity.EXTRA_AVATAR_PURPOSE, forGroup ? AVATAR_PURPOSE_GROUP : AVATAR_PURPOSE_USER);
         return intent;
     }
 
-    private static final String EXTRA_AVATAR_FORM = "avatar_form";
+    private static final String EXTRA_AVATAR_PURPOSE = "avatar_purpose";
+
+    private static final int AVATAR_PURPOSE_USER = 1;
+    private static final int AVATAR_PURPOSE_GROUP = 2;
 
     private AvatarPreviewViewModel viewModel;
     private MediaThumbnailLoader mediaThumbnailLoader;
@@ -56,6 +56,9 @@ public class AvatarPreviewActivity extends HalloActivity {
         setContentView(R.layout.activity_set_avatar);
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+        boolean forGroup = getIntent().getIntExtra(EXTRA_AVATAR_PURPOSE, AVATAR_PURPOSE_USER) == AVATAR_PURPOSE_GROUP;
+        setTitle(forGroup ? R.string.group_avatar_picker_title : R.string.avatar_picker_title);
 
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
@@ -112,11 +115,7 @@ public class AvatarPreviewActivity extends HalloActivity {
 
         cropOverlay = findViewById(R.id.cropOverlay);
 
-        if (getIntent().getIntExtra(EXTRA_AVATAR_FORM, AVATAR_FORM_CIRCLE) == AVATAR_FORM_SQUARE) {
-            cropOverlay.setForm(AvatarCropOverlay.Form.SQUARE);
-        } else {
-            cropOverlay.setForm(AvatarCropOverlay.Form.CIRCLE);
-        }
+        cropOverlay.setForm(forGroup ? AvatarCropOverlay.Form.SQUARE : AvatarCropOverlay.Form.CIRCLE);
     }
 
     @Override
