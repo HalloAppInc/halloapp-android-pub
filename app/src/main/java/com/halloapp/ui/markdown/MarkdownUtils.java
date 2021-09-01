@@ -43,11 +43,14 @@ public class MarkdownUtils {
                 .build();
     }
 
-    public static CharSequence formatMarkdownWithMentions(@NonNull Context context, String text, List<Mention> mentions) {
+    public static CharSequence formatMarkdownWithMentions(@NonNull Context context, @Nullable String text, List<Mention> mentions) {
         return formatMarkdownWithMentions(context, text, mentions, null);
     }
 
-    public static CharSequence formatMarkdownWithMentions(@NonNull Context context, String text, List<Mention> mentions, @Nullable MentionsFormatter.MentionClickListener mentionClickListener) {
+    public static CharSequence formatMarkdownWithMentions(@NonNull Context context, @Nullable String text, List<Mention> mentions, @Nullable MentionsFormatter.MentionClickListener mentionClickListener) {
+        if (text == null) {
+            return null;
+        }
         ArrayList<Integer> initialMentionIndices = new ArrayList<>();
         for (int i = 0; i < text.length(); i++) {
             if (text.charAt(i) == '@') {
