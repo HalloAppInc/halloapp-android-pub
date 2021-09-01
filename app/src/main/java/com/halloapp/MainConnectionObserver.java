@@ -450,7 +450,9 @@ public class MainConnectionObserver extends Connection.Observer {
 
     @Override
     public void onGroupCreated(@NonNull GroupId groupId, @NonNull String name, @Nullable String avatarId, @NonNull List<MemberElement> memberElements, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
-        notifications.showNewGroupNotification(groupId, senderName, name);
+        if (!sender.isMe()) {
+            notifications.showNewGroupNotification(groupId, senderName, name);
+        }
         List<MemberInfo> members = new ArrayList<>();
         for (MemberElement memberElement : memberElements) {
             members.add(new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name));
