@@ -1,7 +1,5 @@
 package com.halloapp.ui.posts;
 
-import android.content.Context;
-
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.collection.LruCache;

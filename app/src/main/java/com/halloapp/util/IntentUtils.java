@@ -99,7 +99,7 @@ public class IntentUtils {
         Intent waIntent = createWhatsAppIntent(phoneNumber, text, false);
         Intent w4bIntent = createWhatsAppIntent(phoneNumber, text, true);
 
-        Intent chooser = null;
+        Intent chooser;
         ArrayList<Intent> extraIntents = new ArrayList<>();
 
         if (Build.VERSION.SDK_INT >= 24) {

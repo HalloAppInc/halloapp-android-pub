@@ -1,7 +1,5 @@
 package com.halloapp.xmpp.feed;
 
-import android.util.Base64;
-
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
@@ -11,7 +9,6 @@ import com.halloapp.proto.server.Comment;
 import com.halloapp.proto.server.GroupFeedItem;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.Post;
-import com.halloapp.util.RandomId;
 import com.halloapp.xmpp.HalloIq;
 
 import java.lang.annotation.Retention;

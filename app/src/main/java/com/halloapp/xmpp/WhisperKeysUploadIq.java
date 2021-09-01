@@ -1,7 +1,6 @@
 package com.halloapp.xmpp;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.google.protobuf.ByteString;
 import com.halloapp.proto.server.Iq;
@@ -11,7 +10,7 @@ import java.util.List;
 
 public class WhisperKeysUploadIq extends HalloIq {
 
-    public List<byte[]> oneTimePreKeys;
+    public final List<byte[]> oneTimePreKeys;
 
     WhisperKeysUploadIq(@NonNull List<byte[]> oneTimePreKeys) {
         this.oneTimePreKeys = oneTimePreKeys;

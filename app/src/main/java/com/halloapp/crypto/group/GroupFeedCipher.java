@@ -6,7 +6,6 @@ import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
-import com.halloapp.crypto.keys.MessageKey;
 import com.halloapp.crypto.keys.PrivateEdECKey;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;

@@ -722,9 +722,9 @@ public class MediaUtils {
     private static final int MP4_ATOM_SIZE_EXTENDED_NEXT_BYTES = 1;
 
     private static final class Mp4Atom {
-        int type;
-        long start;
-        long size;
+        final int type;
+        final long start;
+        final long size;
 
         public Mp4Atom(int type, long start, long size) {
             this.type = type;

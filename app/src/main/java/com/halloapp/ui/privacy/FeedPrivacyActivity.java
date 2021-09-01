@@ -17,7 +17,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.R;
-import com.halloapp.contacts.ContactsSync;
 import com.halloapp.id.UserId;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.ui.HalloActivity;

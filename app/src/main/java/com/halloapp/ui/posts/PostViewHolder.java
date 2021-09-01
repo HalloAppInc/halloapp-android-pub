@@ -24,7 +24,6 @@ import com.halloapp.R;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
-import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.UploadMediaTask;

@@ -224,10 +224,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         if (post.senderUserId.isMe()) {
             return true;
         }
-        if (!hasContactsPerms && post.getParentGroup() == null) {
-            return false;
-        }
-        return true;
+        return hasContactsPerms || post.getParentGroup() != null;
     }
 
     private void processMentionedComments(@NonNull List<Comment> mentionedComments, @NonNull List<SocialActionEvent> seenOut, @NonNull List<SocialActionEvent> unseenOut, boolean hasContactPermissions) {

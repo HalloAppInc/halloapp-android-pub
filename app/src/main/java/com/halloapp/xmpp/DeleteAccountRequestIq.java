@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.proto.server.DeleteAccount;
 import com.halloapp.proto.server.Iq;
-import com.halloapp.proto.server.PushRegister;
-import com.halloapp.proto.server.PushToken;
 
 public class DeleteAccountRequestIq extends HalloIq {
 

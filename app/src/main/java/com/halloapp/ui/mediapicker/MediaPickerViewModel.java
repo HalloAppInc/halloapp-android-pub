@@ -9,17 +9,14 @@ import android.provider.MediaStore;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
 import com.halloapp.FileStore;
 import com.halloapp.Preferences;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 
 import java.io.File;

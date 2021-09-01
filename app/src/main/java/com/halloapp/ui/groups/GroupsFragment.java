@@ -374,7 +374,6 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
         public @NonNull ViewHolderWithLifecycle onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             Log.i("GroupsAdapter.onCreateViewHolder " + viewType);
             return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.group_item, parent, false));
-
         }
 
         @Override

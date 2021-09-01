@@ -165,8 +165,8 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
 
     private class ContactViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView avatar;
-        TextView name;
+        final ImageView avatar;
+        final TextView name;
 
         public ContactViewHolder(@NonNull View itemView) {
             super(itemView);

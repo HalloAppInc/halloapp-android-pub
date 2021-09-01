@@ -3,7 +3,6 @@ package com.halloapp.media;
 import androidx.annotation.NonNull;
 
 import com.halloapp.content.Media;
-import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.util.logs.Log;
 
 import java.io.FilterOutputStream;

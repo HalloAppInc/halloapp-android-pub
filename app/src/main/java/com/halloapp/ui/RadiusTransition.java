@@ -19,7 +19,7 @@ public class RadiusTransition extends Transition {
 
     private static final String PROP_RADIUS = "radius";
 
-    boolean toCircle;
+    final boolean toCircle;
 
     private RadiusTransition(boolean fromCircle) {
         this.toCircle = fromCircle;

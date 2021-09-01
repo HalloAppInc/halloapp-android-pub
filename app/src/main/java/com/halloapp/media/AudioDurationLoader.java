@@ -1,9 +1,6 @@
 package com.halloapp.media;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.MainThread;
@@ -15,8 +12,6 @@ import com.halloapp.content.Media;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
-import com.halloapp.widget.ContentPhotoView;
-import com.halloapp.widget.PlaceholderDrawable;
 
 import java.io.File;
 import java.util.concurrent.Callable;
@@ -30,7 +25,7 @@ public class AudioDurationLoader extends ViewDataLoader<TextView, Long, File> {
     public AudioDurationLoader(@NonNull Context context) {
         this.context = context;
 
-        cache = new LruCache<File, Long>(128);
+        cache = new LruCache<>(128);
     }
 
     @MainThread

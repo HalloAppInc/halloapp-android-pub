@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.logs.Log;
 
 public class GroupFeedMessageKey {
     private final static int MESSAGE_KEY_BYTES = 80;

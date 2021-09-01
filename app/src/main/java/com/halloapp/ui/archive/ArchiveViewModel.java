@@ -15,7 +15,7 @@ public class ArchiveViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Post>> archiveItemList;
     private final ArchiveDataSource.Factory dataSourceFactory;
-    ContentDb contentDb;
+    private final ContentDb contentDb;
 
     public ArchiveViewModel(@NonNull Application application) {
         super(application);

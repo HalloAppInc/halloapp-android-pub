@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 
 import java.text.Collator;

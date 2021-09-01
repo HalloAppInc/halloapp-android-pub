@@ -3,7 +3,6 @@ package com.halloapp.widget;
 import android.Manifest;
 import android.content.Context;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -17,15 +16,11 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
 
-import com.halloapp.ContentDraftManager;
 import com.halloapp.R;
-import com.halloapp.id.ChatId;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.media.VoiceNoteRecorder;
-import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.util.StringUtils;
 
 import java.io.File;

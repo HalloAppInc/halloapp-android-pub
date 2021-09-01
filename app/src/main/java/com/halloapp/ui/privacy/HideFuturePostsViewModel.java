@@ -1,18 +1,12 @@
 package com.halloapp.ui.privacy;
 
-import android.app.Application;
-
-import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.contacts.Contact;
-import com.halloapp.id.UserId;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.privacy.FeedPrivacyManager;
-import com.halloapp.ui.profile.ProfileViewModel;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.xmpp.privacy.PrivacyList;
 

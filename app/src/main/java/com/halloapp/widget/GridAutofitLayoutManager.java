@@ -1,7 +1,6 @@
 package com.halloapp.widget;
 
 import android.content.Context;
-import android.util.TypedValue;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;

@@ -22,7 +22,7 @@ public class ZoomAnimator extends RecyclerView.ItemAnimator {
 
     private static class Item {
         public RecyclerView.ViewHolder holder, older;
-        public ItemHolderInfo pre, post;
+        public final ItemHolderInfo pre, post;
         public float deltaX, deltaY, scaleX, scaleY;
         public boolean canScale = true;
 

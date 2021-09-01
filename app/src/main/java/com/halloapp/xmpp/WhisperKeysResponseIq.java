@@ -9,10 +9,10 @@ import java.util.List;
 
 public class WhisperKeysResponseIq extends HalloIq {
 
-    public Integer count;
-    public byte[] identityKey;
-    public byte[] signedPreKey;
-    public List<byte[]> oneTimePreKeys;
+    public final Integer count;
+    public final byte[] identityKey;
+    public final byte[] signedPreKey;
+    public final List<byte[]> oneTimePreKeys;
 
     private WhisperKeysResponseIq(Integer count, byte[] identityKey, byte[] signedPreKey, List<byte[]> oneTimePreKeys) {
         this.count = count;

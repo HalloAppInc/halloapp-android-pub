@@ -110,7 +110,7 @@ public class BlockListActivity extends HalloActivity implements EasyPermissions.
     public boolean onCreateOptionsMenu(Menu menu) {
         Drawable icon = Preconditions.checkNotNull(ContextCompat.getDrawable(this, R.drawable.ic_add));
         icon.setTint(ContextCompat.getColor(this, R.color.primary_text));
-        menu.add(Menu.NONE, 0, Menu.NONE, R.string.menu_item_block_user).setIcon(icon).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(Menu.NONE, 0, Menu.NONE, R.string.menu_item_block_user).setIcon(icon).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;
     }
 

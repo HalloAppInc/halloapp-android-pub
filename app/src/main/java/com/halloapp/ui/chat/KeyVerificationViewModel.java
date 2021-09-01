@@ -266,8 +266,8 @@ public class KeyVerificationViewModel extends AndroidViewModel {
     }
 
     public static final class KeyVerificationData {
-        public Bitmap qrCode;
-        public List<String> safetyNumber;
+        public final Bitmap qrCode;
+        public final List<String> safetyNumber;
 
         public KeyVerificationData(Bitmap qrCode, List<String> safetyNumber) {
             this.qrCode = qrCode;

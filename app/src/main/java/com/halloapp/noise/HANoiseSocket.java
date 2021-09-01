@@ -15,7 +15,6 @@ import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.PrivateEdECKey;
 import com.halloapp.crypto.keys.PublicEdECKey;
-import com.halloapp.proto.server.AuthRequest;
 import com.halloapp.proto.server.CertMessage;
 import com.halloapp.proto.server.NoiseMessage;
 import com.halloapp.proto.server.Packet;
@@ -285,7 +284,7 @@ public class HANoiseSocket extends Socket {
         }
         byte[] recvBytes = readerOutputStream.toByteArray();
         ByteBuffer wrapped = ByteBuffer.wrap(recvBytes); // big-endian by default
-        int packetSize = wrapped.getInt() & PACKET_SIZE_MASK;;
+        int packetSize = wrapped.getInt() & PACKET_SIZE_MASK;
         readerOutputStream.reset();
         if (recvBytes.length > 4) {
             readerOutputStream.write(recvBytes, 4, recvBytes.length - 4);

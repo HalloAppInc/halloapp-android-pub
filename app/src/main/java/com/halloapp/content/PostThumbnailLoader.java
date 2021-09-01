@@ -17,10 +17,9 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.markdown.MarkdownUtils;
-import com.halloapp.ui.mentions.MentionsFormatter;
 import com.halloapp.ui.mentions.MentionsLoader;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.PlaceholderDrawable;
 import com.halloapp.widget.TextDrawable;
 

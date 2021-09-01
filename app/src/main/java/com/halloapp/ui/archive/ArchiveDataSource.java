@@ -51,7 +51,7 @@ public class ArchiveDataSource extends ItemKeyedDataSource<Pair<Long, String>, P
     @NonNull
     @Override
     public Pair<Long, String> getKey(@NonNull Post post) {
-        return new Pair(post.timestamp, post.id);
+        return new Pair<>(post.timestamp, post.id);
     }
 
     @Override

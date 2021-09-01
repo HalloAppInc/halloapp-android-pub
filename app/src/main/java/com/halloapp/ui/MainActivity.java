@@ -47,7 +47,6 @@ import com.halloapp.ui.groups.GroupCreationPickerActivity;
 import com.halloapp.ui.home.HomeViewModel;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
-import com.halloapp.ui.mediaexplorer.MediaExplorerViewModel;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;

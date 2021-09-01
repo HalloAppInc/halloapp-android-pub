@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import com.halloapp.id.UserId;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.util.MutableObservable;
 import com.halloapp.xmpp.util.Observable;
 
 import java.util.Collection;

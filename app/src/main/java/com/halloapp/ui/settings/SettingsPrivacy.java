@@ -1,6 +1,5 @@
 package com.halloapp.ui.settings;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -15,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 
-import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.Debug;
 import com.halloapp.DebugActivity;
@@ -24,16 +22,11 @@ import com.halloapp.R;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloPreferenceFragment;
-import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.privacy.BlockListActivity;
 import com.halloapp.ui.privacy.FeedPrivacyActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.privacy.PrivacyList;
-
-import java.util.List;
-
-import pub.devrel.easypermissions.EasyPermissions;
 
 public class SettingsPrivacy extends HalloActivity {
 

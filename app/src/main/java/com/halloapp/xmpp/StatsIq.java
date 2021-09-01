@@ -9,7 +9,6 @@ import com.halloapp.proto.server.Iq;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.stats.Counter;
 import com.halloapp.util.stats.Dimensions;
-import com.halloapp.util.stats.Stats;
 
 import java.util.List;
 import java.util.Map;

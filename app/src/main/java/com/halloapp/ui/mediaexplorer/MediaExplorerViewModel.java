@@ -1,7 +1,6 @@
 package com.halloapp.ui.mediaexplorer;
 
 import android.app.Application;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -22,7 +21,6 @@ import com.google.android.gms.common.util.concurrent.HandlerExecutor;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
-import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.BgWorkers;
@@ -163,9 +161,9 @@ public class MediaExplorerViewModel extends AndroidViewModel {
     }
 
     public static class MediaModel implements Parcelable {
-        public Uri uri;
-        public int type;
-        public long rowId;
+        public final Uri uri;
+        public final int type;
+        public final long rowId;
 
         public static ArrayList<MediaModel> fromMedia(@NonNull List<Media> media) {
             ArrayList<MediaModel> models = new ArrayList<>(media.size());

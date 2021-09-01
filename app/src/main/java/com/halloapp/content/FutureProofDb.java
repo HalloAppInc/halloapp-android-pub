@@ -102,7 +102,7 @@ public class FutureProofDb {
                 null,
                 null,
                 null)) {
-            while (cursor.moveToNext()) {
+            if (cursor.moveToNext()) {
                 return cursor.getBlob(3);
             }
         }

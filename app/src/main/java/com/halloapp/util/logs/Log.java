@@ -137,6 +137,7 @@ public class Log {
     }
 
     // Cannot hard-code; proguard minification will change the names
+    @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
     private static final List<String> classesToIgnore = Arrays.asList(
             Preconditions.class.getName()
     );

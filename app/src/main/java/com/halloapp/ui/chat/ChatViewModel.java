@@ -155,10 +155,6 @@ public class ChatViewModel extends AndroidViewModel {
             }
         }
 
-        @Override
-        public void onDbCreated() {
-        }
-
         private void invalidateMessages() {
             mainHandler.post(dataSourceFactory::invalidateLatestDataSource);
         }

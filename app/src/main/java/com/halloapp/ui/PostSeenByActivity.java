@@ -19,13 +19,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
-import com.halloapp.id.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
+import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.invites.InviteContactsActivity;
-import com.halloapp.ui.privacy.FeedPrivacyActivity;
 import com.halloapp.ui.settings.SettingsPrivacy;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
@@ -418,14 +417,9 @@ public class PostSeenByActivity extends HalloActivity {
                     adapter.notifyDataSetChanged();
                 });
             }
-
-            @Override
-            void bindTo(@NonNull ExpandListItem item) {
-            }
         }
 
         private class ManagePrivacyViewHolder extends ViewHolder<ManagePrivacyListItem> {
-
 
             ManagePrivacyViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -433,15 +427,9 @@ public class PostSeenByActivity extends HalloActivity {
                     startActivity(SettingsPrivacy.openFeedPrivacy(v.getContext()));
                 });
             }
-
-            @Override
-            void bindTo(@NonNull ManagePrivacyListItem item) {
-
-            }
         }
 
         private class InviteFriendsViewHolder extends ViewHolder<InviteFriendsListItem> {
-
 
             InviteFriendsViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -449,11 +437,6 @@ public class PostSeenByActivity extends HalloActivity {
                     final Intent intent = new Intent(itemView.getContext(), InviteContactsActivity.class);
                     startActivity(intent);
                 });
-            }
-
-            @Override
-            void bindTo(@NonNull InviteFriendsListItem item) {
-
             }
         }
     }

@@ -362,6 +362,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
 
         commentsView.setAdapter(adapter);
         editText = findViewById(R.id.entry_card);
+        editText.setHint(R.string.type_a_comment_hint);
         editText.setMentionPickerView(mentionPickerView);
 
         editText.addTextChangedListener(new TextWatcher() {

@@ -92,7 +92,6 @@ import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerViewModel;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.MentionPickerView;
-import com.halloapp.ui.mentions.MentionsFormatter;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.PostAttributionLayout;
 import com.halloapp.ui.profile.ViewProfileActivity;
@@ -484,6 +483,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         commentsView.setAdapter(adapter);
         editText = findViewById(R.id.entry_card);
+        editText.setHint(R.string.type_a_comment_hint);
         editText.setMentionPickerView(mentionPickerView);
 
         editText.addTextChangedListener(new TextWatcher() {

@@ -22,6 +22,7 @@ public class ShareActivity extends HalloActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case REQUEST_SELECT_CHAT:
                 if (resultCode == RESULT_OK && data != null) {

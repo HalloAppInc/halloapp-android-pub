@@ -357,6 +357,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
                 if (getActivity() instanceof MainActivity) {

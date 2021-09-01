@@ -48,13 +48,16 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/search_icon"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:background="@null"
                 android:fontFamily="sans-serif-medium"
                 android:textSize="15sp"
-                android:hint="@string/search_contacts"/>
+                android:hint="@string/search_contacts"
+                android:inputType="textPersonName"
+                android:importantForAutofill="no"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

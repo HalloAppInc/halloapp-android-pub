@@ -12,7 +12,6 @@ import com.halloapp.proto.clients.Image;
 import com.halloapp.proto.clients.StreamingInfo;
 import com.halloapp.proto.clients.Video;
 import com.halloapp.proto.clients.VoiceNote;
-import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.MessageElementHelper;
 
 import java.io.File;

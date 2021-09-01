@@ -42,11 +42,11 @@ public class InviteContactsViewModel extends AndroidViewModel {
 
     private final Me me = Me.getInstance();
 
-    MutableLiveData<InviteCountAndRefreshTime> inviteAndTimeData;
+    final MutableLiveData<InviteCountAndRefreshTime> inviteAndTimeData;
 
-    ComputableLiveData<List<Contact>> contactList;
-    ComputableLiveData<Set<String>> waContacts;
-    ComputableLiveData<InviteOptions> inviteOptions;
+    final ComputableLiveData<List<Contact>> contactList;
+    final ComputableLiveData<Set<String>> waContacts;
+    final ComputableLiveData<InviteOptions> inviteOptions;
 
     public static final int RESPONSE_RETRYABLE = -1;
     public static final long RESPONSE_RETRYABLE_LONG = -1;

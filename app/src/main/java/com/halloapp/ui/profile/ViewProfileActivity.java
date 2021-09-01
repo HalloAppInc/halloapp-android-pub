@@ -4,16 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.Window;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.app.SharedElementCallback;
-import androidx.viewpager2.widget.ViewPager2;
 
-import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;

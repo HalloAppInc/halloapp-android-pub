@@ -18,7 +18,7 @@ import com.halloapp.xmpp.MessageElementHelper;
 
 public class GroupChatMessage {
 
-    public GroupId groupId;
+    public final GroupId groupId;
     public String name;
     public String avatarId;
     public UserId sender;

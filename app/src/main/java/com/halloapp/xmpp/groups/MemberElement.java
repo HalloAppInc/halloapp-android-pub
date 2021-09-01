@@ -10,12 +10,12 @@ import java.util.Locale;
 
 public class MemberElement {
 
-    public UserId uid;
-    public @Type String type;
-    public String name;
-    public @Action String action;
-    public @Result String result;
-    public String reason;
+    public final UserId uid;
+    public final @Type String type;
+    public final String name;
+    public final @Action String action;
+    public final @Result String result;
+    public final String reason;
 
     @StringDef({Type.ADMIN, Type.MEMBER, Type.INVALID})
     public @interface Type {

@@ -6,13 +6,13 @@
         android:id="@+id/other_media"
         android:icon="@drawable/ic_media_collection_80"
         android:title="@string/other_media"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/camera"
         android:icon="@drawable/ic_camera"
         android:title="@string/camera_post"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         android:visible="false"/>
 
 </menu>

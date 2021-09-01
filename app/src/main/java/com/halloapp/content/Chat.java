@@ -15,7 +15,7 @@ public class Chat {
     public final boolean isGroup;
     public final String groupDescription;
     public final String groupAvatarId;
-    public int theme;
+    public final int theme;
 
     public String name;
 

@@ -15,7 +15,6 @@ import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
-import androidx.arch.core.util.Function;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.AppContext;
@@ -163,8 +162,8 @@ class MessagesDb {
                     final ContentValues replyValues = new ContentValues();
                     replyValues.put(RepliesTable.COLUMN_MESSAGE_ROW_ID, message.rowId);
 
-                    ContentItem replyItem = null;
-                    int mediaIndex = -1;
+                    ContentItem replyItem;
+                    int mediaIndex;
                     if (message.replyMessageId != null) {
                         replyItem = replyMessage;
                         mediaIndex = message.replyMessageMediaIndex;

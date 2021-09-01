@@ -12,7 +12,7 @@ import androidx.core.graphics.drawable.DrawableCompat;
 public class DrawableUtils {
 
     public static Drawable getTintedDrawable(@NonNull Context context, @DrawableRes int res, @ColorRes int colorRes) {
-        Drawable d = context.getDrawable(res);
+        Drawable d = ContextCompat.getDrawable(context, res);
         if (d == null) {
             return null;
         }

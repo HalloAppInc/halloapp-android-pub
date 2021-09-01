@@ -12,9 +12,7 @@
 
 package com.theartofdev.edmodo.cropper;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,7 +23,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.exifinterface.media.ExifInterface;
 import android.util.AttributeSet;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -34,6 +31,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+
+import androidx.exifinterface.media.ExifInterface;
 
 import com.halloapp.R;
 

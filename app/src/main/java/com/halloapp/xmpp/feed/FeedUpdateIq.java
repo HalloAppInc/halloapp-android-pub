@@ -1,7 +1,5 @@
 package com.halloapp.xmpp.feed;
 
-import android.util.Base64;
-
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

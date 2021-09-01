@@ -22,6 +22,7 @@ public class ShareActivityGroup extends HalloActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case REQUEST_SELECT_GROUP:
                 if (resultCode == RESULT_OK && data != null) {

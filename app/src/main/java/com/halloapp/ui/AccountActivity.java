@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import com.halloapp.R;
+import com.halloapp.util.Preconditions;
 
 public class AccountActivity extends HalloActivity {
 
@@ -16,7 +17,7 @@ public class AccountActivity extends HalloActivity {
 
         setContentView(R.layout.activity_account);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         View requestDataView = findViewById(R.id.request_data);
         requestDataView.setOnClickListener(v -> {

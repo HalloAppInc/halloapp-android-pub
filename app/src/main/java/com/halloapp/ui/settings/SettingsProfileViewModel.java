@@ -158,7 +158,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         private static final String WORKER_PARAM_NAME = "name";
         private static final String WORKER_PARAM_AVATAR_REMOVAL = "avatar_removal";
 
-        AvatarLoader avatarLoader;
+        private final AvatarLoader avatarLoader;
 
         public UpdateProfileWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
             super(context, workerParams);

@@ -202,12 +202,12 @@ public class MediaEditViewModel extends AndroidViewModel {
     }
 
     static class Model {
-        Uri uri;
-        Media original;
-        Media edit;
+        final Uri uri;
+        final Media original;
+        final Media edit;
         Parcelable state;
         Parcelable tmpState;
-        long date;
+        final long date;
 
         Model(Uri uri, Media original, Media edit, Parcelable state, long date) {
             this.uri = uri;
@@ -260,7 +260,9 @@ public class MediaEditViewModel extends AndroidViewModel {
                     break;
                 }
             } else if (state == null && edit.file.exists()) {
-                edit.file.delete();
+                if (!edit.file.delete()) {
+                    Log.w("MediaEditViewModel failed to delete edit file");
+                }
             }
         }
 

@@ -7,10 +7,7 @@ import androidx.annotation.Nullable;
 import com.halloapp.BuildConfig;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
-import com.halloapp.proto.clients.CommentContainer;
-import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.PublishedEntry;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.lang.annotation.Retention;

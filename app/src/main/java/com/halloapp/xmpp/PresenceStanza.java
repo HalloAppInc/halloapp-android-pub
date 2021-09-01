@@ -3,7 +3,6 @@ package com.halloapp.xmpp;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.halloapp.Preferences;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.Presence;
 

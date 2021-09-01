@@ -10,7 +10,6 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.contacts.Contact;
 import com.halloapp.id.UserId;
-import com.halloapp.proto.clients.CommentContainer;
 import com.halloapp.xmpp.Connection;
 
 import java.lang.annotation.Retention;

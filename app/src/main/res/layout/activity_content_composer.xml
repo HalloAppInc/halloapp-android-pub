@@ -142,10 +142,11 @@
                                         android:orientation="horizontal"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_marginLeft="@dimen/content_composer_button_margins"
+                                        android:layout_marginStart="@dimen/content_composer_button_margins"
+                                        android:layout_marginEnd="@dimen/content_composer_button_margins"
                                         android:translationY="@dimen/content_composer_button_bottom_offset"
                                         app:layout_anchor="@id/media_pager"
-                                        app:layout_anchorGravity="bottom|left">
+                                        app:layout_anchorGravity="bottom|start">
 
                                         <ImageButton
                                             android:id="@+id/add_media"
@@ -163,10 +164,11 @@
                                         android:orientation="horizontal"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_marginRight="@dimen/content_composer_button_margins"
+                                        android:layout_marginStart="@dimen/content_composer_button_margins"
+                                        android:layout_marginEnd="@dimen/content_composer_button_margins"
                                         android:translationY="@dimen/content_composer_button_bottom_offset"
                                         app:layout_anchor="@id/media_pager"
-                                        app:layout_anchorGravity="bottom|right">
+                                        app:layout_anchorGravity="bottom|end">
 
 
                                         <ImageButton
@@ -187,7 +189,7 @@
                                             android:scaleType="centerInside"
                                             android:src="@drawable/ic_crop_white"
                                             android:background="@drawable/media_edit_button"
-                                            android:layout_marginLeft="@dimen/content_composer_button_margins"
+                                            android:layout_marginStart="@dimen/content_composer_button_margins"
                                             android:visibility="gone"/>
 
                                     </LinearLayout>

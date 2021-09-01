@@ -169,9 +169,9 @@ public class Preferences {
     };
 
     private abstract class Preference<T> {
-        boolean backedUp;
-        String prefKey;
-        T defaultValue;
+        final boolean backedUp;
+        final String prefKey;
+        final T defaultValue;
 
         public Preference(boolean backedUp, String prefKey, T defaultValue) {
             this.backedUp = backedUp;

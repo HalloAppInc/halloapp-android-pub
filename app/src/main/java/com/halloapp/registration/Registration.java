@@ -500,7 +500,7 @@ public class Registration {
 
         public final String phone;
         public final @Result int result;
-        public int retryWaitTimeSeconds;
+        public final int retryWaitTimeSeconds;
 
         RegistrationRequestResult(@NonNull String phone, int retryWaitTimeSeconds) {
             this.phone = phone;

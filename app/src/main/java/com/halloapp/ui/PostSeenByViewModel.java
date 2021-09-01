@@ -13,11 +13,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.groups.MemberInfo;
-import com.halloapp.id.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.content.SeenByInfo;
+import com.halloapp.id.UserId;
 import com.halloapp.util.ComputableLiveData;
 
 import java.util.ArrayList;

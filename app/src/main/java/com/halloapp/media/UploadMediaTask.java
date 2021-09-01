@@ -47,7 +47,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     private final FileStore fileStore;
     private final ContentDb contentDb;
     private final Connection connection;
-    public static ConcurrentHashMap<String, Boolean> contentItemIds = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, Boolean> contentItemIds = new ConcurrentHashMap<>();
 
     private static final int RETRY_LIMIT = 3;
 
@@ -259,11 +259,10 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                         if (encryptedFile.exists()) {
                             encryptedFile.delete();
                         }
-                        break;
                     } else {
                         Log.e("Resumable Uploader other exception:" + e.code + " for " + mediaLogId);
-                        break;
                     }
+                    break;
                 } catch (IOException e) {
                     Log.e("Resumable Uploader: " + urls.patchUrl + " for " + mediaLogId, e);
                     break;

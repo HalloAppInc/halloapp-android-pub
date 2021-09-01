@@ -43,6 +43,7 @@ public class SetPrivacyListIq extends HalloIq {
         builder.setType(com.halloapp.proto.server.PrivacyList.Type.valueOf(type.toUpperCase(Locale.US)));
 
         List<UserId> userList;
+        //noinspection IfCanBeSwitch
         if (PrivacyList.Type.EXCEPT.equals(type)) {
             userList = contactsDb.getFeedExclusionListForServer();
         } else if (PrivacyList.Type.ONLY.equals(type)) {

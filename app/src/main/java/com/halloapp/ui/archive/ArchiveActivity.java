@@ -29,6 +29,7 @@ import com.halloapp.ui.PostContentActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.Preconditions;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.SquareImageView;
 
@@ -84,7 +85,7 @@ public class ArchiveActivity extends HalloActivity  {
 
     public static class ArchiveSpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
 
-        RecyclerView recyclerView;
+        final RecyclerView recyclerView;
 
         public ArchiveSpanSizeLookup(View view) {
             this.recyclerView = (RecyclerView) view;
@@ -98,13 +99,13 @@ public class ArchiveActivity extends HalloActivity  {
 
     public class ArchiveRecyclerViewHolder extends ViewHolderWithLifecycle {
 
-        TextView titleView;
-        LimitingTextView name;
-        TextContentLoader textContentLoader;
+        final TextView titleView;
+        final LimitingTextView name;
+        final TextContentLoader textContentLoader;
 
-        FrameLayout pictureFrameLayout;
-        TextView durationText;
-        SquareImageView imageView;
+        final FrameLayout pictureFrameLayout;
+        final TextView durationText;
+        final SquareImageView imageView;
 
         Post post;
 
@@ -128,7 +129,8 @@ public class ArchiveActivity extends HalloActivity  {
             name.setOnClickListener(clickListener);
             pictureFrameLayout.setOnClickListener(clickListener);
         }
-        public void bindTo(Post post) {
+
+        public void bindTo(@NonNull Post post) {
             this.post = post;
             name.setText(getString(R.string.post_retracted_by_me));
             if (post.text != null) {
@@ -143,7 +145,7 @@ public class ArchiveActivity extends HalloActivity  {
                     mediaThumbnailLoader.load(imageView, post.media.get(0));
                 } else if (media.type == Media.MEDIA_TYPE_VIDEO) {
                     bgWorkers.execute(() -> {
-                        Long duration = MediaUtils.getVideoDuration(media.file);
+                        long duration = MediaUtils.getVideoDuration(media.file);
                         durationText.post(() -> {
                             durationText.setVisibility(View.VISIBLE);
                             durationText.setText(DateUtils.formatElapsedTime(duration / 1000));
@@ -180,7 +182,7 @@ public class ArchiveActivity extends HalloActivity  {
 
         @Override
         public void onBindViewHolder(@NonNull ArchiveRecyclerViewHolder holder, int position) {
-            holder.bindTo(getItem(position));
+            holder.bindTo(Preconditions.checkNotNull(getItem(position)));
         }
     }
 }

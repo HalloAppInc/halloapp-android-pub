@@ -6,6 +6,7 @@ import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.Iq;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.HalloIq;
 
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class GroupResponseIq extends HalloIq {
         try {
             b = Background.parseFrom(groupStanza.getBackgroundBytes());
         } catch (InvalidProtocolBufferException e) {
+            Log.w("Failed to parse background", e);
         }
         background = b;
         for (GroupMember groupMember : groupStanza.getMembersList()) {

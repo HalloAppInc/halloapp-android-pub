@@ -20,7 +20,7 @@ public class PrivacyList {
     public final Map<UserId, String> typeMap = new HashMap<>();
     public final List<UserId> userIds = new ArrayList<>();
 
-    public @Type String type;
+    public final @Type String type;
 
     @StringDef({Type.ALL, Type.EXCEPT, Type.ONLY, Type.MUTE, Type.BLOCK, Type.INVALID})
     public @interface Type {

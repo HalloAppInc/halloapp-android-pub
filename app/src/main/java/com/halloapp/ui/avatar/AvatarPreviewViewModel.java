@@ -1,7 +1,6 @@
 package com.halloapp.ui.avatar;
 
 import android.app.Application;
-import android.content.ContentResolver;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -25,9 +24,9 @@ import com.halloapp.FileStore;
 import com.halloapp.content.Media;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.FileUtils;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
+import com.halloapp.util.logs.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;

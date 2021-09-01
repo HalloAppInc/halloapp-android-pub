@@ -145,11 +145,10 @@ public class ChatMessageProtocol {
                     // TODO: (clarkc) remove legacy proto format once clients are all sending new format
                     if (!container.hasChatContainer()) {
                         chatMessage = MessageElementHelper.readEncodedEntry(dec);
-                        stats.reportDecryptSuccess(senderPlatform, senderVersion);
                     } else {
                         chatContainer = container.getChatContainer();
-                        stats.reportDecryptSuccess(senderPlatform, senderVersion);
                     }
+                    stats.reportDecryptSuccess(senderPlatform, senderVersion);
                 } catch (InvalidProtocolBufferException e) {
                     Log.e("Payload not a valid container", e);
                 }

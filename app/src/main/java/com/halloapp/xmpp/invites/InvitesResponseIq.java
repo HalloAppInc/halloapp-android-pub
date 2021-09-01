@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class InvitesResponseIq extends HalloIq {
 
-    InviteCountAndRefreshTime inviteCountRefreshData;
+    final InviteCountAndRefreshTime inviteCountRefreshData;
 
     final Map<String, Integer> failedInvites = new HashMap<>();
     final Set<String> successfulInvites = new HashSet<>();

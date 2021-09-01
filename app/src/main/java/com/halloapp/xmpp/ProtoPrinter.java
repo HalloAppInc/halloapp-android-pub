@@ -102,9 +102,9 @@ public class ProtoPrinter {
         private static final int PEEK_BEFORE = 40;
         private static final int PEEK_AFTER = 40;
 
-        @NonNull public String name;
-        public List<Pair<String, String>> attributes;
-        public List<ProtoNode> children;
+        @NonNull public final String name;
+        public final List<Pair<String, String>> attributes;
+        public final List<ProtoNode> children;
 
         public ProtoNode(@NonNull String name, @NonNull List<Pair<String, String>> attributes, @NonNull List<ProtoNode> children) {
             List<Pair<String, String>> selected = new ArrayList<>();

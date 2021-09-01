@@ -6,8 +6,6 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.halloapp.util.logs.Log;
-
 import java.util.Objects;
 
 public abstract class ChatId implements Parcelable {

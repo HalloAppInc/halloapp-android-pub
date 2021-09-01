@@ -1168,10 +1168,10 @@ class PostsDb {
     }
 
     @WorkerThread
-    @NonNull int getCommentCount(@NonNull String postId) {
+    int getCommentCount(@NonNull String postId) {
         final String sql = "SELECT 0 FROM " + CommentsTable.TABLE_NAME +" WHERE " + CommentsTable.COLUMN_POST_ID + "=?";
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        int count = 0;
+        int count;
         try (final Cursor cursor = db.rawQuery(sql, new String [] {postId})) {
             count = cursor.getCount();
         }

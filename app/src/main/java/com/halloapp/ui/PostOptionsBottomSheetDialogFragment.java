@@ -3,7 +3,6 @@ package com.halloapp.ui;
 import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,8 +19,6 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
-import com.halloapp.util.ActivityUtils;
-import com.halloapp.util.BgWorkers;
 import com.halloapp.widget.SnackbarHelper;
 
 import java.util.List;

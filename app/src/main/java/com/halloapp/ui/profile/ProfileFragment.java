@@ -185,12 +185,11 @@ public class ProfileFragment extends PostsFragment {
                 if (contact.addressBookName == null) {
                     emptyIcon.setImageResource(R.drawable.ic_exchange_numbers);
                     emptyView.setText(getString(R.string.posts_exchange_numbers));
-                    updateAddToContacts();
                 } else {
                     emptyIcon.setImageResource(R.drawable.ic_posts);
                     emptyView.setText(getString(R.string.contact_profile_empty, name));
-                    updateAddToContacts();
                 }
+                updateAddToContacts();
                 updateMessageUnblock();
             });
         }
@@ -208,7 +207,7 @@ public class ProfileFragment extends PostsFragment {
 
         if (profileUserId.isMe()) {
             final View.OnClickListener editProfileClickListener = v -> {
-                openProfileEditor();;
+                openProfileEditor();
             };
             avatarView.setOnClickListener(editProfileClickListener);
             nameView.setOnClickListener(editProfileClickListener);

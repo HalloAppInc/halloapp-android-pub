@@ -17,7 +17,6 @@ import com.halloapp.id.UserId;
 import com.halloapp.registration.CheckRegistration;
 import com.halloapp.util.ComputableLiveData;
 
-import java.security.acl.Group;
 import java.util.Collection;
 
 public class MainViewModel extends AndroidViewModel {

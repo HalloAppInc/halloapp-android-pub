@@ -72,11 +72,11 @@ public class PublishedEntry {
         final String url;
         final byte [] encKey;
         final byte [] encSha256hash;
-        int width;
-        int height;
-        public @BlobVersion int blobVersion;
-        public int chunkSize;
-        public long blobSize;
+        final int width;
+        final int height;
+        public final @BlobVersion int blobVersion;
+        public final int chunkSize;
+        public final long blobSize;
 
         public Media(@MediaType String type, String url, byte [] encKey, byte [] encSha256hash, int width, int height, @BlobVersion int blobVersion, int chunkSize, long blobSize) {
             this.type = type;
@@ -246,7 +246,7 @@ public class PublishedEntry {
         return MediaType.MEDIA_TYPE_UNSPECIFIED;
     }
 
-    private BlobVersion getProtoBlobVersion(@NonNull @Media.BlobVersion int blobVersion) {
+    private BlobVersion getProtoBlobVersion(@Media.BlobVersion int blobVersion) {
         if (blobVersion == Media.BLOB_VERSION_CHUNKED) {
             return BlobVersion.BLOB_VERSION_CHUNKED;
         }

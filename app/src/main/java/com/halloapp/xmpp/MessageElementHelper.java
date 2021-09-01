@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
@@ -59,7 +58,7 @@ public class MessageElementHelper {
         return MediaType.MEDIA_TYPE_UNSPECIFIED;
     }
 
-    public static BlobVersion getProtoBlobVersion(@NonNull @Media.BlobVersion int blobVersion) {
+    public static BlobVersion getProtoBlobVersion(@Media.BlobVersion int blobVersion) {
         if (blobVersion == Media.BLOB_VERSION_CHUNKED) {
             return BlobVersion.BLOB_VERSION_CHUNKED;
         }

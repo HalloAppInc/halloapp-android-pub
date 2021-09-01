@@ -52,6 +52,7 @@ public class DecryptStatLoader extends ViewDataLoader<TextView, DecryptStats, St
                     String start = DateFormat.getInstance().format(new Date(result.originalTimestamp));
                     String end = DateFormat.getInstance().format(new Date(result.lastUpdatedTimestamp));
 
+                    //noinspection StringBufferReplaceableByString
                     StringBuilder sb = new StringBuilder();
                     sb.append("Message ID: ").append(messageId.substring(0, Math.min(20, messageId.length()))).append("...\n");
                     sb.append("Outcome: ").append(outcome).append("\n");

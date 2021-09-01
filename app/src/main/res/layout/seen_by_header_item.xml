@@ -17,6 +17,7 @@
         android:singleLine="true"
         android:textAlignment="gravity"
         android:fontFamily="sans-serif-medium"
+        tools:ignore="SpUsage"
         android:textSize="19dp"
         android:textColor="@color/primary_text"
         android:textDirection="locale"

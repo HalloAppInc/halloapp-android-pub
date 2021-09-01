@@ -16,9 +16,7 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.content.tables.ArchiveTable;
 import com.halloapp.content.tables.AudienceTable;
-import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.CommentsTable;
-import com.halloapp.content.tables.DeletedGroupNameTable;
 import com.halloapp.content.tables.FutureProofTable;
 import com.halloapp.content.tables.GroupMembersTable;
 import com.halloapp.content.tables.MediaTable;
@@ -29,7 +27,6 @@ import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.RepliesTable;
 import com.halloapp.content.tables.SeenTable;
-import com.halloapp.content.tables.SilentMessagesTable;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
@@ -101,7 +98,7 @@ public class ContentDb {
         public void onPostAdded(@NonNull Post post) {}
         public void onPostRetracted(@NonNull Post post) {}
         public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {}
-        public void onPostAudienceChanged(@NonNull Post post, @NonNull Collection<UserId> addedUsers) { }
+        public void onPostAudienceChanged(@NonNull Post post, @NonNull Collection<UserId> addedUsers) {}
         public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {}
         public void onCommentAdded(@NonNull Comment comment) {}
@@ -621,7 +618,7 @@ public class ContentDb {
     }
 
     @WorkerThread
-    @NonNull int getCommentCount(@NonNull String postId) {
+    int getCommentCount(@NonNull String postId) {
         return postsDb.getCommentCount(postId);
     }
 

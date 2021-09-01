@@ -31,7 +31,7 @@ import java.util.Locale;
 
 public class MentionPickerView extends FrameLayout {
 
-    protected AvatarLoader avatarLoader;
+    protected final AvatarLoader avatarLoader;
 
     private OnMentionListener listener;
 
@@ -194,8 +194,8 @@ public class MentionPickerView extends FrameLayout {
 
         class MentionItemViewHolder extends RecyclerView.ViewHolder {
 
-            ImageView avatar;
-            TextView name;
+            final ImageView avatar;
+            final TextView name;
 
             public MentionItemViewHolder(@NonNull View itemView) {
                 super(itemView);

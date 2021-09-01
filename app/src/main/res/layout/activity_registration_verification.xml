@@ -38,6 +38,7 @@
                 android:inputType="numberPassword"
                 android:importantForAutofill="no"
                 android:gravity="center"
+                tools:ignore="SpUsage"
                 android:textSize="22dp"
                 android:singleLine="true"
                 app:cetBorderColor="@android:color/white"

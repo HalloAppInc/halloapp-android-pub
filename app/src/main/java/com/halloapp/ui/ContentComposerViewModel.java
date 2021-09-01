@@ -506,10 +506,10 @@ public class ContentComposerViewModel extends AndroidViewModel {
     }
 
     static class EditMediaPair {
-        Uri uri;
-        Media original;
-        Media edit;
-        Parcelable state;
+        final Uri uri;
+        final Media original;
+        final Media edit;
+        final Parcelable state;
 
         public static float getMaxAspectRatio(List<EditMediaPair> mediaPairList) {
             float maxAspectRatio = 0;

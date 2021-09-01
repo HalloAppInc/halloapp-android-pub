@@ -18,8 +18,4 @@ public class SearchToolbar extends Toolbar {
     public SearchToolbar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
-
-    private void test() {
-
-    }
 }

@@ -16,11 +16,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.FileStore;
 import com.halloapp.Me;
-import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.ContentDb;
-import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;

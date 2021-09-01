@@ -195,10 +195,8 @@ public class VoiceNotePlayer implements SensorEventListener {
                     Log.e("VoiceNotePlayer/playFile failed to prepare " + absFilePath, e);
                     return;
                 }
-                playbackState.seek = seekTo;
-            } else {
-                playbackState.seek = seekTo;
             }
+            playbackState.seek = seekTo;
             playbackState.seekMax = mediaPlayer.getDuration();
             playbackState.playing = true;
             playbackState.playingTag = absFilePath;

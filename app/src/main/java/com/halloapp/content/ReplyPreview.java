@@ -6,7 +6,7 @@ import java.util.List;
 
 public class ReplyPreview {
 
-    public long rowId;
+    public final long rowId;
     public final String text;
     public final @Media.MediaType int mediaType;
     public final File file;

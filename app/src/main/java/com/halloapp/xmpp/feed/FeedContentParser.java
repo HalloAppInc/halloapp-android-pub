@@ -1,7 +1,5 @@
 package com.halloapp.xmpp.feed;
 
-import android.text.TextUtils;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -11,10 +9,8 @@ import com.halloapp.content.FutureProofComment;
 import com.halloapp.content.FutureProofPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
-import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.VoiceNoteComment;
-import com.halloapp.content.VoiceNoteMessage;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.Album;
 import com.halloapp.proto.clients.AlbumMedia;

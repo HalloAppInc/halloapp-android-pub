@@ -243,7 +243,7 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
         }
 
         if (dX + stateLockDistance > 0) {
-            float scale = Math.max(0.0f, (1.0f - (float) (dX) / swipeToCancelDistance));
+            float scale = Math.max(0.0f, (1.0f - dX / swipeToCancelDistance));
             voiceVisualizerView.setScale(scale);
             voiceVisualizerView.setAlpha(scale * scale);
         } else {
@@ -271,7 +271,7 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
         }
 
         if (dY + stateLockDistance > 0) {
-            float scale = Math.max(0.0f, (1.0f - (float) (dY) / swipeToLockDistance));
+            float scale = Math.max(0.0f, (1.0f - dY / swipeToLockDistance));
             voiceVisualizerView.setScale(scale);
             voiceVisualizerView.setAlpha(scale * scale);
         } else {

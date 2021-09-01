@@ -504,9 +504,9 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
 
     class AvatarViewHolder extends ViewHolder {
 
-        ImageView avatar;
-        ImageView remove;
-        TextView name;
+        final ImageView avatar;
+        final ImageView remove;
+        final TextView name;
 
         AvatarViewHolder(@NonNull View itemView) {
             super(itemView);

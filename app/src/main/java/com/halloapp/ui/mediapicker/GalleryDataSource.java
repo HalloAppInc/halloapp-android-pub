@@ -8,7 +8,6 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
@@ -18,8 +17,6 @@ import androidx.paging.ItemKeyedDataSource;
 import com.halloapp.AppContext;
 import com.halloapp.util.logs.Log;
 
-import java.io.FileDescriptor;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

@@ -301,7 +301,7 @@ public class VideoEditFragment extends Fragment {
     }
 
     public static class State implements Parcelable {
-        public long durationUs;
+        public final long durationUs;
         public long startUs;
         public long endUs;
         public boolean mute;

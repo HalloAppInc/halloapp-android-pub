@@ -10,7 +10,6 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.ContentDb;
 import com.halloapp.util.logs.Log;
 

@@ -12,7 +12,7 @@ import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.server.GroupInviteLink;
 import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
-import com.halloapp.proto.server.Iq;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.HalloIq;
 import com.halloapp.xmpp.util.IqResult;
@@ -136,6 +136,7 @@ public class GroupsApi {
             try {
                 b = Background.parseFrom(groupStanza.getBackgroundBytes());
             } catch (InvalidProtocolBufferException e) {
+                Log.w("Failed to parse background", e);
             }
             return new GroupInfo(GroupId.fromNullable(groupInviteLink.getGid()), groupStanza.getName(), null, groupStanza.getAvatarId(), b, membersList);
         });

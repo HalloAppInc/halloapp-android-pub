@@ -1,7 +1,5 @@
 package com.halloapp.media;
 
-import com.halloapp.util.logs.Log;
-
 import org.mp4parser.ParsableBox;
 import org.mp4parser.boxes.iso14496.part12.EditBox;
 import org.mp4parser.boxes.iso14496.part12.EditListBox;
@@ -19,7 +17,7 @@ public class StreamableMp4Builder extends DefaultMp4Builder {
             long movieTimeScale = getTimescale(movie);
             EditListBox elst = new EditListBox();
             elst.setVersion(0);
-            List<EditListBox.Entry> entries = new ArrayList<EditListBox.Entry>();
+            List<EditListBox.Entry> entries = new ArrayList<>();
 
             for (Edit edit : track.getEdits()) {
                 entries.add(new EditListBox.Entry(elst,

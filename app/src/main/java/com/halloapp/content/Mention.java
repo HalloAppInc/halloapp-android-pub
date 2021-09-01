@@ -3,7 +3,6 @@ package com.halloapp.content;
 import android.text.TextUtils;
 
 import com.halloapp.id.UserId;
-import com.halloapp.xmpp.Connection;
 
 public class Mention {
 
@@ -23,9 +22,9 @@ public class Mention {
 
     public long rowId;
 
-    public int index;
+    public final int index;
     public UserId userId;
-    public String fallbackName;
+    public final String fallbackName;
     public boolean isInAddressBook;
 
     public Mention(int index, UserId userId, String fallbackName) {
