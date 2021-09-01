@@ -7,7 +7,7 @@
     <string name="title_groups">"Groepen"</string>
     <string name="comment">"Reageren"</string>
     <string name="next">"Volgende"</string>
-    <string name="message">"Stuur bericht"</string>
+    <string name="message">"Bericht sturen"</string>
     <string name="add_post">"Post toevoegen"</string>
     <string name="new_chat">"Nieuwe chat"</string>
     <string name="new_group">"Nieuwe groep"</string>
@@ -599,7 +599,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="data_available_at">"Gegevens zijn beschikbaar op %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
-    <string name="export_data_explanation">"Download een kopie van al je gebruikersgegevens die zijn opgeslagen op de servers van HalloApp. Dit bevat geen berichten of inhoud van posts."</string>
+    <string name="export_data_explanation">"Download een kopie van al je gebruikersgegevens die op de servers van HalloApp zijn opgeslagen. Dit bevat geen berichten of inhoud van posts."</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"Verzoek mislukt"</string>
@@ -779,10 +779,10 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="group_description_updated">"Groepsomschrijving bijgewerkt"</string>
 
     <!-- System message shown when someone else changes the group description, %s will be replaced with their name -->
-    <string name="system_message_group_description_changed">"%s heeft de groepsomschrijving bijgewerkt"</string>
+    <string name="system_message_group_description_changed">"%s heeft de groepsomschrijving gewijzigd"</string>
 
     <!-- System message shown when you change the group description -->
-    <string name="system_message_group_description_changed_by_you">"Je hebt de groepsomschrijving bijgewerkt"</string>
+    <string name="system_message_group_description_changed_by_you">"Je hebt de groepsomschrijving gewijzigd"</string>
 
     <!-- Hint text for the group description field -->
     <string name="group_description_hint">"Groepsomschrijving"</string>

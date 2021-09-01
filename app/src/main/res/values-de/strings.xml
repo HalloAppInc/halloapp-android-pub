@@ -253,7 +253,7 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="online">"online"</string>
 
     <!-- Capital or lower case? -->
-    <string name="today">"heute"</string>
+    <string name="today">"Heute"</string>
 
     <!-- changed to lower case since this is in connection with "last_seen"-String. Last seen Today at %s - Last seen today at %s -->
     <!-- Fuzzy -->
@@ -893,9 +893,9 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="group_updated">"Gruppe aktualisiert"</string>
 
     <!-- Text shown when the user has no groups in common -->
-    <string name="groups_in_common_empty">"You have no groups in common"</string>
+    <string name="groups_in_common_empty">"Ihr habt keine gemeinsamen Gruppen"</string>
 
     <!-- Title for page showing groups in common -->
-    <string name="groups_in_common">"Groups in common"</string>
+    <string name="groups_in_common">"Gemeinsame Gruppen"</string>
 </resources>
 

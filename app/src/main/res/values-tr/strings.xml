@@ -829,7 +829,7 @@ Open the app settings screen to modify app permissions."</string>
     <string name="reply_original_comment_not_found">"Original comment not found"</string>
 
     <!-- Button on others' posts that allows the user to message them about their post in 1-1 messaging -->
-    <string name="reply_privately">"Reply privately"</string>
+    <string name="reply_privately">"Özelden yaz"</string>
 
     <!-- Shown as title for a dialog explaining why permissions are needed when the user has rejected a necessary permission request at least twice but still tries to use the feature -->
     <string name="title_settings_dialog">"Permissions required"</string>
