@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
-    <!-- Ignore everything in the test source set -->
+    <!-- Ignore packages outside com.halloapp -->
     <issue id="all">
-        <ignore path="\*/test/\*" />
+        <ignore path="src/main/java/com/github/*" />
+        <ignore path="src/main/java/com/theartofdev/*" />
+        <ignore path="src/main/java/com/southernstorm/*" />
     </issue>
 
     <!-- Expected; we upload new strings on push to master -->
