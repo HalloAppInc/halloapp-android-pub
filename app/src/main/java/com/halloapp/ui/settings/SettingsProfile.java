@@ -186,7 +186,7 @@ public class SettingsProfile extends HalloActivity {
         View cameraButton = bottomSheetDialog.findViewById(R.id.profile_avatar_take_photo);
         cameraButton.setOnClickListener(view -> {
             final Intent intent = new Intent(this, CameraActivity.class);
-            intent.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_AVATAR);
+            intent.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_USER_AVATAR);
             startActivityForResult(intent, CODE_CHANGE_AVATAR);
             bottomSheetDialog.hide();
         });

@@ -86,7 +86,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private static final int VIDEO_WARNING_DURATION_SEC = 10;
 
     public static final int PURPOSE_COMPOSE = 1;
-    public static final int PURPOSE_AVATAR = 2;
+    public static final int PURPOSE_USER_AVATAR = 2;
+    public static final int PURPOSE_GROUP_AVATAR = 3;
 
     private static final int PENDING_OPERATION_NONE = 0;
     private static final int PENDING_OPERATION_PICTURE = 1;
@@ -626,7 +627,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
                 startComposerForUri(uri);
                 break;
 
-            case PURPOSE_AVATAR:
+            case PURPOSE_USER_AVATAR:
+            case PURPOSE_GROUP_AVATAR:
                 startAvatarPreviewForUri(uri);
                 break;
         }
@@ -646,8 +648,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     }
 
     private void startAvatarPreviewForUri(@NonNull Uri uri) {
-        final Intent intent = new Intent(this, AvatarPreviewActivity.class);
-        intent.setData(uri);
+        Intent intent = AvatarPreviewActivity.open(this, uri, purpose == PURPOSE_GROUP_AVATAR);
         startActivityForResult(intent, REQUEST_CODE_SET_AVATAR);
     }
 

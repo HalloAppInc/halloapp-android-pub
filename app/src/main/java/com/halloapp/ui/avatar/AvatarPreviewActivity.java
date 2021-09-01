@@ -1,5 +1,6 @@
 package com.halloapp.ui.avatar;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
@@ -27,12 +28,19 @@ public class AvatarPreviewActivity extends HalloActivity {
     public static final int AVATAR_FORM_CIRCLE = 1;
     public static final int AVATAR_FORM_SQUARE = 2;
 
-    public static final String EXTRA_AVATAR_FORM = "avatar_form";
-
     public static final String RESULT_AVATAR_WIDTH = "avatar_width";
     public static final String RESULT_AVATAR_HEIGHT = "avatar_height";
     public static final String RESULT_AVATAR_HASH = "avatar_hash";
     public static final String RESULT_AVATAR_FILE_PATH = "avatar_file_path";
+
+    public static Intent open(@NonNull Context context, @NonNull Uri uri, boolean forGroup) {
+        final Intent intent = new Intent(context, AvatarPreviewActivity.class);
+        intent.setData(uri);
+        intent.putExtra(AvatarPreviewActivity.EXTRA_AVATAR_FORM, forGroup ? AVATAR_FORM_SQUARE : AVATAR_FORM_CIRCLE);
+        return intent;
+    }
+
+    private static final String EXTRA_AVATAR_FORM = "avatar_form";
 
     private AvatarPreviewViewModel viewModel;
     private MediaThumbnailLoader mediaThumbnailLoader;

@@ -65,7 +65,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         intent.putExtra(EXTRA_SHOW_CAMERA, true);
         intent.putExtra(EXTRA_ALLOW_MULTIPLE, false);
         intent.putExtra(EXTRA_TITLE_ID, R.string.avatar_picker_title);
-        intent.putExtra(EXTRA_CAMERA_PURPOSE, CameraActivity.PURPOSE_AVATAR);
+        intent.putExtra(EXTRA_CAMERA_PURPOSE, CameraActivity.PURPOSE_USER_AVATAR);
         return intent;
     }
 
@@ -76,7 +76,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         intent.putExtra(EXTRA_SHOW_CAMERA, true);
         intent.putExtra(EXTRA_ALLOW_MULTIPLE, false);
         intent.putExtra(EXTRA_TITLE_ID, R.string.group_avatar_picker_title);
-        intent.putExtra(EXTRA_CAMERA_PURPOSE, CameraActivity.PURPOSE_AVATAR);
+        intent.putExtra(EXTRA_CAMERA_PURPOSE, CameraActivity.PURPOSE_GROUP_AVATAR);
         return intent;
     }
 
@@ -440,16 +440,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     }
 
     private void startAvatarPreview(@NonNull Uri uri) {
-        final Intent intent = new Intent(this, AvatarPreviewActivity.class);
-        intent.setData(uri);
-
         int pickerPurpose = getIntent().getIntExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_SEND);
-        if (pickerPurpose == PICKER_PURPOSE_GROUP_AVATAR) {
-            intent.putExtra(AvatarPreviewActivity.EXTRA_AVATAR_FORM, AvatarPreviewActivity.AVATAR_FORM_SQUARE);
-        } else {
-            intent.putExtra(AvatarPreviewActivity.EXTRA_AVATAR_FORM, AvatarPreviewActivity.AVATAR_FORM_CIRCLE);
-        }
-
+        Intent intent = AvatarPreviewActivity.open(this, uri, pickerPurpose == PICKER_PURPOSE_GROUP_AVATAR);
         startActivityForResult(intent, REQUEST_CODE_SET_AVATAR);
     }
 
