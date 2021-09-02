@@ -46,6 +46,9 @@ public class FeedContentEncoder {
                 }
                 textBuilder.addAllMentions(mentionsList);
             }
+            if (comment.urlPreview != null) {
+                textBuilder.setLink(comment.urlPreview.toProto());
+            }
             textContainer = textBuilder.build();
         }
 
@@ -94,6 +97,9 @@ public class FeedContentEncoder {
                     mentionsList.add(Mention.toProto(mention));
                 }
                 textBuilder.addAllMentions(mentionsList);
+            }
+            if (post.urlPreview != null) {
+                textBuilder.setLink(post.urlPreview.toProto());
             }
             textContainer = textBuilder.build();
         }

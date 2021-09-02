@@ -20,12 +20,13 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.media.VoiceNoteRecorder;
+import com.halloapp.ui.UrlPreviewTextWatcher;
 import com.halloapp.util.StringUtils;
-
 import java.io.File;
 
 import pub.devrel.easypermissions.EasyPermissions;
@@ -70,6 +71,7 @@ public class ChatInputView extends ConstraintLayout {
         void onSendVoiceDraft(File draft);
         void onChooseMedia();
         void requestVoicePermissions();
+        void onUrl(String url);
     }
 
     public ChatInputView(Context context) {
@@ -197,6 +199,14 @@ public class ChatInputView extends ConstraintLayout {
                 updateEntry();
             }
         });
+
+        if (Constants.SEND_URL_PREVIEWS) {
+            editText.addTextChangedListener(new UrlPreviewTextWatcher(url -> {
+                if (inputParent != null) {
+                    inputParent.onUrl(url);
+                }
+            }));
+        }
 
         deleteVoiceDraft.setOnClickListener(v -> {
             audioDraft = null;

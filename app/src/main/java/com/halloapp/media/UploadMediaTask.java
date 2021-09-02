@@ -37,7 +37,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
@@ -100,7 +103,12 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
 
         boolean success = true;
 
-        for (Media media : contentItem.media) {
+        List<Media> mediaList = new ArrayList<>(contentItem.media);
+        if (contentItem.urlPreview != null && contentItem.urlPreview.imageMedia != null) {
+            mediaList.add(contentItem.urlPreview.imageMedia);
+        }
+
+        for (Media media : mediaList) {
             String mediaLogId = contentItem.id + "." + index++;
             Log.i("Resumable Uploader " + mediaLogId + " transferred: " + media.transferred);
             if (media.transferred == Media.TRANSFERRED_YES || media.transferred == Media.TRANSFERRED_FAILURE || media.transferred == Media.TRANSFERRED_UNKNOWN) {
@@ -296,7 +304,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         }
 
         index = 0;
-        for (Media media : contentItem.media) {
+        for (Media media : mediaList) {
             contentItem.setMediaTransferred(media, contentDb);
             Log.i("UploadMediaTask: set transfer state for " + contentItem.id + "." + index++ + " to " + Media.getMediaTransferStateString(media.transferred));
         }

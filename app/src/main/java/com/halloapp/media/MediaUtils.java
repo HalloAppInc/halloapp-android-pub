@@ -152,6 +152,7 @@ public class MediaUtils {
                 return decodeVideo(file, maxDimension);
             }
             case Media.MEDIA_TYPE_UNKNOWN:
+            case Media.MEDIA_TYPE_AUDIO:
             default: {
                 return null;
             }
@@ -263,6 +264,7 @@ public class MediaUtils {
                 return getVideoDimensions(file);
             }
             case Media.MEDIA_TYPE_UNKNOWN:
+            case Media.MEDIA_TYPE_AUDIO:
             default: {
                 return null;
             }

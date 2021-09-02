@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.UrlPreview;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.mentions.TextContent;
 import com.halloapp.xmpp.Connection;
@@ -21,6 +22,7 @@ public abstract class ContentItem implements TextContent {
     public final String text;
     public final List<Media> media = new ArrayList<>();
     public final List<Mention> mentions = new ArrayList<>();
+    public UrlPreview urlPreview;
 
     public ContentItem(
             long rowId,
@@ -63,9 +65,18 @@ public abstract class ContentItem implements TextContent {
         return TextUtils.isEmpty(text) && media.isEmpty();
     }
 
+    public boolean hasMedia() {
+        return !media.isEmpty() || (urlPreview != null && urlPreview.imageMedia != null);
+    }
+
     public boolean isAllMediaTransferred() {
         for (Media mediaItem : media) {
             if (mediaItem.transferred != Media.TRANSFERRED_YES) {
+                return false;
+            }
+        }
+        if (urlPreview != null && urlPreview.imageMedia != null) {
+            if (urlPreview.imageMedia.transferred != Media.TRANSFERRED_YES) {
                 return false;
             }
         }

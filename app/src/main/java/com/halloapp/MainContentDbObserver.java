@@ -57,13 +57,13 @@ public class MainContentDbObserver implements ContentDb.Observer {
     @Override
     public void onPostAdded(@NonNull Post post) {
         if (post.shouldSend()) {
-            if (post.media.isEmpty()) {
+            if (!post.hasMedia()) {
                 connection.sendPost(post);
             } else {
                 new UploadMediaTask(post, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
         } else { // if (post.isIncoming())
-            if (!post.media.isEmpty()) {
+            if (post.hasMedia()) {
                 DownloadMediaTask.download(post, fileStore, contentDb);
             }
             notifications.updateFeedNotifications();
@@ -99,14 +99,14 @@ public class MainContentDbObserver implements ContentDb.Observer {
     public void onCommentAdded(@NonNull Comment comment) {
         if (comment.isOutgoing()) {
             if (comment.shouldSend()) {
-                if (comment.media.isEmpty()) {
+                if (!comment.hasMedia()) {
                     connection.sendComment(comment);
                 } else {
                     new UploadMediaTask(comment, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
                 }
             }
         } else { // if (comment.isIncoming())
-            if (!comment.media.isEmpty()) {
+            if (comment.hasMedia()) {
                 DownloadMediaTask.download(comment, fileStore, contentDb);
             }
             Post parentPost = comment.getParentPost();
@@ -143,13 +143,13 @@ public class MainContentDbObserver implements ContentDb.Observer {
     @Override
     public void onMessageAdded(@NonNull Message message) {
         if (message.shouldSend()) {
-            if (message.media.isEmpty()) {
+            if (!message.hasMedia()) {
                 bgWorkers.execute(() -> signalSessionManager.sendMessage(message));
             } else {
                 new UploadMediaTask(message, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
             }
         } else { // if (message.isIncoming())
-            if (!message.media.isEmpty()) {
+            if (message.hasMedia()) {
                 DownloadMediaTask.download(message, fileStore, contentDb);
             }
             notifications.updateMessageNotifications();

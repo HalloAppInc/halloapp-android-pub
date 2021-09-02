@@ -49,6 +49,7 @@
     <color name="media_content_outline">#dddddd</color>
     <color name="gallery_placeholder">#eeeeee</color>
     <color name="seen_comment_background">#f0f0f0</color>
+    <color name="remove_link_preview_background">#544F46</color>
     <color name="card_background">@color/cardview_light_background</color>
     <color name="dummy_post_background">@color/cardview_light_background</color>
     <color name="dummy_post_content_background">#DBD7CA</color>
@@ -59,6 +60,7 @@
     <color name="e2e_message_text">@color/black_80</color>
     <color name="new_messages_text">@color/secondary_text</color>
     <color name="reply_indicator_background">#cccccc</color>
+    <color name="link_preview_chat_background">#DBE6F1</color>
     <color name="text_post_thumbnail_color">#ff000000</color>
     <color name="fab_background">#ff4500</color>
     <color name="message_background_incoming">#ffffff</color>
@@ -66,6 +68,8 @@
     <color name="message_background_border">@color/black_10</color>
     <color name="message_background_reply_incoming">#F3F2EF</color>
     <color name="message_background_reply_outgoing">#DBE6F1</color>
+    <color name="message_url_preview_background_outgoing">@color/white_54</color>
+    <color name="message_url_preview_background_incoming">#FBFBF8</color>
     <color name="chat_entry_background">#FFFFFF</color>
     <color name="message_text_incoming">#de000000</color>
     <color name="message_text_outgoing">@color/color_secondary</color>

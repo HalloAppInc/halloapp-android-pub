@@ -31,6 +31,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
+            <include layout="@layout/message_url_preview" />
+
             <com.halloapp.widget.MessageTextLayout
                 android:id="@+id/message_text_container"
                 android:paddingTop="4dp"

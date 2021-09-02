@@ -27,6 +27,7 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -53,9 +54,12 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.ContentDraftManager;
 import com.halloapp.Debug;
+import com.halloapp.FileStore;
 import com.halloapp.ForegroundChat;
 import com.halloapp.Notifications;
 import com.halloapp.R;
+import com.halloapp.UrlPreview;
+import com.halloapp.UrlPreviewLoader;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
@@ -69,6 +73,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.media.MediaUtils;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ContentComposerActivity;
@@ -86,6 +91,7 @@ import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.ui.profile.ViewProfileActivity;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ClipUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
@@ -97,6 +103,7 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ChatInputView;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.ItemSwipeHelper;
+import com.halloapp.widget.LinkPreviewComposeView;
 import com.halloapp.widget.LongPressInterceptView;
 import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
@@ -105,6 +112,7 @@ import com.halloapp.widget.SwipeListItemHelper;
 import com.halloapp.xmpp.PresenceLoader;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -220,6 +228,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
     private ChatInputView chatInputView;
 
+    private UrlPreviewLoader urlPreviewLoader;
+    private LinkPreviewComposeView linkPreviewComposeView;
+
     private final SharedElementCallback sharedElementCallback = new SharedElementCallback() {
         @Override
         public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
@@ -280,6 +291,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         audioDurationLoader = new AudioDurationLoader(this);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
+        urlPreviewLoader = new UrlPreviewLoader();
 
         systemMessageTextResolver = new SystemMessageTextResolver(contactLoader);
 
@@ -319,6 +331,21 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 } else {
                     EasyPermissions.requestPermissions(ChatActivity.this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSIONS_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
                 }
+            }
+
+            @Override
+            public void onUrl(String url) {
+                urlPreviewLoader.load(linkPreviewComposeView, url, new ViewDataLoader.Displayer<View, UrlPreview>() {
+                    @Override
+                    public void showResult(@NonNull View view, @Nullable UrlPreview result) {
+                        linkPreviewComposeView.updateUrlPreview(result);
+                    }
+
+                    @Override
+                    public void showLoading(@NonNull View view) {
+                        linkPreviewComposeView.setLoading(!TextUtils.isEmpty(url));
+                    }
+                });
             }
         });
 
@@ -572,6 +599,14 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 this.updateMessageReply(reply.message);
                 replyNameView.setText(reply.name);
             }
+        });
+
+        linkPreviewComposeView = findViewById(R.id.link_preview_compose_view);
+        linkPreviewComposeView.setMediaThumbnailLoader(mediaThumbnailLoader);
+        linkPreviewComposeView.setOnRemovePreviewClickListener(v -> {
+            urlPreviewLoader.cancel(linkPreviewComposeView);
+            linkPreviewComposeView.setLoading(false);
+            linkPreviewComposeView.updateUrlPreview(null);
         });
 
         SwipeListItemHelper swipeListItemHelper = new SwipeListItemHelper(
@@ -1120,12 +1155,30 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 replyMessage != null ? replyMessage.senderUserId : replySenderId,
                 0);
         message.mentions.addAll(textAndMentions.second);
+        message.urlPreview = linkPreviewComposeView.getUrlPreview();
+        linkPreviewComposeView.updateUrlPreview(null);
         replyPostId = null;
         replyPostMediaIndex = -1;
         replyMessage = null;
         replyMessageMediaIndex = -1;
         replyContainer.setVisibility(View.GONE);
-        message.addToStorage(ContentDb.getInstance());
+        if (message.urlPreview != null && message.urlPreview.imageMedia != null) {
+            BgWorkers.getInstance().execute(() -> {
+                if (message.urlPreview.imageMedia != null) {
+                    final File imagePreview = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_IMAGE));
+                    try {
+                        MediaUtils.transcodeImage(message.urlPreview.imageMedia.file, imagePreview, null, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, false);
+                        message.urlPreview.imageMedia.file = imagePreview;
+                    } catch (IOException e) {
+                        Log.e("failed to transcode url preview image", e);
+                        message.urlPreview.imageMedia = null;
+                    }
+                }
+                message.addToStorage(ContentDb.getInstance());
+            });
+        } else {
+            message.addToStorage(ContentDb.getInstance());
+        }
 
         setResult(RESULT_OK);
     }

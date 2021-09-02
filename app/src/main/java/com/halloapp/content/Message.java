@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Me;
+import com.halloapp.UrlPreview;
 import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
@@ -147,6 +148,9 @@ public class Message extends ContentItem {
                 for (com.halloapp.proto.clients.Mention item : albumText.getMentionsList()) {
                     message.mentions.add(Mention.parseFromProto(item));
                 }
+                if (albumText.hasLink()) {
+                    message.urlPreview = UrlPreview.fromProto(albumText.getLink());
+                }
                 break;
             case TEXT:
                 Text text = chatContainer.getText();
@@ -167,6 +171,9 @@ public class Message extends ContentItem {
                         0);
                 for (com.halloapp.proto.clients.Mention item : text.getMentionsList()) {
                     message.mentions.add(Mention.parseFromProto(item));
+                }
+                if (text.hasLink()) {
+                    message.urlPreview = UrlPreview.fromProto(text.getLink());
                 }
                 break;
             case VOICE_NOTE:
@@ -305,6 +312,7 @@ public class Message extends ContentItem {
                 timestamp == message.timestamp &&
                 Objects.equals(text, message.text) &&
                 state == message.state &&
-                media.equals(message.media);
+                media.equals(message.media) &&
+                Objects.equals(urlPreview, message.urlPreview);
     }
 }

@@ -12,10 +12,12 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.FileStore;
+import com.halloapp.UrlPreview;
 import com.halloapp.content.tables.ArchiveTable;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.PostsTable;
+import com.halloapp.content.tables.UrlPreviewsTable;
 import com.halloapp.media.MediaUtils;
 
 public class MediaDb {
@@ -106,6 +108,15 @@ public class MediaDb {
         for (Media mediaItem : comment.media) {
             addMediaItem(db, CommentsTable.TABLE_NAME, comment.rowId, mediaItem);
         }
+    }
+
+    @WorkerThread
+    public void addMedia(@NonNull UrlPreview urlPreview) {
+        if (urlPreview.imageMedia == null) {
+            return;
+        }
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        addMediaItem(db, UrlPreviewsTable.TABLE_NAME, urlPreview.rowId, urlPreview.imageMedia);
     }
 
     @WorkerThread

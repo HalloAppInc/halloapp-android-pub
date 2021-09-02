@@ -65,6 +65,7 @@ public class ContentDb {
     private final MessagesDb messagesDb;
     private final Preferences preferences;
     private final FutureProofDb futureProofDb;
+    private final UrlPreviewsDb urlPreviewsDb;
 
     public interface Observer {
         void onPostAdded(@NonNull Post post);
@@ -151,8 +152,9 @@ public class ContentDb {
         mentionsDb = new MentionsDb(databaseHelper);
         mediaDb = new MediaDb(databaseHelper, fileStore);
         futureProofDb = new FutureProofDb(databaseHelper);
-        messagesDb = new MessagesDb(fileStore, mentionsDb, futureProofDb, serverProps, databaseHelper);
-        postsDb = new PostsDb(mediaDb, mentionsDb, futureProofDb, databaseHelper, fileStore, serverProps);
+        urlPreviewsDb = new UrlPreviewsDb(mediaDb, databaseHelper);
+        messagesDb = new MessagesDb(fileStore, mentionsDb, futureProofDb, urlPreviewsDb, serverProps, databaseHelper);
+        postsDb = new PostsDb(mediaDb, mentionsDb, futureProofDb, urlPreviewsDb, databaseHelper, fileStore, serverProps);
     }
 
     public void addObserver(@NonNull Observer observer) {

@@ -112,6 +112,7 @@ dependencies {
     implementation "io.noties.markwon:editor:4.6.2"
     implementation "io.noties.markwon:ext-strikethrough:4.6.2"
     implementation "io.noties.markwon:inline-parser:4.6.2"
+    implementation 'org.jsoup:jsoup:1.11.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'

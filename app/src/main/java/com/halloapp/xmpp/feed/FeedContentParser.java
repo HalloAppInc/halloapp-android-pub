@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.Me;
+import com.halloapp.UrlPreview;
 import com.halloapp.content.Comment;
 import com.halloapp.content.FutureProofComment;
 import com.halloapp.content.FutureProofPost;
@@ -78,6 +79,9 @@ public class FeedContentParser {
                     processMention(mention);
                     comment.mentions.add(mention);
                 }
+                if (caption.hasLink()) {
+                    comment.urlPreview = UrlPreview.fromProto(caption.getLink());
+                }
 
                 return comment;
             }
@@ -97,6 +101,9 @@ public class FeedContentParser {
                     Mention mention = Mention.parseFromProto(mentionProto);
                     processMention(mention);
                     comment.mentions.add(mention);
+                }
+                if (text.hasLink()) {
+                    comment.urlPreview = UrlPreview.fromProto(text.getLink());
                 }
                 return comment;
             }
@@ -152,6 +159,9 @@ public class FeedContentParser {
                     processMention(mention);
                     np.mentions.add(mention);
                 }
+                if (text.hasLink()) {
+                    np.urlPreview = UrlPreview.fromProto(text.getLink());
+                }
                 return np;
             }
             case ALBUM: {
@@ -176,6 +186,9 @@ public class FeedContentParser {
                     Mention mention = Mention.parseFromProto(mentionProto);
                     processMention(mention);
                     np.mentions.add(mention);
+                }
+                if (caption.hasLink()) {
+                    np.urlPreview = UrlPreview.fromProto(caption.getLink());
                 }
                 return np;
             }

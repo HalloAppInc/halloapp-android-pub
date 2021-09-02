@@ -45,11 +45,11 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
                 continue;
             }
             if (post.isIncoming()) {
-                if (!post.media.isEmpty()) {
+                if (post.hasMedia()) {
                     mainHandler.post(() -> DownloadMediaTask.download(post, fileStore, contentDb));
                 }
             } else /*post.isOutgoing()*/ {
-                if (post.media.isEmpty()) {
+                if (!post.hasMedia()) {
                     connection.sendPost(post);
                 } else {
                     mainHandler.post(() -> new UploadMediaTask(post, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR));
@@ -61,7 +61,7 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
         Log.i("TransferPendingItemsTask: " + messages.size() + " messages");
         for (Message message : messages) {
             if (message.isIncoming()) {
-                if (!message.media.isEmpty()) {
+                if (message.hasMedia()) {
                     mainHandler.post(() -> DownloadMediaTask.download(message, fileStore, contentDb));
                 } else {
                     contentDb.setMessageTransferred(message.chatId, message.senderUserId, message.id);
@@ -71,7 +71,7 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
                     if (message.chatId instanceof UserId) {
                         connection.retractMessage((UserId) message.chatId, message.id);
                     }
-                } else if (message.media.isEmpty()) {
+                } else if (!message.hasMedia()) {
                     signalSessionManager.sendMessage(message);
                 } else {
                     mainHandler.post(() -> new UploadMediaTask(message, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR));
@@ -83,13 +83,13 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
         Log.i("TransferPendingItemsTask: " + comments.size() + " comments");
         for (Comment comment : comments) {
             if (comment.isIncoming()) {
-                if (!comment.media.isEmpty()) {
+                if (comment.hasMedia()) {
                     mainHandler.post(() -> DownloadMediaTask.download(comment, fileStore, contentDb));
                 } else {
                     contentDb.setCommentTransferred(comment.postId, comment.senderUserId, comment.id);
                 }
             } else /*comment.isOutgoing()*/ {
-                if (comment.media.isEmpty()) {
+                if (!comment.hasMedia()) {
                     connection.sendComment(comment);
                 } else {
                     mainHandler.post(() -> new UploadMediaTask(comment, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR));

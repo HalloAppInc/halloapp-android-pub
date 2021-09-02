@@ -32,7 +32,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
+
             <include layout="@layout/message_sender_info" />
+
+            <include layout="@layout/message_url_preview" />
 
             <com.halloapp.widget.LimitingTextView
                 android:id="@+id/text"

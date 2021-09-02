@@ -23,6 +23,14 @@
         app:ltvReadMore="@string/read_more"
         tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."/>
 
+    <com.halloapp.widget.PostLinkPreviewView
+        android:id="@+id/link_preview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:foreground="?attr/selectableItemBackground"
+        />
+
     <Space
         android:id="@+id/footer_spacing"
         android:layout_width="0dp"

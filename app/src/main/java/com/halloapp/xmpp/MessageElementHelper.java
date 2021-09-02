@@ -139,6 +139,9 @@ public class MessageElementHelper {
         Text.Builder textBuilder = Text.newBuilder();
         if (message.text != null) {
             textBuilder.setText(message.text);
+            if (message.urlPreview != null) {
+                textBuilder.setLink(message.urlPreview.toProto());
+            }
         }
         for (Mention mention : message.mentions) {
             textBuilder.addMentions(Mention.toProto(mention));

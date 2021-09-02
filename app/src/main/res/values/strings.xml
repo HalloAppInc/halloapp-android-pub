@@ -278,6 +278,7 @@
     <string name="invite_link_loading">Loading group…</string>
     <string name="invite_link_copied">Link copied!</string>
     <string name="invite_link_title">Invite link</string>
+    <string name="link_preview_loading">Loading preview…</string>
     <string name="invite_link_summary">Anyone with HalloApp can use this link to join this group.</string>
     <!-- Generic error message when user fails to join a group via invite link -->
     <string name="invite_link_failed_to_join">Failed to join the group</string>

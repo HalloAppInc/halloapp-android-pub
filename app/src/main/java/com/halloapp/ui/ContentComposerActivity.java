@@ -50,7 +50,10 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.halloapp.Constants;
+import com.halloapp.FileStore;
 import com.halloapp.R;
+import com.halloapp.UrlPreview;
+import com.halloapp.UrlPreviewLoader;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
@@ -70,9 +73,11 @@ import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.ActivityUtils;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.ThreadUtils;
+import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ContentComposerScrollView;
 import com.halloapp.widget.ContentPhotoView;
@@ -80,9 +85,12 @@ import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.MentionableEntry;
+import com.halloapp.widget.PostLinkPreviewView;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -116,6 +124,10 @@ public class ContentComposerActivity extends HalloActivity {
     private DrawDelegateView drawDelegateView;
     private Toolbar toolbar;
     private View replyContainer;
+
+    private PostLinkPreviewView postLinkPreviewView;
+    private UrlPreviewLoader urlPreviewLoader;
+    private MediaThumbnailLoader mediaThumbnailLoader;
 
     private boolean allowAddMedia;
     private boolean calledFromCamera;
@@ -275,6 +287,11 @@ public class ContentComposerActivity extends HalloActivity {
         viewModel = new ViewModelProvider(this,
                 new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
 
+        mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
+        urlPreviewLoader = new UrlPreviewLoader();
+        postLinkPreviewView = findViewById(R.id.link_preview);
+        postLinkPreviewView.setMediaThumbnailLoader(mediaThumbnailLoader);
+
         mediaPager = findViewById(R.id.media_pager);
         mediaPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
         mediaPager.setVisibility(View.GONE);
@@ -380,7 +397,26 @@ public class ContentComposerActivity extends HalloActivity {
         viewModel.mentionableContacts.getLiveData().observe(this, contacts -> mentionPickerView.setMentionableContacts(contacts));
         viewModel.contentItem.observe(this, contentItem -> {
             if (contentItem != null) {
-                contentItem.addToStorage(ContentDb.getInstance());
+                if (contentItem instanceof Post) {
+                    contentItem.urlPreview = postLinkPreviewView.getUrlPreview();
+                }
+                if (contentItem.urlPreview != null) {
+                    BgWorkers.getInstance().execute(() -> {
+                        if (contentItem.urlPreview.imageMedia != null) {
+                            final File imagePreview = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_IMAGE));
+                            try {
+                                MediaUtils.transcodeImage(contentItem.urlPreview.imageMedia.file, imagePreview, null, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, false);
+                                contentItem.urlPreview.imageMedia.file = imagePreview;
+                            } catch (IOException e) {
+                                Log.e("failed to transcode url preview image", e);
+                                contentItem.urlPreview.imageMedia = null;
+                            }
+                        }
+                        contentItem.addToStorage(ContentDb.getInstance());
+                    });
+                } else {
+                    contentItem.addToStorage(ContentDb.getInstance());
+                }
                 setResult(RESULT_OK);
                 finish();
                 if (chatId != null) {
@@ -426,6 +462,30 @@ public class ContentComposerActivity extends HalloActivity {
             viewModel.replyPost.getLiveData().observe(this, this::updatePostReply);
         } else {
             replyContainer.setVisibility(View.GONE);
+        }
+
+        if (chatId == null && Constants.SEND_URL_PREVIEWS) {
+            editText.addTextChangedListener(new UrlPreviewTextWatcher(new UrlPreviewTextWatcher.UrlListener() {
+                @Override
+                public void onUrl(String url) {
+                    urlPreviewLoader.load(postLinkPreviewView, url, new ViewDataLoader.Displayer<View, UrlPreview>() {
+                        @Override
+                        public void showResult(@NonNull View view, @Nullable UrlPreview result) {
+                            postLinkPreviewView.updateUrlPreview(result);
+                        }
+
+                        @Override
+                        public void showLoading(@NonNull View view) {
+                            postLinkPreviewView.setLoading(!TextUtils.isEmpty(url));
+                        }
+                    });
+                }
+            }));
+            postLinkPreviewView.setOnRemovePreviewClickListener(v -> {
+                urlPreviewLoader.cancel(postLinkPreviewView);
+                postLinkPreviewView.setLoading(false);
+                postLinkPreviewView.updateUrlPreview(null);
+            });
         }
     }
 

@@ -21,7 +21,9 @@ import com.halloapp.util.stats.Events;
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
@@ -84,7 +86,11 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
             int totalRetries = 0;
             boolean hasFailure = false;
             int index = 0;
-            for (Media media : contentItem.media) {
+            List<Media> mediaItems = new ArrayList<>(contentItem.media);
+            if (contentItem.urlPreview != null && contentItem.urlPreview.imageMedia != null) {
+                mediaItems.add(contentItem.urlPreview.imageMedia);
+            }
+            for (Media media : mediaItems) {
                 MediaObjectDownload.Cdn cdn = MediaObjectDownload.Cdn.UNKNOWN_CDN;
                 if (media.url != null && media.url.contains(CLOUD_FRONT_CDN)) {
                     cdn = MediaObjectDownload.Cdn.CLOUDFRONT;

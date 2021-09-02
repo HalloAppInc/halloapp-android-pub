@@ -23,6 +23,7 @@ import androidx.paging.PagedList;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
+import com.halloapp.UrlPreview;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Comment;
@@ -399,7 +400,7 @@ class CommentsViewModel extends AndroidViewModel {
         sendVoiceNote(replyCommentId, recording);
     }
 
-    void sendComment(@Nullable String postText, List<Mention> mentions, @Nullable String replyCommentId, boolean supportsWideColor) {
+    void sendComment(@Nullable String postText, List<Mention> mentions, @Nullable String replyCommentId, @Nullable UrlPreview urlPreview, boolean supportsWideColor) {
         final Comment comment = new Comment(
                 0,
                 postId,
@@ -411,6 +412,7 @@ class CommentsViewModel extends AndroidViewModel {
                 true,
                 postText);
         comment.setParentPost(post.getValue());
+        comment.urlPreview = urlPreview;
         for (Mention mention : mentions) {
             if (mention.index < 0 || mention.index >= postText.length()) {
                 continue;
@@ -419,41 +421,54 @@ class CommentsViewModel extends AndroidViewModel {
         }
 
         Media mediaItem = commentMedia.getValue();
-        if (mediaItem == null) {
+        boolean needsTranscode = mediaItem != null || (comment.urlPreview != null && comment.urlPreview.imageMedia != null);
+        if (!needsTranscode) {
             contentDb.addComment(comment);
         } else {
             bgWorkers.execute(() -> {
-                final File postFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(mediaItem.type));
-                switch (mediaItem.type) {
-                    case Media.MEDIA_TYPE_IMAGE: {
-                        try {
-                            RectF cropRect = null;
-                            if (mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
-                                final float padding = (mediaItem.height - Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) / 2;
-                                cropRect = new RectF(0, padding / mediaItem.height, 1, 1 - padding / mediaItem.height);
+                if (mediaItem != null) {
+                    final File postFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(mediaItem.type));
+                    switch (mediaItem.type) {
+                        case Media.MEDIA_TYPE_IMAGE: {
+                            try {
+                                RectF cropRect = null;
+                                if (mediaItem.height > Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) {
+                                    final float padding = (mediaItem.height - Constants.MAX_IMAGE_ASPECT_RATIO * mediaItem.width) / 2;
+                                    cropRect = new RectF(0, padding / mediaItem.height, 1, 1 - padding / mediaItem.height);
+                                }
+                                MediaUtils.transcodeImage(mediaItem.file, postFile, cropRect, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, !supportsWideColor);
+                            } catch (IOException e) {
+                                Log.e("failed to transcode image", e);
+                                return; // TODO(jack): Error messages for user for these 3 cases
                             }
-                            MediaUtils.transcodeImage(mediaItem.file, postFile, cropRect, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, !supportsWideColor);
-                        } catch (IOException e) {
-                            Log.e("failed to transcode image", e);
-                            return; // TODO(jack): Error messages for user for these 3 cases
+                            break;
                         }
-                        break;
-                    }
-                    case Media.MEDIA_TYPE_VIDEO: {
-                        if (!mediaItem.file.renameTo(postFile)) {
-                            Log.e("failed to rename " + mediaItem.file.getAbsolutePath() + " to " + postFile.getAbsolutePath());
+                        case Media.MEDIA_TYPE_VIDEO: {
+                            if (!mediaItem.file.renameTo(postFile)) {
+                                Log.e("failed to rename " + mediaItem.file.getAbsolutePath() + " to " + postFile.getAbsolutePath());
+                                return;
+                            }
+                            break;
+                        }
+                        case Media.MEDIA_TYPE_UNKNOWN:
+                        default: {
+                            Log.e("unknown media type " + mediaItem.file.getAbsolutePath());
                             return;
                         }
-                        break;
                     }
-                    case Media.MEDIA_TYPE_UNKNOWN:
-                    default: {
-                        Log.e("unknown media type " + mediaItem.file.getAbsolutePath());
-                        return;
+                    final Media sendMedia = Media.createFromFile(mediaItem.type, postFile);
+                    comment.media.add(sendMedia);
+                }
+                if (comment.urlPreview.imageMedia != null) {
+                    final File imagePreview = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_IMAGE));
+                    try {
+                        MediaUtils.transcodeImage(comment.urlPreview.imageMedia.file, imagePreview, null, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, !supportsWideColor);
+                        comment.urlPreview.imageMedia.file = imagePreview;
+                    } catch (IOException e) {
+                        Log.e("failed to transcode url preview image", e);
+                        comment.urlPreview.imageMedia = null;
                     }
                 }
-                final Media sendMedia = Media.createFromFile(mediaItem.type, postFile);
-                comment.media.add(sendMedia);
                 contentDb.addComment(comment);
             });
         }

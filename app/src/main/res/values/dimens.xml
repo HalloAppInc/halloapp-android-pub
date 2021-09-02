@@ -91,6 +91,8 @@
     <dimen name="message_bubble_corner_radius">15dp</dimen>
     <dimen name="message_vertical_separator_sequence">4dp</dimen>
     <dimen name="message_vertical_separator">6dp</dimen>
+    <dimen name="message_top_padding">4dp</dimen>
+    <dimen name="message_top_padding_with_link">0.5dp</dimen>
 
     <dimen name="voice_note_cancel_distance">140dp</dimen>
     <dimen name="voice_note_lock_distance">120dp</dimen>

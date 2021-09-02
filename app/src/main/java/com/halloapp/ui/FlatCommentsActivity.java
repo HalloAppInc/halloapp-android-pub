@@ -45,6 +45,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.DimenRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -70,6 +72,8 @@ import com.halloapp.Constants;
 import com.halloapp.ContentDraftManager;
 import com.halloapp.Debug;
 import com.halloapp.R;
+import com.halloapp.UrlPreview;
+import com.halloapp.UrlPreviewLoader;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
@@ -109,6 +113,7 @@ import com.halloapp.widget.ChatInputView;
 import com.halloapp.widget.ItemSwipeHelper;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.LinearSpacingItemDecoration;
+import com.halloapp.widget.LinkPreviewComposeView;
 import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.RecyclerViewKeyboardScrollHelper;
 import com.halloapp.widget.SnackbarHelper;
@@ -147,6 +152,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private ChatLoader chatLoader;
     private AvatarLoader avatarLoader;
     private ContactLoader contactLoader;
+    private UrlPreviewLoader urlPreviewLoader;
     private TextContentLoader textContentLoader;
 
     private FlatCommentsViewModel viewModel;
@@ -192,6 +198,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private ImageView postAvatarView;
     private TextView postNameView;
     private TextView postGroupView;
+
+    private LinkPreviewComposeView linkPreviewComposeView;
 
     private PostAttributionLayout postAttributionLayout;
 
@@ -359,6 +367,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             }
         });
 
+        linkPreviewComposeView = findViewById(R.id.link_preview_compose_view);
+
         chatInputView = findViewById(R.id.chat_input);
         chatInputView.setVoiceNoteControlView(findViewById(R.id.recording_ui));
         chatInputView.setInputParent(new ChatInputView.InputParent() {
@@ -370,7 +380,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     Log.w("CommentsActivity: cannot send empty comment");
                     return;
                 }
-                viewModel.sendComment(postText, textWithMentions.second, replyCommentId, ActivityUtils.supportsWideColor(FlatCommentsActivity.this));
+                viewModel.sendComment(postText, textWithMentions.second, replyCommentId, linkPreviewComposeView.getUrlPreview(), ActivityUtils.supportsWideColor(FlatCommentsActivity.this));
+                linkPreviewComposeView.updateUrlPreview(null);
                 editText.setText(null);
                 final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
                 imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
@@ -406,6 +417,11 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 } else {
                     EasyPermissions.requestPermissions(FlatCommentsActivity.this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
                 }
+            }
+
+            @Override
+            public void onUrl(String url) {
+
             }
         });
         chatInputView.bindVoicePlayer(this, viewModel.getVoiceNotePlayer());
@@ -508,6 +524,30 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             }
         });
 
+        if (Constants.SEND_URL_PREVIEWS) {
+            editText.addTextChangedListener(new UrlPreviewTextWatcher(new UrlPreviewTextWatcher.UrlListener() {
+                @Override
+                public void onUrl(String url) {
+                    urlPreviewLoader.load(linkPreviewComposeView, url, new ViewDataLoader.Displayer<View, UrlPreview>() {
+                        @Override
+                        public void showResult(@NonNull View view, @Nullable UrlPreview result) {
+                            linkPreviewComposeView.updateUrlPreview(result);
+                        }
+
+                        @Override
+                        public void showLoading(@NonNull View view) {
+                            linkPreviewComposeView.setLoading(!TextUtils.isEmpty(url));
+                        }
+                    });
+                }
+            }));
+            linkPreviewComposeView.setOnRemovePreviewClickListener(v -> {
+                urlPreviewLoader.cancel(linkPreviewComposeView);
+                linkPreviewComposeView.setLoading(false);
+                linkPreviewComposeView.updateUrlPreview(null);
+            });
+        }
+
         if (getIntent().getBooleanExtra(EXTRA_NO_POST_LENGTH_LIMIT, false)) {
             textLimits.put(POST_TEXT_LIMITS_ID, Integer.MAX_VALUE);
         }
@@ -521,6 +561,9 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         avatarLoader = AvatarLoader.getInstance();
         chatLoader = new ChatLoader();
         textContentLoader = new TextContentLoader();
+        urlPreviewLoader = new UrlPreviewLoader();
+
+        linkPreviewComposeView.setMediaThumbnailLoader(mediaThumbnailLoader);
 
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
@@ -1057,6 +1100,10 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         final TextView nameView;
         final TextView groupView;
         final PostAttributionLayout attributionLayout;
+        final View linkPreviewContainer;
+        final TextView linkPreviewTitle;
+        final TextView linkPreviewUrl;
+        final ImageView linkPreviewImg;
 
         Comment comment;
 
@@ -1078,6 +1125,33 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             nameView = itemView.findViewById(R.id.name);
             groupView = itemView.findViewById(R.id.group_name);
             attributionLayout = itemView.findViewById(R.id.post_header);
+            linkPreviewContainer = itemView.findViewById(R.id.link_preview_container);
+            linkPreviewTitle = itemView.findViewById(R.id.link_title);
+            linkPreviewUrl = itemView.findViewById(R.id.link_domain);
+            linkPreviewImg = itemView.findViewById(R.id.link_preview_image);
+            if (linkPreviewContainer != null) {
+                linkPreviewContainer.setOutlineProvider(new ViewOutlineProvider() {
+                    @Override
+                    public void getOutline(View view, Outline outline) {
+                        int left = 0;
+                        int top = 0;
+                        int right = view.getWidth();
+                        int bottom = view.getHeight();
+                        float cornerRadius = itemView.getContext().getResources().getDimension(R.dimen.message_bubble_corner_radius);
+                        outline.setRoundRect(left, top, right, bottom, cornerRadius);
+
+                    }
+                });
+                linkPreviewContainer.setBackgroundColor(ContextCompat.getColor(linkPreviewContainer.getContext(), R.color.message_background_incoming));
+                linkPreviewContainer.setClipToOutline(true);
+                linkPreviewContainer.setOnClickListener(view -> {
+                    UrlPreview preview = comment == null ? null : comment.urlPreview;
+                    if (preview != null && preview.url != null) {
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(preview.url));
+                        linkPreviewContainer.getContext().startActivity(browserIntent);
+                    }
+                });
+            }
 
             if (replyTextView != null) {
                 replyTextView.setOnClickListener(view -> {
@@ -1135,6 +1209,23 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                         }
                     });
                     commentMedia.setTransitionName(MediaPagerAdapter.getTransitionName(comment.id, 0));
+                }
+            }
+
+            if (linkPreviewContainer != null) {
+                mediaThumbnailLoader.cancel(linkPreviewImg);
+                if (comment.urlPreview == null) {
+                    linkPreviewContainer.setVisibility(View.GONE);
+                } else {
+                    linkPreviewContainer.setVisibility(View.VISIBLE);
+                    linkPreviewUrl.setText(comment.urlPreview.tld);
+                    linkPreviewTitle.setText(comment.urlPreview.title);
+                    if (comment.urlPreview.imageMedia != null) {
+                        mediaThumbnailLoader.load(linkPreviewImg, comment.urlPreview.imageMedia);
+                        linkPreviewImg.setVisibility(View.VISIBLE);
+                    } else {
+                        linkPreviewImg.setVisibility(View.GONE);
+                    }
                 }
             }
         }

@@ -45,6 +45,7 @@ class PostsDb {
     private final MediaDb mediaDb;
     private final MentionsDb mentionsDb;
     private final FutureProofDb futureProofDb;
+    private final UrlPreviewsDb urlPreviewsDb;
     private final ContentDbHelper databaseHelper;
     private final FileStore fileStore;
     private final ServerProps serverProps;
@@ -53,12 +54,14 @@ class PostsDb {
             MediaDb mediaDb,
             MentionsDb mentionsDb,
             FutureProofDb futureProofDb,
+            UrlPreviewsDb urlPreviewsDb,
             ContentDbHelper databaseHelper,
             FileStore fileStore,
             ServerProps serverProps) {
         this.mediaDb = mediaDb;
         this.mentionsDb = mentionsDb;
         this.futureProofDb = futureProofDb;
+        this.urlPreviewsDb = urlPreviewsDb;
         this.databaseHelper = databaseHelper;
         this.fileStore = fileStore;
         this.serverProps = serverProps;
@@ -88,6 +91,8 @@ class PostsDb {
         if (!post.mentions.isEmpty()) {
             mentionsDb.addMentions(post);
         }
+        urlPreviewsDb.addUrlPreview(post);
+
         mediaDb.addArchiveMedia(post);
 
         Log.i("ContentDb.addPostToArchive: moved " + post);
@@ -181,6 +186,7 @@ class PostsDb {
                 }
             }
             mentionsDb.addMentions(post);
+            urlPreviewsDb.addUrlPreview(post);
             if (post instanceof FutureProofPost) {
                 futureProofDb.saveFutureProof((FutureProofPost) post);
             }
@@ -621,6 +627,7 @@ class PostsDb {
 
             mediaDb.addMedia(comment);
             mentionsDb.addMentions(comment);
+            urlPreviewsDb.addUrlPreview(comment);
             if (comment instanceof FutureProofComment) {
                 futureProofDb.saveFutureProof((FutureProofComment) comment);
             }
@@ -968,6 +975,7 @@ class PostsDb {
                     lastRowId = rowId;
                     if (post != null) {
                         mentionsDb.fillMentions(post);
+                        urlPreviewsDb.fillUrlPreview(post);
                         posts.add(post);
                     }
                     post = new Post(
@@ -1028,6 +1036,7 @@ class PostsDb {
             }
             if (post != null && (count == null || cursor.getCount() < count)) {
                 mentionsDb.fillMentions(post);
+                urlPreviewsDb.fillUrlPreview(post);
                 posts.add(post);
             }
         }
@@ -1333,6 +1342,7 @@ class PostsDb {
                 comment.type = cursor.getInt(9);
                 fillMedia(comment);
                 mentionsDb.fillMentions(comment);
+                urlPreviewsDb.fillUrlPreview(comment);
                 comment.setParentPost(parentPost);
                 comments.add(comment);
             }
@@ -2160,6 +2170,7 @@ class PostsDb {
         newComment.rowId = original.rowId;
         mediaDb.addMedia(newComment);
         mentionsDb.addMentions(newComment);
+        urlPreviewsDb.addUrlPreview(newComment);
         db.setTransactionSuccessful();
         db.endTransaction();
     }

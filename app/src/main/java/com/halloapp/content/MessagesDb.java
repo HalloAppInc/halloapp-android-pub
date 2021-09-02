@@ -54,6 +54,7 @@ class MessagesDb {
     private final FileStore fileStore;
     private final MentionsDb mentionsDb;
     private final FutureProofDb futureProofDb;
+    private final UrlPreviewsDb urlPreviewsDb;
     private final ServerProps serverProps;
     private final ContentDbHelper databaseHelper;
 
@@ -61,11 +62,13 @@ class MessagesDb {
             FileStore fileStore,
             MentionsDb mentionsDb,
             FutureProofDb futureProofDb,
+            UrlPreviewsDb urlPreviewsDb,
             ServerProps serverProps,
             ContentDbHelper databaseHelper) {
         this.fileStore = fileStore;
         this.mentionsDb = mentionsDb;
         this.futureProofDb = futureProofDb;
+        this.urlPreviewsDb = urlPreviewsDb;
         this.serverProps = serverProps;
         this.databaseHelper = databaseHelper;
     }
@@ -153,6 +156,7 @@ class MessagesDb {
                     mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
                 }
                 mentionsDb.addMentions(message);
+                urlPreviewsDb.addUrlPreview(message);
 
                 if (message instanceof FutureProofMessage) {
                     futureProofDb.saveFutureProof((FutureProofMessage) message);
@@ -1175,6 +1179,7 @@ class MessagesDb {
                             rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
+                    urlPreviewsDb.fillUrlPreview(message);
                 }
                 if (!cursor.isNull(10)) {
                     Media media = new Media(
@@ -1293,6 +1298,7 @@ class MessagesDb {
                             rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
+                    urlPreviewsDb.fillUrlPreview(message);
                 }
                 if (!cursor.isNull(10)) {
                     Media media = new Media(
@@ -1405,6 +1411,7 @@ class MessagesDb {
                             rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
+                    urlPreviewsDb.fillUrlPreview(message);
                 }
                 if (!cursor.isNull(10)) {
                     Media media = new Media(
@@ -1558,6 +1565,7 @@ class MessagesDb {
                             rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
+                    urlPreviewsDb.fillUrlPreview(message);
                 }
                 if (!cursor.isNull(10)) {
                     Media media = new Media(
@@ -1767,6 +1775,7 @@ class MessagesDb {
                             rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
+                    urlPreviewsDb.fillUrlPreview(message);
                 }
                 if (!cursor.isNull(10)) {
                     Media media = new Media(

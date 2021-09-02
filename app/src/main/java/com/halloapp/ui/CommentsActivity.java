@@ -414,7 +414,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
                     Log.w("CommentsActivity: cannot send empty comment");
                     return;
                 }
-                viewModel.sendComment(postText, textWithMentions.second, replyCommentId, ActivityUtils.supportsWideColor(CommentsActivity.this));
+                viewModel.sendComment(postText, textWithMentions.second, replyCommentId, null, ActivityUtils.supportsWideColor(CommentsActivity.this));
                 editText.setText(null);
                 final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
                 imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
@@ -450,6 +450,11 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
                 } else {
                     EasyPermissions.requestPermissions(CommentsActivity.this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
                 }
+            }
+
+            @Override
+            public void onUrl(String url) {
+
             }
         });
         chatInputView.bindVoiceRecorder(this, viewModel.getVoiceNoteRecorder());

@@ -56,5 +56,6 @@ public class Constants {
 
     public static final boolean SEND_CONTAINER = BuildConfig.DEBUG;
 
-    public static final boolean USE_NOISE_FOR_REGISTRATION = true;
+    public static final boolean SEND_URL_PREVIEWS = BuildConfig.DEBUG;
+
 }

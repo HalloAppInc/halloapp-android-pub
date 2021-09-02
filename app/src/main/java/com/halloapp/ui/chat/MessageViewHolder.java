@@ -5,6 +5,7 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.Outline;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.text.Html;
@@ -18,9 +19,12 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DimenRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,8 +36,10 @@ import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.R;
+import com.halloapp.UrlPreview;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.UploadMediaTask;
@@ -70,6 +76,10 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final LimitingTextView textView;
     private final MessageTextLayout messageTextLayout;
     private final ViewPager2 mediaPagerView;
+    private final View linkPreviewContainer;
+    private final TextView linkPreviewTitle;
+    private final TextView linkPreviewUrl;
+    private final ImageView linkPreviewImg;
     private final CircleIndicator3 mediaPagerIndicator;
     private final MediaPagerAdapter mediaPagerAdapter;
     private @Nullable ReplyContainer replyContainer;
@@ -130,6 +140,32 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         decryptStatusView = itemView.findViewById(R.id.decrypt_status);
         newMessagesSeparator = itemView.findViewById(R.id.new_messages);
         e2eNoticeView = itemView.findViewById(R.id.e2e_notice);
+        linkPreviewContainer = itemView.findViewById(R.id.link_preview_container);
+        linkPreviewTitle = itemView.findViewById(R.id.link_title);
+        linkPreviewUrl = itemView.findViewById(R.id.link_domain);
+        linkPreviewImg = itemView.findViewById(R.id.link_preview_image);
+        if (linkPreviewContainer != null) {
+            linkPreviewContainer.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    int left = 0;
+                    int top = 0;
+                    int right = view.getWidth();
+                    int bottom = view.getHeight();
+                    float cornerRadius = itemView.getContext().getResources().getDimension(R.dimen.message_bubble_corner_radius);
+                    outline.setRoundRect(left, top, right, (int) (bottom+cornerRadius), cornerRadius);
+
+                }
+            });
+            linkPreviewContainer.setOnClickListener(v -> {
+                UrlPreview preview = message == null ? null : message.urlPreview;
+                if (preview != null && preview.url != null) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(preview.url));
+                    linkPreviewContainer.getContext().startActivity(browserIntent);
+                }
+            });
+            linkPreviewContainer.setClipToOutline(true);
+        }
         if (e2eNoticeView != null) {
             TextView e2eText = e2eNoticeView.findViewById(R.id.e2e_text);
             e2eText.setText(StringUtils.replaceBoldWithMedium(Html.fromHtml(itemView.getContext().getString(R.string.e2e_notice))));
@@ -318,6 +354,38 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             set.start();
         } else {
             itemView.setBackgroundColor(0);
+        }
+
+        if (linkPreviewContainer != null) {
+            parent.getMediaThumbnailLoader().cancel(linkPreviewImg);
+            @DimenRes int topPadding;
+            if (message.urlPreview == null) {
+                linkPreviewContainer.setVisibility(View.GONE);
+                topPadding = R.dimen.message_top_padding;
+            } else {
+                linkPreviewContainer.setVisibility(View.VISIBLE);
+                linkPreviewUrl.setText(message.urlPreview.tld);
+                linkPreviewTitle.setText(message.urlPreview.title);
+                @ColorRes int colorRes;
+                if (message.isOutgoing()) {
+                    colorRes = R.color.message_url_preview_background_outgoing;
+                } else {
+                    colorRes = R.color.message_url_preview_background_incoming;
+                }
+                topPadding = R.dimen.message_top_padding_with_link;
+                linkPreviewContainer.setBackgroundColor(ContextCompat.getColor(linkPreviewContainer.getContext(), colorRes));
+                if (message.urlPreview.imageMedia == null || message.urlPreview.imageMedia.transferred != Media.TRANSFERRED_YES) {
+                    linkPreviewImg.setVisibility(View.GONE);
+                } else {
+                    linkPreviewImg.setVisibility(View.VISIBLE);
+                    parent.getMediaThumbnailLoader().load(linkPreviewImg, message.urlPreview.imageMedia);
+                }
+            }
+            contentView.setPadding(
+                    contentView.getPaddingLeft(),
+                    contentView.getResources().getDimensionPixelSize(topPadding),
+                    contentView.getPaddingRight(),
+                    contentView.getPaddingBottom());
         }
 
         fillView(message, changed);

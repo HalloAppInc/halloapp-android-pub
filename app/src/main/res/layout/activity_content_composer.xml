@@ -90,7 +90,8 @@
                             <LinearLayout
                                 android:orientation="vertical"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:minHeight="@dimen/entry_card_min_height">
 
                                 <androidx.coordinatorlayout.widget.CoordinatorLayout
                                     android:layout_width="match_parent"
@@ -213,7 +214,6 @@
                                     android:id="@+id/entry_card"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:minHeight="@dimen/entry_card_min_height"
                                     android:layout_weight="1"
                                     android:background="@null"
                                     android:hint="@string/write_a_post"
@@ -228,6 +228,18 @@
                                     android:textSize="@dimen/composer_text_size_large"
                                     android:lineSpacingMultiplier="1.1"
                                     android:visibility="gone" />
+
+                                <com.halloapp.widget.PostLinkPreviewView
+                                    android:id="@+id/link_preview"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="bottom"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_marginBottom="8dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_marginTop="30dp"
+                                    android:visibility="gone"
+                                    />
 
                             </LinearLayout>
 

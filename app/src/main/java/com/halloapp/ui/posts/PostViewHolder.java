@@ -1,6 +1,8 @@
 package com.halloapp.ui.posts;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
@@ -21,6 +23,7 @@ import com.halloapp.Constants;
 import com.halloapp.Debug;
 import com.halloapp.FileStore;
 import com.halloapp.R;
+import com.halloapp.UrlPreview;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
@@ -37,6 +40,7 @@ import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.LimitingTextView;
+import com.halloapp.widget.PostLinkPreviewView;
 import com.halloapp.widget.SeenDetectorLayout;
 import com.halloapp.xmpp.Connection;
 
@@ -56,6 +60,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final LimitingTextView textView;
     private final PostAttributionLayout postHeader;
     protected final MediaPagerAdapter mediaPagerAdapter;
+    private final PostLinkPreviewView postLinkPreviewView;
     private final View footer;
     private final CardView cardView;
     final View footerSpacing;
@@ -113,6 +118,18 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         mediaPagerIndicator = itemView.findViewById(R.id.media_pager_indicator);
         textView = itemView.findViewById(R.id.text);
         footerSpacing = itemView.findViewById(R.id.footer_spacing);
+        postLinkPreviewView = itemView.findViewById(R.id.link_preview);
+        if (postLinkPreviewView != null) {
+            postLinkPreviewView.setCloseButtonVisible(false);
+            postLinkPreviewView.setMediaThumbnailLoader(parent.getMediaThumbnailLoader());
+            postLinkPreviewView.setOnClickListener(v -> {
+                UrlPreview preview = postLinkPreviewView.getUrlPreview();
+                if (preview != null && preview.url != null) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(preview.url));
+                    postLinkPreviewView.getContext().startActivity(browserIntent);
+                }
+            });
+        }
         footer = itemView.findViewById(R.id.post_footer);
 
         if (statusView != null) {
@@ -290,6 +307,10 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getContext().getResources().getDimension(
                         (post.text.length() < 180 && post.media.isEmpty()) ? R.dimen.post_text_size_large : R.dimen.post_text_size));
             }
+        }
+
+        if (postLinkPreviewView != null) {
+            postLinkPreviewView.updateUrlPreview(post.urlPreview);
         }
 
         if (post.isRetracted()) {
