@@ -713,6 +713,7 @@ class PostsDb {
                 + " FROM " + PostsTable.TABLE_NAME
                 + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + " IS NOT NULL"
                 + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "=0"
+                + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_RETRACTED
                 + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "!=?";
         try (final Cursor cursor = db.rawQuery(query, new String[]{UserId.ME.rawId()})) {
             return cursor.getCount();
@@ -740,7 +741,9 @@ class PostsDb {
             args.add(senderUserId.rawId());
         }
         if (unseenOnly) {
-            where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "=0 AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + " != ''";
+            where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "=0"
+                    + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_RETRACTED
+                    + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + " != ''";
         }
         if (groupId != null) {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "=?";
