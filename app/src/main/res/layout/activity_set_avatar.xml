@@ -61,6 +61,7 @@
             android:layout_margin="4dp"
             android:textColor="@android:color/white"
             android:backgroundTint="@android:color/black"
+            android:textAllCaps="false"
             android:text="@string/set_avatar_reset" />
 
         <Button
@@ -70,8 +71,9 @@
             android:layout_gravity="bottom"
             android:layout_weight="1"
             android:layout_margin="4dp"
-            android:textColor="@android:color/black"
-            android:backgroundTint="@android:color/white"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/crop_done"
+            android:textAllCaps="false"
             android:text="@string/set_avatar_done" />
     </LinearLayout>
 
