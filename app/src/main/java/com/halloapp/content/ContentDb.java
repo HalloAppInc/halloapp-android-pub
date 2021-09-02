@@ -957,6 +957,11 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public @NonNull List<Chat> getActiveGroups() {
+        return messagesDb.getActiveGroups();
+    }
+
+    @WorkerThread
     public @Nullable Chat getChat(@NonNull ChatId chatId) {
         return messagesDb.getChat(chatId);
     }

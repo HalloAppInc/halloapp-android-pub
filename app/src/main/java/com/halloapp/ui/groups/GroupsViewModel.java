@@ -93,7 +93,7 @@ public class GroupsViewModel extends AndroidViewModel {
             groupsList = new ComputableLiveData<List<Chat>>() {
                 @Override
                 protected List<Chat> compute() {
-                    final List<Chat> chats = ContentDb.getInstance().getGroups();
+                    final List<Chat> chats = ContentDb.getInstance().getActiveGroups();
                     final Collator collator = Collator.getInstance(Locale.getDefault());
                     Collections.sort(chats, (obj1, obj2) -> collator.compare(obj1.name, obj2.name));
                     return chats;

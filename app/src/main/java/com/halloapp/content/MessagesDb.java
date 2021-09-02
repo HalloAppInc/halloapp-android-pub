@@ -2072,6 +2072,46 @@ class MessagesDb {
     }
 
     @WorkerThread
+    @NonNull List<Chat> getActiveGroups() {
+        final List<Chat> chats = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(ChatsTable.TABLE_NAME,
+                new String [] {
+                        ChatsTable._ID,
+                        ChatsTable.COLUMN_CHAT_ID,
+                        ChatsTable.COLUMN_TIMESTAMP,
+                        ChatsTable.COLUMN_NEW_MESSAGE_COUNT,
+                        ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID,
+                        ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID,
+                        ChatsTable.COLUMN_CHAT_NAME,
+                        ChatsTable.COLUMN_IS_GROUP,
+                        ChatsTable.COLUMN_GROUP_DESCRIPTION,
+                        ChatsTable.COLUMN_GROUP_AVATAR_ID,
+                        ChatsTable.COLUMN_IS_ACTIVE,
+                        ChatsTable.COLUMN_THEME},
+                ChatsTable.COLUMN_IS_GROUP + "=? AND " + ChatsTable.COLUMN_IS_ACTIVE + "=?",
+                new String[]{"1", "1"}, null, null, ChatsTable.COLUMN_TIMESTAMP + " DESC")) {
+            while (cursor.moveToNext()) {
+                final Chat chat = new Chat(
+                        cursor.getLong(0),
+                        ChatId.fromNullable(cursor.getString(1)),
+                        cursor.getLong(2),
+                        cursor.getInt(3),
+                        cursor.getLong(4),
+                        cursor.getLong(5),
+                        cursor.getString(6),
+                        cursor.getInt(7) == 1,
+                        cursor.getString(8),
+                        cursor.getString(9),
+                        cursor.getInt(10) == 1,
+                        cursor.getInt(11));
+                chats.add(chat);
+            }
+        }
+        return chats;
+    }
+
+    @WorkerThread
     @Nullable Chat getChat(@NonNull ChatId chatId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(ChatsTable.TABLE_NAME,
