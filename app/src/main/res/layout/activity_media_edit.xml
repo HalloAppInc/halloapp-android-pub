@@ -29,40 +29,42 @@
         android:layout_marginBottom="8dp"
         />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="60dp"
-        android:layout_marginEnd="60dp"
-        android:layout_marginBottom="10dp">
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:padding="4dp"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/reset"
-            android:layout_width="100dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
             android:textColor="@android:color/white"
             android:backgroundTint="@android:color/black"
             android:textAllCaps="false"
-            android:text="@string/set_avatar_reset"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            android:text="@string/set_avatar_reset"/>
 
         <Button
             android:id="@+id/done"
-            android:layout_width="100dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
             android:textColor="@android:color/white"
             android:backgroundTint="@color/crop_done"
             android:textAllCaps="false"
-            android:text="@string/done"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            android:text="@string/done"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/processing"
