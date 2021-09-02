@@ -22,6 +22,9 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
     private View voiceDelete;
     private VoiceVisualizerView voiceVisualizerView;
 
+    private View arrowLock;
+    private View arrowCancel;
+
     private final int[] pos = new int[2];
 
     private int swipeToCancelDistance;
@@ -118,6 +121,7 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
             voiceVisualizerView.setScale(value);
             voiceLock.setAlpha(value);
             voiceDelete.setAlpha(value);
+            setArrowAlpha(value);
         });
         enterAnimator.start();
 
@@ -220,6 +224,7 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
         voiceDelete.setAlpha(0);
         voiceLock.setAlpha(0);
         voiceVisualizerView.setAlpha(0);
+        setArrowAlpha(0);
     }
 
     private void updateButtonsDefault() {
@@ -229,6 +234,7 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
         voiceLock.setAlpha(1);
         voiceVisualizerView.setAlpha(1);
         voiceVisualizerView.setScale(1.0f);
+        setArrowAlpha(1);
     }
 
     private void updateButtonsCanceling(float x, float y) {
@@ -246,9 +252,11 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
             float scale = Math.max(0.0f, (1.0f - dX / swipeToCancelDistance));
             voiceVisualizerView.setScale(scale);
             voiceVisualizerView.setAlpha(scale * scale);
+            setArrowAlpha(scale*scale);
         } else {
             voiceVisualizerView.setScale(1.0f);
             voiceVisualizerView.setAlpha(0);
+            setArrowAlpha(0);
         }
 
         if (dX > fadeDistance) {
@@ -274,9 +282,11 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
             float scale = Math.max(0.0f, (1.0f - dY / swipeToLockDistance));
             voiceVisualizerView.setScale(scale);
             voiceVisualizerView.setAlpha(scale * scale);
+            setArrowAlpha(scale * scale);
         } else {
             voiceVisualizerView.setScale(1.0f);
             voiceVisualizerView.setAlpha(0);
+            setArrowAlpha(0);
         }
 
         if (dY > fadeDistance) {
@@ -287,11 +297,19 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
         voiceLock.setTranslationY(-dY);
     }
 
+    private void setArrowAlpha(float alpha) {
+        arrowLock.setAlpha(alpha);
+        arrowCancel.setAlpha(alpha);
+    }
+
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.voice_note_recording_ui, this, true);
 
         voiceLock = findViewById(R.id.voice_lock);
         voiceDelete = findViewById(R.id.voice_delete);
+
+        arrowCancel = findViewById(R.id.arrow_cancel);
+        arrowLock = findViewById(R.id.arrow_lock);
 
         voiceVisualizerView = findViewById(R.id.visualizer);
 

@@ -25,6 +25,8 @@
     <string name="text_post">Text</string>
     <string name="bad_image">Unsupported media type</string>
     <string name="time_diff_now">Now</string>
+    <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
+    <string name="slide_to_cancel">Slide to cancel</string>
     <string name="phone_number_hint">Phone number</string>
     <!-- Title shown when a user starts the account deletion process under 'account' -->
     <string name="delete_account_title">Delete account</string>

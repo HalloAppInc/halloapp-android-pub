@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:paddingTop="1dp"
-    android:paddingBottom="2dp">
+    android:paddingBottom="2dp"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <com.halloapp.widget.MentionableEntry
         android:id="@+id/entry_card"
@@ -63,6 +64,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/media" />
 
+    <View
+        android:id="@+id/recording_indicator"
+        android:layout_width="9dp"
+        android:layout_height="9dp"
+        android:gravity="center_vertical"
+        android:background="@drawable/recording_indicator"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:layout_marginTop="1dp"
+
+        app:layout_constraintStart_toStartOf="@id/entry_card"
+        app:layout_constraintTop_toTopOf="@id/record_voice"
+        app:layout_constraintBottom_toBottomOf="@id/record_voice"
+        tools:text="00:01"/>
+
     <TextView
         android:id="@+id/recording_time"
         android:layout_width="wrap_content"
@@ -72,7 +88,8 @@
         android:textSize="21sp"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
-        app:layout_constraintStart_toStartOf="@id/entry_card"
+        android:fontFamily="sans-serif-medium"
+        app:layout_constraintStart_toEndOf="@id/recording_indicator"
         app:layout_constraintTop_toTopOf="@id/record_voice"
         app:layout_constraintBottom_toBottomOf="@id/record_voice"
         tools:text="00:01"/>

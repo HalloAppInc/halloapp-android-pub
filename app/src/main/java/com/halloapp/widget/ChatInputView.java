@@ -7,6 +7,8 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -36,6 +38,7 @@ public class ChatInputView extends ConstraintLayout {
 
     private View deleteVoiceDraft;
     private View voiceDraftInfo;
+    private View recordingIndicator;
 
     private TextView draftSeekTime;
     private ImageView draftControlButton;
@@ -134,6 +137,7 @@ public class ChatInputView extends ConstraintLayout {
         draftSeekTime = findViewById(R.id.seek_time);
         deleteVoiceDraft = findViewById(R.id.delete_voice_draft);
         voiceDraftInfo = findViewById(R.id.voice_draft_info);
+        recordingIndicator = findViewById(R.id.recording_indicator);
 
         sendButton.setOnClickListener(v -> {
             if (inputParent == null) {
@@ -404,11 +408,23 @@ public class ChatInputView extends ConstraintLayout {
         voiceNoteRecorder.isRecording().observe(owner, isRecording -> {
             if (isRecording == null || !isRecording) {
                 recordingTime.setVisibility(View.GONE);
+                recordingIndicator.setVisibility(View.GONE);
+                if (recordingIndicator.getAnimation() != null) {
+                    recordingIndicator.clearAnimation();
+                }
                 media.setVisibility(View.VISIBLE);
                 editText.setVisibility(View.VISIBLE);
             } else {
                 editText.setVisibility(View.INVISIBLE);
                 recordingTime.setVisibility(View.VISIBLE);
+                recordingIndicator.setVisibility(View.VISIBLE);
+                if (recordingIndicator.getAnimation() == null) {
+                    Animation anim = new AlphaAnimation(0.0f, 1.0f);
+                    anim.setDuration(500);
+                    anim.setRepeatMode(Animation.REVERSE);
+                    anim.setRepeatCount(Animation.INFINITE);
+                    recordingIndicator.startAnimation(anim);
+                }
                 media.setVisibility(View.GONE);
 
                 controlView.setVisibility(View.VISIBLE);
