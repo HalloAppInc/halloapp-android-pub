@@ -7,7 +7,9 @@ import android.animation.AnimatorSet;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Outline;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -42,6 +44,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -865,6 +868,11 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 if (playing) {
                     controlButton.setImageResource(R.drawable.ic_pause);
                     seekTime.setText(StringUtils.formatVoiceNoteDuration(seekTime.getContext(), state.seek));
+                    if (!comment.seen) {
+                        comment.seen = true;
+                        ContentDb.getInstance().setCommentSeen(comment.postId, comment.id, true);
+                        updateVoiceNoteTint(true);
+                    }
                 } else {
                     controlButton.setImageResource(R.drawable.ic_play_arrow);
                     seekTime.setText(StringUtils.formatVoiceNoteDuration(seekTime.getContext(), state.seekMax));
@@ -934,6 +942,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     controlButton.setVisibility(View.INVISIBLE);
                 }
             }
+            updateVoiceNoteTint(comment.seen);
         }
 
         private void startObservingPlayback() {
@@ -942,6 +951,17 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         private void stopObservingPlayback() {
             viewModel.getVoiceNotePlayer().getPlaybackState().removeObservers(this);
+        }
+
+        private void updateVoiceNoteTint(boolean wasPlayed) {
+            @ColorInt int color;
+            if (wasPlayed) {
+                color = ContextCompat.getColor(controlButton.getContext(), R.color.voice_note_played);
+            } else {
+                color = ContextCompat.getColor(controlButton.getContext(), R.color.color_secondary);
+            }
+            controlButton.setImageTintList(ColorStateList.valueOf(color));
+            seekBar.getThumb().setColorFilter(color, PorterDuff.Mode.SRC_IN);
         }
 
     }

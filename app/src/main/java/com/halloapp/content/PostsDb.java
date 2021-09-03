@@ -676,7 +676,7 @@ class PostsDb {
         try {
             final int updatedCount = db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
                             CommentsTable.COLUMN_POST_ID + "=? AND " +
-                            CommentsTable.COLUMN_SEEN + "=" + (seen ? 0 : 1),
+                            CommentsTable.COLUMN_SEEN + "=" + (seen ? 0 : 1) + " AND " + CommentsTable.COLUMN_TYPE + "!=" + Comment.TYPE_VOICE_NOTE,
                     new String [] {postId},
                     SQLiteDatabase.CONFLICT_ABORT);
             return updatedCount > 0;
