@@ -619,9 +619,9 @@ public class ConnectionImpl extends Connection {
 
     @Override
     public void sendComment(@NonNull Comment comment) {
-        byte[] encodedEntry;
+        byte[] payload;
         if (comment.type == Comment.TYPE_VOICE_NOTE) { // TODO: (clarkc) remove when old container is removed
-            encodedEntry = FeedContentEncoder.encodeComment(comment);
+            payload = FeedContentEncoder.encodeComment(comment);
         } else {
             final PublishedEntry entry = new PublishedEntry(
                     PublishedEntry.ENTRY_COMMENT,
@@ -641,16 +641,35 @@ public class ConnectionImpl extends Connection {
             if (ServerProps.getInstance().getNewClientContainerEnabled()) {
                 FeedContentEncoder.encodeComment(containerBuilder, comment);
             }
-            encodedEntry = containerBuilder.build().toByteArray();
+            payload = containerBuilder.build().toByteArray();
         }
-        FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.id, comment.postId, encodedEntry);
-        commentItem.parentCommentId = comment.parentCommentId;
         HalloIq requestIq;
         if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
+            FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.id, comment.postId, payload);
+            commentItem.parentCommentId = comment.parentCommentId;
             requestIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, commentItem);
         } else {
-            // TODO(jack): encryption for comments
-            requestIq = new GroupFeedUpdateIq(comment.getParentPost().getParentGroup(), FeedUpdateIq.Action.PUBLISH, commentItem);
+            Post parentPost = comment.getParentPost();
+            GroupId groupId = parentPost.getParentGroup();
+
+            byte[] encPayload = null;
+            List<SenderStateBundle> senderStateBundles = new ArrayList<>();
+            byte[] audienceHash = null;
+
+            if (Constants.GROUP_FEED_ENC_ENABLED) {
+                try {
+                    GroupSetupInfo groupSetupInfo = GroupFeedKeyManager.getInstance().ensureGroupSetUp(groupId);
+                    senderStateBundles = groupSetupInfo.senderStateBundles;
+                    audienceHash = groupSetupInfo.audienceHash;
+                    encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
+                } catch (CryptoException e) {
+                    Log.e("Failed to encrypt group comment", e);
+                } catch (NoSuchAlgorithmException e) {
+                    Log.e("Failed to calculate audience hash", e);
+                }
+            }
+            FeedItem feedItem = new FeedItem(FeedItem.Type.COMMENT, comment.id, parentPost.id, payload, encPayload, senderStateBundles, audienceHash);
+            requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.PUBLISH, feedItem);
         }
         sendIqRequestAsync(requestIq)
                 .onResponse(response -> connectionObservers.notifyOutgoingCommentSent(comment.postId, comment.id))

@@ -46,6 +46,17 @@ public class FeedItem {
         this.audienceHash = audienceHash;
     }
 
+    public FeedItem(@Type int type, @NonNull String commentId, @NonNull String parentPostId, @Nullable byte[] payload, @Nullable byte[] encPayload, @Nullable List<SenderStateBundle> senderStateBundles, @Nullable byte[] audienceHash) {
+        this.id = commentId;
+        this.type = type;
+        this.payload = payload;
+        this.encPayload = encPayload;
+        this.parentPostId = parentPostId;
+        this.parentCommentId = null;
+        this.senderStateBundles = senderStateBundles;
+        this.audienceHash = audienceHash;
+    }
+
     public FeedItem(@Type int type, @NonNull String id, @NonNull String parentPostId, @Nullable byte[] payload) {
         this(type, id, parentPostId, payload, null);
     }
