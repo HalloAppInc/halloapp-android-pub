@@ -31,6 +31,8 @@ public class Stats {
 
     private final SuccessCounter encryption = new SuccessCounter("crypto", "encryption");
     private final DecryptCounter decryption = new DecryptCounter();
+    private final GroupSuccessCounter groupEncryption = new GroupSuccessCounter();
+    private final GroupDecryptCounter groupDecryption = new GroupDecryptCounter();
 
     private boolean scheduled = false;
     private final Timer timer = new Timer();
@@ -68,6 +70,22 @@ public class Stats {
 
     public void reportDecryptError(String error, String senderPlatform, String senderVersion) {
         decryption.reportError(error, senderPlatform, senderVersion);
+    }
+
+    public void reportGroupEncryptSuccess(boolean isComment) {
+        groupEncryption.reportSuccess(isComment);
+    }
+
+    public void reportGroupEncryptError(String error, boolean isComment) {
+        groupEncryption.reportError(error, isComment);
+    }
+
+    public void reportGroupDecryptSuccess(boolean isComment) {
+        groupDecryption.reportSuccess(isComment);
+    }
+
+    public void reportGroupDecryptError(String error, boolean isComment) {
+        groupDecryption.reportError(error, isComment);
     }
 
     private class TimerUploadCounter extends Counter {
@@ -126,6 +144,56 @@ public class Stats {
                     .put(DIM_RESULT, error)
                     .put(DIM_SENDER_PLATFORM, senderPlatform)
                     .put(DIM_SENDER_VERSION, senderVersion);
+            reportEvent(builder.build());
+        }
+    }
+
+    private class GroupSuccessCounter extends TimerUploadCounter {
+        private static final String DIM_RESULT = "result";
+        private static final String DIM_FAILURE_REASON = "failure_reason";
+        private static final String DIM_ITEM_TYPE = "item_type";
+
+        public GroupSuccessCounter() {
+            super("crypto", "group_encryption");
+        }
+
+        public void reportSuccess(boolean isComment) {
+            Dimensions.Builder builder = new Dimensions.Builder()
+                    .put(DIM_RESULT, "ok")
+                    .put(DIM_ITEM_TYPE, isComment ? "comment" : "post");
+            reportEvent(builder.build());
+        }
+
+        public void reportError(String error, boolean isComment) {
+            Dimensions.Builder builder = new Dimensions.Builder()
+                    .put(DIM_RESULT, "fail")
+                    .put(DIM_FAILURE_REASON, error)
+                    .put(DIM_ITEM_TYPE, isComment ? "comment" : "post");
+            reportEvent(builder.build());
+        }
+    }
+
+    private class GroupDecryptCounter extends TimerUploadCounter {
+        private static final String DIM_RESULT = "result";
+        private static final String DIM_FAILURE_REASON = "failure_reason";
+        private static final String DIM_ITEM_TYPE = "item_type";
+
+        public GroupDecryptCounter() {
+            super("crypto", "group_decryption");
+        }
+
+        public void reportSuccess(boolean isComment) {
+            Dimensions.Builder builder = new Dimensions.Builder()
+                    .put(DIM_RESULT, "ok")
+                    .put(DIM_ITEM_TYPE, isComment ? "comment" : "post");
+            reportEvent(builder.build());
+        }
+
+        public void reportError(String error, boolean isComment) {
+            Dimensions.Builder builder = new Dimensions.Builder()
+                    .put(DIM_RESULT, "fail")
+                    .put(DIM_FAILURE_REASON, error)
+                    .put(DIM_ITEM_TYPE, isComment ? "comment" : "post");
             reportEvent(builder.build());
         }
     }
