@@ -21,5 +21,6 @@ public final class CommentsTable implements BaseColumns {
     public static final String COLUMN_SEEN = "seen";
     public static final String COLUMN_TEXT = "text";
     public static final String COLUMN_TYPE = "type";
+    public static final String COLUMN_REREQUEST_COUNT = "rerequest_count";
 }
 

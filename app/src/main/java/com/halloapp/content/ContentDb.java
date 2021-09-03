@@ -847,6 +847,18 @@ public class ContentDb {
         });
     }
 
+    public void setPostRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String postId, int count) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.setPostRerequestCount(groupId, senderUserId, postId, count);
+        });
+    }
+
+    public void setCommentRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String commentId, int count) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.setCommentRerequestCount(groupId, senderUserId, commentId, count);
+        });
+    }
+
     public void setMessageTransferred(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         databaseWriteExecutor.execute(() -> {
             messagesDb.setMessageTransferred(chatId, senderUserId, messageId);
@@ -909,6 +921,14 @@ public class ContentDb {
     @WorkerThread
     public int getMessageRerequestCount(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         return messagesDb.getMessageRerequestCount(chatId, senderUserId, messageId);
+    }
+
+    public int getPostRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String postId) {
+        return postsDb.getPostRerequestCount(groupId, senderUserId, postId);
+    }
+
+    public int getCommentRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String postId) {
+        return postsDb.getCommentRerequestCount(groupId, senderUserId, postId);
     }
 
     @WorkerThread

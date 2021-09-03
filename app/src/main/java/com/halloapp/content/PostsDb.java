@@ -1091,6 +1091,82 @@ class PostsDb {
     }
 
     @WorkerThread
+    int getPostRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String postId) {
+        Log.i("PostsDb.getPostRerequestCount: groupId=" + groupId + "senderUserId=" + senderUserId + " postId=" + postId);
+
+        String sql = "SELECT " + PostsTable.COLUMN_REREQUEST_COUNT + " "
+                + "FROM " + PostsTable.TABLE_NAME + " "
+                + "WHERE " + PostsTable.COLUMN_POST_ID + "=? AND " + PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_GROUP_ID + "=?";
+
+        int count = 0;
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (Cursor cursor = db.rawQuery(sql, new String[] {postId, senderUserId.rawId(), groupId.rawId()})) {
+            if (cursor.moveToNext()) {
+                return cursor.getInt(0);
+            }
+        } catch (SQLException ex) {
+            Log.e("PostsDb.getPostRerequestCount: failed");
+            throw ex;
+        }
+        return count;
+    }
+
+    @WorkerThread
+    void setPostRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String postId, int count) {
+        Log.i("PostsDb.setPostRerequestCount: groupId=" + groupId + "senderUserId=" + senderUserId + " postId=" + postId + " count=" + count);
+        final ContentValues values = new ContentValues();
+        values.put(PostsTable.COLUMN_REREQUEST_COUNT, count);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
+                    PostsTable.COLUMN_GROUP_ID + "=? AND " + PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
+                    new String [] {groupId.rawId(), senderUserId.rawId(), postId},
+                    SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLException ex) {
+            Log.e("PostsDb.setPostRerequestCount: failed");
+            throw ex;
+        }
+    }
+
+    @WorkerThread
+    int getCommentRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String commentId) {
+        Log.i("PostsDb.getCommentRerequestCount: groupId=" + groupId + "senderUserId=" + senderUserId + " commentId=" + commentId);
+
+        String sql = "SELECT " + CommentsTable.COLUMN_REREQUEST_COUNT + " "
+                + "FROM " + CommentsTable.TABLE_NAME + " "
+                + "WHERE " + CommentsTable.COLUMN_COMMENT_ID + "=? AND " + CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "=?";
+
+        int count = 0;
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (Cursor cursor = db.rawQuery(sql, new String[] {commentId, senderUserId.rawId()})) {
+            if (cursor.moveToNext()) {
+                return cursor.getInt(0);
+            }
+        } catch (SQLException ex) {
+            Log.e("PostsDb.getCommentRerequestCount: failed");
+            throw ex;
+        }
+        return count;
+    }
+
+    @WorkerThread
+    void setCommentRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String commentId, int count) {
+        Log.i("PostsDb.setCommentRerequestCount: groupId=" + groupId + "senderUserId=" + senderUserId + " commentId=" + commentId + " count=" + count);
+        final ContentValues values = new ContentValues();
+        values.put(CommentsTable.COLUMN_REREQUEST_COUNT, count);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
+                    CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "=? AND " + CommentsTable.COLUMN_COMMENT_ID + "=?",
+                    new String [] {senderUserId.rawId(), commentId},
+                    SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLException ex) {
+            Log.e("PostsDb.setCommentRerequestCount: failed");
+            throw ex;
+        }
+    }
+
+    @WorkerThread
     long getLastSeenCommentRowId(@NonNull String postId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final String sql =
