@@ -1,11 +1,13 @@
 package com.halloapp.ui.chat;
 
+import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -34,6 +36,7 @@ public class VoiceNoteMessageViewHolder extends MessageViewHolder {
 
     private boolean playing;
     private boolean wasPlaying;
+    private boolean played;
 
     private String audioPath;
 
@@ -70,6 +73,8 @@ public class VoiceNoteMessageViewHolder extends MessageViewHolder {
                 controlButton.setImageResource(R.drawable.ic_pause);
                 seekTime.setText(StringUtils.formatVoiceNoteDuration(seekTime.getContext(), state.seek));
                 if (message.isIncoming() && message.state != Message.STATE_INCOMING_PLAYED) {
+                    played = true;
+                    updateVoiceNoteTint(true);
                     ContentDb.getInstance().setMessagePlayed(message.chatId, message.senderUserId, message.id);
                 }
             } else {
@@ -141,6 +146,18 @@ public class VoiceNoteMessageViewHolder extends MessageViewHolder {
             }
             playedStatus.setColorFilter(ContextCompat.getColor(playedStatus.getContext(), statusColor), PorterDuff.Mode.SRC_IN);
         }
+        updateVoiceNoteTint(message.isOutgoing() || message.state == Message.STATE_INCOMING_PLAYED || played);
+    }
+
+    private void updateVoiceNoteTint(boolean wasPlayed) {
+        @ColorInt int color;
+        if (wasPlayed) {
+            color = ContextCompat.getColor(controlButton.getContext(), R.color.voice_note_played);
+        } else {
+            color = ContextCompat.getColor(controlButton.getContext(), R.color.color_secondary);
+        }
+        controlButton.setImageTintList(ColorStateList.valueOf(color));
+        seekBar.getThumb().setColorFilter(color, PorterDuff.Mode.SRC_IN);
     }
 
     @Override
@@ -160,6 +177,7 @@ public class VoiceNoteMessageViewHolder extends MessageViewHolder {
         super.markRecycled();
         this.audioPath = null;
         playing = false;
+        played = false;
         seekBar.setProgress(0);
         controlButton.setImageResource(R.drawable.ic_play_arrow);
     }
