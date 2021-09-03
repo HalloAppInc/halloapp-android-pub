@@ -287,6 +287,17 @@ public class Notifications {
                         .addRemoteInput(remoteInput)
                         .build();
 
+                String markReadLabel = context.getString(R.string.mark_read_notification_label);
+                Intent markReadIntent = new Intent(context, MarkReadReceiver.class);
+                markReadIntent.putExtra(EXTRA_CHAT_ID, chatId);
+                PendingIntent markReadPendingIntent = PendingIntent.getBroadcast(
+                        context.getApplicationContext(),
+                        (int) Long.parseLong(chatId.rawId()),
+                        markReadIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+                NotificationCompat.Action markReadAction = new NotificationCompat.Action.Builder(R.drawable.ic_messaging_seen, markReadLabel, markReadPendingIntent).build();
+
                 final IconCompat chatIcon = IconCompat.createWithResource(context, R.drawable.avatar_person);
                 final Person chatUser = new Person.Builder().setIcon(chatIcon).setName(context.getString(R.string.me)).setKey("").build();
                 final NotificationCompat.MessagingStyle style = new NotificationCompat.MessagingStyle(chatUser);
@@ -323,7 +334,8 @@ public class Notifications {
                         .setGroup(MESSAGE_NOTIFICATION_GROUP_KEY)
                         .setGroupSummary(false)
                         .setStyle(style)
-                        .addAction(replyAction);
+                        .addAction(replyAction)
+                        .addAction(markReadAction);
                 final Intent contentIntent = ChatActivity.open(context, chatId);
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
                 final Intent parentIntent = new Intent(context, MainActivity.class);
@@ -658,10 +670,10 @@ public class Notifications {
     public static class MessageReplyReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("Notifications.MessageReplyReceiver: reply");
+            Log.i("Notifications.MessageReplyReceiver");
             Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
             if (remoteInput != null) {
-                CharSequence text = remoteInput.getCharSequence(REPLY_TEXT_KEY);
+                CharSequence text = Preconditions.checkNotNull(remoteInput.getCharSequence(REPLY_TEXT_KEY));
                 ChatId chatId = intent.getParcelableExtra(EXTRA_CHAT_ID);
                 String id = RandomId.create();
                 Log.i("Notifications.MessageReplyReceiver: sending message id " + id + " in " + chatId);
@@ -685,6 +697,17 @@ public class Notifications {
                 );
                 SignalSessionManager.getInstance().sendMessage(message);
             }
+        }
+    }
+
+    public static class MarkReadReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("Notifications.MarkReadReceiver");
+            ChatId chatId = Preconditions.checkNotNull(intent.getParcelableExtra(EXTRA_CHAT_ID));
+            Log.i("Notifications.MarkReadReceiver marking chat " + chatId + " as read");
+            ContentDb.getInstance().setChatSeen(chatId);
+            Notifications.getInstance(context).clearMessageNotifications(chatId);
         }
     }
 }

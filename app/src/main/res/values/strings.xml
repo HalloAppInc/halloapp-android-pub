@@ -131,6 +131,8 @@
     <string name="reply_privately">Reply privately</string>
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
     <string name="reply_notification_label">Reply</string>
+    <!-- Action on messaging notifications allowing the user to mark the conversation as read -->
+    <string name="mark_read_notification_label">Mark read</string>
     <string name="reply">Reply</string>
     <string name="close">Close</string>
     <!-- Dialog shown to user before requesting contact permissions -->
