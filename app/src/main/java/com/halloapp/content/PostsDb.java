@@ -926,6 +926,7 @@ class PostsDb {
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_AUDIENCE_TYPE + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "," +
+                    PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_REREQUEST_COUNT + "," +
                     "m." + MediaTable._ID + "," +
                     "m." + MediaTable.COLUMN_TYPE + "," +
                     "m." + MediaTable.COLUMN_URL + "," +
@@ -981,24 +982,25 @@ class PostsDb {
                         post.setParentGroup(parentGroupId);
                     }
                     mentionsDb.fillMentions(post);
-                    post.seenByCount = cursor.getInt(17);
+                    post.seenByCount = cursor.getInt(18);
+                    post.rerequestCount = cursor.getInt(10);
                 }
-                if (!cursor.isNull(10)) {
+                if (!cursor.isNull(11)) {
                     Media media = new Media(
-                            cursor.getLong(10),
-                            cursor.getInt(11),
-                            cursor.getString(12),
-                            fileStore.getMediaFile(cursor.getString(13)),
+                            cursor.getLong(11),
+                            cursor.getInt(12),
+                            cursor.getString(13),
+                            fileStore.getMediaFile(cursor.getString(14)),
                             null,
                             null,
                             null,
-                            cursor.getInt(15),
                             cursor.getInt(16),
                             cursor.getInt(17),
+                            cursor.getInt(18),
                             Media.BLOB_VERSION_UNKNOWN,
                             0,
                             0);
-                    media.encFile = fileStore.getTmpFile(cursor.getString(14));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(15));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
             }
@@ -1458,7 +1460,8 @@ class PostsDb {
                         CommentsTable.COLUMN_TIMESTAMP + ", " +
                         CommentsTable.COLUMN_TRANSFERRED + ", " +
                         CommentsTable.COLUMN_TEXT + ", " +
-                        CommentsTable.COLUMN_SEEN + " " +
+                        CommentsTable.COLUMN_SEEN + ", " +
+                        CommentsTable.COLUMN_REREQUEST_COUNT + " " +
                         "FROM " + CommentsTable.TABLE_NAME + " " +
                         "WHERE comments.comment_id=? " +
                         "AND comments.timestamp>" + getPostExpirationTime() + " " +
@@ -1476,6 +1479,7 @@ class PostsDb {
                         cursor.getInt(6) == 1,
                         cursor.getInt(8) == 1,
                         cursor.getString(7));
+                comment.rerequestCount = cursor.getInt(9);
                 Post parentPost = getPost(comment.postId);
                 comment.setParentPost(parentPost);
                 fillMedia(comment);

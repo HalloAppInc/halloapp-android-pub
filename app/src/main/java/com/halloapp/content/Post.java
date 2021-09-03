@@ -50,6 +50,7 @@ public class Post extends ContentItem {
     public int commentCount;
     public int unseenCommentCount;
     public int seenByCount;
+    public int rerequestCount;
     public Comment firstComment;
 
     private @PrivacyList.Type String audienceType;

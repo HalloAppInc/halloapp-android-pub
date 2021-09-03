@@ -27,6 +27,7 @@ public class Comment extends ContentItem {
 
     public final boolean transferred;
     public boolean seen;
+    public int rerequestCount;
 
     @Nullable
     public Contact senderContact;
