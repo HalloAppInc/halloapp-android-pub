@@ -80,6 +80,7 @@ public class GroupFeedUpdateIq extends HalloIq {
                 cb.setPostId(feedItem.parentPostId);
             }
             cb.setId(feedItem.id);
+            cb.setPostId(feedItem.parentPostId);
             builder.setComment(cb);
         }
 
