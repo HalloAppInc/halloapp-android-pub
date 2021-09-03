@@ -129,6 +129,8 @@
     <string name="comments">Comments</string>
     <!-- Button on others' posts that allows the user to message them about their post in 1-1 messaging -->
     <string name="reply_privately">Reply privately</string>
+    <!-- Action on messaging notifications allowing the user to reply without opening the app -->
+    <string name="reply_notification_label">Reply</string>
     <string name="reply">Reply</string>
     <string name="close">Close</string>
     <!-- Dialog shown to user before requesting contact permissions -->

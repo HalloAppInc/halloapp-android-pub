@@ -340,6 +340,12 @@
             android:exported="false">
         </receiver>
 
+        <receiver
+            android:name=".Notifications$MessageReplyReceiver"
+            android:enabled="true"
+            android:exported="false">
+        </receiver>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.halloapp.fileprovider"

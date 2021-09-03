@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
 
@@ -17,6 +18,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.Person;
+import androidx.core.app.RemoteInput;
 import androidx.core.app.TaskStackBuilder;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.IconCompat;
@@ -30,6 +32,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -44,6 +47,8 @@ import com.halloapp.ui.markdown.MarkdownUtils;
 import com.halloapp.ui.mentions.MentionsLoader;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.RandomId;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 
 import java.util.ArrayList;
@@ -70,6 +75,7 @@ public class Notifications {
     private static final String GROUPS_NOTIFICATION_CHANNEL_ID = "group_notifications";
 
     private static final String MESSAGE_NOTIFICATION_GROUP_KEY = "message_notification";
+    private static final String REPLY_TEXT_KEY = "reply_text";
 
     private static final int FEED_NOTIFICATION_ID = 0;
     private static final int MESSAGE_NOTIFICATION_ID = 1;
@@ -84,6 +90,7 @@ public class Notifications {
     private static final int UNSEEN_MESSAGES_LIMIT = 256;
 
     private static final String EXTRA_FEED_NOTIFICATION_TIME_CUTOFF = "last_feed_notification_time";
+    private static final String EXTRA_CHAT_ID = "chat_id";
 
     private final Context context;
     private final Preferences preferences;
@@ -264,6 +271,22 @@ public class Notifications {
             for (ChatId chatId : chatsIds) {
                 final List<Message> chatMessages = Preconditions.checkNotNull(chatsMessages.get(chatId));
 
+                String replyLabel = context.getString(R.string.reply_notification_label);
+                RemoteInput remoteInput = new RemoteInput.Builder(REPLY_TEXT_KEY)
+                        .setLabel(replyLabel)
+                        .build();
+                Intent replyIntent = new Intent(context, MessageReplyReceiver.class);
+                replyIntent.putExtra(EXTRA_CHAT_ID, chatId);
+                PendingIntent replyPendingIntent = PendingIntent.getBroadcast(
+                        context.getApplicationContext(),
+                        (int) Long.parseLong(chatId.rawId()),
+                        replyIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+                NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder(R.drawable.ic_reply, replyLabel, replyPendingIntent)
+                        .addRemoteInput(remoteInput)
+                        .build();
+
                 final IconCompat chatIcon = IconCompat.createWithResource(context, R.drawable.avatar_person);
                 final Person chatUser = new Person.Builder().setIcon(chatIcon).setName(context.getString(R.string.me)).setKey("").build();
                 final NotificationCompat.MessagingStyle style = new NotificationCompat.MessagingStyle(chatUser);
@@ -299,7 +322,8 @@ public class Notifications {
                         .setColor(ContextCompat.getColor(context, R.color.color_accent))
                         .setGroup(MESSAGE_NOTIFICATION_GROUP_KEY)
                         .setGroupSummary(false)
-                        .setStyle(style);
+                        .setStyle(style)
+                        .addAction(replyAction);
                 final Intent contentIntent = ChatActivity.open(context, chatId);
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
                 final Intent parentIntent = new Intent(context, MainActivity.class);
@@ -627,6 +651,39 @@ public class Notifications {
             if (feedNotificationTimeCutoff > 0) {
                 Log.i("Notifications.BroadcastReceiver: cancel, notification cutoff at " + feedNotificationTimeCutoff);
                 Notifications.getInstance(context).executor.execute(() -> Notifications.getInstance(context).preferences.setFeedNotificationTimeCutoff(feedNotificationTimeCutoff));
+            }
+        }
+    }
+
+    public static class MessageReplyReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("Notifications.MessageReplyReceiver: reply");
+            Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
+            if (remoteInput != null) {
+                CharSequence text = remoteInput.getCharSequence(REPLY_TEXT_KEY);
+                ChatId chatId = intent.getParcelableExtra(EXTRA_CHAT_ID);
+                String id = RandomId.create();
+                Log.i("Notifications.MessageReplyReceiver: sending message id " + id + " in " + chatId);
+
+                Message message = new Message(
+                        0,
+                        chatId,
+                        UserId.ME,
+                        id,
+                        System.currentTimeMillis(),
+                        Message.TYPE_CHAT,
+                        Message.USAGE_CHAT,
+                        Message.STATE_INITIAL,
+                        StringUtils.preparePostText(text.toString()),
+                        null,
+                        0,
+                        null,
+                        0,
+                        null,
+                        0
+                );
+                SignalSessionManager.getInstance().sendMessage(message);
             }
         }
     }
