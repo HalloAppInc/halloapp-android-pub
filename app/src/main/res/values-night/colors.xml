@@ -55,7 +55,7 @@
     <color name="voice_note_played">#949494</color>
 
     <color name="message_state_sent">#66C3DDFF</color>
-    <color name="message_state_read">#C3DDFF</color>
+    <color name="message_state_read">#69A1FF</color>
 
     <color name="group_bg_ring_stroke">@color/white_20</color>
 
