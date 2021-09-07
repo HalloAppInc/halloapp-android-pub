@@ -1116,10 +1116,14 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     commentMedia.setOnClickListener(v -> {
                         commentsFsePosition = position;
 
+                        Post parentPost = comment.getParentPost();
+                        boolean isInGroup = parentPost != null && parentPost.getParentGroup() != null;
+
                         Intent intent = new Intent(commentMedia.getContext(), MediaExplorerActivity.class);
                         intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, MediaExplorerViewModel.MediaModel.fromMedia(Collections.singletonList(media)));
                         intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, 0);
                         intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, comment.id);
+                        intent.putExtra(MediaExplorerActivity.EXTRA_ALLOW_SAVING, isInGroup);
 
                         if (commentMedia.getContext() instanceof Activity) {
                             final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(FlatCommentsActivity.this, commentMedia, commentMedia.getTransitionName());
