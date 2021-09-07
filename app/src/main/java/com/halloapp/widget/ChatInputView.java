@@ -5,6 +5,7 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -347,7 +348,10 @@ public class ChatInputView extends ConstraintLayout {
         if (allowMedia) {
             media.setVisibility(View.VISIBLE);
             if (!allowVoiceNoteRecording) {
-                media.clearColorFilter();
+                TypedValue typedValue = new TypedValue();
+                media.getContext().getTheme().resolveAttribute(R.attr.colorControlNormal, typedValue, true);
+                int color = ContextCompat.getColor(media.getContext(), typedValue.resourceId);
+                media.setColorFilter(color);
             } else {
                 media.setColorFilter(ContextCompat.getColor(media.getContext(), R.color.color_secondary));
             }
