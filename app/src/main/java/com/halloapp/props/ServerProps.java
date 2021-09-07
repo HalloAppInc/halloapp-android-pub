@@ -38,6 +38,7 @@ public class ServerProps {
     private static final String PROP_MAX_VIDEO_BITRATE = "max_video_bit_rate";
     private static final String PROP_VOICE_NOTE_SENDING_ENABLED = "voice_notes";
     private static final String PROP_CONTACT_SYNC_INTERVAL = "contact_sync_frequency";
+    private static final String PROP_MEDIA_COMMENTS_ENABLED = "media_comments";
 
     private static final int WEEK_IN_SECONDS = (int) (DateUtils.WEEK_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
 
@@ -71,6 +72,7 @@ public class ServerProps {
     private final IntegerProp propMaxVideoBitrate = createProp(PROP_MAX_VIDEO_BITRATE, 8000000);
     private final BooleanProp propVoiceNoteSendingEnabled = createProp(PROP_VOICE_NOTE_SENDING_ENABLED, false);
     private final IntegerProp propContactSyncIntervalSeconds = createProp(PROP_CONTACT_SYNC_INTERVAL, Constants.SECONDS_PER_DAY);
+    private final BooleanProp propMediaCommentsEnabled = createProp(PROP_MEDIA_COMMENTS_ENABLED, false);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -225,5 +227,9 @@ public class ServerProps {
 
     public synchronized int getContactSyncIntervalSeconds() {
         return propContactSyncIntervalSeconds.getValue();
+    }
+
+    public synchronized boolean getMediaCommentsEnabled() {
+        return propMediaCommentsEnabled.getValue() || getIsInternalUser();
     }
 }

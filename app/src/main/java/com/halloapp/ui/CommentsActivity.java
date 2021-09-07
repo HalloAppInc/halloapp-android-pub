@@ -334,7 +334,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
                     post.getParentGroup() != null;
             allowVoiceNoteSending = serverProps.getVoiceNoteSendingEnabled() && isInternalGroup;
             chatInputView.setAllowVoiceNoteRecording(allowVoiceNoteSending);
-            chatInputView.setAllowMedia(isInternalGroup);
+            chatInputView.setAllowMedia(serverProps.getMediaCommentsEnabled());
         });
         viewModel.loadPost(postId);
 

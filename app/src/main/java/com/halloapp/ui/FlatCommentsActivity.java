@@ -454,7 +454,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             isInternalGroup = serverProps.getIsInternalUser() &&
                     post != null &&
                     post.getParentGroup() != null;
-            chatInputView.setAllowMedia(isInternalGroup);
+            chatInputView.setAllowMedia(serverProps.getMediaCommentsEnabled());
             chatInputView.setAllowVoiceNoteRecording(serverProps.getVoiceNoteSendingEnabled() && isInternalGroup);
             if (post != null) {
                 bindPost(post);
