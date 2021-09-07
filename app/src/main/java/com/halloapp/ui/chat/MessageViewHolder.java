@@ -161,6 +161,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         }
 
         if (tombstoneMessage != null) {
+            tombstoneMessage.setText(Html.fromHtml(tombstoneMessage.getContext().getString(R.string.message_tombstone_placeholder)));
             tombstoneMessage.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
