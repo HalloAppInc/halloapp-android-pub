@@ -574,7 +574,7 @@ public class ConnectionImpl extends Connection {
             List<SenderStateBundle> senderStateBundles = new ArrayList<>();
             byte[] audienceHash = null;
 
-            if (Constants.GROUP_FEED_ENC_ENABLED) {
+            if (ServerProps.getInstance().getIsInternalUser()) {
                 Stats stats = Stats.getInstance();
                 try {
                     GroupSetupInfo groupSetupInfo = GroupFeedKeyManager.getInstance().ensureGroupSetUp(groupId);
@@ -665,7 +665,7 @@ public class ConnectionImpl extends Connection {
             List<SenderStateBundle> senderStateBundles = new ArrayList<>();
             byte[] audienceHash = null;
 
-            if (Constants.GROUP_FEED_ENC_ENABLED) {
+            if (ServerProps.getInstance().getIsInternalUser()) {
                 Stats stats = Stats.getInstance();
                 try {
                     GroupSetupInfo groupSetupInfo = GroupFeedKeyManager.getInstance().ensureGroupSetUp(groupId);
