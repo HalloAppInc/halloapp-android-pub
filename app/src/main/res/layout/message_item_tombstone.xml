@@ -26,7 +26,7 @@
 
             <include layout="@layout/message_sender_info" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingStart="14dp"
@@ -37,10 +37,7 @@
                     android:id="@+id/time_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/tombstone_text"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_gravity="center"
                     android:src="@drawable/ic_messaging_clock"/>
 
                 <TextView
@@ -49,18 +46,12 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
                     android:gravity="center"
-                    android:paddingTop="9dp"
-                    android:paddingBottom="9dp"
-                    android:paddingStart="9dp"
-                    android:paddingEnd="9dp"
+                    android:padding="9dp"
+                    android:textColorLink="@color/color_link"
                     android:text="@string/message_tombstone_placeholder"
-                    android:textStyle="italic"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/time_icon"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:textStyle="italic"/>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
         </LinearLayout>
     </FrameLayout>
