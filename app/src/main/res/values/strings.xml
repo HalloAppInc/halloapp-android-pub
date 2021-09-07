@@ -353,7 +353,7 @@
     <!-- Shown on the key verification screen indicating tapping on the QR code will open the scanner -->
     <string name="key_verification_tap_to_scan">Tap to scan</string>
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. <![CDATA[<a href="https://halloapp.com/help/">Learn more</a>]]>.</string>
+    <string name="key_verification_explanation">To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. <![CDATA[<a href="https://halloapp.com/blog/encrypted-chat/">Learn more</a>]]>.</string>
     <!-- Shown in progress dialog when loading key verification info -->
     <string name="key_verification_fetching_keys">Fetching keys…</string>
     <!-- Shown when we fail to get key verification info -->
