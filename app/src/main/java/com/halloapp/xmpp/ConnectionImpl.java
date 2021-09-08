@@ -1149,6 +1149,7 @@ public class ConnectionImpl extends Connection {
                         Message message = ChatMessageProtocol.getInstance().parseMessage(chatStanza, msg.getId(), fromUserId);
                         if (message == null) {
                             Log.e("connection: got plaintext payload");
+                            sendAck(msg.getId());
                             return;
                         }
                         processMentions(message.mentions);

@@ -806,6 +806,9 @@ public class ContentDb {
                 retractMessage(msg, completionRunnable);
             } else {
                 Log.e("ContentDb/retractMessage no message found for row id");
+                if (completionRunnable != null) {
+                    completionRunnable.run();
+                }
             }
         });
     }
@@ -817,6 +820,9 @@ public class ContentDb {
                 retractMessage(msg, completionRunnable);
             } else {
                 Log.e("ContentDb/retractMessage no message found for row id");
+                if (completionRunnable != null) {
+                    completionRunnable.run();
+                }
             }
         });
     }
