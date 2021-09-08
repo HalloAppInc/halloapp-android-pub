@@ -73,7 +73,7 @@
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
         android:layout_marginTop="1dp"
-
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="@id/entry_card"
         app:layout_constraintTop_toTopOf="@id/record_voice"
         app:layout_constraintBottom_toBottomOf="@id/record_voice"
