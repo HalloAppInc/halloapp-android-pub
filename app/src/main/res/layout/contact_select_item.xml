@@ -32,18 +32,18 @@
         android:textDirection="locale"
         android:textAlignment="gravity"
         app:layout_constraintStart_toEndOf="@+id/avatar"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/selection_indicator"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/phone"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:text="Ded Pihtov"/>
+        tools:text="Ded Pihtoviwalczykiayancynostriamegono"/>
 
     <TextView
         android:id="@+id/phone"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@+id/avatar"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/selection_indicator"
         app:layout_constraintTop_toBottomOf="@+id/name"
         app:layout_constraintBottom_toBottomOf="parent"
         android:singleLine="true"
