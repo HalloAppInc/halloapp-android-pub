@@ -59,7 +59,7 @@ Je aanbieder kan hiervoor kosten in rekening brengen."</string>
     <string name="chats_search_empty">"Geen chats gevonden voor '%s'"</string>
     <string name="groups_page_empty">"Je groepen verschijnen hier"</string>
     <string name="groups_search_empty">"Geen groepen gevonden voor '%s'"</string>
-    <string name="contact_profile_empty">"%s's posts verschijnen hier"</string>
+    <string name="contact_profile_empty">"Posts van %s verschijnen hier"</string>
     <string name="invalid_phone_number">"Ongeldig telefoonnummer"</string>
     <string name="share_option_post">"Post"</string>
     <string name="share_option_message">"Privébericht"</string>
@@ -93,7 +93,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; heeft je vermeld in een post"</string>
     <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; heeft je vermeld in een reactie op je post"</string>
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; heeft je vermeld in een reactie op een post"</string>
-    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; heeft je vermeld in een reactie op &lt;b&gt;%2$s&lt;/b&gt;'s post"</string>
+    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; heeft je vermeld in een reactie op de post van &lt;b&gt;%2$s&lt;/b&gt;"</string>
     <string name="contact_hashing_faq_dialog_title">"Jouw privacy is onze prioriteit"</string>
     <string name="contact_hashing_faq_dialog_info">"HalloApp gebruikt alleen het telefoonnummer om je te kunnen koppelen met je vrienden op HalloApp en legt geen andere gegevens uit je contactenlijst vast."</string>
     <string name="list_of_two">"%1$s en %2$s"</string>
@@ -443,6 +443,8 @@ versie: %2$s
 
     <!-- Generic error message when user fails to join a group via invite link -->
     <string name="invite_link_failed_to_join">"Deelnemen aan de groep mislukt"</string>
+
+    <!-- I shortened to "Join" to fit in the pop-up, (maybe a tip for other languages too) -->
     <string name="join_group_action">"Deelnemen"</string>
     <string name="system_message_you_joined">"Je neemt deel aan de groep via een uitnodigingslink"</string>
     <string name="system_message_joined">"%s neemt deel aan de groep via een uitnodigingslink"</string>
@@ -494,7 +496,7 @@ versie: %2$s
     <string name="key_verification_tap_to_scan">"Tik om te scannen"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"Om de beveiliging van je verbinding met %s te verifiëren, controleer of bovenstaande nummers overeenkomen met die op het andere apparaat of scan de QR-code op de andere telefoon. "<![CDATA[<a href="https://halloapp.com/help/">Meer informatie</a>]]>"."</string>
+    <string name="key_verification_explanation">"Om de beveiliging van je verbinding met %s te verifiëren, controleer of bovenstaande nummers overeenkomen met die op het andere apparaat of scan de QR-code op de andere telefoon. "<![CDATA[<a href="https://halloapp.com/blog/encrypted-chat/">Meer informatie</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Meer"</string>
@@ -686,8 +688,8 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Activity center item when non-contacts comment on someones post -->
     <plurals name="commented_on_someones_post_grouped">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; ander persoon heeft gereageerd op &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; anderen hebben gereageerd op &lt;b&gt;%2$s&lt;/b&gt;'s posts"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; ander persoon heeft gereageerd op de post van &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; anderen hebben gereageerd op de post van &lt;b&gt;%2$s&lt;/b&gt;"</item>
     </plurals>
 
     <!-- Shown when an archived post's photo thumbnail can't be loaded -->
@@ -810,8 +812,8 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <!-- Activity center item when non-contacts comment on someones post %1$s is the first person name
          %2$s is the number of other people, %3$s is the post author's name -->
     <plurals name="commented_on_someones_post_grouped_with_others">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; ander persoon hebben gereageerd op &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; andere personen hebben gereageerd op &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; ander persoon hebben gereageerd op de post van &lt;b&gt;%3$s&lt;/b&gt;"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; andere personen hebben gereageerd op de post van &lt;b&gt;%3$s&lt;/b&gt;"</item>
     </plurals>
 
     <!-- Activity center item when two non-contacts comment on your post %1$s is the first person name
@@ -820,7 +822,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Activity center item when two non-contacts comment on someones post %1$s is the first person name
          %2$s second persons name, %3$s is the poster's name -->
-    <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; hebben gereageerd op &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
+    <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; hebben gereageerd op de post van &lt;b&gt;%3$s&lt;/b&gt;"</string>
 
     <!-- String that links the user to learn more info -->
     <string name="learn_more">"Meer informatie"</string>
@@ -839,5 +841,14 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Title for page showing groups in common -->
     <string name="groups_in_common">"Gemeenschappelijke groepen"</string>
+
+    <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
+    <string name="slide_to_cancel">"Veeg om te annuleren"</string>
+
+    <!-- Action on messaging notifications allowing the user to reply without opening the app -->
+    <string name="reply_notification_label">"Beantwoorden"</string>
+
+    <!-- Action on messaging notifications allowing the user to mark the conversation as read -->
+    <string name="mark_read_notification_label">"Markeren als gelezen"</string>
 </resources>
 

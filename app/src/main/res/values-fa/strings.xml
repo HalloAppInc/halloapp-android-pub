@@ -489,6 +489,7 @@ version: %2$s
     <string name="key_verification_tap_to_scan">"برای اسکن کردن کلیک کنید"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
+    <!-- Fuzzy -->
     <string name="key_verification_explanation">"برای تأیید ایمنی ارتباطتان با %s، شماره بالا را با شماره‌ای که در دستگاه ایشان است تطبیق دهید یا کد کیو آر دستگاه ایشان را اسکن کنید. "<![CDATA[<a href="https://halloapp.com/help/">بیشتر بدانید</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
@@ -833,5 +834,14 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Title for page showing groups in common -->
     <string name="groups_in_common">"گروه‌های مشترک"</string>
+
+    <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
+    <string name="slide_to_cancel">"برای لغو بکشید"</string>
+
+    <!-- Action on messaging notifications allowing the user to reply without opening the app -->
+    <string name="reply_notification_label">"پاسخ"</string>
+
+    <!-- Action on messaging notifications allowing the user to mark the conversation as read -->
+    <string name="mark_read_notification_label">"خوانده شده"</string>
 </resources>
 

@@ -227,8 +227,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="activity">"Hareketler"</string>
 
     <!-- In activity center, mark all comments/mentions as read -->
-    <!-- Fuzzy -->
-    <string name="mark_all_read">"Hepsini okundu olarak işaretle"</string>
+    <string name="mark_all_read">"Tümünü okundu işaretle"</string>
     <string name="login_failed">"Giriş başarısız"</string>
     <string name="login_failed_explanation">"Lütfen telefon numaranı kontrol et"</string>
     <plurals name="app_expiration_days_left">
@@ -571,7 +570,8 @@ version: %2$s
     <string name="key_verification_tap_to_scan">"Taramak için dokun"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"%1$s ile bağlantınızın güvenliğini doğrulamak için yukarıdaki numaraların, onun cihazında gösterilenlerle eşleşip eşleşmediğini kontrol et veya telefonundaki QR kodunu tarat. "<![CDATA[<a href="https://halloapp.com/help/">Daha fazlasını öğren</a>]]>"."</string>
+    <!-- Fuzzy -->
+    <string name="key_verification_explanation">"%1$s ile bağlantınızın güvenliğini doğrulamak için yukarıdaki numaraların, onun cihazında gösterilenlerle eşleşip eşleşmediğini kontrol et veya telefonundaki QR kodunu tarat. "<![CDATA[<a href="https://halloapp.com/blog/encrypted-chat/">Daha fazlasını öğren</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Daha fazla"</string>
@@ -748,179 +748,189 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</str
     <string name="no_longer_group_member">"Artık bu grubun bir üyesi değilsin."</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes -->
-    <string name="voice_note_record_audio_permission_rationale">"To record voice notes we need permission to access the microphone"</string>
+    <string name="voice_note_record_audio_permission_rationale">"Sesli mesaj kaydedebilmen için mikrofon erişimine izin vermelisin."</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
-    <string name="voice_note_record_audio_permission_rationale_denied">"To record voice notes we need permission to access the microphone.
+    <string name="voice_note_record_audio_permission_rationale_denied">"Sesli mesaj kaydedebilmen için mikrofon erişimine izin vermelisin.
 
-Open the app settings screen to modify app permissions."</string>
+Uygulama izinlerini değiştirmek için Uygulama Ayarları ekranını aç."</string>
 
     <!-- Activity center item when someone replies. %1$s is the person, %2$s is their comment preview -->
-    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; replied: %2$s"</string>
+    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; yanıtladı: %2$s"</string>
 
     <!-- Activity center item when someone comments. %1$s is the person, %2$s is their comment preview -->
-    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; commented: %2$s"</string>
+    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; yorum yaptı: %2$s"</string>
 
     <!-- Activity center item when non-contacts comment on your post -->
     <plurals name="commented_on_your_post_grouped">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; kişi, gönderine yorum yaptı"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; kişi, gönderine yorum yaptı"</item>
     </plurals>
 
     <!-- Activity center item when non-contacts comment on someones post -->
     <plurals name="commented_on_someones_post_grouped">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; kişi, &lt;b&gt;%2$s&lt;/b&gt; kişisinin gönderisine yorum yaptı"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; kişi, &lt;b&gt;%2$s&lt;/b&gt; kişisinin gönderisine yorum yaptı"</item>
     </plurals>
 
     <!-- Shown when an archived post's photo thumbnail can't be loaded -->
-    <string name="couldnt_load_thumbnail">"Couldn't load thumbnail"</string>
+    <string name="couldnt_load_thumbnail">"Küçük resim yüklenemedi"</string>
 
     <!-- Button for user to re-share old posts which have expired -->
-    <string name="reshare_post">"Reshare post"</string>
+    <string name="reshare_post">"Yeniden paylaş"</string>
 
     <!-- Button for going to utility for viewing expired posts -->
-    <string name="archived_posts">"Archive"</string>
+    <string name="archived_posts">"Arşiv"</string>
 
     <!-- Title of utility for viewing expired posts -->
-    <string name="archive">"Archive"</string>
+    <string name="archive">"Arşiv"</string>
 
     <!-- Label displaying the date when a post expired -->
-    <string name="archived_on">"Archived %s"</string>
+    <string name="archived_on">"Arşivlenmiş %s"</string>
 
     <!-- Error message when the group is full -->
-    <string name="invite_link_failed_to_join_full">"You cannot join the group because it is full"</string>
+    <string name="invite_link_failed_to_join_full">"Grup dolu olduğu için katılamazsın."</string>
 
     <!-- Error message when the invite link is invalid -->
-    <string name="invite_link_failed_to_join_invalid">"The invite link is invalid"</string>
+    <string name="invite_link_failed_to_join_invalid">"Davet ilişimi geçersiz"</string>
 
     <!-- Error message when user cannot join a group because they were previously removed by an admin -->
-    <string name="invite_link_failed_to_join_removed">"You were removed and cannot rejoin via invite link"</string>
+    <string name="invite_link_failed_to_join_removed">"Gruptan çıkarıldığın için davet bağlantısıyla yeniden katılamazsın."</string>
 
     <!-- Message that's displayed after a user deletes their account -->
-    <string name="deletion_confirmation_message">"Your HalloApp account has been successfully deleted."</string>
+    <string name="deletion_confirmation_message">"HalloApp hesabın başarıyla silindi."</string>
 
     <!-- Button that allows the user to return to registration after deleting their account -->
-    <string name="return_to_registration">"Return to registration"</string>
+    <string name="return_to_registration">"Kayda dön."</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <string name="archive_empty">"Your expired posts will appear here"</string>
+    <string name="archive_empty">"Süresi dolan gönderilerin burada görünecek."</string>
 
     <!-- Futureproof content we dont understand yet -->
-    <string name="unsupported_content">"Unsupported content"</string>
+    <string name="unsupported_content">"Desteklenmeyen içerik"</string>
 
     <!-- Button opens up the chat to directly chat with another group member -->
-    <string name="send_message">"Send message"</string>
+    <string name="send_message">"Mesaj gönder"</string>
 
     <!-- Body of a notification indicating that user has been added to a new group -->
-    <string name="added_to_group">"%1$s added you to the group %2$s"</string>
+    <string name="added_to_group">"%1$s, seni %2$s grubuna ekledi"</string>
 
     <!-- Name of channel of notifications for being added to a new group which is displayed in settings -->
-    <string name="group_notifications_channel_name">"Group membership notifications"</string>
+    <string name="group_notifications_channel_name">"Grup üyeliği bildirimleri"</string>
 
     <!-- Button that brings user to QR code for joining a group -->
-    <string name="qr_code">"QR Code"</string>
+    <string name="qr_code">"QR Kodu"</string>
 
     <!-- Explains QR code that allows users to automatically join a group -->
-    <string name="scan_qr_instructions">"Scan the QR code to join this HalloApp group"</string>
+    <string name="scan_qr_instructions">"HalloApp grubuna katılmak için QR kodunu tarat"</string>
 
     <!-- Banner below the name of a HalloApp group -->
-    <string name="halloapp_group">"HalloApp Group"</string>
-    <string name="reply_original_comment_not_found">"Original comment not found"</string>
+    <string name="halloapp_group">"HalloApp grubu"</string>
+    <string name="reply_original_comment_not_found">"Asıl yorum bulunamadı"</string>
 
     <!-- Button on others' posts that allows the user to message them about their post in 1-1 messaging -->
     <string name="reply_privately">"Özelden yaz"</string>
 
     <!-- Shown as title for a dialog explaining why permissions are needed when the user has rejected a necessary permission request at least twice but still tries to use the feature -->
-    <string name="title_settings_dialog">"Permissions required"</string>
+    <string name="title_settings_dialog">"İzinler gerekli"</string>
 
     <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
-    <string name="voice_note_preview">"Voice note (%s)"</string>
+    <string name="voice_note_preview">"Sesli mesaj (%s)"</string>
 
     <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
-    <string name="dark_mode_dialog_title">"Select Theme"</string>
+    <string name="dark_mode_dialog_title">"Tema seç"</string>
 
     <!-- Name of mode where screens are darker -->
-    <string name="dark_mode">"Dark"</string>
+    <string name="dark_mode">"Koyu"</string>
 
     <!-- Name of mode where screens are lighter -->
-    <string name="light_mode">"Light"</string>
+    <string name="light_mode">"Açık"</string>
 
     <!-- Name of mode where screens default to system default -->
-    <string name="system_default">"System default"</string>
+    <string name="system_default">"Varsayılan"</string>
 
     <!-- Name of mode where screens default to system default for earlier phones that don't have a concept of system dark mode -->
-    <string name="default_setting">"Default"</string>
+    <string name="default_setting">"Varsayılan"</string>
 
     <!-- Name of setting where user can change between dark/light mode -->
-    <string name="dark_mode_setting_title">"Theme"</string>
+    <string name="dark_mode_setting_title">"Tema"</string>
 
     <!-- General error message shown when fail to update group description -->
-    <string name="failed_update_group_description">"Failed to update the group description"</string>
+    <string name="failed_update_group_description">"Grup açıklaması güncellenemedi"</string>
 
     <!-- Success message shown when user updates group description -->
-    <string name="group_description_updated">"Group description updated"</string>
+    <string name="group_description_updated">"Grup açıklaması güncellendi"</string>
 
     <!-- System message shown when someone else changes the group description, %s will be replaced with their name -->
-    <string name="system_message_group_description_changed">"%s changed the group description"</string>
+    <string name="system_message_group_description_changed">"%s, grup açıklamasını değiştirdi"</string>
 
     <!-- System message shown when you change the group description -->
-    <string name="system_message_group_description_changed_by_you">"You changed the group description"</string>
+    <string name="system_message_group_description_changed_by_you">"Grup açıklamasını değiştirdin"</string>
 
     <!-- Hint text for the group description field -->
-    <string name="group_description_hint">"Group description"</string>
+    <string name="group_description_hint">"Grup açıklaması"</string>
 
     <!-- Title text for the view to edit the group description -->
-    <string name="group_description_title">"Group description"</string>
+    <string name="group_description_title">"Grup açıklaması"</string>
 
     <!-- Text telling the user they can add a group description -->
-    <string name="add_group_description">"Add group description"</string>
-    <string name="action_clear_search">"Clear"</string>
+    <string name="add_group_description">"Grup açıklaması ekle"</string>
+    <string name="action_clear_search">"Temizle"</string>
 
     <!-- Shown above options when picking a new background color for a group -->
-    <string name="group_background_color_pick">"Pick a color"</string>
-    <string name="post_preview_no_caption_by_you">"You shared a post"</string>
-    <string name="post_preview_retracted_by_you">"You deleted a post"</string>
-    <string name="post_preview_with_caption_by_you">"You: %s"</string>
+    <string name="group_background_color_pick">"Bir renk seç"</string>
+    <string name="post_preview_no_caption_by_you">"Bir gönderi paylaştın"</string>
+    <string name="post_preview_retracted_by_you">"Bir gönderi sildin "</string>
+    <string name="post_preview_with_caption_by_you">"Sen: %s"</string>
 
     <!-- Activity center item when non-contacts comment on your post %1$s is the first person name
          %2$s is the number of other people -->
     <plurals name="commented_on_your_post_grouped_with_others">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; ve diğer &lt;b&gt;%2$s&lt;/b&gt; kişi, gönderine yorum yaptı"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; ve diğer &lt;b&gt;%2$s&lt;/b&gt; kişi, gönderine yorum yaptı"</item>
     </plurals>
 
     <!-- Activity center item when non-contacts comment on someones post %1$s is the first person name
          %2$s is the number of other people, %3$s is the post author's name -->
     <plurals name="commented_on_someones_post_grouped_with_others">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; ve diğer &lt;b&gt;%2$s&lt;/b&gt; kişi, &lt;b&gt;%3$s&lt;/b&gt; kişisinin gönderisine yorum yaptı"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; ve diğer &lt;b&gt;%2$s&lt;/b&gt; kişi, &lt;b&gt;%3$s&lt;/b&gt; kişisinin gönderisine yorum yaptı"</item>
     </plurals>
 
     <!-- Activity center item when two non-contacts comment on your post %1$s is the first person name
          %2$s second persons name -->
-    <string name="two_unknown_contacts_commented_on_your_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string>
+    <string name="two_unknown_contacts_commented_on_your_post">"&lt;b&gt;%1$s&lt;/b&gt; ve &lt;b&gt;%2$s&lt;/b&gt; gönderine yorum yaptı"</string>
 
     <!-- Activity center item when two non-contacts comment on someones post %1$s is the first person name
          %2$s second persons name, %3$s is the poster's name -->
-    <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
+    <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; ve &lt;b&gt;%2$s&lt;/b&gt;, &lt;b&gt;%3$s&lt;/b&gt; kişisinin gönderisine yorum yaptı
+"</string>
 
     <!-- String that links the user to learn more info -->
-    <string name="learn_more">"Learn more"</string>
+    <string name="learn_more">"Daha fazlasını öğren"</string>
 
     <!-- Open up the group info page showing name, members, etc -->
-    <string name="view_group_info">"View group info"</string>
+    <string name="view_group_info">"Grup bilgisine bak"</string>
 
     <!-- Shown when changing the group avatar or name fails -->
-    <string name="failed_update_group">"Failed to update group, try again later"</string>
+    <string name="failed_update_group">"Grup güncellemesi başarısız; lütfen daha sonra dene"</string>
 
     <!-- Shown when the group avatar or name has been successfully updated -->
-    <string name="group_updated">"Group updated"</string>
+    <string name="group_updated">"Grup güncellendi"</string>
 
     <!-- Text shown when the user has no groups in common -->
-    <string name="groups_in_common_empty">"You have no groups in common"</string>
+    <string name="groups_in_common_empty">"Ortak grubunuz yok"</string>
 
     <!-- Title for page showing groups in common -->
-    <string name="groups_in_common">"Groups in common"</string>
+    <string name="groups_in_common">"Ortak gruplar"</string>
+
+    <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
+    <string name="slide_to_cancel">"Slide to cancel"</string>
+
+    <!-- Action on messaging notifications allowing the user to reply without opening the app -->
+    <string name="reply_notification_label">"Reply"</string>
+
+    <!-- Action on messaging notifications allowing the user to mark the conversation as read -->
+    <string name="mark_read_notification_label">"Mark read"</string>
 </resources>
 

@@ -472,7 +472,8 @@ versi: %2$s
     <string name="key_verification_tap_to_scan">"Ketuk untuk memindai"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"Untuk memverifikasi keamanan koneksimu dengan %s, periksa apakah angka di atas cocok dengan yang ditampilkan di perangkat mereka atau pindai kode QR di ponsel mereka. "<![CDATA[<a href="https://halloapp.com/help/">Learn more</a>]]>"."</string>
+    <!-- Fuzzy -->
+    <string name="key_verification_explanation">"Untuk memverifikasi keamanan koneksimu dengan %s, periksa apakah angka di atas cocok dengan yang ditampilkan di perangkat mereka atau pindai kode QR di ponsel mereka. "<![CDATA[<a href="https://halloapp.com/blog/encrypted-chat/">Learn more</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Lebih banyak"</string>
@@ -816,5 +817,14 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi."</string>
 
     <!-- Title for page showing groups in common -->
     <string name="groups_in_common">"Groups in common"</string>
+
+    <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
+    <string name="slide_to_cancel">"Slide to cancel"</string>
+
+    <!-- Action on messaging notifications allowing the user to reply without opening the app -->
+    <string name="reply_notification_label">"Reply"</string>
+
+    <!-- Action on messaging notifications allowing the user to mark the conversation as read -->
+    <string name="mark_read_notification_label">"Mark read"</string>
 </resources>
 

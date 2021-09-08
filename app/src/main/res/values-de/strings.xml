@@ -20,8 +20,6 @@
     <string name="invite_notifications_channel_name">"Einladungs-Mitteilungen"</string>
     <string name="invite_notification_text">"%s hat deine Einladung zu HalloApp &#x1f389; angenommen"</string>
     <string name="me">"Ich"</string>
-
-    <!-- Fuzzy -->
     <string name="you">"dich"</string>
     <string name="camera_post">"Kamera"</string>
     <string name="gallery_post">"Galerie"</string>
@@ -55,7 +53,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <!-- Fuzzy translation?  Pls. provide more details -->
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s nutzt HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s ist jetzt aktiv auf HalloApp! &#x1f389;"</string>
+    <string name="new_chat_name_placeholder">"%s nutzt HalloApp! &#x1f389;"</string>
     <string name="posts_empty">"Deine Beiträge erscheinen hier"</string>
     <string name="posts_exchange_numbers">"Um den Kontakt herzustellen, müsst ihr eure Handynummern austauschen"</string>
     <string name="home_page_empty">"Beiträge deiner Kontakte siehst du hier"</string>
@@ -172,14 +170,10 @@ Kosten deines Service-Providers könnten anfallen."</string>
         <item quantity="one">"%d neue Nachricht"</item>
         <item quantity="other">"%d neue Nachrichten"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="new_comments_notification">
         <item quantity="one">"%s hat deinen Beitrag kommentiert"</item>
         <item quantity="other">"%s haben deinen Beitrag kommentiert"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="new_comments_on_multiple_posts_notification">
         <item quantity="one">"%s hat deine Beiträge kommentiert"</item>
         <item quantity="other">"%s haben deine Beiträge kommentiert"</item>
@@ -256,11 +250,8 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="today">"Heute"</string>
 
     <!-- changed to lower case since this is in connection with "last_seen"-String. Last seen Today at %s - Last seen today at %s -->
-    <!-- Fuzzy -->
     <string name="today_at_time">"heute um %s"</string>
     <string name="yesterday">"Gestern"</string>
-
-    <!-- Fuzzy -->
     <string name="yesterday_at_time">"gestern um %s"</string>
     <string name="day_of_week_at_time">"%1$s um %2$s"</string>
     <string name="unknown_contact">"Kontakt unbekannt"</string>
@@ -298,7 +289,7 @@ Version: %2$s
     <string name="menu_item_block_user">"Benutzer blocken"</string>
     <string name="picker_title_block_user">"Benutzer blocken"</string>
     <string name="cancel">"Abbrechen"</string>
-    <string name="group_subtitle">"Für Gruppeninfo hier tippen"</string>
+    <string name="group_subtitle">"Für Gruppen-Info hier tippen"</string>
     <string name="empty_block_list">"Keine geblockten Kontakte"</string>
     <string name="block_notification">"Du hast diesen Kontakt geblockt. Für die Freigabe tippe hier"</string>
     <string name="unblock_notification">"Du hast diesen Kontakt freigegeben"</string>
@@ -386,14 +377,12 @@ Version: %2$s
     <string name="failed_create_group">"Fehler bei der Gruppenerstellung, probiere es später noch einmal"</string>
 
     <!-- Shown in options menu to remove a member of group -->
-    <!-- Fuzzy -->
     <string name="group_remove_member">"Aus der Gruppe entfernen"</string>
     <string name="group_promote_to_admin">"Zum Admin machen"</string>
     <string name="promote_admin_in_progress">"Admin-Status wird hinzugefügt…"</string>
     <string name="failed_promote_admin">"Admin-Status kann nicht geändert werden, probiere es später noch einmal"</string>
 
     <!-- Option for removing a user from the list of admins of a group -->
-    <!-- Fuzzy -->
     <string name="group_demote_from_admin">"Admin-Status entfernen"</string>
     <string name="demote_admin_in_progress">"Admin-Status wird entfernt…"</string>
     <string name="failed_demote_admin">"Admin-Status kann nicht entfernt werden, probiere es später noch einmal"</string>
@@ -492,7 +481,7 @@ Version: %2$s
 
     <!-- Generic error message when user fails to join a group via invite link -->
     <string name="invite_link_failed_to_join">"Beitritt zur Gruppe nicht möglich"</string>
-    <string name="join_group_action">"Der Gruppe beitreten"</string>
+    <string name="join_group_action">"Beitreten"</string>
     <string name="system_message_you_joined">"Du bist der Gruppe über einen Einladungs-Link beigetreten"</string>
     <string name="system_message_joined">"%s ist der Gruppe über einen Einladungs-Link beigetreten"</string>
 
@@ -548,7 +537,8 @@ Version: %2$s
     <string name="key_verification_tap_to_scan">"Zum Scannen hier tippen"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"Um die Sicherheit deiner Verbindung mit %s zu verifizieren, prüfe bitte, ob die obigen Nummern mit denen auf dem anderen Mobilgerät angezeigten übereinstimmen oder scanne den QR-Code. "<![CDATA[<a href="https://halloapp.com/help/">Mehr erfahren</a>]]>"."</string>
+    <!-- Fuzzy -->
+    <string name="key_verification_explanation">"Um die Sicherheit deiner Verbindung mit %s zu verifizieren, prüfe bitte, ob die obigen Nummern mit denen auf dem anderen Mobilgerät angezeigten übereinstimmen oder scanne den QR-Code. "<![CDATA[<a href="https://halloapp.com/blog/encrypted-chat/">Mehr erfahren</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Mehr"</string>
@@ -662,7 +652,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="export_account_data">"Meine Daten exportieren"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
-    <!-- Fuzzy -->
     <string name="e2e_notice">"Alle Nachrichten auf HalloApp sind Ende-zu-Ende verschlüsselt. &lt;b&gt;Tippe hier, um mehr zu erfahren&lt;/b&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
@@ -708,7 +697,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="settings_share_option">"HalloApp teilen"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <!-- Fuzzy -->
     <string name="share_halloapp_text">"Mach mit bei meinem HalloApp-Netzwerk für echte Beziehungen! Kostenlos herunterladen auf halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
@@ -754,7 +742,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="reshare_post">"Beitrag erneut teilen"</string>
 
     <!-- Button for going to utility for viewing expired posts -->
-    <!-- Fuzzy -->
     <string name="archived_posts">"Archivierte Beiträge"</string>
 
     <!-- Title of utility for viewing expired posts -->
@@ -897,5 +884,14 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Title for page showing groups in common -->
     <string name="groups_in_common">"Gemeinsame Gruppen"</string>
+
+    <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
+    <string name="slide_to_cancel">"Wischen zum Abbrechen"</string>
+
+    <!-- Action on messaging notifications allowing the user to reply without opening the app -->
+    <string name="reply_notification_label">"Antworten"</string>
+
+    <!-- Action on messaging notifications allowing the user to mark the conversation as read -->
+    <string name="mark_read_notification_label">"Als gelesen markieren"</string>
 </resources>
 
