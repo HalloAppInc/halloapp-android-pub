@@ -232,6 +232,7 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
                 Format format = player.getVideoFormat();
 
                 if (format == null) {
+                    Log.d("MediaExplorerActivity.computePlayerViewFinalSize: missing video format");
                     return null;
                 }
 
@@ -242,6 +243,7 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
                 return new Size((int) (format.width * scale), (int) (format.height * scale));
             }
 
+            Log.d("MediaExplorerActivity.computePlayerViewFinalSize: null player");
             return null;
     }
 
@@ -838,6 +840,7 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
                 Drawable drawable = imageView.getDrawable();
 
                 if (drawable == null) {
+                    Log.d("AnimatedOutlineProvider.getOriginalMediaSize: missing drawable");
                     return null;
                 }
 
@@ -850,14 +853,17 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
                     Format format = player.getVideoFormat();
 
                     if (format == null) {
+                        Log.d("AnimatedOutlineProvider.getOriginalMediaSize: missing video format");
                         return null;
                     }
 
                     return new Size(format.width, format.height);
                 } else {
+                    Log.d("AnimatedOutlineProvider.getOriginalMediaSize: missing player");
                     return null;
                 }
             } else {
+                Log.d("AnimatedOutlineProvider.getOriginalMediaSize: view is neither player nor image");
                 return null;
             }
         }

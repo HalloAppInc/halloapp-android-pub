@@ -111,6 +111,11 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
             if (names.size() > 0) {
                 View view = MediaPagerAdapter.getTransitionView(findViewById(R.id.container), names.get(0));
+
+                if (view == null) {
+                    Log.d("MainActivity.onMapSharedElements: missing transition view");
+                }
+
                 sharedElements.put(names.get(0), view);
             }
         }

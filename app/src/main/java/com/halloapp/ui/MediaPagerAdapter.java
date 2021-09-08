@@ -105,23 +105,26 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
                 try {
                      mediaIndex = Integer.parseInt(transitionName.substring(split + 1));
                 } catch (NumberFormatException e) {
-                    Log.e("MediaPagerAdapter/getTransitionView: media index not number", e);
+                    Log.e("MediaPagerAdapter.getTransitionView: media index not number", e);
                     return null;
                 }
 
                 ViewPager2 pager = root.findViewWithTag(getPagerTag(contentId));
                 if (pager == null) {
+                    Log.d("MediaPagerAdapter.getTransitionView: pager not found");
                     return null;
                 }
 
                 MediaPagerAdapter adapter = (MediaPagerAdapter) pager.getAdapter();
                 if (adapter == null) {
+                    Log.d("MediaPagerAdapter.getTransitionView: missing adapter");
                     return null;
                 }
 
                 Media media = adapter.media.get(mediaIndex);
                 View container = pager.findViewWithTag(media);
                 if (container == null) {
+                    Log.d("MediaPagerAdapter.getTransitionView: missing transition view container");
                     return null;
                 }
 
