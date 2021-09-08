@@ -14,6 +14,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
+import com.halloapp.Constants;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
@@ -219,6 +220,9 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
     private boolean shouldShowPost(@Nullable Post post, boolean hasContactsPerms) {
         if (post == null) {
+            return false;
+        }
+        if (post.timestamp < System.currentTimeMillis() - Constants.POSTS_EXPIRATION) {
             return false;
         }
         if (post.senderUserId.isMe()) {
