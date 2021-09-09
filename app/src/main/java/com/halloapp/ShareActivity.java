@@ -48,6 +48,8 @@ public class ShareActivity extends HalloActivity {
                     contentComposer.putExtra(ContentComposerActivity.EXTRA_CHAT_ID, chatId);
                     contentComposer.putExtra(Intent.EXTRA_TEXT, getIntent().getStringExtra(Intent.EXTRA_TEXT));
                     startActivityForResult(contentComposer, REQUEST_CONTENT_COMPOSER);
+                } else {
+                    finish();
                 }
                 break;
             default: {

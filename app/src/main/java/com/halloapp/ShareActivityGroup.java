@@ -48,6 +48,8 @@ public class ShareActivityGroup extends HalloActivity {
                     contentComposer.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, groupId);
                     contentComposer.putExtra(Intent.EXTRA_TEXT, getIntent().getStringExtra(Intent.EXTRA_TEXT));
                     startActivityForResult(contentComposer, REQUEST_CONTENT_COMPOSER);
+                } else {
+                    finish();
                 }
                 break;
             default:
