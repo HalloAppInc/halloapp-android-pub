@@ -180,8 +180,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private boolean scrollToComment = false;
     private int commentsFsePosition;
 
-    private boolean isInternalGroup;
-
     private AudioDurationLoader audioDurationLoader;
 
     private ChatInputView chatInputView;
@@ -458,11 +456,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         viewModel.post.observe(this, post -> {
             adapter.notifyDataSetChanged();
             viewModel.mentionableContacts.invalidate();
-            isInternalGroup = serverProps.getIsInternalUser() &&
-                    post != null &&
-                    post.getParentGroup() != null;
             chatInputView.setAllowMedia(serverProps.getMediaCommentsEnabled());
-            chatInputView.setAllowVoiceNoteRecording(serverProps.getVoiceNoteSendingEnabled() && isInternalGroup);
+            chatInputView.setAllowVoiceNoteRecording(serverProps.getVoiceNoteSendingEnabled());
             if (post != null) {
                 bindPost(post);
             }

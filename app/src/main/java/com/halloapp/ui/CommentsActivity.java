@@ -177,7 +177,6 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
     private int commentsFsePosition;
 
     private boolean allowVoiceNoteSending;
-    private boolean isInternalGroup;
 
     private AudioDurationLoader audioDurationLoader;
 
@@ -330,10 +329,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
         viewModel.post.observe(this, post -> {
             adapter.notifyDataSetChanged();
             viewModel.mentionableContacts.invalidate();
-            isInternalGroup = serverProps.getIsInternalUser() &&
-                    post != null &&
-                    post.getParentGroup() != null;
-            allowVoiceNoteSending = serverProps.getVoiceNoteSendingEnabled() && isInternalGroup;
+            allowVoiceNoteSending = serverProps.getVoiceNoteSendingEnabled();
             chatInputView.setAllowVoiceNoteRecording(allowVoiceNoteSending);
             chatInputView.setAllowMedia(serverProps.getMediaCommentsEnabled());
         });
