@@ -92,9 +92,11 @@ public class ViewGroupFeedActivity extends HalloActivity {
     private final SharedElementCallback sharedElementCallback = new SharedElementCallback() {
         @Override
         public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-            if (names.size() > 0) {
-                View view = MediaPagerAdapter.getTransitionView(findViewById(R.id.profile_fragment_placeholder), names.get(0));
-                sharedElements.put(names.get(0), view);
+            for (String name : names) {
+                View view = MediaPagerAdapter.getTransitionView(findViewById(R.id.profile_fragment_placeholder), name);
+                if (view != null) {
+                    sharedElements.put(name, view);
+                }
             }
         }
     };

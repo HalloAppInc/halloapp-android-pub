@@ -25,7 +25,7 @@ public class ViewAvatarActivity extends HalloActivity {
 
     private static final String EXTRA_USER_ID = "user_id";
 
-    private static final String AVATAR_TRANSITION_NAME = "image-transition-avatar";
+    private static final String AVATAR_TRANSITION_NAME = "avatar-image-transition";
 
     private PhotoView avatarView;
 

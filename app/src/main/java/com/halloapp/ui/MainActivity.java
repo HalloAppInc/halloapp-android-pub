@@ -109,14 +109,11 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     private final SharedElementCallback sharedElementCallback = new SharedElementCallback() {
         @Override
         public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-            if (names.size() > 0) {
-                View view = MediaPagerAdapter.getTransitionView(findViewById(R.id.container), names.get(0));
-
-                if (view == null) {
-                    Log.d("MainActivity.onMapSharedElements: missing transition view");
+            for (String name : names) {
+                View view = MediaPagerAdapter.getTransitionView(findViewById(R.id.container), name);
+                if (view != null) {
+                    sharedElements.put(name, view);
                 }
-
-                sharedElements.put(names.get(0), view);
             }
         }
     };
