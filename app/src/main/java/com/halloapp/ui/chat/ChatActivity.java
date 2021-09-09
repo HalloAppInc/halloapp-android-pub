@@ -112,6 +112,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class ChatActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
@@ -291,7 +292,13 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
             @Override
             public void requestVoicePermissions() {
-                EasyPermissions.requestPermissions(ChatActivity.this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSIONS_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
+                if (EasyPermissions.permissionPermanentlyDenied(ChatActivity.this, Manifest.permission.RECORD_AUDIO)) {
+                    new AppSettingsDialog.Builder(ChatActivity.this)
+                            .setRationale(getString(R.string.voice_note_record_audio_permission_rationale_denied))
+                            .build().show();
+                } else {
+                    EasyPermissions.requestPermissions(ChatActivity.this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSIONS_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
+                }
             }
         });
 

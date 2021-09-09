@@ -96,6 +96,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class CommentsActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
@@ -446,7 +447,13 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
 
             @Override
             public void requestVoicePermissions() {
-                EasyPermissions.requestPermissions(CommentsActivity.this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
+                if (EasyPermissions.permissionPermanentlyDenied(CommentsActivity.this, Manifest.permission.RECORD_AUDIO)) {
+                    new AppSettingsDialog.Builder(CommentsActivity.this)
+                            .setRationale(getString(R.string.voice_note_record_audio_permission_rationale_denied))
+                            .build().show();
+                } else {
+                    EasyPermissions.requestPermissions(CommentsActivity.this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
+                }
             }
         });
         chatInputView.bindVoiceRecorder(this, viewModel.getVoiceNoteRecorder());
