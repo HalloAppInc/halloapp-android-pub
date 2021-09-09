@@ -105,7 +105,10 @@ public class Registration {
         if (groupInviteToken != null) {
             otpRequestBuilder.setGroupInviteToken(groupInviteToken);
         }
-        me.saveNoiseKey(CryptoUtils.generateEd25519KeyPair());
+        byte[] noiseKey = me.getMyEd25519NoiseKey();
+        if (noiseKey == null) {
+            me.saveNoiseKey(CryptoUtils.generateEd25519KeyPair());
+        }
         HANoiseSocket noiseSocket = null;
         try {
             final InetAddress address = InetAddress.getByName(host);
