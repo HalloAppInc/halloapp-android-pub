@@ -102,9 +102,9 @@
             android:label="@string/select_contact"/>
 
         <activity
-            android:name=".ui.groups.GroupPickerActivity"
+            android:name=".ui.groups.PostSharePickerActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/select_group"/>
+            android:label="@string/select_post_destination"/>
 
         <activity
             android:name=".ui.GroupsInCommonActivity"
@@ -187,25 +187,7 @@
 
         <activity
             android:name=".ui.ContentComposerActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" >
-            <intent-filter
-                android:label="@string/share_option_post">
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="image/*" />
-                <data android:mimeType="video/*" />
-                <data android:mimeType="text/plain" />
-            </intent-filter>
-            <intent-filter
-                android:label="@string/share_option_post">
-                <action android:name="android.intent.action.SEND_MULTIPLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="image/*" />
-                <data android:mimeType="video/*" />
-                <data android:mimeType="text/plain" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity android:name=".ShareActivity">
             <intent-filter
@@ -226,9 +208,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ShareActivityGroup">
+        <activity android:name=".ShareActivityPost">
             <intent-filter
-                android:label="@string/share_option_group">
+                android:label="@string/share_option_post">
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="image/*" />
@@ -236,7 +218,7 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
             <intent-filter
-                android:label="@string/share_option_group">
+                android:label="@string/share_option_post">
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="image/*" />

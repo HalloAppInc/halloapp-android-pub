@@ -28,16 +28,13 @@ import com.halloapp.content.Chat;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.contacts.ContactsSectionItemDecoration;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-public class GroupPickerActivity extends HalloActivity {
+public class PostSharePickerActivity extends HalloActivity {
 
     private GroupsViewModel viewModel;
     private TextView emptyView;
@@ -45,12 +42,17 @@ public class GroupPickerActivity extends HalloActivity {
     private static final String EXTRA_TITLE_RES = "title_res";
 
     public static final String RESULT_SELECTED_ID = "selected_id";
+    public static final String RESULT_SELECTED_TYPE = "selected_item_type";
 
-    private final GroupPickerActivity.GroupsAdapter adapter = new GroupPickerActivity.GroupsAdapter();
+    public static final String RESULT_SELECTED_HOME = "type_home";
+    public static final String RESULT_SELECTED_GROUP = "type_group";
+
+
+    private final PostSharePickerActivity.GroupsAdapter adapter = new PostSharePickerActivity.GroupsAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
     public static Intent createSharePicker(@NonNull Context context) {
-        return new Intent(context, GroupPickerActivity.class);
+        return new Intent(context, PostSharePickerActivity.class);
     }
 
     @Override
@@ -63,7 +65,8 @@ public class GroupPickerActivity extends HalloActivity {
         getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
-        setContentView(R.layout.activity_groups);
+        setContentView(R.layout.activity_share_post_picker);
+
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -96,13 +99,6 @@ public class GroupPickerActivity extends HalloActivity {
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         listView.setLayoutManager(layoutManager);
         listView.setAdapter(adapter);
-        listView.addItemDecoration(new ContactsSectionItemDecoration(
-                getResources().getDimension(R.dimen.groups_list_item_header_width),
-                getResources().getDimension(R.dimen.groups_list_item_height),
-                getResources().getDimension(R.dimen.groups_list_item_header_text_size),
-                getResources().getColor(R.color.groups_list_item_header_text_color),
-                adapter::getSectionName));
-
         emptyView = findViewById(android.R.id.empty);
 
         viewModel = new ViewModelProvider(this).get(GroupsViewModel.class);
@@ -140,6 +136,7 @@ public class GroupPickerActivity extends HalloActivity {
             itemView.setOnClickListener(v -> {
                 Intent result = new Intent();
                 result.putExtra(RESULT_SELECTED_ID,  Preconditions.checkNotNull(group.chatId).rawId());
+                result.putExtra(RESULT_SELECTED_TYPE,  RESULT_SELECTED_GROUP);
                 setResult(RESULT_OK, result);
                 finish();
             });
@@ -150,7 +147,7 @@ public class GroupPickerActivity extends HalloActivity {
             avatarLoader.load(avatarView, Preconditions.checkNotNull(group.chatId), false);
             if (filterTokens != null && !filterTokens.isEmpty()) {
                 String name = group.name;
-                CharSequence formattedName = FilterUtils.formatMatchingText(GroupPickerActivity.this, name, filterTokens);
+                CharSequence formattedName = FilterUtils.formatMatchingText(PostSharePickerActivity.this, name, filterTokens);
                 if (formattedName != null) {
                     nameView.setText(formattedName);
                 } else {
@@ -163,16 +160,32 @@ public class GroupPickerActivity extends HalloActivity {
     }
 
 
-    private class GroupsAdapter extends RecyclerView.Adapter<GroupPickerActivity.ViewHolder> implements FastScrollRecyclerView.SectionedAdapter, Filterable {
+    class HomeViewHolder extends ViewHolder {
+
+        HomeViewHolder(@NonNull View itemView) {
+            super(itemView);
+            itemView.setOnClickListener(v -> {
+                Intent result = new Intent();
+                result.putExtra(RESULT_SELECTED_TYPE,  RESULT_SELECTED_HOME);
+                setResult(RESULT_OK, result);
+                finish();
+            });
+        }
+    }
+
+    private class GroupsAdapter extends RecyclerView.Adapter<PostSharePickerActivity.ViewHolder> implements Filterable {
 
         private List<Chat> groups = new ArrayList<>();
         private List<Chat> filteredGroups;
         private CharSequence filterText;
         private List<String> filterTokens;
 
+        private static final int ITEM_HOME_FEED = 0;
+        private static final int ITEM_GROUP = 1;
+
         @Override
         public Filter getFilter() {
-            return new GroupPickerActivity.GroupsFilter(groups);
+            return new PostSharePickerActivity.GroupsFilter(groups);
         }
 
         void setGroups(@NonNull List<Chat> groups) {
@@ -190,13 +203,28 @@ public class GroupPickerActivity extends HalloActivity {
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new GroupsViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.groups_list_item, parent, false));
+            if (viewType == ITEM_HOME_FEED) {
+                return new HomeViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.home_list_item, parent, false));
+            } else {
+                return new GroupsViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.groups_list_item, parent, false));
+            }
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            if (position < getFilteredGroupsCount()) {
-                holder.bindTo(filteredGroups.get(position), filterTokens);
+            if (holder instanceof HomeViewHolder) {
+                return;
+            }
+            if(filteredGroups != null) {
+                int adjustedPosition;
+                if (isSearching()) {
+                    adjustedPosition = position;
+                } else {
+                    adjustedPosition = position - 1;
+                }
+                if (adjustedPosition < getFilteredGroupsCount()) {
+                    holder.bindTo(filteredGroups.get(adjustedPosition), filterTokens);
+                }
             }
         }
 
@@ -206,21 +234,22 @@ public class GroupPickerActivity extends HalloActivity {
 
         @Override
         public int getItemCount() {
-            return getFilteredGroupsCount();
+            return getFilteredGroupsCount() + (isSearching() ? 0 : 1);
         }
 
-        @NonNull
-        @Override
-        public String getSectionName(int position) {
-            if (position < 0 || filteredGroups == null || position >= filteredGroups.size()) {
-                return "";
+        private boolean isSearching() {
+            return filteredGroups != null && filteredGroups.size() != groups.size();
+        }
+
+        public int getItemViewType(int position){
+            if (isSearching()) {
+                return ITEM_GROUP;
             }
-            final String name = filteredGroups.get(position).name;
-            if (TextUtils.isEmpty(name)) {
-                return "";
+            if (position == 0) {
+                return ITEM_HOME_FEED;
+            } else {
+                return ITEM_GROUP;
             }
-            final int codePoint = name.codePointAt(0);
-            return Character.isAlphabetic(codePoint) ? new String(Character.toChars(codePoint)).toUpperCase(Locale.getDefault()) : "#";
         }
 
     }
