@@ -45,7 +45,7 @@ import java.util.Set;
 
 public class ActivityCenterActivity extends HalloActivity {
 
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(this);
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
     private final SocialEventsAdapter adapter = new SocialEventsAdapter();
     private TextContentLoader textContentLoader;

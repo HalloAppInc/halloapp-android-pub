@@ -70,7 +70,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         canSave.addSource(nameChangedLiveData, nameChanged -> setCanSave());
         canSave.addSource(tempAvatarLiveData, bitmap -> setCanSave());
         bgWorkers.execute(() -> {
-            hasAvatarSet.postValue(AvatarLoader.getInstance(application).hasAvatar());
+            hasAvatarSet.postValue(AvatarLoader.getInstance().hasAvatar());
         });
 
     }
@@ -162,7 +162,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
 
         public UpdateProfileWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
             super(context, workerParams);
-            avatarLoader = AvatarLoader.getInstance(context);
+            avatarLoader = AvatarLoader.getInstance();
         }
 
         @Override

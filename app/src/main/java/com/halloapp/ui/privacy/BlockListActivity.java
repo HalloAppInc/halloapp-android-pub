@@ -81,7 +81,7 @@ public class BlockListActivity extends HalloActivity implements EasyPermissions.
             actionBar.setElevation(getResources().getDimension(R.dimen.action_bar_elevation));
         }
 
-        avatarLoader = AvatarLoader.getInstance(this);
+        avatarLoader = AvatarLoader.getInstance();
         viewModel = new ViewModelProvider(this).get(BlockListViewModel.class);
 
         RecyclerView recyclerView = findViewById(R.id.block_list_recyclerview);

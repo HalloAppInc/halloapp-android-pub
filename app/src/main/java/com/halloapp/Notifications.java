@@ -120,7 +120,7 @@ public class Notifications {
     private Notifications(Context context) {
         this.context = context.getApplicationContext();
         this.preferences = Preferences.getInstance();
-        this.avatarLoader = AvatarLoader.getInstance(context);
+        this.avatarLoader = AvatarLoader.getInstance();
         this.contactsDb = ContactsDb.getInstance();
         this.foregroundChat = ForegroundChat.getInstance();
     }
@@ -306,7 +306,7 @@ public class Notifications {
                 for (Message message : chatMessages) {
                     Bitmap avatar = avatars.get(message.chatId);
                     if (avatar == null) {
-                        avatar = MediaUtils.getCircledBitmap(avatarLoader.getAvatar(message.chatId));
+                        avatar = MediaUtils.getCircledBitmap(avatarLoader.getAvatar(context, message.chatId));
                         avatars.put(message.chatId, avatar);
                     }
                     final IconCompat icon = IconCompat.createWithBitmap(avatar);

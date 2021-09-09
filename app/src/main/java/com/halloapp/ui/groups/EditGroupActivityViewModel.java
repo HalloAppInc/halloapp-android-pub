@@ -85,7 +85,7 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
         canSave.addSource(nameChangedLiveData, nameChanged -> setCanSave());
         canSave.addSource(tempAvatarLiveData, bitmap -> setCanSave());
         bgWorkers.execute(() -> {
-            hasAvatarSet.postValue(AvatarLoader.getInstance(application).hasAvatar(groupId));
+            hasAvatarSet.postValue(AvatarLoader.getInstance().hasAvatar(groupId));
         });
     }
 
@@ -179,7 +179,7 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
 
         public UpdateGroupWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
             super(context, workerParams);
-            avatarLoader = AvatarLoader.getInstance(context);
+            avatarLoader = AvatarLoader.getInstance();
         }
 
         @Override

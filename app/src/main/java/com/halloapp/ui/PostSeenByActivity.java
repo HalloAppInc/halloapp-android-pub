@@ -71,7 +71,7 @@ public class PostSeenByActivity extends HalloActivity {
         viewModel.seenByList.getLiveData().observe(this, adapter::setSeenBy);
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.details_media_list_height));
-        avatarLoader = AvatarLoader.getInstance(this);
+        avatarLoader = AvatarLoader.getInstance();
 
         viewModel.postDeleted.observe(this, deleted -> {
             if (Boolean.TRUE.equals(deleted)) {

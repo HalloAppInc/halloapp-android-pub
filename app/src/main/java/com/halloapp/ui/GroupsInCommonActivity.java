@@ -93,7 +93,7 @@ public class GroupsInCommonActivity extends HalloActivity {
         textContentLoader = new TextContentLoader();
         unseenGroupPostsLoader = new UnseenGroupPostsLoader();
         systemMessageTextResolver = new SystemMessageTextResolver(contactLoader);
-        avatarLoader = AvatarLoader.getInstance(this);
+        avatarLoader = AvatarLoader.getInstance();
 
         EditText searchBox = findViewById(R.id.search_text);
         searchBox.addTextChangedListener(new TextWatcher() {

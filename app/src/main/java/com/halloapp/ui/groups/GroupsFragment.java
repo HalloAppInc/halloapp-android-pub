@@ -108,7 +108,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        avatarLoader = AvatarLoader.getInstance(this.getActivity());
+        avatarLoader = AvatarLoader.getInstance();
         globalUI = GlobalUI.getInstance();
         contactLoader = new ContactLoader();
         textContentLoader = new TextContentLoader();

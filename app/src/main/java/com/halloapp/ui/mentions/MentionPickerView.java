@@ -45,19 +45,19 @@ public class MentionPickerView extends FrameLayout {
 
     public MentionPickerView(@NonNull Context context) {
         super(context);
-        avatarLoader = AvatarLoader.getInstance(context);
+        avatarLoader = AvatarLoader.getInstance();
         init();
     }
 
     public MentionPickerView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        avatarLoader = AvatarLoader.getInstance(context);
+        avatarLoader = AvatarLoader.getInstance();
         init();
     }
 
     public MentionPickerView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        avatarLoader = AvatarLoader.getInstance(context);
+        avatarLoader = AvatarLoader.getInstance();
         init();
     }
 

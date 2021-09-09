@@ -71,7 +71,7 @@ public class ViewGroupFeedActivity extends HalloActivity {
         return intent;
     }
 
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(this);
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
     private GroupFeedViewModel viewModel;
 

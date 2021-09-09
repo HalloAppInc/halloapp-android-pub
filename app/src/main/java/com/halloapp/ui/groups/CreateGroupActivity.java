@@ -326,7 +326,7 @@ public class CreateGroupActivity extends HalloActivity {
             avatarView = itemView.findViewById(R.id.avatar);
             nameView = itemView.findViewById(R.id.name);
             phoneView = itemView.findViewById(R.id.phone);
-            avatarLoader = AvatarLoader.getInstance(itemView.getContext());
+            avatarLoader = AvatarLoader.getInstance();
         }
 
         void bindTo(@NonNull Contact contact) {

@@ -254,7 +254,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         contactLoader = new ContactLoader();
         chatLoader = new ChatLoader();
         replyLoader = new ReplyLoader(getResources().getDimensionPixelSize(R.dimen.reply_thumb_size));
-        avatarLoader = AvatarLoader.getInstance(this);
+        avatarLoader = AvatarLoader.getInstance();
         presenceLoader = PresenceLoader.getInstance();
         textContentLoader = new TextContentLoader();
         audioDurationLoader = new AudioDurationLoader(this);

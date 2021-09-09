@@ -53,7 +53,7 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(requireActivity()).get(MyProfileViewModel.class);
 
-        avatarLoader = AvatarLoader.getInstance(getContext());
+        avatarLoader = AvatarLoader.getInstance();
         View root = inflater.inflate(R.layout.fragment_settings_home, container, false);
         scrollView = root.findViewById(R.id.container);
 

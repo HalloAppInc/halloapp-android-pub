@@ -518,7 +518,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
         contactLoader = new ContactLoader();
-        avatarLoader = AvatarLoader.getInstance(this);
+        avatarLoader = AvatarLoader.getInstance();
         chatLoader = new ChatLoader();
         textContentLoader = new TextContentLoader();
 

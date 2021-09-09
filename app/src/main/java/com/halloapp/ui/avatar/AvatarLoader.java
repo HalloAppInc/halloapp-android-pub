@@ -53,7 +53,6 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     private static AvatarLoader instance;
 
-    private Context context;
     private final Connection connection;
     private final ContactsDb contactsDb;
     private final LruCache<String, Bitmap> cache;
@@ -63,20 +62,18 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     private boolean isDarkMode;
 
-    public static AvatarLoader getInstance(Context context) {
+    public static AvatarLoader getInstance() {
         if (instance == null) {
             synchronized (AvatarLoader.class) {
                 if (instance == null) {
-                    instance = new AvatarLoader(AppContext.getInstance().get(), Connection.getInstance(), ContactsDb.getInstance());
+                    instance = new AvatarLoader(Connection.getInstance(), ContactsDb.getInstance());
                 }
             }
         }
-        instance.context = context;
         return instance;
     }
 
-    private AvatarLoader(@NonNull Context context, @NonNull Connection connection, @NonNull ContactsDb contactsDb) {
-        this.context = context.getApplicationContext();
+    private AvatarLoader(@NonNull Connection connection, @NonNull ContactsDb contactsDb) {
         this.connection = connection;
         this.contactsDb = contactsDb;
 
@@ -118,7 +115,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             @Override
             public void showResult(@NonNull ImageView view, Bitmap result) {
                 if (result == null) {
-                    view.setImageDrawable(getDefaultAvatar(chatId));
+                    view.setImageDrawable(getDefaultAvatar(view.getContext(), chatId));
                 } else {
                     view.setImageBitmap(result);
                 }
@@ -126,7 +123,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
             @Override
             public void showLoading(@NonNull ImageView view) {
-                view.setImageDrawable(getDefaultAvatar(chatId));
+                view.setImageDrawable(getDefaultAvatar(view.getContext(), chatId));
             }
         };
         load(view, loader, displayer, chatId.rawId(), cache);
@@ -140,7 +137,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             @Override
             public void showResult(@NonNull ImageView view, Bitmap result) {
                 if (result == null) {
-                    view.setImageDrawable(getDefaultAvatar(chatId));
+                    view.setImageDrawable(getDefaultAvatar(view.getContext(), chatId));
                 } else {
                     view.setImageBitmap(result);
                 }
@@ -148,7 +145,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
             @Override
             public void showLoading(@NonNull ImageView view) {
-                view.setImageDrawable(getDefaultAvatar(chatId));
+                view.setImageDrawable(getDefaultAvatar(view.getContext(), chatId));
             }
         };
         load(view, loader, displayer, chatId.rawId(), cache);
@@ -165,7 +162,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     }
 
     @WorkerThread
-    @NonNull public Bitmap getAvatar(@NonNull ChatId chatId) {
+    @NonNull public Bitmap getAvatar(@NonNull Context context, @NonNull ChatId chatId) {
         Bitmap avatar = cache.get(chatId.rawId());
         if (avatar != null) {
             return avatar;
@@ -176,7 +173,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             cache.put(chatId.rawId(), avatar);
         }
 
-        return avatar != null ? avatar : drawableToBitmap(getDefaultAvatar(chatId));
+        return avatar != null ? avatar : drawableToBitmap(getDefaultAvatar(context, chatId));
     }
 
     @WorkerThread
@@ -282,7 +279,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         return contactAvatarInfo;
     }
 
-    @NonNull private Drawable getDefaultAvatar(@NonNull ChatId chatId) {
+    @NonNull private Drawable getDefaultAvatar(@NonNull Context context, @NonNull ChatId chatId) {
         int localMode = AppCompatDelegate.getDefaultNightMode();
         boolean darkMode = localMode == AppCompatDelegate.MODE_NIGHT_YES ||
                 ((localMode == AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM) && (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES);
@@ -291,17 +288,17 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             defaultGroupAvatar = null;
             defaultUserAvatar = null;
         }
-        return chatId instanceof GroupId ? getDefaultGroupAvatar() : getDefaultUserAvatar();
+        return chatId instanceof GroupId ? getDefaultGroupAvatar(context) : getDefaultUserAvatar(context);
     }
 
-    @NonNull private Drawable getDefaultUserAvatar() {
+    @NonNull private Drawable getDefaultUserAvatar(@NonNull Context context) {
         if (defaultUserAvatar == null) {
             defaultUserAvatar = ContextCompat.getDrawable(context, R.drawable.avatar_person);
         }
         return defaultUserAvatar;
     }
 
-    @NonNull private Drawable getDefaultGroupAvatar() {
+    @NonNull private Drawable getDefaultGroupAvatar(@NonNull Context context) {
         if (defaultGroupAvatar == null) {
             defaultGroupAvatar = ContextCompat.getDrawable(context, R.drawable.avatar_groups_placeholder);
         }

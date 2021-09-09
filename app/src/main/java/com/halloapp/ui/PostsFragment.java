@@ -87,7 +87,7 @@ public class PostsFragment extends HalloFragment {
         chatLoader = new ChatLoader();
         contactLoader = new ContactLoader();
         seenByLoader = new SeenByLoader();
-        avatarLoader = AvatarLoader.getInstance(getActivity());
+        avatarLoader = AvatarLoader.getInstance();
         audioDurationLoader = new AudioDurationLoader(requireContext());
         textContentLoader = new TextContentLoader();
         ContactsDb.getInstance().addObserver(contactsObserver);

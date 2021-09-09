@@ -91,7 +91,7 @@ public class ProfileFragment extends PostsFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("ProfileFragment: onCreate");
-        avatarLoader = AvatarLoader.getInstance(getActivity());
+        avatarLoader = AvatarLoader.getInstance();
     }
 
     @Override

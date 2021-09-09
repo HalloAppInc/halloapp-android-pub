@@ -36,7 +36,7 @@ public class GroupInviteLinkQrActivity extends HalloActivity {
     private static final String EXTRA_URL_FOR_QR = "qr_url";
     private static final String EXTRA_GROUP_ID = "group_id";
 
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance(this);
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

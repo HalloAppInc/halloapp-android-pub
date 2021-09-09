@@ -389,7 +389,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
         contactLoader = new ContactLoader();
-        avatarLoader = AvatarLoader.getInstance(this);
+        avatarLoader = AvatarLoader.getInstance();
         textContentLoader = new TextContentLoader();
 
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);

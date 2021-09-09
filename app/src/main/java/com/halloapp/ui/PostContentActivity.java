@@ -230,7 +230,7 @@ public class PostContentActivity extends HalloActivity {
         chatLoader = new ChatLoader();
         contactLoader = new ContactLoader();
         seenByLoader = new SeenByLoader();
-        avatarLoader = AvatarLoader.getInstance(this);
+        avatarLoader = AvatarLoader.getInstance();
         textContentLoader = new TextContentLoader();
         audioDurationLoader = new AudioDurationLoader(this);
         ContactsDb.getInstance().addObserver(contactsObserver);
