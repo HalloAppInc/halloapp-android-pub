@@ -380,7 +380,7 @@ class CommentsViewModel extends AndroidViewModel {
                     RandomId.create(),
                     replyCommentId,
                     System.currentTimeMillis(),
-                    false,
+                    Comment.TRANSFERRED_NO,
                     true,
                     null);
             comment.setParentPost(post.getValue());
@@ -407,7 +407,7 @@ class CommentsViewModel extends AndroidViewModel {
                 RandomId.create(),
                 replyCommentId,
                 System.currentTimeMillis(),
-                false,
+                Comment.TRANSFERRED_NO,
                 true,
                 postText);
         comment.setParentPost(post.getValue());

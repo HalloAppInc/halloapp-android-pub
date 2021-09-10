@@ -35,6 +35,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptStats;
+import com.halloapp.util.stats.GroupDecryptStats;
 import com.halloapp.xmpp.feed.FeedContentParser;
 
 import java.util.ArrayList;
@@ -1084,6 +1085,16 @@ public class ContentDb {
     @WorkerThread
     public DecryptStats getMessageDecryptStats(String messageId) {
         return messagesDb.getMessageDecryptStats(messageId);
+    }
+
+    @WorkerThread
+    public List<GroupDecryptStats> getGroupPostDecryptStats(long lastRowId) {
+        return postsDb.getGroupPostDecryptStats(lastRowId);
+    }
+
+    @WorkerThread
+    public List<GroupDecryptStats> getGroupCommentDecryptStats(long lastRowId) {
+        return postsDb.getGroupCommentDecryptStats(lastRowId);
     }
 
     @WorkerThread

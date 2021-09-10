@@ -11,7 +11,7 @@ public class VoiceNoteComment extends Comment {
             String commentId,
             String parentCommentId,
             long timestamp,
-            boolean transferred,
+            @TransferredState int transferred,
             boolean seen,
             String text) {
         super(rowId, postId, senderUserId, commentId, parentCommentId, timestamp, transferred, seen, text);

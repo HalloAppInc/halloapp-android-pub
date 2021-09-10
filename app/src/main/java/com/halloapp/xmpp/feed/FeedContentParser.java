@@ -42,7 +42,7 @@ public class FeedContentParser {
         return user.equals(me.getUser());
     }
 
-    public Comment parseComment(@NonNull String id, @NonNull UserId publisherId, long timestamp, @NonNull CommentContainer commentContainer) {
+    public Comment parseComment(@NonNull String id, @Nullable String parentCommentId, @NonNull UserId publisherId, long timestamp, @NonNull CommentContainer commentContainer, boolean decryptFailed) {
         CommentContext context = commentContainer.getContext();
 
         switch (commentContainer.getCommentCase()) {
@@ -55,7 +55,7 @@ public class FeedContentParser {
                         id,
                         context.getParentCommentId(),
                         timestamp,
-                        true,
+                        decryptFailed ? Comment.TRANSFERRED_DECRYPT_FAILED : Comment.TRANSFERRED_YES,
                         false,
                         caption.getText()
                 );
@@ -89,7 +89,7 @@ public class FeedContentParser {
                         id,
                         context.getParentCommentId(),
                         timestamp,
-                        true,
+                        decryptFailed ? Comment.TRANSFERRED_DECRYPT_FAILED : Comment.TRANSFERRED_YES,
                         false,
                         text.getText()
                 );
@@ -108,7 +108,7 @@ public class FeedContentParser {
                         id,
                         context.getParentCommentId(),
                         timestamp,
-                        true,
+                        decryptFailed ? Comment.TRANSFERRED_DECRYPT_FAILED : Comment.TRANSFERRED_YES,
                         false,
                         null
                 );
@@ -124,7 +124,7 @@ public class FeedContentParser {
                         id,
                         context.getParentCommentId(),
                         timestamp,
-                        true,
+                        decryptFailed ? Comment.TRANSFERRED_DECRYPT_FAILED : Comment.TRANSFERRED_YES,
                         false,
                         null
                 );
@@ -134,11 +134,11 @@ public class FeedContentParser {
         }
     }
 
-    public Post parsePost(@NonNull String id, @NonNull UserId posterUserId, long timestamp, @NonNull PostContainer postContainer) {
+    public Post parsePost(@NonNull String id, @NonNull UserId posterUserId, long timestamp, @NonNull PostContainer postContainer, boolean decryptFailure) {
         switch (postContainer.getPostCase()) {
             default:
             case POST_NOT_SET: {
-                @Post.TransferredState int transferState = Post.TRANSFERRED_YES;
+                @Post.TransferredState int transferState = decryptFailure ? Post.TRANSFERRED_DECRYPT_FAILED : Post.TRANSFERRED_YES;
                 FutureProofPost futureproofPost = new FutureProofPost(-1, posterUserId, id, timestamp, transferState, Post.SEEN_NO, null);
                 futureproofPost.setProtoBytes(postContainer.toByteArray());
 
@@ -146,7 +146,7 @@ public class FeedContentParser {
             }
             case TEXT: {
                 Text text = postContainer.getText();
-                Post np = new Post(-1, posterUserId, id, timestamp, Post.TRANSFERRED_YES, Post.SEEN_NO, text.getText());
+                Post np = new Post(-1, posterUserId, id, timestamp, decryptFailure ? Post.TRANSFERRED_DECRYPT_FAILED : Post.TRANSFERRED_YES, Post.SEEN_NO, text.getText());
                 for (com.halloapp.proto.clients.Mention mentionProto : text.getMentionsList()) {
                     Mention mention = Mention.parseFromProto(mentionProto);
                     processMention(mention);
@@ -157,7 +157,7 @@ public class FeedContentParser {
             case ALBUM: {
                 Album album = postContainer.getAlbum();
                 Text caption = album.getText();
-                Post np = new Post(-1, posterUserId, id, timestamp, posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO, Post.SEEN_NO, caption.getText());
+                Post np = new Post(-1, posterUserId, id, timestamp, decryptFailure ? Post.TRANSFERRED_DECRYPT_FAILED : posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO, Post.SEEN_NO, caption.getText());
                 for (AlbumMedia albumMedia : album.getMediaList()) {
                     switch (albumMedia.getMediaCase()) {
                         case IMAGE: {

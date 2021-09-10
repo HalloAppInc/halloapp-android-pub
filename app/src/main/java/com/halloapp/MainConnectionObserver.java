@@ -44,6 +44,8 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptReportStats;
+import com.halloapp.util.stats.GroupCommentDecryptReportStats;
+import com.halloapp.util.stats.GroupPostDecryptReportStats;
 import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
@@ -85,6 +87,8 @@ public class MainConnectionObserver extends Connection.Observer {
     private final DecryptReportStats decryptReportStats;
     private final GroupFeedKeyManager groupFeedKeyManager;
     private final SignalSessionManager signalSessionManager;
+    private final GroupPostDecryptReportStats groupPostDecryptReportStats;
+    private final GroupCommentDecryptReportStats groupCommentDecryptReportStats;
 
     public static MainConnectionObserver getInstance(@NonNull Context context) {
         if (instance == null) {
@@ -111,7 +115,9 @@ public class MainConnectionObserver extends Connection.Observer {
                             ForegroundObserver.getInstance(),
                             DecryptReportStats.getInstance(),
                             GroupFeedKeyManager.getInstance(),
-                            SignalSessionManager.getInstance());
+                            SignalSessionManager.getInstance(),
+                            GroupPostDecryptReportStats.getInstance(),
+                            GroupCommentDecryptReportStats.getInstance());
                 }
             }
         }
@@ -140,7 +146,9 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull ForegroundObserver foregroundObserver,
             @NonNull DecryptReportStats decryptReportStats,
             @NonNull GroupFeedKeyManager groupFeedKeyManager,
-            @NonNull SignalSessionManager signalSessionManager) {
+            @NonNull SignalSessionManager signalSessionManager,
+            @NonNull GroupPostDecryptReportStats groupPostDecryptReportStats,
+            @NonNull GroupCommentDecryptReportStats groupCommentDecryptReportStats) {
         this.context = context.getApplicationContext();
 
         this.me = me;
@@ -163,6 +171,8 @@ public class MainConnectionObserver extends Connection.Observer {
         this.decryptReportStats = decryptReportStats;
         this.groupFeedKeyManager = groupFeedKeyManager;
         this.signalSessionManager = signalSessionManager;
+        this.groupPostDecryptReportStats = groupPostDecryptReportStats;
+        this.groupCommentDecryptReportStats = groupCommentDecryptReportStats;
     }
 
     @Override
@@ -177,6 +187,8 @@ public class MainConnectionObserver extends Connection.Observer {
         presenceLoader.onReconnect();
         groupsSync.startGroupsSync();
         decryptReportStats.start();
+        groupPostDecryptReportStats.start();
+        groupCommentDecryptReportStats.start();
     }
 
     @Override
@@ -445,7 +457,7 @@ public class MainConnectionObserver extends Connection.Observer {
 
     @Override
     public void onCommentRevoked(@NonNull String id, @NonNull UserId commentSenderId, @NonNull String postId, long timestamp) {
-        Comment comment = new Comment(0, postId, commentSenderId, id, null, timestamp, !commentSenderId.isMe(), true, null);
+        Comment comment = new Comment(0, postId, commentSenderId, id, null, timestamp, !commentSenderId.isMe() ? Comment.TRANSFERRED_YES : Comment.TRANSFERRED_NO, true, null);
         contentDb.retractComment(comment);
     }
 

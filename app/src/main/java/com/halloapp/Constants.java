@@ -4,7 +4,8 @@ import android.text.format.DateUtils;
 
 public class Constants {
 
-    public static final String USER_AGENT = "HalloApp/Android" + BuildConfig.VERSION_NAME + (BuildConfig.DEBUG ? "D" : "");
+    public static final String FULL_VERSION = BuildConfig.VERSION_NAME + (BuildConfig.DEBUG ? "D" : "");
+    public static final String USER_AGENT = "HalloApp/Android" + FULL_VERSION;
 
     public static final String MAIN_WEBSITE_URL = "https://www.halloapp.com/";
     public static final String ABOUT_PAGE_URL = "https://www.halloapp.com/about";

@@ -30,7 +30,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 49;
+    private static final int DATABASE_VERSION = 50;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -57,7 +57,11 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + PostsTable.COLUMN_GROUP_ID + " TEXT,"
                 + PostsTable.COLUMN_TYPE + " INTEGER DEFAULT 0,"
                 + PostsTable.COLUMN_USAGE + " INTEGER DEFAULT 0,"
-                + PostsTable.COLUMN_REREQUEST_COUNT + " INTEGER DEFAULT 0"
+                + PostsTable.COLUMN_REREQUEST_COUNT + " INTEGER DEFAULT 0,"
+                + PostsTable.COLUMN_FAILURE_REASON + " TEXT,"
+                + PostsTable.COLUMN_CLIENT_VERSION + " TEXT,"
+                + PostsTable.COLUMN_RECEIVE_TIME + " INTEGER,"
+                + PostsTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER"
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + ArchiveTable.TABLE_NAME);
@@ -235,7 +239,11 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + CommentsTable.COLUMN_SEEN + " INTEGER,"
                 + CommentsTable.COLUMN_TEXT + " TEXT,"
                 + CommentsTable.COLUMN_TYPE + " INTEGER,"
-                + CommentsTable.COLUMN_REREQUEST_COUNT + " INTEGER DEFAULT 0"
+                + CommentsTable.COLUMN_REREQUEST_COUNT + " INTEGER DEFAULT 0,"
+                + CommentsTable.COLUMN_FAILURE_REASON + " TEXT,"
+                + CommentsTable.COLUMN_CLIENT_VERSION + " TEXT,"
+                + CommentsTable.COLUMN_RECEIVE_TIME + " INTEGER,"
+                + CommentsTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + CommentsTable.INDEX_COMMENT_KEY);
@@ -476,6 +484,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 48: {
                 upgradeFromVersion48(db);
+            }
+            case 49: {
+                upgradeFromVersion49(db);
             }
             break;
             default: {
@@ -964,6 +975,18 @@ class ContentDbHelper extends SQLiteOpenHelper {
     private void upgradeFromVersion48(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_REREQUEST_COUNT + " INTEGER DEFAULT 0");
         db.execSQL("ALTER TABLE " + CommentsTable.TABLE_NAME + " ADD COLUMN " + CommentsTable.COLUMN_REREQUEST_COUNT + " INTEGER DEFAULT 0");
+    }
+
+    private void upgradeFromVersion49(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_FAILURE_REASON + " TEXT");
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_CLIENT_VERSION + " TEXT");
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_RECEIVE_TIME + " INTEGER");
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER");
+
+        db.execSQL("ALTER TABLE " + CommentsTable.TABLE_NAME + " ADD COLUMN " + CommentsTable.COLUMN_FAILURE_REASON + " TEXT");
+        db.execSQL("ALTER TABLE " + CommentsTable.TABLE_NAME + " ADD COLUMN " + CommentsTable.COLUMN_CLIENT_VERSION + " TEXT");
+        db.execSQL("ALTER TABLE " + CommentsTable.TABLE_NAME + " ADD COLUMN " + CommentsTable.COLUMN_RECEIVE_TIME + " INTEGER");
+        db.execSQL("ALTER TABLE " + CommentsTable.TABLE_NAME + " ADD COLUMN " + CommentsTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER");
     }
 
     /**

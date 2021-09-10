@@ -192,6 +192,8 @@ public class GroupFeedKeyManager {
             Log.i("GroupFeedKeyManager.getInboundMessageKey chain key " + Hex.encode(chainKey) + " -> " + Hex.encode(updatedChainKey));
             CryptoByteUtils.nullify(chainKey, updatedChainKey);
             return messageKey;
+        } catch (NullPointerException e) {
+            throw new CryptoException("group_inbound_key_null", e);
         } catch (GeneralSecurityException e) {
             throw new CryptoException("group_inbound_key_fail", e);
         }
@@ -210,6 +212,8 @@ public class GroupFeedKeyManager {
             Log.i("GroupFeedKeyManager.getOutboundMessageKey chain key " + Hex.encode(chainKey) + " -> " + Hex.encode(updatedChainKey));
             CryptoByteUtils.nullify(chainKey, updatedChainKey);
             return messageKey;
+        } catch (NullPointerException e) {
+            throw new CryptoException("group_outbound_key_null", e);
         } catch (GeneralSecurityException e) {
             throw new CryptoException("group_outbound_key_fail", e);
         }

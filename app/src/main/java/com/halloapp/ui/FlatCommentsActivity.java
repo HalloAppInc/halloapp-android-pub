@@ -985,7 +985,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
             avatarLoader.load(avatarView, comment.senderUserId);
 
-            progressView.setVisibility(comment.transferred ? View.GONE : View.VISIBLE);
+            progressView.setVisibility(comment.transferred != Comment.TRANSFERRED_NO ? View.GONE : View.VISIBLE);
             TimeFormatter.setTimePostsFormat(timeView, comment.timestamp);
             timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
 
@@ -1182,7 +1182,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
             bindParentComment(comment.parentCommentId != null, comment.parentComment);
 
-            progressView.setVisibility(comment.transferred ? View.GONE : View.VISIBLE);
+            progressView.setVisibility(comment.transferred != Comment.TRANSFERRED_NO ? View.GONE : View.VISIBLE);
             TimeFormatter.setTimePostsFormat(timeView, comment.timestamp);
             timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
 

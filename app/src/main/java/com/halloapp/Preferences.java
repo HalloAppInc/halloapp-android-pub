@@ -52,6 +52,8 @@ public class Preferences {
     private static final String PREF_KEY_NEXT_NOTIF_ID = "next_notif_id";
     private static final String PREF_KEY_NEXT_PRESENCE_ID = "next_presence_id";
     private static final String PREF_KEY_LAST_DECRYPT_MESSAGE_ROW_ID = "last_decrypt_message_row_id";
+    private static final String PREF_KEY_LAST_GROUP_POST_DECRYPT_MESSAGE_ROW_ID = "last_group_post_decrypt_message_row_id";
+    private static final String PREF_KEY_LAST_GROUP_COMMENT_DECRYPT_MESSAGE_ROW_ID = "last_group_comment_decrypt_message_row_id";
     private static final String PREF_KEY_LAST_SILENT_DECRYPT_MESSAGE_ROW_ID = "last_silent_decrypt_message_row_id";
     private static final String PREF_KEY_VIDEO_BITRATE = "video_bitrate";
     private static final String PREF_KEY_AUDIO_BITRATE = "audio_bitrate";
@@ -121,6 +123,8 @@ public class Preferences {
     private final StringPreference prefActivePrivacyList = createPref(false, PREF_KEY_FEED_PRIVACY_SETTING, PrivacyList.Type.INVALID);
     private final IntPreference prefNextNotificationId = createPref(false, PREF_KEY_NEXT_NOTIF_ID, Notifications.FIRST_DYNAMIC_NOTIFICATION_ID);
     private final LongPreference prefLastDecryptStatRowId = createPref(false, PREF_KEY_LAST_DECRYPT_MESSAGE_ROW_ID, -1L);
+    private final LongPreference prefLastGroupPostDecryptStatRowId = createPref(false, PREF_KEY_LAST_GROUP_POST_DECRYPT_MESSAGE_ROW_ID, -1L);
+    private final LongPreference prefLastGroupCommentDecryptStatRowId = createPref(false, PREF_KEY_LAST_GROUP_COMMENT_DECRYPT_MESSAGE_ROW_ID, -1L);
     private final LongPreference prefLastSeenPostTime = createPref(false, PREF_KEY_LAST_SEEN_POST_TIME, 0L);
     private final IntPreference prefVideoBitrate = createPref(false, PREF_KEY_VIDEO_BITRATE, Constants.VIDEO_BITRATE);
     private final IntPreference prefAudioBitrate = createPref(false, PREF_KEY_AUDIO_BITRATE, Constants.AUDIO_BITRATE);
@@ -502,6 +506,26 @@ public class Preferences {
     @WorkerThread
     public void setLastDecryptStatMessageRowId(long id) {
         prefLastDecryptStatRowId.set(id);
+    }
+
+    @WorkerThread
+    public long getLastGroupPostDecryptStatMessageRowId() {
+        return prefLastGroupPostDecryptStatRowId.get();
+    }
+
+    @WorkerThread
+    public void setLastGroupPostDecryptStatMessageRowId(long id) {
+        prefLastGroupPostDecryptStatRowId.set(id);
+    }
+
+    @WorkerThread
+    public long getLastGroupCommentDecryptStatMessageRowId() {
+        return prefLastGroupCommentDecryptStatRowId.get();
+    }
+
+    @WorkerThread
+    public void setLastGroupCommentDecryptStatMessageRowId(long id) {
+        prefLastGroupCommentDecryptStatRowId.set(id);
     }
 
     @WorkerThread

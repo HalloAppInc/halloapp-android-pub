@@ -25,9 +25,13 @@ public class Comment extends ContentItem {
 
     private Post parentPost;
 
-    public final boolean transferred;
+    public final @TransferredState int transferred;
     public boolean seen;
     public int rerequestCount;
+
+    // stats not read from DB
+    public String failureReason;
+    public String clientVersion;
 
     @Nullable
     public Contact senderContact;
@@ -35,6 +39,13 @@ public class Comment extends ContentItem {
     public Comment parentComment;
 
     public final List<Mention> mentions = new ArrayList<>();
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({TRANSFERRED_NO, TRANSFERRED_YES, TRANSFERRED_DECRYPT_FAILED})
+    public @interface TransferredState {}
+    public static final int TRANSFERRED_NO = 0;
+    public static final int TRANSFERRED_YES = 1;
+    public static final int TRANSFERRED_DECRYPT_FAILED = 2;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({TYPE_USER, TYPE_FUTURE_PROOF, TYPE_VOICE_NOTE, TYPE_RETRACTED})
@@ -53,7 +64,7 @@ public class Comment extends ContentItem {
             String commentId,
             String parentCommentId,
             long timestamp,
-            boolean transferred,
+            @TransferredState int transferred,
             boolean seen,
             String text) {
         super(rowId, senderUserId, commentId, timestamp, text);
@@ -70,7 +81,7 @@ public class Comment extends ContentItem {
     }
 
     public boolean shouldSend() {
-        return !transferred;
+        return transferred == Comment.TRANSFERRED_NO;
     }
 
     @Override

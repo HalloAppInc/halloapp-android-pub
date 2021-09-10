@@ -805,7 +805,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
             avatarLoader.load(avatarView, comment.senderUserId);
             contactLoader.load(nameView, comment.senderUserId);
 
-            progressView.setVisibility(comment.transferred ? View.GONE : View.VISIBLE);
+            progressView.setVisibility(comment.transferred != Comment.TRANSFERRED_NO ? View.GONE : View.VISIBLE);
             TimeFormatter.setTimePostsFormat(timeView, comment.timestamp);
             timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
 
@@ -965,7 +965,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
             }
             avatarView.setLayoutParams(params);
 
-            progressView.setVisibility(comment.transferred ? View.GONE : View.VISIBLE);
+            progressView.setVisibility(comment.transferred != Comment.TRANSFERRED_NO ? View.GONE : View.VISIBLE);
             TimeFormatter.setTimePostsFormat(timeView, comment.timestamp);
             timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
 

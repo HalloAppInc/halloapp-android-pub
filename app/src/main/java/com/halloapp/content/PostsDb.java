@@ -19,6 +19,7 @@ import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
+import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.SeenTable;
 import com.halloapp.id.GroupId;
@@ -28,6 +29,7 @@ import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.CommentContainer;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+import com.halloapp.util.stats.GroupDecryptStats;
 import com.halloapp.xmpp.feed.FeedContentParser;
 
 import java.io.File;
@@ -117,51 +119,77 @@ class PostsDb {
         if (post.timestamp < getPostExpirationTime()) {
             throw new SQLiteConstraintException("attempting to add expired post");
         }
-        final ContentValues values = new ContentValues();
-        values.put(PostsTable.COLUMN_SENDER_USER_ID, post.senderUserId.rawId());
-        values.put(PostsTable.COLUMN_POST_ID, post.id);
-        values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
-        values.put(PostsTable.COLUMN_TRANSFERRED, post.transferred);
-        values.put(PostsTable.COLUMN_SEEN, post.seen);
-        values.put(PostsTable.COLUMN_AUDIENCE_TYPE, post.getAudienceType());
-        values.put(PostsTable.COLUMN_TYPE, post.type);
-        values.put(PostsTable.COLUMN_USAGE, post.usage);
-        if (post.getParentGroup() != null) {
-            values.put(PostsTable.COLUMN_GROUP_ID, post.getParentGroup().rawId());
-        }
-        if (post.text != null) {
-            values.put(PostsTable.COLUMN_TEXT, post.text);
-        }
+        long now = System.currentTimeMillis();
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
-        Log.i("ContentDb.addPost got rowid " + post.rowId + " for " + post);
+        db.beginTransaction();
 
-        mediaDb.addMedia(post);
+        try {
+            Long tombstoneRowId = null;
+            String tombstoneSql = "SELECT " + PostsTable._ID + " FROM " + PostsTable.TABLE_NAME + " WHERE " + PostsTable.COLUMN_POST_ID + "=? AND " + PostsTable.COLUMN_TRANSFERRED + "=" + Post.TRANSFERRED_DECRYPT_FAILED;
+            try (Cursor cursor = db.rawQuery(tombstoneSql, new String[]{post.id})) {
+                if (cursor.moveToNext()) {
+                    tombstoneRowId = cursor.getLong(0);
+                }
+            }
 
-        final List<UserId> audienceList = post.getAudienceList();
-        if (audienceList != null) {
-            for (UserId userId : audienceList) {
-                final ContentValues audienceUser = new ContentValues();
-                audienceUser.put(AudienceTable.COLUMN_POST_ID, post.id);
-                audienceUser.put(AudienceTable.COLUMN_USER_ID, userId.rawId());
-                db.insertWithOnConflict(AudienceTable.TABLE_NAME, null, audienceUser, SQLiteDatabase.CONFLICT_IGNORE);
+            final ContentValues values = new ContentValues();
+            values.put(PostsTable.COLUMN_SENDER_USER_ID, post.senderUserId.rawId());
+            values.put(PostsTable.COLUMN_POST_ID, post.id);
+            values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
+            values.put(PostsTable.COLUMN_TRANSFERRED, post.transferred);
+            values.put(PostsTable.COLUMN_SEEN, post.seen);
+            values.put(PostsTable.COLUMN_AUDIENCE_TYPE, post.getAudienceType());
+            values.put(PostsTable.COLUMN_TYPE, post.type);
+            values.put(PostsTable.COLUMN_USAGE, post.usage);
+            values.put(PostsTable.COLUMN_RESULT_UPDATE_TIME, now);
+            values.put(PostsTable.COLUMN_FAILURE_REASON, post.failureReason);
+            values.put(PostsTable.COLUMN_CLIENT_VERSION, post.clientVersion);
+            if (post.getParentGroup() != null) {
+                values.put(PostsTable.COLUMN_GROUP_ID, post.getParentGroup().rawId());
             }
-        }
-        final List<UserId> excludeList = post.getExcludeList();
-        if (excludeList != null) {
-            for (UserId userId : excludeList) {
-                final ContentValues excludedUserValues = new ContentValues();
-                excludedUserValues.put(AudienceTable.COLUMN_POST_ID, post.id);
-                excludedUserValues.put(AudienceTable.COLUMN_USER_ID, userId.rawId());
-                excludedUserValues.put(AudienceTable.COLUMN_EXCLUDED, true);
-                db.insertWithOnConflict(AudienceTable.TABLE_NAME, null, excludedUserValues, SQLiteDatabase.CONFLICT_IGNORE);
+            if (post.text != null) {
+                values.put(PostsTable.COLUMN_TEXT, post.text);
             }
+
+            if (tombstoneRowId != null) {
+                db.update(PostsTable.TABLE_NAME, values, PostsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
+                post.rowId = tombstoneRowId;
+            } else {
+                values.put(PostsTable.COLUMN_RECEIVE_TIME, now);
+                post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+            }
+            Log.i("ContentDb.addPost got rowid " + post.rowId + " for " + post);
+
+            mediaDb.addMedia(post);
+
+            final List<UserId> audienceList = post.getAudienceList();
+            if (audienceList != null) {
+                for (UserId userId : audienceList) {
+                    final ContentValues audienceUser = new ContentValues();
+                    audienceUser.put(AudienceTable.COLUMN_POST_ID, post.id);
+                    audienceUser.put(AudienceTable.COLUMN_USER_ID, userId.rawId());
+                    db.insertWithOnConflict(AudienceTable.TABLE_NAME, null, audienceUser, SQLiteDatabase.CONFLICT_IGNORE);
+                }
+            }
+            final List<UserId> excludeList = post.getExcludeList();
+            if (excludeList != null) {
+                for (UserId userId : excludeList) {
+                    final ContentValues excludedUserValues = new ContentValues();
+                    excludedUserValues.put(AudienceTable.COLUMN_POST_ID, post.id);
+                    excludedUserValues.put(AudienceTable.COLUMN_USER_ID, userId.rawId());
+                    excludedUserValues.put(AudienceTable.COLUMN_EXCLUDED, true);
+                    db.insertWithOnConflict(AudienceTable.TABLE_NAME, null, excludedUserValues, SQLiteDatabase.CONFLICT_IGNORE);
+                }
+            }
+            mentionsDb.addMentions(post);
+            if (post instanceof FutureProofPost) {
+                futureProofDb.saveFutureProof((FutureProofPost) post);
+            }
+            db.setTransactionSuccessful();
+            Log.i("ContentDb.addPost: added " + post);
+        } finally {
+            db.endTransaction();
         }
-        mentionsDb.addMentions(post);
-        if (post instanceof FutureProofPost) {
-            futureProofDb.saveFutureProof((FutureProofPost) post);
-        }
-        Log.i("ContentDb.addPost: added " + post);
     }
 
     @WorkerThread
@@ -557,24 +585,51 @@ class PostsDb {
         if (comment.timestamp < getPostExpirationTime()) {
             throw new SQLiteConstraintException("attempting to add expired comment");
         }
-        final ContentValues values = new ContentValues();
-        values.put(CommentsTable.COLUMN_POST_ID, comment.postId);
-        values.put(CommentsTable.COLUMN_COMMENT_SENDER_USER_ID, comment.senderUserId.rawId());
-        values.put(CommentsTable.COLUMN_COMMENT_ID, comment.id);
-        values.put(CommentsTable.COLUMN_PARENT_ID, comment.parentCommentId);
-        values.put(CommentsTable.COLUMN_TIMESTAMP, comment.timestamp);
-        values.put(CommentsTable.COLUMN_TRANSFERRED, comment.transferred);
-        values.put(CommentsTable.COLUMN_SEEN, comment.seen);
-        values.put(CommentsTable.COLUMN_TEXT, comment.text);
-        values.put(CommentsTable.COLUMN_TYPE, comment.type);
+
+        long now = System.currentTimeMillis();
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
-        mediaDb.addMedia(comment);
-        mentionsDb.addMentions(comment);
-        if (comment instanceof FutureProofComment) {
-            futureProofDb.saveFutureProof((FutureProofComment) comment);
+        db.beginTransaction();
+        try {
+            Long tombstoneRowId = null;
+            String tombstoneSql = "SELECT " + CommentsTable._ID + " FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_COMMENT_ID + "=? AND " + CommentsTable.COLUMN_TRANSFERRED + "=" + Comment.TRANSFERRED_DECRYPT_FAILED;
+            try (Cursor cursor = db.rawQuery(tombstoneSql, new String[]{comment.id})) {
+                if (cursor.moveToNext()) {
+                    tombstoneRowId = cursor.getLong(0);
+                }
+            }
+
+            final ContentValues values = new ContentValues();
+            values.put(CommentsTable.COLUMN_POST_ID, comment.postId);
+            values.put(CommentsTable.COLUMN_COMMENT_SENDER_USER_ID, comment.senderUserId.rawId());
+            values.put(CommentsTable.COLUMN_COMMENT_ID, comment.id);
+            values.put(CommentsTable.COLUMN_PARENT_ID, comment.parentCommentId);
+            values.put(CommentsTable.COLUMN_TIMESTAMP, comment.timestamp);
+            values.put(CommentsTable.COLUMN_TRANSFERRED, comment.transferred);
+            values.put(CommentsTable.COLUMN_SEEN, comment.seen);
+            values.put(CommentsTable.COLUMN_TEXT, comment.text);
+            values.put(CommentsTable.COLUMN_TYPE, comment.type);
+            values.put(CommentsTable.COLUMN_RESULT_UPDATE_TIME, now);
+            values.put(CommentsTable.COLUMN_FAILURE_REASON, comment.failureReason);
+            values.put(CommentsTable.COLUMN_CLIENT_VERSION, comment.clientVersion);
+
+            if (tombstoneRowId != null) {
+                db.update(CommentsTable.TABLE_NAME, values, CommentsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
+                comment.rowId = tombstoneRowId;
+            } else {
+                values.put(CommentsTable.COLUMN_RECEIVE_TIME, now);
+                comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+            }
+
+            mediaDb.addMedia(comment);
+            mentionsDb.addMentions(comment);
+            if (comment instanceof FutureProofComment) {
+                futureProofDb.saveFutureProof((FutureProofComment) comment);
+            }
+            db.setTransactionSuccessful();
+            Log.i("ContentDb.addComment: added " + comment);
+        } finally {
+            db.endTransaction();
         }
-        Log.i("ContentDb.addComment: added " + comment);
     }
 
     @WorkerThread
@@ -718,6 +773,80 @@ class PostsDb {
         try (final Cursor cursor = db.rawQuery(query, new String[]{UserId.ME.rawId()})) {
             return cursor.getCount();
         }
+    }
+
+    @WorkerThread
+    public List<GroupDecryptStats> getGroupPostDecryptStats(long lastRowId) {
+        List<GroupDecryptStats> ret = new ArrayList<>();
+        final String sql =
+                "SELECT " + PostsTable.TABLE_NAME + "." + PostsTable._ID + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_REREQUEST_COUNT + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_FAILURE_REASON + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_CLIENT_VERSION + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RECEIVE_TIME + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RESULT_UPDATE_TIME
+                        + " FROM " + PostsTable.TABLE_NAME
+                        + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " > ? AND " + PostsTable.COLUMN_GROUP_ID + " IS NOT NULL";
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(lastRowId)})) {
+            while (cursor.moveToNext()) {
+                ret.add(new GroupDecryptStats(
+                        cursor.getLong(0),
+                        cursor.getString(1),
+                        new GroupId(cursor.getString(2)),
+                        false,
+                        cursor.getInt(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getLong(6),
+                        cursor.getLong(7)
+                ));
+            }
+        }
+        return ret;
+    }
+
+    @WorkerThread
+    public List<GroupDecryptStats> getGroupCommentDecryptStats(long lastRowId) {
+        List<GroupDecryptStats> ret = new ArrayList<>();
+        final String sql =
+                "SELECT " + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID + ","
+                        + "p." + PostsTable.COLUMN_GROUP_ID + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_REREQUEST_COUNT + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_FAILURE_REASON + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_CLIENT_VERSION + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RECEIVE_TIME + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RESULT_UPDATE_TIME
+                        + " FROM " + CommentsTable.TABLE_NAME
+                        + " LEFT JOIN (" +
+                            "SELECT " +
+                            PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "," +
+                            PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID +
+                            " FROM " + PostsTable.TABLE_NAME + ") " +
+                            "AS p ON " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_POST_ID + "=p." + PostsTable.COLUMN_POST_ID
+                        + " WHERE " + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + " > ? AND p." + PostsTable.COLUMN_GROUP_ID + " IS NOT NULL";
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(lastRowId)})) {
+            while (cursor.moveToNext()) {
+                ret.add(new GroupDecryptStats(
+                        cursor.getLong(0),
+                        cursor.getString(1),
+                        new GroupId(cursor.getString(2)),
+                        true,
+                        cursor.getInt(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getLong(6),
+                        cursor.getLong(7)
+                ));
+            }
+        }
+        return ret;
     }
 
     @WorkerThread
@@ -870,7 +999,7 @@ class PostsDb {
                                 firstCommentId,
                                 null,
                                 cursor.getLong(25),
-                                true,
+                                Comment.TRANSFERRED_YES,
                                 true,
                                 cursor.getString(24));
                         post.firstComment.setParentPost(post);
@@ -1198,7 +1327,7 @@ class PostsDb {
                         cursor.getString(5),
                         cursor.getString(3),
                         cursor.getLong(2),
-                        cursor.getInt(6) == 1,
+                        cursor.getInt(6),
                         cursor.getInt(7) == 1,
                         cursor.getString(8));
                 comment.type = cursor.getInt(9);
@@ -1234,7 +1363,7 @@ class PostsDb {
                         cursor.getString(5),
                         cursor.getString(3),
                         cursor.getLong(2),
-                        cursor.getInt(6) == 1,
+                        cursor.getInt(6),
                         cursor.getInt(7) == 1,
                         cursor.getString(8));
                 comment.type = cursor.getInt(9);
@@ -1428,7 +1557,7 @@ class PostsDb {
                         cursor.getString(3),
                         cursor.getString(4),
                         cursor.getLong(5),
-                        cursor.getInt(6) == 1,
+                        cursor.getInt(6),
                         cursor.getInt(8) == 1,
                         cursor.getString(7));
                 if (checkedIds.contains(comment.postId)) {
@@ -1476,7 +1605,7 @@ class PostsDb {
                         cursor.getString(3),
                         cursor.getString(4),
                         cursor.getLong(5),
-                        cursor.getInt(6) == 1,
+                        cursor.getInt(6),
                         cursor.getInt(8) == 1,
                         cursor.getString(7));
                 comment.rerequestCount = cursor.getInt(9);
@@ -1531,7 +1660,7 @@ class PostsDb {
                         cursor.getString(3),
                         cursor.getString(4),
                         cursor.getLong(5),
-                        cursor.getInt(6) == 1,
+                        cursor.getInt(6),
                         cursor.getInt(8) == 1,
                         cursor.getString(7));
                 mentionsDb.fillMentions(comment);
@@ -1571,7 +1700,7 @@ class PostsDb {
                         cursor.getString(3),
                         cursor.getString(4),
                         cursor.getLong(5),
-                        cursor.getInt(6) == 1,
+                        cursor.getInt(6),
                         cursor.getInt(7) == 1,
                         cursor.getString(8));
                 if (!checkedIds.contains(comment.postId)) {
@@ -1831,7 +1960,7 @@ class PostsDb {
                         cursor.getString(3),
                         cursor.getString(4),
                         cursor.getLong(5),
-                        cursor.getInt(6) == 1,
+                        cursor.getInt(6),
                         cursor.getInt(7) == 1,
                         cursor.getString(8));
                 if (!checkedPosts.contains(comment.postId)) {
@@ -2001,7 +2130,7 @@ class PostsDb {
         for (FutureProofComment futureProofComment : futureProofComments) {
             try {
                 CommentContainer commentContainer = CommentContainer.parseFrom(futureProofComment.getProtoBytes());
-                Comment comment = parser.parseComment(futureProofComment.id, futureProofComment.senderUserId, futureProofComment.timestamp, commentContainer);
+                Comment comment = parser.parseComment(futureProofComment.id, futureProofComment.parentCommentId, futureProofComment.senderUserId, futureProofComment.timestamp, commentContainer, false);
                 if (comment instanceof FutureProofComment) {
                     continue;
                 }
@@ -2063,7 +2192,7 @@ class PostsDb {
                         cursor.getString(3),
                         cursor.getString(4),
                         cursor.getLong(5),
-                        cursor.getInt(6) == 1,
+                        cursor.getInt(6),
                         cursor.getInt(7) == 1,
                         cursor.getString(8));
                 if (!checkedPosts.contains(comment.postId)) {

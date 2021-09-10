@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.BuildConfig;
+import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
@@ -224,7 +225,7 @@ public class ChatMessageProtocol {
 
         message.senderPlatform = senderPlatform;
         message.senderVersion = senderVersion;
-        message.clientVersion = BuildConfig.VERSION_NAME + (BuildConfig.DEBUG ? "D" : "");
+        message.clientVersion = Constants.FULL_VERSION;
         message.failureReason = failureReason;
 
         return message;

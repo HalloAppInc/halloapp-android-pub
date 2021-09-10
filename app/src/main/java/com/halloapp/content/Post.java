@@ -34,10 +34,11 @@ public class Post extends ContentItem {
     public static final int SEEN_NO_HIDDEN = 3;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TRANSFERRED_NO, TRANSFERRED_YES})
+    @IntDef({TRANSFERRED_NO, TRANSFERRED_YES, TRANSFERRED_DECRYPT_FAILED})
     public @interface TransferredState {}
     public static final int TRANSFERRED_NO = 0;
     public static final int TRANSFERRED_YES = 1;
+    public static final int TRANSFERRED_DECRYPT_FAILED = 2;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({TYPE_USER, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_RETRACTED})
@@ -52,6 +53,10 @@ public class Post extends ContentItem {
     public int seenByCount;
     public int rerequestCount;
     public Comment firstComment;
+
+    // stats not read from DB
+    public String failureReason;
+    public String clientVersion;
 
     private @PrivacyList.Type String audienceType;
     private List<UserId> audienceList;

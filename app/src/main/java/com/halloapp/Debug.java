@@ -203,7 +203,7 @@ public class Debug {
                             RandomId.create(),
                             null,
                             timestamp,
-                            false,
+                            Comment.TRANSFERRED_NO,
                             false,
                             "TESTING COMMENT DUP"
                     );

@@ -9,6 +9,7 @@ import androidx.annotation.WorkerThread;
 
 import com.google.android.gms.common.util.Hex;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.halloapp.BuildConfig;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
 import com.halloapp.Me;
@@ -1397,6 +1398,7 @@ public class ConnectionImpl extends Connection {
             UserId publisherUserId = getUserId(Long.toString(protoPost.getPublisherUid()));
             byte[] payload = protoPost.getPayload().toByteArray();
 
+            String errorMessage = null;
             if (groupId != null) {
                 byte[] encPayload = protoPost.getEncPayload().toByteArray();
                 if (encPayload != null && encPayload.length > 0) {
@@ -1410,7 +1412,7 @@ public class ConnectionImpl extends Connection {
                         stats.reportGroupDecryptSuccess(false);
                     } catch (CryptoException e) {
                         Log.e("Failed to decrypt group post", e);
-                        String errorMessage = e.getMessage();
+                        errorMessage = e.getMessage();
                         Log.sendErrorReport("Group post decryption failed: " + errorMessage);
                         stats.reportGroupDecryptError(errorMessage, false);
 
@@ -1438,6 +1440,9 @@ public class ConnectionImpl extends Connection {
                 // NOTE: publishedEntry.timestamp == 1000L * protoPost.getTimestamp()
                 UserId posterUserId = getUserId(Long.toString(protoPost.getPublisherUid()));
                 @Post.TransferredState int transferState = publishedEntry.media.isEmpty() || posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO;
+                if (errorMessage != null) {
+                    transferState = Post.TRANSFERRED_DECRYPT_FAILED;
+                }
                 Post np = new Post(-1, posterUserId, protoPost.getId(), publishedEntry.timestamp, transferState, Post.SEEN_NO, publishedEntry.text);
                 for (PublishedEntry.Media entryMedia : publishedEntry.media) {
                     np.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
@@ -1450,13 +1455,21 @@ public class ConnectionImpl extends Connection {
                     processMention(mention);
                     np.mentions.add(mention);
                 }
+
+                np.clientVersion = Constants.FULL_VERSION;
+                np.failureReason = errorMessage;
+
                 return np;
             } else {
                 PostContainer postContainer = container.getPostContainer();
                 UserId posterUserId = getUserId(Long.toString(protoPost.getPublisherUid()));
                 long timeStamp = 1000L * protoPost.getTimestamp();
 
-                return feedContentParser.parsePost(protoPost.getId(), posterUserId, timeStamp, postContainer);
+                Post post = feedContentParser.parsePost(protoPost.getId(), posterUserId, timeStamp, postContainer, errorMessage != null);
+                post.clientVersion = Constants.FULL_VERSION;
+                post.failureReason = errorMessage;
+
+                return post;
             }
         }
 
@@ -1468,6 +1481,7 @@ public class ConnectionImpl extends Connection {
             UserId publisherUserId = getUserId(Long.toString(protoComment.getPublisherUid()));
             byte[] payload = protoComment.getPayload().toByteArray();
 
+            String errorMessage = null;
             if (groupId != null) {
                 byte[] encPayload = protoComment.getEncPayload().toByteArray();
                 if (encPayload != null && encPayload.length > 0) {
@@ -1481,7 +1495,7 @@ public class ConnectionImpl extends Connection {
                         stats.reportGroupDecryptSuccess(true);
                     } catch (CryptoException e) {
                         Log.e("Failed to decrypt group comment", e);
-                        String errorMessage = e.getMessage();
+                        errorMessage = e.getMessage();
                         Log.sendErrorReport("Group comment decryption failed: " + errorMessage);
                         stats.reportGroupDecryptError(errorMessage, true);
 
@@ -1513,7 +1527,7 @@ public class ConnectionImpl extends Connection {
                         publishedEntry.id,
                         publishedEntry.parentCommentId,
                         publishedEntry.timestamp,
-                        true,
+                        errorMessage == null ? Comment.TRANSFERRED_YES : Comment.TRANSFERRED_DECRYPT_FAILED,
                         false,
                         publishedEntry.text
                 );
@@ -1528,13 +1542,22 @@ public class ConnectionImpl extends Connection {
                     processMention(mention);
                     comment.mentions.add(mention);
                 }
+
+                comment.clientVersion = Constants.FULL_VERSION;
+                comment.failureReason = errorMessage;
+
                 return comment;
             } else {
                 CommentContainer commentContainer = container.getCommentContainer();
                 long timestamp = protoComment.getTimestamp() * 1000L;
                 UserId publisherId = getUserId(Long.toString(protoComment.getPublisherUid()));
 
-                return feedContentParser.parseComment(protoComment.getId(), publisherId, timestamp, commentContainer);
+                Comment comment = feedContentParser.parseComment(protoComment.getId(), protoComment.getParentCommentId(), publisherId, timestamp, commentContainer, errorMessage != null);
+
+                comment.clientVersion = Constants.FULL_VERSION;
+                comment.failureReason = errorMessage;
+
+                return comment;
             }
         }
 
