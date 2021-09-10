@@ -110,6 +110,7 @@ public class HalloApp extends Application {
             ContentDb.getInstance().migrateGroupTimestamps(); // TODO(clark): Remove after Oct 1
             ContentDb.getInstance().checkIndexes();
             ContactsDb.getInstance().checkIndexes();
+            ApkHasher.getInstance().run(this);
         });
     }
 

@@ -48,6 +48,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.halloapp.ApkHasher;
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.ContentDraftManager;
@@ -226,6 +227,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // TODO(jack): Remove once we've fixed the null ChatId crash
+        Log.d("Digest: " + ApkHasher.getInstance().get());
 
         supportRequestWindowFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
         supportRequestWindowFeature(Window.FEATURE_CONTENT_TRANSITIONS);
