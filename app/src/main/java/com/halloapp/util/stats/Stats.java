@@ -33,6 +33,7 @@ public class Stats {
     private final DecryptCounter decryption = new DecryptCounter();
     private final GroupSuccessCounter groupEncryption = new GroupSuccessCounter();
     private final GroupDecryptCounter groupDecryption = new GroupDecryptCounter();
+    private final SignalResetCounter signalResetCounter = new SignalResetCounter();
 
     private boolean scheduled = false;
     private final Timer timer = new Timer();
@@ -86,6 +87,10 @@ public class Stats {
 
     public void reportGroupDecryptError(String error, boolean isComment) {
         groupDecryption.reportError(error, isComment);
+    }
+
+    public void reportSignalSessionEstablished(boolean isReset) {
+        signalResetCounter.report(isReset);
     }
 
     private class TimerUploadCounter extends Counter {
@@ -194,6 +199,20 @@ public class Stats {
                     .put(DIM_RESULT, "fail")
                     .put(DIM_FAILURE_REASON, error)
                     .put(DIM_ITEM_TYPE, isComment ? "comment" : "post");
+            reportEvent(builder.build());
+        }
+    }
+
+    private class SignalResetCounter extends TimerUploadCounter {
+        private static final String DIM_RESET = "reset";
+
+        public SignalResetCounter() {
+            super("crypto", "e2e_session");
+        }
+
+        public void report(boolean isReset) {
+            Dimensions.Builder builder = new Dimensions.Builder()
+                    .put(DIM_RESET, isReset ? "true" : "false");
             reportEvent(builder.build());
         }
     }

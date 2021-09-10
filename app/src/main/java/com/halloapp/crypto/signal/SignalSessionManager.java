@@ -22,6 +22,7 @@ import com.halloapp.proto.server.IdentityKey;
 import com.halloapp.proto.clients.SignedPreKey;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+import com.halloapp.util.stats.Stats;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
 import com.halloapp.xmpp.util.ObservableErrorException;
@@ -41,6 +42,7 @@ import java.util.concurrent.ConcurrentMap;
 public class SignalSessionManager {
     private static final long MIN_TIME_BETWEEN_KEY_DOWNLOAD_ATTEMPTS = 5 * DateUtils.SECOND_IN_MILLIS;
 
+    private final Stats stats;
     private final Connection connection;
     private final SignalKeyManager signalKeyManager;
     private final EncryptedKeyStore encryptedKeyStore;
@@ -53,14 +55,15 @@ public class SignalSessionManager {
         if (instance == null) {
             synchronized (SignalSessionManager.class) {
                 if (instance == null) {
-                    instance = new SignalSessionManager(Connection.getInstance(), SignalKeyManager.getInstance(), EncryptedKeyStore.getInstance());
+                    instance = new SignalSessionManager(Stats.getInstance(), Connection.getInstance(), SignalKeyManager.getInstance(), EncryptedKeyStore.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private SignalSessionManager(Connection connection, SignalKeyManager signalKeyManager, EncryptedKeyStore encryptedKeyStore) {
+    private SignalSessionManager(Stats stats, Connection connection, SignalKeyManager signalKeyManager, EncryptedKeyStore encryptedKeyStore) {
+        this.stats = stats;
         this.connection = connection;
         this.signalKeyManager = signalKeyManager;
         this.encryptedKeyStore = encryptedKeyStore;
@@ -108,7 +111,7 @@ public class SignalSessionManager {
             } else {
                 Log.i("Resetting session because teardown key did not match", e);
                 signalKeyManager.tearDownSession(peerUserId);
-                setUpSession(peerUserId);
+                setUpSession(peerUserId, true);
             }
             throw e;
         } catch (InterruptedException e) {
@@ -129,7 +132,7 @@ public class SignalSessionManager {
 
         final UserId recipientUserId = (UserId)message.chatId;
         try (AutoCloseLock autoCloseLock = acquireLock(recipientUserId)) {
-            SessionSetupInfo sessionSetupInfo = setUpSession(recipientUserId);
+            SessionSetupInfo sessionSetupInfo = setUpSession(recipientUserId, false);
             connection.sendMessage(message, sessionSetupInfo);
         } catch (Exception e) {
             Log.e("Failed to set up encryption session", e);
@@ -139,7 +142,7 @@ public class SignalSessionManager {
 
     public SessionSetupInfo getSessionSetupInfo(final @NonNull UserId peerUserId) throws Exception {
         try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
-            return setUpSession(peerUserId);
+            return setUpSession(peerUserId, false);
         } catch (Exception e) {
             Log.e("Failed to set up encryption session", e);
             Log.sendErrorReport("Failed to get session setup info");
@@ -168,7 +171,7 @@ public class SignalSessionManager {
         return protoKeys;
     }
 
-    private SessionSetupInfo setUpSession(UserId peerUserId) throws CryptoException {
+    private SessionSetupInfo setUpSession(UserId peerUserId, boolean isReset) throws CryptoException {
         boolean missingOutboundKeyId = encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId) == -1;
 
         if (!missingOutboundKeyId && encryptedKeyStore.getPeerResponded(peerUserId)) {
@@ -218,6 +221,8 @@ public class SignalSessionManager {
                 }
 
                 signalKeyManager.setUpSession(peerUserId, peerIdentityKey, peerSignedPreKey, oneTimePreKey);
+
+                stats.reportSignalSessionEstablished(isReset);
             } catch (InvalidProtocolBufferException e) {
                 throw new CryptoException("invalid_protobuf", e);
             } catch (InterruptedException | ObservableErrorException e) {
