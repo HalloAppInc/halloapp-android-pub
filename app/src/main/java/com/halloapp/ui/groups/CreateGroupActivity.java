@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.telephony.PhoneNumberUtils;
+import android.text.BidiFormatter;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.SpannableString;
@@ -32,6 +34,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.WorkInfo;
 
 import com.halloapp.Constants;
+import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.id.GroupId;
@@ -104,7 +107,7 @@ public class CreateGroupActivity extends HalloActivity {
         }
 
         Intent cancelIntent = new Intent();
-        cancelIntent.putParcelableArrayListExtra(RESULT_USER_IDS, userIds);
+        cancelIntent.putParcelableArrayListExtra(RESULT_USER_IDS, new ArrayList<>(userIds));
         setResult(RESULT_CANCELED, cancelIntent);
 
         viewModel = new ViewModelProvider(this, new CreateGroupViewModel.Factory(getApplication(), userIds)).get(CreateGroupViewModel.class);
@@ -292,7 +295,7 @@ public class CreateGroupActivity extends HalloActivity {
         @NonNull
         @Override
         public String getSectionName(int position) {
-            if (position <= 0 || contacts == null || position >= contacts.size() + 1) {
+            if (position <= 1 || contacts == null || position >= contacts.size() + 1) {
                 return "";
             }
             final String name = contacts.get(position - 1).getDisplayName();
@@ -315,6 +318,7 @@ public class CreateGroupActivity extends HalloActivity {
     }
 
     static class ContactViewHolder extends ViewHolder {
+        private final Me me;
         private final AvatarLoader avatarLoader;
 
         final private ImageView avatarView;
@@ -326,13 +330,20 @@ public class CreateGroupActivity extends HalloActivity {
             avatarView = itemView.findViewById(R.id.avatar);
             nameView = itemView.findViewById(R.id.name);
             phoneView = itemView.findViewById(R.id.phone);
+
+            me = Me.getInstance();
             avatarLoader = AvatarLoader.getInstance();
         }
 
         void bindTo(@NonNull Contact contact) {
             avatarLoader.load(avatarView, Preconditions.checkNotNull(contact.userId));
-            nameView.setText(contact.getDisplayName());
-            phoneView.setText(contact.getDisplayPhone());
+            if (contact.userId.isMe()) {
+                nameView.setText(R.string.me);
+                phoneView.setText(BidiFormatter.getInstance().unicodeWrap(PhoneNumberUtils.formatNumber("+" + me.getPhone(), null)));
+            } else {
+                nameView.setText(contact.getDisplayName());
+                phoneView.setText(contact.getDisplayPhone());
+            }
         }
     }
 
@@ -342,7 +353,7 @@ public class CreateGroupActivity extends HalloActivity {
             super(itemView);
 
             TextView membersTextView = itemView.findViewById(R.id.members_header_text);
-            membersTextView.setText(getString(R.string.members_header, Integer.toString(userIds.size())));
+            membersTextView.setText(getString(R.string.members_header, Integer.toString(userIds.size() + 1)));
         }
     }
 }

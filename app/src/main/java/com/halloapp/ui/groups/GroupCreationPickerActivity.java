@@ -29,6 +29,7 @@ public class GroupCreationPickerActivity extends MultipleContactPickerActivity {
         intent.putExtra(EXTRA_TITLE_RES, R.string.group_picker_title);
         intent.putExtra(EXTRA_ACTION_RES, R.string.next);
         intent.putExtra(EXTRA_ONLY_FRIENDS, false);
+        intent.putExtra(EXTRA_ALLOW_EMPTY_SELECTION, true);
         return intent;
     }
 

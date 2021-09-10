@@ -67,6 +67,7 @@ public class CreateGroupViewModel extends AndroidViewModel {
                     ret.add(contactsDb.getContact(userId));
                 }
                 Contact.sort(ret);
+                ret.add(0, new Contact(UserId.ME, null, null));
                 return ret;
             }
         };
