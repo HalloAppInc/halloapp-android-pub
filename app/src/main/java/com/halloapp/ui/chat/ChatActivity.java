@@ -126,10 +126,15 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     public static final String EXTRA_COPY_TEXT = "copy_text";
     public static final String EXTRA_OPEN_KEYBOARD = "open_keyboard";
 
+    private static final String EXTRA_FROM_NOTIF = "from_notif";
     private static final String EXTRA_CHAT_ID = "chat_id";
     private static final String DUMMY_ACTION = "dummy_action";
 
     public static Intent open(@NonNull Context context, @NonNull ChatId chatId) {
+        return open(context, chatId, false);
+    }
+
+    public static Intent open(@NonNull Context context, @NonNull ChatId chatId, boolean fromNotification) {
         //noinspection ConstantConditions
         if (chatId == null) {
             throw new IllegalArgumentException("Trying to open ChatActivity for null chatId");
@@ -138,6 +143,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         }
         Intent intent = new Intent(context, ChatActivity.class);
         intent.putExtra(EXTRA_CHAT_ID, chatId);
+        intent.putExtra(EXTRA_FROM_NOTIF, fromNotification);
         intent.setAction(DUMMY_ACTION); // A StackOverflow user claimed this fixed extras getting dropped
         return intent;
     }
@@ -231,7 +237,13 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         super.onCreate(savedInstanceState);
 
         // TODO(jack): Remove once we've fixed the null ChatId crash
-        Log.d("Digest: " + ApkHasher.getInstance().get());
+        Log.d("ChatActivity digest: " + ApkHasher.getInstance().get());
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            for (String key : extras.keySet()) {
+                Log.d("ChatActivity got extra " + key + " -> " + extras.get(key));
+            }
+        }
 
         supportRequestWindowFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
         supportRequestWindowFeature(Window.FEATURE_CONTENT_TRANSITIONS);

@@ -336,7 +336,7 @@ public class Notifications {
                         .setStyle(style)
                         .addAction(replyAction)
                         .addAction(markReadAction);
-                final Intent contentIntent = ChatActivity.open(context, chatId);
+                final Intent contentIntent = ChatActivity.open(context, chatId, true);
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
                 final Intent parentIntent = new Intent(context, MainActivity.class);
                 parentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -367,7 +367,7 @@ public class Notifications {
                 builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE_MESSAGES, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
             } else {
                 final ChatId chatId = chatsIds.get(0);
-                final Intent contentIntent = ChatActivity.open(context, chatId);
+                final Intent contentIntent = ChatActivity.open(context, chatId, true);
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
                 final Intent parentIntent = new Intent(context, MainActivity.class);
                 parentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -644,7 +644,7 @@ public class Notifications {
                 .setContentText(context.getString(R.string.invite_notification_text, contact.getShortName()))
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        final Intent contentIntent = ChatActivity.open(context, Preconditions.checkNotNull(contact.userId));
+        final Intent contentIntent = ChatActivity.open(context, Preconditions.checkNotNull(contact.userId), true);
         builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(id, builder.build());

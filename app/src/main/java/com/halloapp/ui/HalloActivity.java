@@ -86,6 +86,12 @@ public class HalloActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        logTrace("onNewIntent");
+        super.onNewIntent(intent);
+    }
+
+    @Override
     public void startActivity(Intent intent) {
         ComponentName component = intent.getComponent();
         logTrace("startActivity", component == null ? "" : component.getShortClassName());
