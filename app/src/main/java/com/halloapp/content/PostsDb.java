@@ -2001,7 +2001,7 @@ class PostsDb {
         for (FutureProofComment futureProofComment : futureProofComments) {
             try {
                 CommentContainer commentContainer = CommentContainer.parseFrom(futureProofComment.getProtoBytes());
-                Comment comment = parser.parseComment(futureProofComment.id, futureProofComment.parentCommentId, futureProofComment.senderUserId, futureProofComment.timestamp, commentContainer);
+                Comment comment = parser.parseComment(futureProofComment.id, futureProofComment.senderUserId, futureProofComment.timestamp, commentContainer);
                 if (comment instanceof FutureProofComment) {
                     continue;
                 }

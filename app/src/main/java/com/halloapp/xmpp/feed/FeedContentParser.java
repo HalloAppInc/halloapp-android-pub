@@ -42,7 +42,7 @@ public class FeedContentParser {
         return user.equals(me.getUser());
     }
 
-    public Comment parseComment(@NonNull String id, @Nullable String parentCommentId, @NonNull UserId publisherId, long timestamp, @NonNull CommentContainer commentContainer) {
+    public Comment parseComment(@NonNull String id, @NonNull UserId publisherId, long timestamp, @NonNull CommentContainer commentContainer) {
         CommentContext context = commentContainer.getContext();
 
         switch (commentContainer.getCommentCase()) {
@@ -53,7 +53,7 @@ public class FeedContentParser {
                         context.getFeedPostId(),
                         publisherId,
                         id,
-                        parentCommentId,
+                        context.getParentCommentId(),
                         timestamp,
                         true,
                         false,
@@ -87,7 +87,7 @@ public class FeedContentParser {
                         context.getFeedPostId(),
                         publisherId,
                         id,
-                        parentCommentId,
+                        context.getParentCommentId(),
                         timestamp,
                         true,
                         false,
@@ -106,7 +106,7 @@ public class FeedContentParser {
                         context.getFeedPostId(),
                         publisherId,
                         id,
-                        parentCommentId,
+                        context.getParentCommentId(),
                         timestamp,
                         true,
                         false,
@@ -122,7 +122,7 @@ public class FeedContentParser {
                         context.getFeedPostId(),
                         publisherId,
                         id,
-                        parentCommentId,
+                        context.getParentCommentId(),
                         timestamp,
                         true,
                         false,

@@ -1534,7 +1534,7 @@ public class ConnectionImpl extends Connection {
                 long timestamp = protoComment.getTimestamp() * 1000L;
                 UserId publisherId = getUserId(Long.toString(protoComment.getPublisherUid()));
 
-                return feedContentParser.parseComment(protoComment.getId(), protoComment.getParentCommentId(), publisherId, timestamp, commentContainer);
+                return feedContentParser.parseComment(protoComment.getId(), publisherId, timestamp, commentContainer);
             }
         }
 
