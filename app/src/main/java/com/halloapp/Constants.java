@@ -54,7 +54,6 @@ public class Constants {
     public static final int MAX_REREQUESTS_PER_MESSAGE = 5;
 
     public static final boolean SEND_CONTAINER = BuildConfig.DEBUG;
-    public static final boolean RENDER_MARKDOWN = BuildConfig.DEBUG;
 
     public static final boolean USE_NOISE_FOR_REGISTRATION = true;
 }
