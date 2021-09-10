@@ -44,6 +44,7 @@ import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.ui.contacts.ContactsSectionItemDecoration;
+import com.halloapp.ui.contacts.MultipleContactPickerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
@@ -107,7 +108,7 @@ public class CreateGroupActivity extends HalloActivity {
         }
 
         Intent cancelIntent = new Intent();
-        cancelIntent.putParcelableArrayListExtra(RESULT_USER_IDS, new ArrayList<>(userIds));
+        cancelIntent.putParcelableArrayListExtra(MultipleContactPickerActivity.EXTRA_SELECTED_IDS, new ArrayList<>(userIds));
         setResult(RESULT_CANCELED, cancelIntent);
 
         viewModel = new ViewModelProvider(this, new CreateGroupViewModel.Factory(getApplication(), userIds)).get(CreateGroupViewModel.class);

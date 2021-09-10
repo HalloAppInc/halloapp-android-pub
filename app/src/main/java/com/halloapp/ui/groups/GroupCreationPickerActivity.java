@@ -16,6 +16,8 @@ import com.halloapp.util.logs.Log;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 public class GroupCreationPickerActivity extends MultipleContactPickerActivity {
 
@@ -65,6 +67,9 @@ public class GroupCreationPickerActivity extends MultipleContactPickerActivity {
                         startActivity(ViewGroupFeedActivity.viewFeed(getApplicationContext(), groupId));
                     }
                     finish();
+                } else if (data != null) {
+                    List<UserId> userIds = data.getParcelableArrayListExtra(EXTRA_SELECTED_IDS);
+                    selectedContacts = new LinkedHashSet<>(userIds);
                 }
                 break;
             default:

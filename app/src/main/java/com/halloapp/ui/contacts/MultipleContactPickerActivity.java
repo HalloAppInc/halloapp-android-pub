@@ -65,9 +65,9 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
+    public static final String EXTRA_SELECTED_IDS = "selected_ids";
     protected static final String EXTRA_TITLE_RES = "title_res";
     protected static final String EXTRA_ACTION_RES = "action_res";
-    protected static final String EXTRA_SELECTED_IDS = "selected_ids";
     protected static final String EXTRA_DISABLED_IDS = "disabled_ids";
     protected static final String EXTRA_MAX_SELECTION = "max_selection";
     protected static final String EXTRA_ONLY_FRIENDS = "only_friends";
