@@ -95,13 +95,11 @@ class ReplyContainer {
                     nameView.setTextColor(ContextCompat.getColor(nameView.getContext(), R.color.secondary_text));
                     nameView.setText(result.name);
                     textView.setTypeface(textView.getTypeface(), Typeface.NORMAL);
-                    if (result.mentions != null && !result.mentions.isEmpty()) {
-                        parent.getTextContentLoader().load(textView, result);
-                    } else if (result.text == null && result.thumb == null) {
+                    if (result.text == null && result.thumb == null) {
                         textView.setText(message.replyPostId != null ? R.string.reply_original_post_not_found : R.string.reply_original_not_found);
                         textView.setTypeface(textView.getTypeface(), Typeface.ITALIC);
                     } else {
-                        textView.setText(result.text);
+                        parent.getTextContentLoader().load(textView, result);
                     }
                     switch (result.mediaType) {
                         case Media.MEDIA_TYPE_IMAGE: {
