@@ -127,6 +127,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     public static final String EXTRA_OPEN_KEYBOARD = "open_keyboard";
 
     private static final String EXTRA_CHAT_ID = "chat_id";
+    private static final String DUMMY_ACTION = "dummy_action";
 
     public static Intent open(@NonNull Context context, @NonNull ChatId chatId) {
         //noinspection ConstantConditions
@@ -137,6 +138,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         }
         Intent intent = new Intent(context, ChatActivity.class);
         intent.putExtra(EXTRA_CHAT_ID, chatId);
+        intent.setAction(DUMMY_ACTION); // A StackOverflow user claimed this fixed extras getting dropped
         return intent;
     }
 
