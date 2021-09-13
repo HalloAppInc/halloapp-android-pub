@@ -631,12 +631,6 @@ Ouvrez la page des paramètres de l'application pour modifier les permissions de
     <!-- Text shown in activity center upon successful registration -->
     <string name="welcome_notification">"Bienvenue sur HalloApp ! &lt;a href=\"invite-friend\"&gt;Invitez un ami&lt;/a&gt;"</string>
 
-    <!-- added new option for sharing -->
-    <string name="share_option_group">"Publier dans le groupe"</string>
-
-    <!-- A new label used as the title/label of the GroupPickerActivity -->
-    <string name="select_group">"Sélectionner le groupe"</string>
-
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_groups">"Rechercher des groupes"</string>
 
@@ -855,5 +849,14 @@ Ouvrez la page des paramètres de l'application pour modifier les permissions de
 
     <!-- Action on messaging notifications allowing the user to mark the conversation as read -->
     <string name="mark_read_notification_label">"Mark read"</string>
-</resources>
+
+    <!-- shows the name "home" as the first option in the share to group function -->
+    <string name="home">"Home"</string>
+
+    <!-- A new label used as the title/label of the GroupPickerActivity -->
+    <string name="select_post_destination">"Post to…"</string>
+
+    <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
+    <string name="search_post_destination">"Search"</string>
+<string name="share_option_group">"Publier dans le groupe"</string><string name="select_group">"Sélectionner le groupe"</string></resources>
 

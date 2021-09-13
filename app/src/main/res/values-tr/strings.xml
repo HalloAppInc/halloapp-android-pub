@@ -20,9 +20,7 @@
     <string name="invite_notifications_channel_name">"Davet bildirimleri"</string>
     <string name="invite_notification_text">"%s, HalloApp'e katılma davetini kabul etti &#x1f389;"</string>
     <string name="me">"Ben"</string>
-
-    <!-- Fuzzy -->
-    <string name="you">"Sen"</string>
+    <string name="you">"sen"</string>
     <string name="camera_post">"Kamera"</string>
     <string name="gallery_post">"Galeri"</string>
     <string name="text_post">"Metin"</string>
@@ -46,8 +44,6 @@
     <string name="set_avatar_reset">"Sıfırla"</string>
     <string name="new_post">"Yeni gönderi"</string>
     <string name="new_message">"Yeni mesaj"</string>
-
-    <!-- Fuzzy -->
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s, HalloApp'te"</string>
     <string name="new_chat_name_placeholder">"%s, HalloApp kullanıyor! &#x1f389;"</string>
@@ -66,8 +62,6 @@
     <!-- Noun or verb? -->
     <string name="share_option_post">"Gönderi"</string>
     <string name="share_option_message">"Mesaj"</string>
-
-    <!-- Fuzzy -->
     <plurals name="max_post_media_items">
         <item quantity="one">"Gönderi başına en fazla %d öge seçebilirsin"</item>
         <item quantity="other">"Gönderi başına en fazla %d öge seçebilirsin"</item>
@@ -85,8 +79,6 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranına git."</stri
 
 Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</string>
     <string name="retry">"Tekrar dene"</string>
-
-    <!-- Fuzzy -->
     <string name="contact_rationale_upload">"Ailen ve arkadaşlarınla bağlantı kurabilmen için kişilerine erişim iznine ihtiyacımız olacak. &lt;a href=\"learn-more\"&gt;Daha fazlasını öğren&lt;/a&gt;."</string>
     <string name="failed_to_initialize">"Başlatılamadı"</string>
     <string name="type_a_comment_hint">"Yorum ekle"</string>
@@ -102,13 +94,9 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt;, gönderisinde senden bahsetti"</string>
     <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt;, gönderindeki bir yorumda senden bahsetti"</string>
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt;, gönderisindeki bir yorumda senden bahsetti"</string>
-
-    <!-- Fuzzy -->
     <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt;, &lt;b&gt;%2$s&lt;/b&gt; kişisinin gönderisine yaptığı yorumda senden bahsetti"</string>
     <string name="contact_hashing_faq_dialog_title">"Gizliliğin önceliğimizdir"</string>
     <string name="contact_hashing_faq_dialog_info">"HalloApp, seni HalloApp kullanan arkadaşlarınla eşleştirmek için yalnızca telefon numaranı kullanır; rehberindeki başka herhangi bir veriyi almaz."</string>
-
-    <!-- Fuzzy -->
     <string name="list_of_two">"%1$s ve %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
     <string name="list_of_many_middle">", %s"</string>
@@ -146,9 +134,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="group_avatar_picker_title">"Grup simgesi"</string>
     <string name="other_media">"Diğer görseller"</string>
     <string name="rotate">"Döndür"</string>
-
-    <!-- Fuzzy -->
-    <string name="seen_by">"tarafından görüldü"</string>
+    <string name="seen_by">"Görenler"</string>
     <string name="empty_viewed_by">"Gönderini henüz kimse görmedi"</string>
     <string name="options">"Seçenekler"</string>
     <string name="block">"Engelle"</string>
@@ -161,14 +147,10 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
     <string name="action_discard">"İptal et"</string>
     <string name="new_post_notification">"%s, yeni bir gönderi paylaştı"</string>
-
-    <!-- Fuzzy -->
     <plurals name="new_posts_notification">
         <item quantity="one">"%2$s, %1$d yeni gönderi paylaştı"</item>
         <item quantity="other">"%2$s, %1$d yeni gönderi paylaştı"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="new_messages_notification">
         <item quantity="one">"%2$s kişisinden %1$d yeni mesaj"</item>
         <item quantity="other">"%2$s kişisinden %1$d yeni mesaj"</item>
@@ -177,20 +159,14 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
         <item quantity="one">"%d yeni mesaj"</item>
         <item quantity="other">"%d yeni mesaj"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="new_comments_notification">
         <item quantity="one">"%s, gönderine yorum yaptı"</item>
         <item quantity="other">"%s, gönderine yorum yaptı"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="new_comments_on_multiple_posts_notification">
         <item quantity="one">"%s, gönderilerine yorum yaptı"</item>
         <item quantity="other">"%s, gönderilerine yorum yaptı"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"HalloApp'in süresi doldu"</string>
     <string name="notification_app_expiration_body">"Lütfen en son sürümü indir"</string>
@@ -218,9 +194,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
         <item quantity="one">"Bu grubu silmek mi istiyorsun?"</item>
         <item quantity="other">"Seçtiğin %d grubu silmek mi istiyorsun?"</item>
     </plurals>
-
-    <!-- Fuzzy -->
-    <string name="delete_chat_confirmation">"Bu grubu silmek mi istiyorsun?"</string>
+    <string name="delete_chat_confirmation">"Bu sohbeti silmek mi istiyorsun?"</string>
     <string name="yes">"Evet"</string>
     <string name="no">"Hayır"</string>
     <string name="ok">"Tamam"</string>
@@ -250,16 +224,10 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="last_seen_less_minute">"Son görülme 1 dakikadan daha kısa süre önce"</string>
     <string name="online">"Çevrimiçi"</string>
     <string name="today">"Bugün"</string>
-
-    <!-- Fuzzy -->
-    <string name="today_at_time">"bugün saat %s'de/te"</string>
+    <string name="today_at_time">"bugün %s'de/te"</string>
     <string name="yesterday">"Dün"</string>
-
-    <!-- Fuzzy -->
-    <string name="yesterday_at_time">"dün saat %s'de/te"</string>
-
-    <!-- Fuzzy -->
-    <string name="day_of_week_at_time">"%1$s saat %2$s'de/te"</string>
+    <string name="yesterday_at_time">"dün %s'de/te"</string>
+    <string name="day_of_week_at_time">"%1$s %2$s'de/te"</string>
     <string name="unknown_contact">"Bilinmeyen kişi"</string>
     <string name="select_contact">"Yeni mesaj"</string>
     <string name="search_contacts">"Kişilerde ara"</string>
@@ -270,22 +238,16 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="invite_friend_chooser_title">"%s kişisini davet et"</string>
 
     <!-- Will the second %s here be a link? -->
-    <!-- Fuzzy -->
-    <string name="invite_text_with_name_and_number">"Merhaba %1$s, seni, günün her anını kolayca paylaşabileceğin bir sosyal medya uygulaması olan HalloApp'te bana katılmaya davet ediyorum. Kaydolmak için %2$s numarasını kullanabilir ya da halloapp.com/dl adresinden indirebilirsin."</string>
+    <string name="invite_text_with_name_and_number">"Merhaba %1$s! Seni, sevdiklerimizle gerçek bağlantılar kurabildiğimiz bir uygulama olan HalloApp'e davet ediyorum. Kaydolmak için %2$s numarasını kullan. halloapp.com/dl adresinden uygulamayı 
+indir."</string>
     <string name="name_hint">"Adın"</string>
     <string name="name_must_be_specified">"Ad belirtilmeli"</string>
-
-    <!-- Fuzzy -->
     <string name="counter">"%1$d/%2$d"</string>
     <string name="invite_pending">"Beklemede"</string>
     <string name="failed_update_profile">"Profil güncellemesi başarısız, daha sonra tekrar dene"</string>
     <string name="profile_updated">"Profil güncellendi"</string>
     <string name="flip">"Çevir"</string>
-
-    <!-- Fuzzy -->
     <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
-
-    <!-- Fuzzy -->
     <string name="email_logs_text">"
 ----------------------------------------
 Lüften sorununu yukarıda açıkla.
@@ -306,28 +268,18 @@ version: %2$s
     <string name="unblock_notification">"Bu kişinin engelini kaldırdın."</string>
     <string name="system_message_group_created">"Bu grup %s tarafından kuruldu"</string>
     <string name="system_message_group_created_by_you">"Bu grubu sen kurdun"</string>
-
-    <!-- Fuzzy -->
     <string name="system_message_members_added">"%1$s, %2$s kişisini ekledi"</string>
     <string name="system_message_members_added_by_you">"%s kişisini ekledin"</string>
-
-    <!-- Fuzzy -->
     <string name="system_message_members_removed">"%1$s, %2$s kişisini çıkardı"</string>
     <string name="system_message_members_removed_by_you">"%s kişisini çıkardın"</string>
     <string name="system_message_member_left">"%s ayrıldı"</string>
     <string name="system_message_member_you_left">"Ayrıldın"</string>
-
-    <!-- Fuzzy -->
     <string name="system_message_members_promoted">"%1$s, %2$s kişisini yönetici yaptı"</string>
     <string name="system_message_members_promoted_by_you">"%s kişisini yönetici yaptın"</string>
-
-    <!-- Fuzzy -->
     <string name="system_message_members_demoted">"%1$s, %2$s kişisini yöneticilikten çıkardı"</string>
     <string name="system_message_members_demoted_by_you">"%s kişisini yöneticilikten çıkardın"</string>
     <string name="system_message_member_auto_promoted">"%s, otomatik olarak yönetici oldu"</string>
     <string name="system_message_member_auto_promoted_you">"Otomatik olarak yönetici oldun"</string>
-
-    <!-- Fuzzy -->
     <string name="system_message_group_name_changed">"%1$s, grubun adını %2$s olarak değiştirdi"</string>
     <string name="system_message_group_name_changed_by_you">"Grubun adını %s olarak değiştirdin"</string>
     <string name="system_message_group_avatar_changed">"%s, grubun simgesini değiştirdi"</string>
@@ -336,28 +288,18 @@ version: %2$s
     <string name="system_message_group_deleted_by_you">"Grubu sildin"</string>
     <string name="system_post_group_created">"Bu grup, %s tarafından kuruldu"</string>
     <string name="system_post_group_created_by_you">"Bu grubu sen kurdun"</string>
-
-    <!-- Fuzzy -->
     <string name="system_post_members_added">"%1$s, %2$s kişisini ekledi"</string>
     <string name="system_post_members_added_by_you">"%s kişisini ekledin"</string>
-
-    <!-- Fuzzy -->
     <string name="system_post_members_removed">"%1$s, %2$s kişisini sildi"</string>
     <string name="system_post_members_removed_by_you">"%s kişisini sildin"</string>
     <string name="system_post_member_left">"%s ayrıldı"</string>
     <string name="system_post_member_you_left">"Ayrıldın"</string>
-
-    <!-- Fuzzy -->
     <string name="system_post_members_promoted">"%1$s, %2$s kişisini yönetici yaptı"</string>
     <string name="system_post_members_promoted_by_you">"%s kişisini yönetici yaptın"</string>
-
-    <!-- Fuzzy -->
     <string name="system_post_members_demoted">"%1$s, %2$s kişisini yöneticilikten çıkardı"</string>
     <string name="system_post_members_demoted_by_you">"%s kişisini yöneticilikten çıkardın"</string>
     <string name="system_post_member_auto_promoted">"%s, otomatik olarak yönetici oldu"</string>
     <string name="system_post_member_auto_promoted_you">"Otomatik olarak yönetici oldun"</string>
-
-    <!-- Fuzzy -->
     <string name="system_post_group_name_changed">"%1$s, grubun adını %2$s olarak değiştirdi"</string>
     <string name="system_post_group_name_changed_by_you">"Grubun adını %s olarak değiştirdin"</string>
     <string name="system_post_group_avatar_changed">"%s, grubun simgesini değiştirdi"</string>
@@ -383,8 +325,6 @@ version: %2$s
     <string name="invite_failed_unknown">"Davet gönderilemedi"</string>
     <string name="invite_creation_in_progress">"Davet oluşturuluyor…"</string>
     <string name="invite_info_fetch_internet">"Davet bilgileri alınamadı. İnternet bağlantını kontrol et ve tekrar dene"</string>
-
-    <!-- Fuzzy -->
     <plurals name="invites_remaining">
         <item quantity="one">"%s davet hakkın kaldı"</item>
         <item quantity="other">"%s davet hakkın kaldı"</item>
@@ -408,14 +348,12 @@ version: %2$s
     <string name="failed_create_group">"Grup oluşturma başarısız, daha sonra tekrar dene"</string>
 
     <!-- Shown in options menu to remove a member of group -->
-    <!-- Fuzzy -->
-    <string name="group_remove_member">"Çıkar"</string>
+    <string name="group_remove_member">"Gruptan çıkar"</string>
     <string name="group_promote_to_admin">"Yönetici yap"</string>
     <string name="promote_admin_in_progress">"Yönetici yapılıyor…"</string>
     <string name="failed_promote_admin">"Yönetici yapma başarısız, daha sonra tekrar dene"</string>
 
     <!-- Option for removing a user from the list of admins of a group -->
-    <!-- Fuzzy -->
     <string name="group_demote_from_admin">"Yöneticilikten çıkar"</string>
     <string name="demote_admin_in_progress">"Yöneticilikten çıkarılıyor…"</string>
     <string name="failed_demote_admin">"Yönetici çıkarma başarısız, daha sonra tekrar dene"</string>
@@ -490,16 +428,12 @@ version: %2$s
         <item quantity="other">"Kişilerimden %d tanesi ile paylaşılıyor"</item>
     </plurals>
     <string name="post_preview_no_caption">"%s, bir gönderi paylaştı"</string>
-
-    <!-- Fuzzy -->
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
     <string name="composer_sharing_message">"%s kişisine gönderiliyor"</string>
     <string name="composer_sharing_post">"%s ile paylaşılıyor"</string>
-
-    <!-- Fuzzy -->
     <plurals name="max_video_length">
-        <item quantity="one">"Videon %d saniyeden daha uzun. Lütfen bunu düzenle ya da başka bir video seç."</item>
-        <item quantity="other">"Videon %d saniyeden daha uzun. Lütfen bunu düzenle ya da başka bir video seç."</item>
+        <item quantity="one">"Videon %d saniye daha uzun. Lütfen düzenle ya da başka bir video seç."</item>
+        <item quantity="other">"Videon %d saniye daha uzun. Lütfen düzenle ya da başka bir video seç."</item>
     </plurals>
     <string name="mute">"Sessize al"</string>
     <string name="share_link">"İlişimi paylaş"</string>
@@ -557,7 +491,6 @@ version: %2$s
     <string name="registration_phone_code_progress">"Arama yoluyla kod isteniyor…"</string>
 
     <!-- button to request another sms code -->
-    <!-- Fuzzy -->
     <string name="resend_sms">"SMS kodunu tekrar gönder"</string>
 
     <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
@@ -570,7 +503,6 @@ version: %2$s
     <string name="key_verification_tap_to_scan">"Taramak için dokun"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <!-- Fuzzy -->
     <string name="key_verification_explanation">"%1$s ile bağlantınızın güvenliğini doğrulamak için yukarıdaki numaraların, onun cihazında gösterilenlerle eşleşip eşleşmediğini kontrol et veya telefonundaki QR kodunu tarat. "<![CDATA[<a href="https://halloapp.com/blog/encrypted-chat/">Daha fazlasını öğren</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
@@ -678,8 +610,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</str
     <string name="data_available_at">"Veriler, %s tarihinde mevcut olacak"</string>
 
     <!-- Shown at top of data request page explaining the process -->
-    <!-- Fuzzy -->
-    <string name="export_data_explanation">"HalloApp sunucularında depolanan tüm kullanıcı verilerinin bir kopyasını indir. Mesajlar ve gönderiler buna dahil değildir."</string>
+    <string name="export_data_explanation">"HalloApp sunucularında depolanan tüm kullanıcı verilerinin bir kopyasını indir. Mesaj ve gönderiler buna dahil değildir."</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"İstek başarısız"</string>
@@ -688,8 +619,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</str
     <string name="export_account_data">"Verilerimi dışa aktar"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
-    <!-- Fuzzy -->
-    <string name="e2e_notice">"Sohbetler uçtan uca şifrelenir ve HalloApp'in bunlara erişimi yoktur. &lt;b&gt;Daha fazlasını öğrenmek için dokun&lt;/b&gt;"</string>
+    <string name="e2e_notice">"HalloApp'teki tüm mesajlar uçtan uca şifrelidir. &lt;b&gt;Daha fazlasını öğrenmek için dokun&lt;/b&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"Güvenlik numarasını gör"</string>
@@ -705,12 +635,6 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</str
 
     <!-- Text shown in activity center upon successful registration -->
     <string name="welcome_notification">"HalloApp'e hoş geldin! &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</string>
-
-    <!-- added new option for sharing -->
-    <string name="share_option_group">"Gruba gönder"</string>
-
-    <!-- A new label used as the title/label of the GroupPickerActivity -->
-    <string name="select_group">"Grup seç"</string>
 
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_groups">"Grupları ara"</string>
@@ -728,15 +652,13 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</str
     <string name="your_profile_photo">"Profil fotoğrafın"</string>
 
     <!-- Text shown under progress bar when first setting up HalloApp -->
-    <!-- Fuzzy -->
-    <string name="app_initializing">"HalloApp ayarlanıyor…"</string>
+    <string name="app_initializing">"HalloApp ayarlanıyor"</string>
 
     <!-- Shown on a button in settings which shares text with a link to download HalloApp into any other app -->
     <string name="settings_share_option">"HalloApp'i paylaş"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <!-- Fuzzy -->
-    <string name="share_halloapp_text">"HalloApp'te bana katıl, halloapp.com/dl üzerinden ücretsiz indir"</string>
+    <string name="share_halloapp_text">"HalloApp'teki gerçek ilişki ağıma katıl. halloapp.com/dl üzerinden ücretsiz indir."</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
     <string name="contact_permissions_request">"Güncelleme almak ve göndermek için HalloApp'in kişilerine erişmesine izin ver."</string>
@@ -925,12 +847,21 @@ Uygulama izinlerini değiştirmek için Uygulama Ayarları ekranını aç."</str
     <string name="groups_in_common">"Ortak gruplar"</string>
 
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
-    <string name="slide_to_cancel">"Slide to cancel"</string>
+    <string name="slide_to_cancel">"İptal için kaydır"</string>
 
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
-    <string name="reply_notification_label">"Reply"</string>
+    <string name="reply_notification_label">"Yanıtla"</string>
 
     <!-- Action on messaging notifications allowing the user to mark the conversation as read -->
-    <string name="mark_read_notification_label">"Mark read"</string>
-</resources>
+    <string name="mark_read_notification_label">"Okundu işaretle"</string>
+
+    <!-- shows the name "home" as the first option in the share to group function -->
+    <string name="home">"Ana sayfa"</string>
+
+    <!-- A new label used as the title/label of the GroupPickerActivity -->
+    <string name="select_post_destination">"Şuraya gönder…"</string>
+
+    <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
+    <string name="search_post_destination">"Ara"</string>
+<string name="share_option_group">"Gruba gönder"</string><string name="select_group">"Grup seç"</string></resources>
 

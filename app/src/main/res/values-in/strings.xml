@@ -605,12 +605,6 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi"</string>
     <!-- Text shown in activity center upon successful registration -->
     <string name="welcome_notification">"Selamat datang di HalloApp! &lt;a href=\"invite-friend\"&gt;Undang teman&lt;/a&gt;"</string>
 
-    <!-- added new option for sharing -->
-    <string name="share_option_group">"Kirim ke Grup"</string>
-
-    <!-- A new label used as the title/label of the GroupPickerActivity -->
-    <string name="select_group">"Pilih grup"</string>
-
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_groups">"Cari grup"</string>
 
@@ -826,5 +820,14 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi."</string>
 
     <!-- Action on messaging notifications allowing the user to mark the conversation as read -->
     <string name="mark_read_notification_label">"Mark read"</string>
-</resources>
+
+    <!-- shows the name "home" as the first option in the share to group function -->
+    <string name="home">"Home"</string>
+
+    <!-- A new label used as the title/label of the GroupPickerActivity -->
+    <string name="select_post_destination">"Post to…"</string>
+
+    <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
+    <string name="search_post_destination">"Search"</string>
+<string name="share_option_group">"Kirim ke Grup"</string><string name="select_group">"Pilih grup"</string></resources>
 

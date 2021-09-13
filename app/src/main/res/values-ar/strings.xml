@@ -284,7 +284,7 @@
     <string name="action_save">"حفظ"</string>
     <string name="invite_friends">"دعوة أفراد العائلة والأصدقاء"</string>
     <string name="invite_friend_chooser_title">"دعوة %s"</string>
-    <string name="invite_text_with_name_and_number">"مرحباً %1$s هذه دعوة مني لتنضم إلّي في استخدام هالوآب - وهو كناية عن شبكة للعلاقات الحقيقية بين الأشخاص المقربين مني. استخدم %2$s للتسجيل في التطبيق. يمكنك تنزيله من https://halloapp.com/dl"</string>
+    <string name="invite_text_with_name_and_number">"مرحباً %1$s هذه دعوة مني لتنضم إلّي في استخدام هالوآب - وهو كناية عن شبكة للعلاقات الفعلية بين الأشخاص المقربين مني. استخدم %2$s للتسجيل في التطبيق. يمكنك تنزيله من https://halloapp.com/dl"</string>
     <string name="name_hint">"اسمك"</string>
     <string name="name_must_be_specified">"يجب تحديد اسم"</string>
     <string name="counter">"%1$d / %2$d"</string>
@@ -388,7 +388,7 @@
     <string name="failed_add_members">"تعذرت إضافة الأعضاء، الرجاء المحاولة مجدداً"</string>
     <string name="create_group_in_progress">"جاري إنشاء مجموعة %s…"</string>
     <string name="new_group_title">"قم بتسمية مجموعتك"</string>
-    <string name="group_picker_title">"مجموعة جديدة "</string>
+    <string name="group_picker_title">"مجموعة جديدة"</string>
     <string name="button_create_group">"إنشاء"</string>
     <string name="group_name_hint">"اسم المجموعة"</string>
     <string name="failed_create_group">"تعذر إنشاء المجموعة، الرجاء المحاولة مجدداً"</string>
@@ -452,79 +452,79 @@
     <string name="settings_block_list_none_summary">"لا يوجد"</string>
     <string name="settings_feed_contacts_summary">"جهات اتصال هاتفي"</string>
     <plurals name="settings_feed_excluded_summary">
-        <item quantity="zero">"%d contact excluded"</item>
-        <item quantity="one">"%d contact excluded"</item>
-        <item quantity="two">"%d contact excluded"</item>
-        <item quantity="few">"%d contact excluded"</item>
-        <item quantity="many">"%d contact excluded"</item>
-        <item quantity="other">"%d contact excluded"</item>
+        <item quantity="zero">"%d من جهات الاتصال المستبعدة"</item>
+        <item quantity="one">"جهة اتصال مستبعدة %d"</item>
+        <item quantity="two">"جهتا اتصال %d مستبعدتان"</item>
+        <item quantity="few">"%d جهات اتصال مستبعدة"</item>
+        <item quantity="many">"%d جهة اتصال مستبعدة"</item>
+        <item quantity="other">"%d جهة اتصال مستبعدة"</item>
     </plurals>
     <plurals name="settings_feed_selected">
-        <item quantity="zero">"%d contact selected"</item>
-        <item quantity="one">"%d contact selected"</item>
-        <item quantity="two">"%d contact selected"</item>
-        <item quantity="few">"%d contact selected"</item>
-        <item quantity="many">"%d contact selected"</item>
-        <item quantity="other">"%d contact selected"</item>
+        <item quantity="zero">"تم اختيار %d من جهات الاتصال"</item>
+        <item quantity="one">"تم اختيار جهة اتصال %d"</item>
+        <item quantity="two">"تم اختيار جهتي اتصال %d"</item>
+        <item quantity="few">"تم اختيار %d جهات اتصال"</item>
+        <item quantity="many">"تم اختيار %d جهة اتصال"</item>
+        <item quantity="other">"تم اختيار %d جهة اتصال"</item>
     </plurals>
-    <string name="settings_feed_selected_empty">"No contacts selected"</string>
-    <string name="settings_version_footer">"HalloApp Version %s"</string>
-    <string name="connectivity_info_airplane_mode">"Airplane mode on"</string>
-    <string name="connectivity_info_not_connected">"No network"</string>
-    <string name="blocking_user_failed_check_internet">"Couldn't block %s. Check your internet and try again."</string>
-    <string name="blocking_user_successful">"Blocked %s"</string>
-    <string name="blocking_user_in_progress">"Blocking %s…"</string>
-    <string name="unblocking_user_successful">"Unblocked %s"</string>
-    <string name="unblocking_user_failed_check_internet">"Couldn't unblock %s. Check your internet and try again."</string>
-    <string name="unblocking_user_in_progress">"Unblocking %s…"</string>
-    <string name="are_you_sure_dialog_title">"Are you sure?"</string>
-    <string name="hide_future_posts_confirmation">"Are you sure you want to hide all your future posts from %s? You can always change this later."</string>
-    <string name="feed_privacy_hide_success">"Feed privacy updated. Hiding posts from %s"</string>
-    <string name="feed_privacy_hide_failure">"Failed to update feed privacy, check your internet and try again"</string>
-    <string name="user_typing">"typing…"</string>
-    <string name="group_user_typing">"%s is typing…"</string>
-    <string name="group_many_users_typing">"multiple users typing…"</string>
-    <string name="camera_error_generic">"Camera failure."</string>
-    <string name="camera_error_photo">"Could not take a photo."</string>
-    <string name="camera_error_video">"Could not record a video."</string>
+    <string name="settings_feed_selected_empty">"لم يتم اختيار أي جهة اتصال"</string>
+    <string name="settings_version_footer">"إصدار هالوآب رقم %s"</string>
+    <string name="connectivity_info_airplane_mode">"وضع الطائرة يعمل"</string>
+    <string name="connectivity_info_not_connected">"غير متصل بالشبكة"</string>
+    <string name="blocking_user_failed_check_internet">"تعذّر حظر %s. الرجاء التأكد من الاتصال بالشبكة والمحاولة مجدداً."</string>
+    <string name="blocking_user_successful">"تم حظر %s"</string>
+    <string name="blocking_user_in_progress">"جاري حظر %s …"</string>
+    <string name="unblocking_user_successful">"تم رفع الحظر عن %s"</string>
+    <string name="unblocking_user_failed_check_internet">"تعذّر حظر %s. الرجاء التأكد من الاتصال بالشبكة والمحاولة مجدداً. "</string>
+    <string name="unblocking_user_in_progress">"جاري رفع الحظر عن %s …"</string>
+    <string name="are_you_sure_dialog_title">"هل أنت متأكد من الأمر؟"</string>
+    <string name="hide_future_posts_confirmation">"هل أنت متأكد من إخفاء كافة منشوراتك المستقبلية عن %s؟ يمكنك تغيير ذلك لاحقاً. "</string>
+    <string name="feed_privacy_hide_success">"تم تحديث خصوصية الموجز. جاري إخفاء المنشورات عن %s"</string>
+    <string name="feed_privacy_hide_failure">"تعذّر تحديث خصوصية الموجز، الرجاء التأكد من الاتصال بالشبكة والمحاولة مجدداً"</string>
+    <string name="user_typing">"جاري الكتابة…"</string>
+    <string name="group_user_typing">"%s يكتب…"</string>
+    <string name="group_many_users_typing">"العديد من المستخدمين يكتبون…"</string>
+    <string name="camera_error_generic">"فشل تشغيل الكاميرا."</string>
+    <string name="camera_error_photo">"تعذّر التقاط صورة. "</string>
+    <string name="camera_error_video">"تعذّر تسجيل فيديو."</string>
     <plurals name="group_feed_members">
-        <item quantity="zero">"%d member"</item>
-        <item quantity="one">"%d member"</item>
-        <item quantity="two">"%d member"</item>
-        <item quantity="few">"%d member"</item>
-        <item quantity="many">"%d member"</item>
-        <item quantity="other">"%d member"</item>
+        <item quantity="zero">"%d من الأعضاء"</item>
+        <item quantity="one">"عضو %d"</item>
+        <item quantity="two">"عضوان %d"</item>
+        <item quantity="few">"%d أعضاء"</item>
+        <item quantity="many">"%d عضواً"</item>
+        <item quantity="other">"%d عضو"</item>
     </plurals>
-    <string name="composer_sharing_all_summary">"Sharing with my contacts"</string>
-    <string name="composer_sharing_except_summary">"Sharing with some of my contacts"</string>
+    <string name="composer_sharing_all_summary">"المشاركة مع جهات اتصالي"</string>
+    <string name="composer_sharing_except_summary">"المشاركة مع بعض جهات اتصالي"</string>
     <plurals name="composer_sharing_only_summary">
-        <item quantity="zero">"Sharing with %d of my contacts"</item>
-        <item quantity="one">"Sharing with %d of my contacts"</item>
-        <item quantity="two">"Sharing with %d of my contacts"</item>
-        <item quantity="few">"Sharing with %d of my contacts"</item>
-        <item quantity="many">"Sharing with %d of my contacts"</item>
-        <item quantity="other">"Sharing with %d of my contacts"</item>
+        <item quantity="zero">"المشاركة مع %d من جهات اتصالي "</item>
+        <item quantity="one">"المشاركة مع %d من جهات اتصالي"</item>
+        <item quantity="two">"المشاركة مع %d من جهات اتصالي "</item>
+        <item quantity="few">"المشاركة مع %d من جهات اتصالي "</item>
+        <item quantity="many">"المشاركة مع %d من جهات اتصالي "</item>
+        <item quantity="other">"المشاركة مع %d من جهات اتصالي "</item>
     </plurals>
-    <string name="post_preview_no_caption">"%s shared a post"</string>
+    <string name="post_preview_no_caption">"%s شارك منشوراً"</string>
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
-    <string name="composer_sharing_message">"Sending to %s"</string>
-    <string name="composer_sharing_post">"Sharing with %s"</string>
+    <string name="composer_sharing_message">"الإرسال إلى %s"</string>
+    <string name="composer_sharing_post">"المشاركة مع %s"</string>
     <plurals name="max_video_length">
-        <item quantity="zero">"Your video is over %d second long. Please select another video or edit it."</item>
-        <item quantity="one">"Your video is over %d second long. Please select another video or edit it."</item>
-        <item quantity="two">"Your video is over %d second long. Please select another video or edit it."</item>
-        <item quantity="few">"Your video is over %d second long. Please select another video or edit it."</item>
-        <item quantity="many">"Your video is over %d second long. Please select another video or edit it."</item>
-        <item quantity="other">"Your video is over %d second long. Please select another video or edit it."</item>
+        <item quantity="zero">"مقطع الفيديو هذا أطول بـ %d من الثواني. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
+        <item quantity="one">"مقطع الفيديو هذا أطول بثانية %d. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
+        <item quantity="two">"مقطع الفيديو هذا أطول بثانيتين %d. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
+        <item quantity="few">"مقطع الفيديو هذا أطول بـ %d ثوان. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
+        <item quantity="many">"مقطع الفيديو هذا أطول بـ %d ثانية. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
+        <item quantity="other">"مقطع الفيديو هذا أطول بـ %d ثانية. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
     </plurals>
-    <string name="mute">"Mute"</string>
-    <string name="share_link">"Share link"</string>
-    <string name="copy_link">"Copy link"</string>
-    <string name="reset_link">"Reset link"</string>
-    <string name="view_group_invite_link_action">"View group invite"</string>
-    <string name="invite_link_resetting_progress">"Resetting link…"</string>
-    <string name="invite_link_reset">"Link reset"</string>
-    <string name="invite_link_reset_failed">"Failed to reset link"</string>
+    <string name="mute">"كتم الصوت"</string>
+    <string name="share_link">"مشاركة الرابط"</string>
+    <string name="copy_link">"نسخ الرابط"</string>
+    <string name="reset_link">"إعادة ضبط الرابط"</string>
+    <string name="view_group_invite_link_action">"عرض الدعوة إلى المجموعة"</string>
+    <string name="invite_link_resetting_progress">"جاري إعادة ضبط الرابط…"</string>
+    <string name="invite_link_reset">"إعادة ضبط الرابط"</string>
+    <string name="invite_link_reset_failed">"تعذّرت إعادة ضبط الرابط"</string>
     <string name="reset_invite_link_confirmation">"هل تريد إعادة ضبط رابط الدعوة إلى المجموعة؟ "</string>
     <string name="invite_link_joining">"جاري الانضمام إلى المجموعة…"</string>
     <string name="invite_link_loading">"جاري تحميل المجموعة…"</string>
@@ -540,14 +540,14 @@
     <string name="post_preview_retracted">"%s حذف منشور"</string>
     <string name="system_message_group_bg_changed">"%s غيّر لون الخلفية"</string>
     <string name="system_message_group_bg_changed_by_you">"أنت غيّرت لون الخلفية "</string>
-    <string name="group_background_hint">"الخلفية "</string>
+    <string name="group_background_hint">"الخلفية"</string>
     <string name="group_background_saving_dialog">"جاري تحديد الخلفية…"</string>
     <string name="group_background_save_failed">"تعذّر تحديد خلفية المجموعة"</string>
     <string name="group_background_save_success">"تم تحديث خلفية المجموعة"</string>
     <string name="group_background_color">"اللون"</string>
     <string name="group_background_default">"افتراضي"</string>
     <string name="group_info_members">"الأعضاء (%d)"</string>
-    <string name="delete_message_confirmation">"حذف الرسالة المحددة؟ "</string>
+    <string name="delete_message_confirmation">"حذف الرسالة المحددة؟"</string>
     <string name="retract_message_option">"الحذف لدى الجميع"</string>
     <string name="delete_message_option">"الحذف لديّ"</string>
     <string name="contact_permissions_dialog_title">"جهات الاتصال"</string>
@@ -621,344 +621,348 @@
     <string name="manage_storage_button">"إدارة التخزين"</string>
 
     <!-- Message that's displayed if user has low storage -->
-    <string name="low_storage_msg">"Your phone is running low on storage.
-In order to use HalloApp please free some storage on this phone."</string>
+    <string name="low_storage_msg">"إن سعة التخزين في هاتفك ضئيلة.
+لتتمكن من استعمال هالوآب الرجاء تفريغ مساحة تخزين على هذا الهاتف."</string>
     <plurals name="seen_by_people">
-        <item quantity="zero">"Seen by %d person"</item>
-        <item quantity="one">"Seen by %d person"</item>
-        <item quantity="two">"Seen by %d person"</item>
-        <item quantity="few">"Seen by %d person"</item>
-        <item quantity="many">"Seen by %d person"</item>
-        <item quantity="other">"Seen by %d person"</item>
+        <item quantity="zero">"شاهده %d من الأشخاص"</item>
+        <item quantity="one">"شاهده شخص %d"</item>
+        <item quantity="two">"شاهده شخصان %d "</item>
+        <item quantity="few">"شاهده %d أشخاص"</item>
+        <item quantity="many">"شاهده %d شخصاً"</item>
+        <item quantity="other">"شاهده %d شخص"</item>
     </plurals>
 
     <!-- Text that provides context for a group invite link being shared -->
-    <string name="group_invite_link_context">"Click on this link to join my HalloApp group: %s"</string>
-    <string name="voice_note">"Voice note"</string>
+    <string name="group_invite_link_context">"انقر على هذا الرابط للانضمام إلى مجموعتي في هالوآب: %s"</string>
+    <string name="voice_note">"رسالة صوتية"</string>
 
     <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
 This string is used in InviteContactsActivity.java line 160 to show the time that invites will be refreshed after invite count is 0
 example: More invites coming on [Saturday, June 19, 7:59 PM], where content in the brackets is displayed by %s -->
-    <string name="server_invite_refresh_time">"More invites coming on %s"</string>
+    <string name="server_invite_refresh_time">"هنالك المزيد من الدعوات التي سيتم إرسالها في %s"</string>
 
     <!-- Button text on profile of a user not in the user's contacts; tapping takes the user to the contacts app with data prefilled -->
-    <string name="add_to_contacts">"Add to contacts"</string>
+    <string name="add_to_contacts">"الإضافة إلى جهات الاتصال"</string>
 
     <!-- Title shown when a user starts the account deletion process under 'account' -->
-    <string name="delete_account_title">"Delete account"</string>
+    <string name="delete_account_title">"حذف الحساب"</string>
 
     <!-- Button text at bottom for user to confirm account deletion -->
-    <string name="delete_account_button">"Delete"</string>
+    <string name="delete_account_button">"حذف"</string>
 
     <!-- Note at bottom of account deletion activity -->
-    <string name="delete_account_note">"This cannot be undone."</string>
+    <string name="delete_account_note">"لا يمكن الرجوع عن ذلك."</string>
 
     <!-- Error message at bottom of account deletion screen when deletion fails -->
-    <string name="delete_account_failed">"Failed to delete account"</string>
+    <string name="delete_account_failed">"تعذّر حذف الحساب"</string>
 
     <!-- Category in the top-level settings -->
-    <string name="settings_account">"Account"</string>
+    <string name="settings_account">"الحساب"</string>
 
     <!-- Shown for when a user wants to request to download all of their data in a GDPR-compliant manner -->
-    <string name="request_data_title">"Request my data"</string>
+    <string name="request_data_title">"طلب بياناتي"</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature -->
-    <string name="save_to_gallery_storage_permission_rationale">"To save the media to the gallery we need permission to access your device storage"</string>
+    <string name="save_to_gallery_storage_permission_rationale">"لحفظ الوسائط في المعرض يجب أن تمنح التطبيق إذن الوصول إلى التخزين في جهازك"</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature. This is used when the user needs to manually go to their settings -->
-    <string name="save_to_gallery_storage_permission_rationale_denied">"To save the media to the gallery we need permission to access your device storage.
+    <string name="save_to_gallery_storage_permission_rationale_denied">"لحفظ الوسائط في المعرض يجب أن تمنح التطبيق إذن الوصول إلى التخزين في جهازك.
 
-Open the app settings screen to modify app permissions."</string>
+افتح شاشة إعدادات التطبيق لتعديل أذونات التطبيق."</string>
 
     <!-- Message when we successfully save post media to gallery -->
-    <string name="media_saved_to_gallery">"Saved to gallery"</string>
+    <string name="media_saved_to_gallery">"تم الحفظ في المعرض"</string>
 
     <!-- Message when we failed to save post media to gallery -->
-    <string name="media_save_to_gallery_failed">"Failed to save to gallery"</string>
+    <string name="media_save_to_gallery_failed">"تعذّر الحفظ في المعرض"</string>
 
     <!-- Menu option to delete a post -->
-    <string name="delete_post">"Delete post"</string>
+    <string name="delete_post">"حذف المنشور"</string>
 
     <!-- Option to save a photo/video to the user's gallery -->
-    <string name="save_to_gallery">"Save to gallery"</string>
+    <string name="save_to_gallery">"الحفظ في المعرض"</string>
 
     <!-- Title for the user's post -->
-    <string name="my_post">"My post"</string>
+    <string name="my_post">"منشوري"</string>
 
     <!-- button to request registration code via phone call -->
-    <string name="request_call">"Request a Call"</string>
+    <string name="request_call">"طلب مكالمة"</string>
 
     <!-- Shown on request page when there is not a known active request -->
-    <string name="request_data_button">"Request data"</string>
+    <string name="request_data_button">"طلب البيانات"</string>
 
     <!-- Shown as settings option title after the user has requested their data but before it is available for download; string param is date -->
-    <string name="data_available_at">"Data will be available on %s"</string>
+    <string name="data_available_at">"ستتوفر البيانات بتاريخ %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
-    <string name="export_data_explanation">"Download a copy of all your user data stored on HalloApp's servers. This does not contain message or post content."</string>
+    <string name="export_data_explanation">"قم بتنزيل نسخة عن كافة بياناتك كمستخدم التي تم حفظها على خوادم هالوآب. لا تتضمن هذه البيانات محتوى الرسائل أو المنشورات. "</string>
 
     <!-- Shown when a request to the server for data export fails -->
-    <string name="request_export_data_failed">"Request failed"</string>
+    <string name="request_export_data_failed">"تعذّر طلب نقل البيانات"</string>
 
     <!-- Button for exporting account information requested for download -->
-    <string name="export_account_data">"Export my data"</string>
+    <string name="export_account_data">"تصدير بياناتي"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
-    <string name="e2e_notice">"All messages on HalloApp are end-to-end encrypted. &lt;b&gt;Tap to learn more&lt;/b&gt;"</string>
+    <string name="e2e_notice">"إن كافة الرسائل على هالوآب مشفرة تشفيراً تاماً. &lt;b&gt;انقر للمزيد من المعلومات&lt;/b&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
-    <string name="view_safety_number">"View safety number"</string>
+    <string name="view_safety_number">"عرض رقم الأمان"</string>
 
     <!-- Shown as title of key verification activity -->
     <string name="verify_safety_number">"تحقق من رقم الأمان"</string>
 
     <!-- Shown when user has contact permissions disabled on the home feed -->
-    <string name="enable_contacts_rationale">"Get updates from friends &amp; family by turning on contact permissions"</string>
+    <string name="enable_contacts_rationale">"احصل على التحديثات من أفراد العائلة والأصدقاء من خلال تشغيل أذونات جهات الاتصال"</string>
 
     <!-- Button that takes users to system settings -->
-    <string name="go_to_settings">"Go to settings"</string>
+    <string name="go_to_settings">"اذهب إلى الإعدادات"</string>
 
     <!-- Text shown in activity center upon successful registration -->
-    <string name="welcome_notification">"Welcome to HalloApp! &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</string>
-
-    <!-- added new option for sharing -->
-    <string name="share_option_group">"Post to Group"</string>
-
-    <!-- A new label used as the title/label of the GroupPickerActivity -->
-    <string name="select_group">"Select group"</string>
+    <string name="welcome_notification">"أهلاً بك في هالوآب! &lt;a href=\"invite-friend\"&gt;قم بدعوة صديق&lt;/a&gt;"</string>
 
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
-    <string name="search_groups">"Search groups"</string>
+    <string name="search_groups">"البحث في المجموعات"</string>
 
     <!-- Button for user to remove their profile photo and reset it to the default -->
-    <string name="remove_photo">"Remove Photo"</string>
+    <string name="remove_photo">"إزالة الصورة"</string>
 
     <!-- Button for user to take a new photo to replace their profile photo -->
-    <string name="take_photo">"Take Photo"</string>
+    <string name="take_photo">"التقاط صورة"</string>
 
     <!-- Button for user to select a new photo from their gallery to replace their profile photo -->
-    <string name="choose_photo">"Choose Photo"</string>
+    <string name="choose_photo">"اختيار صورة"</string>
 
     <!-- Label above the options for changing the profile photo -->
     <string name="your_profile_photo">"صورة ملفك الشخصي"</string>
 
     <!-- Text shown under progress bar when first setting up HalloApp -->
-    <string name="app_initializing">"Setting up HalloApp"</string>
+    <string name="app_initializing">"إعداد هالوآب"</string>
 
     <!-- Shown on a button in settings which shares text with a link to download HalloApp into any other app -->
-    <string name="settings_share_option">"Share HalloApp"</string>
+    <string name="settings_share_option">"مشاركة هالوآب"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <string name="share_halloapp_text">"Join my real-relationship network on HalloApp. Download for free at halloapp.com/dl"</string>
+    <string name="share_halloapp_text">"انضم إلى شبكة العلاقات الفعلية الخاصة بي على هالوآب. قم بتنزيل التطبيق مجاناً من halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
-    <string name="contact_permissions_request">"Allow HalloApp access to your contacts so you can send and receive updates"</string>
+    <string name="contact_permissions_request">"امنح هالوآب إذن الوصول إلى جهات اتصالك لتتمكن من إرسال التحديثات وتلقيها"</string>
 
     <!-- Dialog shown to user before requesting contact permissions, but user has previously denied them, so they must go to settings -->
-    <string name="contact_permissions_request_permanently_denied">"Allow HalloApp access to your contacts so you can send and receive updates. Tap Settings &gt; Permissions, and turn Contacts on"</string>
+    <string name="contact_permissions_request_permanently_denied">"امنح هالوآب إذن الوصول إلى جهات اتصالك لتتمكن من إرسال التحديثات وتلقيها. انقر على الإعدادات &gt; الأذونات وقم بتشغيل جهات الاتصال"</string>
 
     <!-- Banner explaining why user can't leave a comment in a group they've left -->
-    <string name="no_longer_group_member">"You're no longer a member of this group"</string>
+    <string name="no_longer_group_member">"لم تعد عضواً في هذه المجموعة"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes -->
-    <string name="voice_note_record_audio_permission_rationale">"To record voice notes we need permission to access the microphone"</string>
+    <string name="voice_note_record_audio_permission_rationale">"لتسجيل الرسائل الصوتية يجب أن تمنح التطبيق إذن الوصول إلى المايكروفون
+"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
-    <string name="voice_note_record_audio_permission_rationale_denied">"To record voice notes we need permission to access the microphone.
+    <string name="voice_note_record_audio_permission_rationale_denied">"لتسجيل الرسائل الصوتية يجب أن تمنح التطبيق إذن الوصول إلى المايكروفون. 
 
-Open the app settings screen to modify app permissions."</string>
+افتح شاشة إعدادات التطبيق لتعديل أذونات التطبيق."</string>
 
     <!-- Activity center item when someone replies. %1$s is the person, %2$s is their comment preview -->
-    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; replied: %2$s"</string>
+    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; رد: %2$s"</string>
 
     <!-- Activity center item when someone comments. %1$s is the person, %2$s is their comment preview -->
-    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; commented: %2$s"</string>
+    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt;علّق: %2$s"</string>
 
     <!-- Activity center item when non-contacts comment on your post -->
     <plurals name="commented_on_your_post_grouped">
-        <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
-        <item quantity="two">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
-        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
-        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt; آخر علّق على منشورك"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; آخر علّق على منشورك"</item>
+        <item quantity="two">"&lt;b&gt;%1$s&lt;/b&gt; آخران علّقا على منشورك"</item>
+        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt; آخرون علّقوا على منشورك"</item>
+        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt; آخرون علّقوا على منشورك"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; آخرون علّقوا على منشورك"</item>
     </plurals>
 
     <!-- Activity center item when non-contacts comment on someones post -->
     <plurals name="commented_on_someones_post_grouped">
-        <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
-        <item quantity="two">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
-        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
-        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
+        <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt; من الأشخاص الإضافيين علّقوا على منشور &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="one">"شخص إضافي &lt;b&gt;%1$s&lt;/b&gt; علّق على منشور &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="two">"شخصان إضافيان &lt;b&gt;%1$s&lt;/b&gt; علّقا على منشور &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="few">" &lt;b&gt;%1$s&lt;/b&gt; أشخاص إضافيين علّقوا على منشور &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="many">" &lt;b&gt;%1$s&lt;/b&gt; شخصاً إضافياً علّقوا على منشور &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="other">" &lt;b&gt;%1$s&lt;/b&gt; شخص إضافي علّقوا على منشور &lt;b&gt;%2$s&lt;/b&gt;"</item>
     </plurals>
 
     <!-- Shown when an archived post's photo thumbnail can't be loaded -->
-    <string name="couldnt_load_thumbnail">"Couldn't load thumbnail"</string>
+    <string name="couldnt_load_thumbnail">"تعذّر تحميل الصورة المصغّرة"</string>
 
     <!-- Button for user to re-share old posts which have expired -->
-    <string name="reshare_post">"Reshare post"</string>
+    <string name="reshare_post">"إعادة مشاركة المنشور"</string>
 
     <!-- Button for going to utility for viewing expired posts -->
-    <string name="archived_posts">"Archive"</string>
+    <string name="archived_posts">"أرشفة"</string>
 
     <!-- Title of utility for viewing expired posts -->
-    <string name="archive">"Archive"</string>
+    <string name="archive">"أرشفة"</string>
 
     <!-- Label displaying the date when a post expired -->
-    <string name="archived_on">"Archived %s"</string>
+    <string name="archived_on">"تمت الأرشفة بتاريخ %s"</string>
 
     <!-- Error message when the group is full -->
-    <string name="invite_link_failed_to_join_full">"You cannot join the group because it is full"</string>
+    <string name="invite_link_failed_to_join_full">"لا يمكنك الانضمام إلى المجموعة لأنها ممتلئة"</string>
 
     <!-- Error message when the invite link is invalid -->
-    <string name="invite_link_failed_to_join_invalid">"The invite link is invalid"</string>
+    <string name="invite_link_failed_to_join_invalid">"إن رابط الدعوة غير صالح"</string>
 
     <!-- Error message when user cannot join a group because they were previously removed by an admin -->
-    <string name="invite_link_failed_to_join_removed">"You were removed and cannot rejoin via invite link"</string>
+    <string name="invite_link_failed_to_join_removed">"تم حذفك من المجموعة ولا يمكنك العودة إليها عبر رابط الدعوة"</string>
 
     <!-- Message that's displayed after a user deletes their account -->
-    <string name="deletion_confirmation_message">"Your HalloApp account has been successfully deleted."</string>
+    <string name="deletion_confirmation_message">"تم حذف حساب هالوآب الخاص بك بنجاح."</string>
 
     <!-- Button that allows the user to return to registration after deleting their account -->
-    <string name="return_to_registration">"Return to registration"</string>
+    <string name="return_to_registration">"العودة إلى التسجيل"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <string name="archive_empty">"Your expired posts will appear here"</string>
+    <string name="archive_empty">"سيتم عرض منشوراتك الفائتة هنا"</string>
 
     <!-- Futureproof content we dont understand yet -->
-    <string name="unsupported_content">"Unsupported content"</string>
+    <string name="unsupported_content">"مضمون غير مدعوم"</string>
 
     <!-- Button opens up the chat to directly chat with another group member -->
-    <string name="send_message">"Send message"</string>
+    <string name="send_message">"إرسال رسالة"</string>
 
     <!-- Body of a notification indicating that user has been added to a new group -->
-    <string name="added_to_group">"%1$s added you to the group %2$s"</string>
+    <string name="added_to_group">"%1$s أضافك إلى مجموعة %2$s"</string>
 
     <!-- Name of channel of notifications for being added to a new group which is displayed in settings -->
-    <string name="group_notifications_channel_name">"Group membership notifications"</string>
+    <string name="group_notifications_channel_name">"إشعارات عضوية المجموعة"</string>
 
     <!-- Button that brings user to QR code for joining a group -->
-    <string name="qr_code">"QR Code"</string>
+    <string name="qr_code">"رمز الاستجابة السريعة"</string>
 
     <!-- Explains QR code that allows users to automatically join a group -->
-    <string name="scan_qr_instructions">"Scan the QR code to join this HalloApp group"</string>
+    <string name="scan_qr_instructions">"امسح رمز الاستجابة السريعة للانضمام إلى مجموعة هالوآب هذه "</string>
 
     <!-- Banner below the name of a HalloApp group -->
-    <string name="halloapp_group">"HalloApp Group"</string>
-    <string name="reply_original_comment_not_found">"Original comment not found"</string>
+    <string name="halloapp_group">"مجموعة هالوآب"</string>
+    <string name="reply_original_comment_not_found">"لم يتم العثور على التعليق الأصلي"</string>
 
     <!-- Button on others' posts that allows the user to message them about their post in 1-1 messaging -->
-    <string name="reply_privately">"Reply privately"</string>
+    <string name="reply_privately">"الرد فردياً بشكل خاص"</string>
 
     <!-- Shown as title for a dialog explaining why permissions are needed when the user has rejected a necessary permission request at least twice but still tries to use the feature -->
-    <string name="title_settings_dialog">"Permissions required"</string>
+    <string name="title_settings_dialog">"الأذونات ضرورية"</string>
 
     <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
-    <string name="voice_note_preview">"Voice note (%s)"</string>
+    <string name="voice_note_preview">"رسالة صوتية (%s)"</string>
 
     <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
-    <string name="dark_mode_dialog_title">"Select Theme"</string>
+    <string name="dark_mode_dialog_title">"اختيار تصميم"</string>
 
     <!-- Name of mode where screens are darker -->
-    <string name="dark_mode">"Dark"</string>
+    <string name="dark_mode">"داكن"</string>
 
     <!-- Name of mode where screens are lighter -->
-    <string name="light_mode">"Light"</string>
+    <string name="light_mode">"فاتح"</string>
 
     <!-- Name of mode where screens default to system default -->
-    <string name="system_default">"System default"</string>
+    <string name="system_default">"الإعداد التلقائي للنظام"</string>
 
     <!-- Name of mode where screens default to system default for earlier phones that don't have a concept of system dark mode -->
-    <string name="default_setting">"Default"</string>
+    <string name="default_setting">"تلقائي"</string>
 
     <!-- Name of setting where user can change between dark/light mode -->
-    <string name="dark_mode_setting_title">"Theme"</string>
+    <string name="dark_mode_setting_title">"التصميم"</string>
 
     <!-- General error message shown when fail to update group description -->
-    <string name="failed_update_group_description">"Failed to update the group description"</string>
+    <string name="failed_update_group_description">"تعذّر تحديث وصف المجموعة"</string>
 
     <!-- Success message shown when user updates group description -->
-    <string name="group_description_updated">"Group description updated"</string>
+    <string name="group_description_updated">"تم تحديث وصف المجموعة"</string>
 
     <!-- System message shown when someone else changes the group description, %s will be replaced with their name -->
-    <string name="system_message_group_description_changed">"%s changed the group description"</string>
+    <string name="system_message_group_description_changed">"%s غيّر وصف المجموعة"</string>
 
     <!-- System message shown when you change the group description -->
-    <string name="system_message_group_description_changed_by_you">"You changed the group description"</string>
+    <string name="system_message_group_description_changed_by_you">"أنت غيّرت وصف المجموعة"</string>
 
     <!-- Hint text for the group description field -->
-    <string name="group_description_hint">"Group description"</string>
+    <string name="group_description_hint">"وصف المجموعة"</string>
 
     <!-- Title text for the view to edit the group description -->
-    <string name="group_description_title">"Group description"</string>
+    <string name="group_description_title">"وصف المجموعة"</string>
 
     <!-- Text telling the user they can add a group description -->
-    <string name="add_group_description">"Add group description"</string>
-    <string name="action_clear_search">"Clear"</string>
+    <string name="add_group_description">"إضافة وصف للمجموعة"</string>
+    <string name="action_clear_search">"مسح"</string>
 
     <!-- Shown above options when picking a new background color for a group -->
-    <string name="group_background_color_pick">"Pick a color"</string>
-    <string name="post_preview_no_caption_by_you">"You shared a post"</string>
-    <string name="post_preview_retracted_by_you">"You deleted a post"</string>
-    <string name="post_preview_with_caption_by_you">"You: %s"</string>
+    <string name="group_background_color_pick">"اختيار لون"</string>
+    <string name="post_preview_no_caption_by_you">"أنت شاركت منشوراً"</string>
+    <string name="post_preview_retracted_by_you">"أنت حذفت منشوراً"</string>
+    <string name="post_preview_with_caption_by_you">"أنت: %s"</string>
 
     <!-- Activity center item when non-contacts comment on your post %1$s is the first person name
          %2$s is the number of other people -->
     <plurals name="commented_on_your_post_grouped_with_others">
-        <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
-        <item quantity="two">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
-        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
-        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt;  و&lt;b&gt;%2$s&lt;/b&gt; آخرون علّقوا على منشورك"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;  و&lt;b&gt;%2$s&lt;/b&gt; آخراً علّقا على منشورك"</item>
+        <item quantity="two">"&lt;b&gt;%1$s&lt;/b&gt;  و&lt;b&gt;%2$s&lt;/b&gt; آخرين علّقا على منشورك"</item>
+        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt;  و&lt;b&gt;%2$s&lt;/b&gt; آخرين علّقوا على منشورك"</item>
+        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt;  و&lt;b&gt;%2$s&lt;/b&gt; آخرين علّقوا على منشورك"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;  و&lt;b&gt;%2$s&lt;/b&gt; آخرين علّقوا على منشورك"</item>
     </plurals>
 
     <!-- Activity center item when non-contacts comment on someones post %1$s is the first person name
          %2$s is the number of other people, %3$s is the post author's name -->
     <plurals name="commented_on_someones_post_grouped_with_others">
-        <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
-        <item quantity="two">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
-        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
-        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+        <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt;  و&lt;b&gt;%2$s&lt;/b&gt; من الأشخاص الآخرين علّقوا على منشور &lt;b&gt;%3$s&lt;/b&gt;"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt;  وشخص &lt;b&gt;%2$s&lt;/b&gt; آخر علّقا على منشور &lt;b&gt;%3$s&lt;/b&gt;"</item>
+        <item quantity="two">"&lt;b&gt;%1$s&lt;/b&gt;  وشخصان &lt;b&gt;%2$s&lt;/b&gt; آخران علّقوا على منشور &lt;b&gt;%3$s&lt;/b&gt;"</item>
+        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt;  و&lt;b&gt;%2$s&lt;/b&gt; أشخاص آخرين علّقوا على منشور &lt;b&gt;%3$s&lt;/b&gt;"</item>
+        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt;  و&lt;b&gt;%2$s&lt;/b&gt; شخصاً آخراً علّقوا على منشور &lt;b&gt;%3$s&lt;/b&gt;"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt;  و&lt;b&gt;%2$s&lt;/b&gt; شخص آخر علّقوا على منشور &lt;b&gt;%3$s&lt;/b&gt;"</item>
     </plurals>
 
     <!-- Activity center item when two non-contacts comment on your post %1$s is the first person name
          %2$s second persons name -->
-    <string name="two_unknown_contacts_commented_on_your_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string>
+    <string name="two_unknown_contacts_commented_on_your_post">"&lt;b&gt;%1$s&lt;/b&gt;  و&lt;b&gt;%2$s&lt;/b&gt; علّقا على منشورك"</string>
 
     <!-- Activity center item when two non-contacts comment on someones post %1$s is the first person name
          %2$s second persons name, %3$s is the poster's name -->
-    <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
+    <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt;  و&lt;b&gt;%2$s&lt;/b&gt; آخرين علّقا على منشور &lt;b&gt;%3$s&lt;/b&gt;"</string>
 
     <!-- String that links the user to learn more info -->
-    <string name="learn_more">"Learn more"</string>
+    <string name="learn_more">"تعرّف على المزيد"</string>
 
     <!-- Open up the group info page showing name, members, etc -->
-    <string name="view_group_info">"View group info"</string>
+    <string name="view_group_info">"عرض معلومات المجموعة"</string>
 
     <!-- Shown when changing the group avatar or name fails -->
-    <string name="failed_update_group">"Failed to update group, try again later"</string>
+    <string name="failed_update_group">"تعذّر تحديث المجموعة، الرجاء المحاولة لاحقاً"</string>
 
     <!-- Shown when the group avatar or name has been successfully updated -->
-    <string name="group_updated">"Group updated"</string>
+    <string name="group_updated">"تم تحديث المجموعة"</string>
 
     <!-- Text shown when the user has no groups in common -->
-    <string name="groups_in_common_empty">"You have no groups in common"</string>
+    <string name="groups_in_common_empty">"ليس لديك مجموعات مشتركة"</string>
 
     <!-- Title for page showing groups in common -->
-    <string name="groups_in_common">"Groups in common"</string>
+    <string name="groups_in_common">"المجموعات المشتركة"</string>
 
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
-    <string name="slide_to_cancel">"Slide to cancel"</string>
+    <string name="slide_to_cancel">"مرر للإلغاء"</string>
 
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
-    <string name="reply_notification_label">"Reply"</string>
+    <string name="reply_notification_label">"ردّ"</string>
 
     <!-- Action on messaging notifications allowing the user to mark the conversation as read -->
-    <string name="mark_read_notification_label">"Mark read"</string>
-</resources>
+    <string name="mark_read_notification_label">"تحديدها كمقروءة"</string>
+
+    <!-- shows the name "home" as the first option in the share to group function -->
+    <string name="home">"الصفحة الرئيسية"</string>
+
+    <!-- A new label used as the title/label of the GroupPickerActivity -->
+    <string name="select_post_destination">"النشر على …"</string>
+
+    <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
+    <string name="search_post_destination">"بحث"</string>
+<string name="share_option_group">"Post to Group"</string><string name="select_group">"Select group"</string></resources>
 

@@ -7,7 +7,7 @@
     <string name="title_groups">"Groepen"</string>
     <string name="comment">"Reageren"</string>
     <string name="next">"Volgende"</string>
-    <string name="message">"Bericht sturen"</string>
+    <string name="message">"Stuur bericht"</string>
     <string name="add_post">"Post toevoegen"</string>
     <string name="new_chat">"Nieuwe chat"</string>
     <string name="new_group">"Nieuwe groep"</string>
@@ -88,8 +88,8 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="close">"Sluiten"</string>
     <string name="reply_to_self">"Antwoord op mezelf"</string>
     <string name="reply_to_contact">"Antwoord op %s"</string>
-    <string name="reply_original_not_found">"Origineel bericht niet gevonden"</string>
-    <string name="reply_original_post_not_found">"Originele post niet gevonden"</string>
+    <string name="reply_original_not_found">"Oorspronkelijk bericht niet gevonden"</string>
+    <string name="reply_original_post_not_found">"Oorspronkelijke post niet gevonden"</string>
     <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; heeft je vermeld in een post"</string>
     <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; heeft je vermeld in een reactie op je post"</string>
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; heeft je vermeld in een reactie op een post"</string>
@@ -469,13 +469,13 @@ versie: %2$s
     <string name="failed_no_longer_member">"Je bent geen deelnemer meer van deze groep"</string>
 
     <!-- Placeholder when we do not understand the received message -->
-    <string name="message_upgrade_placeholder">"Je versie van HalloApp ondersteunt dit type bericht niet. &lt;a href=\"update-app\"&gt;Update je app&lt;/a&gt;"</string>
+    <string name="message_upgrade_placeholder">"Je versie van HalloApp ondersteunt dit type bericht niet. &lt;a href=\"update-app\"&gt;Werk je app bij&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received post -->
-    <string name="post_upgrade_placeholder">"Je versie van HalloApp ondersteunt dit type post niet. &lt;a href=\"update-app\"&gt;Update je app&lt;/a&gt;"</string>
+    <string name="post_upgrade_placeholder">"Je versie van HalloApp ondersteunt dit type post niet. &lt;a href=\"update-app\"&gt;Werk je app bij&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received comment -->
-    <string name="comment_upgrade_placeholder">"Je versie van HalloApp ondersteunt dit type reactie niet. &lt;a href=\"update-app\"&gt;Update je app&lt;/a&gt;"</string>
+    <string name="comment_upgrade_placeholder">"Je versie van HalloApp ondersteunt dit type reactie niet. &lt;a href=\"update-app\"&gt;Werk je app bij&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
     <string name="registration_sms_retry_progress">"Nieuwe sms-code wordt aangevraagd…"</string>
@@ -627,12 +627,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <!-- Text shown in activity center upon successful registration -->
     <string name="welcome_notification">"Welkom op HalloApp! &lt;a href=\"invite-friend\"&gt;Nodig een vriend uit&lt;/a&gt;"</string>
 
-    <!-- added new option for sharing -->
-    <string name="share_option_group">"Post in groep"</string>
-
-    <!-- A new label used as the title/label of the GroupPickerActivity -->
-    <string name="select_group">"Selecteer groep"</string>
-
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_groups">"Zoek groepen"</string>
 
@@ -745,7 +739,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Banner below the name of a HalloApp group -->
     <string name="halloapp_group">"HalloApp-groep"</string>
-    <string name="reply_original_comment_not_found">"Originele reactie niet gevonden"</string>
+    <string name="reply_original_comment_not_found">"Oorspronkelijke reactie niet gevonden"</string>
 
     <!-- Button on others' posts that allows the user to message them about their post in 1-1 messaging -->
     <string name="reply_privately">"Privé beantwoorden"</string>
@@ -850,5 +844,15 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Action on messaging notifications allowing the user to mark the conversation as read -->
     <string name="mark_read_notification_label">"Markeren als gelezen"</string>
-</resources>
+
+    <!-- shows the name "home" as the first option in the share to group function -->
+    <string name="home">"Home"</string>
+
+    <!-- A new label used as the title/label of the GroupPickerActivity -->
+    <!-- Fuzzy -->
+    <string name="select_post_destination">"Plaats in…"</string>
+
+    <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
+    <string name="search_post_destination">"Zoeken"</string>
+<string name="share_option_group">"Post in groep"</string><string name="select_group">"Selecteer groep"</string></resources>
 

@@ -537,7 +537,6 @@ Version: %2$s
     <string name="key_verification_tap_to_scan">"Zum Scannen hier tippen"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <!-- Fuzzy -->
     <string name="key_verification_explanation">"Um die Sicherheit deiner Verbindung mit %s zu verifizieren, prüfe bitte, ob die obigen Nummern mit denen auf dem anderen Mobilgerät angezeigten übereinstimmen oder scanne den QR-Code. "<![CDATA[<a href="https://halloapp.com/blog/encrypted-chat/">Mehr erfahren</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
@@ -668,12 +667,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Text shown in activity center upon successful registration -->
     <string name="welcome_notification">"Herzlich willkommen bei HalloApp! &lt;a href=\"invite-friend\"&gt;Jemanden einladen&lt;/a&gt;"</string>
-
-    <!-- added new option for sharing -->
-    <string name="share_option_group">"In Gruppe teilen"</string>
-
-    <!-- A new label used as the title/label of the GroupPickerActivity -->
-    <string name="select_group">"Gruppe auswählen"</string>
 
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_groups">"Gruppe suchen"</string>
@@ -893,5 +886,14 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Action on messaging notifications allowing the user to mark the conversation as read -->
     <string name="mark_read_notification_label">"Als gelesen markieren"</string>
-</resources>
+
+    <!-- shows the name "home" as the first option in the share to group function -->
+    <string name="home">"Home"</string>
+
+    <!-- A new label used as the title/label of the GroupPickerActivity -->
+    <string name="select_post_destination">"Post to…"</string>
+
+    <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
+    <string name="search_post_destination">"Suchen"</string>
+<string name="share_option_group">"In Gruppe teilen"</string><string name="select_group">"Gruppe auswählen"</string></resources>
 

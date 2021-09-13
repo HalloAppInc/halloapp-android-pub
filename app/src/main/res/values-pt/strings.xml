@@ -631,12 +631,6 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <!-- Text shown in activity center upon successful registration -->
     <string name="welcome_notification">"Bem-vindo ao HalloApp! &lt;a href=\"invite-friend\"&gt;Convide um amigo&lt;/a&gt;"</string>
 
-    <!-- added new option for sharing -->
-    <string name="share_option_group">"Postar para Grupo"</string>
-
-    <!-- A new label used as the title/label of the GroupPickerActivity -->
-    <string name="select_group">"Selecionar grupo"</string>
-
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_groups">"Pesquisar grupos"</string>
 
@@ -855,5 +849,14 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 
     <!-- Action on messaging notifications allowing the user to mark the conversation as read -->
     <string name="mark_read_notification_label">"Mark read"</string>
-</resources>
+
+    <!-- shows the name "home" as the first option in the share to group function -->
+    <string name="home">"Home"</string>
+
+    <!-- A new label used as the title/label of the GroupPickerActivity -->
+    <string name="select_post_destination">"Post to…"</string>
+
+    <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
+    <string name="search_post_destination">"Search"</string>
+<string name="share_option_group">"Postar para Grupo"</string><string name="select_group">"Selecionar grupo"</string></resources>
 

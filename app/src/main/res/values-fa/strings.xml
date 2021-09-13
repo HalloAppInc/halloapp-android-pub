@@ -621,12 +621,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Text shown in activity center upon successful registration -->
     <string name="welcome_notification">"به هالواپ خوش‌آمدید! &lt;a href=\"invite-friend\"&gt;دوست خود را دعوت کنید&lt;/a&gt;"</string>
 
-    <!-- added new option for sharing -->
-    <string name="share_option_group">"پست به گروه"</string>
-
-    <!-- A new label used as the title/label of the GroupPickerActivity -->
-    <string name="select_group">"انتخاب گروه"</string>
-
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_groups">"جستجوی گروه"</string>
 
@@ -843,5 +837,14 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Action on messaging notifications allowing the user to mark the conversation as read -->
     <string name="mark_read_notification_label">"خوانده شده"</string>
-</resources>
+
+    <!-- shows the name "home" as the first option in the share to group function -->
+    <string name="home">"صفحه اصلی"</string>
+
+    <!-- A new label used as the title/label of the GroupPickerActivity -->
+    <string name="select_post_destination">"پست به…"</string>
+
+    <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
+    <string name="search_post_destination">"جستجو"</string>
+<string name="share_option_group">"پست به گروه"</string><string name="select_group">"انتخاب گروه"</string></resources>
 
