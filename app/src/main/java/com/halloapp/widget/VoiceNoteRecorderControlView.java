@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -73,6 +74,8 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
 
     private boolean rtl;
 
+    private View recordingTime;
+
     public void onTouch(MotionEvent event) {
         final int action = event.getActionMasked();
         if (action == MotionEvent.ACTION_DOWN) {
@@ -98,6 +101,27 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
                 state = STATE_DONE;
                 onDone();
             }
+        }
+    }
+
+    private void updatePadding() {
+        if (recordingTime == null) {
+            recordingTime = ((ViewGroup) getParent()).findViewById(R.id.recording_time);
+        }
+        if (recordingTime != null) {
+            int paddingLeft;
+            int paddingRight;
+            switch(getLayoutDirection()) {
+                case LAYOUT_DIRECTION_RTL:
+                    paddingLeft = 0;
+                    paddingRight = getWidth() - recordingTime.getLeft();
+                    break;
+                case LAYOUT_DIRECTION_LTR:
+                default:
+                    paddingLeft = recordingTime.getRight();
+                    paddingRight = 0;
+            }
+            setPadding(paddingLeft, 0, paddingRight, 0);
         }
     }
 
@@ -174,6 +198,7 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
                 }
             } else if (dX > stateLockDistance) {
                 state = STATE_CANCELING;
+                updatePadding();
             } else if (dY > stateLockDistance) {
                 state = STATE_LOCKING;
             }
