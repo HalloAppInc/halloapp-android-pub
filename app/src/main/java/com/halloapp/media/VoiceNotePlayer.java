@@ -98,9 +98,11 @@ public class VoiceNotePlayer implements SensorEventListener {
             int seek = mediaPlayer.getCurrentPosition() - 1000;
             seek = Math.max(seek, 0);
             mediaPlayer.stop();
-            mediaPlayer.setAudioStreamType(stream);
-            currentAudioStream = stream;
+            mediaPlayer.reset();
             try {
+                mediaPlayer.setDataSource(currentAudio);
+                mediaPlayer.setAudioStreamType(stream);
+                currentAudioStream = stream;
                 mediaPlayer.prepare();
                 mediaPlayer.seekTo(seek);
                 mediaPlayer.start();
