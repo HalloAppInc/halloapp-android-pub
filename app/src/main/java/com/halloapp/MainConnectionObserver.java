@@ -376,6 +376,7 @@ public class MainConnectionObserver extends Connection.Observer {
                 if (post.rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
                     Log.w("Reached rerequest limit for post " + contentId);
                 } else {
+                    groupFeedKeyManager.tearDownOutboundSession(groupId);
                     contentDb.setPostRerequestCount(groupId, UserId.ME, contentId, post.rerequestCount + 1);
                     connection.sendPost(post);
                 }
@@ -385,6 +386,7 @@ public class MainConnectionObserver extends Connection.Observer {
                     if (comment.rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
                         Log.w("Reached rerequest limit for comment " + contentId);
                     } else {
+                        groupFeedKeyManager.tearDownOutboundSession(groupId);
                         contentDb.setCommentRerequestCount(groupId, UserId.ME, contentId, comment.rerequestCount + 1);
                         connection.sendComment(comment);
                     }
