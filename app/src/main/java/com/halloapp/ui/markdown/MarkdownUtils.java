@@ -90,6 +90,9 @@ public class MarkdownUtils {
         List<Mention> adjustedMentions = new ArrayList<>();
         for (Mention mention : mentions) {
             int i = initialMentionIndices.indexOf(mention.index);
+            if (i < 0 || i >= newMentionIndices.size()) {
+                continue;
+            }
             Mention copy = new Mention(newMentionIndices.get(i), mention.userId, mention.fallbackName);
             adjustedMentions.add(copy);
         }
