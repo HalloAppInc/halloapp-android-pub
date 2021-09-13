@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.content.Mention;
 import com.halloapp.ui.mentions.MentionsFormatter;
+import com.halloapp.util.logs.Log;
 
 import org.commonmark.node.Node;
 
@@ -75,7 +76,7 @@ public class MarkdownUtils {
         }
         ArrayList<Integer> initialMentionIndices = new ArrayList<>();
         for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) == '@') {
+            if (text.charAt(i) == MentionsFormatter.MENTION_CHARACTER) {
                 initialMentionIndices.add(i);
             }
         }
@@ -83,12 +84,15 @@ public class MarkdownUtils {
         CharSequence markdown = markwon.toMarkdown(text);
         ArrayList<Integer> newMentionIndices = new ArrayList<>();
         for (int i = 0; i < markdown.length(); i++) {
-            if (markdown.charAt(i) == '@') {
+            if (markdown.charAt(i) == MentionsFormatter.MENTION_CHARACTER) {
                 newMentionIndices.add(i);
             }
         }
         List<Mention> adjustedMentions = new ArrayList<>();
         for (Mention mention : mentions) {
+            if (!MentionsFormatter.isValidMention(text, mention)) {
+                continue;
+            }
             int i = initialMentionIndices.indexOf(mention.index);
             if (i < 0 || i >= newMentionIndices.size()) {
                 continue;

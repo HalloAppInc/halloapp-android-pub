@@ -23,7 +23,7 @@ public class MentionsFormatter {
         void onMentionClick(View v, Mention mention);
     }
 
-    private static final char MENTION_CHARACTER = '@';
+    public static final char MENTION_CHARACTER = '@';
 
     @NonNull
     public static CharSequence insertMentions(@NonNull CharSequence str, @NonNull List<Mention> mentions) {
@@ -46,7 +46,7 @@ public class MentionsFormatter {
         return builder;
     }
 
-    private static boolean isValidMention(@NonNull CharSequence str, @NonNull Mention mention) {
+    public static boolean isValidMention(@NonNull CharSequence str, @NonNull Mention mention) {
         if (mention.index < 0 || mention.index >= str.length()) {
             return false;
         }
