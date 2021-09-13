@@ -307,6 +307,17 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.PlayedReceipt getPlayedReceipt();
 
   /**
+   * <code>.server.RequestLogs request_logs = 31;</code>
+   * @return Whether the requestLogs field is set.
+   */
+  boolean hasRequestLogs();
+  /**
+   * <code>.server.RequestLogs request_logs = 31;</code>
+   * @return The requestLogs.
+   */
+  com.halloapp.proto.server.RequestLogs getRequestLogs();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */

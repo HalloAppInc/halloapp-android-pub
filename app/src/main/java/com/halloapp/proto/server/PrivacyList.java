@@ -14,6 +14,7 @@ public  final class PrivacyList extends
   private PrivacyList() {
     uidElements_ = emptyProtobufList();
     hash_ = com.google.protobuf.ByteString.EMPTY;
+    phoneElements_ = emptyProtobufList();
   }
   /**
    * Protobuf enum {@code server.PrivacyList.Type}
@@ -294,6 +295,126 @@ public  final class PrivacyList extends
     hash_ = getDefaultInstance().getHash();
   }
 
+  public static final int PHONE_ELEMENTS_FIELD_NUMBER = 4;
+  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.PhoneElement> phoneElements_;
+  /**
+   * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+   */
+  @java.lang.Override
+  public java.util.List<com.halloapp.proto.server.PhoneElement> getPhoneElementsList() {
+    return phoneElements_;
+  }
+  /**
+   * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+   */
+  public java.util.List<? extends com.halloapp.proto.server.PhoneElementOrBuilder> 
+      getPhoneElementsOrBuilderList() {
+    return phoneElements_;
+  }
+  /**
+   * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+   */
+  @java.lang.Override
+  public int getPhoneElementsCount() {
+    return phoneElements_.size();
+  }
+  /**
+   * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.PhoneElement getPhoneElements(int index) {
+    return phoneElements_.get(index);
+  }
+  /**
+   * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+   */
+  public com.halloapp.proto.server.PhoneElementOrBuilder getPhoneElementsOrBuilder(
+      int index) {
+    return phoneElements_.get(index);
+  }
+  private void ensurePhoneElementsIsMutable() {
+    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.PhoneElement> tmp = phoneElements_;
+    if (!tmp.isModifiable()) {
+      phoneElements_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
+     }
+  }
+
+  /**
+   * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+   */
+  private void setPhoneElements(
+      int index, com.halloapp.proto.server.PhoneElement value) {
+    value.getClass();
+  ensurePhoneElementsIsMutable();
+    phoneElements_.set(index, value);
+  }
+  /**
+   * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+   */
+  private void addPhoneElements(com.halloapp.proto.server.PhoneElement value) {
+    value.getClass();
+  ensurePhoneElementsIsMutable();
+    phoneElements_.add(value);
+  }
+  /**
+   * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+   */
+  private void addPhoneElements(
+      int index, com.halloapp.proto.server.PhoneElement value) {
+    value.getClass();
+  ensurePhoneElementsIsMutable();
+    phoneElements_.add(index, value);
+  }
+  /**
+   * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+   */
+  private void addAllPhoneElements(
+      java.lang.Iterable<? extends com.halloapp.proto.server.PhoneElement> values) {
+    ensurePhoneElementsIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, phoneElements_);
+  }
+  /**
+   * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+   */
+  private void clearPhoneElements() {
+    phoneElements_ = emptyProtobufList();
+  }
+  /**
+   * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+   */
+  private void removePhoneElements(int index) {
+    ensurePhoneElementsIsMutable();
+    phoneElements_.remove(index);
+  }
+
+  public static final int USING_PHONES_FIELD_NUMBER = 5;
+  private boolean usingPhones_;
+  /**
+   * <code>bool using_phones = 5;</code>
+   * @return The usingPhones.
+   */
+  @java.lang.Override
+  public boolean getUsingPhones() {
+    return usingPhones_;
+  }
+  /**
+   * <code>bool using_phones = 5;</code>
+   * @param value The usingPhones to set.
+   */
+  private void setUsingPhones(boolean value) {
+    
+    usingPhones_ = value;
+  }
+  /**
+   * <code>bool using_phones = 5;</code>
+   */
+  private void clearUsingPhones() {
+    
+    usingPhones_ = false;
+  }
+
   public static com.halloapp.proto.server.PrivacyList parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -565,6 +686,136 @@ public  final class PrivacyList extends
       return this;
     }
 
+    /**
+     * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+     */
+    @java.lang.Override
+    public java.util.List<com.halloapp.proto.server.PhoneElement> getPhoneElementsList() {
+      return java.util.Collections.unmodifiableList(
+          instance.getPhoneElementsList());
+    }
+    /**
+     * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+     */
+    @java.lang.Override
+    public int getPhoneElementsCount() {
+      return instance.getPhoneElementsCount();
+    }/**
+     * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.PhoneElement getPhoneElements(int index) {
+      return instance.getPhoneElements(index);
+    }
+    /**
+     * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+     */
+    public Builder setPhoneElements(
+        int index, com.halloapp.proto.server.PhoneElement value) {
+      copyOnWrite();
+      instance.setPhoneElements(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+     */
+    public Builder setPhoneElements(
+        int index, com.halloapp.proto.server.PhoneElement.Builder builderForValue) {
+      copyOnWrite();
+      instance.setPhoneElements(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+     */
+    public Builder addPhoneElements(com.halloapp.proto.server.PhoneElement value) {
+      copyOnWrite();
+      instance.addPhoneElements(value);
+      return this;
+    }
+    /**
+     * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+     */
+    public Builder addPhoneElements(
+        int index, com.halloapp.proto.server.PhoneElement value) {
+      copyOnWrite();
+      instance.addPhoneElements(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+     */
+    public Builder addPhoneElements(
+        com.halloapp.proto.server.PhoneElement.Builder builderForValue) {
+      copyOnWrite();
+      instance.addPhoneElements(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+     */
+    public Builder addPhoneElements(
+        int index, com.halloapp.proto.server.PhoneElement.Builder builderForValue) {
+      copyOnWrite();
+      instance.addPhoneElements(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+     */
+    public Builder addAllPhoneElements(
+        java.lang.Iterable<? extends com.halloapp.proto.server.PhoneElement> values) {
+      copyOnWrite();
+      instance.addAllPhoneElements(values);
+      return this;
+    }
+    /**
+     * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+     */
+    public Builder clearPhoneElements() {
+      copyOnWrite();
+      instance.clearPhoneElements();
+      return this;
+    }
+    /**
+     * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+     */
+    public Builder removePhoneElements(int index) {
+      copyOnWrite();
+      instance.removePhoneElements(index);
+      return this;
+    }
+
+    /**
+     * <code>bool using_phones = 5;</code>
+     * @return The usingPhones.
+     */
+    @java.lang.Override
+    public boolean getUsingPhones() {
+      return instance.getUsingPhones();
+    }
+    /**
+     * <code>bool using_phones = 5;</code>
+     * @param value The usingPhones to set.
+     * @return This builder for chaining.
+     */
+    public Builder setUsingPhones(boolean value) {
+      copyOnWrite();
+      instance.setUsingPhones(value);
+      return this;
+    }
+    /**
+     * <code>bool using_phones = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearUsingPhones() {
+      copyOnWrite();
+      instance.clearUsingPhones();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.PrivacyList)
   }
   @java.lang.Override
@@ -585,10 +836,13 @@ public  final class PrivacyList extends
             "uidElements_",
             com.halloapp.proto.server.UidElement.class,
             "hash_",
+            "phoneElements_",
+            com.halloapp.proto.server.PhoneElement.class,
+            "usingPhones_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0001\u0000\u0001\f\u0002\u001b" +
-              "\u0003\n";
+              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0002\u0000\u0001\f\u0002\u001b" +
+              "\u0003\n\u0004\u001b\u0005\u0007";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

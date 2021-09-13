@@ -37,4 +37,24 @@ public interface PrivacyListOrBuilder extends
    * @return The hash.
    */
   com.google.protobuf.ByteString getHash();
+
+  /**
+   * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+   */
+  java.util.List<com.halloapp.proto.server.PhoneElement> 
+      getPhoneElementsList();
+  /**
+   * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+   */
+  com.halloapp.proto.server.PhoneElement getPhoneElements(int index);
+  /**
+   * <code>repeated .server.PhoneElement phone_elements = 4;</code>
+   */
+  int getPhoneElementsCount();
+
+  /**
+   * <code>bool using_phones = 5;</code>
+   * @return The usingPhones.
+   */
+  boolean getUsingPhones();
 }
