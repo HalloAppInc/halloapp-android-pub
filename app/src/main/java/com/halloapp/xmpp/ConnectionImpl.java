@@ -9,6 +9,7 @@ import androidx.annotation.WorkerThread;
 
 import com.google.android.gms.common.util.Hex;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.halloapp.AppContext;
 import com.halloapp.BuildConfig;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
@@ -83,6 +84,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
+import com.halloapp.util.logs.LogUploaderWorker;
 import com.halloapp.util.stats.Counter;
 import com.halloapp.util.stats.Stats;
 import com.halloapp.xmpp.chat.ChatMessageProtocol;
@@ -1324,6 +1326,10 @@ public class ConnectionImpl extends Connection {
                     boolean senderStateIssue = GroupFeedRerequest.RerequestType.SENDER_STATE == groupFeedRerequest.getRerequestType();
 
                     connectionObservers.notifyGroupFeedRerequest(userId, new GroupId(rawGroupId), contentId, senderStateIssue, msg.getId());
+                    handled = true;
+                } else if (msg.hasRequestLogs()) {
+                    Log.i("connection: got log request message " + ProtoPrinter.toString(msg));
+                    LogUploaderWorker.uploadLogs(AppContext.getInstance().get(), msg.getId());
                     handled = true;
                 }
             }

@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
+import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -19,6 +20,7 @@ import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.ThreadUtils;
+import com.halloapp.xmpp.Connection;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,13 +36,22 @@ public class LogUploaderWorker extends Worker {
 
     private static final String LOG_UPLOAD_WORK_ID = "log-upload";
 
+    private static final String WORKER_PARAM_ACK_ID = "ack-id";
+
     private final Me me = Me.getInstance();
     private final FileStore fileStore = FileStore.getInstance();
     private final LogManager logManager = LogManager.getInstance();
 
     public static void uploadLogs(@NonNull Context context) {
-        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(LogUploaderWorker.class).build();
-        WorkManager.getInstance(context).enqueueUniqueWork(LOG_UPLOAD_WORK_ID, ExistingWorkPolicy.KEEP, workRequest);
+        uploadLogs(context, null);
+    }
+
+    public static void uploadLogs(@NonNull Context context, @Nullable String ackId) {
+        final OneTimeWorkRequest.Builder workRequest = new OneTimeWorkRequest.Builder(LogUploaderWorker.class);
+        if (ackId != null) {
+            workRequest.setInputData(new Data.Builder().putString(WORKER_PARAM_ACK_ID, ackId).build());
+        }
+        WorkManager.getInstance(context).enqueueUniqueWork(LOG_UPLOAD_WORK_ID, ExistingWorkPolicy.KEEP, workRequest.build());
     }
 
     public LogUploaderWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
@@ -66,6 +77,11 @@ public class LogUploaderWorker extends Worker {
         } catch (IOException e) {
             Log.e("LogUploaderWorker/doWork failed to upload logs", e);
             return Result.failure();
+        }
+        Data data = getInputData();
+        String ackId = data.getString(WORKER_PARAM_ACK_ID);
+        if (!TextUtils.isEmpty(ackId)) {
+            Connection.getInstance().sendAck(ackId);
         }
         return Result.success();
     }
