@@ -91,10 +91,12 @@ public class MarkdownUtils {
         List<Mention> adjustedMentions = new ArrayList<>();
         for (Mention mention : mentions) {
             if (!MentionsFormatter.isValidMention(text, mention)) {
+                Log.e("MarkdownUtils/formatMarkdownWithMentions invalid mention!");
                 continue;
             }
             int i = initialMentionIndices.indexOf(mention.index);
             if (i < 0 || i >= newMentionIndices.size()) {
+                Log.e("MarkdownUtils/formatMarkdownWithMentions mention index out of bounds " + i);
                 continue;
             }
             Mention copy = new Mention(newMentionIndices.get(i), mention.userId, mention.fallbackName);
