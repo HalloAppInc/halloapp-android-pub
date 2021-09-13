@@ -121,6 +121,7 @@ public class VoiceNoteRecorderControlView extends FrameLayout {
             voiceVisualizerView.setScale(value);
             voiceLock.setAlpha(value);
             voiceDelete.setAlpha(value);
+            voiceLock.setTranslationY((1.0f - value) * fadeDistance);
             setArrowAlpha(value);
         });
         enterAnimator.start();
