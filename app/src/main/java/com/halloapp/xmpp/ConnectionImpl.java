@@ -204,16 +204,6 @@ public class ConnectionImpl extends Connection {
         final String host = preferences.getUseDebugHost() ? DEBUG_HOST : HOST;
         try {
             final InetAddress address = InetAddress.getByName(host);
-            // TODO (clarkc) remove when we no longer need migration code to noise
-            if (me.getMyEd25519NoiseKey() == null) {
-                Log.i("connection: migrating registration to noise");
-                Registration.RegistrationVerificationResult migrationResult = Registration.getInstance().migrateRegistrationToNoise();
-                if (migrationResult.result != Registration.RegistrationVerificationResult.RESULT_OK) {
-                    disconnectInBackground();
-                    throw new IOException("Failed to migrate registration");
-                }
-                Log.i("connection: noise migration successful");
-            }
             HANoiseSocket noiseSocket = new HANoiseSocket(me, address, NOISE_PORT);
             noiseSocket.initialize(createAuthRequest().toByteArray());
             this.socket = noiseSocket;

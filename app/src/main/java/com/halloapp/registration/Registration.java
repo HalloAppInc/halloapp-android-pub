@@ -1,7 +1,6 @@
 package com.halloapp.registration;
 
 import android.text.TextUtils;
-import android.util.Base64;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -28,38 +27,28 @@ import com.halloapp.proto.server.RegisterRequest;
 import com.halloapp.proto.server.RegisterResponse;
 import com.halloapp.proto.server.VerifyOtpRequest;
 import com.halloapp.proto.server.VerifyOtpResponse;
-import com.halloapp.util.FileUtils;
 import com.halloapp.util.LanguageUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.net.HttpURLConnection;
 import java.net.InetAddress;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.ShortBufferException;
-import javax.net.ssl.HttpsURLConnection;
 
 public class Registration {
 
     private static final String NOISE_HOST = "s.halloapp.net";
     private static final String DEBUG_NOISE_HOST = "s-test.halloapp.net";
     private static final int NOISE_PORT = 5208;
-    private static final String HOST = "api.halloapp.net";
     private static final int RETRY_DEFAULT_WAIT_TIME_SECONDS = 15;
 
     private static Registration instance;
@@ -91,7 +80,7 @@ public class Registration {
 
     @WorkerThread
     public @NonNull RegistrationRequestResult requestRegistration(@NonNull String phone, @Nullable String groupInviteToken) {
-        return requestRegistrationType(phone, groupInviteToken,  false);
+        return requestRegistrationTypeViaNoise(phone, groupInviteToken,  false);
     }
 
     @WorkerThread
@@ -153,79 +142,8 @@ public class Registration {
         }
     }
 
-    @WorkerThread
-    private @NonNull RegistrationRequestResult requestRegistrationType(@NonNull String phone, @Nullable String groupInviteToken, boolean phoneCall) {
-        if (Constants.USE_NOISE_FOR_REGISTRATION) {
-            return requestRegistrationTypeViaNoise(phone, groupInviteToken, phoneCall);
-        }
-        Log.i("Registration.requestRegistration phone=" + phone);
-        ThreadUtils.setSocketTag();
-
-        InputStream inStream = null;
-        HttpsURLConnection connection = null;
-        try {
-            final URL url = new URL("https://" + HOST + "/api/registration/request_otp");
-            connection = (HttpsURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("User-Agent", Constants.USER_AGENT);
-            connection.setUseCaches(false);
-            connection.setAllowUserInteraction(false);
-            connection.setConnectTimeout(30_000);
-            connection.setReadTimeout(30_000);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setRequestProperty("Content-Type", "application/json");
-            JSONObject requestJson = new JSONObject();
-            requestJson.put("phone", phone);
-            if (groupInviteToken != null) {
-                requestJson.put("group_invite_token", groupInviteToken);
-            }
-            if (phoneCall) {
-                requestJson.put("method", "voice_call");
-            }
-            requestJson.put("lang_id", LanguageUtils.getLocaleIdentifier());
-            connection.getOutputStream().write(requestJson.toString().getBytes());
-
-            final int responseCode = connection.getResponseCode();
-            if (responseCode != HttpURLConnection.HTTP_OK) {
-                Log.e("Registration.requestRegistration responseCode:" + responseCode);
-            }
-            inStream = responseCode < 400 ? connection.getInputStream() : connection.getErrorStream();
-            final JSONObject responseJson = new JSONObject(FileUtils.inputStreamToString(inStream));
-            final String result = responseJson.optString("result");
-            final String normalizedPhone = responseJson.optString("phone");
-            final String error = responseJson.optString("error");
-            final String retryTimeStr = responseJson.optString("retry_after_secs");
-            int retryTime = 0;
-            try {
-                retryTime = Integer.parseInt(retryTimeStr);
-            } catch (NumberFormatException e) {
-                Log.e("Registration/requestRegistration invalid retry time: " + retryTimeStr, e);
-            }
-            Log.i("Registration.requestRegistration result=" + result + " error=" + error + " phone=" + normalizedPhone);
-            if (!"ok".equals(result)) {
-                return new RegistrationRequestResult(phone, RegistrationRequestResult.translateServerErrorCode(error), retryTime);
-            }
-            if (TextUtils.isEmpty(phone)) {
-                return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_SERVER, retryTime);
-            }
-            return new RegistrationRequestResult(phone, retryTime);
-        } catch (IOException e) {
-            Log.e("Registration.requestRegistration", e);
-            return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_NETWORK, 0);
-        } catch (JSONException e) {
-            Log.e("Registration.requestRegistration", e);
-            return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_SERVER, RETRY_DEFAULT_WAIT_TIME_SECONDS);
-        } finally {
-            FileUtils.closeSilently(inStream);
-            if (connection != null) {
-                connection.disconnect();
-            }
-        }
-    }
-
     public @NonNull RegistrationRequestResult requestRegistrationViaVoiceCall(@NonNull String phone, @Nullable String groupInviteToken) {
-        return requestRegistrationType(phone, groupInviteToken, true);
+        return requestRegistrationTypeViaNoise(phone, groupInviteToken, true);
     }
 
     public @NonNull RegistrationRequestResult registerPhoneNumber(@Nullable String name, @NonNull String phone, @Nullable String groupInviteToken) {
@@ -237,9 +155,7 @@ public class Registration {
 
     @WorkerThread
     public @NonNull RegistrationVerificationResult verifyPhoneNumber(@NonNull String phone, @NonNull String code) {
-        RegistrationVerificationResult verificationResult = Constants.USE_NOISE_FOR_REGISTRATION
-                ? verifyRegistrationViaNoise(phone, code, me.getName())
-                : verifyRegistrationNoise(phone, code, me.getName());
+        RegistrationVerificationResult verificationResult = verifyRegistrationViaNoise(phone, code, me.getName());
 
         if (verificationResult.result == RegistrationVerificationResult.RESULT_OK) {
             String uid = me.getUser();
@@ -254,66 +170,6 @@ public class Registration {
             connection.connect();
         }
         return verificationResult;
-    }
-
-    @WorkerThread
-    public RegistrationVerificationResult migrateRegistrationToNoise() {
-        ThreadUtils.setSocketTag();
-
-        InputStream inStream = null;
-        HttpsURLConnection connection = null;
-
-        final String uid = me.getUser();
-        final String password = me.getPassword();
-        try {
-            final URL url = new URL("https://" + HOST + "/api/registration/update_key");
-            connection = (HttpsURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("User-Agent", Constants.USER_AGENT);
-            connection.setUseCaches(false);
-            connection.setAllowUserInteraction(false);
-            connection.setConnectTimeout(30_000);
-            connection.setReadTimeout(30_000);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setRequestProperty("Content-Type", "application/json");
-            JSONObject requestJson = new JSONObject();
-
-            byte[] keypair = CryptoUtils.generateEd25519KeyPair();
-            byte[] pub = Arrays.copyOfRange(keypair, 0, 32);
-            byte[] priv = Arrays.copyOfRange(keypair, 32, 96);
-            requestJson.put("s_ed_pub", Base64.encodeToString(pub, Base64.NO_WRAP));
-            byte[] sign = CryptoUtils.sign("HALLO".getBytes(), new PrivateEdECKey(priv));
-            requestJson.put("signed_phrase", Base64.encodeToString(sign, Base64.NO_WRAP));
-            requestJson.put("uid", uid);
-            requestJson.put("password", password);
-
-            connection.getOutputStream().write(requestJson.toString().getBytes());
-
-            final int responseCode = connection.getResponseCode();
-            if (responseCode != HttpURLConnection.HTTP_OK) {
-                Log.e("Registration.verifyRegistration responseCode:" + responseCode);
-            }
-            inStream = responseCode < 400 ? connection.getInputStream() : connection.getErrorStream();
-            final JSONObject responseJson = new JSONObject(FileUtils.inputStreamToString(inStream));
-            final String result = responseJson.optString("result");
-            if (!"ok".equals(result)) {
-                return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
-            }
-            me.saveNoiseKey(keypair);
-            return new RegistrationVerificationResult(uid, password, me.getPhone());
-        } catch (IOException e) {
-            Log.e("Registration.verifyRegistration", e);
-            return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_NETWORK);
-        } catch (JSONException e) {
-            Log.e("Registration.verifyRegistration", e);
-            return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
-        } finally {
-            FileUtils.closeSilently(inStream);
-            if (connection != null) {
-                connection.disconnect();
-            }
-        }
     }
 
     @WorkerThread
@@ -395,99 +251,6 @@ public class Registration {
         }
     }
 
-    @WorkerThread
-    private @NonNull RegistrationVerificationResult verifyRegistrationNoise(@NonNull String phone, @NonNull String code, @NonNull String name) {
-        ThreadUtils.setSocketTag();
-
-        encryptedKeyStore.generateClientPrivateKeys();
-        IdentityKey identityKeyProto = IdentityKey.newBuilder()
-                .setPublicKey(ByteString.copyFrom(encryptedKeyStore.getMyPublicEd25519IdentityKey().getKeyMaterial()))
-                .build();
-        PublicXECKey signedPreKey = encryptedKeyStore.getMyPublicSignedPreKey();
-        byte[] signature = CryptoUtils.verifyDetached(signedPreKey.getKeyMaterial(), encryptedKeyStore.getMyPrivateEd25519IdentityKey());
-        SignedPreKey signedPreKeyProto = SignedPreKey.newBuilder()
-                .setPublicKey(ByteString.copyFrom(signedPreKey.getKeyMaterial()))
-                .setSignature(ByteString.copyFrom(signature))
-                // TODO(jack): ID
-                .build();
-        List<byte[]> oneTimePreKeys = new ArrayList<>();
-        for (OneTimePreKey otpk : encryptedKeyStore.getNewBatchOfOneTimePreKeys()) {
-            com.halloapp.proto.clients.OneTimePreKey toAdd = com.halloapp.proto.clients.OneTimePreKey.newBuilder()
-                    .setId(otpk.id)
-                    .setPublicKey(ByteString.copyFrom(otpk.publicXECKey.getKeyMaterial()))
-                    .build();
-            oneTimePreKeys.add(toAdd.toByteArray());
-        }
-
-        String identityKeyB64 = Base64.encodeToString(identityKeyProto.toByteArray(), Base64.NO_WRAP);
-        String signedPreKeyB64 = Base64.encodeToString(signedPreKeyProto.toByteArray(), Base64.NO_WRAP);
-        JSONArray jsonArray = new JSONArray();
-        for (byte[] otpk : oneTimePreKeys) {
-            jsonArray.put(Base64.encodeToString(otpk, Base64.NO_WRAP));
-        }
-
-        Log.i("Registration.verifyRegistration phone=" + phone + " code=" + code);
-        InputStream inStream = null;
-        HttpsURLConnection connection = null;
-        try {
-            final URL url = new URL("https://" + HOST + "/api/registration/register2");
-            connection = (HttpsURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("User-Agent", Constants.USER_AGENT);
-            connection.setUseCaches(false);
-            connection.setAllowUserInteraction(false);
-            connection.setConnectTimeout(30_000);
-            connection.setReadTimeout(30_000);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setRequestProperty("Content-Type", "application/json");
-            JSONObject requestJson = new JSONObject();
-            requestJson.put("phone", phone);
-            requestJson.put("code", code);
-            requestJson.put("name", name);
-
-            requestJson.put("identity_key", identityKeyB64);
-            requestJson.put("signed_key", signedPreKeyB64);
-            requestJson.put("one_time_keys", jsonArray);
-
-            byte[] keypair = CryptoUtils.generateEd25519KeyPair();
-            byte[] pub = Arrays.copyOfRange(keypair, 0, 32);
-            byte[] priv = Arrays.copyOfRange(keypair, 32, 96);
-            requestJson.put("s_ed_pub", Base64.encodeToString(pub, Base64.NO_WRAP));
-            byte[] sign = CryptoUtils.sign("HALLO".getBytes(), new PrivateEdECKey(priv));
-            requestJson.put("signed_phrase", Base64.encodeToString(sign, Base64.NO_WRAP));
-
-            connection.getOutputStream().write(requestJson.toString().getBytes());
-
-            final int responseCode = connection.getResponseCode();
-            if (responseCode != HttpURLConnection.HTTP_OK) {
-                Log.e("Registration.verifyRegistration responseCode:" + responseCode);
-            }
-            inStream = responseCode < 400 ? connection.getInputStream() : connection.getErrorStream();
-            final JSONObject responseJson = new JSONObject(FileUtils.inputStreamToString(inStream));
-            final String result = responseJson.optString("result");
-            final String normalizedPhone = responseJson.optString("phone");
-            final String uid = responseJson.optString("uid");
-            final String error = responseJson.optString("error");
-            if (!"ok".equals(result) || TextUtils.isEmpty(phone) || TextUtils.isEmpty(uid)) {
-                return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
-            }
-            me.saveNoiseKey(keypair);
-            return new RegistrationVerificationResult(uid, null, phone);
-        } catch (IOException e) {
-            Log.e("Registration.verifyRegistration", e);
-            return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_NETWORK);
-        } catch (JSONException e) {
-            Log.e("Registration.verifyRegistration", e);
-            return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
-        } finally {
-            FileUtils.closeSilently(inStream);
-            if (connection != null) {
-                connection.disconnect();
-            }
-        }
-    }
-
     public static class RegistrationRequestResult {
 
         @Retention(RetentionPolicy.SOURCE)
@@ -526,25 +289,6 @@ public class Registration {
 
         RegistrationRequestResult(@Result int result, int retryWaitTimeSeconds) {
             this(null, result, retryWaitTimeSeconds);
-        }
-
-        static @Result int translateServerErrorCode(String error) {
-            if ("sms_fail".equals(error)) {
-                return RESULT_FAILED_SERVER_SMS_FAIL;
-            } else if ("cannot_enroll".equals(error)) {
-                return RESULT_FAILED_SERVER_CANNOT_ENROLL;
-            } else if ("no_friends".equals(error)) {
-                return RESULT_FAILED_SERVER_NO_FRIENDS;
-            } else if ("not_invited".equals(error)) {
-                return RESULT_FAILED_SERVER_NOT_INVITED;
-            } else if ("invalid_client_version".equals(error)) {
-                return RESULT_FAILED_CLIENT_EXPIRED;
-            } else if ("retried_too_soon".equals(error)) {
-                return RESULT_FAILED_RETRIED_TOO_SOON;
-            } else if ("invalid_phone_number".equals(error)) {
-                return RESULT_FAILED_INVALID_PHONE_NUMBER;
-            }
-            return RESULT_FAILED_SERVER;
         }
 
         static @Result int translateServerErrorCode(OtpResponse.Reason reason) {

@@ -133,8 +133,7 @@ public class Me {
                 }
             }
         }
-        // TODO (clarkc) Remove getPassword() when migration is finished.
-        return !TextUtils.isEmpty(getUser()) && !TextUtils.isEmpty(getName()) && (getMyEd25519NoiseKey() != null || !TextUtils.isEmpty(getPassword()));
+        return !TextUtils.isEmpty(getUser()) && !TextUtils.isEmpty(getName()) && (getMyEd25519NoiseKey() != null);
     }
 
     @WorkerThread
