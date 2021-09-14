@@ -64,7 +64,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
             }
         } else { // if (post.isIncoming())
             if (!post.media.isEmpty()) {
-                new DownloadMediaTask(post, fileStore, contentDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+                DownloadMediaTask.download(post, fileStore, contentDb);
             }
             notifications.updateFeedNotifications();
         }
@@ -107,7 +107,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
             }
         } else { // if (comment.isIncoming())
             if (!comment.media.isEmpty()) {
-                new DownloadMediaTask(comment, fileStore, contentDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+                DownloadMediaTask.download(comment, fileStore, contentDb);
             }
             Post parentPost = comment.getParentPost();
             if (parentPost != null) {
@@ -150,7 +150,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
             }
         } else { // if (message.isIncoming())
             if (!message.media.isEmpty()) {
-                new DownloadMediaTask(message, fileStore, contentDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+                DownloadMediaTask.download(message, fileStore, contentDb);
             }
             notifications.updateMessageNotifications();
         }

@@ -120,7 +120,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                 if (post.senderUserId.isMe()) {
                     UploadMediaTask.restartUpload(post, fileStore, contentDb, connection);
                 } else {
-                    DownloadMediaTask.download(fileStore, contentDb, post);
+                    DownloadMediaTask.download(post, fileStore, contentDb);
                 }
             });
         }

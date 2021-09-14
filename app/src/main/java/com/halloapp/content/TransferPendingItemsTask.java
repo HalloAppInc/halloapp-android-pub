@@ -46,7 +46,7 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
             }
             if (post.isIncoming()) {
                 if (!post.media.isEmpty()) {
-                    mainHandler.post(() -> new DownloadMediaTask(post, fileStore, contentDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR));
+                    mainHandler.post(() -> DownloadMediaTask.download(post, fileStore, contentDb));
                 }
             } else /*post.isOutgoing()*/ {
                 if (post.media.isEmpty()) {
@@ -62,7 +62,7 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
         for (Message message : messages) {
             if (message.isIncoming()) {
                 if (!message.media.isEmpty()) {
-                    mainHandler.post(() -> new DownloadMediaTask(message, fileStore, contentDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR));
+                    mainHandler.post(() -> DownloadMediaTask.download(message, fileStore, contentDb));
                 } else {
                     contentDb.setMessageTransferred(message.chatId, message.senderUserId, message.id);
                 }
@@ -84,7 +84,7 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
         for (Comment comment : comments) {
             if (comment.isIncoming()) {
                 if (!comment.media.isEmpty()) {
-                    mainHandler.post(() -> new DownloadMediaTask(comment, fileStore, contentDb).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR));
+                    mainHandler.post(() -> DownloadMediaTask.download(comment, fileStore, contentDb));
                 } else {
                     contentDb.setCommentTransferred(comment.postId, comment.senderUserId, comment.id);
                 }
