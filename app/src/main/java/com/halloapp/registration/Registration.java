@@ -105,15 +105,16 @@ public class Registration {
         if (groupInviteToken != null) {
             otpRequestBuilder.setGroupInviteToken(groupInviteToken);
         }
-        byte[] noiseKey = me.getMyEd25519NoiseKey();
+        byte[] noiseKey = me.getMyRegEd25519NoiseKey();
         if (noiseKey == null) {
-            me.saveNoiseKey(CryptoUtils.generateEd25519KeyPair());
+            noiseKey = CryptoUtils.generateEd25519KeyPair();
+            me.saveNoiseRegKey(noiseKey);
         }
         HANoiseSocket noiseSocket = null;
         try {
             final InetAddress address = InetAddress.getByName(host);
             noiseSocket = new HANoiseSocket(me, address, NOISE_PORT);
-            noiseSocket.initialize(RegisterRequest.newBuilder()
+            noiseSocket.initialize(noiseKey, RegisterRequest.newBuilder()
                     .setOtpRequest(otpRequestBuilder)
                     .build().toByteArray());
 
@@ -350,7 +351,7 @@ public class Registration {
         verifyOtpRequestBuilder.addAllOneTimeKeys(oneTimePreKeys);
         verifyOtpRequestBuilder.setUserAgent(Constants.USER_AGENT);
 
-        byte[] keypair = me.getMyEd25519NoiseKey();
+        byte[] keypair = CryptoUtils.generateEd25519KeyPair();
         byte[] pub = Arrays.copyOfRange(keypair, 0, 32);
         byte[] priv = Arrays.copyOfRange(keypair, 32, 96);
         verifyOtpRequestBuilder.setStaticKey(ByteString.copyFrom(pub));
@@ -360,7 +361,12 @@ public class Registration {
         try {
             final InetAddress address = InetAddress.getByName(host);
             noiseSocket = new HANoiseSocket(me, address, NOISE_PORT);
-            noiseSocket.initialize(RegisterRequest.newBuilder().setVerifyRequest(verifyOtpRequestBuilder).build().toByteArray());
+            byte[] noiseKey = me.getMyRegEd25519NoiseKey();
+            if (noiseKey == null) {
+                noiseKey = CryptoUtils.generateEd25519KeyPair();
+                me.saveNoiseRegKey(noiseKey);
+            }
+            noiseSocket.initialize(noiseKey, RegisterRequest.newBuilder().setVerifyRequest(verifyOtpRequestBuilder).build().toByteArray());
 
             RegisterResponse packet = RegisterResponse.parseFrom(noiseSocket.readPacket());
             final VerifyOtpResponse response = packet.getVerifyResponse();

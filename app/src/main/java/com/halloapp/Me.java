@@ -33,6 +33,7 @@ public class Me {
     private static final String PREF_KEY_PHONE = "phone";
     private static final String PREF_KEY_NAME = "name";
 
+    private static final String PREF_KEY_MY_REG_ED25519_NOISE_KEY = "my_reg_ed25519_noise_key";
     private static final String PREF_KEY_MY_ED25519_NOISE_KEY = "my_ed25519_noise_key";
     private static final String PREF_KEY_SERVER_PUBLIC_STATIC_KEY = "server_public_static_key";
 
@@ -198,6 +199,10 @@ public class Me {
         setMyEd25519NoiseKey(noiseKeyPair);
     }
 
+    public void saveNoiseRegKey(byte[] noiseKeyPair) {
+        setMyRegEd25519NoiseKey(noiseKeyPair);
+    }
+
     public void setServerStaticKey(byte[] publicServerStaticKey) {
         storeBytes(PREF_KEY_SERVER_PUBLIC_STATIC_KEY, publicServerStaticKey);
     }
@@ -217,6 +222,14 @@ public class Me {
 
     public byte[] getMyEd25519NoiseKey() {
         return retrieveBytes(PREF_KEY_MY_ED25519_NOISE_KEY);
+    }
+
+    private void setMyRegEd25519NoiseKey(byte[] key) {
+        storeBytes(PREF_KEY_MY_REG_ED25519_NOISE_KEY, key);
+    }
+
+    public byte[] getMyRegEd25519NoiseKey() {
+        return retrieveBytes(PREF_KEY_MY_REG_ED25519_NOISE_KEY);
     }
 
     private void storeBytes(String prefKey, byte[] bytes) {
