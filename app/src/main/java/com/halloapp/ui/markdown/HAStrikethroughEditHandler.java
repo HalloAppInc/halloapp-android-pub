@@ -9,11 +9,11 @@ import io.noties.markwon.editor.AbstractEditHandler;
 import io.noties.markwon.editor.MarkwonEditorUtils;
 import io.noties.markwon.editor.PersistedSpans;
 
-public class StrikethroughEditHandler extends AbstractEditHandler<StrikethroughSpan> {
+public class HAStrikethroughEditHandler extends AbstractEditHandler<StrikethroughSpan> {
 
     @NonNull
-    public static StrikethroughEditHandler create() {
-        return new StrikethroughEditHandler();
+    public static HAStrikethroughEditHandler create() {
+        return new HAStrikethroughEditHandler();
     }
 
     @Override
@@ -23,11 +23,8 @@ public class StrikethroughEditHandler extends AbstractEditHandler<StrikethroughS
 
     @Override
     public void handleMarkdownSpan(@NonNull PersistedSpans persistedSpans, @NonNull Editable editable, @NonNull String input, @NonNull StrikethroughSpan span, int spanStart, int spanTextLength) {
-        // inline spans can delimit other inline spans,
-        //  for example: `**_~~hey~~_**`, this is why we must additionally find delimiter used
-        //  and its actual start/end positions
         final MarkwonEditorUtils.Match match =
-                MarkwonEditorUtils.findDelimited(input, spanStart, "~~");
+                MarkwonEditorUtils.findDelimited(input, spanStart, "~", "~~");
         if (match != null) {
             editable.setSpan(
                     persistedSpans.get(StrikethroughSpan.class),
