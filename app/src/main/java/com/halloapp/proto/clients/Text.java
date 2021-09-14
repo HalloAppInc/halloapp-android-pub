@@ -156,6 +156,52 @@ public  final class Text extends
     mentions_.remove(index);
   }
 
+  public static final int LINK_FIELD_NUMBER = 3;
+  private com.halloapp.proto.clients.Link link_;
+  /**
+   * <code>.clients.Link link = 3;</code>
+   */
+  @java.lang.Override
+  public boolean hasLink() {
+    return link_ != null;
+  }
+  /**
+   * <code>.clients.Link link = 3;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.Link getLink() {
+    return link_ == null ? com.halloapp.proto.clients.Link.getDefaultInstance() : link_;
+  }
+  /**
+   * <code>.clients.Link link = 3;</code>
+   */
+  private void setLink(com.halloapp.proto.clients.Link value) {
+    value.getClass();
+  link_ = value;
+    
+    }
+  /**
+   * <code>.clients.Link link = 3;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeLink(com.halloapp.proto.clients.Link value) {
+    value.getClass();
+  if (link_ != null &&
+        link_ != com.halloapp.proto.clients.Link.getDefaultInstance()) {
+      link_ =
+        com.halloapp.proto.clients.Link.newBuilder(link_).mergeFrom(value).buildPartial();
+    } else {
+      link_ = value;
+    }
+    
+  }
+  /**
+   * <code>.clients.Link link = 3;</code>
+   */
+  private void clearLink() {  link_ = null;
+    
+  }
+
   public static com.halloapp.proto.clients.Text parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -402,6 +448,53 @@ public  final class Text extends
       return this;
     }
 
+    /**
+     * <code>.clients.Link link = 3;</code>
+     */
+    @java.lang.Override
+    public boolean hasLink() {
+      return instance.hasLink();
+    }
+    /**
+     * <code>.clients.Link link = 3;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.Link getLink() {
+      return instance.getLink();
+    }
+    /**
+     * <code>.clients.Link link = 3;</code>
+     */
+    public Builder setLink(com.halloapp.proto.clients.Link value) {
+      copyOnWrite();
+      instance.setLink(value);
+      return this;
+      }
+    /**
+     * <code>.clients.Link link = 3;</code>
+     */
+    public Builder setLink(
+        com.halloapp.proto.clients.Link.Builder builderForValue) {
+      copyOnWrite();
+      instance.setLink(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.clients.Link link = 3;</code>
+     */
+    public Builder mergeLink(com.halloapp.proto.clients.Link value) {
+      copyOnWrite();
+      instance.mergeLink(value);
+      return this;
+    }
+    /**
+     * <code>.clients.Link link = 3;</code>
+     */
+    public Builder clearLink() {  copyOnWrite();
+      instance.clearLink();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.Text)
   }
   @java.lang.Override
@@ -421,10 +514,11 @@ public  final class Text extends
             "text_",
             "mentions_",
             com.halloapp.proto.clients.Mention.class,
+            "link_",
           };
           java.lang.String info =
-              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u0208\u0002\u001b" +
-              "";
+              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0001\u0000\u0001\u0208\u0002\u001b" +
+              "\u0003\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -32,4 +32,15 @@ public interface TextOrBuilder extends
    * <code>repeated .clients.Mention mentions = 2;</code>
    */
   int getMentionsCount();
+
+  /**
+   * <code>.clients.Link link = 3;</code>
+   * @return Whether the link field is set.
+   */
+  boolean hasLink();
+  /**
+   * <code>.clients.Link link = 3;</code>
+   * @return The link.
+   */
+  com.halloapp.proto.clients.Link getLink();
 }
