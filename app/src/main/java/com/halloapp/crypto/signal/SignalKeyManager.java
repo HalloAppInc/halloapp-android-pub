@@ -46,7 +46,7 @@ public class SignalKeyManager {
         this.encryptedKeyStore = encryptedKeyStore;
     }
 
-    public void tearDownSession(UserId peerUserId) {
+    void tearDownSession(UserId peerUserId) {
         Log.i("SignalKeyManager tearing down session with user " + peerUserId);
         encryptedKeyStore.clearPeerVerified(peerUserId);
         encryptedKeyStore.clearSessionAlreadySetUp(peerUserId);
@@ -71,7 +71,7 @@ public class SignalKeyManager {
         // teardown keys intentionally omitted
     }
 
-    public void setUpSession(UserId peerUserId, PublicEdECKey recipientPublicIdentityKey, PublicXECKey recipientPublicSignedPreKey, @Nullable OneTimePreKey recipientPublicOneTimePreKey) throws CryptoException {
+    void setUpSession(UserId peerUserId, PublicEdECKey recipientPublicIdentityKey, PublicXECKey recipientPublicSignedPreKey, @Nullable OneTimePreKey recipientPublicOneTimePreKey) throws CryptoException {
         encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, recipientPublicIdentityKey);
         encryptedKeyStore.setPeerSignedPreKey(peerUserId, recipientPublicSignedPreKey);
         if (recipientPublicOneTimePreKey != null) {
@@ -117,7 +117,7 @@ public class SignalKeyManager {
         }
     }
 
-    public void receiveSessionSetup(UserId peerUserId, byte[] message, @NonNull SessionSetupInfo sessionSetupInfo) throws CryptoException {
+    void receiveSessionSetup(UserId peerUserId, byte[] message, @NonNull SessionSetupInfo sessionSetupInfo) throws CryptoException {
         byte[] ephemeralKeyBytes = Arrays.copyOfRange(message, 0, 32);
         byte[] ephemeralKeyIdBytes = Arrays.copyOfRange(message, 32, 36);
 

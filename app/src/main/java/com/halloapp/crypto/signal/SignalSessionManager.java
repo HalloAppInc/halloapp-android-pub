@@ -87,33 +87,35 @@ public class SignalSessionManager {
 
     public byte[] decryptMessage(@NonNull byte[] message, @NonNull UserId peerUserId, @Nullable SessionSetupInfo sessionSetupInfo) throws CryptoException {
         try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
-            if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
-                if (sessionSetupInfo == null || sessionSetupInfo.identityKey == null) {
-                    throw new CryptoException("no_identity_key");
+            try {
+                if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
+                    if (sessionSetupInfo == null || sessionSetupInfo.identityKey == null) {
+                        throw new CryptoException("no_identity_key");
+                    }
+                    signalKeyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
+                    encryptedKeyStore.setPeerResponded(peerUserId, true);
+                } else if (sessionSetupInfo != null && sessionSetupInfo.identityKey != null) {
+                    PublicEdECKey peerIdentityKey = encryptedKeyStore.getPeerPublicIdentityKey(peerUserId);
+                    if (!Arrays.equals(peerIdentityKey.getKeyMaterial(), sessionSetupInfo.identityKey.getKeyMaterial())) {
+                        Log.w("Session already set up but received session setup info with new identity key;"
+                                + " stored: " + Base64.encodeToString(peerIdentityKey.getKeyMaterial(), Base64.NO_WRAP)
+                                + " received: " + Base64.encodeToString(sessionSetupInfo.identityKey.getKeyMaterial(), Base64.NO_WRAP));
+                    }
+                    encryptedKeyStore.setPeerResponded(peerUserId, true);
                 }
-                signalKeyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
-                encryptedKeyStore.setPeerResponded(peerUserId, true);
-            } else if (sessionSetupInfo != null && sessionSetupInfo.identityKey != null) {
-                PublicEdECKey peerIdentityKey = encryptedKeyStore.getPeerPublicIdentityKey(peerUserId);
-                if (!Arrays.equals(peerIdentityKey.getKeyMaterial(), sessionSetupInfo.identityKey.getKeyMaterial())) {
-                    Log.w("Session already set up but received session setup info with new identity key;"
-                            + " stored: " + Base64.encodeToString(peerIdentityKey.getKeyMaterial(), Base64.NO_WRAP)
-                            + " received: " + Base64.encodeToString(sessionSetupInfo.identityKey.getKeyMaterial(), Base64.NO_WRAP));
-                }
-                encryptedKeyStore.setPeerResponded(peerUserId, true);
-            }
-            encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
+                encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
 
-            return signalMessageCipher.convertFromWire(message, peerUserId);
-        } catch (CryptoException e) {
-            if (e.teardownKeyMatched) {
-                Log.i("Teardown key matched; skipping session reset");
-            } else {
-                Log.i("Resetting session because teardown key did not match", e);
-                signalKeyManager.tearDownSession(peerUserId);
-                setUpSession(peerUserId, true);
+                return signalMessageCipher.convertFromWire(message, peerUserId);
+            } catch (CryptoException e) {
+                if (e.teardownKeyMatched) {
+                    Log.i("Teardown key matched; skipping session reset");
+                } else {
+                    Log.i("Resetting session because teardown key did not match", e);
+                    signalKeyManager.tearDownSession(peerUserId);
+                    setUpSession(peerUserId, true);
+                }
+                throw e;
             }
-            throw e;
         } catch (InterruptedException e) {
             throw new CryptoException("dec_interrupted", e);
         }

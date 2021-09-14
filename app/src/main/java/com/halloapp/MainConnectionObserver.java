@@ -346,7 +346,7 @@ public class MainConnectionObserver extends Connection.Observer {
              byte[] lastMessageEphemeralKey = encryptedKeyStore.getInboundTeardownKey(peerUserId);
              if (!Arrays.equals(lastMessageEphemeralKey, messageEphemeralKey)) {
                  encryptedKeyStore.setInboundTeardownKey(peerUserId, messageEphemeralKey);
-                 signalKeyManager.tearDownSession(peerUserId);
+                 signalSessionManager.tearDownSession(peerUserId);
                  if (sessionSetupKey.length == 0) {
                     Log.i("Got empty session setup key; cannot process rereq session setup from older client");
                  } else {
