@@ -18,13 +18,12 @@ import com.halloapp.content.Post;
 import com.halloapp.content.PostsManager;
 import com.halloapp.content.TransferPendingItemsTask;
 import com.halloapp.crypto.CryptoException;
-import com.halloapp.crypto.group.GroupFeedKeyManager;
+import com.halloapp.crypto.group.GroupFeedSessionManager;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
-import com.halloapp.crypto.signal.SignalSessionSetupInfo;
-import com.halloapp.crypto.signal.SignalKeyManager;
 import com.halloapp.crypto.signal.SignalSessionManager;
+import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.GroupsSync;
 import com.halloapp.groups.MemberInfo;
@@ -73,7 +72,6 @@ public class MainConnectionObserver extends Connection.Observer {
     private final Connection connection;
     private final ContactsDb contactsDb;
     private final GroupsSync groupsSync;
-    private final SignalKeyManager signalKeyManager;
     private final Preferences preferences;
     private final AvatarLoader avatarLoader;
     private final PostsManager postsManager;
@@ -85,8 +83,8 @@ public class MainConnectionObserver extends Connection.Observer {
     private final FeedPrivacyManager feedPrivacyManager;
     private final ForegroundObserver foregroundObserver;
     private final DecryptReportStats decryptReportStats;
-    private final GroupFeedKeyManager groupFeedKeyManager;
     private final SignalSessionManager signalSessionManager;
+    private final GroupFeedSessionManager groupFeedSessionManager;
     private final GroupPostDecryptReportStats groupPostDecryptReportStats;
     private final GroupCommentDecryptReportStats groupCommentDecryptReportStats;
 
@@ -102,7 +100,6 @@ public class MainConnectionObserver extends Connection.Observer {
                             Connection.getInstance(),
                             ContactsDb.getInstance(),
                             GroupsSync.getInstance(context),
-                            SignalKeyManager.getInstance(),
                             Preferences.getInstance(),
                             AvatarLoader.getInstance(),
                             PostsManager.getInstance(),
@@ -114,8 +111,8 @@ public class MainConnectionObserver extends Connection.Observer {
                             FeedPrivacyManager.getInstance(),
                             ForegroundObserver.getInstance(),
                             DecryptReportStats.getInstance(),
-                            GroupFeedKeyManager.getInstance(),
                             SignalSessionManager.getInstance(),
+                            GroupFeedSessionManager.getInstance(),
                             GroupPostDecryptReportStats.getInstance(),
                             GroupCommentDecryptReportStats.getInstance());
                 }
@@ -133,7 +130,6 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull Connection connection,
             @NonNull ContactsDb contactsDb,
             @NonNull GroupsSync groupsSync,
-            @NonNull SignalKeyManager signalKeyManager,
             @NonNull Preferences preferences,
             @NonNull AvatarLoader avatarLoader,
             @NonNull PostsManager postsManager,
@@ -145,8 +141,8 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull FeedPrivacyManager feedPrivacyManager,
             @NonNull ForegroundObserver foregroundObserver,
             @NonNull DecryptReportStats decryptReportStats,
-            @NonNull GroupFeedKeyManager groupFeedKeyManager,
             @NonNull SignalSessionManager signalSessionManager,
+            @NonNull GroupFeedSessionManager groupFeedSessionManager,
             @NonNull GroupPostDecryptReportStats groupPostDecryptReportStats,
             @NonNull GroupCommentDecryptReportStats groupCommentDecryptReportStats) {
         this.context = context.getApplicationContext();
@@ -157,7 +153,6 @@ public class MainConnectionObserver extends Connection.Observer {
         this.connection = connection;
         this.contactsDb = contactsDb;
         this.groupsSync = groupsSync;
-        this.signalKeyManager = signalKeyManager;
         this.preferences = preferences;
         this.avatarLoader = avatarLoader;
         this.postsManager = postsManager;
@@ -169,8 +164,8 @@ public class MainConnectionObserver extends Connection.Observer {
         this.feedPrivacyManager = feedPrivacyManager;
         this.foregroundObserver = foregroundObserver;
         this.decryptReportStats = decryptReportStats;
-        this.groupFeedKeyManager = groupFeedKeyManager;
         this.signalSessionManager = signalSessionManager;
+        this.groupFeedSessionManager = groupFeedSessionManager;
         this.groupPostDecryptReportStats = groupPostDecryptReportStats;
         this.groupCommentDecryptReportStats = groupCommentDecryptReportStats;
     }
@@ -281,7 +276,7 @@ public class MainConnectionObserver extends Connection.Observer {
         }
 
         if (foundMismatch) {
-            GroupFeedKeyManager.getInstance().tearDownOutboundSession(groupId);
+            groupFeedSessionManager.tearDownOutboundSession(groupId);
             connection.sendPost(post);
         } else {
             Log.w("Server said audience does not match but failed to find mismatch; not re-sending");
@@ -351,7 +346,7 @@ public class MainConnectionObserver extends Connection.Observer {
                     Log.i("Got empty session setup key; cannot process rereq session setup from older client");
                  } else {
                      try {
-                         signalKeyManager.receiveSessionSetup(peerUserId, new PublicXECKey(sessionSetupKey), 1, new SignalSessionSetupInfo(peerIdentityKey, otpkId));
+                         signalSessionManager.receiveSessionSetup(peerUserId, new PublicXECKey(sessionSetupKey), 1, new SignalSessionSetupInfo(peerIdentityKey, otpkId));
                          encryptedKeyStore.setPeerResponded(peerUserId, true);
                      } catch (CryptoException e) {
                          Log.e("Failed to reset session on message rerequest", e);
@@ -376,7 +371,7 @@ public class MainConnectionObserver extends Connection.Observer {
                 if (post.rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
                     Log.w("Reached rerequest limit for post " + contentId);
                 } else {
-                    groupFeedKeyManager.tearDownOutboundSession(groupId);
+                    groupFeedSessionManager.tearDownOutboundSession(groupId);
                     contentDb.setPostRerequestCount(groupId, UserId.ME, contentId, post.rerequestCount + 1);
                     connection.sendPost(post);
                 }
@@ -386,7 +381,7 @@ public class MainConnectionObserver extends Connection.Observer {
                     if (comment.rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
                         Log.w("Reached rerequest limit for comment " + contentId);
                     } else {
-                        groupFeedKeyManager.tearDownOutboundSession(groupId);
+                        groupFeedSessionManager.tearDownOutboundSession(groupId);
                         contentDb.setCommentRerequestCount(groupId, UserId.ME, contentId, comment.rerequestCount + 1);
                         connection.sendComment(comment);
                     }
@@ -532,7 +527,7 @@ public class MainConnectionObserver extends Connection.Observer {
             if (!removed.isEmpty()) {
                 String idList = toUserIdList(removed);
                 addSystemPost(groupId, sender, Post.USAGE_REMOVE_MEMBER, idList, null);
-                groupFeedKeyManager.tearDownOutboundSession(groupId);
+                groupFeedSessionManager.tearDownOutboundSession(groupId);
             }
 
             for (MemberInfo member : removed) {

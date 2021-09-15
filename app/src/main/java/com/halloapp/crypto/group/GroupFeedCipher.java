@@ -30,8 +30,8 @@ public class GroupFeedCipher {
         this.groupFeedKeyManager = groupFeedKeyManager;
     }
 
-    public byte[] convertForWire(byte[] payload, GroupId groupId) throws CryptoException {
-        byte[] messageKey = GroupFeedKeyManager.getInstance().getNextOutboundMessageKey(groupId);
+    byte[] convertForWire(byte[] payload, GroupId groupId) throws CryptoException {
+        byte[] messageKey = groupFeedKeyManager.getNextOutboundMessageKey(groupId);
         PrivateEdECKey privateSignatureKey = encryptedKeyStore.getMyPrivateGroupSigningKey(groupId);
         int nextChainIndex = encryptedKeyStore.getMyGroupCurrentChainIndex(groupId);
 
@@ -61,7 +61,7 @@ public class GroupFeedCipher {
         }
     }
 
-    public byte[] convertFromWire(byte[] encPayload, GroupId groupId, UserId peerUserId) throws CryptoException {
+    byte[] convertFromWire(byte[] encPayload, GroupId groupId, UserId peerUserId) throws CryptoException {
         byte[] currentChainIndexBytes = Arrays.copyOfRange(encPayload, 0, 4);
         byte[] encryptedMessage = Arrays.copyOfRange(encPayload, 4, encPayload.length - 32);
         byte[] receivedHmac = Arrays.copyOfRange(encPayload, encPayload.length - 32, encPayload.length);
@@ -110,7 +110,7 @@ public class GroupFeedCipher {
         throw new IllegalStateException("Unreachable");
     }
 
-    void onDecryptFailure(String reason, GroupId groupId, UserId peerUserId, GroupFeedMessageKey messageKey) throws CryptoException {
+    private void onDecryptFailure(String reason, GroupId groupId, UserId peerUserId, GroupFeedMessageKey messageKey) throws CryptoException {
         encryptedKeyStore.storeSkippedGroupFeedKey(groupId, peerUserId, messageKey);
         throw new CryptoException(reason);
     }

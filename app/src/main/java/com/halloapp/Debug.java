@@ -1,5 +1,6 @@
 package com.halloapp;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -46,6 +47,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressLint("VisibleForTests")
 public class Debug {
 
     private static final String DEBUG_MENU_RESET_REGISTRATION = "Reset registration";

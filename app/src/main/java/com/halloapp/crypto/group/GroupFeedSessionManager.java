@@ -14,6 +14,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -67,5 +68,21 @@ public class GroupFeedSessionManager {
         } catch (InterruptedException e) {
             throw new CryptoException("group_dec_interrupted", e);
         }
+    }
+
+    public GroupSetupInfo ensureGroupSetUp(GroupId groupId) throws CryptoException, NoSuchAlgorithmException {
+        return groupFeedKeyManager.ensureGroupSetUp(groupId);
+    }
+
+    public void sendPostRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String postId, boolean senderStateIssue) {
+        connection.sendGroupPostRerequest(senderUserId, groupId, postId, senderStateIssue);
+    }
+
+    public void sendCommentRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String commentId, boolean senderStateIssue) {
+        connection.sendGroupPostRerequest(senderUserId, groupId, commentId, senderStateIssue);
+    }
+
+    public void tearDownOutboundSession(GroupId groupId) {
+        groupFeedKeyManager.tearDownOutboundSession(groupId);
     }
 }

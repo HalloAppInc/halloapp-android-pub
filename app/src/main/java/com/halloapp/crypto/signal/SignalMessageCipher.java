@@ -73,7 +73,7 @@ class SignalMessageCipher {
         throw new IllegalStateException("Unreachable");
     }
 
-    void onDecryptFailure(String reason, UserId peerUserId, SignalMessageKey signalMessageKey) throws CryptoException {
+    private void onDecryptFailure(String reason, UserId peerUserId, SignalMessageKey signalMessageKey) throws CryptoException {
         encryptedKeyStore.storeSkippedMessageKey(peerUserId, signalMessageKey);
         byte[] lastTeardownKey = encryptedKeyStore.getOutboundTeardownKey(peerUserId);
         byte[] newTeardownKey = signalMessageKey.getKeyMaterial();

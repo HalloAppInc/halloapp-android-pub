@@ -1,6 +1,6 @@
 package com.halloapp.crypto.group;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 import com.google.crypto.tink.subtle.Hex;
 import com.google.protobuf.ByteString;
@@ -12,8 +12,8 @@ import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PrivateEdECKey;
-import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.crypto.signal.SignalSessionManager;
+import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -22,7 +22,6 @@ import com.halloapp.proto.clients.SenderState;
 import com.halloapp.proto.server.SenderStateBundle;
 import com.halloapp.proto.server.SenderStateWithKeyInfo;
 import com.halloapp.util.logs.Log;
-import com.halloapp.xmpp.Connection;
 
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -34,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 public class GroupFeedKeyManager {
     private static GroupFeedKeyManager instance;
 
@@ -61,7 +61,7 @@ public class GroupFeedKeyManager {
         this.signalSessionManager = signalSessionManager;
     }
 
-    public GroupSetupInfo ensureGroupSetUp(GroupId groupId) throws CryptoException, NoSuchAlgorithmException {
+    GroupSetupInfo ensureGroupSetUp(GroupId groupId) throws CryptoException, NoSuchAlgorithmException {
         Map<UserId, SignalSessionSetupInfo> setupInfoMap = new HashMap<>();
         List<MemberInfo> members = new ArrayList<>();
         for (MemberInfo memberInfo : ContentDb.getInstance().getGroupMembers(groupId)) {
@@ -163,7 +163,7 @@ public class GroupFeedKeyManager {
         return new GroupSetupInfo(audienceHash, senderStateBundles);
     }
 
-    public byte[] getNextInboundMessageKey(GroupId groupId, UserId peerUserId, int currentChainIndex) throws CryptoException {
+    byte[] getNextInboundMessageKey(GroupId groupId, UserId peerUserId, int currentChainIndex) throws CryptoException {
         int storedCurrentChainIndex = encryptedKeyStore.getPeerGroupCurrentChainIndex(groupId, peerUserId);
         Log.i("GroupFeedKeyManager.getNextInboundMessageKey for " + groupId + " member " + peerUserId + " receivedIndex " + currentChainIndex + " storedIndex " + storedCurrentChainIndex);
 
@@ -182,6 +182,7 @@ public class GroupFeedKeyManager {
         return getInboundMessageKey(groupId, peerUserId);
     }
 
+    @VisibleForTesting
     public byte[] getInboundMessageKey(GroupId groupId, UserId peerUserId) throws CryptoException {
         Log.i("GroupFeedKeyManager.getInboundMessageKey for " + groupId + " member " + peerUserId);
         try {
@@ -233,15 +234,7 @@ public class GroupFeedKeyManager {
         }
     }
 
-    public void sendPostRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String postId, boolean senderStateIssue) {
-        Connection.getInstance().sendGroupPostRerequest(senderUserId, groupId, postId, senderStateIssue);
-    }
-
-    public void sendCommentRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String commentId, boolean senderStateIssue) {
-        Connection.getInstance().sendGroupPostRerequest(senderUserId, groupId, commentId, senderStateIssue);
-    }
-
-    public void tearDownOutboundSession(GroupId groupId) {
+    void tearDownOutboundSession(GroupId groupId) {
         Log.i("GroupFeedKeyManager tearing down outbound session for " + groupId);
         encryptedKeyStore.clearMyGroupChainKey(groupId);
         encryptedKeyStore.clearMyGroupCurrentChainIndex(groupId);
@@ -249,7 +242,7 @@ public class GroupFeedKeyManager {
         encryptedKeyStore.clearGroupSendAlreadySetUp(groupId);
     }
 
-    public void tearDownInboundSession(GroupId groupId, UserId peerUserId) {
+    void tearDownInboundSession(GroupId groupId, UserId peerUserId) {
         Log.i("GroupFeedKeyManager tearing down inbound session with " + peerUserId + " for " + groupId);
         encryptedKeyStore.clearPeerGroupChainKey(groupId, peerUserId);
         encryptedKeyStore.clearPeerGroupCurrentChainIndex(groupId, peerUserId);

@@ -22,7 +22,6 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.CryptoException;
-import com.halloapp.crypto.group.GroupFeedKeyManager;
 import com.halloapp.crypto.group.GroupFeedSessionManager;
 import com.halloapp.crypto.group.GroupSetupInfo;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
@@ -568,7 +567,7 @@ public class ConnectionImpl extends Connection {
             if (ServerProps.getInstance().getIsInternalUser()) {
                 Stats stats = Stats.getInstance();
                 try {
-                    GroupSetupInfo groupSetupInfo = GroupFeedKeyManager.getInstance().ensureGroupSetUp(groupId);
+                    GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
                     senderStateBundles = groupSetupInfo.senderStateBundles;
                     audienceHash = groupSetupInfo.audienceHash;
                     encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
@@ -659,7 +658,7 @@ public class ConnectionImpl extends Connection {
             if (ServerProps.getInstance().getIsInternalUser()) {
                 Stats stats = Stats.getInstance();
                 try {
-                    GroupSetupInfo groupSetupInfo = GroupFeedKeyManager.getInstance().ensureGroupSetUp(groupId);
+                    GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
                     senderStateBundles = groupSetupInfo.senderStateBundles;
                     audienceHash = groupSetupInfo.audienceHash;
                     encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
@@ -1417,7 +1416,7 @@ public class ConnectionImpl extends Connection {
                         count = contentDb.getPostRerequestCount(groupId, publisherUserId, protoPost.getId());
                         count += 1;
                         contentDb.setPostRerequestCount(groupId, publisherUserId, protoPost.getId(), count);
-                        GroupFeedKeyManager.getInstance().sendPostRerequest(publisherUserId, groupId, protoPost.getId(), false);
+                        GroupFeedSessionManager.getInstance().sendPostRerequest(publisherUserId, groupId, protoPost.getId(), false);
                     }
                 }
             }
@@ -1500,7 +1499,7 @@ public class ConnectionImpl extends Connection {
                         count = contentDb.getCommentRerequestCount(groupId, publisherUserId, protoComment.getId());
                         count += 1;
                         contentDb.setCommentRerequestCount(groupId, publisherUserId, protoComment.getId(), count);
-                        GroupFeedKeyManager.getInstance().sendCommentRerequest(publisherUserId, groupId, protoComment.getId(), false);
+                        GroupFeedSessionManager.getInstance().sendCommentRerequest(publisherUserId, groupId, protoComment.getId(), false);
                     }
                 }
             }

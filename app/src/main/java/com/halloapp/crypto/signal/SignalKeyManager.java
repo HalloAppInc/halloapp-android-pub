@@ -2,6 +2,7 @@ package com.halloapp.crypto.signal;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoException;
@@ -20,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 public class SignalKeyManager {
 
     private static SignalKeyManager instance;
@@ -126,7 +128,7 @@ public class SignalKeyManager {
         receiveSessionSetup(peerUserId, publicEphemeralKey, ephemeralKeyId, signalSessionSetupInfo);
     }
 
-    public void receiveSessionSetup(UserId peerUserId, PublicXECKey publicEphemeralKey, int ephemeralKeyId, @NonNull SignalSessionSetupInfo signalSessionSetupInfo) throws CryptoException {
+    void receiveSessionSetup(UserId peerUserId, PublicXECKey publicEphemeralKey, int ephemeralKeyId, @NonNull SignalSessionSetupInfo signalSessionSetupInfo) throws CryptoException {
         encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, signalSessionSetupInfo.identityKey);
 
         try {
@@ -192,7 +194,7 @@ public class SignalKeyManager {
         return getNextMessageKey(peerUserId, false);
     }
 
-    public byte[] getInboundMessageKey(UserId peerUserId, PublicXECKey ephemeralKey, int ephemeralKeyId, int previousChainLength, int currentChainIndex) throws CryptoException {
+    byte[] getInboundMessageKey(UserId peerUserId, PublicXECKey ephemeralKey, int ephemeralKeyId, int previousChainLength, int currentChainIndex) throws CryptoException {
         int latestStoredEphemeralKeyId = encryptedKeyStore.getInboundEphemeralKeyId(peerUserId);
         int latestPreviousChainLength = encryptedKeyStore.getInboundPreviousChainLength(peerUserId);
         int latestStoredChainIndex = encryptedKeyStore.getInboundCurrentChainIndex(peerUserId);
@@ -275,11 +277,11 @@ public class SignalKeyManager {
         }
     }
 
-    public void updateOutboundChainAndRootKey(UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral) throws CryptoException {
+    private void updateOutboundChainAndRootKey(UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral) throws CryptoException {
         updateChainAndRootKey(peerUserId, myEphemeral, peerEphemeral, true);
     }
 
-    public void updateInboundChainAndRootKey(UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral) throws CryptoException {
+    private void updateInboundChainAndRootKey(UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral) throws CryptoException {
         updateChainAndRootKey(peerUserId, myEphemeral, peerEphemeral, false);
     }
 

@@ -173,6 +173,10 @@ public class SignalSessionManager {
         return protoKeys;
     }
 
+    public void receiveSessionSetup(UserId peerUserId, PublicXECKey publicEphemeralKey, int ephemeralKeyId, @NonNull SignalSessionSetupInfo signalSessionSetupInfo) throws CryptoException {
+        signalKeyManager.receiveSessionSetup(peerUserId, publicEphemeralKey, ephemeralKeyId, signalSessionSetupInfo);
+    }
+
     private SignalSessionSetupInfo setUpSession(UserId peerUserId, boolean isReset) throws CryptoException {
         boolean missingOutboundKeyId = encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId) == -1;
 
