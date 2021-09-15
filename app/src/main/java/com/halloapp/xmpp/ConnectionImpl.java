@@ -679,6 +679,7 @@ public class ConnectionImpl extends Connection {
                 }
             }
             FeedItem feedItem = new FeedItem(FeedItem.Type.COMMENT, comment.id, parentPost.id, payload, encPayload, senderStateBundles, audienceHash);
+            feedItem.parentCommentId = comment.parentCommentId;
             requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.PUBLISH, feedItem);
         }
         sendIqRequestAsync(requestIq)
