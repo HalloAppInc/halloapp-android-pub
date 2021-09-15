@@ -363,11 +363,13 @@ public class Debug {
                                         MemberInfo member = otherMembers.get(whichUser);
                                         UserId peerUserId = member.userId;
                                         Log.d("Debug selected: " + whichUser + " -> " + member);
-                                        try {
-                                            GroupFeedKeyManager.getInstance().getInboundMessageKey(groupId, peerUserId);
-                                        } catch (CryptoException e) {
-                                            e.printStackTrace();
-                                        }
+                                        bgWorkers.execute(() -> {
+                                            try {
+                                                GroupFeedKeyManager.getInstance().getInboundMessageKey(groupId, peerUserId);
+                                            } catch (CryptoException e) {
+                                                e.printStackTrace();
+                                            }
+                                        });
                                     });
                             selectUserBuilder.create().show();
                         });
