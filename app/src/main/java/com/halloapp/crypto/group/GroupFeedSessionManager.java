@@ -12,6 +12,7 @@ import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
 import java.security.NoSuchAlgorithmException;
@@ -71,7 +72,20 @@ public class GroupFeedSessionManager {
     }
 
     public GroupSetupInfo ensureGroupSetUp(GroupId groupId) throws CryptoException, NoSuchAlgorithmException {
-        return groupFeedKeyManager.ensureGroupSetUp(groupId);
+        try (AutoCloseLock autoCloseLock = acquireLock(groupId, null)) {
+            return groupFeedKeyManager.ensureGroupSetUp(groupId);
+        } catch (InterruptedException e) {
+            throw new CryptoException("group_setup_interrupted", e);
+        }
+    }
+
+    public void tearDownOutboundSession(GroupId groupId) {
+        try (AutoCloseLock autoCloseLock = acquireLock(groupId, null)) {
+            groupFeedKeyManager.tearDownOutboundSession(groupId);
+        } catch (InterruptedException e) {
+            Log.e("Group session teardown interrupted", e);
+            Log.sendErrorReport("Group teardown interrupted");
+        }
     }
 
     public void sendPostRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String postId, boolean senderStateIssue) {
@@ -80,9 +94,5 @@ public class GroupFeedSessionManager {
 
     public void sendCommentRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String commentId, boolean senderStateIssue) {
         connection.sendGroupPostRerequest(senderUserId, groupId, commentId, senderStateIssue);
-    }
-
-    public void tearDownOutboundSession(GroupId groupId) {
-        groupFeedKeyManager.tearDownOutboundSession(groupId);
     }
 }

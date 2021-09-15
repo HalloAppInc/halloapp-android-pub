@@ -173,8 +173,12 @@ public class SignalSessionManager {
         return protoKeys;
     }
 
-    public void receiveSessionSetup(UserId peerUserId, PublicXECKey publicEphemeralKey, int ephemeralKeyId, @NonNull SignalSessionSetupInfo signalSessionSetupInfo) throws CryptoException {
-        signalKeyManager.receiveSessionSetup(peerUserId, publicEphemeralKey, ephemeralKeyId, signalSessionSetupInfo);
+    public void receiveRerequestSetup(UserId peerUserId, PublicXECKey publicEphemeralKey, int ephemeralKeyId, @NonNull SignalSessionSetupInfo signalSessionSetupInfo) throws CryptoException {
+        try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
+            signalKeyManager.receiveSessionSetup(peerUserId, publicEphemeralKey, ephemeralKeyId, signalSessionSetupInfo);
+        } catch (InterruptedException e) {
+            throw new CryptoException("recv_setup_interrupted", e);
+        }
     }
 
     private SignalSessionSetupInfo setUpSession(UserId peerUserId, boolean isReset) throws CryptoException {

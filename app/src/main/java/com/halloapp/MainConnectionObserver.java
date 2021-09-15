@@ -346,7 +346,7 @@ public class MainConnectionObserver extends Connection.Observer {
                     Log.i("Got empty session setup key; cannot process rereq session setup from older client");
                  } else {
                      try {
-                         signalSessionManager.receiveSessionSetup(peerUserId, new PublicXECKey(sessionSetupKey), 1, new SignalSessionSetupInfo(peerIdentityKey, otpkId));
+                         signalSessionManager.receiveRerequestSetup(peerUserId, new PublicXECKey(sessionSetupKey), 1, new SignalSessionSetupInfo(peerIdentityKey, otpkId));
                          encryptedKeyStore.setPeerResponded(peerUserId, true);
                      } catch (CryptoException e) {
                          Log.e("Failed to reset session on message rerequest", e);
