@@ -1018,6 +1018,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
     }
 
     void deleteDb() {
+        Log.i("ContentDb: deleting db");
         close();
         final File dbFile = context.getDatabasePath(getDatabaseName());
         if (!dbFile.delete()) {
