@@ -849,8 +849,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="home">"Home"</string>
 
     <!-- A new label used as the title/label of the GroupPickerActivity -->
-    <!-- Fuzzy -->
-    <string name="select_post_destination">"Plaats in…"</string>
+    <string name="select_post_destination">"Plaatsen in…"</string>
 
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_post_destination">"Zoeken"</string>
