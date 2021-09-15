@@ -12,7 +12,7 @@ import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PrivateEdECKey;
-import com.halloapp.crypto.signal.SessionSetupInfo;
+import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
@@ -62,20 +62,20 @@ public class GroupFeedKeyManager {
     }
 
     public GroupSetupInfo ensureGroupSetUp(GroupId groupId) throws CryptoException, NoSuchAlgorithmException {
-        Map<UserId, SessionSetupInfo> setupInfoMap = new HashMap<>();
+        Map<UserId, SignalSessionSetupInfo> setupInfoMap = new HashMap<>();
         List<MemberInfo> members = new ArrayList<>();
         for (MemberInfo memberInfo : ContentDb.getInstance().getGroupMembers(groupId)) {
             UserId userId = memberInfo.userId;
             if (userId.isMe()) {
                 members.add(new MemberInfo(-1, new UserId(Me.getInstance().getUser()), memberInfo.type, memberInfo.name));
             } else {
-                SessionSetupInfo sessionSetupInfo;
+                SignalSessionSetupInfo signalSessionSetupInfo;
                 try {
-                    sessionSetupInfo = signalSessionManager.getSessionSetupInfo(userId);
+                    signalSessionSetupInfo = signalSessionManager.getSessionSetupInfo(userId);
                 } catch (Exception e) {
                     throw new CryptoException("failed_get_session_setup_info", e);
                 }
-                setupInfoMap.put(userId, sessionSetupInfo);
+                setupInfoMap.put(userId, signalSessionSetupInfo);
 
                 members.add(memberInfo);
             }
@@ -128,11 +128,11 @@ public class GroupFeedKeyManager {
                 byte[] encSenderKey = SignalSessionManager.getInstance().encryptMessage(senderStateBytes, peerUserId);
                 SenderStateWithKeyInfo.Builder info = SenderStateWithKeyInfo.newBuilder()
                         .setEncSenderState(ByteString.copyFrom(encSenderKey));
-                SessionSetupInfo sessionSetupInfo = setupInfoMap.get(peerUserId);
-                if (sessionSetupInfo != null) {
-                    info.setPublicKey(ByteString.copyFrom(sessionSetupInfo.identityKey.getKeyMaterial()));
-                    if (sessionSetupInfo.oneTimePreKeyId != null) {
-                        info.setOneTimePreKeyId(sessionSetupInfo.oneTimePreKeyId);
+                SignalSessionSetupInfo signalSessionSetupInfo = setupInfoMap.get(peerUserId);
+                if (signalSessionSetupInfo != null) {
+                    info.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
+                    if (signalSessionSetupInfo.oneTimePreKeyId != null) {
+                        info.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
                     }
                 }
                 SenderStateBundle senderStateBundle = SenderStateBundle.newBuilder()

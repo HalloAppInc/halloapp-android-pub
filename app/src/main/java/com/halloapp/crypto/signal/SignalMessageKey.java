@@ -1,4 +1,4 @@
-package com.halloapp.crypto.keys;
+package com.halloapp.crypto.signal;
 
 import androidx.annotation.NonNull;
 
@@ -6,7 +6,7 @@ import com.halloapp.crypto.CryptoException;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 
-public class MessageKey {
+public class SignalMessageKey {
     private final static int MESSAGE_KEY_BYTES = 80;
 
     private final int ephemeralKeyId;
@@ -14,7 +14,7 @@ public class MessageKey {
     private final int currentChainIndex;
     private final byte[] messageKey;
 
-    public MessageKey(int ephemeralKeyId, int previousChainLength, int currentChainIndex, @NonNull byte[] messageKey) throws CryptoException {
+    public SignalMessageKey(int ephemeralKeyId, int previousChainLength, int currentChainIndex, @NonNull byte[] messageKey) throws CryptoException {
         if (ephemeralKeyId < 0) {
             Log.e("Invalid ephemeral key id " + ephemeralKeyId);
             throw new CryptoException("neg_ephemeral_key_id");

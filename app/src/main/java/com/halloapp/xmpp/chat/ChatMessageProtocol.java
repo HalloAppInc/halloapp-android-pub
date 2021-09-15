@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.content.ContentDb;
@@ -16,7 +15,7 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.signal.SignalSessionManager;
-import com.halloapp.crypto.signal.SessionSetupInfo;
+import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.id.UserId;
@@ -68,14 +67,14 @@ public class ChatMessageProtocol {
         this.signalSessionManager = signalSessionManager;
     }
 
-    public ChatStanza serializeMessage(@NonNull Message message, UserId recipientUserId, @Nullable SessionSetupInfo sessionSetupInfo) {
+    public ChatStanza serializeMessage(@NonNull Message message, UserId recipientUserId, @Nullable SignalSessionSetupInfo signalSessionSetupInfo) {
         ChatStanza.Builder builder = ChatStanza.newBuilder();
         builder.setSenderLogInfo(encryptedKeyStore.getLogInfo(recipientUserId));
 
-        if (sessionSetupInfo != null) {
-            builder.setPublicKey(ByteString.copyFrom(sessionSetupInfo.identityKey.getKeyMaterial()));
-            if (sessionSetupInfo.oneTimePreKeyId != null) {
-                builder.setOneTimePreKeyId(sessionSetupInfo.oneTimePreKeyId);
+        if (signalSessionSetupInfo != null) {
+            builder.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
+            if (signalSessionSetupInfo.oneTimePreKeyId != null) {
+                builder.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
             }
         }
 
@@ -128,7 +127,7 @@ public class ChatMessageProtocol {
         byte[] identityKeyBytes = chatStanza.getPublicKey().toByteArray();
         PublicEdECKey identityKey = identityKeyBytes == null || identityKeyBytes.length == 0 ? null : new PublicEdECKey(identityKeyBytes);
 
-        SessionSetupInfo sessionSetupInfo = new SessionSetupInfo(identityKey, (int) chatStanza.getOneTimePreKeyId());
+        SignalSessionSetupInfo signalSessionSetupInfo = new SignalSessionSetupInfo(identityKey, (int) chatStanza.getOneTimePreKeyId());
         String senderAgent = chatStanza.getSenderClientVersion();
 
         Log.i("Local state relevant to message " + id + " from:" + encryptedKeyStore.getLogInfo(fromUserId));
@@ -139,7 +138,7 @@ public class ChatMessageProtocol {
         ChatContainer chatContainer = null;
         if (encryptedBytes != null) {
             try {
-                final byte[] dec = signalSessionManager.decryptMessage(encryptedBytes, fromUserId, sessionSetupInfo);
+                final byte[] dec = signalSessionManager.decryptMessage(encryptedBytes, fromUserId, signalSessionSetupInfo);
                 try {
                     Container container = Container.parseFrom(dec);
                     // TODO: (clarkc) remove legacy proto format once clients are all sending new format

@@ -22,7 +22,7 @@ import com.halloapp.crypto.group.GroupFeedKeyManager;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
-import com.halloapp.crypto.signal.SessionSetupInfo;
+import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.crypto.signal.SignalKeyManager;
 import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.groups.GroupInfo;
@@ -351,7 +351,7 @@ public class MainConnectionObserver extends Connection.Observer {
                     Log.i("Got empty session setup key; cannot process rereq session setup from older client");
                  } else {
                      try {
-                         signalKeyManager.receiveSessionSetup(peerUserId, new PublicXECKey(sessionSetupKey), 1, new SessionSetupInfo(peerIdentityKey, otpkId));
+                         signalKeyManager.receiveSessionSetup(peerUserId, new PublicXECKey(sessionSetupKey), 1, new SignalSessionSetupInfo(peerIdentityKey, otpkId));
                          encryptedKeyStore.setPeerResponded(peerUserId, true);
                      } catch (CryptoException e) {
                          Log.e("Failed to reset session on message rerequest", e);

@@ -16,6 +16,7 @@ import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.group.GroupFeedMessageKey;
+import com.halloapp.crypto.signal.SignalMessageKey;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.util.Preconditions;
@@ -319,15 +320,15 @@ public class EncryptedKeyStore {
     }
 
     // TODO(jack): Clear out old keys after some threshold
-    public void storeSkippedMessageKey(UserId peerUserId, MessageKey messageKey) {
-        Log.i("Storing skipped message key " + messageKey + " for user " + peerUserId);
+    public void storeSkippedMessageKey(UserId peerUserId, SignalMessageKey signalMessageKey) {
+        Log.i("Storing skipped message key " + signalMessageKey + " for user " + peerUserId);
         String messageKeySetPrefKey = getMessageKeySetPrefKey(peerUserId);
         Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
 
-        String keyPrefKey = getMessageKeyPrefKey(peerUserId, messageKey.getEphemeralKeyId(), messageKey.getCurrentChainIndex());
+        String keyPrefKey = getMessageKeyPrefKey(peerUserId, signalMessageKey.getEphemeralKeyId(), signalMessageKey.getCurrentChainIndex());
         messageKeyPrefKeys.add(keyPrefKey);
 
-        if (!getPreferences().edit().putString(keyPrefKey, bytesToString(messageKey.getKeyMaterial())).putStringSet(messageKeySetPrefKey, messageKeyPrefKeys).commit()) {
+        if (!getPreferences().edit().putString(keyPrefKey, bytesToString(signalMessageKey.getKeyMaterial())).putStringSet(messageKeySetPrefKey, messageKeyPrefKeys).commit()) {
             Log.e("EncryptedKeyStore: failed to store skipped message key");
         }
     }

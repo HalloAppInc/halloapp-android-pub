@@ -11,7 +11,7 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.keys.PublicEdECKey;
-import com.halloapp.crypto.signal.SessionSetupInfo;
+import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -151,9 +151,9 @@ public abstract class Connection {
 
     public abstract void retractGroupComment(final @NonNull GroupId groupId, final @NonNull UserId postSenderUserId, final @NonNull String postId, final @NonNull String commentId);
 
-    public abstract void sendMessage(final @NonNull Message message, final @Nullable SessionSetupInfo sessionSetupInfo);
+    public abstract void sendMessage(final @NonNull Message message, final @Nullable SignalSessionSetupInfo signalSessionSetupInfo);
 
-    public abstract void sendGroupMessage(final @NonNull Message message, final @Nullable SessionSetupInfo sessionSetupInfo);
+    public abstract void sendGroupMessage(final @NonNull Message message, final @Nullable SignalSessionSetupInfo signalSessionSetupInfo);
 
     public abstract Observable<Iq> sendIqRequest(@NonNull HalloIq iq);
 

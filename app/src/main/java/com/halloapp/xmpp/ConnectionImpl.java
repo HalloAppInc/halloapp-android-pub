@@ -10,7 +10,6 @@ import androidx.annotation.WorkerThread;
 import com.google.android.gms.common.util.Hex;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.AppContext;
-import com.halloapp.BuildConfig;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
 import com.halloapp.Me;
@@ -28,7 +27,7 @@ import com.halloapp.crypto.group.GroupFeedSessionManager;
 import com.halloapp.crypto.group.GroupSetupInfo;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
-import com.halloapp.crypto.signal.SessionSetupInfo;
+import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
@@ -77,7 +76,6 @@ import com.halloapp.proto.server.SeenReceipt;
 import com.halloapp.proto.server.SenderStateBundle;
 import com.halloapp.proto.server.SenderStateWithKeyInfo;
 import com.halloapp.proto.server.WhisperKeys;
-import com.halloapp.registration.Registration;
 import com.halloapp.ui.ExportDataActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
@@ -727,7 +725,7 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public void sendMessage(@NonNull Message message, @Nullable SessionSetupInfo sessionSetupInfo) {
+    public void sendMessage(@NonNull Message message, @Nullable SignalSessionSetupInfo signalSessionSetupInfo) {
         executor.execute(() -> {
             if (message.isLocalMessage()) {
                 Log.i("connection: System message shouldn't be sent");
@@ -743,7 +741,7 @@ public class ConnectionImpl extends Connection {
                     .setId(message.id)
                     .setType(Msg.Type.CHAT)
                     .setToUid(Long.parseLong(message.chatId.rawId()))
-                    .setChatStanza(ChatMessageProtocol.getInstance().serializeMessage(message, recipientUserId, sessionSetupInfo))
+                    .setChatStanza(ChatMessageProtocol.getInstance().serializeMessage(message, recipientUserId, signalSessionSetupInfo))
                     .build();
             ackHandlers.put(message.id, () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
             sendPacket(Packet.newBuilder().setMsg(msg).build());
@@ -751,7 +749,7 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public void sendGroupMessage(@NonNull Message message, @Nullable SessionSetupInfo sessionSetupInfo) {
+    public void sendGroupMessage(@NonNull Message message, @Nullable SignalSessionSetupInfo signalSessionSetupInfo) {
         executor.execute(() -> {
             if (message.isLocalMessage()) {
                 Log.i("connection: System message shouldn't be sent");
@@ -1583,9 +1581,9 @@ public class ConnectionImpl extends Connection {
                     byte[] encSenderState = senderStateWithKeyInfo.getEncSenderState().toByteArray();
                     byte[] peerPublicIdentityKey = senderStateWithKeyInfo.getPublicKey().toByteArray();
                     long oneTimePreKeyId = senderStateWithKeyInfo.getOneTimePreKeyId();
-                    SessionSetupInfo sessionSetupInfo = peerPublicIdentityKey == null || peerPublicIdentityKey.length == 0 ? null : new SessionSetupInfo(new PublicEdECKey(peerPublicIdentityKey), (int) oneTimePreKeyId);
+                    SignalSessionSetupInfo signalSessionSetupInfo = peerPublicIdentityKey == null || peerPublicIdentityKey.length == 0 ? null : new SignalSessionSetupInfo(new PublicEdECKey(peerPublicIdentityKey), (int) oneTimePreKeyId);
                     try {
-                        byte[] senderStateDec = SignalSessionManager.getInstance().decryptMessage(encSenderState, publisherUserId, sessionSetupInfo);
+                        byte[] senderStateDec = SignalSessionManager.getInstance().decryptMessage(encSenderState, publisherUserId, signalSessionSetupInfo);
                         SenderState senderState = SenderState.parseFrom(senderStateDec);
                         SenderKey senderKey = senderState.getSenderKey();
                         int currentChainIndex = senderState.getCurrentChainIndex();

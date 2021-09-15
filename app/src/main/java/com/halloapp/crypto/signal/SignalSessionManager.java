@@ -85,21 +85,21 @@ public class SignalSessionManager {
         }
     }
 
-    public byte[] decryptMessage(@NonNull byte[] message, @NonNull UserId peerUserId, @Nullable SessionSetupInfo sessionSetupInfo) throws CryptoException {
+    public byte[] decryptMessage(@NonNull byte[] message, @NonNull UserId peerUserId, @Nullable SignalSessionSetupInfo signalSessionSetupInfo) throws CryptoException {
         try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
             try {
                 if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
-                    if (sessionSetupInfo == null || sessionSetupInfo.identityKey == null) {
+                    if (signalSessionSetupInfo == null || signalSessionSetupInfo.identityKey == null) {
                         throw new CryptoException("no_identity_key");
                     }
-                    signalKeyManager.receiveSessionSetup(peerUserId, message, sessionSetupInfo);
+                    signalKeyManager.receiveSessionSetup(peerUserId, message, signalSessionSetupInfo);
                     encryptedKeyStore.setPeerResponded(peerUserId, true);
-                } else if (sessionSetupInfo != null && sessionSetupInfo.identityKey != null) {
+                } else if (signalSessionSetupInfo != null && signalSessionSetupInfo.identityKey != null) {
                     PublicEdECKey peerIdentityKey = encryptedKeyStore.getPeerPublicIdentityKey(peerUserId);
-                    if (!Arrays.equals(peerIdentityKey.getKeyMaterial(), sessionSetupInfo.identityKey.getKeyMaterial())) {
+                    if (!Arrays.equals(peerIdentityKey.getKeyMaterial(), signalSessionSetupInfo.identityKey.getKeyMaterial())) {
                         Log.w("Session already set up but received session setup info with new identity key;"
                                 + " stored: " + Base64.encodeToString(peerIdentityKey.getKeyMaterial(), Base64.NO_WRAP)
-                                + " received: " + Base64.encodeToString(sessionSetupInfo.identityKey.getKeyMaterial(), Base64.NO_WRAP));
+                                + " received: " + Base64.encodeToString(signalSessionSetupInfo.identityKey.getKeyMaterial(), Base64.NO_WRAP));
                     }
                     encryptedKeyStore.setPeerResponded(peerUserId, true);
                 }
@@ -134,15 +134,15 @@ public class SignalSessionManager {
 
         final UserId recipientUserId = (UserId)message.chatId;
         try (AutoCloseLock autoCloseLock = acquireLock(recipientUserId)) {
-            SessionSetupInfo sessionSetupInfo = setUpSession(recipientUserId, false);
-            connection.sendMessage(message, sessionSetupInfo);
+            SignalSessionSetupInfo signalSessionSetupInfo = setUpSession(recipientUserId, false);
+            connection.sendMessage(message, signalSessionSetupInfo);
         } catch (Exception e) {
             Log.e("Failed to set up encryption session", e);
             Log.sendErrorReport("Failed to get session setup info");
         }
     }
 
-    public SessionSetupInfo getSessionSetupInfo(final @NonNull UserId peerUserId) throws Exception {
+    public SignalSessionSetupInfo getSessionSetupInfo(final @NonNull UserId peerUserId) throws Exception {
         try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
             return setUpSession(peerUserId, false);
         } catch (Exception e) {
@@ -173,7 +173,7 @@ public class SignalSessionManager {
         return protoKeys;
     }
 
-    private SessionSetupInfo setUpSession(UserId peerUserId, boolean isReset) throws CryptoException {
+    private SignalSessionSetupInfo setUpSession(UserId peerUserId, boolean isReset) throws CryptoException {
         boolean missingOutboundKeyId = encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId) == -1;
 
         if (!missingOutboundKeyId && encryptedKeyStore.getPeerResponded(peerUserId)) {
@@ -236,7 +236,7 @@ public class SignalSessionManager {
             Log.i("EncryptedSessionManager.setUpSession: Session has already been set up!");
         }
 
-        return new SessionSetupInfo(
+        return new SignalSessionSetupInfo(
                 encryptedKeyStore.getMyPublicEd25519IdentityKey(),
                 encryptedKeyStore.getPeerOneTimePreKeyId(peerUserId)
         );

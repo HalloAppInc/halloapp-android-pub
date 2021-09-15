@@ -4,7 +4,6 @@ import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
-import com.halloapp.crypto.keys.MessageKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.crypto.keys.XECKey;
 import com.halloapp.id.UserId;
@@ -51,8 +50,8 @@ class SignalMessageCipher {
         byte[] calculatedHmac = CryptoUtils.hmac(hmacKey, encryptedMessage);
         if (!Arrays.equals(calculatedHmac, receivedHmac)) {
             Log.e("HMAC does not match; rejecting and storing message key");
-            MessageKey messageKey = new MessageKey(ephemeralKeyId, previousChainLength, currentChainIndex, inboundMessageKey);
-            onDecryptFailure("hmac_mismatch", peerUserId, messageKey);
+            SignalMessageKey signalMessageKey = new SignalMessageKey(ephemeralKeyId, previousChainLength, currentChainIndex, inboundMessageKey);
+            onDecryptFailure("hmac_mismatch", peerUserId, signalMessageKey);
         }
 
         try {
@@ -67,17 +66,17 @@ class SignalMessageCipher {
             return ret;
         } catch (GeneralSecurityException e) {
             Log.w("Decryption failed, storing message key", e);
-            MessageKey messageKey = new MessageKey(ephemeralKeyId, previousChainLength, currentChainIndex, inboundMessageKey);
-            onDecryptFailure("cipher_dec_failure", peerUserId, messageKey);
+            SignalMessageKey signalMessageKey = new SignalMessageKey(ephemeralKeyId, previousChainLength, currentChainIndex, inboundMessageKey);
+            onDecryptFailure("cipher_dec_failure", peerUserId, signalMessageKey);
         }
 
         throw new IllegalStateException("Unreachable");
     }
 
-    void onDecryptFailure(String reason, UserId peerUserId, MessageKey messageKey) throws CryptoException {
-        encryptedKeyStore.storeSkippedMessageKey(peerUserId, messageKey);
+    void onDecryptFailure(String reason, UserId peerUserId, SignalMessageKey signalMessageKey) throws CryptoException {
+        encryptedKeyStore.storeSkippedMessageKey(peerUserId, signalMessageKey);
         byte[] lastTeardownKey = encryptedKeyStore.getOutboundTeardownKey(peerUserId);
-        byte[] newTeardownKey = messageKey.getKeyMaterial();
+        byte[] newTeardownKey = signalMessageKey.getKeyMaterial();
         boolean match = Arrays.equals(lastTeardownKey, newTeardownKey);
         if (!match) {
             encryptedKeyStore.setOutboundTeardownKey(peerUserId, newTeardownKey);
@@ -87,8 +86,8 @@ class SignalMessageCipher {
     }
 
     byte[] convertForWire(byte[] message, UserId peerUserId) throws CryptoException {
-        MessageKey messageKey = signalKeyManager.getNextOutboundMessageKey(peerUserId);
-        byte[] outboundMessageKey = messageKey.getKeyMaterial();
+        SignalMessageKey signalMessageKey = signalKeyManager.getNextOutboundMessageKey(peerUserId);
+        byte[] outboundMessageKey = signalMessageKey.getKeyMaterial();
 
         byte[] aesKey = Arrays.copyOfRange(outboundMessageKey, 0, 32);
         byte[] hmacKey = Arrays.copyOfRange(outboundMessageKey, 32, 64);
@@ -107,8 +106,8 @@ class SignalMessageCipher {
 
             byte[] ephemeralKeyBytes = XECKey.publicFromPrivate(encryptedKeyStore.getOutboundEphemeralKey(peerUserId)).getKeyMaterial();
             byte[] ephemeralKeyIdBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId)).array();
-            byte[] previousChainLengthBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(messageKey.getPreviousChainLength()).array();
-            byte[] currentChainIndexBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(messageKey.getCurrentChainIndex()).array();
+            byte[] previousChainLengthBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(signalMessageKey.getPreviousChainLength()).array();
+            byte[] currentChainIndexBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(signalMessageKey.getCurrentChainIndex()).array();
 
             return CryptoByteUtils.concat(ephemeralKeyBytes, ephemeralKeyIdBytes, previousChainLengthBytes, currentChainIndexBytes, encryptedContents, hmac);
         } catch (GeneralSecurityException e) {

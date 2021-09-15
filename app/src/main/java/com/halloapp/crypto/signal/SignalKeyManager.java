@@ -7,7 +7,6 @@ import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
-import com.halloapp.crypto.keys.MessageKey;
 import com.halloapp.crypto.keys.OneTimePreKey;
 import com.halloapp.crypto.keys.PrivateXECKey;
 import com.halloapp.crypto.keys.PublicEdECKey;
@@ -117,29 +116,29 @@ public class SignalKeyManager {
         }
     }
 
-    void receiveSessionSetup(UserId peerUserId, byte[] message, @NonNull SessionSetupInfo sessionSetupInfo) throws CryptoException {
+    void receiveSessionSetup(UserId peerUserId, byte[] message, @NonNull SignalSessionSetupInfo signalSessionSetupInfo) throws CryptoException {
         byte[] ephemeralKeyBytes = Arrays.copyOfRange(message, 0, 32);
         byte[] ephemeralKeyIdBytes = Arrays.copyOfRange(message, 32, 36);
 
         int ephemeralKeyId = ByteBuffer.wrap(ephemeralKeyIdBytes).getInt();
         PublicXECKey publicEphemeralKey = new PublicXECKey(ephemeralKeyBytes);
 
-        receiveSessionSetup(peerUserId, publicEphemeralKey, ephemeralKeyId, sessionSetupInfo);
+        receiveSessionSetup(peerUserId, publicEphemeralKey, ephemeralKeyId, signalSessionSetupInfo);
     }
 
-    public void receiveSessionSetup(UserId peerUserId, PublicXECKey publicEphemeralKey, int ephemeralKeyId, @NonNull SessionSetupInfo sessionSetupInfo) throws CryptoException {
-        encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, sessionSetupInfo.identityKey);
+    public void receiveSessionSetup(UserId peerUserId, PublicXECKey publicEphemeralKey, int ephemeralKeyId, @NonNull SignalSessionSetupInfo signalSessionSetupInfo) throws CryptoException {
+        encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, signalSessionSetupInfo.identityKey);
 
         try {
-            byte[] a = CryptoUtils.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), CryptoUtils.convertPublicEdToX(sessionSetupInfo.identityKey));
+            byte[] a = CryptoUtils.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), CryptoUtils.convertPublicEdToX(signalSessionSetupInfo.identityKey));
             byte[] b = CryptoUtils.ecdh(encryptedKeyStore.getMyPrivateX25519IdentityKey(), publicEphemeralKey);
             byte[] c = CryptoUtils.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), publicEphemeralKey);
 
             byte[] masterSecret;
-            if (sessionSetupInfo.oneTimePreKeyId != null) {
+            if (signalSessionSetupInfo.oneTimePreKeyId != null) {
                 byte[] d;
                 try {
-                    d = CryptoUtils.ecdh(encryptedKeyStore.removeOneTimePreKeyById(sessionSetupInfo.oneTimePreKeyId), publicEphemeralKey);
+                    d = CryptoUtils.ecdh(encryptedKeyStore.removeOneTimePreKeyById(signalSessionSetupInfo.oneTimePreKeyId), publicEphemeralKey);
                 } catch (CryptoException e) {
                     tearDownSession(peerUserId);
                     throw e;
@@ -177,7 +176,7 @@ public class SignalKeyManager {
         }
     }
 
-    public MessageKey getNextOutboundMessageKey(UserId peerUserId) throws CryptoException {
+    public SignalMessageKey getNextOutboundMessageKey(UserId peerUserId) throws CryptoException {
         int ephemeralKeyId = encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId);
         int previousChainLength = encryptedKeyStore.getOutboundPreviousChainLength(peerUserId);
         int currentChainIndex = encryptedKeyStore.getOutboundCurrentChainIndex(peerUserId);
@@ -186,7 +185,7 @@ public class SignalKeyManager {
         int newIndex = currentChainIndex + 1;
         encryptedKeyStore.setOutboundCurrentChainIndex(peerUserId, newIndex);
 
-        return new MessageKey(ephemeralKeyId, previousChainLength, currentChainIndex, messageKey);
+        return new SignalMessageKey(ephemeralKeyId, previousChainLength, currentChainIndex, messageKey);
     }
 
     private byte[] getNextInboundMessageKey(UserId peerUserId) throws CryptoException {
@@ -245,8 +244,8 @@ public class SignalKeyManager {
         for (int i=0; i<count; i++) {
             byte[] inboundMessageKey = getNextInboundMessageKey(peerUserId);
             try {
-                MessageKey messageKey = new MessageKey(ephemeralKeyId, previousChainLength, startIndex + i, inboundMessageKey);
-                encryptedKeyStore.storeSkippedMessageKey(peerUserId, messageKey);
+                SignalMessageKey signalMessageKey = new SignalMessageKey(ephemeralKeyId, previousChainLength, startIndex + i, inboundMessageKey);
+                encryptedKeyStore.storeSkippedMessageKey(peerUserId, signalMessageKey);
             } catch (CryptoException e) {
                 Log.e("Cannot store invalid incoming message key for later use", e);
                 throw new CryptoException("skip_msg_key_" + e.getMessage());
