@@ -17,6 +17,7 @@ import com.google.crypto.tink.subtle.Random;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.content.Chat;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
@@ -101,6 +102,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_CLEAR_LOGS);
         menu.getMenu().add(DEBUG_MENU_RUN_DAILY_WORKER);
         menu.getMenu().add(DEBUG_MENU_CORRUPT_KEY_STORE);
+        menu.getMenu().add(DEBUG_MENU_CORRUPT_GROUP_KEY_STORE);
         menu.getMenu().add(DEBUG_MENU_NORMAL_USER_MODE);
         menu.getMenu().add(DEBUG_MENU_ADD_TO_ARCHIVE);
         menu.getMenu().add(DEBUG_MENU_REMOVE_ARCHIVE);
@@ -247,6 +249,32 @@ public class Debug {
                                         showCorruptKeyStoreDialog(activity, peerUserId);
                                     });
                             selectUserBuilder.create().show();
+                        });
+                    });
+                    break;
+                }
+                case DEBUG_MENU_CORRUPT_GROUP_KEY_STORE: {
+                    bgWorkers.execute(() -> {
+                        List<Chat> chats = ContentDb.getInstance().getActiveGroups();
+                        List<GroupId> groups = new ArrayList<>();
+                        List<String> names = new ArrayList<>();
+                        for (Chat chat : chats) {
+                            if (chat.chatId instanceof GroupId) {
+                                groups.add((GroupId) chat.chatId);
+                                names.add(chat.name + " - " + chat.chatId.rawId());
+                            }
+                        }
+
+                        CharSequence[] arr = new CharSequence[0];
+                        activity.runOnUiThread(() -> {
+                            AlertDialog.Builder selectGroupBuilder = new AlertDialog.Builder(activity);
+                            selectGroupBuilder.setTitle("Pick group (from active)")
+                                    .setItems(names.toArray(arr), (dialog, which) -> {
+                                        GroupId groupId = groups.get(which);
+                                        Log.d("Debug selected: " + which + " -> " + groupId);
+                                        showCorruptGroupKeyStoreDialog(activity, groupId);
+                                    });
+                            selectGroupBuilder.create().show();
                         });
                     });
                     break;
