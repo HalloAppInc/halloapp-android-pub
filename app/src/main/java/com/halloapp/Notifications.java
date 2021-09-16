@@ -696,6 +696,18 @@ public class Notifications {
                         0
                 );
                 SignalSessionManager.getInstance().sendMessage(message);
+
+                final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MESSAGE_NOTIFICATION_CHANNEL_ID)
+                        .setContentTitle(context.getString(R.string.app_name))
+                        .setContentText(text)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setColor(ContextCompat.getColor(context, R.color.color_accent))
+                        .setAutoCancel(true)
+                        .setGroup(MESSAGE_NOTIFICATION_GROUP_KEY)
+                        .setGroupSummary(true);
+
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                notificationManager.notify(MESSAGE_NOTIFICATION_ID, builder.build());
             }
         }
     }
