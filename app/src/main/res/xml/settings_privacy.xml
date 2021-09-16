@@ -12,7 +12,8 @@
 
         <Preference app:key="privacy_policy"
             app:title="@string/privacy_policy"
-            app:summary=" "/>
+            app:summary=" "
+            app:isPreferenceVisible="false"/>
 
     </com.halloapp.widget.HAPreferenceCategory>
 
