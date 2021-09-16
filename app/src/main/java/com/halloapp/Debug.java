@@ -11,6 +11,7 @@ import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.util.Consumer;
 
 import com.google.crypto.tink.subtle.Random;
 import com.halloapp.contacts.Contact;
@@ -22,6 +23,7 @@ import com.halloapp.content.Post;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.group.GroupFeedKeyManager;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
+import com.halloapp.crypto.keys.PrivateEdECKey;
 import com.halloapp.crypto.keys.PrivateXECKey;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
@@ -75,6 +77,7 @@ public class Debug {
     private static final String DEBUG_MENU_REMOVE_ARCHIVE = "Remove archive";
     private static final String DEBUG_MENU_SKIP_OUTBOUND_GROUP_FEED_KEY = "Skip outbound key";
     private static final String DEBUG_MENU_SKIP_INBOUND_GROUP_FEED_KEY = "Skip inbound key";
+    private static final String DEBUG_MENU_CORRUPT_GROUP_KEY_STORE = "Corrupt group key store";
 
     private static final BgWorkers bgWorkers = BgWorkers.getInstance();
 
@@ -330,6 +333,7 @@ public class Debug {
 
         menu.getMenu().add(DEBUG_MENU_SKIP_OUTBOUND_GROUP_FEED_KEY);
         menu.getMenu().add(DEBUG_MENU_SKIP_INBOUND_GROUP_FEED_KEY);
+        menu.getMenu().add(DEBUG_MENU_CORRUPT_GROUP_KEY_STORE);
         menu.setOnMenuItemClickListener(item -> {
             SnackbarHelper.showInfo(activity, item.getTitle());
             switch (item.getTitle().toString()) {
@@ -374,6 +378,10 @@ public class Debug {
                             selectUserBuilder.create().show();
                         });
                     });
+                    break;
+                }
+                case DEBUG_MENU_CORRUPT_GROUP_KEY_STORE: {
+                    showCorruptGroupKeyStoreDialog(activity, groupId);
                     break;
                 }
             }
@@ -449,6 +457,69 @@ public class Debug {
                     bgWorkers.execute(corruptionActions[which]);
                 });
         corruptionPickerBuilder.create().show();
+    }
+
+    private static void showCorruptGroupKeyStoreDialog(@NonNull Activity activity, @NonNull GroupId groupId) {
+        EncryptedKeyStore encryptedKeyStore = EncryptedKeyStore.getInstance();
+        CharSequence[] corruptionOptions = {
+                "Mark session not set up",
+                "Remove skipped message keys",
+                "Remove my group signing key",
+                "Mutate my group signing key",
+                "Remove peer group signing key",
+                "Mutate peer group signing key",
+                "Mutate outbound chain key",
+                "Mutate inbound chain key",
+                "Mutate outbound current chain index",
+                "Mutate inbound current chain index",
+        };
+
+        final int KEY_SIZE = 32;
+        final int MAX_NUM = 500;
+        Runnable[] corruptionActions = {
+                () -> encryptedKeyStore.clearGroupSendAlreadySetUp(groupId),
+                () -> selectUserFromGroup(activity, groupId, userId -> encryptedKeyStore.clearSkippedGroupFeedKeys(groupId, userId)),
+                () -> encryptedKeyStore.clearMyGroupSigningKey(groupId),
+                () -> encryptedKeyStore.setMyGroupSigningKey(groupId, new PrivateEdECKey(Random.randBytes(KEY_SIZE))),
+                () -> selectUserFromGroup(activity, groupId, userId -> encryptedKeyStore.clearPeerGroupSigningKey(groupId, userId)),
+                () -> selectUserFromGroup(activity, groupId, userId -> encryptedKeyStore.setPeerGroupSigningKey(groupId, userId, new PublicEdECKey(Random.randBytes(KEY_SIZE)))),
+                () -> encryptedKeyStore.setMyGroupChainKey(groupId, Random.randBytes(KEY_SIZE)),
+                () -> selectUserFromGroup(activity, groupId, userId -> encryptedKeyStore.setPeerGroupChainKey(groupId, userId, Random.randBytes(KEY_SIZE))),
+                () -> encryptedKeyStore.setMyGroupCurrentChainIndex(groupId, Random.randInt(MAX_NUM)),
+                () -> selectUserFromGroup(activity, groupId, userId -> encryptedKeyStore.setPeerGroupCurrentChainIndex(groupId, userId, Random.randInt(MAX_NUM))),
+        };
+
+        AlertDialog.Builder corruptionPickerBuilder = new AlertDialog.Builder(activity);
+        corruptionPickerBuilder.setTitle("Pick corruption")
+                .setItems(corruptionOptions, (ignored, which) -> {
+                    Log.d("Debug selected corruption of " + which + " -> " + corruptionOptions[which]);
+                    bgWorkers.execute(corruptionActions[which]);
+                });
+        corruptionPickerBuilder.create().show();
+    }
+
+    private static void selectUserFromGroup(@NonNull Activity activity, @NonNull GroupId groupId, @NonNull Consumer<UserId> handler) {
+        ContentDb contentDb = ContentDb.getInstance();
+        List<MemberInfo> members = contentDb.getGroupMembers(groupId);
+        List<UserId> otherMemberIds = new ArrayList<>();
+        List<String> namesList = new ArrayList<>();
+        for (MemberInfo memberInfo : members) {
+            if (!Me.getInstance().getUser().equals(memberInfo.userId.rawId()) && !UserId.ME.equals(memberInfo.userId)) {
+                otherMemberIds.add(memberInfo.userId);
+                namesList.add(memberInfo.userId.rawId());
+            }
+        }
+
+        CharSequence[] names = new CharSequence[0];
+        activity.runOnUiThread(() -> {
+            AlertDialog.Builder memberPicker = new AlertDialog.Builder(activity);
+            memberPicker.setTitle("Pick member")
+                    .setItems(namesList.toArray(names), (ignored, which) -> {
+                        Log.d("Debug selected corruption of " + which + " -> " + otherMemberIds.get(which));
+                        bgWorkers.execute(() -> handler.accept(otherMemberIds.get(which)));
+                    });
+            memberPicker.create().show();
+        });
     }
 
     public static void askSendLogsWithId(@NonNull Context context, @NonNull String contentId) {
