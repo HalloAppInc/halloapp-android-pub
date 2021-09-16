@@ -119,7 +119,7 @@ public class Preferences {
     private final BooleanPreference prefRequireFullContactSync = createPref(false, PREF_KEY_REQUIRE_FULL_CONTACTS_SYNC, true);
     private final BooleanPreference prefRequireSharePosts = createPref(false, PREF_KEY_REQUIRE_SHARE_POSTS, false);
     private final LongPreference prefFeedNotificationCutoff = createPref(false, PREF_KEY_FEED_NOTIFICATION_TIME_CUTOFF, 0L);
-    private final BooleanPreference prefUseDebugHost = createPref(false, PREF_KEY_USE_DEBUG_HOST, false);
+    private final BooleanPreference prefUseDebugHost = createPref(false, PREF_KEY_USE_DEBUG_HOST, BuildConfig.DEBUG);
     private final StringPreference prefActivePrivacyList = createPref(false, PREF_KEY_FEED_PRIVACY_SETTING, PrivacyList.Type.INVALID);
     private final IntPreference prefNextNotificationId = createPref(false, PREF_KEY_NEXT_NOTIF_ID, Notifications.FIRST_DYNAMIC_NOTIFICATION_ID);
     private final LongPreference prefLastDecryptStatRowId = createPref(false, PREF_KEY_LAST_DECRYPT_MESSAGE_ROW_ID, -1L);
@@ -479,6 +479,11 @@ public class Preferences {
     @WorkerThread
     public boolean getUseDebugHost() {
         return prefUseDebugHost.get();
+    }
+
+    @WorkerThread
+    public void setUseDebugHost(boolean useDebugHost) {
+        prefUseDebugHost.set(useDebugHost);
     }
 
     @WorkerThread

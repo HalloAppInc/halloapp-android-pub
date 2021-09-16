@@ -17,21 +17,4 @@
 
     </com.halloapp.widget.HAPreferenceCategory>
 
-    <com.halloapp.widget.HAPreferenceCategory app:key="debug" app:title="Debug" app:isPreferenceVisible="false">
-
-        <SwitchPreferenceCompat
-            app:key="use_debug_host"
-            app:title="Use debug host"
-            app:defaultValue="@bool/isDebug"/>
-
-        <Preference
-            app:key="debug_menu"
-            app:title="DEBUG MENU"/>
-
-        <Preference
-            app:key="debug_config"
-            app:title="Debug Config"/>
-
-    </com.halloapp.widget.HAPreferenceCategory>
-
 </PreferenceScreen>

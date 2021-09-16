@@ -12,11 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.Preference;
-import androidx.preference.PreferenceCategory;
 
 import com.halloapp.Constants;
-import com.halloapp.Debug;
-import com.halloapp.DebugActivity;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.props.ServerProps;
@@ -25,7 +22,6 @@ import com.halloapp.ui.HalloPreferenceFragment;
 import com.halloapp.ui.privacy.BlockListActivity;
 import com.halloapp.ui.privacy.FeedPrivacyActivity;
 import com.halloapp.util.Preconditions;
-import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 public class SettingsPrivacy extends HalloActivity {
@@ -99,33 +95,6 @@ public class SettingsPrivacy extends HalloActivity {
             privacyPolicyPreference.setOnPreferenceClickListener(preference -> {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.PRIVACY_POLICY_URL));
                 startActivity(intent);
-                return false;
-            });
-
-            final PreferenceCategory debugCategory = Preconditions.checkNotNull(findPreference("debug"));
-            debugCategory.setVisible(serverProps.getIsInternalUser());
-
-            final Preference hostPreference = Preconditions.checkNotNull(findPreference("use_debug_host"));
-            hostPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    Connection connection = Connection.getInstance();
-                    connection.disconnect();
-                    connection.connect();
-                    return true;
-                }
-            });
-
-            final Preference debugPreference = Preconditions.checkNotNull(findPreference("debug_menu"));
-            debugPreference.setOnPreferenceClickListener(preference -> {
-                View prefView = getListView().getChildAt(preference.getOrder());
-                Debug.showDebugMenu(requireActivity(), prefView);
-                return false;
-            });
-
-            final Preference debugConfigPreference = Preconditions.checkNotNull(findPreference("debug_config"));
-            debugConfigPreference.setOnPreferenceClickListener(preference -> {
-                startActivity(new Intent(getContext(), DebugActivity.class));
                 return false;
             });
         }
