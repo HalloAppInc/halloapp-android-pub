@@ -22,9 +22,8 @@ import java.util.concurrent.ConcurrentMap;
 public class GroupFeedSessionManager {
 
     private final Connection connection;
-    private final EncryptedKeyStore encryptedKeyStore;
-    private final GroupFeedKeyManager groupFeedKeyManager;
     private final GroupFeedCipher groupFeedCipher;
+    private final GroupFeedKeyManager groupFeedKeyManager;
     private final ConcurrentMap<Pair<GroupId, UserId>, AutoCloseLock> lockMap = new ConcurrentHashMap<>();
 
     private static GroupFeedSessionManager instance = null;
@@ -33,19 +32,17 @@ public class GroupFeedSessionManager {
         if (instance == null) {
             synchronized (SignalSessionManager.class) {
                 if (instance == null) {
-                    instance = new GroupFeedSessionManager(Connection.getInstance(), GroupFeedKeyManager.getInstance(), EncryptedKeyStore.getInstance());
+                    instance = new GroupFeedSessionManager(Connection.getInstance(), GroupFeedCipher.getInstance(), GroupFeedKeyManager.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private GroupFeedSessionManager(Connection connection, GroupFeedKeyManager groupFeedKeyManager, EncryptedKeyStore encryptedKeyStore) {
+    private GroupFeedSessionManager(Connection connection, GroupFeedCipher groupFeedCipher, GroupFeedKeyManager groupFeedKeyManager) {
         this.connection = connection;
+        this.groupFeedCipher = groupFeedCipher;
         this.groupFeedKeyManager = groupFeedKeyManager;
-        this.encryptedKeyStore = encryptedKeyStore;
-
-        this.groupFeedCipher = new GroupFeedCipher(encryptedKeyStore, groupFeedKeyManager);
     }
 
     // Should be used in a try-with-resources block for auto-release

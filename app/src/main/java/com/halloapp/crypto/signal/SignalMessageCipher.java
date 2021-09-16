@@ -18,12 +18,26 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 class SignalMessageCipher {
+
+    private static SignalMessageCipher instance;
+
     private static final int COUNTER_SIZE_BYTES = 4;
 
     private final SignalKeyManager signalKeyManager;
     private final EncryptedKeyStore encryptedKeyStore;
 
-    SignalMessageCipher(SignalKeyManager signalKeyManager, EncryptedKeyStore encryptedKeyStore) {
+    public static SignalMessageCipher getInstance() {
+        if (instance == null) {
+            synchronized (SignalMessageCipher.class) {
+                if (instance == null) {
+                    instance = new SignalMessageCipher(SignalKeyManager.getInstance(), EncryptedKeyStore.getInstance());
+                }
+            }
+        }
+        return instance;
+    }
+
+    private SignalMessageCipher(SignalKeyManager signalKeyManager, EncryptedKeyStore encryptedKeyStore) {
         this.signalKeyManager = signalKeyManager;
         this.encryptedKeyStore = encryptedKeyStore;
     }

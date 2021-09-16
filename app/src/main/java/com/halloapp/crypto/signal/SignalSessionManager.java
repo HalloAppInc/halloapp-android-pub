@@ -55,20 +55,19 @@ public class SignalSessionManager {
         if (instance == null) {
             synchronized (SignalSessionManager.class) {
                 if (instance == null) {
-                    instance = new SignalSessionManager(Stats.getInstance(), Connection.getInstance(), SignalKeyManager.getInstance(), EncryptedKeyStore.getInstance());
+                    instance = new SignalSessionManager(Stats.getInstance(), Connection.getInstance(), SignalKeyManager.getInstance(), EncryptedKeyStore.getInstance(), SignalMessageCipher.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private SignalSessionManager(Stats stats, Connection connection, SignalKeyManager signalKeyManager, EncryptedKeyStore encryptedKeyStore) {
+    private SignalSessionManager(Stats stats, Connection connection, SignalKeyManager signalKeyManager, EncryptedKeyStore encryptedKeyStore, SignalMessageCipher signalMessageCipher) {
         this.stats = stats;
         this.connection = connection;
         this.signalKeyManager = signalKeyManager;
         this.encryptedKeyStore = encryptedKeyStore;
-
-        this.signalMessageCipher = new SignalMessageCipher(signalKeyManager, encryptedKeyStore);
+        this.signalMessageCipher = signalMessageCipher;
     }
 
     // Should be used in a try-with-resources block for auto-release

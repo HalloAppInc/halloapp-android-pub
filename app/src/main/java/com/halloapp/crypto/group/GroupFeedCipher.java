@@ -20,10 +20,24 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class GroupFeedCipher {
+
+    private static GroupFeedCipher instance;
+
     private static final int COUNTER_SIZE_BYTES = 4;
 
     private final EncryptedKeyStore encryptedKeyStore;
     private final GroupFeedKeyManager groupFeedKeyManager;
+
+    public static GroupFeedCipher getInstance() {
+        if (instance == null) {
+            synchronized (GroupFeedCipher.class) {
+                if (instance == null) {
+                    instance = new GroupFeedCipher(EncryptedKeyStore.getInstance(), GroupFeedKeyManager.getInstance());
+                }
+            }
+        }
+        return instance;
+    }
 
     GroupFeedCipher(EncryptedKeyStore encryptedKeyStore, GroupFeedKeyManager groupFeedKeyManager) {
         this.encryptedKeyStore = encryptedKeyStore;
