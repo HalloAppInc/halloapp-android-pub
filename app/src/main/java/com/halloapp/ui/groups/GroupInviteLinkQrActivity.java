@@ -44,7 +44,7 @@ public class GroupInviteLinkQrActivity extends HalloActivity {
         setContentView(R.layout.activity_group_invite_qr);
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        String url = getIntent().getStringExtra(EXTRA_URL_FOR_QR);
+        String url = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_URL_FOR_QR));
         GroupId groupId = Preconditions.checkNotNull(getIntent().getParcelableExtra(EXTRA_GROUP_ID));
         GroupInviteQRViewModel viewModel = new GroupInviteQRViewModel(this.getApplication(), url, groupId);
 
@@ -80,7 +80,7 @@ public class GroupInviteLinkQrActivity extends HalloActivity {
         public final ComputableLiveData<String> groupName = new ComputableLiveData<String>() {
             @Override
             protected String compute() {
-                return contentDb.getChat(groupId).name;
+                return Preconditions.checkNotNull(contentDb.getChat(groupId)).name;
             }
         };
 
