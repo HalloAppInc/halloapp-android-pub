@@ -121,6 +121,12 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
                 return 0;
             }
             return Long.parseLong(durationString);
+        } catch (IllegalArgumentException e) {
+            Log.e("GalleryDataSource.getDuration invalid uri " + uri + " for id " + id, e);
+            throw e;
+        } catch (RuntimeException e) {
+            Log.e("GalleryDataSource.getDuration other exception with uri " + uri + " for id " + id, e);
+            throw e;
         } finally  {
             retriever.release();
         }
