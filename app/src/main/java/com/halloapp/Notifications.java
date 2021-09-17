@@ -587,6 +587,7 @@ public class Notifications {
                 .setColor(ContextCompat.getColor(context, R.color.color_accent))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                .setAutoCancel(true)
                 .setContentText(body);
         final Intent groupIntent = ViewGroupFeedActivity.viewFeed(context, groupId);
         builder.setContentIntent(PendingIntent.getActivity(context, 0, groupIntent, PendingIntent.FLAG_UPDATE_CURRENT));
