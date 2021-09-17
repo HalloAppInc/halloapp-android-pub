@@ -19,7 +19,6 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.collection.LruCache;
 import androidx.core.content.ContextCompat;
 
-import com.halloapp.AppContext;
 import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;

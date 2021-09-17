@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.crypto.AutoCloseLock;
 import com.halloapp.crypto.CryptoException;
-import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;

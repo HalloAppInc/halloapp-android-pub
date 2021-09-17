@@ -26,7 +26,7 @@ import java.util.concurrent.Semaphore;
 public class ViewDataLoader<V extends View, R, K> {
 
     private final ExecutorService executor;
-    private final Map<View, Future> queue = new WeakHashMap<>();
+    private final Map<View, Future<?>> queue = new WeakHashMap<>();
     private final Map<K, Semaphore> keyLoadGuards = new HashMap<>();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
@@ -61,7 +61,7 @@ public class ViewDataLoader<V extends View, R, K> {
 
     @MainThread
     public void loadMultiple(@NonNull V view, @NonNull List<Callable<R>> loaders, @NonNull Displayer<V, List<R>> displayer, @NonNull List<K> keys, @Nullable LruCache<K, R> cache) {
-        final Future existing = queue.get(view);
+        final Future<?> existing = queue.get(view);
         if (existing != null) {
             existing.cancel(true);
         }
@@ -83,7 +83,7 @@ public class ViewDataLoader<V extends View, R, K> {
         }
         displayer.showLoading(view);
 
-        final Future future = executor.submit(() -> {
+        final Future<?> future = executor.submit(() -> {
             List<R> results = new ArrayList<>();
             for (int i=0; i<keys.size(); i++) {
                 K key = keys.get(i);
@@ -132,7 +132,7 @@ public class ViewDataLoader<V extends View, R, K> {
 
     @MainThread
     public void cancel(@NonNull V view) {
-        final Future existing = queue.get(view);
+        final Future<?> existing = queue.get(view);
         if (existing != null) {
             existing.cancel(true);
         }

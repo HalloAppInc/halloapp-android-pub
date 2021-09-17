@@ -129,22 +129,22 @@ public class MediaPickerPreview implements Runnable {
 
         tv.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
-            public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int surfaceWidth, int surfaceHeight) {
+            public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int surfaceWidth, int surfaceHeight) {
                 attachSurface(player, surfaceTexture);
             }
 
             @Override
-            public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height) {}
+            public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surfaceTexture, int width, int height) {}
 
             @Override
-            public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
+            public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surfaceTexture) {
                 player.stop();
                 player.release();
                 return true;
             }
 
             @Override
-            public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {}
+            public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surfaceTexture) {}
         });
 
         display();

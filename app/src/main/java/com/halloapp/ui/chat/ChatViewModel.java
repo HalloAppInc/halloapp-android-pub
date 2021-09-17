@@ -438,7 +438,7 @@ public class ChatViewModel extends AndroidViewModel {
     }
 
     void reloadMessagesAt(long rowId) {
-        final PagedList pagedList = messageList.getValue();
+        final PagedList<Message> pagedList = messageList.getValue();
         if (pagedList != null) {
             ((MessagesDataSource)pagedList.getDataSource()).reloadAt(rowId);
         }

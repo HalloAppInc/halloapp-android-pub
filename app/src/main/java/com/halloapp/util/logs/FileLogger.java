@@ -112,7 +112,7 @@ public class FileLogger {
                     }
                     prepareLogFile();
                     writeLogToDisk(logLine);
-                } catch (InterruptedException | IOException e) {
+                } catch (InterruptedException | IOException ignored) {
                 }
             }
             try {
@@ -120,7 +120,7 @@ public class FileLogger {
                     outputStream.flush();
                 }
                 FileUtils.closeSilently(outputStream);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
 
@@ -203,7 +203,7 @@ public class FileLogger {
         logging = false;
         try {
             loggingThread.join();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
         }
     }
 }

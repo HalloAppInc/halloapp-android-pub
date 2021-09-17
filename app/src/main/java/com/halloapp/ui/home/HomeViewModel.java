@@ -176,7 +176,7 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     void reloadPostsAt(long timestamp) {
-        final PagedList pagedList = postList.getValue();
+        final PagedList<Post> pagedList = postList.getValue();
         if (pagedList != null) {
             ((PostsDataSource)pagedList.getDataSource()).reloadAt(timestamp);
         }

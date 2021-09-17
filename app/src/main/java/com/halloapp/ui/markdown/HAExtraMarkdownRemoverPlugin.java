@@ -7,10 +7,6 @@ import org.commonmark.parser.Parser;
 import java.util.HashSet;
 
 import io.noties.markwon.AbstractMarkwonPlugin;
-import io.noties.markwon.inlineparser.BangInlineProcessor;
-import io.noties.markwon.inlineparser.HtmlInlineProcessor;
-import io.noties.markwon.inlineparser.MarkwonInlineParserPlugin;
-import io.noties.markwon.inlineparser.OpenBracketInlineProcessor;
 
 /**
  * Markwon plugin that strips out many of the unused features of

@@ -85,7 +85,7 @@ class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
             this.text = text;
         }
 
-        @Override
+        @Override @Nullable
         public List<Mention> getMentions() {
             return mentions;
         }
