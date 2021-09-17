@@ -1,6 +1,5 @@
 package com.halloapp.crypto.group;
 
-import com.google.crypto.tink.subtle.Hex;
 import com.goterl.lazysodium.interfaces.Sign;
 import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoException;
@@ -9,6 +8,7 @@ import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PrivateEdECKey;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 
 import java.nio.ByteBuffer;
@@ -90,7 +90,7 @@ public class GroupFeedCipher {
 
         byte[] calculatedHmac = CryptoUtils.hmac(hmacKey, encryptedMessage);
         if (!Arrays.equals(calculatedHmac, receivedHmac)) {
-            Log.e("Expected HMAC " + Hex.encode(receivedHmac) + " but calculated " + Hex.encode(calculatedHmac));
+            Log.e("Expected HMAC " + StringUtils.bytesToHexString(receivedHmac) + " but calculated " + StringUtils.bytesToHexString(calculatedHmac));
             GroupFeedMessageKey messageKey = new GroupFeedMessageKey(currentChainIndex, inboundMessageKey);
             onDecryptFailure("group_hmac_mismatch", groupId, peerUserId, messageKey);
         }

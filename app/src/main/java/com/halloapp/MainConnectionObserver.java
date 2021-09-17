@@ -6,7 +6,6 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.crypto.tink.subtle.Hex;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
@@ -41,6 +40,7 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptReportStats;
 import com.halloapp.util.stats.GroupCommentDecryptReportStats;
@@ -266,7 +266,7 @@ public class MainConnectionObserver extends Connection.Observer {
                 }
 
                 if (!Arrays.equals(remoteIdentityKey, localIdentityKey)) {
-                    Log.i("Remote and local identity key do not match for " + peerUserId + "; remote: " + Hex.encode(remoteIdentityKey) + "; local: " + Hex.encode(localIdentityKey));
+                    Log.i("Remote and local identity key do not match for " + peerUserId + "; remote: " + StringUtils.bytesToHexString(remoteIdentityKey) + "; local: " + StringUtils.bytesToHexString(localIdentityKey));
                     encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, new PublicEdECKey(remoteIdentityKey));
                     foundMismatch = true;
                 }

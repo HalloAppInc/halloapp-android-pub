@@ -2,7 +2,6 @@ package com.halloapp.crypto.group;
 
 import androidx.annotation.VisibleForTesting;
 
-import com.google.crypto.tink.subtle.Hex;
 import com.google.protobuf.ByteString;
 import com.goterl.lazysodium.interfaces.Sign;
 import com.halloapp.Me;
@@ -21,6 +20,7 @@ import com.halloapp.proto.clients.SenderKey;
 import com.halloapp.proto.clients.SenderState;
 import com.halloapp.proto.server.SenderStateBundle;
 import com.halloapp.proto.server.SenderStateWithKeyInfo;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 
 import java.security.GeneralSecurityException;
@@ -190,7 +190,7 @@ public class GroupFeedKeyManager {
             byte[] messageKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_MESSAGE_KEY, 80);
             byte[] updatedChainKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_CHAIN_KEY, 32);
             encryptedKeyStore.setPeerGroupChainKey(groupId, peerUserId, updatedChainKey);
-            Log.i("GroupFeedKeyManager.getInboundMessageKey chain key " + Hex.encode(chainKey) + " -> " + Hex.encode(updatedChainKey));
+            Log.i("GroupFeedKeyManager.getInboundMessageKey chain key " + StringUtils.bytesToHexString(chainKey) + " -> " + StringUtils.bytesToHexString(updatedChainKey));
             CryptoByteUtils.nullify(chainKey, updatedChainKey);
             return messageKey;
         } catch (NullPointerException e) {
@@ -210,7 +210,7 @@ public class GroupFeedKeyManager {
             byte[] updatedChainKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_CHAIN_KEY, 32);
             encryptedKeyStore.setMyGroupChainKey(groupId, updatedChainKey);
             encryptedKeyStore.setMyGroupCurrentChainIndex(groupId, nextChainIndex);
-            Log.i("GroupFeedKeyManager.getOutboundMessageKey chain key " + Hex.encode(chainKey) + " -> " + Hex.encode(updatedChainKey));
+            Log.i("GroupFeedKeyManager.getOutboundMessageKey chain key " + StringUtils.bytesToHexString(chainKey) + " -> " + StringUtils.bytesToHexString(updatedChainKey));
             CryptoByteUtils.nullify(chainKey, updatedChainKey);
             return messageKey;
         } catch (NullPointerException e) {
