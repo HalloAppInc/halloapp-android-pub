@@ -83,6 +83,8 @@ public class ResumableUploader {
         boolean cancelled = false;
         in.skip(offset);
         int uploadPercent = 0;
+
+        Log.i("ResumableUploader.sendPatchRequest starting from " + offset + " of " + inStreamSize + " for " + mediaLogId);
         while (!cancelled) {
             final int count = in.read(bytes, 0, BUFFER_SIZE);
             if (count == -1) {

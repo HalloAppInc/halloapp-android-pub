@@ -319,13 +319,14 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     }
 
     private File encryptFile(@NonNull File file, @Nullable byte[] mediaKey, @Media.MediaType int type, @NonNull String postId) throws IOException {
-        Log.i("UploadMediaTask.encryptFile using media key hash " + CryptoByteUtils.obfuscate(mediaKey));
+        Log.i("UploadMediaTask.encryptFile using media key hash " + CryptoByteUtils.obfuscate(mediaKey) + " for plaintext file of size " + file.length());
 
         final String finishedEncryptedFileName = "encrypted-" + file.getName() + "-" + postId + "-finished";
         final String unfinishedEncryptedFileName = "encrypted-" + file.getName() + "-" + postId + "-unfinished";
 
         File encryptedFile = new File(fileStore.getTmpDir(), finishedEncryptedFileName);
         if (encryptedFile.exists()) {
+            Log.d("UploadMediaTask.encryptFile using existing file of size " + encryptedFile.length());
             return encryptedFile;
         } else {
             encryptedFile = new File(fileStore.getTmpDir(), unfinishedEncryptedFileName);
@@ -358,6 +359,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         if (!encryptedFile.renameTo(newEncryptedFile)) {
             Log.e("Resumable Uploader Task convert: failed to rename " + encryptedFile.getAbsolutePath() + " to " + newEncryptedFile.getAbsolutePath());
         }
+        Log.d("UploadMediaTask.encryptFile resulting size " + newEncryptedFile.length());
         return newEncryptedFile;
     }
 
@@ -422,6 +424,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     }
 
     private void prepareMedia(@NonNull Media media, long maxVideoDurationSeconds) throws IOException, MediaConversionException {
+        Log.d("UploadMediaTask.prepareMedia start size " + media.file.length());
         if (media.type == Media.MEDIA_TYPE_VIDEO && MediaUtils.shouldConvertVideo(media.file, maxVideoDurationSeconds)) {
             final File file = fileStore.getTmpFile(RandomId.create());
             final MediaConverter mediaConverter = new MediaConverter();
@@ -462,6 +465,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                 Log.e("Resumable Uploader Task convert: failed to rename " + file.getAbsolutePath() + " to " + media.file.getAbsolutePath());
             }
         }
+        Log.d("UploadMediaTask.prepareMedia converted size " + media.file.length());
 
         if (media.type == Media.MEDIA_TYPE_VIDEO) {
             Mp4Utils.zeroMp4Timestamps(media.file);
@@ -469,7 +473,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         }
     }
 
-    public static void restartUpload(@NonNull ContentItem contentItem, @NonNull FileStore fileStore, @NonNull ContentDb contentDb, @NonNull Connection connection){
+    public static void restartUpload(@NonNull ContentItem contentItem, @NonNull FileStore fileStore, @NonNull ContentDb contentDb, @NonNull Connection connection) {
         contentItem.reInitialize();
         new UploadMediaTask(contentItem, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
     }

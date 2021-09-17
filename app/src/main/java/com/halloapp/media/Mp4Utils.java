@@ -466,6 +466,7 @@ public class Mp4Utils {
 
     @WorkerThread
     public static void zeroMp4Timestamps(@NonNull File mp4File) throws IOException {
+        Log.d("Mp4Utils.zeroMp4Timestamps start size " + mp4File.length());
         final File tempFile = FileStore.getInstance().getTmpFile(RandomId.create());
         FileUtils.copyFile(mp4File, tempFile);
 
@@ -484,10 +485,12 @@ public class Mp4Utils {
         } finally {
             tempFile.delete();
         }
+        Log.d("Mp4Utils.zeroMp4Timestamps end size " + mp4File.length());
     }
 
     @WorkerThread
     public static void makeMp4Streamable(@NonNull File mp4File) throws IOException {
+        Log.d("Mp4Utils.makeMp4Streamable start size " + mp4File.length());
         final File tempFile = FileStore.getInstance().getTmpFile(RandomId.create());
 
         try (final FileInputStream inputStream = new FileInputStream(mp4File);
@@ -507,5 +510,6 @@ public class Mp4Utils {
         } finally {
             tempFile.delete();
         }
+        Log.d("Mp4Utils.makeMp4Streamable end size " + mp4File.length());
     }
 }
