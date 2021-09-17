@@ -458,6 +458,7 @@ public class Mp4Utils {
                 inFileChannel.transferTo(ftypSize, lastAtom.start - ftypSize, outFileChannel);
             } else {
                 Log.i("Mp4Utils.putMoovAtomAtStart: Last atom in mp4 was not moov, nothing more to do.");
+                inFileChannel.transferTo(0, inFileChannel.size(), outFileChannel);
             }
         } else {
             throw new Mp4FormatException("No top-level atoms found");
