@@ -236,11 +236,20 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
                     return null;
                 }
 
+                float fw, fh;
+                if (format.rotationDegrees == 90 || format.rotationDegrees == 270) {
+                    fw = format.height;
+                    fh = format.width;
+                } else {
+                    fw = format.width;
+                    fh = format.height;
+                }
+
                 float vw = playerView.getWidth();
                 float vh = playerView.getHeight();
-                float scale = Math.min(vw / format.width, vh / format.height);
+                float scale = Math.min(vw / fw, vh / fh);
 
-                return new Size((int) (format.width * scale), (int) (format.height * scale));
+                return new Size((int) (fw * scale), (int) (fh * scale));
             }
 
             Log.d("MediaExplorerActivity.computePlayerViewFinalSize: null player");
@@ -268,7 +277,6 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
                 getWindow().getSharedElementEnterTransition().addListener(transitionListener);
 
                 if (view instanceof PlayerView) {
-                    view.setBackgroundColor(getResources().getColor(android.R.color.holo_red_dark));
                     PlayerView playerView = (PlayerView) view;
                     playerView.hideController();
 
@@ -857,7 +865,11 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
                         return null;
                     }
 
-                    return new Size(format.width, format.height);
+                    if (format.rotationDegrees == 90 || format.rotationDegrees == 270) {
+                        return new Size(format.height, format.width);
+                    } else {
+                        return new Size(format.width, format.height);
+                    }
                 } else {
                     Log.d("AnimatedOutlineProvider.getOriginalMediaSize: missing player");
                     return null;
