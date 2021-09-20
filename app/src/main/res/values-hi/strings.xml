@@ -852,5 +852,6 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_post_destination">"Search"</string>
+    <string name="link_preview_loading">"Loading preview…"</string>
 <string name="share_option_group">"Post to Group"</string><string name="select_group">"Select group"</string></resources>
 

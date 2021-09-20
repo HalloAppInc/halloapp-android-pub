@@ -744,7 +744,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="archived_on">"Archiviert am %s"</string>
 
     <!-- Error message when the group is full -->
-    <string name="invite_link_failed_to_join_full">"Du kannst der Gruppe nicht beitreten, da die maximale Mitgliederanzahl erreicht ist"</string>
+    <string name="invite_link_failed_to_join_full">"Du kannst der Gruppe nicht beitreten, da sie voll ist"</string>
 
     <!-- Error message when the invite link is invalid -->
     <string name="invite_link_failed_to_join_invalid">"Der Einladungslink ist ungültig"</string>
@@ -895,5 +895,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_post_destination">"Suchen"</string>
+    <string name="link_preview_loading">"Loading preview…"</string>
 <string name="share_option_group">"In Gruppe teilen"</string><string name="select_group">"Gruppe auswählen"</string></resources>
 

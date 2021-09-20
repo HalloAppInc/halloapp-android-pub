@@ -62,13 +62,13 @@ Je aanbieder kan hiervoor kosten in rekening brengen."</string>
     <string name="contact_profile_empty">"Posts van %s verschijnen hier"</string>
     <string name="invalid_phone_number">"Ongeldig telefoonnummer"</string>
     <string name="share_option_post">"Post"</string>
-    <string name="share_option_message">"Privébericht"</string>
+    <string name="share_option_message">"Chatbericht"</string>
     <plurals name="max_post_media_items">
         <item quantity="one">"Je kunt maximaal %d media-item per post selecteren"</item>
         <item quantity="other">"Je kunt maximaal %d media-items per post selecteren"</item>
     </plurals>
-    <string name="camera_record_audio_permission_rationale">"Om foto's en video's te maken, hebben we je toestemming nodig om de camera te gebruiken en om geluid op te nemen op je apparaat"</string>
-    <string name="camera_record_audio_permission_rationale_denied">"Om foto's en video's te maken, hebben we je toestemming nodig om de camera te gebruiken en om geluid op te nemen op je apparaat.
+    <string name="camera_record_audio_permission_rationale">"Om foto's en video's te maken, hebben we toestemming nodig om de camera te gebruiken en om geluid op te nemen op je apparaat"</string>
+    <string name="camera_record_audio_permission_rationale_denied">"Om foto's en video's te maken, hebben we toestemming nodig om de camera te gebruiken en om geluid op te nemen op je apparaat.
 
 Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="contacts_permission_rationale">"Om je te kunnen verbinden met je vrienden en familie hebben we toestemming nodig voor toegang tot de contacten op je apparaat"</string>
@@ -80,7 +80,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
 Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="retry">"Opnieuw proberen"</string>
-    <string name="contact_rationale_upload">"Om je te kunnen verbinden met je vrienden en familie hebben we je toestemming nodig voor toegang tot je contacten. &lt;a href=\"learn-more\"&gt;Meer informatie&lt;/a&gt;"</string>
+    <string name="contact_rationale_upload">"Om je te kunnen verbinden met je vrienden en familie hebben we toestemming nodig voor toegang tot je contacten. &lt;a href=\"learn-more\"&gt;Meer informatie&lt;/a&gt;"</string>
     <string name="failed_to_initialize">"Initialiseren mislukt"</string>
     <string name="type_a_comment_hint">"Voeg een reactie toe"</string>
     <string name="comments">"Reacties"</string>
@@ -853,5 +853,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_post_destination">"Zoeken"</string>
+    <string name="link_preview_loading">"Loading preview…"</string>
 <string name="share_option_group">"Post in groep"</string><string name="select_group">"Selecteer groep"</string></resources>
 
