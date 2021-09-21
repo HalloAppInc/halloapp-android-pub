@@ -109,6 +109,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         abstract VoiceNotePlayer getVoiceNotePlayer();
         abstract void addToContacts();
         abstract LiveData<Contact> getContactLiveData();
+        abstract LiveData<String> getPhoneLiveData();
     }
 
     public static @DrawableRes int getStatusImageResource(@Message.State int state) {
@@ -503,6 +504,10 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             } else {
                 parent.getContactLiveData().observe(this, contact -> {
                     addToContactsView.setVisibility(TextUtils.isEmpty(contact.addressBookName) ? View.VISIBLE : View.GONE);
+                });
+                parent.getPhoneLiveData().observe(this, phone -> {
+                    TextView addToContactsText = addToContactsView.findViewById(R.id.add_to_contacts_text);
+                    addToContactsText.setText(addToContactsText.getContext().getString(R.string.add_to_contacts_notice, phone));
                 });
             }
         }

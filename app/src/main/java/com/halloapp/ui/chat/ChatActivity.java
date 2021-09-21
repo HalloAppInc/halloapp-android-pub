@@ -1632,5 +1632,10 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         LiveData<Contact> getContactLiveData() {
             return viewModel.contact.getLiveData();
         }
+
+        @Override
+        LiveData<String> getPhoneLiveData() {
+            return viewModel.phone;
+        }
     };
 }
