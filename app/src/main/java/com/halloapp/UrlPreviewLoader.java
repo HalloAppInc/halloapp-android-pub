@@ -45,14 +45,18 @@ public class UrlPreviewLoader extends ViewDataLoader<View, UrlPreview, String> {
             String imgUrl = preview.getPreviewImageUrl();
             if (imgUrl != null) {
                 final File file = FileStore.getInstance().getTmpFile(RandomId.create());
-                Downloader.run(imgUrl, null, null, Media.MEDIA_TYPE_UNKNOWN, null, file, new Downloader.DownloadListener() {
-                    @Override
-                    public boolean onProgress(long bytesWritten) {
-                        return true;
-                    }
-                }, imgUrl);
-                MediaUtils.transcodeImage(file, file, null, Constants.MAX_IMAGE_DIMENSION / 2, Constants.JPEG_QUALITY, true);
-                preview.imageMedia = Media.createFromFile(Media.MEDIA_TYPE_IMAGE, file);
+                try {
+                    Downloader.run(imgUrl, null, null, Media.MEDIA_TYPE_UNKNOWN, null, file, new Downloader.DownloadListener() {
+                        @Override
+                        public boolean onProgress(long bytesWritten) {
+                            return true;
+                        }
+                    }, imgUrl);
+                    MediaUtils.transcodeImage(file, file, null, Constants.MAX_IMAGE_DIMENSION / 2, Constants.JPEG_QUALITY, true);
+                    preview.imageMedia = Media.createFromFile(Media.MEDIA_TYPE_IMAGE, file);
+                } catch (Exception e) {
+                    Log.e("UrlPreviewLoader/load error fetching preview image", e);
+                }
             }
             return preview;
         };
