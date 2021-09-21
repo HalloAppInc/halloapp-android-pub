@@ -20,12 +20,16 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.GroupId;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.markdown.MarkdownUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.SnackbarHelper;
 
 import java.util.List;
+
+import io.noties.markwon.editor.MarkwonEditor;
+import io.noties.markwon.editor.MarkwonEditorTextWatcher;
 
 public class EditGroupDescriptionActivity extends HalloActivity {
 
@@ -60,6 +64,9 @@ public class EditGroupDescriptionActivity extends HalloActivity {
         ProgressBar progressBar = findViewById(R.id.progress);
         EditText descriptionField = findViewById(R.id.edit_description);
         View saveBtn = findViewById(R.id.save);
+
+        final MarkwonEditor editor = MarkdownUtils.createMarkwonEditor(this);
+        descriptionField.addTextChangedListener(MarkwonEditorTextWatcher.withProcess(editor));
 
         viewModel = new ViewModelProvider(this, new EditGroupDescriptionViewModel.Factory(getApplication(), groupId)).get(EditGroupDescriptionViewModel.class);
 

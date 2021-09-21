@@ -56,7 +56,11 @@ public class MarkdownUtils {
         return formatMarkdownWithMentions(context, text, mentions, null);
     }
 
-    public static CharSequence formatMarkdownWithMentions(@NonNull Context context, @Nullable String text, List<Mention> mentions, @Nullable MentionsFormatter.MentionClickListener mentionClickListener) {
+    public static CharSequence formatMarkdown(@NonNull Context context, @Nullable String text) {
+        return formatMarkdownWithMentions(context, text, null);
+    }
+
+    public static CharSequence formatMarkdownWithMentions(@NonNull Context context, @Nullable String text, @Nullable List<Mention> mentions, @Nullable MentionsFormatter.MentionClickListener mentionClickListener) {
         if (text == null) {
             return null;
         }
@@ -68,6 +72,9 @@ public class MarkdownUtils {
         }
         Markwon markwon = createMarkwon(context);
         CharSequence markdown = markwon.toMarkdown(text);
+        if (mentions == null || mentions.isEmpty()) {
+            return markdown;
+        }
         ArrayList<Integer> newMentionIndices = new ArrayList<>();
         for (int i = 0; i < markdown.length(); i++) {
             if (markdown.charAt(i) == MentionsFormatter.MENTION_CHARACTER) {

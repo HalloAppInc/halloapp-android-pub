@@ -39,6 +39,7 @@ import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
+import com.halloapp.ui.markdown.MarkdownUtils;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
@@ -198,7 +199,7 @@ public class GroupInfoActivity extends HalloActivity {
             } else {
                 descriptionTv.setVisibility(View.VISIBLE);
                 descriptionPlaceholder.setVisibility(View.GONE);
-                descriptionTv.setText(chat.groupDescription);
+                descriptionTv.setText(MarkdownUtils.formatMarkdown(descriptionTv.getContext(), chat.groupDescription));
             }
         });
 
