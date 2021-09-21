@@ -93,6 +93,12 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <LinearLayout
+            android:id="@+id/groups_children"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -135,6 +141,12 @@
                 android:paddingBottom="16dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/chats_children"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
 
         <View
             android:layout_width="match_parent"

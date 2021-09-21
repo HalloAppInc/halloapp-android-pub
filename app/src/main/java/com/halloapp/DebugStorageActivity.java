@@ -2,6 +2,8 @@ package com.halloapp;
 
 import android.app.Application;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -10,6 +12,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
@@ -18,10 +21,18 @@ import com.halloapp.id.GroupId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class DebugStorageActivity extends HalloActivity {
 
@@ -38,19 +49,38 @@ public class DebugStorageActivity extends HalloActivity {
         viewModel = new ViewModelProvider(this).get(StorageViewModel.class);
 
         TextView homeUsageTextView = findViewById(R.id.home_usage);
-        viewModel.homeUsageLiveData.observe(this, homeUsageTextView::setText);
-
         TextView groupUsageTextView = findViewById(R.id.group_usage);
-        viewModel.groupsUsageLiveData.observe(this, groupUsageTextView::setText);
-
         TextView chatsUsageTextView = findViewById(R.id.chats_usage);
-        viewModel.chatsUsageLiveData.observe(this, chatsUsageTextView::setText);
-
         TextView archiveUsageTextView = findViewById(R.id.archive_usage);
-        viewModel.archiveUsageLiveData.observe(this, archiveUsageTextView::setText);
-
         TextView cacheUsageTextView = findViewById(R.id.cache_usage);
+
+        LinearLayout groupUsageBreakdown = findViewById(R.id.groups_children);
+        LinearLayout chatsUsageBreakdown = findViewById(R.id.chats_children);
+
+        viewModel.homeUsageLiveData.observe(this, homeUsageTextView::setText);
+        viewModel.groupsUsageLiveData.observe(this, groupUsageTextView::setText);
+        viewModel.chatsUsageLiveData.observe(this, chatsUsageTextView::setText);
+        viewModel.archiveUsageLiveData.observe(this, archiveUsageTextView::setText);
         viewModel.cacheUsage.getLiveData().observe(this, cacheUsageTextView::setText);
+
+        viewModel.groupsUsageBreakdownLiveData.observe(this, map -> addDivisions(groupUsageBreakdown, map));
+        viewModel.chatsUsageBreakdownLiveData.observe(this, map -> addDivisions(chatsUsageBreakdown, map));
+    }
+
+    private void addDivisions(LinearLayout list, Map<String, Long> map) {
+        list.removeAllViews();
+        List<String> keys = new ArrayList<>(map.keySet());
+        Comparator<String> orderBySizeComparator = (o1, o2) ->
+                Long.compare(Preconditions.checkNotNull(map.get(o2)), Preconditions.checkNotNull(map.get(o1)));
+        Collections.sort(keys, orderBySizeComparator);
+        for (String key : keys) {
+            View v = getLayoutInflater().inflate(R.layout.item_storage_usage, list, false);
+            TextView label = v.findViewById(R.id.usage_label);
+            TextView value = v.findViewById(R.id.usage_value);
+            label.setText(key);
+            value.setText(readableSize(Preconditions.checkNotNull(map.get(key))));
+            list.addView(v);
+        }
     }
 
     public static class StorageViewModel extends AndroidViewModel {
@@ -61,6 +91,9 @@ public class DebugStorageActivity extends HalloActivity {
         public MutableLiveData<String> archiveUsageLiveData = new MutableLiveData<>();
         public ComputableLiveData<String> cacheUsage;
 
+        public MutableLiveData<Map<String, Long>> groupsUsageBreakdownLiveData = new MutableLiveData<>();
+        public MutableLiveData<Map<String, Long>> chatsUsageBreakdownLiveData = new MutableLiveData<>();
+
         public StorageViewModel(@NonNull Application application) {
             super(application);
 
@@ -69,34 +102,68 @@ public class DebugStorageActivity extends HalloActivity {
                 protected String compute() {
                     long homeUsage = 0;
                     long groupUsage = 0;
+                    ConcurrentMap<String, Long> groupBreakdown = new ConcurrentHashMap<>();
                     List<Post> allPosts = ContentDb.getInstance().getAllPosts();
                     for (Post post : allPosts) {
                         GroupId parentGroup = post.getParentGroup();
                         for (Media media : post.media) {
-                            if (parentGroup == null) {
-                                homeUsage += media.file.length();
-                            } else {
-                                groupUsage += media.file.length();
+                            if (media.file != null) {
+                                if (parentGroup == null) {
+                                    homeUsage += media.file.length();
+                                } else {
+                                    groupUsage += media.file.length();
+
+                                    String key = parentGroup.rawId();
+                                    groupBreakdown.putIfAbsent(key, 0L);
+                                    groupBreakdown.put(key, groupBreakdown.get(key) + media.file.length());
+                                }
+                            }
+                        }
+
+                        for (Comment comment : ContentDb.getInstance().getAllComments(post.id)) {
+                            for (Media media : comment.media) {
+                                if (media.file != null) {
+                                    if (parentGroup == null) {
+                                        homeUsage += media.file.length();
+                                    } else {
+                                        groupUsage += media.file.length();
+
+                                        String key = parentGroup.rawId();
+                                        groupBreakdown.putIfAbsent(key, 0L);
+                                        groupBreakdown.put(key, groupBreakdown.get(key) + media.file.length());
+                                    }
+                                }
                             }
                         }
                     }
                     homeUsageLiveData.postValue(readableSize(homeUsage));
                     groupsUsageLiveData.postValue(readableSize(groupUsage));
+                    groupsUsageBreakdownLiveData.postValue(groupBreakdown);
 
                     long chatUsage = 0;
+                    ConcurrentMap<String, Long> chatBreakdown = new ConcurrentHashMap<>();
                     List<Message> allMessages = ContentDb.getInstance().getAllMessages();
                     for (Message message : allMessages) {
                         for (Media media : message.media) {
-                            chatUsage += media.file.length();
+                            if (media.file != null) {
+                                chatUsage += media.file.length();
+
+                                String key = message.chatId.rawId();
+                                chatBreakdown.putIfAbsent(key, 0L);
+                                chatBreakdown.put(key, chatBreakdown.get(key) + media.file.length());
+                            }
                         }
                     }
                     chatsUsageLiveData.postValue(readableSize(chatUsage));
+                    chatsUsageBreakdownLiveData.postValue(chatBreakdown);
 
                     long archiveUsage = 0;
                     List<Post> allArchived = ContentDb.getInstance().getArchivedPosts(null, null, false);
                     for (Post post : allArchived) {
                         for (Media media : post.media) {
-                            archiveUsage += media.file.length();
+                            if (media.file != null) {
+                                archiveUsage += media.file.length();
+                            }
                         }
                     }
                     archiveUsageLiveData.postValue(readableSize(archiveUsage));
@@ -126,18 +193,18 @@ public class DebugStorageActivity extends HalloActivity {
             }
             return 0;
         }
+    }
 
-        private static String readableSize(long size) {
-            long factor = 1024;
-            if (size < factor) {
-                return size + " B";
-            } else if (size < factor * factor) {
-                return String.format(Locale.US, "%.2f", ((float) size) / factor) + " KiB";
-            } else if (size < Math.pow(factor, 3)) {
-                return String.format(Locale.US, "%.2f", ((float) size) / (factor * factor)) + " MiB";
-            } else {
-                return String.format(Locale.US, "%.2f", ((float) size) / Math.pow(factor, 3)) + " GiB";
-            }
+    private static String readableSize(long size) {
+        long factor = 1024;
+        if (size < factor) {
+            return size + " B";
+        } else if (size < factor * factor) {
+            return String.format(Locale.US, "%.2f", ((float) size) / factor) + " KiB";
+        } else if (size < Math.pow(factor, 3)) {
+            return String.format(Locale.US, "%.2f", ((float) size) / (factor * factor)) + " MiB";
+        } else {
+            return String.format(Locale.US, "%.2f", ((float) size) / Math.pow(factor, 3)) + " GiB";
         }
     }
 }

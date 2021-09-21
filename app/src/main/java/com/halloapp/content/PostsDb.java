@@ -1352,7 +1352,7 @@ class PostsDb {
     }
 
     @WorkerThread
-    @NonNull List<Comment> getComments(@NonNull String postId, int start, int count) {
+    @NonNull List<Comment> getComments(@NonNull String postId, @Nullable Integer start, @Nullable Integer count) {
         final String sql =
                 "WITH RECURSIVE " +
                     "comments_tree(level, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text, type) AS ( " +
@@ -1360,7 +1360,8 @@ class PostsDb {
                         "UNION ALL " +
                         "SELECT comments_tree.level+1, comments._id, comments.timestamp, comments.parent_id, comments.comment_sender_user_id, comments.comment_id, comments.transferred, comments.seen, comments.text, comments.type " +
                             "FROM comments, comments_tree WHERE comments.parent_id=comments_tree.comment_id ORDER BY 1 DESC, 2) " +
-                "SELECT * FROM comments_tree LIMIT " + count + " OFFSET " + start;
+                "SELECT * FROM comments_tree " +
+                        (count == null ? "" : ("LIMIT " + count)) + (start == null ? "" : " OFFSET " + start);
         final List<Comment> comments = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         Post parentPost = getPost(postId);
