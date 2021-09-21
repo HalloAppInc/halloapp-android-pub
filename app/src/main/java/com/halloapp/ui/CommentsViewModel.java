@@ -442,7 +442,7 @@ class CommentsViewModel extends AndroidViewModel {
                     final Media sendMedia = Media.createFromFile(mediaItem.type, postFile);
                     comment.media.add(sendMedia);
                 }
-                if (comment.urlPreview.imageMedia != null) {
+                if (comment.urlPreview != null && comment.urlPreview.imageMedia != null) {
                     final File imagePreview = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_IMAGE));
                     try {
                         MediaUtils.transcodeImage(comment.urlPreview.imageMedia.file, imagePreview, null, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, !supportsWideColor);
