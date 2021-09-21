@@ -42,6 +42,7 @@ import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.app.SharedElementCallback;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
@@ -1622,6 +1623,14 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             return textLimits;
         }
 
+        @Override
+        void addToContacts() {
+            startActivity(IntentUtils.createContactIntent(viewModel.contact.getLiveData().getValue(), viewModel.phone.getValue()));
+        }
 
+        @Override
+        LiveData<Contact> getContactLiveData() {
+            return viewModel.contact.getLiveData();
+        }
     };
 }

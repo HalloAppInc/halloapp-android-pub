@@ -29,6 +29,7 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.BuildConfig;
@@ -37,6 +38,7 @@ import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.UrlPreview;
+import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
@@ -69,6 +71,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final TextView decryptStatusView;
     private final TextView newMessagesSeparator;
     private final View e2eNoticeView;
+    private final View addToContactsView;
     private final TextView nameView;
     private final TextView systemMessage;
     private final TextView tombstoneMessage;
@@ -104,6 +107,8 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         abstract void scrollToOriginal(Message replyingMessage);
         abstract void clearHighlight();
         abstract VoiceNotePlayer getVoiceNotePlayer();
+        abstract void addToContacts();
+        abstract LiveData<Contact> getContactLiveData();
     }
 
     public static @DrawableRes int getStatusImageResource(@Message.State int state) {
@@ -140,6 +145,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         decryptStatusView = itemView.findViewById(R.id.decrypt_status);
         newMessagesSeparator = itemView.findViewById(R.id.new_messages);
         e2eNoticeView = itemView.findViewById(R.id.e2e_notice);
+        addToContactsView = itemView.findViewById(R.id.add_to_contacts_notice);
         linkPreviewContainer = itemView.findViewById(R.id.link_preview_container);
         linkPreviewTitle = itemView.findViewById(R.id.link_title);
         linkPreviewUrl = itemView.findViewById(R.id.link_domain);
@@ -169,6 +175,9 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
         if (e2eNoticeView != null) {
             TextView e2eText = e2eNoticeView.findViewById(R.id.e2e_text);
             e2eText.setText(StringUtils.replaceBoldWithMedium(Html.fromHtml(itemView.getContext().getString(R.string.e2e_notice))));
+        }
+        if (addToContactsView != null) {
+            addToContactsView.setOnClickListener(v -> parent.addToContacts());
         }
         nameView = itemView.findViewById(R.id.name);
         textView = itemView.findViewById(R.id.text);
@@ -484,6 +493,16 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
                     Uri uri = Uri.parse(Constants.ENCRYPTED_CHAT_BLOG_URL);
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                     parent.startActivity(intent);
+                });
+            }
+        }
+
+        if (addToContactsView != null) {
+            if (!isLast) {
+                addToContactsView.setVisibility(View.GONE);
+            } else {
+                parent.getContactLiveData().observe(this, contact -> {
+                    addToContactsView.setVisibility(TextUtils.isEmpty(contact.addressBookName) ? View.VISIBLE : View.GONE);
                 });
             }
         }

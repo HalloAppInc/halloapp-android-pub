@@ -363,6 +363,8 @@
     <string name="key_verification_switch_label">Verified</string>
     <!-- Notification shown as if it were the first message in a chat -->
     <string name="e2e_notice">All messages on HalloApp are end-to-end encrypted. &lt;b&gt;Tap to learn more&lt;/b&gt;</string>
+    <!-- Notification shown at top of chat if the other user is not in this user's address book -->
+    <string name="add_to_contacts_notice">To see posts from this user add their number to your address book. Tap to add.</string>
     <!-- Menu option to delete a post -->
     <string name="delete_post">Delete post</string>
     <!-- Option to save a photo/video to the user's gallery -->
