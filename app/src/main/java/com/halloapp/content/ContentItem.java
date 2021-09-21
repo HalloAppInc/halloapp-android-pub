@@ -3,6 +3,7 @@ package com.halloapp.content;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.halloapp.UrlPreview;
 import com.halloapp.id.UserId;
@@ -22,7 +23,9 @@ public abstract class ContentItem implements TextContent {
     public final String text;
     public final List<Media> media = new ArrayList<>();
     public final List<Mention> mentions = new ArrayList<>();
+
     public UrlPreview urlPreview;
+    public String loadingUrlPreview;
 
     public ContentItem(
             long rowId,
@@ -66,7 +69,7 @@ public abstract class ContentItem implements TextContent {
     }
 
     public boolean hasMedia() {
-        return !media.isEmpty() || (urlPreview != null && urlPreview.imageMedia != null);
+        return !media.isEmpty() || (urlPreview != null && urlPreview.imageMedia != null) || getLoadingUrlPreview() != null;
     }
 
     public boolean isAllMediaTransferred() {
@@ -106,6 +109,32 @@ public abstract class ContentItem implements TextContent {
             if (mediaItem.transferred == Media.TRANSFERRED_FAILURE) {
                 mediaItem.initializeRetry();
             }
+        }
+    }
+
+    public String getLoadingUrlPreview() {
+        return loadingUrlPreview;
+    }
+
+    public void updateUrlPreview(@Nullable UrlPreview preview) {
+        synchronized (this) {
+            if (loadingUrlPreview != null) {
+                this.urlPreview = preview;
+                notifyAll();
+            }
+        }
+    }
+
+    public UrlPreview getUrlPreviewOrWait(int ms) throws InterruptedException {
+        synchronized (this) {
+            if (urlPreview != null) {
+                return urlPreview;
+            }
+            if (loadingUrlPreview != null) {
+                wait(ms);
+            }
+            loadingUrlPreview = null;
+            return urlPreview;
         }
     }
 

@@ -14,6 +14,7 @@ import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
+import com.halloapp.UrlPreview;
 import com.halloapp.content.tables.ArchiveTable;
 import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.content.tables.CommentsTable;
@@ -547,6 +548,16 @@ public class ContentDb {
 
     public void addComment(@NonNull Comment comment) {
         addFeedItems(new ArrayList<>(), Collections.singletonList(comment), null);
+    }
+
+    public void addUrlPreview(@NonNull ContentItem contentItem) {
+        if (contentItem instanceof Comment) {
+            urlPreviewsDb.addUrlPreview((Comment) contentItem);
+        } else if (contentItem instanceof Post) {
+            urlPreviewsDb.addUrlPreview((Post) contentItem);
+        } else if (contentItem instanceof Message) {
+            urlPreviewsDb.addUrlPreview((Message) contentItem);
+        }
     }
 
     public void retractComment(@NonNull Comment comment) {

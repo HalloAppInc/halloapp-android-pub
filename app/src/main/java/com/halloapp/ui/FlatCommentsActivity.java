@@ -105,6 +105,7 @@ import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.ActivityUtils;
 import com.halloapp.util.DrawableUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
@@ -374,13 +375,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         chatInputView.setInputParent(new ChatInputView.InputParent() {
             @Override
             public void onSendText() {
-                final Pair<String, List<Mention>> textWithMentions = editText.getTextWithMentions();
-                final String postText = StringUtils.preparePostText(textWithMentions.first);
-                if (TextUtils.isEmpty(postText) && viewModel.commentMedia.getValue() == null) {
-                    Log.w("CommentsActivity: cannot send empty comment");
-                    return;
-                }
-                viewModel.sendComment(postText, textWithMentions.second, replyCommentId, linkPreviewComposeView.getUrlPreview(), ActivityUtils.supportsWideColor(FlatCommentsActivity.this));
+                sendComment();
                 linkPreviewComposeView.updateUrlPreview(null);
                 editText.setText(null);
                 final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
@@ -421,7 +416,21 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
             @Override
             public void onUrl(String url) {
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
+                urlPreviewLoader.load(linkPreviewComposeView, url, new ViewDataLoader.Displayer<View, UrlPreview>() {
+                    @Override
+                    public void showResult(@NonNull View view, @Nullable UrlPreview result) {
+                        linkPreviewComposeView.updateUrlPreview(result);
+                    }
 
+                    @Override
+                    public void showLoading(@NonNull View view) {
+                        linkPreviewComposeView.setLoadingUrl(url);
+                        linkPreviewComposeView.setLoading(!TextUtils.isEmpty(url));
+                    }
+                });
             }
         });
         chatInputView.bindVoicePlayer(this, viewModel.getVoiceNotePlayer());
@@ -524,23 +533,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             }
         });
 
-        if (Constants.SEND_URL_PREVIEWS) {
-            editText.addTextChangedListener(new UrlPreviewTextWatcher(new UrlPreviewTextWatcher.UrlListener() {
-                @Override
-                public void onUrl(String url) {
-                    urlPreviewLoader.load(linkPreviewComposeView, url, new ViewDataLoader.Displayer<View, UrlPreview>() {
-                        @Override
-                        public void showResult(@NonNull View view, @Nullable UrlPreview result) {
-                            linkPreviewComposeView.updateUrlPreview(result);
-                        }
-
-                        @Override
-                        public void showLoading(@NonNull View view) {
-                            linkPreviewComposeView.setLoading(!TextUtils.isEmpty(url));
-                        }
-                    });
-                }
-            }));
+        if (serverProps.getIsInternalUser()) {
             linkPreviewComposeView.setOnRemovePreviewClickListener(v -> {
                 urlPreviewLoader.cancel(linkPreviewComposeView);
                 linkPreviewComposeView.setLoading(false);
@@ -617,6 +610,40 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             }
         });
         itemSwipeHelper.attachToRecyclerView(commentsView);
+    }
+
+    private void sendComment() {
+        final Pair<String, List<Mention>> textWithMentions = editText.getTextWithMentions();
+        final String postText = StringUtils.preparePostText(textWithMentions.first);
+        if (TextUtils.isEmpty(postText) && viewModel.commentMedia.getValue() == null) {
+            Log.w("CommentsActivity: cannot send empty comment");
+            return;
+        }
+        List<Mention> mentions = textWithMentions.second;
+        final Comment comment = new Comment(
+                0,
+                postId,
+                UserId.ME,
+                RandomId.create(),
+                replyCommentId,
+                System.currentTimeMillis(),
+                Comment.TRANSFERRED_NO,
+                true,
+                postText);
+        linkPreviewComposeView.attachPreview(comment);
+        urlPreviewLoader.cancel(linkPreviewComposeView, true);
+
+        if (comment.urlPreview == null && comment.loadingUrlPreview != null) {
+            urlPreviewLoader.addWaitingContentItem(comment);
+        }
+
+        for (Mention mention : mentions) {
+            if (mention.index < 0 || mention.index >= postText.length()) {
+                continue;
+            }
+            comment.mentions.add(mention);
+        }
+        viewModel.sendComment(comment, ActivityUtils.supportsWideColor(FlatCommentsActivity.this));
     }
 
     private void updateSendButton() {
@@ -774,6 +801,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         ContactsDb.getInstance().removeObserver(contactsObserver);
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
+        urlPreviewLoader.destroy();
     }
 
     @Override

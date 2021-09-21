@@ -398,7 +398,8 @@ public class ContentComposerActivity extends HalloActivity {
         viewModel.contentItem.observe(this, contentItem -> {
             if (contentItem != null) {
                 if (contentItem instanceof Post) {
-                    contentItem.urlPreview = postLinkPreviewView.getUrlPreview();
+                    postLinkPreviewView.attachPreview(contentItem);
+                    urlPreviewLoader.cancel(postLinkPreviewView, true);
                 }
                 if (contentItem.urlPreview != null) {
                     BgWorkers.getInstance().execute(() -> {
@@ -415,6 +416,9 @@ public class ContentComposerActivity extends HalloActivity {
                         contentItem.addToStorage(ContentDb.getInstance());
                     });
                 } else {
+                    if (contentItem.loadingUrlPreview != null) {
+                        urlPreviewLoader.addWaitingContentItem(contentItem);
+                    }
                     contentItem.addToStorage(ContentDb.getInstance());
                 }
                 setResult(RESULT_OK);
@@ -464,10 +468,13 @@ public class ContentComposerActivity extends HalloActivity {
             replyContainer.setVisibility(View.GONE);
         }
 
-        if (chatId == null && Constants.SEND_URL_PREVIEWS) {
+        if (chatId == null && ServerProps.getInstance().getIsInternalUser()) {
             editText.addTextChangedListener(new UrlPreviewTextWatcher(new UrlPreviewTextWatcher.UrlListener() {
                 @Override
                 public void onUrl(String url) {
+                    if (isFinishing() || isDestroyed()) {
+                        return;
+                    }
                     urlPreviewLoader.load(postLinkPreviewView, url, new ViewDataLoader.Displayer<View, UrlPreview>() {
                         @Override
                         public void showResult(@NonNull View view, @Nullable UrlPreview result) {
@@ -476,6 +483,7 @@ public class ContentComposerActivity extends HalloActivity {
 
                         @Override
                         public void showLoading(@NonNull View view) {
+                            postLinkPreviewView.setLoadingUrl(url);
                             postLinkPreviewView.setLoading(!TextUtils.isEmpty(url));
                         }
                     });
@@ -649,6 +657,9 @@ public class ContentComposerActivity extends HalloActivity {
     public void onDestroy() {
         super.onDestroy();
         fullThumbnailLoader.destroy();
+        urlPreviewLoader.destroy();
+        mediaThumbnailLoader.destroy();
+        textContentLoader.destroy();
     }
 
     @Override

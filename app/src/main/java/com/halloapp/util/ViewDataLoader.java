@@ -25,10 +25,10 @@ import java.util.concurrent.Semaphore;
 
 public class ViewDataLoader<V extends View, R, K> {
 
-    private final ExecutorService executor;
-    private final Map<View, Future<?>> queue = new WeakHashMap<>();
+    protected final ExecutorService executor;
+    protected final Map<View, Future<?>> queue = new WeakHashMap<>();
     private final Map<K, Semaphore> keyLoadGuards = new HashMap<>();
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    protected final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public interface Displayer<V, R> {
         void showResult(@NonNull V view, @Nullable R result);
@@ -144,7 +144,7 @@ public class ViewDataLoader<V extends View, R, K> {
         executor.shutdownNow();
     }
 
-    private void executeShowResult(@NonNull V view, @NonNull Displayer<V, List<R>> displayer, @NonNull List<K> keys, @Nullable List<R> result) {
+    protected void executeShowResult(@NonNull V view, @NonNull Displayer<V, List<R>> displayer, @NonNull List<K> keys, @Nullable List<R> result) {
 
         if (getTag(keys).equals(view.getTag())) {
             mainHandler.post(() -> {

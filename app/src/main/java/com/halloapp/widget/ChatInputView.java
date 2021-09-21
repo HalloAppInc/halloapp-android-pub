@@ -25,6 +25,7 @@ import com.halloapp.R;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.media.VoiceNoteRecorder;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.UrlPreviewTextWatcher;
 import com.halloapp.util.StringUtils;
 import java.io.File;
@@ -200,7 +201,7 @@ public class ChatInputView extends ConstraintLayout {
             }
         });
 
-        if (Constants.SEND_URL_PREVIEWS) {
+        if (ServerProps.getInstance().getIsInternalUser()) {
             editText.addTextChangedListener(new UrlPreviewTextWatcher(url -> {
                 if (inputParent != null) {
                     inputParent.onUrl(url);

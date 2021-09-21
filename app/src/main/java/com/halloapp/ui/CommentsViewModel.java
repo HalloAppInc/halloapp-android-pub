@@ -400,25 +400,8 @@ class CommentsViewModel extends AndroidViewModel {
         sendVoiceNote(replyCommentId, recording);
     }
 
-    void sendComment(@Nullable String postText, List<Mention> mentions, @Nullable String replyCommentId, @Nullable UrlPreview urlPreview, boolean supportsWideColor) {
-        final Comment comment = new Comment(
-                0,
-                postId,
-                UserId.ME,
-                RandomId.create(),
-                replyCommentId,
-                System.currentTimeMillis(),
-                Comment.TRANSFERRED_NO,
-                true,
-                postText);
+    void sendComment(@NonNull Comment comment, boolean supportsWideColor) {
         comment.setParentPost(post.getValue());
-        comment.urlPreview = urlPreview;
-        for (Mention mention : mentions) {
-            if (mention.index < 0 || mention.index >= postText.length()) {
-                continue;
-            }
-            comment.mentions.add(mention);
-        }
 
         Media mediaItem = commentMedia.getValue();
         boolean needsTranscode = mediaItem != null || (comment.urlPreview != null && comment.urlPreview.imageMedia != null);

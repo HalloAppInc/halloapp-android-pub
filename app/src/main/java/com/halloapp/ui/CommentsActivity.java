@@ -76,6 +76,7 @@ import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.ActivityUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
@@ -408,13 +409,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
         chatInputView.setInputParent(new ChatInputView.InputParent() {
             @Override
             public void onSendText() {
-                final Pair<String, List<Mention>> textWithMentions = editText.getTextWithMentions();
-                final String postText = StringUtils.preparePostText(textWithMentions.first);
-                if (TextUtils.isEmpty(postText) && viewModel.commentMedia.getValue() == null) {
-                    Log.w("CommentsActivity: cannot send empty comment");
-                    return;
-                }
-                viewModel.sendComment(postText, textWithMentions.second, replyCommentId, null, ActivityUtils.supportsWideColor(CommentsActivity.this));
+                sendComment();
                 editText.setText(null);
                 final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
                 imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
@@ -517,6 +512,34 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
 
         File draft = chatInputView.getAudioDraft();
         contentDraftManager.setCommentAudioDraft(postId, draft);
+    }
+
+    private void sendComment() {
+        final Pair<String, List<Mention>> textWithMentions = editText.getTextWithMentions();
+        final String postText = StringUtils.preparePostText(textWithMentions.first);
+        if (TextUtils.isEmpty(postText) && viewModel.commentMedia.getValue() == null) {
+            Log.w("CommentsActivity: cannot send empty comment");
+            return;
+        }
+        List<Mention> mentions = textWithMentions.second;
+        final Comment comment = new Comment(
+                0,
+                postId,
+                UserId.ME,
+                RandomId.create(),
+                replyCommentId,
+                System.currentTimeMillis(),
+                Comment.TRANSFERRED_NO,
+                true,
+                postText);
+
+        for (Mention mention : mentions) {
+            if (mention.index < 0 || mention.index >= postText.length()) {
+                continue;
+            }
+            comment.mentions.add(mention);
+        }
+        viewModel.sendComment(comment, ActivityUtils.supportsWideColor(CommentsActivity.this));
     }
 
     private void updateSendButton() {

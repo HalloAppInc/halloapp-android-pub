@@ -12,6 +12,7 @@ import com.dstukalov.videoconverter.MediaConversionException;
 import com.dstukalov.videoconverter.MediaConverter;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
+import com.halloapp.UrlPreview;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
@@ -53,6 +54,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     public static final ConcurrentHashMap<String, Boolean> contentItemIds = new ConcurrentHashMap<>();
 
     private static final int RETRY_LIMIT = 3;
+    public static final int PENDING_URL_PREVIEW_WAIT_MS = 10_000;
 
     public UploadMediaTask(@NonNull ContentItem contentItem, @NonNull FileStore fileStore, @NonNull ContentDb contentDb, @NonNull Connection connection) {
         this.contentItem = contentItem;
@@ -91,6 +93,22 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             maxVideoDurationSeconds = ServerProps.getInstance().getMaxChatVideoDuration();
         } else if (contentItem instanceof Post || contentItem instanceof Comment) {
             maxVideoDurationSeconds = ServerProps.getInstance().getMaxFeedVideoDuration();
+        }
+
+        if (contentItem.loadingUrlPreview != null) {
+            Log.i("UploadMediaTask/loading url preview found, waiting for it to complete");
+            UrlPreview urlPreview = null;
+            try {
+                urlPreview = contentItem.getUrlPreviewOrWait(PENDING_URL_PREVIEW_WAIT_MS);
+            } catch (InterruptedException e) {
+                Log.e("UploadMediaTask/loadingUrlPreview wait interrupted", e);
+            }
+            if (urlPreview != null) {
+                Log.i("UploadMediaTask/loading url preview did not complete in time, or failed");
+                contentDb.addUrlPreview(contentItem);
+            } else {
+                Log.i("UploadMediaTask/loadingUrlPreview completed");
+            }
         }
 
         long startTimeMs = System.currentTimeMillis();

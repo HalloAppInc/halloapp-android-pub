@@ -2,6 +2,7 @@ package com.halloapp.widget;
 
 import android.content.Context;
 import android.graphics.Outline;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewOutlineProvider;
@@ -15,6 +16,7 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.R;
 import com.halloapp.UrlPreview;
+import com.halloapp.content.ContentItem;
 import com.halloapp.media.MediaThumbnailLoader;
 
 public class LinkPreviewComposeView extends FrameLayout {
@@ -29,6 +31,7 @@ public class LinkPreviewComposeView extends FrameLayout {
     protected UrlPreview urlPreview;
 
     protected boolean isLoading;
+    protected String loadingUrl;
 
     private MediaThumbnailLoader mediaThumbnailLoader;
 
@@ -81,6 +84,18 @@ public class LinkPreviewComposeView extends FrameLayout {
         linkPreviewClose.setOnClickListener(listener);
     }
 
+    public void setLoadingUrl(String url) {
+        this.loadingUrl = url;
+    }
+
+    public String getLoadingUrl() {
+        return loadingUrl;
+    }
+
+    public boolean isLoading() {
+        return isLoading;
+    }
+
     public void setLoading(boolean loading) {
         if (isLoading != loading) {
             isLoading = loading;
@@ -96,12 +111,25 @@ public class LinkPreviewComposeView extends FrameLayout {
                 linkTitle.setVisibility(View.VISIBLE);
                 linkDomainUrl.setVisibility(View.VISIBLE);
                 linkIcon.setVisibility(View.VISIBLE);
+                loadingUrl = null;
             }
         }
     }
 
     public UrlPreview getUrlPreview() {
         return urlPreview;
+    }
+
+    public void attachPreview(@NonNull ContentItem contentItem) {
+        if (urlPreview != null) {
+            contentItem.urlPreview = urlPreview;
+        } else {
+            if (!TextUtils.isEmpty(loadingUrl)) {
+                contentItem.loadingUrlPreview = loadingUrl;
+            } else {
+                contentItem.loadingUrlPreview = null;
+            }
+        }
     }
 
     public void updateUrlPreview(@Nullable UrlPreview urlPreview) {

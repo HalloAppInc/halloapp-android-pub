@@ -64,6 +64,7 @@ import com.halloapp.UrlPreviewLoader;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
@@ -336,6 +337,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
             @Override
             public void onUrl(String url) {
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
                 urlPreviewLoader.load(linkPreviewComposeView, url, new ViewDataLoader.Displayer<View, UrlPreview>() {
                     @Override
                     public void showResult(@NonNull View view, @Nullable UrlPreview result) {
@@ -344,6 +348,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
                     @Override
                     public void showLoading(@NonNull View view) {
+                        linkPreviewComposeView.setLoadingUrl(url);
                         linkPreviewComposeView.setLoading(!TextUtils.isEmpty(url));
                     }
                 });
@@ -824,6 +829,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         chatLoader.destroy();
         contactLoader.destroy();
         replyLoader.destroy();
+        urlPreviewLoader.destroy();
     }
 
     @Override
@@ -1156,8 +1162,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 replyMessage != null ? replyMessage.senderUserId : replySenderId,
                 0);
         message.mentions.addAll(textAndMentions.second);
-        message.urlPreview = linkPreviewComposeView.getUrlPreview();
+        linkPreviewComposeView.attachPreview(message);
         linkPreviewComposeView.updateUrlPreview(null);
+        urlPreviewLoader.cancel(linkPreviewComposeView, true);
         replyPostId = null;
         replyPostMediaIndex = -1;
         replyMessage = null;
@@ -1178,6 +1185,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 message.addToStorage(ContentDb.getInstance());
             });
         } else {
+            if (message.loadingUrlPreview != null) {
+                urlPreviewLoader.addWaitingContentItem(message);
+            }
             message.addToStorage(ContentDb.getInstance());
         }
 
