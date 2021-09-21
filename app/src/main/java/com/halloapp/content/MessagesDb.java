@@ -1476,7 +1476,7 @@ class MessagesDb {
     }
 
     @WorkerThread
-    @NonNull List<Message> getMessages(@NonNull ChatId chatId, @Nullable Long startRowId, int count, boolean after) {
+    @NonNull List<Message> getMessages(@NonNull ChatId chatId, @Nullable Long startRowId, @Nullable Integer count, boolean after) {
         final List<Message> messages = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         String where = MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "=\"" + chatId.rawId() + "\"";
@@ -1534,7 +1534,7 @@ class MessagesDb {
                 "AS r ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=r." + RepliesTable.COLUMN_MESSAGE_ROW_ID + " " +
             "WHERE " + where + " " +
             "ORDER BY " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + (after ? " DESC " : " ASC ") +
-            "LIMIT " + count;
+            (count == null ? "" : ("LIMIT " + count));
 
         try (final Cursor cursor = db.rawQuery(sql, null)) {
 
@@ -1586,7 +1586,7 @@ class MessagesDb {
                     Preconditions.checkNotNull(message).media.add(media);
                 }
             }
-            if (message != null && cursor.getCount() < count) {
+            if (message != null && (count == null || cursor.getCount() < count)) {
                 messages.add(message);
             }
         }

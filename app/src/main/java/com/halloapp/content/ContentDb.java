@@ -522,6 +522,16 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public List<Post> getAllPosts() {
+        List<Post> ret = postsDb.getAllPosts(null);
+        List<Chat> groups = getGroups();
+        for (Chat group : groups) {
+            ret.addAll(postsDb.getAllPosts((GroupId) group.chatId));
+        }
+        return ret;
+    }
+
+    @WorkerThread
     public @Nullable Post getPost(@NonNull String postId) {
         return postsDb.getPost(postId);
     }
@@ -957,8 +967,18 @@ public class ContentDb {
     }
 
     @WorkerThread
-    @NonNull List<Message> getMessages(@NonNull ChatId chatId, @Nullable Long startRowId, int count, boolean after) {
+    @NonNull List<Message> getMessages(@NonNull ChatId chatId, @Nullable Long startRowId, @Nullable Integer count, boolean after) {
         return messagesDb.getMessages(chatId, startRowId, count, after);
+    }
+
+    @WorkerThread
+    public List<Message> getAllMessages() {
+        List<Message> ret = new ArrayList<>();
+        List<Chat> chats = getChats(false);
+        for (Chat chat : chats) {
+            ret.addAll(getMessages((UserId) chat.chatId, null, null, false));
+        }
+        return ret;
     }
 
     @WorkerThread
@@ -1147,7 +1167,7 @@ public class ContentDb {
     }
 
     @NonNull
-    public List<Post> getArchivedPosts(Long timestamp, int count, boolean after) {
+    public List<Post> getArchivedPosts(Long timestamp, @Nullable Integer count, boolean after) {
         return postsDb.getArchivedPosts(timestamp, count, after);
     }
 

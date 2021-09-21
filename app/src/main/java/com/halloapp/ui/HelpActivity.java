@@ -13,6 +13,7 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.Debug;
 import com.halloapp.DebugActivity;
+import com.halloapp.DebugStorageActivity;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.props.ServerProps;
@@ -79,6 +80,11 @@ public class HelpActivity extends HalloActivity {
             View debugMenu = findViewById(R.id.debug_menu);
             debugMenu.setOnClickListener(v -> {
                 Debug.showDebugMenu(this, debugMenu);
+            });
+
+            View debugStorage = findViewById(R.id.debug_storage);
+            debugStorage.setOnClickListener(v -> {
+                startActivity(new Intent(this, DebugStorageActivity.class));
             });
 
             View debugConfig = findViewById(R.id.debug_config);

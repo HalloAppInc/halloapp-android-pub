@@ -2026,7 +2026,13 @@ class PostsDb {
     }
 
     @NonNull
-    List<Post> getArchivedPosts(Long timestamp, Integer pageSize, boolean after) {
+    List<Post> getAllPosts(@Nullable GroupId groupId) {
+        List<Post> posts = getPosts(null, null, false, null, groupId, false);
+        return posts;
+    }
+
+    @NonNull
+    List<Post> getArchivedPosts(Long timestamp, @Nullable Integer pageSize, boolean after) {
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
 

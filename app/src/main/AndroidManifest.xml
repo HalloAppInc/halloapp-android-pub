@@ -177,6 +177,9 @@
         <activity
             android:name=".DebugActivity" />
 
+        <activity
+            android:name=".DebugStorageActivity"/>
+
         <activity android:name=".ui.invites.InviteContactsActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/invite_title"
