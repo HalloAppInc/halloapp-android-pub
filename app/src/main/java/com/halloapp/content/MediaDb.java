@@ -20,6 +20,9 @@ import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.UrlPreviewsTable;
 import com.halloapp.media.MediaUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MediaDb {
     private final ContentDbHelper databaseHelper;
     private final FileStore fileStore;
@@ -84,6 +87,35 @@ public class MediaDb {
             }
         }
         return null;
+    }
+
+    // DEBUG ONLY
+    @NonNull
+    @Deprecated
+    public List<Media> getAllMedia() {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+
+        List<Media> media = new ArrayList<>();
+        final String uploadQuerySql =
+                "SELECT " +
+                        MediaTable._ID + "," +
+                        MediaTable.COLUMN_TYPE + "," +
+                        MediaTable.COLUMN_FILE + " " +
+                        "FROM " + MediaTable.TABLE_NAME;
+        try (final Cursor cursor = db.rawQuery(uploadQuerySql, new String[]{})) {
+            while (cursor.moveToNext()) {
+                long id = cursor.getLong(0);
+                int type = cursor.getInt((1));
+
+                media.add(
+                        new Media(
+                                id,
+                                type,
+                                null,
+                                fileStore.getMediaFile(cursor.getString(2)), null, null, null, 0, 0, Media.TRANSFERRED_NO, Media.BLOB_VERSION_DEFAULT, 0, 0));
+            }
+        }
+        return media;
     }
 
     @WorkerThread

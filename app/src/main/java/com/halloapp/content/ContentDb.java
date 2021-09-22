@@ -174,6 +174,13 @@ public class ContentDb {
         addFeedItems(Collections.singletonList(post), new ArrayList<>(), completionRunnable);
     }
 
+    // DEBUG ONLY
+    @NonNull
+    @Deprecated
+    public List<Media> getAllMedia() {
+        return mediaDb.getAllMedia();
+    }
+
     public void addFeedItems(@NonNull List<Post> posts, @NonNull List<Comment> comments, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
             for (Post post : posts) {

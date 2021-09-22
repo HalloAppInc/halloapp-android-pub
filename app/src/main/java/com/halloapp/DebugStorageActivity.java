@@ -111,7 +111,6 @@ public class DebugStorageActivity extends HalloActivity {
                     long groupUsage = 0;
                     ConcurrentMap<String, Long> groupBreakdown = new ConcurrentHashMap<>();
                     List<Post> allPosts = ContentDb.getInstance().getAllPosts();
-                    HashSet<String> allAccountedForMedia = new HashSet<>();
                     for (Post post : allPosts) {
                         GroupId parentGroup = post.getParentGroup();
                         for (Media media : post.media) {
@@ -125,7 +124,6 @@ public class DebugStorageActivity extends HalloActivity {
                                     groupBreakdown.putIfAbsent(key, 0L);
                                     groupBreakdown.put(key, groupBreakdown.get(key) + media.file.length());
                                 }
-                                allAccountedForMedia.add(media.file.getAbsolutePath());
                             }
                         }
 
@@ -141,7 +139,6 @@ public class DebugStorageActivity extends HalloActivity {
                                         groupBreakdown.putIfAbsent(key, 0L);
                                         groupBreakdown.put(key, groupBreakdown.get(key) + media.file.length());
                                     }
-                                    allAccountedForMedia.add(media.file.getAbsolutePath());
                                 }
                             }
                         }
@@ -161,8 +158,6 @@ public class DebugStorageActivity extends HalloActivity {
                                 String key = message.chatId.rawId();
                                 chatBreakdown.putIfAbsent(key, 0L);
                                 chatBreakdown.put(key, chatBreakdown.get(key) + media.file.length());
-
-                                allAccountedForMedia.add(media.file.getAbsolutePath());
                             }
                         }
                     }
@@ -175,8 +170,6 @@ public class DebugStorageActivity extends HalloActivity {
                         for (Media media : post.media) {
                             if (media.file != null) {
                                 archiveUsage += media.file.length();
-
-                                allAccountedForMedia.add(media.file.getAbsolutePath());
                             }
                         }
                     }
@@ -184,9 +177,17 @@ public class DebugStorageActivity extends HalloActivity {
 
                     File mediaDir = FileStore.getInstance().getMediaDir();
 
+                    HashSet<String> allMediaFiles = new HashSet<>();
+                    List<Media> medias = ContentDb.getInstance().getAllMedia();
+                    for (Media m : medias) {
+                        if (m != null && m.file != null) {
+                            allMediaFiles.add(m.file.getAbsolutePath());
+                        }
+                    }
+
                     ConcurrentMap<String, Long> leakedBreakdown = new ConcurrentHashMap<>();
                     HashSet<File> leakedPaths = new HashSet<>();
-                    findLeakedMedia(mediaDir, allAccountedForMedia, leakedPaths);
+                    findLeakedMedia(mediaDir, allMediaFiles, leakedPaths);
                     long leakedUsage = 0;
                     for (File f : leakedPaths) {
                         long len = f.length();
