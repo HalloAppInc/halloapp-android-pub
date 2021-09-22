@@ -226,7 +226,21 @@ class PostsDb {
                 values.put(PostsTable.COLUMN_TYPE, Post.TYPE_RETRACTED);
                 post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
             } else {
-                db.delete(CommentsTable.TABLE_NAME, CommentsTable.COLUMN_POST_ID + "=?",
+                List<String> fileNames = new ArrayList<>();
+                String sql = "SELECT " + MediaTable.COLUMN_FILE
+                        + " FROM " + MediaTable.TABLE_NAME
+                        + " WHERE " + MediaTable.COLUMN_PARENT_TABLE + "='" + CommentsTable.TABLE_NAME + "'"
+                        + " AND " + MediaTable.COLUMN_PARENT_ROW_ID + " IN (SELECT " + CommentsTable._ID + " FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=?)";
+                try (Cursor cursor = db.rawQuery(sql, new String[] {post.id})) {
+                    while (cursor.moveToNext()) {
+                        String name = cursor.getString(0);
+                        if (name != null) {
+                            fileNames.add(name);
+                        }
+                    }
+                }
+                db.delete(CommentsTable.TABLE_NAME,
+                        CommentsTable.COLUMN_POST_ID + "=?",
                         new String[]{post.id});
                 db.delete(MediaTable.TABLE_NAME,
                         MediaTable.COLUMN_PARENT_ROW_ID + "=? AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'",
@@ -239,6 +253,12 @@ class PostsDb {
                         if (!media.file.delete()) {
                             Log.e("ContentDb.retractPost: failed to delete " + media.file.getAbsolutePath());
                         }
+                    }
+                }
+                for (String name : fileNames) {
+                    File file = fileStore.getMediaFile(name);
+                    if (!file.delete()) {
+                        Log.e("ContentDb.retractPost: failed to delete " + file.getAbsolutePath());
                     }
                 }
             }
