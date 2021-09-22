@@ -110,7 +110,7 @@ Abra as configurações do aplicativo para modificar as permissões do aplicativ
     <string name="settings_privacy">"Privacidade"</string>
     <plurals name="contact_selection_subtitle">
         <item quantity="one">"%d contato selecionado"</item>
-        <item quantity="other">"%d contatos selecionado"</item>
+        <item quantity="other">"%d contatos selecionados"</item>
     </plurals>
     <plurals name="contact_maximum_selection">
         <item quantity="one">"Você pode selecionar até %d contato"</item>
@@ -213,7 +213,7 @@ Abra as configurações do aplicativo para modificar as permissões do aplicativ
     <string name="album">"Álbum"</string>
     <string name="new_messages">"Novas mensagens"</string>
     <string name="delete">"Apagar"</string>
-    <string name="clear_chat">"Apagar chat"</string>
+    <string name="clear_chat">"Apagar conversa"</string>
     <string name="view_profile">"Ver perfil"</string>
     <string name="action_hide">"Ocultar"</string>
     <string name="hide_my_posts">"Ocultar minhas publicações"</string>
@@ -499,7 +499,7 @@ versão: %2$s"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
     <!-- Fuzzy -->
-    <string name="key_verification_explanation">"Para verificar a segurança de sua conexão com %s, cheque se os números acima coincidem com os exibidos em seu dispositivo ou escaneie o código QR em seu telefone. "<![CDATA[<a href="https://halloapp.com/blog/encrypted-chat/">Saiba mais</a>]]>"."</string>
+    <string name="key_verification_explanation">"Para verificar a segurança de sua conexão com %s, verifique se os números acima coincidem com os exibidos em seu dispositivo ou escaneie o código QR em seu telefone. "<![CDATA[<a href="https://halloapp.com/blog/encrypted-chat/">Saiba mais</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Mais"</string>
@@ -534,14 +534,14 @@ versão: %2$s"</string>
     <string name="manage_storage_button">"Gerenciar Armazenamento"</string>
 
     <!-- Message that's displayed if user has low storage -->
-    <string name="low_storage_msg">"Seu telefone está ficando sem espaço de armazenamento. Para usar o HalloApp, libere espaço de armazenamento no telefone."</string>
+    <string name="low_storage_msg">"Seu telefone está ficando sem espaço de armazenamento. Para usar o HalloApp, liberte espaço de armazenamento no telefone."</string>
     <plurals name="seen_by_people">
         <item quantity="one">"Visto por %d pessoa"</item>
         <item quantity="other">"Visto por %d pessoas"</item>
     </plurals>
 
     <!-- Text that provides context for a group invite link being shared -->
-    <string name="group_invite_link_context">"Clique neste link para participar do meu grupo no HalloApp: %s"</string>
+    <string name="group_invite_link_context">"Clique neste link para participar no meu grupo no HalloApp: %s"</string>
     <string name="voice_note">"Anotação de voz"</string>
 
     <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
@@ -859,5 +859,8 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_post_destination">"Search"</string>
     <string name="link_preview_loading">"Loading preview…"</string>
+
+    <!-- Notification shown at top of chat if the other user is not in this user's address book -->
+    <string name="add_to_contacts_notice">"To see posts from %s add their number to your address book. Tap to add."</string>
 <string name="share_option_group">"Postar para Grupo"</string><string name="select_group">"Selecionar grupo"</string></resources>
 

@@ -915,5 +915,8 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_post_destination">"Search"</string>
     <string name="link_preview_loading">"Loading preview…"</string>
+
+    <!-- Notification shown at top of chat if the other user is not in this user's address book -->
+    <string name="add_to_contacts_notice">"To see posts from %s add their number to your address book. Tap to add."</string>
 <string name="share_option_group">"Опубликовать в группе"</string><string name="select_group">"Выбрать группу"</string></resources>
 

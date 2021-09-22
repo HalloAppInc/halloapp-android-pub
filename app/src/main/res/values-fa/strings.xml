@@ -846,6 +846,9 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_post_destination">"جستجو"</string>
-    <string name="link_preview_loading">"Loading preview…"</string>
+    <string name="link_preview_loading">"بارگذاری پیش‌نمایش…"</string>
+
+    <!-- Notification shown at top of chat if the other user is not in this user's address book -->
+    <string name="add_to_contacts_notice">"برای دیدن پست‌های %s شماره ایشان را به دفتر تلفن اضافه کنید. اینجا کلیک کنید."</string>
 <string name="share_option_group">"پست به گروه"</string><string name="select_group">"انتخاب گروه"</string></resources>
 

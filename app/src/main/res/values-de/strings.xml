@@ -879,7 +879,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="groups_in_common">"Gemeinsame Gruppen"</string>
 
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
-    <string name="slide_to_cancel">"Wischen zum Abbrechen"</string>
+    <string name="slide_to_cancel">"Wischen, um die Aufnahme abzubrechen"</string>
 
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
     <string name="reply_notification_label">"Antworten"</string>
@@ -895,6 +895,9 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_post_destination">"Suchen"</string>
-    <string name="link_preview_loading">"Loading preview…"</string>
+    <string name="link_preview_loading">"Vorschau wird geladen…"</string>
+
+    <!-- Notification shown at top of chat if the other user is not in this user's address book -->
+    <string name="add_to_contacts_notice">"To see posts from %s add their number to your address book. Tap to add."</string>
 <string name="share_option_group">"In Gruppe teilen"</string><string name="select_group">"Gruppe auswählen"</string></resources>
 
