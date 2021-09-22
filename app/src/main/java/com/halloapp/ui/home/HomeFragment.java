@@ -165,7 +165,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                 layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
                 restoreStateOnDataLoaded = false;
             }
-            refreshInviteNux();
+            inviteView.post(this::refreshInviteNux);
         }));
         activityCenterViewModel.getSocialHistory().observe(getViewLifecycleOwner(), commentHistoryData -> {
             if (notificationDrawable != null) {
