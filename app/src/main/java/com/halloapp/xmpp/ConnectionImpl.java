@@ -119,6 +119,8 @@ import java.util.TimerTask;
 import java.util.WeakHashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -137,6 +139,7 @@ public class ConnectionImpl extends Connection {
     private final ConnectionObservers connectionObservers;
 
     private final ConnectionExecutor executor = new ConnectionExecutor();
+    private final Executor chatStanzaExecutor = Executors.newSingleThreadExecutor();
     private final Map<String, Runnable> ackHandlers = new ConcurrentHashMap<>();
     public boolean clientExpired = false;
     private HANoiseSocket socket = null;
@@ -1136,10 +1139,10 @@ public class ConnectionImpl extends Connection {
                         connectionObservers.notifyUserPhonesReceived(Collections.singletonMap(fromUserId, senderPhone));
                     }
 
-                    bgWorkers.execute(() -> {
+                    chatStanzaExecutor.execute(() -> {
                         Message message = ChatMessageProtocol.getInstance().parseMessage(chatStanza, msg.getId(), fromUserId);
                         if (message == null) {
-                            Log.e("connection: got plaintext payload");
+                            Log.e("connection: got empty message");
                             sendAck(msg.getId());
                             return;
                         }
