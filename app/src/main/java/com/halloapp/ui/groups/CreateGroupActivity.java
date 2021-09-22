@@ -78,6 +78,8 @@ public class CreateGroupActivity extends HalloActivity {
 
     private MenuItem createMenuItem;
 
+    private boolean waitingForResult = false;
+
     public static Intent newPickerIntent(@NonNull Context context, @Nullable Collection<UserId> userIds) {
         Intent intent = new Intent(context, CreateGroupActivity.class);
         if (userIds != null) {
@@ -159,8 +161,6 @@ public class CreateGroupActivity extends HalloActivity {
 
         viewModel.getCreateGroupWorkInfo().observe(this, new Observer<List<WorkInfo>>() {
 
-            boolean running;
-
             @Override
             public void onChanged(List<WorkInfo> workInfos) {
                 for (WorkInfo workInfo : workInfos) {
@@ -171,8 +171,8 @@ public class CreateGroupActivity extends HalloActivity {
                             createGroupDialog = ProgressDialog.show(CreateGroupActivity.this, null, getString(R.string.create_group_in_progress, nameEditText.getText().toString()), true);
                             createGroupDialog.show();
                         }
-                        running = true;
-                    } else if (running) {
+                        waitingForResult = true;
+                    } else if (waitingForResult) {
                         if (createGroupDialog != null) {
                             createGroupDialog.cancel();
                         }
@@ -188,7 +188,7 @@ public class CreateGroupActivity extends HalloActivity {
                             setResult(RESULT_OK, resultIntent);
                             finish();
                         }
-                        running = false;
+                        waitingForResult = false;
                     }
                 }
             }
@@ -243,7 +243,9 @@ public class CreateGroupActivity extends HalloActivity {
                 return true;
             }
 
+            waitingForResult = true;
             nameEditText.setEnabled(false);
+            Log.i("CreateGroupActivity/onOptionsItemSelected starting group creation");
             viewModel.createGroup(name, userIds);
             return true;
         }
