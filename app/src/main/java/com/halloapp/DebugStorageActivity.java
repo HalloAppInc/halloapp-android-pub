@@ -27,7 +27,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -53,11 +52,12 @@ public class DebugStorageActivity extends HalloActivity {
         TextView groupUsageTextView = findViewById(R.id.group_usage);
         TextView chatsUsageTextView = findViewById(R.id.chats_usage);
         TextView archiveUsageTextView = findViewById(R.id.archive_usage);
-        TextView cacheUsageTextView = findViewById(R.id.cache_usage);
+        TextView internalUsageTextView = findViewById(R.id.internal_usage);
         TextView leakedMediaTextView = findViewById(R.id.leaked_usage);
 
         LinearLayout groupUsageBreakdown = findViewById(R.id.groups_children);
         LinearLayout chatsUsageBreakdown = findViewById(R.id.chats_children);
+        LinearLayout internalUsageBreakdown = findViewById(R.id.internal_children);
         LinearLayout leakedUsageBreakdown = findViewById(R.id.leaked_children);
 
         viewModel.homeUsageLiveData.observe(this, homeUsageTextView::setText);
@@ -65,10 +65,11 @@ public class DebugStorageActivity extends HalloActivity {
         viewModel.chatsUsageLiveData.observe(this, chatsUsageTextView::setText);
         viewModel.archiveUsageLiveData.observe(this, archiveUsageTextView::setText);
         viewModel.leakedMediaLiveData.observe(this, leakedMediaTextView::setText);
-        viewModel.cacheUsage.getLiveData().observe(this, cacheUsageTextView::setText);
+        viewModel.internalUsage.getLiveData().observe(this, internalUsageTextView::setText);
 
         viewModel.groupsUsageBreakdownLiveData.observe(this, map -> addDivisions(groupUsageBreakdown, map));
         viewModel.chatsUsageBreakdownLiveData.observe(this, map -> addDivisions(chatsUsageBreakdown, map));
+        viewModel.internalUsageBreakdownLiveData.observe(this, map -> addDivisions(internalUsageBreakdown, map));
         viewModel.leakedMediaBreakdownLiveData.observe(this, map -> addDivisions(leakedUsageBreakdown, map));
     }
 
@@ -95,16 +96,17 @@ public class DebugStorageActivity extends HalloActivity {
         public MutableLiveData<String> chatsUsageLiveData = new MutableLiveData<>();
         public MutableLiveData<String> archiveUsageLiveData = new MutableLiveData<>();
         public MutableLiveData<String> leakedMediaLiveData = new MutableLiveData<>();
-        public ComputableLiveData<String> cacheUsage;
+        public ComputableLiveData<String> internalUsage;
 
         public MutableLiveData<Map<String, Long>> groupsUsageBreakdownLiveData = new MutableLiveData<>();
         public MutableLiveData<Map<String, Long>> chatsUsageBreakdownLiveData = new MutableLiveData<>();
+        public MutableLiveData<Map<String, Long>> internalUsageBreakdownLiveData = new MutableLiveData<>();
         public MutableLiveData<Map<String, Long>> leakedMediaBreakdownLiveData = new MutableLiveData<>();
 
         public StorageViewModel(@NonNull Application application) {
             super(application);
 
-            cacheUsage = new ComputableLiveData<String>() {
+            internalUsage = new ComputableLiveData<String>() {
                 @Override
                 protected String compute() {
                     long homeUsage = 0;
@@ -198,8 +200,22 @@ public class DebugStorageActivity extends HalloActivity {
                     leakedMediaLiveData.postValue(readableSize(leakedUsage));
                     leakedMediaBreakdownLiveData.postValue(leakedBreakdown);
 
-                    File cacheDir = application.getCacheDir();
-                    return readableSize(dirUsage(cacheDir));
+                    ConcurrentMap<String, Long> internalBreakdown = new ConcurrentHashMap<>();
+                    long internalUsage = 0;
+                    File dataDir = application.getCacheDir().getParentFile();
+                    File filesDir = application.getFilesDir();
+                    File[] files = dataDir.listFiles();
+                    if (files != null) {
+                        for (File file : files) {
+                            if (!filesDir.equals(file)) {
+                                long size = treeUsage(file);
+                                internalUsage += size;
+                                internalBreakdown.put(file.getName(), size);
+                            }
+                        }
+                    }
+                    internalUsageBreakdownLiveData.postValue(internalBreakdown);
+                    return readableSize(internalUsage);
                 }
             };
         }
@@ -221,7 +237,7 @@ public class DebugStorageActivity extends HalloActivity {
             }
         }
 
-        private static long dirUsage(File file) {
+        private static long treeUsage(File file) {
             if (file == null || !file.exists()) {
                 return 0;
             }
@@ -230,7 +246,7 @@ public class DebugStorageActivity extends HalloActivity {
                 File[] files = file.listFiles();
                 if (files != null) {
                     for (File subfile : files) {
-                        sum += dirUsage(subfile);
+                        sum += treeUsage(subfile);
                     }
                 }
                 return sum;
