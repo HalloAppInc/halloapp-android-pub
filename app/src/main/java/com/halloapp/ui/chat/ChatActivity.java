@@ -943,6 +943,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void blockContact(MenuItem item) {
+        final String chatName = viewModel.name.getLiveData().getValue();
         ProgressDialog blockDialog = ProgressDialog.show(this, null, getString(R.string.blocking_user_in_progress, chatName), true);
         blockDialog.show();
 
@@ -951,7 +952,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 return;
             }
             blockDialog.cancel();
-            String chatName = viewModel.name.getLiveData().getValue();
             if (success) {
                 SnackbarHelper.showInfo(chatView, getString(R.string.blocking_user_successful, chatName));
                 item.setTitle(getString(R.string.unblock));
@@ -963,6 +963,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void unBlockContact(MenuItem item) {
+        final String chatName = viewModel.name.getLiveData().getValue();
         ProgressDialog unblockDialog = ProgressDialog.show(this, null, getString(R.string.unblocking_user_in_progress, chatName), true);
         unblockDialog.show();
         viewModel.unblockContact(new UserId(chatId.rawId())).observe(this, success -> {
@@ -970,7 +971,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 return;
             }
             unblockDialog.cancel();
-            String chatName = viewModel.name.getLiveData().getValue();
             if (success) {
                 SnackbarHelper.showInfo(chatView, getString(R.string.unblocking_user_successful, chatName));
                 item.setTitle(getString(R.string.block));
