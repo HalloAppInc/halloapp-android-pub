@@ -30,6 +30,11 @@ public class AvatarPreviewActivity extends HalloActivity {
     public static final String RESULT_AVATAR_HASH = "avatar_hash";
     public static final String RESULT_AVATAR_FILE_PATH = "avatar_file_path";
 
+    public static final String RESULT_LARGE_AVATAR_WIDTH = "large_avatar_width";
+    public static final String RESULT_LARGE_AVATAR_HEIGHT = "large_avatar_height";
+    public static final String RESULT_LARGE_AVATAR_HASH = "large_avatar_hash";
+    public static final String RESULT_LARGE_AVATAR_FILE_PATH = "large_avatar_file_path";
+
     public static Intent open(@NonNull Context context, @NonNull Uri uri, boolean forGroup) {
         final Intent intent = new Intent(context, AvatarPreviewActivity.class);
         intent.setData(uri);
@@ -69,10 +74,17 @@ public class AvatarPreviewActivity extends HalloActivity {
             viewModel.preparePost().observe(this, result -> {
                 if (result != null) {
                     Intent resultIntent = new Intent();
-                    resultIntent.putExtra(RESULT_AVATAR_HASH, result.hash);
-                    resultIntent.putExtra(RESULT_AVATAR_HEIGHT, result.height);
-                    resultIntent.putExtra(RESULT_AVATAR_WIDTH, result.width);
-                    resultIntent.putExtra(RESULT_AVATAR_FILE_PATH, result.filePath);
+
+                    resultIntent.putExtra(RESULT_AVATAR_HASH, result.first.hash);
+                    resultIntent.putExtra(RESULT_AVATAR_HEIGHT, result.first.height);
+                    resultIntent.putExtra(RESULT_AVATAR_WIDTH, result.first.width);
+                    resultIntent.putExtra(RESULT_AVATAR_FILE_PATH, result.first.filePath);
+
+                    resultIntent.putExtra(RESULT_LARGE_AVATAR_HASH, result.second.hash);
+                    resultIntent.putExtra(RESULT_LARGE_AVATAR_HEIGHT, result.second.height);
+                    resultIntent.putExtra(RESULT_LARGE_AVATAR_WIDTH, result.second.width);
+                    resultIntent.putExtra(RESULT_LARGE_AVATAR_FILE_PATH, result.second.filePath);
+
                     setResult(RESULT_OK, resultIntent);
                     finish();
                 } else {

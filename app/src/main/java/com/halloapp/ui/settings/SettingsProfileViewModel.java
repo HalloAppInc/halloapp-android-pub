@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.text.TextUtils;
-import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -52,6 +51,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
     private String tempName;
 
     private String avatarFile;
+    private String largeAvatarFile;
     private Integer avatarWidth;
     private Integer avatarHeight;
     private boolean avatarDeleted = false;
@@ -101,6 +101,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
             builder.putInt(UpdateProfileWorker.WORKER_PARAM_AVATAR_HEIGHT, avatarHeight);
             builder.putInt(UpdateProfileWorker.WORKER_PARAM_AVATAR_WIDTH, avatarWidth);
             builder.putString(UpdateProfileWorker.WORKER_PARAM_AVATAR_FILE, avatarFile);
+            builder.putString(UpdateProfileWorker.WORKER_PARAM_LARGE_AVATAR_FILE, largeAvatarFile);
         }
         if (avatarDeleted) {
             builder.putBoolean(UpdateProfileWorker.WORKER_PARAM_AVATAR_REMOVAL, true);
@@ -124,10 +125,11 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         return tempAvatarLiveData;
     }
 
-    public void setTempAvatar(@NonNull String filepath, int width, int height) {
+    public void setTempAvatar(@NonNull String filepath, @NonNull String largeFilepath, int width, int height) {
         this.avatarWidth = width;
         this.avatarHeight = height;
         this.avatarFile = filepath;
+        this.largeAvatarFile = largeFilepath;
         bgWorkers.execute(() -> tempAvatarLiveData.postValue(BitmapFactory.decodeFile(filepath)));
         hasAvatarSet.setValue(true);
         avatarDeleted = false;
@@ -153,6 +155,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         private static final String WORK_NAME = "set-name";
 
         private static final String WORKER_PARAM_AVATAR_FILE = "avatar_file";
+        private static final String WORKER_PARAM_LARGE_AVATAR_FILE = "large_avatar_file";
         private static final String WORKER_PARAM_AVATAR_WIDTH = "avatar_width";
         private static final String WORKER_PARAM_AVATAR_HEIGHT = "avatar_height";
         private static final String WORKER_PARAM_NAME = "name";
@@ -169,6 +172,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         public @NonNull Result doWork() {
             final String name = getInputData().getString(WORKER_PARAM_NAME);
             final String avatarFilePath = getInputData().getString(WORKER_PARAM_AVATAR_FILE);
+            final String largeAvatarFilePath = getInputData().getString(WORKER_PARAM_LARGE_AVATAR_FILE);
             final boolean avatarDeleted = getInputData().getBoolean(WORKER_PARAM_AVATAR_REMOVAL,false);
             int avatarWidth = getInputData().getInt(WORKER_PARAM_AVATAR_WIDTH, -1);
             int avatarHeight = getInputData().getInt(WORKER_PARAM_AVATAR_HEIGHT, -1);
@@ -177,9 +181,11 @@ public class SettingsProfileViewModel extends AndroidViewModel {
                     Connection.getInstance().sendName(Preconditions.checkNotNull(name)).await();
                     Me.getInstance().saveName(name);
                 }
-                if (avatarFilePath != null && avatarWidth > 0 && avatarHeight > 0) {
+                if (avatarFilePath != null && largeAvatarFilePath != null && avatarWidth > 0 && avatarHeight > 0) {
                     File avatarFile = new File(avatarFilePath);
-                    try (FileInputStream fileInputStream = new FileInputStream(avatarFile)) {
+                    File largeAvatarFile = new File(largeAvatarFilePath);
+                    try (FileInputStream fileInputStream = new FileInputStream(avatarFile);
+                         FileInputStream largeFileInputStream = new FileInputStream(largeAvatarFile)) {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         byte[] buf = new byte[1024];
                         int c;
@@ -187,8 +193,14 @@ public class SettingsProfileViewModel extends AndroidViewModel {
                             baos.write(buf, 0, c);
                         }
                         byte[] fileBytes = baos.toByteArray();
-                        String base64 = Base64.encodeToString(fileBytes, Base64.NO_WRAP);
-                        String avatarId = Connection.getInstance().setAvatar(base64, fileBytes.length, avatarWidth, avatarHeight).await();
+
+                        baos.reset();
+                        while ((c = largeFileInputStream.read(buf)) != -1) {
+                            baos.write(buf, 0, c);
+                        }
+                        byte[] largeFileBytes = baos.toByteArray();
+
+                        String avatarId = Connection.getInstance().setAvatar(fileBytes, largeFileBytes).await();
                         if (avatarId == null) {
                             return Result.failure();
                         }

@@ -123,7 +123,7 @@ public abstract class Connection {
 
     public abstract Observable<Void> sendEvents(Collection<EventData> events);
 
-    public abstract Observable<String> setAvatar(String base64, long numBytes, int width, int height);
+    public abstract Observable<String> setAvatar(byte[] bytes, byte[] largeBytes);
 
     public abstract Observable<String> removeAvatar();
 

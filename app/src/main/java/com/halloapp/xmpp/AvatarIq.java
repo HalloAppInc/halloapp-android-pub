@@ -1,7 +1,5 @@
 package com.halloapp.xmpp;
 
-import android.util.Base64;
-
 import com.google.protobuf.ByteString;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.Avatar;
@@ -10,42 +8,30 @@ import com.halloapp.proto.server.UploadAvatar;
 
 public class AvatarIq extends HalloIq {
 
-    final String base64;
-    final long numBytes;
-    final int height;
-    final int width;
     final String avatarId;
     final UserId userId;
     final byte[] bytes;
+    final byte[] largeBytes;
 
-    AvatarIq(String base64, long numBytes, int height, int width) {
-        this.base64 = base64;
-        this.numBytes = numBytes;
-        this.height = height;
-        this.width = width;
+    AvatarIq(byte[] bytes, byte[] largeBytes) {
         this.avatarId = null;
         this.userId = null;
-        this.bytes = Base64.decode(base64, Base64.NO_WRAP);
+        this.bytes = bytes;
+        this.largeBytes = largeBytes;
     }
 
     AvatarIq(UserId userId) {
-        this.base64 = null;
-        this.numBytes = 0;
-        this.height = 0;
-        this.width = 0;
         this.avatarId = null;
         this.userId = userId;
         this.bytes = null;
+        this.largeBytes = null;
     }
 
     private AvatarIq(String avatarId) {
-        this.base64 = null;
-        this.numBytes = 0;
-        this.height = 0;
-        this.width = 0;
         this.avatarId = avatarId;
         this.userId = null;
         this.bytes = null;
+        this.largeBytes = null;
     }
 
     @Override

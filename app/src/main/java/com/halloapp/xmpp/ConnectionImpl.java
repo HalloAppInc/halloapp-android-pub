@@ -473,14 +473,14 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public Observable<String> setAvatar(String base64, long numBytes, int width, int height) {
-        final AvatarIq avatarIq = new AvatarIq(base64, numBytes, height, width);
+    public Observable<String> setAvatar(byte[] bytes, byte[] largeBytes) {
+        final AvatarIq avatarIq = new AvatarIq(bytes, largeBytes);
         return sendIqRequestAsync(avatarIq).map(res -> AvatarIq.fromProto(res.getAvatar()).avatarId);
     }
 
     @Override
     public Observable<String> removeAvatar() {
-        return setAvatar("", 0, 0, 0);
+        return setAvatar(new byte[] {}, new byte[] {});
     }
 
     @Override

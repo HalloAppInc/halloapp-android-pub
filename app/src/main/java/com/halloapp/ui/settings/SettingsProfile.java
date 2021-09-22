@@ -61,8 +61,9 @@ public class SettingsProfile extends HalloActivity {
                         int height = data.getIntExtra(AvatarPreviewActivity.RESULT_AVATAR_HEIGHT, - 1);
                         int width = data.getIntExtra(AvatarPreviewActivity.RESULT_AVATAR_WIDTH, -1);
                         String filePath = data.getStringExtra(AvatarPreviewActivity.RESULT_AVATAR_FILE_PATH);
-                        if (filePath != null && width > 0 && height > 0) {
-                            viewModel.setTempAvatar(filePath, width, height);
+                        String largeFilePath = data.getStringExtra(AvatarPreviewActivity.RESULT_LARGE_AVATAR_FILE_PATH);
+                        if (filePath != null && largeFilePath != null && width > 0 && height > 0) {
+                            viewModel.setTempAvatar(filePath, largeFilePath, width, height);
                         }
                     }
                 }

@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Pair;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
@@ -15,7 +16,9 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -41,7 +44,8 @@ import java.util.Map;
 public class AvatarPreviewViewModel extends AndroidViewModel {
 
     final MutableLiveData<Media> media = new MutableLiveData<>();
-    final MutableLiveData<TranscodeResult> result = new MutableLiveData<>();
+    final MutableLiveData<TranscodeResult> smallResult = new MutableLiveData<>();
+    final MutableLiveData<TranscodeResult> fullResult = new MutableLiveData<>();
 
     private RectF cropRect;
     private int rotation;
@@ -77,10 +81,20 @@ public class AvatarPreviewViewModel extends AndroidViewModel {
         new LoadAvatarUriTask(getApplication(), uri, media).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    LiveData<TranscodeResult> preparePost() {
-        // TODO(jack): Switch this over to using a worker instead
-        new TranscodeTask(getMedia(), cropRect, rotation, result).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        return result;
+    LiveData<Pair<TranscodeResult, TranscodeResult>> preparePost() {
+        new TranscodeTask(getMedia(), cropRect, rotation, Constants.MAX_AVATAR_DIMENSION, smallResult).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new TranscodeTask(getMedia(), cropRect, rotation, Constants.MAX_LARGE_AVATAR_DIMENSION, fullResult).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        MediatorLiveData<Pair<TranscodeResult, TranscodeResult>> ret = new MediatorLiveData<>();
+        Observer<TranscodeResult> observer = r -> {
+            TranscodeResult small = smallResult.getValue();
+            TranscodeResult full = fullResult.getValue();
+            if (small != null && full != null) {
+                ret.setValue(new Pair<>(small, full));
+            }
+        };
+        ret.addSource(smallResult, observer);
+        ret.addSource(fullResult, observer);
+        return ret;
     }
 
     public static class TranscodeResult {
@@ -104,23 +118,25 @@ public class AvatarPreviewViewModel extends AndroidViewModel {
         private final Media media;
         private final RectF cropRect;
         private final int rotation;
+        private final int maxDimension;
         private final MutableLiveData<TranscodeResult> result;
 
         private File transcodedFile;
 
-        TranscodeTask(@Nullable Media media, @Nullable RectF cropRect, int rotation, @NonNull MutableLiveData<TranscodeResult> result) {
+        TranscodeTask(@Nullable Media media, @Nullable RectF cropRect, int rotation, int maxDimension, @NonNull MutableLiveData<TranscodeResult> result) {
             this.media = media;
             this.cropRect = cropRect;
             this.rotation = rotation;
+            this.maxDimension = maxDimension;
             this.result = result;
         }
 
         @Override
         protected AvatarPreviewViewModel.TranscodeResult doInBackground(Void... voids) {
             if (media != null) {
-                transcodedFile = FileStore.getInstance().getTmpFile("avatar");
+                transcodedFile = FileStore.getInstance().getTmpFile("avatar-" + maxDimension);
                 try {
-                    return transcode(media.file, transcodedFile, cropRect, Constants.MAX_AVATAR_DIMENSION);
+                    return transcode(media.file, transcodedFile, cropRect, maxDimension);
                 } catch (IOException | NoSuchAlgorithmException e) {
                     Log.e("failed to transcode image", e);
                     return null;
