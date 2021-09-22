@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -53,18 +54,22 @@ public class DebugStorageActivity extends HalloActivity {
         TextView chatsUsageTextView = findViewById(R.id.chats_usage);
         TextView archiveUsageTextView = findViewById(R.id.archive_usage);
         TextView cacheUsageTextView = findViewById(R.id.cache_usage);
+        TextView leakedMediaTextView = findViewById(R.id.leaked_usage);
 
         LinearLayout groupUsageBreakdown = findViewById(R.id.groups_children);
         LinearLayout chatsUsageBreakdown = findViewById(R.id.chats_children);
+        LinearLayout leakedUsageBreakdown = findViewById(R.id.leaked_children);
 
         viewModel.homeUsageLiveData.observe(this, homeUsageTextView::setText);
         viewModel.groupsUsageLiveData.observe(this, groupUsageTextView::setText);
         viewModel.chatsUsageLiveData.observe(this, chatsUsageTextView::setText);
         viewModel.archiveUsageLiveData.observe(this, archiveUsageTextView::setText);
+        viewModel.leakedMediaLiveData.observe(this, leakedMediaTextView::setText);
         viewModel.cacheUsage.getLiveData().observe(this, cacheUsageTextView::setText);
 
         viewModel.groupsUsageBreakdownLiveData.observe(this, map -> addDivisions(groupUsageBreakdown, map));
         viewModel.chatsUsageBreakdownLiveData.observe(this, map -> addDivisions(chatsUsageBreakdown, map));
+        viewModel.leakedMediaBreakdownLiveData.observe(this, map -> addDivisions(leakedUsageBreakdown, map));
     }
 
     private void addDivisions(LinearLayout list, Map<String, Long> map) {
@@ -89,10 +94,12 @@ public class DebugStorageActivity extends HalloActivity {
         public MutableLiveData<String> groupsUsageLiveData = new MutableLiveData<>();
         public MutableLiveData<String> chatsUsageLiveData = new MutableLiveData<>();
         public MutableLiveData<String> archiveUsageLiveData = new MutableLiveData<>();
+        public MutableLiveData<String> leakedMediaLiveData = new MutableLiveData<>();
         public ComputableLiveData<String> cacheUsage;
 
         public MutableLiveData<Map<String, Long>> groupsUsageBreakdownLiveData = new MutableLiveData<>();
         public MutableLiveData<Map<String, Long>> chatsUsageBreakdownLiveData = new MutableLiveData<>();
+        public MutableLiveData<Map<String, Long>> leakedMediaBreakdownLiveData = new MutableLiveData<>();
 
         public StorageViewModel(@NonNull Application application) {
             super(application);
@@ -104,6 +111,7 @@ public class DebugStorageActivity extends HalloActivity {
                     long groupUsage = 0;
                     ConcurrentMap<String, Long> groupBreakdown = new ConcurrentHashMap<>();
                     List<Post> allPosts = ContentDb.getInstance().getAllPosts();
+                    HashSet<String> allAccountedForMedia = new HashSet<>();
                     for (Post post : allPosts) {
                         GroupId parentGroup = post.getParentGroup();
                         for (Media media : post.media) {
@@ -117,6 +125,7 @@ public class DebugStorageActivity extends HalloActivity {
                                     groupBreakdown.putIfAbsent(key, 0L);
                                     groupBreakdown.put(key, groupBreakdown.get(key) + media.file.length());
                                 }
+                                allAccountedForMedia.add(media.file.getAbsolutePath());
                             }
                         }
 
@@ -132,6 +141,7 @@ public class DebugStorageActivity extends HalloActivity {
                                         groupBreakdown.putIfAbsent(key, 0L);
                                         groupBreakdown.put(key, groupBreakdown.get(key) + media.file.length());
                                     }
+                                    allAccountedForMedia.add(media.file.getAbsolutePath());
                                 }
                             }
                         }
@@ -151,6 +161,8 @@ public class DebugStorageActivity extends HalloActivity {
                                 String key = message.chatId.rawId();
                                 chatBreakdown.putIfAbsent(key, 0L);
                                 chatBreakdown.put(key, chatBreakdown.get(key) + media.file.length());
+
+                                allAccountedForMedia.add(media.file.getAbsolutePath());
                             }
                         }
                     }
@@ -163,15 +175,49 @@ public class DebugStorageActivity extends HalloActivity {
                         for (Media media : post.media) {
                             if (media.file != null) {
                                 archiveUsage += media.file.length();
+
+                                allAccountedForMedia.add(media.file.getAbsolutePath());
                             }
                         }
                     }
                     archiveUsageLiveData.postValue(readableSize(archiveUsage));
 
+                    File mediaDir = FileStore.getInstance().getMediaDir();
+
+                    ConcurrentMap<String, Long> leakedBreakdown = new ConcurrentHashMap<>();
+                    HashSet<File> leakedPaths = new HashSet<>();
+                    findLeakedMedia(mediaDir, allAccountedForMedia, leakedPaths);
+                    long leakedUsage = 0;
+                    for (File f : leakedPaths) {
+                        long len = f.length();
+                        leakedUsage += len;
+                        leakedBreakdown.put(f.getName(), len);
+                        Log.e("DebugStorageActivity/leaked media found: " + f.getAbsolutePath() + " size: " + len);
+                    }
+                    leakedMediaLiveData.postValue(readableSize(leakedUsage));
+                    leakedMediaBreakdownLiveData.postValue(leakedBreakdown);
+
                     File cacheDir = application.getCacheDir();
                     return readableSize(dirUsage(cacheDir));
                 }
             };
+        }
+
+        private static void findLeakedMedia(File file, HashSet<String> mediaPaths, HashSet<File> leakedPaths) {
+            if (file.isDirectory()) {
+                File[] files = file.listFiles();
+                if (files == null) {
+                    return;
+                }
+                for (int i = 0; i < files.length; i++) {
+                    findLeakedMedia(files[i], mediaPaths, leakedPaths);
+                }
+            } else {
+                if (!mediaPaths.contains(file.getAbsolutePath())) {
+                    // Leaked
+                    leakedPaths.add(file);
+                }
+            }
         }
 
         private static long dirUsage(File file) {
