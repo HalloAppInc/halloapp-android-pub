@@ -1377,9 +1377,7 @@ public class ConnectionImpl extends Connection {
                 connectionObservers.notifyUserNamesReceived(names);
             }
 
-            if (!posts.isEmpty() || !comments.isEmpty()) {
-                connectionObservers.notifyIncomingFeedItemsReceived(posts, comments, ackId);
-            }
+            connectionObservers.notifyIncomingFeedItemsReceived(posts, comments, ackId);
 
             return !posts.isEmpty() || !comments.isEmpty();
         }
@@ -1634,9 +1632,8 @@ public class ConnectionImpl extends Connection {
                 connectionObservers.notifyUserNamesReceived(names);
             }
 
-            if (!posts.isEmpty() || !comments.isEmpty()) {
-                connectionObservers.notifyIncomingFeedItemsReceived(posts, comments, ackId);
-            }
+            connectionObservers.notifyIncomingFeedItemsReceived(posts, comments, ackId);
+
             return !posts.isEmpty() || !comments.isEmpty();
         }
 
