@@ -80,7 +80,7 @@ class CommentsViewModel extends AndroidViewModel {
 
     private final Observer<Post> postObserver;
 
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    protected final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private final VoiceNoteRecorder voiceNoteRecorder;
     private final VoiceNotePlayer voiceNotePlayer;

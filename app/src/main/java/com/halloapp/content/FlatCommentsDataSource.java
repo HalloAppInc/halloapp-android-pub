@@ -48,6 +48,9 @@ public class FlatCommentsDataSource extends PositionalDataSource<Comment> {
         }
     }
 
+    private HashMap<UserId, Contact> contactMap = new HashMap<>();
+    private HashMap<String, Comment> commentMap = new HashMap<>();
+
     private FlatCommentsDataSource(@NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb, @NonNull String postId) {
         this.contentDb = contentDb;
         this.postId = postId;
@@ -62,8 +65,6 @@ public class FlatCommentsDataSource extends PositionalDataSource<Comment> {
     }
 
     private void loadExtraFields(@NonNull List<Comment> comments) {
-        HashMap<UserId, Contact> contactMap = new HashMap<>();
-        HashMap<String, Comment> commentMap = new HashMap<>();
         for (Comment comment : comments) {
             commentMap.put(comment.id, comment);
         }
@@ -79,6 +80,7 @@ public class FlatCommentsDataSource extends PositionalDataSource<Comment> {
                     if (comment.parentComment != null) {
                         fillComment(comment.parentComment, contactMap);
                     }
+                    commentMap.put(comment.parentCommentId, comment.parentComment);
                 }
             }
         }

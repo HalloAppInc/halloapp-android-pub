@@ -34,10 +34,29 @@ class FlatCommentsViewModel extends CommentsViewModel {
 
     private String replyCommentId;
 
+    private ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
+
+        @Override
+        public void onContactsChanged() {
+            invalidateDataSource();
+        }
+
+        @Override
+        public void onContactsReset() {
+            invalidateDataSource();
+        }
+
+        private void invalidateDataSource() {
+            mainHandler.post(FlatCommentsViewModel.this::invalidateLatestDataSource);
+        }
+    };
+
     FlatCommentsViewModel(@NonNull Application application, @NonNull String postId) {
         super(application, postId);
 
         this.postId = postId;
+
+        contactsDb.addObserver(contactsObserver);
 
         replyComputableLiveData = new ComputableLiveData<Reply>() {
             @Override
@@ -99,6 +118,12 @@ class FlatCommentsViewModel extends CommentsViewModel {
     @Override
     protected void invalidateLatestDataSource() {
         dataSourceFactory.invalidateLatestDataSource();
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        contactsDb.removeObserver(contactsObserver);
     }
 
     public static class Factory implements ViewModelProvider.Factory {
