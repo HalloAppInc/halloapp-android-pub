@@ -704,7 +704,7 @@ Abra as configurações da aplicação para modificar as permissões."</string>
     <string name="archive">"Arquivo"</string>
 
     <!-- Label displaying the date when a post expired -->
-    <string name="archived_on">"Arquivado em"</string>
+    <string name="archived_on">"Arquivado em %s"</string>
 
     <!-- Error message when the group is full -->
     <string name="invite_link_failed_to_join_full">"Não se pode juntar ao grupo porque está cheio"</string>
