@@ -27,7 +27,6 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -64,7 +63,6 @@ import com.halloapp.UrlPreviewLoader;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
-import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
@@ -245,6 +243,14 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         }
     };
 
+    private void onMessageSent() {
+        replyPostId = null;
+        replyPostMediaIndex = -1;
+        replyMessage = null;
+        replyMessageMediaIndex = -1;
+        replyContainer.setVisibility(View.GONE);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -307,16 +313,19 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             @Override
             public void onSendText() {
                 sendMessage();
+                onMessageSent();
             }
 
             @Override
             public void onSendVoiceNote() {
-                viewModel.finishRecording(replyPostMediaIndex, false);
+                viewModel.finishRecording(replyPostId, replyPostMediaIndex, replyMessage, replyMessageMediaIndex, false);
+                onMessageSent();
             }
 
             @Override
             public void onSendVoiceDraft(File draft) {
-                viewModel.sendVoiceNote(replyPostMediaIndex, draft);
+                viewModel.sendVoiceNote(replyPostId, replyPostMediaIndex, replyMessage, replyMessageMediaIndex, draft);
+                onMessageSent();
             }
 
             @Override
@@ -1165,11 +1174,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         linkPreviewComposeView.attachPreview(message);
         linkPreviewComposeView.updateUrlPreview(null);
         urlPreviewLoader.cancel(linkPreviewComposeView, true);
-        replyPostId = null;
-        replyPostMediaIndex = -1;
-        replyMessage = null;
-        replyMessageMediaIndex = -1;
-        replyContainer.setVisibility(View.GONE);
         if (message.urlPreview != null && message.urlPreview.imageMedia != null) {
             BgWorkers.getInstance().execute(() -> {
                 if (message.urlPreview.imageMedia != null) {

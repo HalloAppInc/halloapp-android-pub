@@ -314,7 +314,7 @@ public class ChatViewModel extends AndroidViewModel {
         return isRecording;
     }
 
-    public void sendVoiceNote(int replyPostMediaIndex, @Nullable File recording) {
+    public void sendVoiceNote(@Nullable String replyPostId, int replyPostMediaIndex, @Nullable Message replyMessage, int replyMessageMediaIndex, @Nullable File recording) {
         if (recording == null) {
             return;
         }
@@ -328,7 +328,22 @@ public class ChatViewModel extends AndroidViewModel {
                 Log.e("failed to rename " + recording.getAbsolutePath() + " to " + targetFile.getAbsolutePath());
                 return;
             }
-            final ContentItem contentItem = new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.TYPE_VOICE_NOTE, Message.USAGE_CHAT, Message.STATE_INITIAL, null, replyPostId, replyPostMediaIndex, null, -1, null, 0);
+            final ContentItem contentItem = new Message(0,
+                    chatId,
+                    UserId.ME,
+                    RandomId.create(),
+                    System.currentTimeMillis(),
+                    Message.TYPE_VOICE_NOTE,
+                    Message.USAGE_CHAT,
+                    Message.STATE_INITIAL,
+                    null,
+                    replyPostId,
+                    replyPostMediaIndex,
+                    replyMessage != null ? replyMessage.id : null,
+                    replyMessageMediaIndex ,
+                    replyMessage != null ? replyMessage.senderUserId : replySenderId,
+                    0);
+
 
             final Media sendMedia = Media.createFromFile(Media.MEDIA_TYPE_AUDIO, targetFile);
             contentItem.media.add(sendMedia);
@@ -336,12 +351,12 @@ public class ChatViewModel extends AndroidViewModel {
         });
     }
 
-    public void finishRecording(int replyPostMediaIndex, boolean canceled) {
+    public void finishRecording(@Nullable String replyPostId, int replyPostMediaIndex, @Nullable Message replyMessage, int replyMessageMediaIndex, boolean canceled) {
         File recording = voiceNoteRecorder.finishRecording();
         if (canceled || recording == null) {
             return;
         }
-        sendVoiceNote(replyPostMediaIndex, recording);
+        sendVoiceNote(replyPostId, replyPostMediaIndex, replyMessage, replyMessageMediaIndex, recording);
     }
 
     public void updateMessageRowId(long rowId) {
