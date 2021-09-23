@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.AppContext;
@@ -174,9 +175,7 @@ public class ContentDb {
         addFeedItems(Collections.singletonList(post), new ArrayList<>(), completionRunnable);
     }
 
-    // DEBUG ONLY
-    @NonNull
-    @Deprecated
+    @VisibleForTesting
     public List<Media> getAllMedia() {
         return mediaDb.getAllMedia();
     }
@@ -1149,6 +1148,7 @@ public class ContentDb {
             Log.i("ContentDb.cleanup: vacuum");
             observers.notifyFeedCleanup();
         }
+        mediaDb.cleanup();
     }
 
     @NonNull

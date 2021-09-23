@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDoneException;
 import android.database.sqlite.SQLiteStatement;
+import android.text.format.DateUtils;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
@@ -19,8 +20,11 @@ import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.UrlPreviewsTable;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.util.logs.Log;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class MediaDb {
@@ -89,9 +93,7 @@ public class MediaDb {
         return null;
     }
 
-    // DEBUG ONLY
-    @NonNull
-    @Deprecated
+    @WorkerThread
     public List<Media> getAllMedia() {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
 
@@ -116,6 +118,42 @@ public class MediaDb {
             }
         }
         return media;
+    }
+
+    @WorkerThread
+    public void cleanup() {
+        List<Media> allMedia = getAllMedia();
+        HashSet<String> mediaPaths = new HashSet<>();
+        for (Media media : allMedia) {
+            if (media.file != null) {
+                mediaPaths.add(media.file.getAbsolutePath());
+            }
+        }
+        File mediaDir = fileStore.getMediaDir();
+        cleanupLeakedMediaFiles(mediaDir, mediaPaths);
+    }
+
+    private static void cleanupLeakedMediaFiles(File file, HashSet<String> mediaPaths) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files == null) {
+                return;
+            }
+            for (int i = 0; i < files.length; i++) {
+                cleanupLeakedMediaFiles(files[i], mediaPaths);
+            }
+        } else if (!mediaPaths.contains(file.getAbsolutePath())) {
+            long ageMs = System.currentTimeMillis() - file.lastModified();
+            boolean oldEnough = ageMs > DateUtils.DAY_IN_MILLIS;
+            if (oldEnough) {
+                boolean deleted = file.delete();
+                if (deleted) {
+                    Log.w("MediaDb/cleanupLeakedMediaFiles deleted orphaned media file: " + file.getName());
+                } else {
+                    Log.w("MediaDb/cleanupLeakedMediaFiles failed to delete orphaned media file: " + file.getName());
+                }
+            }
+        }
     }
 
     @WorkerThread
