@@ -34,7 +34,6 @@ public class ServerProps {
     private static final String PROP_MAX_FEED_VIDEO_DURATION = "max_feed_video_duration";
     private static final String PROP_MAX_CHAT_VIDEO_DURATION = "max_chat_video_duration";
     private static final String PROP_MIN_GROUP_SYNC_INTERVAL = "group_sync_time";
-    private static final String PROP_NEW_CLIENT_CONTAINER = "new_client_container";
     private static final String PROP_MAX_VIDEO_BITRATE = "max_video_bit_rate";
     private static final String PROP_VOICE_NOTE_SENDING_ENABLED = "voice_notes";
     private static final String PROP_CONTACT_SYNC_INTERVAL = "contact_sync_frequency";
@@ -68,7 +67,6 @@ public class ServerProps {
     private final IntegerProp propMaxFeedVideoDuration = createProp(PROP_MAX_FEED_VIDEO_DURATION, 60);
     private final IntegerProp propMaxChatVideoDuration = createProp(PROP_MAX_CHAT_VIDEO_DURATION, 120);
     private final IntegerProp propMinGroupSyncInterval = createProp(PROP_MIN_GROUP_SYNC_INTERVAL, WEEK_IN_SECONDS);
-    private final BooleanProp propNewClientContainerEnabled = createProp(PROP_NEW_CLIENT_CONTAINER, false);
     private final IntegerProp propMaxVideoBitrate = createProp(PROP_MAX_VIDEO_BITRATE, 8000000);
     private final BooleanProp propVoiceNoteSendingEnabled = createProp(PROP_VOICE_NOTE_SENDING_ENABLED, false);
     private final IntegerProp propContactSyncIntervalSeconds = createProp(PROP_CONTACT_SYNC_INTERVAL, Constants.SECONDS_PER_DAY);
@@ -100,9 +98,9 @@ public class ServerProps {
         }
 
         preferences.edit()
-                .remove("private_reactions") // TODO(jack): Remove after May 1
                 .remove("cleartext_chat_messages") // TODO(jack): Remove after Oct 1
                 .remove("group_invite_links") // TODO(clark): Remove after Oct 1
+                .remove("new_client_container") // TODO(clark): Remove after January 1
                 .apply();
 
         loadProps();
@@ -199,10 +197,6 @@ public class ServerProps {
 
     public synchronized boolean getGroupChatsEnabled() {
         return propGroupChatsEnabled.getValue();
-    }
-
-    public synchronized boolean getNewClientContainerEnabled() {
-        return Constants.SEND_CONTAINER || propNewClientContainerEnabled.getValue();
     }
 
     public synchronized int getMaxFeedVideoDuration() {

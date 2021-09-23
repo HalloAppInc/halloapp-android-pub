@@ -105,21 +105,6 @@ public class PublishedEntry {
         }
     }
 
-    static @PublishedEntry.Media.MediaType String getMediaType(@com.halloapp.content.Media.MediaType int mediaType) {
-        switch (mediaType) {
-            case com.halloapp.content.Media.MEDIA_TYPE_IMAGE: {
-                return PublishedEntry.Media.MEDIA_TYPE_IMAGE;
-            }
-            case com.halloapp.content.Media.MEDIA_TYPE_VIDEO: {
-                return PublishedEntry.Media.MEDIA_TYPE_VIDEO;
-            }
-            case com.halloapp.content.Media.MEDIA_TYPE_UNKNOWN:
-            default: {
-                throw new IllegalArgumentException();
-            }
-        }
-    }
-
     static PublishedEntry getFeedEntry(@NonNull String payload, @NonNull String id, long timestamp, String publisherId) {
         PublishedEntry.Builder entryBuilder = readEncodedEntryString(payload);
         entryBuilder.id(id);
@@ -142,78 +127,6 @@ public class PublishedEntry {
         }
         this.feedItemId = feedItemId;
         this.parentCommentId = parentCommentId;
-    }
-
-    public Container.Builder getEntryBuilder() {
-        Container.Builder containerBuilder = Container.newBuilder();
-        switch (type) {
-            case ENTRY_FEED: {
-                Post.Builder postBuilder = Post.newBuilder();
-                if (!media.isEmpty()) {
-                    postBuilder.addAllMedia(getMediaProtos());
-                }
-                if (text != null) {
-                    postBuilder.setText(text);
-                }
-                if (!mentions.isEmpty()) {
-                    postBuilder.addAllMentions(mentions);
-                }
-                containerBuilder.setPost(postBuilder.build());
-                break;
-            }
-            case ENTRY_COMMENT: {
-                Comment.Builder commentBuilder = Comment.newBuilder();
-                commentBuilder.setFeedPostId(feedItemId);
-                if (!media.isEmpty()) {
-                    commentBuilder.setMedia(getMediaProtos().get(0));
-                }
-                if (parentCommentId != null) {
-                    commentBuilder.setParentCommentId(parentCommentId);
-                }
-                if (text != null) {
-                    commentBuilder.setText(text);
-                }
-                if (!mentions.isEmpty()) {
-                    commentBuilder.addAllMentions(mentions);
-                }
-                containerBuilder.setComment(commentBuilder.build());
-                break;
-            }
-            default: {
-                throw new IllegalStateException("Unknown type " + type);
-            }
-        }
-        return containerBuilder;
-    }
-
-    private List<AlbumMedia> getAlbumMediaProtos() {
-        Preconditions.checkState(!media.isEmpty(), "Trying to get empty media proto");
-
-        List<AlbumMedia> mediaList = new ArrayList<>();
-        for (Media item : media) {
-            EncryptedResource encryptedResource = EncryptedResource.newBuilder()
-                    .setEncryptionKey(ByteString.copyFrom(item.encKey))
-                    .setCiphertextHash(ByteString.copyFrom(item.encSha256hash))
-                    .setDownloadUrl(item.url).build();
-
-            AlbumMedia.Builder albumMediaBuilder = AlbumMedia.newBuilder();
-            if ("image".equals(item.type)) {
-                albumMediaBuilder.setImage(Image.newBuilder()
-                        .setWidth(item.width)
-                        .setHeight(item.height)
-                        .setImg(encryptedResource).build());
-
-            } else if ("video".equals(item.type)) {
-                albumMediaBuilder.setVideo(Video.newBuilder()
-                        .setWidth(item.width)
-                        .setHeight(item.height)
-                        .setVideo(encryptedResource).build());
-            } else {
-                continue;
-            }
-            mediaList.add(albumMediaBuilder.build());
-        }
-        return mediaList;
     }
 
     private List<com.halloapp.proto.clients.Media> getMediaProtos() {

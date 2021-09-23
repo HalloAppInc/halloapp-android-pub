@@ -54,8 +54,4 @@ public class Constants {
 
     public static final int MAX_REREQUESTS_PER_MESSAGE = 5;
 
-    public static final boolean SEND_CONTAINER = BuildConfig.DEBUG;
-
-    public static final boolean SEND_URL_PREVIEWS = BuildConfig.DEBUG;
-
 }

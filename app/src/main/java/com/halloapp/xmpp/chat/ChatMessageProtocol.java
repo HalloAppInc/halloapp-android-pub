@@ -39,7 +39,6 @@ public class ChatMessageProtocol {
                     instance = new ChatMessageProtocol(
                             Stats.getInstance(),
                             ContentDb.getInstance(),
-                            ServerProps.getInstance(),
                             EncryptedKeyStore.getInstance(),
                             SignalSessionManager.getInstance());
                 }
@@ -50,19 +49,16 @@ public class ChatMessageProtocol {
 
     private final Stats stats;
     private final ContentDb contentDb;
-    private final ServerProps serverProps;
     private final EncryptedKeyStore encryptedKeyStore;
     private final SignalSessionManager signalSessionManager;
 
     private ChatMessageProtocol(
             @NonNull Stats stats,
             @NonNull ContentDb contentDb,
-            @NonNull ServerProps serverProps,
             @NonNull EncryptedKeyStore encryptedKeyStore,
             @NonNull SignalSessionManager signalSessionManager) {
         this.stats = stats;
         this.contentDb = contentDb;
-        this.serverProps = serverProps;
         this.encryptedKeyStore = encryptedKeyStore;
         this.signalSessionManager = signalSessionManager;
     }
@@ -103,15 +99,9 @@ public class ChatMessageProtocol {
 
     private byte[] serializeMessageToBytes(@NonNull Message message) {
         Container.Builder containerBuilder = Container.newBuilder();
-        ChatMessage chatMessage = MessageElementHelper.messageToChatMessage(message);
         ChatContainer chatContainer = MessageElementHelper.messageToChatContainer(message);
 
-        if (chatMessage != null) {
-            containerBuilder.setChatMessage(chatMessage);
-        }
-        if (serverProps.getNewClientContainerEnabled()) {
-            containerBuilder.setChatContainer(chatContainer);
-        }
+        containerBuilder.setChatContainer(chatContainer);
 
         return containerBuilder.build().toByteArray();
     }

@@ -527,28 +527,8 @@ public class ConnectionImpl extends Connection {
 
     @Override
     public void sendPost(@NonNull Post post) {
-        final PublishedEntry entry = new PublishedEntry(
-                PublishedEntry.ENTRY_FEED,
-                null,
-                post.timestamp,
-                me.getUser(),
-                post.text,
-                null,
-                null);
-        for (Media media : post.media) {
-            entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.encSha256hash, media.width, media.height, media.blobVersion, media.chunkSize, media.blobSize));
-        }
-        for (Mention mention : post.mentions) {
-            entry.mentions.add(Mention.toProto(mention));
-        }
-        if (post.getAudienceType() == null && post.getParentGroup() == null) {
-            Log.e("connection: sendPost null audience type but not a group post");
-            return;
-        }
-        Container.Builder containerBuilder = entry.getEntryBuilder();
-        if (ServerProps.getInstance().getNewClientContainerEnabled()) {
-            FeedContentEncoder.encodePost(containerBuilder, post);
-        }
+        Container.Builder containerBuilder = Container.newBuilder();
+        FeedContentEncoder.encodePost(containerBuilder, post);
         if (!containerBuilder.hasPost()) {
             Log.e("connection: sendPost no post content");
             return;
@@ -621,30 +601,8 @@ public class ConnectionImpl extends Connection {
 
     @Override
     public void sendComment(@NonNull Comment comment) {
-        byte[] payload;
-        if (comment.type == Comment.TYPE_VOICE_NOTE) { // TODO: (clarkc) remove when old container is removed
-            payload = FeedContentEncoder.encodeComment(comment);
-        } else {
-            final PublishedEntry entry = new PublishedEntry(
-                    PublishedEntry.ENTRY_COMMENT,
-                    null,
-                    comment.timestamp,
-                    me.getUser(),
-                    comment.text,
-                    comment.postId,
-                    comment.parentCommentId);
-            for (Media media : comment.media) {
-                entry.media.add(new PublishedEntry.Media(PublishedEntry.getMediaType(media.type), media.url, media.encKey, media.encSha256hash, media.width, media.height, media.blobVersion, media.chunkSize, media.blobSize));
-            }
-            for (Mention mention : comment.mentions) {
-                entry.mentions.add(Mention.toProto(mention));
-            }
-            Container.Builder containerBuilder = entry.getEntryBuilder();
-            if (ServerProps.getInstance().getNewClientContainerEnabled()) {
-                FeedContentEncoder.encodeComment(containerBuilder, comment);
-            }
-            payload = containerBuilder.build().toByteArray();
-        }
+        byte[] payload = FeedContentEncoder.encodeComment(comment);
+
         HalloIq requestIq;
         if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
             FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.id, comment.postId, payload);
