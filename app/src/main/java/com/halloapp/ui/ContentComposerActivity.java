@@ -197,7 +197,7 @@ public class ContentComposerActivity extends HalloActivity {
             }
         });
         mediaVerticalScrollView.setOnOverScrollChangeListener((view, scrollX, scrollY, clampedX, clampedY) -> {
-            if (scrollY <= 0 && clampedY) {
+            if (mediaPager.getVisibility() == View.VISIBLE && scrollY <= 0 && clampedY) {
                 clearEditFocus();
             }
         });
