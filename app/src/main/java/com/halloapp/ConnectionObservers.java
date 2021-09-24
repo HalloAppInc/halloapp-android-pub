@@ -84,6 +84,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyOfflineQueueComplete() {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onOfflineQueueComplete();
+            }
+        }
+    }
+
     public void notifyClientVersionExpiringSoon(int daysLeft) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {

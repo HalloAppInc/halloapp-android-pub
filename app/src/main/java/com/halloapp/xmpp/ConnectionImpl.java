@@ -1054,7 +1054,12 @@ public class ConnectionImpl extends Connection {
             if (msg.getType() == Msg.Type.ERROR) {
                 Log.w("connection: got error message " + ProtoPrinter.toString(msg));
             } else {
-                if (msg.hasFeedItem()) {
+                if (msg.hasEndOfQueue()) {
+                    Log.i("connection: end of offline queue");
+                    preferences.setPendingOfflineQueue(false);
+                    connectionObservers.notifyOfflineQueueComplete();
+                    handled = true;
+                } else if (msg.hasFeedItem()) {
                     Log.i("connection: got feed item " + ProtoPrinter.toString(msg));
                     com.halloapp.proto.server.FeedItem feedItem = msg.getFeedItem();
                     handled = processFeedPubSubItems(Collections.singletonList(feedItem), msg.getId());

@@ -25,8 +25,9 @@ public class PushMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getNotification() != null) {
             Log.d("PushMessagingService: Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
+        Preferences.getInstance().setPendingOfflineQueue(true);
 
-        Connection.getInstance().connect();
+        PushSyncWorker.schedule(getApplicationContext());
 
         PushReceived pushReceived = PushReceived.newBuilder().setClientTimestamp(System.currentTimeMillis()).setId(remoteMessage.getMessageId()).build();
         Events.getInstance().sendEvent(pushReceived);
