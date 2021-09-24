@@ -43,12 +43,13 @@ public class ApkHasher {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] buffer = new byte[8192];
             int c;
-            InputStream is = new FileInputStream(apkFile);
-            while ((c = is.read(buffer)) > 0) {
-                digest.update(buffer, 0, c);
+            try (InputStream is = new FileInputStream(apkFile)) {
+                while ((c = is.read(buffer)) > 0) {
+                    digest.update(buffer, 0, c);
+                }
+                hash = StringUtils.bytesToHexString(digest.digest());
+                Log.i("HalloApp digest: " + hash);
             }
-            hash = StringUtils.bytesToHexString(digest.digest());
-            Log.i("HalloApp digest: " + hash);
         } catch (PackageManager.NameNotFoundException e) {
             Log.e("Could not find own package", e);
         } catch (IOException e) {
