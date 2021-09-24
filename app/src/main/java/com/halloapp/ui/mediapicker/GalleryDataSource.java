@@ -31,9 +31,11 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
 
     private static final String MEDIA_TYPE_SELECTION = MediaStore.Files.FileColumns.MEDIA_TYPE + " IN ('" +
             MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE + "', '" +
-            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO + "')";
+            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO + "') AND " +
+            MediaStore.Files.FileColumns.MIME_TYPE + " NOT IN ('image/svg+xml')";
     private static final String MEDIA_TYPE_IMAGES_ONLY = MediaStore.Files.FileColumns.MEDIA_TYPE + " IN ('" +
-            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE + "')";
+            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE + "') AND " +
+            MediaStore.Files.FileColumns.MIME_TYPE + " NOT IN ('image/svg+xml')";
     private static final String[] MEDIA_PROJECTION = new String[] {
             MediaStore.Files.FileColumns._ID,
             MediaStore.Files.FileColumns.MEDIA_TYPE,
