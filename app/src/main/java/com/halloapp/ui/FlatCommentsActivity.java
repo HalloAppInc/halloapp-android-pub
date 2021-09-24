@@ -45,8 +45,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
-import androidx.annotation.DimenRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -135,13 +133,11 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
     public static final String EXTRA_POST_SENDER_USER_ID = "post_sender_user_id";
     public static final String EXTRA_POST_ID = "post_id";
-    public static final String EXTRA_REPLY_USER_ID = "reply_user_id";
     public static final String EXTRA_REPLY_COMMENT_ID = "reply_comment_id";
     public static final String EXTRA_SHOW_KEYBOARD = "show_keyboard";
     public static final String EXTRA_NO_POST_LENGTH_LIMIT = "no_post_length_limit";
 
     private static final String KEY_REPLY_COMMENT_ID = "reply_comment_id";
-    private static final String KEY_REPLY_USER_ID = "reply_user_id";
 
     private static final int REQUEST_CODE_PICK_MEDIA = 1;
 
@@ -571,9 +567,9 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         ContactsDb.getInstance().addObserver(contactsObserver);
 
         if (savedInstanceState != null) {
-            updateReplyIndicator(savedInstanceState.getString(KEY_REPLY_USER_ID), savedInstanceState.getString(KEY_REPLY_COMMENT_ID));
+            updateReplyIndicator(savedInstanceState.getString(KEY_REPLY_COMMENT_ID));
         } else {
-            updateReplyIndicator(getIntent().getStringExtra(EXTRA_REPLY_USER_ID), getIntent().getStringExtra(EXTRA_REPLY_COMMENT_ID));
+            updateReplyIndicator(getIntent().getStringExtra(EXTRA_REPLY_COMMENT_ID));
         }
 
         itemSwipeHelper = new ItemSwipeHelper(new SwipeListItemHelper(
@@ -884,15 +880,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         }
     }
 
-    private void updateReplyIndicator(@Nullable String rawUserId, @Nullable String commentId) {
-        if (rawUserId == null || commentId == null) {
-            return;
-        }
-        replyCommentId = commentId;
-        viewModel.loadReply(commentId);
-    }
-
-    private void updateReplyIndicator(@NonNull UserId userId, @NonNull String commentId) {
+    private void updateReplyIndicator(@NonNull String commentId) {
         replyCommentId = commentId;
         viewModel.loadReply(commentId);
     }
@@ -1069,7 +1057,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
             replyButton.setOnClickListener(v -> {
                 keyboardScrollHelper.setAnchorForKeyboardChange(position);
-                updateReplyIndicator(comment.senderUserId, comment.id);
+                updateReplyIndicator(comment.id);
                 editText.requestFocus();
                 final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
                 imm.showSoftInput(editText,0);
@@ -1311,7 +1299,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
             replyButton.setOnClickListener(v -> {
                 keyboardScrollHelper.setAnchorForKeyboardChange(position);
-                updateReplyIndicator(comment.senderUserId, comment.id);
+                updateReplyIndicator(comment.id);
                 editText.requestFocus();
                 final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
                 imm.showSoftInput(editText,0);
