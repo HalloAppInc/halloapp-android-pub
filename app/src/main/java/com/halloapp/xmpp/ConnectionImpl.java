@@ -529,7 +529,7 @@ public class ConnectionImpl extends Connection {
     public void sendPost(@NonNull Post post) {
         Container.Builder containerBuilder = Container.newBuilder();
         FeedContentEncoder.encodePost(containerBuilder, post);
-        if (!containerBuilder.hasPost()) {
+        if (!containerBuilder.hasPostContainer()) {
             Log.e("connection: sendPost no post content");
             return;
         }
