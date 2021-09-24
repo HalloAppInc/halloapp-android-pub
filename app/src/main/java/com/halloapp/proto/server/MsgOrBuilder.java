@@ -318,6 +318,47 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.RequestLogs getRequestLogs();
 
   /**
+   * <pre>
+   * only for use with SMSApp clients
+   * </pre>
+   *
+   * <code>.server.WakeUp wakeup = 32;</code>
+   * @return Whether the wakeup field is set.
+   */
+  boolean hasWakeup();
+  /**
+   * <pre>
+   * only for use with SMSApp clients
+   * </pre>
+   *
+   * <code>.server.WakeUp wakeup = 32;</code>
+   * @return The wakeup.
+   */
+  com.halloapp.proto.server.WakeUp getWakeup();
+
+  /**
+   * <code>.server.HomeFeedRerequest home_feed_rerequest = 33;</code>
+   * @return Whether the homeFeedRerequest field is set.
+   */
+  boolean hasHomeFeedRerequest();
+  /**
+   * <code>.server.HomeFeedRerequest home_feed_rerequest = 33;</code>
+   * @return The homeFeedRerequest.
+   */
+  com.halloapp.proto.server.HomeFeedRerequest getHomeFeedRerequest();
+
+  /**
+   * <code>.server.FeedItems historical_content = 34;</code>
+   * @return Whether the historicalContent field is set.
+   */
+  boolean hasHistoricalContent();
+  /**
+   * <code>.server.FeedItems historical_content = 34;</code>
+   * @return The historicalContent.
+   */
+  com.halloapp.proto.server.FeedItems getHistoricalContent();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */

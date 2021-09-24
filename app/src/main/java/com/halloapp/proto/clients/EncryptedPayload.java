@@ -18,6 +18,7 @@ public  final class EncryptedPayload extends
   public enum PayloadCase {
     SENDER_STATE_ENCRYPTED_PAYLOAD(1),
     ONE_TO_ONE_ENCRYPTED_PAYLOAD(2),
+    COMMENT_KEY_ENCRYPTED_PAYLOAD(3),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -35,6 +36,7 @@ public  final class EncryptedPayload extends
       switch (value) {
         case 1: return SENDER_STATE_ENCRYPTED_PAYLOAD;
         case 2: return ONE_TO_ONE_ENCRYPTED_PAYLOAD;
+        case 3: return COMMENT_KEY_ENCRYPTED_PAYLOAD;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -113,6 +115,37 @@ public  final class EncryptedPayload extends
    */
   private void clearOneToOneEncryptedPayload() {
     if (payloadCase_ == 2) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int COMMENT_KEY_ENCRYPTED_PAYLOAD_FIELD_NUMBER = 3;
+  /**
+   * <code>bytes comment_key_encrypted_payload = 3;</code>
+   * @return The commentKeyEncryptedPayload.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getCommentKeyEncryptedPayload() {
+    if (payloadCase_ == 3) {
+      return (com.google.protobuf.ByteString) payload_;
+    }
+    return com.google.protobuf.ByteString.EMPTY;
+  }
+  /**
+   * <code>bytes comment_key_encrypted_payload = 3;</code>
+   * @param value The commentKeyEncryptedPayload to set.
+   */
+  private void setCommentKeyEncryptedPayload(com.google.protobuf.ByteString value) {
+    value.getClass();
+  payloadCase_ = 3;
+    payload_ = value;
+  }
+  /**
+   * <code>bytes comment_key_encrypted_payload = 3;</code>
+   */
+  private void clearCommentKeyEncryptedPayload() {
+    if (payloadCase_ == 3) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -281,6 +314,34 @@ public  final class EncryptedPayload extends
       return this;
     }
 
+    /**
+     * <code>bytes comment_key_encrypted_payload = 3;</code>
+     * @return The commentKeyEncryptedPayload.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getCommentKeyEncryptedPayload() {
+      return instance.getCommentKeyEncryptedPayload();
+    }
+    /**
+     * <code>bytes comment_key_encrypted_payload = 3;</code>
+     * @param value The commentKeyEncryptedPayload to set.
+     * @return This builder for chaining.
+     */
+    public Builder setCommentKeyEncryptedPayload(com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setCommentKeyEncryptedPayload(value);
+      return this;
+    }
+    /**
+     * <code>bytes comment_key_encrypted_payload = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearCommentKeyEncryptedPayload() {
+      copyOnWrite();
+      instance.clearCommentKeyEncryptedPayload();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.EncryptedPayload)
   }
   @java.lang.Override
@@ -301,8 +362,8 @@ public  final class EncryptedPayload extends
             "payloadCase_",
           };
           java.lang.String info =
-              "\u0000\u0002\u0001\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001=\u0000\u0002=" +
-              "\u0000";
+              "\u0000\u0003\u0001\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001=\u0000\u0002=" +
+              "\u0000\u0003=\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

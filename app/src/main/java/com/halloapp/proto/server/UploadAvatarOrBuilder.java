@@ -8,20 +8,34 @@ public interface UploadAvatarOrBuilder extends
     com.google.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>string id = 1;</code>
+   * <code>string id = 1 [deprecated = true];</code>
    * @return The id.
    */
-  java.lang.String getId();
+  @java.lang.Deprecated java.lang.String getId();
   /**
-   * <code>string id = 1;</code>
+   * <code>string id = 1 [deprecated = true];</code>
    * @return The bytes for id.
    */
-  com.google.protobuf.ByteString
+  @java.lang.Deprecated com.google.protobuf.ByteString
       getIdBytes();
 
   /**
+   * <pre>
+   * scaled-down binary jpeg data.
+   * </pre>
+   *
    * <code>bytes data = 2;</code>
    * @return The data.
    */
   com.google.protobuf.ByteString getData();
+
+  /**
+   * <pre>
+   * full binary jpeg data.
+   * </pre>
+   *
+   * <code>bytes full_data = 3;</code>
+   * @return The fullData.
+   */
+  com.google.protobuf.ByteString getFullData();
 }

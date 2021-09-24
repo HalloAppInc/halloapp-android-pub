@@ -349,5 +349,43 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.ContactSyncError getContactSyncError();
 
+  /**
+   * <pre>
+   * only for sms_app gateway use
+   * </pre>
+   *
+   * <code>.server.ClientOtpRequest client_otp_request = 35;</code>
+   * @return Whether the clientOtpRequest field is set.
+   */
+  boolean hasClientOtpRequest();
+  /**
+   * <pre>
+   * only for sms_app gateway use
+   * </pre>
+   *
+   * <code>.server.ClientOtpRequest client_otp_request = 35;</code>
+   * @return The clientOtpRequest.
+   */
+  com.halloapp.proto.server.ClientOtpRequest getClientOtpRequest();
+
+  /**
+   * <pre>
+   * only for sms_app gateway use
+   * </pre>
+   *
+   * <code>.server.ClientOtpResponse client_otp_response = 36;</code>
+   * @return Whether the clientOtpResponse field is set.
+   */
+  boolean hasClientOtpResponse();
+  /**
+   * <pre>
+   * only for sms_app gateway use
+   * </pre>
+   *
+   * <code>.server.ClientOtpResponse client_otp_response = 36;</code>
+   * @return The clientOtpResponse.
+   */
+  com.halloapp.proto.server.ClientOtpResponse getClientOtpResponse();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }

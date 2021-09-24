@@ -166,6 +166,9 @@ public  final class Msg extends
     HISTORY_RESEND(29),
     PLAYED_RECEIPT(30),
     REQUEST_LOGS(31),
+    WAKEUP(32),
+    HOME_FEED_REREQUEST(33),
+    HISTORICAL_CONTENT(34),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -206,6 +209,9 @@ public  final class Msg extends
         case 29: return HISTORY_RESEND;
         case 30: return PLAYED_RECEIPT;
         case 31: return REQUEST_LOGS;
+        case 32: return WAKEUP;
+        case 33: return HOME_FEED_REREQUEST;
+        case 34: return HISTORICAL_CONTENT;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -1613,6 +1619,176 @@ public  final class Msg extends
    */
   private void clearRequestLogs() {
     if (payloadCase_ == 31) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int WAKEUP_FIELD_NUMBER = 32;
+  /**
+   * <pre>
+   * only for use with SMSApp clients
+   * </pre>
+   *
+   * <code>.server.WakeUp wakeup = 32;</code>
+   */
+  @java.lang.Override
+  public boolean hasWakeup() {
+    return payloadCase_ == 32;
+  }
+  /**
+   * <pre>
+   * only for use with SMSApp clients
+   * </pre>
+   *
+   * <code>.server.WakeUp wakeup = 32;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.WakeUp getWakeup() {
+    if (payloadCase_ == 32) {
+       return (com.halloapp.proto.server.WakeUp) payload_;
+    }
+    return com.halloapp.proto.server.WakeUp.getDefaultInstance();
+  }
+  /**
+   * <pre>
+   * only for use with SMSApp clients
+   * </pre>
+   *
+   * <code>.server.WakeUp wakeup = 32;</code>
+   */
+  private void setWakeup(com.halloapp.proto.server.WakeUp value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 32;
+  }
+  /**
+   * <pre>
+   * only for use with SMSApp clients
+   * </pre>
+   *
+   * <code>.server.WakeUp wakeup = 32;</code>
+   */
+  private void mergeWakeup(com.halloapp.proto.server.WakeUp value) {
+    value.getClass();
+  if (payloadCase_ == 32 &&
+        payload_ != com.halloapp.proto.server.WakeUp.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.WakeUp.newBuilder((com.halloapp.proto.server.WakeUp) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 32;
+  }
+  /**
+   * <pre>
+   * only for use with SMSApp clients
+   * </pre>
+   *
+   * <code>.server.WakeUp wakeup = 32;</code>
+   */
+  private void clearWakeup() {
+    if (payloadCase_ == 32) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int HOME_FEED_REREQUEST_FIELD_NUMBER = 33;
+  /**
+   * <code>.server.HomeFeedRerequest home_feed_rerequest = 33;</code>
+   */
+  @java.lang.Override
+  public boolean hasHomeFeedRerequest() {
+    return payloadCase_ == 33;
+  }
+  /**
+   * <code>.server.HomeFeedRerequest home_feed_rerequest = 33;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.HomeFeedRerequest getHomeFeedRerequest() {
+    if (payloadCase_ == 33) {
+       return (com.halloapp.proto.server.HomeFeedRerequest) payload_;
+    }
+    return com.halloapp.proto.server.HomeFeedRerequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.HomeFeedRerequest home_feed_rerequest = 33;</code>
+   */
+  private void setHomeFeedRerequest(com.halloapp.proto.server.HomeFeedRerequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 33;
+  }
+  /**
+   * <code>.server.HomeFeedRerequest home_feed_rerequest = 33;</code>
+   */
+  private void mergeHomeFeedRerequest(com.halloapp.proto.server.HomeFeedRerequest value) {
+    value.getClass();
+  if (payloadCase_ == 33 &&
+        payload_ != com.halloapp.proto.server.HomeFeedRerequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.HomeFeedRerequest.newBuilder((com.halloapp.proto.server.HomeFeedRerequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 33;
+  }
+  /**
+   * <code>.server.HomeFeedRerequest home_feed_rerequest = 33;</code>
+   */
+  private void clearHomeFeedRerequest() {
+    if (payloadCase_ == 33) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int HISTORICAL_CONTENT_FIELD_NUMBER = 34;
+  /**
+   * <code>.server.FeedItems historical_content = 34;</code>
+   */
+  @java.lang.Override
+  public boolean hasHistoricalContent() {
+    return payloadCase_ == 34;
+  }
+  /**
+   * <code>.server.FeedItems historical_content = 34;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.FeedItems getHistoricalContent() {
+    if (payloadCase_ == 34) {
+       return (com.halloapp.proto.server.FeedItems) payload_;
+    }
+    return com.halloapp.proto.server.FeedItems.getDefaultInstance();
+  }
+  /**
+   * <code>.server.FeedItems historical_content = 34;</code>
+   */
+  private void setHistoricalContent(com.halloapp.proto.server.FeedItems value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 34;
+  }
+  /**
+   * <code>.server.FeedItems historical_content = 34;</code>
+   */
+  private void mergeHistoricalContent(com.halloapp.proto.server.FeedItems value) {
+    value.getClass();
+  if (payloadCase_ == 34 &&
+        payload_ != com.halloapp.proto.server.FeedItems.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.FeedItems.newBuilder((com.halloapp.proto.server.FeedItems) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 34;
+  }
+  /**
+   * <code>.server.FeedItems historical_content = 34;</code>
+   */
+  private void clearHistoricalContent() {
+    if (payloadCase_ == 34) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -3129,6 +3305,174 @@ public  final class Msg extends
     }
 
     /**
+     * <pre>
+     * only for use with SMSApp clients
+     * </pre>
+     *
+     * <code>.server.WakeUp wakeup = 32;</code>
+     */
+    @java.lang.Override
+    public boolean hasWakeup() {
+      return instance.hasWakeup();
+    }
+    /**
+     * <pre>
+     * only for use with SMSApp clients
+     * </pre>
+     *
+     * <code>.server.WakeUp wakeup = 32;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.WakeUp getWakeup() {
+      return instance.getWakeup();
+    }
+    /**
+     * <pre>
+     * only for use with SMSApp clients
+     * </pre>
+     *
+     * <code>.server.WakeUp wakeup = 32;</code>
+     */
+    public Builder setWakeup(com.halloapp.proto.server.WakeUp value) {
+      copyOnWrite();
+      instance.setWakeup(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * only for use with SMSApp clients
+     * </pre>
+     *
+     * <code>.server.WakeUp wakeup = 32;</code>
+     */
+    public Builder setWakeup(
+        com.halloapp.proto.server.WakeUp.Builder builderForValue) {
+      copyOnWrite();
+      instance.setWakeup(builderForValue.build());
+      return this;
+    }
+    /**
+     * <pre>
+     * only for use with SMSApp clients
+     * </pre>
+     *
+     * <code>.server.WakeUp wakeup = 32;</code>
+     */
+    public Builder mergeWakeup(com.halloapp.proto.server.WakeUp value) {
+      copyOnWrite();
+      instance.mergeWakeup(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * only for use with SMSApp clients
+     * </pre>
+     *
+     * <code>.server.WakeUp wakeup = 32;</code>
+     */
+    public Builder clearWakeup() {
+      copyOnWrite();
+      instance.clearWakeup();
+      return this;
+    }
+
+    /**
+     * <code>.server.HomeFeedRerequest home_feed_rerequest = 33;</code>
+     */
+    @java.lang.Override
+    public boolean hasHomeFeedRerequest() {
+      return instance.hasHomeFeedRerequest();
+    }
+    /**
+     * <code>.server.HomeFeedRerequest home_feed_rerequest = 33;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.HomeFeedRerequest getHomeFeedRerequest() {
+      return instance.getHomeFeedRerequest();
+    }
+    /**
+     * <code>.server.HomeFeedRerequest home_feed_rerequest = 33;</code>
+     */
+    public Builder setHomeFeedRerequest(com.halloapp.proto.server.HomeFeedRerequest value) {
+      copyOnWrite();
+      instance.setHomeFeedRerequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.HomeFeedRerequest home_feed_rerequest = 33;</code>
+     */
+    public Builder setHomeFeedRerequest(
+        com.halloapp.proto.server.HomeFeedRerequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setHomeFeedRerequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.HomeFeedRerequest home_feed_rerequest = 33;</code>
+     */
+    public Builder mergeHomeFeedRerequest(com.halloapp.proto.server.HomeFeedRerequest value) {
+      copyOnWrite();
+      instance.mergeHomeFeedRerequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.HomeFeedRerequest home_feed_rerequest = 33;</code>
+     */
+    public Builder clearHomeFeedRerequest() {
+      copyOnWrite();
+      instance.clearHomeFeedRerequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.FeedItems historical_content = 34;</code>
+     */
+    @java.lang.Override
+    public boolean hasHistoricalContent() {
+      return instance.hasHistoricalContent();
+    }
+    /**
+     * <code>.server.FeedItems historical_content = 34;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.FeedItems getHistoricalContent() {
+      return instance.getHistoricalContent();
+    }
+    /**
+     * <code>.server.FeedItems historical_content = 34;</code>
+     */
+    public Builder setHistoricalContent(com.halloapp.proto.server.FeedItems value) {
+      copyOnWrite();
+      instance.setHistoricalContent(value);
+      return this;
+    }
+    /**
+     * <code>.server.FeedItems historical_content = 34;</code>
+     */
+    public Builder setHistoricalContent(
+        com.halloapp.proto.server.FeedItems.Builder builderForValue) {
+      copyOnWrite();
+      instance.setHistoricalContent(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.FeedItems historical_content = 34;</code>
+     */
+    public Builder mergeHistoricalContent(com.halloapp.proto.server.FeedItems value) {
+      copyOnWrite();
+      instance.mergeHistoricalContent(value);
+      return this;
+    }
+    /**
+     * <code>.server.FeedItems historical_content = 34;</code>
+     */
+    public Builder clearHistoricalContent() {
+      copyOnWrite();
+      instance.clearHistoricalContent();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -3233,14 +3577,17 @@ public  final class Msg extends
             com.halloapp.proto.server.HistoryResend.class,
             com.halloapp.proto.server.PlayedReceipt.class,
             com.halloapp.proto.server.RequestLogs.class,
+            com.halloapp.proto.server.WakeUp.class,
+            com.halloapp.proto.server.HomeFeedRerequest.class,
+            com.halloapp.proto.server.FeedItems.class,
           };
           java.lang.String info =
-              "\u0000\u001f\u0001\u0000\u0001\u001f\u001f\u0000\u0000\u0000\u0001\u0208\u0002\f" +
-              "\u0003\u0002\u0004\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000" +
-              "\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011" +
-              "<\u0000\u0012<\u0000\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000" +
-              "\u0018<\u0000\u0019\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e" +
-              "<\u0000\u001f<\u0000";
+              "\u0000\"\u0001\u0000\u0001\"\"\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002" +
+              "\u0004\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b" +
+              "<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012" +
+              "<\u0000\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000" +
+              "\u0019\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f" +
+              "<\u0000 <\u0000!<\u0000\"<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

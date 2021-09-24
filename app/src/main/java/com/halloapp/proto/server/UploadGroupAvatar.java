@@ -14,6 +14,7 @@ public  final class UploadGroupAvatar extends
   private UploadGroupAvatar() {
     gid_ = "";
     data_ = com.google.protobuf.ByteString.EMPTY;
+    fullData_ = com.google.protobuf.ByteString.EMPTY;
   }
   public static final int GID_FIELD_NUMBER = 1;
   private java.lang.String gid_;
@@ -65,6 +66,10 @@ public  final class UploadGroupAvatar extends
   public static final int DATA_FIELD_NUMBER = 2;
   private com.google.protobuf.ByteString data_;
   /**
+   * <pre>
+   * scaled-down binary jpeg data.
+   * </pre>
+   *
    * <code>bytes data = 2;</code>
    * @return The data.
    */
@@ -73,6 +78,10 @@ public  final class UploadGroupAvatar extends
     return data_;
   }
   /**
+   * <pre>
+   * scaled-down binary jpeg data.
+   * </pre>
+   *
    * <code>bytes data = 2;</code>
    * @param value The data to set.
    */
@@ -82,11 +91,54 @@ public  final class UploadGroupAvatar extends
     data_ = value;
   }
   /**
+   * <pre>
+   * scaled-down binary jpeg data.
+   * </pre>
+   *
    * <code>bytes data = 2;</code>
    */
   private void clearData() {
     
     data_ = getDefaultInstance().getData();
+  }
+
+  public static final int FULL_DATA_FIELD_NUMBER = 3;
+  private com.google.protobuf.ByteString fullData_;
+  /**
+   * <pre>
+   * full binary jpeg data.
+   * </pre>
+   *
+   * <code>bytes full_data = 3;</code>
+   * @return The fullData.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getFullData() {
+    return fullData_;
+  }
+  /**
+   * <pre>
+   * full binary jpeg data.
+   * </pre>
+   *
+   * <code>bytes full_data = 3;</code>
+   * @param value The fullData to set.
+   */
+  private void setFullData(com.google.protobuf.ByteString value) {
+    value.getClass();
+  
+    fullData_ = value;
+  }
+  /**
+   * <pre>
+   * full binary jpeg data.
+   * </pre>
+   *
+   * <code>bytes full_data = 3;</code>
+   */
+  private void clearFullData() {
+    
+    fullData_ = getDefaultInstance().getFullData();
   }
 
   public static com.halloapp.proto.server.UploadGroupAvatar parseFrom(
@@ -234,6 +286,10 @@ public  final class UploadGroupAvatar extends
     }
 
     /**
+     * <pre>
+     * scaled-down binary jpeg data.
+     * </pre>
+     *
      * <code>bytes data = 2;</code>
      * @return The data.
      */
@@ -242,6 +298,10 @@ public  final class UploadGroupAvatar extends
       return instance.getData();
     }
     /**
+     * <pre>
+     * scaled-down binary jpeg data.
+     * </pre>
+     *
      * <code>bytes data = 2;</code>
      * @param value The data to set.
      * @return This builder for chaining.
@@ -252,12 +312,56 @@ public  final class UploadGroupAvatar extends
       return this;
     }
     /**
+     * <pre>
+     * scaled-down binary jpeg data.
+     * </pre>
+     *
      * <code>bytes data = 2;</code>
      * @return This builder for chaining.
      */
     public Builder clearData() {
       copyOnWrite();
       instance.clearData();
+      return this;
+    }
+
+    /**
+     * <pre>
+     * full binary jpeg data.
+     * </pre>
+     *
+     * <code>bytes full_data = 3;</code>
+     * @return The fullData.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getFullData() {
+      return instance.getFullData();
+    }
+    /**
+     * <pre>
+     * full binary jpeg data.
+     * </pre>
+     *
+     * <code>bytes full_data = 3;</code>
+     * @param value The fullData to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFullData(com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setFullData(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * full binary jpeg data.
+     * </pre>
+     *
+     * <code>bytes full_data = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearFullData() {
+      copyOnWrite();
+      instance.clearFullData();
       return this;
     }
 
@@ -279,10 +383,11 @@ public  final class UploadGroupAvatar extends
           java.lang.Object[] objects = new java.lang.Object[] {
             "gid_",
             "data_",
+            "fullData_",
           };
           java.lang.String info =
-              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0208\u0002\n" +
-              "";
+              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0208\u0002\n" +
+              "\u0003\n";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -19,5 +19,11 @@ public interface EncryptedPayloadOrBuilder extends
    */
   com.google.protobuf.ByteString getOneToOneEncryptedPayload();
 
+  /**
+   * <code>bytes comment_key_encrypted_payload = 3;</code>
+   * @return The commentKeyEncryptedPayload.
+   */
+  com.google.protobuf.ByteString getCommentKeyEncryptedPayload();
+
   public com.halloapp.proto.clients.EncryptedPayload.PayloadCase getPayloadCase();
 }

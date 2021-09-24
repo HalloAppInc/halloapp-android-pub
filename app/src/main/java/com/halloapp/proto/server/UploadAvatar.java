@@ -14,28 +14,29 @@ public  final class UploadAvatar extends
   private UploadAvatar() {
     id_ = "";
     data_ = com.google.protobuf.ByteString.EMPTY;
+    fullData_ = com.google.protobuf.ByteString.EMPTY;
   }
   public static final int ID_FIELD_NUMBER = 1;
   private java.lang.String id_;
   /**
-   * <code>string id = 1;</code>
+   * <code>string id = 1 [deprecated = true];</code>
    * @return The id.
    */
   @java.lang.Override
-  public java.lang.String getId() {
+  @java.lang.Deprecated public java.lang.String getId() {
     return id_;
   }
   /**
-   * <code>string id = 1;</code>
+   * <code>string id = 1 [deprecated = true];</code>
    * @return The bytes for id.
    */
   @java.lang.Override
-  public com.google.protobuf.ByteString
+  @java.lang.Deprecated public com.google.protobuf.ByteString
       getIdBytes() {
     return com.google.protobuf.ByteString.copyFromUtf8(id_);
   }
   /**
-   * <code>string id = 1;</code>
+   * <code>string id = 1 [deprecated = true];</code>
    * @param value The id to set.
    */
   private void setId(
@@ -45,14 +46,14 @@ public  final class UploadAvatar extends
     id_ = value;
   }
   /**
-   * <code>string id = 1;</code>
+   * <code>string id = 1 [deprecated = true];</code>
    */
   private void clearId() {
     
     id_ = getDefaultInstance().getId();
   }
   /**
-   * <code>string id = 1;</code>
+   * <code>string id = 1 [deprecated = true];</code>
    * @param value The bytes for id to set.
    */
   private void setIdBytes(
@@ -65,6 +66,10 @@ public  final class UploadAvatar extends
   public static final int DATA_FIELD_NUMBER = 2;
   private com.google.protobuf.ByteString data_;
   /**
+   * <pre>
+   * scaled-down binary jpeg data.
+   * </pre>
+   *
    * <code>bytes data = 2;</code>
    * @return The data.
    */
@@ -73,6 +78,10 @@ public  final class UploadAvatar extends
     return data_;
   }
   /**
+   * <pre>
+   * scaled-down binary jpeg data.
+   * </pre>
+   *
    * <code>bytes data = 2;</code>
    * @param value The data to set.
    */
@@ -82,11 +91,54 @@ public  final class UploadAvatar extends
     data_ = value;
   }
   /**
+   * <pre>
+   * scaled-down binary jpeg data.
+   * </pre>
+   *
    * <code>bytes data = 2;</code>
    */
   private void clearData() {
     
     data_ = getDefaultInstance().getData();
+  }
+
+  public static final int FULL_DATA_FIELD_NUMBER = 3;
+  private com.google.protobuf.ByteString fullData_;
+  /**
+   * <pre>
+   * full binary jpeg data.
+   * </pre>
+   *
+   * <code>bytes full_data = 3;</code>
+   * @return The fullData.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getFullData() {
+    return fullData_;
+  }
+  /**
+   * <pre>
+   * full binary jpeg data.
+   * </pre>
+   *
+   * <code>bytes full_data = 3;</code>
+   * @param value The fullData to set.
+   */
+  private void setFullData(com.google.protobuf.ByteString value) {
+    value.getClass();
+  
+    fullData_ = value;
+  }
+  /**
+   * <pre>
+   * full binary jpeg data.
+   * </pre>
+   *
+   * <code>bytes full_data = 3;</code>
+   */
+  private void clearFullData() {
+    
+    fullData_ = getDefaultInstance().getFullData();
   }
 
   public static com.halloapp.proto.server.UploadAvatar parseFrom(
@@ -185,48 +237,48 @@ public  final class UploadAvatar extends
 
 
     /**
-     * <code>string id = 1;</code>
+     * <code>string id = 1 [deprecated = true];</code>
      * @return The id.
      */
     @java.lang.Override
-    public java.lang.String getId() {
+    @java.lang.Deprecated public java.lang.String getId() {
       return instance.getId();
     }
     /**
-     * <code>string id = 1;</code>
+     * <code>string id = 1 [deprecated = true];</code>
      * @return The bytes for id.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString
+    @java.lang.Deprecated public com.google.protobuf.ByteString
         getIdBytes() {
       return instance.getIdBytes();
     }
     /**
-     * <code>string id = 1;</code>
+     * <code>string id = 1 [deprecated = true];</code>
      * @param value The id to set.
      * @return This builder for chaining.
      */
-    public Builder setId(
+    @java.lang.Deprecated public Builder setId(
         java.lang.String value) {
       copyOnWrite();
       instance.setId(value);
       return this;
     }
     /**
-     * <code>string id = 1;</code>
+     * <code>string id = 1 [deprecated = true];</code>
      * @return This builder for chaining.
      */
-    public Builder clearId() {
+    @java.lang.Deprecated public Builder clearId() {
       copyOnWrite();
       instance.clearId();
       return this;
     }
     /**
-     * <code>string id = 1;</code>
+     * <code>string id = 1 [deprecated = true];</code>
      * @param value The bytes for id to set.
      * @return This builder for chaining.
      */
-    public Builder setIdBytes(
+    @java.lang.Deprecated public Builder setIdBytes(
         com.google.protobuf.ByteString value) {
       copyOnWrite();
       instance.setIdBytes(value);
@@ -234,6 +286,10 @@ public  final class UploadAvatar extends
     }
 
     /**
+     * <pre>
+     * scaled-down binary jpeg data.
+     * </pre>
+     *
      * <code>bytes data = 2;</code>
      * @return The data.
      */
@@ -242,6 +298,10 @@ public  final class UploadAvatar extends
       return instance.getData();
     }
     /**
+     * <pre>
+     * scaled-down binary jpeg data.
+     * </pre>
+     *
      * <code>bytes data = 2;</code>
      * @param value The data to set.
      * @return This builder for chaining.
@@ -252,12 +312,56 @@ public  final class UploadAvatar extends
       return this;
     }
     /**
+     * <pre>
+     * scaled-down binary jpeg data.
+     * </pre>
+     *
      * <code>bytes data = 2;</code>
      * @return This builder for chaining.
      */
     public Builder clearData() {
       copyOnWrite();
       instance.clearData();
+      return this;
+    }
+
+    /**
+     * <pre>
+     * full binary jpeg data.
+     * </pre>
+     *
+     * <code>bytes full_data = 3;</code>
+     * @return The fullData.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getFullData() {
+      return instance.getFullData();
+    }
+    /**
+     * <pre>
+     * full binary jpeg data.
+     * </pre>
+     *
+     * <code>bytes full_data = 3;</code>
+     * @param value The fullData to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFullData(com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setFullData(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * full binary jpeg data.
+     * </pre>
+     *
+     * <code>bytes full_data = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearFullData() {
+      copyOnWrite();
+      instance.clearFullData();
       return this;
     }
 
@@ -279,10 +383,11 @@ public  final class UploadAvatar extends
           java.lang.Object[] objects = new java.lang.Object[] {
             "id_",
             "data_",
+            "fullData_",
           };
           java.lang.String info =
-              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0208\u0002\n" +
-              "";
+              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0208\u0002\n" +
+              "\u0003\n";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

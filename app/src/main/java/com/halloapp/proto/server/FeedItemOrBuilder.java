@@ -54,5 +54,50 @@ public interface FeedItemOrBuilder extends
    */
   int getShareStanzasCount();
 
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  java.util.List<com.halloapp.proto.server.SenderStateBundle> 
+      getSenderStateBundlesList();
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  com.halloapp.proto.server.SenderStateBundle getSenderStateBundles(int index);
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  int getSenderStateBundlesCount();
+
+  /**
+   * <pre>
+   * Meant for the receiver, computed by the server using `sender_state_bundles`.
+   * </pre>
+   *
+   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+   * @return Whether the senderState field is set.
+   */
+  boolean hasSenderState();
+  /**
+   * <pre>
+   * Meant for the receiver, computed by the server using `sender_state_bundles`.
+   * </pre>
+   *
+   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+   * @return The senderState.
+   */
+  com.halloapp.proto.server.SenderStateWithKeyInfo getSenderState();
+
   public com.halloapp.proto.server.FeedItem.ItemCase getItemCase();
 }

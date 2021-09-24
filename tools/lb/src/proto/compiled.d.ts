@@ -10,6 +10,9 @@ export namespace server {
 
         /** UploadAvatar data */
         data?: (Uint8Array|null);
+
+        /** UploadAvatar fullData */
+        fullData?: (Uint8Array|null);
     }
 
     /** Represents an UploadAvatar. */
@@ -26,6 +29,9 @@ export namespace server {
 
         /** UploadAvatar data. */
         public data: Uint8Array;
+
+        /** UploadAvatar fullData. */
+        public fullData: Uint8Array;
 
         /**
          * Creates a new UploadAvatar instance using the specified properties.
@@ -292,6 +298,9 @@ export namespace server {
 
         /** UploadGroupAvatar data */
         data?: (Uint8Array|null);
+
+        /** UploadGroupAvatar fullData */
+        fullData?: (Uint8Array|null);
     }
 
     /** Represents an UploadGroupAvatar. */
@@ -308,6 +317,9 @@ export namespace server {
 
         /** UploadGroupAvatar data. */
         public data: Uint8Array;
+
+        /** UploadGroupAvatar fullData. */
+        public fullData: Uint8Array;
 
         /**
          * Creates a new UploadGroupAvatar instance using the specified properties.
@@ -989,9 +1001,6 @@ export namespace server {
         /** Contact avatarId */
         avatarId?: (string|null);
 
-        /** Contact role */
-        role?: (server.Contact.Role|null);
-
         /** Contact name */
         name?: (string|null);
 
@@ -1022,9 +1031,6 @@ export namespace server {
 
         /** Contact avatarId. */
         public avatarId: string;
-
-        /** Contact role. */
-        public role: server.Contact.Role;
 
         /** Contact name. */
         public name: string;
@@ -1109,12 +1115,6 @@ export namespace server {
         enum Action {
             ADD = 0,
             DELETE = 1
-        }
-
-        /** Role enum. */
-        enum Role {
-            FRIENDS = 0,
-            NONE = 1
         }
     }
 
@@ -1912,6 +1912,12 @@ export namespace server {
 
         /** FeedItem shareStanzas */
         shareStanzas?: (server.IShareStanza[]|null);
+
+        /** FeedItem senderStateBundles */
+        senderStateBundles?: (server.ISenderStateBundle[]|null);
+
+        /** FeedItem senderState */
+        senderState?: (server.ISenderStateWithKeyInfo|null);
     }
 
     /** Represents a FeedItem. */
@@ -1934,6 +1940,12 @@ export namespace server {
 
         /** FeedItem shareStanzas. */
         public shareStanzas: server.IShareStanza[];
+
+        /** FeedItem senderStateBundles. */
+        public senderStateBundles: server.ISenderStateBundle[];
+
+        /** FeedItem senderState. */
+        public senderState?: (server.ISenderStateWithKeyInfo|null);
 
         /** FeedItem item. */
         public item?: ("post"|"comment");
@@ -4830,6 +4842,12 @@ export namespace server {
 
         /** Iq contactSyncError */
         contactSyncError?: (server.IContactSyncError|null);
+
+        /** Iq clientOtpRequest */
+        clientOtpRequest?: (server.IClientOtpRequest|null);
+
+        /** Iq clientOtpResponse */
+        clientOtpResponse?: (server.IClientOtpResponse|null);
     }
 
     /** Represents an Iq. */
@@ -4934,8 +4952,14 @@ export namespace server {
         /** Iq contactSyncError. */
         public contactSyncError?: (server.IContactSyncError|null);
 
+        /** Iq clientOtpRequest. */
+        public clientOtpRequest?: (server.IClientOtpRequest|null);
+
+        /** Iq clientOtpResponse. */
+        public clientOtpResponse?: (server.IClientOtpResponse|null);
+
         /** Iq payload. */
-        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError");
+        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse");
 
         /**
          * Creates a new Iq instance using the specified properties.
@@ -5109,6 +5133,15 @@ export namespace server {
         /** Msg requestLogs */
         requestLogs?: (server.IRequestLogs|null);
 
+        /** Msg wakeup */
+        wakeup?: (server.IWakeUp|null);
+
+        /** Msg homeFeedRerequest */
+        homeFeedRerequest?: (server.IHomeFeedRerequest|null);
+
+        /** Msg historicalContent */
+        historicalContent?: (server.IFeedItems|null);
+
         /** Msg retryCount */
         retryCount?: (number|null);
 
@@ -5212,6 +5245,15 @@ export namespace server {
         /** Msg requestLogs. */
         public requestLogs?: (server.IRequestLogs|null);
 
+        /** Msg wakeup. */
+        public wakeup?: (server.IWakeUp|null);
+
+        /** Msg homeFeedRerequest. */
+        public homeFeedRerequest?: (server.IHomeFeedRerequest|null);
+
+        /** Msg historicalContent. */
+        public historicalContent?: (server.IFeedItems|null);
+
         /** Msg retryCount. */
         public retryCount: number;
 
@@ -5219,7 +5261,7 @@ export namespace server {
         public rerequestCount: number;
 
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"historicalContent");
 
         /**
          * Creates a new Msg instance using the specified properties.
@@ -6936,6 +6978,112 @@ export namespace server {
         enum RerequestType {
             PAYLOAD = 0,
             SENDER_STATE = 1
+        }
+    }
+
+    /** Properties of a HomeFeedRerequest. */
+    interface IHomeFeedRerequest {
+
+        /** HomeFeedRerequest id */
+        id?: (string|null);
+
+        /** HomeFeedRerequest rerequestType */
+        rerequestType?: (server.HomeFeedRerequest.RerequestType|null);
+    }
+
+    /** Represents a HomeFeedRerequest. */
+    class HomeFeedRerequest implements IHomeFeedRerequest {
+
+        /**
+         * Constructs a new HomeFeedRerequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IHomeFeedRerequest);
+
+        /** HomeFeedRerequest id. */
+        public id: string;
+
+        /** HomeFeedRerequest rerequestType. */
+        public rerequestType: server.HomeFeedRerequest.RerequestType;
+
+        /**
+         * Creates a new HomeFeedRerequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HomeFeedRerequest instance
+         */
+        public static create(properties?: server.IHomeFeedRerequest): server.HomeFeedRerequest;
+
+        /**
+         * Encodes the specified HomeFeedRerequest message. Does not implicitly {@link server.HomeFeedRerequest.verify|verify} messages.
+         * @param message HomeFeedRerequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IHomeFeedRerequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HomeFeedRerequest message, length delimited. Does not implicitly {@link server.HomeFeedRerequest.verify|verify} messages.
+         * @param message HomeFeedRerequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IHomeFeedRerequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HomeFeedRerequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HomeFeedRerequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.HomeFeedRerequest;
+
+        /**
+         * Decodes a HomeFeedRerequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HomeFeedRerequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.HomeFeedRerequest;
+
+        /**
+         * Verifies a HomeFeedRerequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HomeFeedRerequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HomeFeedRerequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.HomeFeedRerequest;
+
+        /**
+         * Creates a plain object from a HomeFeedRerequest message. Also converts values to other types if specified.
+         * @param message HomeFeedRerequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.HomeFeedRerequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HomeFeedRerequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace HomeFeedRerequest {
+
+        /** RerequestType enum. */
+        enum RerequestType {
+            UNKNOWN_TYPE = 0,
+            PAYLOAD = 1,
+            SENDER_STATE = 2
         }
     }
 
@@ -9307,6 +9455,316 @@ export namespace server {
             BAD_REQUEST = 21,
             INTERNAL_SERVER_ERROR = 22
         }
+    }
+
+    /** Properties of a ClientOtpRequest. */
+    interface IClientOtpRequest {
+
+        /** ClientOtpRequest method */
+        method?: (server.ClientOtpRequest.Method|null);
+
+        /** ClientOtpRequest phone */
+        phone?: (string|null);
+
+        /** ClientOtpRequest content */
+        content?: (string|null);
+    }
+
+    /** Represents a ClientOtpRequest. */
+    class ClientOtpRequest implements IClientOtpRequest {
+
+        /**
+         * Constructs a new ClientOtpRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IClientOtpRequest);
+
+        /** ClientOtpRequest method. */
+        public method: server.ClientOtpRequest.Method;
+
+        /** ClientOtpRequest phone. */
+        public phone: string;
+
+        /** ClientOtpRequest content. */
+        public content: string;
+
+        /**
+         * Creates a new ClientOtpRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ClientOtpRequest instance
+         */
+        public static create(properties?: server.IClientOtpRequest): server.ClientOtpRequest;
+
+        /**
+         * Encodes the specified ClientOtpRequest message. Does not implicitly {@link server.ClientOtpRequest.verify|verify} messages.
+         * @param message ClientOtpRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IClientOtpRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ClientOtpRequest message, length delimited. Does not implicitly {@link server.ClientOtpRequest.verify|verify} messages.
+         * @param message ClientOtpRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IClientOtpRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ClientOtpRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ClientOtpRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.ClientOtpRequest;
+
+        /**
+         * Decodes a ClientOtpRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ClientOtpRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.ClientOtpRequest;
+
+        /**
+         * Verifies a ClientOtpRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ClientOtpRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ClientOtpRequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.ClientOtpRequest;
+
+        /**
+         * Creates a plain object from a ClientOtpRequest message. Also converts values to other types if specified.
+         * @param message ClientOtpRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.ClientOtpRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ClientOtpRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace ClientOtpRequest {
+
+        /** Method enum. */
+        enum Method {
+            SMS = 0,
+            VOICE_CALL = 1
+        }
+    }
+
+    /** Properties of a ClientOtpResponse. */
+    interface IClientOtpResponse {
+
+        /** ClientOtpResponse result */
+        result?: (server.ClientOtpResponse.Result|null);
+
+        /** ClientOtpResponse reason */
+        reason?: (server.ClientOtpResponse.Reason|null);
+    }
+
+    /** Represents a ClientOtpResponse. */
+    class ClientOtpResponse implements IClientOtpResponse {
+
+        /**
+         * Constructs a new ClientOtpResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IClientOtpResponse);
+
+        /** ClientOtpResponse result. */
+        public result: server.ClientOtpResponse.Result;
+
+        /** ClientOtpResponse reason. */
+        public reason: server.ClientOtpResponse.Reason;
+
+        /**
+         * Creates a new ClientOtpResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ClientOtpResponse instance
+         */
+        public static create(properties?: server.IClientOtpResponse): server.ClientOtpResponse;
+
+        /**
+         * Encodes the specified ClientOtpResponse message. Does not implicitly {@link server.ClientOtpResponse.verify|verify} messages.
+         * @param message ClientOtpResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IClientOtpResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ClientOtpResponse message, length delimited. Does not implicitly {@link server.ClientOtpResponse.verify|verify} messages.
+         * @param message ClientOtpResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IClientOtpResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ClientOtpResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ClientOtpResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.ClientOtpResponse;
+
+        /**
+         * Decodes a ClientOtpResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ClientOtpResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.ClientOtpResponse;
+
+        /**
+         * Verifies a ClientOtpResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ClientOtpResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ClientOtpResponse
+         */
+        public static fromObject(object: { [k: string]: any }): server.ClientOtpResponse;
+
+        /**
+         * Creates a plain object from a ClientOtpResponse message. Also converts values to other types if specified.
+         * @param message ClientOtpResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.ClientOtpResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ClientOtpResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace ClientOtpResponse {
+
+        /** Result enum. */
+        enum Result {
+            UNKNOWN_RESULT = 0,
+            SUCCESS = 1,
+            FAILURE = 2
+        }
+
+        /** Reason enum. */
+        enum Reason {
+            UNKNOWN_REASON = 0,
+            SETUP_ISSUE = 1,
+            PERMISSION_ISSUE = 2,
+            FORMATTING_ISSUE = 3,
+            NETWORKING_ISSUE = 4
+        }
+    }
+
+    /** Properties of a WakeUp. */
+    interface IWakeUp {
+    }
+
+    /** Represents a WakeUp. */
+    class WakeUp implements IWakeUp {
+
+        /**
+         * Constructs a new WakeUp.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IWakeUp);
+
+        /**
+         * Creates a new WakeUp instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns WakeUp instance
+         */
+        public static create(properties?: server.IWakeUp): server.WakeUp;
+
+        /**
+         * Encodes the specified WakeUp message. Does not implicitly {@link server.WakeUp.verify|verify} messages.
+         * @param message WakeUp message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IWakeUp, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified WakeUp message, length delimited. Does not implicitly {@link server.WakeUp.verify|verify} messages.
+         * @param message WakeUp message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IWakeUp, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a WakeUp message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns WakeUp
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.WakeUp;
+
+        /**
+         * Decodes a WakeUp message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns WakeUp
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.WakeUp;
+
+        /**
+         * Verifies a WakeUp message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a WakeUp message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns WakeUp
+         */
+        public static fromObject(object: { [k: string]: any }): server.WakeUp;
+
+        /**
+         * Creates a plain object from a WakeUp message. Also converts values to other types if specified.
+         * @param message WakeUp
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.WakeUp, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this WakeUp to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of an EventData. */

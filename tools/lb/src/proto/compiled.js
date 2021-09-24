@@ -28,6 +28,7 @@ $root.server = (function() {
          * @interface IUploadAvatar
          * @property {string|null} [id] UploadAvatar id
          * @property {Uint8Array|null} [data] UploadAvatar data
+         * @property {Uint8Array|null} [fullData] UploadAvatar fullData
          */
 
         /**
@@ -62,6 +63,14 @@ $root.server = (function() {
         UploadAvatar.prototype.data = $util.newBuffer([]);
 
         /**
+         * UploadAvatar fullData.
+         * @member {Uint8Array} fullData
+         * @memberof server.UploadAvatar
+         * @instance
+         */
+        UploadAvatar.prototype.fullData = $util.newBuffer([]);
+
+        /**
          * Creates a new UploadAvatar instance using the specified properties.
          * @function create
          * @memberof server.UploadAvatar
@@ -89,6 +98,8 @@ $root.server = (function() {
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
             if (message.data != null && Object.hasOwnProperty.call(message, "data"))
                 writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.data);
+            if (message.fullData != null && Object.hasOwnProperty.call(message, "fullData"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.fullData);
             return writer;
         };
 
@@ -128,6 +139,9 @@ $root.server = (function() {
                     break;
                 case 2:
                     message.data = reader.bytes();
+                    break;
+                case 3:
+                    message.fullData = reader.bytes();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -170,6 +184,9 @@ $root.server = (function() {
             if (message.data != null && message.hasOwnProperty("data"))
                 if (!(message.data && typeof message.data.length === "number" || $util.isString(message.data)))
                     return "data: buffer expected";
+            if (message.fullData != null && message.hasOwnProperty("fullData"))
+                if (!(message.fullData && typeof message.fullData.length === "number" || $util.isString(message.fullData)))
+                    return "fullData: buffer expected";
             return null;
         };
 
@@ -192,6 +209,11 @@ $root.server = (function() {
                     $util.base64.decode(object.data, message.data = $util.newBuffer($util.base64.length(object.data)), 0);
                 else if (object.data.length)
                     message.data = object.data;
+            if (object.fullData != null)
+                if (typeof object.fullData === "string")
+                    $util.base64.decode(object.fullData, message.fullData = $util.newBuffer($util.base64.length(object.fullData)), 0);
+                else if (object.fullData.length)
+                    message.fullData = object.fullData;
             return message;
         };
 
@@ -217,11 +239,20 @@ $root.server = (function() {
                     if (options.bytes !== Array)
                         object.data = $util.newBuffer(object.data);
                 }
+                if (options.bytes === String)
+                    object.fullData = "";
+                else {
+                    object.fullData = [];
+                    if (options.bytes !== Array)
+                        object.fullData = $util.newBuffer(object.fullData);
+                }
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
             if (message.data != null && message.hasOwnProperty("data"))
                 object.data = options.bytes === String ? $util.base64.encode(message.data, 0, message.data.length) : options.bytes === Array ? Array.prototype.slice.call(message.data) : message.data;
+            if (message.fullData != null && message.hasOwnProperty("fullData"))
+                object.fullData = options.bytes === String ? $util.base64.encode(message.fullData, 0, message.fullData.length) : options.bytes === Array ? Array.prototype.slice.call(message.fullData) : message.fullData;
             return object;
         };
 
@@ -679,6 +710,7 @@ $root.server = (function() {
          * @interface IUploadGroupAvatar
          * @property {string|null} [gid] UploadGroupAvatar gid
          * @property {Uint8Array|null} [data] UploadGroupAvatar data
+         * @property {Uint8Array|null} [fullData] UploadGroupAvatar fullData
          */
 
         /**
@@ -713,6 +745,14 @@ $root.server = (function() {
         UploadGroupAvatar.prototype.data = $util.newBuffer([]);
 
         /**
+         * UploadGroupAvatar fullData.
+         * @member {Uint8Array} fullData
+         * @memberof server.UploadGroupAvatar
+         * @instance
+         */
+        UploadGroupAvatar.prototype.fullData = $util.newBuffer([]);
+
+        /**
          * Creates a new UploadGroupAvatar instance using the specified properties.
          * @function create
          * @memberof server.UploadGroupAvatar
@@ -740,6 +780,8 @@ $root.server = (function() {
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.gid);
             if (message.data != null && Object.hasOwnProperty.call(message, "data"))
                 writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.data);
+            if (message.fullData != null && Object.hasOwnProperty.call(message, "fullData"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.fullData);
             return writer;
         };
 
@@ -779,6 +821,9 @@ $root.server = (function() {
                     break;
                 case 2:
                     message.data = reader.bytes();
+                    break;
+                case 3:
+                    message.fullData = reader.bytes();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -821,6 +866,9 @@ $root.server = (function() {
             if (message.data != null && message.hasOwnProperty("data"))
                 if (!(message.data && typeof message.data.length === "number" || $util.isString(message.data)))
                     return "data: buffer expected";
+            if (message.fullData != null && message.hasOwnProperty("fullData"))
+                if (!(message.fullData && typeof message.fullData.length === "number" || $util.isString(message.fullData)))
+                    return "fullData: buffer expected";
             return null;
         };
 
@@ -843,6 +891,11 @@ $root.server = (function() {
                     $util.base64.decode(object.data, message.data = $util.newBuffer($util.base64.length(object.data)), 0);
                 else if (object.data.length)
                     message.data = object.data;
+            if (object.fullData != null)
+                if (typeof object.fullData === "string")
+                    $util.base64.decode(object.fullData, message.fullData = $util.newBuffer($util.base64.length(object.fullData)), 0);
+                else if (object.fullData.length)
+                    message.fullData = object.fullData;
             return message;
         };
 
@@ -868,11 +921,20 @@ $root.server = (function() {
                     if (options.bytes !== Array)
                         object.data = $util.newBuffer(object.data);
                 }
+                if (options.bytes === String)
+                    object.fullData = "";
+                else {
+                    object.fullData = [];
+                    if (options.bytes !== Array)
+                        object.fullData = $util.newBuffer(object.fullData);
+                }
             }
             if (message.gid != null && message.hasOwnProperty("gid"))
                 object.gid = message.gid;
             if (message.data != null && message.hasOwnProperty("data"))
                 object.data = options.bytes === String ? $util.base64.encode(message.data, 0, message.data.length) : options.bytes === Array ? Array.prototype.slice.call(message.data) : message.data;
+            if (message.fullData != null && message.hasOwnProperty("fullData"))
+                object.fullData = options.bytes === String ? $util.base64.encode(message.fullData, 0, message.fullData.length) : options.bytes === Array ? Array.prototype.slice.call(message.fullData) : message.fullData;
             return object;
         };
 
@@ -2324,7 +2386,6 @@ $root.server = (function() {
          * @property {string|null} [normalized] Contact normalized
          * @property {number|Long|null} [uid] Contact uid
          * @property {string|null} [avatarId] Contact avatarId
-         * @property {server.Contact.Role|null} [role] Contact role
          * @property {string|null} [name] Contact name
          * @property {number|Long|null} [numPotentialFriends] Contact numPotentialFriends
          */
@@ -2385,14 +2446,6 @@ $root.server = (function() {
         Contact.prototype.avatarId = "";
 
         /**
-         * Contact role.
-         * @member {server.Contact.Role} role
-         * @memberof server.Contact
-         * @instance
-         */
-        Contact.prototype.role = 0;
-
-        /**
          * Contact name.
          * @member {string} name
          * @memberof server.Contact
@@ -2442,8 +2495,6 @@ $root.server = (function() {
                 writer.uint32(/* id 4, wireType 0 =*/32).int64(message.uid);
             if (message.avatarId != null && Object.hasOwnProperty.call(message, "avatarId"))
                 writer.uint32(/* id 5, wireType 2 =*/42).string(message.avatarId);
-            if (message.role != null && Object.hasOwnProperty.call(message, "role"))
-                writer.uint32(/* id 6, wireType 0 =*/48).int32(message.role);
             if (message.name != null && Object.hasOwnProperty.call(message, "name"))
                 writer.uint32(/* id 7, wireType 2 =*/58).string(message.name);
             if (message.numPotentialFriends != null && Object.hasOwnProperty.call(message, "numPotentialFriends"))
@@ -2496,9 +2547,6 @@ $root.server = (function() {
                     break;
                 case 5:
                     message.avatarId = reader.string();
-                    break;
-                case 6:
-                    message.role = reader.int32();
                     break;
                 case 7:
                     message.name = reader.string();
@@ -2561,14 +2609,6 @@ $root.server = (function() {
             if (message.avatarId != null && message.hasOwnProperty("avatarId"))
                 if (!$util.isString(message.avatarId))
                     return "avatarId: string expected";
-            if (message.role != null && message.hasOwnProperty("role"))
-                switch (message.role) {
-                default:
-                    return "role: enum value expected";
-                case 0:
-                case 1:
-                    break;
-                }
             if (message.name != null && message.hasOwnProperty("name"))
                 if (!$util.isString(message.name))
                     return "name: string expected";
@@ -2615,16 +2655,6 @@ $root.server = (function() {
                     message.uid = new $util.LongBits(object.uid.low >>> 0, object.uid.high >>> 0).toNumber();
             if (object.avatarId != null)
                 message.avatarId = String(object.avatarId);
-            switch (object.role) {
-            case "FRIENDS":
-            case 0:
-                message.role = 0;
-                break;
-            case "NONE":
-            case 1:
-                message.role = 1;
-                break;
-            }
             if (object.name != null)
                 message.name = String(object.name);
             if (object.numPotentialFriends != null)
@@ -2662,7 +2692,6 @@ $root.server = (function() {
                 } else
                     object.uid = options.longs === String ? "0" : 0;
                 object.avatarId = "";
-                object.role = options.enums === String ? "FRIENDS" : 0;
                 object.name = "";
                 if ($util.Long) {
                     var long = new $util.Long(0, 0, false);
@@ -2683,8 +2712,6 @@ $root.server = (function() {
                     object.uid = options.longs === String ? $util.Long.prototype.toString.call(message.uid) : options.longs === Number ? new $util.LongBits(message.uid.low >>> 0, message.uid.high >>> 0).toNumber() : message.uid;
             if (message.avatarId != null && message.hasOwnProperty("avatarId"))
                 object.avatarId = message.avatarId;
-            if (message.role != null && message.hasOwnProperty("role"))
-                object.role = options.enums === String ? $root.server.Contact.Role[message.role] : message.role;
             if (message.name != null && message.hasOwnProperty("name"))
                 object.name = message.name;
             if (message.numPotentialFriends != null && message.hasOwnProperty("numPotentialFriends"))
@@ -2717,20 +2744,6 @@ $root.server = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "ADD"] = 0;
             values[valuesById[1] = "DELETE"] = 1;
-            return values;
-        })();
-
-        /**
-         * Role enum.
-         * @name server.Contact.Role
-         * @enum {number}
-         * @property {number} FRIENDS=0 FRIENDS value
-         * @property {number} NONE=1 NONE value
-         */
-        Contact.Role = (function() {
-            var valuesById = {}, values = Object.create(valuesById);
-            values[valuesById[0] = "FRIENDS"] = 0;
-            values[valuesById[1] = "NONE"] = 1;
             return values;
         })();
 
@@ -4812,6 +4825,8 @@ $root.server = (function() {
          * @property {server.IPost|null} [post] FeedItem post
          * @property {server.IComment|null} [comment] FeedItem comment
          * @property {Array.<server.IShareStanza>|null} [shareStanzas] FeedItem shareStanzas
+         * @property {Array.<server.ISenderStateBundle>|null} [senderStateBundles] FeedItem senderStateBundles
+         * @property {server.ISenderStateWithKeyInfo|null} [senderState] FeedItem senderState
          */
 
         /**
@@ -4824,6 +4839,7 @@ $root.server = (function() {
          */
         function FeedItem(properties) {
             this.shareStanzas = [];
+            this.senderStateBundles = [];
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -4861,6 +4877,22 @@ $root.server = (function() {
          * @instance
          */
         FeedItem.prototype.shareStanzas = $util.emptyArray;
+
+        /**
+         * FeedItem senderStateBundles.
+         * @member {Array.<server.ISenderStateBundle>} senderStateBundles
+         * @memberof server.FeedItem
+         * @instance
+         */
+        FeedItem.prototype.senderStateBundles = $util.emptyArray;
+
+        /**
+         * FeedItem senderState.
+         * @member {server.ISenderStateWithKeyInfo|null|undefined} senderState
+         * @memberof server.FeedItem
+         * @instance
+         */
+        FeedItem.prototype.senderState = null;
 
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
@@ -4909,6 +4941,11 @@ $root.server = (function() {
             if (message.shareStanzas != null && message.shareStanzas.length)
                 for (var i = 0; i < message.shareStanzas.length; ++i)
                     $root.server.ShareStanza.encode(message.shareStanzas[i], writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+            if (message.senderStateBundles != null && message.senderStateBundles.length)
+                for (var i = 0; i < message.senderStateBundles.length; ++i)
+                    $root.server.SenderStateBundle.encode(message.senderStateBundles[i], writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
+            if (message.senderState != null && Object.hasOwnProperty.call(message, "senderState"))
+                $root.server.SenderStateWithKeyInfo.encode(message.senderState, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
             return writer;
         };
 
@@ -4956,6 +4993,14 @@ $root.server = (function() {
                     if (!(message.shareStanzas && message.shareStanzas.length))
                         message.shareStanzas = [];
                     message.shareStanzas.push($root.server.ShareStanza.decode(reader, reader.uint32()));
+                    break;
+                case 7:
+                    if (!(message.senderStateBundles && message.senderStateBundles.length))
+                        message.senderStateBundles = [];
+                    message.senderStateBundles.push($root.server.SenderStateBundle.decode(reader, reader.uint32()));
+                    break;
+                case 8:
+                    message.senderState = $root.server.SenderStateWithKeyInfo.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -5029,6 +5074,20 @@ $root.server = (function() {
                         return "shareStanzas." + error;
                 }
             }
+            if (message.senderStateBundles != null && message.hasOwnProperty("senderStateBundles")) {
+                if (!Array.isArray(message.senderStateBundles))
+                    return "senderStateBundles: array expected";
+                for (var i = 0; i < message.senderStateBundles.length; ++i) {
+                    var error = $root.server.SenderStateBundle.verify(message.senderStateBundles[i]);
+                    if (error)
+                        return "senderStateBundles." + error;
+                }
+            }
+            if (message.senderState != null && message.hasOwnProperty("senderState")) {
+                var error = $root.server.SenderStateWithKeyInfo.verify(message.senderState);
+                if (error)
+                    return "senderState." + error;
+            }
             return null;
         };
 
@@ -5078,6 +5137,21 @@ $root.server = (function() {
                     message.shareStanzas[i] = $root.server.ShareStanza.fromObject(object.shareStanzas[i]);
                 }
             }
+            if (object.senderStateBundles) {
+                if (!Array.isArray(object.senderStateBundles))
+                    throw TypeError(".server.FeedItem.senderStateBundles: array expected");
+                message.senderStateBundles = [];
+                for (var i = 0; i < object.senderStateBundles.length; ++i) {
+                    if (typeof object.senderStateBundles[i] !== "object")
+                        throw TypeError(".server.FeedItem.senderStateBundles: object expected");
+                    message.senderStateBundles[i] = $root.server.SenderStateBundle.fromObject(object.senderStateBundles[i]);
+                }
+            }
+            if (object.senderState != null) {
+                if (typeof object.senderState !== "object")
+                    throw TypeError(".server.FeedItem.senderState: object expected");
+                message.senderState = $root.server.SenderStateWithKeyInfo.fromObject(object.senderState);
+            }
             return message;
         };
 
@@ -5094,10 +5168,14 @@ $root.server = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.arrays || options.defaults)
+            if (options.arrays || options.defaults) {
                 object.shareStanzas = [];
-            if (options.defaults)
+                object.senderStateBundles = [];
+            }
+            if (options.defaults) {
                 object.action = options.enums === String ? "PUBLISH" : 0;
+                object.senderState = null;
+            }
             if (message.action != null && message.hasOwnProperty("action"))
                 object.action = options.enums === String ? $root.server.FeedItem.Action[message.action] : message.action;
             if (message.post != null && message.hasOwnProperty("post")) {
@@ -5115,6 +5193,13 @@ $root.server = (function() {
                 for (var j = 0; j < message.shareStanzas.length; ++j)
                     object.shareStanzas[j] = $root.server.ShareStanza.toObject(message.shareStanzas[j], options);
             }
+            if (message.senderStateBundles && message.senderStateBundles.length) {
+                object.senderStateBundles = [];
+                for (var j = 0; j < message.senderStateBundles.length; ++j)
+                    object.senderStateBundles[j] = $root.server.SenderStateBundle.toObject(message.senderStateBundles[j], options);
+            }
+            if (message.senderState != null && message.hasOwnProperty("senderState"))
+                object.senderState = $root.server.SenderStateWithKeyInfo.toObject(message.senderState, options);
             return object;
         };
 
@@ -12348,6 +12433,8 @@ $root.server = (function() {
          * @property {server.IHistoryResend|null} [historyResend] Iq historyResend
          * @property {server.IExportData|null} [exportData] Iq exportData
          * @property {server.IContactSyncError|null} [contactSyncError] Iq contactSyncError
+         * @property {server.IClientOtpRequest|null} [clientOtpRequest] Iq clientOtpRequest
+         * @property {server.IClientOtpResponse|null} [clientOtpResponse] Iq clientOtpResponse
          */
 
         /**
@@ -12613,17 +12700,33 @@ $root.server = (function() {
          */
         Iq.prototype.contactSyncError = null;
 
+        /**
+         * Iq clientOtpRequest.
+         * @member {server.IClientOtpRequest|null|undefined} clientOtpRequest
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.clientOtpRequest = null;
+
+        /**
+         * Iq clientOtpResponse.
+         * @member {server.IClientOtpResponse|null|undefined} clientOtpResponse
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.clientOtpResponse = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * Iq payload.
-         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|undefined} payload
+         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|undefined} payload
          * @memberof server.Iq
          * @instance
          */
         Object.defineProperty(Iq.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError"]),
+            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -12713,6 +12816,10 @@ $root.server = (function() {
                 $root.server.ExportData.encode(message.exportData, writer.uint32(/* id 33, wireType 2 =*/266).fork()).ldelim();
             if (message.contactSyncError != null && Object.hasOwnProperty.call(message, "contactSyncError"))
                 $root.server.ContactSyncError.encode(message.contactSyncError, writer.uint32(/* id 34, wireType 2 =*/274).fork()).ldelim();
+            if (message.clientOtpRequest != null && Object.hasOwnProperty.call(message, "clientOtpRequest"))
+                $root.server.ClientOtpRequest.encode(message.clientOtpRequest, writer.uint32(/* id 35, wireType 2 =*/282).fork()).ldelim();
+            if (message.clientOtpResponse != null && Object.hasOwnProperty.call(message, "clientOtpResponse"))
+                $root.server.ClientOtpResponse.encode(message.clientOtpResponse, writer.uint32(/* id 36, wireType 2 =*/290).fork()).ldelim();
             return writer;
         };
 
@@ -12839,6 +12946,12 @@ $root.server = (function() {
                     break;
                 case 34:
                     message.contactSyncError = $root.server.ContactSyncError.decode(reader, reader.uint32());
+                    break;
+                case 35:
+                    message.clientOtpRequest = $root.server.ClientOtpRequest.decode(reader, reader.uint32());
+                    break;
+                case 36:
+                    message.clientOtpResponse = $root.server.ClientOtpResponse.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -13177,6 +13290,26 @@ $root.server = (function() {
                         return "contactSyncError." + error;
                 }
             }
+            if (message.clientOtpRequest != null && message.hasOwnProperty("clientOtpRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.ClientOtpRequest.verify(message.clientOtpRequest);
+                    if (error)
+                        return "clientOtpRequest." + error;
+                }
+            }
+            if (message.clientOtpResponse != null && message.hasOwnProperty("clientOtpResponse")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.ClientOtpResponse.verify(message.clientOtpResponse);
+                    if (error)
+                        return "clientOtpResponse." + error;
+                }
+            }
             return null;
         };
 
@@ -13357,6 +13490,16 @@ $root.server = (function() {
                     throw TypeError(".server.Iq.contactSyncError: object expected");
                 message.contactSyncError = $root.server.ContactSyncError.fromObject(object.contactSyncError);
             }
+            if (object.clientOtpRequest != null) {
+                if (typeof object.clientOtpRequest !== "object")
+                    throw TypeError(".server.Iq.clientOtpRequest: object expected");
+                message.clientOtpRequest = $root.server.ClientOtpRequest.fromObject(object.clientOtpRequest);
+            }
+            if (object.clientOtpResponse != null) {
+                if (typeof object.clientOtpResponse !== "object")
+                    throw TypeError(".server.Iq.clientOtpResponse: object expected");
+                message.clientOtpResponse = $root.server.ClientOtpResponse.fromObject(object.clientOtpResponse);
+            }
             return message;
         };
 
@@ -13526,6 +13669,16 @@ $root.server = (function() {
                 if (options.oneofs)
                     object.payload = "contactSyncError";
             }
+            if (message.clientOtpRequest != null && message.hasOwnProperty("clientOtpRequest")) {
+                object.clientOtpRequest = $root.server.ClientOtpRequest.toObject(message.clientOtpRequest, options);
+                if (options.oneofs)
+                    object.payload = "clientOtpRequest";
+            }
+            if (message.clientOtpResponse != null && message.hasOwnProperty("clientOtpResponse")) {
+                object.clientOtpResponse = $root.server.ClientOtpResponse.toObject(message.clientOtpResponse, options);
+                if (options.oneofs)
+                    object.payload = "clientOtpResponse";
+            }
             return object;
         };
 
@@ -13596,6 +13749,9 @@ $root.server = (function() {
          * @property {server.IHistoryResend|null} [historyResend] Msg historyResend
          * @property {server.IPlayedReceipt|null} [playedReceipt] Msg playedReceipt
          * @property {server.IRequestLogs|null} [requestLogs] Msg requestLogs
+         * @property {server.IWakeUp|null} [wakeup] Msg wakeup
+         * @property {server.IHomeFeedRerequest|null} [homeFeedRerequest] Msg homeFeedRerequest
+         * @property {server.IFeedItems|null} [historicalContent] Msg historicalContent
          * @property {number|null} [retryCount] Msg retryCount
          * @property {number|null} [rerequestCount] Msg rerequestCount
          */
@@ -13848,6 +14004,30 @@ $root.server = (function() {
         Msg.prototype.requestLogs = null;
 
         /**
+         * Msg wakeup.
+         * @member {server.IWakeUp|null|undefined} wakeup
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.wakeup = null;
+
+        /**
+         * Msg homeFeedRerequest.
+         * @member {server.IHomeFeedRerequest|null|undefined} homeFeedRerequest
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.homeFeedRerequest = null;
+
+        /**
+         * Msg historicalContent.
+         * @member {server.IFeedItems|null|undefined} historicalContent
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.historicalContent = null;
+
+        /**
          * Msg retryCount.
          * @member {number} retryCount
          * @memberof server.Msg
@@ -13868,12 +14048,12 @@ $root.server = (function() {
 
         /**
          * Msg payload.
-         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|undefined} payload
+         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"historicalContent"|undefined} payload
          * @memberof server.Msg
          * @instance
          */
         Object.defineProperty(Msg.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs"]),
+            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "historicalContent"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -13963,6 +14143,12 @@ $root.server = (function() {
                 $root.server.PlayedReceipt.encode(message.playedReceipt, writer.uint32(/* id 30, wireType 2 =*/242).fork()).ldelim();
             if (message.requestLogs != null && Object.hasOwnProperty.call(message, "requestLogs"))
                 $root.server.RequestLogs.encode(message.requestLogs, writer.uint32(/* id 31, wireType 2 =*/250).fork()).ldelim();
+            if (message.wakeup != null && Object.hasOwnProperty.call(message, "wakeup"))
+                $root.server.WakeUp.encode(message.wakeup, writer.uint32(/* id 32, wireType 2 =*/258).fork()).ldelim();
+            if (message.homeFeedRerequest != null && Object.hasOwnProperty.call(message, "homeFeedRerequest"))
+                $root.server.HomeFeedRerequest.encode(message.homeFeedRerequest, writer.uint32(/* id 33, wireType 2 =*/266).fork()).ldelim();
+            if (message.historicalContent != null && Object.hasOwnProperty.call(message, "historicalContent"))
+                $root.server.FeedItems.encode(message.historicalContent, writer.uint32(/* id 34, wireType 2 =*/274).fork()).ldelim();
             return writer;
         };
 
@@ -14083,6 +14269,15 @@ $root.server = (function() {
                     break;
                 case 31:
                     message.requestLogs = $root.server.RequestLogs.decode(reader, reader.uint32());
+                    break;
+                case 32:
+                    message.wakeup = $root.server.WakeUp.decode(reader, reader.uint32());
+                    break;
+                case 33:
+                    message.homeFeedRerequest = $root.server.HomeFeedRerequest.decode(reader, reader.uint32());
+                    break;
+                case 34:
+                    message.historicalContent = $root.server.FeedItems.decode(reader, reader.uint32());
                     break;
                 case 21:
                     message.retryCount = reader.int32();
@@ -14394,6 +14589,36 @@ $root.server = (function() {
                         return "requestLogs." + error;
                 }
             }
+            if (message.wakeup != null && message.hasOwnProperty("wakeup")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.WakeUp.verify(message.wakeup);
+                    if (error)
+                        return "wakeup." + error;
+                }
+            }
+            if (message.homeFeedRerequest != null && message.hasOwnProperty("homeFeedRerequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.HomeFeedRerequest.verify(message.homeFeedRerequest);
+                    if (error)
+                        return "homeFeedRerequest." + error;
+                }
+            }
+            if (message.historicalContent != null && message.hasOwnProperty("historicalContent")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.FeedItems.verify(message.historicalContent);
+                    if (error)
+                        return "historicalContent." + error;
+                }
+            }
             if (message.retryCount != null && message.hasOwnProperty("retryCount"))
                 if (!$util.isInteger(message.retryCount))
                     return "retryCount: integer expected";
@@ -14582,6 +14807,21 @@ $root.server = (function() {
                     throw TypeError(".server.Msg.requestLogs: object expected");
                 message.requestLogs = $root.server.RequestLogs.fromObject(object.requestLogs);
             }
+            if (object.wakeup != null) {
+                if (typeof object.wakeup !== "object")
+                    throw TypeError(".server.Msg.wakeup: object expected");
+                message.wakeup = $root.server.WakeUp.fromObject(object.wakeup);
+            }
+            if (object.homeFeedRerequest != null) {
+                if (typeof object.homeFeedRerequest !== "object")
+                    throw TypeError(".server.Msg.homeFeedRerequest: object expected");
+                message.homeFeedRerequest = $root.server.HomeFeedRerequest.fromObject(object.homeFeedRerequest);
+            }
+            if (object.historicalContent != null) {
+                if (typeof object.historicalContent !== "object")
+                    throw TypeError(".server.Msg.historicalContent: object expected");
+                message.historicalContent = $root.server.FeedItems.fromObject(object.historicalContent);
+            }
             if (object.retryCount != null)
                 message.retryCount = object.retryCount | 0;
             if (object.rerequestCount != null)
@@ -14760,6 +15000,21 @@ $root.server = (function() {
                 object.requestLogs = $root.server.RequestLogs.toObject(message.requestLogs, options);
                 if (options.oneofs)
                     object.payload = "requestLogs";
+            }
+            if (message.wakeup != null && message.hasOwnProperty("wakeup")) {
+                object.wakeup = $root.server.WakeUp.toObject(message.wakeup, options);
+                if (options.oneofs)
+                    object.payload = "wakeup";
+            }
+            if (message.homeFeedRerequest != null && message.hasOwnProperty("homeFeedRerequest")) {
+                object.homeFeedRerequest = $root.server.HomeFeedRerequest.toObject(message.homeFeedRerequest, options);
+                if (options.oneofs)
+                    object.payload = "homeFeedRerequest";
+            }
+            if (message.historicalContent != null && message.hasOwnProperty("historicalContent")) {
+                object.historicalContent = $root.server.FeedItems.toObject(message.historicalContent, options);
+                if (options.oneofs)
+                    object.payload = "historicalContent";
             }
             return object;
         };
@@ -18965,6 +19220,250 @@ $root.server = (function() {
         })();
 
         return GroupFeedRerequest;
+    })();
+
+    server.HomeFeedRerequest = (function() {
+
+        /**
+         * Properties of a HomeFeedRerequest.
+         * @memberof server
+         * @interface IHomeFeedRerequest
+         * @property {string|null} [id] HomeFeedRerequest id
+         * @property {server.HomeFeedRerequest.RerequestType|null} [rerequestType] HomeFeedRerequest rerequestType
+         */
+
+        /**
+         * Constructs a new HomeFeedRerequest.
+         * @memberof server
+         * @classdesc Represents a HomeFeedRerequest.
+         * @implements IHomeFeedRerequest
+         * @constructor
+         * @param {server.IHomeFeedRerequest=} [properties] Properties to set
+         */
+        function HomeFeedRerequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * HomeFeedRerequest id.
+         * @member {string} id
+         * @memberof server.HomeFeedRerequest
+         * @instance
+         */
+        HomeFeedRerequest.prototype.id = "";
+
+        /**
+         * HomeFeedRerequest rerequestType.
+         * @member {server.HomeFeedRerequest.RerequestType} rerequestType
+         * @memberof server.HomeFeedRerequest
+         * @instance
+         */
+        HomeFeedRerequest.prototype.rerequestType = 0;
+
+        /**
+         * Creates a new HomeFeedRerequest instance using the specified properties.
+         * @function create
+         * @memberof server.HomeFeedRerequest
+         * @static
+         * @param {server.IHomeFeedRerequest=} [properties] Properties to set
+         * @returns {server.HomeFeedRerequest} HomeFeedRerequest instance
+         */
+        HomeFeedRerequest.create = function create(properties) {
+            return new HomeFeedRerequest(properties);
+        };
+
+        /**
+         * Encodes the specified HomeFeedRerequest message. Does not implicitly {@link server.HomeFeedRerequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.HomeFeedRerequest
+         * @static
+         * @param {server.IHomeFeedRerequest} message HomeFeedRerequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HomeFeedRerequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.id != null && Object.hasOwnProperty.call(message, "id"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
+            if (message.rerequestType != null && Object.hasOwnProperty.call(message, "rerequestType"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.rerequestType);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified HomeFeedRerequest message, length delimited. Does not implicitly {@link server.HomeFeedRerequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.HomeFeedRerequest
+         * @static
+         * @param {server.IHomeFeedRerequest} message HomeFeedRerequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HomeFeedRerequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a HomeFeedRerequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.HomeFeedRerequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.HomeFeedRerequest} HomeFeedRerequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HomeFeedRerequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.HomeFeedRerequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.id = reader.string();
+                    break;
+                case 2:
+                    message.rerequestType = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a HomeFeedRerequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.HomeFeedRerequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.HomeFeedRerequest} HomeFeedRerequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HomeFeedRerequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a HomeFeedRerequest message.
+         * @function verify
+         * @memberof server.HomeFeedRerequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        HomeFeedRerequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.id != null && message.hasOwnProperty("id"))
+                if (!$util.isString(message.id))
+                    return "id: string expected";
+            if (message.rerequestType != null && message.hasOwnProperty("rerequestType"))
+                switch (message.rerequestType) {
+                default:
+                    return "rerequestType: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            return null;
+        };
+
+        /**
+         * Creates a HomeFeedRerequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.HomeFeedRerequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.HomeFeedRerequest} HomeFeedRerequest
+         */
+        HomeFeedRerequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.HomeFeedRerequest)
+                return object;
+            var message = new $root.server.HomeFeedRerequest();
+            if (object.id != null)
+                message.id = String(object.id);
+            switch (object.rerequestType) {
+            case "UNKNOWN_TYPE":
+            case 0:
+                message.rerequestType = 0;
+                break;
+            case "PAYLOAD":
+            case 1:
+                message.rerequestType = 1;
+                break;
+            case "SENDER_STATE":
+            case 2:
+                message.rerequestType = 2;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a HomeFeedRerequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.HomeFeedRerequest
+         * @static
+         * @param {server.HomeFeedRerequest} message HomeFeedRerequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        HomeFeedRerequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.id = "";
+                object.rerequestType = options.enums === String ? "UNKNOWN_TYPE" : 0;
+            }
+            if (message.id != null && message.hasOwnProperty("id"))
+                object.id = message.id;
+            if (message.rerequestType != null && message.hasOwnProperty("rerequestType"))
+                object.rerequestType = options.enums === String ? $root.server.HomeFeedRerequest.RerequestType[message.rerequestType] : message.rerequestType;
+            return object;
+        };
+
+        /**
+         * Converts this HomeFeedRerequest to JSON.
+         * @function toJSON
+         * @memberof server.HomeFeedRerequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        HomeFeedRerequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * RerequestType enum.
+         * @name server.HomeFeedRerequest.RerequestType
+         * @enum {number}
+         * @property {number} UNKNOWN_TYPE=0 UNKNOWN_TYPE value
+         * @property {number} PAYLOAD=1 PAYLOAD value
+         * @property {number} SENDER_STATE=2 SENDER_STATE value
+         */
+        HomeFeedRerequest.RerequestType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_TYPE"] = 0;
+            values[valuesById[1] = "PAYLOAD"] = 1;
+            values[valuesById[2] = "SENDER_STATE"] = 2;
+            return values;
+        })();
+
+        return HomeFeedRerequest;
     })();
 
     server.SeenReceipt = (function() {
@@ -25028,6 +25527,717 @@ $root.server = (function() {
         })();
 
         return VerifyOtpResponse;
+    })();
+
+    server.ClientOtpRequest = (function() {
+
+        /**
+         * Properties of a ClientOtpRequest.
+         * @memberof server
+         * @interface IClientOtpRequest
+         * @property {server.ClientOtpRequest.Method|null} [method] ClientOtpRequest method
+         * @property {string|null} [phone] ClientOtpRequest phone
+         * @property {string|null} [content] ClientOtpRequest content
+         */
+
+        /**
+         * Constructs a new ClientOtpRequest.
+         * @memberof server
+         * @classdesc Represents a ClientOtpRequest.
+         * @implements IClientOtpRequest
+         * @constructor
+         * @param {server.IClientOtpRequest=} [properties] Properties to set
+         */
+        function ClientOtpRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ClientOtpRequest method.
+         * @member {server.ClientOtpRequest.Method} method
+         * @memberof server.ClientOtpRequest
+         * @instance
+         */
+        ClientOtpRequest.prototype.method = 0;
+
+        /**
+         * ClientOtpRequest phone.
+         * @member {string} phone
+         * @memberof server.ClientOtpRequest
+         * @instance
+         */
+        ClientOtpRequest.prototype.phone = "";
+
+        /**
+         * ClientOtpRequest content.
+         * @member {string} content
+         * @memberof server.ClientOtpRequest
+         * @instance
+         */
+        ClientOtpRequest.prototype.content = "";
+
+        /**
+         * Creates a new ClientOtpRequest instance using the specified properties.
+         * @function create
+         * @memberof server.ClientOtpRequest
+         * @static
+         * @param {server.IClientOtpRequest=} [properties] Properties to set
+         * @returns {server.ClientOtpRequest} ClientOtpRequest instance
+         */
+        ClientOtpRequest.create = function create(properties) {
+            return new ClientOtpRequest(properties);
+        };
+
+        /**
+         * Encodes the specified ClientOtpRequest message. Does not implicitly {@link server.ClientOtpRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.ClientOtpRequest
+         * @static
+         * @param {server.IClientOtpRequest} message ClientOtpRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ClientOtpRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.method != null && Object.hasOwnProperty.call(message, "method"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.method);
+            if (message.phone != null && Object.hasOwnProperty.call(message, "phone"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.phone);
+            if (message.content != null && Object.hasOwnProperty.call(message, "content"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.content);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ClientOtpRequest message, length delimited. Does not implicitly {@link server.ClientOtpRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.ClientOtpRequest
+         * @static
+         * @param {server.IClientOtpRequest} message ClientOtpRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ClientOtpRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a ClientOtpRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.ClientOtpRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.ClientOtpRequest} ClientOtpRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ClientOtpRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.ClientOtpRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.method = reader.int32();
+                    break;
+                case 2:
+                    message.phone = reader.string();
+                    break;
+                case 3:
+                    message.content = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a ClientOtpRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.ClientOtpRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.ClientOtpRequest} ClientOtpRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ClientOtpRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a ClientOtpRequest message.
+         * @function verify
+         * @memberof server.ClientOtpRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ClientOtpRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.method != null && message.hasOwnProperty("method"))
+                switch (message.method) {
+                default:
+                    return "method: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.phone != null && message.hasOwnProperty("phone"))
+                if (!$util.isString(message.phone))
+                    return "phone: string expected";
+            if (message.content != null && message.hasOwnProperty("content"))
+                if (!$util.isString(message.content))
+                    return "content: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a ClientOtpRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.ClientOtpRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.ClientOtpRequest} ClientOtpRequest
+         */
+        ClientOtpRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.ClientOtpRequest)
+                return object;
+            var message = new $root.server.ClientOtpRequest();
+            switch (object.method) {
+            case "SMS":
+            case 0:
+                message.method = 0;
+                break;
+            case "VOICE_CALL":
+            case 1:
+                message.method = 1;
+                break;
+            }
+            if (object.phone != null)
+                message.phone = String(object.phone);
+            if (object.content != null)
+                message.content = String(object.content);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a ClientOtpRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.ClientOtpRequest
+         * @static
+         * @param {server.ClientOtpRequest} message ClientOtpRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ClientOtpRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.method = options.enums === String ? "SMS" : 0;
+                object.phone = "";
+                object.content = "";
+            }
+            if (message.method != null && message.hasOwnProperty("method"))
+                object.method = options.enums === String ? $root.server.ClientOtpRequest.Method[message.method] : message.method;
+            if (message.phone != null && message.hasOwnProperty("phone"))
+                object.phone = message.phone;
+            if (message.content != null && message.hasOwnProperty("content"))
+                object.content = message.content;
+            return object;
+        };
+
+        /**
+         * Converts this ClientOtpRequest to JSON.
+         * @function toJSON
+         * @memberof server.ClientOtpRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ClientOtpRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Method enum.
+         * @name server.ClientOtpRequest.Method
+         * @enum {number}
+         * @property {number} SMS=0 SMS value
+         * @property {number} VOICE_CALL=1 VOICE_CALL value
+         */
+        ClientOtpRequest.Method = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "SMS"] = 0;
+            values[valuesById[1] = "VOICE_CALL"] = 1;
+            return values;
+        })();
+
+        return ClientOtpRequest;
+    })();
+
+    server.ClientOtpResponse = (function() {
+
+        /**
+         * Properties of a ClientOtpResponse.
+         * @memberof server
+         * @interface IClientOtpResponse
+         * @property {server.ClientOtpResponse.Result|null} [result] ClientOtpResponse result
+         * @property {server.ClientOtpResponse.Reason|null} [reason] ClientOtpResponse reason
+         */
+
+        /**
+         * Constructs a new ClientOtpResponse.
+         * @memberof server
+         * @classdesc Represents a ClientOtpResponse.
+         * @implements IClientOtpResponse
+         * @constructor
+         * @param {server.IClientOtpResponse=} [properties] Properties to set
+         */
+        function ClientOtpResponse(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ClientOtpResponse result.
+         * @member {server.ClientOtpResponse.Result} result
+         * @memberof server.ClientOtpResponse
+         * @instance
+         */
+        ClientOtpResponse.prototype.result = 0;
+
+        /**
+         * ClientOtpResponse reason.
+         * @member {server.ClientOtpResponse.Reason} reason
+         * @memberof server.ClientOtpResponse
+         * @instance
+         */
+        ClientOtpResponse.prototype.reason = 0;
+
+        /**
+         * Creates a new ClientOtpResponse instance using the specified properties.
+         * @function create
+         * @memberof server.ClientOtpResponse
+         * @static
+         * @param {server.IClientOtpResponse=} [properties] Properties to set
+         * @returns {server.ClientOtpResponse} ClientOtpResponse instance
+         */
+        ClientOtpResponse.create = function create(properties) {
+            return new ClientOtpResponse(properties);
+        };
+
+        /**
+         * Encodes the specified ClientOtpResponse message. Does not implicitly {@link server.ClientOtpResponse.verify|verify} messages.
+         * @function encode
+         * @memberof server.ClientOtpResponse
+         * @static
+         * @param {server.IClientOtpResponse} message ClientOtpResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ClientOtpResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.reason);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ClientOtpResponse message, length delimited. Does not implicitly {@link server.ClientOtpResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.ClientOtpResponse
+         * @static
+         * @param {server.IClientOtpResponse} message ClientOtpResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ClientOtpResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a ClientOtpResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.ClientOtpResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.ClientOtpResponse} ClientOtpResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ClientOtpResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.ClientOtpResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    message.reason = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a ClientOtpResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.ClientOtpResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.ClientOtpResponse} ClientOtpResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ClientOtpResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a ClientOtpResponse message.
+         * @function verify
+         * @memberof server.ClientOtpResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ClientOtpResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                    break;
+                }
+            return null;
+        };
+
+        /**
+         * Creates a ClientOtpResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.ClientOtpResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.ClientOtpResponse} ClientOtpResponse
+         */
+        ClientOtpResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.ClientOtpResponse)
+                return object;
+            var message = new $root.server.ClientOtpResponse();
+            switch (object.result) {
+            case "UNKNOWN_RESULT":
+            case 0:
+                message.result = 0;
+                break;
+            case "SUCCESS":
+            case 1:
+                message.result = 1;
+                break;
+            case "FAILURE":
+            case 2:
+                message.result = 2;
+                break;
+            }
+            switch (object.reason) {
+            case "UNKNOWN_REASON":
+            case 0:
+                message.reason = 0;
+                break;
+            case "SETUP_ISSUE":
+            case 1:
+                message.reason = 1;
+                break;
+            case "PERMISSION_ISSUE":
+            case 2:
+                message.reason = 2;
+                break;
+            case "FORMATTING_ISSUE":
+            case 3:
+                message.reason = 3;
+                break;
+            case "NETWORKING_ISSUE":
+            case 4:
+                message.reason = 4;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a ClientOtpResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.ClientOtpResponse
+         * @static
+         * @param {server.ClientOtpResponse} message ClientOtpResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ClientOtpResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.result = options.enums === String ? "UNKNOWN_RESULT" : 0;
+                object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
+            }
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.ClientOtpResponse.Result[message.result] : message.result;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = options.enums === String ? $root.server.ClientOtpResponse.Reason[message.reason] : message.reason;
+            return object;
+        };
+
+        /**
+         * Converts this ClientOtpResponse to JSON.
+         * @function toJSON
+         * @memberof server.ClientOtpResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ClientOtpResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.ClientOtpResponse.Result
+         * @enum {number}
+         * @property {number} UNKNOWN_RESULT=0 UNKNOWN_RESULT value
+         * @property {number} SUCCESS=1 SUCCESS value
+         * @property {number} FAILURE=2 FAILURE value
+         */
+        ClientOtpResponse.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_RESULT"] = 0;
+            values[valuesById[1] = "SUCCESS"] = 1;
+            values[valuesById[2] = "FAILURE"] = 2;
+            return values;
+        })();
+
+        /**
+         * Reason enum.
+         * @name server.ClientOtpResponse.Reason
+         * @enum {number}
+         * @property {number} UNKNOWN_REASON=0 UNKNOWN_REASON value
+         * @property {number} SETUP_ISSUE=1 SETUP_ISSUE value
+         * @property {number} PERMISSION_ISSUE=2 PERMISSION_ISSUE value
+         * @property {number} FORMATTING_ISSUE=3 FORMATTING_ISSUE value
+         * @property {number} NETWORKING_ISSUE=4 NETWORKING_ISSUE value
+         */
+        ClientOtpResponse.Reason = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_REASON"] = 0;
+            values[valuesById[1] = "SETUP_ISSUE"] = 1;
+            values[valuesById[2] = "PERMISSION_ISSUE"] = 2;
+            values[valuesById[3] = "FORMATTING_ISSUE"] = 3;
+            values[valuesById[4] = "NETWORKING_ISSUE"] = 4;
+            return values;
+        })();
+
+        return ClientOtpResponse;
+    })();
+
+    server.WakeUp = (function() {
+
+        /**
+         * Properties of a WakeUp.
+         * @memberof server
+         * @interface IWakeUp
+         */
+
+        /**
+         * Constructs a new WakeUp.
+         * @memberof server
+         * @classdesc Represents a WakeUp.
+         * @implements IWakeUp
+         * @constructor
+         * @param {server.IWakeUp=} [properties] Properties to set
+         */
+        function WakeUp(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * Creates a new WakeUp instance using the specified properties.
+         * @function create
+         * @memberof server.WakeUp
+         * @static
+         * @param {server.IWakeUp=} [properties] Properties to set
+         * @returns {server.WakeUp} WakeUp instance
+         */
+        WakeUp.create = function create(properties) {
+            return new WakeUp(properties);
+        };
+
+        /**
+         * Encodes the specified WakeUp message. Does not implicitly {@link server.WakeUp.verify|verify} messages.
+         * @function encode
+         * @memberof server.WakeUp
+         * @static
+         * @param {server.IWakeUp} message WakeUp message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        WakeUp.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified WakeUp message, length delimited. Does not implicitly {@link server.WakeUp.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.WakeUp
+         * @static
+         * @param {server.IWakeUp} message WakeUp message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        WakeUp.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a WakeUp message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.WakeUp
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.WakeUp} WakeUp
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        WakeUp.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.WakeUp();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a WakeUp message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.WakeUp
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.WakeUp} WakeUp
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        WakeUp.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a WakeUp message.
+         * @function verify
+         * @memberof server.WakeUp
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        WakeUp.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            return null;
+        };
+
+        /**
+         * Creates a WakeUp message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.WakeUp
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.WakeUp} WakeUp
+         */
+        WakeUp.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.WakeUp)
+                return object;
+            return new $root.server.WakeUp();
+        };
+
+        /**
+         * Creates a plain object from a WakeUp message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.WakeUp
+         * @static
+         * @param {server.WakeUp} message WakeUp
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        WakeUp.toObject = function toObject() {
+            return {};
+        };
+
+        /**
+         * Converts this WakeUp to JSON.
+         * @function toJSON
+         * @memberof server.WakeUp
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        WakeUp.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return WakeUp;
     })();
 
     server.EventData = (function() {

@@ -61,17 +61,6 @@ public interface ContactOrBuilder extends
       getAvatarIdBytes();
 
   /**
-   * <code>.server.Contact.Role role = 6;</code>
-   * @return The enum numeric value on the wire for role.
-   */
-  int getRoleValue();
-  /**
-   * <code>.server.Contact.Role role = 6;</code>
-   * @return The role.
-   */
-  com.halloapp.proto.server.Contact.Role getRole();
-
-  /**
    * <code>string name = 7;</code>
    * @return The name.
    */

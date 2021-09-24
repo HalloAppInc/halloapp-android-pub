@@ -20,8 +20,22 @@ public interface UploadGroupAvatarOrBuilder extends
       getGidBytes();
 
   /**
+   * <pre>
+   * scaled-down binary jpeg data.
+   * </pre>
+   *
    * <code>bytes data = 2;</code>
    * @return The data.
    */
   com.google.protobuf.ByteString getData();
+
+  /**
+   * <pre>
+   * full binary jpeg data.
+   * </pre>
+   *
+   * <code>bytes full_data = 3;</code>
+   * @return The fullData.
+   */
+  com.google.protobuf.ByteString getFullData();
 }

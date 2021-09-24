@@ -106,95 +106,6 @@ public  final class Contact extends
     // @@protoc_insertion_point(enum_scope:server.Contact.Action)
   }
 
-  /**
-   * Protobuf enum {@code server.Contact.Role}
-   */
-  public enum Role
-      implements com.google.protobuf.Internal.EnumLite {
-    /**
-     * <code>FRIENDS = 0;</code>
-     */
-    FRIENDS(0),
-    /**
-     * <code>NONE = 1;</code>
-     */
-    NONE(1),
-    UNRECOGNIZED(-1),
-    ;
-
-    /**
-     * <code>FRIENDS = 0;</code>
-     */
-    public static final int FRIENDS_VALUE = 0;
-    /**
-     * <code>NONE = 1;</code>
-     */
-    public static final int NONE_VALUE = 1;
-
-
-    @java.lang.Override
-    public final int getNumber() {
-      if (this == UNRECOGNIZED) {
-        throw new java.lang.IllegalArgumentException(
-            "Can't get the number of an unknown enum value.");
-      }
-      return value;
-    }
-
-    /**
-     * @param value The number of the enum to look for.
-     * @return The enum associated with the given number.
-     * @deprecated Use {@link #forNumber(int)} instead.
-     */
-    @java.lang.Deprecated
-    public static Role valueOf(int value) {
-      return forNumber(value);
-    }
-
-    public static Role forNumber(int value) {
-      switch (value) {
-        case 0: return FRIENDS;
-        case 1: return NONE;
-        default: return null;
-      }
-    }
-
-    public static com.google.protobuf.Internal.EnumLiteMap<Role>
-        internalGetValueMap() {
-      return internalValueMap;
-    }
-    private static final com.google.protobuf.Internal.EnumLiteMap<
-        Role> internalValueMap =
-          new com.google.protobuf.Internal.EnumLiteMap<Role>() {
-            @java.lang.Override
-            public Role findValueByNumber(int number) {
-              return Role.forNumber(number);
-            }
-          };
-
-    public static com.google.protobuf.Internal.EnumVerifier 
-        internalGetVerifier() {
-      return RoleVerifier.INSTANCE;
-    }
-
-    private static final class RoleVerifier implements 
-         com.google.protobuf.Internal.EnumVerifier { 
-            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new RoleVerifier();
-            @java.lang.Override
-            public boolean isInRange(int number) {
-              return Role.forNumber(number) != null;
-            }
-          };
-
-    private final int value;
-
-    private Role(int value) {
-      this.value = value;
-    }
-
-    // @@protoc_insertion_point(enum_scope:server.Contact.Role)
-  }
-
   public static final int ACTION_FIELD_NUMBER = 1;
   private int action_;
   /**
@@ -402,48 +313,6 @@ public  final class Contact extends
     checkByteStringIsUtf8(value);
     avatarId_ = value.toStringUtf8();
     
-  }
-
-  public static final int ROLE_FIELD_NUMBER = 6;
-  private int role_;
-  /**
-   * <code>.server.Contact.Role role = 6;</code>
-   * @return The enum numeric value on the wire for role.
-   */
-  @java.lang.Override
-  public int getRoleValue() {
-    return role_;
-  }
-  /**
-   * <code>.server.Contact.Role role = 6;</code>
-   * @return The role.
-   */
-  @java.lang.Override
-  public com.halloapp.proto.server.Contact.Role getRole() {
-    com.halloapp.proto.server.Contact.Role result = com.halloapp.proto.server.Contact.Role.forNumber(role_);
-    return result == null ? com.halloapp.proto.server.Contact.Role.UNRECOGNIZED : result;
-  }
-  /**
-   * <code>.server.Contact.Role role = 6;</code>
-   * @param value The enum numeric value on the wire for role to set.
-   */
-  private void setRoleValue(int value) {
-      role_ = value;
-  }
-  /**
-   * <code>.server.Contact.Role role = 6;</code>
-   * @param value The role to set.
-   */
-  private void setRole(com.halloapp.proto.server.Contact.Role value) {
-    role_ = value.getNumber();
-    
-  }
-  /**
-   * <code>.server.Contact.Role role = 6;</code>
-   */
-  private void clearRole() {
-    
-    role_ = 0;
   }
 
   public static final int NAME_FIELD_NUMBER = 7;
@@ -836,52 +705,6 @@ public  final class Contact extends
     }
 
     /**
-     * <code>.server.Contact.Role role = 6;</code>
-     * @return The enum numeric value on the wire for role.
-     */
-    @java.lang.Override
-    public int getRoleValue() {
-      return instance.getRoleValue();
-    }
-    /**
-     * <code>.server.Contact.Role role = 6;</code>
-     * @param value The role to set.
-     * @return This builder for chaining.
-     */
-    public Builder setRoleValue(int value) {
-      copyOnWrite();
-      instance.setRoleValue(value);
-      return this;
-    }
-    /**
-     * <code>.server.Contact.Role role = 6;</code>
-     * @return The role.
-     */
-    @java.lang.Override
-    public com.halloapp.proto.server.Contact.Role getRole() {
-      return instance.getRole();
-    }
-    /**
-     * <code>.server.Contact.Role role = 6;</code>
-     * @param value The enum numeric value on the wire for role to set.
-     * @return This builder for chaining.
-     */
-    public Builder setRole(com.halloapp.proto.server.Contact.Role value) {
-      copyOnWrite();
-      instance.setRole(value);
-      return this;
-    }
-    /**
-     * <code>.server.Contact.Role role = 6;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearRole() {
-      copyOnWrite();
-      instance.clearRole();
-      return this;
-    }
-
-    /**
      * <code>string name = 7;</code>
      * @return The name.
      */
@@ -979,13 +802,12 @@ public  final class Contact extends
             "normalized_",
             "uid_",
             "avatarId_",
-            "role_",
             "name_",
             "numPotentialFriends_",
           };
           java.lang.String info =
-              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0000\u0000\u0001\f\u0002\u0208\u0003\u0208" +
-              "\u0004\u0002\u0005\u0208\u0006\f\u0007\u0208\b\u0002";
+              "\u0000\u0007\u0000\u0000\u0001\b\u0007\u0000\u0000\u0000\u0001\f\u0002\u0208\u0003" +
+              "\u0208\u0004\u0002\u0005\u0208\u0007\u0208\b\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

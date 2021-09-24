@@ -13,6 +13,7 @@ public  final class FeedItem extends
     FeedItemOrBuilder {
   private FeedItem() {
     shareStanzas_ = emptyProtobufList();
+    senderStateBundles_ = emptyProtobufList();
   }
   /**
    * Protobuf enum {@code server.FeedItem.Action}
@@ -391,6 +392,210 @@ public  final class FeedItem extends
     shareStanzas_.remove(index);
   }
 
+  public static final int SENDER_STATE_BUNDLES_FIELD_NUMBER = 7;
+  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.SenderStateBundle> senderStateBundles_;
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  @java.lang.Override
+  public java.util.List<com.halloapp.proto.server.SenderStateBundle> getSenderStateBundlesList() {
+    return senderStateBundles_;
+  }
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  public java.util.List<? extends com.halloapp.proto.server.SenderStateBundleOrBuilder> 
+      getSenderStateBundlesOrBuilderList() {
+    return senderStateBundles_;
+  }
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  @java.lang.Override
+  public int getSenderStateBundlesCount() {
+    return senderStateBundles_.size();
+  }
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.SenderStateBundle getSenderStateBundles(int index) {
+    return senderStateBundles_.get(index);
+  }
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  public com.halloapp.proto.server.SenderStateBundleOrBuilder getSenderStateBundlesOrBuilder(
+      int index) {
+    return senderStateBundles_.get(index);
+  }
+  private void ensureSenderStateBundlesIsMutable() {
+    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.SenderStateBundle> tmp = senderStateBundles_;
+    if (!tmp.isModifiable()) {
+      senderStateBundles_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
+     }
+  }
+
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  private void setSenderStateBundles(
+      int index, com.halloapp.proto.server.SenderStateBundle value) {
+    value.getClass();
+  ensureSenderStateBundlesIsMutable();
+    senderStateBundles_.set(index, value);
+  }
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  private void addSenderStateBundles(com.halloapp.proto.server.SenderStateBundle value) {
+    value.getClass();
+  ensureSenderStateBundlesIsMutable();
+    senderStateBundles_.add(value);
+  }
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  private void addSenderStateBundles(
+      int index, com.halloapp.proto.server.SenderStateBundle value) {
+    value.getClass();
+  ensureSenderStateBundlesIsMutable();
+    senderStateBundles_.add(index, value);
+  }
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  private void addAllSenderStateBundles(
+      java.lang.Iterable<? extends com.halloapp.proto.server.SenderStateBundle> values) {
+    ensureSenderStateBundlesIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, senderStateBundles_);
+  }
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  private void clearSenderStateBundles() {
+    senderStateBundles_ = emptyProtobufList();
+  }
+  /**
+   * <pre>
+   * Sent by the publisher.
+   * </pre>
+   *
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   */
+  private void removeSenderStateBundles(int index) {
+    ensureSenderStateBundlesIsMutable();
+    senderStateBundles_.remove(index);
+  }
+
+  public static final int SENDER_STATE_FIELD_NUMBER = 8;
+  private com.halloapp.proto.server.SenderStateWithKeyInfo senderState_;
+  /**
+   * <pre>
+   * Meant for the receiver, computed by the server using `sender_state_bundles`.
+   * </pre>
+   *
+   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+   */
+  @java.lang.Override
+  public boolean hasSenderState() {
+    return senderState_ != null;
+  }
+  /**
+   * <pre>
+   * Meant for the receiver, computed by the server using `sender_state_bundles`.
+   * </pre>
+   *
+   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.SenderStateWithKeyInfo getSenderState() {
+    return senderState_ == null ? com.halloapp.proto.server.SenderStateWithKeyInfo.getDefaultInstance() : senderState_;
+  }
+  /**
+   * <pre>
+   * Meant for the receiver, computed by the server using `sender_state_bundles`.
+   * </pre>
+   *
+   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+   */
+  private void setSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
+    value.getClass();
+  senderState_ = value;
+    
+    }
+  /**
+   * <pre>
+   * Meant for the receiver, computed by the server using `sender_state_bundles`.
+   * </pre>
+   *
+   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
+    value.getClass();
+  if (senderState_ != null &&
+        senderState_ != com.halloapp.proto.server.SenderStateWithKeyInfo.getDefaultInstance()) {
+      senderState_ =
+        com.halloapp.proto.server.SenderStateWithKeyInfo.newBuilder(senderState_).mergeFrom(value).buildPartial();
+    } else {
+      senderState_ = value;
+    }
+    
+  }
+  /**
+   * <pre>
+   * Meant for the receiver, computed by the server using `sender_state_bundles`.
+   * </pre>
+   *
+   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+   */
+  private void clearSenderState() {  senderState_ = null;
+    
+  }
+
   public static com.halloapp.proto.server.FeedItem parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -742,6 +947,227 @@ public  final class FeedItem extends
       return this;
     }
 
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    @java.lang.Override
+    public java.util.List<com.halloapp.proto.server.SenderStateBundle> getSenderStateBundlesList() {
+      return java.util.Collections.unmodifiableList(
+          instance.getSenderStateBundlesList());
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    @java.lang.Override
+    public int getSenderStateBundlesCount() {
+      return instance.getSenderStateBundlesCount();
+    }/**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.SenderStateBundle getSenderStateBundles(int index) {
+      return instance.getSenderStateBundles(index);
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    public Builder setSenderStateBundles(
+        int index, com.halloapp.proto.server.SenderStateBundle value) {
+      copyOnWrite();
+      instance.setSenderStateBundles(index, value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    public Builder setSenderStateBundles(
+        int index, com.halloapp.proto.server.SenderStateBundle.Builder builderForValue) {
+      copyOnWrite();
+      instance.setSenderStateBundles(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    public Builder addSenderStateBundles(com.halloapp.proto.server.SenderStateBundle value) {
+      copyOnWrite();
+      instance.addSenderStateBundles(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    public Builder addSenderStateBundles(
+        int index, com.halloapp.proto.server.SenderStateBundle value) {
+      copyOnWrite();
+      instance.addSenderStateBundles(index, value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    public Builder addSenderStateBundles(
+        com.halloapp.proto.server.SenderStateBundle.Builder builderForValue) {
+      copyOnWrite();
+      instance.addSenderStateBundles(builderForValue.build());
+      return this;
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    public Builder addSenderStateBundles(
+        int index, com.halloapp.proto.server.SenderStateBundle.Builder builderForValue) {
+      copyOnWrite();
+      instance.addSenderStateBundles(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    public Builder addAllSenderStateBundles(
+        java.lang.Iterable<? extends com.halloapp.proto.server.SenderStateBundle> values) {
+      copyOnWrite();
+      instance.addAllSenderStateBundles(values);
+      return this;
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    public Builder clearSenderStateBundles() {
+      copyOnWrite();
+      instance.clearSenderStateBundles();
+      return this;
+    }
+    /**
+     * <pre>
+     * Sent by the publisher.
+     * </pre>
+     *
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     */
+    public Builder removeSenderStateBundles(int index) {
+      copyOnWrite();
+      instance.removeSenderStateBundles(index);
+      return this;
+    }
+
+    /**
+     * <pre>
+     * Meant for the receiver, computed by the server using `sender_state_bundles`.
+     * </pre>
+     *
+     * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+     */
+    @java.lang.Override
+    public boolean hasSenderState() {
+      return instance.hasSenderState();
+    }
+    /**
+     * <pre>
+     * Meant for the receiver, computed by the server using `sender_state_bundles`.
+     * </pre>
+     *
+     * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.SenderStateWithKeyInfo getSenderState() {
+      return instance.getSenderState();
+    }
+    /**
+     * <pre>
+     * Meant for the receiver, computed by the server using `sender_state_bundles`.
+     * </pre>
+     *
+     * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+     */
+    public Builder setSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
+      copyOnWrite();
+      instance.setSenderState(value);
+      return this;
+      }
+    /**
+     * <pre>
+     * Meant for the receiver, computed by the server using `sender_state_bundles`.
+     * </pre>
+     *
+     * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+     */
+    public Builder setSenderState(
+        com.halloapp.proto.server.SenderStateWithKeyInfo.Builder builderForValue) {
+      copyOnWrite();
+      instance.setSenderState(builderForValue.build());
+      return this;
+    }
+    /**
+     * <pre>
+     * Meant for the receiver, computed by the server using `sender_state_bundles`.
+     * </pre>
+     *
+     * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+     */
+    public Builder mergeSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
+      copyOnWrite();
+      instance.mergeSenderState(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Meant for the receiver, computed by the server using `sender_state_bundles`.
+     * </pre>
+     *
+     * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+     */
+    public Builder clearSenderState() {  copyOnWrite();
+      instance.clearSenderState();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.FeedItem)
   }
   @java.lang.Override
@@ -765,10 +1191,13 @@ public  final class FeedItem extends
             com.halloapp.proto.server.Comment.class,
             "shareStanzas_",
             com.halloapp.proto.server.ShareStanza.class,
+            "senderStateBundles_",
+            com.halloapp.proto.server.SenderStateBundle.class,
+            "senderState_",
           };
           java.lang.String info =
-              "\u0000\u0004\u0001\u0000\u0001\u0004\u0004\u0000\u0001\u0000\u0001\f\u0002<\u0000" +
-              "\u0003<\u0000\u0004\u001b";
+              "\u0000\u0006\u0001\u0000\u0001\b\u0006\u0000\u0002\u0000\u0001\f\u0002<\u0000\u0003" +
+              "<\u0000\u0004\u001b\u0007\u001b\b\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

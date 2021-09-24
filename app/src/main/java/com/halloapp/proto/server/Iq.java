@@ -153,6 +153,8 @@ public  final class Iq extends
     HISTORY_RESEND(32),
     EXPORT_DATA(33),
     CONTACT_SYNC_ERROR(34),
+    CLIENT_OTP_REQUEST(35),
+    CLIENT_OTP_RESPONSE(36),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -197,6 +199,8 @@ public  final class Iq extends
         case 32: return HISTORY_RESEND;
         case 33: return EXPORT_DATA;
         case 34: return CONTACT_SYNC_ERROR;
+        case 35: return CLIENT_OTP_REQUEST;
+        case 36: return CLIENT_OTP_RESPONSE;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -1752,6 +1756,146 @@ public  final class Iq extends
    */
   private void clearContactSyncError() {
     if (payloadCase_ == 34) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int CLIENT_OTP_REQUEST_FIELD_NUMBER = 35;
+  /**
+   * <pre>
+   * only for sms_app gateway use
+   * </pre>
+   *
+   * <code>.server.ClientOtpRequest client_otp_request = 35;</code>
+   */
+  @java.lang.Override
+  public boolean hasClientOtpRequest() {
+    return payloadCase_ == 35;
+  }
+  /**
+   * <pre>
+   * only for sms_app gateway use
+   * </pre>
+   *
+   * <code>.server.ClientOtpRequest client_otp_request = 35;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.ClientOtpRequest getClientOtpRequest() {
+    if (payloadCase_ == 35) {
+       return (com.halloapp.proto.server.ClientOtpRequest) payload_;
+    }
+    return com.halloapp.proto.server.ClientOtpRequest.getDefaultInstance();
+  }
+  /**
+   * <pre>
+   * only for sms_app gateway use
+   * </pre>
+   *
+   * <code>.server.ClientOtpRequest client_otp_request = 35;</code>
+   */
+  private void setClientOtpRequest(com.halloapp.proto.server.ClientOtpRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 35;
+  }
+  /**
+   * <pre>
+   * only for sms_app gateway use
+   * </pre>
+   *
+   * <code>.server.ClientOtpRequest client_otp_request = 35;</code>
+   */
+  private void mergeClientOtpRequest(com.halloapp.proto.server.ClientOtpRequest value) {
+    value.getClass();
+  if (payloadCase_ == 35 &&
+        payload_ != com.halloapp.proto.server.ClientOtpRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.ClientOtpRequest.newBuilder((com.halloapp.proto.server.ClientOtpRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 35;
+  }
+  /**
+   * <pre>
+   * only for sms_app gateway use
+   * </pre>
+   *
+   * <code>.server.ClientOtpRequest client_otp_request = 35;</code>
+   */
+  private void clearClientOtpRequest() {
+    if (payloadCase_ == 35) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int CLIENT_OTP_RESPONSE_FIELD_NUMBER = 36;
+  /**
+   * <pre>
+   * only for sms_app gateway use
+   * </pre>
+   *
+   * <code>.server.ClientOtpResponse client_otp_response = 36;</code>
+   */
+  @java.lang.Override
+  public boolean hasClientOtpResponse() {
+    return payloadCase_ == 36;
+  }
+  /**
+   * <pre>
+   * only for sms_app gateway use
+   * </pre>
+   *
+   * <code>.server.ClientOtpResponse client_otp_response = 36;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.ClientOtpResponse getClientOtpResponse() {
+    if (payloadCase_ == 36) {
+       return (com.halloapp.proto.server.ClientOtpResponse) payload_;
+    }
+    return com.halloapp.proto.server.ClientOtpResponse.getDefaultInstance();
+  }
+  /**
+   * <pre>
+   * only for sms_app gateway use
+   * </pre>
+   *
+   * <code>.server.ClientOtpResponse client_otp_response = 36;</code>
+   */
+  private void setClientOtpResponse(com.halloapp.proto.server.ClientOtpResponse value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 36;
+  }
+  /**
+   * <pre>
+   * only for sms_app gateway use
+   * </pre>
+   *
+   * <code>.server.ClientOtpResponse client_otp_response = 36;</code>
+   */
+  private void mergeClientOtpResponse(com.halloapp.proto.server.ClientOtpResponse value) {
+    value.getClass();
+  if (payloadCase_ == 36 &&
+        payload_ != com.halloapp.proto.server.ClientOtpResponse.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.ClientOtpResponse.newBuilder((com.halloapp.proto.server.ClientOtpResponse) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 36;
+  }
+  /**
+   * <pre>
+   * only for sms_app gateway use
+   * </pre>
+   *
+   * <code>.server.ClientOtpResponse client_otp_response = 36;</code>
+   */
+  private void clearClientOtpResponse() {
+    if (payloadCase_ == 36) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -3351,6 +3495,150 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <pre>
+     * only for sms_app gateway use
+     * </pre>
+     *
+     * <code>.server.ClientOtpRequest client_otp_request = 35;</code>
+     */
+    @java.lang.Override
+    public boolean hasClientOtpRequest() {
+      return instance.hasClientOtpRequest();
+    }
+    /**
+     * <pre>
+     * only for sms_app gateway use
+     * </pre>
+     *
+     * <code>.server.ClientOtpRequest client_otp_request = 35;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.ClientOtpRequest getClientOtpRequest() {
+      return instance.getClientOtpRequest();
+    }
+    /**
+     * <pre>
+     * only for sms_app gateway use
+     * </pre>
+     *
+     * <code>.server.ClientOtpRequest client_otp_request = 35;</code>
+     */
+    public Builder setClientOtpRequest(com.halloapp.proto.server.ClientOtpRequest value) {
+      copyOnWrite();
+      instance.setClientOtpRequest(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * only for sms_app gateway use
+     * </pre>
+     *
+     * <code>.server.ClientOtpRequest client_otp_request = 35;</code>
+     */
+    public Builder setClientOtpRequest(
+        com.halloapp.proto.server.ClientOtpRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setClientOtpRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <pre>
+     * only for sms_app gateway use
+     * </pre>
+     *
+     * <code>.server.ClientOtpRequest client_otp_request = 35;</code>
+     */
+    public Builder mergeClientOtpRequest(com.halloapp.proto.server.ClientOtpRequest value) {
+      copyOnWrite();
+      instance.mergeClientOtpRequest(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * only for sms_app gateway use
+     * </pre>
+     *
+     * <code>.server.ClientOtpRequest client_otp_request = 35;</code>
+     */
+    public Builder clearClientOtpRequest() {
+      copyOnWrite();
+      instance.clearClientOtpRequest();
+      return this;
+    }
+
+    /**
+     * <pre>
+     * only for sms_app gateway use
+     * </pre>
+     *
+     * <code>.server.ClientOtpResponse client_otp_response = 36;</code>
+     */
+    @java.lang.Override
+    public boolean hasClientOtpResponse() {
+      return instance.hasClientOtpResponse();
+    }
+    /**
+     * <pre>
+     * only for sms_app gateway use
+     * </pre>
+     *
+     * <code>.server.ClientOtpResponse client_otp_response = 36;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.ClientOtpResponse getClientOtpResponse() {
+      return instance.getClientOtpResponse();
+    }
+    /**
+     * <pre>
+     * only for sms_app gateway use
+     * </pre>
+     *
+     * <code>.server.ClientOtpResponse client_otp_response = 36;</code>
+     */
+    public Builder setClientOtpResponse(com.halloapp.proto.server.ClientOtpResponse value) {
+      copyOnWrite();
+      instance.setClientOtpResponse(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * only for sms_app gateway use
+     * </pre>
+     *
+     * <code>.server.ClientOtpResponse client_otp_response = 36;</code>
+     */
+    public Builder setClientOtpResponse(
+        com.halloapp.proto.server.ClientOtpResponse.Builder builderForValue) {
+      copyOnWrite();
+      instance.setClientOtpResponse(builderForValue.build());
+      return this;
+    }
+    /**
+     * <pre>
+     * only for sms_app gateway use
+     * </pre>
+     *
+     * <code>.server.ClientOtpResponse client_otp_response = 36;</code>
+     */
+    public Builder mergeClientOtpResponse(com.halloapp.proto.server.ClientOtpResponse value) {
+      copyOnWrite();
+      instance.mergeClientOtpResponse(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * only for sms_app gateway use
+     * </pre>
+     *
+     * <code>.server.ClientOtpResponse client_otp_response = 36;</code>
+     */
+    public Builder clearClientOtpResponse() {
+      copyOnWrite();
+      instance.clearClientOtpResponse();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -3400,14 +3688,16 @@ public  final class Iq extends
             com.halloapp.proto.server.HistoryResend.class,
             com.halloapp.proto.server.ExportData.class,
             com.halloapp.proto.server.ContactSyncError.class,
+            com.halloapp.proto.server.ClientOtpRequest.class,
+            com.halloapp.proto.server.ClientOtpResponse.class,
           };
           java.lang.String info =
-              "\u0000\u001f\u0001\u0000\u0001\"\u001f\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003" +
-              "<\u0000\u0004<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<" +
-              "\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012" +
-              "<\u0000\u0013<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000" +
-              "\u0019<\u0000\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001f<\u0000 <\u0000!<\u0000" +
-              "\"<\u0000";
+              "\u0000!\u0001\u0000\u0001$!\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
+              "<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<" +
+              "\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013" +
+              "<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019<\u0000" +
+              "\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001f<\u0000 <\u0000!<\u0000\"<\u0000#<\u0000" +
+              "$<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
