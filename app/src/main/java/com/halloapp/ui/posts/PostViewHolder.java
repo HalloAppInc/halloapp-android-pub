@@ -37,6 +37,7 @@ import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.PostOptionsBottomSheetDialogFragment;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
@@ -127,13 +128,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             postLinkPreviewView.setOnClickListener(v -> {
                 UrlPreview preview = postLinkPreviewView.getUrlPreview();
                 if (preview != null && preview.url != null) {
-                    try {
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(URLUtil.guessUrl(preview.url)));
-                        postLinkPreviewView.getContext().startActivity(browserIntent);
-                    } catch (Exception e) {
-                        Toast.makeText(postLinkPreviewView.getContext(), R.string.failed_to_open_link, Toast.LENGTH_SHORT).show();
-                        Log.e("PostViewHolder/linkPreview failed to open url " + preview.url);
-                    }
+                    IntentUtils.openUrlInBrowser(postLinkPreviewView.getContext(), preview.url);
                 }
             });
         }

@@ -104,6 +104,7 @@ import com.halloapp.ui.posts.PostAttributionLayout;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.ActivityUtils;
 import com.halloapp.util.DrawableUtils;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.Result;
@@ -1179,8 +1180,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 linkPreviewContainer.setOnClickListener(view -> {
                     UrlPreview preview = comment == null ? null : comment.urlPreview;
                     if (preview != null && preview.url != null) {
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(preview.url));
-                        linkPreviewContainer.getContext().startActivity(browserIntent);
+                        IntentUtils.openUrlInBrowser(linkPreviewContainer.getContext(), preview.url);
                     }
                 });
             }

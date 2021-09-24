@@ -11,10 +11,13 @@ import android.os.Build;
 import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.text.TextUtils;
+import android.webkit.URLUtil;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.util.logs.Log;
 
@@ -74,6 +77,16 @@ public class IntentUtils {
         }
 
         return intent;
+    }
+
+    public static void openUrlInBrowser(@NonNull Context context, @NonNull String url) {
+        try {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(URLUtil.guessUrl(url)));
+            context.startActivity(browserIntent);
+        } catch (Exception e) {
+            Toast.makeText(context, R.string.failed_to_open_link, Toast.LENGTH_SHORT).show();
+            Log.e("PostViewHolder/linkPreview failed to open url " + url);
+        }
     }
 
     private static boolean isEnabled(@NonNull Context context, @Nullable String packageName) {

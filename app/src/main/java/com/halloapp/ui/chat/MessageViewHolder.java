@@ -50,6 +50,7 @@ import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.groups.GroupParticipants;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
@@ -167,8 +168,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             linkPreviewContainer.setOnClickListener(v -> {
                 UrlPreview preview = message == null ? null : message.urlPreview;
                 if (preview != null && preview.url != null) {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(preview.url));
-                    linkPreviewContainer.getContext().startActivity(browserIntent);
+                    IntentUtils.openUrlInBrowser(linkPreviewContainer.getContext(), preview.url);
                 }
             });
             linkPreviewContainer.setClipToOutline(true);
