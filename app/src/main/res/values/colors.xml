@@ -70,6 +70,7 @@
     <color name="message_background_reply_outgoing">#DBE6F1</color>
     <color name="message_url_preview_background_outgoing">@color/white_54</color>
     <color name="message_url_preview_background_incoming">#FBFBF8</color>
+    <color name="url_preview_background_posts">#f3f2ef</color>
     <color name="chat_entry_background">#FFFFFF</color>
     <color name="message_text_incoming">#de000000</color>
     <color name="message_text_outgoing">@color/color_secondary</color>
