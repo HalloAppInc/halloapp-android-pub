@@ -37,6 +37,7 @@ public class PostLinkPreviewView extends LinkPreviewComposeView {
 
     protected void init() {
         super.init();
+        linkImagePreview.setOutlineProvider(null);
         setBackgroundResource(R.drawable.bg_post_link_preview);
         setOutlineProvider(new ViewOutlineProvider() {
             @Override
