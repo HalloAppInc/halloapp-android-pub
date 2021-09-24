@@ -146,6 +146,8 @@
     <string name="mentioned_you_in_comment_on_your_post">&lt;b>%s&lt;/b> mentioned you in a comment on your post</string>
     <string name="mentioned_you_in_comment_on_own_post">&lt;b>%s&lt;/b> mentioned you in a comment on their post</string>
     <string name="mentioned_you_in_comment_on_someones_post">&lt;b>%1$s&lt;/b> mentioned you in a comment on &lt;b>%2$s&lt;/b>\'s post</string>
+    <!-- Message showed when a link fails to open -->
+    <string name="failed_to_open_link">Failed to open link</string>
 
     <!-- Activity center item when someone replies. %1$s is the person, %2$s is their comment preview -->
     <string name="replied_to_with_preview">&lt;b>%1$s&lt;/b> replied: %2$s</string>

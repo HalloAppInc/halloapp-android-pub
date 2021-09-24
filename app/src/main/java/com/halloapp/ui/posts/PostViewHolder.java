@@ -6,8 +6,10 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.ColorRes;
@@ -125,8 +127,13 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             postLinkPreviewView.setOnClickListener(v -> {
                 UrlPreview preview = postLinkPreviewView.getUrlPreview();
                 if (preview != null && preview.url != null) {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(preview.url));
-                    postLinkPreviewView.getContext().startActivity(browserIntent);
+                    try {
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(URLUtil.guessUrl(preview.url)));
+                        postLinkPreviewView.getContext().startActivity(browserIntent);
+                    } catch (Exception e) {
+                        Toast.makeText(postLinkPreviewView.getContext(), R.string.failed_to_open_link, Toast.LENGTH_SHORT).show();
+                        Log.e("PostViewHolder/linkPreview failed to open url " + preview.url);
+                    }
                 }
             });
         }
