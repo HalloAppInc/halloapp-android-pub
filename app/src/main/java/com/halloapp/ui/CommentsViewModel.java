@@ -43,6 +43,7 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.Result;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
@@ -64,7 +65,7 @@ class CommentsViewModel extends AndroidViewModel {
     final MutableLiveData<Post> post = new MutableLiveData<>();
     final MutableLiveData<Contact> replyContact = new MutableLiveData<>();
     final MutableLiveData<Boolean> postDeleted = new MutableLiveData<>();
-    final MutableLiveData<Media> commentMedia = new MutableLiveData<>();
+    final MutableLiveData<Result<Media>> commentMedia = new MutableLiveData<>();
 
     private final Me me = Me.getInstance();
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
@@ -403,11 +404,12 @@ class CommentsViewModel extends AndroidViewModel {
     void sendComment(@NonNull Comment comment, boolean supportsWideColor) {
         comment.setParentPost(post.getValue());
 
-        Media mediaItem = commentMedia.getValue();
-        boolean needsTranscode = mediaItem != null || (comment.urlPreview != null && comment.urlPreview.imageMedia != null);
+        Result<Media> mediaItemResult = commentMedia.getValue();
+        boolean needsTranscode = (mediaItemResult != null && mediaItemResult.isSuccess()) || (comment.urlPreview != null && comment.urlPreview.imageMedia != null);
         if (!needsTranscode) {
             contentDb.addComment(comment);
         } else {
+            Media mediaItem = mediaItemResult == null ? null : mediaItemResult.getResult();
             bgWorkers.execute(() -> {
                 if (mediaItem != null) {
                     final File postFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(mediaItem.type));
@@ -494,20 +496,20 @@ class CommentsViewModel extends AndroidViewModel {
         }
     }
 
-    private static class LoadMediaUriTask extends AsyncTask<Void, Void, Media> {
+    private static class LoadMediaUriTask extends AsyncTask<Void, Void, Result<Media>> {
 
         private final Uri uri;
         private final Application application;
-        private final MutableLiveData<Media> media;
+        private final MutableLiveData<Result<Media>> media;
 
-        LoadMediaUriTask(@NonNull Application application, @NonNull Uri uri, @NonNull MutableLiveData<Media> media) {
+        LoadMediaUriTask(@NonNull Application application, @NonNull Uri uri, @NonNull MutableLiveData<Result<Media>> media) {
             this.application = application;
             this.uri = uri;
             this.media = media;
         }
 
         @Override
-        protected Media doInBackground(Void... voids) {
+        protected Result<Media> doInBackground(Void... voids) {
             final Map<Uri, Integer> types = MediaUtils.getMediaTypes(application, Collections.singletonList(uri));
             @Media.MediaType int mediaType = types.get(uri);
             final File file = FileStore.getInstance().getTmpFile(RandomId.create());
@@ -517,16 +519,16 @@ class CommentsViewModel extends AndroidViewModel {
                 final Media mediaItem = Media.createFromFile(mediaType, file);
                 mediaItem.width = size.getWidth();
                 mediaItem.height = size.getHeight();
-                return mediaItem;
+                return Result.ok(mediaItem);
             } else {
                 Log.e("CommentsViewModel: failed to load " + uri);
+                return Result.fail("Failed to load " + uri);
             }
-            return null;
         }
 
         @Override
-        protected void onPostExecute(Media media) {
-            this.media.postValue(media);
+        protected void onPostExecute(Result<Media> result) {
+            this.media.postValue(result);
         }
     }
 

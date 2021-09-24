@@ -77,6 +77,7 @@ import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.ActivityUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.Result;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
@@ -308,9 +309,12 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
         viewModel.commentMedia.observe(this, media -> {
             if (media == null) {
                 mediaContainer.setVisibility(View.GONE);
+            } else if (!media.isSuccess()) {
+                mediaContainer.setVisibility(View.GONE);
+                SnackbarHelper.showWarning(this, R.string.failed_to_load_media);
             } else {
                 mediaContainer.setVisibility(View.VISIBLE);
-                mediaThumbnailLoader.load(imageView, media);
+                mediaThumbnailLoader.load(imageView, media.getResult());
             }
             updateSendButton();
         });
@@ -517,7 +521,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
     private void sendComment() {
         final Pair<String, List<Mention>> textWithMentions = editText.getTextWithMentions();
         final String postText = StringUtils.preparePostText(textWithMentions.first);
-        if (TextUtils.isEmpty(postText) && viewModel.commentMedia.getValue() == null) {
+        if (TextUtils.isEmpty(postText) && (viewModel.commentMedia.getValue() == null || !viewModel.commentMedia.getValue().isSuccess())) {
             Log.w("CommentsActivity: cannot send empty comment");
             return;
         }
@@ -545,8 +549,8 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
     private void updateSendButton() {
         Editable e = editText.getText();
         String s = e == null ? null : e.toString();
-        Media m = viewModel.commentMedia.getValue();
-        boolean canSend = m != null || !TextUtils.isEmpty(s);
+        Result<Media> r = viewModel.commentMedia.getValue();
+        boolean canSend = (r != null && r.isSuccess()) || !TextUtils.isEmpty(s);
         chatInputView.setCanSend(canSend);
     }
 
