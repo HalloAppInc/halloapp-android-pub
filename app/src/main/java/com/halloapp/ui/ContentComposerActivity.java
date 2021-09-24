@@ -397,7 +397,7 @@ public class ContentComposerActivity extends HalloActivity {
         viewModel.mentionableContacts.getLiveData().observe(this, contacts -> mentionPickerView.setMentionableContacts(contacts));
         viewModel.contentItem.observe(this, contentItem -> {
             if (contentItem != null) {
-                if (contentItem instanceof Post) {
+                if (!contentItem.hasMedia() && contentItem instanceof Post) {
                     postLinkPreviewView.attachPreview(contentItem);
                     urlPreviewLoader.cancel(postLinkPreviewView, true);
                 }
@@ -473,6 +473,10 @@ public class ContentComposerActivity extends HalloActivity {
                 @Override
                 public void onUrl(String url) {
                     if (isFinishing() || isDestroyed()) {
+                        return;
+                    }
+                    if (mediaPager.getVisibility() == View.VISIBLE) {
+                        urlPreviewLoader.cancel(postLinkPreviewView);
                         return;
                     }
                     urlPreviewLoader.load(postLinkPreviewView, url, new ViewDataLoader.Displayer<View, UrlPreview>() {
