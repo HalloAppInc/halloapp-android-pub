@@ -375,6 +375,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             public void onSendText() {
                 sendComment();
                 linkPreviewComposeView.updateUrlPreview(null);
+                viewModel.resetCommentMediaUri();
                 editText.setText(null);
                 final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
                 imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
@@ -385,6 +386,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             @Override
             public void onSendVoiceNote() {
                 viewModel.finishRecording(replyCommentId, false);
+                viewModel.resetCommentMediaUri();
                 resetReplyIndicator();
                 scrollToComment = true;
             }
@@ -392,6 +394,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             @Override
             public void onSendVoiceDraft(File draft) {
                 viewModel.sendVoiceNote(replyCommentId, draft);
+                viewModel.resetCommentMediaUri();
                 resetReplyIndicator();
                 scrollToComment = true;
             }
@@ -888,7 +891,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private void resetReplyIndicator() {
         replyCommentId = null;
         viewModel.loadReply(null);
-        viewModel.resetCommentMediaUri();
     }
 
     @Override

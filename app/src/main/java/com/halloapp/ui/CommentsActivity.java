@@ -418,6 +418,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
                 final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
                 imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                 resetReplyIndicator();
+                viewModel.resetCommentMediaUri();
                 scrollToComment = true;
             }
 
@@ -425,6 +426,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
             public void onSendVoiceNote() {
                 viewModel.finishRecording(replyCommentId, false);
                 resetReplyIndicator();
+                viewModel.resetCommentMediaUri();
                 scrollToComment = true;
             }
 
@@ -432,6 +434,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
             public void onSendVoiceDraft(File draft) {
                 viewModel.sendVoiceNote(replyCommentId, draft);
                 resetReplyIndicator();
+                viewModel.resetCommentMediaUri();
                 scrollToComment = true;
             }
 
@@ -678,7 +681,6 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
         replyUserId = null;
         replyCommentId = null;
         viewModel.resetReplyUser();
-        viewModel.resetCommentMediaUri();
     }
 
     @Override
