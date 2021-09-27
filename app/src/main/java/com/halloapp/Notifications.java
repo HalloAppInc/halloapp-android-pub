@@ -696,7 +696,7 @@ public class Notifications {
                         null,
                         0
                 );
-                SignalSessionManager.getInstance().sendMessage(message);
+                message.addToStorage(ContentDb.getInstance());
 
                 final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MESSAGE_NOTIFICATION_CHANNEL_ID)
                         .setContentTitle(context.getString(R.string.app_name))
