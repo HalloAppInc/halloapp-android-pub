@@ -850,5 +850,8 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
     <string name="add_to_contacts_notice">"برای دیدن پست‌های %s شماره ایشان را به دفتر تلفن اضافه کنید. اینجا کلیک کنید."</string>
+
+    <!-- Message showed when a link fails to open -->
+    <string name="failed_to_open_link">"Failed to open link"</string>
 <string name="share_option_group">"پست به گروه"</string><string name="select_group">"انتخاب گروه"</string></resources>
 

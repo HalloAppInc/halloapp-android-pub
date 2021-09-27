@@ -735,7 +735,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="qr_code">"QR-Code"</string>
 
     <!-- Explains QR code that allows users to automatically join a group -->
-    <string name="scan_qr_instructions">"Scan de QR-code om aan deze HalloApp-groep deel te nemen"</string>
+    <string name="scan_qr_instructions">"Scan de QR-code om deel te nemen aan deze HalloApp-groep"</string>
 
     <!-- Banner below the name of a HalloApp group -->
     <string name="halloapp_group">"HalloApp-groep"</string>
@@ -857,5 +857,8 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
     <string name="add_to_contacts_notice">"Om posts te zien van %s, moet je het telefoonnummer toevoegen aan je adresboek. Tik om toe te voegen"</string>
+
+    <!-- Message showed when a link fails to open -->
+    <string name="failed_to_open_link">"Openen link mislukt"</string>
 <string name="share_option_group">"Post in groep"</string><string name="select_group">"Selecteer groep"</string></resources>
 

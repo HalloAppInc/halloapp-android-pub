@@ -880,5 +880,8 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
     <!-- Fuzzy -->
     <string name="add_to_contacts_notice">"Para ver publicaciones de %s, añade su número a tu agenda. Toca para añadir."</string>
+
+    <!-- Message showed when a link fails to open -->
+    <string name="failed_to_open_link">"Falló al abrir enlace"</string>
 <string name="share_option_group">"Escribe en el grupo"</string><string name="select_group">"Selecciona grupo"</string></resources>
 

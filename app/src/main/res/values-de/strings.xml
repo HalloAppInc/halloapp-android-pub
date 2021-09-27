@@ -898,6 +898,9 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="link_preview_loading">"Vorschau wird geladen…"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
-    <string name="add_to_contacts_notice">"To see posts from %s add their number to your address book. Tap to add."</string>
+    <string name="add_to_contacts_notice">"Um die Beiträge von %s zu sehen, einfach die Handynummer zu deinen Kontakten hinzufügen. Dazu hier tippen."</string>
+
+    <!-- Message showed when a link fails to open -->
+    <string name="failed_to_open_link">"Der Link kann nicht geöffnet werden"</string>
 <string name="share_option_group">"In Gruppe teilen"</string><string name="select_group">"Gruppe auswählen"</string></resources>
 

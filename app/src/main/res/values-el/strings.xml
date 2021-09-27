@@ -861,5 +861,8 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
     <string name="add_to_contacts_notice">"To see posts from %s add their number to your address book. Tap to add."</string>
+
+    <!-- Message showed when a link fails to open -->
+    <string name="failed_to_open_link">"Failed to open link"</string>
 <string name="share_option_group">"Δημοσίευση σε Ομάδα"</string><string name="select_group">"Επιλογή ομάδας"</string></resources>
 

@@ -862,5 +862,8 @@ Abra as configurações da aplicação para modificar as permissões."</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
     <string name="add_to_contacts_notice">"Para ver publicações de %s, adicione o número dele ou dela aos seus contatos. Toque para adicionar."</string>
+
+    <!-- Message showed when a link fails to open -->
+    <string name="failed_to_open_link">"Failed to open link"</string>
 <string name="share_option_group">"Postar para Grupo"</string><string name="select_group">"Selecionar grupo"</string></resources>
 
