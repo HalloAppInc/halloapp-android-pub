@@ -52,6 +52,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     private static AvatarLoader instance;
 
+    private final FileStore fileStore;
     private final Connection connection;
     private final ContactsDb contactsDb;
     private final LruCache<String, Bitmap> cache;
@@ -65,14 +66,15 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         if (instance == null) {
             synchronized (AvatarLoader.class) {
                 if (instance == null) {
-                    instance = new AvatarLoader(Connection.getInstance(), ContactsDb.getInstance());
+                    instance = new AvatarLoader(FileStore.getInstance(), Connection.getInstance(), ContactsDb.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private AvatarLoader(@NonNull Connection connection, @NonNull ContactsDb contactsDb) {
+    private AvatarLoader(@NonNull FileStore fileStore, @NonNull Connection connection, @NonNull ContactsDb contactsDb) {
+        this.fileStore = fileStore;
         this.connection = connection;
         this.contactsDb = contactsDb;
 
@@ -182,7 +184,6 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     @WorkerThread
     private Bitmap getAvatarImpl(@NonNull ChatId chatId, @Nullable String knownAvatarId) {
-        FileStore fileStore = FileStore.getInstance();
         File avatarFile = fileStore.getAvatarFile(chatId.rawId());
 
         ContactsDb.ContactAvatarInfo contactAvatarInfo = getContactAvatarInfo(chatId);
@@ -190,68 +191,10 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         long currentTimeMs = System.currentTimeMillis();
         if (currentTimeMs - contactAvatarInfo.avatarCheckTimestamp > AVATAR_DATA_EXPIRATION_MS) {
             try {
-                String avatarId = knownAvatarId;
-
-                if (chatId instanceof UserId) {
-                    UserId userId = (UserId) chatId;
-
-                    Contact contact = contactsDb.getContact(userId);
-                    if (userId.isMe()) {
-                        avatarId = contactAvatarInfo.avatarId;
-                        if (avatarId == null) {
-                            avatarId = connection.getMyAvatarId().await();
-                            contactAvatarInfo.avatarCheckTimestamp = System.currentTimeMillis();
-                        }
-                    } else {
-                        avatarId = contact.avatarId;
-                    }
-
-                    if (TextUtils.isEmpty(avatarId)) {
-                        Log.i("AvatarLoader: no avatar id " + avatarId);
-                        return null;
-                    }
-
-                    if (shouldDownloadAvatar(avatarFile, Preconditions.checkNotNull(avatarId), contactAvatarInfo)) {
-                        String url = "https://avatar-cdn.halloapp.net/" + avatarId;
-                        Downloader.run(url, null, null, Media.MEDIA_TYPE_UNKNOWN, null, avatarFile, new Downloader.DownloadListener() {
-                            @Override
-                            public boolean onProgress(long bytesWritten) {
-                                return true;
-                            }
-                        }, "user-avatar");
-                        contactAvatarInfo.avatarId = contact.avatarId;
-                    }
-                } else {
-                    Chat chat = ContentDb.getInstance().getChat(chatId);
-                    if (chat != null) {
-                        avatarId = chat.groupAvatarId;
-                    } else {
-                        Log.i("AvatarLoader: group no chat");
-                    }
-
-                    if (TextUtils.isEmpty(avatarId)) {
-                        Log.i("AvatarLoader: no group avatar id " + avatarId);
-                        return null;
-                    }
-
-                    if (shouldDownloadAvatar(avatarFile, Preconditions.checkNotNull(avatarId), contactAvatarInfo)) {
-                        String url = "https://avatar-cdn.halloapp.net/" + avatarId;
-                        Downloader.run(url, null, null, Media.MEDIA_TYPE_UNKNOWN, null, avatarFile, new Downloader.DownloadListener() {
-                            @Override
-                            public boolean onProgress(long bytesWritten) {
-                                return true;
-                            }
-                        }, "group-avatar");
-                        contactAvatarInfo.avatarId = avatarId;
-                    }
+                String avatarId = getAvatarId(knownAvatarId, chatId, contactAvatarInfo);
+                if (!downloadAvatar(avatarId, avatarFile, contactAvatarInfo)) {
+                    return null;
                 }
-
-                contactAvatarInfo.avatarCheckTimestamp = System.currentTimeMillis();
-            } catch (InterruptedException | IOException | GeneralSecurityException | ObservableErrorException | ChunkedMediaParametersException e) {
-                Log.w("AvatarLoader: Failed getting avatar for " + chatId + "; resetting values", e);
-                contactAvatarInfo.avatarCheckTimestamp = 0;
-                contactAvatarInfo.avatarId = null;
-                return null;
             } finally {
                 contactsDb.updateContactAvatarInfo(contactAvatarInfo);
             }
@@ -261,6 +204,70 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             return null;
         }
         return BitmapFactory.decodeFile(avatarFile.getAbsolutePath());
+    }
+
+    @WorkerThread
+    private String getAvatarId(@Nullable String knownAvatarId, @NonNull ChatId chatId, @NonNull ContactsDb.ContactAvatarInfo contactAvatarInfo) {
+        String avatarId = knownAvatarId;
+
+        if (chatId instanceof UserId) {
+            UserId userId = (UserId) chatId;
+
+            Contact contact = contactsDb.getContact(userId);
+            if (userId.isMe()) {
+                avatarId = contactAvatarInfo.avatarId;
+                if (avatarId == null) {
+                    try {
+                        avatarId = connection.getMyAvatarId().await();
+                    } catch (InterruptedException | ObservableErrorException e) {
+                        Log.w("AvatarLoader: Failed getting avatar for " + chatId + "; resetting values", e);
+                        contactAvatarInfo.avatarCheckTimestamp = 0;
+                        contactAvatarInfo.avatarId = null;
+                        return null;
+                    }
+                    contactAvatarInfo.avatarCheckTimestamp = System.currentTimeMillis();
+                }
+            } else {
+                avatarId = contact.avatarId;
+            }
+        } else {
+            Chat chat = ContentDb.getInstance().getChat(chatId);
+            if (chat != null) {
+                avatarId = chat.groupAvatarId;
+            } else {
+                Log.i("AvatarLoader: group no chat");
+            }
+        }
+
+        return avatarId;
+    }
+
+    @WorkerThread
+    private boolean downloadAvatar(@Nullable String avatarId, @NonNull File avatarFile, @NonNull ContactsDb.ContactAvatarInfo contactAvatarInfo) {
+        if (TextUtils.isEmpty(avatarId)) {
+            Log.i("AvatarLoader: no group avatar id " + avatarId);
+            return false;
+        }
+
+        try {
+            if (shouldDownloadAvatar(avatarFile, Preconditions.checkNotNull(avatarId), contactAvatarInfo)) {
+                String url = "https://avatar-cdn.halloapp.net/" + avatarId;
+                Downloader.run(url, null, null, Media.MEDIA_TYPE_UNKNOWN, null, avatarFile, new Downloader.DownloadListener() {
+                    @Override
+                    public boolean onProgress(long bytesWritten) {
+                        return true;
+                    }
+                }, "avatar-" + avatarId);
+                contactAvatarInfo.avatarId = avatarId;
+            }
+            contactAvatarInfo.avatarCheckTimestamp = System.currentTimeMillis();
+            return true;
+        } catch (IOException | GeneralSecurityException | ChunkedMediaParametersException e) {
+            Log.w("AvatarLoader: Failed getting avatar " + avatarId + "; resetting values", e);
+            contactAvatarInfo.avatarCheckTimestamp = 0;
+            contactAvatarInfo.avatarId = null;
+            return false;
+        }
     }
 
     private static boolean shouldDownloadAvatar(@NonNull File avatarFile, @NonNull String avatarId, ContactsDb.ContactAvatarInfo avatarInfo) {
@@ -334,7 +341,6 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         contactAvatarInfo.avatarCheckTimestamp = 0;
         contactsDb.updateContactAvatarInfo(contactAvatarInfo);
 
-        FileStore fileStore = FileStore.getInstance();
         File avatarFile = fileStore.getAvatarFile(UserId.ME.rawId());
         if (avatarFile.exists()) {
             if (!avatarFile.delete()) {
@@ -345,7 +351,6 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     }
 
     public void reportAvatarUpdate(@NonNull ChatId chatId, @Nullable String avatarId) {
-        FileStore fileStore = FileStore.getInstance();
         File avatarFile = fileStore.getAvatarFile(chatId.rawId());
         if (avatarFile.exists()) {
             if (!avatarFile.delete()) {
