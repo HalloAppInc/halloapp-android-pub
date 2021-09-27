@@ -47,6 +47,7 @@ public class AvatarIq extends HalloIq {
         } else {
             UploadAvatar.Builder builder = UploadAvatar.newBuilder();
             builder.setData(ByteString.copyFrom(bytes));
+            builder.setFullData(ByteString.copyFrom(largeBytes));
             return Iq.newBuilder()
                     .setType(Iq.Type.SET)
                     .setId(getStanzaId())
