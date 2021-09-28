@@ -39,6 +39,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -109,6 +110,8 @@ public class ContentComposerActivity extends HalloActivity {
 
     private static final int REQUEST_CODE_CROP = 1;
     private static final int REQUEST_CODE_MORE_MEDIA = 2;
+
+    private static final int EXO_PLAYER_BUFFER_MS = 25000;
 
     private final Map<ContentComposerViewModel.EditMediaPair, SimpleExoPlayer> playerMap = new HashMap<>();
 
@@ -1019,7 +1022,9 @@ public class ContentComposerActivity extends HalloActivity {
                     .setContentType(C.CONTENT_TYPE_MOVIE)
                     .build();
 
-            player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
+            DefaultLoadControl.Builder builder = new DefaultLoadControl.Builder();
+            builder.setBufferDurationsMs(EXO_PLAYER_BUFFER_MS, EXO_PLAYER_BUFFER_MS, DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS, DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS);
+            player = new SimpleExoPlayer.Builder(getApplicationContext()).setLoadControl(builder.build()).build();
             player.addListener(new Player.EventListener() {
                 @Override
                 public void onIsPlayingChanged(boolean isPlaying) {
