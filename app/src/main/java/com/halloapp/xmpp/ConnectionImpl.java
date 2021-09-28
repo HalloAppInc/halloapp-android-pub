@@ -10,6 +10,7 @@ import androidx.annotation.WorkerThread;
 import com.google.android.gms.common.util.Hex;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.AppContext;
+import com.halloapp.ConnectRetryWorker;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
 import com.halloapp.Me;
@@ -103,6 +104,7 @@ import com.halloapp.xmpp.util.Observable;
 import com.halloapp.xmpp.util.ResponseHandler;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
@@ -121,6 +123,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -171,28 +174,28 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public void connect() {
-        executor.execute(this::connectInBackground);
+    public Future<Boolean> connect() {
+        return executor.submit(this::connectInBackground);
     }
 
     @WorkerThread
-    private void connectInBackground() {
+    private boolean connectInBackground() throws ConnectException {
         ThreadUtils.setSocketTag();
         if (me == null) {
             Log.i("connection: me is null");
-            return;
+            throw new ConnectException("connection: me is null");
         }
         if (!me.isRegistered()) {
             Log.i("connection: not registered");
-            return;
+            throw new ConnectException("connection: not registered");
         }
         if (isConnected() && isAuthenticated()) {
             Log.i("connection: already connected");
-            return;
+            return true;
         }
         if (clientExpired) {
             Log.i("connection: expired client");
-            return;
+            throw new ConnectException("Client expired");
         }
         if (!ackHandlers.isEmpty()) {
             Log.i("connection: " + ackHandlers.size() + " ack handlers cleared");
@@ -218,9 +221,11 @@ public class ConnectionImpl extends Connection {
             connectionObservers.notifyConnected();
             isAuthenticated = true;
             Log.i("connection: established");
+            return true;
         } catch (IOException | NoiseException e) {
             Log.e("connection: cannot create connection", e);
         }
+        return false;
     }
 
     @WorkerThread
@@ -261,15 +266,19 @@ public class ConnectionImpl extends Connection {
             Log.e("connection: cannot reconnect, me is null");
             return false;
         }
-        connectInBackground();
-        return socket != null && isConnected() && isAuthenticated();
+        try {
+            return connectInBackground();
+        } catch (ConnectException e) {
+            Log.e("connection: reconnect failed", e);
+            return false;
+        }
     }
 
     public void sendPacket(Packet packet) {
         packetWriter.sendPacket(packet);
     }
 
-    public boolean isConnected() {
+    private boolean isConnected() {
         return socket != null && socket.isConnected() && !socket.isClosed();
     }
 
@@ -522,7 +531,7 @@ public class ConnectionImpl extends Connection {
             sharePosts.add(new SharePosts(user, itemList));
         }
         FeedUpdateIq updateIq = new FeedUpdateIq(sharePosts);
-        return sendIqRequestAsync(updateIq).map(r -> null);
+        return sendIqRequestAsync(updateIq, true).map(r -> null);
     }
 
     @Override
@@ -570,7 +579,7 @@ public class ConnectionImpl extends Connection {
             FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, encPayload, senderStateBundles, audienceHash);
             publishIq = new GroupFeedUpdateIq(post.getParentGroup(), GroupFeedUpdateIq.Action.PUBLISH, feedItem);
         }
-        sendIqRequestAsync(publishIq)
+        sendIqRequestAsync(publishIq, true)
                 .onResponse(response -> connectionObservers.notifyOutgoingPostSent(post.id))
                 .onError(e -> {
                     Log.e("connection: cannot send post", e);
@@ -586,7 +595,7 @@ public class ConnectionImpl extends Connection {
     @Override
     public void retractPost(@NonNull String postId) {
         FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null));
-        sendIqRequestAsync(requestIq)
+        sendIqRequestAsync(requestIq, true)
                 .onResponse(response -> connectionObservers.notifyOutgoingPostSent(postId))
                 .onError(e -> Log.e("connection: cannot retract post", e));
     }
@@ -594,7 +603,7 @@ public class ConnectionImpl extends Connection {
     @Override
     public void retractGroupPost(@NonNull GroupId groupId, @NonNull String postId) {
         GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null));
-        sendIqRequestAsync(requestIq)
+        sendIqRequestAsync(requestIq, true)
                 .onResponse(response -> connectionObservers.notifyOutgoingPostSent(postId))
                 .onError(e -> Log.e("connection: cannot retract post", e));
     }
@@ -640,7 +649,7 @@ public class ConnectionImpl extends Connection {
             feedItem.parentCommentId = comment.parentCommentId;
             requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.PUBLISH, feedItem);
         }
-        sendIqRequestAsync(requestIq)
+        sendIqRequestAsync(requestIq, true)
                 .onResponse(response -> connectionObservers.notifyOutgoingCommentSent(comment.postId, comment.id))
                 .onError(e -> Log.e("connection: cannot send comment", e));
     }
@@ -650,7 +659,7 @@ public class ConnectionImpl extends Connection {
     public void retractComment(@Nullable UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
         FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null);
         FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, commentItem);
-        sendIqRequestAsync(requestIq)
+        sendIqRequestAsync(requestIq, true)
                 .onResponse(response -> connectionObservers.notifyOutgoingCommentSent(postId, commentId))
                 .onError(e -> Log.e("connection: cannot retract comment", e));
     }
@@ -659,6 +668,7 @@ public class ConnectionImpl extends Connection {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send message, no connection");
+                ConnectRetryWorker.schedule(AppContext.getInstance().get());
                 return;
             }
 
@@ -679,7 +689,7 @@ public class ConnectionImpl extends Connection {
     public void retractGroupComment(@NonNull GroupId groupId, @NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
         FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null);
         GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, commentItem);
-        sendIqRequestAsync(requestIq)
+        sendIqRequestAsync(requestIq, true)
                 .onResponse(r -> connectionObservers.notifyOutgoingCommentSent(postId, commentId))
                 .onError(e -> Log.e("connection: cannot retract comment", e));
     }
@@ -693,6 +703,7 @@ public class ConnectionImpl extends Connection {
             }
             if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send message, no connection");
+                ConnectRetryWorker.schedule(AppContext.getInstance().get());
                 return;
             }
             final UserId recipientUserId = (UserId)message.chatId;
@@ -717,6 +728,7 @@ public class ConnectionImpl extends Connection {
             }
             if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send message, no connection");
+                ConnectRetryWorker.schedule(AppContext.getInstance().get());
                 return;
             }
 
@@ -764,11 +776,18 @@ public class ConnectionImpl extends Connection {
     }
 
     private Observable<Iq> sendIqRequestAsync(@NonNull HalloIq iq) {
+        return sendIqRequestAsync(iq, false);
+    }
+
+    private Observable<Iq> sendIqRequestAsync(@NonNull HalloIq iq, boolean retryConnection) {
         BackgroundObservable<Iq> iqResponse = new BackgroundObservable<>(bgWorkers);
         executor.executeWithDropHandler(() -> {
             if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send iq " + iq + ", no connection");
                 iqResponse.setException(new NotConnectedException());
+                if (retryConnection) {
+                    ConnectRetryWorker.schedule(AppContext.getInstance().get());
+                }
                 return;
             }
             Iq protoIq = iq.toProtoIq();
@@ -838,6 +857,7 @@ public class ConnectionImpl extends Connection {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send seen receipt, no connection");
+                ConnectRetryWorker.schedule(AppContext.getInstance().get());
                 return;
             }
             String id = RandomId.create();
@@ -860,6 +880,7 @@ public class ConnectionImpl extends Connection {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send message seen receipt, no connection");
+                ConnectRetryWorker.schedule(AppContext.getInstance().get());
                 return;
             }
             String id = RandomId.create();
@@ -881,6 +902,7 @@ public class ConnectionImpl extends Connection {
         executor.execute(() -> {
             if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot send message seen receipt, no connection");
+                ConnectRetryWorker.schedule(AppContext.getInstance().get());
                 return;
             }
             String id = RandomId.create();

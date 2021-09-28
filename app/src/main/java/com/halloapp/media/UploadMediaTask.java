@@ -10,6 +10,8 @@ import androidx.annotation.WorkerThread;
 import com.dstukalov.videoconverter.BadMediaException;
 import com.dstukalov.videoconverter.MediaConversionException;
 import com.dstukalov.videoconverter.MediaConverter;
+import com.halloapp.AppContext;
+import com.halloapp.ConnectRetryWorker;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.UrlPreview;
@@ -329,6 +331,8 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
 
         if (contentItem.isAllMediaTransferred()) {
             contentItem.send(connection);
+        } else {
+            ConnectRetryWorker.schedule(AppContext.getInstance().get());
         }
         UploadMediaTask.contentItemIds.remove(contentItem.id);
 

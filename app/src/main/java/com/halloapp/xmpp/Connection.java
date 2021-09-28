@@ -25,6 +25,7 @@ import com.halloapp.xmpp.util.Observable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class Connection {
@@ -92,7 +93,7 @@ public abstract class Connection {
         public void onMessageRevoked(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId, @NonNull String ackId) {}
     }
 
-    public abstract void connect();
+    public abstract Future<Boolean> connect();
 
     public abstract void clientExpired();
 
