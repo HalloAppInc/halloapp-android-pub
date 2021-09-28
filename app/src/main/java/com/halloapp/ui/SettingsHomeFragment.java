@@ -76,7 +76,6 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
         archivedPosts.setOnClickListener(v -> {
             startActivity(new Intent(v.getContext(), ArchiveActivity.class));
         });
-        archivedPosts.setVisibility(ServerProps.getInstance().getIsInternalUser() ? View.VISIBLE : View.GONE);
 
 
         View help = root.findViewById(R.id.help);
