@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Outline;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -256,6 +255,24 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
             return null;
     }
 
+    @Nullable
+    private Size computeImageViewFinalSize(@NonNull ImageView imageView) {
+        Drawable drawable = imageView.getDrawable();
+
+        if (drawable == null) {
+            Log.d("MediaExplorerActivity.computeImageViewFinalSize: missing drawable");
+            return null;
+        }
+
+        float dw = drawable.getIntrinsicWidth();
+        float dh = drawable.getIntrinsicHeight();
+        float vw = imageView.getWidth();
+        float vh = imageView.getHeight();
+        float scale = Math.min(vw / dw, vh / dh);
+
+        return new Size((int) (dw * scale), (int) (dh * scale));
+    }
+
     @MainThread
     private void finishEnterTransitionWhenReady() {
         pager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -310,12 +327,33 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
                         startPostponedEnterTransition();
                     }
                 } else {
-                    AnimatedOutlineProvider outlineProvider = new AnimatedOutlineProvider(animatedCornerRadius);
-                    view.setOutlineProvider(outlineProvider);
-                    view.setClipToOutline(true);
-                    outlineProvider.animate(0, () -> view.setClipToOutline(false));
+                    ImageView imageView = (ImageView) view;
 
-                    startPostponedEnterTransition();
+                    imageView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            if (imageView.getDrawable() == null) {
+                                return;
+                            }
+
+                            imageView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                            AnimatedOutlineProvider outlineProvider = new AnimatedOutlineProvider(animatedCornerRadius);
+                            view.setOutlineProvider(outlineProvider);
+                            view.setClipToOutline(true);
+                            outlineProvider.animate(0, () -> view.setClipToOutline(false));
+
+                            Size size = computeImageViewFinalSize(imageView);
+
+                            if (size != null) {
+                                ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+                                layoutParams.width = size.getWidth();
+                                layoutParams.height = size.getHeight();
+                            }
+
+                            startPostponedEnterTransition();
+                        }
+                    });
                 }
             }
         });
@@ -841,74 +879,9 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
             });
         }
 
-        @Nullable
-        private Size getOriginalMediaSize(@NonNull View view) {
-            if (view instanceof ImageView) {
-                ImageView imageView = (ImageView) view;
-                Drawable drawable = imageView.getDrawable();
-
-                if (drawable == null) {
-                    Log.d("AnimatedOutlineProvider.getOriginalMediaSize: missing drawable");
-                    return null;
-                }
-
-                return new Size(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-            } else if (view instanceof PlayerView) {
-                PlayerView playerView = (PlayerView) view;
-
-                if (playerView.getPlayer() instanceof SimpleExoPlayer) {
-                    SimpleExoPlayer player = (SimpleExoPlayer) playerView.getPlayer();
-                    Format format = player.getVideoFormat();
-
-                    if (format == null) {
-                        Log.d("AnimatedOutlineProvider.getOriginalMediaSize: missing video format");
-                        return null;
-                    }
-
-                    if (format.rotationDegrees == 90 || format.rotationDegrees == 270) {
-                        return new Size(format.height, format.width);
-                    } else {
-                        return new Size(format.width, format.height);
-                    }
-                } else {
-                    Log.d("AnimatedOutlineProvider.getOriginalMediaSize: missing player");
-                    return null;
-                }
-            } else {
-                Log.d("AnimatedOutlineProvider.getOriginalMediaSize: view is neither player nor image");
-                return null;
-            }
-        }
-
-        @Nullable
-        private Rect getMediaPositionInsideView(@NonNull View view) {
-            Size mediaSize = getOriginalMediaSize(view);
-
-            if (mediaSize == null) {
-                return null;
-            }
-
-            float viewWidth = view.getWidth();
-            float viewHeight = view.getHeight();
-            float scale = Math.min(viewWidth / mediaSize.getWidth(), viewHeight / mediaSize.getHeight());
-            float scaledWidth = mediaSize.getWidth() * scale;
-            float scaledHeight = mediaSize.getHeight() * scale;
-
-            int left = (int) (viewWidth - scaledWidth) / 2;
-            int top = (int) (viewHeight - scaledHeight) / 2;
-            int right = (int) (viewWidth + scaledWidth) / 2;
-            int bottom = (int) (viewHeight + scaledHeight) / 2;
-
-            return new Rect(left, top, right, bottom);
-        }
-
         @Override
         public void getOutline(View view, Outline outline) {
-            Rect frame = getMediaPositionInsideView(view);
-
-            if (frame != null) {
-                outline.setRoundRect(frame, cornerRadius);
-            }
+            outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), cornerRadius);
         }
     }
 }
