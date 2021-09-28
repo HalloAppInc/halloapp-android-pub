@@ -76,6 +76,7 @@ import java.util.Objects;
 @SuppressWarnings("WeakerAccess")
 public class MediaUtils {
     private static final int TRIMMING_BUFFER_SIZE = 2 * 1024 * 1024;
+    private static final long INITIAL_FRAME_TIME = 1000;
 
     @WorkerThread
     public static int getExifOrientation(@NonNull File file) throws IOException {
@@ -236,11 +237,18 @@ public class MediaUtils {
             Log.e("MediaUtils.decodeVideo", e);
             return null;
         }
+
+        long initialFrameTime = INITIAL_FRAME_TIME;
+        long videoDuration = getVideoDuration(file);
+        if (videoDuration < INITIAL_FRAME_TIME) {
+            initialFrameTime = videoDuration / 2;
+        }
+
         final Bitmap bitmap;
         if (Build.VERSION.SDK_INT >= 27) {
-            bitmap = mediaMetadataRetriever.getScaledFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC, maxDimension, maxDimension);
+            bitmap = mediaMetadataRetriever.getScaledFrameAtTime(initialFrameTime * 1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC, maxDimension, maxDimension);
         } else {
-            final Bitmap frameBitmap = mediaMetadataRetriever.getFrameAtTime(0);
+            final Bitmap frameBitmap = mediaMetadataRetriever.getFrameAtTime(initialFrameTime * 1000);
             if (frameBitmap != null && (frameBitmap.getWidth() > maxDimension || frameBitmap.getHeight() > maxDimension)) {
                 final float scale = Math.min(1f * maxDimension / frameBitmap.getWidth(), 1f * maxDimension / frameBitmap.getHeight());
                 bitmap = Bitmap.createScaledBitmap(frameBitmap, (int) (frameBitmap.getWidth() * scale), (int) (frameBitmap.getHeight() * scale), true);
