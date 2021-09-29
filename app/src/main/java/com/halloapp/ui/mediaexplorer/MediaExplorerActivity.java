@@ -47,6 +47,7 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -273,6 +274,49 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
         return new Size((int) (dw * scale), (int) (dh * scale));
     }
 
+    private void prepareViewForEnterTransition(@NonNull View view) {
+        Size size;
+        if (view instanceof PlayerView) {
+            PlayerView playerView = (PlayerView) view;
+            playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
+
+            size = computePlayerViewFinalSize(playerView);
+        } else {
+            ImageView imageView = (ImageView) view;
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+            size = computeImageViewFinalSize(imageView);
+        }
+
+        if (size != null) {
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+            layoutParams.width = size.getWidth();
+            layoutParams.height = size.getHeight();
+        }
+
+        AnimatedOutlineProvider outlineProvider = new AnimatedOutlineProvider(animatedCornerRadius);
+        view.setOutlineProvider(outlineProvider);
+        view.setClipToOutline(true);
+
+        outlineProvider.animate(0, () -> {
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+
+            view.setClipToOutline(false);
+
+            if (view instanceof PlayerView) {
+                PlayerView playerView = (PlayerView) view;
+                playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+            } else {
+                ImageView imageView = (ImageView) view;
+                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            }
+
+            view.requestLayout();
+        });
+    }
+
     @MainThread
     private void finishEnterTransitionWhenReady() {
         pager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -306,18 +350,7 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
                                 if (state == Player.STATE_READY) {
                                     player.removeListener(this);
 
-                                    AnimatedOutlineProvider outlineProvider = new AnimatedOutlineProvider(animatedCornerRadius);
-                                    view.setOutlineProvider(outlineProvider);
-                                    view.setClipToOutline(true);
-                                    outlineProvider.animate(0, () -> view.setClipToOutline(false));
-
-                                    Size size = computePlayerViewFinalSize(playerView);
-
-                                    if (size != null) {
-                                        ViewGroup.LayoutParams layoutParams = playerView.getLayoutParams();
-                                        layoutParams.width = size.getWidth();
-                                        layoutParams.height = size.getHeight();
-                                    }
+                                    prepareViewForEnterTransition(view);
 
                                     startPostponedEnterTransition();
                                 }
@@ -338,18 +371,7 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
 
                             imageView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-                            AnimatedOutlineProvider outlineProvider = new AnimatedOutlineProvider(animatedCornerRadius);
-                            view.setOutlineProvider(outlineProvider);
-                            view.setClipToOutline(true);
-                            outlineProvider.animate(0, () -> view.setClipToOutline(false));
-
-                            Size size = computeImageViewFinalSize(imageView);
-
-                            if (size != null) {
-                                ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-                                layoutParams.width = size.getWidth();
-                                layoutParams.height = size.getHeight();
-                            }
+                            prepareViewForEnterTransition(view);
 
                             startPostponedEnterTransition();
                         }

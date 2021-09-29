@@ -13,7 +13,7 @@
         android:layout_gravity="center"
         app:show_buffering="when_playing"
         app:show_shuffle_button="false"
-        app:resize_mode="fill"
+        app:resize_mode="fit"
         app:surface_type="texture_view"
         >
         <!-- app:surface_type="texture_view" required for smooth transitions -->

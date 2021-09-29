@@ -6,9 +6,8 @@
     >
 
     <com.github.chrisbanes.photoview.PhotoView
-        android:background="@android:color/holo_red_dark"
         android:id="@+id/image"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
