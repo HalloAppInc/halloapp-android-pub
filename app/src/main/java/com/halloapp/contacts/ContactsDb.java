@@ -368,6 +368,8 @@ public class ContactsDb {
                 final ContentValues values = new ContentValues();
                 values.put(AvatarsTable.COLUMN_AVATAR_TIMESTAMP, contact.avatarCheckTimestamp);
                 values.put(AvatarsTable.COLUMN_AVATAR_ID, contact.avatarId);
+                values.put(AvatarsTable.COLUMN_REGULAR_CURRENT_ID, contact.regularCurrentId);
+                values.put(AvatarsTable.COLUMN_LARGE_CURRENT_ID, contact.largeCurrentId);
                 final int updateRowsCount = db.updateWithOnConflict(AvatarsTable.TABLE_NAME, values,
                         AvatarsTable.COLUMN_CHAT_ID + "=? ",
                         new String [] {contact.chatId.rawId()},
@@ -392,11 +394,13 @@ public class ContactsDb {
                 new String[] {
                         AvatarsTable.COLUMN_CHAT_ID,
                         AvatarsTable.COLUMN_AVATAR_TIMESTAMP,
-                        AvatarsTable.COLUMN_AVATAR_ID
+                        AvatarsTable.COLUMN_AVATAR_ID,
+                        AvatarsTable.COLUMN_REGULAR_CURRENT_ID,
+                        AvatarsTable.COLUMN_LARGE_CURRENT_ID
                 },
                 AvatarsTable.COLUMN_CHAT_ID + "=?", new String [] {chatId.rawId()}, null, null, null, "1")) {
             if (cursor.moveToNext()) {
-                return new ContactAvatarInfo(chatId, cursor.getLong(1), cursor.getString(2));
+                return new ContactAvatarInfo(chatId, cursor.getLong(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
             }
         }
         return null;
@@ -924,6 +928,8 @@ public class ContactsDb {
         static final String COLUMN_CHAT_ID = "user_id";
         static final String COLUMN_AVATAR_TIMESTAMP = "avatar_timestamp";
         static final String COLUMN_AVATAR_ID = "avatar_hash";
+        static final String COLUMN_REGULAR_CURRENT_ID = "regular_current_id";
+        static final String COLUMN_LARGE_CURRENT_ID = "large_current_id";
     }
 
     // table for user-defined names
@@ -997,7 +1003,7 @@ public class ContactsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "contacts.db";
-        private static final int DATABASE_VERSION = 15;
+        private static final int DATABASE_VERSION = 16;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -1029,7 +1035,9 @@ public class ContactsDb {
                     + AvatarsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                     + AvatarsTable.COLUMN_CHAT_ID + " TEXT NOT NULL,"
                     + AvatarsTable.COLUMN_AVATAR_TIMESTAMP + " INTEGER,"
-                    + AvatarsTable.COLUMN_AVATAR_ID + " TEXT"
+                    + AvatarsTable.COLUMN_AVATAR_ID + " TEXT,"
+                    + AvatarsTable.COLUMN_REGULAR_CURRENT_ID + " TEXT,"
+                    + AvatarsTable.COLUMN_LARGE_CURRENT_ID + "TEXT"
                     + ");");
 
             db.execSQL("DROP INDEX IF EXISTS " + AvatarsTable.INDEX_USER_ID);
@@ -1127,6 +1135,9 @@ public class ContactsDb {
                 case 14: {
                     upgradeFromVersion14(db);
                 }
+                case 15: {
+                    upgradeFromVersion15(db);
+                }
                 break;
                 default: {
                     onCreate(db);
@@ -1179,7 +1190,7 @@ public class ContactsDb {
                         }
                         final String avatarHash = cursor.getString(9);
                         if (!TextUtils.isEmpty(avatarHash)) {
-                            avatars.put(userId, new ContactAvatarInfo(userId, cursor.getLong(8), avatarHash));
+                            avatars.put(userId, new ContactAvatarInfo(userId, cursor.getLong(8), avatarHash, null, null));
                         }
                     }
                 }
@@ -1348,6 +1359,11 @@ public class ContactsDb {
                     + ");");
         }
 
+        private void upgradeFromVersion15(SQLiteDatabase db) {
+            db.execSQL("ALTER TABLE " + AvatarsTable.TABLE_NAME + " ADD COLUMN " + AvatarsTable.COLUMN_REGULAR_CURRENT_ID + " TEXT");
+            db.execSQL("ALTER TABLE " + AvatarsTable.TABLE_NAME + " ADD COLUMN " + AvatarsTable.COLUMN_LARGE_CURRENT_ID + " TEXT");
+        }
+
         /**
          * Recreates a table with a new schema specified by columns.
          *
@@ -1419,11 +1435,15 @@ public class ContactsDb {
         public final ChatId chatId;
         public long avatarCheckTimestamp;
         public String avatarId;
+        public String regularCurrentId;
+        public String largeCurrentId;
 
-        public ContactAvatarInfo(ChatId chatId, long avatarCheckTimestamp, String avatarId) {
+        public ContactAvatarInfo(ChatId chatId, long avatarCheckTimestamp, String avatarId, String regularCurrentId, String largeCurrentId) {
             this.chatId = chatId;
             this.avatarCheckTimestamp = avatarCheckTimestamp;
             this.avatarId = avatarId;
+            this.regularCurrentId = regularCurrentId;
+            this.largeCurrentId = largeCurrentId;
         }
     }
 }

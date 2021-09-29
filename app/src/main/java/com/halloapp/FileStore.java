@@ -144,7 +144,11 @@ public class FileStore {
     }
 
     public File getAvatarFile(String jid) {
-        return new File(avatarDir, jid + ".jpg");
+        return getAvatarFile(jid, false);
+    }
+
+    public File getAvatarFile(String jid, boolean large) {
+        return new File(avatarDir, jid + (large ? "-large" : "") + ".jpg");
     }
 
     public File getLogDir() {

@@ -59,7 +59,7 @@ public class ViewAvatarActivity extends HalloActivity {
         avatarView = findViewById(R.id.image);
         avatarView.setTransitionName(AVATAR_TRANSITION_NAME);
         avatarView.setReturnToMinScaleOnUp(false);
-        avatarLoader.load(avatarView, userId, false);
+        avatarLoader.loadLarge(avatarView, userId, null);
 
         dragDownToDismissHelper = new DragDownToDismissHelper(avatarView, findViewById(R.id.main));
         dragDownToDismissHelper.setDragDismissListener(this::onBackPressed);

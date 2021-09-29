@@ -48,8 +48,6 @@ import java.util.concurrent.ExecutionException;
 
 public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
-    private static final long AVATAR_DATA_EXPIRATION_MS = DateUtils.WEEK_IN_MILLIS;
-
     private static AvatarLoader instance;
 
     private final FileStore fileStore;
@@ -81,7 +79,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         // Use 1/8th of the available memory for memory cache
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory / 8;
-        Log.i("AvatarLoader: create " + cacheSize + "KB cache for post images");
+        Log.i("AvatarLoader: create " + cacheSize + "KB cache for avatars");
         cache = new LruCache<String, Bitmap>(cacheSize) {
 
             @Override
@@ -152,6 +150,38 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         load(view, loader, displayer, chatId.rawId(), cache);
     }
 
+    @MainThread
+    public void loadLarge(@NonNull ImageView view, @NonNull ChatId chatId, String avatarId) {
+        final Callable<Bitmap> loader = () -> getAvatarImpl(chatId, avatarId, true);
+        final Displayer<ImageView, Bitmap> displayer = new Displayer<ImageView, Bitmap>() {
+
+            @Override
+            public void showResult(@NonNull ImageView view, Bitmap result) {
+                if (result == null) {
+                    Bitmap small = cache.get(chatId.rawId());
+                    if (small != null) {
+                        view.setImageBitmap(small);
+                    } else {
+                        view.setImageDrawable(getDefaultAvatar(view.getContext(), chatId));
+                    }
+                } else {
+                    view.setImageBitmap(result);
+                }
+            }
+
+            @Override
+            public void showLoading(@NonNull ImageView view) {
+                Bitmap small = cache.get(chatId.rawId());
+                if (small != null) {
+                    view.setImageBitmap(small);
+                } else {
+                    view.setImageDrawable(getDefaultAvatar(view.getContext(), chatId));
+                }
+            }
+        };
+        load(view, loader, displayer, chatId.rawId(), null);
+    }
+
     @WorkerThread
     public boolean hasAvatar() {
         return hasAvatar(UserId.ME);
@@ -184,20 +214,21 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     @WorkerThread
     private Bitmap getAvatarImpl(@NonNull ChatId chatId, @Nullable String knownAvatarId) {
-        File avatarFile = fileStore.getAvatarFile(chatId.rawId());
+        return getAvatarImpl(chatId, knownAvatarId, false);
+    }
 
+    @WorkerThread
+    private Bitmap getAvatarImpl(@NonNull ChatId chatId, @Nullable String knownAvatarId, boolean large) {
+        File avatarFile = fileStore.getAvatarFile(chatId.rawId(), large);
         ContactsDb.ContactAvatarInfo contactAvatarInfo = getContactAvatarInfo(chatId);
 
-        long currentTimeMs = System.currentTimeMillis();
-        if (currentTimeMs - contactAvatarInfo.avatarCheckTimestamp > AVATAR_DATA_EXPIRATION_MS) {
-            try {
-                String avatarId = getAvatarId(knownAvatarId, chatId, contactAvatarInfo);
-                if (!downloadAvatar(avatarId, avatarFile, contactAvatarInfo)) {
-                    return null;
-                }
-            } finally {
-                contactsDb.updateContactAvatarInfo(contactAvatarInfo);
+         try {
+            String avatarId = getAvatarId(knownAvatarId, chatId, contactAvatarInfo);
+            if (!downloadAvatar(avatarId, avatarFile, contactAvatarInfo, large)) {
+                return null;
             }
+        } finally {
+            contactsDb.updateContactAvatarInfo(contactAvatarInfo);
         }
 
         if (!avatarFile.exists()) {
@@ -243,35 +274,50 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     }
 
     @WorkerThread
-    private boolean downloadAvatar(@Nullable String avatarId, @NonNull File avatarFile, @NonNull ContactsDb.ContactAvatarInfo contactAvatarInfo) {
+    private boolean downloadAvatar(@Nullable String avatarId, @NonNull File avatarFile, @NonNull ContactsDb.ContactAvatarInfo contactAvatarInfo, boolean large) {
         if (TextUtils.isEmpty(avatarId)) {
             Log.i("AvatarLoader: no group avatar id " + avatarId);
             return false;
         }
 
         try {
-            if (shouldDownloadAvatar(avatarFile, Preconditions.checkNotNull(avatarId), contactAvatarInfo)) {
-                String url = "https://avatar-cdn.halloapp.net/" + avatarId;
+            if (shouldDownloadAvatar(Preconditions.checkNotNull(avatarId), contactAvatarInfo, large)) {
+                String url = "https://avatar-cdn.halloapp.net/" + avatarId + (large ? "-full" : "");
                 Downloader.run(url, null, null, Media.MEDIA_TYPE_UNKNOWN, null, avatarFile, new Downloader.DownloadListener() {
                     @Override
                     public boolean onProgress(long bytesWritten) {
                         return true;
                     }
-                }, "avatar-" + avatarId);
+                }, "avatar-" + avatarId + (large ? "-full" : ""));
                 contactAvatarInfo.avatarId = avatarId;
             }
-            contactAvatarInfo.avatarCheckTimestamp = System.currentTimeMillis();
+            if (large) {
+                contactAvatarInfo.largeCurrentId = avatarId;
+            } else {
+                contactAvatarInfo.regularCurrentId = avatarId;
+            }
             return true;
+        } catch (Downloader.DownloadException e) {
+            Log.i("AvatarLoader: avatar not found on server");
+            if (large) {
+                contactAvatarInfo.largeCurrentId = avatarId;
+            } else {
+                contactAvatarInfo.regularCurrentId = avatarId;
+            }
+            return false;
         } catch (IOException | GeneralSecurityException | ChunkedMediaParametersException e) {
             Log.w("AvatarLoader: Failed getting avatar " + avatarId + "; resetting values", e);
-            contactAvatarInfo.avatarCheckTimestamp = 0;
-            contactAvatarInfo.avatarId = null;
+            if (large) {
+                contactAvatarInfo.largeCurrentId = null;
+            } else {
+                contactAvatarInfo.regularCurrentId = null;
+            }
             return false;
         }
     }
 
-    private static boolean shouldDownloadAvatar(@NonNull File avatarFile, @NonNull String avatarId, ContactsDb.ContactAvatarInfo avatarInfo) {
-        return avatarInfo.avatarCheckTimestamp == 0 || !avatarFile.exists() || !avatarId.equals(avatarInfo.avatarId);
+    private static boolean shouldDownloadAvatar(@NonNull String avatarId, ContactsDb.ContactAvatarInfo avatarInfo, boolean large) {
+        return !avatarId.equals(large ? avatarInfo.largeCurrentId : avatarInfo.regularCurrentId);
     }
 
     private @NonNull ContactsDb.ContactAvatarInfo getContactAvatarInfo(ChatId chatId) {
@@ -279,7 +325,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
         if (contactAvatarInfo == null) {
             Log.i("AvatarLoader: Making new contact avatar info for chat " + chatId);
-            contactAvatarInfo = new ContactsDb.ContactAvatarInfo(chatId, 0, null);
+            contactAvatarInfo = new ContactsDb.ContactAvatarInfo(chatId, 0, null, null, null);
         }
 
         return contactAvatarInfo;
@@ -339,29 +385,43 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         ContactsDb.ContactAvatarInfo contactAvatarInfo = getContactAvatarInfo(UserId.ME);
         contactAvatarInfo.avatarId = avatarId;
         contactAvatarInfo.avatarCheckTimestamp = 0;
+        contactAvatarInfo.regularCurrentId = null;
+        contactAvatarInfo.largeCurrentId = null;
         contactsDb.updateContactAvatarInfo(contactAvatarInfo);
 
-        File avatarFile = fileStore.getAvatarFile(UserId.ME.rawId());
-        if (avatarFile.exists()) {
-            if (!avatarFile.delete()) {
-                Log.e("failed to remove avatar " + avatarFile.getAbsolutePath());
+        File smallFile = fileStore.getAvatarFile(UserId.ME.rawId());
+        if (smallFile.exists()) {
+            if (!smallFile.delete()) {
+                Log.e("failed to remove avatar " + smallFile.getAbsolutePath());
+            }
+        }
+        File largeFile = fileStore.getAvatarFile(UserId.ME.rawId());
+        if (largeFile.exists()) {
+            if (!largeFile.delete()) {
+                Log.e("failed to remove avatar " + largeFile.getAbsolutePath());
             }
         }
         cache.remove(UserId.ME.rawId());
     }
 
     public void reportAvatarUpdate(@NonNull ChatId chatId, @Nullable String avatarId) {
-        File avatarFile = fileStore.getAvatarFile(chatId.rawId());
-        if (avatarFile.exists()) {
-            if (!avatarFile.delete()) {
-                Log.e("failed to remove avatar " + avatarFile.getAbsolutePath());
+        File smallFile = fileStore.getAvatarFile(chatId.rawId());
+        if (smallFile.exists()) {
+            if (!smallFile.delete()) {
+                Log.e("failed to remove avatar " + smallFile.getAbsolutePath());
+            }
+        }
+        File largeFile = fileStore.getAvatarFile(chatId.rawId());
+        if (largeFile.exists()) {
+            if (!largeFile.delete()) {
+                Log.e("failed to remove avatar " + largeFile.getAbsolutePath());
             }
         }
 
         ContactsDb.getInstance().updateAvatarId(chatId, avatarId);
         cache.remove(chatId.rawId());
         try {
-            ContactsDb.getInstance().updateContactAvatarInfo(new ContactsDb.ContactAvatarInfo(chatId, 0, avatarId)).get();
+            ContactsDb.getInstance().updateContactAvatarInfo(new ContactsDb.ContactAvatarInfo(chatId, 0, avatarId, null, null)).get();
         } catch (ExecutionException | InterruptedException e) {
             Log.e("failed to update avatar", e);
         }
