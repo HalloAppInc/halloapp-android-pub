@@ -1549,7 +1549,7 @@ public class ConnectionImpl extends Connection {
 
             for (GroupFeedItem item : items) {
                 GroupId groupId = new GroupId(item.getGid());
-                if (item.hasSenderState()) {
+                if (ServerProps.getInstance().getIsInternalUser() && item.hasSenderState()) {
                     SenderStateWithKeyInfo senderStateWithKeyInfo = item.getSenderState();
 
                     long publisherUid;
