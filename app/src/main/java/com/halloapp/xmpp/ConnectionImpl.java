@@ -1575,6 +1575,7 @@ public class ConnectionImpl extends Connection {
                         byte[] chainKey = senderKey.getChainKey().toByteArray();
                         byte[] publicSignatureKeyBytes = senderKey.getPublicSignatureKey().toByteArray();
                         PublicEdECKey publicSignatureKey = new PublicEdECKey(publicSignatureKeyBytes);
+                        Log.i("Received sender state with current chain index of " + currentChainIndex + " from " + publisherUid);
 
                         EncryptedKeyStore encryptedKeyStore = EncryptedKeyStore.getInstance();
                         encryptedKeyStore.setPeerGroupCurrentChainIndex(groupId, publisherUserId, currentChainIndex);
