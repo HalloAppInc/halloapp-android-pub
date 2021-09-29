@@ -1090,6 +1090,7 @@ class PostsDb {
                     "m." + MediaTable.COLUMN_URL + "," +
                     "m." + MediaTable.COLUMN_FILE + "," +
                     "m." + MediaTable.COLUMN_ENC_FILE + "," +
+                    "m." + MediaTable.COLUMN_ENC_KEY + "," +
                     "m." + MediaTable.COLUMN_WIDTH + "," +
                     "m." + MediaTable.COLUMN_HEIGHT + "," +
                     "m." + MediaTable.COLUMN_TRANSFERRED + "," +
@@ -1104,6 +1105,7 @@ class PostsDb {
                         MediaTable.COLUMN_URL + "," +
                         MediaTable.COLUMN_FILE + "," +
                         MediaTable.COLUMN_ENC_FILE + "," +
+                        MediaTable.COLUMN_ENC_KEY + "," +
                         MediaTable.COLUMN_WIDTH + "," +
                         MediaTable.COLUMN_HEIGHT + "," +
                         MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
@@ -1140,7 +1142,7 @@ class PostsDb {
                         post.setParentGroup(parentGroupId);
                     }
                     mentionsDb.fillMentions(post);
-                    post.seenByCount = cursor.getInt(18);
+                    post.seenByCount = cursor.getInt(19);
                     post.rerequestCount = cursor.getInt(10);
                 }
                 if (!cursor.isNull(11)) {
@@ -1149,12 +1151,12 @@ class PostsDb {
                             cursor.getInt(12),
                             cursor.getString(13),
                             fileStore.getMediaFile(cursor.getString(14)),
+                            cursor.getBlob(16),
                             null,
                             null,
-                            null,
-                            cursor.getInt(16),
                             cursor.getInt(17),
                             cursor.getInt(18),
+                            cursor.getInt(19),
                             Media.BLOB_VERSION_UNKNOWN,
                             0,
                             0);
