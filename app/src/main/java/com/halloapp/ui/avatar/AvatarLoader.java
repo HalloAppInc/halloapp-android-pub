@@ -291,19 +291,9 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 }, "avatar-" + avatarId + (large ? "-full" : ""));
                 contactAvatarInfo.avatarId = avatarId;
             }
-            if (large) {
-                contactAvatarInfo.largeCurrentId = avatarId;
-            } else {
-                contactAvatarInfo.regularCurrentId = avatarId;
-            }
             return true;
         } catch (Downloader.DownloadException e) {
             Log.i("AvatarLoader: avatar not found on server");
-            if (large) {
-                contactAvatarInfo.largeCurrentId = avatarId;
-            } else {
-                contactAvatarInfo.regularCurrentId = avatarId;
-            }
             return false;
         } catch (IOException | GeneralSecurityException | ChunkedMediaParametersException e) {
             Log.w("AvatarLoader: Failed getting avatar " + avatarId + "; resetting values", e);
@@ -317,7 +307,13 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     }
 
     private static boolean shouldDownloadAvatar(@NonNull String avatarId, ContactsDb.ContactAvatarInfo avatarInfo, boolean large) {
-        return !avatarId.equals(large ? avatarInfo.largeCurrentId : avatarInfo.regularCurrentId);
+        boolean ret = !avatarId.equals(large ? avatarInfo.largeCurrentId : avatarInfo.regularCurrentId);
+        if (large) {
+            avatarInfo.largeCurrentId = avatarId;
+        } else {
+            avatarInfo.regularCurrentId = avatarId;
+        }
+        return ret;
     }
 
     private @NonNull ContactsDb.ContactAvatarInfo getContactAvatarInfo(ChatId chatId) {
