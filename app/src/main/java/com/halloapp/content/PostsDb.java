@@ -1333,7 +1333,37 @@ class PostsDb {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final String sql =
                 "SELECT MAX(" + CommentsTable._ID + ") FROM " + CommentsTable.TABLE_NAME + " " +
-                "WHERE " + CommentsTable.COLUMN_POST_ID + "=? AND " + CommentsTable.COLUMN_SEEN + "=1";
+                        "WHERE " + CommentsTable.COLUMN_POST_ID + "=? AND " + CommentsTable.COLUMN_SEEN + "=1";
+        try (final Cursor cursor = db.rawQuery(sql, new String [] {postId})) {
+            if (cursor.moveToNext()) {
+                return cursor.isNull(0) ? -1 : cursor.getLong(0);
+            } else {
+                return -1;
+            }
+        }
+    }
+
+    @WorkerThread
+    int getUnseenCommentCount(@NonNull String postId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+                "SELECT COUNT(" + CommentsTable._ID + ") FROM " + CommentsTable.TABLE_NAME + " " +
+                        "WHERE " + CommentsTable.COLUMN_POST_ID + "=? AND " + CommentsTable.COLUMN_SEEN + "=0";
+        try (final Cursor cursor = db.rawQuery(sql, new String [] {postId})) {
+            if (cursor.moveToNext()) {
+                return cursor.getInt(0);
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    @WorkerThread
+    long getFirstUnseenCommentRowId(@NonNull String postId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+                "SELECT MIN(" + CommentsTable._ID + ") FROM " + CommentsTable.TABLE_NAME + " " +
+                        "WHERE " + CommentsTable.COLUMN_POST_ID + "=? AND " + CommentsTable.COLUMN_SEEN + "=0";
         try (final Cursor cursor = db.rawQuery(sql, new String [] {postId})) {
             if (cursor.moveToNext()) {
                 return cursor.isNull(0) ? -1 : cursor.getLong(0);

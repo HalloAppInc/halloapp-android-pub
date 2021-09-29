@@ -247,6 +247,11 @@
         <item quantity="one">%d new message</item>
         <item quantity="other">%d new messages</item>
     </plurals>
+    <!-- New comment separator -->
+    <plurals name="new_comment_separator">
+        <item quantity="one">%d new comment</item>
+        <item quantity="other">%d new comments</item>
+    </plurals>
     <plurals name="new_comments_notification">
         <item quantity="other">%s commented on your post</item>
     </plurals>

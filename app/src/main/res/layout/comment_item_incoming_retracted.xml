@@ -5,12 +5,14 @@
     android:orientation="vertical">
 
     <include
-        layout="@layout/message_item_header"/>
+        layout="@layout/comment_item_header"/>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="64dp"
         android:layout_marginTop="8dp">
 
         <LinearLayout
@@ -19,9 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:background="@drawable/message_background_incoming"
-            android:orientation="vertical"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="64dp">
+            android:orientation="vertical">
 
             <include layout="@layout/message_sender_info" />
 
@@ -34,7 +34,7 @@
                 android:paddingTop="9dp"
                 android:paddingEnd="14dp"
                 android:paddingBottom="9dp"
-                android:text="@string/message_retracted_placeholder"
+                android:text="@string/comment_retracted_placeholder"
                 android:textStyle="italic" />
 
         </LinearLayout>

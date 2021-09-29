@@ -7,22 +7,22 @@
     android:orientation="vertical">
 
     <include
-        layout="@layout/message_item_header"/>
+        layout="@layout/comment_item_header"/>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="64dp">
 
         <LinearLayout
             android:id="@+id/content"
-            android:layout_marginStart="64dp"
-            android:layout_marginEnd="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:paddingTop="4dp"
-            android:background="@drawable/message_background_outgoing"
-            android:orientation="vertical">
+            android:layout_gravity="start"
+            android:background="@drawable/message_background_incoming"
+            android:orientation="vertical"
+            android:paddingTop="4dp">
 
             <FrameLayout
                 android:id="@+id/reply_container"
@@ -31,17 +31,57 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <include layout="@layout/message_url_preview" />
+
+            <include layout="@layout/message_sender_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <include layout="@layout/message_url_preview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="5dp"/>
+
+            <FrameLayout
+                android:id="@+id/comment_media_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="4dp">
+
+                <ImageView
+                    android:id="@+id/comment_media"
+                    android:layout_width="238dp"
+                    android:layout_height="238dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_gravity="center_horizontal"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop" />
+
+                <ImageView
+                    android:id="@+id/comment_video_indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_video"/>
+
+            </FrameLayout>
 
             <com.halloapp.widget.MessageTextLayout
                 android:id="@+id/message_text_container"
                 android:paddingTop="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
+                android:layout_gravity="start"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="0dp"
-                android:layout_marginBottom="9dp">
+                android:layout_marginBottom="7dp">
 
                 <com.halloapp.widget.LimitingTextView
                     android:id="@+id/text"
@@ -68,22 +108,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="0dp"
-                        android:paddingEnd="5dp"
+                        android:paddingEnd="10dp"
                         android:layout_gravity="center_vertical"
-                        android:textColor="@color/message_timestamp_outgoing"
+                        android:textColor="@color/post_timestamp"
                         android:textSize="10sp"
                         tools:text="11:49 PM"/>
-
-                    <ImageView
-                        android:id="@+id/status"
-                        android:layout_width="14dp"
-                        android:layout_height="10dp"
-                        android:layout_gravity="center_vertical"
-                        android:scaleType="fitCenter"
-                        android:layout_marginStart="0dp"
-                        android:layout_marginEnd="10dp"
-                        tools:src="@drawable/ic_messaging_delivered" />
-
                 </LinearLayout>
 
             </com.halloapp.widget.MessageTextLayout>
@@ -91,5 +120,6 @@
         </LinearLayout>
 
     </FrameLayout>
+
 
 </LinearLayout>

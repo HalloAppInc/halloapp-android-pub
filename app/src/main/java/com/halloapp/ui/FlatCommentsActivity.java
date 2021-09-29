@@ -6,18 +6,17 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Outline;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
-import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -26,30 +25,36 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.text.style.DynamicDrawableSpan;
-import android.text.style.ImageSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TextAppearanceSpan;
 import android.text.style.URLSpan;
 import android.util.Pair;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
-import androidx.annotation.DrawableRes;
+import androidx.annotation.ColorRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ActionMode;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.app.SharedElementCallback;
@@ -72,7 +77,6 @@ import com.halloapp.Debug;
 import com.halloapp.R;
 import com.halloapp.UrlPreview;
 import com.halloapp.UrlPreviewLoader;
-import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
@@ -90,6 +94,7 @@ import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.markdown.MarkdownUtils;
 import com.halloapp.ui.mediaedit.MediaEditActivity;
@@ -101,13 +106,13 @@ import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.PostAttributionLayout;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.ActivityUtils;
-import com.halloapp.util.DrawableUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.Result;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
+import com.halloapp.util.TimeUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ChatInputView;
@@ -115,7 +120,9 @@ import com.halloapp.widget.ItemSwipeHelper;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.widget.LinkPreviewComposeView;
+import com.halloapp.widget.LongPressInterceptView;
 import com.halloapp.widget.MentionableEntry;
+import com.halloapp.widget.MessageTextLayout;
 import com.halloapp.widget.RecyclerViewKeyboardScrollHelper;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.widget.SwipeListItemHelper;
@@ -125,6 +132,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -169,6 +177,10 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+    private ActionMode actionMode;
+
+    private Comment selectedComment;
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
@@ -292,7 +304,10 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             }));
         });
 
-        viewModel.lastSeenCommentRowId.getLiveData().observe(this, rowId -> adapter.setLastSeenCommentRowId(rowId == null ? -1 : rowId));
+        viewModel.unseenCommentCount.getLiveData().observe(this, pair -> {
+            adapter.setFirstUnseenCommentId(pair.first);
+            adapter.setNewCommentCount(pair.second);
+        });
 
         viewModel.getReply().observe(this, reply -> {
             if (reply == null) {
@@ -575,23 +590,25 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             updateReplyIndicator(getIntent().getStringExtra(EXTRA_REPLY_COMMENT_ID));
         }
 
-        itemSwipeHelper = new ItemSwipeHelper(new SwipeListItemHelper(
-                Preconditions.checkNotNull(ContextCompat.getDrawable(this, R.drawable.ic_delete_white)),
-                ContextCompat.getColor(this, R.color.swipe_delete_background),
-                getResources().getDimensionPixelSize(R.dimen.swipe_delete_icon_margin)) {
+        SwipeListItemHelper swipeListItemHelper = new SwipeListItemHelper(
+                Preconditions.checkNotNull(ContextCompat.getDrawable(this, R.drawable.ic_swipe_reply)),
+                ContextCompat.getColor(this, R.color.swipe_reply_background),
+                getResources().getDimensionPixelSize(R.dimen.swipe_reply_icon_margin)) {
 
             @Override
-            public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-                if (viewHolder.getItemViewType() == ITEM_TYPE_POST) {
-                    return makeMovementFlags(0);
-                }
-                return super.getMovementFlags(recyclerView, viewHolder);
+            public boolean isItemViewSwipeEnabled() {
+                return false; // initiate swipes manually by calling startSwipe()
             }
 
             @Override
             public boolean canSwipe(@NonNull RecyclerView.ViewHolder viewHolder) {
-                final Comment comment = ((ViewHolder)viewHolder).comment;
-                return comment != null && comment.senderUserId.isMe() && !comment.isRetracted();
+                switch (viewHolder.getItemViewType()) {
+                    case ITEM_TYPE_POST:
+                    case ITEM_TYPE_RETRACTED_INCOMING:
+                    case ITEM_TYPE_RETRACTED_OUTGOING:
+                        return false;
+                }
+                return true;
             }
 
             @Override
@@ -601,19 +618,90 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 itemSwipeHelper.attachToRecyclerView(null);
                 itemSwipeHelper.attachToRecyclerView(commentsView);
 
-                final Comment comment = ((ViewHolder)viewHolder).comment;
-                if (comment == null || !comment.senderUserId.isMe() || comment.isRetracted()) {
+                final Comment comment = ((BaseCommentViewHolder)viewHolder).comment;
+                if (comment == null || comment.isRetracted()) {
                     return;
                 }
-                final AlertDialog.Builder builder = new AlertDialog.Builder(FlatCommentsActivity.this);
-                builder.setMessage(getBaseContext().getString(R.string.retract_comment_confirmation));
-                builder.setCancelable(true);
-                builder.setPositiveButton(R.string.yes, (dialog, which) -> ContentDb.getInstance().retractComment(comment));
-                builder.setNegativeButton(R.string.no, null);
-                builder.show();
+
+                updateReplyIndicator(comment.id);
+                showKeyboard();
+            }
+        };
+        itemSwipeHelper = new ItemSwipeHelper(swipeListItemHelper);
+        itemSwipeHelper.attachToRecyclerView(commentsView);
+
+        // Modified from ItemTouchHelper
+        commentsView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            private static final int ACTIVE_POINTER_ID_NONE = -1;
+
+            private final int slop = ViewConfiguration.get(commentsView.getContext()).getScaledTouchSlop();
+
+            private int activePointerId;
+            private float initialX;
+            private float initialY;
+
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent event) {
+                final int action = event.getActionMasked();
+                if (action == MotionEvent.ACTION_DOWN) {
+                    activePointerId = event.getPointerId(0);
+                    initialX = event.getX();
+                    initialY = event.getY();
+                } else if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
+                    activePointerId = ACTIVE_POINTER_ID_NONE;
+                } else if (activePointerId != ACTIVE_POINTER_ID_NONE) {
+                    final int index = event.findPointerIndex(activePointerId);
+                    if (index >= 0) {
+                        RecyclerView.ViewHolder vh = findSwipedView(event);
+                        if (vh instanceof BaseCommentViewHolder) {
+                            BaseCommentViewHolder mvh = (BaseCommentViewHolder) vh;
+                            Comment comment = mvh.comment;
+                            swipeListItemHelper.setIconTint(GroupParticipants.getParticipantNameColor(FlatCommentsActivity.this, comment.senderUserId));
+                        }
+                        if (vh != null) {
+                            itemSwipeHelper.startSwipe(vh);
+                        }
+                    }
+                }
+
+                return false;
+            }
+            private RecyclerView.ViewHolder findSwipedView(MotionEvent motionEvent) {
+                final RecyclerView.LayoutManager lm = Preconditions.checkNotNull(commentsView.getLayoutManager());
+                if (activePointerId == ACTIVE_POINTER_ID_NONE) {
+                    return null;
+                }
+                final int pointerIndex = motionEvent.findPointerIndex(activePointerId);
+                final float dx = motionEvent.getX(pointerIndex) - initialX;
+                final float dy = motionEvent.getY(pointerIndex) - initialY;
+                final float absDx = Math.abs(dx);
+                final float absDy = Math.abs(dy);
+
+                if (absDx < slop && absDy < slop) {
+                    return null;
+                }
+                if (absDx > absDy && lm.canScrollHorizontally()) {
+                    return null;
+                } else if (absDy > absDx && lm.canScrollVertically()) {
+                    return null;
+                }
+                View child = commentsView.findChildViewUnder(initialX, initialY);
+                if (child == null) {
+                    return null;
+                }
+                return commentsView.getChildViewHolder(child);
+            }
+
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
             }
         });
-        itemSwipeHelper.attachToRecyclerView(commentsView);
     }
 
     private void sendComment() {
@@ -901,10 +989,11 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
     }
 
-    private class VoiceNoteViewHolder extends ViewHolder {
+    private class VoiceNoteViewHolder extends BaseCommentViewHolder {
         private final SeekBar seekBar;
         private final ImageView controlButton;
         private final TextView seekTime;
+        private final ProgressBar loading;
 
         private boolean playing;
 
@@ -915,10 +1004,19 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         public VoiceNoteViewHolder(@NonNull View itemView) {
             super(itemView);
+            itemView.setOnLongClickListener(v -> {
+                if (comment == null) {
+                    return false;
+                }
+                selectedComment = comment;
+                updateActionMode();
+                return true;
+            });
 
             seekBar = itemView.findViewById(R.id.voice_note_seekbar);
             controlButton = itemView.findViewById(R.id.control_btn);
             seekTime = itemView.findViewById(R.id.seek_time);
+            loading = itemView.findViewById(R.id.loading);
 
             controlButton.setOnClickListener(v -> {
                 if (playing) {
@@ -972,6 +1070,28 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         }
 
         @Override
+        public void fillView(boolean changed) {
+            if (comment.media != null && !comment.media.isEmpty()) {
+                Media media = comment.media.get(0);
+                if (media.transferred == Media.TRANSFERRED_YES) {
+                    if (media.file != null) {
+                        String newPath = media.file.getAbsolutePath();
+                        if (!newPath.equals(audioPath)) {
+                            this.audioPath = media.file.getAbsolutePath();
+                            audioDurationLoader.load(seekTime, media);
+                        }
+                    }
+                    loading.setVisibility(View.GONE);
+                    controlButton.setVisibility(View.VISIBLE);
+                } else {
+                    loading.setVisibility(View.VISIBLE);
+                    controlButton.setVisibility(View.INVISIBLE);
+                }
+            }
+            updateVoiceNoteTint(comment.seen);
+        }
+
+        @Override
         public void markAttach() {
             super.markAttach();
             startObservingPlayback();
@@ -992,26 +1112,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             controlButton.setImageResource(R.drawable.ic_play_arrow);
         }
 
-        void bindTo(final @NonNull Comment comment, long lastSeencommentRowId, int position) {
-            this.comment = comment;
-            bindCommon(comment, lastSeencommentRowId, position);
-            if (comment.media != null && !comment.media.isEmpty()) {
-                Media media = comment.media.get(0);
-                if (media.transferred == Media.TRANSFERRED_YES) {
-                    if (media.file != null) {
-                        String newPath = media.file.getAbsolutePath();
-                        if (!newPath.equals(audioPath)) {
-                            this.audioPath = media.file.getAbsolutePath();
-                            audioDurationLoader.load(seekTime, media);
-                        }
-                    }
-                    controlButton.setVisibility(View.VISIBLE);
-                } else {
-                    controlButton.setVisibility(View.INVISIBLE);
-                }
-            }
-            updateVoiceNoteTint(comment.seen);
-        }
 
         private void startObservingPlayback() {
             viewModel.getVoiceNotePlayer().getPlaybackState().observe(this, playbackStateObserver);
@@ -1030,40 +1130,93 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             }
             controlButton.setImageTintList(ColorStateList.valueOf(color));
             seekBar.getThumb().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            loading.getIndeterminateDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
         }
 
     }
+    private boolean updateActionMode() {
+        if (actionMode == null) {
+            actionMode = startSupportActionMode(new ActionMode.Callback() {
+                @Override
+                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                    getMenuInflater().inflate(R.menu.comment_select, menu);
+                    if (selectedComment == null || !selectedComment.senderUserId.isMe()) {
+                        menu.findItem(R.id.delete).setVisible(false);
+                    }
+                    return true;
+                }
 
-    private class FutureProofViewHolder extends ViewHolder {
+                @Override
+                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    return true;
+                }
 
-        Comment comment;
+                @Override
+                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                    if (item.getItemId() == R.id.reply) {
+                        if (selectedComment != null) {
+                            updateReplyIndicator(selectedComment.id);
+                        }
+                        if (actionMode != null) {
+                            actionMode.finish();
+                        }
+                        return true;
+                    } else if (item.getItemId() == R.id.delete) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(FlatCommentsActivity.this);
+                        builder.setMessage(R.string.retract_comment_confirmation);
+                        builder.setNegativeButton(R.string.no, null);
+                        DialogInterface.OnClickListener listener = (dialog, which) -> {
+                            switch (which) {
+                                case DialogInterface.BUTTON_POSITIVE: {
+                                    if (selectedComment != null) {
+                                        ContentDb.getInstance().retractComment(selectedComment);
+                                    }
+                                    if (actionMode != null) {
+                                        actionMode.finish();
+                                    }
+                                    break;
+                                }
+                            }
+                        };
+                        builder.setPositiveButton(R.string.yes, listener);
+                        builder.create().show();
+                        return true;
+                    }
+                    return true;
+                }
+
+                @Override
+                public void onDestroyActionMode(ActionMode mode) {
+                    selectedComment = null;
+                    adapter.notifyDataSetChanged();
+                    actionMode = null;
+                }
+            });
+        }
+        adapter.notifyDataSetChanged();
+        return true;
+    }
+
+    private class FutureProofViewHolder extends BaseCommentViewHolder {
 
         public FutureProofViewHolder(@NonNull View itemView) {
             super(itemView);
 
             TextView futureProofMessage = itemView.findViewById(R.id.future_proof_text);
             linkifyFutureProof(futureProofMessage);
+
+            itemView.setOnLongClickListener(v -> {
+                if (comment == null) {
+                    return false;
+                }
+                selectedComment = comment;
+                updateActionMode();
+                return true;
+            });
         }
 
-        void bindTo(final @NonNull Comment comment, long lastSeenCommentRowId, int position) {
-            this.comment = comment;
-            bindCommon(comment, lastSeenCommentRowId, position);
-
-            avatarLoader.load(avatarView, comment.senderUserId);
-
-            progressView.setVisibility(comment.transferred != Comment.TRANSFERRED_NO ? View.GONE : View.VISIBLE);
-            TimeFormatter.setTimePostsFormat(timeView, comment.timestamp);
-            timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
-
-            replyButton.setVisibility(View.VISIBLE);
-
-            replyButton.setOnClickListener(v -> {
-                keyboardScrollHelper.setAnchorForKeyboardChange(position);
-                updateReplyIndicator(comment.id);
-                editText.requestFocus();
-                final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
-                imm.showSoftInput(editText,0);
-            });
+        @Override
+        public void fillView(boolean changed) {
         }
     }
 
@@ -1105,53 +1258,72 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         futureProofMessage.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
-    private class ViewHolder extends ViewHolderWithLifecycle {
+    private abstract class BaseCommentViewHolder extends ViewHolderWithLifecycle implements SwipeListItemHelper.SwipeableViewHolder {
+        protected final TextView timestampView;
+        private final TextView nameView;
+        private final View linkPreviewContainer;
+        private final TextView linkPreviewTitle;
+        private final TextView linkPreviewUrl;
+        private final ImageView linkPreviewImg;
+        private final View contentView;
 
-        final ImageView avatarView;
-        final View commentMediaContainer;
-        final ImageView commentMedia;
-        final ImageView commentVideoIndicator;
-        final LimitingTextView commentView;
-        final TextView timeView;
-        final View progressView;
-        final View replyButton;
-        final RecyclerView mediaGallery;
-        final View cardView;
-        final View replyBubble;
-        final TextView replyTextView;
-        final ImageView replyThumbView;
-        final TextView nameView;
-        final TextView groupView;
-        final PostAttributionLayout attributionLayout;
-        final View linkPreviewContainer;
-        final TextView linkPreviewTitle;
-        final TextView linkPreviewUrl;
-        final ImageView linkPreviewImg;
+        private final FrameLayout replyContainerView;
+        private final TextView replyNameView;
+        private final TextView replyTextView;
+        private final ImageView replyMediaThumbView;
+        private final ImageView replyMediaIconView;
 
-        Comment comment;
+        private final TextView newCommentsSeparator;
+        private final TextView dateSeparator;
 
-        ViewHolder(final @NonNull View v) {
-            super(v);
-            avatarView = v.findViewById(R.id.avatar);
-            commentMediaContainer = v.findViewById(R.id.comment_media_container);
-            commentMedia = v.findViewById(R.id.comment_media);
-            commentVideoIndicator = v.findViewById(R.id.comment_video_indicator);
-            commentView = v.findViewById(R.id.comment_text);
-            timeView = v.findViewById(R.id.time);
-            progressView = v.findViewById(R.id.progress);
-            replyButton = v.findViewById(R.id.reply);
-            mediaGallery = v.findViewById(R.id.media);
-            cardView = v.findViewById(R.id.comment);
-            replyBubble = v.findViewById(R.id.reply_bubble);
-            replyTextView = v.findViewById(R.id.reply_text);
-            replyThumbView = v.findViewById(R.id.reply_thumbnail);
+        protected Comment comment;
+
+        protected int position;
+
+        private AnimatorSet highlightAnimation;
+
+        public View getSwipeView() {
+            return contentView;
+        }
+
+        public BaseCommentViewHolder(@NonNull View itemView) {
+            super(itemView);
+
             nameView = itemView.findViewById(R.id.name);
-            groupView = itemView.findViewById(R.id.group_name);
-            attributionLayout = itemView.findViewById(R.id.post_header);
+            timestampView = itemView.findViewById(R.id.timestamp);
             linkPreviewContainer = itemView.findViewById(R.id.link_preview_container);
             linkPreviewTitle = itemView.findViewById(R.id.link_title);
             linkPreviewUrl = itemView.findViewById(R.id.link_domain);
             linkPreviewImg = itemView.findViewById(R.id.link_preview_image);
+            contentView = itemView.findViewById(R.id.content);
+            replyContainerView = itemView.findViewById(R.id.reply_container);
+            newCommentsSeparator = itemView.findViewById(R.id.new_comments);
+            dateSeparator = itemView.findViewById(R.id.date);
+            if (replyContainerView != null) {
+                LayoutInflater.from(replyContainerView.getContext()).inflate(R.layout.message_item_reply_content, replyContainerView);
+
+                replyNameView = replyContainerView.findViewById(R.id.reply_name);
+                replyTextView = replyContainerView.findViewById(R.id.reply_text);
+                replyMediaThumbView = replyContainerView.findViewById(R.id.reply_media_thumb);
+                replyMediaThumbView.setOutlineProvider(new ViewOutlineProvider() {
+                    @Override
+                    public void getOutline(View view, Outline outline) {
+                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), replyMediaThumbView.getContext().getResources().getDimension(R.dimen.reply_media_corner_radius));
+                    }
+                });
+                replyMediaThumbView.setClipToOutline(true);
+                replyMediaIconView = replyContainerView.findViewById(R.id.reply_media_icon);
+                replyContainerView.setOnClickListener(v -> {
+                    if (comment.parentComment != null) {
+                        scrollToOriginal(comment.parentComment);
+                    }
+                });
+            } else {
+                replyNameView = null;
+                replyTextView = null;
+                replyMediaThumbView = null;
+                replyMediaIconView = null;
+            }
             if (linkPreviewContainer != null) {
                 linkPreviewContainer.setOutlineProvider(new ViewOutlineProvider() {
                     @Override
@@ -1165,98 +1337,33 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
                     }
                 });
-                linkPreviewContainer.setBackgroundColor(ContextCompat.getColor(linkPreviewContainer.getContext(), R.color.message_background_incoming));
-                linkPreviewContainer.setClipToOutline(true);
-                linkPreviewContainer.setOnClickListener(view -> {
+                linkPreviewContainer.setOnClickListener(v -> {
                     UrlPreview preview = comment == null ? null : comment.urlPreview;
                     if (preview != null && preview.url != null) {
                         IntentUtils.openUrlInBrowser(linkPreviewContainer.getContext(), preview.url);
                     }
                 });
-            }
-
-            if (replyTextView != null) {
-                replyTextView.setOnClickListener(view -> {
-                    if (comment != null) {
-                        scrollToOriginal(comment.parentComment);
-                    }
-                });
-            }
-
-            if (mediaGallery != null) {
-                final LinearLayoutManager layoutManager = new LinearLayoutManager(mediaGallery.getContext(), RecyclerView.HORIZONTAL, false);
-                mediaGallery.setLayoutManager(layoutManager);
-                mediaGallery.addItemDecoration(new LinearSpacingItemDecoration(layoutManager, getResources().getDimensionPixelSize(R.dimen.comment_media_list_spacing)));
-            }
-            if (commentMedia != null) {
-                commentMedia.setOutlineProvider(new ViewOutlineProvider() {
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.comment_media_corner_radius));
-                    }
-                });
-                commentMedia.setClipToOutline(true);
+                linkPreviewContainer.setClipToOutline(true);
             }
         }
 
-        void bindTo(final @NonNull Comment comment, long lastSeenCommentRowId, int position) {
+        public void bindTo(@NonNull Comment comment, @Nullable Comment prevComment, @Nullable Comment nextComment, int position, int newCommentCountSeparator) {
+            boolean changed = Objects.equals(this.comment, comment);
             this.comment = comment;
-            bindCommon(comment, lastSeenCommentRowId, position);
+            this.position = position;
 
-            if (commentMediaContainer != null) {
-                if (comment.media.isEmpty()) {
-                    commentMediaContainer.setVisibility(View.GONE);
-                } else {
-                    commentMediaContainer.setVisibility(View.VISIBLE);
-                    Media media = comment.media.get(0);
-                    mediaThumbnailLoader.load(commentMedia, media);
-                    commentVideoIndicator.setVisibility(media.type == Media.MEDIA_TYPE_VIDEO ? View.VISIBLE : View.GONE);
-                    commentMedia.setOnClickListener(v -> {
-                        commentsFsePosition = position;
+            boolean diffSender = prevComment == null || !prevComment.senderUserId.equals(comment.senderUserId);
 
-                        Post parentPost = comment.getParentPost();
-                        boolean isInGroup = parentPost != null && parentPost.getParentGroup() != null;
-
-                        Intent intent = new Intent(commentMedia.getContext(), MediaExplorerActivity.class);
-                        intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, MediaExplorerViewModel.MediaModel.fromMedia(Collections.singletonList(media)));
-                        intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, 0);
-                        intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, comment.id);
-                        intent.putExtra(MediaExplorerActivity.EXTRA_ALLOW_SAVING, isInGroup);
-
-                        if (commentMedia.getContext() instanceof Activity) {
-                            final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(FlatCommentsActivity.this, commentMedia, commentMedia.getTransitionName());
-                            startActivity(intent, options.toBundle());
-                        } else {
-                            startActivity(intent);
-                        }
-                    });
-                    commentMedia.setTransitionName(MediaPagerAdapter.getTransitionName(comment.id, 0));
-                }
+            if (selectedComment != null && selectedComment.rowId == comment.rowId) {
+                itemView.setBackgroundColor(itemView.getContext().getResources().getColor(R.color.color_secondary_40_alpha));
+            } else {
+                itemView.setBackgroundColor(0);
             }
-
-            if (linkPreviewContainer != null) {
-                mediaThumbnailLoader.cancel(linkPreviewImg);
-                if (comment.urlPreview == null) {
-                    linkPreviewContainer.setVisibility(View.GONE);
-                } else {
-                    linkPreviewContainer.setVisibility(View.VISIBLE);
-                    linkPreviewUrl.setText(comment.urlPreview.tld);
-                    linkPreviewTitle.setText(comment.urlPreview.title);
-                    if (comment.urlPreview.imageMedia != null) {
-                        mediaThumbnailLoader.load(linkPreviewImg, comment.urlPreview.imageMedia);
-                        linkPreviewImg.setVisibility(View.VISIBLE);
-                    } else {
-                        linkPreviewImg.setVisibility(View.GONE);
-                    }
-                }
-            }
-        }
-
-        void bindCommon(@NonNull Comment comment, long lastSeenCommentRowId, int position) {
-            avatarLoader.load(avatarView, comment.senderUserId);
-
             if (highlightedComment == comment.rowId) {
-                AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(itemView.getContext(), R.animator.comment_highlight);
+                if (highlightAnimation != null) {
+                    highlightAnimation.cancel();
+                }
+                AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(itemView.getContext(), R.animator.message_highlight);
                 set.setTarget(itemView);
                 set.addListener(new Animator.AnimatorListener() {
                     @Override
@@ -1279,76 +1386,251 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
                     }
                 });
+                highlightAnimation = set;
                 set.start();
-            } else {
-                itemView.setBackgroundColor(0);
+            } else if (highlightAnimation != null) {
+                highlightAnimation.cancel();
             }
 
+            if (contentView != null) {
+                View contentParent = (contentView.getParent() instanceof View) ? (View) contentView.getParent() : null;
+                if (contentParent != null) {
+                    int paddingTop;
+                    int paddingBottom;
+                    final int separator = contentParent.getResources().getDimensionPixelSize(R.dimen.comment_vertical_separator);
+                    final int separatorSeq = contentParent.getResources().getDimensionPixelSize(R.dimen.comment_vertical_separator_sequence);
+                    if (nextComment == null) {
+                        paddingBottom = separator;
+                    } else {
+                        if (nextComment.senderUserId.equals(comment.senderUserId)) {
+                            paddingBottom = separatorSeq / 2;
+                        } else {
+                            paddingBottom = separator / 2;
+                        }
+                    }
+                    if (prevComment == null) {
+                        paddingTop = separator;
+                    } else if (diffSender) {
+                        paddingTop = separator / 2;
+                    } else {
+                        paddingTop = separatorSeq / 2;
+                    }
+                    contentParent.getResources().getDimensionPixelSize(diffSender ? R.dimen.comment_vertical_separator : R.dimen.comment_vertical_separator_sequence);
+                    contentParent.setPadding(
+                            contentParent.getPaddingLeft(),
+                            paddingTop,
+                            contentParent.getPaddingRight(),
+                            paddingBottom);
+                }
+            }
+            timestampView.setText(TimeFormatter.formatMessageTime(timestampView.getContext(), comment.timestamp));
+            timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
+            if (nameView != null) {
+                if (comment.isOutgoing()) {
+                    nameView.setVisibility(View.GONE);
+                } else if (diffSender) {
+                    int color = GroupParticipants.getParticipantNameColor(nameView.getContext(), comment.senderUserId);
+                    nameView.setTextColor(color);
+                    nameView.setText(comment.senderContact.getDisplayName());
+                    if (!comment.senderUserId.isMe()) {
+                        nameView.setOnClickListener(v -> {
+                            v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), comment.senderUserId));
+                        });
+                    }
+                    nameView.setVisibility(View.VISIBLE);
+                } else {
+                    nameView.setVisibility(View.GONE);
+                }
+            }
+            if (linkPreviewContainer != null) {
+                mediaThumbnailLoader.cancel(linkPreviewImg);
+                if (comment.urlPreview == null) {
+                    linkPreviewContainer.setVisibility(View.GONE);
+                } else {
+                    linkPreviewContainer.setVisibility(View.VISIBLE);
+                    linkPreviewUrl.setText(comment.urlPreview.tld);
+                    linkPreviewTitle.setText(comment.urlPreview.title);
+                    @ColorRes int colorRes;
+                    if (comment.isOutgoing()) {
+                        colorRes = R.color.message_url_preview_background_outgoing;
+                    } else {
+                        colorRes = R.color.message_url_preview_background_incoming;
+                    }
+                    linkPreviewContainer.setBackgroundColor(ContextCompat.getColor(linkPreviewContainer.getContext(), colorRes));
+                    if (comment.urlPreview.imageMedia == null || comment.urlPreview.imageMedia.transferred != Media.TRANSFERRED_YES) {
+                        linkPreviewImg.setVisibility(View.GONE);
+                    } else {
+                        linkPreviewImg.setVisibility(View.VISIBLE);
+                        mediaThumbnailLoader.load(linkPreviewImg, comment.urlPreview.imageMedia);
+                    }
+                }
+            }
+            if (replyContainerView != null) {
+                if (comment.parentCommentId == null) {
+                    replyContainerView.setVisibility(View.GONE);
+                } else {
+                    replyContainerView.setVisibility(View.VISIBLE);
+                    replyContainerView.setBackgroundResource(R.drawable.reply_frame_background);
+                    replyContainerView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(replyContainerView.getContext(),
+                            comment.isOutgoing()
+                                    ? R.color.message_background_reply_outgoing
+                                    : R.color.message_background_reply_incoming)));
+                    replyNameView.setTextColor(GroupParticipants.getParticipantNameColor(FlatCommentsActivity.this, comment.parentComment.senderUserId));
+                    replyNameView.setText(comment.parentComment.senderContact.getDisplayName());
+                    replyTextView.setTypeface(replyTextView.getTypeface(), Typeface.NORMAL);
+                    setCommentText(replyTextView, comment.parentComment, true);
+                    if (!comment.parentComment.media.isEmpty()) {
+                        mediaThumbnailLoader.load(replyMediaThumbView, comment.parentComment.media.get(0));
+                        replyMediaThumbView.setVisibility(View.VISIBLE);
+                        replyMediaIconView.setVisibility(View.VISIBLE);
+                        switch (comment.parentComment.media.get(0).type) {
+                            case Media.MEDIA_TYPE_IMAGE: {
+                                replyMediaIconView.setImageResource(R.drawable.ic_camera);
+                                break;
+                            }
+                            case Media.MEDIA_TYPE_VIDEO: {
+                                replyMediaIconView.setImageResource(R.drawable.ic_video);
+                                break;
+                            }
+                            case Media.MEDIA_TYPE_AUDIO: {
+                                replyMediaIconView.setImageResource(R.drawable.ic_keyboard_voice);
+                                replyMediaThumbView.setVisibility(View.GONE);
+                                break;
+                            }
+                            case Media.MEDIA_TYPE_UNKNOWN:
+                            default: {
+                                replyMediaIconView.setImageResource(R.drawable.ic_media_collection);
+                                break;
+                            }
+                        }
+                    } else {
+                        mediaThumbnailLoader.cancel(replyMediaThumbView);
+                        replyMediaThumbView.setVisibility(View.GONE);
+                        replyMediaIconView.setVisibility(View.GONE);
+                    }
+                }
+            }
+            if (newCommentsSeparator != null) {
+                if (newCommentCountSeparator > 0) {
+                    newCommentsSeparator.setVisibility(View.VISIBLE);
+                    newCommentsSeparator.setText(newCommentsSeparator.getContext().getResources().getQuantityString(R.plurals.new_comment_separator, newCommentCountSeparator, newCommentCountSeparator));
+                } else {
+                    newCommentsSeparator.setVisibility(View.GONE);
+                }
+            }
+            if (dateSeparator != null) {
+                if (prevComment == null || !TimeUtils.isSameDay(comment.timestamp, prevComment.timestamp)) {
+                    dateSeparator.setVisibility(View.VISIBLE);
+                    dateSeparator.setText(TimeFormatter.formatMessageSeparatorDate(dateSeparator.getContext(), comment.timestamp));
+                } else {
+                    dateSeparator.setVisibility(View.GONE);
+                }
+            }
+
+            fillView(changed);
+        }
+
+        public abstract void fillView(boolean changed);
+    }
+
+    private class RetractedCommentViewHolder extends BaseCommentViewHolder {
+
+        public RetractedCommentViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        public void fillView(boolean changed) {
+
+        }
+    }
+
+    private class TextCommentViewHolder extends BaseCommentViewHolder {
+
+        private final LimitingTextView textView;
+        private final MessageTextLayout messageTextLayout;
+        private final View mediaContainer;
+        private final View videoIndicator;
+        private final ImageView commentMedia;
+
+        public TextCommentViewHolder(@NonNull View itemView) {
+            super(itemView);
+            itemView.setOnLongClickListener(v -> {
+                if (comment == null) {
+                    return false;
+                }
+                selectedComment = comment;
+                updateActionMode();
+                return true;
+            });
+
+            textView = itemView.findViewById(R.id.text);
+            messageTextLayout = itemView.findViewById(R.id.message_text_container);
+            mediaContainer = itemView.findViewById(R.id.comment_media_container);
+
+            videoIndicator = itemView.findViewById(R.id.comment_video_indicator);
+            commentMedia = itemView.findViewById(R.id.comment_media);
+            commentMedia.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.comment_media_corner_radius));
+                }
+            });
+            commentMedia.setClipToOutline(true);
+        }
+
+        @Override
+        public void fillView(boolean changed) {
             final Integer textLimit = textLimits.get(comment.rowId);
-            commentView.setLineLimit(textLimit != null ? textLimit : Constants.TEXT_POST_LINE_LIMIT);
-            commentView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
-            setCommentText(commentView, comment, false);
-            commentView.setOnReadMoreListener((view, limit) -> {
+            textView.setLineLimit(textLimit != null ? textLimit : Constants.TEXT_POST_LINE_LIMIT);
+            textView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
+            textView.setOnReadMoreListener((view, limit) -> {
                 textLimits.put(comment.rowId, limit);
                 return false;
             });
+            boolean emojisOnly = StringUtils.isFewEmoji(comment.text);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getResources().getDimension(emojisOnly ? R.dimen.message_text_size_few_emoji : R.dimen.message_text_size));
+            textContentLoader.load(textView, comment);
 
-            bindParentComment(comment.parentCommentId != null, comment.parentComment);
+            if (messageTextLayout != null) {
+                messageTextLayout.setForceSeparateLine(emojisOnly);
+            }
 
-            progressView.setVisibility(comment.transferred != Comment.TRANSFERRED_NO ? View.GONE : View.VISIBLE);
-            TimeFormatter.setTimePostsFormat(timeView, comment.timestamp);
-            timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
-
-            replyButton.setOnClickListener(v -> {
-                keyboardScrollHelper.setAnchorForKeyboardChange(position);
-                updateReplyIndicator(comment.id);
-                editText.requestFocus();
-                final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
-                imm.showSoftInput(editText,0);
-            });
-
-            // TODO(jack): Make this more reliable
-            if (comment.isRetracted() || Boolean.FALSE.equals(viewModel.isMember.getLiveData().getValue())) {
-                replyButton.setVisibility(View.GONE);
+            if (TextUtils.isEmpty(comment.text)) {
+                textView.setText(comment.text);
+                textView.setVisibility(View.GONE);
             } else {
-                replyButton.setVisibility(View.VISIBLE);
+                textView.setVisibility(View.VISIBLE);
+                textView.setTextColor(ContextCompat.getColor(textView.getContext(), comment.isIncoming() ? R.color.message_text_incoming : R.color.message_text_outgoing));
             }
-        }
 
-        void bindParentComment(boolean hasParent, @Nullable Comment parentComment) {
-            if (replyBubble != null) {
-                replyBubble.setVisibility(hasParent ? View.VISIBLE : View.GONE);
-            }
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) avatarView.getLayoutParams();
-            params.topMargin = hasParent ? avatarView.getContext().getResources().getDimensionPixelSize(R.dimen.reply_comment_avatar_offset) : 0;
-            avatarView.setLayoutParams(params);
-            mediaThumbnailLoader.cancel(replyThumbView);
-            if (hasParent) {
-                if (parentComment != null) {
-                    setCommentText(replyTextView, parentComment, true);
-                    if (parentComment.media.size() > 0) {
-                        Media media = parentComment.media.get(0);
-                        if (media.type != Media.MEDIA_TYPE_AUDIO) {
-                            replyThumbView.setVisibility(View.VISIBLE);
-                            replyThumbView.setOutlineProvider(new ViewOutlineProvider() {
-                                @Override
-                                public void getOutline(View view, Outline outline) {
-                                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.comment_media_list_corner_radius));
-                                }
-                            });
-                            replyThumbView.setClipToOutline(true);
-                            mediaThumbnailLoader.load(replyThumbView, media);
-                        } else {
-                            replyThumbView.setVisibility(View.GONE);
-                        }
+            if (comment.media.isEmpty()) {
+                mediaContainer.setVisibility(View.GONE);
+            } else {
+                mediaContainer.setVisibility(View.VISIBLE);
+                Media media = comment.media.get(0);
+                mediaThumbnailLoader.load(commentMedia, media);
+                videoIndicator.setVisibility(media.type == Media.MEDIA_TYPE_VIDEO ? View.VISIBLE : View.GONE);
+                commentMedia.setOnClickListener(v -> {
+                    commentsFsePosition = position;
+
+                    Post parentPost = comment.getParentPost();
+                    boolean isInGroup = parentPost != null && parentPost.getParentGroup() != null;
+
+                    Intent intent = new Intent(commentMedia.getContext(), MediaExplorerActivity.class);
+                    intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, MediaExplorerViewModel.MediaModel.fromMedia(Collections.singletonList(media)));
+                    intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, 0);
+                    intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, comment.id);
+                    intent.putExtra(MediaExplorerActivity.EXTRA_ALLOW_SAVING, isInGroup);
+
+                    if (commentMedia.getContext() instanceof Activity) {
+                        final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(FlatCommentsActivity.this, commentMedia, commentMedia.getTransitionName());
+                        startActivity(intent, options.toBundle());
                     } else {
-                        replyThumbView.setVisibility(View.GONE);
+                        startActivity(intent);
                     }
-                } else {
-                    SpannableString s = new SpannableString(getString(R.string.reply_original_comment_not_found));
-                    s.setSpan(new StyleSpan(Typeface.ITALIC), 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    replyTextView.setText(s);
-                }
+                });
+                commentMedia.setTransitionName(MediaPagerAdapter.getTransitionName(comment.id, 0));
             }
         }
     }
@@ -1437,15 +1719,23 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     };
 
     private static final int ITEM_TYPE_POST = 0;
-    private static final int ITEM_TYPE_COMMENT = 1;
-    private static final int ITEM_TYPE_FUTURE_PROOF_POST = 2;
-    private static final int ITEM_TYPE_COMMENT_FUTURE_PROOF = 3;
-    private static final int ITEM_TYPE_VOICE_NOTE = 4;
+    private static final int ITEM_TYPE_TEXT_INCOMING = 1;
+    private static final int ITEM_TYPE_TEXT_OUTGOING = 2;
+    private static final int ITEM_TYPE_MEDIA_INCOMING = 3;
+    private static final int ITEM_TYPE_MEDIA_OUTGOING = 4;
+    private static final int ITEM_TYPE_FUTURE_PROOF_POST = 5;
+    private static final int ITEM_TYPE_COMMENT_FUTURE_PROOF = 6;
+    private static final int ITEM_TYPE_VOICE_NOTE_INCOMING = 7;
+    private static final int ITEM_TYPE_VOICE_NOTE_OUTGOING = 8;
+    private static final int ITEM_TYPE_RETRACTED_OUTGOING = 9;
+    private static final int ITEM_TYPE_RETRACTED_INCOMING= 10;
 
-    private class CommentsAdapter extends AdapterWithLifecycle<ViewHolder> {
+    private class CommentsAdapter extends AdapterWithLifecycle<ViewHolderWithLifecycle> {
 
         final AsyncPagedListDiffer<Comment> differ;
-        private long lastSeenCommentRowId;
+        private long firstUnseenCommentId;
+
+        private int unseenCommentCount;
 
         CommentsAdapter() {
             setHasStableIds(true);
@@ -1473,9 +1763,16 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             differ = new AsyncPagedListDiffer<>(listUpdateCallback, new AsyncDifferConfig.Builder<>(DIFF_CALLBACK).build());
         }
 
-        public void setLastSeenCommentRowId(long rowId) {
-            if (lastSeenCommentRowId != rowId) {
-                lastSeenCommentRowId = rowId;
+        public void setNewCommentCount(int count) {
+            if (this.unseenCommentCount != count) {
+                this.unseenCommentCount = count;
+                notifyDataSetChanged();
+            }
+        }
+
+        public void setFirstUnseenCommentId(long rowId) {
+            if (firstUnseenCommentId != rowId) {
+                firstUnseenCommentId = rowId;
                 notifyDataSetChanged();
             }
         }
@@ -1514,11 +1811,15 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 case Comment.TYPE_FUTURE_PROOF:
                     return ITEM_TYPE_COMMENT_FUTURE_PROOF;
                 case Comment.TYPE_VOICE_NOTE:
-                    return ITEM_TYPE_VOICE_NOTE;
-                case Comment.TYPE_USER:
+                    return comment.isIncoming() ? ITEM_TYPE_VOICE_NOTE_INCOMING : ITEM_TYPE_VOICE_NOTE_OUTGOING;
                 case Comment.TYPE_RETRACTED:
+                    return comment.isIncoming() ? ITEM_TYPE_RETRACTED_INCOMING : ITEM_TYPE_RETRACTED_OUTGOING;
+                case Comment.TYPE_USER:
+                    if (!comment.media.isEmpty()) {
+                        return comment.isIncoming() ? ITEM_TYPE_MEDIA_INCOMING : ITEM_TYPE_MEDIA_OUTGOING;
+                    }
                 default:
-                    return ITEM_TYPE_COMMENT;
+                    return comment.isIncoming() ? ITEM_TYPE_TEXT_INCOMING : ITEM_TYPE_TEXT_OUTGOING;
             }
         }
 
@@ -1528,44 +1829,71 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     return R.layout.flat_comment_future_proof_post_item;
                 case ITEM_TYPE_POST:
                     return R.layout.flat_comment_post_item;
-                case ITEM_TYPE_COMMENT:
-                    return R.layout.flat_comment_item;
+                case ITEM_TYPE_TEXT_OUTGOING:
+                case ITEM_TYPE_MEDIA_OUTGOING:
+                    return R.layout.comment_item_outgoing_text;
+                case ITEM_TYPE_TEXT_INCOMING:
+                case ITEM_TYPE_MEDIA_INCOMING:
+                    return R.layout.comment_item_incoming_text;
                 case ITEM_TYPE_COMMENT_FUTURE_PROOF:
-                    return R.layout.flat_comment_future_proof;
-                case ITEM_TYPE_VOICE_NOTE:
-                    return R.layout.flat_comment_voice_note;
+                    return R.layout.comment_item_future_proof;
+                case ITEM_TYPE_VOICE_NOTE_INCOMING:
+                    return R.layout.comment_item_incoming_voice_note;
+                case ITEM_TYPE_VOICE_NOTE_OUTGOING:
+                    return R.layout.comment_item_outgoing_voice_note;
+                case ITEM_TYPE_RETRACTED_INCOMING:
+                    return R.layout.comment_item_incoming_retracted;
+                case ITEM_TYPE_RETRACTED_OUTGOING:
+                    return R.layout.comment_item_outgoing_retracted;
             }
             throw new IllegalArgumentException("unknown view type " + viewType);
         }
 
         @Override
-        public @NonNull ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(getLayoutId(viewType), parent, false);
-            if (viewType == ITEM_TYPE_COMMENT_FUTURE_PROOF) {
-                return new FutureProofViewHolder(itemView);
+        public @NonNull ViewHolderWithLifecycle onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LongPressInterceptView root = new LongPressInterceptView(parent.getContext());
+            root.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(getLayoutId(viewType), root, true);
+            switch (viewType) {
+                case ITEM_TYPE_COMMENT_FUTURE_PROOF:
+                    return new FutureProofViewHolder(root);
+                case ITEM_TYPE_VOICE_NOTE_INCOMING:
+                case ITEM_TYPE_VOICE_NOTE_OUTGOING:
+                    return new VoiceNoteViewHolder(root);
+                case ITEM_TYPE_TEXT_INCOMING:
+                case ITEM_TYPE_TEXT_OUTGOING:
+                case ITEM_TYPE_MEDIA_INCOMING:
+                case ITEM_TYPE_MEDIA_OUTGOING:
+                default:
+                    return new TextCommentViewHolder(root);
+                case ITEM_TYPE_RETRACTED_INCOMING:
+                case ITEM_TYPE_RETRACTED_OUTGOING:
+                    return new RetractedCommentViewHolder(root);
             }
-            if (viewType == ITEM_TYPE_VOICE_NOTE) {
-                return new VoiceNoteViewHolder(itemView);
-            }
-            return new ViewHolder(itemView);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.bindTo(Preconditions.checkNotNull(getItem(position)), lastSeenCommentRowId, position);
+        public void onBindViewHolder(@NonNull ViewHolderWithLifecycle holder, int position) {
+            if (holder instanceof BaseCommentViewHolder) {
+                Comment prevComment = null;
+                if (position > 0) {
+                    prevComment = getItem(position - 1);
+                }
+                Comment nextComment = null;
+                if (position < getItemCount() - 1) {
+                    nextComment = getItem(position + 1);
+                }
+                Comment comment = Preconditions.checkNotNull(getItem(position));
+                ((BaseCommentViewHolder) holder).bindTo(comment, prevComment, nextComment, position, comment.rowId == firstUnseenCommentId ? unseenCommentCount : 0);
+            }
         }
     }
 
     private void setCommentText(@NonNull TextView textView, @NonNull Comment comment, boolean isReply) {
         SpannableStringBuilder builder = new SpannableStringBuilder();
-        builder.append(createAuthorSpan(comment.senderContact, (v) -> v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), comment.senderContact.userId))));
         CharSequence commentText = "";
-        boolean separateWithColon = true;
         audioDurationLoader.cancel(textView);
         boolean setCommentText = true;
-        if (isReply) {
-            textView.setMaxLines(1);
-        }
         switch (comment.type) {
             case Comment.TYPE_FUTURE_PROOF: {
                 if (isReply) {
@@ -1587,18 +1915,11 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             }
             case Comment.TYPE_USER: {
                 SpannableStringBuilder mediaText = new SpannableStringBuilder();
-                boolean showMediaIcon = isReply && !comment.media.isEmpty();
-                if (showMediaIcon) {
-                    textView.setMaxLines(2);
-                    separateWithColon = false;
-                    mediaText.append("\n");
-                    mediaText.append(getMediaIconSpan(comment.media.get(0).type, textView.getLineHeight()));
-                }
                 if (!TextUtils.isEmpty(comment.text)) {
                     mediaText.append(MarkdownUtils.formatMarkdownWithMentions(this, comment.getText(), comment.mentions, (v, mention) -> {
                         v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), mention.userId));
                     }));
-                } else if (showMediaIcon){
+                } else if (!comment.media.isEmpty()){
                     switch (comment.media.get(0).type) {
                         case Media.MEDIA_TYPE_IMAGE: {
                             mediaText.append(getString(R.string.photo));
@@ -1621,8 +1942,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             case Comment.TYPE_VOICE_NOTE: {
                 if (isReply) {
                     setCommentText = false;
-                    builder.append(": ");
-                    builder.append(getMediaIconSpan(Media.MEDIA_TYPE_AUDIO, textView.getLineHeight()));
                     audioDurationLoader.load(textView, comment.media.get(0).file, new ViewDataLoader.Displayer<TextView, Long>() {
                         @Override
                         public void showResult(@NonNull TextView view, @Nullable Long result) {
@@ -1645,70 +1964,10 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             default:
                 commentText = "";
         }
-        if (!TextUtils.isEmpty(commentText)) {
-            if (separateWithColon) {
-                builder.append(": ");
-            }
-            builder.append(commentText);
-        }
+        builder.append(commentText);
+
         if (setCommentText) {
             textView.setText(builder);
-        }
-    }
-
-    private CharSequence getMediaIconSpan(@Media.MediaType int mediaType, int size) {
-        int alignment = DynamicDrawableSpan.ALIGN_BOTTOM;
-        @DrawableRes int drawableRes;
-        switch (mediaType) {
-            case Media.MEDIA_TYPE_AUDIO: {
-                drawableRes = R.drawable.ic_keyboard_voice;
-                break;
-            }
-            case Media.MEDIA_TYPE_IMAGE: {
-                drawableRes = R.drawable.ic_image;
-                break;
-            }
-            case Media.MEDIA_TYPE_VIDEO: {
-                drawableRes = R.drawable.ic_video;
-                break;
-            }
-            default:
-                return "";
-        }
-        SpannableString spannableString = new SpannableString("i");
-        Drawable icon = DrawableUtils.getTintedDrawable(this, drawableRes, R.color.comment_reply_text);
-        icon.setBounds(0, 0, size, size);
-        spannableString.setSpan(new ImageSpan(icon, DynamicDrawableSpan.ALIGN_BOTTOM), 0, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return spannableString;
-    }
-
-    private CharSequence createAuthorSpan(Contact contact, @Nullable View.OnClickListener listener) {
-        CharSequence name = contact.userId.isMe() ? getString(R.string.me) : contact.getDisplayName();
-        SpannableString mentionString = new SpannableString(name);
-        mentionString.setSpan(new AuthorSpan(listener), 0, mentionString.length(),  Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return mentionString;
-    }
-
-    static class AuthorSpan extends ClickableSpan {
-
-        private @Nullable
-        final View.OnClickListener listener;
-
-        public AuthorSpan(@Nullable View.OnClickListener listener){
-            this.listener = listener;
-        }
-
-        @Override
-        public void onClick(@NonNull View widget) {
-            if (listener != null) {
-                listener.onClick(widget);
-            }
-        }
-
-        @Override
-        public void updateDrawState(@NonNull TextPaint ds) {
-            ds.setUnderlineText(false);
-            ds.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         }
     }
 }

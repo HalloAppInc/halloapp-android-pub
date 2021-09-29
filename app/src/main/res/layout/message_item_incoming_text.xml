@@ -12,9 +12,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="64dp">
+        android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/content"
@@ -23,6 +21,8 @@
             android:layout_gravity="start"
             android:background="@drawable/message_background_incoming"
             android:orientation="vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="64dp"
             android:paddingTop="4dp">
 
             <FrameLayout
@@ -33,13 +33,17 @@
                 android:layout_height="wrap_content"/>
 
 
-            <include layout="@layout/message_sender_info" />
+            <include layout="@layout/message_sender_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-            <include layout="@layout/message_url_preview" />
+            <include layout="@layout/message_url_preview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
             <com.halloapp.widget.LimitingTextView
                 android:id="@+id/text"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autoLink="web"
                 android:lineSpacingMultiplier="1.1"
@@ -54,7 +58,7 @@
 
             <include
                 layout="@layout/message_timestamp_footer_incoming"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"/>
 

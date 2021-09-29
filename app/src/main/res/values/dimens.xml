@@ -94,6 +94,9 @@
     <dimen name="message_top_padding">4dp</dimen>
     <dimen name="message_top_padding_with_link">0.5dp</dimen>
 
+    <dimen name="comment_vertical_separator_sequence">5dp</dimen>
+    <dimen name="comment_vertical_separator">10dp</dimen>
+
     <dimen name="voice_note_cancel_distance">140dp</dimen>
     <dimen name="voice_note_lock_distance">120dp</dimen>
     <dimen name="voice_note_fade_distance">60dp</dimen>

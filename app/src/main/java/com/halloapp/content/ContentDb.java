@@ -638,6 +638,16 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public long getFirstUnseenCommentRowId(@NonNull String postId) {
+        return postsDb.getFirstUnseenCommentRowId(postId);
+    }
+
+    @WorkerThread
+    public int getUnseenCommentCount(@NonNull String postId) {
+        return postsDb.getUnseenCommentCount(postId);
+    }
+
+    @WorkerThread
     @NonNull List<Comment> getComments(@NonNull String postId, @Nullable Integer start, @Nullable Integer count) {
         return postsDb.getComments(postId, start, count);
     }

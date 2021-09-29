@@ -1,72 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <include
-        layout="@layout/message_item_header"/>
+        layout="@layout/comment_item_header"/>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginStart="16dp">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:id="@+id/content"
-            android:layout_width="240dp"
-            android:layout_marginEnd="64dp"
-            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:background="@drawable/message_background_incoming"
+            android:layout_marginStart="64dp"
+            android:layout_marginEnd="16dp"
+            android:layout_gravity="end"
+            android:background="@drawable/message_background_outgoing"
             android:orientation="vertical">
 
             <FrameLayout
                 android:id="@+id/reply_container"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                android:layout_marginTop="4dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <include layout="@layout/message_sender_info" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="240dp"
                 android:layout_height="wrap_content"
-                android:paddingStart="13dp"
-                android:paddingEnd="0dp"
                 >
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/ptt_avatar"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    tools:src="@drawable/avatar_person"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"/>
 
                 <ImageView
                     android:id="@+id/control_btn"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    app:layout_constraintStart_toEndOf="@id/ptt_avatar"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginStart="6dp"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:tint="@color/color_secondary"
-                    android:layout_marginTop="5dp"
                     android:src="@drawable/ic_play_arrow"/>
 
                 <ProgressBar
                     android:id="@+id/loading"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
                     app:layout_constraintStart_toStartOf="@id/control_btn"
                     app:layout_constraintEnd_toEndOf="@id/control_btn"
                     app:layout_constraintTop_toTopOf="@id/control_btn"
@@ -113,6 +99,9 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+
         </LinearLayout>
+
     </FrameLayout>
+
 </LinearLayout>

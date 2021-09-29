@@ -50,6 +50,7 @@ import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.groups.GroupParticipants;
+import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
@@ -59,11 +60,12 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.MessageTextLayout;
 import com.halloapp.widget.SnackbarHelper;
+import com.halloapp.widget.SwipeListItemHelper;
 import com.halloapp.xmpp.Connection;
 
 import me.relex.circleindicator.CircleIndicator3;
 
-public class MessageViewHolder extends ViewHolderWithLifecycle {
+public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeListItemHelper.SwipeableViewHolder {
 
     private final View contentView;
     private final ImageView statusView;
@@ -97,6 +99,11 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
     private final DecryptStatLoader decryptStatLoader;
 
     protected Message message;
+
+    @Override
+    public View getSwipeView() {
+        return contentView;
+    }
 
     abstract static class MessageViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
         abstract void onItemLongClicked(String text, @NonNull Message message);
@@ -444,7 +451,19 @@ public class MessageViewHolder extends ViewHolderWithLifecycle {
             });
             boolean emojisOnly = StringUtils.isFewEmoji(message.text);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getResources().getDimension(emojisOnly ? R.dimen.message_text_size_few_emoji : R.dimen.message_text_size));
-            parent.getTextContentLoader().load(textView, message);
+            parent.getTextContentLoader().load(textView, message, new TextContentLoader.TextDisplayer() {
+                @Override
+                public void showResult(TextView tv, CharSequence text) {
+                    tv.setText(text);
+                    textView.requestLayout();
+                }
+
+                @Override
+                public void showPreview(TextView tv, CharSequence text) {
+                    tv.setText(text);
+                    textView.requestLayout();
+                }
+            });
 
             if (messageTextLayout != null) {
                 messageTextLayout.setForceSeparateLine(emojisOnly);

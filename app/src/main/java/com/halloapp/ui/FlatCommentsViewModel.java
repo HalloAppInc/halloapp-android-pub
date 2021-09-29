@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
@@ -31,6 +32,7 @@ class FlatCommentsViewModel extends CommentsViewModel {
     private final String postId;
 
     private final ComputableLiveData<Reply> replyComputableLiveData;
+    final ComputableLiveData<Pair<Long, Integer>> unseenCommentCount;
 
     private String replyCommentId;
 
@@ -82,6 +84,15 @@ class FlatCommentsViewModel extends CommentsViewModel {
                     return me.getName();
                 }
                 return contactsDb.getContact(sender).getDisplayName();
+            }
+        };
+        unseenCommentCount = new ComputableLiveData<Pair<Long, Integer>>() {
+            @Override
+            protected Pair<Long, Integer> compute() {
+                long rowId = contentDb.getFirstUnseenCommentRowId(postId);
+                int commentCount = contentDb.getUnseenCommentCount(postId);
+                contentDb.setCommentsSeen(postId);
+                return new Pair<>(rowId, commentCount);
             }
         };
     }
