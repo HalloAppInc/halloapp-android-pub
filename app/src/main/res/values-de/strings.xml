@@ -291,7 +291,7 @@ Version: %2$s
     <string name="cancel">"Abbrechen"</string>
     <string name="group_subtitle">"Für Gruppen-Info hier tippen"</string>
     <string name="empty_block_list">"Keine geblockten Kontakte"</string>
-    <string name="block_notification">"Du hast diesen Kontakt geblockt. Für die Freigabe tippe hier"</string>
+    <string name="block_notification">"Du hast diesen Kontakt geblockt. Für die Freigabe hier tippen"</string>
     <string name="unblock_notification">"Du hast diesen Kontakt freigegeben"</string>
     <string name="system_message_group_created">"%s hat diese Gruppe gegründet"</string>
     <string name="system_message_group_created_by_you">"Du hast diese Gruppe gegründet"</string>
@@ -787,7 +787,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="reply_privately">"Privat antworten"</string>
 
     <!-- Shown as title for a dialog explaining why permissions are needed when the user has rejected a necessary permission request at least twice but still tries to use the feature -->
-    <string name="title_settings_dialog">"Zustimmung erforderlich"</string>
+    <string name="title_settings_dialog">"Berechtigungen erforderlich"</string>
 
     <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
     <string name="voice_note_preview">"Sprachnotiz (%s)"</string>
