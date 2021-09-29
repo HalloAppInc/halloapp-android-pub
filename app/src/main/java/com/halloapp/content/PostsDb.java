@@ -1142,7 +1142,7 @@ class PostsDb {
                         post.setParentGroup(parentGroupId);
                     }
                     mentionsDb.fillMentions(post);
-                    post.seenByCount = cursor.getInt(19);
+                    post.seenByCount = cursor.getInt(20);
                     post.rerequestCount = cursor.getInt(10);
                 }
                 if (!cursor.isNull(11)) {
