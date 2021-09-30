@@ -654,9 +654,8 @@ public class ConnectionImpl extends Connection {
                 .onError(e -> Log.e("connection: cannot send comment", e));
     }
 
-    // TODO: (clarkc) remove post sender user id when server tells us
     @Override
-    public void retractComment(@Nullable UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
+    public void retractComment(@NonNull String postId, @NonNull String commentId) {
         FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null);
         FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, commentItem);
         sendIqRequestAsync(requestIq, true)

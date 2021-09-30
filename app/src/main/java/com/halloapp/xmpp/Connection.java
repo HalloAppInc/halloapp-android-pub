@@ -149,7 +149,7 @@ public abstract class Connection {
 
     public abstract void retractMessage(final @NonNull UserId chatUserId, final @NonNull String messageId);
 
-    public abstract void retractComment(final @Nullable UserId postSenderUserId, final @NonNull String postId, final @NonNull String commentId);
+    public abstract void retractComment(final @NonNull String postId, final @NonNull String commentId);
 
     public abstract void retractGroupComment(final @NonNull GroupId groupId, final @NonNull UserId postSenderUserId, final @NonNull String postId, final @NonNull String commentId);
 
