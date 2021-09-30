@@ -1,6 +1,7 @@
 package com.halloapp.ui.avatar;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,14 +13,23 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.github.chrisbanes.photoview.PhotoView;
 import com.halloapp.R;
+import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.ContentDb;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.DragDownToDismissHelper;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.RadiusTransition;
+import com.halloapp.ui.groups.EditGroupActivityViewModel;
+import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 
 public class ViewAvatarActivity extends HalloActivity {
@@ -29,6 +39,7 @@ public class ViewAvatarActivity extends HalloActivity {
     private static final String AVATAR_TRANSITION_NAME = "avatar-image-transition";
 
     private PhotoView avatarView;
+    private ViewAvatarViewModel viewModel;
 
     public static void viewAvatarWithTransition(@NonNull Activity activity, @NonNull View avatarView, @NonNull ChatId chatId) {
         Context context = avatarView.getContext();
@@ -77,6 +88,9 @@ public class ViewAvatarActivity extends HalloActivity {
         Transition toCircle = RadiusTransition.toCircle();
         returnTransition.addTransition(toCircle);
         getWindow().setSharedElementReturnTransition(returnTransition);
+
+        viewModel = new ViewModelProvider(this, new ViewAvatarViewModel.Factory(getApplication(), chatId)).get(ViewAvatarViewModel.class);
+        viewModel.getTitleLiveData().observe(this, this::setTitle);
     }
 
     @Override
@@ -96,5 +110,48 @@ public class ViewAvatarActivity extends HalloActivity {
         TransitionSet set = new TransitionSet();
         set.addTransition(transition);
         return set;
+    }
+
+    public static class ViewAvatarViewModel extends AndroidViewModel {
+        private final ComputableLiveData<String> titleLiveData;
+
+        public ViewAvatarViewModel(@NonNull Application application, @NonNull ChatId chatId) {
+            super(application);
+
+            titleLiveData = new ComputableLiveData<String>() {
+                @Override
+                protected String compute() {
+                    if (chatId instanceof UserId) {
+                        return ContactsDb.getInstance().getContact((UserId) chatId).getDisplayName();
+                    } else if (chatId instanceof GroupId) {
+                        return Preconditions.checkNotNull(ContentDb.getInstance().getChat(chatId)).name;
+                    }
+                    return null;
+                }
+            };
+        }
+
+        public LiveData<String> getTitleLiveData() {
+            return titleLiveData.getLiveData();
+        }
+
+        public static class Factory implements ViewModelProvider.Factory {
+            private final Application application;
+            private final ChatId chatId;
+
+            Factory(@NonNull Application application, @NonNull ChatId chatId) {
+                this.application = application;
+                this.chatId = chatId;
+            }
+
+            @Override
+            public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+                if (modelClass.isAssignableFrom(ViewAvatarViewModel.class)) {
+                    //noinspection unchecked
+                    return (T) new ViewAvatarViewModel(application, chatId);
+                }
+                throw new IllegalArgumentException("Unknown ViewModel class");
+            }
+        }
     }
 }
