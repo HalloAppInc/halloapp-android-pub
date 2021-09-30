@@ -89,7 +89,9 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
                     contentDb.setCommentTransferred(comment.postId, comment.senderUserId, comment.id);
                 }
             } else /*comment.isOutgoing()*/ {
-                if (!comment.hasMedia()) {
+                if (comment.isRetracted()) {
+                    connection.retractComment(comment.postId, comment.id);
+                } else if (!comment.hasMedia()) {
                     connection.sendComment(comment);
                 } else {
                     mainHandler.post(() -> new UploadMediaTask(comment, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR));
