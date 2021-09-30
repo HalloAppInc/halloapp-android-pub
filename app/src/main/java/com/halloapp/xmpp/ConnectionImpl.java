@@ -493,14 +493,14 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public Observable<String> setGroupAvatar(GroupId groupId, String base64) {
-        final GroupAvatarIq avatarIq = new GroupAvatarIq(groupId, base64);
+    public Observable<String> setGroupAvatar(GroupId groupId, byte[] bytes) {
+        final GroupAvatarIq avatarIq = new GroupAvatarIq(groupId, bytes);
         return sendIqRequestAsync(avatarIq).map(res -> GroupResponseIq.fromProto(res.getGroupStanza()).avatar);
     }
 
     @Override
     public Observable<String> removeGroupAvatar(GroupId groupId) {
-        return setGroupAvatar(groupId, "");
+        return setGroupAvatar(groupId, new byte[] {});
     }
 
     @Override

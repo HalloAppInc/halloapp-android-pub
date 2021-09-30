@@ -148,8 +148,7 @@ public class CreateGroupViewModel extends AndroidViewModel {
                             baos.write(buf, 0, c);
                         }
                         byte[] fileBytes = baos.toByteArray();
-                        String base64 = Base64.encodeToString(fileBytes, Base64.NO_WRAP);
-                        String avatarId = Connection.getInstance().setGroupAvatar(groupId, base64).await();
+                        String avatarId = Connection.getInstance().setGroupAvatar(groupId, fileBytes).await();
                         if (avatarId == null) {
                             return Result.failure();
                         }

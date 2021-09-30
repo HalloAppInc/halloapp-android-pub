@@ -12,11 +12,11 @@ import com.halloapp.proto.server.UploadGroupAvatar;
 public class GroupAvatarIq extends HalloIq {
 
     final GroupId groupId;
-    final String base64;
+    final byte[] bytes;
 
-    GroupAvatarIq(@NonNull GroupId groupId, @NonNull String base64) {
+    GroupAvatarIq(@NonNull GroupId groupId, @NonNull byte[] bytes) {
         this.groupId = groupId;
-        this.base64 = base64;
+        this.bytes = bytes;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class GroupAvatarIq extends HalloIq {
                 .setGroupAvatar(
                         UploadGroupAvatar.newBuilder()
                                 .setGid(groupId.rawId())
-                                .setData(ByteString.copyFrom(Base64.decode(base64, Base64.NO_WRAP)))
+                                .setData(ByteString.copyFrom(bytes))
                                 .build())
                 .build();
     }
