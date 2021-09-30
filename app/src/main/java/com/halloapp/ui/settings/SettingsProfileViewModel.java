@@ -205,7 +205,9 @@ public class SettingsProfileViewModel extends AndroidViewModel {
                             return Result.failure();
                         }
                         final File outFile = FileStore.getInstance().getAvatarFile(UserId.ME.rawId());
+                        final File largeOutFile = FileStore.getInstance().getAvatarFile(UserId.ME.rawId(), true);
                         FileUtils.copyFile(avatarFile, outFile);
+                        FileUtils.copyFile(largeAvatarFile, largeOutFile);
                         avatarLoader.reportMyAvatarChanged(avatarId);
                     } catch (IOException e) {
                         Log.e("Failed to get base64", e);
