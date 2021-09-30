@@ -230,7 +230,7 @@ public class CreateGroupActivity extends HalloActivity {
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.create_group_menu, menu);
         createMenuItem = menu.findItem(R.id.create);
-        updateAction(false);
+        updateAction(nameEditText != null && !TextUtils.isEmpty(nameEditText.getText()));
         return true;
     }
 
