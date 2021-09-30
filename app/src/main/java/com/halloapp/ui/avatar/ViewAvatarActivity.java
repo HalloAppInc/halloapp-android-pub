@@ -15,6 +15,7 @@ import androidx.core.app.ActivityOptionsCompat;
 
 import com.github.chrisbanes.photoview.PhotoView;
 import com.halloapp.R;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.DragDownToDismissHelper;
 import com.halloapp.ui.HalloActivity;
@@ -23,16 +24,16 @@ import com.halloapp.util.Preconditions;
 
 public class ViewAvatarActivity extends HalloActivity {
 
-    private static final String EXTRA_USER_ID = "user_id";
+    private static final String EXTRA_CHAT_ID = "chat_id";
 
     private static final String AVATAR_TRANSITION_NAME = "avatar-image-transition";
 
     private PhotoView avatarView;
 
-    public static void viewAvatarWithTransition(@NonNull Activity activity, @NonNull View avatarView, UserId userId) {
+    public static void viewAvatarWithTransition(@NonNull Activity activity, @NonNull View avatarView, @NonNull ChatId chatId) {
         Context context = avatarView.getContext();
         Intent i = new Intent(context, ViewAvatarActivity.class);
-        i.putExtra(EXTRA_USER_ID, userId);
+        i.putExtra(EXTRA_CHAT_ID, chatId);
         avatarView.setTransitionName(AVATAR_TRANSITION_NAME);
 
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, avatarView, AVATAR_TRANSITION_NAME);
@@ -47,9 +48,9 @@ public class ViewAvatarActivity extends HalloActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        UserId userId = getIntent().getParcelableExtra(EXTRA_USER_ID);
+        ChatId chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
 
-        if (userId == null) {
+        if (chatId == null) {
             finish();
             return;
         }
@@ -59,7 +60,7 @@ public class ViewAvatarActivity extends HalloActivity {
         avatarView = findViewById(R.id.image);
         avatarView.setTransitionName(AVATAR_TRANSITION_NAME);
         avatarView.setReturnToMinScaleOnUp(false);
-        avatarLoader.loadLarge(avatarView, userId, null);
+        avatarLoader.loadLarge(avatarView, chatId, null);
 
         dragDownToDismissHelper = new DragDownToDismissHelper(avatarView, findViewById(R.id.main));
         dragDownToDismissHelper.setDragDismissListener(this::onBackPressed);

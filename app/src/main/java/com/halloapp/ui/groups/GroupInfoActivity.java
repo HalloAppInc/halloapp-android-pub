@@ -37,6 +37,7 @@ import com.halloapp.ui.HalloBottomSheetDialog;
 import com.halloapp.ui.HeaderFooterAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.avatar.ViewAvatarActivity;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
 import com.halloapp.ui.markdown.MarkdownUtils;
@@ -150,7 +151,7 @@ public class GroupInfoActivity extends HalloActivity {
             }
         };
         groupNameView = findViewById(R.id.name);
-        avatarView.setOnClickListener(openEditGroupListener);
+        avatarView.setOnClickListener(v -> ViewAvatarActivity.viewAvatarWithTransition(this, avatarView, groupId));
 
         leaveGroup = findViewById(R.id.leave_group);
         View descriptionContainer = findViewById(R.id.description_container);
