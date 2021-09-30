@@ -82,6 +82,7 @@ public class GroupInfoActivity extends HalloActivity {
     private TextView groupNameView;
     private RecyclerView membersView;
     private ImageView avatarView;
+    private View changeAvatarView;
     private View addMembersView;
     private View inviteLinkView;
     private View addDivider;
@@ -126,6 +127,9 @@ public class GroupInfoActivity extends HalloActivity {
 
         avatarView = findViewById(R.id.avatar);
         avatarLoader.load(avatarView, groupId, false);
+
+        changeAvatarView = findViewById(R.id.change_avatar);
+        changeAvatarView.setOnClickListener(v -> startActivity(EditGroupActivity.openEditGroup(this, groupId)));
 
         inviteLinkView = findViewById(R.id.invite_link_container);
         inviteLinkView.setOnClickListener(v -> startActivity(GroupInviteLinkActivity.newIntent(this, groupId)));
