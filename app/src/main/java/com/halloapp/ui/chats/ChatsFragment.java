@@ -3,6 +3,7 @@ package com.halloapp.ui.chats;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -19,6 +20,7 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -612,6 +614,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                     mediaIcon.setVisibility(View.GONE);
                 } else if (message.media.size() == 1) {
                     mediaIcon.setVisibility(View.VISIBLE);
+                    @ColorRes int tintColor = R.color.primary_text;
                     final Media media = message.media.get(0);
                     switch (media.type) {
                         case Media.MEDIA_TYPE_IMAGE: {
@@ -624,6 +627,9 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                         }
                         case Media.MEDIA_TYPE_AUDIO: {
                             mediaIcon.setImageResource(R.drawable.ic_keyboard_voice);
+                            if (message.state == Message.STATE_OUTGOING_PLAYED) {
+                                tintColor = R.color.message_state_read;
+                            }
                             break;
                         }
                         case Media.MEDIA_TYPE_UNKNOWN:
@@ -632,9 +638,11 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                             break;
                         }
                     }
+                    mediaIcon.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(mediaIcon.getContext(), tintColor)));
                 } else {
                     mediaIcon.setVisibility(View.VISIBLE);
                     mediaIcon.setImageResource(R.drawable.ic_media_collection);
+                    mediaIcon.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(mediaIcon.getContext(), R.color.primary_text)));
                 }
 
                 if (message.chatId instanceof GroupId && !message.senderUserId.isMe()) {
