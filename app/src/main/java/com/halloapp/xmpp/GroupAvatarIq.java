@@ -1,7 +1,5 @@
 package com.halloapp.xmpp;
 
-import android.util.Base64;
-
 import androidx.annotation.NonNull;
 
 import com.google.protobuf.ByteString;
@@ -13,10 +11,12 @@ public class GroupAvatarIq extends HalloIq {
 
     final GroupId groupId;
     final byte[] bytes;
+    final byte[] largeBytes;
 
-    GroupAvatarIq(@NonNull GroupId groupId, @NonNull byte[] bytes) {
+    GroupAvatarIq(@NonNull GroupId groupId, @NonNull byte[] bytes, @NonNull byte[] largeBytes) {
         this.groupId = groupId;
         this.bytes = bytes;
+        this.largeBytes = largeBytes;
     }
 
     @Override
@@ -28,6 +28,7 @@ public class GroupAvatarIq extends HalloIq {
                         UploadGroupAvatar.newBuilder()
                                 .setGid(groupId.rawId())
                                 .setData(ByteString.copyFrom(bytes))
+                                .setFullData(ByteString.copyFrom(largeBytes))
                                 .build())
                 .build();
     }

@@ -129,7 +129,7 @@ public abstract class Connection {
 
     public abstract Observable<String> removeAvatar();
 
-    public abstract Observable<String> setGroupAvatar(GroupId groupId, byte[] bytes);
+    public abstract Observable<String> setGroupAvatar(GroupId groupId, byte[] bytes, byte[] largeBytes);
 
     public abstract Observable<String> removeGroupAvatar(GroupId groupId);
 

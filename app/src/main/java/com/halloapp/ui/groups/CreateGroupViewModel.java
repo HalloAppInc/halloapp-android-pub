@@ -27,6 +27,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
@@ -53,6 +54,7 @@ public class CreateGroupViewModel extends AndroidViewModel {
     private final ComputableLiveData<List<Contact>> contactsLiveData;
 
     private String avatarFile;
+    private String largeAvatarFile;
 
     public CreateGroupViewModel(@NonNull Application application, @NonNull List<UserId> userIds) {
         super(application);
@@ -78,8 +80,9 @@ public class CreateGroupViewModel extends AndroidViewModel {
         return avatarLiveData;
     }
 
-    public void setAvatar(@NonNull String filepath) {
+    public void setAvatar(@NonNull String filepath, @NonNull String largeFilepath) {
         this.avatarFile = filepath;
+        this.largeAvatarFile = largeFilepath;
         bgWorkers.execute(() -> avatarLiveData.postValue(BitmapFactory.decodeFile(filepath)));
     }
 
@@ -102,6 +105,7 @@ public class CreateGroupViewModel extends AndroidViewModel {
         builder.putString(CreateGroupWorker.WORKER_PARAM_GROUP_NAME, name);
         builder.putStringArray(CreateGroupWorker.WORKER_PARAM_USER_IDS, userIdStrings);
         builder.putString(CreateGroupWorker.WORKER_PARAM_AVATAR_FILE, avatarFile);
+        builder.putString(CreateGroupWorker.WORKER_PARAM_LARGE_AVATAR_FILE, largeAvatarFile);
         final Data data = builder.build();
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(CreateGroupWorker.class).setInputData(data).build();
         workManager.enqueueUniqueWork(CreateGroupWorker.WORK_NAME, ExistingWorkPolicy.REPLACE, workRequest);
@@ -114,6 +118,7 @@ public class CreateGroupViewModel extends AndroidViewModel {
         private static final String WORKER_PARAM_GROUP_NAME = "group_name";
         private static final String WORKER_PARAM_USER_IDS = "user_ids";
         private static final String WORKER_PARAM_AVATAR_FILE = "avatar_file";
+        private static final String WORKER_PARAM_LARGE_AVATAR_FILE = "large_avatar_file";
 
         public static final String WORKER_OUTPUT_GROUP_ID = "group_id";
 
@@ -128,6 +133,7 @@ public class CreateGroupViewModel extends AndroidViewModel {
             final String groupName = Preconditions.checkNotNull(getInputData().getString(WORKER_PARAM_GROUP_NAME));
             final String[] rawUserIds = Preconditions.checkNotNull(getInputData().getStringArray(WORKER_PARAM_USER_IDS));
             final String avatarFilePath = getInputData().getString(WORKER_PARAM_AVATAR_FILE);
+            final String largeAvatarFilePath = getInputData().getString(WORKER_PARAM_LARGE_AVATAR_FILE);
 
             List<UserId> userIds = new ArrayList<>();
             for (String rawId : rawUserIds) {
@@ -138,9 +144,11 @@ public class CreateGroupViewModel extends AndroidViewModel {
                 GroupInfo groupInfo = groupsApi.createGroup(groupName, userIds).await();
                 GroupId groupId = groupInfo.groupId;
 
-                if (avatarFilePath != null) {
+                if (avatarFilePath != null && largeAvatarFilePath != null) {
                     File avatarFile = new File(avatarFilePath);
-                    try (FileInputStream fileInputStream = new FileInputStream(avatarFile)) {
+                    File largeAvatarFile = new File(largeAvatarFilePath);
+                    try (FileInputStream fileInputStream = new FileInputStream(avatarFile);
+                         FileInputStream largeFileInputStream = new FileInputStream(largeAvatarFile)) {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         byte[] buf = new byte[1024];
                         int c;
@@ -148,16 +156,24 @@ public class CreateGroupViewModel extends AndroidViewModel {
                             baos.write(buf, 0, c);
                         }
                         byte[] fileBytes = baos.toByteArray();
-                        String avatarId = Connection.getInstance().setGroupAvatar(groupId, fileBytes).await();
+
+                        baos.reset();
+                        while ((c = largeFileInputStream.read(buf)) != -1) {
+                            baos.write(buf, 0, c);
+                        }
+                        byte[] largeFileBytes = baos.toByteArray();
+
+                        String avatarId = Connection.getInstance().setGroupAvatar(groupId, fileBytes, largeFileBytes).await();
                         if (avatarId == null) {
                             return Result.failure();
                         }
                         final File outFile = FileStore.getInstance().getAvatarFile(groupId.rawId());
+                        final File largeOutFile = FileStore.getInstance().getAvatarFile(groupId.rawId(), true);
                         FileUtils.copyFile(avatarFile, outFile);
+                        FileUtils.copyFile(largeAvatarFile, largeOutFile);
 
-                        // TODO(jack): make all the avatar code support GroupIds
-//                        AvatarLoader avatarLoader = AvatarLoader.getInstance(getApplicationContext());
-//                        avatarLoader.reportAvatarUpdate(groupInfo.groupId, avatarId);
+                        AvatarLoader avatarLoader = AvatarLoader.getInstance();
+                        avatarLoader.reportAvatarUpdate(groupInfo.groupId, avatarId);
                     } catch (IOException e) {
                         Log.e("Failed to get base64", e);
                         return Result.failure();
