@@ -38,11 +38,11 @@ public class HalloApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        initSync();
         Log.i("halloapp: onCreate");
         // https://firebase.google.com/docs/test-lab/android/android-studio#modify_instrumented_test_behavior_for
         String runningInFirebaseTestLab = Settings.System.getString(getContentResolver(), "firebase.test.lab");
         Log.i("halloapp: running in firebase test lab? " + runningInFirebaseTestLab);
-        initSync();
 
         if (ServerProps.getInstance().getIsInternalUser() || BuildConfig.DEBUG) {
             Preferences.getInstance().loadVideoOverride();
