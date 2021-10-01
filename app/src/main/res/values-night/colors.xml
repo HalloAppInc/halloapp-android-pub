@@ -18,7 +18,7 @@
     <color name="reply_indicator_background">#606060</color>
     <color name="link_preview_chat_background">#606060</color>
     <color name="text_post_thumbnail_color">#ffffffff</color>
-    <color name="message_background_incoming">#424242</color>
+    <color name="message_background_incoming">#3F3E3C</color>
     <color name="message_background_outgoing">#3C4757</color>
     <color name="message_background_border">@color/white_30</color>
     <color name="message_background_reply_incoming">@color/black_30</color>
@@ -106,20 +106,18 @@
     <color name="group_me_bg">#495D78</color>
 
     <!-- Group Participant Colors -->
-    <color name="group_bg_1">#685F50</color>
-    <color name="group_bg_2">#3C3745</color>
-    <color name="group_bg_3">#525C4A</color>
-    <color name="group_bg_4">#6C5468</color>
-    <color name="group_bg_5">#405B64</color>
-    <color name="group_bg_6">#5B4234</color>
-    <color name="group_bg_7">#5B5B41</color>
-    <color name="group_bg_8">#464C62</color>
-    <color name="group_bg_9">#554241</color>
-    <color name="group_bg_10">#564B41</color>
-    <color name="group_bg_11">#3D4B47</color>
-    <color name="group_bg_12">#4E4153</color>
-    <color name="group_bg_13">#33323E</color>
-    <color name="group_bg_14">#505341</color>
+    <color name="group_name_1">#478F97</color>
+    <color name="group_name_2">#427FC7</color>
+    <color name="group_name_3">#4CA8D7</color>
+    <color name="group_name_4">#44C2B7</color>
+    <color name="group_name_5">#4DAA57</color>
+    <color name="group_name_6">#B9AF40</color>
+    <color name="group_name_7">#B98B47</color>
+    <color name="group_name_8">#ED7D57</color>
+    <color name="group_name_9">#EA6387</color>
+    <color name="group_name_10">#BE4A9B</color>
+    <color name="group_name_11">#E56337</color>
+    <color name="group_name_12">#846DC7</color>
 
     <color name="group_theme_1_bg">#394666</color>
     <color name="group_theme_2_bg">#43676F</color>

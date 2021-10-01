@@ -164,35 +164,18 @@
     <color name="group_me_bg">#E7EEF8</color>
 
     <!-- Group Participant Colors -->
-    <color name="group_name_1">#DFA54D</color>
-    <color name="group_name_2">#AC7EFF</color>
-    <color name="group_name_3">#71B765</color>
-    <color name="group_name_4">#FF7BBA</color>
-    <color name="group_name_5">#45C0E7</color>
-    <color name="group_name_6">#F5813F</color>
-    <color name="group_name_7">#CFC823</color>
-    <color name="group_name_8">#5E8BFF</color>
-    <color name="group_name_9">#E86666</color>
-    <color name="group_name_10">#C37F19</color>
-    <color name="group_name_11">#63C3A1</color>
-    <color name="group_name_12">#D582E2</color>
-    <color name="group_name_13">#665BDF</color>
-    <color name="group_name_14">#98C026</color>
-
-    <color name="group_bg_1">#FFF7EA</color>
-    <color name="group_bg_2">#F5EFFF</color>
-    <color name="group_bg_3">#F0FDED</color>
-    <color name="group_bg_4">#F9EFF4</color>
-    <color name="group_bg_5">#F1FCFF</color>
-    <color name="group_bg_6">#FFF9F5</color>
-    <color name="group_bg_7">#FFFEED</color>
-    <color name="group_bg_8">#F4F2FF</color>
-    <color name="group_bg_9">#FFF8F2</color>
-    <color name="group_bg_10">#FFF8F2</color>
-    <color name="group_bg_11">#F0F8F5</color>
-    <color name="group_bg_12">#FEF8FF</color>
-    <color name="group_bg_13">#F0F8F5</color>
-    <color name="group_bg_14">#FBFFF1</color>
+    <color name="group_name_1">#478F97</color>
+    <color name="group_name_2">#427FC7</color>
+    <color name="group_name_3">#4CA8D7</color>
+    <color name="group_name_4">#44C2B7</color>
+    <color name="group_name_5">#4DAA57</color>
+    <color name="group_name_6">#B9AF40</color>
+    <color name="group_name_7">#B98B47</color>
+    <color name="group_name_8">#ED7D57</color>
+    <color name="group_name_9">#EA6387</color>
+    <color name="group_name_10">#BE4A9B</color>
+    <color name="group_name_11">#E56337</color>
+    <color name="group_name_12">#846DC7</color>
 
     <color name="group_theme_1_bg">#AAB9D7</color>
     <color name="group_theme_2_bg">#BBE1EA</color>
