@@ -14,6 +14,7 @@ import com.halloapp.content.Post;
 import com.halloapp.proto.log_events.MediaDownload;
 import com.halloapp.proto.log_events.MediaObjectDownload;
 import com.halloapp.util.FileUtils;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.stats.Events;
@@ -21,7 +22,9 @@ import com.halloapp.util.stats.Events;
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -208,9 +211,23 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                     } catch (GeneralSecurityException e) {
                         Log.e("DownloadMediaTask: GSE downloading " + media.url + " for " + mediaLogId, e);
                         if (media.encFile != null) {
+                            Log.d("DownloadMediaTask: provided ciphertext hash is " + StringUtils.bytesToHexString(media.encSha256hash) + " for " + mediaLogId);
+                            boolean hashesMatch = false;
+                            try {
+                                byte[] computedEncHash = FileUtils.getFileSha256(media.encFile);
+                                Log.d("DownloadMediaTask: computed hash of download is " + StringUtils.bytesToHexString(computedEncHash) + " for " + mediaLogId);
+                                hashesMatch = Arrays.equals(media.encSha256hash, computedEncHash);
+                                if (hashesMatch) {
+                                    Log.d("DownloadMediaTask: hashes match but decrypt failed; marking transfer as failed for " + mediaLogId);
+                                    media.transferred = Media.TRANSFERRED_FAILURE;
+                                    contentItem.setMediaTransferred(media, contentDb);
+                                }
+                            } catch (IOException | NoSuchAlgorithmException e2) {
+                                Log.w("Failed to compute ciphertext hash on decrypt failure", e2);
+                            }
                             if (!media.encFile.delete()) {
                                 Log.e("DownloadMediaTask: failed to delete temp enc file for " + mediaLogId);
-                            } else {
+                            } else if (!hashesMatch) {
                                 retry = true;
                             }
                         }
