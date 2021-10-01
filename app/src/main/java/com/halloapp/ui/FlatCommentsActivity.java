@@ -1002,6 +1002,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         private final Observer<VoiceNotePlayer.PlaybackState> playbackStateObserver;
 
+        final int topPaddingNoName;
+
         public VoiceNoteViewHolder(@NonNull View itemView) {
             super(itemView);
             itemView.setOnLongClickListener(v -> {
@@ -1012,7 +1014,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 updateActionMode();
                 return true;
             });
-
+            topPaddingNoName = itemView.getResources().getDimensionPixelSize(R.dimen.comment_voice_note_top_padding_no_name);
             seekBar = itemView.findViewById(R.id.voice_note_seekbar);
             controlButton = itemView.findViewById(R.id.control_btn);
             seekTime = itemView.findViewById(R.id.seek_time);
@@ -1092,6 +1094,13 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 }
             }
             updateVoiceNoteTint(comment.played);
+            if (changed) {
+                if (comment.isIncoming() && (nameView == null || nameView.getVisibility() == View.GONE)) {
+                    contentView.setPadding(contentView.getPaddingLeft(), topPaddingNoName, contentView.getPaddingRight(), contentView.getPaddingBottom());
+                } else {
+                    contentView.setPadding(contentView.getPaddingLeft(), 0, contentView.getPaddingRight(), contentView.getPaddingBottom());
+                }
+            }
         }
 
         @Override
@@ -1267,12 +1276,12 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
     private abstract class BaseCommentViewHolder extends ViewHolderWithLifecycle implements SwipeListItemHelper.SwipeableViewHolder {
         protected final TextView timestampView;
-        private final TextView nameView;
+        protected final TextView nameView;
         private final View linkPreviewContainer;
         private final TextView linkPreviewTitle;
         private final TextView linkPreviewUrl;
         private final ImageView linkPreviewImg;
-        private final View contentView;
+        protected final View contentView;
 
         private final FrameLayout replyContainerView;
         private final TextView replyNameView;
@@ -1355,7 +1364,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         }
 
         public void bindTo(@NonNull Comment comment, @Nullable Comment prevComment, @Nullable Comment nextComment, int position, int newCommentCountSeparator) {
-            boolean changed = Objects.equals(this.comment, comment);
+            boolean changed = !Objects.equals(this.comment, comment);
             this.comment = comment;
             this.position = position;
 
@@ -1422,7 +1431,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     } else {
                         paddingTop = separatorSeq / 2;
                     }
-                    contentParent.getResources().getDimensionPixelSize(diffSender ? R.dimen.comment_vertical_separator : R.dimen.comment_vertical_separator_sequence);
                     contentParent.setPadding(
                             contentParent.getPaddingLeft(),
                             paddingTop,

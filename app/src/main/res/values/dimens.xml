@@ -97,6 +97,8 @@
     <dimen name="comment_vertical_separator_sequence">5dp</dimen>
     <dimen name="comment_vertical_separator">10dp</dimen>
 
+    <dimen name="comment_voice_note_top_padding_no_name">8dp</dimen>
+
     <dimen name="voice_note_cancel_distance">140dp</dimen>
     <dimen name="voice_note_lock_distance">120dp</dimen>
     <dimen name="voice_note_fade_distance">60dp</dimen>
