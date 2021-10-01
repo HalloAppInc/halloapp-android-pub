@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
         android:id="@+id/progressshape"
-        android:bottom="6dp"
-        android:top="6dp">
+        android:bottom="7dp"
+        android:top="7dp">
         <clip>
             <shape
                 android:shape="rectangle" >
