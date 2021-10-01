@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp">
+
+    <TextView
+        android:id="@+id/category_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="15sp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/color_secondary"
+        android:padding="10dp"
+        tools:text="Chats"/>
+
+    <TextView
+        android:id="@+id/item_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="15sp"
+        android:textColor="@color/secondary_text"
+        android:padding="10dp"
+        android:layout_marginStart="10dp"
+        android:visibility="gone"
+        tools:text="Chats"/>
+
+    <TextView
+        android:id="@+id/usage_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/secondary_text"
+        android:padding="10dp"
+        android:textSize="15sp"
+        tools:text="638 KiB"/>
+
+
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_margin="5dp"
+        android:layout_gravity="center"/>
+
+</LinearLayout>

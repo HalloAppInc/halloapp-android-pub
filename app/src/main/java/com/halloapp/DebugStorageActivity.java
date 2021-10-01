@@ -2,7 +2,9 @@ package com.halloapp;
 
 import android.app.Application;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -11,6 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
@@ -27,6 +31,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -38,6 +43,21 @@ public class DebugStorageActivity extends HalloActivity {
 
     private StorageViewModel viewModel;
 
+    private final HashMap<String, Long> ids = new HashMap<>();
+    private long id = 0;
+
+    private String homeUsage;
+    private String groupUsage;
+    private String chatsUsage;
+    private String archiveUsage;
+    private String leakedMediaUsage;
+    private String internalUsage;
+
+    private List<Item> groupsBreakdown;
+    private List<Item> chatsBreakdown;
+    private List<Item> internalBreakdown;
+    private List<Item> leakedBreakdown;
+
     @Override
     protected void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,44 +68,203 @@ public class DebugStorageActivity extends HalloActivity {
 
         viewModel = new ViewModelProvider(this).get(StorageViewModel.class);
 
-        TextView homeUsageTextView = findViewById(R.id.home_usage);
-        TextView groupUsageTextView = findViewById(R.id.group_usage);
-        TextView chatsUsageTextView = findViewById(R.id.chats_usage);
-        TextView archiveUsageTextView = findViewById(R.id.archive_usage);
-        TextView internalUsageTextView = findViewById(R.id.internal_usage);
-        TextView leakedMediaTextView = findViewById(R.id.leaked_usage);
+        RecyclerView storageRv = findViewById(R.id.storage_rv);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        storageRv.setLayoutManager(layoutManager);
 
-        LinearLayout groupUsageBreakdown = findViewById(R.id.groups_children);
-        LinearLayout chatsUsageBreakdown = findViewById(R.id.chats_children);
-        LinearLayout internalUsageBreakdown = findViewById(R.id.internal_children);
-        LinearLayout leakedUsageBreakdown = findViewById(R.id.leaked_children);
+        StorageAdapter adapter = new StorageAdapter();
+        adapter.setStorageItems(constructList());
+        storageRv.setAdapter(adapter);
 
-        viewModel.homeUsageLiveData.observe(this, homeUsageTextView::setText);
-        viewModel.groupsUsageLiveData.observe(this, groupUsageTextView::setText);
-        viewModel.chatsUsageLiveData.observe(this, chatsUsageTextView::setText);
-        viewModel.archiveUsageLiveData.observe(this, archiveUsageTextView::setText);
-        viewModel.leakedMediaLiveData.observe(this, leakedMediaTextView::setText);
-        viewModel.internalUsage.getLiveData().observe(this, internalUsageTextView::setText);
+        viewModel.homeUsageLiveData.observe(this, t -> {
+            homeUsage = t;
+            adapter.setStorageItems(constructList());
+        });
+        viewModel.groupsUsageLiveData.observe(this, t -> {
+            groupUsage = t;
+            adapter.setStorageItems(constructList());
+        });
+        viewModel.chatsUsageLiveData.observe(this, t -> {
+            chatsUsage = t;
+            adapter.setStorageItems(constructList());
+        });
+        viewModel.archiveUsageLiveData.observe(this, t -> {
+            archiveUsage = t;
+            adapter.setStorageItems(constructList());
+        });
+        viewModel.leakedMediaLiveData.observe(this, t -> {
+            leakedMediaUsage = t;
+            adapter.setStorageItems(constructList());
+        });
+        viewModel.internalUsage.getLiveData().observe(this, t -> {
+            internalUsage = t;
+            adapter.setStorageItems(constructList());
+        });
 
-        viewModel.groupsUsageBreakdownLiveData.observe(this, map -> addDivisions(groupUsageBreakdown, map));
-        viewModel.chatsUsageBreakdownLiveData.observe(this, map -> addDivisions(chatsUsageBreakdown, map));
-        viewModel.internalUsageBreakdownLiveData.observe(this, map -> addDivisions(internalUsageBreakdown, map));
-        viewModel.leakedMediaBreakdownLiveData.observe(this, map -> addDivisions(leakedUsageBreakdown, map));
+        viewModel.groupsUsageBreakdownLiveData.observe(this, map -> {
+            groupsBreakdown = convertMapToList(map);
+            adapter.notifyDataSetChanged();
+        });
+        viewModel.chatsUsageBreakdownLiveData.observe(this, map -> {
+            chatsBreakdown = convertMapToList(map);
+            adapter.notifyDataSetChanged();
+        });
+        viewModel.internalUsageBreakdownLiveData.observe(this, map -> {
+            internalBreakdown = convertMapToList(map);
+            adapter.notifyDataSetChanged();
+        });
+        viewModel.leakedMediaBreakdownLiveData.observe(this, map -> {
+            leakedBreakdown = convertMapToList(map);
+            adapter.notifyDataSetChanged();
+        });
     }
 
-    private void addDivisions(LinearLayout list, Map<String, Long> map) {
-        list.removeAllViews();
+    private List<Item> convertMapToList(Map<String, Long> map) {
         List<String> keys = new ArrayList<>(map.keySet());
         Comparator<String> orderBySizeComparator = (o1, o2) ->
                 Long.compare(Preconditions.checkNotNull(map.get(o2)), Preconditions.checkNotNull(map.get(o1)));
         Collections.sort(keys, orderBySizeComparator);
+        List<Item> items = new ArrayList<>(keys.size());
         for (String key : keys) {
-            View v = getLayoutInflater().inflate(R.layout.item_storage_usage, list, false);
-            TextView label = v.findViewById(R.id.usage_label);
-            TextView value = v.findViewById(R.id.usage_value);
-            label.setText(key);
-            value.setText(readableSize(Preconditions.checkNotNull(map.get(key))));
-            list.addView(v);
+            items.add(new StorageItem(key, readableSize(Preconditions.checkNotNull(map.get(key)))));
+        }
+        return items;
+    }
+
+    private List<Item> constructList() {
+        List<Item> list = new ArrayList<>();
+        list.add(new CategoryItem("Home feed", homeUsage));
+        list.add(new CategoryItem("Group feed", groupUsage));
+        if (groupsBreakdown != null) {
+            list.addAll(groupsBreakdown);
+        }
+        list.add(new CategoryItem("Chats", chatsUsage));
+        if (chatsBreakdown != null) {
+            list.addAll(chatsBreakdown);
+        }
+        list.add(new CategoryItem("Archive", archiveUsage));
+        list.add(new CategoryItem("Other internal", internalUsage));
+        if (internalBreakdown != null) {
+            list.addAll(internalBreakdown);
+        }
+        list.add(new CategoryItem("Leaked media", leakedMediaUsage));
+        if (leakedBreakdown != null) {
+            list.addAll(leakedBreakdown);
+        }
+        return list;
+    }
+
+    private abstract class Item {
+        public Item(String name, String text) {
+            this.name = name;
+            this.text = text;
+        }
+        public abstract long getId();
+        String name;
+        String text;
+    }
+
+    private class StorageItem extends Item {
+
+        public StorageItem(String name, String text) {
+            super(name, text);
+        }
+
+        public long getId() {
+            String idKey = "item-" + name;
+            if (!ids.containsKey(idKey)) {
+                ids.put(idKey, id);
+                id++;
+            }
+            return ids.get(idKey);
+        }
+    }
+
+    private class CategoryItem extends Item {
+        public CategoryItem(String name, String text) {
+            super(name, text);
+        }
+        public long getId() {
+            String idKey = "category-" + name;
+            if (!ids.containsKey(idKey)) {
+                ids.put(idKey, id);
+                id++;
+            }
+            return ids.get(idKey);
+        }
+    }
+
+    private class ViewHolder extends RecyclerView.ViewHolder {
+
+        TextView categoryName;
+        TextView itemName;
+        TextView usage;
+        View loading;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            usage = itemView.findViewById(R.id.usage_amount);
+            itemName = itemView.findViewById(R.id.item_name);
+            categoryName = itemView.findViewById(R.id.category_name);
+            loading = itemView.findViewById(R.id.loading);
+        }
+    }
+
+    private class StorageAdapter extends RecyclerView.Adapter<ViewHolder> {
+
+        private List<Item> storageItems;
+
+        public StorageAdapter() {
+            setHasStableIds(true);
+        }
+
+        public void setStorageItems(List<Item> items) {
+            this.storageItems = items;
+            notifyDataSetChanged();
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.storage_usage_item, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            Item item = storageItems.get(position);
+            if (item instanceof StorageItem) {
+                holder.itemName.setVisibility(View.VISIBLE);
+                holder.categoryName.setVisibility(View.GONE);
+                holder.itemName.setText(item.name);
+            } else {
+                holder.itemName.setVisibility(View.GONE);
+                holder.categoryName.setVisibility(View.VISIBLE);
+                holder.categoryName.setText(item.name);
+            }
+            if (item.text == null) {
+                holder.usage.setVisibility(View.GONE);
+                holder.loading.setVisibility(View.VISIBLE);
+            } else {
+                holder.usage.setVisibility(View.VISIBLE);
+                holder.loading.setVisibility(View.GONE);
+                holder.usage.setText(item.text);
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return 1;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return storageItems.get(position).getId();
+        }
+
+        @Override
+        public int getItemCount() {
+            return (storageItems == null) ? 0 : storageItems.size();
         }
     }
 
