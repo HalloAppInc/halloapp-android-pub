@@ -42,9 +42,11 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/comment_media_container"
-                android:layout_width="238dp"
-                android:layout_height="238dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
                 android:layout_marginBottom="4dp">
 
                 <ImageView
