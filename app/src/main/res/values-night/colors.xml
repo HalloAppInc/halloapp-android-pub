@@ -100,6 +100,8 @@
     <color name="e2e_message_text">@color/white_80</color>
     <color name="new_messages">#686D74</color>
 
+    <color name="voice_note_seekbar_bg">@color/white_20</color>
+
     <color name="group_me">#C3DDFF</color>
     <color name="group_me_bg">#495D78</color>
 

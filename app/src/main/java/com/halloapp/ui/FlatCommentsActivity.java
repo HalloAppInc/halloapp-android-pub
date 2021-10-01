@@ -1030,7 +1030,10 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 if (state == null || audioPath == null || !audioPath.equals(state.playingTag)) {
                     return;
                 }
-                playing = state.playing;
+                if (playing != state.playing) {
+                    playing = state.playing;
+                    updateVoiceNoteTint(true);
+                }
                 if (playing) {
                     controlButton.setImageResource(R.drawable.ic_pause);
                     seekTime.setText(StringUtils.formatVoiceNoteDuration(seekTime.getContext(), state.seek));
@@ -1129,7 +1132,11 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 color = ContextCompat.getColor(controlButton.getContext(), R.color.color_secondary);
             }
             controlButton.setImageTintList(ColorStateList.valueOf(color));
-            seekBar.getThumb().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            if (playing) {
+                seekBar.getThumb().clearColorFilter();
+            } else {
+                seekBar.getThumb().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            }
             loading.getIndeterminateDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
         }
 

@@ -130,6 +130,8 @@
     <color name="message_timestamp">#94AAC8</color>
     <color name="message_timestamp_outgoing">@color/color_secondary_50_alpha</color>
 
+    <color name="voice_note_seekbar_bg">@color/black_10</color>
+
     <color name="message_state_clock">#9DBBDD</color>
     <color name="message_state_sent">#660063E4</color>
     <color name="message_state_read">#0063E4</color>

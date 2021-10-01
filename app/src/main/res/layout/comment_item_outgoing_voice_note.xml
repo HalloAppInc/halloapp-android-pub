@@ -64,6 +64,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="10dp"
                     android:paddingEnd="12dp"
+                    android:progressDrawable="@drawable/voice_note_seekbar"
                     app:layout_constraintTop_toTopOf="@id/control_btn"
                     app:layout_constraintBottom_toBottomOf="@id/control_btn"
                     app:layout_constraintStart_toEndOf="@id/control_btn"
