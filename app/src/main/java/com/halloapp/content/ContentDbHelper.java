@@ -31,7 +31,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 51;
+    private static final int DATABASE_VERSION = 52;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -238,6 +238,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + CommentsTable.COLUMN_TIMESTAMP + " INTEGER,"
                 + CommentsTable.COLUMN_TRANSFERRED + " INTEGER,"
                 + CommentsTable.COLUMN_SEEN + " INTEGER,"
+                + CommentsTable.COLUMN_PLAYED + " INTEGER,"
                 + CommentsTable.COLUMN_TEXT + " TEXT,"
                 + CommentsTable.COLUMN_TYPE + " INTEGER,"
                 + CommentsTable.COLUMN_REREQUEST_COUNT + " INTEGER DEFAULT 0,"
@@ -509,6 +510,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 50: {
                 upgradeFromVersion50(db);
+            }
+            case 51: {
+                upgradeFromVersion51(db);
             }
             break;
             default: {
@@ -1057,6 +1061,11 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 +   "DELETE FROM " + FutureProofTable.TABLE_NAME + " WHERE " + FutureProofTable.COLUMN_PARENT_ROW_ID + "=OLD." + CommentsTable._ID + " AND " + FutureProofTable.COLUMN_PARENT_TABLE + "='" + CommentsTable.TABLE_NAME + "'; "
                 +   "DELETE FROM " + UrlPreviewsTable.TABLE_NAME + " WHERE " + UrlPreviewsTable.COLUMN_PARENT_ROW_ID + "=OLD." + CommentsTable._ID + " AND " + UrlPreviewsTable.COLUMN_PARENT_TABLE + "='" + CommentsTable.TABLE_NAME + "'; "
                 + "END;");
+    }
+
+    private void upgradeFromVersion51(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + CommentsTable.TABLE_NAME + " ADD COLUMN " + CommentsTable.COLUMN_PLAYED + " INTEGER DEFAULT 0");
+        db.execSQL("UPDATE " + CommentsTable.TABLE_NAME + " SET " + CommentsTable.COLUMN_PLAYED + "=" + CommentsTable.COLUMN_SEEN + ";");
     }
 
     /**

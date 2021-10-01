@@ -1037,9 +1037,9 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 if (playing) {
                     controlButton.setImageResource(R.drawable.ic_pause);
                     seekTime.setText(StringUtils.formatVoiceNoteDuration(seekTime.getContext(), state.seek));
-                    if (!comment.seen) {
-                        comment.seen = true;
-                        ContentDb.getInstance().setCommentSeen(comment.postId, comment.id, true);
+                    if (!comment.played) {
+                        comment.played = true;
+                        ContentDb.getInstance().setCommentPlayed(comment.postId, comment.id, true);
                         updateVoiceNoteTint(true);
                     }
                 } else {
@@ -1091,7 +1091,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     controlButton.setVisibility(View.INVISIBLE);
                 }
             }
-            updateVoiceNoteTint(comment.seen);
+            updateVoiceNoteTint(comment.played);
         }
 
         @Override

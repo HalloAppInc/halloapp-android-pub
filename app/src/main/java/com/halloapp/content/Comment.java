@@ -27,6 +27,7 @@ public class Comment extends ContentItem {
 
     public final @TransferredState int transferred;
     public boolean seen;
+    public boolean played;
     public int rerequestCount;
 
     // stats not read from DB

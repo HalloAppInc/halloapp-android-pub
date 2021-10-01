@@ -632,6 +632,17 @@ public class ContentDb {
         });
     }
 
+    public void setCommentPlayed(@NonNull String postId, @NonNull String commentId, boolean played) {
+        databaseWriteExecutor.execute(() -> {
+            if (postsDb.setCommentPlayed(postId, commentId, played)) {
+                Post post = postsDb.getPost(postId);
+                if (post != null) {
+                    observers.notifyCommentsSeen(post.senderUserId, postId);
+                }
+            }
+        });
+    }
+
     @WorkerThread
     public long getLastSeenCommentRowId(@NonNull String postId) {
         return postsDb.getLastSeenCommentRowId(postId);

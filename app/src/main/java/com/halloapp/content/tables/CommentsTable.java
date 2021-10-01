@@ -19,6 +19,7 @@ public final class CommentsTable implements BaseColumns {
     public static final String COLUMN_TIMESTAMP = "timestamp";
     public static final String COLUMN_TRANSFERRED = "transferred";
     public static final String COLUMN_SEEN = "seen";
+    public static final String COLUMN_PLAYED = "played";
     public static final String COLUMN_TEXT = "text";
     public static final String COLUMN_TYPE = "type";
     public static final String COLUMN_REREQUEST_COUNT = "rerequest_count";
