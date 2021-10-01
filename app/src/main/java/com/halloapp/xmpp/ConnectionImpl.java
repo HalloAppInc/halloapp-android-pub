@@ -1506,7 +1506,7 @@ public class ConnectionImpl extends Connection {
                         publishedEntry.id,
                         publishedEntry.parentCommentId,
                         publishedEntry.timestamp,
-                        errorMessage == null ? Comment.TRANSFERRED_YES : Comment.TRANSFERRED_DECRYPT_FAILED,
+                        errorMessage == null ? publishedEntry.media.isEmpty() ? Comment.TRANSFERRED_YES : Comment.TRANSFERRED_NO : Comment.TRANSFERRED_DECRYPT_FAILED,
                         false,
                         publishedEntry.text
                 );

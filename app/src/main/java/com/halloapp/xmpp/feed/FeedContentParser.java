@@ -56,7 +56,7 @@ public class FeedContentParser {
                         id,
                         context.getParentCommentId(),
                         timestamp,
-                        decryptFailed ? Comment.TRANSFERRED_DECRYPT_FAILED : Comment.TRANSFERRED_YES,
+                        decryptFailed ? Comment.TRANSFERRED_DECRYPT_FAILED : album.getMediaList().isEmpty() ? Comment.TRANSFERRED_YES : Comment.TRANSFERRED_NO,
                         false,
                         caption.getText()
                 );
@@ -115,7 +115,7 @@ public class FeedContentParser {
                         id,
                         context.getParentCommentId(),
                         timestamp,
-                        decryptFailed ? Comment.TRANSFERRED_DECRYPT_FAILED : Comment.TRANSFERRED_YES,
+                        decryptFailed ? Comment.TRANSFERRED_DECRYPT_FAILED : Comment.TRANSFERRED_NO,
                         false,
                         null
                 );

@@ -2034,7 +2034,7 @@ class PostsDb {
                         CommentsTable.COLUMN_SEEN,
                         CommentsTable.COLUMN_TEXT,
                         CommentsTable.COLUMN_TYPE},
-                CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "='' AND " + CommentsTable.COLUMN_TRANSFERRED + "=0 AND " + CommentsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime(),
+                CommentsTable.COLUMN_TRANSFERRED + "=0 AND " + CommentsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime(),
                 null, null, null, null)) {
             while (cursor.moveToNext()) {
                 final Comment comment = new Comment(
