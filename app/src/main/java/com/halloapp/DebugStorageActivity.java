@@ -103,19 +103,19 @@ public class DebugStorageActivity extends HalloActivity {
 
         viewModel.groupsUsageBreakdownLiveData.observe(this, map -> {
             groupsBreakdown = convertMapToList(map);
-            adapter.notifyDataSetChanged();
+            adapter.setStorageItems(constructList());
         });
         viewModel.chatsUsageBreakdownLiveData.observe(this, map -> {
             chatsBreakdown = convertMapToList(map);
-            adapter.notifyDataSetChanged();
+            adapter.setStorageItems(constructList());
         });
         viewModel.internalUsageBreakdownLiveData.observe(this, map -> {
             internalBreakdown = convertMapToList(map);
-            adapter.notifyDataSetChanged();
+            adapter.setStorageItems(constructList());
         });
         viewModel.leakedMediaBreakdownLiveData.observe(this, map -> {
             leakedBreakdown = convertMapToList(map);
-            adapter.notifyDataSetChanged();
+            adapter.setStorageItems(constructList());
         });
     }
 
