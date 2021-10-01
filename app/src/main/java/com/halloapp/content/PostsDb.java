@@ -1428,8 +1428,8 @@ class PostsDb {
     @NonNull List<Comment> getComments(@NonNull String postId, @Nullable Integer start, @Nullable Integer count) {
         final String sql =
                 "WITH RECURSIVE " +
-                    "comments_tree(level, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text, type, played) AS ( " +
-                        "SELECT 0, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text, type, played FROM comments WHERE post_id=? AND parent_id IS NULL AND timestamp > " + getPostExpirationTime() + " " +
+                    "comments_tree(level, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text, type) AS ( " +
+                        "SELECT 0, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text, type FROM comments WHERE post_id=? AND parent_id IS NULL AND timestamp > " + getPostExpirationTime() + " " +
                         "UNION ALL " +
                         "SELECT comments_tree.level+1, comments._id, comments.timestamp, comments.parent_id, comments.comment_sender_user_id, comments.comment_id, comments.transferred, comments.seen, comments.text, comments.type " +
                             "FROM comments, comments_tree WHERE comments.parent_id=comments_tree.comment_id ORDER BY 1 DESC, 2) " +
@@ -1451,7 +1451,6 @@ class PostsDb {
                         cursor.getInt(7) == 1,
                         cursor.getString(8));
                 comment.type = cursor.getInt(9);
-                comment.played = cursor.getInt(10) == 1;
                 fillMedia(comment);
                 mentionsDb.fillMentions(comment);
                 comment.setParentPost(parentPost);
