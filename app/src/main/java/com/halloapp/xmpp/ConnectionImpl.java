@@ -1339,7 +1339,7 @@ public class ConnectionImpl extends Connection {
                 } else if (item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE) || item.getAction() == com.halloapp.proto.server.FeedItem.Action.PUBLISH) {
                     if (item.hasPost()) {
                         com.halloapp.proto.server.Post protoPost = item.getPost();
-                        Post post = processPost(protoPost, names, null);
+                        Post post = processPost(protoPost, names, null, false);
                         if (post != null) {
                             post.seen = item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.PUBLISH) ? Post.SEEN_NO : Post.SEEN_NO_HIDDEN;
                             posts.add(post);
@@ -1349,7 +1349,7 @@ public class ConnectionImpl extends Connection {
 
                     } else if (item.hasComment()) {
                         com.halloapp.proto.server.Comment protoComment = item.getComment();
-                        Comment comment = processComment(protoComment, names, null);
+                        Comment comment = processComment(protoComment, names, null, false);
                         if (comment != null) {
                             comment.seen = item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE);
                             comments.add(comment);
@@ -1369,7 +1369,7 @@ public class ConnectionImpl extends Connection {
             return !posts.isEmpty() || !comments.isEmpty();
         }
 
-        private Post processPost(com.halloapp.proto.server.Post protoPost, Map<UserId, String> names, @Nullable GroupId groupId) {
+        private Post processPost(com.halloapp.proto.server.Post protoPost, Map<UserId, String> names, @Nullable GroupId groupId, boolean senderStateIssue) {
             if (protoPost.getPublisherUid() != 0 && protoPost.getPublisherName() != null) {
                 names.put(new UserId(Long.toString(protoPost.getPublisherUid())), protoPost.getPublisherName());
             }
@@ -1401,7 +1401,7 @@ public class ConnectionImpl extends Connection {
                         count = contentDb.getPostRerequestCount(groupId, publisherUserId, protoPost.getId());
                         count += 1;
                         contentDb.setPostRerequestCount(groupId, publisherUserId, protoPost.getId(), count);
-                        GroupFeedSessionManager.getInstance().sendPostRerequest(publisherUserId, groupId, protoPost.getId(), false);
+                        GroupFeedSessionManager.getInstance().sendPostRerequest(publisherUserId, groupId, protoPost.getId(), senderStateIssue);
                     }
                 }
             }
@@ -1452,7 +1452,7 @@ public class ConnectionImpl extends Connection {
             }
         }
 
-        private Comment processComment(com.halloapp.proto.server.Comment protoComment, Map<UserId, String> names, @Nullable GroupId groupId) {
+        private Comment processComment(com.halloapp.proto.server.Comment protoComment, Map<UserId, String> names, @Nullable GroupId groupId, boolean senderStateIssue) {
             if (protoComment.getPublisherUid() != 0 && protoComment.getPublisherName() != null) {
                 names.put(new UserId(Long.toString(protoComment.getPublisherUid())), protoComment.getPublisherName());
             }
@@ -1484,7 +1484,7 @@ public class ConnectionImpl extends Connection {
                         count = contentDb.getCommentRerequestCount(groupId, publisherUserId, protoComment.getId());
                         count += 1;
                         contentDb.setCommentRerequestCount(groupId, publisherUserId, protoComment.getId(), count);
-                        GroupFeedSessionManager.getInstance().sendCommentRerequest(publisherUserId, groupId, protoComment.getId(), false);
+                        GroupFeedSessionManager.getInstance().sendCommentRerequest(publisherUserId, groupId, protoComment.getId(), senderStateIssue);
                     }
                 }
             }
@@ -1546,6 +1546,7 @@ public class ConnectionImpl extends Connection {
             final List<Comment> comments = new ArrayList<>();
             final Map<UserId, String> names = new HashMap<>();
 
+            boolean senderStateIssue = false;
             for (GroupFeedItem item : items) {
                 GroupId groupId = new GroupId(item.getGid());
                 if (ServerProps.getInstance().getIsInternalUser() && item.hasSenderState()) {
@@ -1582,6 +1583,7 @@ public class ConnectionImpl extends Connection {
                         encryptedKeyStore.setPeerGroupSigningKey(groupId, publisherUserId, publicSignatureKey);
                     } catch (CryptoException e) {
                         Log.e("Failed to decrypt sender state for " + ProtoPrinter.toString(item), e);
+                        senderStateIssue = true;
                     } catch (InvalidProtocolBufferException e) {
                         Log.e("Failed to parse sender state for " + ProtoPrinter.toString(item), e);
                     }
@@ -1590,7 +1592,7 @@ public class ConnectionImpl extends Connection {
                 if (item.getAction() == GroupFeedItem.Action.PUBLISH || item.getAction() == GroupFeedItem.Action.SHARE) {
                     if (item.hasComment()) {
                         com.halloapp.proto.server.Comment protoComment = item.getComment();
-                        Comment comment = processComment(protoComment, names, groupId);
+                        Comment comment = processComment(protoComment, names, groupId, senderStateIssue);
                         if (comment != null) {
                             comments.add(comment);
                         } else {
@@ -1598,7 +1600,7 @@ public class ConnectionImpl extends Connection {
                         }
                     } else if (item.hasPost()) {
                         com.halloapp.proto.server.Post protoPost = item.getPost();
-                        Post post = processPost(protoPost, names, groupId);
+                        Post post = processPost(protoPost, names, groupId, senderStateIssue);
                         if (post != null) {
                             post.seen = item.getAction().equals(GroupFeedItem.Action.PUBLISH) ? Post.SEEN_NO : Post.SEEN_NO_HIDDEN;
                             post.setParentGroup(new GroupId(item.getGid()));
