@@ -1114,6 +1114,11 @@ class PostsDb {
                     "m." + MediaTable.COLUMN_WIDTH + "," +
                     "m." + MediaTable.COLUMN_HEIGHT + "," +
                     "m." + MediaTable.COLUMN_TRANSFERRED + "," +
+                    "m." + MediaTable.COLUMN_SHA256_HASH + "," +
+                    "m." + MediaTable.COLUMN_DEC_SHA256_HASH + "," +
+                    "m." + MediaTable.COLUMN_BLOB_VERSION + "," +
+                    "m." + MediaTable.COLUMN_CHUNK_SIZE + "," +
+                    "m." + MediaTable.COLUMN_BLOB_SIZE + "," +
                     "s.seen_by_count " +
                 "FROM " + PostsTable.TABLE_NAME + " " +
                 "LEFT JOIN (" +
@@ -1128,7 +1133,12 @@ class PostsDb {
                         MediaTable.COLUMN_ENC_KEY + "," +
                         MediaTable.COLUMN_WIDTH + "," +
                         MediaTable.COLUMN_HEIGHT + "," +
-                        MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                        MediaTable.COLUMN_TRANSFERRED + "," +
+                        MediaTable.COLUMN_SHA256_HASH + "," +
+                        MediaTable.COLUMN_DEC_SHA256_HASH + "," +
+                        MediaTable.COLUMN_BLOB_VERSION + "," +
+                        MediaTable.COLUMN_CHUNK_SIZE + "," +
+                        MediaTable.COLUMN_BLOB_SIZE + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                     "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
                 "LEFT JOIN (" +
                     "SELECT " +
@@ -1162,7 +1172,7 @@ class PostsDb {
                         post.setParentGroup(parentGroupId);
                     }
                     mentionsDb.fillMentions(post);
-                    post.seenByCount = cursor.getInt(20);
+                    post.seenByCount = cursor.getInt(25);
                     post.rerequestCount = cursor.getInt(10);
                 }
                 if (!cursor.isNull(11)) {
@@ -1172,14 +1182,14 @@ class PostsDb {
                             cursor.getString(13),
                             fileStore.getMediaFile(cursor.getString(14)),
                             cursor.getBlob(16),
-                            null,
-                            null,
+                            cursor.getBlob(20),
+                            cursor.getBlob(21),
                             cursor.getInt(17),
                             cursor.getInt(18),
                             cursor.getInt(19),
-                            Media.BLOB_VERSION_UNKNOWN,
-                            0,
-                            0);
+                            cursor.getInt(22),
+                            cursor.getInt(23),
+                            cursor.getInt(24));
                     media.encFile = fileStore.getTmpFile(cursor.getString(15));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
