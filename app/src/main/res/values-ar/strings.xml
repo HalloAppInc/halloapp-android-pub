@@ -554,6 +554,8 @@
     <string name="not_now">"ليس الآن"</string>
     <string name="continue_button">"المتابعة"</string>
     <string name="invite_link_load_failed">"تعذّر فتح رابط الدعوة إلى المجموعة"</string>
+
+    <!-- Fuzzy -->
     <string name="message_tombstone_placeholder">"بانتظار هذه الصورة. قد يستغرق الأمر بعض الوقت. &lt;a href=\"https://halloapp.com/help/\"&gt;تعرّف على المزيد&lt;/a&gt;."</string>
     <string name="failed_no_longer_member">"لم تعد عضواً في هذه المجموعة"</string>
 
@@ -971,5 +973,15 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">"Failed to open link"</string>
+
+    <!-- New comment separator -->
+    <plurals name="new_comment_separator">
+        <item quantity="zero">"%d new comment"</item>
+        <item quantity="one">"%d new comment"</item>
+        <item quantity="two">"%d new comment"</item>
+        <item quantity="few">"%d new comment"</item>
+        <item quantity="many">"%d new comment"</item>
+        <item quantity="other">"%d new comment"</item>
+    </plurals>
 <string name="share_option_group">"Post to Group"</string><string name="select_group">"Select group"</string></resources>
 

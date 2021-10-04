@@ -475,6 +475,8 @@ uid: %1$s
     <string name="not_now">"Не сега"</string>
     <string name="continue_button">"Продължи"</string>
     <string name="invite_link_load_failed">"Неуспешно отваряне на връзката за покана на група"</string>
+
+    <!-- Fuzzy -->
     <string name="message_tombstone_placeholder">"В очакване на това съобщение. Това може да отнеме известно време. &lt;a href=\"https://halloapp.com/help/\"&gt; Научете повече &lt;/a&gt;."</string>
     <string name="failed_no_longer_member">"Вече не сте член на тази група"</string>
 
@@ -874,5 +876,11 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">"Failed to open link"</string>
+
+    <!-- New comment separator -->
+    <plurals name="new_comment_separator">
+        <item quantity="one">"%d new comment"</item>
+        <item quantity="other">"%d new comment"</item>
+    </plurals>
 <string name="share_option_group">"Публикация в Група"</string><string name="select_group">"Избери група"</string></resources>
 

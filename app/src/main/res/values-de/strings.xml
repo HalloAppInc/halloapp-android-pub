@@ -83,10 +83,10 @@ Kosten deines Service-Providers könnten anfallen."</string>
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
 
     <!-- updated -->
-    <string name="storage_permission_rationale">"Für die Auswahl der Medien benötigen wir deine Erlaubnis, um auf den Speicher deines Geräts zugreifen zu können."</string>
+    <string name="storage_permission_rationale">"Für die Auswahl der Medien benötigen wir deine Erlaubnis, um auf den Gerätespeicher zugreifen zu können"</string>
 
     <!-- updated -->
-    <string name="storage_permission_rationale_denied">"Für die Auswahl der Medien benötigen wir deine Erlaubnis, um auf den Speicher deines Geräts zugreifen zu können.
+    <string name="storage_permission_rationale_denied">"Für die Auswahl der Medien benötigen wir deine Erlaubnis, um auf den Gerätespeicher zugreifen zu können.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
     <string name="retry">"Noch einmal probieren"</string>
@@ -503,7 +503,7 @@ Version: %2$s
     <string name="not_now">"Jetzt nicht"</string>
     <string name="continue_button">"Weiter"</string>
     <string name="invite_link_load_failed">"Fehler beim Öffnen des Links zur Gruppeneinladung"</string>
-    <string name="message_tombstone_placeholder">"Auf Nachrichteneingang wird gewartet. Dies kann eine Weile dauern. &lt;a href=\"https://halloapp.com/help/\"&gt;Mehr erfahren&lt;/a&gt;."</string>
+    <string name="message_tombstone_placeholder">"Auf Nachrichteneingang wird gewartet. Dies kann eine Weile dauern. "<![CDATA[<a href="https://halloapp.com/help/">Mehr erfahren</a>]]>"."</string>
     <string name="failed_no_longer_member">"Du bist kein Mitglied dieser Gruppe mehr"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -610,10 +610,10 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="request_data_title">"Meine Daten anfordern"</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature -->
-    <string name="save_to_gallery_storage_permission_rationale">"Für die Speicherung der Medien in der Galerie, benötigen wir deine Erlaubnis, um auf den Speicher deines Geräts zugreifen zu können."</string>
+    <string name="save_to_gallery_storage_permission_rationale">"Für die Speicherung der Medien in der Galerie benötigen wir deine Erlaubnis, um auf den Gerätespeicher zugreifen zu können"</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature. This is used when the user needs to manually go to their settings -->
-    <string name="save_to_gallery_storage_permission_rationale_denied">"Für die Speicherung der Medien in der Galerie benötigen wir deine Erlaubnis, um auf den Speicher deines Geräts zugreifen zu können.
+    <string name="save_to_gallery_storage_permission_rationale_denied">"Für die Speicherung der Medien in der Galerie benötigen wir deine Erlaubnis, um auf den Gerätespeicher zugreifen zu können.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
 
@@ -902,5 +902,11 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">"Der Link kann nicht geöffnet werden"</string>
+
+    <!-- New comment separator -->
+    <plurals name="new_comment_separator">
+        <item quantity="one">"%d neuer Kommentar"</item>
+        <item quantity="other">"%d neue Kommentare"</item>
+    </plurals>
 <string name="share_option_group">"In Gruppe teilen"</string><string name="select_group">"Gruppe auswählen"</string></resources>
 

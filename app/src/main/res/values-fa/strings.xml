@@ -458,6 +458,8 @@ version: %2$s
     <string name="not_now">"الآن نه"</string>
     <string name="continue_button">"ادامه"</string>
     <string name="invite_link_load_failed">"خطا در باز کردن لینک دعوت گروه"</string>
+
+    <!-- Fuzzy -->
     <string name="message_tombstone_placeholder">"در انتظار این پیام. ممکن است مدتی طول بکشد. &lt;a href=\"https://halloapp.com/help/\"&gt;بیشتر بدانید&lt;/a&gt;."</string>
     <string name="failed_no_longer_member">"شما دیگر عضو این گروه نیستید"</string>
 
@@ -852,6 +854,12 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="add_to_contacts_notice">"برای دیدن پست‌های %s شماره ایشان را به دفتر تلفن اضافه کنید. اینجا کلیک کنید."</string>
 
     <!-- Message showed when a link fails to open -->
-    <string name="failed_to_open_link">"Failed to open link"</string>
+    <string name="failed_to_open_link">"خطا در باز کردن لینک"</string>
+
+    <!-- New comment separator -->
+    <plurals name="new_comment_separator">
+        <item quantity="one">"%d نظر جدید"</item>
+        <item quantity="other">"%d نظر جدید"</item>
+    </plurals>
 <string name="share_option_group">"پست به گروه"</string><string name="select_group">"انتخاب گروه"</string></resources>
 

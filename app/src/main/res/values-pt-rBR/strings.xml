@@ -467,6 +467,8 @@ versão: %2$s"</string>
     <string name="not_now">"Agora não"</string>
     <string name="continue_button">"Continuar"</string>
     <string name="invite_link_load_failed">"Falha ao abrir o link do convite de grupo"</string>
+
+    <!-- Fuzzy -->
     <string name="message_tombstone_placeholder">"Aguardando esta mensagem. Isso pode demorar um pouco. &lt;a href=\"https://halloapp.com/help/\"&gt;Saiba mais&lt;/a&gt;."</string>
     <string name="failed_no_longer_member">"Você não é mais membro deste grupo"</string>
 
@@ -865,5 +867,11 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">"Failed to open link"</string>
+
+    <!-- New comment separator -->
+    <plurals name="new_comment_separator">
+        <item quantity="one">"%d new comment"</item>
+        <item quantity="other">"%d new comment"</item>
+    </plurals>
 <string name="share_option_group">"Postar para Grupo"</string><string name="select_group">"Selecionar grupo"</string></resources>
 

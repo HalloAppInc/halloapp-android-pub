@@ -472,6 +472,8 @@ version: %2$s
     <string name="not_now">"Şimdi değil"</string>
     <string name="continue_button">"Devam"</string>
     <string name="invite_link_load_failed">"Grup davet ilişimi açılamadı"</string>
+
+    <!-- Fuzzy -->
     <string name="message_tombstone_placeholder">"Mesaj yükleniyor. Bu biraz zaman alabilir. &lt;a href=\"https://halloapp.com/help/\"&gt;Daha fazlasını öğren&lt;/a&gt;"</string>
     <string name="failed_no_longer_member">"Artık bu grubun bir üyesi değilsin"</string>
 
@@ -870,5 +872,11 @@ Uygulama izinlerini değiştirmek için Uygulama Ayarları ekranını aç."</str
 
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">"Failed to open link"</string>
+
+    <!-- New comment separator -->
+    <plurals name="new_comment_separator">
+        <item quantity="one">"%d new comment"</item>
+        <item quantity="other">"%d new comment"</item>
+    </plurals>
 <string name="share_option_group">"Gruba gönder"</string><string name="select_group">"Grup seç"</string></resources>
 
