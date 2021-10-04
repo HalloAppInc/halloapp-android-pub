@@ -704,7 +704,6 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
 
         options |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
         options |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-        options |= View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
 
         getWindow().getDecorView().setSystemUiVisibility(options);
     }
