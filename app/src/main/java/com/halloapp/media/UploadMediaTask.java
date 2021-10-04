@@ -500,6 +500,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         if (media.type == Media.MEDIA_TYPE_VIDEO) {
             Mp4Utils.zeroMp4Timestamps(media.file);
             Mp4Utils.makeMp4Streamable(media.file);
+            Mp4Utils.removeMp4Location(media.file);
         }
     }
 
