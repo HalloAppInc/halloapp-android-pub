@@ -155,7 +155,7 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
 
         setContentView(R.layout.activity_media_explorer);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        Preconditions.checkNotNull(getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_arrow_left_stroke);
+        Preconditions.checkNotNull(getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_arrow_left_round);
 
         pager = findViewById(R.id.media_pager);
         pager.setAdapter(adapter);
@@ -172,10 +172,17 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
             }
         });
 
+        float indicatorRadius = getResources().getDimension(R.dimen.explorer_indicator_radius);
         indicator = findViewById(R.id.media_pager_indicator);
+        indicator.setClipToOutline(true);
+        indicator.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), indicatorRadius);
+            }
+        });
 
         findViewById(R.id.main).setOnClickListener(v -> toggleSystemUI());
-        toggleSystemUI();
 
         ArrayList<MediaExplorerViewModel.MediaModel> media = getIntent().getParcelableArrayListExtra(EXTRA_MEDIA);
         if (media == null || media.size() == 0) {
@@ -208,6 +215,8 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
         } else {
             indicator.setVisibility(View.GONE);
         }
+
+        toggleSystemUI();
 
         if (chatId == null) {
             viewModel.setPosition(selected);

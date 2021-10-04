@@ -1,0 +1,24 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <item>
+        <shape android:shape="oval">
+            <size
+                android:width="24dp"
+                android:height="24dp" />
+
+            <solid
+                android:color="@color/black_70" />
+        </shape>
+    </item>
+
+    <item
+        android:drawable="@drawable/ic_arrow_left_stroke"
+        android:left="2dp"
+        android:right="2dp"
+        android:top="2dp"
+        android:bottom="2dp"
+        />
+</layer-list>

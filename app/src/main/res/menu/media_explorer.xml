@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/save_to_gallery"
-        android:icon="@drawable/ic_save_stroke"
+        android:icon="@drawable/ic_save_round"
         android:title="@string/save_to_gallery"
         app:showAsAction="ifRoom"/>
 
