@@ -1037,7 +1037,7 @@ public class ContactsDb {
                     + AvatarsTable.COLUMN_AVATAR_TIMESTAMP + " INTEGER,"
                     + AvatarsTable.COLUMN_AVATAR_ID + " TEXT,"
                     + AvatarsTable.COLUMN_REGULAR_CURRENT_ID + " TEXT,"
-                    + AvatarsTable.COLUMN_LARGE_CURRENT_ID + "TEXT"
+                    + AvatarsTable.COLUMN_LARGE_CURRENT_ID + " TEXT"
                     + ");");
 
             db.execSQL("DROP INDEX IF EXISTS " + AvatarsTable.INDEX_USER_ID);
