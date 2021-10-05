@@ -40,6 +40,8 @@ public class GroupFeedKeyManager {
     private static final byte[] HKDF_INPUT_MESSAGE_KEY = new byte[]{3};
     private static final byte[] HKDF_INPUT_CHAIN_KEY = new byte[]{4};
 
+    private static final int MAX_GROUP_FEED_KEYS_SKIP = 100;
+
     private final Me me;
     private final EncryptedKeyStore encryptedKeyStore;
     private final SignalSessionManager signalSessionManager;
@@ -222,6 +224,10 @@ public class GroupFeedKeyManager {
 
     private void skipInboundKeys(GroupId groupId, UserId peerUserId, int count, int startIndex) throws CryptoException {
         Log.i("GroupFeedKeyManager: skipping " + count + " inbound keys");
+        if (count > MAX_GROUP_FEED_KEYS_SKIP) {
+            Log.e("Attempting to skip too many keys");
+            throw new CryptoException("skip_too_many_grp_keys");
+        }
         for (int i=0; i<count; i++) {
             byte[] inboundMessageKey = getInboundMessageKey(groupId, peerUserId);
             try {
