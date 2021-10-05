@@ -1684,7 +1684,8 @@ class PostsDb {
                         CommentsTable.COLUMN_TRANSFERRED + ", " +
                         CommentsTable.COLUMN_TEXT + ", " +
                         CommentsTable.COLUMN_SEEN + ", " +
-                        CommentsTable.COLUMN_REREQUEST_COUNT + " " +
+                        CommentsTable.COLUMN_REREQUEST_COUNT + ", " +
+                        CommentsTable.COLUMN_TYPE + " " +
                         "FROM " + CommentsTable.TABLE_NAME + " " +
                         "WHERE comments.comment_id=? " +
                         "AND comments.timestamp>" + getPostExpirationTime() + " " +
@@ -1703,6 +1704,7 @@ class PostsDb {
                         cursor.getInt(8) == 1,
                         cursor.getString(7));
                 comment.rerequestCount = cursor.getInt(9);
+                comment.type = cursor.getInt(10);
                 Post parentPost = getPost(comment.postId);
                 comment.setParentPost(parentPost);
                 fillMedia(comment);
