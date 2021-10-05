@@ -10,6 +10,7 @@ import com.halloapp.ui.mentions.MentionsFormatter;
 import com.halloapp.util.logs.Log;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import io.noties.markwon.Markwon;
@@ -82,6 +83,7 @@ public class MarkdownUtils {
             }
         }
         List<Mention> adjustedMentions = new ArrayList<>();
+        HashSet<Integer> addedMentionIndices = new HashSet<>();
         for (Mention mention : mentions) {
             if (!MentionsFormatter.isValidMention(text, mention)) {
                 Log.e("MarkdownUtils/formatMarkdownWithMentions invalid mention!");
@@ -92,8 +94,14 @@ public class MarkdownUtils {
                 Log.e("MarkdownUtils/formatMarkdownWithMentions mention index out of bounds " + i);
                 continue;
             }
-            Mention copy = new Mention(newMentionIndices.get(i), mention.userId, mention.fallbackName);
+            int newIndex = newMentionIndices.get(i);
+            if (addedMentionIndices.contains(newIndex)) {
+                Log.e("MarkdownUtils/formatMarkdownWithMentions duplicated mention " + i);
+                continue;
+            }
+            Mention copy = new Mention(newIndex, mention.userId, mention.fallbackName);
             adjustedMentions.add(copy);
+            addedMentionIndices.add(newIndex);
         }
         return MentionsFormatter.insertMentions(markdown, adjustedMentions, mentionClickListener);
     }
