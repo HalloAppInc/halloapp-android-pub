@@ -8,6 +8,7 @@
         <item name="android:windowBackground">@color/window_background</item>
         <item name="android:navigationBarColor">@color/color_primary_dark</item>
         <item name="actionBarStyle">@style/ActionBar</item>
+        <item name="actionBarPopupTheme">@style/ActionBar.PopupTheme</item>
         <item name="actionModeCloseDrawable">@drawable/ic_close</item>
         <item name="actionModeBackground">@color/window_background</item>
         <item name="useLightSystemBars">@bool/light_system_bars</item>
@@ -152,6 +153,10 @@
         <item name="elevation">0dp</item>
         <item name="titleTextStyle">@style/TextAppearance.Toolbar.Title</item>
         <item name="subtitleTextStyle">@style/TextAppearance.Toolbar.Subtitle</item>
+    </style>
+
+    <style name="ActionBar.PopupTheme" parent="@style/Widget.MaterialComponents.ActionBar.Solid">
+        <item name="colorSurface">@color/overflow_menu_bg</item>
     </style>
 
     <style name="ActionBar.GroupBackground" parent="@style/Widget.MaterialComponents.ActionBar.Solid">
