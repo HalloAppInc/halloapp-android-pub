@@ -147,7 +147,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             }
             try {
                 prepareMedia(media, maxVideoDurationSeconds);
-            } catch (IOException | MediaConversionException e) {
+            } catch (IOException | MediaConversionException | RuntimeException e) {
                 Log.e("UploadMediaTask media preparation failed for " + mediaLogId, e);
                 break;
             }
