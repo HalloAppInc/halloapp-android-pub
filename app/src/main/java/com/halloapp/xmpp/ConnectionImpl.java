@@ -27,8 +27,8 @@ import com.halloapp.crypto.group.GroupFeedSessionManager;
 import com.halloapp.crypto.group.GroupSetupInfo;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
-import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.crypto.signal.SignalSessionManager;
+import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -1502,11 +1502,11 @@ public class ConnectionImpl extends Connection {
 
                 final Comment comment = new Comment(0,
                         publishedEntry.feedItemId,
-                        getUserId(Long.toString(protoComment.getPublisherUid())),
+                        publisherUserId,
                         publishedEntry.id,
                         publishedEntry.parentCommentId,
                         publishedEntry.timestamp,
-                        errorMessage == null ? publishedEntry.media.isEmpty() ? Comment.TRANSFERRED_YES : Comment.TRANSFERRED_NO : Comment.TRANSFERRED_DECRYPT_FAILED,
+                        errorMessage == null ? publishedEntry.media.isEmpty() || publisherUserId.isMe() ? Comment.TRANSFERRED_YES : Comment.TRANSFERRED_NO : Comment.TRANSFERRED_DECRYPT_FAILED,
                         false,
                         publishedEntry.text
                 );
