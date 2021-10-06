@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,18 +43,28 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class VideoEditFragment extends Fragment {
 
     private static final int THUMBNAIL_COUNT = 6;
+    private static final String FORMAT_HMMSS = "%tH:%tM:%tS.%tL";
+    private static final String FORMAT_MMSS = "%tM:%tS.%tL";
+    private static final long PLAYBACK_REFRESH_MS = 1000 / 60;
 
+    private float borderThickness;
+    private float handleRadius;
     private float thumbnailSize;
+
+    private View playbackIndicatorView;
     private VideoRangeView rangeView;
-    private TextView durationView;
+    private TextView durationView, trimTimesView;
     private PlayerView playerView;
     private SimpleExoPlayer player;
     private State state;
     private final Runnable resetPlayerAction = this::resetPlayer;
+    private final Runnable updatePlaybackIndicatorAction = this::updatePlaybackIndicator;
     private boolean isPlayerInitialized = false;
     private MediaEditViewModel viewModel;
     private MediaEditViewModel.Model selected;
@@ -85,7 +96,11 @@ public class VideoEditFragment extends Fragment {
         }
 
         thumbnailSize = getResources().getDimension(R.dimen.video_edit_thumbnail_size);
+        borderThickness = getResources().getDimension(R.dimen.video_edit_range_border);
+        handleRadius = getResources().getDimension(R.dimen.video_edit_range_handle_radius);
 
+        playbackIndicatorView = view.findViewById(R.id.playback_indicator);
+        trimTimesView = view.findViewById(R.id.trim_times);
         rangeView = view.findViewById(R.id.trim_control_range);
         durationView = view.findViewById(R.id.duration);
         playerView = view.findViewById(R.id.player);
@@ -216,8 +231,10 @@ public class VideoEditFragment extends Fragment {
                 if (isPlaying) {
                     long resetDelay = state.getEnd() - player.getCurrentPosition();
                     playerView.postDelayed(resetPlayerAction, resetDelay);
+                    playerView.postDelayed(updatePlaybackIndicatorAction, PLAYBACK_REFRESH_MS);
                 } else {
                     playerView.removeCallbacks(resetPlayerAction);
+                    playerView.removeCallbacks(updatePlaybackIndicatorAction);
                 }
                 playerView.setKeepScreenOn(isPlaying);
             }
@@ -264,7 +281,7 @@ public class VideoEditFragment extends Fragment {
     }
 
     private void setupVideoRange() {
-        rangeView.setRangeChangedListener((start, end) -> {
+        rangeView.setRangeChangedListener((start, end, region) -> {
             if (!isPlayerInitialized) {
                 return;
             }
@@ -272,8 +289,17 @@ public class VideoEditFragment extends Fragment {
             state.setFractionalStart(start);
             state.setFractionalEnd(end);
 
+            switch (region) {
+                case START:
+                case NONE:
+                    resetPlayer(true);
+                    break;
+                case END:
+                    resetPlayer(false);
+                    break;
+            }
+
             updateDurationView();
-            resetPlayer();
             syncState();
         });
     }
@@ -285,13 +311,48 @@ public class VideoEditFragment extends Fragment {
         syncState();
     }
 
+    private String formatGranular(long time) {
+        if (TimeUnit.MILLISECONDS.toHours(time) > 0) {
+            return String.format(Locale.getDefault(), FORMAT_HMMSS, time, time, time, time);
+        } else {
+            return String.format(Locale.getDefault(), FORMAT_MMSS, time, time, time);
+        }
+    }
+
+    private String formatRange(long start, long end) {
+        if (end < start) return "";
+        return String.format("%s - %s", formatGranular(start), formatGranular(end));
+    }
+
     private void updateDurationView() {
+        trimTimesView.setText(formatRange(state.getStart(), state.getEnd()));
         durationView.setText(DateUtils.formatElapsedTime(state.getDuration() / 1000));
     }
 
+    private void updatePlaybackIndicator() {
+        int minPosition = (int) (borderThickness / 2 + handleRadius);
+        int maxSize = rangeView.getWidth() - 2 * (int) handleRadius - (int) (borderThickness / 2);
+        long position = minPosition + maxSize * player.getCurrentPosition() / player.getDuration();
+
+        FrameLayout.LayoutParams indicatorParams = (FrameLayout.LayoutParams) playbackIndicatorView.getLayoutParams();
+        indicatorParams.setMarginStart((int) position);
+        playbackIndicatorView.setLayoutParams(indicatorParams);
+
+        playerView.postDelayed(updatePlaybackIndicatorAction, PLAYBACK_REFRESH_MS);
+    }
+
     private void resetPlayer() {
+        resetPlayer(true);
+    }
+
+    private void resetPlayer(boolean toStart) {
         player.setPlayWhenReady(false);
-        player.seekTo(state.getStart());
+
+        if (toStart) {
+            player.seekTo(state.getStart());
+        } else {
+            player.seekTo(state.getEnd());
+        }
     }
 
     private void syncState() {

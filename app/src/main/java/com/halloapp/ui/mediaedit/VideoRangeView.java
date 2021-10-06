@@ -20,11 +20,12 @@ public class VideoRangeView extends View {
         /**
          * @param start range start will be between 0 - 1
          * @param end range end will be between 0 - 1 and bigger than range start
+         * @param region is START, END or NONE and is also called on completion
          */
-        void onRangeChanged(float start, float end);
+        void onRangeChanged(float start, float end, DragRegion region);
     }
 
-    private enum DragRegion {
+    public enum DragRegion {
         START, END, NONE
     }
 
@@ -37,6 +38,7 @@ public class VideoRangeView extends View {
     private final Paint borderPaint = new Paint();
     private final Paint handlePaint = new Paint();
 
+    private DragRegion dragRegion = DragRegion.NONE;
     private float start = 0;
     private float end = 1;
     private RangeChangedListener listener;
@@ -68,55 +70,53 @@ public class VideoRangeView extends View {
         initDragHandling();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initDragHandling() {
-        setOnTouchListener(new OnTouchListener() {
-            DragRegion dragRegion = DragRegion.NONE;
+        setOnTouchListener((View view, MotionEvent event) -> {
+            float width = getWidth();
 
-            @SuppressLint("ClickableViewAccessibility")
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
-                float width = getWidth();
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    float startDistance = Math.abs(width * start - event.getX());
+                    float endDistance = Math.abs(width * end - event.getX());
 
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        float startDistance = Math.abs(width * start - event.getX());
-                        float endDistance = Math.abs(width * end - event.getX());
-
-                        if (startDistance < threshold && endDistance > threshold) {
+                    if (startDistance < threshold && endDistance > threshold) {
+                        dragRegion = DragRegion.START;
+                    } else if (startDistance > threshold && endDistance < threshold) {
+                        dragRegion = DragRegion.END;
+                    } else if (startDistance < threshold && endDistance < threshold) {
+                        if (startDistance < endDistance) {
                             dragRegion = DragRegion.START;
-                        } else if (startDistance > threshold && endDistance < threshold) {
+                        } else {
                             dragRegion = DragRegion.END;
-                        } else if (startDistance < threshold && endDistance < threshold) {
-                            if (startDistance < endDistance) {
-                                dragRegion = DragRegion.START;
-                            } else {
-                                dragRegion = DragRegion.END;
-                            }
                         }
+                    }
 
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        switch (dragRegion) {
-                            case START:
-                                start = Math.max(0, Math.min(event.getX() / width, end));
-                                invalidate();
-                                notifyRangeChanged();
-                                break;
-                            case END:
-                                end = Math.min(1, Math.max(event.getX() / width, start));
-                                invalidate();
-                                notifyRangeChanged();
-                                break;
-                        }
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    float minimumInterval = 2 * (borderThickness + handleRadius) / width;
 
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        dragRegion = DragRegion.NONE;
-                        break;
-                }
-                return true;
+                    switch (dragRegion) {
+                        case START:
+                            start = Math.max(0, Math.min(event.getX() / width, end - minimumInterval));
+                            invalidate();
+                            notifyRangeChanged();
+                            break;
+                        case END:
+                            end = Math.min(1, Math.max(event.getX() / width, start + minimumInterval));
+                            invalidate();
+                            notifyRangeChanged();
+                            break;
+                    }
+
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    dragRegion = DragRegion.NONE;
+                    notifyRangeChanged();
+                    break;
             }
+            return true;
         });
     }
 
@@ -138,7 +138,7 @@ public class VideoRangeView extends View {
 
     public void notifyRangeChanged() {
         if (listener != null) {
-            listener.onRangeChanged(start, end);
+            listener.onRangeChanged(start, end, dragRegion);
         }
     }
 
@@ -151,8 +151,9 @@ public class VideoRangeView extends View {
     }
 
     private void drawShadow(Canvas canvas) {
-        int left = (int) (getWidth() * start);
-        int right = (int) (getWidth() * end);
+        int offsetHorizontal = (int) (borderThickness / 2 + handleRadius);
+        int left = (int) (getWidth() * start) + offsetHorizontal;
+        int right = (int) (getWidth() * end) - offsetHorizontal;
 
         path.reset();
         path.addRect(0, 0, getWidth(), getHeight(), Path.Direction.CW);
@@ -162,17 +163,13 @@ public class VideoRangeView extends View {
     }
 
     private void drawBorder(Canvas canvas) {
-        int offset = (int) (borderThickness / 2);
-        int left = (int) (getWidth() * start) + offset;
-        int right = (int) (getWidth() * end) - offset;
-
-        if (Math.abs(left - right) < borderThickness) {
-            left -= borderThickness / 2;
-            right += borderThickness / 2;
-        }
+        int offsetHorizontal = (int) (borderThickness / 2 + handleRadius);
+        int offsetVertical = (int) (borderThickness / 2);
+        int left = (int) (getWidth() * start) + offsetHorizontal;
+        int right = (int) (getWidth() * end) - offsetHorizontal;
 
         path.reset();
-        path.addRect(left, offset, right, getHeight() - offset, Path.Direction.CW);
+        path.addRect(left, offsetVertical, right, getHeight() - offsetVertical, Path.Direction.CW);
         path.setFillType(Path.FillType.WINDING);
         canvas.drawPath(path, borderPaint);
 

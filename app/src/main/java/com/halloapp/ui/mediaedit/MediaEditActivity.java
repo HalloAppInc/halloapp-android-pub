@@ -152,7 +152,7 @@ public class MediaEditActivity extends HalloActivity {
                 previewListView.setVisibility(View.VISIBLE);
                 previewAdapter.onViewModelUpdate(models);
             } else {
-                previewListView.setVisibility(View.INVISIBLE);
+                previewListView.setVisibility(View.GONE);
             }
         });
 
