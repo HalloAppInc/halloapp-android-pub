@@ -685,6 +685,9 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 } else if (absDy > absDx && lm.canScrollVertically()) {
                     return null;
                 }
+                if (commentsView.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) {
+                    return null;
+                }
                 View child = commentsView.findChildViewUnder(initialX, initialY);
                 if (child == null) {
                     return null;

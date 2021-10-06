@@ -737,6 +737,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 } else if (absDy > absDx && lm.canScrollVertically()) {
                     return null;
                 }
+                if (chatView.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) {
+                    return null;
+                }
                 View child = chatView.findChildViewUnder(initialX, initialY);
                 if (child == null) {
                     return null;
