@@ -11,9 +11,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="64dp">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:id="@+id/content"
@@ -22,6 +20,8 @@
             android:layout_gravity="start"
             android:background="@drawable/message_background_incoming"
             android:orientation="vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="64dp"
             android:paddingTop="4dp">
 
             <FrameLayout
