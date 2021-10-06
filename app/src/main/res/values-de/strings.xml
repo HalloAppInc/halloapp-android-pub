@@ -879,7 +879,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="groups_in_common">"Gemeinsame Gruppen"</string>
 
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
-    <string name="slide_to_cancel">"Wischen, um die Aufnahme abzubrechen"</string>
+    <string name="slide_to_cancel">"Wischen zum Abbrechen"</string>
 
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
     <string name="reply_notification_label">"Antworten"</string>
