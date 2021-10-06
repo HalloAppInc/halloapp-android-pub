@@ -707,6 +707,7 @@ public class MediaUtils {
     @WorkerThread
     public static void trimVideo(@NonNull Context context, @NonNull Uri uri, @NonNull File target, long startTimeUs, long endTimeUs, boolean mute) throws IOException {
         int rotationDegrees = 0;
+        int bufferSize = -1;
         HashMap<Integer, Integer> indexes = new HashMap<>();
 
         MediaMuxer muxer = new MediaMuxer(target.getAbsolutePath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
@@ -725,46 +726,43 @@ public class MediaUtils {
                 rotationDegrees = format.getInteger(MediaFormat.KEY_ROTATION);
             }
 
+            extractor.selectTrack(i);
             indexes.put(i, muxer.addTrack(format));
+
+            if (format.containsKey(MediaFormat.KEY_MAX_INPUT_SIZE)) {
+                bufferSize = Math.max(format.getInteger(MediaFormat.KEY_MAX_INPUT_SIZE), bufferSize);
+            }
         }
 
-        ByteBuffer buffer = ByteBuffer.allocate(TRIMMING_BUFFER_SIZE);
+        ByteBuffer buffer = ByteBuffer.allocate(bufferSize < 0 ? TRIMMING_BUFFER_SIZE : bufferSize);
 
+        extractor.seekTo(startTimeUs, MediaExtractor.SEEK_TO_CLOSEST_SYNC);
+
+        int offset = 0;
         muxer.setOrientationHint(rotationDegrees);
         muxer.start();
+        while (true) {
+            MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
 
-        for (int i = 0; i < extractor.getTrackCount(); ++i) {
-            if (!indexes.containsKey(i)) {
-                continue;
+            try {
+                info.offset = offset;
+                info.size = extractor.readSampleData(buffer, offset);
+                info.presentationTimeUs = extractor.getSampleTime();
+                info.flags = extractor.getSampleFlags();
+            } catch (IllegalArgumentException e) {
+                Log.e("VideoEditActivity: unable to extract video, probably buffer too small", e);
+                throw new IOException(e);
             }
 
-            extractor.selectTrack(i);
-            extractor.seekTo(startTimeUs, MediaExtractor.SEEK_TO_PREVIOUS_SYNC);
-
-            while (true) {
-                MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
-
-                try {
-                    info.size = extractor.readSampleData(buffer, 0);
-                    info.presentationTimeUs = extractor.getSampleTime();
-                    info.flags = extractor.getSampleFlags();
-                } catch (IllegalArgumentException e) {
-                    Log.e("VideoEditActivity: unable to extract video, probably buffer too small", e);
-                    throw new IOException(e);
-                }
-
-                if (info.size < 0 || (endTimeUs > 0 && info.presentationTimeUs > endTimeUs)) {
-                    break;
-                }
-
-                muxer.writeSampleData(Objects.requireNonNull(indexes.get(i)), buffer, info);
-                extractor.advance();
+            if (info.size < 0 || (endTimeUs > 0 && info.presentationTimeUs > endTimeUs)) {
+                break;
             }
 
-            extractor.unselectTrack(i);
+            muxer.writeSampleData(Objects.requireNonNull(indexes.get(extractor.getSampleTrackIndex())), buffer, info);
+            extractor.advance();
         }
-        muxer.stop();
 
+        muxer.stop();
         extractor.release();
         muxer.release();
     }
