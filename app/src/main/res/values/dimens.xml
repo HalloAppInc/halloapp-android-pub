@@ -47,7 +47,7 @@
     <dimen name="avatar_crop_overlay_stroke">3dp</dimen>
     <dimen name="avatar_crop_overlay_corner_radius">15dp</dimen>
     <dimen name="reply_min_width">240dp</dimen>
-    <dimen name="reply_media_corner_radius">7dp</dimen>
+    <dimen name="reply_media_corner_radius">8dp</dimen>
     <dimen name="reply_thumb_size">56dp</dimen>
     <dimen name="post_text_size">16sp</dimen>
     <dimen name="post_text_size_large">20sp</dimen>
