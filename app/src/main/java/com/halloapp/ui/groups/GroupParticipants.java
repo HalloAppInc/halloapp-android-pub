@@ -31,7 +31,7 @@ public class GroupParticipants {
     };
 
     public static int getColorIndex(@Nullable UserId userId) {
-        if (userId == null) {
+        if (userId == null || userId.isMe()) {
             return 0;
         }
         return (int) (Long.parseLong(userId.rawId()) % PARTICIPANT_COLORS.length);
