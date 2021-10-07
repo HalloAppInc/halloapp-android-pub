@@ -88,4 +88,9 @@
         <attr name="cropFlipVertically" format="boolean"/>
     </declare-styleable>
 
+    <declare-styleable name="CommentHeaderBehavior">
+        <attr name="finalXPosition" format="dimension"/>
+        <attr name="finalYPosition" format="dimension"/>
+        <attr name="finalToolbarHeight" format="dimension"/>
+    </declare-styleable>
 </resources>

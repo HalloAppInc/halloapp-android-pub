@@ -54,6 +54,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.widget.Toolbar;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.app.SharedElementCallback;
@@ -70,6 +71,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.ContentDraftManager;
@@ -138,6 +140,8 @@ import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class FlatCommentsActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
+
+    private static final float PERCENTAGE_TO_HIDE_TOOLBAR_AT  = 0.6f;
 
     public static final String EXTRA_POST_SENDER_USER_ID = "post_sender_user_id";
     public static final String EXTRA_POST_ID = "post_id";
@@ -225,6 +229,22 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flat_comments);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        TextView titleView = findViewById(R.id.title);
+        titleView.setText(R.string.comments);
+        AppBarLayout appBarLayout = findViewById(R.id.app_bar_layout);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int offset) {
+                int maxScroll = appBarLayout.getTotalScrollRange();
+                float percentage = (float) Math.abs(offset) / (float) maxScroll;
+
+                titleView.setAlpha(Math.max(0, 2 * (0.5f - percentage)));
+            }
+        });
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
