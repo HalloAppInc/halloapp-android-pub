@@ -27,7 +27,7 @@
                 app:contentInsetLeft="0dp"
                 app:contentInsetStart="0dp"
                 app:contentInsetStartWithNavigation="0dp"
-                app:popupTheme="@style/ThemeOverlay.MaterialComponents"
+                app:popupTheme="@style/ActionBar.PopupTheme"
                 app:theme="@style/ThemeOverlay.MaterialComponents.ActionBar">
 
                 <LinearLayout

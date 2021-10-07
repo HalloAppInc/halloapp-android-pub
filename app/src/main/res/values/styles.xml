@@ -155,9 +155,8 @@
         <item name="subtitleTextStyle">@style/TextAppearance.Toolbar.Subtitle</item>
     </style>
 
-    <style name="ActionBar.PopupTheme" parent="@style/Widget.MaterialComponents.ActionBar.Solid">
+    <style name="ActionBar.PopupTheme" parent="@style/AppTheme">
         <item name="colorSurface">@color/overflow_menu_bg</item>
-        <item name="android:textColor">@color/primary_text</item>
     </style>
 
     <style name="ActionBar.GroupBackground" parent="@style/Widget.MaterialComponents.ActionBar.Solid">
