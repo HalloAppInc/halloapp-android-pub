@@ -157,6 +157,7 @@
 
     <style name="ActionBar.PopupTheme" parent="@style/Widget.MaterialComponents.ActionBar.Solid">
         <item name="colorSurface">@color/overflow_menu_bg</item>
+        <item name="android:textColor">@color/primary_text</item>
     </style>
 
     <style name="ActionBar.GroupBackground" parent="@style/Widget.MaterialComponents.ActionBar.Solid">
