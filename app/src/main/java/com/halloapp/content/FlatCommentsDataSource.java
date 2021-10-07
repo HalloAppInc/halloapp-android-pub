@@ -8,9 +8,11 @@ import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.UserId;
+import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.mentions.MentionsLoader;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public class FlatCommentsDataSource extends PositionalDataSource<Comment> {
@@ -51,10 +53,15 @@ public class FlatCommentsDataSource extends PositionalDataSource<Comment> {
     private HashMap<UserId, Contact> contactMap = new HashMap<>();
     private HashMap<String, Comment> commentMap = new HashMap<>();
 
+    private List<Integer> unusedColors = new LinkedList<>();
+
     private FlatCommentsDataSource(@NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb, @NonNull String postId) {
         this.contentDb = contentDb;
         this.postId = postId;
         this.contactsDb = contactsDb;
+        for (int i = 0; i < GroupParticipants.PARTICIPANT_COLORS.length; i++) {
+            unusedColors.add(i);
+        }
     }
 
     @Override
@@ -100,8 +107,22 @@ public class FlatCommentsDataSource extends PositionalDataSource<Comment> {
             comment.senderContact = contactMap.get(comment.senderUserId);
         } else {
             comment.senderContact = contactsDb.getContact(comment.senderUserId);
+            comment.senderContact.setColorIndex(getColorIndex(comment.senderUserId));
             contactMap.put(comment.senderUserId, comment.senderContact);
         }
+    }
+
+    private int getColorIndex(UserId userId) {
+        int defColor = GroupParticipants.getColorIndex(userId);
+        if (unusedColors.size() == 0) {
+            return defColor;
+        }
+        int index = unusedColors.indexOf(defColor);
+        if (index != -1) {
+            return unusedColors.remove(index);
+        }
+        index = (int)(Math.random() * unusedColors.size());
+        return unusedColors.remove(index);
     }
 
     @Override

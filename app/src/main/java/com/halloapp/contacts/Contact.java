@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.id.UserId;
+import com.halloapp.ui.groups.GroupParticipants;
 
 import java.text.Collator;
 import java.util.Collections;
@@ -34,6 +35,8 @@ public class Contact implements Parcelable {
     public boolean hideChat;
     public boolean invited;
 
+    private int colorIndex = -1;
+
     public Contact(long rowId,
                    long addressBookId, @Nullable String addressBookName, @Nullable String addressBookPhone,
                    @Nullable String normalizedPhone, @Nullable String avatarId, @Nullable UserId userId) {
@@ -49,6 +52,17 @@ public class Contact implements Parcelable {
     public Contact(@NonNull UserId userId, @Nullable String name, @Nullable String halloName) {
         this(0, 0, name, null, null, null, userId);
         this.halloName = halloName;
+    }
+
+    public void setColorIndex(int colorIndex) {
+        this.colorIndex = colorIndex;
+    }
+
+    public int getColorIndex() {
+        if (colorIndex == -1) {
+            colorIndex = GroupParticipants.getColorIndex(userId);
+        }
+        return colorIndex;
     }
 
     public @Nullable String getRawUserId() {

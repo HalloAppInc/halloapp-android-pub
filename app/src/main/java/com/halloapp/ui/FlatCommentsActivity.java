@@ -656,7 +656,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                         if (vh instanceof BaseCommentViewHolder) {
                             BaseCommentViewHolder mvh = (BaseCommentViewHolder) vh;
                             Comment comment = mvh.comment;
-                            swipeListItemHelper.setIconTint(GroupParticipants.getParticipantNameColor(FlatCommentsActivity.this, comment.senderUserId));
+                            swipeListItemHelper.setIconTint(GroupParticipants.getParticipantNameColor(FlatCommentsActivity.this, comment.senderContact));
                         }
                         if (vh != null) {
                             itemSwipeHelper.startSwipe(vh);
@@ -1447,8 +1447,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 if (comment.isOutgoing()) {
                     nameView.setVisibility(View.GONE);
                 } else if (diffSender) {
-                    int color = GroupParticipants.getParticipantNameColor(nameView.getContext(), comment.senderUserId);
-                    nameView.setTextColor(color);
+                    nameView.setTextColor(GroupParticipants.getParticipantNameColor(nameView.getContext(), comment.senderContact));
                     nameView.setText(comment.senderContact.getDisplayName());
                     if (!comment.senderUserId.isMe()) {
                         nameView.setOnClickListener(v -> {
@@ -1493,7 +1492,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                             comment.isOutgoing()
                                     ? R.color.message_background_reply_outgoing
                                     : R.color.message_background_reply_incoming)));
-                    replyNameView.setTextColor(GroupParticipants.getParticipantNameColor(FlatCommentsActivity.this, comment.parentComment.senderUserId, true));
+                    replyNameView.setTextColor(GroupParticipants.getParticipantNameColor(FlatCommentsActivity.this, comment.parentComment.senderContact, true));
                     replyNameView.setText(comment.parentComment.senderContact.getDisplayName());
                     replyTextView.setTypeface(replyTextView.getTypeface(), Typeface.NORMAL);
                     setCommentText(replyTextView, comment.parentComment, true);
