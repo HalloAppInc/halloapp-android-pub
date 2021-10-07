@@ -13,11 +13,11 @@ import com.halloapp.R;
 
 public class CommentHeaderBehavior extends CoordinatorLayout.Behavior<View> {
 
-    private int startXPositionImage;
-    private int startYPositionImage;
+    private int startXPos;
+    private int startYPos;
     private int startToolbarHeight;
 
-    private boolean initialised = false;
+    private boolean initialized = false;
 
     private float amountOfToolbarToMove;
     private float amountToMoveXPosition;
@@ -51,17 +51,17 @@ public class CommentHeaderBehavior extends CoordinatorLayout.Behavior<View> {
     public boolean onDependentViewChanged(@NonNull final CoordinatorLayout parent, @NonNull final View child, @NonNull final View dependency) {
         initProperties(child, dependency);
 
-        float currentToolbarHeight = Math.min(dependency.getBottom(), startToolbarHeight);
+        float currentToolbarHeight = startToolbarHeight + dependency.getY(); // current expanded height of toolbar
+        currentToolbarHeight = Math.max(currentToolbarHeight, finalToolbarHeight);
 
-        final float amountAlreadyMoved = 1.5f * (startToolbarHeight - currentToolbarHeight);
-        final float progress = Math.min(100f, 100 * amountAlreadyMoved / amountOfToolbarToMove);
+        final float amountAlreadyMoved = startToolbarHeight - currentToolbarHeight;
+        final float progress = 100 * amountAlreadyMoved / amountOfToolbarToMove; // how much % of expand we reached
 
         final float distanceXToSubtract = progress * amountToMoveXPosition / 100;
         final float distanceYToSubtract = progress * amountToMoveYPosition / 100;
-
-        float newXPosition = startXPositionImage - distanceXToSubtract;
+        float newXPosition = startXPos - distanceXToSubtract;
         child.setX(newXPosition);
-        child.setY(startYPositionImage - distanceYToSubtract);
+        child.setY(startYPos - distanceYToSubtract);
 
         return true;
     }
@@ -69,15 +69,15 @@ public class CommentHeaderBehavior extends CoordinatorLayout.Behavior<View> {
     private void initProperties(
             final View child,
             final View dependency) {
-        startToolbarHeight = Math.max(dependency.getBottom(), startToolbarHeight);
-        amountOfToolbarToMove = startToolbarHeight - finalToolbarHeight;
-        if (!initialised) {
-            startXPositionImage = (int) child.getX();
-            startYPositionImage = (int) child.getY();
+
+        if (!initialized) {
+            startXPos = (int) child.getX();
+            startYPos = (int) child.getY();
             startToolbarHeight = dependency.getHeight();
-            amountToMoveXPosition = startXPositionImage - finalXPosition;
-            amountToMoveYPosition = startYPositionImage - finalYPosition;
-            initialised = true;
+            amountOfToolbarToMove = startToolbarHeight - finalToolbarHeight;
+            amountToMoveXPosition = startXPos - finalXPosition;
+            amountToMoveYPosition = startYPos - finalYPosition;
+            initialized = true;
         }
     }
 }

@@ -133,6 +133,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:paddingTop="2dp"
+            android:layout_marginEnd="36dp"
             android:elevation="4dp"
             android:layout_marginTop="?attr/actionBarSize"
             app:layout_behavior=".ui.CommentHeaderBehavior"
