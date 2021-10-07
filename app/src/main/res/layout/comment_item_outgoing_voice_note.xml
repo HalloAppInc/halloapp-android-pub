@@ -32,7 +32,7 @@
                 android:layout_marginTop="4dp"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="240dp"
+                android:layout_width="259dp"
                 android:layout_height="wrap_content"
                 >
 
