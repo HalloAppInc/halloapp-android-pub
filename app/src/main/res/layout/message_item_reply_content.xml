@@ -23,6 +23,7 @@
         android:textDirection="locale"
         android:textAlignment="gravity"
         android:padding="2dp"
+        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/reply_media_thumb"
         app:layout_constraintTop_toTopOf="parent"

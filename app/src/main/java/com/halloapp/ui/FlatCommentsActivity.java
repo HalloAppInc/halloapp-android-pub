@@ -40,7 +40,6 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -59,6 +58,7 @@ import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.app.SharedElementCallback;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
@@ -1493,7 +1493,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                             comment.isOutgoing()
                                     ? R.color.message_background_reply_outgoing
                                     : R.color.message_background_reply_incoming)));
-                    replyNameView.setTextColor(GroupParticipants.getParticipantNameColor(FlatCommentsActivity.this, comment.parentComment.senderUserId));
+                    replyNameView.setTextColor(GroupParticipants.getParticipantNameColor(FlatCommentsActivity.this, comment.parentComment.senderUserId, true));
                     replyNameView.setText(comment.parentComment.senderContact.getDisplayName());
                     replyTextView.setTypeface(replyTextView.getTypeface(), Typeface.NORMAL);
                     setCommentText(replyTextView, comment.parentComment, true);

@@ -35,8 +35,6 @@ class ReplyContainer {
     private final ImageView mediaIconView;
     private final MessageViewHolder.MessageViewHolderParent parent;
 
-    private static final int REPLY_NAME_ALPHA = 0x9A;
-
     ReplyContainer(@NonNull View containerView, @NonNull MessageViewHolder.MessageViewHolderParent parent) {
         this.containerView = containerView;
         this.parent = parent;
