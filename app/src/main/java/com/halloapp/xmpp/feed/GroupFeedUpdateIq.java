@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 
 import com.google.protobuf.ByteString;
 import com.halloapp.id.GroupId;
+import com.halloapp.proto.clients.EncryptedPayload;
 import com.halloapp.proto.server.Comment;
 import com.halloapp.proto.server.GroupFeedItem;
 import com.halloapp.proto.server.Iq;
@@ -61,7 +62,10 @@ public class GroupFeedUpdateIq extends HalloIq {
                 pb.setPayload(ByteString.copyFrom(feedItem.payload));
             }
             if (feedItem.encPayload != null) {
-                pb.setEncPayload(ByteString.copyFrom(feedItem.encPayload));
+                EncryptedPayload encryptedPayload = EncryptedPayload.newBuilder()
+                        .setSenderStateEncryptedPayload(ByteString.copyFrom(feedItem.encPayload))
+                        .build();
+                pb.setEncPayload(ByteString.copyFrom(encryptedPayload.toByteArray()));
             }
             pb.setId(feedItem.id);
             builder.setPost(pb);
@@ -70,8 +74,10 @@ public class GroupFeedUpdateIq extends HalloIq {
             if (feedItem.payload != null) {
                 cb.setPayload(ByteString.copyFrom(feedItem.payload));
             }
-            if (feedItem.encPayload != null) {
-                cb.setEncPayload(ByteString.copyFrom(feedItem.encPayload));
+            if (feedItem.encPayload != null) {EncryptedPayload encryptedPayload = EncryptedPayload.newBuilder()
+                    .setSenderStateEncryptedPayload(ByteString.copyFrom(feedItem.encPayload))
+                    .build();
+                cb.setEncPayload(ByteString.copyFrom(encryptedPayload.toByteArray()));
             }
             if (feedItem.parentCommentId != null) {
                 cb.setParentCommentId(feedItem.parentCommentId);

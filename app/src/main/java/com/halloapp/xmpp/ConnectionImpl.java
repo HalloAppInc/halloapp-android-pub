@@ -38,6 +38,7 @@ import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.clients.CommentContainer;
 import com.halloapp.proto.clients.Container;
+import com.halloapp.proto.clients.EncryptedPayload;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.clients.SenderKey;
 import com.halloapp.proto.clients.SenderState;
@@ -1383,6 +1384,12 @@ public class ConnectionImpl extends Connection {
                 if (encPayload != null && encPayload.length > 0) {
                     Stats stats = Stats.getInstance();
                     try {
+                        try {
+                            EncryptedPayload encryptedPayload = EncryptedPayload.parseFrom(encPayload);
+                            encPayload = encryptedPayload.getSenderStateEncryptedPayload().toByteArray();
+                        } catch (InvalidProtocolBufferException e) {
+                            throw new CryptoException("grp_invalid_proto", e);
+                        }
                         byte[] decPayload = GroupFeedSessionManager.getInstance().decryptMessage(encPayload, groupId, publisherUserId);
                         if (!Arrays.equals(payload, decPayload)) {
                             Log.e("Group Feed Encryption plaintext and decrypted differ");
@@ -1466,6 +1473,12 @@ public class ConnectionImpl extends Connection {
                 if (encPayload != null && encPayload.length > 0) {
                     Stats stats = Stats.getInstance();
                     try {
+                        try {
+                            EncryptedPayload encryptedPayload = EncryptedPayload.parseFrom(encPayload);
+                            encPayload = encryptedPayload.getSenderStateEncryptedPayload().toByteArray();
+                        } catch (InvalidProtocolBufferException e) {
+                            throw new CryptoException("grp_invalid_proto", e);
+                        }
                         byte[] decPayload = GroupFeedSessionManager.getInstance().decryptMessage(encPayload, groupId, publisherUserId);
                         if (!Arrays.equals(payload, decPayload)) {
                             Log.e("Group Feed Encryption plaintext and decrypted differ");
@@ -1564,10 +1577,10 @@ public class ConnectionImpl extends Connection {
                     UserId publisherUserId = new UserId(Long.toString(publisherUid));
 
                     byte[] encSenderState = senderStateWithKeyInfo.getEncSenderState().toByteArray();
-                    byte[] peerPublicIdentityKey = senderStateWithKeyInfo.getPublicKey().toByteArray();
-                    long oneTimePreKeyId = senderStateWithKeyInfo.getOneTimePreKeyId();
-                    SignalSessionSetupInfo signalSessionSetupInfo = peerPublicIdentityKey == null || peerPublicIdentityKey.length == 0 ? null : new SignalSessionSetupInfo(new PublicEdECKey(peerPublicIdentityKey), (int) oneTimePreKeyId);
                     try {
+                        byte[] peerPublicIdentityKey = senderStateWithKeyInfo.getPublicKey().toByteArray();
+                        long oneTimePreKeyId = senderStateWithKeyInfo.getOneTimePreKeyId();
+                        SignalSessionSetupInfo signalSessionSetupInfo = peerPublicIdentityKey == null || peerPublicIdentityKey.length == 0 ? null : new SignalSessionSetupInfo(new PublicEdECKey(peerPublicIdentityKey), (int) oneTimePreKeyId);
                         byte[] senderStateDec = SignalSessionManager.getInstance().decryptMessage(encSenderState, publisherUserId, signalSessionSetupInfo);
                         SenderState senderState = SenderState.parseFrom(senderStateDec);
                         SenderKey senderKey = senderState.getSenderKey();
