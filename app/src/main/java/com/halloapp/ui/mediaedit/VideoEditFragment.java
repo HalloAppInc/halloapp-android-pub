@@ -38,6 +38,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.Media;
+import com.halloapp.media.VideoThumbnailsExtractor;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
@@ -155,7 +156,8 @@ public class VideoEditFragment extends Fragment {
 
     private void setupThumbnails(@NonNull View root, @NonNull Uri uri) {
         bgWorkers.execute(() -> {
-            ArrayList<Bitmap> thumbnails = generateThumbnails(uri);
+            ArrayList<Bitmap> thumbnails = new ArrayList<>(THUMBNAIL_COUNT);
+            VideoThumbnailsExtractor.extract(requireContext(), uri, THUMBNAIL_COUNT, (int) thumbnailSize, (thumbnails::add));
 
             root.post(() -> {
                 LinearLayout thumbnailsView = root.findViewById(R.id.trim_control_thumbnails);
@@ -172,47 +174,6 @@ public class VideoEditFragment extends Fragment {
                 }
             });
         });
-    }
-
-    @NonNull
-    @WorkerThread
-    private ArrayList<Bitmap> generateThumbnails(@NonNull Uri uri) {
-        ArrayList<Bitmap> thumbnails = new ArrayList<>();
-
-        try {
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(requireContext(), uri);
-
-            long durationNs = Long.parseLong(Preconditions.checkNotNull(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)));
-            float width = Float.parseFloat(Preconditions.checkNotNull(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)));
-            float height = Float.parseFloat(Preconditions.checkNotNull(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)));
-            int rotation = Integer.parseInt(Preconditions.checkNotNull(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)));
-
-            long thumbnailIntervalUs = 1000 * durationNs / THUMBNAIL_COUNT;
-
-            float ratio = Math.max(thumbnailSize / width, thumbnailSize / height);
-            int scaledWidth = (int) (rotation == 0 || rotation == 180 ? ratio * width : ratio * height);
-            int scaledHeight = (int) (rotation == 0 || rotation == 180 ? ratio * height : ratio * width);
-
-            for (int i = 0; i < THUMBNAIL_COUNT; ++i) {
-                Bitmap extractedImage = retriever.getFrameAtTime(i * thumbnailIntervalUs, 0);
-                if (extractedImage == null) {
-                    continue;
-                }
-
-                Bitmap scaledImage = Bitmap.createScaledBitmap(extractedImage, scaledWidth, scaledHeight, false);
-                extractedImage.recycle();
-                thumbnails.add(scaledImage);
-            }
-
-            retriever.release();
-        } catch (NullPointerException e) {
-            Log.w("VideoEditFragment: generateThumbnails video missing keys ", e);
-        } catch (IllegalArgumentException e) {
-            Log.e("VideoEditFragment.generateThumbnails", e);
-        }
-
-        return thumbnails;
     }
 
     private @NonNull MediaSource buildMediaSource(@NonNull Uri uri) {
