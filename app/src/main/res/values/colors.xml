@@ -55,7 +55,7 @@
     <color name="dummy_post_content_background">#DBD7CA</color>
     <color name="date_separator">@color/message_background_incoming</color>
     <color name="date_separator_text">@color/secondary_text</color>
-    <color name="new_messages">#DFDFD7</color>
+    <color name="new_messages">#EAE7DD</color>
     <color name="e2e_message_bg">#FDE79B</color>
     <color name="e2e_message_text">@color/black_80</color>
     <color name="new_messages_text">@color/secondary_text</color>
