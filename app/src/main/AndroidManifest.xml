@@ -12,6 +12,10 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
 
@@ -83,7 +87,9 @@
             android:theme="@style/AppTheme.Chat"
             android:label=""
             android:windowSoftInputMode="adjustResize"/>
-
+        <activity android:name=".ui.calling.CallActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/new_group_title"/>
         <activity android:name=".ui.chat.KeyVerificationActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label=""/>

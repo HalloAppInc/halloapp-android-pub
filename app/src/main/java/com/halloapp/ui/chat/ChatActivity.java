@@ -82,6 +82,7 @@ import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.SystemMessageTextResolver;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
+import com.halloapp.ui.calling.CallActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.groups.GroupInfoActivity;
 import com.halloapp.ui.groups.GroupParticipants;
@@ -952,6 +953,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             String phone = viewModel.phone.getValue();
             Intent intent = IntentUtils.createContactIntent(contact, phone);
             startActivity(intent);
+        } else if (item.getItemId() == R.id.call) {
+            Log.i("starting a call with Uid: " + (UserId) chatId);
+            startActivity(new Intent(this, CallActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }

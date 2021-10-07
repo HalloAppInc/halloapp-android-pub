@@ -9,7 +9,10 @@ public class AndroidHallOfShame {
             return "KB2005".equalsIgnoreCase(Build.MODEL);
         }
         if ("samsung".equalsIgnoreCase(Build.BRAND)) {
-            return "SM-G960F".equalsIgnoreCase(Build.MODEL);
+            if ("SM-G960F".equalsIgnoreCase(Build.MODEL) ||
+                    "SM-G991U".equalsIgnoreCase(Build.MODEL)) {
+                return true;
+            }
         }
         return false;
     }
