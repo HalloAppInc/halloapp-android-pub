@@ -643,6 +643,7 @@ public class ConnectionImpl extends Connection {
                         .build();
                 pb.setEncPayload(ByteString.copyFrom(encryptedPayload.toByteArray()));
                 pb.setId(post.id);
+                pb.setTimestamp(post.timestamp);
                 builder.setPost(pb);
 
                 Msg msg = Msg.newBuilder()
@@ -774,6 +775,7 @@ public class ConnectionImpl extends Connection {
                 }
                 cb.setPostId(comment.postId);
                 cb.setId(comment.id);
+                cb.setTimestamp(comment.timestamp);
                 builder.setComment(cb);
 
                 Msg msg = Msg.newBuilder()
