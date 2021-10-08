@@ -59,6 +59,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
     private final MediaPagerAdapterParent parent;
     private final float mediaCornerRadius;
     private final float maxAspectRatio;
+    private final boolean representVideoByThumbnail;
     private ArrayList<Media> media;
     private String contentId;
     private RecyclerView recyclerView;
@@ -128,9 +129,9 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
                     return null;
                 }
 
-                if (media.type == Media.MEDIA_TYPE_IMAGE) {
+                if (adapter.isMediaRepresentedByImage(media)) {
                     return container.findViewById(R.id.image);
-                } else if (media.type == Media.MEDIA_TYPE_VIDEO) {
+                } else if (adapter.isMediaRepresentedByVideo(media)) {
                     return container.findViewById(R.id.video);
                 }
             }
@@ -160,7 +161,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
                         return true;
                     }
 
-                    if (media.type == Media.MEDIA_TYPE_IMAGE) {
+                    if (adapter.isMediaRepresentedByImage(media)) {
                         ContentPhotoView photoView = container.findViewById(R.id.image);
 
                         if (photoView.getDrawable() == null) {
@@ -175,7 +176,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
                         } else {
                             root.post(runnable);
                         }
-                    } else if (media.type == Media.MEDIA_TYPE_VIDEO) {
+                    } else if (adapter.isMediaRepresentedByVideo(media)) {
                         ContentPlayerView playerView = container.findViewById(R.id.video);
                         Player player = playerView.getPlayer();
 
@@ -213,11 +214,24 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
     }
 
     public MediaPagerAdapter(@NonNull MediaPagerAdapter.MediaPagerAdapterParent parent, float mediaCornerRadius, float maxAspectRatio) {
+        this(parent, mediaCornerRadius, maxAspectRatio, true);
+    }
+
+    public MediaPagerAdapter(@NonNull MediaPagerAdapter.MediaPagerAdapterParent parent, float mediaCornerRadius, float maxAspectRatio, boolean representVideoByThumbnail) {
         this.parent = parent;
         this.mediaCornerRadius = mediaCornerRadius;
         this.maxAspectRatio = maxAspectRatio;
+        this.representVideoByThumbnail = representVideoByThumbnail;
 
         parent.getLifecycleOwner().getLifecycle().addObserver(this);
+    }
+
+    private boolean isMediaRepresentedByImage(@NonNull Media media) {
+        return media.type == Media.MEDIA_TYPE_IMAGE || (media.type == Media.MEDIA_TYPE_VIDEO && representVideoByThumbnail);
+    }
+
+    private boolean isMediaRepresentedByVideo(@NonNull Media media) {
+        return media.type == Media.MEDIA_TYPE_VIDEO && !representVideoByThumbnail;
     }
 
     public void setMedia(@NonNull List<Media> media) {
@@ -337,7 +351,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         holder.imageView.setOnClickListener(null);
         holder.playerView.setOnTouchListener(null);
 
-        if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
+        if (isMediaRepresentedByVideo(mediaItem)) {
             holder.playerView.setResizeMode(com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT);
 
             if (mediaItem.width > 0) {
@@ -352,6 +366,12 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
             holder.imageView.setVisibility(View.VISIBLE);
 
             parent.getMediaThumbnailLoader().load(holder.imageView, mediaItem);
+
+            if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
+                holder.playButton.setVisibility(View.VISIBLE);
+            } else {
+                holder.playButton.setVisibility(View.GONE);
+            }
 
             if (mediaItem.file != null) {
                 holder.imageView.setOnClickListener(v -> exploreMedia(holder.imageView, mediaItem, 0));
@@ -434,7 +454,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
 
         if (media != null) {
             for (Media mediaItem : media) {
-                if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
+                if (isMediaRepresentedByVideo(mediaItem)) {
                     View container = recyclerView.findViewWithTag(mediaItem);
 
                     if (container != null) {
@@ -454,7 +474,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         if (media != null) {
             for (int position = 0; position < media.size(); position++) {
                 final Media mediaItem = getMediaForPosition(position);
-                if (mediaItem != null && mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
+                if (mediaItem != null && isMediaRepresentedByVideo(mediaItem)) {
                     final View container = recyclerView.findViewWithTag(mediaItem);
                     if (container == null) {
                         continue;
@@ -692,6 +712,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         final ContentPhotoView imageView;
         final ContentPlayerView playerView;
         final ProgressBar progressView;
+        final View playButton;
         final AspectRatioFrameLayout container;
         Media mediaItem;
 
@@ -701,6 +722,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
             imageView = itemView.findViewById(R.id.image);
             playerView = itemView.findViewById(R.id.video);
             progressView = itemView.findViewById(R.id.media_progress);
+            playButton = itemView.findViewById(R.id.play);
 
             imageView.setCornerRadius(mediaCornerRadius);
             imageView.setSinglePointerDragStartDisabled(true);

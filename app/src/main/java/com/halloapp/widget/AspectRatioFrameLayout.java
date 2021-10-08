@@ -69,7 +69,9 @@ public class AspectRatioFrameLayout extends FrameLayout {
     }
 
     private int spec(int param, int size) {
-        if (param == ViewGroup.LayoutParams.MATCH_PARENT) {
+        if (param >= 0) {
+            return MeasureSpec.makeMeasureSpec(Math.min(param, size), MeasureSpec.EXACTLY);
+        } else if (param == ViewGroup.LayoutParams.MATCH_PARENT) {
             return MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY);
         } else {
             return MeasureSpec.makeMeasureSpec(size, MeasureSpec.AT_MOST);

@@ -39,4 +39,14 @@
         android:layout_gravity="center"
         android:visibility="gone"/>
 
+    <ImageView
+        android:id="@+id/play"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center"
+        android:src="@drawable/play_button"
+        android:contentDescription="@string/play"
+        style="@style/ExoMediaButton.Play"
+        android:visibility="gone" />
+
 </com.halloapp.widget.AspectRatioFrameLayout>
