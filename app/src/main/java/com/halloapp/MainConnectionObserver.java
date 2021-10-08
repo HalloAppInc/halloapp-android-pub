@@ -371,9 +371,8 @@ public class MainConnectionObserver extends Connection.Observer {
                 if (post.rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
                     Log.w("Reached rerequest limit for post " + contentId);
                 } else {
-                    groupFeedSessionManager.tearDownOutboundSession(groupId);
                     contentDb.setPostRerequestCount(groupId, UserId.ME, contentId, post.rerequestCount + 1);
-                    connection.sendPost(post);
+                    connection.sendRerequestedGroupPost(post, senderUserId);
                 }
             } else {
                 Comment comment = contentDb.getComment(contentId);
@@ -381,9 +380,8 @@ public class MainConnectionObserver extends Connection.Observer {
                     if (comment.rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
                         Log.w("Reached rerequest limit for comment " + contentId);
                     } else {
-                        groupFeedSessionManager.tearDownOutboundSession(groupId);
                         contentDb.setCommentRerequestCount(groupId, UserId.ME, contentId, comment.rerequestCount + 1);
-                        connection.sendComment(comment);
+                        connection.sendRerequestedGroupComment(comment, senderUserId);
                     }
                 } else {
                     Log.e("Could not find group feed content " + contentId + " to satisfy rerequest");

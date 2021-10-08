@@ -10,6 +10,7 @@ import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.clients.SenderState;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
@@ -90,5 +91,13 @@ public class GroupFeedSessionManager {
 
     public void sendCommentRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String commentId, boolean senderStateIssue) {
         connection.sendGroupPostRerequest(senderUserId, groupId, commentId, senderStateIssue);
+    }
+
+    public SenderState getSenderState(GroupId groupId) throws CryptoException {
+        try (AutoCloseLock autoCloseLock = acquireLock(groupId, null)) {
+            return groupFeedKeyManager.getSenderState(groupId);
+        } catch (InterruptedException e) {
+            throw new CryptoException("group_enc_interrupted", e);
+        }
     }
 }

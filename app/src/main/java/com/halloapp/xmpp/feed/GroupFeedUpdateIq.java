@@ -74,16 +74,14 @@ public class GroupFeedUpdateIq extends HalloIq {
             if (feedItem.payload != null) {
                 cb.setPayload(ByteString.copyFrom(feedItem.payload));
             }
-            if (feedItem.encPayload != null) {EncryptedPayload encryptedPayload = EncryptedPayload.newBuilder()
+            if (feedItem.encPayload != null) {
+                EncryptedPayload encryptedPayload = EncryptedPayload.newBuilder()
                     .setSenderStateEncryptedPayload(ByteString.copyFrom(feedItem.encPayload))
                     .build();
                 cb.setEncPayload(ByteString.copyFrom(encryptedPayload.toByteArray()));
             }
             if (feedItem.parentCommentId != null) {
                 cb.setParentCommentId(feedItem.parentCommentId);
-            }
-            if (feedItem.parentPostId != null) {
-                cb.setPostId(feedItem.parentPostId);
             }
             cb.setId(feedItem.id);
             cb.setPostId(feedItem.parentPostId);

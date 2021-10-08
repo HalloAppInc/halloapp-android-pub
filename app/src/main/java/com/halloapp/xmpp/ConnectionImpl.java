@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.google.android.gms.common.util.Hex;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.AppContext;
 import com.halloapp.ConnectRetryWorker;
@@ -594,6 +595,70 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public void sendRerequestedGroupPost(@NonNull Post post, @NonNull UserId userId) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || socket == null) {
+                Log.e("connection: cannot resend post, no connection");
+                ConnectRetryWorker.schedule(AppContext.getInstance().get());
+                return;
+            }
+
+            Container.Builder containerBuilder = Container.newBuilder();
+            FeedContentEncoder.encodePost(containerBuilder, post);
+            if (!containerBuilder.hasPostContainer()) {
+                Log.e("connection: sendRerequestedGroupPost no post content");
+                return;
+            }
+
+            GroupId groupId = post.getParentGroup();
+            try {
+                SignalSessionSetupInfo signalSessionSetupInfo;
+                try {
+                    signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(userId);
+                } catch (Exception e) {
+                    throw new CryptoException("failed_get_session_setup_info", e);
+                }
+                SenderState senderState = GroupFeedSessionManager.getInstance().getSenderState(groupId);
+                byte[] encSenderState = SignalSessionManager.getInstance().encryptMessage(senderState.toByteArray(), userId);
+                SenderStateWithKeyInfo.Builder senderStateWithKeyInfoBuilder = SenderStateWithKeyInfo.newBuilder()
+                        .setEncSenderState(ByteString.copyFrom(encSenderState));
+                if (signalSessionSetupInfo != null) {
+                    senderStateWithKeyInfoBuilder.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
+                    if (signalSessionSetupInfo.oneTimePreKeyId != null) {
+                        senderStateWithKeyInfoBuilder.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
+                    }
+                }
+
+                GroupFeedItem.Builder builder = GroupFeedItem.newBuilder();
+                builder.setAction(GroupFeedItem.Action.PUBLISH);
+                builder.setGid(groupId.rawId());
+                builder.setSenderState(senderStateWithKeyInfoBuilder.build());
+
+                byte[] payload = containerBuilder.build().toByteArray();
+                byte[] encPayload = SignalSessionManager.getInstance().encryptMessage(payload, userId);
+                com.halloapp.proto.server.Post.Builder pb = com.halloapp.proto.server.Post.newBuilder();
+                pb.setPayload(ByteString.copyFrom(payload));
+                EncryptedPayload encryptedPayload = EncryptedPayload.newBuilder()
+                        .setOneToOneEncryptedPayload(ByteString.copyFrom(encPayload))
+                        .build();
+                pb.setEncPayload(ByteString.copyFrom(encryptedPayload.toByteArray()));
+                pb.setId(post.id);
+                builder.setPost(pb);
+
+                Msg msg = Msg.newBuilder()
+                        .setId(post.id)
+                        .setType(Msg.Type.GROUPCHAT)
+                        .setToUid(Long.parseLong(userId.rawId()))
+                        .setGroupFeedItem(builder.build())
+                        .build();
+                sendPacket(Packet.newBuilder().setMsg(msg).build());
+            } catch (CryptoException e) {
+                Log.e("Failed to send rerequested group post", e);
+            }
+        });
+    }
+
+    @Override
     public void retractPost(@NonNull String postId) {
         FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null));
         sendIqRequestAsync(requestIq, true)
@@ -653,6 +718,75 @@ public class ConnectionImpl extends Connection {
         sendIqRequestAsync(requestIq, true)
                 .onResponse(response -> connectionObservers.notifyOutgoingCommentSent(comment.postId, comment.id))
                 .onError(e -> Log.e("connection: cannot send comment", e));
+    }
+
+    @Override
+    public void sendRerequestedGroupComment(@NonNull Comment comment, @NonNull UserId userId) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || socket == null) {
+                Log.e("connection: cannot resend comment, no connection");
+                ConnectRetryWorker.schedule(AppContext.getInstance().get());
+                return;
+            }
+
+            Container.Builder containerBuilder = Container.newBuilder();
+            FeedContentEncoder.encodeComment(containerBuilder, comment);
+            if (!containerBuilder.hasCommentContainer()) {
+                Log.e("connection: sendRerequestedGroupComment no comment content");
+                return;
+            }
+
+            GroupId groupId = comment.getParentPost().getParentGroup();
+            try {
+                SignalSessionSetupInfo signalSessionSetupInfo;
+                try {
+                    signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(userId);
+                } catch (Exception e) {
+                    throw new CryptoException("failed_get_session_setup_info", e);
+                }
+                SenderState senderState = GroupFeedSessionManager.getInstance().getSenderState(groupId);
+                byte[] encSenderState = SignalSessionManager.getInstance().encryptMessage(senderState.toByteArray(), userId);
+                SenderStateWithKeyInfo.Builder senderStateWithKeyInfoBuilder = SenderStateWithKeyInfo.newBuilder()
+                        .setEncSenderState(ByteString.copyFrom(encSenderState));
+                if (signalSessionSetupInfo != null) {
+                    senderStateWithKeyInfoBuilder.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
+                    if (signalSessionSetupInfo.oneTimePreKeyId != null) {
+                        senderStateWithKeyInfoBuilder.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
+                    }
+                }
+
+                GroupFeedItem.Builder builder = GroupFeedItem.newBuilder();
+                builder.setAction(GroupFeedItem.Action.PUBLISH);
+                builder.setGid(groupId.rawId());
+                builder.setSenderState(senderStateWithKeyInfoBuilder.build());
+
+                byte[] payload = containerBuilder.build().toByteArray();
+                byte[] encPayload = SignalSessionManager.getInstance().encryptMessage(payload, userId);
+
+                com.halloapp.proto.server.Comment.Builder cb = com.halloapp.proto.server.Comment.newBuilder();
+                cb.setPayload(ByteString.copyFrom(payload));
+                EncryptedPayload encryptedPayload = EncryptedPayload.newBuilder()
+                        .setOneToOneEncryptedPayload(ByteString.copyFrom(encPayload))
+                        .build();
+                cb.setEncPayload(ByteString.copyFrom(encryptedPayload.toByteArray()));
+                if (comment.parentCommentId != null) {
+                    cb.setParentCommentId(comment.parentCommentId);
+                }
+                cb.setPostId(comment.postId);
+                cb.setId(comment.id);
+                builder.setComment(cb);
+
+                Msg msg = Msg.newBuilder()
+                        .setId(comment.id)
+                        .setType(Msg.Type.GROUPCHAT)
+                        .setToUid(Long.parseLong(userId.rawId()))
+                        .setGroupFeedItem(builder.build())
+                        .build();
+                sendPacket(Packet.newBuilder().setMsg(msg).build());
+            } catch (CryptoException e) {
+                Log.e("Failed to send rerequested group comment", e);
+            }
+        });
     }
 
     @Override

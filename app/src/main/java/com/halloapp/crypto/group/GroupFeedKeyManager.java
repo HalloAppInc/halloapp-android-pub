@@ -11,6 +11,7 @@ import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PrivateEdECKey;
+import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.groups.MemberInfo;
@@ -220,6 +221,24 @@ public class GroupFeedKeyManager {
         } catch (GeneralSecurityException e) {
             throw new CryptoException("group_outbound_key_fail", e);
         }
+    }
+
+    SenderState getSenderState(GroupId groupId) throws CryptoException {
+        byte[] chainKey = encryptedKeyStore.getMyGroupChainKey(groupId);
+        PublicEdECKey publicSignatureKey = encryptedKeyStore.getMyPublicGroupSigningKey(groupId);
+        int currentChainIndex = encryptedKeyStore.getMyGroupCurrentChainIndex(groupId);
+
+        SenderKey senderKey = SenderKey.newBuilder()
+                .setChainKey(ByteString.copyFrom(chainKey))
+                .setPublicSignatureKey(ByteString.copyFrom(publicSignatureKey.getKeyMaterial()))
+                .build();
+
+        SenderState senderState = SenderState.newBuilder()
+                .setSenderKey(senderKey)
+                .setCurrentChainIndex(currentChainIndex)
+                .build();
+
+        return senderState;
     }
 
     private void skipInboundKeys(GroupId groupId, UserId peerUserId, int count, int startIndex) throws CryptoException {

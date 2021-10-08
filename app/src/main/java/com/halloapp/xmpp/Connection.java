@@ -141,11 +141,15 @@ public abstract class Connection {
 
     public abstract void sendPost(final @NonNull Post post);
 
+    public abstract void sendRerequestedGroupPost(@NonNull Post post, @NonNull UserId userId);
+
     public abstract void retractPost(final @NonNull String postId);
 
     public abstract void retractGroupPost(final @NonNull GroupId groupId, @NonNull String postId);
 
     public abstract void sendComment(final @NonNull Comment comment);
+
+    public abstract void sendRerequestedGroupComment(@NonNull Comment comment, @NonNull UserId userId);
 
     public abstract void retractMessage(final @NonNull UserId chatUserId, final @NonNull String messageId);
 
