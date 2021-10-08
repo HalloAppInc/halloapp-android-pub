@@ -79,6 +79,7 @@ import com.halloapp.Debug;
 import com.halloapp.R;
 import com.halloapp.UrlPreview;
 import com.halloapp.UrlPreviewLoader;
+import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
@@ -1512,8 +1513,9 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                             comment.isOutgoing()
                                     ? R.color.message_background_reply_outgoing
                                     : R.color.message_background_reply_incoming)));
-                    replyNameView.setTextColor(GroupParticipants.getParticipantNameColor(FlatCommentsActivity.this, comment.parentComment.senderContact, true));
-                    replyNameView.setText(comment.parentComment.senderContact.getDisplayName());
+                    Contact senderContact = comment.parentComment.senderContact;
+                    replyNameView.setTextColor(GroupParticipants.getParticipantNameColor(FlatCommentsActivity.this, senderContact, true));
+                    replyNameView.setText(senderContact.userId.isMe() ? getString(R.string.me) : senderContact.getDisplayName());
                     replyTextView.setTypeface(replyTextView.getTypeface(), Typeface.NORMAL);
                     setCommentText(replyTextView, comment.parentComment, true);
                     if (!comment.parentComment.media.isEmpty()) {
