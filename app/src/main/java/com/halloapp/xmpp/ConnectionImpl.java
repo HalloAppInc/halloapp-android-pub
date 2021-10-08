@@ -1384,13 +1384,27 @@ public class ConnectionImpl extends Connection {
                 if (encPayload != null && encPayload.length > 0) {
                     Stats stats = Stats.getInstance();
                     try {
+                        byte[] decPayload;
                         try {
                             EncryptedPayload encryptedPayload = EncryptedPayload.parseFrom(encPayload);
-                            encPayload = encryptedPayload.getSenderStateEncryptedPayload().toByteArray();
+                            switch (encryptedPayload.getPayloadCase()) {
+                                case SENDER_STATE_ENCRYPTED_PAYLOAD: {
+                                    byte[] toDecrypt = encryptedPayload.getSenderStateEncryptedPayload().toByteArray();
+                                    decPayload = GroupFeedSessionManager.getInstance().decryptMessage(toDecrypt, groupId, publisherUserId);
+                                    break;
+                                }
+                                case ONE_TO_ONE_ENCRYPTED_PAYLOAD: {
+                                    byte[] toDecrypt = encryptedPayload.getOneToOneEncryptedPayload().toByteArray();
+                                    decPayload = SignalSessionManager.getInstance().decryptMessage(toDecrypt, publisherUserId, null);
+                                    break;
+                                }
+                                default: {
+                                    throw new CryptoException("no_accepted_enc_payload");
+                                }
+                            }
                         } catch (InvalidProtocolBufferException e) {
                             throw new CryptoException("grp_invalid_proto", e);
                         }
-                        byte[] decPayload = GroupFeedSessionManager.getInstance().decryptMessage(encPayload, groupId, publisherUserId);
                         if (!Arrays.equals(payload, decPayload)) {
                             Log.e("Group Feed Encryption plaintext and decrypted differ");
                             throw new CryptoException("grp_payload_differs");
@@ -1473,13 +1487,27 @@ public class ConnectionImpl extends Connection {
                 if (encPayload != null && encPayload.length > 0) {
                     Stats stats = Stats.getInstance();
                     try {
+                        byte[] decPayload;
                         try {
                             EncryptedPayload encryptedPayload = EncryptedPayload.parseFrom(encPayload);
-                            encPayload = encryptedPayload.getSenderStateEncryptedPayload().toByteArray();
+                            switch (encryptedPayload.getPayloadCase()) {
+                                case SENDER_STATE_ENCRYPTED_PAYLOAD: {
+                                    byte[] toDecrypt = encryptedPayload.getSenderStateEncryptedPayload().toByteArray();
+                                    decPayload = GroupFeedSessionManager.getInstance().decryptMessage(toDecrypt, groupId, publisherUserId);
+                                    break;
+                                }
+                                case ONE_TO_ONE_ENCRYPTED_PAYLOAD: {
+                                    byte[] toDecrypt = encryptedPayload.getOneToOneEncryptedPayload().toByteArray();
+                                    decPayload = SignalSessionManager.getInstance().decryptMessage(toDecrypt, publisherUserId, null);
+                                    break;
+                                }
+                                default: {
+                                    throw new CryptoException("no_accepted_enc_payload");
+                                }
+                            }
                         } catch (InvalidProtocolBufferException e) {
                             throw new CryptoException("grp_invalid_proto", e);
                         }
-                        byte[] decPayload = GroupFeedSessionManager.getInstance().decryptMessage(encPayload, groupId, publisherUserId);
                         if (!Arrays.equals(payload, decPayload)) {
                             Log.e("Group Feed Encryption plaintext and decrypted differ");
                             throw new CryptoException("grp_payload_differs");
