@@ -13,6 +13,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.content.Post;
 import com.halloapp.ui.CommentsActivity;
+import com.halloapp.ui.FlatCommentsActivity;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.util.ViewDataLoader;
 
@@ -30,7 +31,7 @@ public class IncomingPostViewHolder extends PostViewHolder {
         message = itemView.findViewById(R.id.message);
 
         itemView.findViewById(R.id.comment).setOnClickListener(view -> {
-            final Intent intent = CommentsActivity.viewComments(itemView.getContext(), post.id, post.senderUserId);
+            final Intent intent = FlatCommentsActivity.viewComments(itemView.getContext(), post.id, post.senderUserId);
             intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, post.commentCount == 0);
             parent.startActivity(intent);
         });
