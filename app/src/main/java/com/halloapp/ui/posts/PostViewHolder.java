@@ -1,15 +1,11 @@
 package com.halloapp.ui.posts;
 
-import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.net.Uri;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
-import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.ColorRes;
@@ -36,6 +32,7 @@ import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.PostOptionsBottomSheetDialogFragment;
 import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.ui.groups.GroupContentDecryptStatLoader;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Rtl;
@@ -55,6 +52,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final TextView nameView;
     private final TextView groupView;
     private final TextView timeView;
+    private final TextView decryptStatusView;
     private final ImageView statusView;
     private final View progressView;
     private final View moreOptionsView;
@@ -72,6 +70,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final Connection connection;
     private final FileStore fileStore;
     private final ContentDb contentDb;
+    private final GroupContentDecryptStatLoader groupContentDecryptStatLoader;
     Post post;
 
     private boolean showGroupName;
@@ -107,6 +106,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         this.connection = Connection.getInstance();
         this.fileStore = FileStore.getInstance();
         this.contentDb = ContentDb.getInstance();
+        this.groupContentDecryptStatLoader = new GroupContentDecryptStatLoader();
 
         cardView = itemView.findViewById(R.id.card_view);
         postHeader = itemView.findViewById(R.id.post_header);
@@ -114,6 +114,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         nameView = itemView.findViewById(R.id.name);
         groupView = itemView.findViewById(R.id.group_name);
         timeView = itemView.findViewById(R.id.time);
+        decryptStatusView = itemView.findViewById(R.id.decrypt_status);
         statusView = itemView.findViewById(R.id.status);
         progressView = itemView.findViewById(R.id.progress);
         moreOptionsView = itemView.findViewById(R.id.more_options);
@@ -266,6 +267,10 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                 Debug.askSendLogsWithId(timeView.getContext(), post.id);
                 return false;
             });
+        }
+
+        if (decryptStatusView != null) {
+            groupContentDecryptStatLoader.loadPost(decryptStatusView, post.id);
         }
 
         final boolean noCaption = TextUtils.isEmpty(post.text);

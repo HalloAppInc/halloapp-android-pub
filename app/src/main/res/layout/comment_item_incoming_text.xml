@@ -111,9 +111,19 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="0dp"
-                        android:paddingEnd="10dp"
+                        android:paddingEnd="0dp"
                         android:layout_gravity="center_vertical"
                         android:textColor="@color/post_timestamp"
+                        android:textSize="10sp"
+                        tools:text="11:49 PM"/>
+
+                    <TextView
+                        android:id="@+id/decrypt_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="10dp"
+                        android:paddingStart="0dp"
+                        android:textColor="#19C253"
                         android:textSize="10sp"
                         tools:text="11:49 PM"/>
                 </LinearLayout>

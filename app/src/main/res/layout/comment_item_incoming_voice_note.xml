@@ -87,18 +87,36 @@
                     android:textSize="11sp"
                     tools:text="0:03"/>
 
-                <TextView
-                    android:id="@+id/timestamp"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="12dp"
-                    android:layout_gravity="center_vertical"
-                    android:textColor="@color/secondary_text"
-                    android:textSize="11sp"
+                    android:orientation="horizontal"
                     app:layout_constraintBottom_toBottomOf="@id/seek_time"
                     app:layout_constraintEnd_toEndOf="parent"
-                    tools:text="11:49 PM"/>
+                    >
+
+                    <TextView
+                        android:id="@+id/timestamp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="0dp"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="11sp"
+                        tools:text="11:49 PM"/>
+
+                    <TextView
+                        android:id="@+id/decrypt_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="12dp"
+                        android:paddingStart="0dp"
+                        android:textColor="#19C253"
+                        android:textSize="10sp"
+                        tools:text="11:49 PM"/>
+
+                </LinearLayout>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

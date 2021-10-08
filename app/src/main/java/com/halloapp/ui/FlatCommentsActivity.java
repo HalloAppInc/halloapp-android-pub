@@ -97,6 +97,7 @@ import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.groups.GroupContentDecryptStatLoader;
 import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.markdown.MarkdownUtils;
@@ -1300,6 +1301,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
     private abstract class BaseCommentViewHolder extends ViewHolderWithLifecycle implements SwipeListItemHelper.SwipeableViewHolder {
         protected final TextView timestampView;
+        protected final TextView decryptStatusView;
         protected final TextView nameView;
         private final View linkPreviewContainer;
         private final TextView linkPreviewTitle;
@@ -1316,6 +1318,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         private final TextView newCommentsSeparator;
         private final TextView dateSeparator;
 
+        private final GroupContentDecryptStatLoader groupContentDecryptStatLoader;
+
         protected Comment comment;
 
         protected int position;
@@ -1331,6 +1335,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
             nameView = itemView.findViewById(R.id.name);
             timestampView = itemView.findViewById(R.id.timestamp);
+            decryptStatusView = itemView.findViewById(R.id.decrypt_status);
             linkPreviewContainer = itemView.findViewById(R.id.link_preview_container);
             linkPreviewTitle = itemView.findViewById(R.id.link_title);
             linkPreviewUrl = itemView.findViewById(R.id.link_domain);
@@ -1339,6 +1344,9 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             replyContainerView = itemView.findViewById(R.id.reply_container);
             newCommentsSeparator = itemView.findViewById(R.id.new_comments);
             dateSeparator = itemView.findViewById(R.id.date);
+
+            groupContentDecryptStatLoader = new GroupContentDecryptStatLoader();
+
             if (replyContainerView != null) {
                 LayoutInflater.from(replyContainerView.getContext()).inflate(R.layout.message_item_reply_content, replyContainerView);
 
@@ -1463,6 +1471,9 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 }
             }
             timestampView.setText(TimeFormatter.formatMessageTime(timestampView.getContext(), comment.timestamp));
+            if (decryptStatusView != null) {
+                groupContentDecryptStatLoader.loadComment(decryptStatusView, comment.id);
+            }
             timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
             if (nameView != null) {
                 if (comment.isOutgoing()) {

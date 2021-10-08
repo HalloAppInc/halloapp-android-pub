@@ -106,6 +106,17 @@
                     android:textColor="?android:attr/textColorSecondary"
                     tools:text="1h"/>
 
+                <TextView
+                    android:id="@+id/decrypt_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="0dp"
+                    android:paddingStart="0dp"
+                    android:paddingBottom="6dp"
+                    android:textColor="#19C253"
+                    android:textSize="10sp"
+                    tools:text="11:49 PM"/>
+
                 <ProgressBar
                     android:id="@+id/progress"
                     android:layout_width="16sp"

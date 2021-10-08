@@ -1157,8 +1157,18 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public GroupDecryptStats getGroupPostDecryptStats(String postId) {
+        return postsDb.getGroupPostDecryptStats(postId);
+    }
+
+    @WorkerThread
     public List<GroupDecryptStats> getGroupCommentDecryptStats(long lastRowId) {
         return postsDb.getGroupCommentDecryptStats(lastRowId);
+    }
+
+    @WorkerThread
+    public GroupDecryptStats getGroupCommentDecryptStats(String commentId) {
+        return postsDb.getGroupCommentDecryptStats(commentId);
     }
 
     @WorkerThread
