@@ -269,7 +269,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             });
         }
 
-        if (decryptStatusView != null) {
+        if (decryptStatusView != null && !post.senderUserId.isMe()) {
             groupContentDecryptStatLoader.loadPost(decryptStatusView, post.id);
         }
 
