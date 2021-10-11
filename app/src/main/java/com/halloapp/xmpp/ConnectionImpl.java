@@ -1515,7 +1515,7 @@ public class ConnectionImpl extends Connection {
             byte[] payload = protoPost.getPayload().toByteArray();
 
             String errorMessage = null;
-            if (groupId != null) {
+            if (groupId != null && ServerProps.getInstance().getIsInternalUser()) {
                 byte[] encPayload = protoPost.getEncPayload().toByteArray();
                 if (encPayload != null && encPayload.length > 0) {
                     Stats stats = Stats.getInstance();
@@ -1618,7 +1618,7 @@ public class ConnectionImpl extends Connection {
             byte[] payload = protoComment.getPayload().toByteArray();
 
             String errorMessage = null;
-            if (groupId != null) {
+            if (groupId != null && ServerProps.getInstance().getIsInternalUser()) {
                 byte[] encPayload = protoComment.getEncPayload().toByteArray();
                 if (encPayload != null && encPayload.length > 0) {
                     Stats stats = Stats.getInstance();
