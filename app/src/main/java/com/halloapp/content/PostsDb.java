@@ -139,14 +139,6 @@ class PostsDb {
             }
 
             final ContentValues values = new ContentValues();
-            values.put(PostsTable.COLUMN_SENDER_USER_ID, post.senderUserId.rawId());
-            values.put(PostsTable.COLUMN_POST_ID, post.id);
-            values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
-            values.put(PostsTable.COLUMN_TRANSFERRED, post.transferred);
-            values.put(PostsTable.COLUMN_SEEN, post.seen);
-            values.put(PostsTable.COLUMN_AUDIENCE_TYPE, post.getAudienceType());
-            values.put(PostsTable.COLUMN_TYPE, post.type);
-            values.put(PostsTable.COLUMN_USAGE, post.usage);
             values.put(PostsTable.COLUMN_RESULT_UPDATE_TIME, now);
             values.put(PostsTable.COLUMN_FAILURE_REASON, post.failureReason);
             values.put(PostsTable.COLUMN_CLIENT_VERSION, post.clientVersion);
@@ -160,6 +152,17 @@ class PostsDb {
             if (tombstoneRowId != null) {
                 db.update(PostsTable.TABLE_NAME, values, PostsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
                 post.rowId = tombstoneRowId;
+            } else {
+                values.put(PostsTable.COLUMN_SENDER_USER_ID, post.senderUserId.rawId());
+                values.put(PostsTable.COLUMN_POST_ID, post.id);
+                values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
+                values.put(PostsTable.COLUMN_TRANSFERRED, post.transferred);
+                values.put(PostsTable.COLUMN_AUDIENCE_TYPE, post.getAudienceType());
+                values.put(PostsTable.COLUMN_SEEN, post.seen);
+                values.put(PostsTable.COLUMN_TYPE, post.type);
+                values.put(PostsTable.COLUMN_USAGE, post.usage);
+                values.put(PostsTable.COLUMN_RECEIVE_TIME, now);
+                post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
 
                 mediaDb.addMedia(post);
 
@@ -187,9 +190,6 @@ class PostsDb {
                 if (post instanceof FutureProofPost) {
                     futureProofDb.saveFutureProof((FutureProofPost) post);
                 }
-            } else {
-                values.put(PostsTable.COLUMN_RECEIVE_TIME, now);
-                post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
             }
             Log.i("ContentDb.addPost got rowid " + post.rowId + " for " + post);
 
@@ -627,15 +627,6 @@ class PostsDb {
             }
 
             final ContentValues values = new ContentValues();
-            values.put(CommentsTable.COLUMN_POST_ID, comment.postId);
-            values.put(CommentsTable.COLUMN_COMMENT_SENDER_USER_ID, comment.senderUserId.rawId());
-            values.put(CommentsTable.COLUMN_COMMENT_ID, comment.id);
-            values.put(CommentsTable.COLUMN_PARENT_ID, comment.parentCommentId);
-            values.put(CommentsTable.COLUMN_TIMESTAMP, comment.timestamp);
-            values.put(CommentsTable.COLUMN_TRANSFERRED, comment.transferred);
-            values.put(CommentsTable.COLUMN_SEEN, comment.seen);
-            values.put(CommentsTable.COLUMN_TEXT, comment.text);
-            values.put(CommentsTable.COLUMN_TYPE, comment.type);
             values.put(CommentsTable.COLUMN_RESULT_UPDATE_TIME, now);
             values.put(CommentsTable.COLUMN_FAILURE_REASON, comment.failureReason);
             values.put(CommentsTable.COLUMN_CLIENT_VERSION, comment.clientVersion);
@@ -643,6 +634,18 @@ class PostsDb {
             if (tombstoneRowId != null) {
                 db.update(CommentsTable.TABLE_NAME, values, CommentsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
                 comment.rowId = tombstoneRowId;
+            } else {
+                values.put(CommentsTable.COLUMN_POST_ID, comment.postId);
+                values.put(CommentsTable.COLUMN_COMMENT_SENDER_USER_ID, comment.senderUserId.rawId());
+                values.put(CommentsTable.COLUMN_COMMENT_ID, comment.id);
+                values.put(CommentsTable.COLUMN_PARENT_ID, comment.parentCommentId);
+                values.put(CommentsTable.COLUMN_TIMESTAMP, comment.timestamp);
+                values.put(CommentsTable.COLUMN_TRANSFERRED, comment.transferred);
+                values.put(CommentsTable.COLUMN_SEEN, comment.seen);
+                values.put(CommentsTable.COLUMN_TEXT, comment.text);
+                values.put(CommentsTable.COLUMN_TYPE, comment.type);
+                values.put(CommentsTable.COLUMN_RECEIVE_TIME, now);
+                comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
 
                 mediaDb.addMedia(comment);
                 mentionsDb.addMentions(comment);
@@ -650,9 +653,6 @@ class PostsDb {
                 if (comment instanceof FutureProofComment) {
                     futureProofDb.saveFutureProof((FutureProofComment) comment);
                 }
-            } else {
-                values.put(CommentsTable.COLUMN_RECEIVE_TIME, now);
-                comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
             }
 
             db.setTransactionSuccessful();
