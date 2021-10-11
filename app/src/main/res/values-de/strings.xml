@@ -117,7 +117,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="no_activity">"Keine Aktivität"</string>
     <string name="failed_to_load_media">"Fehler beim Hochladen des Mediums"</string>
     <string name="settings">"Einstellungen"</string>
-    <string name="send_logs">"Feedback &amp; Logs teilen"</string>
+    <string name="send_logs">"Feedback und Logs teilen"</string>
     <string name="terms_of_service">"Nutzungsbedingungen"</string>
     <string name="privacy_policy">"Datenschutzrichtlinie"</string>
     <string name="settings_block_list">"Blockierte Kontakte"</string>
@@ -759,7 +759,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="return_to_registration">"Zurück zur Registrierung"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <string name="archive_empty">"Deine nicht mehr sichtbaren Beiträge werden hier angezeigt"</string>
+    <string name="archive_empty">"Abgelaufene Beiträge erscheinen hier"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"Nicht unterstützter Inhalt"</string>
