@@ -117,6 +117,26 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
 
     private static final int REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE = 1;
 
+    public static Intent viewComments(@NonNull Context context, String postId, @Nullable UserId senderUserId) {
+        final Intent intent;
+        if (ServerProps.getInstance().getIsInternalUser()) {
+            intent = new Intent(context, FlatCommentsActivity.class);
+        } else {
+            intent = new Intent(context, CommentsActivity.class);
+        }
+        if (senderUserId != null) {
+            intent.putExtra(CommentsActivity.EXTRA_POST_SENDER_USER_ID, senderUserId.rawId());
+        }
+        intent.putExtra(CommentsActivity.EXTRA_POST_ID, postId);
+        intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, false);
+
+        return intent;
+    }
+
+    public static Intent viewComments(@NonNull Context context, String postId) {
+        return viewComments(context, postId, null);
+    }
+
     private final ServerProps serverProps = ServerProps.getInstance();
     private final ContentDraftManager contentDraftManager = ContentDraftManager.getInstance();
 
