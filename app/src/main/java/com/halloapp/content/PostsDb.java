@@ -160,38 +160,39 @@ class PostsDb {
             if (tombstoneRowId != null) {
                 db.update(PostsTable.TABLE_NAME, values, PostsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
                 post.rowId = tombstoneRowId;
+
+                mediaDb.addMedia(post);
+
+                final List<UserId> audienceList = post.getAudienceList();
+                if (audienceList != null) {
+                    for (UserId userId : audienceList) {
+                        final ContentValues audienceUser = new ContentValues();
+                        audienceUser.put(AudienceTable.COLUMN_POST_ID, post.id);
+                        audienceUser.put(AudienceTable.COLUMN_USER_ID, userId.rawId());
+                        db.insertWithOnConflict(AudienceTable.TABLE_NAME, null, audienceUser, SQLiteDatabase.CONFLICT_IGNORE);
+                    }
+                }
+                final List<UserId> excludeList = post.getExcludeList();
+                if (excludeList != null) {
+                    for (UserId userId : excludeList) {
+                        final ContentValues excludedUserValues = new ContentValues();
+                        excludedUserValues.put(AudienceTable.COLUMN_POST_ID, post.id);
+                        excludedUserValues.put(AudienceTable.COLUMN_USER_ID, userId.rawId());
+                        excludedUserValues.put(AudienceTable.COLUMN_EXCLUDED, true);
+                        db.insertWithOnConflict(AudienceTable.TABLE_NAME, null, excludedUserValues, SQLiteDatabase.CONFLICT_IGNORE);
+                    }
+                }
+                mentionsDb.addMentions(post);
+                urlPreviewsDb.addUrlPreview(post);
+                if (post instanceof FutureProofPost) {
+                    futureProofDb.saveFutureProof((FutureProofPost) post);
+                }
             } else {
                 values.put(PostsTable.COLUMN_RECEIVE_TIME, now);
                 post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
             }
             Log.i("ContentDb.addPost got rowid " + post.rowId + " for " + post);
 
-            mediaDb.addMedia(post);
-
-            final List<UserId> audienceList = post.getAudienceList();
-            if (audienceList != null) {
-                for (UserId userId : audienceList) {
-                    final ContentValues audienceUser = new ContentValues();
-                    audienceUser.put(AudienceTable.COLUMN_POST_ID, post.id);
-                    audienceUser.put(AudienceTable.COLUMN_USER_ID, userId.rawId());
-                    db.insertWithOnConflict(AudienceTable.TABLE_NAME, null, audienceUser, SQLiteDatabase.CONFLICT_IGNORE);
-                }
-            }
-            final List<UserId> excludeList = post.getExcludeList();
-            if (excludeList != null) {
-                for (UserId userId : excludeList) {
-                    final ContentValues excludedUserValues = new ContentValues();
-                    excludedUserValues.put(AudienceTable.COLUMN_POST_ID, post.id);
-                    excludedUserValues.put(AudienceTable.COLUMN_USER_ID, userId.rawId());
-                    excludedUserValues.put(AudienceTable.COLUMN_EXCLUDED, true);
-                    db.insertWithOnConflict(AudienceTable.TABLE_NAME, null, excludedUserValues, SQLiteDatabase.CONFLICT_IGNORE);
-                }
-            }
-            mentionsDb.addMentions(post);
-            urlPreviewsDb.addUrlPreview(post);
-            if (post instanceof FutureProofPost) {
-                futureProofDb.saveFutureProof((FutureProofPost) post);
-            }
             db.setTransactionSuccessful();
             Log.i("ContentDb.addPost: added " + post);
         } finally {
