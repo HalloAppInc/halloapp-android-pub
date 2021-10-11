@@ -6,6 +6,7 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -159,6 +160,21 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
     private final ServerProps serverProps = ServerProps.getInstance();
     private final ContentDraftManager contentDraftManager = ContentDraftManager.getInstance();
+
+    public static Intent viewComments(@NonNull Context context, String postId, @Nullable UserId senderUserId) {
+        final Intent intent = new Intent(context, FlatCommentsActivity.class);
+        if (senderUserId != null) {
+            intent.putExtra(FlatCommentsActivity.EXTRA_POST_SENDER_USER_ID, senderUserId.rawId());
+        }
+        intent.putExtra(FlatCommentsActivity.EXTRA_POST_ID, postId);
+        intent.putExtra(FlatCommentsActivity.EXTRA_SHOW_KEYBOARD, false);
+
+        return intent;
+    }
+
+    public static Intent viewComments(@NonNull Context context, String postId) {
+        return viewComments(context, postId, null);
+    }
 
     private final CommentsAdapter adapter = new CommentsAdapter();
     private MediaThumbnailLoader mediaThumbnailLoader;
