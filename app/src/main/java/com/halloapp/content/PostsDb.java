@@ -642,17 +642,18 @@ class PostsDb {
             if (tombstoneRowId != null) {
                 db.update(CommentsTable.TABLE_NAME, values, CommentsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
                 comment.rowId = tombstoneRowId;
+
+                mediaDb.addMedia(comment);
+                mentionsDb.addMentions(comment);
+                urlPreviewsDb.addUrlPreview(comment);
+                if (comment instanceof FutureProofComment) {
+                    futureProofDb.saveFutureProof((FutureProofComment) comment);
+                }
             } else {
                 values.put(CommentsTable.COLUMN_RECEIVE_TIME, now);
                 comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
             }
 
-            mediaDb.addMedia(comment);
-            mentionsDb.addMentions(comment);
-            urlPreviewsDb.addUrlPreview(comment);
-            if (comment instanceof FutureProofComment) {
-                futureProofDb.saveFutureProof((FutureProofComment) comment);
-            }
             db.setTransactionSuccessful();
             Log.i("ContentDb.addComment: added " + comment);
         } finally {
