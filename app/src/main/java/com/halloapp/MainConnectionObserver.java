@@ -557,6 +557,9 @@ public class MainConnectionObserver extends Connection.Observer {
         }
 
         contentDb.addRemoveGroupMembers(groupId, groupName, avatarId, joined, new ArrayList<>(), () -> {
+            if (!joined.isEmpty()) {
+                encryptedKeyStore.clearGroupSendAlreadySetUp(groupId);
+            }
             for (MemberInfo member : joined) {
                 addSystemPost(groupId, member.userId, Post.USAGE_MEMBER_JOINED, null, () -> {
                     if (member.userId.isMe()) {
@@ -580,6 +583,9 @@ public class MainConnectionObserver extends Connection.Observer {
         }
 
         contentDb.addRemoveGroupMembers(groupId, null, null, new ArrayList<>(), left, () -> {
+            if (!left.isEmpty()) {
+                groupFeedSessionManager.tearDownOutboundSession(groupId);
+            }
             for (MemberInfo member : left) {
                     addSystemPost(groupId, member.userId, Post.USAGE_MEMBER_LEFT, null, () -> {
                         if (member.userId.isMe()) {
