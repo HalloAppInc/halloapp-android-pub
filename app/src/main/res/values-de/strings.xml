@@ -53,7 +53,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <!-- Fuzzy translation?  Pls. provide more details -->
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s nutzt HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s nutzt nun HalloApp! &#x1f389;"</string>
+    <string name="new_chat_name_placeholder">"%s nutzt HalloApp! &#x1f389;"</string>
     <string name="posts_empty">"Deine Beiträge erscheinen hier"</string>
     <string name="posts_exchange_numbers">"Um den Kontakt herzustellen, müsst ihr eure Handynummern austauschen"</string>
     <string name="home_page_empty">"Beiträge deiner Kontakte siehst du hier"</string>
@@ -73,7 +73,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
         <item quantity="one">"Du kannst pro Beitrag maximal %d Medienobjekt auswählen"</item>
         <item quantity="other">"Du kannst pro Beitrag bis zu %d Medienobjekte auswählen"</item>
     </plurals>
-    <string name="camera_record_audio_permission_rationale">"Um Fotos und Videos aufzunehmen, benötigen wir deine Erlaubnis, damit wir auf deine Kamera zugreifen und Audio aufnehmen können."</string>
+    <string name="camera_record_audio_permission_rationale">"Um Fotos und Videos aufzunehmen, benötigen wir deine Erlaubnis, damit wir auf deine Kamera zugreifen und Audio aufnehmen können"</string>
     <string name="camera_record_audio_permission_rationale_denied">"Um Fotos und Videos aufzunehmen, benötigen wir deine Erlaubnis, damit wir auf deine Kamera zugreifen und Audio aufnehmen können.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
@@ -102,9 +102,9 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="reply_to_contact">"%s antworten"</string>
     <string name="reply_original_not_found">"Originalnachricht nicht gefunden"</string>
     <string name="reply_original_post_not_found">"Originalbeitrag nicht gefunden"</string>
-    <string name="mentioned_you_in_their_post">"Du wurdest im Beitrag von &lt;b&gt;%s&lt;/b&gt; erwähnt"</string>
-    <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; hat dich in einem Kommentar zu deinem Beitrag erwähnt"</string>
-    <string name="mentioned_you_in_comment_on_own_post">"Du wurdest im Beitrag von &lt;b&gt;%s&lt;/b&gt; erwähnt"</string>
+    <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; hat dich im Beitrag erwähnt"</string>
+    <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; hat dich im Kommentar zu deinem Beitrag erwähnt"</string>
+    <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; hat dich im Kommentar zum Beitrag erwähnt"</string>
 
     <!-- Fuzzy translation? Pls. provide more details -->
     <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; hat dich in einem Kommentar zu &lt;b&gt;%2$s&lt;/b&gt;'s Beitrag erwähnt"</string>
@@ -136,7 +136,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="about">"Über HalloApp"</string>
     <string name="notify_posts">"Beiträge"</string>
     <string name="notify_comments">"Kommentare"</string>
-    <string name="read_more">"Mehr erfahren"</string>
+    <string name="read_more">"mehr erfahren"</string>
     <string name="no_photos_or_videos_found">"Keine Fotos oder Videos gefunden"</string>
     <string name="gallery">"Galerie"</string>
     <string name="avatar_picker_title">"Profilbild"</string>
@@ -338,8 +338,8 @@ Version: %2$s
     <string name="group_info_title">"Gruppen-Info"</string>
     <string name="admin">"Admin"</string>
     <string name="save">"Speichern"</string>
-    <string name="contact_picker_feed_except_title">"Meine Kontakte außer…"</string>
-    <string name="contact_picker_feed_only_title">"Teile Beiträge mit …"</string>
+    <string name="contact_picker_feed_except_title">"Beiträge ausblenden für…"</string>
+    <string name="contact_picker_feed_only_title">"Beiträge teilen mit…"</string>
     <string name="setting_feed_privacy_title">"Wer kann meine Beiträge sehen"</string>
     <string name="setting_feed_all">"Meine Kontakte"</string>
     <string name="setting_feed_only">"Nur teilen mit…"</string>
@@ -369,7 +369,7 @@ Version: %2$s
     <string name="add_members">"Mitglieder hinzufügen"</string>
     <string name="add_members_in_progress">"Mitglieder werden hinzugefügt…"</string>
     <string name="failed_add_members">"Fehler beim Hinzufügen von Mitgliedern, probiere es später noch einmal"</string>
-    <string name="create_group_in_progress">"Gruppe %s… wird gegründet"</string>
+    <string name="create_group_in_progress">"Erstellung der Gruppe %s…"</string>
     <string name="new_group_title">"Gruppennamen erstellen"</string>
     <string name="group_picker_title">"Neue Gruppe"</string>
     <string name="button_create_group">"Erstellen"</string>
@@ -386,7 +386,7 @@ Version: %2$s
     <string name="group_demote_from_admin">"Admin-Status entfernen"</string>
     <string name="demote_admin_in_progress">"Admin-Status wird entfernt…"</string>
     <string name="failed_demote_admin">"Admin-Status kann nicht entfernt werden, probiere es später noch einmal"</string>
-    <string name="remove_member_in_progress">"Mitglied entfernen…"</string>
+    <string name="remove_member_in_progress">"Mitglied wird entfernt…"</string>
     <string name="failed_remove_member">"Das Mitglied kann nicht entfernt werden, probiere es später noch einmal"</string>
     <string name="leave_group">"Gruppe verlassen"</string>
     <plurals name="leave_group_plural">
@@ -473,8 +473,8 @@ Version: %2$s
     <string name="invite_link_reset">"Link zurücksetzen"</string>
     <string name="invite_link_reset_failed">"Link konnte nicht zurückgesetzt werden"</string>
     <string name="reset_invite_link_confirmation">"Möchtest du den Link zur Gruppeneinladung zurücksetzen?"</string>
-    <string name="invite_link_joining">"Gruppe wird beigetreten…"</string>
-    <string name="invite_link_loading">"Gruppe wird hochgeladen…"</string>
+    <string name="invite_link_joining">"Der Gruppe wird beigetreten…"</string>
+    <string name="invite_link_loading">"Die Gruppe wird hochgeladen…"</string>
     <string name="invite_link_copied">"Link wurde kopiert!"</string>
     <string name="invite_link_title">"Einladungs-Link"</string>
     <string name="invite_link_summary">"Alle Kontakte auf HalloApp können diesen Link nutzen, um dieser Gruppe beizutreten."</string>
@@ -504,7 +504,7 @@ Version: %2$s
     <string name="continue_button">"Weiter"</string>
     <string name="invite_link_load_failed">"Fehler beim Öffnen des Links zur Gruppeneinladung"</string>
     <string name="message_tombstone_placeholder">"Auf Nachrichteneingang wird gewartet. Dies kann eine Weile dauern. "<![CDATA[<a href="https://halloapp.com/help/">Mehr erfahren</a>]]>"."</string>
-    <string name="failed_no_longer_member">"Du bist kein Mitglied dieser Gruppe mehr"</string>
+    <string name="failed_no_longer_member">"Du bist nicht mehr ein Mitglied dieser Gruppe"</string>
 
     <!-- Placeholder when we do not understand the received message -->
     <string name="message_upgrade_placeholder">"Deine HalloApp-Version unterstützt diese Art von Nachricht nicht.
@@ -519,10 +519,10 @@ Version: %2$s
 &lt;a href=\"update-app\"&gt;Aktualisiere deine App&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
-    <string name="registration_sms_retry_progress">"Neuer SMS-Code wird gesendet…"</string>
+    <string name="registration_sms_retry_progress">"Neuer SMS-Code wird angefordert…"</string>
 
     <!-- message when user requests a voice call -->
-    <string name="registration_phone_code_progress">"Code via Anruf angefordert…"</string>
+    <string name="registration_phone_code_progress">"Code per Telefonanruf wird angefordert…"</string>
 
     <!-- button to request another sms code -->
     <string name="resend_sms">"SMS-Code erneut senden"</string>
@@ -666,7 +666,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="go_to_settings">"Zu meinen Einstellungen"</string>
 
     <!-- Text shown in activity center upon successful registration -->
-    <string name="welcome_notification">"Herzlich willkommen bei HalloApp! &lt;a href=\"invite-friend\"&gt;Jemanden einladen&lt;/a&gt;"</string>
+    <string name="welcome_notification">"Herzlich willkommen bei HalloApp! &lt;a href=\"invite-friend\"&gt;Freunde einladen&lt;/a&gt;"</string>
 
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_groups">"Gruppe suchen"</string>
@@ -693,7 +693,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="share_halloapp_text">"Mach mit bei meinem HalloApp-Netzwerk für echte Beziehungen! Kostenlos herunterladen auf halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
-    <string name="contact_permissions_request">"Erlaube HalloApp den Zugriff auf deine Kontakte, damit du Updates senden und empfangen kannst."</string>
+    <string name="contact_permissions_request">"Erlaube HalloApp den Zugriff auf deine Kontakte, damit du Updates senden und empfangen kannst"</string>
 
     <!-- Dialog shown to user before requesting contact permissions, but user has previously denied them, so they must go to settings -->
     <string name="contact_permissions_request_permanently_denied">"Erlaube HalloApp den Zugriff auf deine Kontakte, damit du Updates senden und empfangen kannst. Tippe auf Einstellungen &gt; Berechtigungen und aktiviere Kontakte"</string>
@@ -774,7 +774,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="group_notifications_channel_name">"Gruppen-Mitteilungen"</string>
 
     <!-- Button that brings user to QR code for joining a group -->
-    <string name="qr_code">"QR Code"</string>
+    <string name="qr_code">"QR-Code"</string>
 
     <!-- Explains QR code that allows users to automatically join a group -->
     <string name="scan_qr_instructions">"Scanne den QR-Code, um dieser HalloApp-Gruppe beizutreten"</string>
@@ -908,5 +908,24 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
         <item quantity="one">"%d neuer Kommentar"</item>
         <item quantity="other">"%d neue Kommentare"</item>
     </plurals>
+
+    <!-- Title for activity that lets user select who to share with -->
+    <string name="share_with">"Teilen mit…"</string>
+
+    <!-- Title for feed privacy when setting it from a single post -->
+    <string name="setting_feed_privacy_single_post_title">"Wer sieht diesen Beitrag"</string>
+
+    <!-- Text shown when sharing a post with a group -->
+    <string name="composer_sharing_group_post">"Mit der Gruppe teilen"</string>
+
+    <!-- Title of section for recent groups -->
+    <string name="recent_groups">"Neueste Gruppen"</string>
+
+    <!-- Item for creating a new group -->
+    <string name="create_new_group">"Neue Gruppe erstellen"</string>
+
+    <!-- Shown as a subtitle on the content composer screen when making a post. Tapping will
+         allow user to change destination for the post -->
+    <string name="tap_to_change">"Zum Ändern hier tippen"</string>
 <string name="share_option_group">"In Gruppe teilen"</string><string name="select_group">"Gruppe auswählen"</string></resources>
 

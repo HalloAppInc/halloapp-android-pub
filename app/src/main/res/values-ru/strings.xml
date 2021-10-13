@@ -931,5 +931,24 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
         <item quantity="many">"%d new comment"</item>
         <item quantity="other">"%d new comment"</item>
     </plurals>
+
+    <!-- Title for activity that lets user select who to share with -->
+    <string name="share_with">"Share with…"</string>
+
+    <!-- Title for feed privacy when setting it from a single post -->
+    <string name="setting_feed_privacy_single_post_title">"Who will see this post"</string>
+
+    <!-- Text shown when sharing a post with a group -->
+    <string name="composer_sharing_group_post">"Sharing with group"</string>
+
+    <!-- Title of section for recent groups -->
+    <string name="recent_groups">"Recent groups"</string>
+
+    <!-- Item for creating a new group -->
+    <string name="create_new_group">"Create new group"</string>
+
+    <!-- Shown as a subtitle on the content composer screen when making a post. Tapping will
+         allow user to change destination for the post -->
+    <string name="tap_to_change">"Tap to change"</string>
 <string name="share_option_group">"Опубликовать в группе"</string><string name="select_group">"Выбрать группу"</string></resources>
 
