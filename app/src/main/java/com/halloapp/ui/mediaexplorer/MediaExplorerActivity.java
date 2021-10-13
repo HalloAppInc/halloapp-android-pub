@@ -136,7 +136,7 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
     };
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) { // TODO: Fix crash
         super.onCreate(savedInstanceState);
 
         supportRequestWindowFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);

@@ -1603,7 +1603,7 @@ class MessagesDb {
         final ArrayList<Media> items = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
 
-        String where = MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "='" + chatId.rawId() + "'";
+        String where = MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "='" + chatId.rawId() + "' AND m." + MediaTable.COLUMN_TYPE + " != " + Media.MEDIA_TYPE_AUDIO;
         if (startRowId != null) {
             where += " AND m." + MediaTable._ID + (after ? ">" : "<") + startRowId;
         }
@@ -1658,7 +1658,7 @@ class MessagesDb {
 
     @WorkerThread
     long getChatMediaPosition(ChatId chatId, long rowId) {
-        String where = MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "='" + chatId.rawId() + "' AND m." + MediaTable._ID + "<" + rowId;
+        String where = MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "='" + chatId.rawId() + "' AND m."  + MediaTable.COLUMN_TYPE + " != " + Media.MEDIA_TYPE_AUDIO + " AND m." + MediaTable._ID + "<" + rowId;
         String sql =
             "SELECT COUNT(*) FROM " + MessagesTable.TABLE_NAME + " " +
             "INNER JOIN " + MediaTable.TABLE_NAME + " " +
@@ -1669,7 +1669,7 @@ class MessagesDb {
 
     @WorkerThread
     long getChatMediaCount(ChatId chatId) {
-        String where = MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "='" + chatId.rawId() + "'";
+        String where = MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "='" + chatId.rawId() + "' AND m." + MediaTable.COLUMN_TYPE + " != " + Media.MEDIA_TYPE_AUDIO;
         String sql =
                 "SELECT COUNT(*) FROM " + MessagesTable.TABLE_NAME + " " +
                         "INNER JOIN " + MediaTable.TABLE_NAME + " " +
