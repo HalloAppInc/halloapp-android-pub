@@ -414,8 +414,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 linkPreviewComposeView.updateUrlPreview(null);
                 viewModel.resetCommentMediaUri();
                 editText.setText(null);
-                final InputMethodManager imm = Preconditions.checkNotNull((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
-                imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                 resetReplyIndicator();
                 scrollToComment = true;
             }
