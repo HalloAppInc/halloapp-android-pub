@@ -4,15 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,9 +32,11 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.groups.GroupCreationPickerActivity;
 import com.halloapp.ui.privacy.FeedPrivacyActivity;
+import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SharePrivacyActivity extends HalloActivity {
@@ -43,6 +51,8 @@ public class SharePrivacyActivity extends HalloActivity {
     private ShareItemAdapter adapter;
 
     private SharePrivacyViewModel viewModel;
+
+    private MenuItem searchMenuItem;
 
     public static Intent openPostPrivacy(@NonNull Context context, @Nullable GroupId groupId) {
         Intent i = new Intent(context, SharePrivacyActivity.class);
@@ -94,24 +104,94 @@ public class SharePrivacyActivity extends HalloActivity {
         viewModel.getFeedPrivacy().observe(this, adapter::setFeedPrivacy);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.chat_list_menu, menu);
+        searchMenuItem = menu.findItem(R.id.menu_search);
+        final MenuItem closeMenuItem = menu.findItem(R.id.menu_clear);
+        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
+
+        closeMenuItem.setVisible(false);
+        ImageView closeBtn = searchView.findViewById(R.id.search_close_btn);
+        closeBtn.setEnabled(false);
+        closeBtn.setImageDrawable(null);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(final String text) {
+                searchView.clearFocus();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(final String text) {
+                adapter.getFilter().filter(text);
+                closeMenuItem.setVisible(!TextUtils.isEmpty(text));
+                return false;
+            }
+        });
+        closeMenuItem.setOnMenuItemClickListener(item -> {
+            searchView.setQuery("", false);
+            return true;
+        });
+        return true;
+    }
+
+    private class GroupsFilter extends FilterUtils.ItemFilter<Chat> {
+
+        GroupsFilter(@NonNull List<Chat> chats) {
+            super(chats);
+        }
+
+        @Override
+        protected String itemToString(Chat chat) {
+            return chat.name;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            //noinspection unchecked
+            final List<Chat> filteredContacts = (List<Chat>) results.values;
+            adapter.setFilteredGroups(filteredContacts, constraint);
+        }
+    }
+
     private static final int TYPE_HOME = 1;
     private static final int TYPE_GROUP = 2;
     private static final int TYPE_CREATE_GROUP = 3;
 
-    private class ShareItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private class ShareItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
+        private List<Chat> filteredGroupsList;
+        private CharSequence filterText;
         private List<Chat> groupsList;
         private FeedPrivacy feedPrivacy;
         private GroupId selectedId;
 
         public void setGroupsList(@Nullable List<Chat> groups) {
             this.groupsList = groups;
+            if (groups == null) {
+                filteredGroupsList = null;
+            } else {
+                this.filteredGroupsList = new ArrayList<>(groupsList);
+                getFilter().filter(filterText);
+            }
             notifyDataSetChanged();
         }
 
         public void setFeedPrivacy(@Nullable FeedPrivacy feedPrivacy) {
             this.feedPrivacy = feedPrivacy;
             notifyDataSetChanged();
+        }
+
+        void setFilteredGroups(@NonNull List<Chat> contacts, CharSequence filterText) {
+            this.filteredGroupsList = contacts;
+            this.filterText = filterText;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public Filter getFilter() {
+            return new GroupsFilter(groupsList);
         }
 
         public void setSelectedId(@Nullable GroupId groupId) {
@@ -140,7 +220,7 @@ public class SharePrivacyActivity extends HalloActivity {
                 if (type == TYPE_CREATE_GROUP) {
                     viewHolder.bindCreateGroup();
                 } else {
-                    Chat chat = groupsList.get(position - 1);
+                    Chat chat = filteredGroupsList.get(position - 1);
                     viewHolder.bindChat(chat, chat.chatId.equals(selectedId));
                 }
             }
@@ -158,7 +238,11 @@ public class SharePrivacyActivity extends HalloActivity {
 
         @Override
         public int getItemCount() {
-            return 2 + (groupsList == null ? 0 : groupsList.size());
+            return 2 + getFilteredGroupsCount();
+        }
+
+        private int getFilteredGroupsCount() {
+            return filteredGroupsList == null ? 0 : filteredGroupsList.size();
         }
     }
 
