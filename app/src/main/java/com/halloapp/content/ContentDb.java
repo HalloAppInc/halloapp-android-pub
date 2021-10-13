@@ -28,6 +28,7 @@ import com.halloapp.content.tables.OutgoingPlayedReceiptsTable;
 import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.RepliesTable;
+import com.halloapp.content.tables.RerequestsTable;
 import com.halloapp.content.tables.SeenTable;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
@@ -920,6 +921,26 @@ public class ContentDb {
         });
     }
 
+    public void setOutboundPostRerequestCount(@NonNull UserId rerequestorUserId, @NonNull String postId, int count) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.setOutboundRerequestCount(rerequestorUserId, postId, PostsTable.TABLE_NAME, count);
+        });
+    }
+
+    public int getOutboundPostRerequestCount(@NonNull UserId rerequestorUserId, @NonNull String postId) {
+        return postsDb.getOutboundRerequestCount(rerequestorUserId, postId, PostsTable.TABLE_NAME);
+    }
+
+    public void setOutboundCommentRerequestCount(@NonNull UserId rerequestorUserId, @NonNull String postId, int count) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.setOutboundRerequestCount(rerequestorUserId, postId, CommentsTable.TABLE_NAME, count);
+        });
+    }
+
+    public int getOutboundCommentRerequestCount(@NonNull UserId rerequestorUserId, @NonNull String postId) {
+        return postsDb.getOutboundRerequestCount(rerequestorUserId, postId, CommentsTable.TABLE_NAME);
+    }
+
     public void setMessageTransferred(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         databaseWriteExecutor.execute(() -> {
             messagesDb.setMessageTransferred(chatId, senderUserId, messageId);
@@ -1248,6 +1269,7 @@ public class ContentDb {
                 PostsTable.INDEX_POST_KEY,
                 PostsTable.INDEX_TIMESTAMP,
                 RepliesTable.INDEX_MESSAGE_KEY,
+                RerequestsTable.INDEX_REREQUEST_KEY,
                 SeenTable.INDEX_SEEN_KEY,
                 OutgoingPlayedReceiptsTable.INDEX_OUTGOING_RECEIPT_KEY,
         };

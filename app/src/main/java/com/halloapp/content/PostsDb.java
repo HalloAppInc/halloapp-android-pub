@@ -21,6 +21,7 @@ import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.PostsTable;
+import com.halloapp.content.tables.RerequestsTable;
 import com.halloapp.content.tables.SeenTable;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -1431,6 +1432,56 @@ class PostsDb {
         } catch (SQLException ex) {
             Log.e("PostsDb.setCommentRerequestCount: failed");
             throw ex;
+        }
+    }
+
+    @WorkerThread
+    void setOutboundRerequestCount(@NonNull UserId rerequesterUserId, @NonNull String contentId, @NonNull String parentTable, int count) {
+        Log.i("PostsDb.setOutboundRerequestCount: userId=" + rerequesterUserId + " contentId=" + contentId + " parentTable=" + parentTable + " count=" + count);
+
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        Long existingRowId = null;
+        String sql = "SELECT " + RerequestsTable._ID + " FROM " + RerequestsTable.TABLE_NAME
+                + " WHERE " + RerequestsTable.COLUMN_CONTENT_ID + "=?"
+                + " AND " + RerequestsTable.COLUMN_REQUESTOR_USER_ID + "=?"
+                + " AND " + RerequestsTable.COLUMN_PARENT_TABLE + "=?";
+        try (Cursor cursor = db.rawQuery(sql, new String[]{contentId, rerequesterUserId.rawId(), parentTable})) {
+            if (cursor.moveToNext()) {
+                existingRowId = cursor.getLong(0);
+            }
+        }
+
+        final ContentValues values = new ContentValues();
+        values.put(RerequestsTable.COLUMNT_REREQUEST_COUNT, count);
+        try {
+            if (existingRowId == null) {
+                values.put(RerequestsTable.COLUMN_CONTENT_ID, contentId);
+                values.put(RerequestsTable.COLUMN_REQUESTOR_USER_ID, rerequesterUserId.rawId());
+                values.put(RerequestsTable.COLUMN_PARENT_TABLE, parentTable);
+                db.insertWithOnConflict(RerequestsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+            } else {
+                db.updateWithOnConflict(RerequestsTable.TABLE_NAME, values, RerequestsTable._ID + "=?", new String[]{Long.toString(existingRowId)}, SQLiteDatabase.CONFLICT_ABORT);
+            }
+        } catch (SQLException ex) {
+            Log.e("PostsDb.setOutboundRerequestCount: failed");
+            throw ex;
+        }
+    }
+
+    @WorkerThread
+    int getOutboundRerequestCount(@NonNull UserId rerequesterUserId, @NonNull String contentId, @NonNull String parentTable) {
+        Log.i("PostsDb.getOutboundRerequestCount: userId=" + rerequesterUserId + " contentId=" + contentId + " parentTable=" + parentTable);
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql = "SELECT " + RerequestsTable.COLUMNT_REREQUEST_COUNT + " FROM " + RerequestsTable.TABLE_NAME
+                + " WHERE " + RerequestsTable.COLUMN_REQUESTOR_USER_ID + "=?"
+                + " AND " + RerequestsTable.COLUMN_CONTENT_ID + "=?"
+                + " AND " + RerequestsTable.COLUMN_PARENT_TABLE + "=?";
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{rerequesterUserId.rawId(), contentId, parentTable})) {
+            if (cursor.moveToNext()) {
+                return cursor.getInt(0);
+            } else {
+                return 0;
+            }
         }
     }
 
