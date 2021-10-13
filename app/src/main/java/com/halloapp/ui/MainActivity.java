@@ -548,7 +548,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         boolean showCommentsActivity = intent.getBooleanExtra(EXTRA_POST_SHOW_COMMENTS, false);
         if (extraPostId != null) {
             if (showCommentsActivity) {
-                Intent viewIntent = FlatCommentsActivity.viewComments(this, extraPostId);
+                Intent viewIntent = CommentsActivity.viewComments(this, extraPostId);
                 startActivity(viewIntent);
             } else {
                 scrollToTop();
