@@ -88,6 +88,9 @@ public class ContentComposerViewModel extends AndroidViewModel {
         feedPrivacyLiveData.invalidate();
     };
 
+    private GroupId targetGroupId;
+    private ChatId targetChatId;
+
     ContentComposerViewModel(@NonNull Application application, @Nullable ChatId chatId, @Nullable GroupId groupFeedId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable String replyPostId, int replyPostMediaIndex) {
         super(application);
         me = Me.getInstance();
@@ -95,32 +98,28 @@ public class ContentComposerViewModel extends AndroidViewModel {
         contactsDb = ContactsDb.getInstance();
         this.replyPostId = replyPostId;
         this.replyPostMediaIndex = replyPostMediaIndex;
+
+        this.targetChatId = chatId;
+        this.targetGroupId = groupFeedId;
+
         if (uris != null) {
             loadUris(uris, editStates);
         }
-        if (chatId != null) {
-            shareTargetName = new ComputableLiveData<String>() {
-                @Override
-                protected String compute() {
+        shareTargetName = new ComputableLiveData<String>() {
+            @Override
+            protected String compute() {
+                if (targetChatId != null) {
                     if (chatId instanceof UserId) {
-                        return contactsDb.getContact((UserId)chatId).getDisplayName();
+                        return contactsDb.getContact((UserId) chatId).getDisplayName();
                     } else if (chatId instanceof GroupId) {
                         return Preconditions.checkNotNull(contentDb.getChat(chatId)).name;
                     }
-                    return null;
+                } else if (targetGroupId != null) {
+                    return Preconditions.checkNotNull(contentDb.getChat(targetGroupId)).name;
                 }
-            };
-        } else if (groupFeedId != null) {
-            shareTargetName = new ComputableLiveData<String>() {
-                @Override
-                protected String compute() {
-                    return Preconditions.checkNotNull(contentDb.getChat(groupFeedId)).name;
-
-                }
-            };
-        } else {
-            shareTargetName = null;
-        }
+                return null;
+            }
+        };
         if (replyPostId != null) {
             replyPost = new ComputableLiveData<Post>() {
                 @Override
@@ -168,6 +167,10 @@ public class ContentComposerViewModel extends AndroidViewModel {
         feedPrivacyManager.addObserver(feedPrivacyObserver);
     }
 
+    public void setDestinationFeed(@Nullable GroupId groupId) {
+        this.targetGroupId = groupId;
+        shareTargetName.invalidate();
+    }
 
     @Override
     protected void onCleared() {

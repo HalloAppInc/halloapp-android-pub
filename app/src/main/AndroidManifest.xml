@@ -104,6 +104,11 @@
             android:label="@string/select_contact"/>
 
         <activity
+            android:name=".ui.SharePrivacyActivity"
+            android:theme="@style/AppTheme"
+            android:label="@string/share_with"/>
+
+        <activity
             android:name=".ui.groups.PostSharePickerActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/select_post_destination"/>

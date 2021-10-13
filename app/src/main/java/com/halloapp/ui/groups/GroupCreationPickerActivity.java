@@ -2,6 +2,7 @@ package com.halloapp.ui.groups;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -21,7 +22,11 @@ import java.util.List;
 
 public class GroupCreationPickerActivity extends MultipleContactPickerActivity {
 
+    private static final String EXTRA_NAVIGATE_TO_GROUP = "nav_to_group";
+
     private static final int REQUEST_CODE_SELECT_CONTACTS = 1;
+
+    private boolean navigateToGroup;
 
     public static Intent newIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds) {
         Intent intent = new Intent(context, GroupCreationPickerActivity.class);
@@ -35,7 +40,20 @@ public class GroupCreationPickerActivity extends MultipleContactPickerActivity {
         return intent;
     }
 
+    public static Intent newIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds, boolean navigateToGroup) {
+        Intent intent = newIntent(context, selectedIds);
+        intent.putExtra(EXTRA_NAVIGATE_TO_GROUP, navigateToGroup);
+        return intent;
+    }
+
     private final ServerProps serverProps = ServerProps.getInstance();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        navigateToGroup = getIntent().getBooleanExtra(EXTRA_NAVIGATE_TO_GROUP, true);
+    }
 
     @Override
     protected int getMaxSelection() {
@@ -62,9 +80,13 @@ public class GroupCreationPickerActivity extends MultipleContactPickerActivity {
                         finish();
                         break;
                     }
-                    GroupId groupId = data.getParcelableExtra(CreateGroupActivity.RESULT_GROUP_ID);
-                    if (groupId != null) {
-                        startActivity(ViewGroupFeedActivity.viewFeed(getApplicationContext(), groupId));
+                    if (navigateToGroup) {
+                        GroupId groupId = data.getParcelableExtra(CreateGroupActivity.RESULT_GROUP_ID);
+                        if (groupId != null) {
+                            startActivity(ViewGroupFeedActivity.viewFeed(getApplicationContext(), groupId));
+                        }
+                    } else {
+                        setResult(resultCode, data);
                     }
                     finish();
                 } else if (data != null) {

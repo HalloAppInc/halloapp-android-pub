@@ -1,6 +1,7 @@
 package com.halloapp.ui.privacy;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -39,6 +40,14 @@ public class FeedPrivacyActivity extends HalloActivity implements EasyPermission
     public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY = 1;
     public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_EXCEPT = 2;
 
+    public static final String EXTRA_FOR_SINGLE_POST = "single_post";
+
+    public static Intent editFeedPrivacy(@NonNull Context context) {
+        Intent i = new Intent(context, FeedPrivacyActivity.class);
+        i.putExtra(EXTRA_FOR_SINGLE_POST, true);
+        return i;
+    }
+
     private FeedPrivacyViewModel viewModel;
 
     private @Nullable List<UserId> onlyList;
@@ -69,6 +78,14 @@ public class FeedPrivacyActivity extends HalloActivity implements EasyPermission
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setElevation(getResources().getDimension(R.dimen.action_bar_elevation));
+        }
+
+        boolean forSinglePost = getIntent().getBooleanExtra(EXTRA_FOR_SINGLE_POST, false);
+        TextView headerTitle = findViewById(R.id.header);
+        if (forSinglePost) {
+            headerTitle.setText(R.string.setting_feed_privacy_single_post_title);
+        } else {
+            headerTitle.setText(R.string.setting_feed_privacy_title);
         }
 
         final RadioButton all = findViewById(R.id.radio_all);

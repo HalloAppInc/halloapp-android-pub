@@ -35,6 +35,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.transition.TransitionManager;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -65,6 +66,7 @@ import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.props.ServerProps;
+import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.mediaedit.MediaEditActivity;
@@ -110,6 +112,7 @@ public class ContentComposerActivity extends HalloActivity {
 
     private static final int REQUEST_CODE_CROP = 1;
     private static final int REQUEST_CODE_MORE_MEDIA = 2;
+    private static final int REQUEST_CODE_CHANGE_PRIVACY = 3;
 
     private static final int EXO_PLAYER_BUFFER_MS = 25000;
 
@@ -118,6 +121,7 @@ public class ContentComposerActivity extends HalloActivity {
     private ContentComposerViewModel viewModel;
     private MediaThumbnailLoader fullThumbnailLoader;
     private TextContentLoader textContentLoader;
+    private AvatarLoader avatarLoader;
     private ContentComposerScrollView mediaVerticalScrollView;
     private MentionableEntry editText;
     private MentionPickerView mentionPickerView;
@@ -127,10 +131,15 @@ public class ContentComposerActivity extends HalloActivity {
     private DrawDelegateView drawDelegateView;
     private Toolbar toolbar;
     private View replyContainer;
+    private TextView tapToChangeSubtitle;
+    private TextView subtitleView;
 
     private PostLinkPreviewView postLinkPreviewView;
     private UrlPreviewLoader urlPreviewLoader;
     private MediaThumbnailLoader mediaThumbnailLoader;
+
+    private ImageView avatarView;
+    private ImageView homeIconView;
 
     private boolean allowAddMedia;
     private boolean calledFromCamera;
@@ -152,6 +161,14 @@ public class ContentComposerActivity extends HalloActivity {
     private boolean prevEditEmpty;
     private boolean updatedMediaProcessed = false;
     private int currentItemToSet = -1;
+
+    private final Runnable hideTapToChangeSubtitle = () -> {
+        if (tapToChangeSubtitle != null) {
+            TransitionManager.beginDelayedTransition((ViewGroup) tapToChangeSubtitle.getParent());
+            tapToChangeSubtitle.setVisibility(View.GONE);
+            subtitleView.setVisibility(View.VISIBLE);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,6 +226,7 @@ public class ContentComposerActivity extends HalloActivity {
         getWindowManager().getDefaultDisplay().getSize(point);
         fullThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         textContentLoader = new TextContentLoader();
+        avatarLoader = AvatarLoader.getInstance();
 
         mentionPickerView = findViewById(R.id.mention_picker_view);
 
@@ -315,6 +333,30 @@ public class ContentComposerActivity extends HalloActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
+
+        avatarView = findViewById(R.id.avatar);
+        homeIconView = findViewById(R.id.home_icon);
+        if (chatId == null) {
+            View changePrivacy = findViewById(R.id.change_privacy);
+            changePrivacy.setOnClickListener(v -> {
+                startActivityForResult(SharePrivacyActivity.openPostPrivacy(this, groupId), REQUEST_CODE_CHANGE_PRIVACY);
+            });
+            avatarView.setVisibility(View.VISIBLE);
+            avatarView.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), avatarView.getContext().getResources().getDimension(R.dimen.share_privacy_avatar_corner_radius));
+                }
+            });
+            avatarView.setClipToOutline(true);
+            homeIconView.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), avatarView.getContext().getResources().getDimension(R.dimen.share_privacy_avatar_corner_radius));
+                }
+            });
+            homeIconView.setClipToOutline(true);
+        }
 
         mediaPagerIndicator = findViewById(R.id.media_pager_indicator);
         mediaPagerAdapter = new MediaPagerAdapter();
@@ -445,23 +487,37 @@ public class ContentComposerActivity extends HalloActivity {
             }
         });
         final TextView titleView = toolbar.findViewById(R.id.toolbar_title);
-        if (viewModel.shareTargetName != null) {
-            if (groupId != null) {
-                titleView.setText(R.string.new_post);
-                viewModel.shareTargetName.getLiveData().observe(this, this::updatePostSubtitle);
-            } else {
-                titleView.setText(R.string.new_message);
-                viewModel.shareTargetName.getLiveData().observe(this, name -> {
-                    updateMessageSubtitle(name);
-                    if (replyPostId != null) {
-                        final TextView replyNameView = findViewById(R.id.reply_name);
-                        replyNameView.setText(name);
-                    }
-                });
-            }
+        final View spinner = toolbar.findViewById(R.id.spinner_drop_down);
+        tapToChangeSubtitle = toolbar.findViewById(R.id.tap_to_change_subtitle);
+        subtitleView = toolbar.findViewById(R.id.toolbar_subtitle);
+        if (chatId != null) {
+            titleView.setText(R.string.new_message);
+            viewModel.shareTargetName.getLiveData().observe(this, name -> {
+                updateMessageSubtitle(name);
+                if (replyPostId != null) {
+                    final TextView replyNameView = findViewById(R.id.reply_name);
+                    replyNameView.setText(name);
+                }
+            });
+            subtitleView.setVisibility(View.VISIBLE);
+            tapToChangeSubtitle.setVisibility(View.GONE);
         } else {
-            titleView.setText(R.string.new_post);
-            viewModel.getFeedPrivacy().observe(this, this::updatePostSubtitle);
+            viewModel.shareTargetName.getLiveData().observe(this, name -> {
+                if (groupId == null) {
+                    titleView.setText(R.string.home);
+                } else {
+                    titleView.setText(name);
+                    updatePostSubtitle(name);
+                }
+            });
+            updateDestination(groupId);
+            spinner.setVisibility(View.VISIBLE);
+            subtitleView.setVisibility(View.INVISIBLE);
+            tapToChangeSubtitle.setVisibility(View.VISIBLE);
+            tapToChangeSubtitle.removeCallbacks(hideTapToChangeSubtitle);
+            subtitleView.setVisibility(View.INVISIBLE);
+            tapToChangeSubtitle.setVisibility(View.VISIBLE);
+            tapToChangeSubtitle.postDelayed(hideTapToChangeSubtitle, 3000);
         }
 
         replyContainer = findViewById(R.id.reply_container);
@@ -505,7 +561,6 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     private void updatePostSubtitle(final FeedPrivacy feedPrivacy) {
-        final TextView subtitleView = toolbar.findViewById(R.id.toolbar_subtitle);
         if (feedPrivacy == null) {
             Log.e("ContentComposerActivity: updatePostSubtitle received null FeedPrivacy");
             subtitleView.setText("");
@@ -523,13 +578,7 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     private void updatePostSubtitle(final String name) {
-        final TextView subtitleView = toolbar.findViewById(R.id.toolbar_subtitle);
-        if (name == null) {
-            Log.e("ContentComposerActivity: updateMessageSubtitle received null name");
-            subtitleView.setText("");
-        } else {
-            subtitleView.setText(getString(R.string.composer_sharing_post, name));
-        }
+        subtitleView.setText(getString(R.string.composer_sharing_group_post));
     }
 
     private void updateMessageSubtitle(final String name) {
@@ -550,6 +599,25 @@ public class ContentComposerActivity extends HalloActivity {
         }
 
         mediaPager.setSizeLimits(ContentComposerViewModel.EditMediaPair.getMaxAspectRatio(mediaPairList), maxHeight);
+    }
+
+    private void updateDestination(@Nullable GroupId newFeedTarget) {
+        groupId = newFeedTarget;
+        viewModel.setDestinationFeed(newFeedTarget);
+        if (newFeedTarget != null) {
+            viewModel.getFeedPrivacy().removeObservers(this);
+        } else {
+            viewModel.getFeedPrivacy().observe(this, this::updatePostSubtitle);
+        }
+        avatarLoader.cancel(avatarView);
+        if (groupId == null) {
+            homeIconView.setVisibility(View.VISIBLE);
+            avatarView.setVisibility(View.INVISIBLE);
+        } else {
+            homeIconView.setVisibility(View.GONE);
+            avatarView.setVisibility(View.VISIBLE);
+            avatarLoader.load(avatarView, groupId);
+        }
     }
 
     @Override
@@ -899,6 +967,12 @@ public class ContentComposerActivity extends HalloActivity {
                 if (result == RESULT_OK && !updatedMediaProcessed) {
                     onDataUpdated(data);
                     updatedMediaProcessed = true;
+                }
+                break;
+            case REQUEST_CODE_CHANGE_PRIVACY:
+                if (result == RESULT_OK && data != null) {
+                    GroupId newId = data.getParcelableExtra(SharePrivacyActivity.RESULT_GROUP_ID);
+                    updateDestination(newId);
                 }
                 break;
         }

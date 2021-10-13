@@ -23,6 +23,9 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/window_background"
             android:gravity="center_vertical"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
+            app:contentInsetStartWithNavigation="0dp"
             app:layout_constraintBottom_toTopOf="@+id/media_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -30,28 +33,106 @@
             app:popupTheme="@style/ThemeOverlay.MaterialComponents"
             app:theme="@style/ActionBar.Composer">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/change_privacy"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="center_vertical">
+                android:layout_marginStart="10dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:background="?selectableItemBackground">
 
-                <TextView
-                    android:id="@+id/toolbar_title"
+                <ImageView
+                    android:id="@+id/home_icon"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:padding="6dp"
+                    android:background="@android:color/white"
+                    android:src="@drawable/ic_home_selected"
+                    app:tint="@color/color_secondary"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:visibility="gone"
+                    />
+
+                <ImageView
+                    android:id="@+id/avatar"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@android:color/white"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:visibility="gone"
+                    />
+
+                    <TextView
+                        android:id="@+id/toolbar_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/new_post"
+                        android:layout_marginStart="8dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        app:layout_constraintStart_toEndOf="@id/avatar"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_chainStyle="packed"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintBottom_toTopOf="@id/toolbar_subtitle"
+                        app:layout_constraintEnd_toStartOf="@id/spinner_drop_down"
+                        android:textAppearance="@style/TextAppearance.Toolbar.Title.Composer"/>
+
+                <ImageView
+                    android:id="@+id/spinner_drop_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/new_post"
-                    android:textAppearance="@style/TextAppearance.Toolbar.Title.Composer"/>
+                    android:src="@drawable/ic_drop_down"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    android:paddingTop="5dp"
+                    app:layout_constraintStart_toEndOf="@id/toolbar_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintTop_toTopOf="@id/toolbar_title"
+                    app:layout_constraintBottom_toBottomOf="@id/toolbar_title"
+                    app:tint="@color/primary_text"
+                    tools:visibility="visible"
+                    android:visibility="gone"/>
+
+                    <TextView
+                        android:id="@+id/toolbar_subtitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        app:layout_constraintStart_toEndOf="@id/avatar"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        app:layout_constraintVertical_chainStyle="packed"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/toolbar_title"
+                        tools:text="Sharing with my contacts"
+                        android:textAppearance="@style/TextAppearance.Toolbar.Subtitle.Composer"/>
 
                 <TextView
-                    android:id="@+id/toolbar_subtitle"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tap_to_change_subtitle"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintStart_toEndOf="@id/avatar"
+                    app:layout_constraintEnd_toEndOf="parent"
                     android:ellipsize="end"
                     android:maxLines="1"
+                    app:layout_constraintBottom_toBottomOf="@id/toolbar_subtitle"
+                    app:layout_constraintTop_toTopOf="@id/toolbar_subtitle"
+                    android:text="@string/tap_to_change"
+                    android:visibility="gone"
                     android:textAppearance="@style/TextAppearance.Toolbar.Subtitle.Composer"/>
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.appcompat.widget.Toolbar>
 

@@ -108,5 +108,7 @@
     <dimen name="voice_note_circle_min_radius">120dp</dimen>
     <dimen name="voice_note_circle_offset">24dp</dimen>
     <dimen name="voice_note_levitate_distance">10dp</dimen>
+    
+    <dimen name="share_privacy_avatar_corner_radius">8dp</dimen>
 
 </resources>

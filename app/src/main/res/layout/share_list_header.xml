@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="30dp"
+        android:background="?selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/home_icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="11dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="13dp"
+            android:layout_marginBottom="11dp"
+            android:padding="6dp"
+            android:background="@android:color/white"
+            android:src="@drawable/ic_home_selected"
+            app:tint="@color/color_secondary"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/home_header"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/home"
+            android:textColor="@color/primary_text"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="13dp"
+            app:layout_constraintBottom_toTopOf="@id/home_privacy_setting"
+            app:layout_constraintStart_toEndOf="@id/home_icon"
+            app:layout_constraintVertical_chainStyle="packed"
+            android:textSize="17sp"/>
+
+        <TextView
+            android:id="@+id/home_privacy_setting"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            tools:text="Share with all my contacts"
+            android:textColor="@color/tertiary_text"
+            app:layout_constraintTop_toBottomOf="@id/home_header"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@id/home_header"
+            android:textSize="12sp"/>
+
+        <ImageView
+            android:id="@+id/change_privacy_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_settings_gear"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/secondary_text"
+            android:padding="4dp"
+            android:layout_marginEnd="16dp"
+            android:background="?selectableItemBackgroundBorderless"
+            app:layout_constraintEnd_toStartOf="@id/selection_indicator"/>
+
+        <ImageView
+            android:id="@+id/selection_indicator"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:padding="2dp"
+            android:background="@drawable/contact_selection_background"
+            android:src="@drawable/ic_check"
+            app:tint="@android:color/white"
+            android:scaleType="fitCenter"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="9dp"
+        android:textColor="@color/tertiary_text"
+        android:text="@string/recent_groups"/>
+
+</LinearLayout>

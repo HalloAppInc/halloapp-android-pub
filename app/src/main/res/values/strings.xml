@@ -428,6 +428,8 @@
     <string name="email_logs_subject">HalloApp Android %1$s %2$s</string>
     <string name="email_logs_text">\n----------------------------------------\nPlease describe the issue above.\nuid: %1$s\nversion: %2$s\n----------------------------------------\n</string>
     <string name="share">Share</string>
+    <!-- Title for activity that lets user select who to share with -->
+    <string name="share_with">Share with…</string>
     <string name="unblock">Unblock</string>
     <string name="unblock_user_confirmation">Would you like to unblock %s?</string>
     <string name="menu_item_block_user">Block user</string>
@@ -500,6 +502,8 @@
     <string name="save">Save</string>
     <string name="contact_picker_feed_except_title">Hide posts from…</string>
     <string name="contact_picker_feed_only_title">Share posts with…</string>
+    <!-- Title for feed privacy when setting it from a single post -->
+    <string name="setting_feed_privacy_single_post_title">Who will see this post</string>
     <string name="setting_feed_privacy_title">Who can see my posts</string>
     <string name="setting_feed_all">My contacts</string>
     <string name="setting_feed_only">Only share with…</string>
@@ -644,6 +648,8 @@
     <string name="post_preview_with_caption_by_you">You: %s</string>
     <string name="composer_sharing_message">Sending to %s</string>
     <string name="composer_sharing_post">Sharing with %s</string>
+    <!-- Text shown when sharing a post with a group -->
+    <string name="composer_sharing_group_post">Sharing with group</string>
     <plurals name="max_video_length">
         <item quantity="one">Your video is over %d second long. Please select another video or edit it.</item>
         <item quantity="other">Your video is over %d seconds long. Please select another video or edit it.</item>
@@ -714,4 +720,11 @@
     <string name="default_setting">Default</string>
     <!-- Name of setting where user can change between dark/light mode -->
     <string name="dark_mode_setting_title">Theme</string>
+    <!-- Title of section for recent groups -->
+    <string name="recent_groups">Recent groups</string>
+    <!-- Item for creating a new group -->
+    <string name="create_new_group">Create new group</string>
+    <!-- Shown as a subtitle on the content composer screen when making a post. Tapping will
+         allow user to change destination for the post -->
+    <string name="tap_to_change">Tap to change</string>
 </resources>
