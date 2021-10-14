@@ -16,6 +16,7 @@ public class MemberElement {
     public final @Action String action;
     public final @Result String result;
     public final String reason;
+    public final byte[] identityKey;
 
     @StringDef({Type.ADMIN, Type.MEMBER, Type.INVALID})
     public @interface Type {
@@ -51,5 +52,6 @@ public class MemberElement {
         action = groupMember.getAction().name().toLowerCase(Locale.US);
         result = groupMember.getResult();
         reason = groupMember.getReason();
+        identityKey = groupMember.getIdentityKey().toByteArray();
     }
 }

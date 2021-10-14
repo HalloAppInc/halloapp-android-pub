@@ -51,13 +51,16 @@ import com.halloapp.xmpp.ContactInfo;
 import com.halloapp.xmpp.PresenceLoader;
 import com.halloapp.xmpp.WhisperKeysMessage;
 import com.halloapp.xmpp.WhisperKeysResponseIq;
+import com.halloapp.xmpp.groups.GroupsApi;
 import com.halloapp.xmpp.groups.MemberElement;
 import com.halloapp.xmpp.util.ObservableErrorException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 public class MainConnectionObserver extends Connection.Observer {
@@ -69,6 +72,7 @@ public class MainConnectionObserver extends Connection.Observer {
     private final Me me;
     private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
+    private final GroupsApi groupsApi;
     private final Connection connection;
     private final ContactsDb contactsDb;
     private final GroupsSync groupsSync;
@@ -97,6 +101,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             Me.getInstance(),
                             BgWorkers.getInstance(),
                             ContentDb.getInstance(),
+                            GroupsApi.getInstance(),
                             Connection.getInstance(),
                             ContactsDb.getInstance(),
                             GroupsSync.getInstance(context),
@@ -127,6 +132,7 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull Me me,
             @NonNull BgWorkers bgWorkers,
             @NonNull ContentDb contentDb,
+            @NonNull GroupsApi groupsApi,
             @NonNull Connection connection,
             @NonNull ContactsDb contactsDb,
             @NonNull GroupsSync groupsSync,
@@ -150,6 +156,7 @@ public class MainConnectionObserver extends Connection.Observer {
         this.me = me;
         this.bgWorkers = bgWorkers;
         this.contentDb = contentDb;
+        this.groupsApi = groupsApi;
         this.connection = connection;
         this.contactsDb = contactsDb;
         this.groupsSync = groupsSync;
@@ -247,41 +254,53 @@ public class MainConnectionObserver extends Connection.Observer {
     public void onAudienceHashMismatch(@NonNull Post post) {
         GroupId groupId = post.getParentGroup();
 
-        boolean foundMismatch = GroupsSync.getInstance(context).performSingleGroupSync(Preconditions.checkNotNull(groupId));
-        List<MemberInfo> localMembers = contentDb.getGroupMembers(groupId);
-        try {
-            for (MemberInfo member : localMembers) {
-                if (me.getUser().equals(member.userId.rawId()) || member.userId.isMe()) {
-                    continue;
-                }
-                UserId peerUserId = member.userId;
-                WhisperKeysResponseIq keysIq = connection.downloadKeys(peerUserId).await();
-                IdentityKey identityKeyProto = IdentityKey.parseFrom(keysIq.identityKey);
-                byte[] remoteIdentityKey = identityKeyProto.getPublicKey().toByteArray();
-                byte[] localIdentityKey = null;
-                try {
-                    localIdentityKey = encryptedKeyStore.getPeerPublicIdentityKey(peerUserId).getKeyMaterial();
-                } catch (CryptoException e) {
-                    Log.w("Failed to get local copy of peer identity key for " + peerUserId, e);
+        bgWorkers.execute(() -> {
+            try {
+                Map<UserId, PublicEdECKey> keys = groupsApi.getGroupKeys(groupId).await();
+                List<MemberInfo> localMembers = contentDb.getGroupMembers(groupId);
+
+                boolean foundMismatch = false;
+                Set<UserId> remoteUids = keys.keySet();
+                Set<UserId> localUids = new HashSet<>();
+                for (MemberInfo memberInfo : localMembers) {
+                    localUids.add(memberInfo.userId);
                 }
 
-                if (!Arrays.equals(remoteIdentityKey, localIdentityKey)) {
-                    Log.i("Remote and local identity key do not match for " + peerUserId + "; remote: " + StringUtils.bytesToHexString(remoteIdentityKey) + "; local: " + StringUtils.bytesToHexString(localIdentityKey));
-                    encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, new PublicEdECKey(remoteIdentityKey));
-                    foundMismatch = true;
+                if (remoteUids.size() != localMembers.size() || !remoteUids.containsAll(localUids)) {
+                    Log.i("Found member list mismatch; syncing group");
+                    foundMismatch = GroupsSync.getInstance(context).performSingleGroupSync(Preconditions.checkNotNull(groupId));
                 }
+
+                for (UserId userId : remoteUids) {
+                    if (userId.isMe()) {
+                        continue;
+                    }
+                    byte[] remoteIdentityKey = Preconditions.checkNotNull(keys.get(userId)).getKeyMaterial();
+                    byte[] localIdentityKey = null;
+                    try {
+                        localIdentityKey = encryptedKeyStore.getPeerPublicIdentityKey(userId).getKeyMaterial();
+                    } catch (CryptoException e) {
+                        Log.w("Failed to get local copy of peer identity key for " + userId, e);
+                    }
+
+                    if (!Arrays.equals(remoteIdentityKey, localIdentityKey)) {
+                        Log.i("Remote and local identity key do not match for " + userId + "; remote: " + StringUtils.bytesToHexString(remoteIdentityKey) + "; local: " + StringUtils.bytesToHexString(localIdentityKey) + "; overwriting");
+                        encryptedKeyStore.setPeerPublicIdentityKey(userId, new PublicEdECKey(remoteIdentityKey));
+                        foundMismatch = true;
+                    }
+                }
+
+                if (foundMismatch) {
+                    groupFeedSessionManager.tearDownOutboundSession(groupId);
+                    connection.sendPost(post);
+                } else {
+                    Log.w("Server said audience does not match but failed to find mismatch; not re-sending");
+                    Log.sendErrorReport("no_local_audience_mismatch");
+                }
+            } catch (ObservableErrorException | InterruptedException e) {
+                Log.e("Failed to get keys for group", e);
             }
-        } catch (ObservableErrorException | InterruptedException | InvalidProtocolBufferException e) {
-            Log.e("Failed to get identity key on audience hash mismatch", e);
-        }
-
-        if (foundMismatch) {
-            groupFeedSessionManager.tearDownOutboundSession(groupId);
-            connection.sendPost(post);
-        } else {
-            Log.w("Server said audience does not match but failed to find mismatch; not re-sending");
-            Log.sendErrorReport("no_local_audience_mismatch");
-        }
+        });
     }
 
     @Override

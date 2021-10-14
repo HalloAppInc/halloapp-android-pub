@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
@@ -12,6 +13,7 @@ import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.server.GroupInviteLink;
 import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
+import com.halloapp.proto.server.IdentityKey;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.HalloIq;
@@ -19,7 +21,9 @@ import com.halloapp.xmpp.util.IqResult;
 import com.halloapp.xmpp.util.Observable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GroupsApi {
 
@@ -187,6 +191,25 @@ public class GroupsApi {
         final Observable<HalloIq> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
             return true;
+        });
+    }
+
+    public Observable<Map<UserId, PublicEdECKey>> getGroupKeys(@NonNull GroupId groupId) {
+        final GetGroupKeysIq requestIq = new GetGroupKeysIq(groupId);
+        final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
+        return observable.map(response -> {
+            Map<UserId, PublicEdECKey> ret = new HashMap<>();
+            for (MemberElement member : response.memberElements) {
+                byte[] identityKeyBytes = null;
+                try {
+                    IdentityKey identityKeyProto = IdentityKey.parseFrom(member.identityKey);
+                    identityKeyBytes = identityKeyProto.getPublicKey().toByteArray();
+                } catch (InvalidProtocolBufferException e) {
+                    Log.e("Got invalid identity key proto", e);
+                }
+                ret.put(member.uid, new PublicEdECKey(identityKeyBytes));
+            }
+            return ret;
         });
     }
 }
