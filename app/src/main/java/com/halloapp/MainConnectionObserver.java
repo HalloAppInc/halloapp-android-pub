@@ -371,6 +371,7 @@ public class MainConnectionObserver extends Connection.Observer {
                 int rerequestCount = contentDb.getOutboundPostRerequestCount(senderUserId, contentId);
                 if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
                     Log.w("Reached rerequest limit for post " + contentId + " for user " + senderUserId);
+                    checkIdentityKey();
                 } else {
                     contentDb.setOutboundPostRerequestCount(senderUserId, contentId, rerequestCount + 1);
                     connection.sendRerequestedGroupPost(post, senderUserId);
@@ -381,6 +382,7 @@ public class MainConnectionObserver extends Connection.Observer {
                     int rerequestCount = contentDb.getOutboundCommentRerequestCount(senderUserId, contentId);
                     if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
                         Log.w("Reached rerequest limit for comment " + contentId);
+                        checkIdentityKey();
                     } else {
                         contentDb.setOutboundCommentRerequestCount(senderUserId, contentId, rerequestCount + 1);
                         connection.sendRerequestedGroupComment(comment, senderUserId);
@@ -391,6 +393,28 @@ public class MainConnectionObserver extends Connection.Observer {
             }
             connection.sendAck(stanzaId);
         });
+    }
+
+    private void checkIdentityKey() {
+        Log.i("Verifying identity key matches");
+        connection.downloadKeys(new UserId(me.getUser()))
+                .onResponse(response -> {
+                    try {
+                        IdentityKey identityKeyProto = IdentityKey.parseFrom(response.identityKey);
+                        byte[] remote = identityKeyProto.getPublicKey().toByteArray();
+                        byte[] local = encryptedKeyStore.getMyPublicEd25519IdentityKey().getKeyMaterial();
+                        Log.i("Remote identity key: " + StringUtils.bytesToHexString(remote));
+                        Log.i("Local identity key: " + StringUtils.bytesToHexString(local));
+                        if (!Arrays.equals(remote, local)) {
+                            Log.e("Remote and local identity key do not match; resetting registration");
+                            me.resetRegistration();
+                        }
+                    } catch (InvalidProtocolBufferException e) {
+                        Log.e("Failed to parse own identity key proto", e);
+                    }
+                }).onError(err -> {
+                    Log.w("Failed to fetch own identity key for verification", err);
+                });
     }
 
     @Override
