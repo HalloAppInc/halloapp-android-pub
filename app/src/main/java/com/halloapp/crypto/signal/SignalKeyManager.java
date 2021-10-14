@@ -29,6 +29,7 @@ public class SignalKeyManager {
     private static final byte[] HKDF_ROOT_KEY_INFO = "HalloApp".getBytes(StandardCharsets.UTF_8);
     private static final byte[] HKDF_INPUT_MESSAGE_KEY = new byte[]{1};
     private static final byte[] HKDF_INPUT_CHAIN_KEY = new byte[]{2};
+    private static final int MAX_SIGNAL_KEYS_SKIP = 100;
 
     private final EncryptedKeyStore encryptedKeyStore;
 
@@ -243,6 +244,10 @@ public class SignalKeyManager {
 
     private void skipInboundKeys(UserId peerUserId, int count, int ephemeralKeyId, int previousChainLength, int startIndex) throws CryptoException {
         Log.i("skipping " + count + " inbound keys");
+        if (count > MAX_SIGNAL_KEYS_SKIP) {
+            Log.e("Attempting to skip too many keys");
+            throw new CryptoException("skip_too_many_keys");
+        }
         for (int i=0; i<count; i++) {
             byte[] inboundMessageKey = getNextInboundMessageKey(peerUserId);
             try {
