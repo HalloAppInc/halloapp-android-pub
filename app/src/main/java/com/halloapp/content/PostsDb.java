@@ -1002,8 +1002,10 @@ class PostsDb {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "=?";
             args.add(groupId.rawId());
         } else {
-            where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_USER;
-            where += " AND (" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "!='' OR m." + MediaTable._ID + " IS NOT NULL OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + " IS NULL)";
+            where += " AND ("
+                    + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_USER + " OR "
+                    + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_FUTURE_PROOF + " OR "
+                    + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + " IS NULL)";
         }
         if (!args.isEmpty()) {
             selectionArgs = args.toArray(new String[0]);
