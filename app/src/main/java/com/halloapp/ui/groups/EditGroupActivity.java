@@ -212,7 +212,7 @@ public class EditGroupActivity extends HalloActivity {
     }
 
     final View.OnClickListener setAvatarListener = v -> {
-        final Intent intent = MediaPickerActivity.pickAvatar(this);
+        final Intent intent = MediaPickerActivity.pickGroupAvatar(this);
         startActivityForResult(intent, CODE_CHANGE_AVATAR);
     };
 
