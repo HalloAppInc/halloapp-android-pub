@@ -389,6 +389,7 @@ public class MainConnectionObserver extends Connection.Observer {
             if (post != null && groupId.equals(post.getParentGroup())) {
                 if (post.isRetracted()) {
                     Log.i("Rerequested post has been retracted; ignoring");
+                    return;
                 }
                 int rerequestCount = contentDb.getOutboundPostRerequestCount(senderUserId, contentId);
                 if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
@@ -403,6 +404,7 @@ public class MainConnectionObserver extends Connection.Observer {
                 if (comment != null) {
                     if (comment.isRetracted()) {
                         Log.i("Rerequested comment has been retracted; ignoring");
+                        return;
                     }
                     int rerequestCount = contentDb.getOutboundCommentRerequestCount(senderUserId, contentId);
                     if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
