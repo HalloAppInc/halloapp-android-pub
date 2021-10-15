@@ -145,6 +145,7 @@ public class ConnectionImpl extends Connection {
 
     private final ConnectionExecutor executor = new ConnectionExecutor();
     private final Executor chatStanzaExecutor = Executors.newSingleThreadExecutor();
+    private final Executor groupStanzaExecutor = Executors.newSingleThreadExecutor();
     private final Map<String, Runnable> ackHandlers = new ConcurrentHashMap<>();
     public boolean clientExpired = false;
     private HANoiseSocket socket = null;
@@ -1228,7 +1229,10 @@ public class ConnectionImpl extends Connection {
                 } else if (msg.hasGroupFeedItem()) {
                     Log.i("connection: got group feed item " + ProtoPrinter.toString(msg));
                     GroupFeedItem groupFeedItem = msg.getGroupFeedItem();
-                    handled = processGroupFeedItems(Collections.singletonList(groupFeedItem), msg.getId());
+                    groupStanzaExecutor.execute(() -> {
+                        processGroupFeedItems(Collections.singletonList(groupFeedItem), msg.getId());
+                    });
+                    handled = true;
                 } else if (msg.hasGroupFeedItems()) {
                     Log.i("connection: got group feed items " + ProtoPrinter.toString(msg));
                     GroupFeedItems groupFeedItems = msg.getGroupFeedItems();
@@ -1242,7 +1246,10 @@ public class ConnectionImpl extends Connection {
                                 .build();
                         outList.add(newItem);
                     }
-                    handled = processGroupFeedItems(outList, msg.getId());
+                    groupStanzaExecutor.execute(() -> {
+                        processGroupFeedItems(outList, msg.getId());
+                    });
+                    handled = true;
                 } else if (msg.hasChatStanza()) {
                     Log.i("connection: got chat stanza " + ProtoPrinter.toString(msg));
                     ChatStanza chatStanza = msg.getChatStanza();
