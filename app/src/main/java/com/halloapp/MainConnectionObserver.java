@@ -387,6 +387,9 @@ public class MainConnectionObserver extends Connection.Observer {
         bgWorkers.execute(() -> {
             Post post = contentDb.getPost(contentId);
             if (post != null && groupId.equals(post.getParentGroup())) {
+                if (post.isRetracted()) {
+                    Log.i("Rerequested post has been retracted; ignoring");
+                }
                 int rerequestCount = contentDb.getOutboundPostRerequestCount(senderUserId, contentId);
                 if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
                     Log.w("Reached rerequest limit for post " + contentId + " for user " + senderUserId);
@@ -398,6 +401,9 @@ public class MainConnectionObserver extends Connection.Observer {
             } else {
                 Comment comment = contentDb.getComment(contentId);
                 if (comment != null) {
+                    if (comment.isRetracted()) {
+                        Log.i("Rerequested comment has been retracted; ignoring");
+                    }
                     int rerequestCount = contentDb.getOutboundCommentRerequestCount(senderUserId, contentId);
                     if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
                         Log.w("Reached rerequest limit for comment " + contentId);
