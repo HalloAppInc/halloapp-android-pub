@@ -58,4 +58,15 @@ public interface AuthRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getResourceBytes();
+
+  /**
+   * <code>.server.DeviceInfo device_info = 6;</code>
+   * @return Whether the deviceInfo field is set.
+   */
+  boolean hasDeviceInfo();
+  /**
+   * <code>.server.DeviceInfo device_info = 6;</code>
+   * @return The deviceInfo.
+   */
+  com.halloapp.proto.server.DeviceInfo getDeviceInfo();
 }

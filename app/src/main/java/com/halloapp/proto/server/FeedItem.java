@@ -392,14 +392,14 @@ public  final class FeedItem extends
     shareStanzas_.remove(index);
   }
 
-  public static final int SENDER_STATE_BUNDLES_FIELD_NUMBER = 7;
+  public static final int SENDER_STATE_BUNDLES_FIELD_NUMBER = 5;
   private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.SenderStateBundle> senderStateBundles_;
   /**
    * <pre>
    * Sent by the publisher.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
    */
   @java.lang.Override
   public java.util.List<com.halloapp.proto.server.SenderStateBundle> getSenderStateBundlesList() {
@@ -410,7 +410,7 @@ public  final class FeedItem extends
    * Sent by the publisher.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
    */
   public java.util.List<? extends com.halloapp.proto.server.SenderStateBundleOrBuilder> 
       getSenderStateBundlesOrBuilderList() {
@@ -421,7 +421,7 @@ public  final class FeedItem extends
    * Sent by the publisher.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
    */
   @java.lang.Override
   public int getSenderStateBundlesCount() {
@@ -432,7 +432,7 @@ public  final class FeedItem extends
    * Sent by the publisher.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
    */
   @java.lang.Override
   public com.halloapp.proto.server.SenderStateBundle getSenderStateBundles(int index) {
@@ -443,7 +443,7 @@ public  final class FeedItem extends
    * Sent by the publisher.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
    */
   public com.halloapp.proto.server.SenderStateBundleOrBuilder getSenderStateBundlesOrBuilder(
       int index) {
@@ -462,7 +462,7 @@ public  final class FeedItem extends
    * Sent by the publisher.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
    */
   private void setSenderStateBundles(
       int index, com.halloapp.proto.server.SenderStateBundle value) {
@@ -475,7 +475,7 @@ public  final class FeedItem extends
    * Sent by the publisher.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
    */
   private void addSenderStateBundles(com.halloapp.proto.server.SenderStateBundle value) {
     value.getClass();
@@ -487,7 +487,7 @@ public  final class FeedItem extends
    * Sent by the publisher.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
    */
   private void addSenderStateBundles(
       int index, com.halloapp.proto.server.SenderStateBundle value) {
@@ -500,7 +500,7 @@ public  final class FeedItem extends
    * Sent by the publisher.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
    */
   private void addAllSenderStateBundles(
       java.lang.Iterable<? extends com.halloapp.proto.server.SenderStateBundle> values) {
@@ -513,7 +513,7 @@ public  final class FeedItem extends
    * Sent by the publisher.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
    */
   private void clearSenderStateBundles() {
     senderStateBundles_ = emptyProtobufList();
@@ -523,21 +523,21 @@ public  final class FeedItem extends
    * Sent by the publisher.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
    */
   private void removeSenderStateBundles(int index) {
     ensureSenderStateBundlesIsMutable();
     senderStateBundles_.remove(index);
   }
 
-  public static final int SENDER_STATE_FIELD_NUMBER = 8;
+  public static final int SENDER_STATE_FIELD_NUMBER = 6;
   private com.halloapp.proto.server.SenderStateWithKeyInfo senderState_;
   /**
    * <pre>
    * Meant for the receiver, computed by the server using `sender_state_bundles`.
    * </pre>
    *
-   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+   * <code>.server.SenderStateWithKeyInfo sender_state = 6;</code>
    */
   @java.lang.Override
   public boolean hasSenderState() {
@@ -548,7 +548,7 @@ public  final class FeedItem extends
    * Meant for the receiver, computed by the server using `sender_state_bundles`.
    * </pre>
    *
-   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+   * <code>.server.SenderStateWithKeyInfo sender_state = 6;</code>
    */
   @java.lang.Override
   public com.halloapp.proto.server.SenderStateWithKeyInfo getSenderState() {
@@ -559,7 +559,7 @@ public  final class FeedItem extends
    * Meant for the receiver, computed by the server using `sender_state_bundles`.
    * </pre>
    *
-   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+   * <code>.server.SenderStateWithKeyInfo sender_state = 6;</code>
    */
   private void setSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
     value.getClass();
@@ -571,7 +571,7 @@ public  final class FeedItem extends
    * Meant for the receiver, computed by the server using `sender_state_bundles`.
    * </pre>
    *
-   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+   * <code>.server.SenderStateWithKeyInfo sender_state = 6;</code>
    */
   @java.lang.SuppressWarnings({"ReferenceEquality"})
   private void mergeSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
@@ -590,7 +590,7 @@ public  final class FeedItem extends
    * Meant for the receiver, computed by the server using `sender_state_bundles`.
    * </pre>
    *
-   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+   * <code>.server.SenderStateWithKeyInfo sender_state = 6;</code>
    */
   private void clearSenderState() {  senderState_ = null;
     
@@ -952,7 +952,7 @@ public  final class FeedItem extends
      * Sent by the publisher.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
      */
     @java.lang.Override
     public java.util.List<com.halloapp.proto.server.SenderStateBundle> getSenderStateBundlesList() {
@@ -964,7 +964,7 @@ public  final class FeedItem extends
      * Sent by the publisher.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
      */
     @java.lang.Override
     public int getSenderStateBundlesCount() {
@@ -974,7 +974,7 @@ public  final class FeedItem extends
      * Sent by the publisher.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
      */
     @java.lang.Override
     public com.halloapp.proto.server.SenderStateBundle getSenderStateBundles(int index) {
@@ -985,7 +985,7 @@ public  final class FeedItem extends
      * Sent by the publisher.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
      */
     public Builder setSenderStateBundles(
         int index, com.halloapp.proto.server.SenderStateBundle value) {
@@ -998,7 +998,7 @@ public  final class FeedItem extends
      * Sent by the publisher.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
      */
     public Builder setSenderStateBundles(
         int index, com.halloapp.proto.server.SenderStateBundle.Builder builderForValue) {
@@ -1012,7 +1012,7 @@ public  final class FeedItem extends
      * Sent by the publisher.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
      */
     public Builder addSenderStateBundles(com.halloapp.proto.server.SenderStateBundle value) {
       copyOnWrite();
@@ -1024,7 +1024,7 @@ public  final class FeedItem extends
      * Sent by the publisher.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
      */
     public Builder addSenderStateBundles(
         int index, com.halloapp.proto.server.SenderStateBundle value) {
@@ -1037,7 +1037,7 @@ public  final class FeedItem extends
      * Sent by the publisher.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
      */
     public Builder addSenderStateBundles(
         com.halloapp.proto.server.SenderStateBundle.Builder builderForValue) {
@@ -1050,7 +1050,7 @@ public  final class FeedItem extends
      * Sent by the publisher.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
      */
     public Builder addSenderStateBundles(
         int index, com.halloapp.proto.server.SenderStateBundle.Builder builderForValue) {
@@ -1064,7 +1064,7 @@ public  final class FeedItem extends
      * Sent by the publisher.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
      */
     public Builder addAllSenderStateBundles(
         java.lang.Iterable<? extends com.halloapp.proto.server.SenderStateBundle> values) {
@@ -1077,7 +1077,7 @@ public  final class FeedItem extends
      * Sent by the publisher.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
      */
     public Builder clearSenderStateBundles() {
       copyOnWrite();
@@ -1089,7 +1089,7 @@ public  final class FeedItem extends
      * Sent by the publisher.
      * </pre>
      *
-     * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+     * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
      */
     public Builder removeSenderStateBundles(int index) {
       copyOnWrite();
@@ -1102,7 +1102,7 @@ public  final class FeedItem extends
      * Meant for the receiver, computed by the server using `sender_state_bundles`.
      * </pre>
      *
-     * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+     * <code>.server.SenderStateWithKeyInfo sender_state = 6;</code>
      */
     @java.lang.Override
     public boolean hasSenderState() {
@@ -1113,7 +1113,7 @@ public  final class FeedItem extends
      * Meant for the receiver, computed by the server using `sender_state_bundles`.
      * </pre>
      *
-     * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+     * <code>.server.SenderStateWithKeyInfo sender_state = 6;</code>
      */
     @java.lang.Override
     public com.halloapp.proto.server.SenderStateWithKeyInfo getSenderState() {
@@ -1124,7 +1124,7 @@ public  final class FeedItem extends
      * Meant for the receiver, computed by the server using `sender_state_bundles`.
      * </pre>
      *
-     * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+     * <code>.server.SenderStateWithKeyInfo sender_state = 6;</code>
      */
     public Builder setSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
       copyOnWrite();
@@ -1136,7 +1136,7 @@ public  final class FeedItem extends
      * Meant for the receiver, computed by the server using `sender_state_bundles`.
      * </pre>
      *
-     * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+     * <code>.server.SenderStateWithKeyInfo sender_state = 6;</code>
      */
     public Builder setSenderState(
         com.halloapp.proto.server.SenderStateWithKeyInfo.Builder builderForValue) {
@@ -1149,7 +1149,7 @@ public  final class FeedItem extends
      * Meant for the receiver, computed by the server using `sender_state_bundles`.
      * </pre>
      *
-     * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+     * <code>.server.SenderStateWithKeyInfo sender_state = 6;</code>
      */
     public Builder mergeSenderState(com.halloapp.proto.server.SenderStateWithKeyInfo value) {
       copyOnWrite();
@@ -1161,7 +1161,7 @@ public  final class FeedItem extends
      * Meant for the receiver, computed by the server using `sender_state_bundles`.
      * </pre>
      *
-     * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+     * <code>.server.SenderStateWithKeyInfo sender_state = 6;</code>
      */
     public Builder clearSenderState() {  copyOnWrite();
       instance.clearSenderState();
@@ -1196,8 +1196,8 @@ public  final class FeedItem extends
             "senderState_",
           };
           java.lang.String info =
-              "\u0000\u0006\u0001\u0000\u0001\b\u0006\u0000\u0002\u0000\u0001\f\u0002<\u0000\u0003" +
-              "<\u0000\u0004\u001b\u0007\u001b\b\t";
+              "\u0000\u0006\u0001\u0000\u0001\u0006\u0006\u0000\u0002\u0000\u0001\f\u0002<\u0000" +
+              "\u0003<\u0000\u0004\u001b\u0005\u001b\u0006\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -13,7 +13,7 @@ public  final class GroupDecryptionReport extends
     GroupDecryptionReportOrBuilder {
   private GroupDecryptionReport() {
     reason_ = "";
-    msgId_ = "";
+    contentId_ = "";
     gid_ = "";
     originalVersion_ = "";
   }
@@ -302,50 +302,50 @@ public  final class GroupDecryptionReport extends
     
   }
 
-  public static final int MSG_ID_FIELD_NUMBER = 3;
-  private java.lang.String msgId_;
+  public static final int CONTENT_ID_FIELD_NUMBER = 3;
+  private java.lang.String contentId_;
   /**
-   * <code>string msg_id = 3;</code>
-   * @return The msgId.
+   * <code>string content_id = 3;</code>
+   * @return The contentId.
    */
   @java.lang.Override
-  public java.lang.String getMsgId() {
-    return msgId_;
+  public java.lang.String getContentId() {
+    return contentId_;
   }
   /**
-   * <code>string msg_id = 3;</code>
-   * @return The bytes for msgId.
+   * <code>string content_id = 3;</code>
+   * @return The bytes for contentId.
    */
   @java.lang.Override
   public com.google.protobuf.ByteString
-      getMsgIdBytes() {
-    return com.google.protobuf.ByteString.copyFromUtf8(msgId_);
+      getContentIdBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(contentId_);
   }
   /**
-   * <code>string msg_id = 3;</code>
-   * @param value The msgId to set.
+   * <code>string content_id = 3;</code>
+   * @param value The contentId to set.
    */
-  private void setMsgId(
+  private void setContentId(
       java.lang.String value) {
     value.getClass();
   
-    msgId_ = value;
+    contentId_ = value;
   }
   /**
-   * <code>string msg_id = 3;</code>
+   * <code>string content_id = 3;</code>
    */
-  private void clearMsgId() {
+  private void clearContentId() {
     
-    msgId_ = getDefaultInstance().getMsgId();
+    contentId_ = getDefaultInstance().getContentId();
   }
   /**
-   * <code>string msg_id = 3;</code>
-   * @param value The bytes for msgId to set.
+   * <code>string content_id = 3;</code>
+   * @param value The bytes for contentId to set.
    */
-  private void setMsgIdBytes(
+  private void setContentIdBytes(
       com.google.protobuf.ByteString value) {
     checkByteStringIsUtf8(value);
-    msgId_ = value.toStringUtf8();
+    contentId_ = value.toStringUtf8();
     
   }
 
@@ -748,51 +748,51 @@ public  final class GroupDecryptionReport extends
     }
 
     /**
-     * <code>string msg_id = 3;</code>
-     * @return The msgId.
+     * <code>string content_id = 3;</code>
+     * @return The contentId.
      */
     @java.lang.Override
-    public java.lang.String getMsgId() {
-      return instance.getMsgId();
+    public java.lang.String getContentId() {
+      return instance.getContentId();
     }
     /**
-     * <code>string msg_id = 3;</code>
-     * @return The bytes for msgId.
+     * <code>string content_id = 3;</code>
+     * @return The bytes for contentId.
      */
     @java.lang.Override
     public com.google.protobuf.ByteString
-        getMsgIdBytes() {
-      return instance.getMsgIdBytes();
+        getContentIdBytes() {
+      return instance.getContentIdBytes();
     }
     /**
-     * <code>string msg_id = 3;</code>
-     * @param value The msgId to set.
+     * <code>string content_id = 3;</code>
+     * @param value The contentId to set.
      * @return This builder for chaining.
      */
-    public Builder setMsgId(
+    public Builder setContentId(
         java.lang.String value) {
       copyOnWrite();
-      instance.setMsgId(value);
+      instance.setContentId(value);
       return this;
     }
     /**
-     * <code>string msg_id = 3;</code>
+     * <code>string content_id = 3;</code>
      * @return This builder for chaining.
      */
-    public Builder clearMsgId() {
+    public Builder clearContentId() {
       copyOnWrite();
-      instance.clearMsgId();
+      instance.clearContentId();
       return this;
     }
     /**
-     * <code>string msg_id = 3;</code>
-     * @param value The bytes for msgId to set.
+     * <code>string content_id = 3;</code>
+     * @param value The bytes for contentId to set.
      * @return This builder for chaining.
      */
-    public Builder setMsgIdBytes(
+    public Builder setContentIdBytes(
         com.google.protobuf.ByteString value) {
       copyOnWrite();
-      instance.setMsgIdBytes(value);
+      instance.setContentIdBytes(value);
       return this;
     }
 
@@ -1034,7 +1034,7 @@ public  final class GroupDecryptionReport extends
           java.lang.Object[] objects = new java.lang.Object[] {
             "result_",
             "reason_",
-            "msgId_",
+            "contentId_",
             "gid_",
             "itemType_",
             "originalVersion_",

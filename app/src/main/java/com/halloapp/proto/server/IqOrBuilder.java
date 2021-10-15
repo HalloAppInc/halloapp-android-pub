@@ -387,5 +387,71 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.ClientOtpResponse getClientOtpResponse();
 
+  /**
+   * <code>.server.WhisperKeysCollection whisper_keys_collection = 37;</code>
+   * @return Whether the whisperKeysCollection field is set.
+   */
+  boolean hasWhisperKeysCollection();
+  /**
+   * <code>.server.WhisperKeysCollection whisper_keys_collection = 37;</code>
+   * @return The whisperKeysCollection.
+   */
+  com.halloapp.proto.server.WhisperKeysCollection getWhisperKeysCollection();
+
+  /**
+   * <code>.server.GetCallServers get_call_servers = 38;</code>
+   * @return Whether the getCallServers field is set.
+   */
+  boolean hasGetCallServers();
+  /**
+   * <code>.server.GetCallServers get_call_servers = 38;</code>
+   * @return The getCallServers.
+   */
+  com.halloapp.proto.server.GetCallServers getGetCallServers();
+
+  /**
+   * <code>.server.GetCallServersResult get_call_servers_result = 39;</code>
+   * @return Whether the getCallServersResult field is set.
+   */
+  boolean hasGetCallServersResult();
+  /**
+   * <code>.server.GetCallServersResult get_call_servers_result = 39;</code>
+   * @return The getCallServersResult.
+   */
+  com.halloapp.proto.server.GetCallServersResult getGetCallServersResult();
+
+  /**
+   * <code>.server.StartCall start_call = 40;</code>
+   * @return Whether the startCall field is set.
+   */
+  boolean hasStartCall();
+  /**
+   * <code>.server.StartCall start_call = 40;</code>
+   * @return The startCall.
+   */
+  com.halloapp.proto.server.StartCall getStartCall();
+
+  /**
+   * <code>.server.StartCallResult start_call_result = 41;</code>
+   * @return Whether the startCallResult field is set.
+   */
+  boolean hasStartCallResult();
+  /**
+   * <code>.server.StartCallResult start_call_result = 41;</code>
+   * @return The startCallResult.
+   */
+  com.halloapp.proto.server.StartCallResult getStartCallResult();
+
+  /**
+   * <code>.server.TruncWhisperKeysCollection trunc_whisper_keys_collection = 42;</code>
+   * @return Whether the truncWhisperKeysCollection field is set.
+   */
+  boolean hasTruncWhisperKeysCollection();
+  /**
+   * <code>.server.TruncWhisperKeysCollection trunc_whisper_keys_collection = 42;</code>
+   * @return The truncWhisperKeysCollection.
+   */
+  com.halloapp.proto.server.TruncWhisperKeysCollection getTruncWhisperKeysCollection();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }

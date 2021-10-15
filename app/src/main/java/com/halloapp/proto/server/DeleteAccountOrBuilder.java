@@ -18,4 +18,27 @@ public interface DeleteAccountOrBuilder extends
    */
   com.google.protobuf.ByteString
       getPhoneBytes();
+
+  /**
+   * <code>.server.DeleteAccount.Reason reason = 2;</code>
+   * @return The enum numeric value on the wire for reason.
+   */
+  int getReasonValue();
+  /**
+   * <code>.server.DeleteAccount.Reason reason = 2;</code>
+   * @return The reason.
+   */
+  com.halloapp.proto.server.DeleteAccount.Reason getReason();
+
+  /**
+   * <code>string feedback = 3;</code>
+   * @return The feedback.
+   */
+  java.lang.String getFeedback();
+  /**
+   * <code>string feedback = 3;</code>
+   * @return The bytes for feedback.
+   */
+  com.google.protobuf.ByteString
+      getFeedbackBytes();
 }

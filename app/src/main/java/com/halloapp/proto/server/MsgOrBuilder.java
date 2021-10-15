@@ -348,15 +348,59 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.HomeFeedRerequest getHomeFeedRerequest();
 
   /**
-   * <code>.server.FeedItems historical_content = 34;</code>
-   * @return Whether the historicalContent field is set.
+   * <code>.server.IncomingCall incoming_call = 34;</code>
+   * @return Whether the incomingCall field is set.
    */
-  boolean hasHistoricalContent();
+  boolean hasIncomingCall();
   /**
-   * <code>.server.FeedItems historical_content = 34;</code>
-   * @return The historicalContent.
+   * <code>.server.IncomingCall incoming_call = 34;</code>
+   * @return The incomingCall.
    */
-  com.halloapp.proto.server.FeedItems getHistoricalContent();
+  com.halloapp.proto.server.IncomingCall getIncomingCall();
+
+  /**
+   * <code>.server.CallRinging call_ringing = 35;</code>
+   * @return Whether the callRinging field is set.
+   */
+  boolean hasCallRinging();
+  /**
+   * <code>.server.CallRinging call_ringing = 35;</code>
+   * @return The callRinging.
+   */
+  com.halloapp.proto.server.CallRinging getCallRinging();
+
+  /**
+   * <code>.server.AnswerCall answer_call = 36;</code>
+   * @return Whether the answerCall field is set.
+   */
+  boolean hasAnswerCall();
+  /**
+   * <code>.server.AnswerCall answer_call = 36;</code>
+   * @return The answerCall.
+   */
+  com.halloapp.proto.server.AnswerCall getAnswerCall();
+
+  /**
+   * <code>.server.EndCall end_call = 37;</code>
+   * @return Whether the endCall field is set.
+   */
+  boolean hasEndCall();
+  /**
+   * <code>.server.EndCall end_call = 37;</code>
+   * @return The endCall.
+   */
+  com.halloapp.proto.server.EndCall getEndCall();
+
+  /**
+   * <code>.server.IceCandicate ice_candidate = 38;</code>
+   * @return Whether the iceCandidate field is set.
+   */
+  boolean hasIceCandidate();
+  /**
+   * <code>.server.IceCandicate ice_candidate = 38;</code>
+   * @return The iceCandidate.
+   */
+  com.halloapp.proto.server.IceCandicate getIceCandidate();
 
   /**
    * <code>int32 retry_count = 21;</code>

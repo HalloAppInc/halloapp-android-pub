@@ -155,6 +155,12 @@ public  final class Iq extends
     CONTACT_SYNC_ERROR(34),
     CLIENT_OTP_REQUEST(35),
     CLIENT_OTP_RESPONSE(36),
+    WHISPER_KEYS_COLLECTION(37),
+    GET_CALL_SERVERS(38),
+    GET_CALL_SERVERS_RESULT(39),
+    START_CALL(40),
+    START_CALL_RESULT(41),
+    TRUNC_WHISPER_KEYS_COLLECTION(42),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -201,6 +207,12 @@ public  final class Iq extends
         case 34: return CONTACT_SYNC_ERROR;
         case 35: return CLIENT_OTP_REQUEST;
         case 36: return CLIENT_OTP_RESPONSE;
+        case 37: return WHISPER_KEYS_COLLECTION;
+        case 38: return GET_CALL_SERVERS;
+        case 39: return GET_CALL_SERVERS_RESULT;
+        case 40: return START_CALL;
+        case 41: return START_CALL_RESULT;
+        case 42: return TRUNC_WHISPER_KEYS_COLLECTION;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -1896,6 +1908,306 @@ public  final class Iq extends
    */
   private void clearClientOtpResponse() {
     if (payloadCase_ == 36) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int WHISPER_KEYS_COLLECTION_FIELD_NUMBER = 37;
+  /**
+   * <code>.server.WhisperKeysCollection whisper_keys_collection = 37;</code>
+   */
+  @java.lang.Override
+  public boolean hasWhisperKeysCollection() {
+    return payloadCase_ == 37;
+  }
+  /**
+   * <code>.server.WhisperKeysCollection whisper_keys_collection = 37;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.WhisperKeysCollection getWhisperKeysCollection() {
+    if (payloadCase_ == 37) {
+       return (com.halloapp.proto.server.WhisperKeysCollection) payload_;
+    }
+    return com.halloapp.proto.server.WhisperKeysCollection.getDefaultInstance();
+  }
+  /**
+   * <code>.server.WhisperKeysCollection whisper_keys_collection = 37;</code>
+   */
+  private void setWhisperKeysCollection(com.halloapp.proto.server.WhisperKeysCollection value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 37;
+  }
+  /**
+   * <code>.server.WhisperKeysCollection whisper_keys_collection = 37;</code>
+   */
+  private void mergeWhisperKeysCollection(com.halloapp.proto.server.WhisperKeysCollection value) {
+    value.getClass();
+  if (payloadCase_ == 37 &&
+        payload_ != com.halloapp.proto.server.WhisperKeysCollection.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.WhisperKeysCollection.newBuilder((com.halloapp.proto.server.WhisperKeysCollection) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 37;
+  }
+  /**
+   * <code>.server.WhisperKeysCollection whisper_keys_collection = 37;</code>
+   */
+  private void clearWhisperKeysCollection() {
+    if (payloadCase_ == 37) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int GET_CALL_SERVERS_FIELD_NUMBER = 38;
+  /**
+   * <code>.server.GetCallServers get_call_servers = 38;</code>
+   */
+  @java.lang.Override
+  public boolean hasGetCallServers() {
+    return payloadCase_ == 38;
+  }
+  /**
+   * <code>.server.GetCallServers get_call_servers = 38;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.GetCallServers getGetCallServers() {
+    if (payloadCase_ == 38) {
+       return (com.halloapp.proto.server.GetCallServers) payload_;
+    }
+    return com.halloapp.proto.server.GetCallServers.getDefaultInstance();
+  }
+  /**
+   * <code>.server.GetCallServers get_call_servers = 38;</code>
+   */
+  private void setGetCallServers(com.halloapp.proto.server.GetCallServers value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 38;
+  }
+  /**
+   * <code>.server.GetCallServers get_call_servers = 38;</code>
+   */
+  private void mergeGetCallServers(com.halloapp.proto.server.GetCallServers value) {
+    value.getClass();
+  if (payloadCase_ == 38 &&
+        payload_ != com.halloapp.proto.server.GetCallServers.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.GetCallServers.newBuilder((com.halloapp.proto.server.GetCallServers) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 38;
+  }
+  /**
+   * <code>.server.GetCallServers get_call_servers = 38;</code>
+   */
+  private void clearGetCallServers() {
+    if (payloadCase_ == 38) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int GET_CALL_SERVERS_RESULT_FIELD_NUMBER = 39;
+  /**
+   * <code>.server.GetCallServersResult get_call_servers_result = 39;</code>
+   */
+  @java.lang.Override
+  public boolean hasGetCallServersResult() {
+    return payloadCase_ == 39;
+  }
+  /**
+   * <code>.server.GetCallServersResult get_call_servers_result = 39;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.GetCallServersResult getGetCallServersResult() {
+    if (payloadCase_ == 39) {
+       return (com.halloapp.proto.server.GetCallServersResult) payload_;
+    }
+    return com.halloapp.proto.server.GetCallServersResult.getDefaultInstance();
+  }
+  /**
+   * <code>.server.GetCallServersResult get_call_servers_result = 39;</code>
+   */
+  private void setGetCallServersResult(com.halloapp.proto.server.GetCallServersResult value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 39;
+  }
+  /**
+   * <code>.server.GetCallServersResult get_call_servers_result = 39;</code>
+   */
+  private void mergeGetCallServersResult(com.halloapp.proto.server.GetCallServersResult value) {
+    value.getClass();
+  if (payloadCase_ == 39 &&
+        payload_ != com.halloapp.proto.server.GetCallServersResult.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.GetCallServersResult.newBuilder((com.halloapp.proto.server.GetCallServersResult) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 39;
+  }
+  /**
+   * <code>.server.GetCallServersResult get_call_servers_result = 39;</code>
+   */
+  private void clearGetCallServersResult() {
+    if (payloadCase_ == 39) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int START_CALL_FIELD_NUMBER = 40;
+  /**
+   * <code>.server.StartCall start_call = 40;</code>
+   */
+  @java.lang.Override
+  public boolean hasStartCall() {
+    return payloadCase_ == 40;
+  }
+  /**
+   * <code>.server.StartCall start_call = 40;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.StartCall getStartCall() {
+    if (payloadCase_ == 40) {
+       return (com.halloapp.proto.server.StartCall) payload_;
+    }
+    return com.halloapp.proto.server.StartCall.getDefaultInstance();
+  }
+  /**
+   * <code>.server.StartCall start_call = 40;</code>
+   */
+  private void setStartCall(com.halloapp.proto.server.StartCall value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 40;
+  }
+  /**
+   * <code>.server.StartCall start_call = 40;</code>
+   */
+  private void mergeStartCall(com.halloapp.proto.server.StartCall value) {
+    value.getClass();
+  if (payloadCase_ == 40 &&
+        payload_ != com.halloapp.proto.server.StartCall.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.StartCall.newBuilder((com.halloapp.proto.server.StartCall) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 40;
+  }
+  /**
+   * <code>.server.StartCall start_call = 40;</code>
+   */
+  private void clearStartCall() {
+    if (payloadCase_ == 40) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int START_CALL_RESULT_FIELD_NUMBER = 41;
+  /**
+   * <code>.server.StartCallResult start_call_result = 41;</code>
+   */
+  @java.lang.Override
+  public boolean hasStartCallResult() {
+    return payloadCase_ == 41;
+  }
+  /**
+   * <code>.server.StartCallResult start_call_result = 41;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.StartCallResult getStartCallResult() {
+    if (payloadCase_ == 41) {
+       return (com.halloapp.proto.server.StartCallResult) payload_;
+    }
+    return com.halloapp.proto.server.StartCallResult.getDefaultInstance();
+  }
+  /**
+   * <code>.server.StartCallResult start_call_result = 41;</code>
+   */
+  private void setStartCallResult(com.halloapp.proto.server.StartCallResult value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 41;
+  }
+  /**
+   * <code>.server.StartCallResult start_call_result = 41;</code>
+   */
+  private void mergeStartCallResult(com.halloapp.proto.server.StartCallResult value) {
+    value.getClass();
+  if (payloadCase_ == 41 &&
+        payload_ != com.halloapp.proto.server.StartCallResult.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.StartCallResult.newBuilder((com.halloapp.proto.server.StartCallResult) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 41;
+  }
+  /**
+   * <code>.server.StartCallResult start_call_result = 41;</code>
+   */
+  private void clearStartCallResult() {
+    if (payloadCase_ == 41) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int TRUNC_WHISPER_KEYS_COLLECTION_FIELD_NUMBER = 42;
+  /**
+   * <code>.server.TruncWhisperKeysCollection trunc_whisper_keys_collection = 42;</code>
+   */
+  @java.lang.Override
+  public boolean hasTruncWhisperKeysCollection() {
+    return payloadCase_ == 42;
+  }
+  /**
+   * <code>.server.TruncWhisperKeysCollection trunc_whisper_keys_collection = 42;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.TruncWhisperKeysCollection getTruncWhisperKeysCollection() {
+    if (payloadCase_ == 42) {
+       return (com.halloapp.proto.server.TruncWhisperKeysCollection) payload_;
+    }
+    return com.halloapp.proto.server.TruncWhisperKeysCollection.getDefaultInstance();
+  }
+  /**
+   * <code>.server.TruncWhisperKeysCollection trunc_whisper_keys_collection = 42;</code>
+   */
+  private void setTruncWhisperKeysCollection(com.halloapp.proto.server.TruncWhisperKeysCollection value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 42;
+  }
+  /**
+   * <code>.server.TruncWhisperKeysCollection trunc_whisper_keys_collection = 42;</code>
+   */
+  private void mergeTruncWhisperKeysCollection(com.halloapp.proto.server.TruncWhisperKeysCollection value) {
+    value.getClass();
+  if (payloadCase_ == 42 &&
+        payload_ != com.halloapp.proto.server.TruncWhisperKeysCollection.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.TruncWhisperKeysCollection.newBuilder((com.halloapp.proto.server.TruncWhisperKeysCollection) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 42;
+  }
+  /**
+   * <code>.server.TruncWhisperKeysCollection trunc_whisper_keys_collection = 42;</code>
+   */
+  private void clearTruncWhisperKeysCollection() {
+    if (payloadCase_ == 42) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -3639,6 +3951,294 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.WhisperKeysCollection whisper_keys_collection = 37;</code>
+     */
+    @java.lang.Override
+    public boolean hasWhisperKeysCollection() {
+      return instance.hasWhisperKeysCollection();
+    }
+    /**
+     * <code>.server.WhisperKeysCollection whisper_keys_collection = 37;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.WhisperKeysCollection getWhisperKeysCollection() {
+      return instance.getWhisperKeysCollection();
+    }
+    /**
+     * <code>.server.WhisperKeysCollection whisper_keys_collection = 37;</code>
+     */
+    public Builder setWhisperKeysCollection(com.halloapp.proto.server.WhisperKeysCollection value) {
+      copyOnWrite();
+      instance.setWhisperKeysCollection(value);
+      return this;
+    }
+    /**
+     * <code>.server.WhisperKeysCollection whisper_keys_collection = 37;</code>
+     */
+    public Builder setWhisperKeysCollection(
+        com.halloapp.proto.server.WhisperKeysCollection.Builder builderForValue) {
+      copyOnWrite();
+      instance.setWhisperKeysCollection(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.WhisperKeysCollection whisper_keys_collection = 37;</code>
+     */
+    public Builder mergeWhisperKeysCollection(com.halloapp.proto.server.WhisperKeysCollection value) {
+      copyOnWrite();
+      instance.mergeWhisperKeysCollection(value);
+      return this;
+    }
+    /**
+     * <code>.server.WhisperKeysCollection whisper_keys_collection = 37;</code>
+     */
+    public Builder clearWhisperKeysCollection() {
+      copyOnWrite();
+      instance.clearWhisperKeysCollection();
+      return this;
+    }
+
+    /**
+     * <code>.server.GetCallServers get_call_servers = 38;</code>
+     */
+    @java.lang.Override
+    public boolean hasGetCallServers() {
+      return instance.hasGetCallServers();
+    }
+    /**
+     * <code>.server.GetCallServers get_call_servers = 38;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.GetCallServers getGetCallServers() {
+      return instance.getGetCallServers();
+    }
+    /**
+     * <code>.server.GetCallServers get_call_servers = 38;</code>
+     */
+    public Builder setGetCallServers(com.halloapp.proto.server.GetCallServers value) {
+      copyOnWrite();
+      instance.setGetCallServers(value);
+      return this;
+    }
+    /**
+     * <code>.server.GetCallServers get_call_servers = 38;</code>
+     */
+    public Builder setGetCallServers(
+        com.halloapp.proto.server.GetCallServers.Builder builderForValue) {
+      copyOnWrite();
+      instance.setGetCallServers(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.GetCallServers get_call_servers = 38;</code>
+     */
+    public Builder mergeGetCallServers(com.halloapp.proto.server.GetCallServers value) {
+      copyOnWrite();
+      instance.mergeGetCallServers(value);
+      return this;
+    }
+    /**
+     * <code>.server.GetCallServers get_call_servers = 38;</code>
+     */
+    public Builder clearGetCallServers() {
+      copyOnWrite();
+      instance.clearGetCallServers();
+      return this;
+    }
+
+    /**
+     * <code>.server.GetCallServersResult get_call_servers_result = 39;</code>
+     */
+    @java.lang.Override
+    public boolean hasGetCallServersResult() {
+      return instance.hasGetCallServersResult();
+    }
+    /**
+     * <code>.server.GetCallServersResult get_call_servers_result = 39;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.GetCallServersResult getGetCallServersResult() {
+      return instance.getGetCallServersResult();
+    }
+    /**
+     * <code>.server.GetCallServersResult get_call_servers_result = 39;</code>
+     */
+    public Builder setGetCallServersResult(com.halloapp.proto.server.GetCallServersResult value) {
+      copyOnWrite();
+      instance.setGetCallServersResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.GetCallServersResult get_call_servers_result = 39;</code>
+     */
+    public Builder setGetCallServersResult(
+        com.halloapp.proto.server.GetCallServersResult.Builder builderForValue) {
+      copyOnWrite();
+      instance.setGetCallServersResult(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.GetCallServersResult get_call_servers_result = 39;</code>
+     */
+    public Builder mergeGetCallServersResult(com.halloapp.proto.server.GetCallServersResult value) {
+      copyOnWrite();
+      instance.mergeGetCallServersResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.GetCallServersResult get_call_servers_result = 39;</code>
+     */
+    public Builder clearGetCallServersResult() {
+      copyOnWrite();
+      instance.clearGetCallServersResult();
+      return this;
+    }
+
+    /**
+     * <code>.server.StartCall start_call = 40;</code>
+     */
+    @java.lang.Override
+    public boolean hasStartCall() {
+      return instance.hasStartCall();
+    }
+    /**
+     * <code>.server.StartCall start_call = 40;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.StartCall getStartCall() {
+      return instance.getStartCall();
+    }
+    /**
+     * <code>.server.StartCall start_call = 40;</code>
+     */
+    public Builder setStartCall(com.halloapp.proto.server.StartCall value) {
+      copyOnWrite();
+      instance.setStartCall(value);
+      return this;
+    }
+    /**
+     * <code>.server.StartCall start_call = 40;</code>
+     */
+    public Builder setStartCall(
+        com.halloapp.proto.server.StartCall.Builder builderForValue) {
+      copyOnWrite();
+      instance.setStartCall(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.StartCall start_call = 40;</code>
+     */
+    public Builder mergeStartCall(com.halloapp.proto.server.StartCall value) {
+      copyOnWrite();
+      instance.mergeStartCall(value);
+      return this;
+    }
+    /**
+     * <code>.server.StartCall start_call = 40;</code>
+     */
+    public Builder clearStartCall() {
+      copyOnWrite();
+      instance.clearStartCall();
+      return this;
+    }
+
+    /**
+     * <code>.server.StartCallResult start_call_result = 41;</code>
+     */
+    @java.lang.Override
+    public boolean hasStartCallResult() {
+      return instance.hasStartCallResult();
+    }
+    /**
+     * <code>.server.StartCallResult start_call_result = 41;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.StartCallResult getStartCallResult() {
+      return instance.getStartCallResult();
+    }
+    /**
+     * <code>.server.StartCallResult start_call_result = 41;</code>
+     */
+    public Builder setStartCallResult(com.halloapp.proto.server.StartCallResult value) {
+      copyOnWrite();
+      instance.setStartCallResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.StartCallResult start_call_result = 41;</code>
+     */
+    public Builder setStartCallResult(
+        com.halloapp.proto.server.StartCallResult.Builder builderForValue) {
+      copyOnWrite();
+      instance.setStartCallResult(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.StartCallResult start_call_result = 41;</code>
+     */
+    public Builder mergeStartCallResult(com.halloapp.proto.server.StartCallResult value) {
+      copyOnWrite();
+      instance.mergeStartCallResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.StartCallResult start_call_result = 41;</code>
+     */
+    public Builder clearStartCallResult() {
+      copyOnWrite();
+      instance.clearStartCallResult();
+      return this;
+    }
+
+    /**
+     * <code>.server.TruncWhisperKeysCollection trunc_whisper_keys_collection = 42;</code>
+     */
+    @java.lang.Override
+    public boolean hasTruncWhisperKeysCollection() {
+      return instance.hasTruncWhisperKeysCollection();
+    }
+    /**
+     * <code>.server.TruncWhisperKeysCollection trunc_whisper_keys_collection = 42;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.TruncWhisperKeysCollection getTruncWhisperKeysCollection() {
+      return instance.getTruncWhisperKeysCollection();
+    }
+    /**
+     * <code>.server.TruncWhisperKeysCollection trunc_whisper_keys_collection = 42;</code>
+     */
+    public Builder setTruncWhisperKeysCollection(com.halloapp.proto.server.TruncWhisperKeysCollection value) {
+      copyOnWrite();
+      instance.setTruncWhisperKeysCollection(value);
+      return this;
+    }
+    /**
+     * <code>.server.TruncWhisperKeysCollection trunc_whisper_keys_collection = 42;</code>
+     */
+    public Builder setTruncWhisperKeysCollection(
+        com.halloapp.proto.server.TruncWhisperKeysCollection.Builder builderForValue) {
+      copyOnWrite();
+      instance.setTruncWhisperKeysCollection(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.TruncWhisperKeysCollection trunc_whisper_keys_collection = 42;</code>
+     */
+    public Builder mergeTruncWhisperKeysCollection(com.halloapp.proto.server.TruncWhisperKeysCollection value) {
+      copyOnWrite();
+      instance.mergeTruncWhisperKeysCollection(value);
+      return this;
+    }
+    /**
+     * <code>.server.TruncWhisperKeysCollection trunc_whisper_keys_collection = 42;</code>
+     */
+    public Builder clearTruncWhisperKeysCollection() {
+      copyOnWrite();
+      instance.clearTruncWhisperKeysCollection();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -3690,14 +4290,20 @@ public  final class Iq extends
             com.halloapp.proto.server.ContactSyncError.class,
             com.halloapp.proto.server.ClientOtpRequest.class,
             com.halloapp.proto.server.ClientOtpResponse.class,
+            com.halloapp.proto.server.WhisperKeysCollection.class,
+            com.halloapp.proto.server.GetCallServers.class,
+            com.halloapp.proto.server.GetCallServersResult.class,
+            com.halloapp.proto.server.StartCall.class,
+            com.halloapp.proto.server.StartCallResult.class,
+            com.halloapp.proto.server.TruncWhisperKeysCollection.class,
           };
           java.lang.String info =
-              "\u0000!\u0001\u0000\u0001$!\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
-              "<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<" +
-              "\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013" +
+              "\u0000\'\u0001\u0000\u0001*\'\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000" +
+              "\u0004<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b" +
+              "<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013" +
               "<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019<\u0000" +
               "\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001f<\u0000 <\u0000!<\u0000\"<\u0000#<\u0000" +
-              "$<\u0000";
+              "$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000*<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

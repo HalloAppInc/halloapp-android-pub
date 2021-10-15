@@ -31,16 +31,16 @@ public interface GroupDecryptionReportOrBuilder extends
       getReasonBytes();
 
   /**
-   * <code>string msg_id = 3;</code>
-   * @return The msgId.
+   * <code>string content_id = 3;</code>
+   * @return The contentId.
    */
-  java.lang.String getMsgId();
+  java.lang.String getContentId();
   /**
-   * <code>string msg_id = 3;</code>
-   * @return The bytes for msgId.
+   * <code>string content_id = 3;</code>
+   * @return The bytes for contentId.
    */
   com.google.protobuf.ByteString
-      getMsgIdBytes();
+      getContentIdBytes();
 
   /**
    * <code>string gid = 4;</code>

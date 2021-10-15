@@ -59,7 +59,7 @@ public interface FeedItemOrBuilder extends
    * Sent by the publisher.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
    */
   java.util.List<com.halloapp.proto.server.SenderStateBundle> 
       getSenderStateBundlesList();
@@ -68,7 +68,7 @@ public interface FeedItemOrBuilder extends
    * Sent by the publisher.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
    */
   com.halloapp.proto.server.SenderStateBundle getSenderStateBundles(int index);
   /**
@@ -76,7 +76,7 @@ public interface FeedItemOrBuilder extends
    * Sent by the publisher.
    * </pre>
    *
-   * <code>repeated .server.SenderStateBundle sender_state_bundles = 7;</code>
+   * <code>repeated .server.SenderStateBundle sender_state_bundles = 5;</code>
    */
   int getSenderStateBundlesCount();
 
@@ -85,7 +85,7 @@ public interface FeedItemOrBuilder extends
    * Meant for the receiver, computed by the server using `sender_state_bundles`.
    * </pre>
    *
-   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+   * <code>.server.SenderStateWithKeyInfo sender_state = 6;</code>
    * @return Whether the senderState field is set.
    */
   boolean hasSenderState();
@@ -94,7 +94,7 @@ public interface FeedItemOrBuilder extends
    * Meant for the receiver, computed by the server using `sender_state_bundles`.
    * </pre>
    *
-   * <code>.server.SenderStateWithKeyInfo sender_state = 8;</code>
+   * <code>.server.SenderStateWithKeyInfo sender_state = 6;</code>
    * @return The senderState.
    */
   com.halloapp.proto.server.SenderStateWithKeyInfo getSenderState();

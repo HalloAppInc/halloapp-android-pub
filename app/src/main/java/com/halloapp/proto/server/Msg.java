@@ -43,6 +43,10 @@ public  final class Msg extends
      * <code>CHAT = 4;</code>
      */
     CHAT(4),
+    /**
+     * <code>CALL = 5;</code>
+     */
+    CALL(5),
     UNRECOGNIZED(-1),
     ;
 
@@ -70,6 +74,10 @@ public  final class Msg extends
      * <code>CHAT = 4;</code>
      */
     public static final int CHAT_VALUE = 4;
+    /**
+     * <code>CALL = 5;</code>
+     */
+    public static final int CALL_VALUE = 5;
 
 
     @java.lang.Override
@@ -98,6 +106,7 @@ public  final class Msg extends
         case 2: return GROUPCHAT;
         case 3: return HEADLINE;
         case 4: return CHAT;
+        case 5: return CALL;
         default: return null;
       }
     }
@@ -168,7 +177,11 @@ public  final class Msg extends
     REQUEST_LOGS(31),
     WAKEUP(32),
     HOME_FEED_REREQUEST(33),
-    HISTORICAL_CONTENT(34),
+    INCOMING_CALL(34),
+    CALL_RINGING(35),
+    ANSWER_CALL(36),
+    END_CALL(37),
+    ICE_CANDIDATE(38),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -211,7 +224,11 @@ public  final class Msg extends
         case 31: return REQUEST_LOGS;
         case 32: return WAKEUP;
         case 33: return HOME_FEED_REREQUEST;
-        case 34: return HISTORICAL_CONTENT;
+        case 34: return INCOMING_CALL;
+        case 35: return CALL_RINGING;
+        case 36: return ANSWER_CALL;
+        case 37: return END_CALL;
+        case 38: return ICE_CANDIDATE;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -1744,40 +1761,40 @@ public  final class Msg extends
     }
   }
 
-  public static final int HISTORICAL_CONTENT_FIELD_NUMBER = 34;
+  public static final int INCOMING_CALL_FIELD_NUMBER = 34;
   /**
-   * <code>.server.FeedItems historical_content = 34;</code>
+   * <code>.server.IncomingCall incoming_call = 34;</code>
    */
   @java.lang.Override
-  public boolean hasHistoricalContent() {
+  public boolean hasIncomingCall() {
     return payloadCase_ == 34;
   }
   /**
-   * <code>.server.FeedItems historical_content = 34;</code>
+   * <code>.server.IncomingCall incoming_call = 34;</code>
    */
   @java.lang.Override
-  public com.halloapp.proto.server.FeedItems getHistoricalContent() {
+  public com.halloapp.proto.server.IncomingCall getIncomingCall() {
     if (payloadCase_ == 34) {
-       return (com.halloapp.proto.server.FeedItems) payload_;
+       return (com.halloapp.proto.server.IncomingCall) payload_;
     }
-    return com.halloapp.proto.server.FeedItems.getDefaultInstance();
+    return com.halloapp.proto.server.IncomingCall.getDefaultInstance();
   }
   /**
-   * <code>.server.FeedItems historical_content = 34;</code>
+   * <code>.server.IncomingCall incoming_call = 34;</code>
    */
-  private void setHistoricalContent(com.halloapp.proto.server.FeedItems value) {
+  private void setIncomingCall(com.halloapp.proto.server.IncomingCall value) {
     value.getClass();
   payload_ = value;
     payloadCase_ = 34;
   }
   /**
-   * <code>.server.FeedItems historical_content = 34;</code>
+   * <code>.server.IncomingCall incoming_call = 34;</code>
    */
-  private void mergeHistoricalContent(com.halloapp.proto.server.FeedItems value) {
+  private void mergeIncomingCall(com.halloapp.proto.server.IncomingCall value) {
     value.getClass();
   if (payloadCase_ == 34 &&
-        payload_ != com.halloapp.proto.server.FeedItems.getDefaultInstance()) {
-      payload_ = com.halloapp.proto.server.FeedItems.newBuilder((com.halloapp.proto.server.FeedItems) payload_)
+        payload_ != com.halloapp.proto.server.IncomingCall.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.IncomingCall.newBuilder((com.halloapp.proto.server.IncomingCall) payload_)
           .mergeFrom(value).buildPartial();
     } else {
       payload_ = value;
@@ -1785,10 +1802,210 @@ public  final class Msg extends
     payloadCase_ = 34;
   }
   /**
-   * <code>.server.FeedItems historical_content = 34;</code>
+   * <code>.server.IncomingCall incoming_call = 34;</code>
    */
-  private void clearHistoricalContent() {
+  private void clearIncomingCall() {
     if (payloadCase_ == 34) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int CALL_RINGING_FIELD_NUMBER = 35;
+  /**
+   * <code>.server.CallRinging call_ringing = 35;</code>
+   */
+  @java.lang.Override
+  public boolean hasCallRinging() {
+    return payloadCase_ == 35;
+  }
+  /**
+   * <code>.server.CallRinging call_ringing = 35;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.CallRinging getCallRinging() {
+    if (payloadCase_ == 35) {
+       return (com.halloapp.proto.server.CallRinging) payload_;
+    }
+    return com.halloapp.proto.server.CallRinging.getDefaultInstance();
+  }
+  /**
+   * <code>.server.CallRinging call_ringing = 35;</code>
+   */
+  private void setCallRinging(com.halloapp.proto.server.CallRinging value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 35;
+  }
+  /**
+   * <code>.server.CallRinging call_ringing = 35;</code>
+   */
+  private void mergeCallRinging(com.halloapp.proto.server.CallRinging value) {
+    value.getClass();
+  if (payloadCase_ == 35 &&
+        payload_ != com.halloapp.proto.server.CallRinging.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.CallRinging.newBuilder((com.halloapp.proto.server.CallRinging) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 35;
+  }
+  /**
+   * <code>.server.CallRinging call_ringing = 35;</code>
+   */
+  private void clearCallRinging() {
+    if (payloadCase_ == 35) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int ANSWER_CALL_FIELD_NUMBER = 36;
+  /**
+   * <code>.server.AnswerCall answer_call = 36;</code>
+   */
+  @java.lang.Override
+  public boolean hasAnswerCall() {
+    return payloadCase_ == 36;
+  }
+  /**
+   * <code>.server.AnswerCall answer_call = 36;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.AnswerCall getAnswerCall() {
+    if (payloadCase_ == 36) {
+       return (com.halloapp.proto.server.AnswerCall) payload_;
+    }
+    return com.halloapp.proto.server.AnswerCall.getDefaultInstance();
+  }
+  /**
+   * <code>.server.AnswerCall answer_call = 36;</code>
+   */
+  private void setAnswerCall(com.halloapp.proto.server.AnswerCall value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 36;
+  }
+  /**
+   * <code>.server.AnswerCall answer_call = 36;</code>
+   */
+  private void mergeAnswerCall(com.halloapp.proto.server.AnswerCall value) {
+    value.getClass();
+  if (payloadCase_ == 36 &&
+        payload_ != com.halloapp.proto.server.AnswerCall.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.AnswerCall.newBuilder((com.halloapp.proto.server.AnswerCall) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 36;
+  }
+  /**
+   * <code>.server.AnswerCall answer_call = 36;</code>
+   */
+  private void clearAnswerCall() {
+    if (payloadCase_ == 36) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int END_CALL_FIELD_NUMBER = 37;
+  /**
+   * <code>.server.EndCall end_call = 37;</code>
+   */
+  @java.lang.Override
+  public boolean hasEndCall() {
+    return payloadCase_ == 37;
+  }
+  /**
+   * <code>.server.EndCall end_call = 37;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.EndCall getEndCall() {
+    if (payloadCase_ == 37) {
+       return (com.halloapp.proto.server.EndCall) payload_;
+    }
+    return com.halloapp.proto.server.EndCall.getDefaultInstance();
+  }
+  /**
+   * <code>.server.EndCall end_call = 37;</code>
+   */
+  private void setEndCall(com.halloapp.proto.server.EndCall value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 37;
+  }
+  /**
+   * <code>.server.EndCall end_call = 37;</code>
+   */
+  private void mergeEndCall(com.halloapp.proto.server.EndCall value) {
+    value.getClass();
+  if (payloadCase_ == 37 &&
+        payload_ != com.halloapp.proto.server.EndCall.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.EndCall.newBuilder((com.halloapp.proto.server.EndCall) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 37;
+  }
+  /**
+   * <code>.server.EndCall end_call = 37;</code>
+   */
+  private void clearEndCall() {
+    if (payloadCase_ == 37) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int ICE_CANDIDATE_FIELD_NUMBER = 38;
+  /**
+   * <code>.server.IceCandicate ice_candidate = 38;</code>
+   */
+  @java.lang.Override
+  public boolean hasIceCandidate() {
+    return payloadCase_ == 38;
+  }
+  /**
+   * <code>.server.IceCandicate ice_candidate = 38;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.IceCandicate getIceCandidate() {
+    if (payloadCase_ == 38) {
+       return (com.halloapp.proto.server.IceCandicate) payload_;
+    }
+    return com.halloapp.proto.server.IceCandicate.getDefaultInstance();
+  }
+  /**
+   * <code>.server.IceCandicate ice_candidate = 38;</code>
+   */
+  private void setIceCandidate(com.halloapp.proto.server.IceCandicate value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 38;
+  }
+  /**
+   * <code>.server.IceCandicate ice_candidate = 38;</code>
+   */
+  private void mergeIceCandidate(com.halloapp.proto.server.IceCandicate value) {
+    value.getClass();
+  if (payloadCase_ == 38 &&
+        payload_ != com.halloapp.proto.server.IceCandicate.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.IceCandicate.newBuilder((com.halloapp.proto.server.IceCandicate) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 38;
+  }
+  /**
+   * <code>.server.IceCandicate ice_candidate = 38;</code>
+   */
+  private void clearIceCandidate() {
+    if (payloadCase_ == 38) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -3425,50 +3642,242 @@ public  final class Msg extends
     }
 
     /**
-     * <code>.server.FeedItems historical_content = 34;</code>
+     * <code>.server.IncomingCall incoming_call = 34;</code>
      */
     @java.lang.Override
-    public boolean hasHistoricalContent() {
-      return instance.hasHistoricalContent();
+    public boolean hasIncomingCall() {
+      return instance.hasIncomingCall();
     }
     /**
-     * <code>.server.FeedItems historical_content = 34;</code>
+     * <code>.server.IncomingCall incoming_call = 34;</code>
      */
     @java.lang.Override
-    public com.halloapp.proto.server.FeedItems getHistoricalContent() {
-      return instance.getHistoricalContent();
+    public com.halloapp.proto.server.IncomingCall getIncomingCall() {
+      return instance.getIncomingCall();
     }
     /**
-     * <code>.server.FeedItems historical_content = 34;</code>
+     * <code>.server.IncomingCall incoming_call = 34;</code>
      */
-    public Builder setHistoricalContent(com.halloapp.proto.server.FeedItems value) {
+    public Builder setIncomingCall(com.halloapp.proto.server.IncomingCall value) {
       copyOnWrite();
-      instance.setHistoricalContent(value);
+      instance.setIncomingCall(value);
       return this;
     }
     /**
-     * <code>.server.FeedItems historical_content = 34;</code>
+     * <code>.server.IncomingCall incoming_call = 34;</code>
      */
-    public Builder setHistoricalContent(
-        com.halloapp.proto.server.FeedItems.Builder builderForValue) {
+    public Builder setIncomingCall(
+        com.halloapp.proto.server.IncomingCall.Builder builderForValue) {
       copyOnWrite();
-      instance.setHistoricalContent(builderForValue.build());
+      instance.setIncomingCall(builderForValue.build());
       return this;
     }
     /**
-     * <code>.server.FeedItems historical_content = 34;</code>
+     * <code>.server.IncomingCall incoming_call = 34;</code>
      */
-    public Builder mergeHistoricalContent(com.halloapp.proto.server.FeedItems value) {
+    public Builder mergeIncomingCall(com.halloapp.proto.server.IncomingCall value) {
       copyOnWrite();
-      instance.mergeHistoricalContent(value);
+      instance.mergeIncomingCall(value);
       return this;
     }
     /**
-     * <code>.server.FeedItems historical_content = 34;</code>
+     * <code>.server.IncomingCall incoming_call = 34;</code>
      */
-    public Builder clearHistoricalContent() {
+    public Builder clearIncomingCall() {
       copyOnWrite();
-      instance.clearHistoricalContent();
+      instance.clearIncomingCall();
+      return this;
+    }
+
+    /**
+     * <code>.server.CallRinging call_ringing = 35;</code>
+     */
+    @java.lang.Override
+    public boolean hasCallRinging() {
+      return instance.hasCallRinging();
+    }
+    /**
+     * <code>.server.CallRinging call_ringing = 35;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.CallRinging getCallRinging() {
+      return instance.getCallRinging();
+    }
+    /**
+     * <code>.server.CallRinging call_ringing = 35;</code>
+     */
+    public Builder setCallRinging(com.halloapp.proto.server.CallRinging value) {
+      copyOnWrite();
+      instance.setCallRinging(value);
+      return this;
+    }
+    /**
+     * <code>.server.CallRinging call_ringing = 35;</code>
+     */
+    public Builder setCallRinging(
+        com.halloapp.proto.server.CallRinging.Builder builderForValue) {
+      copyOnWrite();
+      instance.setCallRinging(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.CallRinging call_ringing = 35;</code>
+     */
+    public Builder mergeCallRinging(com.halloapp.proto.server.CallRinging value) {
+      copyOnWrite();
+      instance.mergeCallRinging(value);
+      return this;
+    }
+    /**
+     * <code>.server.CallRinging call_ringing = 35;</code>
+     */
+    public Builder clearCallRinging() {
+      copyOnWrite();
+      instance.clearCallRinging();
+      return this;
+    }
+
+    /**
+     * <code>.server.AnswerCall answer_call = 36;</code>
+     */
+    @java.lang.Override
+    public boolean hasAnswerCall() {
+      return instance.hasAnswerCall();
+    }
+    /**
+     * <code>.server.AnswerCall answer_call = 36;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.AnswerCall getAnswerCall() {
+      return instance.getAnswerCall();
+    }
+    /**
+     * <code>.server.AnswerCall answer_call = 36;</code>
+     */
+    public Builder setAnswerCall(com.halloapp.proto.server.AnswerCall value) {
+      copyOnWrite();
+      instance.setAnswerCall(value);
+      return this;
+    }
+    /**
+     * <code>.server.AnswerCall answer_call = 36;</code>
+     */
+    public Builder setAnswerCall(
+        com.halloapp.proto.server.AnswerCall.Builder builderForValue) {
+      copyOnWrite();
+      instance.setAnswerCall(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.AnswerCall answer_call = 36;</code>
+     */
+    public Builder mergeAnswerCall(com.halloapp.proto.server.AnswerCall value) {
+      copyOnWrite();
+      instance.mergeAnswerCall(value);
+      return this;
+    }
+    /**
+     * <code>.server.AnswerCall answer_call = 36;</code>
+     */
+    public Builder clearAnswerCall() {
+      copyOnWrite();
+      instance.clearAnswerCall();
+      return this;
+    }
+
+    /**
+     * <code>.server.EndCall end_call = 37;</code>
+     */
+    @java.lang.Override
+    public boolean hasEndCall() {
+      return instance.hasEndCall();
+    }
+    /**
+     * <code>.server.EndCall end_call = 37;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.EndCall getEndCall() {
+      return instance.getEndCall();
+    }
+    /**
+     * <code>.server.EndCall end_call = 37;</code>
+     */
+    public Builder setEndCall(com.halloapp.proto.server.EndCall value) {
+      copyOnWrite();
+      instance.setEndCall(value);
+      return this;
+    }
+    /**
+     * <code>.server.EndCall end_call = 37;</code>
+     */
+    public Builder setEndCall(
+        com.halloapp.proto.server.EndCall.Builder builderForValue) {
+      copyOnWrite();
+      instance.setEndCall(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.EndCall end_call = 37;</code>
+     */
+    public Builder mergeEndCall(com.halloapp.proto.server.EndCall value) {
+      copyOnWrite();
+      instance.mergeEndCall(value);
+      return this;
+    }
+    /**
+     * <code>.server.EndCall end_call = 37;</code>
+     */
+    public Builder clearEndCall() {
+      copyOnWrite();
+      instance.clearEndCall();
+      return this;
+    }
+
+    /**
+     * <code>.server.IceCandicate ice_candidate = 38;</code>
+     */
+    @java.lang.Override
+    public boolean hasIceCandidate() {
+      return instance.hasIceCandidate();
+    }
+    /**
+     * <code>.server.IceCandicate ice_candidate = 38;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.IceCandicate getIceCandidate() {
+      return instance.getIceCandidate();
+    }
+    /**
+     * <code>.server.IceCandicate ice_candidate = 38;</code>
+     */
+    public Builder setIceCandidate(com.halloapp.proto.server.IceCandicate value) {
+      copyOnWrite();
+      instance.setIceCandidate(value);
+      return this;
+    }
+    /**
+     * <code>.server.IceCandicate ice_candidate = 38;</code>
+     */
+    public Builder setIceCandidate(
+        com.halloapp.proto.server.IceCandicate.Builder builderForValue) {
+      copyOnWrite();
+      instance.setIceCandidate(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.IceCandicate ice_candidate = 38;</code>
+     */
+    public Builder mergeIceCandidate(com.halloapp.proto.server.IceCandicate value) {
+      copyOnWrite();
+      instance.mergeIceCandidate(value);
+      return this;
+    }
+    /**
+     * <code>.server.IceCandicate ice_candidate = 38;</code>
+     */
+    public Builder clearIceCandidate() {
+      copyOnWrite();
+      instance.clearIceCandidate();
       return this;
     }
 
@@ -3579,15 +3988,19 @@ public  final class Msg extends
             com.halloapp.proto.server.RequestLogs.class,
             com.halloapp.proto.server.WakeUp.class,
             com.halloapp.proto.server.HomeFeedRerequest.class,
-            com.halloapp.proto.server.FeedItems.class,
+            com.halloapp.proto.server.IncomingCall.class,
+            com.halloapp.proto.server.CallRinging.class,
+            com.halloapp.proto.server.AnswerCall.class,
+            com.halloapp.proto.server.EndCall.class,
+            com.halloapp.proto.server.IceCandicate.class,
           };
           java.lang.String info =
-              "\u0000\"\u0001\u0000\u0001\"\"\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002" +
-              "\u0004\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b" +
-              "<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012" +
-              "<\u0000\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000" +
-              "\u0019\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f" +
-              "<\u0000 <\u0000!<\u0000\"<\u0000";
+              "\u0000&\u0001\u0000\u0001&&\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
+              "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
+              "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
+              "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
+              "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
+              " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

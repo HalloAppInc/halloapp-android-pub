@@ -227,6 +227,52 @@ public  final class AuthRequest extends
     
   }
 
+  public static final int DEVICE_INFO_FIELD_NUMBER = 6;
+  private com.halloapp.proto.server.DeviceInfo deviceInfo_;
+  /**
+   * <code>.server.DeviceInfo device_info = 6;</code>
+   */
+  @java.lang.Override
+  public boolean hasDeviceInfo() {
+    return deviceInfo_ != null;
+  }
+  /**
+   * <code>.server.DeviceInfo device_info = 6;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.DeviceInfo getDeviceInfo() {
+    return deviceInfo_ == null ? com.halloapp.proto.server.DeviceInfo.getDefaultInstance() : deviceInfo_;
+  }
+  /**
+   * <code>.server.DeviceInfo device_info = 6;</code>
+   */
+  private void setDeviceInfo(com.halloapp.proto.server.DeviceInfo value) {
+    value.getClass();
+  deviceInfo_ = value;
+    
+    }
+  /**
+   * <code>.server.DeviceInfo device_info = 6;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeDeviceInfo(com.halloapp.proto.server.DeviceInfo value) {
+    value.getClass();
+  if (deviceInfo_ != null &&
+        deviceInfo_ != com.halloapp.proto.server.DeviceInfo.getDefaultInstance()) {
+      deviceInfo_ =
+        com.halloapp.proto.server.DeviceInfo.newBuilder(deviceInfo_).mergeFrom(value).buildPartial();
+    } else {
+      deviceInfo_ = value;
+    }
+    
+  }
+  /**
+   * <code>.server.DeviceInfo device_info = 6;</code>
+   */
+  private void clearDeviceInfo() {  deviceInfo_ = null;
+    
+  }
+
   public static com.halloapp.proto.server.AuthRequest parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -542,6 +588,53 @@ public  final class AuthRequest extends
       return this;
     }
 
+    /**
+     * <code>.server.DeviceInfo device_info = 6;</code>
+     */
+    @java.lang.Override
+    public boolean hasDeviceInfo() {
+      return instance.hasDeviceInfo();
+    }
+    /**
+     * <code>.server.DeviceInfo device_info = 6;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.DeviceInfo getDeviceInfo() {
+      return instance.getDeviceInfo();
+    }
+    /**
+     * <code>.server.DeviceInfo device_info = 6;</code>
+     */
+    public Builder setDeviceInfo(com.halloapp.proto.server.DeviceInfo value) {
+      copyOnWrite();
+      instance.setDeviceInfo(value);
+      return this;
+      }
+    /**
+     * <code>.server.DeviceInfo device_info = 6;</code>
+     */
+    public Builder setDeviceInfo(
+        com.halloapp.proto.server.DeviceInfo.Builder builderForValue) {
+      copyOnWrite();
+      instance.setDeviceInfo(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.DeviceInfo device_info = 6;</code>
+     */
+    public Builder mergeDeviceInfo(com.halloapp.proto.server.DeviceInfo value) {
+      copyOnWrite();
+      instance.mergeDeviceInfo(value);
+      return this;
+    }
+    /**
+     * <code>.server.DeviceInfo device_info = 6;</code>
+     */
+    public Builder clearDeviceInfo() {  copyOnWrite();
+      instance.clearDeviceInfo();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.AuthRequest)
   }
   @java.lang.Override
@@ -563,10 +656,11 @@ public  final class AuthRequest extends
             "clientMode_",
             "clientVersion_",
             "resource_",
+            "deviceInfo_",
           };
           java.lang.String info =
-              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0000\u0000\u0001\u0002\u0002\u0208" +
-              "\u0003\t\u0004\t\u0005\u0208";
+              "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\u0002\u0002\u0208" +
+              "\u0003\t\u0004\t\u0005\u0208\u0006\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
