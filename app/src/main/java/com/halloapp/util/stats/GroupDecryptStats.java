@@ -50,7 +50,7 @@ public class GroupDecryptStats {
         }
         builder.setResult(failureReason == null ? GroupDecryptionReport.Status.OK : GroupDecryptionReport.Status.FAIL)
                 .setItemType(isComment ? GroupDecryptionReport.ItemType.COMMENT : GroupDecryptionReport.ItemType.POST)
-                .setMsgId(messageId)
+                .setContentId(messageId)
                 .setRerequestCount(rerequestCount)
                 .setTimeTakenS((int)timeTakenS);
         return builder.build();
