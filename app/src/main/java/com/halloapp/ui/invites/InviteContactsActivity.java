@@ -32,6 +32,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
@@ -228,7 +229,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
     }
 
     private String getInviteText(@NonNull Contact contact) {
-        return getString(R.string.invite_text_with_name_and_number, contact.getShortName(), contact.getDisplayPhone());
+        return getString(R.string.invite_text_with_name_and_number, contact.getShortName(), contact.getDisplayPhone(), Constants.DOWNLOAD_LINK_URL);
     }
 
     private void sendInviteSms(@NonNull Contact contact) {

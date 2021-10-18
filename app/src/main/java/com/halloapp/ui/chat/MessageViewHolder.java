@@ -46,6 +46,7 @@ import com.halloapp.content.Message;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.media.VoiceNotePlayer;
+import com.halloapp.ui.ActivityCenterActivity;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
@@ -62,6 +63,8 @@ import com.halloapp.widget.MessageTextLayout;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.widget.SwipeListItemHelper;
 import com.halloapp.xmpp.Connection;
+
+import java.util.Locale;
 
 import me.relex.circleindicator.CircleIndicator3;
 
@@ -214,7 +217,13 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         }
 
         if (tombstoneMessage != null) {
-            tombstoneMessage.setText(Html.fromHtml(tombstoneMessage.getContext().getString(R.string.message_tombstone_placeholder)));
+            CharSequence text = Html.fromHtml(tombstoneMessage.getContext().getString(R.string.message_tombstone_placeholder));
+            text = StringUtils.replaceLink(tombstoneMessage.getContext(), text, "learn-more", () -> {
+                Uri uri = Uri.parse(Constants.FAQ_URL);
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                parent.startActivity(intent);
+            });
+            tombstoneMessage.setText(text);
             tombstoneMessage.setMovementMethod(LinkMovementMethod.getInstance());
         }
 

@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
@@ -27,11 +28,13 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.zxing.client.android.Intents;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 
@@ -108,8 +111,15 @@ public class KeyVerificationActivity extends HalloActivity {
             } else {
                 tv.setVisibility(View.VISIBLE);
                 tv.setText(name);
+
                 TextView explanationText = findViewById(R.id.explanation);
-                explanationText.setText(Html.fromHtml(getString(R.string.key_verification_explanation, name)));
+                CharSequence text = Html.fromHtml(getString(R.string.key_verification_explanation, name));
+                text = StringUtils.replaceLink(explanationText.getContext(), text, "learn-more", () -> {
+                    Uri uri = Uri.parse(Constants.ENCRYPTED_CHAT_BLOG_URL);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                });
+                explanationText.setText(text);
                 explanationText.setMovementMethod(LinkMovementMethod.getInstance());
             }
         });
