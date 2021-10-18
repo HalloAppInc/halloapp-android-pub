@@ -224,7 +224,9 @@ Buka layar pengaturan aplikasi untuk mengubah izin app."</string>
     <string name="action_save">"Simpan"</string>
     <string name="invite_friends">"Undang teman &amp; keluarga"</string>
     <string name="invite_friend_chooser_title">"Undang %s"</string>
-    <string name="invite_text_with_name_and_number">"Hai %1$s, saya memiliki undangan bagi Anda untuk bergabung dengan saya di HalloApp - jaringan hubungan nyata bagi orang-orang terdekat saya. Gunakan %2$s untuk mendaftar. Dapatkan di https://halloapp.com/dl"</string>
+
+    <!-- Fuzzy -->
+    <string name="invite_text_with_name_and_number">"Hai %1$s, saya memiliki undangan bagi Anda untuk bergabung dengan saya di HalloApp - jaringan hubungan nyata bagi orang-orang terdekat saya. Gunakan %2$s untuk mendaftar. Dapatkan di %3$s"</string>
     <string name="name_hint">"Nama Anda"</string>
     <string name="name_must_be_specified">"Nama harus ditentukan"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -443,7 +445,7 @@ versi: %2$s
     <string name="invite_link_load_failed">"Gagal membuka tautan undangan grup"</string>
 
     <!-- Fuzzy -->
-    <string name="message_tombstone_placeholder">"Menunggu pesan ini. Ini mungkin memakan waktu cukup lama. &lt;a href=\"https://halloapp.com/help/\"&gt;Pelajari lebih lanjut&lt;/a&gt;."</string>
+    <string name="message_tombstone_placeholder">"Menunggu pesan ini. Ini mungkin memakan waktu cukup lama. &lt;a href=\"learn-more\"&gt;Pelajari lebih lanjut&lt;/a&gt;."</string>
     <string name="failed_no_longer_member">"Kamu bukan lagi anggota grup ini"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -475,7 +477,7 @@ versi: %2$s
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
     <!-- Fuzzy -->
-    <string name="key_verification_explanation">"Untuk memverifikasi keamanan koneksimu dengan %s, periksa apakah angka di atas cocok dengan yang ditampilkan di perangkat mereka atau pindai kode QR di ponsel mereka. "<![CDATA[<a href="https://halloapp.com/blog/encrypted-chat/">Learn more</a>]]>"."</string>
+    <string name="key_verification_explanation">"Untuk memverifikasi keamanan koneksimu dengan %s, periksa apakah angka di atas cocok dengan yang ditampilkan di perangkat mereka atau pindai kode QR di ponsel mereka. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Lebih banyak"</string>

@@ -232,7 +232,9 @@
     <string name="action_save">"ذخیره"</string>
     <string name="invite_friends">"دعوت دوستان و آشنایان"</string>
     <string name="invite_friend_chooser_title">"دعوت %s"</string>
-    <string name="invite_text_with_name_and_number">"سلام %1$s، شما را دعوت میکنم به من در هالواپ ملحق شوید - یک شبکه برای آشنایانم. از %2$s برای ثبتنام استفاده کنید. آن را از https://halloapp.com/dl دانلود کنید"</string>
+
+    <!-- Fuzzy -->
+    <string name="invite_text_with_name_and_number">"سلام %1$s، شما را دعوت میکنم به من در هالواپ ملحق شوید - یک شبکه برای آشنایانم. از %2$s برای ثبتنام استفاده کنید. آن را از %3$s دانلود کنید"</string>
     <string name="name_hint">"نام شما"</string>
     <string name="name_must_be_specified">"نام باید مشخص شود"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -460,7 +462,7 @@ version: %2$s
     <string name="invite_link_load_failed">"خطا در باز کردن لینک دعوت گروه"</string>
 
     <!-- Fuzzy -->
-    <string name="message_tombstone_placeholder">"در انتظار این پیام. ممکن است مدتی طول بکشد. &lt;a href=\"https://halloapp.com/help/\"&gt;بیشتر بدانید&lt;/a&gt;."</string>
+    <string name="message_tombstone_placeholder">"در انتظار این پیام. ممکن است مدتی طول بکشد. &lt;a href= learn-more\"&gt;بیشتر بدانید&lt;/a&gt;."</string>
     <string name="failed_no_longer_member">"شما دیگر عضو این گروه نیستید"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -492,7 +494,7 @@ version: %2$s
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
     <!-- Fuzzy -->
-    <string name="key_verification_explanation">"برای تأیید ایمنی ارتباطتان با %s، شماره بالا را با شماره‌ای که در دستگاه ایشان است تطبیق دهید یا کد کیو آر دستگاه ایشان را اسکن کنید. "<![CDATA[<a href="https://halloapp.com/help/">بیشتر بدانید</a>]]>"."</string>
+    <string name="key_verification_explanation">"برای تأیید ایمنی ارتباطتان با %s، شماره بالا را با شماره‌ای که در دستگاه ایشان است تطبیق دهید یا کد کیو آر دستگاه ایشان را اسکن کنید. "<![CDATA[<a href="learn-more">بیشتر بدانید</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"بیشتر"</string>

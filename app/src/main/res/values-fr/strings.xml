@@ -238,7 +238,9 @@ Ouvre l'écran des paramètres de l'application pour modifier les autorisations 
     <string name="action_save">"Enregistrer"</string>
     <string name="invite_friends">"Inviter des amis et des membres de la famille"</string>
     <string name="invite_friend_chooser_title">"Inviter %s"</string>
-    <string name="invite_text_with_name_and_number">"Bonjour %1$s, je vous invite à me rejoindre sur HalloApp, un réseau de relations réelles pour les personnes les plus proches de moi. Utilisez %2$s pour vous inscrire. Obtenez-le sur https://halloapp.com/dl"</string>
+
+    <!-- Fuzzy -->
+    <string name="invite_text_with_name_and_number">"Bonjour %1$s, je vous invite à me rejoindre sur HalloApp, un réseau de relations réelles pour les personnes les plus proches de moi. Utilisez %2$s pour vous inscrire. Obtenez-le sur %3$s"</string>
     <string name="name_hint">"Votre nom"</string>
     <string name="name_must_be_specified">"Le nom doit être spécifié"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -468,7 +470,7 @@ version : %2$s
     <string name="invite_link_load_failed">"Échec de l'ouverture du lien d'invitation au groupe"</string>
 
     <!-- Fuzzy -->
-    <string name="message_tombstone_placeholder">"En attente de ce message. Cela peut prendre un moment. &lt;a href=\"https://halloapp.com/help/\"&gt;En savoir plus&lt;/a&gt;."</string>
+    <string name="message_tombstone_placeholder">"En attente de ce message. Cela peut prendre un moment. &lt;a href=\"learn-more\"&gt;En savoir plus&lt;/a&gt;."</string>
     <string name="failed_no_longer_member">"Vous n'êtes plus membre de ce groupe."</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -500,7 +502,7 @@ version : %2$s
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
     <!-- Fuzzy -->
-    <string name="key_verification_explanation">"Pour vérifier la sécurité de votre connexion avec %s, vérifiez si les chiffres au-dessus correspondent à ceux affichés sur son appareil ou scannez le code QR sur son téléphone. "<![CDATA[<a href="https://halloapp.com/blog/encrypted-chat/">En savoir plus</a>]]>"."</string>
+    <string name="key_verification_explanation">"Pour vérifier la sécurité de votre connexion avec %s, vérifiez si les chiffres au-dessus correspondent à ceux affichés sur son appareil ou scannez le code QR sur son téléphone. "<![CDATA[<a href="learn-more">En savoir plus</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Plus"</string>

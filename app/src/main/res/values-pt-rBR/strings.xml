@@ -240,7 +240,7 @@ Abra as configurações do aplicativo para modificar as permissões do aplicativ
     <string name="invite_friend_chooser_title">"Convidar %s"</string>
 
     <!-- Fuzzy -->
-    <string name="invite_text_with_name_and_number">"Oi, %1$s! Gostaria de convidar você a se juntar a mim no HalloApp, um aplicativo social simples para compartilhar momentos cotidianos. Use %2$s para se cadastrar. Baixe em halloapp.com/dl"</string>
+    <string name="invite_text_with_name_and_number">"Oi, %1$s! Gostaria de convidar você a se juntar a mim no HalloApp, um aplicativo social simples para compartilhar momentos cotidianos. Use %2$s para se cadastrar. Baixe em %3$s"</string>
     <string name="name_hint">"Seu nome"</string>
     <string name="name_must_be_specified">"O nome deve ser especificado"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -469,7 +469,7 @@ versão: %2$s"</string>
     <string name="invite_link_load_failed">"Falha ao abrir o link do convite de grupo"</string>
 
     <!-- Fuzzy -->
-    <string name="message_tombstone_placeholder">"Aguardando esta mensagem. Isso pode demorar um pouco. &lt;a href=\"https://halloapp.com/help/\"&gt;Saiba mais&lt;/a&gt;."</string>
+    <string name="message_tombstone_placeholder">"Aguardando esta mensagem. Isso pode demorar um pouco. &lt;a href=\"learn-more\"&gt;Saiba mais&lt;/a&gt;."</string>
     <string name="failed_no_longer_member">"Você não é mais membro deste grupo"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -501,7 +501,7 @@ versão: %2$s"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
     <!-- Fuzzy -->
-    <string name="key_verification_explanation">"Para verificar a segurança de sua conexão com %s, verifique se os números acima coincidem com os exibidos em seu dispositivo ou escaneie o código QR em seu telefone. "<![CDATA[<a href="https://halloapp.com/blog/encrypted-chat/">Saiba mais</a>]]>"."</string>
+    <string name="key_verification_explanation">"Para verificar a segurança de sua conexão com %s, verifique se os números acima coincidem com os exibidos em seu dispositivo ou escaneie o código QR em seu telefone. "<![CDATA[<a href="learn-more">Saiba mais</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Mais"</string>

@@ -235,7 +235,9 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="action_save">"Opslaan"</string>
     <string name="invite_friends">"Vrienden &amp; familie uitnodigen"</string>
     <string name="invite_friend_chooser_title">"%s uitnodigen"</string>
-    <string name="invite_text_with_name_and_number">"Hey %1$s, ik wil je graag uitnodigen voor HalloApp - een netwerk voor échte relaties die het dichtst bij me staan. Gebruik %2$s om je te registreren. Download de app op https://halloapp.com/dl"</string>
+
+    <!-- Fuzzy -->
+    <string name="invite_text_with_name_and_number">"Hey %1$s, ik wil je graag uitnodigen voor HalloApp - een netwerk voor échte relaties die het dichtst bij me staan. Gebruik %2$s om je te registreren. Download de app op %3$s"</string>
     <string name="name_hint">"Jouw naam"</string>
     <string name="name_must_be_specified">"Naam moet opgegeven worden"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -465,7 +467,9 @@ versie: %2$s
     <string name="not_now">"Niet nu"</string>
     <string name="continue_button">"Doorgaan"</string>
     <string name="invite_link_load_failed">"Openen van uitnodigingslink voor de groep mislukt"</string>
-    <string name="message_tombstone_placeholder">"Wachten op dit bericht. Dit kan even duren. "<![CDATA[<a href="https://halloapp.com/help/">Meer informatie</a>]]>"."</string>
+
+    <!-- Fuzzy -->
+    <string name="message_tombstone_placeholder">"Wachten op dit bericht. Dit kan even duren. "<![CDATA[<a href="learn-more">Meer informatie</a>]]>"."</string>
     <string name="failed_no_longer_member">"Je bent geen deelnemer meer van deze groep"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -496,7 +500,8 @@ versie: %2$s
     <string name="key_verification_tap_to_scan">"Tik om te scannen"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"Om de beveiliging van je verbinding met %s te verifiëren, controleer of bovenstaande nummers overeenkomen met die op het andere apparaat of scan de QR-code op de andere telefoon. "<![CDATA[<a href="https://halloapp.com/blog/encrypted-chat/">Meer informatie</a>]]>"."</string>
+    <!-- Fuzzy -->
+    <string name="key_verification_explanation">"Om de beveiliging van je verbinding met %s te verifiëren, controleer of bovenstaande nummers overeenkomen met die op het andere apparaat of scan de QR-code op de andere telefoon. "<![CDATA[<a href="learn-more">Meer informatie</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Meer"</string>
@@ -868,22 +873,22 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     </plurals>
 
     <!-- Title for activity that lets user select who to share with -->
-    <string name="share_with">"Share with…"</string>
+    <string name="share_with">"Delen met…"</string>
 
     <!-- Title for feed privacy when setting it from a single post -->
-    <string name="setting_feed_privacy_single_post_title">"Who will see this post"</string>
+    <string name="setting_feed_privacy_single_post_title">"Wie kan deze post zien"</string>
 
     <!-- Text shown when sharing a post with a group -->
-    <string name="composer_sharing_group_post">"Sharing with group"</string>
+    <string name="composer_sharing_group_post">"Delen met groep"</string>
 
     <!-- Title of section for recent groups -->
-    <string name="recent_groups">"Recent groups"</string>
+    <string name="recent_groups">"Recente groepen"</string>
 
     <!-- Item for creating a new group -->
-    <string name="create_new_group">"Create new group"</string>
+    <string name="create_new_group">"Nieuwe groep aanmaken"</string>
 
     <!-- Shown as a subtitle on the content composer screen when making a post. Tapping will
          allow user to change destination for the post -->
-    <string name="tap_to_change">"Tap to change"</string>
+    <string name="tap_to_change">"Tik om te wijzigen"</string>
 <string name="share_option_group">"Post in groep"</string><string name="select_group">"Selecteer groep"</string></resources>
 

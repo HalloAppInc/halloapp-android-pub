@@ -238,7 +238,8 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="invite_friend_chooser_title">"%s kişisini davet et"</string>
 
     <!-- Will the second %s here be a link? -->
-    <string name="invite_text_with_name_and_number">"Merhaba %1$s! Seni, sevdiklerimizle gerçek bağlantılar kurabildiğimiz bir uygulama olan HalloApp'e davet ediyorum. Kaydolmak için %2$s numarasını kullan. halloapp.com/dl adresinden uygulamayı 
+    <!-- Fuzzy -->
+    <string name="invite_text_with_name_and_number">"Merhaba %1$s! Seni, sevdiklerimizle gerçek bağlantılar kurabildiğimiz bir uygulama olan HalloApp'e davet ediyorum. Kaydolmak için %2$s numarasını kullan. %3$s adresinden uygulamayı 
 indir."</string>
     <string name="name_hint">"Adın"</string>
     <string name="name_must_be_specified">"Ad belirtilmeli"</string>
@@ -474,7 +475,7 @@ version: %2$s
     <string name="invite_link_load_failed">"Grup davet ilişimi açılamadı"</string>
 
     <!-- Fuzzy -->
-    <string name="message_tombstone_placeholder">"Mesaj yükleniyor. Bu biraz zaman alabilir. &lt;a href=\"https://halloapp.com/help/\"&gt;Daha fazlasını öğren&lt;/a&gt;"</string>
+    <string name="message_tombstone_placeholder">"Mesaj yükleniyor. Bu biraz zaman alabilir. &lt;a href=\"learn-more\"&gt;Daha fazlasını öğren&lt;/a&gt;"</string>
     <string name="failed_no_longer_member">"Artık bu grubun bir üyesi değilsin"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -505,7 +506,8 @@ version: %2$s
     <string name="key_verification_tap_to_scan">"Taramak için dokun"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"%1$s ile bağlantınızın güvenliğini doğrulamak için yukarıdaki numaraların, onun cihazında gösterilenlerle eşleşip eşleşmediğini kontrol et veya telefonundaki QR kodunu tarat. "<![CDATA[<a href="https://halloapp.com/blog/encrypted-chat/">Daha fazlasını öğren</a>]]>"."</string>
+    <!-- Fuzzy -->
+    <string name="key_verification_explanation">"%1$s ile bağlantınızın güvenliğini doğrulamak için yukarıdaki numaraların, onun cihazında gösterilenlerle eşleşip eşleşmediğini kontrol et veya telefonundaki QR kodunu tarat. "<![CDATA[<a href="learn-more">Daha fazlasını öğren</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Daha fazla"</string>
@@ -865,37 +867,37 @@ Uygulama izinlerini değiştirmek için Uygulama Ayarları ekranını aç."</str
 
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_post_destination">"Ara"</string>
-    <string name="link_preview_loading">"Loading preview…"</string>
+    <string name="link_preview_loading">"Ön izleme yükleniyor…"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
-    <string name="add_to_contacts_notice">"To see posts from %s add their number to your address book. Tap to add."</string>
+    <string name="add_to_contacts_notice">"Gönderilerini görmek için %s kişisinin rehberinde ekli olması gerekir. Eklemek için dokun."</string>
 
     <!-- Message showed when a link fails to open -->
-    <string name="failed_to_open_link">"Failed to open link"</string>
+    <string name="failed_to_open_link">"İlişim açılamadı."</string>
 
     <!-- New comment separator -->
     <plurals name="new_comment_separator">
-        <item quantity="one">"%d new comment"</item>
-        <item quantity="other">"%d new comment"</item>
+        <item quantity="one">"%d yeni yorum"</item>
+        <item quantity="other">"%d yeni yorum"</item>
     </plurals>
 
     <!-- Title for activity that lets user select who to share with -->
-    <string name="share_with">"Share with…"</string>
+    <string name="share_with">"Şununla paylaş…"</string>
 
     <!-- Title for feed privacy when setting it from a single post -->
-    <string name="setting_feed_privacy_single_post_title">"Who will see this post"</string>
+    <string name="setting_feed_privacy_single_post_title">"Bu gönderiyi kimler görebilir"</string>
 
     <!-- Text shown when sharing a post with a group -->
-    <string name="composer_sharing_group_post">"Sharing with group"</string>
+    <string name="composer_sharing_group_post">"Grupla paylaşılıyor "</string>
 
     <!-- Title of section for recent groups -->
-    <string name="recent_groups">"Recent groups"</string>
+    <string name="recent_groups">"Geçmiş gruplar"</string>
 
     <!-- Item for creating a new group -->
-    <string name="create_new_group">"Create new group"</string>
+    <string name="create_new_group">"Yeni grup yarat"</string>
 
     <!-- Shown as a subtitle on the content composer screen when making a post. Tapping will
          allow user to change destination for the post -->
-    <string name="tap_to_change">"Tap to change"</string>
+    <string name="tap_to_change">"Değiştirmek için dokun"</string>
 <string name="share_option_group">"Gruba gönder"</string><string name="select_group">"Grup seç"</string></resources>
 

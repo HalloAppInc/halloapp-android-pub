@@ -247,7 +247,7 @@
     <string name="invite_friend_chooser_title">"Покани %s"</string>
 
     <!-- Fuzzy -->
-    <string name="invite_text_with_name_and_number">"Хей, %1$s, имам покана за теб да се присъединиш към мен в HalloApp (лесно за използване социално приложение за споделяне на моменти от ежедневието). Използвай %2$s, за да се регистрираш. Получи я на halloapp.com/dl"</string>
+    <string name="invite_text_with_name_and_number">"Хей, %1$s, имам покана за теб да се присъединиш към мен в HalloApp (лесно за използване социално приложение за споделяне на моменти от ежедневието). Използвай %2$s, за да се регистрираш. Получи я на %3$s"</string>
     <string name="name_hint">"Ваашето име"</string>
     <string name="name_must_be_specified">"Името трябва да бъде посочено"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -477,7 +477,7 @@ uid: %1$s
     <string name="invite_link_load_failed">"Неуспешно отваряне на връзката за покана на група"</string>
 
     <!-- Fuzzy -->
-    <string name="message_tombstone_placeholder">"В очакване на това съобщение. Това може да отнеме известно време. &lt;a href=\"https://halloapp.com/help/\"&gt; Научете повече &lt;/a&gt;."</string>
+    <string name="message_tombstone_placeholder">"В очакване на това съобщение. Това може да отнеме известно време. &lt;a href=\"learn-more\"&gt; Научете повече &lt;/a&gt;."</string>
     <string name="failed_no_longer_member">"Вече не сте член на тази група"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -509,7 +509,7 @@ uid: %1$s
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
     <!-- Fuzzy -->
-    <string name="key_verification_explanation">"За да проверите сигурността на връзката си с %s, проверете дали числата по-горе съвпадат с показаните на тяхното устройство или сканирайте QR кода на телефона си. "<![CDATA[<a href="https://halloapp.com/blog/encrypted-chat/">Learn more</a>]]>"."</string>
+    <string name="key_verification_explanation">"За да проверите сигурността на връзката си с %s, проверете дали числата по-горе съвпадат с показаните на тяхното устройство или сканирайте QR кода на телефона си. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Повече"</string>

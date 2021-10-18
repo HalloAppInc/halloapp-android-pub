@@ -284,7 +284,9 @@
     <string name="action_save">"حفظ"</string>
     <string name="invite_friends">"دعوة أفراد العائلة والأصدقاء"</string>
     <string name="invite_friend_chooser_title">"دعوة %s"</string>
-    <string name="invite_text_with_name_and_number">"مرحباً %1$s هذه دعوة مني لتنضم إلّي في استخدام هالوآب - وهو كناية عن شبكة للعلاقات الفعلية بين الأشخاص المقربين مني. استخدم %2$s للتسجيل في التطبيق. يمكنك تنزيله من https://halloapp.com/dl"</string>
+
+    <!-- Fuzzy -->
+    <string name="invite_text_with_name_and_number">"مرحباً %1$s هذه دعوة مني لتنضم إلّي في استخدام هالوآب - وهو كناية عن شبكة للعلاقات الفعلية بين الأشخاص المقربين مني. استخدم %2$s للتسجيل في التطبيق. يمكنك تنزيله من %3$s"</string>
     <string name="name_hint">"اسمك"</string>
     <string name="name_must_be_specified">"يجب تحديد اسم"</string>
     <string name="counter">"%1$d / %2$d"</string>
@@ -556,7 +558,7 @@
     <string name="invite_link_load_failed">"تعذّر فتح رابط الدعوة إلى المجموعة"</string>
 
     <!-- Fuzzy -->
-    <string name="message_tombstone_placeholder">"بانتظار هذه الصورة. قد يستغرق الأمر بعض الوقت. &lt;a href=\"https://halloapp.com/help/\"&gt;تعرّف على المزيد&lt;/a&gt;."</string>
+    <string name="message_tombstone_placeholder">"بانتظار هذه الصورة. قد يستغرق الأمر بعض الوقت. &lt;a href= learn-more\"&gt;تعرّف على المزيد&lt;/a&gt;."</string>
     <string name="failed_no_longer_member">"لم تعد عضواً في هذه المجموعة"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -588,7 +590,7 @@
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
     <!-- Fuzzy -->
-    <string name="key_verification_explanation">"للتحقق من أن اتصالك مع %s آمن، تأكد من أن الأرقام الواردة أعلاه تتطابق مع الأرقام التي تظهر على هاتف هذا الشخص أو قم بمسح رمز الاستجابة السريعة الوارد على هاتفه. "<![CDATA[<a href="https://halloapp.com/help/">تعرّف على المزيد</a>]]>"."</string>
+    <string name="key_verification_explanation">"للتحقق من أن اتصالك مع %s آمن، تأكد من أن الأرقام الواردة أعلاه تتطابق مع الأرقام التي تظهر على هاتف هذا الشخص أو قم بمسح رمز الاستجابة السريعة الوارد على هاتفه. "<![CDATA[<a href= learn-more">تعرّف على المزيد</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"المزيد"</string>

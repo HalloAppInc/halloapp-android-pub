@@ -241,7 +241,9 @@ Para modificar los permisos de la aplicación, abre la pantalla de configuració
     <string name="action_save">"Guardar"</string>
     <string name="invite_friends">"Invitar a tu familia y amigos"</string>
     <string name="invite_friend_chooser_title">"Invita a %s"</string>
-    <string name="invite_text_with_name_and_number">"Hola %1$s, tengo una invitación para que te unas a mí en HalloApp - una red social con relaciones reales para los más cercanos a mí. Usa %2$s para registrarte. Obténla en https://halloapp.com/dl"</string>
+
+    <!-- Fuzzy -->
+    <string name="invite_text_with_name_and_number">"Hola %1$s, tengo una invitación para que te unas a mí en HalloApp - una red social con relaciones reales para los más cercanos a mí. Usa %2$s para registrarte. Obténla en %3$s"</string>
     <string name="name_hint">"Tu nombre"</string>
     <string name="name_must_be_specified">"Debes especificar tu nombre"</string>
 
@@ -488,7 +490,7 @@ versión: %2$s
     <string name="invite_link_load_failed">"No se pudo abrir el enlace de invitación del grupo"</string>
 
     <!-- Fuzzy -->
-    <string name="message_tombstone_placeholder">"Esperando este mensaje. Esto puede tomar un tiempo. &lt;a href=\"https://halloapp.com/help/\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="message_tombstone_placeholder">"Esperando este mensaje. Esto puede tomar un tiempo. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
     <string name="failed_no_longer_member">"Ya no formas parte de este grupo."</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -520,7 +522,7 @@ versión: %2$s
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
     <!-- Fuzzy -->
-    <string name="key_verification_explanation">"Para verificar la seguridad de tu conexión con %s, comprueba que los números de arriba coinciden con los mostrados en su dispositivo o escanea el código QR en su teléfono. "<![CDATA[<a href="https://halloapp.com/blog/encrypted-chat/">Learn more</a>]]>"."</string>
+    <string name="key_verification_explanation">"Para verificar la seguridad de tu conexión con %s, comprueba que los números de arriba coinciden con los mostrados en su dispositivo o escanea el código QR en su teléfono. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Más"</string>
