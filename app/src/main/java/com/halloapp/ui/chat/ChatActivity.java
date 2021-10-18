@@ -150,7 +150,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             throw new IllegalArgumentException("Trying to open ChatActivity for group");
         }
         Intent intent = new Intent(context, ChatActivity.class);
-        intent.putExtra(EXTRA_CHAT_ID, chatId);
+        intent.putExtra(EXTRA_CHAT_ID, chatId.rawId());
         intent.putExtra(EXTRA_FROM_NOTIF, fromNotification);
         intent.setAction(DUMMY_ACTION); // A StackOverflow user claimed this fixed extras getting dropped
         return intent;
@@ -305,7 +305,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
         allowVoiceNoteSending = ServerProps.getInstance().getVoiceNoteSendingEnabled();
 
-        chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
+        String rawChatId = getIntent().getStringExtra(EXTRA_CHAT_ID);
+        chatId = ChatId.fromNullable(rawChatId);
         Log.d("ChatActivity chatId " + chatId);
 
         chatInputView.setVoiceNoteControlView(findViewById(R.id.recording_ui));
