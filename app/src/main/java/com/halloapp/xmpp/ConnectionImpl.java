@@ -830,7 +830,7 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public void retractGroupComment(@NonNull GroupId groupId, @NonNull UserId postSenderUserId, @NonNull String postId, @NonNull String commentId) {
+    public void retractGroupComment(@NonNull GroupId groupId, @NonNull String postId, @NonNull String commentId) {
         FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null);
         GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, commentItem);
         sendIqRequestAsync(requestIq, true)

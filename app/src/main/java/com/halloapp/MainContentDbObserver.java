@@ -124,7 +124,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
             if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
                 connection.retractComment(comment.postId, comment.id);
             } else {
-                connection.retractGroupComment(comment.getParentPost().getParentGroup(), comment.getParentPost().senderUserId, comment.postId, comment.id);
+                connection.retractGroupComment(comment.getParentPost().getParentGroup(), comment.postId, comment.id);
             }
         }
         notifications.updateFeedNotifications(comment);

@@ -155,7 +155,7 @@ public abstract class Connection {
 
     public abstract void retractComment(final @NonNull String postId, final @NonNull String commentId);
 
-    public abstract void retractGroupComment(final @NonNull GroupId groupId, final @NonNull UserId postSenderUserId, final @NonNull String postId, final @NonNull String commentId);
+    public abstract void retractGroupComment(final @NonNull GroupId groupId, final @NonNull String postId, final @NonNull String commentId);
 
     public abstract void sendMessage(final @NonNull Message message, final @Nullable SignalSessionSetupInfo signalSessionSetupInfo);
 
