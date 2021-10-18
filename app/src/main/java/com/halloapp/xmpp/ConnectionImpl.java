@@ -1,5 +1,6 @@
 package com.halloapp.xmpp;
 
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.Base64;
 
@@ -58,6 +59,7 @@ import com.halloapp.proto.server.ContactHash;
 import com.halloapp.proto.server.ContactList;
 import com.halloapp.proto.server.ContactSyncError;
 import com.halloapp.proto.server.DeliveryReceipt;
+import com.halloapp.proto.server.DeviceInfo;
 import com.halloapp.proto.server.ErrorStanza;
 import com.halloapp.proto.server.ExportData;
 import com.halloapp.proto.server.FeedItems;
@@ -250,11 +252,16 @@ public class ConnectionImpl extends Connection {
         ClientMode clientMode = ClientMode.newBuilder()
                 .setMode(ClientMode.Mode.ACTIVE)
                 .build();
+        DeviceInfo deviceInfo = DeviceInfo.newBuilder()
+                .setDevice(Build.BRAND + ":" + Build.MODEL)
+                .setOsVersion(Integer.toString(Build.VERSION.SDK_INT))
+                .build();
 
         AuthRequest.Builder authRequestBuilder = AuthRequest.newBuilder()
                 .setUid(Long.parseLong(me.getUser()))
                 .setClientVersion(clientVersion)
                 .setClientMode(clientMode)
+                .setDeviceInfo(deviceInfo)
                 .setResource("android");
         return authRequestBuilder.build();
     }
