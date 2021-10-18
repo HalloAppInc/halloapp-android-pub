@@ -276,7 +276,7 @@ public class Notifications {
                         .setLabel(replyLabel)
                         .build();
                 Intent replyIntent = new Intent(context, MessageReplyReceiver.class);
-                replyIntent.putExtra(EXTRA_CHAT_ID, chatId);
+                replyIntent.putExtra(EXTRA_CHAT_ID, chatId.rawId());
                 PendingIntent replyPendingIntent = PendingIntent.getBroadcast(
                         context.getApplicationContext(),
                         (int) Long.parseLong(chatId.rawId()),
@@ -289,7 +289,7 @@ public class Notifications {
 
                 String markReadLabel = context.getString(R.string.mark_read_notification_label);
                 Intent markReadIntent = new Intent(context, MarkReadReceiver.class);
-                markReadIntent.putExtra(EXTRA_CHAT_ID, chatId);
+                markReadIntent.putExtra(EXTRA_CHAT_ID, chatId.rawId());
                 PendingIntent markReadPendingIntent = PendingIntent.getBroadcast(
                         context.getApplicationContext(),
                         (int) Long.parseLong(chatId.rawId()),
@@ -675,7 +675,8 @@ public class Notifications {
             Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
             if (remoteInput != null) {
                 CharSequence text = Preconditions.checkNotNull(remoteInput.getCharSequence(REPLY_TEXT_KEY));
-                ChatId chatId = intent.getParcelableExtra(EXTRA_CHAT_ID);
+                String rawId = intent.getStringExtra(EXTRA_CHAT_ID);
+                ChatId chatId = ChatId.fromNullable(rawId);
                 String id = RandomId.create();
                 Log.i("Notifications.MessageReplyReceiver: sending message id " + id + " in " + chatId);
 
@@ -708,7 +709,7 @@ public class Notifications {
                         .setGroupSummary(true);
 
                 NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                notificationManager.notify(MESSAGE_NOTIFICATION_ID, builder.build());
+                notificationManager.notify(rawId, MESSAGE_NOTIFICATION_ID, builder.build());
             }
         }
     }
@@ -717,7 +718,7 @@ public class Notifications {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i("Notifications.MarkReadReceiver");
-            ChatId chatId = Preconditions.checkNotNull(intent.getParcelableExtra(EXTRA_CHAT_ID));
+            ChatId chatId = Preconditions.checkNotNull(ChatId.fromNullable(intent.getStringExtra(EXTRA_CHAT_ID)));
             Log.i("Notifications.MarkReadReceiver marking chat " + chatId + " as read");
             ContentDb.getInstance().setChatSeen(chatId);
             Notifications.getInstance(context).clearMessageNotifications(chatId);
