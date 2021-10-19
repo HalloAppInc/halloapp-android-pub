@@ -385,6 +385,9 @@ public class MainConnectionObserver extends Connection.Observer {
     @Override
     public void onGroupFeedRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {
         bgWorkers.execute(() -> {
+            if (senderStateIssue) {
+                signalSessionManager.tearDownSession(senderUserId);
+            }
             Post post = contentDb.getPost(contentId);
             if (post != null && groupId.equals(post.getParentGroup())) {
                 if (post.isRetracted()) {

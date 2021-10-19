@@ -1572,6 +1572,10 @@ public class ConnectionImpl extends Connection {
                         count = contentDb.getPostRerequestCount(groupId, publisherUserId, protoPost.getId());
                         count += 1;
                         contentDb.setPostRerequestCount(groupId, publisherUserId, protoPost.getId(), count);
+                        if (senderStateIssue) {
+                            Log.i("Tearing down session because of sender state issue");
+                            SignalSessionManager.getInstance().tearDownSession(publisherUserId);
+                        }
                         GroupFeedSessionManager.getInstance().sendPostRerequest(publisherUserId, groupId, protoPost.getId(), senderStateIssue);
                     }
                 }
@@ -1675,6 +1679,10 @@ public class ConnectionImpl extends Connection {
                         count = contentDb.getCommentRerequestCount(groupId, publisherUserId, protoComment.getId());
                         count += 1;
                         contentDb.setCommentRerequestCount(groupId, publisherUserId, protoComment.getId(), count);
+                        if (senderStateIssue) {
+                            Log.i("Tearing down session because of sender state issue");
+                            SignalSessionManager.getInstance().tearDownSession(publisherUserId);
+                        }
                         GroupFeedSessionManager.getInstance().sendCommentRerequest(publisherUserId, groupId, protoComment.getId(), senderStateIssue);
                     }
                 }
