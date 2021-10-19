@@ -193,7 +193,7 @@ public class GroupFeedKeyManager {
             byte[] messageKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_MESSAGE_KEY, 80);
             byte[] updatedChainKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_CHAIN_KEY, 32);
             encryptedKeyStore.setPeerGroupChainKey(groupId, peerUserId, updatedChainKey);
-            Log.i("GroupFeedKeyManager.getInboundMessageKey chain key " + StringUtils.bytesToHexString(chainKey) + " -> " + StringUtils.bytesToHexString(updatedChainKey));
+            Log.i("GroupFeedKeyManager.getInboundMessageKey chain key " + CryptoByteUtils.obfuscate(chainKey) + " -> " + CryptoByteUtils.obfuscate(updatedChainKey));
             CryptoByteUtils.nullify(chainKey, updatedChainKey);
             return messageKey;
         } catch (NullPointerException e) {
@@ -213,7 +213,7 @@ public class GroupFeedKeyManager {
             byte[] updatedChainKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_CHAIN_KEY, 32);
             encryptedKeyStore.setMyGroupChainKey(groupId, updatedChainKey);
             encryptedKeyStore.setMyGroupCurrentChainIndex(groupId, nextChainIndex);
-            Log.i("GroupFeedKeyManager.getOutboundMessageKey chain key " + StringUtils.bytesToHexString(chainKey) + " -> " + StringUtils.bytesToHexString(updatedChainKey));
+            Log.i("GroupFeedKeyManager.getOutboundMessageKey chain key " + CryptoByteUtils.obfuscate(chainKey) + " -> " + CryptoByteUtils.obfuscate(updatedChainKey));
             CryptoByteUtils.nullify(chainKey, updatedChainKey);
             return messageKey;
         } catch (NullPointerException e) {
