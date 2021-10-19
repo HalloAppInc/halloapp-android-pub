@@ -305,7 +305,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
         public LiveData<Registration.RegistrationRequestResult> requestSms(String phone, @Nullable String token) {
             MutableLiveData<Registration.RegistrationRequestResult> result = new MutableLiveData<>();
             bgWorkers.execute(() -> {
-                Registration.RegistrationRequestResult requestResult = registration.requestRegistration(phone, token);
+                Registration.RegistrationRequestResult requestResult = registration.requestRegistration(phone, token, null);
                 result.postValue(requestResult);
             });
             return result;

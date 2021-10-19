@@ -46,12 +46,13 @@ import com.hbb20.CountryCodePicker;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.michaelrocks.libphonenumber.android.NumberParseException;
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
 import io.michaelrocks.libphonenumber.android.Phonenumber;
-
 
 public class RegistrationRequestActivity extends HalloActivity {
 
@@ -59,6 +60,7 @@ public class RegistrationRequestActivity extends HalloActivity {
 
     private static final int REQUEST_CODE_VERIFICATION = 1;
     private static final long INSTALL_REFERRER_TIMEOUT_MS = 2000;
+    private static final long HASHCASH_MAX_WAIT_MS = 60_000;
 
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final SmsVerificationManager smsVerificationManager = SmsVerificationManager.getInstance();
@@ -298,8 +300,10 @@ public class RegistrationRequestActivity extends HalloActivity {
         private final Registration registration = Registration.getInstance();
 
         private final MutableLiveData<Registration.RegistrationRequestResult> registrationRequestResult = new MutableLiveData<>();
+        private final CountDownLatch hashcashLatch = new CountDownLatch(1);
 
         private String groupInviteToken;
+        private Registration.HashcashResult hashcashResult;
 
         public RegistrationRequestViewModel(@NonNull Application application) {
             super(application);
@@ -312,6 +316,15 @@ public class RegistrationRequestActivity extends HalloActivity {
                 }
             };
             timer.schedule(timerTask, Constants.SEND_LOGS_BUTTON_DELAY_MS);
+
+            bgWorkers.execute(() -> {
+                hashcashResult = registration.getHashcashSolution();
+                if (hashcashResult.result != Registration.HashcashResult.RESULT_OK) {
+                    Log.e("Got hashcash failure " + hashcashResult.result);
+                    Log.sendErrorReport("Hashcash failed");
+                }
+                hashcashLatch.countDown();
+            });
         }
 
         LiveData<Registration.RegistrationRequestResult> getRegistrationRequestResult() {
@@ -319,65 +332,74 @@ public class RegistrationRequestActivity extends HalloActivity {
         }
 
         void requestRegistration(@NonNull String phone, @Nullable String name) {
-            InstallReferrerClient referrerClient = InstallReferrerClient.newBuilder(AppContext.getInstance().get().getApplicationContext()).build();
-
-            AtomicBoolean registerCalled = new AtomicBoolean(false);
-            Timer timer = new Timer();
-            TimerTask timerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    if (registerCalled.compareAndSet(false, true)) {
-                        Log.i("RegistrationRequestViewModel InstallReferrer took too long");
-                        registrationRequestResult.postValue(registration.registerPhoneNumber(name, phone, null));
-                        referrerClient.endConnection();
-                    }
+            bgWorkers.execute(() -> {
+                try {
+                    hashcashLatch.await(HASHCASH_MAX_WAIT_MS, TimeUnit.MILLISECONDS);
+                    Log.i("RegistrationRequestActivity/requestRegistration done waiting for hashcashLatch");
+                } catch (InterruptedException e) {
+                    Log.e("Interrupted while waiting for hashcash", e);
                 }
-            };
-            timer.schedule(timerTask, INSTALL_REFERRER_TIMEOUT_MS);
 
-            referrerClient.startConnection(new InstallReferrerStateListener() {
-                private static final String INVITE_TAG = "ginvite-";
+                InstallReferrerClient referrerClient = InstallReferrerClient.newBuilder(AppContext.getInstance().get().getApplicationContext()).build();
 
-                @Override
-                public void onInstallReferrerSetupFinished(int responseCode) {
-                    String inviteCode = null;
-                    switch (responseCode) {
-                        case InstallReferrerClient.InstallReferrerResponse.OK:
-                            try {
-                                ReferrerDetails details = referrerClient.getInstallReferrer();
-                                String referrerUrl = details.getInstallReferrer();
-                                Log.i("RegistrationRequestActivity/requestRegistration got referrerUrl " + referrerUrl);
-                                if (!TextUtils.isEmpty(referrerUrl) && referrerUrl.contains(INVITE_TAG)) {
-                                    int start = referrerUrl.indexOf(INVITE_TAG) + INVITE_TAG.length();
-                                    int end = referrerUrl.indexOf("&", start);
-                                    inviteCode = referrerUrl.substring(start, Math.max(referrerUrl.length(), end));
-                                } else {
-                                    Log.w("RegistrationRequestActivity/requestRegistration no referrer invite");
-                                }
-                            } catch (RemoteException e) {
-                                Log.e("RegistrationRequestActivity/requestRegistration failed to get install referrer", e);
-                            }
-                            break;
-                        case InstallReferrerClient.InstallReferrerResponse.FEATURE_NOT_SUPPORTED:
-                            Log.w("RegistrationRequestActivity/requestRegistration referrer not available");
-                            break;
-                        case InstallReferrerClient.InstallReferrerResponse.SERVICE_UNAVAILABLE:
-                            Log.w("RegistrationRequestActivity/requestRegistration no connection");
-                            break;
-                    }
-                    final String code = inviteCode;
-                    groupInviteToken = code;
-                    bgWorkers.execute(() -> {
+                AtomicBoolean registerCalled = new AtomicBoolean(false);
+                Timer timer = new Timer();
+                TimerTask timerTask = new TimerTask() {
+                    @Override
+                    public void run() {
                         if (registerCalled.compareAndSet(false, true)) {
-                            registrationRequestResult.postValue(registration.registerPhoneNumber(name, phone, code));
+                            Log.i("RegistrationRequestViewModel InstallReferrer took too long");
+                            registrationRequestResult.postValue(registration.registerPhoneNumber(name, phone, null, hashcashResult == null ? null : hashcashResult.fullSolution));
                             referrerClient.endConnection();
                         }
-                    });
-                }
+                    }
+                };
+                timer.schedule(timerTask, INSTALL_REFERRER_TIMEOUT_MS);
 
-                @Override
-                public void onInstallReferrerServiceDisconnected() {
-                }
+                referrerClient.startConnection(new InstallReferrerStateListener() {
+                    private static final String INVITE_TAG = "ginvite-";
+
+                    @Override
+                    public void onInstallReferrerSetupFinished(int responseCode) {
+                        String inviteCode = null;
+                        switch (responseCode) {
+                            case InstallReferrerClient.InstallReferrerResponse.OK:
+                                try {
+                                    ReferrerDetails details = referrerClient.getInstallReferrer();
+                                    String referrerUrl = details.getInstallReferrer();
+                                    Log.i("RegistrationRequestActivity/requestRegistration got referrerUrl " + referrerUrl);
+                                    if (!TextUtils.isEmpty(referrerUrl) && referrerUrl.contains(INVITE_TAG)) {
+                                        int start = referrerUrl.indexOf(INVITE_TAG) + INVITE_TAG.length();
+                                        int end = referrerUrl.indexOf("&", start);
+                                        inviteCode = referrerUrl.substring(start, Math.max(referrerUrl.length(), end));
+                                    } else {
+                                        Log.w("RegistrationRequestActivity/requestRegistration no referrer invite");
+                                    }
+                                } catch (RemoteException e) {
+                                    Log.e("RegistrationRequestActivity/requestRegistration failed to get install referrer", e);
+                                }
+                                break;
+                            case InstallReferrerClient.InstallReferrerResponse.FEATURE_NOT_SUPPORTED:
+                                Log.w("RegistrationRequestActivity/requestRegistration referrer not available");
+                                break;
+                            case InstallReferrerClient.InstallReferrerResponse.SERVICE_UNAVAILABLE:
+                                Log.w("RegistrationRequestActivity/requestRegistration no connection");
+                                break;
+                        }
+                        final String code = inviteCode;
+                        groupInviteToken = code;
+                        bgWorkers.execute(() -> {
+                            if (registerCalled.compareAndSet(false, true)) {
+                                registrationRequestResult.postValue(registration.registerPhoneNumber(name, phone, code, hashcashResult == null ? null : hashcashResult.fullSolution));
+                                referrerClient.endConnection();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onInstallReferrerServiceDisconnected() {
+                    }
+                });
             });
         }
     }
