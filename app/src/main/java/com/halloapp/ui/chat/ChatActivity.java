@@ -955,7 +955,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             startActivity(intent);
         } else if (item.getItemId() == R.id.call) {
             Log.i("starting a call with Uid: " + (UserId) chatId);
-            startActivity(new Intent(this, CallActivity.class));
+            startActivity(CallActivity.getStartCallIntent(this, (UserId) chatId));
         }
         return super.onOptionsItemSelected(item);
     }

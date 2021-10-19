@@ -89,7 +89,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:paddingBottom="20dp"
             android:textColor="@android:color/black"
-            android:text="Calling someone..."/>
+            android:text="@string/calling"/>
 
         <ImageView
             android:id="@+id/calling_cancel"

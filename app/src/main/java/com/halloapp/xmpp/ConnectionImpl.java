@@ -46,9 +46,11 @@ import com.halloapp.proto.clients.SenderKey;
 import com.halloapp.proto.clients.SenderState;
 import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.server.Ack;
+import com.halloapp.proto.server.AnswerCall;
 import com.halloapp.proto.server.AuthRequest;
 import com.halloapp.proto.server.AuthResult;
 import com.halloapp.proto.server.Avatar;
+import com.halloapp.proto.server.CallRinging;
 import com.halloapp.proto.server.ChatRetract;
 import com.halloapp.proto.server.ChatStanza;
 import com.halloapp.proto.server.ChatState;
@@ -60,6 +62,7 @@ import com.halloapp.proto.server.ContactList;
 import com.halloapp.proto.server.ContactSyncError;
 import com.halloapp.proto.server.DeliveryReceipt;
 import com.halloapp.proto.server.DeviceInfo;
+import com.halloapp.proto.server.EndCall;
 import com.halloapp.proto.server.ErrorStanza;
 import com.halloapp.proto.server.ExportData;
 import com.halloapp.proto.server.FeedItems;
@@ -69,6 +72,9 @@ import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.HaError;
+import com.halloapp.proto.server.IceCandicate;
+import com.halloapp.proto.server.IceCandidate;
+import com.halloapp.proto.server.IncomingCall;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.Packet;
@@ -79,6 +85,8 @@ import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.SeenReceipt;
 import com.halloapp.proto.server.SenderStateBundle;
 import com.halloapp.proto.server.SenderStateWithKeyInfo;
+import com.halloapp.proto.server.StunServer;
+import com.halloapp.proto.server.TurnServer;
 import com.halloapp.proto.server.WhisperKeys;
 import com.halloapp.ui.ExportDataActivity;
 import com.halloapp.util.BgWorkers;
@@ -1094,6 +1102,23 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public void sendCallMsg(@NonNull Msg msg) {
+        executor.execute(() -> {
+            if (!reconnectIfNeeded() || socket == null) {
+                Log.e("connection: cannot send call msg, no connection");
+                ConnectRetryWorker.schedule(AppContext.getInstance().get());
+                return;
+            }
+            // TODO(nikola): Msg is not reset automatically on the next connection.
+            // We will have to store the messages in some database and resend them on the next
+            // connection.
+            ackHandlers.put(msg.getId(), () -> Log.i("call msg " + msg.getId() + " acked"));
+            sendPacket(Packet.newBuilder().setMsg(msg).build());
+            Log.i("connection: sending call msg " + msg.getId() + " to " + msg.getToUid());
+        });
+    }
+
+    @Override
     public Observable<Iq> deleteAccount(@NonNull String phone, @Nullable String reason) {
         return sendIqRequestAsync(new DeleteAccountRequestIq(phone, reason)).map(response -> {
             Log.d("connection: response after deleting account " + ProtoPrinter.toString(response));
@@ -1483,6 +1508,68 @@ public class ConnectionImpl extends Connection {
                 } else if (msg.hasRequestLogs()) {
                     Log.i("connection: got log request message " + ProtoPrinter.toString(msg));
                     LogUploaderWorker.uploadLogs(AppContext.getInstance().get(), msg.getId());
+                    handled = true;
+//                } else if (msg.getType() == Msg.Type.CALL) {
+//                    Log.i("connection: got call msg" + ProtoPrinter.toString(msg));
+//                    connectionObservers.notifyCallMsg(msg);
+//                    handled = true;
+//                }
+//              // TODO(nikola): Discuss this with the android team. I would rather want to do
+                    // msg.getType() == Msg.Type.CALL and just send the msg to be parsed by the
+                    // CallManager
+                } else if (msg.hasIncomingCall()) {
+                    Log.i("connection: got incoming call message " + ProtoPrinter.toString(msg));
+                    UserId userId = getUserId(Long.toString(msg.getFromUid()));
+                    IncomingCall incomingCall = msg.getIncomingCall();
+
+                    String callId = incomingCall.getCallId();
+                    // TODO(nikola): do decryption here
+                    String webrtcOffer = incomingCall.getWebrtcOffer().getEncPayload().toStringUtf8();
+                    List<StunServer> stunServers = incomingCall.getStunServersList();
+                    List<TurnServer> turnServers = incomingCall.getTurnServersList();
+                    long timestamp = incomingCall.getTimestampMs();
+                    connectionObservers.notifyIncomingCall(callId, userId, webrtcOffer, stunServers, turnServers, timestamp, msg.getId());
+                    handled = true;
+                } else if (msg.hasAnswerCall()) {
+                    Log.i("connection: got answer call message " + ProtoPrinter.toString(msg));
+                    UserId userId = getUserId(Long.toString(msg.getFromUid()));
+                    AnswerCall answerCall = msg.getAnswerCall();
+
+                    String callId = answerCall.getCallId();
+                    // TODO(nikola): do decryption here
+                    String answer = answerCall.getWebrtcAnswer().getEncPayload().toStringUtf8();
+                    long timestamp = answerCall.getTimestampMs();
+                    connectionObservers.notifyAnswerCall(callId, userId, answer, timestamp, msg.getId());
+                    handled = true;
+                } else if (msg.hasCallRinging()) {
+                    Log.i("connection: got call ringing message " + ProtoPrinter.toString(msg));
+                    UserId userId = getUserId(Long.toString(msg.getFromUid()));
+                    CallRinging callRinging = msg.getCallRinging();
+
+                    String callId = callRinging.getCallId();
+                    long timestamp = callRinging.getTimestampMs();
+                    connectionObservers.notifyCallRinging(callId, userId, timestamp, msg.getId());
+                    handled = true;
+                } else if (msg.hasEndCall()) {
+                    Log.i("connection: got end call message " + ProtoPrinter.toString(msg));
+                    UserId userId = getUserId(Long.toString(msg.getFromUid()));
+                    EndCall endCall = msg.getEndCall();
+
+                    String callId = endCall.getCallId();
+                    EndCall.Reason reason = endCall.getReason();
+                    long timestamp = endCall.getTimestampMs();
+                    connectionObservers.notifyEndCall(callId, userId, reason, timestamp, msg.getId());
+                    handled = true;
+                } else if (msg.hasIceCandidate()) {
+                    Log.i("connection: got ice candidate message " + ProtoPrinter.toString(msg));
+                    UserId userId = getUserId(Long.toString(msg.getFromUid()));
+                    IceCandidate iceCandicate = msg.getIceCandidate();
+
+                    String callId = iceCandicate.getCallId();
+                    String sdpMediaId = iceCandicate.getSdpMediaId();
+                    int sdpMediaLineIndex = iceCandicate.getSdpMediaLineIndex();
+                    String sdp = iceCandicate.getSdp();
+                    connectionObservers.notifyIceCandidate(callId, userId, sdpMediaId, sdpMediaLineIndex, sdp, msg.getId());
                     handled = true;
                 }
             }

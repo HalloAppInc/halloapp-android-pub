@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.halloapp.calling.CallAudioManager;
 import com.halloapp.calling.CallManager;
+import com.halloapp.id.UserId;
 import com.halloapp.util.logs.Log;
 
 import java.lang.annotation.Retention;
@@ -26,10 +27,12 @@ public class CallViewModel extends ViewModel {
         int STATE_CALLING = 1;
         int STATE_IN_CALL = 2;
         int STATE_RINGING = 3;
+        int STATE_END = 4;
     }
 
     private final MutableLiveData<Boolean> isMuted = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isSpeakerOn = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isPeerRinging = new MutableLiveData<>(false);
     private final MutableLiveData<Integer> state = new MutableLiveData<>();
 
     @Nullable
@@ -38,14 +41,24 @@ public class CallViewModel extends ViewModel {
     @Nullable
     private CallManager callManager;
 
+    private UserId peerUid;
+
     public CallViewModel() {
         state.postValue(State.STATE_INIT);
+
+    }
+
+    public void setPeerUid(UserId peerUid) {
+        this.peerUid = peerUid;
     }
 
     public void initAudioManager(Context context) {
         if (audioManager != null) {
             return;
         }
+        callManager = CallManager.getInstance();
+        // TODO(nikola): remove this call. switch to to observer pattern
+        callManager.setCallViewModel(this);
         audioManager = CallAudioManager.create(context.getApplicationContext());
         // Store existing audio settings and change audio mode to
         // MODE_IN_COMMUNICATION for best possible VoIP performance.
@@ -74,6 +87,11 @@ public class CallViewModel extends ViewModel {
         return state;
     }
 
+    @NonNull
+    public LiveData<Boolean> isPeerRinging() {
+        return isPeerRinging;
+    }
+
     public boolean inCall() {
         return state.getValue() != null && state.getValue() == State.STATE_IN_CALL;
     }
@@ -100,29 +118,53 @@ public class CallViewModel extends ViewModel {
         state.postValue(State.STATE_CALLING);
         // had to move this to the constructor rather then here.
         // initAudioManager(context);
-        callManager = new CallManager(this, context);
+        callManager.startCall(this, peerUid);
     }
 
     public void onCancelCall() {
-        state.postValue(State.STATE_INIT);
+        endCall();
+    }
+
+    public void onIncomingCall() {
+        Log.i("onIncomingCall");
+        state.postValue(State.STATE_RINGING);
     }
 
     public void onDeclineCall() {
         Log.i("onDeclineCall");
-        state.postValue(State.STATE_INIT);
+        endCall();
+    }
+
+    public void onPeerIsRinging() {
+        Log.i("onPeerIsRinging");
+        isPeerRinging.postValue(true);
+    }
+    public void onAnswerCall() {
+        Log.i("onAnswerCall");
+        state.postValue(State.STATE_IN_CALL);
     }
 
     public void onAcceptCall() {
         Log.i("onAcceptCall");
         state.postValue(State.STATE_IN_CALL);
+        // TODO(nikola): we should include the call id here.
+        callManager.onAcceptCall();
     }
 
     public void onHangUp() {
         Log.i("onHangUp");
-        state.postValue(State.STATE_INIT);
+        endCall();
+    }
+
+    public void onEndCall() {
+        Log.i("onEndCall");
+        endCall();
+    }
+
+    private void endCall() {
+        state.postValue(State.STATE_END);
         if (callManager != null) {
             callManager.stop();
-            callManager = null;
         }
         stopAudioManager();
     }

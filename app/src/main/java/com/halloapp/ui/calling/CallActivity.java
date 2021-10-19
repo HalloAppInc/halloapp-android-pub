@@ -4,13 +4,18 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.halloapp.R;
+import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.util.logs.Log;
 
@@ -23,7 +28,12 @@ public class CallActivity extends HalloActivity {
     private View inCallView;
     private View initView;
 
+    private TextView callingTextView;
+    private ImageView muteButtonView;
+    private ImageView speakerButtonView;
+
     private CallViewModel callViewModel;
+    private UserId peerUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +55,16 @@ public class CallActivity extends HalloActivity {
         inCallView = findViewById(R.id.in_call_view);
         initView = findViewById(R.id.init_view);
 
+        callingTextView = findViewById(R.id.calling_text);
+        callingTextView.setText(R.string.calling);
+        muteButtonView = findViewById(R.id.in_call_mute);
+        speakerButtonView = findViewById(R.id.in_call_speaker);
+
         callViewModel = new ViewModelProvider(this).get(CallViewModel.class);
+        String userUidStr = (String) getIntent().getExtras().get("peer_uid");
+        this.peerUid = new UserId(userUidStr);
+        Log.i("peerUid is " + peerUid);
+        callViewModel.setPeerUid(peerUid);
 
         callViewModel.getState().observe(this, state -> {
             callingView.setVisibility(View.GONE);
@@ -68,7 +87,15 @@ public class CallActivity extends HalloActivity {
                 case CallViewModel.State.STATE_RINGING:
                     ringingView.setVisibility(View.VISIBLE);
                     break;
+                case CallViewModel.State.STATE_END:
+                    Log.i("finishing the activity");
+                    finish();
+                    break;
             }
+        });
+
+        callViewModel.isPeerRinging().observe(this, isPeerRinging -> {
+            callingTextView.setText(R.string.ringing);
         });
 
         findViewById(R.id.init_start).setOnClickListener(v -> startCall());
@@ -153,11 +180,11 @@ public class CallActivity extends HalloActivity {
         callViewModel.onMute();
         if (callViewModel.isMuted()) {
             // TODO(nikola): Selected does not seem to do anything
-            findViewById(R.id.in_call_mute).setSelected(true);
-            findViewById(R.id.in_call_mute).setBackgroundColor(Color.GRAY);
+            muteButtonView.setSelected(true);
+            muteButtonView.setBackgroundColor(Color.GRAY);
         } else {
-            findViewById(R.id.in_call_mute).setSelected(false);
-            findViewById(R.id.in_call_mute).setBackgroundColor(Color.TRANSPARENT);
+            muteButtonView.setSelected(false);
+            muteButtonView.setBackgroundColor(Color.TRANSPARENT);
         }
     }
 
@@ -166,20 +193,26 @@ public class CallActivity extends HalloActivity {
 
         if(callViewModel.isSpeakerOn()) {
             Log.i("going to speakerphone");
-            findViewById(R.id.in_call_speaker).setSelected(true);
-            findViewById(R.id.in_call_speaker).setBackgroundColor(Color.GRAY);
+            speakerButtonView.setSelected(true);
+            speakerButtonView.setBackgroundColor(Color.GRAY);
         } else {
             Log.i("going to earpiece");
-            findViewById(R.id.in_call_speaker).setSelected(false);
-            findViewById(R.id.in_call_speaker).setBackgroundColor(Color.TRANSPARENT);
+            speakerButtonView.setSelected(false);
+            speakerButtonView.setBackgroundColor(Color.TRANSPARENT);
         }
     }
 
     private static int getSystemUiVisibility() {
-        int flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+        return View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
                 View.SYSTEM_UI_FLAG_FULLSCREEN |
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        return flags;
+    }
+
+    public static Intent getStartCallIntent(Context context, UserId userId) {
+        Intent intent = new Intent(context, CallActivity.class);
+        // TODO(nikola): make peer_uid constant?
+        intent.putExtra("peer_uid", userId.rawId());
+        return intent;
     }
 }
 

@@ -43,6 +43,10 @@ public abstract class ChatId implements Parcelable {
         return id;
     }
 
+    public @NonNull Long rawIdLong() {
+        return Long.parseLong(id);
+    }
+
     @Override
     public @NonNull String toString() {
         return "{chat:" + id + "}";

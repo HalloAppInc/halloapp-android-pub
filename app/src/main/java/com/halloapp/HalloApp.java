@@ -20,6 +20,7 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.halloapp.calling.CallManager;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.ContentDb;
@@ -75,6 +76,8 @@ public class HalloApp extends Application {
                     .penaltyLog()
                     .build());
         }
+        // TODO:(nikola) temp code
+        CallManager.getInstance();
 
         ConnectionObservers.getInstance().addObserver(MainConnectionObserver.getInstance(this));
         ContentDb.getInstance().addObserver(MainContentDbObserver.getInstance(this));

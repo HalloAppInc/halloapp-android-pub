@@ -24,7 +24,6 @@ import androidx.annotation.StringRes;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
-import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 

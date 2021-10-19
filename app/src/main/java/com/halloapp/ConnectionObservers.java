@@ -11,6 +11,10 @@ import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.EndCall;
+import com.halloapp.proto.server.Msg;
+import com.halloapp.proto.server.StunServer;
+import com.halloapp.proto.server.TurnServer;
 import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
@@ -397,6 +401,46 @@ public class ConnectionObservers {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onPostRevoked(postUid, postId, groupId);
+            }
+        }
+    }
+
+    public void notifyIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer, @NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers, long timestamp, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onIncomingCall(callId, peerUid, webrtcOffer, stunServers, turnServers, timestamp, ackId);
+            }
+        }
+    }
+
+    public void notifyAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcAnswer, long timestamp, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onAnswerCall(callId, peerUid, webrtcAnswer, timestamp, ackId);
+            }
+        }
+    }
+
+    public void notifyCallRinging(@NonNull String callId, @NonNull UserId peerUid, long timestamp, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onCallRinging(callId, peerUid, timestamp, ackId);
+            }
+        }
+    }
+
+    public void notifyEndCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull EndCall.Reason reason, long timestamp, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onEndCall(callId, peerUid, reason, timestamp, ackId);
+            }
+        }
+    }
+
+    public void notifyIceCandidate(@NonNull String callId, @NonNull UserId peerUid, @NonNull String sdpMediaId, int sdpMediaLineIndex, @NonNull String sdp, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onIceCandidate(callId, peerUid, sdpMediaId, sdpMediaLineIndex, sdp, ackId);
             }
         }
     }

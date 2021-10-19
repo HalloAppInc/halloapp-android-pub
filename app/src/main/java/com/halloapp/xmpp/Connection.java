@@ -17,7 +17,11 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.log_events.EventData;
+import com.halloapp.proto.server.EndCall;
 import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.Msg;
+import com.halloapp.proto.server.StunServer;
+import com.halloapp.proto.server.TurnServer;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.stats.Counter;
 import com.halloapp.xmpp.groups.MemberElement;
@@ -92,6 +96,11 @@ public abstract class Connection {
         public void onPostRevoked(@NonNull UserId senderUserId, @NonNull String postId, GroupId groupId) {}
         public void onCommentRevoked(@NonNull String id, @NonNull UserId commentSenderId, @NonNull String postId, long timestamp) {}
         public void onMessageRevoked(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId, @NonNull String ackId) {}
+        public void onIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer, List<StunServer> stunServers, List<TurnServer> turnServers, Long timestamp, @NonNull String ackId) {}
+        public void onCallRinging(@NonNull String callId, @NonNull UserId peerUid, Long timestamp, @NonNull String ackId) {}
+        public void onAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer, Long timestamp, @NonNull String ackId) {}
+        public void onEndCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull EndCall.Reason reason, Long timestamp, @NonNull String ackId) {}
+        public void onIceCandidate(@NonNull String callId, @NonNull UserId peerUid, @NonNull String sdpMediaId, int sdpMediaLineIndex, @NonNull String sdp, @NonNull String ackId) {}
     }
 
     public abstract Future<Boolean> connect();
@@ -179,6 +188,8 @@ public abstract class Connection {
     public abstract void sendMessageSeenReceipt(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
 
     public abstract void sendMessagePlayedReceipt(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
+
+    public abstract void sendCallMsg(@NonNull Msg msg);
 
     public abstract UserId getUserId(@NonNull String user);
 
