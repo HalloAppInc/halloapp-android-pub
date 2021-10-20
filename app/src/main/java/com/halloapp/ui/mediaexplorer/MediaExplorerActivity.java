@@ -652,6 +652,12 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
         }
         isExiting = true;
 
+        if (!isSystemUIShown()) {
+            int options = getWindow().getDecorView().getSystemUiVisibility();
+            options ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+            getWindow().getDecorView().setSystemUiVisibility(options);
+        }
+
         MediaExplorerViewModel.MediaModel model = getCurrentItem();
 
         bgWorkers.execute(() -> {
