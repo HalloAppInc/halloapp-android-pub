@@ -43,6 +43,8 @@
 
     <color name="overflow_menu_bg">#393939</color>
 
+    <color name="color_danger">#c2103f</color>
+
     <color name="selected_chat_highlight">@color/white_5</color>
 
     <color name="color_secondary">#69A1FF</color>

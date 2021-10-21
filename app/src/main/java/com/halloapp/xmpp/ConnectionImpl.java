@@ -1067,8 +1067,8 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public Observable<Iq> deleteAccount(@NonNull String phone) {
-        return sendIqRequestAsync(new DeleteAccountRequestIq(phone)).map(response -> {
+    public Observable<Iq> deleteAccount(@NonNull String phone, @Nullable String reason) {
+        return sendIqRequestAsync(new DeleteAccountRequestIq(phone, reason)).map(response -> {
             Log.d("connection: response after deleting account " + ProtoPrinter.toString(response));
             return response;
         });

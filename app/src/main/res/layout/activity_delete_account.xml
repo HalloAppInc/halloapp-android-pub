@@ -1,135 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="24dp"
-    android:paddingBottom="0dp"
     tools:context=".ui.RegistrationRequestActivity">
-
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginBottom="36dp"
-        android:src="@drawable/ic_logo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
         android:id="@+id/entry_card"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo"
+        android:layout_height="match_parent"
         android:fillViewport="true">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp"
-            android:gravity="center_vertical"
-            android:orientation="vertical"
-            tools:context=".ui.RegistrationRequestActivity">
+            android:layout_height="wrap_content">
 
             <LinearLayout
+                android:id="@+id/delete_explanation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_warning"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_gravity="center_vertical"
+                        app:tint="@color/color_danger"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/delete_account_explanation_title"
+                        android:textColor="@color/color_danger"/>
+
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:gravity="start"
-                    android:text="@string/delete_account_title"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+                    android:layout_marginStart="44dp"
+                    android:text="@string/delete_account_explanation_bullet_one"/>
 
-                <FrameLayout
-                    android:id="@+id/loading"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="44dp"
+                    android:text="@string/delete_account_explanation_bullet_two"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="44dp"
+                    android:text="@string/delete_account_explanation_bullet_three"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/continue_delete"
+                    style="@style/Widget.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:text="@string/continue_button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/phone_number_layout" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/delete_step"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:context=".ui.RegistrationRequestActivity">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/delete_account_instructions"/>
+
+                <LinearLayout
+                    android:id="@+id/phone_number_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="invisible"
-                    tools:visibility="visible">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/registration_entry_background"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="6dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/name_layout">
 
-                    <ProgressBar
+                    <com.hbb20.CountryCodePicker
+                        android:id="@+id/ccp"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:indeterminateBehavior="repeat"
-                        android:indeterminateDrawable="@drawable/thick_progress_spinner"
-                        android:indeterminateDuration="1250"
-                        android:padding="1dp" />
+                        android:layout_height="wrap_content"
+                        app:ccpDialog_textColor="?android:textColorPrimary"
+                        app:ccp_autoDetectCountry="true"
+                        app:ccp_contentColor="?android:textColorPrimary"
+                        app:ccp_countryPreference="us,in"
+                        app:ccp_hintExampleNumberType="MOBILE"
+                        app:ccp_useFlagEmoji="true" />
 
-                </FrameLayout>
+                    <EditText
+                        android:id="@+id/phone_number"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="phoneNational"
+                        android:background="@null"
+                        android:hint="@string/phone_number_hint"
+                        android:inputType="phone"
+                        tools:ignore="UnusedAttribute" />
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="28dp"
+                    app:errorEnabled="true"
+                    app:boxBackgroundColor="@color/settings_text_entry_background"
+                    app:boxStrokeColor="@color/color_primary"
+                    app:hintTextColor="@color/color_primary"
+                    android:hint="@string/delete_account_feedback_hint">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/feedback_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text|textMultiLine"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/next"
+                    style="@style/Widget.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:text="@string/delete_account_button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/phone_number_layout" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/phone_number_layout"
-                android:layout_width="match_parent"
+                android:id="@+id/delete_progress"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/registration_entry_background"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="6dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/name_layout">
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:orientation="vertical">
 
-                <com.hbb20.CountryCodePicker
-                    android:id="@+id/ccp"
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:ccpDialog_textColor="?android:textColorPrimary"
-                    app:ccp_autoDetectCountry="true"
-                    app:ccp_contentColor="?android:textColorPrimary"
-                    app:ccp_countryPreference="us,in"
-                    app:ccp_hintExampleNumberType="MOBILE"
-                    app:ccp_useFlagEmoji="true" />
+                    android:textSize="20sp"
+                    android:textColor="@color/primary_text"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_gravity="center"
+                    android:text="@string/delete_account_in_progress"/>
 
-                <EditText
-                    android:id="@+id/phone_number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:autofillHints="phoneNational"
-                    android:background="@null"
-                    android:hint="@string/phone_number_hint"
-                    android:inputType="phone"
-                    tools:ignore="UnusedAttribute" />
+                <ProgressBar
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:indeterminateDuration="1500"
+                    android:indeterminateDrawable="@drawable/thick_progress_spinner" />
+
             </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/next"
-                style="@style/Widget.Button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:text="@string/delete_account_button"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/phone_number_layout" />
-
-            <TextView
-                android:id="@+id/notes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="bottom|start"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp"
-                android:text="@string/delete_account_note"
-                android:textColor="@color/secondary_text" />
-
-        </LinearLayout>
+        </FrameLayout>
 
     </ScrollView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

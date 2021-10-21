@@ -30,6 +30,8 @@
     <string name="phone_number_hint">Phone number</string>
     <!-- Title shown when a user starts the account deletion process under 'account' -->
     <string name="delete_account_title">Delete account</string>
+    <!-- Action for user to start their delete accoount process under 'account' -->
+    <string name="delete_my_account_action">Delete my account</string>
     <!-- Button text at bottom for user to confirm account deletion -->
     <string name="delete_account_button">Delete</string>
     <!-- Note at bottom of account deletion activity -->
@@ -747,4 +749,20 @@
     <string name="zero_zone_home_nux_text_one">Use your phone number to connect with friends &amp; family in a space with no ads, no brands, no likes, and no influencers.</string>
     <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
     <string name="zero_zone_home_nux_text_two">HalloApp is for you, and those closest to you, in private. Invite your real friends to get started</string>
+    <!-- Top line before the other delete account bullets. Will explain what deleting your account entails -->
+    <string name="delete_account_explanation_title">Deleting your account will:</string>
+    <!-- First account deletion bullet saying the profile photo will be deleted -->
+    <string name="delete_account_explanation_bullet_one">• Delete your account information and profile photo</string>
+    <!-- Second account deletion bullet saying the you will be removed from all group -->
+    <string name="delete_account_explanation_bullet_two">• Remove you from all HalloApp groups</string>
+    <!-- Third account deletion bullet explaining message history will be deleted -->
+    <string name="delete_account_explanation_bullet_three">• Delete your message history on this phone</string>
+    <!-- Instructions shown above delete account entry -->
+    <string name="delete_account_instructions">To delete your account, confirm your phone number. This cannot be undone</string>
+    <!-- Progress message while account is deleting -->
+    <string name="delete_account_in_progress">Deleting your account…</string>
+    <!-- Text box hint for optional field for adding feedback for why you are deleting your account -->
+    <string name="delete_account_feedback_hint">Feedback for HalloApp (Optional)</string>
+    <!-- Message shown in dialog asking if user is sure they want to delete their account -->
+    <string name="delete_account_confirmation_message">Are you sure that you want to delete your account? This cannot be undone</string>
 </resources>

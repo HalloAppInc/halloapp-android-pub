@@ -1,5 +1,7 @@
 package com.halloapp.xmpp;
 
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 
 import com.halloapp.proto.server.DeleteAccount;
@@ -8,17 +10,23 @@ import com.halloapp.proto.server.Iq;
 public class DeleteAccountRequestIq extends HalloIq {
 
     private final String phone;
+    private final String reason;
 
-    DeleteAccountRequestIq(@NonNull String phone) {
+    DeleteAccountRequestIq(@NonNull String phone, @NonNull String reason) {
         this.phone = phone;
+        this.reason = reason;
     }
 
     @Override
     public Iq toProtoIq() {
+        DeleteAccount.Builder builder = DeleteAccount.newBuilder().setPhone(phone);
+        if (!TextUtils.isEmpty(reason)) {
+            builder.setFeedback(reason);
+        }
         return Iq.newBuilder()
                 .setId(getStanzaId())
                 .setType(Iq.Type.SET)
-                .setDeleteAccount(DeleteAccount.newBuilder().setPhone(phone).build())
+                .setDeleteAccount(builder.build())
                 .build();
     }
 }

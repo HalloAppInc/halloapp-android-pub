@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Build;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -35,8 +37,12 @@ public class DeleteAccountActivity extends HalloActivity {
 
     private CountryCodePicker countryCodePicker;
     private EditText phoneNumberEditText;
+    private EditText deleteReason;
     private View nextButton;
-    private View loadingProgressBar;
+
+    private View deleteExplanationContainer;
+    private View deleteProgressContainer;
+    private View deleteConfirmationContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,41 +56,63 @@ public class DeleteAccountActivity extends HalloActivity {
 
         viewModel = new ViewModelProvider(this).get(DeleteAccountViewModel.class);
 
+        deleteExplanationContainer = findViewById(R.id.delete_explanation);
+        deleteProgressContainer = findViewById(R.id.delete_progress);
+        deleteConfirmationContainer = findViewById(R.id.delete_step);
+        deleteReason = findViewById(R.id.feedback_edit_text);
+
+        View continueButton = findViewById(R.id.continue_delete);
+        continueButton.setOnClickListener(v -> {
+            deleteExplanationContainer.setVisibility(View.GONE);
+            deleteConfirmationContainer.setVisibility(View.VISIBLE);
+        });
+
         phoneNumberEditText = findViewById(R.id.phone_number);
         countryCodePicker = findViewById(R.id.ccp);
         countryCodePicker.registerCarrierNumberEditText(phoneNumberEditText);
         countryCodePicker.useFlagEmoji(Build.VERSION.SDK_INT >= 28);
-        loadingProgressBar = findViewById(R.id.loading);
         nextButton = findViewById(R.id.next);
 
         phoneNumberEditText.setTextColor(phoneNumberEditText.getCurrentTextColor()); // so phoneNumberEditText.setEnabled(false) doesn't change color
 
         viewModel.getResult().observe(this, success -> {
             nextButton.setEnabled(true);
-            loadingProgressBar.setVisibility(View.INVISIBLE);
+            deleteProgressContainer.setVisibility(View.GONE);
+            deleteConfirmationContainer.setVisibility(View.VISIBLE);
             if (!Boolean.TRUE.equals(success)) {
                 SnackbarHelper.showWarning(this, R.string.delete_account_failed);
             }
         });
 
         nextButton.setOnClickListener(v -> {
-            nextButton.setEnabled(false);
-            loadingProgressBar.setVisibility(View.VISIBLE);
-            deleteAccount();
+            if (isPhoneNumberValid()) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(R.string.delete_account_confirmation_message);
+                builder.setPositiveButton(R.string.delete_account_button, (dialog, which) -> {
+                    deleteAccount();
+                });
+                builder.setNegativeButton(R.string.cancel, null);
+                builder.show();
+            }
         });
     }
 
-    private void deleteAccount() {
+    private boolean isPhoneNumberValid() {
         if (!isPhoneOkayLength()) {
             SnackbarHelper.showWarning(this, R.string.invalid_phone_number);
-            loadingProgressBar.setVisibility(View.INVISIBLE);
             nextButton.setEnabled(true);
             phoneNumberEditText.requestFocus();
-            return;
+            return false;
         }
+        return true;
+    }
 
+    private void deleteAccount() {
+        nextButton.setEnabled(false);
         String phone = countryCodePicker.getFullNumberWithPlus();
-        viewModel.deleteAccount(phone);
+        deleteConfirmationContainer.setVisibility(View.GONE);
+        deleteProgressContainer.setVisibility(View.VISIBLE);
+        viewModel.deleteAccount(phone, deleteReason.getText().toString());
     }
 
     private boolean isPhoneOkayLength() {
@@ -113,8 +141,8 @@ public class DeleteAccountActivity extends HalloActivity {
             return result;
         }
 
-        void deleteAccount(@NonNull String phone) {
-            connection.deleteAccount(phone).onResponse(iq -> {
+        void deleteAccount(@NonNull String phone, @Nullable String reason) {
+            connection.deleteAccount(phone, reason).onResponse(iq -> {
                 deleteAllUserData();
                 result.postValue(true);
                 final Intent intent = new Intent(getApplication(), DeletionConfirmationActivity.class);

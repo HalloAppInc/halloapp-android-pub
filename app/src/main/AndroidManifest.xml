@@ -157,7 +157,7 @@
 
         <activity
             android:name=".ui.DeleteAccountActivity"
-            android:label=""/>
+            android:label="@string/delete_account_title"/>
 
         <activity
             android:name=".ui.groups.ViewGroupFeedActivity"

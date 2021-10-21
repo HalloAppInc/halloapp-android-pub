@@ -185,7 +185,7 @@ public abstract class Connection {
 
     public abstract String getAndIncrementShortId();
 
-    public abstract Observable<Iq> deleteAccount(@NonNull String phone);
+    public abstract Observable<Iq> deleteAccount(@NonNull String phone, @Nullable String reason);
 
     public abstract Observable<ExportDataResponseIq> requestAccountData();
 }
