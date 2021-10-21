@@ -865,22 +865,43 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     </plurals>
 
     <!-- Title for activity that lets user select who to share with -->
-    <string name="share_with">"Share with…"</string>
+    <string name="share_with">"اشتراک با…"</string>
 
     <!-- Title for feed privacy when setting it from a single post -->
-    <string name="setting_feed_privacy_single_post_title">"Who will see this post"</string>
+    <string name="setting_feed_privacy_single_post_title">"کسانی که این پست را میبینند"</string>
 
     <!-- Text shown when sharing a post with a group -->
-    <string name="composer_sharing_group_post">"Sharing with group"</string>
+    <string name="composer_sharing_group_post">"اشتراک با گروه"</string>
 
     <!-- Title of section for recent groups -->
-    <string name="recent_groups">"Recent groups"</string>
+    <string name="recent_groups">"گروه‌های اخیر"</string>
 
     <!-- Item for creating a new group -->
-    <string name="create_new_group">"Create new group"</string>
+    <string name="create_new_group">"ساختن گروه جدید"</string>
 
     <!-- Shown as a subtitle on the content composer screen when making a post. Tapping will
          allow user to change destination for the post -->
-    <string name="tap_to_change">"Tap to change"</string>
+    <string name="tap_to_change">"کلیک برای تغییر"</string>
+
+    <!-- Title for bottom sheet that comes up telling a user to invite friends to a group -->
+    <string name="invite_group_zero_zone_title">"Invite a friend to your group"</string>
+
+    <!-- Explanation text for bottom sheet shown telling user to share an invite link to invite friends -->
+    <string name="invite_group_zero_zone_details">"Share this link with friends and they'll automatically join your group."</string>
+
+    <!-- initial group created for the user where %s is replaced with their name. should indicate that it is their group -->
+    <string name="zero_zone_group_name">"%s's group"</string>
+
+    <!-- Title for option to invite a contact using an invite link -->
+    <string name="invite_via_link">"Invite via link"</string>
+
+    <!-- Text shown in button for inviting friends -->
+    <string name="add_invite">"Add"</string>
+
+    <!-- Text shown as subheader for inviting friends section -->
+    <string name="invite_friends_header">"Invite friends"</string>
+
+    <!-- Text shown as preview for invite friends group post -->
+    <string name="invite_friends_post_preview">"Invite a friend to your group"</string>
 <string name="share_option_group">"پست به گروه"</string><string name="select_group">"انتخاب گروه"</string></resources>
 

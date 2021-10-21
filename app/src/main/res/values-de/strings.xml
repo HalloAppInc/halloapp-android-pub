@@ -262,8 +262,6 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="action_save">"Speichern"</string>
     <string name="invite_friends">"Freunde &amp; Familie einladen"</string>
     <string name="invite_friend_chooser_title">"%s einladen"</string>
-
-    <!-- Fuzzy -->
     <string name="invite_text_with_name_and_number">"Hey %1$s, ich lade dich ein, dich auch bei HalloApp anzumelden. Ein Netzwerk für echte Beziehungen und diejenigen, die einem am nächsten stehen. Nutze %2$s zur Registrierung und hol sie dir auf %3$s"</string>
     <string name="name_hint">"Dein Name"</string>
     <string name="name_must_be_specified">"Name muss angegeben werden"</string>
@@ -436,7 +434,7 @@ Version: %2$s
     <string name="unblocking_user_in_progress">"%s wird freigegeben…"</string>
     <string name="are_you_sure_dialog_title">"Bist du dir sicher?"</string>
     <string name="hide_future_posts_confirmation">"Bist du dir sicher, dass du alle deine zukünftigen Beiträge vor %s verbergen möchtest? Du kannst dies später jederzeit ändern."</string>
-    <string name="feed_privacy_hide_success">"Privatsphäre-Feed wurde aktualisiert. Beiträge von %s werden ausgeblendet"</string>
+    <string name="feed_privacy_hide_success">"Privatsphäre-Feed wurde aktualisiert. Beiträge werden ausgeblendet für %s"</string>
     <string name="feed_privacy_hide_failure">"Fehler bei der Aktualisierung des Privatsphäre-Feeds. Überprüfe deine Internetverbindung und versuche es noch einmal"</string>
     <string name="user_typing">"schreibt…"</string>
     <string name="group_user_typing">"%s schreibt…"</string>
@@ -505,8 +503,6 @@ Version: %2$s
     <string name="not_now">"Jetzt nicht"</string>
     <string name="continue_button">"Weiter"</string>
     <string name="invite_link_load_failed">"Fehler beim Öffnen des Links zur Gruppeneinladung"</string>
-
-    <!-- Fuzzy -->
     <string name="message_tombstone_placeholder">"Auf Nachrichteneingang wird gewartet. Dies kann eine Weile dauern. "<![CDATA[<a href="learn-more">Mehr erfahren</a>]]>"."</string>
     <string name="failed_no_longer_member">"Du bist nicht mehr ein Mitglied dieser Gruppe"</string>
 
@@ -541,7 +537,6 @@ Version: %2$s
     <string name="key_verification_tap_to_scan">"Zum Scannen hier tippen"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <!-- Fuzzy -->
     <string name="key_verification_explanation">"Um die Sicherheit deiner Verbindung mit %s zu verifizieren, prüfe bitte, ob die obigen Nummern mit denen auf dem anderen Mobilgerät angezeigten übereinstimmen oder scanne den QR-Code. "<![CDATA[<a href="learn-more">Mehr erfahren</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
@@ -551,7 +546,7 @@ Version: %2$s
     <string name="manage_feed_privacy">"Privatsphäre verwalten"</string>
 
     <!-- Button to invite a contact to a group with an invite link -->
-    <string name="group_invite_via_link">"Zur Gruppe via Link einladen"</string>
+    <string name="group_invite_via_link">"Per Link zur Gruppe einladen"</string>
 
     <!-- Shown below on seen by to explain that posts disappear -->
     <string name="seen_by_post_expiration_notice">"Deine Beiträge sind 30 Tage sichtbar."</string>
@@ -932,5 +927,26 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Shown as a subtitle on the content composer screen when making a post. Tapping will
          allow user to change destination for the post -->
     <string name="tap_to_change">"Zum Ändern hier tippen"</string>
+
+    <!-- Title for bottom sheet that comes up telling a user to invite friends to a group -->
+    <string name="invite_group_zero_zone_title">"Invite a friend to your group"</string>
+
+    <!-- Explanation text for bottom sheet shown telling user to share an invite link to invite friends -->
+    <string name="invite_group_zero_zone_details">"Teile diesen Link mit Freunden und sie werden automatisch deiner Gruppe beitreten."</string>
+
+    <!-- initial group created for the user where %s is replaced with their name. should indicate that it is their group -->
+    <string name="zero_zone_group_name">"%s's Gruppe"</string>
+
+    <!-- Title for option to invite a contact using an invite link -->
+    <string name="invite_via_link">"Per Link einladen"</string>
+
+    <!-- Text shown in button for inviting friends -->
+    <string name="add_invite">"Hinzufügen"</string>
+
+    <!-- Text shown as subheader for inviting friends section -->
+    <string name="invite_friends_header">"Freunde einladen"</string>
+
+    <!-- Text shown as preview for invite friends group post -->
+    <string name="invite_friends_post_preview">"Invite a friend to your group"</string>
 <string name="share_option_group">"In Gruppe teilen"</string><string name="select_group">"Gruppe auswählen"</string></resources>
 
