@@ -77,33 +77,12 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/pending_btn"
-            style="@style/Widget.Button"
+            android:id="@+id/add_btn"
+            style="@style/Widget.Button.Secondary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/invite_pending"
             android:clickable="false"
-            android:enabled="false"/>
-
-        <ImageView
-            android:id="@+id/wa_btn"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_margin="8dp"
-            android:src="@drawable/ic_check"
-            android:background="?selectableItemBackgroundBorderless"
-            android:visibility="gone"
-            />
-
-        <ImageView
-            android:id="@+id/sms_btn"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_margin="8dp"
-            android:src="@drawable/ic_delete"
-            android:visibility="gone"
-            android:background="?selectableItemBackgroundBorderless"
-            />
+            android:text="@string/add_invite" />
 
     </LinearLayout>
 

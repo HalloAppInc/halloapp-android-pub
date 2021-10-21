@@ -97,6 +97,7 @@ public class ContentDb {
         void onFeedCleanup();
         void onDbCreated();
         void onArchivedPostRemoved(@NonNull Post post);
+        void onLocalPostSeen(@NonNull String postId);
     }
 
     public static class DefaultObserver implements Observer {
@@ -106,6 +107,7 @@ public class ContentDb {
         public void onPostAudienceChanged(@NonNull Post post, @NonNull Collection<UserId> addedUsers) {}
         public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {}
+        public void onLocalPostSeen(@NonNull String postId) {}
         public void onCommentAdded(@NonNull Comment comment) {}
         public void onCommentRetracted(@NonNull Comment comment) {}
         public void onCommentUpdated(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {}
@@ -260,6 +262,21 @@ public class ContentDb {
             observers.notifyArchivedPostRemoved(post);
         });
     }
+
+    public void removeZeroZonePost(@NonNull Post post) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.deleteZeroZonePost(post);
+            observers.notifyPostRetracted(post);
+        });
+    }
+
+    public void setZeroZonePostSeen(@NonNull String postId) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.setZeroZoneGroupPostSeen(postId);
+            observers.notifyLocalPostSeen(postId);
+        });
+    }
+
 
     public void setIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
         databaseWriteExecutor.execute(() -> {
@@ -591,6 +608,14 @@ public class ContentDb {
         });
     }
 
+    public boolean hasHomeZeroZonePost() {
+        return postsDb.hasZeroZoneHomePost();
+    }
+
+    public boolean hasGroupZeroZonePost(@NonNull GroupId groupId) {
+        return postsDb.hasZeroZoneGroupPost(groupId);
+    }
+
     public void setCommentTransferred(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
         databaseWriteExecutor.execute(() -> {
             postsDb.setCommentTransferred(postId, commentSenderUserId, commentId);
@@ -787,6 +812,12 @@ public class ContentDb {
             if (completionRunnable != null) {
                 completionRunnable.run();
             }
+        });
+    }
+
+    public void setGroupLink(@NonNull GroupId groupId, @Nullable String inviteLink) {
+        databaseWriteExecutor.execute(() -> {
+            messagesDb.setGroupInviteLinkToken(groupId, inviteLink);
         });
     }
 

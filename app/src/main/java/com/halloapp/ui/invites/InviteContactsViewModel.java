@@ -45,8 +45,6 @@ public class InviteContactsViewModel extends AndroidViewModel {
     final MutableLiveData<InviteCountAndRefreshTime> inviteAndTimeData;
 
     final ComputableLiveData<List<Contact>> contactList;
-    final ComputableLiveData<Set<String>> waContacts;
-    final ComputableLiveData<InviteOptions> inviteOptions;
 
     public static final int RESPONSE_RETRYABLE = -1;
     public static final long RESPONSE_RETRYABLE_LONG = -1;
@@ -58,11 +56,6 @@ public class InviteContactsViewModel extends AndroidViewModel {
             refreshContacts();
         }
     };
-
-    public static class InviteOptions {
-        public boolean hasWA;
-        public String defaultSms;
-    }
 
     public InviteContactsViewModel(@NonNull Application application) {
         super(application);
@@ -119,41 +112,10 @@ public class InviteContactsViewModel extends AndroidViewModel {
             }
         };
 
-        inviteOptions = new ComputableLiveData<InviteOptions>() {
-            @Override
-            protected InviteOptions compute() {
-                return loadInviteOptions();
-            }
-        };
-
-        waContacts = new ComputableLiveData<Set<String>>() {
-            @Override
-            protected Set<String> compute() {
-                return AddressBookContacts.fetchWANumbers(application);
-            }
-        };
-
         contactsDb.addObserver(contactsObserver);
         fetchInviteAndTimeRefreshData();
     }
 
-    private InviteOptions loadInviteOptions() {
-        String defaultSms = Telephony.Sms.getDefaultSmsPackage(getApplication());
-        boolean hasWa = false;
-
-        PackageManager packageManager = getApplication().getPackageManager();
-        for (PackageInfo packageInfo : packageManager.getInstalledPackages(0)) {
-            if (packageInfo.packageName.equals("com.whatsapp")) {
-                hasWa = true;
-                break;
-            }
-        }
-        InviteOptions inviteOptions = new InviteOptions();
-        inviteOptions.hasWA = hasWa;
-        inviteOptions.defaultSms = defaultSms;
-
-        return inviteOptions;
-    }
 
     private void fetchInviteAndTimeRefreshData() {
         bgWorkers.execute(() -> {
@@ -176,11 +138,8 @@ public class InviteContactsViewModel extends AndroidViewModel {
         });
     }
 
-    public void refreshInvites() {fetchInviteAndTimeRefreshData();}
-
     public void refreshContacts() {
         contactList.invalidate();
-        waContacts.invalidate();
     }
 
     public LiveData<InviteCountAndRefreshTime> getInviteCountAndRefreshTime() {

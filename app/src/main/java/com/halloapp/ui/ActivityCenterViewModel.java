@@ -82,6 +82,11 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         }
 
         @Override
+        public void onLocalPostSeen(@NonNull String postId) {
+            invalidateSocialHistory();
+        }
+
+        @Override
         public void onCommentAdded(@NonNull Comment comment) {
             if (comment.isIncoming()) {
                 invalidateSocialHistory();

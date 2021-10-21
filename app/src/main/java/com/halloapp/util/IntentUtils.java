@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.util.logs.Log;
@@ -33,6 +34,19 @@ public class IntentUtils {
     private static final String FB_MESSENGER_PACKAGE = "com.facebook.orca";
     private static final String WHATSAPP_PACKAGE = "com.whatsapp";
     private static final String WHATSAPP_BUSINESS_PACKAGE = "com.whatsapp.w4b";
+
+    public static Intent createShareDlIntent() {
+        return createShareUrlIntent(Constants.DOWNLOAD_LINK_URL);
+    }
+
+    public static Intent createShareUrlIntent(@NonNull String url) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, url);
+        sendIntent.setType("text/plain");
+
+        return Intent.createChooser(sendIntent, null);
+    }
 
     public static Intent createSmsIntent(@NonNull String phoneNumber, @Nullable String text) {
         Preconditions.checkNotNull(phoneNumber);

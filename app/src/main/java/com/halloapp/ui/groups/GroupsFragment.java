@@ -469,6 +469,8 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                             infoView.setVisibility(View.VISIBLE);
                             if (result.type == Post.TYPE_SYSTEM) {
                                 bindGroupSystemPostPreview(result);
+                            } else if (result.type == Post.TYPE_ZERO_ZONE) {
+                                bindGroupZeroZonePostPreview(result);
                             } else {
                                 bindGroupPostPreview(result);
                             }
@@ -513,6 +515,14 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                 timeView.setVisibility(View.VISIBLE);
                 timeView.setText(TimeFormatter.formatRelativeTime(timeView.getContext(), post.timestamp));
                 contactLoader.cancel(infoView);
+                systemMessageTextResolver.bindGroupSystemPostPreview(infoView, post);
+            }
+
+            private void bindGroupZeroZonePostPreview(@NonNull Post post) {
+                timeView.setVisibility(View.VISIBLE);
+                timeView.setText(TimeFormatter.formatRelativeTime(timeView.getContext(), post.timestamp));
+                contactLoader.cancel(infoView);
+                infoView.setText(R.string.invite_friends_post_preview);
                 systemMessageTextResolver.bindGroupSystemPostPreview(infoView, post);
             }
 

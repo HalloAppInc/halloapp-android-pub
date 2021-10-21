@@ -146,7 +146,9 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         emptyView = findViewById(android.R.id.empty);
 
         viewModel = new ViewModelProvider(this).get(ContactsViewModel.class);
-        viewModel.contactList.getLiveData().observe(this, adapter::setContacts);
+        viewModel.contactList.getLiveData().observe(this, contacts -> {
+            adapter.setContacts(contacts);
+        });
 
         boolean showInviteOption = getIntent().getBooleanExtra(EXTRA_SHOW_INVITE, true);
         adapter.setInviteVisible(showInviteOption);

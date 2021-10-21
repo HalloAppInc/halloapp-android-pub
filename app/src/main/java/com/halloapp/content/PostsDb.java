@@ -202,6 +202,15 @@ class PostsDb {
     }
 
     @WorkerThread
+    void deleteZeroZonePost(@NonNull Post post) {
+        if (post.type != Post.TYPE_ZERO_ZONE) {
+            return;
+        }
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.delete(PostsTable.TABLE_NAME, PostsTable.COLUMN_POST_ID + "=? AND " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_ZERO_ZONE, new String[] {post.id});
+    }
+
+    @WorkerThread
     void retractPost(@NonNull Post post) {
         Log.i("ContentDb.retractPost: postId=" + post.id);
         final ContentValues values = new ContentValues();
@@ -289,6 +298,23 @@ class PostsDb {
                     SQLiteDatabase.CONFLICT_ABORT);
         } catch (SQLException ex) {
             Log.e("ContentDb.setIncomingPostSeen: failed");
+            throw ex;
+        }
+    }
+
+    @WorkerThread
+    void setZeroZoneGroupPostSeen(@NonNull String postId) {
+        Log.i("ContentDb.setZeroZoneGroupPostSeen: postId=" + postId);
+        final ContentValues values = new ContentValues();
+        values.put(PostsTable.COLUMN_SEEN, Post.SEEN_YES);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
+                    PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
+                    new String [] {"", postId},
+                    SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLException ex) {
+            Log.e("ContentDb.setZeroZoneGroupPostSeen: failed");
             throw ex;
         }
     }
@@ -820,7 +846,8 @@ class PostsDb {
                 + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + " IS NOT NULL"
                 + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "=0"
                 + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_RETRACTED
-                + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "!=?"
+                + " AND (" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "!=?"
+                + " OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_ZERO_ZONE + ")"
                 + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + " > " + getPostExpirationTime();
         try (final Cursor cursor = db.rawQuery(query, new String[]{UserId.ME.rawId()})) {
             return cursor.getCount();
@@ -992,11 +1019,14 @@ class PostsDb {
         if (senderUserId != null) {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=?";
             args.add(senderUserId.rawId());
+            if (senderUserId.isMe()) {
+                where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_ZERO_ZONE;
+            }
         }
         if (unseenOnly) {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "=0"
                     + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_RETRACTED
-                    + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + " != ''";
+                    + " AND (" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + " != ''" + " OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_ZERO_ZONE + ")";
         }
         if (groupId != null) {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "=?";
@@ -1165,6 +1195,58 @@ class PostsDb {
         Log.i("ContentDb.getPosts: start=" + timestamp + " count=" + count + " after=" + after + " posts.size=" + posts.size() + (posts.isEmpty() ? "" : (" got posts from " + posts.get(0).timestamp + " to " + posts.get(posts.size()-1).timestamp)));
 
         return posts;
+    }
+
+    @WorkerThread
+    boolean hasZeroZoneHomePost() {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+                "SELECT " +
+                        PostsTable.TABLE_NAME + "." + PostsTable._ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_AUDIENCE_TYPE + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_REREQUEST_COUNT + " " +
+                        "FROM " + PostsTable.TABLE_NAME + " " +
+                        "WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=?";
+        try (final Cursor cursor = db.rawQuery(sql, new String [] {Integer.toString(Post.TYPE_ZERO_ZONE)})) {
+            while (cursor.moveToNext()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @WorkerThread
+    boolean hasZeroZoneGroupPost(@NonNull GroupId groupId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+                "SELECT " +
+                        PostsTable.TABLE_NAME + "." + PostsTable._ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_AUDIENCE_TYPE + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_REREQUEST_COUNT + " " +
+                        "FROM " + PostsTable.TABLE_NAME + " " +
+                        "WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=? AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "=?";
+        try (final Cursor cursor = db.rawQuery(sql, new String [] {Integer.toString(Post.TYPE_ZERO_ZONE), groupId.rawId()})) {
+            while (cursor.moveToNext()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @WorkerThread

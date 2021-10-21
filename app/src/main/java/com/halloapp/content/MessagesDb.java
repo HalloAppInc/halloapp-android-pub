@@ -386,6 +386,27 @@ class MessagesDb {
     }
 
     @WorkerThread
+    boolean setGroupInviteLinkToken(@NonNull GroupId groupId, @Nullable String inviteToken) {
+        Log.i("MessagesDb.setGroupInviteLinkToken " + groupId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            final ContentValues chatValues = new ContentValues();
+            chatValues.put(ChatsTable.COLUMN_INVITE_LINK, inviteToken);
+            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()});
+
+            db.setTransactionSuccessful();
+            Log.i("ContentDb.setGroupInviteLinkToken: success " + groupId);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("ContentDb.setGroupInviteLinkToken: " + ex.getMessage() + " " + groupId);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    @WorkerThread
     boolean setGroupName(@NonNull GroupId groupId, @NonNull String name) {
         Log.i("MessagesDb.setGroupName " + groupId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -1999,7 +2020,8 @@ class MessagesDb {
                         ChatsTable.COLUMN_GROUP_DESCRIPTION,
                         ChatsTable.COLUMN_GROUP_AVATAR_ID,
                         ChatsTable.COLUMN_IS_ACTIVE,
-                        ChatsTable.COLUMN_THEME},
+                        ChatsTable.COLUMN_THEME,
+                        ChatsTable.COLUMN_INVITE_LINK},
                 selection, null, null, null, ChatsTable.COLUMN_TIMESTAMP + " DESC")) {
             while (cursor.moveToNext()) {
                 final Chat chat = new Chat(
@@ -2015,6 +2037,7 @@ class MessagesDb {
                         cursor.getString(9),
                         cursor.getInt(10) == 1,
                         cursor.getInt(11));
+                chat.inviteToken = cursor.getString(12);
                 if (!serverProps.getGroupChatsEnabled() && chat.isGroup) {
                     continue;
                 }
@@ -2057,7 +2080,8 @@ class MessagesDb {
                         ChatsTable.COLUMN_GROUP_DESCRIPTION,
                         ChatsTable.COLUMN_GROUP_AVATAR_ID,
                         ChatsTable.COLUMN_IS_ACTIVE,
-                        ChatsTable.COLUMN_THEME},
+                        ChatsTable.COLUMN_THEME,
+                        ChatsTable.COLUMN_INVITE_LINK},
                 ChatsTable.COLUMN_IS_GROUP + "=?",
                 new String[]{"1"}, null, null, ChatsTable.COLUMN_TIMESTAMP + " DESC")) {
             while (cursor.moveToNext()) {
@@ -2074,6 +2098,7 @@ class MessagesDb {
                         cursor.getString(9),
                         cursor.getInt(10) == 1,
                         cursor.getInt(11));
+                chat.inviteToken = cursor.getString(12);
                 chats.add(chat);
             }
         }
@@ -2097,7 +2122,8 @@ class MessagesDb {
                         ChatsTable.COLUMN_GROUP_DESCRIPTION,
                         ChatsTable.COLUMN_GROUP_AVATAR_ID,
                         ChatsTable.COLUMN_IS_ACTIVE,
-                        ChatsTable.COLUMN_THEME},
+                        ChatsTable.COLUMN_THEME,
+                        ChatsTable.COLUMN_INVITE_LINK},
                 ChatsTable.COLUMN_IS_GROUP + "=? AND " + ChatsTable.COLUMN_IS_ACTIVE + "=?",
                 new String[]{"1", "1"}, null, null, ChatsTable.COLUMN_TIMESTAMP + " DESC")) {
             while (cursor.moveToNext()) {
@@ -2114,6 +2140,7 @@ class MessagesDb {
                         cursor.getString(9),
                         cursor.getInt(10) == 1,
                         cursor.getInt(11));
+                chat.inviteToken = cursor.getString(12);
                 chats.add(chat);
             }
         }
@@ -2136,12 +2163,13 @@ class MessagesDb {
                         ChatsTable.COLUMN_GROUP_DESCRIPTION,
                         ChatsTable.COLUMN_GROUP_AVATAR_ID,
                         ChatsTable.COLUMN_IS_ACTIVE,
-                        ChatsTable.COLUMN_THEME},
+                        ChatsTable.COLUMN_THEME,
+                        ChatsTable.COLUMN_INVITE_LINK},
                 ChatsTable.COLUMN_CHAT_ID + "=?",
                 new String [] {chatId.rawId()},
                 null, null, null)) {
             if (cursor.moveToNext()) {
-                return new Chat(
+                Chat chat = new Chat(
                         cursor.getLong(0),
                         ChatId.fromNullable(cursor.getString(1)),
                         cursor.getLong(2),
@@ -2154,6 +2182,8 @@ class MessagesDb {
                         cursor.getString(9),
                         cursor.getInt(10) == 1,
                         cursor.getInt(11));
+                chat.inviteToken = cursor.getString(12);
+                return chat;
             }
         }
         return null;

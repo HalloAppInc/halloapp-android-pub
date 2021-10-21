@@ -32,7 +32,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 53;
+    private static final int DATABASE_VERSION = 54;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -137,7 +137,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + ChatsTable.COLUMN_IS_ACTIVE + " INTEGER DEFAULT 1,"
                 + ChatsTable.COLUMN_GROUP_DESCRIPTION + " TEXT,"
                 + ChatsTable.COLUMN_GROUP_AVATAR_ID + " TEXT,"
-                + ChatsTable.COLUMN_THEME + " INTEGER DEFAULT 0"
+                + ChatsTable.COLUMN_THEME + " INTEGER DEFAULT 0,"
+                + ChatsTable.COLUMN_INVITE_LINK + " TEXT"
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + DeletedGroupNameTable.TABLE_NAME);
@@ -535,6 +536,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 52: {
                 upgradeFromVersion52(db);
+            }
+            case 53: {
+                upgradeFromVersion53(db);
             }
             break;
             default: {
@@ -1129,6 +1133,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 +   "DELETE FROM " + UrlPreviewsTable.TABLE_NAME + " WHERE " + UrlPreviewsTable.COLUMN_PARENT_ROW_ID + "=OLD." + CommentsTable._ID + " AND " + UrlPreviewsTable.COLUMN_PARENT_TABLE + "='" + CommentsTable.TABLE_NAME + "'; "
                 +   "DELETE FROM " + RerequestsTable.TABLE_NAME + " WHERE " + RerequestsTable.COLUMN_CONTENT_ID + "=OLD." + CommentsTable.COLUMN_COMMENT_ID + " AND " + RerequestsTable.COLUMN_PARENT_TABLE + "='" + CommentsTable.TABLE_NAME + "'; "
                 + "END;");
+    }
+
+    private void upgradeFromVersion53(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + ChatsTable.TABLE_NAME + " ADD COLUMN " + ChatsTable.COLUMN_INVITE_LINK + " TEXT");
     }
 
     /**

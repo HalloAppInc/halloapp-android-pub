@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/contacts_list_item_height"
+    android:paddingStart="40dp"
+    android:paddingEnd="16dp"
+    android:orientation="horizontal"
+    android:background="?selectableItemBackground">
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="11dp"
+        android:layout_marginStart="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_share_outline"
+        android:background="@drawable/color_bg_circle"
+        android:backgroundTint="@color/white_button_background"
+        app:tint="@color/color_secondary"/>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textSize="17sp"
+        android:fontFamily="sans-serif-medium"
+        android:textDirection="locale"
+        android:textAlignment="gravity"
+        android:textColor="@color/color_secondary"
+        android:text="@string/group_invite_via_link"/>
+
+</LinearLayout>

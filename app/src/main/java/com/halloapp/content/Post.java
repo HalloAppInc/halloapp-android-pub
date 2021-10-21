@@ -41,12 +41,13 @@ public class Post extends ContentItem {
     public static final int TRANSFERRED_DECRYPT_FAILED = 2;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TYPE_USER, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_RETRACTED})
+    @IntDef({TYPE_USER, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_RETRACTED, TYPE_ZERO_ZONE})
     public @interface Type {}
     public static final int TYPE_USER = 0;
     public static final int TYPE_SYSTEM = 1;
     public static final int TYPE_FUTURE_PROOF = 2;
     public static final int TYPE_RETRACTED = 3;
+    public static final int TYPE_ZERO_ZONE = 4;
 
     public int commentCount;
     public int unseenCommentCount;

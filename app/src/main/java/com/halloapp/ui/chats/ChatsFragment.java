@@ -35,9 +35,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
+import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.InviteContactsAdapter;
 import com.halloapp.content.Chat;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
@@ -57,7 +60,9 @@ import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.profile.ViewProfileActivity;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FilterUtils;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
@@ -78,6 +83,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     private static final int REQUEST_CODE_OPEN_CHAT = 1;
 
     private final ChatsAdapter adapter = new ChatsAdapter();
+    private InviteContactsAdapter inviteAdapter;
 
     private final PresenceLoader presenceLoader = PresenceLoader.getInstance();
 
@@ -150,7 +156,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             }
             @Override
             public boolean onQueryTextChange(final String text) {
-                adapter.getFilter().filter(text);
+                (inviteAdapter == null ? adapter : inviteAdapter).getFilter().filter(text);
                 closeMenuItem.setVisible(!TextUtils.isEmpty(text));
                 return false;
             }
@@ -183,11 +189,57 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         }
         viewModel.chatsList.getLiveData().observe(getViewLifecycleOwner(), chats -> {
             adapter.setChats(chats);
-            emptyView.setVisibility(chats.size() == 0 ? View.VISIBLE : View.GONE);
+            emptyView.setVisibility((chats.size() == 0 && inviteAdapter == null) ? View.VISIBLE : View.GONE);
+        });
+        viewModel.showInviteList.observe(getViewLifecycleOwner(), showInvites -> {
+            if (showInvites == null || !showInvites) {
+                if (inviteAdapter != null) {
+                    inviteAdapter.setParent(null);
+                    inviteAdapter = null;
+                    viewModel.contactsList.getLiveData().removeObservers(getViewLifecycleOwner());
+                    chatsView.setAdapter(adapter);
+                    viewModel.chatsList.invalidate();
+                }
+                return;
+            }
+            if (inviteAdapter == null) {
+                inviteAdapter = new InviteContactsAdapter();
+                inviteAdapter.setSendingEnabled(true);
+                inviteAdapter.setShowHeader(true);
+                inviteAdapter.setParent(new InviteContactsAdapter.InviteContactsAdapterParent() {
+                    @Override
+                    public void onInvite(@NonNull Contact contact) {
+                        viewModel.markContactInvited(contact);
+                        Intent chooser = IntentUtils.createSmsChooserIntent(requireContext(), getString(R.string.invite_friend_chooser_title, contact.getShortName()), Preconditions.checkNotNull(contact.normalizedPhone), getInviteText(contact));
+                        startActivity(chooser);
+                    }
+
+                    @Override
+                    public void onFiltered(@NonNull CharSequence constraint, @NonNull List<Contact> contacts) {
+                        if (contacts.isEmpty()) {
+                            emptyView.setVisibility(View.VISIBLE);
+                            if (TextUtils.isEmpty(constraint)) {
+                                emptyViewMessage.setText(R.string.chats_page_empty);
+                            } else {
+                                emptyViewMessage.setText(getString(R.string.chats_search_empty, constraint));
+                            }
+                        } else {
+                            emptyView.setVisibility(View.GONE);
+                        }
+                    }
+                });
+                viewModel.contactsList.getLiveData().observe(getViewLifecycleOwner(), inviteAdapter::setContacts);
+                chatsView.setAdapter(inviteAdapter);
+                emptyView.setVisibility(View.GONE);
+            }
         });
         viewModel.messageUpdated.observe(getViewLifecycleOwner(), updated -> adapter.notifyDataSetChanged());
 
         return root;
+    }
+
+    private String getInviteText(@NonNull Contact contact) {
+        return getString(R.string.invite_text_with_name_and_number, contact.getShortName(), contact.getDisplayPhone(), Constants.DOWNLOAD_LINK_URL);
     }
 
     @Override

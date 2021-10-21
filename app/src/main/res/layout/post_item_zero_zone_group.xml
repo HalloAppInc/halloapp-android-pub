@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.halloapp.widget.SeenDetectorLayout
+        android:id="@+id/seen_detector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingTop="16dp"
+        android:paddingBottom="32dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="20dp"
+            app:cardBackgroundColor="@color/post_card_background"
+            app:cardElevation="@dimen/post_elevation">
+
+            <include layout="@layout/layout_group_zero_zone" />
+
+            <ImageView
+                android:id="@+id/remove_zero_zone_nux"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_close"/>
+
+        </androidx.cardview.widget.CardView>
+
+    </com.halloapp.widget.SeenDetectorLayout>
+
+</FrameLayout>

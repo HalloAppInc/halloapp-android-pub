@@ -240,4 +240,9 @@ public class MainContentDbObserver implements ContentDb.Observer {
     public void onArchivedPostRemoved(@NonNull Post post) {
 
     }
+
+    @Override
+    public void onLocalPostSeen(@NonNull String postId) {
+
+    }
 }

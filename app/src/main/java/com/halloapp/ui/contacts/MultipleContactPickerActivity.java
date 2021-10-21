@@ -37,10 +37,13 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.id.UserId;
+import com.halloapp.nux.InviteGroupBottomSheetDialogFragment;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.FilterUtils;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
@@ -72,6 +75,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     protected static final String EXTRA_MAX_SELECTION = "max_selection";
     protected static final String EXTRA_ONLY_FRIENDS = "only_friends";
     protected static final String EXTRA_ALLOW_EMPTY_SELECTION = "allow_empty_selection";
+    public static final String EXTRA_INVITE_LINK = "group_invite_link";
     public static final String EXTRA_RESULT_SELECTED_IDS = "result_selected_ids";
 
     private final ContactsAdapter adapter = new ContactsAdapter();
@@ -92,6 +96,9 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     private @DrawableRes int selectionIcon;
     private int maxSelection = -1;
     private boolean allowEmptySelection;
+
+    private boolean showedInviteBottomSheet;
+    private String groupInviteLink;
 
     private MenuItem finishMenuItem;
 
@@ -190,6 +197,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         if (disabledInput != null) {
             disabledContacts.addAll(disabledInput);
         }
+        groupInviteLink = getIntent().getStringExtra(EXTRA_INVITE_LINK);
         viewModel.contactList.getLiveData().observe(this, allContacts -> {
             Map<UserId, Contact> map = new HashMap<>();
             for (Contact contact : allContacts) {
@@ -198,7 +206,12 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
             this.contactMap = map;
             adapter.setContacts(allContacts);
             avatarsAdapter.setUserIds(selectedContacts);
+            if (allContacts.isEmpty() && !TextUtils.isEmpty(groupInviteLink) && !showedInviteBottomSheet) {
+                showedInviteBottomSheet = true;
+                DialogFragmentUtils.showDialogFragmentOnce(InviteGroupBottomSheetDialogFragment.newInstance(groupInviteLink), getSupportFragmentManager());
+            }
         });
+        adapter.setInviteLink(groupInviteLink);
 
         maxSelection = getIntent().getIntExtra(EXTRA_MAX_SELECTION, -1);
         allowEmptySelection = getIntent().getBooleanExtra(EXTRA_ALLOW_EMPTY_SELECTION, false);
@@ -329,12 +342,21 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         }
     }
 
-    private class ContactsAdapter extends RecyclerView.Adapter<ContactsActivity.ViewHolder> implements FastScrollRecyclerView.SectionedAdapter, Filterable {
+    private class ContactsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements FastScrollRecyclerView.SectionedAdapter, Filterable {
+
+        private static final int TYPE_CONTACT = 1;
+        private static final int TYPE_INVITE_LINK = 2;
 
         private List<Contact> contacts = new ArrayList<>();
         private List<Contact> filteredContacts;
         private CharSequence filterText;
         private List<String> filterTokens;
+
+        private String inviteLink;
+
+        void setInviteLink(@Nullable String inviteLink) {
+            this.inviteLink = inviteLink;
+        }
 
         void setContacts(@NonNull List<Contact> contacts) {
             this.contacts = contacts;
@@ -351,21 +373,37 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
 
         @Override
         public @NonNull
-        ContactsActivity.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ContactViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_select_item, parent, false));
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ContactsActivity.ViewHolder holder, int position) {
-            if (position < getFilteredContactsCount()) {
-                Contact contact = filteredContacts.get(position);
-                holder.bindTo(contact, filterTokens);
+        RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            if (viewType == TYPE_CONTACT) {
+                return new ContactViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_select_item, parent, false));
+            } else {
+                return new InviteViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_group_invite_link, parent, false));
             }
         }
 
         @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            if (holder instanceof ContactsActivity.ViewHolder) {
+                if (position < getFilteredContactsCount()) {
+                    Contact contact = filteredContacts.get(position);
+                    ((ContactsActivity.ViewHolder)holder).bindTo(contact, filterTokens);
+                }
+            } else if (holder instanceof InviteViewHolder) {
+                ((InviteViewHolder) holder).bind(inviteLink);
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (inviteLink != null && position == getItemCount() - 1) {
+                return TYPE_INVITE_LINK;
+            }
+            return TYPE_CONTACT;
+        }
+
+        @Override
         public int getItemCount() {
-            return getFilteredContactsCount();
+            return getFilteredContactsCount() + (inviteLink == null ? 0 : 1);
         }
 
         @NonNull
@@ -414,6 +452,25 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
             } else {
                 emptyView.setVisibility(View.GONE);
             }
+        }
+    }
+
+    static class InviteViewHolder extends RecyclerView.ViewHolder {
+
+        private String inviteLink;
+
+        public InviteViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            itemView.setOnClickListener(v -> {
+                if (inviteLink != null) {
+                    itemView.getContext().startActivity(IntentUtils.createShareUrlIntent(inviteLink));
+                }
+            });
+        }
+
+        public void bind(@Nullable String inviteLink) {
+            this.inviteLink = inviteLink;
         }
     }
 

@@ -46,6 +46,11 @@ public class MainViewModel extends AndroidViewModel {
             unseenGroupsCount.invalidate();
         }
 
+        @Override
+        public void onLocalPostSeen(@NonNull String postId) {
+            unseenGroupsCount.invalidate();
+        }
+
         public void onMessageAdded(@NonNull Message message) {
             if (message.isIncoming()) {
                 unseenChatsCount.invalidate();

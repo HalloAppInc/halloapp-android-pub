@@ -38,6 +38,7 @@
     <color name="group_bg_picker_background">#FFFFFF</color>
     <color name="dimmed_window_overlay">#80000000</color>
     <color name="post_actions_separator">#1a000000</color>
+    <color name="white_button_background">#FFFFFF</color>
     <color name="post_card_color_background">@color/cardview_light_background</color>
     <color name="post_card_background">#ffffff</color>
     <color name="badge_text">#ffffff</color>
@@ -102,6 +103,8 @@
 
     <color name="comment_reply_bg">@color/color_secondary_15_alpha</color>
     <color name="comment_reply_text">@color/black_54</color>
+    
+    <color name="share_link_post_bg">#F3F2EF</color>
 
     <color name="voice_note_circle">#E6CAE3FF</color>
     <color name="voice_note_droplet_bg">@color/color_secondary</color>

@@ -51,6 +51,11 @@ public class GroupsViewModel extends AndroidViewModel {
             }
 
             @Override
+            public void onLocalPostSeen(@NonNull String postId) {
+                invalidateGroups();
+            }
+
+            @Override
             public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
                 invalidateGroups();
             }

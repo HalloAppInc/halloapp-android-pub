@@ -18,6 +18,7 @@ public class Chat {
     public final int theme;
 
     public String name;
+    public String inviteToken;
 
     public Chat(
             long rowId,

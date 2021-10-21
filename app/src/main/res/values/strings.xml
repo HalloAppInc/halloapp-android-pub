@@ -741,4 +741,10 @@
     <string name="invite_friends_header">Invite friends</string>
     <!-- Text shown as preview for invite friends group post -->
     <string name="invite_friends_post_preview">Invite a friend to your group</string>
+    <!-- Title for home post explaining what HalloApp is -->
+    <string name="zero_zone_home_nux_header">Welcome to HalloApp, a space for real relationships ✨</string>
+    <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
+    <string name="zero_zone_home_nux_text_one">Use your phone number to connect with friends &amp; family in a space with no ads, no brands, no likes, and no influencers.</string>
+    <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
+    <string name="zero_zone_home_nux_text_two">HalloApp is for you, and those closest to you, in private. Invite your real friends to get started</string>
 </resources>

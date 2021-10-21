@@ -300,6 +300,11 @@
         <item name="backgroundTint">@color/secondary_button_color_selector</item>
     </style>
 
+    <style name="Widget.Button.SecondaryWhiteBackground" parent="Widget.Button">
+        <item name="backgroundTint">@color/white_button_background</item>
+        <item name="android:textColor">@color/secondary_text_button_color_selector</item>
+    </style>
+
     <style name="Widget.Button" parent="@style/Widget.MaterialComponents.Button">
         <item name="android:textAllCaps">false</item>
     </style>

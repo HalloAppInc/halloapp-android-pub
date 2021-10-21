@@ -42,6 +42,7 @@ import com.halloapp.ui.posts.OutgoingPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.ui.posts.SubtlePostViewHolder;
+import com.halloapp.ui.posts.ZeroZonePostViewHolder;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
@@ -139,6 +140,8 @@ public class PostsFragment extends HalloFragment {
         static final int POST_TYPE_RETRACTED = 0x02;
         static final int POST_TYPE_SYSTEM = 0x03;
         static final int POST_TYPE_FUTURE_PROOF = 0x04;
+        static final int POST_TYPE_ZERO_ZONE_HOME = 0x05;
+        static final int POST_TYPE_ZERO_ZONE_GROUP = 0x06;
         static final int POST_TYPE_MASK = 0xFF;
 
         static final int POST_DIRECTION_OUTGOING = 0x0000;
@@ -309,6 +312,9 @@ public class PostsFragment extends HalloFragment {
                 case Post.TYPE_RETRACTED:
                     type = POST_TYPE_RETRACTED;
                     break;
+                case Post.TYPE_ZERO_ZONE:
+                    type = post.getParentGroup() != null ? POST_TYPE_ZERO_ZONE_GROUP : POST_TYPE_ZERO_ZONE_HOME;
+                    break;
             }
             if (post.isRetracted()) {
                 type = POST_TYPE_RETRACTED;
@@ -328,6 +334,11 @@ public class PostsFragment extends HalloFragment {
             int postType = viewType & POST_TYPE_MASK;
             if (postType == POST_TYPE_RETRACTED || postType == POST_TYPE_SYSTEM) {
                 return new SubtlePostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.centered_post_item, parent, false), postViewHolderParent);
+            }
+            if (postType == POST_TYPE_ZERO_ZONE_HOME) {
+                return new ZeroZonePostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item_zero_zone_home, parent, false), postViewHolderParent);
+            } else if (postType == POST_TYPE_ZERO_ZONE_GROUP) {
+                return new ZeroZonePostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item_zero_zone_group, parent, false), postViewHolderParent);
             }
             View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
 
@@ -379,6 +390,9 @@ public class PostsFragment extends HalloFragment {
             } else if (holder instanceof SubtlePostViewHolder) {
                 SubtlePostViewHolder postViewHolder = (SubtlePostViewHolder) holder;
                 postViewHolder.applyTheme(theme);
+                postViewHolder.bindTo(Preconditions.checkNotNull(getItem(position)), position == 0);
+            } else if (holder instanceof ZeroZonePostViewHolder) {
+                ZeroZonePostViewHolder postViewHolder = (ZeroZonePostViewHolder) holder;
                 postViewHolder.bindTo(Preconditions.checkNotNull(getItem(position)), position == 0);
             }
         }

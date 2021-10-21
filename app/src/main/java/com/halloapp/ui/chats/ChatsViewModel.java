@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
+import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
@@ -22,6 +23,7 @@ import com.halloapp.content.SeenReceipt;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
@@ -33,14 +35,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 
 public class ChatsViewModel extends AndroidViewModel {
 
     final ComputableLiveData<List<Chat>> chatsList;
+    final ComputableLiveData<List<Contact>> contactsList;
     final MutableLiveData<Boolean> messageUpdated;
+    final MutableLiveData<Boolean> showInviteList;
 
+    private final Me me;
     private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
@@ -53,6 +59,7 @@ public class ChatsViewModel extends AndroidViewModel {
         @Override
         public void onContactsChanged() {
             chatsList.invalidate();
+            contactsList.invalidate();
         }
     };
 
@@ -124,6 +131,7 @@ public class ChatsViewModel extends AndroidViewModel {
     public ChatsViewModel(@NonNull Application application) {
         super(application);
 
+        me = Me.getInstance();
         bgWorkers = BgWorkers.getInstance();
         contactsDb = ContactsDb.getInstance();
         contactsDb.addObserver(contactsObserver);
@@ -133,6 +141,49 @@ public class ChatsViewModel extends AndroidViewModel {
 
         preferences = Preferences.getInstance();
 
+        contactsList = new ComputableLiveData<List<Contact>>() {
+
+            @Override
+            protected List<Contact> compute() {
+                List<Contact> contacts = Contact.sort(ContactsDb.getInstance().getUniqueContactsWithPhones());
+
+                ListIterator<Contact> iterator = contacts.listIterator();
+                String myUserId = me.getUser();
+                while(iterator.hasNext()){
+                    UserId userId = iterator.next().userId;
+                    if (userId != null && userId.rawId().equals(myUserId)) {
+                        iterator.remove();
+                    }
+                }
+                Collator collator = Collator.getInstance(Locale.getDefault());
+                Collections.sort(contacts, (o1, o2) -> {
+                    if (o1.userId != null || o2.userId != null) {
+                        if (o1.userId == null) {
+                            return -1;
+                        } else if (o2.userId == null) {
+                            return 1;
+                        }
+                    } else if (o1.numPotentialFriends > 1 && o2.numPotentialFriends > 1) {
+                        if (o1.numPotentialFriends != o2.numPotentialFriends) {
+                            return (int) o2.numPotentialFriends - (int) o1.numPotentialFriends;
+                        }
+                    } else if (o1.numPotentialFriends > 1) {
+                        return -1;
+                    } else if (o2.numPotentialFriends > 1) {
+                        return 1;
+                    }
+                    boolean alpha1 = Character.isAlphabetic(o1.getDisplayName().codePointAt(0));
+                    boolean alpha2 = Character.isAlphabetic(o2.getDisplayName().codePointAt(0));
+                    if (alpha1 == alpha2) {
+                        return collator.compare(o1.getDisplayName(), o2.getDisplayName());
+                    } else {
+                        return alpha1 ? -1 : 1;
+                    }
+                });
+                return contacts;
+            }
+        };
+        showInviteList = new MutableLiveData<>();
         messageLoader = new MessageLoader(Preconditions.checkNotNull(application));
         chatsList = new ComputableLiveData<List<Chat>>() {
             @Override
@@ -176,6 +227,9 @@ public class ChatsViewModel extends AndroidViewModel {
                     return obj1.timestamp < obj2.timestamp ? 1 : -1;
                 });
                 chats.addAll(contactChats);
+                if (chats.isEmpty() && preferences.getZeroZoneState() >= ZeroZoneManager.ZeroZoneState.NEEDS_INITIALIZATION) {
+                    showInviteList.postValue(true);
+                }
                 return chats;
             }
         };
@@ -201,6 +255,13 @@ public class ChatsViewModel extends AndroidViewModel {
 
     public @Nullable Parcelable getSavedScrollState() {
         return savedScrollState;
+    }
+
+    public void markContactInvited(@NonNull Contact contact) {
+        bgWorkers.execute(() -> {
+            contactsDb.markInvited(contact);
+            contactsList.invalidate();
+        });
     }
 
     @Override

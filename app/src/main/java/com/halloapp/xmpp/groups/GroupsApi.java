@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.halloapp.content.ContentDb;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
@@ -29,20 +30,22 @@ public class GroupsApi {
 
     private static GroupsApi instance;
 
+    private final ContentDb contentDb;
     private final Connection connection;
 
     public static GroupsApi getInstance() {
         if (instance == null) {
             synchronized (GroupsApi.class) {
                 if (instance == null) {
-                    instance = new GroupsApi(Connection.getInstance());
+                    instance = new GroupsApi(ContentDb.getInstance(), Connection.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    private GroupsApi(Connection connection) {
+    private GroupsApi(ContentDb contentDb, Connection connection) {
+        this.contentDb = contentDb;
         this.connection = connection;
     }
 
@@ -104,8 +107,10 @@ public class GroupsApi {
         return connection.sendIqRequest(requestIq).map(response -> {
             GroupInviteLink groupInviteLink = response.getGroupInviteLink();
             if (groupInviteLink == null) {
+                contentDb.setGroupLink(groupId, null);
                 return null;
             }
+            contentDb.setGroupLink(groupId, groupInviteLink.getLink());
             return groupInviteLink.getLink();
         });
     }
@@ -118,7 +123,11 @@ public class GroupsApi {
             if (groupInviteLink == null) {
                 return null;
             }
-            return GroupInviteLink.Action.RESET.equals(groupInviteLink.getAction());
+            boolean success = GroupInviteLink.Action.RESET.equals(groupInviteLink.getAction());
+            if (success) {
+                contentDb.setGroupLink(groupId, null);
+            }
+            return success;
         });
     }
 

@@ -9,7 +9,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.halloapp.Constants;
 import com.halloapp.Me;
+import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
@@ -18,6 +20,7 @@ import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
 import com.halloapp.util.logs.Log;
@@ -34,12 +37,14 @@ public class GroupViewModel extends AndroidViewModel {
     private final ContentDb contentDb;
     private final GroupsApi groupsApi;
     private final ContactsDb contactsDb;
+    private final Preferences preferences;
 
     private final GroupId groupId;
 
     private final ComputableLiveData<Chat> chatLiveData;
     private final ComputableLiveData<List<GroupMember>> membersLiveData;
 
+    private final MutableLiveData<String> groupInviteLink = new MutableLiveData<>();
     private final MutableLiveData<Boolean> userIsAdmin = new MutableLiveData<>();
     private final MutableLiveData<Boolean> chatIsActive = new MutableLiveData<>();
 
@@ -97,12 +102,19 @@ public class GroupViewModel extends AndroidViewModel {
         contentDb.addObserver(contentObserver);
         groupsApi = GroupsApi.getInstance();
         contactsDb = ContactsDb.getInstance();
+        preferences = Preferences.getInstance();
 
         chatLiveData = new ComputableLiveData<Chat>() {
             @Override
             protected Chat compute() {
                 Chat chat = contentDb.getChat(groupId);
                 chatIsActive.postValue(chat != null && chat.isActive);
+
+                if (chat != null
+                        && preferences.getZeroZoneState() >= ZeroZoneManager.ZeroZoneState.NEEDS_INITIALIZATION
+                        && groupId.equals(preferences.getZeroZoneGroupId())) {
+                    groupInviteLink.postValue(Constants.GROUP_INVITE_BASE_URL + chat.inviteToken);
+                }
                 return chat;
             }
         };
@@ -143,6 +155,10 @@ public class GroupViewModel extends AndroidViewModel {
             }
         };
         membersLiveData.invalidate();
+    }
+
+    public String getGroupInviteLink() {
+        return groupInviteLink.getValue();
     }
 
     public LiveData<Chat> getChat() {

@@ -73,6 +73,14 @@ class ContentDbObservers {
         }
     }
 
+    void notifyLocalPostSeen(@NonNull String postId) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onLocalPostSeen(postId);
+            }
+        }
+    }
+
     void notifyCommentAdded(@NonNull Comment comment) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {

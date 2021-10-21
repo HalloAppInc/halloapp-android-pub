@@ -1,5 +1,6 @@
 package com.halloapp.contacts;
 
+import android.Manifest;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.net.Uri;
@@ -22,6 +23,7 @@ import androidx.work.WorkerParameters;
 import com.halloapp.AppContext;
 import com.halloapp.Preferences;
 import com.halloapp.id.UserId;
+import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
@@ -42,6 +44,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class ContactsSync {
 
@@ -430,6 +434,22 @@ public class ContactsSync {
             final Result result = ContactsSync.getInstance().performContactSync(fullSync, Arrays.asList(contactHashes));
             if  (!Result.success().equals(result)) {
                 Log.sendErrorReport("ContactsSync failed");
+            } else {
+                @ZeroZoneManager.ZeroZoneState int zeroZoneState = Preferences.getInstance().getZeroZoneState();
+                if (zeroZoneState != ZeroZoneManager.ZeroZoneState.NOT_IN_ZERO_ZONE) {
+                    EasyPermissions.hasPermissions(getApplicationContext(), Manifest.permission.READ_CONTACTS);
+                    List<Contact> contacts = ContactsDb.getInstance().getUsers();
+                    boolean inZeroZone = ZeroZoneManager.isInZeroZone(contacts);
+                    if (inZeroZone) {
+                        if (zeroZoneState == ZeroZoneManager.ZeroZoneState.WAITING_FOR_SYNC) {
+                            Preferences.getInstance().setZeroZoneState(ZeroZoneManager.ZeroZoneState.NEEDS_INITIALIZATION);
+                            ZeroZoneManager.initialize(getApplicationContext());
+                        }
+                    } else {
+                        Log.i("ContactsSyncWorker.doWork user not in zero zone");
+                        Preferences.getInstance().setZeroZoneState(ZeroZoneManager.ZeroZoneState.NOT_IN_ZERO_ZONE);
+                    }
+                }
             }
             return result;
         }

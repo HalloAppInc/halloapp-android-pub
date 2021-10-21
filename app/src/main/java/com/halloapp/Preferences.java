@@ -5,9 +5,12 @@ import android.content.SharedPreferences;
 
 import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.halloapp.id.GroupId;
+import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.ui.ExportDataActivity;
 import com.halloapp.ui.mediapicker.MediaPickerViewModel;
 import com.halloapp.util.logs.Log;
@@ -65,6 +68,8 @@ public class Preferences {
     private static final String PREF_KEY_NIGHT_MODE = "night_mode";
     private static final String PREF_KEY_EXPORT_DATA_STATE = "export_data_state";
     private static final String PREF_KEY_LAST_SEEN_POST_TIME = "last_seen_post_time";
+    private static final String PREF_KEY_ZERO_ZONE_STATE = "zero_zone_state";
+    private static final String PREF_KEY_ZERO_ZONE_GROUP_ID = "zero_zone_group_id";
 
     private static final String PREF_KEY_REGISTRATION_TIME = "registration_time";
     private static final String PREF_KEY_INVITE_NOTIFICATION_SEEN = "welcome_invite_seen";
@@ -135,6 +140,8 @@ public class Preferences {
     private final IntPreference prefH265Res = createPref(false, PREF_KEY_H265_RES, Constants.VIDEO_RESOLUTION_H265);
     private final IntPreference prefPickerLayout = createPref(false, PREF_KEY_PICKER_LAYOUT, MediaPickerViewModel.LAYOUT_DAY_SMALL);
     private final IntPreference prefNightMode = createPref(false, PREF_KEY_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+    private final IntPreference prefZeroZoneState = createPref(false, PREF_KEY_ZERO_ZONE_STATE, 0);
+    private final StringPreference prefZeroZoneGroupId = createPref(false, PREF_KEY_ZERO_ZONE_GROUP_ID, null);
 
     private final IntPreference prefExportDataState = createPref(true, PREF_KEY_EXPORT_DATA_STATE, ExportDataActivity.EXPORT_STATE_INITIAL);
     private final BooleanPreference prefNotifyPosts = createPref(true, PREF_KEY_NOTIFY_POSTS, true);
@@ -608,5 +615,26 @@ public class Preferences {
     @WorkerThread
     public void setPendingOfflineQueue(boolean hasQueue) {
         prefPendingOfflineQueue.set(hasQueue);
+    }
+
+    @WorkerThread
+    public @ZeroZoneManager.ZeroZoneState int getZeroZoneState() {
+        return prefZeroZoneState.get();
+    }
+
+    @WorkerThread
+    public void setZeroZoneState(@ZeroZoneManager.ZeroZoneState int state) {
+        prefZeroZoneState.set(state);
+    }
+
+    @WorkerThread
+    @Nullable
+    public GroupId getZeroZoneGroupId() {
+        return GroupId.fromNullable(prefZeroZoneGroupId.get());
+    }
+
+    @WorkerThread
+    public void setZeroZoneGroupId(@Nullable GroupId groupId) {
+        prefZeroZoneGroupId.set(groupId == null ? null : groupId.rawId());
     }
 }
