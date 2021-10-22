@@ -38,6 +38,8 @@ public class ViewAvatarActivity extends HalloActivity {
 
     private static final String AVATAR_TRANSITION_NAME = "avatar-image-transition";
 
+    private ChatId chatId;
+
     private PhotoView avatarView;
     private ViewAvatarViewModel viewModel;
 
@@ -59,7 +61,7 @@ public class ViewAvatarActivity extends HalloActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ChatId chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
+        chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
 
         if (chatId == null) {
             finish();
@@ -71,7 +73,7 @@ public class ViewAvatarActivity extends HalloActivity {
         avatarView = findViewById(R.id.image);
         avatarView.setTransitionName(AVATAR_TRANSITION_NAME);
         avatarView.setReturnToMinScaleOnUp(false);
-        avatarLoader.loadLarge(avatarView, chatId, null);
+        avatarLoader.load(avatarView, chatId, null);
 
         dragDownToDismissHelper = new DragDownToDismissHelper(avatarView, findViewById(R.id.main));
         dragDownToDismissHelper.setDragDismissListener(this::onBackPressed);
@@ -82,6 +84,32 @@ public class ViewAvatarActivity extends HalloActivity {
         TransitionSet enterTransition =  createTransitionSet(getWindow().getSharedElementEnterTransition());
         Transition toSquare = RadiusTransition.toSquare();
         enterTransition.addTransition(toSquare);
+        enterTransition.addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionEnd(Transition transition) {
+                avatarLoader.loadLarge(avatarView, chatId, null);
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionPause(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionResume(Transition transition) {
+
+            }
+        });
         getWindow().setSharedElementEnterTransition(enterTransition);
 
         TransitionSet returnTransition = createTransitionSet(getWindow().getSharedElementReturnTransition());
@@ -110,6 +138,12 @@ public class ViewAvatarActivity extends HalloActivity {
         TransitionSet set = new TransitionSet();
         set.addTransition(transition);
         return set;
+    }
+
+    @Override
+    public void onBackPressed() {
+        avatarLoader.load(avatarView, chatId, null);
+        super.onBackPressed();
     }
 
     public static class ViewAvatarViewModel extends AndroidViewModel {
