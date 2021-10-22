@@ -554,7 +554,7 @@ public class MainConnectionObserver extends Connection.Observer {
 
         contentDb.addGroupChat(new GroupInfo(groupId, name, null, avatarId, Background.getDefaultInstance(), members), () -> {
             GroupId zeroZoneGroup = preferences.getZeroZoneGroupId();
-            if (zeroZoneGroup != null && !zeroZoneGroup.equals(groupId)) {
+            if (zeroZoneGroup == null || !zeroZoneGroup.equals(groupId)) {
                 addSystemPost(groupId, sender, Post.USAGE_CREATE_GROUP, null, () -> connection.sendAck(ackId));
             } else {
                 connection.sendAck(ackId);
