@@ -33,6 +33,7 @@ import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.MainActivity;
@@ -76,6 +77,8 @@ public class Debug {
     private static final String DEBUG_MENU_NORMAL_USER_MODE = "Normal user mode";
     private static final String DEBUG_MENU_ADD_TO_ARCHIVE = "Add to archive";
     private static final String DEBUG_MENU_REMOVE_ARCHIVE = "Remove archive";
+    private static final String DEBUG_MENU_FORCE_ZERO_ZONE = "Force Zero Zone";
+    private static final String DEBUG_MENU_FORCE_LEAVE_ZERO_ZONE = "Leave Zero Zone";
     private static final String DEBUG_MENU_SKIP_OUTBOUND_GROUP_FEED_KEY = "Skip outbound key";
     private static final String DEBUG_MENU_SKIP_INBOUND_GROUP_FEED_KEY = "Skip inbound key";
     private static final String DEBUG_MENU_CORRUPT_GROUP_KEY_STORE = "Corrupt group key store";
@@ -106,6 +109,8 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_NORMAL_USER_MODE);
         menu.getMenu().add(DEBUG_MENU_ADD_TO_ARCHIVE);
         menu.getMenu().add(DEBUG_MENU_REMOVE_ARCHIVE);
+        menu.getMenu().add(DEBUG_MENU_FORCE_ZERO_ZONE);
+        menu.getMenu().add(DEBUG_MENU_FORCE_LEAVE_ZERO_ZONE);
         menu.setOnMenuItemClickListener(item -> {
             SnackbarHelper.showInfo(activity, item.getTitle());
             switch (item.getTitle().toString()) {
@@ -299,6 +304,21 @@ public class Debug {
                 case DEBUG_MENU_REMOVE_ARCHIVE: {
                     bgWorkers.execute(() -> {
                         ContentDb.getInstance().deleteArchive();
+                    });
+                    break;
+                }
+                case DEBUG_MENU_FORCE_LEAVE_ZERO_ZONE: {
+                    bgWorkers.execute(() -> {
+                        Preferences.getInstance().setForcedZeroZone(false);
+                        Preferences.getInstance().setZeroZoneState(ZeroZoneManager.ZeroZoneState.NOT_IN_ZERO_ZONE);
+                    });
+                    break;
+                }
+                case DEBUG_MENU_FORCE_ZERO_ZONE: {
+                    bgWorkers.execute(() -> {
+                        Preferences.getInstance().setForcedZeroZone(true);
+                        Preferences.getInstance().setZeroZoneGroupId(null);
+                        Preferences.getInstance().setZeroZoneState(ZeroZoneManager.ZeroZoneState.WAITING_FOR_SYNC);
                     });
                     break;
                 }

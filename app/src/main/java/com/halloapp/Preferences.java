@@ -70,6 +70,7 @@ public class Preferences {
     private static final String PREF_KEY_LAST_SEEN_POST_TIME = "last_seen_post_time";
     private static final String PREF_KEY_ZERO_ZONE_STATE = "zero_zone_state";
     private static final String PREF_KEY_ZERO_ZONE_GROUP_ID = "zero_zone_group_id";
+    private static final String PREF_KEY_FORCED_ZERO_ZONE = "forced_zero_zone";
 
     private static final String PREF_KEY_REGISTRATION_TIME = "registration_time";
     private static final String PREF_KEY_INVITE_NOTIFICATION_SEEN = "welcome_invite_seen";
@@ -142,6 +143,7 @@ public class Preferences {
     private final IntPreference prefNightMode = createPref(false, PREF_KEY_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
     private final IntPreference prefZeroZoneState = createPref(false, PREF_KEY_ZERO_ZONE_STATE, 0);
     private final StringPreference prefZeroZoneGroupId = createPref(false, PREF_KEY_ZERO_ZONE_GROUP_ID, null);
+    private final BooleanPreference prefForceZeroZone = createPref(false, PREF_KEY_FORCED_ZERO_ZONE, false);
 
     private final IntPreference prefExportDataState = createPref(true, PREF_KEY_EXPORT_DATA_STATE, ExportDataActivity.EXPORT_STATE_INITIAL);
     private final BooleanPreference prefNotifyPosts = createPref(true, PREF_KEY_NOTIFY_POSTS, true);
@@ -636,5 +638,15 @@ public class Preferences {
     @WorkerThread
     public void setZeroZoneGroupId(@Nullable GroupId groupId) {
         prefZeroZoneGroupId.set(groupId == null ? null : groupId.rawId());
+    }
+
+    @WorkerThread
+    public void setForcedZeroZone(boolean inZeroZone) {
+        prefForceZeroZone.set(inZeroZone);
+    }
+
+    @WorkerThread
+    public boolean isForcedZeroZone() {
+        return prefForceZeroZone.get();
     }
 }

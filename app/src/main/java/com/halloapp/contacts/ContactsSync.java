@@ -437,17 +437,19 @@ public class ContactsSync {
             } else {
                 @ZeroZoneManager.ZeroZoneState int zeroZoneState = Preferences.getInstance().getZeroZoneState();
                 if (zeroZoneState != ZeroZoneManager.ZeroZoneState.NOT_IN_ZERO_ZONE) {
-                    EasyPermissions.hasPermissions(getApplicationContext(), Manifest.permission.READ_CONTACTS);
-                    List<Contact> contacts = ContactsDb.getInstance().getUsers();
-                    boolean inZeroZone = ZeroZoneManager.isInZeroZone(contacts);
-                    if (inZeroZone) {
-                        if (zeroZoneState == ZeroZoneManager.ZeroZoneState.WAITING_FOR_SYNC) {
-                            Preferences.getInstance().setZeroZoneState(ZeroZoneManager.ZeroZoneState.NEEDS_INITIALIZATION);
-                            ZeroZoneManager.initialize(getApplicationContext());
+                    boolean hasContactPerms = EasyPermissions.hasPermissions(getApplicationContext(), Manifest.permission.READ_CONTACTS);
+                    if (hasContactPerms) {
+                        List<Contact> contacts = ContactsDb.getInstance().getUsers();
+                        boolean inZeroZone = ZeroZoneManager.isInZeroZone(contacts) || Preferences.getInstance().isForcedZeroZone();
+                        if (inZeroZone) {
+                            if (zeroZoneState == ZeroZoneManager.ZeroZoneState.WAITING_FOR_SYNC) {
+                                Preferences.getInstance().setZeroZoneState(ZeroZoneManager.ZeroZoneState.NEEDS_INITIALIZATION);
+                                ZeroZoneManager.initialize(getApplicationContext());
+                            }
+                        } else {
+                            Log.i("ContactsSyncWorker.doWork user not in zero zone");
+                            Preferences.getInstance().setZeroZoneState(ZeroZoneManager.ZeroZoneState.NOT_IN_ZERO_ZONE);
                         }
-                    } else {
-                        Log.i("ContactsSyncWorker.doWork user not in zero zone");
-                        Preferences.getInstance().setZeroZoneState(ZeroZoneManager.ZeroZoneState.NOT_IN_ZERO_ZONE);
                     }
                 }
             }
