@@ -1963,38 +1963,38 @@ public  final class Msg extends
 
   public static final int ICE_CANDIDATE_FIELD_NUMBER = 38;
   /**
-   * <code>.server.IceCandicate ice_candidate = 38;</code>
+   * <code>.server.IceCandidate ice_candidate = 38;</code>
    */
   @java.lang.Override
   public boolean hasIceCandidate() {
     return payloadCase_ == 38;
   }
   /**
-   * <code>.server.IceCandicate ice_candidate = 38;</code>
+   * <code>.server.IceCandidate ice_candidate = 38;</code>
    */
   @java.lang.Override
-  public com.halloapp.proto.server.IceCandicate getIceCandidate() {
+  public com.halloapp.proto.server.IceCandidate getIceCandidate() {
     if (payloadCase_ == 38) {
-       return (com.halloapp.proto.server.IceCandicate) payload_;
+       return (com.halloapp.proto.server.IceCandidate) payload_;
     }
-    return com.halloapp.proto.server.IceCandicate.getDefaultInstance();
+    return com.halloapp.proto.server.IceCandidate.getDefaultInstance();
   }
   /**
-   * <code>.server.IceCandicate ice_candidate = 38;</code>
+   * <code>.server.IceCandidate ice_candidate = 38;</code>
    */
-  private void setIceCandidate(com.halloapp.proto.server.IceCandicate value) {
+  private void setIceCandidate(com.halloapp.proto.server.IceCandidate value) {
     value.getClass();
   payload_ = value;
     payloadCase_ = 38;
   }
   /**
-   * <code>.server.IceCandicate ice_candidate = 38;</code>
+   * <code>.server.IceCandidate ice_candidate = 38;</code>
    */
-  private void mergeIceCandidate(com.halloapp.proto.server.IceCandicate value) {
+  private void mergeIceCandidate(com.halloapp.proto.server.IceCandidate value) {
     value.getClass();
   if (payloadCase_ == 38 &&
-        payload_ != com.halloapp.proto.server.IceCandicate.getDefaultInstance()) {
-      payload_ = com.halloapp.proto.server.IceCandicate.newBuilder((com.halloapp.proto.server.IceCandicate) payload_)
+        payload_ != com.halloapp.proto.server.IceCandidate.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.IceCandidate.newBuilder((com.halloapp.proto.server.IceCandidate) payload_)
           .mergeFrom(value).buildPartial();
     } else {
       payload_ = value;
@@ -2002,7 +2002,7 @@ public  final class Msg extends
     payloadCase_ = 38;
   }
   /**
-   * <code>.server.IceCandicate ice_candidate = 38;</code>
+   * <code>.server.IceCandidate ice_candidate = 38;</code>
    */
   private void clearIceCandidate() {
     if (payloadCase_ == 38) {
@@ -3834,46 +3834,46 @@ public  final class Msg extends
     }
 
     /**
-     * <code>.server.IceCandicate ice_candidate = 38;</code>
+     * <code>.server.IceCandidate ice_candidate = 38;</code>
      */
     @java.lang.Override
     public boolean hasIceCandidate() {
       return instance.hasIceCandidate();
     }
     /**
-     * <code>.server.IceCandicate ice_candidate = 38;</code>
+     * <code>.server.IceCandidate ice_candidate = 38;</code>
      */
     @java.lang.Override
-    public com.halloapp.proto.server.IceCandicate getIceCandidate() {
+    public com.halloapp.proto.server.IceCandidate getIceCandidate() {
       return instance.getIceCandidate();
     }
     /**
-     * <code>.server.IceCandicate ice_candidate = 38;</code>
+     * <code>.server.IceCandidate ice_candidate = 38;</code>
      */
-    public Builder setIceCandidate(com.halloapp.proto.server.IceCandicate value) {
+    public Builder setIceCandidate(com.halloapp.proto.server.IceCandidate value) {
       copyOnWrite();
       instance.setIceCandidate(value);
       return this;
     }
     /**
-     * <code>.server.IceCandicate ice_candidate = 38;</code>
+     * <code>.server.IceCandidate ice_candidate = 38;</code>
      */
     public Builder setIceCandidate(
-        com.halloapp.proto.server.IceCandicate.Builder builderForValue) {
+        com.halloapp.proto.server.IceCandidate.Builder builderForValue) {
       copyOnWrite();
       instance.setIceCandidate(builderForValue.build());
       return this;
     }
     /**
-     * <code>.server.IceCandicate ice_candidate = 38;</code>
+     * <code>.server.IceCandidate ice_candidate = 38;</code>
      */
-    public Builder mergeIceCandidate(com.halloapp.proto.server.IceCandicate value) {
+    public Builder mergeIceCandidate(com.halloapp.proto.server.IceCandidate value) {
       copyOnWrite();
       instance.mergeIceCandidate(value);
       return this;
     }
     /**
-     * <code>.server.IceCandicate ice_candidate = 38;</code>
+     * <code>.server.IceCandidate ice_candidate = 38;</code>
      */
     public Builder clearIceCandidate() {
       copyOnWrite();
@@ -3992,7 +3992,7 @@ public  final class Msg extends
             com.halloapp.proto.server.CallRinging.class,
             com.halloapp.proto.server.AnswerCall.class,
             com.halloapp.proto.server.EndCall.class,
-            com.halloapp.proto.server.IceCandicate.class,
+            com.halloapp.proto.server.IceCandidate.class,
           };
           java.lang.String info =
               "\u0000&\u0001\u0000\u0001&&\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +

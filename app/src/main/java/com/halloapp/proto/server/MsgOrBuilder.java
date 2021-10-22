@@ -392,15 +392,15 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.EndCall getEndCall();
 
   /**
-   * <code>.server.IceCandicate ice_candidate = 38;</code>
+   * <code>.server.IceCandidate ice_candidate = 38;</code>
    * @return Whether the iceCandidate field is set.
    */
   boolean hasIceCandidate();
   /**
-   * <code>.server.IceCandicate ice_candidate = 38;</code>
+   * <code>.server.IceCandidate ice_candidate = 38;</code>
    * @return The iceCandidate.
    */
-  com.halloapp.proto.server.IceCandicate getIceCandidate();
+  com.halloapp.proto.server.IceCandidate getIceCandidate();
 
   /**
    * <code>int32 retry_count = 21;</code>

@@ -325,6 +325,52 @@ public  final class Comment extends
     encPayload_ = getDefaultInstance().getEncPayload();
   }
 
+  public static final int MEDIA_COUNTERS_FIELD_NUMBER = 9;
+  private com.halloapp.proto.server.MediaCounters mediaCounters_;
+  /**
+   * <code>.server.MediaCounters media_counters = 9;</code>
+   */
+  @java.lang.Override
+  public boolean hasMediaCounters() {
+    return mediaCounters_ != null;
+  }
+  /**
+   * <code>.server.MediaCounters media_counters = 9;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.MediaCounters getMediaCounters() {
+    return mediaCounters_ == null ? com.halloapp.proto.server.MediaCounters.getDefaultInstance() : mediaCounters_;
+  }
+  /**
+   * <code>.server.MediaCounters media_counters = 9;</code>
+   */
+  private void setMediaCounters(com.halloapp.proto.server.MediaCounters value) {
+    value.getClass();
+  mediaCounters_ = value;
+    
+    }
+  /**
+   * <code>.server.MediaCounters media_counters = 9;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeMediaCounters(com.halloapp.proto.server.MediaCounters value) {
+    value.getClass();
+  if (mediaCounters_ != null &&
+        mediaCounters_ != com.halloapp.proto.server.MediaCounters.getDefaultInstance()) {
+      mediaCounters_ =
+        com.halloapp.proto.server.MediaCounters.newBuilder(mediaCounters_).mergeFrom(value).buildPartial();
+    } else {
+      mediaCounters_ = value;
+    }
+    
+  }
+  /**
+   * <code>.server.MediaCounters media_counters = 9;</code>
+   */
+  private void clearMediaCounters() {  mediaCounters_ = null;
+    
+  }
+
   public static com.halloapp.proto.server.Comment parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -740,6 +786,53 @@ public  final class Comment extends
       return this;
     }
 
+    /**
+     * <code>.server.MediaCounters media_counters = 9;</code>
+     */
+    @java.lang.Override
+    public boolean hasMediaCounters() {
+      return instance.hasMediaCounters();
+    }
+    /**
+     * <code>.server.MediaCounters media_counters = 9;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.MediaCounters getMediaCounters() {
+      return instance.getMediaCounters();
+    }
+    /**
+     * <code>.server.MediaCounters media_counters = 9;</code>
+     */
+    public Builder setMediaCounters(com.halloapp.proto.server.MediaCounters value) {
+      copyOnWrite();
+      instance.setMediaCounters(value);
+      return this;
+      }
+    /**
+     * <code>.server.MediaCounters media_counters = 9;</code>
+     */
+    public Builder setMediaCounters(
+        com.halloapp.proto.server.MediaCounters.Builder builderForValue) {
+      copyOnWrite();
+      instance.setMediaCounters(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.MediaCounters media_counters = 9;</code>
+     */
+    public Builder mergeMediaCounters(com.halloapp.proto.server.MediaCounters value) {
+      copyOnWrite();
+      instance.mergeMediaCounters(value);
+      return this;
+    }
+    /**
+     * <code>.server.MediaCounters media_counters = 9;</code>
+     */
+    public Builder clearMediaCounters() {  copyOnWrite();
+      instance.clearMediaCounters();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Comment)
   }
   @java.lang.Override
@@ -764,10 +857,11 @@ public  final class Comment extends
             "payload_",
             "timestamp_",
             "encPayload_",
+            "mediaCounters_",
           };
           java.lang.String info =
-              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0000\u0000\u0001\u0208\u0002\u0208\u0003\u0208" +
-              "\u0004\u0002\u0005\u0208\u0006\n\u0007\u0002\b\n";
+              "\u0000\t\u0000\u0000\u0001\t\t\u0000\u0000\u0000\u0001\u0208\u0002\u0208\u0003\u0208" +
+              "\u0004\u0002\u0005\u0208\u0006\n\u0007\u0002\b\n\t\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

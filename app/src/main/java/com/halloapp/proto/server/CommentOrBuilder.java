@@ -82,4 +82,15 @@ public interface CommentOrBuilder extends
    * @return The encPayload.
    */
   com.google.protobuf.ByteString getEncPayload();
+
+  /**
+   * <code>.server.MediaCounters media_counters = 9;</code>
+   * @return Whether the mediaCounters field is set.
+   */
+  boolean hasMediaCounters();
+  /**
+   * <code>.server.MediaCounters media_counters = 9;</code>
+   * @return The mediaCounters.
+   */
+  com.halloapp.proto.server.MediaCounters getMediaCounters();
 }

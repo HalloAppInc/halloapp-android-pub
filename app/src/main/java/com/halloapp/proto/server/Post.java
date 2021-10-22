@@ -275,6 +275,52 @@ public  final class Post extends
     encPayload_ = getDefaultInstance().getEncPayload();
   }
 
+  public static final int MEDIA_COUNTERS_FIELD_NUMBER = 8;
+  private com.halloapp.proto.server.MediaCounters mediaCounters_;
+  /**
+   * <code>.server.MediaCounters media_counters = 8;</code>
+   */
+  @java.lang.Override
+  public boolean hasMediaCounters() {
+    return mediaCounters_ != null;
+  }
+  /**
+   * <code>.server.MediaCounters media_counters = 8;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.MediaCounters getMediaCounters() {
+    return mediaCounters_ == null ? com.halloapp.proto.server.MediaCounters.getDefaultInstance() : mediaCounters_;
+  }
+  /**
+   * <code>.server.MediaCounters media_counters = 8;</code>
+   */
+  private void setMediaCounters(com.halloapp.proto.server.MediaCounters value) {
+    value.getClass();
+  mediaCounters_ = value;
+    
+    }
+  /**
+   * <code>.server.MediaCounters media_counters = 8;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeMediaCounters(com.halloapp.proto.server.MediaCounters value) {
+    value.getClass();
+  if (mediaCounters_ != null &&
+        mediaCounters_ != com.halloapp.proto.server.MediaCounters.getDefaultInstance()) {
+      mediaCounters_ =
+        com.halloapp.proto.server.MediaCounters.newBuilder(mediaCounters_).mergeFrom(value).buildPartial();
+    } else {
+      mediaCounters_ = value;
+    }
+    
+  }
+  /**
+   * <code>.server.MediaCounters media_counters = 8;</code>
+   */
+  private void clearMediaCounters() {  mediaCounters_ = null;
+    
+  }
+
   public static com.halloapp.proto.server.Post parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -639,6 +685,53 @@ public  final class Post extends
       return this;
     }
 
+    /**
+     * <code>.server.MediaCounters media_counters = 8;</code>
+     */
+    @java.lang.Override
+    public boolean hasMediaCounters() {
+      return instance.hasMediaCounters();
+    }
+    /**
+     * <code>.server.MediaCounters media_counters = 8;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.MediaCounters getMediaCounters() {
+      return instance.getMediaCounters();
+    }
+    /**
+     * <code>.server.MediaCounters media_counters = 8;</code>
+     */
+    public Builder setMediaCounters(com.halloapp.proto.server.MediaCounters value) {
+      copyOnWrite();
+      instance.setMediaCounters(value);
+      return this;
+      }
+    /**
+     * <code>.server.MediaCounters media_counters = 8;</code>
+     */
+    public Builder setMediaCounters(
+        com.halloapp.proto.server.MediaCounters.Builder builderForValue) {
+      copyOnWrite();
+      instance.setMediaCounters(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.MediaCounters media_counters = 8;</code>
+     */
+    public Builder mergeMediaCounters(com.halloapp.proto.server.MediaCounters value) {
+      copyOnWrite();
+      instance.mergeMediaCounters(value);
+      return this;
+    }
+    /**
+     * <code>.server.MediaCounters media_counters = 8;</code>
+     */
+    public Builder clearMediaCounters() {  copyOnWrite();
+      instance.clearMediaCounters();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Post)
   }
   @java.lang.Override
@@ -662,10 +755,11 @@ public  final class Post extends
             "timestamp_",
             "publisherName_",
             "encPayload_",
+            "mediaCounters_",
           };
           java.lang.String info =
-              "\u0000\u0007\u0000\u0000\u0001\u0007\u0007\u0000\u0000\u0000\u0001\u0208\u0002\u0002" +
-              "\u0003\n\u0004\t\u0005\u0002\u0006\u0208\u0007\n";
+              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0000\u0000\u0001\u0208\u0002\u0002\u0003\n" +
+              "\u0004\t\u0005\u0002\u0006\u0208\u0007\n\b\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -96,4 +96,27 @@ public interface GroupDecryptionReportOrBuilder extends
    * @return The timeTakenS.
    */
   int getTimeTakenS();
+
+  /**
+   * <code>.server.Platform sender_platform = 9;</code>
+   * @return The enum numeric value on the wire for senderPlatform.
+   */
+  int getSenderPlatformValue();
+  /**
+   * <code>.server.Platform sender_platform = 9;</code>
+   * @return The senderPlatform.
+   */
+  com.halloapp.proto.log_events.Platform getSenderPlatform();
+
+  /**
+   * <code>string sender_version = 10;</code>
+   * @return The senderVersion.
+   */
+  java.lang.String getSenderVersion();
+  /**
+   * <code>string sender_version = 10;</code>
+   * @return The bytes for senderVersion.
+   */
+  com.google.protobuf.ByteString
+      getSenderVersionBytes();
 }

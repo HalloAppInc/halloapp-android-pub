@@ -16,6 +16,7 @@ public  final class GroupDecryptionReport extends
     contentId_ = "";
     gid_ = "";
     originalVersion_ = "";
+    senderVersion_ = "";
   }
   /**
    * Protobuf enum {@code server.GroupDecryptionReport.Status}
@@ -557,6 +558,95 @@ public  final class GroupDecryptionReport extends
     timeTakenS_ = 0;
   }
 
+  public static final int SENDER_PLATFORM_FIELD_NUMBER = 9;
+  private int senderPlatform_;
+  /**
+   * <code>.server.Platform sender_platform = 9;</code>
+   * @return The enum numeric value on the wire for senderPlatform.
+   */
+  @java.lang.Override
+  public int getSenderPlatformValue() {
+    return senderPlatform_;
+  }
+  /**
+   * <code>.server.Platform sender_platform = 9;</code>
+   * @return The senderPlatform.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.log_events.Platform getSenderPlatform() {
+    com.halloapp.proto.log_events.Platform result = com.halloapp.proto.log_events.Platform.forNumber(senderPlatform_);
+    return result == null ? com.halloapp.proto.log_events.Platform.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.Platform sender_platform = 9;</code>
+   * @param value The enum numeric value on the wire for senderPlatform to set.
+   */
+  private void setSenderPlatformValue(int value) {
+      senderPlatform_ = value;
+  }
+  /**
+   * <code>.server.Platform sender_platform = 9;</code>
+   * @param value The senderPlatform to set.
+   */
+  private void setSenderPlatform(com.halloapp.proto.log_events.Platform value) {
+    senderPlatform_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.Platform sender_platform = 9;</code>
+   */
+  private void clearSenderPlatform() {
+    
+    senderPlatform_ = 0;
+  }
+
+  public static final int SENDER_VERSION_FIELD_NUMBER = 10;
+  private java.lang.String senderVersion_;
+  /**
+   * <code>string sender_version = 10;</code>
+   * @return The senderVersion.
+   */
+  @java.lang.Override
+  public java.lang.String getSenderVersion() {
+    return senderVersion_;
+  }
+  /**
+   * <code>string sender_version = 10;</code>
+   * @return The bytes for senderVersion.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getSenderVersionBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(senderVersion_);
+  }
+  /**
+   * <code>string sender_version = 10;</code>
+   * @param value The senderVersion to set.
+   */
+  private void setSenderVersion(
+      java.lang.String value) {
+    value.getClass();
+  
+    senderVersion_ = value;
+  }
+  /**
+   * <code>string sender_version = 10;</code>
+   */
+  private void clearSenderVersion() {
+    
+    senderVersion_ = getDefaultInstance().getSenderVersion();
+  }
+  /**
+   * <code>string sender_version = 10;</code>
+   * @param value The bytes for senderVersion to set.
+   */
+  private void setSenderVersionBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    senderVersion_ = value.toStringUtf8();
+    
+  }
+
   public static com.halloapp.proto.log_events.GroupDecryptionReport parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1016,6 +1106,101 @@ public  final class GroupDecryptionReport extends
       return this;
     }
 
+    /**
+     * <code>.server.Platform sender_platform = 9;</code>
+     * @return The enum numeric value on the wire for senderPlatform.
+     */
+    @java.lang.Override
+    public int getSenderPlatformValue() {
+      return instance.getSenderPlatformValue();
+    }
+    /**
+     * <code>.server.Platform sender_platform = 9;</code>
+     * @param value The senderPlatform to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderPlatformValue(int value) {
+      copyOnWrite();
+      instance.setSenderPlatformValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.Platform sender_platform = 9;</code>
+     * @return The senderPlatform.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.log_events.Platform getSenderPlatform() {
+      return instance.getSenderPlatform();
+    }
+    /**
+     * <code>.server.Platform sender_platform = 9;</code>
+     * @param value The enum numeric value on the wire for senderPlatform to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderPlatform(com.halloapp.proto.log_events.Platform value) {
+      copyOnWrite();
+      instance.setSenderPlatform(value);
+      return this;
+    }
+    /**
+     * <code>.server.Platform sender_platform = 9;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSenderPlatform() {
+      copyOnWrite();
+      instance.clearSenderPlatform();
+      return this;
+    }
+
+    /**
+     * <code>string sender_version = 10;</code>
+     * @return The senderVersion.
+     */
+    @java.lang.Override
+    public java.lang.String getSenderVersion() {
+      return instance.getSenderVersion();
+    }
+    /**
+     * <code>string sender_version = 10;</code>
+     * @return The bytes for senderVersion.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSenderVersionBytes() {
+      return instance.getSenderVersionBytes();
+    }
+    /**
+     * <code>string sender_version = 10;</code>
+     * @param value The senderVersion to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderVersion(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setSenderVersion(value);
+      return this;
+    }
+    /**
+     * <code>string sender_version = 10;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSenderVersion() {
+      copyOnWrite();
+      instance.clearSenderVersion();
+      return this;
+    }
+    /**
+     * <code>string sender_version = 10;</code>
+     * @param value The bytes for senderVersion to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderVersionBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setSenderVersionBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.GroupDecryptionReport)
   }
   @java.lang.Override
@@ -1040,10 +1225,12 @@ public  final class GroupDecryptionReport extends
             "originalVersion_",
             "rerequestCount_",
             "timeTakenS_",
+            "senderPlatform_",
+            "senderVersion_",
           };
           java.lang.String info =
-              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0000\u0000\u0001\f\u0002\u0208\u0003\u0208" +
-              "\u0004\u0208\u0005\f\u0006\u0208\u0007\u000b\b\u000b";
+              "\u0000\n\u0000\u0000\u0001\n\n\u0000\u0000\u0000\u0001\f\u0002\u0208\u0003\u0208" +
+              "\u0004\u0208\u0005\f\u0006\u0208\u0007\u000b\b\u000b\t\f\n\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

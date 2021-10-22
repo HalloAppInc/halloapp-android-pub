@@ -17,6 +17,8 @@ public  final class GroupFeedItem extends
     avatarId_ = "";
     senderStateBundles_ = emptyProtobufList();
     audienceHash_ = com.google.protobuf.ByteString.EMPTY;
+    senderLogInfo_ = "";
+    senderClientVersion_ = "";
   }
   /**
    * Protobuf enum {@code server.GroupFeedItem.Action}
@@ -673,6 +675,140 @@ public  final class GroupFeedItem extends
     audienceHash_ = getDefaultInstance().getAudienceHash();
   }
 
+  public static final int SENDER_LOG_INFO_FIELD_NUMBER = 16;
+  private java.lang.String senderLogInfo_;
+  /**
+   * <pre>
+   * Use &gt;=16 for temporary elements since 1-15 encode smaller
+   * </pre>
+   *
+   * <code>string sender_log_info = 16;</code>
+   * @return The senderLogInfo.
+   */
+  @java.lang.Override
+  public java.lang.String getSenderLogInfo() {
+    return senderLogInfo_;
+  }
+  /**
+   * <pre>
+   * Use &gt;=16 for temporary elements since 1-15 encode smaller
+   * </pre>
+   *
+   * <code>string sender_log_info = 16;</code>
+   * @return The bytes for senderLogInfo.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getSenderLogInfoBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(senderLogInfo_);
+  }
+  /**
+   * <pre>
+   * Use &gt;=16 for temporary elements since 1-15 encode smaller
+   * </pre>
+   *
+   * <code>string sender_log_info = 16;</code>
+   * @param value The senderLogInfo to set.
+   */
+  private void setSenderLogInfo(
+      java.lang.String value) {
+    value.getClass();
+  
+    senderLogInfo_ = value;
+  }
+  /**
+   * <pre>
+   * Use &gt;=16 for temporary elements since 1-15 encode smaller
+   * </pre>
+   *
+   * <code>string sender_log_info = 16;</code>
+   */
+  private void clearSenderLogInfo() {
+    
+    senderLogInfo_ = getDefaultInstance().getSenderLogInfo();
+  }
+  /**
+   * <pre>
+   * Use &gt;=16 for temporary elements since 1-15 encode smaller
+   * </pre>
+   *
+   * <code>string sender_log_info = 16;</code>
+   * @param value The bytes for senderLogInfo to set.
+   */
+  private void setSenderLogInfoBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    senderLogInfo_ = value.toStringUtf8();
+    
+  }
+
+  public static final int SENDER_CLIENT_VERSION_FIELD_NUMBER = 17;
+  private java.lang.String senderClientVersion_;
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 17;</code>
+   * @return The senderClientVersion.
+   */
+  @java.lang.Override
+  public java.lang.String getSenderClientVersion() {
+    return senderClientVersion_;
+  }
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 17;</code>
+   * @return The bytes for senderClientVersion.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getSenderClientVersionBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(senderClientVersion_);
+  }
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 17;</code>
+   * @param value The senderClientVersion to set.
+   */
+  private void setSenderClientVersion(
+      java.lang.String value) {
+    value.getClass();
+  
+    senderClientVersion_ = value;
+  }
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 17;</code>
+   */
+  private void clearSenderClientVersion() {
+    
+    senderClientVersion_ = getDefaultInstance().getSenderClientVersion();
+  }
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 17;</code>
+   * @param value The bytes for senderClientVersion to set.
+   */
+  private void setSenderClientVersionBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    senderClientVersion_ = value.toStringUtf8();
+    
+  }
+
   public static com.halloapp.proto.server.GroupFeedItem parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1318,6 +1454,144 @@ public  final class GroupFeedItem extends
       return this;
     }
 
+    /**
+     * <pre>
+     * Use &gt;=16 for temporary elements since 1-15 encode smaller
+     * </pre>
+     *
+     * <code>string sender_log_info = 16;</code>
+     * @return The senderLogInfo.
+     */
+    @java.lang.Override
+    public java.lang.String getSenderLogInfo() {
+      return instance.getSenderLogInfo();
+    }
+    /**
+     * <pre>
+     * Use &gt;=16 for temporary elements since 1-15 encode smaller
+     * </pre>
+     *
+     * <code>string sender_log_info = 16;</code>
+     * @return The bytes for senderLogInfo.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSenderLogInfoBytes() {
+      return instance.getSenderLogInfoBytes();
+    }
+    /**
+     * <pre>
+     * Use &gt;=16 for temporary elements since 1-15 encode smaller
+     * </pre>
+     *
+     * <code>string sender_log_info = 16;</code>
+     * @param value The senderLogInfo to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderLogInfo(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setSenderLogInfo(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Use &gt;=16 for temporary elements since 1-15 encode smaller
+     * </pre>
+     *
+     * <code>string sender_log_info = 16;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSenderLogInfo() {
+      copyOnWrite();
+      instance.clearSenderLogInfo();
+      return this;
+    }
+    /**
+     * <pre>
+     * Use &gt;=16 for temporary elements since 1-15 encode smaller
+     * </pre>
+     *
+     * <code>string sender_log_info = 16;</code>
+     * @param value The bytes for senderLogInfo to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderLogInfoBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setSenderLogInfoBytes(value);
+      return this;
+    }
+
+    /**
+     * <pre>
+     * ex: "HalloApp/Android0.127"
+     * </pre>
+     *
+     * <code>string sender_client_version = 17;</code>
+     * @return The senderClientVersion.
+     */
+    @java.lang.Override
+    public java.lang.String getSenderClientVersion() {
+      return instance.getSenderClientVersion();
+    }
+    /**
+     * <pre>
+     * ex: "HalloApp/Android0.127"
+     * </pre>
+     *
+     * <code>string sender_client_version = 17;</code>
+     * @return The bytes for senderClientVersion.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSenderClientVersionBytes() {
+      return instance.getSenderClientVersionBytes();
+    }
+    /**
+     * <pre>
+     * ex: "HalloApp/Android0.127"
+     * </pre>
+     *
+     * <code>string sender_client_version = 17;</code>
+     * @param value The senderClientVersion to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderClientVersion(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setSenderClientVersion(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * ex: "HalloApp/Android0.127"
+     * </pre>
+     *
+     * <code>string sender_client_version = 17;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSenderClientVersion() {
+      copyOnWrite();
+      instance.clearSenderClientVersion();
+      return this;
+    }
+    /**
+     * <pre>
+     * ex: "HalloApp/Android0.127"
+     * </pre>
+     *
+     * <code>string sender_client_version = 17;</code>
+     * @param value The bytes for senderClientVersion to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderClientVersionBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setSenderClientVersionBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.GroupFeedItem)
   }
   @java.lang.Override
@@ -1346,10 +1620,13 @@ public  final class GroupFeedItem extends
             com.halloapp.proto.server.SenderStateBundle.class,
             "senderState_",
             "audienceHash_",
+            "senderLogInfo_",
+            "senderClientVersion_",
           };
           java.lang.String info =
-              "\u0000\t\u0001\u0000\u0001\t\t\u0000\u0001\u0000\u0001\f\u0002\u0208\u0003\u0208" +
-              "\u0004\u0208\u0005<\u0000\u0006<\u0000\u0007\u001b\b\t\t\n";
+              "\u0000\u000b\u0001\u0000\u0001\u0011\u000b\u0000\u0001\u0000\u0001\f\u0002\u0208" +
+              "\u0003\u0208\u0004\u0208\u0005<\u0000\u0006<\u0000\u0007\u001b\b\t\t\n\u0010\u0208" +
+              "\u0011\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

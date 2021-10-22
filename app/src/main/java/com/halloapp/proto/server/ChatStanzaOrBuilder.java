@@ -67,6 +67,17 @@ public interface ChatStanzaOrBuilder extends
       getSenderPhoneBytes();
 
   /**
+   * <code>.server.MediaCounters media_counters = 8;</code>
+   * @return Whether the mediaCounters field is set.
+   */
+  boolean hasMediaCounters();
+  /**
+   * <code>.server.MediaCounters media_counters = 8;</code>
+   * @return The mediaCounters.
+   */
+  com.halloapp.proto.server.MediaCounters getMediaCounters();
+
+  /**
    * <pre>
    * Use &gt;=16 for temporary elements since 1-15 encode smaller
    * </pre>

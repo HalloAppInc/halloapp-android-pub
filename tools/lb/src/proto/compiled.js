@@ -3703,6 +3703,238 @@ $root.server = (function() {
         return ContactSyncError;
     })();
 
+    server.MediaCounters = (function() {
+
+        /**
+         * Properties of a MediaCounters.
+         * @memberof server
+         * @interface IMediaCounters
+         * @property {number|null} [numImages] MediaCounters numImages
+         * @property {number|null} [numVideos] MediaCounters numVideos
+         * @property {number|null} [numAudio] MediaCounters numAudio
+         */
+
+        /**
+         * Constructs a new MediaCounters.
+         * @memberof server
+         * @classdesc Represents a MediaCounters.
+         * @implements IMediaCounters
+         * @constructor
+         * @param {server.IMediaCounters=} [properties] Properties to set
+         */
+        function MediaCounters(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * MediaCounters numImages.
+         * @member {number} numImages
+         * @memberof server.MediaCounters
+         * @instance
+         */
+        MediaCounters.prototype.numImages = 0;
+
+        /**
+         * MediaCounters numVideos.
+         * @member {number} numVideos
+         * @memberof server.MediaCounters
+         * @instance
+         */
+        MediaCounters.prototype.numVideos = 0;
+
+        /**
+         * MediaCounters numAudio.
+         * @member {number} numAudio
+         * @memberof server.MediaCounters
+         * @instance
+         */
+        MediaCounters.prototype.numAudio = 0;
+
+        /**
+         * Creates a new MediaCounters instance using the specified properties.
+         * @function create
+         * @memberof server.MediaCounters
+         * @static
+         * @param {server.IMediaCounters=} [properties] Properties to set
+         * @returns {server.MediaCounters} MediaCounters instance
+         */
+        MediaCounters.create = function create(properties) {
+            return new MediaCounters(properties);
+        };
+
+        /**
+         * Encodes the specified MediaCounters message. Does not implicitly {@link server.MediaCounters.verify|verify} messages.
+         * @function encode
+         * @memberof server.MediaCounters
+         * @static
+         * @param {server.IMediaCounters} message MediaCounters message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MediaCounters.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.numImages != null && Object.hasOwnProperty.call(message, "numImages"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.numImages);
+            if (message.numVideos != null && Object.hasOwnProperty.call(message, "numVideos"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.numVideos);
+            if (message.numAudio != null && Object.hasOwnProperty.call(message, "numAudio"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.numAudio);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified MediaCounters message, length delimited. Does not implicitly {@link server.MediaCounters.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.MediaCounters
+         * @static
+         * @param {server.IMediaCounters} message MediaCounters message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MediaCounters.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a MediaCounters message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.MediaCounters
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.MediaCounters} MediaCounters
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MediaCounters.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.MediaCounters();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.numImages = reader.int32();
+                    break;
+                case 2:
+                    message.numVideos = reader.int32();
+                    break;
+                case 3:
+                    message.numAudio = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a MediaCounters message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.MediaCounters
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.MediaCounters} MediaCounters
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MediaCounters.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a MediaCounters message.
+         * @function verify
+         * @memberof server.MediaCounters
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        MediaCounters.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.numImages != null && message.hasOwnProperty("numImages"))
+                if (!$util.isInteger(message.numImages))
+                    return "numImages: integer expected";
+            if (message.numVideos != null && message.hasOwnProperty("numVideos"))
+                if (!$util.isInteger(message.numVideos))
+                    return "numVideos: integer expected";
+            if (message.numAudio != null && message.hasOwnProperty("numAudio"))
+                if (!$util.isInteger(message.numAudio))
+                    return "numAudio: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates a MediaCounters message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.MediaCounters
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.MediaCounters} MediaCounters
+         */
+        MediaCounters.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.MediaCounters)
+                return object;
+            var message = new $root.server.MediaCounters();
+            if (object.numImages != null)
+                message.numImages = object.numImages | 0;
+            if (object.numVideos != null)
+                message.numVideos = object.numVideos | 0;
+            if (object.numAudio != null)
+                message.numAudio = object.numAudio | 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a MediaCounters message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.MediaCounters
+         * @static
+         * @param {server.MediaCounters} message MediaCounters
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        MediaCounters.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.numImages = 0;
+                object.numVideos = 0;
+                object.numAudio = 0;
+            }
+            if (message.numImages != null && message.hasOwnProperty("numImages"))
+                object.numImages = message.numImages;
+            if (message.numVideos != null && message.hasOwnProperty("numVideos"))
+                object.numVideos = message.numVideos;
+            if (message.numAudio != null && message.hasOwnProperty("numAudio"))
+                object.numAudio = message.numAudio;
+            return object;
+        };
+
+        /**
+         * Converts this MediaCounters to JSON.
+         * @function toJSON
+         * @memberof server.MediaCounters
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        MediaCounters.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return MediaCounters;
+    })();
+
     server.Audience = (function() {
 
         /**
@@ -3994,6 +4226,7 @@ $root.server = (function() {
          * @property {number|Long|null} [timestamp] Post timestamp
          * @property {string|null} [publisherName] Post publisherName
          * @property {Uint8Array|null} [encPayload] Post encPayload
+         * @property {server.IMediaCounters|null} [mediaCounters] Post mediaCounters
          */
 
         /**
@@ -4068,6 +4301,14 @@ $root.server = (function() {
         Post.prototype.encPayload = $util.newBuffer([]);
 
         /**
+         * Post mediaCounters.
+         * @member {server.IMediaCounters|null|undefined} mediaCounters
+         * @memberof server.Post
+         * @instance
+         */
+        Post.prototype.mediaCounters = null;
+
+        /**
          * Creates a new Post instance using the specified properties.
          * @function create
          * @memberof server.Post
@@ -4105,6 +4346,8 @@ $root.server = (function() {
                 writer.uint32(/* id 6, wireType 2 =*/50).string(message.publisherName);
             if (message.encPayload != null && Object.hasOwnProperty.call(message, "encPayload"))
                 writer.uint32(/* id 7, wireType 2 =*/58).bytes(message.encPayload);
+            if (message.mediaCounters != null && Object.hasOwnProperty.call(message, "mediaCounters"))
+                $root.server.MediaCounters.encode(message.mediaCounters, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
             return writer;
         };
 
@@ -4159,6 +4402,9 @@ $root.server = (function() {
                     break;
                 case 7:
                     message.encPayload = reader.bytes();
+                    break;
+                case 8:
+                    message.mediaCounters = $root.server.MediaCounters.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -4218,6 +4464,11 @@ $root.server = (function() {
             if (message.encPayload != null && message.hasOwnProperty("encPayload"))
                 if (!(message.encPayload && typeof message.encPayload.length === "number" || $util.isString(message.encPayload)))
                     return "encPayload: buffer expected";
+            if (message.mediaCounters != null && message.hasOwnProperty("mediaCounters")) {
+                var error = $root.server.MediaCounters.verify(message.mediaCounters);
+                if (error)
+                    return "mediaCounters." + error;
+            }
             return null;
         };
 
@@ -4270,6 +4521,11 @@ $root.server = (function() {
                     $util.base64.decode(object.encPayload, message.encPayload = $util.newBuffer($util.base64.length(object.encPayload)), 0);
                 else if (object.encPayload.length)
                     message.encPayload = object.encPayload;
+            if (object.mediaCounters != null) {
+                if (typeof object.mediaCounters !== "object")
+                    throw TypeError(".server.Post.mediaCounters: object expected");
+                message.mediaCounters = $root.server.MediaCounters.fromObject(object.mediaCounters);
+            }
             return message;
         };
 
@@ -4314,6 +4570,7 @@ $root.server = (function() {
                     if (options.bytes !== Array)
                         object.encPayload = $util.newBuffer(object.encPayload);
                 }
+                object.mediaCounters = null;
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
@@ -4335,6 +4592,8 @@ $root.server = (function() {
                 object.publisherName = message.publisherName;
             if (message.encPayload != null && message.hasOwnProperty("encPayload"))
                 object.encPayload = options.bytes === String ? $util.base64.encode(message.encPayload, 0, message.encPayload.length) : options.bytes === Array ? Array.prototype.slice.call(message.encPayload) : message.encPayload;
+            if (message.mediaCounters != null && message.hasOwnProperty("mediaCounters"))
+                object.mediaCounters = $root.server.MediaCounters.toObject(message.mediaCounters, options);
             return object;
         };
 
@@ -4366,6 +4625,7 @@ $root.server = (function() {
          * @property {Uint8Array|null} [payload] Comment payload
          * @property {number|Long|null} [timestamp] Comment timestamp
          * @property {Uint8Array|null} [encPayload] Comment encPayload
+         * @property {server.IMediaCounters|null} [mediaCounters] Comment mediaCounters
          */
 
         /**
@@ -4448,6 +4708,14 @@ $root.server = (function() {
         Comment.prototype.encPayload = $util.newBuffer([]);
 
         /**
+         * Comment mediaCounters.
+         * @member {server.IMediaCounters|null|undefined} mediaCounters
+         * @memberof server.Comment
+         * @instance
+         */
+        Comment.prototype.mediaCounters = null;
+
+        /**
          * Creates a new Comment instance using the specified properties.
          * @function create
          * @memberof server.Comment
@@ -4487,6 +4755,8 @@ $root.server = (function() {
                 writer.uint32(/* id 7, wireType 0 =*/56).int64(message.timestamp);
             if (message.encPayload != null && Object.hasOwnProperty.call(message, "encPayload"))
                 writer.uint32(/* id 8, wireType 2 =*/66).bytes(message.encPayload);
+            if (message.mediaCounters != null && Object.hasOwnProperty.call(message, "mediaCounters"))
+                $root.server.MediaCounters.encode(message.mediaCounters, writer.uint32(/* id 9, wireType 2 =*/74).fork()).ldelim();
             return writer;
         };
 
@@ -4544,6 +4814,9 @@ $root.server = (function() {
                     break;
                 case 8:
                     message.encPayload = reader.bytes();
+                    break;
+                case 9:
+                    message.mediaCounters = $root.server.MediaCounters.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -4604,6 +4877,11 @@ $root.server = (function() {
             if (message.encPayload != null && message.hasOwnProperty("encPayload"))
                 if (!(message.encPayload && typeof message.encPayload.length === "number" || $util.isString(message.encPayload)))
                     return "encPayload: buffer expected";
+            if (message.mediaCounters != null && message.hasOwnProperty("mediaCounters")) {
+                var error = $root.server.MediaCounters.verify(message.mediaCounters);
+                if (error)
+                    return "mediaCounters." + error;
+            }
             return null;
         };
 
@@ -4655,6 +4933,11 @@ $root.server = (function() {
                     $util.base64.decode(object.encPayload, message.encPayload = $util.newBuffer($util.base64.length(object.encPayload)), 0);
                 else if (object.encPayload.length)
                     message.encPayload = object.encPayload;
+            if (object.mediaCounters != null) {
+                if (typeof object.mediaCounters !== "object")
+                    throw TypeError(".server.Comment.mediaCounters: object expected");
+                message.mediaCounters = $root.server.MediaCounters.fromObject(object.mediaCounters);
+            }
             return message;
         };
 
@@ -4700,6 +4983,7 @@ $root.server = (function() {
                     if (options.bytes !== Array)
                         object.encPayload = $util.newBuffer(object.encPayload);
                 }
+                object.mediaCounters = null;
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
@@ -4723,6 +5007,8 @@ $root.server = (function() {
                     object.timestamp = options.longs === String ? $util.Long.prototype.toString.call(message.timestamp) : options.longs === Number ? new $util.LongBits(message.timestamp.low >>> 0, message.timestamp.high >>> 0).toNumber() : message.timestamp;
             if (message.encPayload != null && message.hasOwnProperty("encPayload"))
                 object.encPayload = options.bytes === String ? $util.base64.encode(message.encPayload, 0, message.encPayload.length) : options.bytes === Array ? Array.prototype.slice.call(message.encPayload) : message.encPayload;
+            if (message.mediaCounters != null && message.hasOwnProperty("mediaCounters"))
+                object.mediaCounters = $root.server.MediaCounters.toObject(message.mediaCounters, options);
             return object;
         };
 
@@ -6196,6 +6482,8 @@ $root.server = (function() {
          * @property {Array.<server.ISenderStateBundle>|null} [senderStateBundles] GroupFeedItem senderStateBundles
          * @property {server.ISenderStateWithKeyInfo|null} [senderState] GroupFeedItem senderState
          * @property {Uint8Array|null} [audienceHash] GroupFeedItem audienceHash
+         * @property {string|null} [senderLogInfo] GroupFeedItem senderLogInfo
+         * @property {string|null} [senderClientVersion] GroupFeedItem senderClientVersion
          */
 
         /**
@@ -6286,6 +6574,22 @@ $root.server = (function() {
          */
         GroupFeedItem.prototype.audienceHash = $util.newBuffer([]);
 
+        /**
+         * GroupFeedItem senderLogInfo.
+         * @member {string} senderLogInfo
+         * @memberof server.GroupFeedItem
+         * @instance
+         */
+        GroupFeedItem.prototype.senderLogInfo = "";
+
+        /**
+         * GroupFeedItem senderClientVersion.
+         * @member {string} senderClientVersion
+         * @memberof server.GroupFeedItem
+         * @instance
+         */
+        GroupFeedItem.prototype.senderClientVersion = "";
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
@@ -6343,6 +6647,10 @@ $root.server = (function() {
                 $root.server.SenderStateWithKeyInfo.encode(message.senderState, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
             if (message.audienceHash != null && Object.hasOwnProperty.call(message, "audienceHash"))
                 writer.uint32(/* id 9, wireType 2 =*/74).bytes(message.audienceHash);
+            if (message.senderLogInfo != null && Object.hasOwnProperty.call(message, "senderLogInfo"))
+                writer.uint32(/* id 16, wireType 2 =*/130).string(message.senderLogInfo);
+            if (message.senderClientVersion != null && Object.hasOwnProperty.call(message, "senderClientVersion"))
+                writer.uint32(/* id 17, wireType 2 =*/138).string(message.senderClientVersion);
             return writer;
         };
 
@@ -6405,6 +6713,12 @@ $root.server = (function() {
                     break;
                 case 9:
                     message.audienceHash = reader.bytes();
+                    break;
+                case 16:
+                    message.senderLogInfo = reader.string();
+                    break;
+                case 17:
+                    message.senderClientVersion = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -6495,6 +6809,12 @@ $root.server = (function() {
             if (message.audienceHash != null && message.hasOwnProperty("audienceHash"))
                 if (!(message.audienceHash && typeof message.audienceHash.length === "number" || $util.isString(message.audienceHash)))
                     return "audienceHash: buffer expected";
+            if (message.senderLogInfo != null && message.hasOwnProperty("senderLogInfo"))
+                if (!$util.isString(message.senderLogInfo))
+                    return "senderLogInfo: string expected";
+            if (message.senderClientVersion != null && message.hasOwnProperty("senderClientVersion"))
+                if (!$util.isString(message.senderClientVersion))
+                    return "senderClientVersion: string expected";
             return null;
         };
 
@@ -6560,6 +6880,10 @@ $root.server = (function() {
                     $util.base64.decode(object.audienceHash, message.audienceHash = $util.newBuffer($util.base64.length(object.audienceHash)), 0);
                 else if (object.audienceHash.length)
                     message.audienceHash = object.audienceHash;
+            if (object.senderLogInfo != null)
+                message.senderLogInfo = String(object.senderLogInfo);
+            if (object.senderClientVersion != null)
+                message.senderClientVersion = String(object.senderClientVersion);
             return message;
         };
 
@@ -6591,6 +6915,8 @@ $root.server = (function() {
                     if (options.bytes !== Array)
                         object.audienceHash = $util.newBuffer(object.audienceHash);
                 }
+                object.senderLogInfo = "";
+                object.senderClientVersion = "";
             }
             if (message.action != null && message.hasOwnProperty("action"))
                 object.action = options.enums === String ? $root.server.GroupFeedItem.Action[message.action] : message.action;
@@ -6619,6 +6945,10 @@ $root.server = (function() {
                 object.senderState = $root.server.SenderStateWithKeyInfo.toObject(message.senderState, options);
             if (message.audienceHash != null && message.hasOwnProperty("audienceHash"))
                 object.audienceHash = options.bytes === String ? $util.base64.encode(message.audienceHash, 0, message.audienceHash.length) : options.bytes === Array ? Array.prototype.slice.call(message.audienceHash) : message.audienceHash;
+            if (message.senderLogInfo != null && message.hasOwnProperty("senderLogInfo"))
+                object.senderLogInfo = message.senderLogInfo;
+            if (message.senderClientVersion != null && message.hasOwnProperty("senderClientVersion"))
+                object.senderClientVersion = message.senderClientVersion;
             return object;
         };
 
@@ -10894,6 +11224,7 @@ $root.server = (function() {
          * @property {number|Long|null} [oneTimePreKeyId] ChatStanza oneTimePreKeyId
          * @property {string|null} [senderName] ChatStanza senderName
          * @property {string|null} [senderPhone] ChatStanza senderPhone
+         * @property {server.IMediaCounters|null} [mediaCounters] ChatStanza mediaCounters
          * @property {string|null} [senderLogInfo] ChatStanza senderLogInfo
          * @property {string|null} [senderClientVersion] ChatStanza senderClientVersion
          */
@@ -10970,6 +11301,14 @@ $root.server = (function() {
         ChatStanza.prototype.senderPhone = "";
 
         /**
+         * ChatStanza mediaCounters.
+         * @member {server.IMediaCounters|null|undefined} mediaCounters
+         * @memberof server.ChatStanza
+         * @instance
+         */
+        ChatStanza.prototype.mediaCounters = null;
+
+        /**
          * ChatStanza senderLogInfo.
          * @member {string} senderLogInfo
          * @memberof server.ChatStanza
@@ -11023,6 +11362,8 @@ $root.server = (function() {
                 writer.uint32(/* id 6, wireType 2 =*/50).string(message.senderName);
             if (message.senderPhone != null && Object.hasOwnProperty.call(message, "senderPhone"))
                 writer.uint32(/* id 7, wireType 2 =*/58).string(message.senderPhone);
+            if (message.mediaCounters != null && Object.hasOwnProperty.call(message, "mediaCounters"))
+                $root.server.MediaCounters.encode(message.mediaCounters, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
             if (message.senderLogInfo != null && Object.hasOwnProperty.call(message, "senderLogInfo"))
                 writer.uint32(/* id 16, wireType 2 =*/130).string(message.senderLogInfo);
             if (message.senderClientVersion != null && Object.hasOwnProperty.call(message, "senderClientVersion"))
@@ -11081,6 +11422,9 @@ $root.server = (function() {
                     break;
                 case 7:
                     message.senderPhone = reader.string();
+                    break;
+                case 8:
+                    message.mediaCounters = $root.server.MediaCounters.decode(reader, reader.uint32());
                     break;
                 case 16:
                     message.senderLogInfo = reader.string();
@@ -11144,6 +11488,11 @@ $root.server = (function() {
             if (message.senderPhone != null && message.hasOwnProperty("senderPhone"))
                 if (!$util.isString(message.senderPhone))
                     return "senderPhone: string expected";
+            if (message.mediaCounters != null && message.hasOwnProperty("mediaCounters")) {
+                var error = $root.server.MediaCounters.verify(message.mediaCounters);
+                if (error)
+                    return "mediaCounters." + error;
+            }
             if (message.senderLogInfo != null && message.hasOwnProperty("senderLogInfo"))
                 if (!$util.isString(message.senderLogInfo))
                     return "senderLogInfo: string expected";
@@ -11202,6 +11551,11 @@ $root.server = (function() {
                 message.senderName = String(object.senderName);
             if (object.senderPhone != null)
                 message.senderPhone = String(object.senderPhone);
+            if (object.mediaCounters != null) {
+                if (typeof object.mediaCounters !== "object")
+                    throw TypeError(".server.ChatStanza.mediaCounters: object expected");
+                message.mediaCounters = $root.server.MediaCounters.fromObject(object.mediaCounters);
+            }
             if (object.senderLogInfo != null)
                 message.senderLogInfo = String(object.senderLogInfo);
             if (object.senderClientVersion != null)
@@ -11256,6 +11610,7 @@ $root.server = (function() {
                     object.oneTimePreKeyId = options.longs === String ? "0" : 0;
                 object.senderName = "";
                 object.senderPhone = "";
+                object.mediaCounters = null;
                 object.senderLogInfo = "";
                 object.senderClientVersion = "";
             }
@@ -11279,6 +11634,8 @@ $root.server = (function() {
                 object.senderName = message.senderName;
             if (message.senderPhone != null && message.hasOwnProperty("senderPhone"))
                 object.senderPhone = message.senderPhone;
+            if (message.mediaCounters != null && message.hasOwnProperty("mediaCounters"))
+                object.mediaCounters = $root.server.MediaCounters.toObject(message.mediaCounters, options);
             if (message.senderLogInfo != null && message.hasOwnProperty("senderLogInfo"))
                 object.senderLogInfo = message.senderLogInfo;
             if (message.senderClientVersion != null && message.hasOwnProperty("senderClientVersion"))
@@ -14952,27 +15309,27 @@ $root.server = (function() {
         return IncomingCall;
     })();
 
-    server.IceCandicate = (function() {
+    server.IceCandidate = (function() {
 
         /**
-         * Properties of an IceCandicate.
+         * Properties of an IceCandidate.
          * @memberof server
-         * @interface IIceCandicate
-         * @property {string|null} [callId] IceCandicate callId
-         * @property {string|null} [sdpMediaId] IceCandicate sdpMediaId
-         * @property {number|null} [sdpMediaLineIndex] IceCandicate sdpMediaLineIndex
-         * @property {string|null} [sdp] IceCandicate sdp
+         * @interface IIceCandidate
+         * @property {string|null} [callId] IceCandidate callId
+         * @property {string|null} [sdpMediaId] IceCandidate sdpMediaId
+         * @property {number|null} [sdpMediaLineIndex] IceCandidate sdpMediaLineIndex
+         * @property {string|null} [sdp] IceCandidate sdp
          */
 
         /**
-         * Constructs a new IceCandicate.
+         * Constructs a new IceCandidate.
          * @memberof server
-         * @classdesc Represents an IceCandicate.
-         * @implements IIceCandicate
+         * @classdesc Represents an IceCandidate.
+         * @implements IIceCandidate
          * @constructor
-         * @param {server.IIceCandicate=} [properties] Properties to set
+         * @param {server.IIceCandidate=} [properties] Properties to set
          */
-        function IceCandicate(properties) {
+        function IceCandidate(properties) {
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -14980,59 +15337,59 @@ $root.server = (function() {
         }
 
         /**
-         * IceCandicate callId.
+         * IceCandidate callId.
          * @member {string} callId
-         * @memberof server.IceCandicate
+         * @memberof server.IceCandidate
          * @instance
          */
-        IceCandicate.prototype.callId = "";
+        IceCandidate.prototype.callId = "";
 
         /**
-         * IceCandicate sdpMediaId.
+         * IceCandidate sdpMediaId.
          * @member {string} sdpMediaId
-         * @memberof server.IceCandicate
+         * @memberof server.IceCandidate
          * @instance
          */
-        IceCandicate.prototype.sdpMediaId = "";
+        IceCandidate.prototype.sdpMediaId = "";
 
         /**
-         * IceCandicate sdpMediaLineIndex.
+         * IceCandidate sdpMediaLineIndex.
          * @member {number} sdpMediaLineIndex
-         * @memberof server.IceCandicate
+         * @memberof server.IceCandidate
          * @instance
          */
-        IceCandicate.prototype.sdpMediaLineIndex = 0;
+        IceCandidate.prototype.sdpMediaLineIndex = 0;
 
         /**
-         * IceCandicate sdp.
+         * IceCandidate sdp.
          * @member {string} sdp
-         * @memberof server.IceCandicate
+         * @memberof server.IceCandidate
          * @instance
          */
-        IceCandicate.prototype.sdp = "";
+        IceCandidate.prototype.sdp = "";
 
         /**
-         * Creates a new IceCandicate instance using the specified properties.
+         * Creates a new IceCandidate instance using the specified properties.
          * @function create
-         * @memberof server.IceCandicate
+         * @memberof server.IceCandidate
          * @static
-         * @param {server.IIceCandicate=} [properties] Properties to set
-         * @returns {server.IceCandicate} IceCandicate instance
+         * @param {server.IIceCandidate=} [properties] Properties to set
+         * @returns {server.IceCandidate} IceCandidate instance
          */
-        IceCandicate.create = function create(properties) {
-            return new IceCandicate(properties);
+        IceCandidate.create = function create(properties) {
+            return new IceCandidate(properties);
         };
 
         /**
-         * Encodes the specified IceCandicate message. Does not implicitly {@link server.IceCandicate.verify|verify} messages.
+         * Encodes the specified IceCandidate message. Does not implicitly {@link server.IceCandidate.verify|verify} messages.
          * @function encode
-         * @memberof server.IceCandicate
+         * @memberof server.IceCandidate
          * @static
-         * @param {server.IIceCandicate} message IceCandicate message or plain object to encode
+         * @param {server.IIceCandidate} message IceCandidate message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        IceCandicate.encode = function encode(message, writer) {
+        IceCandidate.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
             if (message.callId != null && Object.hasOwnProperty.call(message, "callId"))
@@ -15047,33 +15404,33 @@ $root.server = (function() {
         };
 
         /**
-         * Encodes the specified IceCandicate message, length delimited. Does not implicitly {@link server.IceCandicate.verify|verify} messages.
+         * Encodes the specified IceCandidate message, length delimited. Does not implicitly {@link server.IceCandidate.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof server.IceCandicate
+         * @memberof server.IceCandidate
          * @static
-         * @param {server.IIceCandicate} message IceCandicate message or plain object to encode
+         * @param {server.IIceCandidate} message IceCandidate message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        IceCandicate.encodeDelimited = function encodeDelimited(message, writer) {
+        IceCandidate.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
 
         /**
-         * Decodes an IceCandicate message from the specified reader or buffer.
+         * Decodes an IceCandidate message from the specified reader or buffer.
          * @function decode
-         * @memberof server.IceCandicate
+         * @memberof server.IceCandidate
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {server.IceCandicate} IceCandicate
+         * @returns {server.IceCandidate} IceCandidate
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        IceCandicate.decode = function decode(reader, length) {
+        IceCandidate.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.IceCandicate();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.IceCandidate();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -15098,30 +15455,30 @@ $root.server = (function() {
         };
 
         /**
-         * Decodes an IceCandicate message from the specified reader or buffer, length delimited.
+         * Decodes an IceCandidate message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof server.IceCandicate
+         * @memberof server.IceCandidate
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {server.IceCandicate} IceCandicate
+         * @returns {server.IceCandidate} IceCandidate
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        IceCandicate.decodeDelimited = function decodeDelimited(reader) {
+        IceCandidate.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
 
         /**
-         * Verifies an IceCandicate message.
+         * Verifies an IceCandidate message.
          * @function verify
-         * @memberof server.IceCandicate
+         * @memberof server.IceCandidate
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        IceCandicate.verify = function verify(message) {
+        IceCandidate.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.callId != null && message.hasOwnProperty("callId"))
@@ -15140,17 +15497,17 @@ $root.server = (function() {
         };
 
         /**
-         * Creates an IceCandicate message from a plain object. Also converts values to their respective internal types.
+         * Creates an IceCandidate message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof server.IceCandicate
+         * @memberof server.IceCandidate
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {server.IceCandicate} IceCandicate
+         * @returns {server.IceCandidate} IceCandidate
          */
-        IceCandicate.fromObject = function fromObject(object) {
-            if (object instanceof $root.server.IceCandicate)
+        IceCandidate.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.IceCandidate)
                 return object;
-            var message = new $root.server.IceCandicate();
+            var message = new $root.server.IceCandidate();
             if (object.callId != null)
                 message.callId = String(object.callId);
             if (object.sdpMediaId != null)
@@ -15163,15 +15520,15 @@ $root.server = (function() {
         };
 
         /**
-         * Creates a plain object from an IceCandicate message. Also converts values to other types if specified.
+         * Creates a plain object from an IceCandidate message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof server.IceCandicate
+         * @memberof server.IceCandidate
          * @static
-         * @param {server.IceCandicate} message IceCandicate
+         * @param {server.IceCandidate} message IceCandidate
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        IceCandicate.toObject = function toObject(message, options) {
+        IceCandidate.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             var object = {};
@@ -15193,17 +15550,17 @@ $root.server = (function() {
         };
 
         /**
-         * Converts this IceCandicate to JSON.
+         * Converts this IceCandidate to JSON.
          * @function toJSON
-         * @memberof server.IceCandicate
+         * @memberof server.IceCandidate
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        IceCandicate.prototype.toJSON = function toJSON() {
+        IceCandidate.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
-        return IceCandicate;
+        return IceCandidate;
     })();
 
     server.CallRinging = (function() {
@@ -17538,7 +17895,7 @@ $root.server = (function() {
          * @property {server.ICallRinging|null} [callRinging] Msg callRinging
          * @property {server.IAnswerCall|null} [answerCall] Msg answerCall
          * @property {server.IEndCall|null} [endCall] Msg endCall
-         * @property {server.IIceCandicate|null} [iceCandidate] Msg iceCandidate
+         * @property {server.IIceCandidate|null} [iceCandidate] Msg iceCandidate
          * @property {number|null} [retryCount] Msg retryCount
          * @property {number|null} [rerequestCount] Msg rerequestCount
          */
@@ -17840,7 +18197,7 @@ $root.server = (function() {
 
         /**
          * Msg iceCandidate.
-         * @member {server.IIceCandicate|null|undefined} iceCandidate
+         * @member {server.IIceCandidate|null|undefined} iceCandidate
          * @memberof server.Msg
          * @instance
          */
@@ -17975,7 +18332,7 @@ $root.server = (function() {
             if (message.endCall != null && Object.hasOwnProperty.call(message, "endCall"))
                 $root.server.EndCall.encode(message.endCall, writer.uint32(/* id 37, wireType 2 =*/298).fork()).ldelim();
             if (message.iceCandidate != null && Object.hasOwnProperty.call(message, "iceCandidate"))
-                $root.server.IceCandicate.encode(message.iceCandidate, writer.uint32(/* id 38, wireType 2 =*/306).fork()).ldelim();
+                $root.server.IceCandidate.encode(message.iceCandidate, writer.uint32(/* id 38, wireType 2 =*/306).fork()).ldelim();
             return writer;
         };
 
@@ -18116,7 +18473,7 @@ $root.server = (function() {
                     message.endCall = $root.server.EndCall.decode(reader, reader.uint32());
                     break;
                 case 38:
-                    message.iceCandidate = $root.server.IceCandicate.decode(reader, reader.uint32());
+                    message.iceCandidate = $root.server.IceCandidate.decode(reader, reader.uint32());
                     break;
                 case 21:
                     message.retryCount = reader.int32();
@@ -18494,7 +18851,7 @@ $root.server = (function() {
                     return "payload: multiple values";
                 properties.payload = 1;
                 {
-                    var error = $root.server.IceCandicate.verify(message.iceCandidate);
+                    var error = $root.server.IceCandidate.verify(message.iceCandidate);
                     if (error)
                         return "iceCandidate." + error;
                 }
@@ -18724,7 +19081,7 @@ $root.server = (function() {
             if (object.iceCandidate != null) {
                 if (typeof object.iceCandidate !== "object")
                     throw TypeError(".server.Msg.iceCandidate: object expected");
-                message.iceCandidate = $root.server.IceCandicate.fromObject(object.iceCandidate);
+                message.iceCandidate = $root.server.IceCandidate.fromObject(object.iceCandidate);
             }
             if (object.retryCount != null)
                 message.retryCount = object.retryCount | 0;
@@ -18936,7 +19293,7 @@ $root.server = (function() {
                     object.payload = "endCall";
             }
             if (message.iceCandidate != null && message.hasOwnProperty("iceCandidate")) {
-                object.iceCandidate = $root.server.IceCandicate.toObject(message.iceCandidate, options);
+                object.iceCandidate = $root.server.IceCandidate.toObject(message.iceCandidate, options);
                 if (options.oneofs)
                     object.payload = "iceCandidate";
             }
@@ -33902,6 +34259,8 @@ $root.server = (function() {
          * @property {string|null} [originalVersion] GroupDecryptionReport originalVersion
          * @property {number|null} [rerequestCount] GroupDecryptionReport rerequestCount
          * @property {number|null} [timeTakenS] GroupDecryptionReport timeTakenS
+         * @property {server.Platform|null} [senderPlatform] GroupDecryptionReport senderPlatform
+         * @property {string|null} [senderVersion] GroupDecryptionReport senderVersion
          */
 
         /**
@@ -33984,6 +34343,22 @@ $root.server = (function() {
         GroupDecryptionReport.prototype.timeTakenS = 0;
 
         /**
+         * GroupDecryptionReport senderPlatform.
+         * @member {server.Platform} senderPlatform
+         * @memberof server.GroupDecryptionReport
+         * @instance
+         */
+        GroupDecryptionReport.prototype.senderPlatform = 0;
+
+        /**
+         * GroupDecryptionReport senderVersion.
+         * @member {string} senderVersion
+         * @memberof server.GroupDecryptionReport
+         * @instance
+         */
+        GroupDecryptionReport.prototype.senderVersion = "";
+
+        /**
          * Creates a new GroupDecryptionReport instance using the specified properties.
          * @function create
          * @memberof server.GroupDecryptionReport
@@ -34023,6 +34398,10 @@ $root.server = (function() {
                 writer.uint32(/* id 7, wireType 0 =*/56).uint32(message.rerequestCount);
             if (message.timeTakenS != null && Object.hasOwnProperty.call(message, "timeTakenS"))
                 writer.uint32(/* id 8, wireType 0 =*/64).uint32(message.timeTakenS);
+            if (message.senderPlatform != null && Object.hasOwnProperty.call(message, "senderPlatform"))
+                writer.uint32(/* id 9, wireType 0 =*/72).int32(message.senderPlatform);
+            if (message.senderVersion != null && Object.hasOwnProperty.call(message, "senderVersion"))
+                writer.uint32(/* id 10, wireType 2 =*/82).string(message.senderVersion);
             return writer;
         };
 
@@ -34080,6 +34459,12 @@ $root.server = (function() {
                     break;
                 case 8:
                     message.timeTakenS = reader.uint32();
+                    break;
+                case 9:
+                    message.senderPlatform = reader.int32();
+                    break;
+                case 10:
+                    message.senderVersion = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -34152,6 +34537,18 @@ $root.server = (function() {
             if (message.timeTakenS != null && message.hasOwnProperty("timeTakenS"))
                 if (!$util.isInteger(message.timeTakenS))
                     return "timeTakenS: integer expected";
+            if (message.senderPlatform != null && message.hasOwnProperty("senderPlatform"))
+                switch (message.senderPlatform) {
+                default:
+                    return "senderPlatform: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.senderVersion != null && message.hasOwnProperty("senderVersion"))
+                if (!$util.isString(message.senderVersion))
+                    return "senderVersion: string expected";
             return null;
         };
 
@@ -34207,6 +34604,22 @@ $root.server = (function() {
                 message.rerequestCount = object.rerequestCount >>> 0;
             if (object.timeTakenS != null)
                 message.timeTakenS = object.timeTakenS >>> 0;
+            switch (object.senderPlatform) {
+            case "UNKNOWN":
+            case 0:
+                message.senderPlatform = 0;
+                break;
+            case "IOS":
+            case 1:
+                message.senderPlatform = 1;
+                break;
+            case "ANDROID":
+            case 2:
+                message.senderPlatform = 2;
+                break;
+            }
+            if (object.senderVersion != null)
+                message.senderVersion = String(object.senderVersion);
             return message;
         };
 
@@ -34232,6 +34645,8 @@ $root.server = (function() {
                 object.originalVersion = "";
                 object.rerequestCount = 0;
                 object.timeTakenS = 0;
+                object.senderPlatform = options.enums === String ? "UNKNOWN" : 0;
+                object.senderVersion = "";
             }
             if (message.result != null && message.hasOwnProperty("result"))
                 object.result = options.enums === String ? $root.server.GroupDecryptionReport.Status[message.result] : message.result;
@@ -34249,6 +34664,10 @@ $root.server = (function() {
                 object.rerequestCount = message.rerequestCount;
             if (message.timeTakenS != null && message.hasOwnProperty("timeTakenS"))
                 object.timeTakenS = message.timeTakenS;
+            if (message.senderPlatform != null && message.hasOwnProperty("senderPlatform"))
+                object.senderPlatform = options.enums === String ? $root.server.Platform[message.senderPlatform] : message.senderPlatform;
+            if (message.senderVersion != null && message.hasOwnProperty("senderVersion"))
+                object.senderVersion = message.senderVersion;
             return object;
         };
 

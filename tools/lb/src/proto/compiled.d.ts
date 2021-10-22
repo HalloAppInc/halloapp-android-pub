@@ -1522,6 +1522,108 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a MediaCounters. */
+    interface IMediaCounters {
+
+        /** MediaCounters numImages */
+        numImages?: (number|null);
+
+        /** MediaCounters numVideos */
+        numVideos?: (number|null);
+
+        /** MediaCounters numAudio */
+        numAudio?: (number|null);
+    }
+
+    /** Represents a MediaCounters. */
+    class MediaCounters implements IMediaCounters {
+
+        /**
+         * Constructs a new MediaCounters.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IMediaCounters);
+
+        /** MediaCounters numImages. */
+        public numImages: number;
+
+        /** MediaCounters numVideos. */
+        public numVideos: number;
+
+        /** MediaCounters numAudio. */
+        public numAudio: number;
+
+        /**
+         * Creates a new MediaCounters instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns MediaCounters instance
+         */
+        public static create(properties?: server.IMediaCounters): server.MediaCounters;
+
+        /**
+         * Encodes the specified MediaCounters message. Does not implicitly {@link server.MediaCounters.verify|verify} messages.
+         * @param message MediaCounters message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IMediaCounters, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified MediaCounters message, length delimited. Does not implicitly {@link server.MediaCounters.verify|verify} messages.
+         * @param message MediaCounters message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IMediaCounters, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a MediaCounters message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns MediaCounters
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.MediaCounters;
+
+        /**
+         * Decodes a MediaCounters message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns MediaCounters
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.MediaCounters;
+
+        /**
+         * Verifies a MediaCounters message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a MediaCounters message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns MediaCounters
+         */
+        public static fromObject(object: { [k: string]: any }): server.MediaCounters;
+
+        /**
+         * Creates a plain object from a MediaCounters message. Also converts values to other types if specified.
+         * @param message MediaCounters
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.MediaCounters, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this MediaCounters to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an Audience. */
     interface IAudience {
 
@@ -1651,6 +1753,9 @@ export namespace server {
 
         /** Post encPayload */
         encPayload?: (Uint8Array|null);
+
+        /** Post mediaCounters */
+        mediaCounters?: (server.IMediaCounters|null);
     }
 
     /** Represents a Post. */
@@ -1682,6 +1787,9 @@ export namespace server {
 
         /** Post encPayload. */
         public encPayload: Uint8Array;
+
+        /** Post mediaCounters. */
+        public mediaCounters?: (server.IMediaCounters|null);
 
         /**
          * Creates a new Post instance using the specified properties.
@@ -1780,6 +1888,9 @@ export namespace server {
 
         /** Comment encPayload */
         encPayload?: (Uint8Array|null);
+
+        /** Comment mediaCounters */
+        mediaCounters?: (server.IMediaCounters|null);
     }
 
     /** Represents a Comment. */
@@ -1814,6 +1925,9 @@ export namespace server {
 
         /** Comment encPayload. */
         public encPayload: Uint8Array;
+
+        /** Comment mediaCounters. */
+        public mediaCounters?: (server.IMediaCounters|null);
 
         /**
          * Creates a new Comment instance using the specified properties.
@@ -2450,6 +2564,12 @@ export namespace server {
 
         /** GroupFeedItem audienceHash */
         audienceHash?: (Uint8Array|null);
+
+        /** GroupFeedItem senderLogInfo */
+        senderLogInfo?: (string|null);
+
+        /** GroupFeedItem senderClientVersion */
+        senderClientVersion?: (string|null);
     }
 
     /** Represents a GroupFeedItem. */
@@ -2487,6 +2607,12 @@ export namespace server {
 
         /** GroupFeedItem audienceHash. */
         public audienceHash: Uint8Array;
+
+        /** GroupFeedItem senderLogInfo. */
+        public senderLogInfo: string;
+
+        /** GroupFeedItem senderClientVersion. */
+        public senderClientVersion: string;
 
         /** GroupFeedItem item. */
         public item?: ("post"|"comment");
@@ -4159,6 +4285,9 @@ export namespace server {
         /** ChatStanza senderPhone */
         senderPhone?: (string|null);
 
+        /** ChatStanza mediaCounters */
+        mediaCounters?: (server.IMediaCounters|null);
+
         /** ChatStanza senderLogInfo */
         senderLogInfo?: (string|null);
 
@@ -4195,6 +4324,9 @@ export namespace server {
 
         /** ChatStanza senderPhone. */
         public senderPhone: string;
+
+        /** ChatStanza mediaCounters. */
+        public mediaCounters?: (server.IMediaCounters|null);
 
         /** ChatStanza senderLogInfo. */
         public senderLogInfo: string;
@@ -5722,109 +5854,109 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of an IceCandicate. */
-    interface IIceCandicate {
+    /** Properties of an IceCandidate. */
+    interface IIceCandidate {
 
-        /** IceCandicate callId */
+        /** IceCandidate callId */
         callId?: (string|null);
 
-        /** IceCandicate sdpMediaId */
+        /** IceCandidate sdpMediaId */
         sdpMediaId?: (string|null);
 
-        /** IceCandicate sdpMediaLineIndex */
+        /** IceCandidate sdpMediaLineIndex */
         sdpMediaLineIndex?: (number|null);
 
-        /** IceCandicate sdp */
+        /** IceCandidate sdp */
         sdp?: (string|null);
     }
 
-    /** Represents an IceCandicate. */
-    class IceCandicate implements IIceCandicate {
+    /** Represents an IceCandidate. */
+    class IceCandidate implements IIceCandidate {
 
         /**
-         * Constructs a new IceCandicate.
+         * Constructs a new IceCandidate.
          * @param [properties] Properties to set
          */
-        constructor(properties?: server.IIceCandicate);
+        constructor(properties?: server.IIceCandidate);
 
-        /** IceCandicate callId. */
+        /** IceCandidate callId. */
         public callId: string;
 
-        /** IceCandicate sdpMediaId. */
+        /** IceCandidate sdpMediaId. */
         public sdpMediaId: string;
 
-        /** IceCandicate sdpMediaLineIndex. */
+        /** IceCandidate sdpMediaLineIndex. */
         public sdpMediaLineIndex: number;
 
-        /** IceCandicate sdp. */
+        /** IceCandidate sdp. */
         public sdp: string;
 
         /**
-         * Creates a new IceCandicate instance using the specified properties.
+         * Creates a new IceCandidate instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns IceCandicate instance
+         * @returns IceCandidate instance
          */
-        public static create(properties?: server.IIceCandicate): server.IceCandicate;
+        public static create(properties?: server.IIceCandidate): server.IceCandidate;
 
         /**
-         * Encodes the specified IceCandicate message. Does not implicitly {@link server.IceCandicate.verify|verify} messages.
-         * @param message IceCandicate message or plain object to encode
+         * Encodes the specified IceCandidate message. Does not implicitly {@link server.IceCandidate.verify|verify} messages.
+         * @param message IceCandidate message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: server.IIceCandicate, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: server.IIceCandidate, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified IceCandicate message, length delimited. Does not implicitly {@link server.IceCandicate.verify|verify} messages.
-         * @param message IceCandicate message or plain object to encode
+         * Encodes the specified IceCandidate message, length delimited. Does not implicitly {@link server.IceCandidate.verify|verify} messages.
+         * @param message IceCandidate message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: server.IIceCandicate, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: server.IIceCandidate, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes an IceCandicate message from the specified reader or buffer.
+         * Decodes an IceCandidate message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns IceCandicate
+         * @returns IceCandidate
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.IceCandicate;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.IceCandidate;
 
         /**
-         * Decodes an IceCandicate message from the specified reader or buffer, length delimited.
+         * Decodes an IceCandidate message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns IceCandicate
+         * @returns IceCandidate
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.IceCandicate;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.IceCandidate;
 
         /**
-         * Verifies an IceCandicate message.
+         * Verifies an IceCandidate message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates an IceCandicate message from a plain object. Also converts values to their respective internal types.
+         * Creates an IceCandidate message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns IceCandicate
+         * @returns IceCandidate
          */
-        public static fromObject(object: { [k: string]: any }): server.IceCandicate;
+        public static fromObject(object: { [k: string]: any }): server.IceCandidate;
 
         /**
-         * Creates a plain object from an IceCandicate message. Also converts values to other types if specified.
-         * @param message IceCandicate
+         * Creates a plain object from an IceCandidate message. Also converts values to other types if specified.
+         * @param message IceCandidate
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: server.IceCandicate, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: server.IceCandidate, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this IceCandicate to JSON.
+         * Converts this IceCandidate to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -6583,7 +6715,7 @@ export namespace server {
         endCall?: (server.IEndCall|null);
 
         /** Msg iceCandidate */
-        iceCandidate?: (server.IIceCandicate|null);
+        iceCandidate?: (server.IIceCandidate|null);
 
         /** Msg retryCount */
         retryCount?: (number|null);
@@ -6707,7 +6839,7 @@ export namespace server {
         public endCall?: (server.IEndCall|null);
 
         /** Msg iceCandidate. */
-        public iceCandidate?: (server.IIceCandicate|null);
+        public iceCandidate?: (server.IIceCandidate|null);
 
         /** Msg retryCount. */
         public retryCount: number;
@@ -12564,6 +12696,12 @@ export namespace server {
 
         /** GroupDecryptionReport timeTakenS */
         timeTakenS?: (number|null);
+
+        /** GroupDecryptionReport senderPlatform */
+        senderPlatform?: (server.Platform|null);
+
+        /** GroupDecryptionReport senderVersion */
+        senderVersion?: (string|null);
     }
 
     /** Represents a GroupDecryptionReport. */
@@ -12598,6 +12736,12 @@ export namespace server {
 
         /** GroupDecryptionReport timeTakenS. */
         public timeTakenS: number;
+
+        /** GroupDecryptionReport senderPlatform. */
+        public senderPlatform: server.Platform;
+
+        /** GroupDecryptionReport senderVersion. */
+        public senderVersion: string;
 
         /**
          * Creates a new GroupDecryptionReport instance using the specified properties.
