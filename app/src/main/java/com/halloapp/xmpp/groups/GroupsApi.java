@@ -5,6 +5,9 @@ import androidx.annotation.Nullable;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.content.ContentDb;
+import com.halloapp.crypto.CryptoException;
+import com.halloapp.crypto.group.GroupFeedSessionManager;
+import com.halloapp.crypto.group.GroupSetupInfo;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
@@ -21,6 +24,7 @@ import com.halloapp.xmpp.HalloIq;
 import com.halloapp.xmpp.util.IqResult;
 import com.halloapp.xmpp.util.Observable;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,13 +69,41 @@ public class GroupsApi {
         final AddRemoveMembersIq requestIq = new AddRemoveMembersIq(groupId, addUids, removeUids);
         final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
+            boolean success = true;
+            List<MemberInfo> addedUsers = new ArrayList<>();
             for (MemberElement memberElement : response.memberElements) {
                 if (!MemberElement.Result.OK.equals(memberElement.result)) {
-                    return false;
+                    success = false;
+                } else if (MemberElement.Action.ADD.equals(memberElement.action)) {
+                    addedUsers.add(new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name));
                 }
             }
 
-            return true;
+
+            if (!addedUsers.isEmpty()) {
+                contentDb.addRemoveGroupMembers(groupId, null, null, addedUsers, new ArrayList<>(), () -> {
+                    StringBuilder sb = new StringBuilder();
+                    for (MemberInfo memberInfo : addedUsers) {
+                        sb.append(memberInfo.userId.rawId()).append(",");
+                    }
+                    byte[] payload = sb.toString().getBytes();
+                    try {
+                        GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
+                        byte[] encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
+                        GroupsHistoryResendIq historyResendIq = new GroupsHistoryResendIq(groupId, groupSetupInfo, encPayload);
+                        final Observable<HalloIq> resendObservable = connection.sendRequestIq(historyResendIq);
+                        resendObservable.onResponse(res -> {
+                            Log.d("History resend request succeeded");
+                        }).onError(e -> {
+                            Log.w("History resend request failed", e);
+                        });
+                    } catch (CryptoException | NoSuchAlgorithmException e) {
+                        Log.e("Failed to encrypt member list for history resend request", e);
+                    }
+                });
+            }
+
+            return success;
         });
     }
 
