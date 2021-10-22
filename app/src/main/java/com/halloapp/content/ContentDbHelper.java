@@ -32,7 +32,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 54;
+    private static final int DATABASE_VERSION = 55;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -62,6 +62,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + PostsTable.COLUMN_REREQUEST_COUNT + " INTEGER DEFAULT 0,"
                 + PostsTable.COLUMN_FAILURE_REASON + " TEXT,"
                 + PostsTable.COLUMN_CLIENT_VERSION + " TEXT,"
+                + PostsTable.COLUMN_SENDER_PLATFORM + " TEXT,"
+                + PostsTable.COLUMN_SENDER_VERSION + " TEXT,"
                 + PostsTable.COLUMN_RECEIVE_TIME + " INTEGER,"
                 + PostsTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER"
                 + ");");
@@ -246,6 +248,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + CommentsTable.COLUMN_REREQUEST_COUNT + " INTEGER DEFAULT 0,"
                 + CommentsTable.COLUMN_FAILURE_REASON + " TEXT,"
                 + CommentsTable.COLUMN_CLIENT_VERSION + " TEXT,"
+                + CommentsTable.COLUMN_SENDER_PLATFORM + " TEXT,"
+                + CommentsTable.COLUMN_SENDER_VERSION + " TEXT,"
                 + CommentsTable.COLUMN_RECEIVE_TIME + " INTEGER,"
                 + CommentsTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER"
                 + ");");
@@ -539,6 +543,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 53: {
                 upgradeFromVersion53(db);
+            }
+            case 54: {
+                upgradeFromVersion54(db);
             }
             break;
             default: {
@@ -1137,6 +1144,14 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion53(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + ChatsTable.TABLE_NAME + " ADD COLUMN " + ChatsTable.COLUMN_INVITE_LINK + " TEXT");
+    }
+
+    private void upgradeFromVersion54(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_SENDER_PLATFORM + " TEXT");
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_SENDER_VERSION + " TEXT");
+
+        db.execSQL("ALTER TABLE " + CommentsTable.TABLE_NAME + " ADD COLUMN " + CommentsTable.COLUMN_SENDER_PLATFORM + " TEXT");
+        db.execSQL("ALTER TABLE " + CommentsTable.TABLE_NAME + " ADD COLUMN " + CommentsTable.COLUMN_SENDER_VERSION + " TEXT");
     }
 
     /**

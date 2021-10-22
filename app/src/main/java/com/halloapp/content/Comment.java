@@ -33,6 +33,8 @@ public class Comment extends ContentItem {
     // stats not read from DB
     public String failureReason;
     public String clientVersion;
+    public String senderVersion;
+    public String senderPlatform;
 
     @Nullable
     public Contact senderContact;

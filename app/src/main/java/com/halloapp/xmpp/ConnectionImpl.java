@@ -1492,7 +1492,7 @@ public class ConnectionImpl extends Connection {
                 } else if (item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE) || item.getAction() == com.halloapp.proto.server.FeedItem.Action.PUBLISH) {
                     if (item.hasPost()) {
                         com.halloapp.proto.server.Post protoPost = item.getPost();
-                        Post post = processPost(protoPost, names, null, false);
+                        Post post = processPost(protoPost, names, null, false, null, null);
                         if (post != null) {
                             post.seen = item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.PUBLISH) ? Post.SEEN_NO : Post.SEEN_NO_HIDDEN;
                             posts.add(post);
@@ -1502,7 +1502,7 @@ public class ConnectionImpl extends Connection {
 
                     } else if (item.hasComment()) {
                         com.halloapp.proto.server.Comment protoComment = item.getComment();
-                        Comment comment = processComment(protoComment, names, null, false);
+                        Comment comment = processComment(protoComment, names, null, false, null, null);
                         if (comment != null) {
                             comment.seen = item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE);
                             comments.add(comment);
@@ -1522,7 +1522,7 @@ public class ConnectionImpl extends Connection {
             return !posts.isEmpty() || !comments.isEmpty();
         }
 
-        private Post processPost(com.halloapp.proto.server.Post protoPost, Map<UserId, String> names, @Nullable GroupId groupId, boolean senderStateIssue) {
+        private Post processPost(com.halloapp.proto.server.Post protoPost, Map<UserId, String> names, @Nullable GroupId groupId, boolean senderStateIssue, @Nullable String senderPlatform, @Nullable String senderVersion) {
             if (protoPost.getPublisherUid() != 0 && protoPost.getPublisherName() != null) {
                 names.put(new UserId(Long.toString(protoPost.getPublisherUid())), protoPost.getPublisherName());
             }
@@ -1613,6 +1613,8 @@ public class ConnectionImpl extends Connection {
                 }
 
                 np.clientVersion = Constants.FULL_VERSION;
+                np.senderPlatform = senderPlatform;
+                np.senderVersion = senderVersion;
                 np.failureReason = errorMessage;
 
                 return np;
@@ -1623,13 +1625,15 @@ public class ConnectionImpl extends Connection {
 
                 Post post = feedContentParser.parsePost(protoPost.getId(), posterUserId, timeStamp, postContainer, errorMessage != null);
                 post.clientVersion = Constants.FULL_VERSION;
+                post.senderPlatform = senderPlatform;
+                post.senderVersion = senderVersion;
                 post.failureReason = errorMessage;
 
                 return post;
             }
         }
 
-        private Comment processComment(com.halloapp.proto.server.Comment protoComment, Map<UserId, String> names, @Nullable GroupId groupId, boolean senderStateIssue) {
+        private Comment processComment(com.halloapp.proto.server.Comment protoComment, Map<UserId, String> names, @Nullable GroupId groupId, boolean senderStateIssue, @Nullable String senderPlatform, @Nullable String senderVersion) {
             if (protoComment.getPublisherUid() != 0 && protoComment.getPublisherName() != null) {
                 names.put(new UserId(Long.toString(protoComment.getPublisherUid())), protoComment.getPublisherName());
             }
@@ -1724,6 +1728,8 @@ public class ConnectionImpl extends Connection {
                 }
 
                 comment.clientVersion = Constants.FULL_VERSION;
+                comment.senderPlatform = senderPlatform;
+                comment.senderVersion = senderVersion;
                 comment.failureReason = errorMessage;
 
                 return comment;
@@ -1735,6 +1741,8 @@ public class ConnectionImpl extends Connection {
                 Comment comment = feedContentParser.parseComment(protoComment.getId(), protoComment.getParentCommentId(), publisherId, timestamp, commentContainer, errorMessage != null);
 
                 comment.clientVersion = Constants.FULL_VERSION;
+                comment.senderPlatform = senderPlatform;
+                comment.senderVersion = senderVersion;
                 comment.failureReason = errorMessage;
 
                 return comment;
@@ -1749,6 +1757,10 @@ public class ConnectionImpl extends Connection {
 
             boolean senderStateIssue = false;
             for (GroupFeedItem item : items) {
+                String senderAgent = item.getSenderClientVersion();
+                String senderPlatform = senderAgent == null ? "" : senderAgent.contains("Android") ? "android" : senderAgent.contains("iOS") ? "ios" : "";
+                String senderVersion = senderPlatform.equals("android") ? senderAgent.split("Android")[1] : senderPlatform.equals("ios") ? senderAgent.split("iOS")[1] : "";
+
                 GroupId groupId = new GroupId(item.getGid());
                 if (ServerProps.getInstance().getIsInternalUser() && item.hasSenderState()) {
                     SenderStateWithKeyInfo senderStateWithKeyInfo = item.getSenderState();
@@ -1793,7 +1805,7 @@ public class ConnectionImpl extends Connection {
                 if (item.getAction() == GroupFeedItem.Action.PUBLISH || item.getAction() == GroupFeedItem.Action.SHARE) {
                     if (item.hasComment()) {
                         com.halloapp.proto.server.Comment protoComment = item.getComment();
-                        Comment comment = processComment(protoComment, names, groupId, senderStateIssue);
+                        Comment comment = processComment(protoComment, names, groupId, senderStateIssue, senderPlatform, senderVersion);
                         if (comment != null) {
                             comments.add(comment);
                         } else {
@@ -1801,7 +1813,7 @@ public class ConnectionImpl extends Connection {
                         }
                     } else if (item.hasPost()) {
                         com.halloapp.proto.server.Post protoPost = item.getPost();
-                        Post post = processPost(protoPost, names, groupId, senderStateIssue);
+                        Post post = processPost(protoPost, names, groupId, senderStateIssue, senderPlatform, senderVersion);
                         if (post != null) {
                             post.seen = item.getAction().equals(GroupFeedItem.Action.PUBLISH) ? Post.SEEN_NO : Post.SEEN_NO_HIDDEN;
                             post.setParentGroup(new GroupId(item.getGid()));

@@ -142,7 +142,6 @@ class PostsDb {
             final ContentValues values = new ContentValues();
             values.put(PostsTable.COLUMN_RESULT_UPDATE_TIME, now);
             values.put(PostsTable.COLUMN_FAILURE_REASON, post.failureReason);
-            values.put(PostsTable.COLUMN_CLIENT_VERSION, post.clientVersion);
             if (post.getParentGroup() != null) {
                 values.put(PostsTable.COLUMN_GROUP_ID, post.getParentGroup().rawId());
             }
@@ -154,6 +153,9 @@ class PostsDb {
                 db.update(PostsTable.TABLE_NAME, values, PostsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
                 post.rowId = tombstoneRowId;
             } else {
+                values.put(PostsTable.COLUMN_CLIENT_VERSION, post.clientVersion);
+                values.put(PostsTable.COLUMN_SENDER_VERSION, post.senderVersion);
+                values.put(PostsTable.COLUMN_SENDER_PLATFORM, post.senderPlatform);
                 values.put(PostsTable.COLUMN_SENDER_USER_ID, post.senderUserId.rawId());
                 values.put(PostsTable.COLUMN_POST_ID, post.id);
                 values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
@@ -656,12 +658,14 @@ class PostsDb {
             final ContentValues values = new ContentValues();
             values.put(CommentsTable.COLUMN_RESULT_UPDATE_TIME, now);
             values.put(CommentsTable.COLUMN_FAILURE_REASON, comment.failureReason);
-            values.put(CommentsTable.COLUMN_CLIENT_VERSION, comment.clientVersion);
 
             if (tombstoneRowId != null) {
                 db.update(CommentsTable.TABLE_NAME, values, CommentsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
                 comment.rowId = tombstoneRowId;
             } else {
+                values.put(CommentsTable.COLUMN_CLIENT_VERSION, comment.clientVersion);
+                values.put(CommentsTable.COLUMN_SENDER_VERSION, comment.senderVersion);
+                values.put(CommentsTable.COLUMN_SENDER_PLATFORM, comment.senderPlatform);
                 values.put(CommentsTable.COLUMN_POST_ID, comment.postId);
                 values.put(CommentsTable.COLUMN_COMMENT_SENDER_USER_ID, comment.senderUserId.rawId());
                 values.put(CommentsTable.COLUMN_COMMENT_ID, comment.id);
@@ -864,6 +868,8 @@ class PostsDb {
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_REREQUEST_COUNT + ","
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_FAILURE_REASON + ","
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_CLIENT_VERSION + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_VERSION + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_PLATFORM + ","
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RECEIVE_TIME + ","
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RESULT_UPDATE_TIME
                         + " FROM " + PostsTable.TABLE_NAME
@@ -880,8 +886,10 @@ class PostsDb {
                         cursor.getInt(3),
                         cursor.getString(4),
                         cursor.getString(5),
-                        cursor.getLong(6),
-                        cursor.getLong(7)
+                        cursor.getString(6),
+                        cursor.getString(7),
+                        cursor.getLong(8),
+                        cursor.getLong(9)
                 ));
             }
         }
@@ -897,6 +905,8 @@ class PostsDb {
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_REREQUEST_COUNT + ","
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_FAILURE_REASON + ","
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_CLIENT_VERSION + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_VERSION + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_PLATFORM + ","
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RECEIVE_TIME + ","
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RESULT_UPDATE_TIME
                         + " FROM " + PostsTable.TABLE_NAME
@@ -913,8 +923,10 @@ class PostsDb {
                         cursor.getInt(3),
                         cursor.getString(4),
                         cursor.getString(5),
-                        cursor.getLong(6),
-                        cursor.getLong(7)
+                        cursor.getString(6),
+                        cursor.getString(7),
+                        cursor.getLong(8),
+                        cursor.getLong(9)
                 );
             }
         }
@@ -931,6 +943,8 @@ class PostsDb {
                         + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_REREQUEST_COUNT + ","
                         + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_FAILURE_REASON + ","
                         + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_CLIENT_VERSION + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_SENDER_VERSION + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_SENDER_PLATFORM + ","
                         + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RECEIVE_TIME + ","
                         + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RESULT_UPDATE_TIME
                         + " FROM " + CommentsTable.TABLE_NAME
@@ -953,8 +967,10 @@ class PostsDb {
                         cursor.getInt(3),
                         cursor.getString(4),
                         cursor.getString(5),
-                        cursor.getLong(6),
-                        cursor.getLong(7)
+                        cursor.getString(6),
+                        cursor.getString(7),
+                        cursor.getLong(8),
+                        cursor.getLong(9)
                 ));
             }
         }
@@ -970,6 +986,8 @@ class PostsDb {
                         + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_REREQUEST_COUNT + ","
                         + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_FAILURE_REASON + ","
                         + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_CLIENT_VERSION + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_SENDER_VERSION + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_SENDER_PLATFORM + ","
                         + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RECEIVE_TIME + ","
                         + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RESULT_UPDATE_TIME
                         + " FROM " + CommentsTable.TABLE_NAME
@@ -992,8 +1010,10 @@ class PostsDb {
                         cursor.getInt(3),
                         cursor.getString(4),
                         cursor.getString(5),
-                        cursor.getLong(6),
-                        cursor.getLong(7)
+                        cursor.getString(6),
+                        cursor.getString(7),
+                        cursor.getLong(8),
+                        cursor.getLong(9)
                 );
             }
         }

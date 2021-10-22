@@ -28,6 +28,8 @@ public final class PostsTable implements BaseColumns {
     // for stats
     public static final String COLUMN_FAILURE_REASON = "failure_reason";
     public static final String COLUMN_CLIENT_VERSION = "client_version"; // at time id first seen
+    public static final String COLUMN_SENDER_PLATFORM = "sender_platform";
+    public static final String COLUMN_SENDER_VERSION = "sender_version";
     public static final String COLUMN_RECEIVE_TIME = "receive_time";
     public static final String COLUMN_RESULT_UPDATE_TIME = "result_update_time";
 }

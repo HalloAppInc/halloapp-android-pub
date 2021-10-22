@@ -72,7 +72,7 @@ public class GroupContentDecryptStatLoader extends ViewDataLoader<TextView, Grou
                     sb.append("Content ID: ").append(contentId.substring(0, Math.min(20, contentId.length()))).append("...\n");
                     sb.append("Outcome: ").append(outcome).append("\n");
                     sb.append("Rerequest count: ").append(result.rerequestCount).append("\n");
-//                    sb.append("Sender: ").append(result.senderPlatform).append(" ").append(result.senderVersion).append("\n");
+                    sb.append("Sender: ").append(result.senderPlatform).append(" ").append(result.senderVersion).append("\n");
                     sb.append("Receiver: ").append("android ").append(result.version).append("\n");
                     sb.append("First seen: ").append(start).append("\n");
                     sb.append("Last updated: ").append(end);
