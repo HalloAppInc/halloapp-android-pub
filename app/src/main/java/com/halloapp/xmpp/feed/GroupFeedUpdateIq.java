@@ -4,6 +4,7 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
 import com.google.protobuf.ByteString;
+import com.halloapp.Constants;
 import com.halloapp.id.GroupId;
 import com.halloapp.proto.clients.EncryptedPayload;
 import com.halloapp.proto.server.Comment;
@@ -49,6 +50,7 @@ public class GroupFeedUpdateIq extends HalloIq {
         GroupFeedItem.Builder builder = GroupFeedItem.newBuilder();
         builder.setAction(getProtoAction());
         builder.setGid(groupId.rawId());
+        builder.setSenderClientVersion(Constants.USER_AGENT);
         if (feedItem.senderStateBundles != null && feedItem.senderStateBundles.size() > 0) {
             builder.addAllSenderStateBundles(feedItem.senderStateBundles);
         }

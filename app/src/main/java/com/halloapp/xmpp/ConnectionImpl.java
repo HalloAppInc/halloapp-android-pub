@@ -640,6 +640,7 @@ public class ConnectionImpl extends Connection {
                 GroupFeedItem.Builder builder = GroupFeedItem.newBuilder();
                 builder.setAction(GroupFeedItem.Action.PUBLISH);
                 builder.setGid(groupId.rawId());
+                builder.setSenderClientVersion(Constants.USER_AGENT);
                 builder.setSenderState(senderStateWithKeyInfoBuilder.build());
 
                 byte[] payload = containerBuilder.build().toByteArray();
@@ -767,6 +768,7 @@ public class ConnectionImpl extends Connection {
                 GroupFeedItem.Builder builder = GroupFeedItem.newBuilder();
                 builder.setAction(GroupFeedItem.Action.PUBLISH);
                 builder.setGid(groupId.rawId());
+                builder.setSenderClientVersion(Constants.USER_AGENT);
                 builder.setSenderState(senderStateWithKeyInfoBuilder.build());
 
                 byte[] payload = containerBuilder.build().toByteArray();
