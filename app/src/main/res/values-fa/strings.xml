@@ -891,7 +891,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="invite_group_zero_zone_details">"این لینک را با دوستانتان به اشتراک بگذارید و آن‌ها اتوماتیک به گروهتان میپیوندند."</string>
 
     <!-- initial group created for the user where %s is replaced with their name. should indicate that it is their group -->
-    <string name="zero_zone_group_name">"گروه s%"</string>
+    <string name="zero_zone_group_name">"گروه %s"</string>
 
     <!-- Title for option to invite a contact using an invite link -->
     <string name="invite_via_link">"دعوت از طریق لینک"</string>
