@@ -742,6 +742,7 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="return_to_registration">"Volver a inscripción"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
+    <!-- Fuzzy -->
     <string name="archive_empty">"Tus publicaciones caducadas aparecerán aquí"</string>
 
     <!-- Futureproof content we dont understand yet -->
@@ -895,43 +896,79 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     </plurals>
 
     <!-- Title for activity that lets user select who to share with -->
-    <string name="share_with">"Share with…"</string>
+    <string name="share_with">"Compartir con…"</string>
 
     <!-- Title for feed privacy when setting it from a single post -->
-    <string name="setting_feed_privacy_single_post_title">"Who will see this post"</string>
+    <string name="setting_feed_privacy_single_post_title">"Quién verá esta publicación"</string>
 
     <!-- Text shown when sharing a post with a group -->
-    <string name="composer_sharing_group_post">"Sharing with group"</string>
+    <string name="composer_sharing_group_post">"Compartiendo con el grupo"</string>
 
     <!-- Title of section for recent groups -->
-    <string name="recent_groups">"Recent groups"</string>
+    <string name="recent_groups">"Grupos recientes"</string>
 
     <!-- Item for creating a new group -->
-    <string name="create_new_group">"Create new group"</string>
+    <string name="create_new_group">"Crear grupo nuevo"</string>
 
     <!-- Shown as a subtitle on the content composer screen when making a post. Tapping will
          allow user to change destination for the post -->
-    <string name="tap_to_change">"Tap to change"</string>
+    <string name="tap_to_change">"Tocar para cambiar"</string>
 
     <!-- Title for bottom sheet that comes up telling a user to invite friends to a group -->
-    <string name="invite_group_zero_zone_title">"Invite a friend to your group"</string>
+    <string name="invite_group_zero_zone_title">"Invitar un amigo al grupo"</string>
 
     <!-- Explanation text for bottom sheet shown telling user to share an invite link to invite friends -->
-    <string name="invite_group_zero_zone_details">"Share this link with friends and they'll automatically join your group."</string>
+    <string name="invite_group_zero_zone_details">"Comparte este enlace con amigos y automáticamente se unirán a tu grupo."</string>
 
     <!-- initial group created for the user where %s is replaced with their name. should indicate that it is their group -->
-    <string name="zero_zone_group_name">"%s's group"</string>
+    <string name="zero_zone_group_name">"Grupo de %s"</string>
 
     <!-- Title for option to invite a contact using an invite link -->
-    <string name="invite_via_link">"Invite via link"</string>
+    <string name="invite_via_link">"Invitar por un enlace"</string>
 
     <!-- Text shown in button for inviting friends -->
-    <string name="add_invite">"Add"</string>
+    <string name="add_invite">"Añadir"</string>
 
     <!-- Text shown as subheader for inviting friends section -->
-    <string name="invite_friends_header">"Invite friends"</string>
+    <string name="invite_friends_header">"Invitar a amigos"</string>
 
     <!-- Text shown as preview for invite friends group post -->
-    <string name="invite_friends_post_preview">"Invite a friend to your group"</string>
+    <string name="invite_friends_post_preview">"Invitar a un amgo a tu grupo"</string>
+
+    <!-- Title for home post explaining what HalloApp is -->
+    <string name="zero_zone_home_nux_header">"¡Bienvenido a HalloApp! , un espacio para relaciones reales ✨"</string>
+
+    <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
+    <string name="zero_zone_home_nux_text_one">"Usa tu número de teléfono para conectarte con amigos y familia en un entorno sin anuncios, marcas, me gustan o influentes."</string>
+
+    <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
+    <string name="zero_zone_home_nux_text_two">"HalloApp es para tí y aquellos más cercanos a tí. En privado. Invita a tus amigos de verdad para empezar."</string>
+
+    <!-- Action for user to start their delete accoount process under 'account' -->
+    <string name="delete_my_account_action">"Borrar mi cuenta"</string>
+
+    <!-- Top line before the other delete account bullets. Will explain what deleting your account entails -->
+    <string name="delete_account_explanation_title">"Borrar tu cuenta hará:"</string>
+
+    <!-- First account deletion bullet saying the profile photo will be deleted -->
+    <string name="delete_account_explanation_bullet_one">"• Borrar la informacón de tu cuenta y tu foto de perfil"</string>
+
+    <!-- Second account deletion bullet saying the you will be removed from all group -->
+    <string name="delete_account_explanation_bullet_two">"• Eliminarte de todos los grupos de HalloApp"</string>
+
+    <!-- Third account deletion bullet explaining message history will be deleted -->
+    <string name="delete_account_explanation_bullet_three">"• Borrar tu historial de mensajería en este teléfono"</string>
+
+    <!-- Instructions shown above delete account entry -->
+    <string name="delete_account_instructions">"Para borrar tu cuenta, confirma tu número de teléfono. Ese paso no se puede deshacer"</string>
+
+    <!-- Progress message while account is deleting -->
+    <string name="delete_account_in_progress">"Borrando tu cuenta…"</string>
+
+    <!-- Text box hint for optional field for adding feedback for why you are deleting your account -->
+    <string name="delete_account_feedback_hint">"Opiniones para HalloApp (opcional)"</string>
+
+    <!-- Message shown in dialog asking if user is sure they want to delete their account -->
+    <string name="delete_account_confirmation_message">"¿Estás seguro de que quieres borrar tu cuenta? Este paso no se puede deshacer"</string>
 <string name="share_option_group">"Escribe en el grupo"</string><string name="select_group">"Selecciona grupo"</string></resources>
 

@@ -714,6 +714,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="return_to_registration">"برگشت به ثبتنام"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
+    <!-- Fuzzy -->
     <string name="archive_empty">"پست‌های منقضی شده شما اینجا خواهند بود"</string>
 
     <!-- Futureproof content we dont understand yet -->
@@ -884,24 +885,60 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="tap_to_change">"کلیک برای تغییر"</string>
 
     <!-- Title for bottom sheet that comes up telling a user to invite friends to a group -->
-    <string name="invite_group_zero_zone_title">"Invite a friend to your group"</string>
+    <string name="invite_group_zero_zone_title">"دوستتان را به گروه دعوت کنید"</string>
 
     <!-- Explanation text for bottom sheet shown telling user to share an invite link to invite friends -->
-    <string name="invite_group_zero_zone_details">"Share this link with friends and they'll automatically join your group."</string>
+    <string name="invite_group_zero_zone_details">"این لینک را با دوستانتان به اشتراک بگذارید و آن‌ها اتوماتیک به گروهتان میپیوندند."</string>
 
     <!-- initial group created for the user where %s is replaced with their name. should indicate that it is their group -->
-    <string name="zero_zone_group_name">"%s's group"</string>
+    <string name="zero_zone_group_name">"گروه s%"</string>
 
     <!-- Title for option to invite a contact using an invite link -->
-    <string name="invite_via_link">"Invite via link"</string>
+    <string name="invite_via_link">"دعوت از طریق لینک"</string>
 
     <!-- Text shown in button for inviting friends -->
-    <string name="add_invite">"Add"</string>
+    <string name="add_invite">"دعوت"</string>
 
     <!-- Text shown as subheader for inviting friends section -->
-    <string name="invite_friends_header">"Invite friends"</string>
+    <string name="invite_friends_header">"دعوت دوست"</string>
 
     <!-- Text shown as preview for invite friends group post -->
-    <string name="invite_friends_post_preview">"Invite a friend to your group"</string>
+    <string name="invite_friends_post_preview">"دعوت دوست به گروهتان"</string>
+
+    <!-- Title for home post explaining what HalloApp is -->
+    <string name="zero_zone_home_nux_header">"به هالواپ خوش‌آمدید، فضایی برای رابطه‌های واقعی ✨"</string>
+
+    <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
+    <string name="zero_zone_home_nux_text_one">"از شماره تلفن خود برای پیوستن به دوستان و آشنایانتان در فضایی بدون تبلیغات، برندها، لایک‌ها و اینفلونسرها استفاده کنید."</string>
+
+    <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
+    <string name="zero_zone_home_nux_text_two">"هالواپ برای شما و نزدیکانتان به طور خصوصی است. دوستان واقعیتان را برای شروع دعوت کنید"</string>
+
+    <!-- Action for user to start their delete accoount process under 'account' -->
+    <string name="delete_my_account_action">"حذف حساب کاربری"</string>
+
+    <!-- Top line before the other delete account bullets. Will explain what deleting your account entails -->
+    <string name="delete_account_explanation_title">"حذف حساب کاربریتان:"</string>
+
+    <!-- First account deletion bullet saying the profile photo will be deleted -->
+    <string name="delete_account_explanation_bullet_one">"•اطلاعات کاربریتان و عکستان را حذف میکند"</string>
+
+    <!-- Second account deletion bullet saying the you will be removed from all group -->
+    <string name="delete_account_explanation_bullet_two">"•شما را از تمامی گروه‌های هالواپ حذف میکند"</string>
+
+    <!-- Third account deletion bullet explaining message history will be deleted -->
+    <string name="delete_account_explanation_bullet_three">"•تمام پیام‌هایتان را از این گوشی پاک میکند"</string>
+
+    <!-- Instructions shown above delete account entry -->
+    <string name="delete_account_instructions">"برای حذف حساب کاربریتان، شماره تلفن خود را تأیید کنید. این کار برگشت‌ناپذیر است"</string>
+
+    <!-- Progress message while account is deleting -->
+    <string name="delete_account_in_progress">"حذف حساب کاربریتان…"</string>
+
+    <!-- Text box hint for optional field for adding feedback for why you are deleting your account -->
+    <string name="delete_account_feedback_hint">"بازخورد برای هالواپ (اختیاری)"</string>
+
+    <!-- Message shown in dialog asking if user is sure they want to delete their account -->
+    <string name="delete_account_confirmation_message">"آیا مطمئن هستید میخواهید حساب کاربریتان را حذف کنید؟ این کار برگشت‌ناپذیر است"</string>
 <string name="share_option_group">"پست به گروه"</string><string name="select_group">"انتخاب گروه"</string></resources>
 

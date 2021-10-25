@@ -235,8 +235,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="action_save">"Opslaan"</string>
     <string name="invite_friends">"Vrienden &amp; familie uitnodigen"</string>
     <string name="invite_friend_chooser_title">"%s uitnodigen"</string>
-
-    <!-- Fuzzy -->
     <string name="invite_text_with_name_and_number">"Hey %1$s, ik wil je graag uitnodigen voor HalloApp - een netwerk voor échte relaties die het dichtst bij me staan. Gebruik %2$s om je te registreren. Download de app op %3$s"</string>
     <string name="name_hint">"Jouw naam"</string>
     <string name="name_must_be_specified">"Naam moet opgegeven worden"</string>
@@ -467,8 +465,6 @@ versie: %2$s
     <string name="not_now">"Niet nu"</string>
     <string name="continue_button">"Doorgaan"</string>
     <string name="invite_link_load_failed">"Openen van uitnodigingslink voor de groep mislukt"</string>
-
-    <!-- Fuzzy -->
     <string name="message_tombstone_placeholder">"Wachten op dit bericht. Dit kan even duren. "<![CDATA[<a href="learn-more">Meer informatie</a>]]>"."</string>
     <string name="failed_no_longer_member">"Je bent geen deelnemer meer van deze groep"</string>
 
@@ -500,7 +496,6 @@ versie: %2$s
     <string name="key_verification_tap_to_scan">"Tik om te scannen"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <!-- Fuzzy -->
     <string name="key_verification_explanation">"Om de beveiliging van je verbinding met %s te verifiëren, controleer of bovenstaande nummers overeenkomen met die op het andere apparaat of scan de QR-code op de andere telefoon. "<![CDATA[<a href="learn-more">Meer informatie</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
@@ -722,7 +717,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="return_to_registration">"Terug naar registratie"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <string name="archive_empty">"Je verlopen posts verschijnen hier"</string>
+    <string name="archive_empty">"Je posts worden na 30 dagen hier gearchiveerd"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"Niet-ondersteunde inhoud"</string>
@@ -911,5 +906,41 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Text shown as preview for invite friends group post -->
     <string name="invite_friends_post_preview">"Nodig een vriend uit voor je groep"</string>
+
+    <!-- Title for home post explaining what HalloApp is -->
+    <string name="zero_zone_home_nux_header">"Welkom bij HalloApp, een digitale ruimte voor echte relaties ✨"</string>
+
+    <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
+    <string name="zero_zone_home_nux_text_one">"Gebruik je telefoonnummer om je te verbinden met vrienden &amp; familie in een ruimte zonder advertenties, zonder merken, zonder likes en zonder influencers."</string>
+
+    <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
+    <string name="zero_zone_home_nux_text_two">"HalloApp is voor jou en degenen die het dichtst bij je staan, volledig in privé. Nodig je echte vrienden uit om te beginnen"</string>
+
+    <!-- Action for user to start their delete accoount process under 'account' -->
+    <string name="delete_my_account_action">"Mijn account verwijderen"</string>
+
+    <!-- Top line before the other delete account bullets. Will explain what deleting your account entails -->
+    <string name="delete_account_explanation_title">"Het verwijderen van je account zal:"</string>
+
+    <!-- First account deletion bullet saying the profile photo will be deleted -->
+    <string name="delete_account_explanation_bullet_one">"• Je accountinformatie en profielfoto verwijderen"</string>
+
+    <!-- Second account deletion bullet saying the you will be removed from all group -->
+    <string name="delete_account_explanation_bullet_two">"• Je uit alle HalloApp-groepen verwijderen"</string>
+
+    <!-- Third account deletion bullet explaining message history will be deleted -->
+    <string name="delete_account_explanation_bullet_three">"• Je chatgeschiedenis van je telefoon verwijderen"</string>
+
+    <!-- Instructions shown above delete account entry -->
+    <string name="delete_account_instructions">"Bevestig je telefoonnummer om je account te verwijderen. Dit kan niet ongedaan worden gemaakt"</string>
+
+    <!-- Progress message while account is deleting -->
+    <string name="delete_account_in_progress">"Je account wordt verwijderd…"</string>
+
+    <!-- Text box hint for optional field for adding feedback for why you are deleting your account -->
+    <string name="delete_account_feedback_hint">"Feedback voor HalloApp (Optioneel)"</string>
+
+    <!-- Message shown in dialog asking if user is sure they want to delete their account -->
+    <string name="delete_account_confirmation_message">"Weet je zeker dat je je account wilt verwijderen? Dit kan niet ongedaan worden gemaakt"</string>
 <string name="share_option_group">"Post in groep"</string><string name="select_group">"Selecteer groep"</string></resources>
 

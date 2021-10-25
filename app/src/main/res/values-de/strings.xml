@@ -627,7 +627,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="delete_post">"Beitrag löschen"</string>
 
     <!-- Option to save a photo/video to the user's gallery -->
-    <string name="save_to_gallery">"In Galerie speichern"</string>
+    <string name="save_to_gallery">"In der Galerie speichern"</string>
 
     <!-- Title for the user's post -->
     <string name="my_post">"Mein Beitrag"</string>
@@ -759,7 +759,8 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="return_to_registration">"Zurück zur Registrierung"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <string name="archive_empty">"Abgelaufene Beiträge erscheinen hier"</string>
+    <!-- Fuzzy -->
+    <string name="archive_empty">"Deine Beiträge werden hier nach 30 Tagen archiviert"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"Nicht unterstützter Inhalt"</string>
@@ -929,7 +930,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="tap_to_change">"Zum Ändern hier tippen"</string>
 
     <!-- Title for bottom sheet that comes up telling a user to invite friends to a group -->
-    <string name="invite_group_zero_zone_title">"Invite a friend to your group"</string>
+    <string name="invite_group_zero_zone_title">"Lade Freunde zu deiner Gruppe ein"</string>
 
     <!-- Explanation text for bottom sheet shown telling user to share an invite link to invite friends -->
     <string name="invite_group_zero_zone_details">"Teile diesen Link mit Freunden und sie werden automatisch deiner Gruppe beitreten."</string>
@@ -947,6 +948,42 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="invite_friends_header">"Freunde einladen"</string>
 
     <!-- Text shown as preview for invite friends group post -->
-    <string name="invite_friends_post_preview">"Invite a friend to your group"</string>
+    <string name="invite_friends_post_preview">"Lade Freunde zu deiner Gruppe ein"</string>
+
+    <!-- Title for home post explaining what HalloApp is -->
+    <string name="zero_zone_home_nux_header">"Willkommen bei HalloApp, ein digitaler Raum für echte Beziehungen ✨"</string>
+
+    <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
+    <string name="zero_zone_home_nux_text_one">"Verwende deine Handynummer, um dich mit Freunden und Familie in einem digitalen Raum ohne Werbung, Marken, Likes und Influencer zu verbinden."</string>
+
+    <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
+    <string name="zero_zone_home_nux_text_two">"HalloApp ist für dich und die, die dir nahe stehen - ganz privat. Lade deine wahren Freunde ein, um loszulegen"</string>
+
+    <!-- Action for user to start their delete accoount process under 'account' -->
+    <string name="delete_my_account_action">"Meinen Account löschen"</string>
+
+    <!-- Top line before the other delete account bullets. Will explain what deleting your account entails -->
+    <string name="delete_account_explanation_title">"Das Löschen deines Accounts wird:"</string>
+
+    <!-- First account deletion bullet saying the profile photo will be deleted -->
+    <string name="delete_account_explanation_bullet_one">"• Deine Account-Info und dein Profilbild löschen"</string>
+
+    <!-- Second account deletion bullet saying the you will be removed from all group -->
+    <string name="delete_account_explanation_bullet_two">"• Dich aus allen HalloApp-Gruppen entfernen"</string>
+
+    <!-- Third account deletion bullet explaining message history will be deleted -->
+    <string name="delete_account_explanation_bullet_three">"• Deinen Chatverlauf auf diesem Gerät löschen"</string>
+
+    <!-- Instructions shown above delete account entry -->
+    <string name="delete_account_instructions">"Bitte Handynummer eingeben, um den Account zu löschen. Dieser Vorgang kann nicht rückgängig gemacht werden"</string>
+
+    <!-- Progress message while account is deleting -->
+    <string name="delete_account_in_progress">"Account wird gelöscht…"</string>
+
+    <!-- Text box hint for optional field for adding feedback for why you are deleting your account -->
+    <string name="delete_account_feedback_hint">"Feedback für HalloApp (optional)"</string>
+
+    <!-- Message shown in dialog asking if user is sure they want to delete their account -->
+    <string name="delete_account_confirmation_message">"Möchtest du deinen Account wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden"</string>
 <string name="share_option_group">"In Gruppe teilen"</string><string name="select_group">"Gruppe auswählen"</string></resources>
 
