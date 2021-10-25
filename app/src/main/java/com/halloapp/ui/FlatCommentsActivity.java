@@ -59,7 +59,6 @@ import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.app.SharedElementCallback;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.ColorUtils;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
@@ -143,13 +142,12 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class FlatCommentsActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
-    private static final float PERCENTAGE_TO_HIDE_TOOLBAR_AT  = 0.6f;
-
     public static final String EXTRA_POST_SENDER_USER_ID = "post_sender_user_id";
     public static final String EXTRA_POST_ID = "post_id";
     public static final String EXTRA_REPLY_COMMENT_ID = "reply_comment_id";
     public static final String EXTRA_SHOW_KEYBOARD = "show_keyboard";
     public static final String EXTRA_NO_POST_LENGTH_LIMIT = "no_post_length_limit";
+    public static final String EXTRA_NAVIGATE_TO_COMMENT_ID = "navigate_to_comment_id";
 
     private static final String KEY_REPLY_COMMENT_ID = "reply_comment_id";
 
@@ -226,6 +224,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private FrameLayout postContentContainer;
 
     private int postType = -1;
+    private int scrollToPos = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -305,25 +304,44 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         final View replyIndicatorCloseButton = findViewById(R.id.reply_close);
 
         viewModel = new ViewModelProvider(this, new FlatCommentsViewModel.Factory(getApplication(), postId)).get(FlatCommentsViewModel.class);
+        viewModel.setNavigationCommentId(getIntent().getStringExtra(EXTRA_NAVIGATE_TO_COMMENT_ID));
         viewModel.getCommentList().observe(this, comments -> {
             adapter.submitList(comments, () -> commentsView.post(() -> {
-                if (!scrollToComment) {
+                if (!scrollToComment && scrollToPos == -1) {
                     return;
                 }
                 scrollToComment = false;
-                long currentOldest = 0;
-                int commentPosition = -1;
-                for (int i = 0; i < comments.size(); i++) {
-                    Comment comment = Preconditions.checkNotNull(comments.get(i));
-                    if (comment.senderUserId.isMe() && comment.timestamp > currentOldest) {
-                        commentPosition = i;
-                        currentOldest = comment.timestamp;
+                if (scrollToPos != -1) {
+                    appBarLayout.setExpanded(false, true);
+                    commentsView.scrollToPosition(scrollToPos);
+                } else {
+                    long currentOldest = 0;
+                    int commentPosition = -1;
+                    for (int i = 0; i < comments.size(); i++) {
+                        Comment comment = Preconditions.checkNotNull(comments.get(i));
+                        if (comment.senderUserId.isMe() && comment.timestamp > currentOldest) {
+                            commentPosition = i;
+                            currentOldest = comment.timestamp;
+                        }
+                    }
+                    if (commentPosition != -1) {
+                        appBarLayout.setExpanded(false, true);
+                        commentsView.smoothScrollToPosition(commentPosition + 1);
                     }
                 }
-                if (commentPosition != -1) {
-                    commentsView.smoothScrollToPosition(commentPosition+1);
-                }
+                scrollToPos = -1;
             }));
+        });
+        viewModel.getNavCommentPosition().observe(this, pos -> {
+            if (pos == null) {
+                scrollToPos = -1;
+                return;
+            }
+            if (pos < adapter.getItemCount()) {
+                commentsLayoutManager.scrollToPosition(pos);
+            } else {
+                scrollToPos = pos;
+            }
         });
 
         viewModel.unseenCommentCount.getLiveData().observe(this, pair -> {

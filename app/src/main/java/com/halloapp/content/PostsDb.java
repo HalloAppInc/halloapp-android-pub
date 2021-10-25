@@ -1635,6 +1635,38 @@ class PostsDb {
     }
 
     @WorkerThread
+    @NonNull int getCommentsFlatCount(@NonNull String postId) {
+        final String sqls = "SELECT COUNT(*) FROM comments WHERE post_id=? AND timestamp > " + getPostExpirationTime();
+        int count = 0;
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sqls, new String [] {postId})) {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                count = cursor.getInt(0);
+            }
+        }
+        return count;
+    }
+
+    @WorkerThread
+    @NonNull int getCommentFlatIndex(@NonNull String postId, @NonNull String commentId) {
+        Comment comment = getComment(commentId);
+        if (comment == null) {
+            return -1;
+        }
+        final String sqls = "SELECT COUNT(*) FROM comments WHERE post_id=? AND timestamp > " + getPostExpirationTime() + " AND timestamp < " + comment.timestamp;
+        int count = -1;
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sqls, new String [] {postId})) {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                count = cursor.getInt(0);
+            }
+        }
+        return count;
+    }
+
+    @WorkerThread
     @NonNull List<Comment> getCommentsFlat(@NonNull String postId, int start, int count) {
         final String sqls = "SELECT 0, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text, type, played FROM comments WHERE post_id=? AND timestamp > " + getPostExpirationTime() + " ORDER BY timestamp ASC LIMIT " + count + " OFFSET " + start ;
         final List<Comment> comments = new ArrayList<>();

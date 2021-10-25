@@ -68,7 +68,8 @@ public class FlatCommentsDataSource extends PositionalDataSource<Comment> {
     public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<Comment> callback) {
         final List<Comment> comments = contentDb.getCommentsFlat(postId, params.requestedStartPosition, params.requestedLoadSize);
         loadExtraFields(comments);
-        callback.onResult(comments, params.requestedStartPosition);
+        int count = contentDb.getCommentsFlatCount(postId);
+        callback.onResult(comments, params.requestedStartPosition, count);
     }
 
     private void loadExtraFields(@NonNull List<Comment> comments) {

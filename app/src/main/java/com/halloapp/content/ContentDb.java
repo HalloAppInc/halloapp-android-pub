@@ -699,6 +699,16 @@ public class ContentDb {
     }
 
     @WorkerThread
+    int getCommentsFlatCount(@NonNull String postId) {
+        return postsDb.getCommentsFlatCount(postId);
+    }
+
+    @WorkerThread
+    public int getCommentFlatIndex(@NonNull String postId, @NonNull String commentId) {
+        return postsDb.getCommentFlatIndex(postId, commentId);
+    }
+
+    @WorkerThread
     int getCommentCount(@NonNull String postId) {
         return postsDb.getCommentCount(postId);
     }

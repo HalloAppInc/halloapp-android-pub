@@ -34,7 +34,10 @@ class FlatCommentsViewModel extends CommentsViewModel {
     private final ComputableLiveData<Reply> replyComputableLiveData;
     final ComputableLiveData<Pair<Long, Integer>> unseenCommentCount;
 
+    private final ComputableLiveData<Integer> navigationCommentPosition;
+
     private String replyCommentId;
+    private String navCommentId;
 
     private ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
 
@@ -95,6 +98,24 @@ class FlatCommentsViewModel extends CommentsViewModel {
                 return new Pair<>(rowId, commentCount);
             }
         };
+        navigationCommentPosition = new ComputableLiveData<Integer>() {
+            @Override
+            protected Integer compute() {
+                if (navCommentId == null) {
+                    return null;
+                }
+                return contentDb.getCommentFlatIndex(postId, navCommentId);
+            }
+        };
+    }
+
+    public LiveData<Integer> getNavCommentPosition() {
+        return navigationCommentPosition.getLiveData();
+    }
+
+    public void setNavigationCommentId(@Nullable String commentId) {
+        navCommentId = commentId;
+        navigationCommentPosition.invalidate();
     }
 
     public LiveData<Reply> getReply() {
@@ -113,7 +134,7 @@ class FlatCommentsViewModel extends CommentsViewModel {
     protected LiveData<PagedList<Comment>> createCommentsList() {
         dataSourceFactory = new FlatCommentsDataSource.Factory(contentDb, contactsDb, postId);
 
-        return new LivePagedListBuilder<>(dataSourceFactory, new PagedList.Config.Builder().setPageSize(50).setEnablePlaceholders(false).build()).build();
+        return new LivePagedListBuilder<>(dataSourceFactory, new PagedList.Config.Builder().setPageSize(50).build()).build();
     }
 
     public static class Reply {
