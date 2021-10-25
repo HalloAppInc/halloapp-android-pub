@@ -18,6 +18,7 @@ public  final class RegisterRequest extends
   public enum RequestCase {
     OTP_REQUEST(1),
     VERIFY_REQUEST(2),
+    HASHCASH_REQUEST(3),
     REQUEST_NOT_SET(0);
     private final int value;
     private RequestCase(int value) {
@@ -35,6 +36,7 @@ public  final class RegisterRequest extends
       switch (value) {
         case 1: return OTP_REQUEST;
         case 2: return VERIFY_REQUEST;
+        case 3: return HASHCASH_REQUEST;
         case 0: return REQUEST_NOT_SET;
         default: return null;
       }
@@ -151,6 +153,56 @@ public  final class RegisterRequest extends
    */
   private void clearVerifyRequest() {
     if (requestCase_ == 2) {
+      requestCase_ = 0;
+      request_ = null;
+    }
+  }
+
+  public static final int HASHCASH_REQUEST_FIELD_NUMBER = 3;
+  /**
+   * <code>.server.HashcashRequest hashcash_request = 3;</code>
+   */
+  @java.lang.Override
+  public boolean hasHashcashRequest() {
+    return requestCase_ == 3;
+  }
+  /**
+   * <code>.server.HashcashRequest hashcash_request = 3;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.HashcashRequest getHashcashRequest() {
+    if (requestCase_ == 3) {
+       return (com.halloapp.proto.server.HashcashRequest) request_;
+    }
+    return com.halloapp.proto.server.HashcashRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.HashcashRequest hashcash_request = 3;</code>
+   */
+  private void setHashcashRequest(com.halloapp.proto.server.HashcashRequest value) {
+    value.getClass();
+  request_ = value;
+    requestCase_ = 3;
+  }
+  /**
+   * <code>.server.HashcashRequest hashcash_request = 3;</code>
+   */
+  private void mergeHashcashRequest(com.halloapp.proto.server.HashcashRequest value) {
+    value.getClass();
+  if (requestCase_ == 3 &&
+        request_ != com.halloapp.proto.server.HashcashRequest.getDefaultInstance()) {
+      request_ = com.halloapp.proto.server.HashcashRequest.newBuilder((com.halloapp.proto.server.HashcashRequest) request_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      request_ = value;
+    }
+    requestCase_ = 3;
+  }
+  /**
+   * <code>.server.HashcashRequest hashcash_request = 3;</code>
+   */
+  private void clearHashcashRequest() {
+    if (requestCase_ == 3) {
       requestCase_ = 0;
       request_ = null;
     }
@@ -359,6 +411,54 @@ public  final class RegisterRequest extends
       return this;
     }
 
+    /**
+     * <code>.server.HashcashRequest hashcash_request = 3;</code>
+     */
+    @java.lang.Override
+    public boolean hasHashcashRequest() {
+      return instance.hasHashcashRequest();
+    }
+    /**
+     * <code>.server.HashcashRequest hashcash_request = 3;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.HashcashRequest getHashcashRequest() {
+      return instance.getHashcashRequest();
+    }
+    /**
+     * <code>.server.HashcashRequest hashcash_request = 3;</code>
+     */
+    public Builder setHashcashRequest(com.halloapp.proto.server.HashcashRequest value) {
+      copyOnWrite();
+      instance.setHashcashRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.HashcashRequest hashcash_request = 3;</code>
+     */
+    public Builder setHashcashRequest(
+        com.halloapp.proto.server.HashcashRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setHashcashRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.HashcashRequest hashcash_request = 3;</code>
+     */
+    public Builder mergeHashcashRequest(com.halloapp.proto.server.HashcashRequest value) {
+      copyOnWrite();
+      instance.mergeHashcashRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.HashcashRequest hashcash_request = 3;</code>
+     */
+    public Builder clearHashcashRequest() {
+      copyOnWrite();
+      instance.clearHashcashRequest();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.RegisterRequest)
   }
   @java.lang.Override
@@ -379,10 +479,11 @@ public  final class RegisterRequest extends
             "requestCase_",
             com.halloapp.proto.server.OtpRequest.class,
             com.halloapp.proto.server.VerifyOtpRequest.class,
+            com.halloapp.proto.server.HashcashRequest.class,
           };
           java.lang.String info =
-              "\u0000\u0002\u0001\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001<\u0000\u0002<" +
-              "\u0000";
+              "\u0000\u0003\u0001\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001<\u0000\u0002<" +
+              "\u0000\u0003<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

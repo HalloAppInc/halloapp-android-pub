@@ -28367,6 +28367,7 @@ $root.server = (function() {
          * @interface IRegisterRequest
          * @property {server.IOtpRequest|null} [otpRequest] RegisterRequest otpRequest
          * @property {server.IVerifyOtpRequest|null} [verifyRequest] RegisterRequest verifyRequest
+         * @property {server.IHashcashRequest|null} [hashcashRequest] RegisterRequest hashcashRequest
          */
 
         /**
@@ -28400,17 +28401,25 @@ $root.server = (function() {
          */
         RegisterRequest.prototype.verifyRequest = null;
 
+        /**
+         * RegisterRequest hashcashRequest.
+         * @member {server.IHashcashRequest|null|undefined} hashcashRequest
+         * @memberof server.RegisterRequest
+         * @instance
+         */
+        RegisterRequest.prototype.hashcashRequest = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * RegisterRequest request.
-         * @member {"otpRequest"|"verifyRequest"|undefined} request
+         * @member {"otpRequest"|"verifyRequest"|"hashcashRequest"|undefined} request
          * @memberof server.RegisterRequest
          * @instance
          */
         Object.defineProperty(RegisterRequest.prototype, "request", {
-            get: $util.oneOfGetter($oneOfFields = ["otpRequest", "verifyRequest"]),
+            get: $util.oneOfGetter($oneOfFields = ["otpRequest", "verifyRequest", "hashcashRequest"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -28442,6 +28451,8 @@ $root.server = (function() {
                 $root.server.OtpRequest.encode(message.otpRequest, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             if (message.verifyRequest != null && Object.hasOwnProperty.call(message, "verifyRequest"))
                 $root.server.VerifyOtpRequest.encode(message.verifyRequest, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            if (message.hashcashRequest != null && Object.hasOwnProperty.call(message, "hashcashRequest"))
+                $root.server.HashcashRequest.encode(message.hashcashRequest, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             return writer;
         };
 
@@ -28481,6 +28492,9 @@ $root.server = (function() {
                     break;
                 case 2:
                     message.verifyRequest = $root.server.VerifyOtpRequest.decode(reader, reader.uint32());
+                    break;
+                case 3:
+                    message.hashcashRequest = $root.server.HashcashRequest.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -28536,6 +28550,16 @@ $root.server = (function() {
                         return "verifyRequest." + error;
                 }
             }
+            if (message.hashcashRequest != null && message.hasOwnProperty("hashcashRequest")) {
+                if (properties.request === 1)
+                    return "request: multiple values";
+                properties.request = 1;
+                {
+                    var error = $root.server.HashcashRequest.verify(message.hashcashRequest);
+                    if (error)
+                        return "hashcashRequest." + error;
+                }
+            }
             return null;
         };
 
@@ -28560,6 +28584,11 @@ $root.server = (function() {
                 if (typeof object.verifyRequest !== "object")
                     throw TypeError(".server.RegisterRequest.verifyRequest: object expected");
                 message.verifyRequest = $root.server.VerifyOtpRequest.fromObject(object.verifyRequest);
+            }
+            if (object.hashcashRequest != null) {
+                if (typeof object.hashcashRequest !== "object")
+                    throw TypeError(".server.RegisterRequest.hashcashRequest: object expected");
+                message.hashcashRequest = $root.server.HashcashRequest.fromObject(object.hashcashRequest);
             }
             return message;
         };
@@ -28587,6 +28616,11 @@ $root.server = (function() {
                 if (options.oneofs)
                     object.request = "verifyRequest";
             }
+            if (message.hashcashRequest != null && message.hasOwnProperty("hashcashRequest")) {
+                object.hashcashRequest = $root.server.HashcashRequest.toObject(message.hashcashRequest, options);
+                if (options.oneofs)
+                    object.request = "hashcashRequest";
+            }
             return object;
         };
 
@@ -28612,6 +28646,7 @@ $root.server = (function() {
          * @interface IRegisterResponse
          * @property {server.IOtpResponse|null} [otpResponse] RegisterResponse otpResponse
          * @property {server.IVerifyOtpResponse|null} [verifyResponse] RegisterResponse verifyResponse
+         * @property {server.IHashcashResponse|null} [hashcashResponse] RegisterResponse hashcashResponse
          */
 
         /**
@@ -28645,17 +28680,25 @@ $root.server = (function() {
          */
         RegisterResponse.prototype.verifyResponse = null;
 
+        /**
+         * RegisterResponse hashcashResponse.
+         * @member {server.IHashcashResponse|null|undefined} hashcashResponse
+         * @memberof server.RegisterResponse
+         * @instance
+         */
+        RegisterResponse.prototype.hashcashResponse = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * RegisterResponse response.
-         * @member {"otpResponse"|"verifyResponse"|undefined} response
+         * @member {"otpResponse"|"verifyResponse"|"hashcashResponse"|undefined} response
          * @memberof server.RegisterResponse
          * @instance
          */
         Object.defineProperty(RegisterResponse.prototype, "response", {
-            get: $util.oneOfGetter($oneOfFields = ["otpResponse", "verifyResponse"]),
+            get: $util.oneOfGetter($oneOfFields = ["otpResponse", "verifyResponse", "hashcashResponse"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -28687,6 +28730,8 @@ $root.server = (function() {
                 $root.server.OtpResponse.encode(message.otpResponse, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             if (message.verifyResponse != null && Object.hasOwnProperty.call(message, "verifyResponse"))
                 $root.server.VerifyOtpResponse.encode(message.verifyResponse, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            if (message.hashcashResponse != null && Object.hasOwnProperty.call(message, "hashcashResponse"))
+                $root.server.HashcashResponse.encode(message.hashcashResponse, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             return writer;
         };
 
@@ -28726,6 +28771,9 @@ $root.server = (function() {
                     break;
                 case 2:
                     message.verifyResponse = $root.server.VerifyOtpResponse.decode(reader, reader.uint32());
+                    break;
+                case 3:
+                    message.hashcashResponse = $root.server.HashcashResponse.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -28781,6 +28829,16 @@ $root.server = (function() {
                         return "verifyResponse." + error;
                 }
             }
+            if (message.hashcashResponse != null && message.hasOwnProperty("hashcashResponse")) {
+                if (properties.response === 1)
+                    return "response: multiple values";
+                properties.response = 1;
+                {
+                    var error = $root.server.HashcashResponse.verify(message.hashcashResponse);
+                    if (error)
+                        return "hashcashResponse." + error;
+                }
+            }
             return null;
         };
 
@@ -28805,6 +28863,11 @@ $root.server = (function() {
                 if (typeof object.verifyResponse !== "object")
                     throw TypeError(".server.RegisterResponse.verifyResponse: object expected");
                 message.verifyResponse = $root.server.VerifyOtpResponse.fromObject(object.verifyResponse);
+            }
+            if (object.hashcashResponse != null) {
+                if (typeof object.hashcashResponse !== "object")
+                    throw TypeError(".server.RegisterResponse.hashcashResponse: object expected");
+                message.hashcashResponse = $root.server.HashcashResponse.fromObject(object.hashcashResponse);
             }
             return message;
         };
@@ -28832,6 +28895,11 @@ $root.server = (function() {
                 if (options.oneofs)
                     object.response = "verifyResponse";
             }
+            if (message.hashcashResponse != null && message.hasOwnProperty("hashcashResponse")) {
+                object.hashcashResponse = $root.server.HashcashResponse.toObject(message.hashcashResponse, options);
+                if (options.oneofs)
+                    object.response = "hashcashResponse";
+            }
             return object;
         };
 
@@ -28849,6 +28917,380 @@ $root.server = (function() {
         return RegisterResponse;
     })();
 
+    server.HashcashRequest = (function() {
+
+        /**
+         * Properties of a HashcashRequest.
+         * @memberof server
+         * @interface IHashcashRequest
+         * @property {string|null} [countryCode] HashcashRequest countryCode
+         */
+
+        /**
+         * Constructs a new HashcashRequest.
+         * @memberof server
+         * @classdesc Represents a HashcashRequest.
+         * @implements IHashcashRequest
+         * @constructor
+         * @param {server.IHashcashRequest=} [properties] Properties to set
+         */
+        function HashcashRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * HashcashRequest countryCode.
+         * @member {string} countryCode
+         * @memberof server.HashcashRequest
+         * @instance
+         */
+        HashcashRequest.prototype.countryCode = "";
+
+        /**
+         * Creates a new HashcashRequest instance using the specified properties.
+         * @function create
+         * @memberof server.HashcashRequest
+         * @static
+         * @param {server.IHashcashRequest=} [properties] Properties to set
+         * @returns {server.HashcashRequest} HashcashRequest instance
+         */
+        HashcashRequest.create = function create(properties) {
+            return new HashcashRequest(properties);
+        };
+
+        /**
+         * Encodes the specified HashcashRequest message. Does not implicitly {@link server.HashcashRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.HashcashRequest
+         * @static
+         * @param {server.IHashcashRequest} message HashcashRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HashcashRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.countryCode != null && Object.hasOwnProperty.call(message, "countryCode"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.countryCode);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified HashcashRequest message, length delimited. Does not implicitly {@link server.HashcashRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.HashcashRequest
+         * @static
+         * @param {server.IHashcashRequest} message HashcashRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HashcashRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a HashcashRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.HashcashRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.HashcashRequest} HashcashRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HashcashRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.HashcashRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.countryCode = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a HashcashRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.HashcashRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.HashcashRequest} HashcashRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HashcashRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a HashcashRequest message.
+         * @function verify
+         * @memberof server.HashcashRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        HashcashRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.countryCode != null && message.hasOwnProperty("countryCode"))
+                if (!$util.isString(message.countryCode))
+                    return "countryCode: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a HashcashRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.HashcashRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.HashcashRequest} HashcashRequest
+         */
+        HashcashRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.HashcashRequest)
+                return object;
+            var message = new $root.server.HashcashRequest();
+            if (object.countryCode != null)
+                message.countryCode = String(object.countryCode);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a HashcashRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.HashcashRequest
+         * @static
+         * @param {server.HashcashRequest} message HashcashRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        HashcashRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.countryCode = "";
+            if (message.countryCode != null && message.hasOwnProperty("countryCode"))
+                object.countryCode = message.countryCode;
+            return object;
+        };
+
+        /**
+         * Converts this HashcashRequest to JSON.
+         * @function toJSON
+         * @memberof server.HashcashRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        HashcashRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return HashcashRequest;
+    })();
+
+    server.HashcashResponse = (function() {
+
+        /**
+         * Properties of a HashcashResponse.
+         * @memberof server
+         * @interface IHashcashResponse
+         * @property {string|null} [hashcashChallenge] HashcashResponse hashcashChallenge
+         */
+
+        /**
+         * Constructs a new HashcashResponse.
+         * @memberof server
+         * @classdesc Represents a HashcashResponse.
+         * @implements IHashcashResponse
+         * @constructor
+         * @param {server.IHashcashResponse=} [properties] Properties to set
+         */
+        function HashcashResponse(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * HashcashResponse hashcashChallenge.
+         * @member {string} hashcashChallenge
+         * @memberof server.HashcashResponse
+         * @instance
+         */
+        HashcashResponse.prototype.hashcashChallenge = "";
+
+        /**
+         * Creates a new HashcashResponse instance using the specified properties.
+         * @function create
+         * @memberof server.HashcashResponse
+         * @static
+         * @param {server.IHashcashResponse=} [properties] Properties to set
+         * @returns {server.HashcashResponse} HashcashResponse instance
+         */
+        HashcashResponse.create = function create(properties) {
+            return new HashcashResponse(properties);
+        };
+
+        /**
+         * Encodes the specified HashcashResponse message. Does not implicitly {@link server.HashcashResponse.verify|verify} messages.
+         * @function encode
+         * @memberof server.HashcashResponse
+         * @static
+         * @param {server.IHashcashResponse} message HashcashResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HashcashResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.hashcashChallenge != null && Object.hasOwnProperty.call(message, "hashcashChallenge"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.hashcashChallenge);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified HashcashResponse message, length delimited. Does not implicitly {@link server.HashcashResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.HashcashResponse
+         * @static
+         * @param {server.IHashcashResponse} message HashcashResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HashcashResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a HashcashResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.HashcashResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.HashcashResponse} HashcashResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HashcashResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.HashcashResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.hashcashChallenge = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a HashcashResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.HashcashResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.HashcashResponse} HashcashResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HashcashResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a HashcashResponse message.
+         * @function verify
+         * @memberof server.HashcashResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        HashcashResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.hashcashChallenge != null && message.hasOwnProperty("hashcashChallenge"))
+                if (!$util.isString(message.hashcashChallenge))
+                    return "hashcashChallenge: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a HashcashResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.HashcashResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.HashcashResponse} HashcashResponse
+         */
+        HashcashResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.HashcashResponse)
+                return object;
+            var message = new $root.server.HashcashResponse();
+            if (object.hashcashChallenge != null)
+                message.hashcashChallenge = String(object.hashcashChallenge);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a HashcashResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.HashcashResponse
+         * @static
+         * @param {server.HashcashResponse} message HashcashResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        HashcashResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.hashcashChallenge = "";
+            if (message.hashcashChallenge != null && message.hasOwnProperty("hashcashChallenge"))
+                object.hashcashChallenge = message.hashcashChallenge;
+            return object;
+        };
+
+        /**
+         * Converts this HashcashResponse to JSON.
+         * @function toJSON
+         * @memberof server.HashcashResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        HashcashResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return HashcashResponse;
+    })();
+
     server.OtpRequest = (function() {
 
         /**
@@ -28860,6 +29302,8 @@ $root.server = (function() {
          * @property {string|null} [langId] OtpRequest langId
          * @property {string|null} [groupInviteToken] OtpRequest groupInviteToken
          * @property {string|null} [userAgent] OtpRequest userAgent
+         * @property {string|null} [hashcashSolution] OtpRequest hashcashSolution
+         * @property {number|Long|null} [hashcashSolutionTimeTakenMs] OtpRequest hashcashSolutionTimeTakenMs
          */
 
         /**
@@ -28918,6 +29362,22 @@ $root.server = (function() {
         OtpRequest.prototype.userAgent = "";
 
         /**
+         * OtpRequest hashcashSolution.
+         * @member {string} hashcashSolution
+         * @memberof server.OtpRequest
+         * @instance
+         */
+        OtpRequest.prototype.hashcashSolution = "";
+
+        /**
+         * OtpRequest hashcashSolutionTimeTakenMs.
+         * @member {number|Long} hashcashSolutionTimeTakenMs
+         * @memberof server.OtpRequest
+         * @instance
+         */
+        OtpRequest.prototype.hashcashSolutionTimeTakenMs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
          * Creates a new OtpRequest instance using the specified properties.
          * @function create
          * @memberof server.OtpRequest
@@ -28951,6 +29411,10 @@ $root.server = (function() {
                 writer.uint32(/* id 4, wireType 2 =*/34).string(message.groupInviteToken);
             if (message.userAgent != null && Object.hasOwnProperty.call(message, "userAgent"))
                 writer.uint32(/* id 5, wireType 2 =*/42).string(message.userAgent);
+            if (message.hashcashSolution != null && Object.hasOwnProperty.call(message, "hashcashSolution"))
+                writer.uint32(/* id 6, wireType 2 =*/50).string(message.hashcashSolution);
+            if (message.hashcashSolutionTimeTakenMs != null && Object.hasOwnProperty.call(message, "hashcashSolutionTimeTakenMs"))
+                writer.uint32(/* id 7, wireType 0 =*/56).int64(message.hashcashSolutionTimeTakenMs);
             return writer;
         };
 
@@ -28999,6 +29463,12 @@ $root.server = (function() {
                     break;
                 case 5:
                     message.userAgent = reader.string();
+                    break;
+                case 6:
+                    message.hashcashSolution = reader.string();
+                    break;
+                case 7:
+                    message.hashcashSolutionTimeTakenMs = reader.int64();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -29055,6 +29525,12 @@ $root.server = (function() {
             if (message.userAgent != null && message.hasOwnProperty("userAgent"))
                 if (!$util.isString(message.userAgent))
                     return "userAgent: string expected";
+            if (message.hashcashSolution != null && message.hasOwnProperty("hashcashSolution"))
+                if (!$util.isString(message.hashcashSolution))
+                    return "hashcashSolution: string expected";
+            if (message.hashcashSolutionTimeTakenMs != null && message.hasOwnProperty("hashcashSolutionTimeTakenMs"))
+                if (!$util.isInteger(message.hashcashSolutionTimeTakenMs) && !(message.hashcashSolutionTimeTakenMs && $util.isInteger(message.hashcashSolutionTimeTakenMs.low) && $util.isInteger(message.hashcashSolutionTimeTakenMs.high)))
+                    return "hashcashSolutionTimeTakenMs: integer|Long expected";
             return null;
         };
 
@@ -29088,6 +29564,17 @@ $root.server = (function() {
                 message.groupInviteToken = String(object.groupInviteToken);
             if (object.userAgent != null)
                 message.userAgent = String(object.userAgent);
+            if (object.hashcashSolution != null)
+                message.hashcashSolution = String(object.hashcashSolution);
+            if (object.hashcashSolutionTimeTakenMs != null)
+                if ($util.Long)
+                    (message.hashcashSolutionTimeTakenMs = $util.Long.fromValue(object.hashcashSolutionTimeTakenMs)).unsigned = false;
+                else if (typeof object.hashcashSolutionTimeTakenMs === "string")
+                    message.hashcashSolutionTimeTakenMs = parseInt(object.hashcashSolutionTimeTakenMs, 10);
+                else if (typeof object.hashcashSolutionTimeTakenMs === "number")
+                    message.hashcashSolutionTimeTakenMs = object.hashcashSolutionTimeTakenMs;
+                else if (typeof object.hashcashSolutionTimeTakenMs === "object")
+                    message.hashcashSolutionTimeTakenMs = new $util.LongBits(object.hashcashSolutionTimeTakenMs.low >>> 0, object.hashcashSolutionTimeTakenMs.high >>> 0).toNumber();
             return message;
         };
 
@@ -29110,6 +29597,12 @@ $root.server = (function() {
                 object.langId = "";
                 object.groupInviteToken = "";
                 object.userAgent = "";
+                object.hashcashSolution = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.hashcashSolutionTimeTakenMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.hashcashSolutionTimeTakenMs = options.longs === String ? "0" : 0;
             }
             if (message.phone != null && message.hasOwnProperty("phone"))
                 object.phone = message.phone;
@@ -29121,6 +29614,13 @@ $root.server = (function() {
                 object.groupInviteToken = message.groupInviteToken;
             if (message.userAgent != null && message.hasOwnProperty("userAgent"))
                 object.userAgent = message.userAgent;
+            if (message.hashcashSolution != null && message.hasOwnProperty("hashcashSolution"))
+                object.hashcashSolution = message.hashcashSolution;
+            if (message.hashcashSolutionTimeTakenMs != null && message.hasOwnProperty("hashcashSolutionTimeTakenMs"))
+                if (typeof message.hashcashSolutionTimeTakenMs === "number")
+                    object.hashcashSolutionTimeTakenMs = options.longs === String ? String(message.hashcashSolutionTimeTakenMs) : message.hashcashSolutionTimeTakenMs;
+                else
+                    object.hashcashSolutionTimeTakenMs = options.longs === String ? $util.Long.prototype.toString.call(message.hashcashSolutionTimeTakenMs) : options.longs === Number ? new $util.LongBits(message.hashcashSolutionTimeTakenMs.low >>> 0, message.hashcashSolutionTimeTakenMs.high >>> 0).toNumber() : message.hashcashSolutionTimeTakenMs;
             return object;
         };
 
@@ -29350,6 +29850,8 @@ $root.server = (function() {
                 case 7:
                 case 8:
                 case 9:
+                case 10:
+                case 11:
                     break;
                 }
             if (message.retryAfterSecs != null && message.hasOwnProperty("retryAfterSecs"))
@@ -29426,6 +29928,14 @@ $root.server = (function() {
             case "INTERNAL_SERVER_ERROR":
             case 9:
                 message.reason = 9;
+                break;
+            case "INVALID_HASHCASH_NONCE":
+            case 10:
+                message.reason = 10;
+                break;
+            case "WRONG_HASHCASH_SOLUTION":
+            case 11:
+                message.reason = 11;
                 break;
             }
             if (object.retryAfterSecs != null)
@@ -29518,6 +30028,8 @@ $root.server = (function() {
          * @property {number} RETRIED_TOO_SOON=7 RETRIED_TOO_SOON value
          * @property {number} BAD_REQUEST=8 BAD_REQUEST value
          * @property {number} INTERNAL_SERVER_ERROR=9 INTERNAL_SERVER_ERROR value
+         * @property {number} INVALID_HASHCASH_NONCE=10 INVALID_HASHCASH_NONCE value
+         * @property {number} WRONG_HASHCASH_SOLUTION=11 WRONG_HASHCASH_SOLUTION value
          */
         OtpResponse.Reason = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -29531,6 +30043,8 @@ $root.server = (function() {
             values[valuesById[7] = "RETRIED_TOO_SOON"] = 7;
             values[valuesById[8] = "BAD_REQUEST"] = 8;
             values[valuesById[9] = "INTERNAL_SERVER_ERROR"] = 9;
+            values[valuesById[10] = "INVALID_HASHCASH_NONCE"] = 10;
+            values[valuesById[11] = "WRONG_HASHCASH_SOLUTION"] = 11;
             return values;
         })();
 

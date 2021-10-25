@@ -18,6 +18,7 @@ public  final class RegisterResponse extends
   public enum ResponseCase {
     OTP_RESPONSE(1),
     VERIFY_RESPONSE(2),
+    HASHCASH_RESPONSE(3),
     RESPONSE_NOT_SET(0);
     private final int value;
     private ResponseCase(int value) {
@@ -35,6 +36,7 @@ public  final class RegisterResponse extends
       switch (value) {
         case 1: return OTP_RESPONSE;
         case 2: return VERIFY_RESPONSE;
+        case 3: return HASHCASH_RESPONSE;
         case 0: return RESPONSE_NOT_SET;
         default: return null;
       }
@@ -151,6 +153,56 @@ public  final class RegisterResponse extends
    */
   private void clearVerifyResponse() {
     if (responseCase_ == 2) {
+      responseCase_ = 0;
+      response_ = null;
+    }
+  }
+
+  public static final int HASHCASH_RESPONSE_FIELD_NUMBER = 3;
+  /**
+   * <code>.server.HashcashResponse hashcash_response = 3;</code>
+   */
+  @java.lang.Override
+  public boolean hasHashcashResponse() {
+    return responseCase_ == 3;
+  }
+  /**
+   * <code>.server.HashcashResponse hashcash_response = 3;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.HashcashResponse getHashcashResponse() {
+    if (responseCase_ == 3) {
+       return (com.halloapp.proto.server.HashcashResponse) response_;
+    }
+    return com.halloapp.proto.server.HashcashResponse.getDefaultInstance();
+  }
+  /**
+   * <code>.server.HashcashResponse hashcash_response = 3;</code>
+   */
+  private void setHashcashResponse(com.halloapp.proto.server.HashcashResponse value) {
+    value.getClass();
+  response_ = value;
+    responseCase_ = 3;
+  }
+  /**
+   * <code>.server.HashcashResponse hashcash_response = 3;</code>
+   */
+  private void mergeHashcashResponse(com.halloapp.proto.server.HashcashResponse value) {
+    value.getClass();
+  if (responseCase_ == 3 &&
+        response_ != com.halloapp.proto.server.HashcashResponse.getDefaultInstance()) {
+      response_ = com.halloapp.proto.server.HashcashResponse.newBuilder((com.halloapp.proto.server.HashcashResponse) response_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      response_ = value;
+    }
+    responseCase_ = 3;
+  }
+  /**
+   * <code>.server.HashcashResponse hashcash_response = 3;</code>
+   */
+  private void clearHashcashResponse() {
+    if (responseCase_ == 3) {
       responseCase_ = 0;
       response_ = null;
     }
@@ -359,6 +411,54 @@ public  final class RegisterResponse extends
       return this;
     }
 
+    /**
+     * <code>.server.HashcashResponse hashcash_response = 3;</code>
+     */
+    @java.lang.Override
+    public boolean hasHashcashResponse() {
+      return instance.hasHashcashResponse();
+    }
+    /**
+     * <code>.server.HashcashResponse hashcash_response = 3;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.HashcashResponse getHashcashResponse() {
+      return instance.getHashcashResponse();
+    }
+    /**
+     * <code>.server.HashcashResponse hashcash_response = 3;</code>
+     */
+    public Builder setHashcashResponse(com.halloapp.proto.server.HashcashResponse value) {
+      copyOnWrite();
+      instance.setHashcashResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.HashcashResponse hashcash_response = 3;</code>
+     */
+    public Builder setHashcashResponse(
+        com.halloapp.proto.server.HashcashResponse.Builder builderForValue) {
+      copyOnWrite();
+      instance.setHashcashResponse(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.HashcashResponse hashcash_response = 3;</code>
+     */
+    public Builder mergeHashcashResponse(com.halloapp.proto.server.HashcashResponse value) {
+      copyOnWrite();
+      instance.mergeHashcashResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.HashcashResponse hashcash_response = 3;</code>
+     */
+    public Builder clearHashcashResponse() {
+      copyOnWrite();
+      instance.clearHashcashResponse();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.RegisterResponse)
   }
   @java.lang.Override
@@ -379,10 +479,11 @@ public  final class RegisterResponse extends
             "responseCase_",
             com.halloapp.proto.server.OtpResponse.class,
             com.halloapp.proto.server.VerifyOtpResponse.class,
+            com.halloapp.proto.server.HashcashResponse.class,
           };
           java.lang.String info =
-              "\u0000\u0002\u0001\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001<\u0000\u0002<" +
-              "\u0000";
+              "\u0000\u0003\u0001\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001<\u0000\u0002<" +
+              "\u0000\u0003<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

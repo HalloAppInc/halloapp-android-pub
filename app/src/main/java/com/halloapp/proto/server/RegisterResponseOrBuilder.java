@@ -29,5 +29,16 @@ public interface RegisterResponseOrBuilder extends
    */
   com.halloapp.proto.server.VerifyOtpResponse getVerifyResponse();
 
+  /**
+   * <code>.server.HashcashResponse hashcash_response = 3;</code>
+   * @return Whether the hashcashResponse field is set.
+   */
+  boolean hasHashcashResponse();
+  /**
+   * <code>.server.HashcashResponse hashcash_response = 3;</code>
+   * @return The hashcashResponse.
+   */
+  com.halloapp.proto.server.HashcashResponse getHashcashResponse();
+
   public com.halloapp.proto.server.RegisterResponse.ResponseCase getResponseCase();
 }

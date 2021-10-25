@@ -65,4 +65,22 @@ public interface OtpRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getUserAgentBytes();
+
+  /**
+   * <code>string hashcash_solution = 6;</code>
+   * @return The hashcashSolution.
+   */
+  java.lang.String getHashcashSolution();
+  /**
+   * <code>string hashcash_solution = 6;</code>
+   * @return The bytes for hashcashSolution.
+   */
+  com.google.protobuf.ByteString
+      getHashcashSolutionBytes();
+
+  /**
+   * <code>int64 hashcash_solution_time_taken_ms = 7;</code>
+   * @return The hashcashSolutionTimeTakenMs.
+   */
+  long getHashcashSolutionTimeTakenMs();
 }

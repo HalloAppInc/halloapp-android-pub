@@ -29,5 +29,16 @@ public interface RegisterRequestOrBuilder extends
    */
   com.halloapp.proto.server.VerifyOtpRequest getVerifyRequest();
 
+  /**
+   * <code>.server.HashcashRequest hashcash_request = 3;</code>
+   * @return Whether the hashcashRequest field is set.
+   */
+  boolean hasHashcashRequest();
+  /**
+   * <code>.server.HashcashRequest hashcash_request = 3;</code>
+   * @return The hashcashRequest.
+   */
+  com.halloapp.proto.server.HashcashRequest getHashcashRequest();
+
   public com.halloapp.proto.server.RegisterRequest.RequestCase getRequestCase();
 }

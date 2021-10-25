@@ -157,6 +157,14 @@ public  final class OtpResponse extends
      * <code>INTERNAL_SERVER_ERROR = 9;</code>
      */
     INTERNAL_SERVER_ERROR(9),
+    /**
+     * <code>INVALID_HASHCASH_NONCE = 10;</code>
+     */
+    INVALID_HASHCASH_NONCE(10),
+    /**
+     * <code>WRONG_HASHCASH_SOLUTION = 11;</code>
+     */
+    WRONG_HASHCASH_SOLUTION(11),
     UNRECOGNIZED(-1),
     ;
 
@@ -200,6 +208,14 @@ public  final class OtpResponse extends
      * <code>INTERNAL_SERVER_ERROR = 9;</code>
      */
     public static final int INTERNAL_SERVER_ERROR_VALUE = 9;
+    /**
+     * <code>INVALID_HASHCASH_NONCE = 10;</code>
+     */
+    public static final int INVALID_HASHCASH_NONCE_VALUE = 10;
+    /**
+     * <code>WRONG_HASHCASH_SOLUTION = 11;</code>
+     */
+    public static final int WRONG_HASHCASH_SOLUTION_VALUE = 11;
 
 
     @java.lang.Override
@@ -233,6 +249,8 @@ public  final class OtpResponse extends
         case 7: return RETRIED_TOO_SOON;
         case 8: return BAD_REQUEST;
         case 9: return INTERNAL_SERVER_ERROR;
+        case 10: return INVALID_HASHCASH_NONCE;
+        case 11: return WRONG_HASHCASH_SOLUTION;
         default: return null;
       }
     }

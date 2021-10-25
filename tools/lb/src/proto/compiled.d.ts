@@ -10589,6 +10589,9 @@ export namespace server {
 
         /** RegisterRequest verifyRequest */
         verifyRequest?: (server.IVerifyOtpRequest|null);
+
+        /** RegisterRequest hashcashRequest */
+        hashcashRequest?: (server.IHashcashRequest|null);
     }
 
     /** Represents a RegisterRequest. */
@@ -10606,8 +10609,11 @@ export namespace server {
         /** RegisterRequest verifyRequest. */
         public verifyRequest?: (server.IVerifyOtpRequest|null);
 
+        /** RegisterRequest hashcashRequest. */
+        public hashcashRequest?: (server.IHashcashRequest|null);
+
         /** RegisterRequest request. */
-        public request?: ("otpRequest"|"verifyRequest");
+        public request?: ("otpRequest"|"verifyRequest"|"hashcashRequest");
 
         /**
          * Creates a new RegisterRequest instance using the specified properties.
@@ -10688,6 +10694,9 @@ export namespace server {
 
         /** RegisterResponse verifyResponse */
         verifyResponse?: (server.IVerifyOtpResponse|null);
+
+        /** RegisterResponse hashcashResponse */
+        hashcashResponse?: (server.IHashcashResponse|null);
     }
 
     /** Represents a RegisterResponse. */
@@ -10705,8 +10714,11 @@ export namespace server {
         /** RegisterResponse verifyResponse. */
         public verifyResponse?: (server.IVerifyOtpResponse|null);
 
+        /** RegisterResponse hashcashResponse. */
+        public hashcashResponse?: (server.IHashcashResponse|null);
+
         /** RegisterResponse response. */
-        public response?: ("otpResponse"|"verifyResponse");
+        public response?: ("otpResponse"|"verifyResponse"|"hashcashResponse");
 
         /**
          * Creates a new RegisterResponse instance using the specified properties.
@@ -10779,6 +10791,186 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a HashcashRequest. */
+    interface IHashcashRequest {
+
+        /** HashcashRequest countryCode */
+        countryCode?: (string|null);
+    }
+
+    /** Represents a HashcashRequest. */
+    class HashcashRequest implements IHashcashRequest {
+
+        /**
+         * Constructs a new HashcashRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IHashcashRequest);
+
+        /** HashcashRequest countryCode. */
+        public countryCode: string;
+
+        /**
+         * Creates a new HashcashRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HashcashRequest instance
+         */
+        public static create(properties?: server.IHashcashRequest): server.HashcashRequest;
+
+        /**
+         * Encodes the specified HashcashRequest message. Does not implicitly {@link server.HashcashRequest.verify|verify} messages.
+         * @param message HashcashRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IHashcashRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HashcashRequest message, length delimited. Does not implicitly {@link server.HashcashRequest.verify|verify} messages.
+         * @param message HashcashRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IHashcashRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HashcashRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HashcashRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.HashcashRequest;
+
+        /**
+         * Decodes a HashcashRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HashcashRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.HashcashRequest;
+
+        /**
+         * Verifies a HashcashRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HashcashRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HashcashRequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.HashcashRequest;
+
+        /**
+         * Creates a plain object from a HashcashRequest message. Also converts values to other types if specified.
+         * @param message HashcashRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.HashcashRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HashcashRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a HashcashResponse. */
+    interface IHashcashResponse {
+
+        /** HashcashResponse hashcashChallenge */
+        hashcashChallenge?: (string|null);
+    }
+
+    /** Represents a HashcashResponse. */
+    class HashcashResponse implements IHashcashResponse {
+
+        /**
+         * Constructs a new HashcashResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IHashcashResponse);
+
+        /** HashcashResponse hashcashChallenge. */
+        public hashcashChallenge: string;
+
+        /**
+         * Creates a new HashcashResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HashcashResponse instance
+         */
+        public static create(properties?: server.IHashcashResponse): server.HashcashResponse;
+
+        /**
+         * Encodes the specified HashcashResponse message. Does not implicitly {@link server.HashcashResponse.verify|verify} messages.
+         * @param message HashcashResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IHashcashResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HashcashResponse message, length delimited. Does not implicitly {@link server.HashcashResponse.verify|verify} messages.
+         * @param message HashcashResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IHashcashResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HashcashResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HashcashResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.HashcashResponse;
+
+        /**
+         * Decodes a HashcashResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HashcashResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.HashcashResponse;
+
+        /**
+         * Verifies a HashcashResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HashcashResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HashcashResponse
+         */
+        public static fromObject(object: { [k: string]: any }): server.HashcashResponse;
+
+        /**
+         * Creates a plain object from a HashcashResponse message. Also converts values to other types if specified.
+         * @param message HashcashResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.HashcashResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HashcashResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an OtpRequest. */
     interface IOtpRequest {
 
@@ -10796,6 +10988,12 @@ export namespace server {
 
         /** OtpRequest userAgent */
         userAgent?: (string|null);
+
+        /** OtpRequest hashcashSolution */
+        hashcashSolution?: (string|null);
+
+        /** OtpRequest hashcashSolutionTimeTakenMs */
+        hashcashSolutionTimeTakenMs?: (number|Long|null);
     }
 
     /** Represents an OtpRequest. */
@@ -10821,6 +11019,12 @@ export namespace server {
 
         /** OtpRequest userAgent. */
         public userAgent: string;
+
+        /** OtpRequest hashcashSolution. */
+        public hashcashSolution: string;
+
+        /** OtpRequest hashcashSolutionTimeTakenMs. */
+        public hashcashSolutionTimeTakenMs: (number|Long);
 
         /**
          * Creates a new OtpRequest instance using the specified properties.
@@ -11030,7 +11234,9 @@ export namespace server {
             INVALID_GROUP_INVITE_TOKEN = 6,
             RETRIED_TOO_SOON = 7,
             BAD_REQUEST = 8,
-            INTERNAL_SERVER_ERROR = 9
+            INTERNAL_SERVER_ERROR = 9,
+            INVALID_HASHCASH_NONCE = 10,
+            WRONG_HASHCASH_SOLUTION = 11
         }
     }
 
