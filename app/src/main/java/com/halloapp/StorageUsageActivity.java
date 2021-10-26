@@ -300,7 +300,6 @@ public class StorageUsageActivity extends HalloActivity {
                 }
                 avatarLoader.load(holder.avatar, chatId);
             } else {
-                holder.itemName.setVisibility(View.GONE);
                 holder.categoryName.setVisibility(View.VISIBLE);
                 holder.categoryName.setText(item.name);
             }
