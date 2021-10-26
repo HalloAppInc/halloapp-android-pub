@@ -54,14 +54,14 @@ public class MarkdownUtils {
     }
 
     public static CharSequence formatMarkdownWithMentions(@NonNull Context context, @Nullable String text, List<Mention> mentions) {
-        return formatMarkdownWithMentions(context, text, mentions, null);
+        return formatMarkdownWithMentions(context, text, mentions, true, null);
     }
 
     public static CharSequence formatMarkdown(@NonNull Context context, @Nullable String text) {
         return formatMarkdownWithMentions(context, text, null);
     }
 
-    public static CharSequence formatMarkdownWithMentions(@NonNull Context context, @Nullable String text, @Nullable List<Mention> mentions, @Nullable MentionsFormatter.MentionClickListener mentionClickListener) {
+    public static CharSequence formatMarkdownWithMentions(@NonNull Context context, @Nullable String text, @Nullable List<Mention> mentions, boolean showAt, @Nullable MentionsFormatter.MentionClickListener mentionClickListener) {
         if (text == null) {
             return null;
         }
@@ -103,6 +103,6 @@ public class MarkdownUtils {
             adjustedMentions.add(copy);
             addedMentionIndices.add(newIndex);
         }
-        return MentionsFormatter.insertMentions(markdown, adjustedMentions, mentionClickListener);
+        return MentionsFormatter.insertMentions(markdown, adjustedMentions, showAt, mentionClickListener);
     }
 }

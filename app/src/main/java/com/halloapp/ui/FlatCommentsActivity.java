@@ -357,7 +357,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             replyIndicator.setVisibility(View.VISIBLE);
             contactLoader.load(replyNameView, reply.comment.senderUserId);
             TextView replyTextView = replyIndicator.findViewById(R.id.reply_text);
-            textContentLoader.load(replyTextView, reply.comment);
+            textContentLoader.load(replyTextView, reply.comment, false);
             final ImageView replyMediaIconView = replyIndicator.findViewById(R.id.reply_media_icon);
             final ImageView replyMediaThumbView = replyIndicator.findViewById(R.id.reply_media_thumb);
 
@@ -1544,7 +1544,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     replyNameView.setTextColor(GroupParticipants.getParticipantNameColor(FlatCommentsActivity.this, senderContact, true));
                     replyNameView.setText(senderContact.userId.isMe() ? getString(R.string.me) : senderContact.getDisplayName());
                     replyTextView.setTypeface(replyTextView.getTypeface(), Typeface.NORMAL);
-                    setCommentText(replyTextView, comment.parentComment, true);
+                    setCommentText(replyTextView, comment.parentComment);
                     if (!comment.parentComment.media.isEmpty()) {
                         mediaThumbnailLoader.load(replyMediaThumbView, comment.parentComment.media.get(0));
                         replyMediaThumbView.setVisibility(View.VISIBLE);
@@ -1656,7 +1656,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             });
             boolean emojisOnly = StringUtils.isFewEmoji(comment.text);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getResources().getDimension(emojisOnly ? R.dimen.message_text_size_few_emoji : R.dimen.message_text_size));
-            textContentLoader.load(textView, comment);
+            textContentLoader.load(textView, comment, false);
 
             if (messageTextLayout != null) {
                 messageTextLayout.setForceSeparateLine(emojisOnly);
@@ -1955,26 +1955,20 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         }
     }
 
-    private void setCommentText(@NonNull TextView textView, @NonNull Comment comment, boolean isReply) {
+    private void setCommentText(@NonNull TextView textView, @NonNull Comment comment) {
         SpannableStringBuilder builder = new SpannableStringBuilder();
         CharSequence commentText = "";
         audioDurationLoader.cancel(textView);
         boolean setCommentText = true;
         switch (comment.type) {
             case Comment.TYPE_FUTURE_PROOF: {
-                if (isReply) {
-                    commentText = getString(R.string.unsupported_content);
-                }
+                commentText = getString(R.string.unsupported_content);
                 break;
             }
             case Comment.TYPE_RETRACTED: {
                 SpannableString s = new SpannableString(getString(R.string.comment_retracted_placeholder));
                 Object span;
-                if (isReply) {
-                    span = new StyleSpan(Typeface.ITALIC);
-                } else {
-                    span = new TextAppearanceSpan(this, R.style.FlatCommentTextAppearanceRetracted);
-                }
+                span = new StyleSpan(Typeface.ITALIC);
                 s.setSpan(span, 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 commentText = s;
                 break;
@@ -1982,7 +1976,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             case Comment.TYPE_USER: {
                 SpannableStringBuilder mediaText = new SpannableStringBuilder();
                 if (!TextUtils.isEmpty(comment.text)) {
-                    mediaText.append(MarkdownUtils.formatMarkdownWithMentions(this, comment.getText(), comment.mentions, (v, mention) -> {
+                    mediaText.append(MarkdownUtils.formatMarkdownWithMentions(this, comment.getText(), comment.mentions, false, (v, mention) -> {
                         v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), mention.userId));
                     }));
                 } else if (!comment.media.isEmpty()){
@@ -2006,25 +2000,23 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 break;
             }
             case Comment.TYPE_VOICE_NOTE: {
-                if (isReply) {
-                    setCommentText = false;
-                    audioDurationLoader.load(textView, comment.media.get(0).file, new ViewDataLoader.Displayer<TextView, Long>() {
-                        @Override
-                        public void showResult(@NonNull TextView view, @Nullable Long result) {
-                            if (result != null) {
-                                builder.append(getString(R.string.voice_note_preview, StringUtils.formatVoiceNoteDuration(view.getContext(), result)));
-                                view.setText(builder);
-                            }
+                setCommentText = false;
+                audioDurationLoader.load(textView, comment.media.get(0).file, new ViewDataLoader.Displayer<TextView, Long>() {
+                    @Override
+                    public void showResult(@NonNull TextView view, @Nullable Long result) {
+                        if (result != null) {
+                            builder.append(getString(R.string.voice_note_preview, StringUtils.formatVoiceNoteDuration(view.getContext(), result)));
+                            view.setText(builder);
                         }
+                    }
 
-                        @Override
-                        public void showLoading(@NonNull TextView view) {
-                            SpannableStringBuilder loading = new SpannableStringBuilder(builder);
-                            loading.append(getString(R.string.voice_note));
-                            view.setText(loading);
-                        }
-                    });
-                }
+                    @Override
+                    public void showLoading(@NonNull TextView view) {
+                        SpannableStringBuilder loading = new SpannableStringBuilder(builder);
+                        loading.append(getString(R.string.voice_note));
+                        view.setText(loading);
+                    }
+                });
                 break;
             }
             default:

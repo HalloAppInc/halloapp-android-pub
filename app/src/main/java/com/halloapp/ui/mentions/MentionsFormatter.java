@@ -26,12 +26,7 @@ public class MentionsFormatter {
     public static final char MENTION_CHARACTER = '@';
 
     @NonNull
-    public static CharSequence insertMentions(@NonNull CharSequence str, @NonNull List<Mention> mentions) {
-        return insertMentions(str, mentions, null);
-    }
-
-    @NonNull
-    public static CharSequence insertMentions(@NonNull CharSequence str, @NonNull List<Mention> mentions, @Nullable MentionClickListener mentionClickListener) {
+    public static CharSequence insertMentions(@NonNull CharSequence str, @NonNull List<Mention> mentions, boolean showAt, @Nullable MentionClickListener mentionClickListener) {
         Collections.sort(mentions, (o1, o2) -> o1.index - o2.index);
 
         SpannableStringBuilder builder = new SpannableStringBuilder(str);
@@ -41,7 +36,7 @@ public class MentionsFormatter {
                 Log.i("MentionsFormatter/insertMentions invalid mention");
                 continue;
             }
-            builder.replace(mention.index, mention.index + 1, createSpan(mention, mentionClickListener));
+            builder.replace(mention.index, mention.index + 1, createSpan(mention, showAt, mentionClickListener));
         }
         return builder;
     }
@@ -53,8 +48,8 @@ public class MentionsFormatter {
         return str.charAt(mention.index) == MENTION_CHARACTER;
     }
 
-    private static CharSequence createSpan(@NonNull Mention mention, @Nullable MentionClickListener mentionClickListener) {
-        SpannableString mentionString = new SpannableString("@" + mention.fallbackName);
+    private static CharSequence createSpan(@NonNull Mention mention, boolean showAt, @Nullable MentionClickListener mentionClickListener) {
+        SpannableString mentionString = new SpannableString(showAt ? "@" + mention.fallbackName : mention.fallbackName);
         mentionString.setSpan(new MentionSpan(mention, mentionClickListener), 0, mentionString.length(),  Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return mentionString;
     }

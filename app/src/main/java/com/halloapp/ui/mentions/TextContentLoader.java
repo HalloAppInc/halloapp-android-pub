@@ -50,7 +50,27 @@ public class TextContentLoader extends ViewDataLoader<TextView, List<Mention>, T
     }
 
     @MainThread
+    public void load(@NonNull TextView view, @NonNull TextContent textContent, boolean showAt) {
+        load(view, textContent, showAt, new TextDisplayer() {
+            @Override
+            public void showResult(TextView tv, CharSequence text) {
+                tv.setText(text);
+            }
+
+            @Override
+            public void showPreview(TextView tv, CharSequence text) {
+                tv.setText(text);
+            }
+        });
+    }
+
+    @MainThread
     public void load(@NonNull TextView view, @NonNull TextContent textContent, @NonNull TextDisplayer textDisplayer) {
+        load(view, textContent, true, textDisplayer);
+    }
+
+    @MainThread
+    public void load(@NonNull TextView view, @NonNull TextContent textContent, boolean showAt, @NonNull TextDisplayer textDisplayer) {
         List<Mention> mentions = textContent.getMentions();
         String text = textContent.getText();
         if (mentions.isEmpty()) {
@@ -66,14 +86,14 @@ public class TextContentLoader extends ViewDataLoader<TextView, List<Mention>, T
                     textDisplayer.showResult(view, text);
                     return;
                 }
-                textDisplayer.showResult(view, MarkdownUtils.formatMarkdownWithMentions(view.getContext(), text, result, (v, mention) -> {
+                textDisplayer.showResult(view, MarkdownUtils.formatMarkdownWithMentions(view.getContext(), text, result, showAt, (v, mention) -> {
                     v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), mention.userId));
                 }));
             }
 
             @Override
             public void showLoading(@NonNull TextView view) {
-                textDisplayer.showPreview(view, MarkdownUtils.formatMarkdownWithMentions(view.getContext(), text, mentions));
+                textDisplayer.showPreview(view, MarkdownUtils.formatMarkdownWithMentions(view.getContext(), text, mentions, showAt, null));
             }
         };
         load(view, loader, displayer, textContent, cache);
