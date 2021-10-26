@@ -13,6 +13,7 @@ import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.server.GroupInviteLink;
 import com.halloapp.proto.server.GroupMember;
@@ -80,7 +81,7 @@ public class GroupsApi {
             }
 
 
-            if (!addedUsers.isEmpty()) {
+            if (!addedUsers.isEmpty() && ServerProps.getInstance().getIsInternalUser()) {
                 contentDb.addRemoveGroupMembers(groupId, null, null, addedUsers, new ArrayList<>(), () -> {
                     StringBuilder sb = new StringBuilder();
                     for (MemberInfo memberInfo : addedUsers) {
