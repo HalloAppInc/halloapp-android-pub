@@ -750,7 +750,7 @@
     <!-- Title for option to invite a contact using an invite link -->
     <string name="invite_via_link">Invite via link</string>
     <!-- Text shown in button for inviting friends -->
-    <string name="add_invite">Add</string>
+    <string name="invite_action">Invite</string>
     <!-- Text shown as subheader for inviting friends section -->
     <string name="invite_friends_header">Invite friends</string>
     <!-- Text shown as preview for invite friends group post -->

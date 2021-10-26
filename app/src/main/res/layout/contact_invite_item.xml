@@ -83,7 +83,7 @@
             android:outlineProvider="none"
             android:layout_height="wrap_content"
             android:clickable="false"
-            android:text="@string/add_invite" />
+            android:text="@string/invite_action" />
 
     </LinearLayout>
 
