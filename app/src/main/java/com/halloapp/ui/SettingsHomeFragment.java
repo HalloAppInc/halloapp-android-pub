@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.StorageUsageActivity;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.archive.ArchiveActivity;
@@ -112,6 +113,11 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
         darkMode.setOnClickListener(v -> {
             DarkModeDialog dialog = new DarkModeDialog(getContext());
             dialog.show();
+        });
+
+        View storageUsage = root.findViewById(R.id.storage_usage);
+        storageUsage.setOnClickListener(v -> {
+            startActivity(new Intent(v.getContext(), StorageUsageActivity.class));
         });
 
         View notifications = root.findViewById(R.id.notifications);

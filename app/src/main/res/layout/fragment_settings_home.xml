@@ -265,6 +265,38 @@
 
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/window_background"/>
+
+            <LinearLayout
+                android:id="@+id/storage_usage"
+                android:layout_width="match_parent"
+                android:layout_height="52sp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:gravity="center_vertical"
+                android:background="?selectableItemBackground">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="18dp"
+                    android:layout_marginStart="20dp"
+                    android:scaleType="center"
+                    app:tint="@color/color_primary"
+                    android:src="@drawable/ic_storage"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textColor="@color/primary_text"
+                    android:text="@string/storage_usage_title" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout

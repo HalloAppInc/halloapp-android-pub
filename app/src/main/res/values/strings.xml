@@ -76,6 +76,18 @@
     <string name="set_avatar_done">Done</string>
     <string name="set_avatar_reset">Reset</string>
     <string name="new_post">New post</string>
+    <!-- Title for the screen where we display where your storage is being used -->
+    <string name="storage_usage_title">Storage usage</string>
+    <!-- Storage usage section header for home feed category -->
+    <string name="storage_usage_home">Home feed</string>
+    <!-- Storage usage section header for chats category -->
+    <string name="storage_usage_chats">Chats</string>
+    <!-- Storage usage section header for groups category -->
+    <string name="storage_usage_groups">Groups</string>
+    <!-- Storage usage section header for other category -->
+    <string name="storage_usage_internal">Other</string>
+    <!-- Storage usage section header for archive category -->
+    <string name="storage_usage_archive">Archive</string>
     <string name="new_message">New message</string>
     <string name="chat_message_attribution">%1$s: %2$s</string>
     <string name="empty_chat_with_name_placeholder">%s is on HalloApp.</string>

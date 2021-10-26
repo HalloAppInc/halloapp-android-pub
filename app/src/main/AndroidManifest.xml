@@ -185,6 +185,10 @@
         <activity
             android:name=".DebugStorageActivity"/>
 
+        <activity
+            android:name=".StorageUsageActivity"
+            android:label="@string/storage_usage_title"/>
+
         <activity android:name=".ui.invites.InviteContactsActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/invite_title"
