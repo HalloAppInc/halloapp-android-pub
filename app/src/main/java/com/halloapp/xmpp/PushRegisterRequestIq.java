@@ -25,7 +25,7 @@ public class PushRegisterRequestIq extends HalloIq {
                         PushRegister.newBuilder()
                                 .setPushToken(
                                         PushToken.newBuilder()
-                                                .setOs(PushToken.Os.ANDROID)
+                                                .setTokenType(PushToken.TokenType.ANDROID)
                                                 .setToken(token)
                                 )
                         .setLangId(languageCode)
