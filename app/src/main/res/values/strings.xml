@@ -541,7 +541,8 @@
     <!-- example: More invites coming on [Saturday, June 19, 7:59 PM], where content in the brackets is displayed by %s-->
     <string name="server_invite_refresh_time">More invites coming on %s</string>
     <string name="invite_friends_title">Invite friends &amp; family</string>
-    <string name="invite_title">Invite</string>
+    <!-- Title for invite contacts screen -->
+    <string name="invite_title">Invite friends</string>
     <string name="settings_invite_option">Invite to HalloApp</string>
     <string name="invite_already_on_halloapp">Already on HalloApp</string>
     <string name="invite_invalid_phone_number">Invalid phone number</string>

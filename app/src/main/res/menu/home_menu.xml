@@ -5,7 +5,7 @@
     <item
         android:id="@+id/invite"
         android:icon="@drawable/ic_invite"
-        android:title="@string/invite_title"
+        android:title="@string/invite_action"
         app:iconTint="@color/feed_notification_icon"
         app:showAsAction="ifRoom"/>
 
