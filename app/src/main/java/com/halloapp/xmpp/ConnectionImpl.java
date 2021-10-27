@@ -566,26 +566,25 @@ public class ConnectionImpl extends Connection {
             List<SenderStateBundle> senderStateBundles = new ArrayList<>();
             byte[] audienceHash = null;
 
-            if (ServerProps.getInstance().getIsInternalUser()) {
-                Stats stats = Stats.getInstance();
-                try {
-                    GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
-                    senderStateBundles = groupSetupInfo.senderStateBundles;
-                    audienceHash = groupSetupInfo.audienceHash;
-                    encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
-                    stats.reportGroupEncryptSuccess(false);
-                } catch (CryptoException e) {
-                    String errorMessage = e.getMessage();
-                    Log.e("Failed to encrypt group post", e);
-                    Log.sendErrorReport("Group post encrypt failed: " + errorMessage);
-                    stats.reportGroupEncryptError(errorMessage, false);
-                } catch (NoSuchAlgorithmException e) {
-                    String errorMessage = "no_such_algo";
-                    Log.e("Failed to calculate audience hash", e);
-                    Log.sendErrorReport("Group post encrypt failed: " + errorMessage);
-                    stats.reportGroupEncryptError(errorMessage, false);
-                }
+            Stats stats = Stats.getInstance();
+            try {
+                GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
+                senderStateBundles = groupSetupInfo.senderStateBundles;
+                audienceHash = groupSetupInfo.audienceHash;
+                encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
+                stats.reportGroupEncryptSuccess(false);
+            } catch (CryptoException e) {
+                String errorMessage = e.getMessage();
+                Log.e("Failed to encrypt group post", e);
+                Log.sendErrorReport("Group post encrypt failed: " + errorMessage);
+                stats.reportGroupEncryptError(errorMessage, false);
+            } catch (NoSuchAlgorithmException e) {
+                String errorMessage = "no_such_algo";
+                Log.e("Failed to calculate audience hash", e);
+                Log.sendErrorReport("Group post encrypt failed: " + errorMessage);
+                stats.reportGroupEncryptError(errorMessage, false);
             }
+
             FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, encPayload, senderStateBundles, audienceHash);
             publishIq = new GroupFeedUpdateIq(post.getParentGroup(), GroupFeedUpdateIq.Action.PUBLISH, feedItem);
         }
@@ -701,26 +700,25 @@ public class ConnectionImpl extends Connection {
             List<SenderStateBundle> senderStateBundles = new ArrayList<>();
             byte[] audienceHash = null;
 
-            if (ServerProps.getInstance().getIsInternalUser()) {
-                Stats stats = Stats.getInstance();
-                try {
-                    GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
-                    senderStateBundles = groupSetupInfo.senderStateBundles;
-                    audienceHash = groupSetupInfo.audienceHash;
-                    encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
-                    stats.reportGroupEncryptSuccess(true);
-                } catch (CryptoException e) {
-                    String errorMessage = e.getMessage();
-                    Log.e("Failed to encrypt group comment", e);
-                    Log.sendErrorReport("Group comment encrypt failed: " + errorMessage);
-                    stats.reportGroupEncryptError(errorMessage, true);
-                } catch (NoSuchAlgorithmException e) {
-                    String errorMessage = "no_such_algo";
-                    Log.e("Failed to calculate audience hash", e);
-                    Log.sendErrorReport("Group comment encrypt failed: " + errorMessage);
-                    stats.reportGroupEncryptError(errorMessage, true);
-                }
+            Stats stats = Stats.getInstance();
+            try {
+                GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
+                senderStateBundles = groupSetupInfo.senderStateBundles;
+                audienceHash = groupSetupInfo.audienceHash;
+                encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
+                stats.reportGroupEncryptSuccess(true);
+            } catch (CryptoException e) {
+                String errorMessage = e.getMessage();
+                Log.e("Failed to encrypt group comment", e);
+                Log.sendErrorReport("Group comment encrypt failed: " + errorMessage);
+                stats.reportGroupEncryptError(errorMessage, true);
+            } catch (NoSuchAlgorithmException e) {
+                String errorMessage = "no_such_algo";
+                Log.e("Failed to calculate audience hash", e);
+                Log.sendErrorReport("Group comment encrypt failed: " + errorMessage);
+                stats.reportGroupEncryptError(errorMessage, true);
             }
+
             FeedItem feedItem = new FeedItem(FeedItem.Type.COMMENT, comment.id, parentPost.id, payload, encPayload, senderStateBundles, audienceHash);
             feedItem.parentCommentId = comment.parentCommentId;
             requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.PUBLISH, feedItem);
@@ -1531,7 +1529,7 @@ public class ConnectionImpl extends Connection {
             byte[] payload = protoPost.getPayload().toByteArray();
 
             String errorMessage = null;
-            if (groupId != null && ServerProps.getInstance().getIsInternalUser()) {
+            if (groupId != null) {
                 byte[] encPayload = protoPost.getEncPayload().toByteArray();
                 if (encPayload != null && encPayload.length > 0) {
                     Stats stats = Stats.getInstance();
@@ -1642,7 +1640,7 @@ public class ConnectionImpl extends Connection {
             byte[] payload = protoComment.getPayload().toByteArray();
 
             String errorMessage = null;
-            if (groupId != null && ServerProps.getInstance().getIsInternalUser()) {
+            if (groupId != null) {
                 byte[] encPayload = protoComment.getEncPayload().toByteArray();
                 if (encPayload != null && encPayload.length > 0) {
                     Stats stats = Stats.getInstance();
@@ -1762,7 +1760,7 @@ public class ConnectionImpl extends Connection {
                 String senderVersion = senderPlatform.equals("android") ? senderAgent.split("Android")[1] : senderPlatform.equals("ios") ? senderAgent.split("iOS")[1] : "";
 
                 GroupId groupId = new GroupId(item.getGid());
-                if (ServerProps.getInstance().getIsInternalUser() && item.hasSenderState()) {
+                if (item.hasSenderState()) {
                     SenderStateWithKeyInfo senderStateWithKeyInfo = item.getSenderState();
 
                     long publisherUid;

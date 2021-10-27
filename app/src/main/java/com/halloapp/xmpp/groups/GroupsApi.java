@@ -81,7 +81,7 @@ public class GroupsApi {
             }
 
 
-            if (!addedUsers.isEmpty() && ServerProps.getInstance().getIsInternalUser()) {
+            if (!addedUsers.isEmpty()) {
                 contentDb.addRemoveGroupMembers(groupId, null, null, addedUsers, new ArrayList<>(), () -> {
                     StringBuilder sb = new StringBuilder();
                     for (MemberInfo memberInfo : addedUsers) {
