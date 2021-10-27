@@ -45,9 +45,9 @@ public class GroupFeedCipher {
     }
 
     byte[] convertForWire(byte[] payload, GroupId groupId) throws CryptoException {
+        int usedChainIndex = encryptedKeyStore.getMyGroupCurrentChainIndex(groupId);
         byte[] messageKey = groupFeedKeyManager.getNextOutboundMessageKey(groupId);
         PrivateEdECKey privateSignatureKey = encryptedKeyStore.getMyPrivateGroupSigningKey(groupId);
-        int nextChainIndex = encryptedKeyStore.getMyGroupCurrentChainIndex(groupId);
 
         byte[] signature = CryptoUtils.verifyDetached(payload, privateSignatureKey);
         byte[] signedPayload = CryptoByteUtils.concat(payload, signature);
@@ -67,7 +67,7 @@ public class GroupFeedCipher {
 
             CryptoByteUtils.nullify(messageKey, aesKey, hmacKey, iv);
 
-            byte[] currentChainIndexBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(nextChainIndex).array();
+            byte[] currentChainIndexBytes = ByteBuffer.allocate(COUNTER_SIZE_BYTES).putInt(usedChainIndex).array();
 
             return CryptoByteUtils.concat(currentChainIndexBytes, encryptedContents, hmac);
         } catch (GeneralSecurityException e) {
