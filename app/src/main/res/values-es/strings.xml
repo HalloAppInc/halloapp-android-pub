@@ -344,6 +344,7 @@ versión: %2$s
     <string name="invite_friends_title">"Invita a tu familia y amigos"</string>
 
     <!-- noun or verb? -->
+    <!-- Fuzzy -->
     <string name="invite_title">"Invitar"</string>
     <string name="settings_invite_option">"Invitar a HalloApp"</string>
     <string name="invite_already_on_halloapp">"Ya en HalloApp"</string>
@@ -926,9 +927,6 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <!-- Title for option to invite a contact using an invite link -->
     <string name="invite_via_link">"Invitar por un enlace"</string>
 
-    <!-- Text shown in button for inviting friends -->
-    <string name="add_invite">"Añadir"</string>
-
     <!-- Text shown as subheader for inviting friends section -->
     <string name="invite_friends_header">"Invitar a amigos"</string>
 
@@ -970,5 +968,27 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
 
     <!-- Message shown in dialog asking if user is sure they want to delete their account -->
     <string name="delete_account_confirmation_message">"¿Estás seguro de que quieres borrar tu cuenta? Este paso no se puede deshacer"</string>
-<string name="share_option_group">"Escribe en el grupo"</string><string name="select_group">"Selecciona grupo"</string></resources>
+
+    <!-- Title for the screen where we display where your storage is being used -->
+    <string name="storage_usage_title">"Uso del almacenamiento"</string>
+
+    <!-- Storage usage section header for home feed category -->
+    <!-- Fuzzy -->
+    <string name="storage_usage_home">"Contenido inicial"</string>
+
+    <!-- Storage usage section header for chats category -->
+    <string name="storage_usage_chats">"Conversaciones"</string>
+
+    <!-- Storage usage section header for groups category -->
+    <string name="storage_usage_groups">"Grupos"</string>
+
+    <!-- Storage usage section header for other category -->
+    <string name="storage_usage_internal">"Otros"</string>
+
+    <!-- Storage usage section header for archive category -->
+    <string name="storage_usage_archive">"Archivos"</string>
+
+    <!-- Text shown in button for inviting friends -->
+    <string name="invite_action">"Invitar"</string>
+<string name="add_invite">"Añadir"</string><string name="share_option_group">"Escribe en el grupo"</string><string name="select_group">"Selecciona grupo"</string></resources>
 

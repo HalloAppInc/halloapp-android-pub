@@ -359,6 +359,8 @@ Version: %2$s
         <item quantity="other">"Du hast diese Woche noch %s Einladungen"</item>
     </plurals>
     <string name="invite_friends_title">"Freunde &amp; Familie einladen"</string>
+
+    <!-- Fuzzy -->
     <string name="invite_title">"Einladen"</string>
     <string name="settings_invite_option">"Zu HalloApp einladen"</string>
     <string name="invite_already_on_halloapp">"Nutzt bereits HalloApp"</string>
@@ -759,7 +761,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="return_to_registration">"Zurück zur Registrierung"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <!-- Fuzzy -->
     <string name="archive_empty">"Deine Beiträge werden hier nach 30 Tagen archiviert"</string>
 
     <!-- Futureproof content we dont understand yet -->
@@ -941,9 +942,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Title for option to invite a contact using an invite link -->
     <string name="invite_via_link">"Per Link einladen"</string>
 
-    <!-- Text shown in button for inviting friends -->
-    <string name="add_invite">"Hinzufügen"</string>
-
     <!-- Text shown as subheader for inviting friends section -->
     <string name="invite_friends_header">"Freunde einladen"</string>
 
@@ -985,5 +983,26 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Message shown in dialog asking if user is sure they want to delete their account -->
     <string name="delete_account_confirmation_message">"Möchtest du deinen Account wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden"</string>
-<string name="share_option_group">"In Gruppe teilen"</string><string name="select_group">"Gruppe auswählen"</string></resources>
+
+    <!-- Title for the screen where we display where your storage is being used -->
+    <string name="storage_usage_title">"Speicherauslastung"</string>
+
+    <!-- Storage usage section header for home feed category -->
+    <string name="storage_usage_home">"Home-Feed"</string>
+
+    <!-- Storage usage section header for chats category -->
+    <string name="storage_usage_chats">"Chats"</string>
+
+    <!-- Storage usage section header for groups category -->
+    <string name="storage_usage_groups">"Gruppen"</string>
+
+    <!-- Storage usage section header for other category -->
+    <string name="storage_usage_internal">"Sonstiges"</string>
+
+    <!-- Storage usage section header for archive category -->
+    <string name="storage_usage_archive">"Archiv"</string>
+
+    <!-- Text shown in button for inviting friends -->
+    <string name="invite_action">"Einladen"</string>
+<string name="add_invite">"Hinzufügen"</string><string name="share_option_group">"In Gruppe teilen"</string><string name="select_group">"Gruppe auswählen"</string></resources>
 

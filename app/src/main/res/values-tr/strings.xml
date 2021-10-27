@@ -331,6 +331,8 @@ version: %2$s
         <item quantity="other">"%s davet hakkın kaldı"</item>
     </plurals>
     <string name="invite_friends_title">"Aileni ve arkadaşlarını davet et"</string>
+
+    <!-- Fuzzy -->
     <string name="invite_title">"Davet"</string>
     <string name="settings_invite_option">"HalloApp'e davet et"</string>
     <string name="invite_already_on_halloapp">"Halihazırda HalloApp'te"</string>
@@ -913,9 +915,6 @@ Uygulama izinlerini değiştirmek için Uygulama Ayarları ekranını aç."</str
     <!-- Title for option to invite a contact using an invite link -->
     <string name="invite_via_link">"Invite via link"</string>
 
-    <!-- Text shown in button for inviting friends -->
-    <string name="add_invite">"Add"</string>
-
     <!-- Text shown as subheader for inviting friends section -->
     <string name="invite_friends_header">"Invite friends"</string>
 
@@ -957,5 +956,26 @@ Uygulama izinlerini değiştirmek için Uygulama Ayarları ekranını aç."</str
 
     <!-- Message shown in dialog asking if user is sure they want to delete their account -->
     <string name="delete_account_confirmation_message">"Are you sure that you want to delete your account? This cannot be undone"</string>
-<string name="share_option_group">"Gruba gönder"</string><string name="select_group">"Grup seç"</string></resources>
+
+    <!-- Title for the screen where we display where your storage is being used -->
+    <string name="storage_usage_title">"Storage usage"</string>
+
+    <!-- Storage usage section header for home feed category -->
+    <string name="storage_usage_home">"Home feed"</string>
+
+    <!-- Storage usage section header for chats category -->
+    <string name="storage_usage_chats">"Chats"</string>
+
+    <!-- Storage usage section header for groups category -->
+    <string name="storage_usage_groups">"Groups"</string>
+
+    <!-- Storage usage section header for other category -->
+    <string name="storage_usage_internal">"Other"</string>
+
+    <!-- Storage usage section header for archive category -->
+    <string name="storage_usage_archive">"Archive"</string>
+
+    <!-- Text shown in button for inviting friends -->
+    <string name="invite_action">"Invite"</string>
+<string name="add_invite">"Add"</string><string name="share_option_group">"Gruba gönder"</string><string name="select_group">"Grup seç"</string></resources>
 

@@ -325,6 +325,8 @@ versie: %2$s
         <item quantity="other">"Je hebt deze week nog %s uitnodigingen over"</item>
     </plurals>
     <string name="invite_friends_title">"Vrienden &amp; familie uitnodigen"</string>
+
+    <!-- Fuzzy -->
     <string name="invite_title">"Uitnodigen"</string>
     <string name="settings_invite_option">"Uitnodigen voor HalloApp"</string>
     <string name="invite_already_on_halloapp">"Al op HalloApp"</string>
@@ -898,9 +900,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <!-- Title for option to invite a contact using an invite link -->
     <string name="invite_via_link">"Uitnodigen via link"</string>
 
-    <!-- Text shown in button for inviting friends -->
-    <string name="add_invite">"Toevoegen"</string>
-
     <!-- Text shown as subheader for inviting friends section -->
     <string name="invite_friends_header">"Vrienden uitnodigen"</string>
 
@@ -942,5 +941,26 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Message shown in dialog asking if user is sure they want to delete their account -->
     <string name="delete_account_confirmation_message">"Weet je zeker dat je je account wilt verwijderen? Dit kan niet ongedaan worden gemaakt"</string>
-<string name="share_option_group">"Post in groep"</string><string name="select_group">"Selecteer groep"</string></resources>
+
+    <!-- Title for the screen where we display where your storage is being used -->
+    <string name="storage_usage_title">"Opslaggebruik"</string>
+
+    <!-- Storage usage section header for home feed category -->
+    <string name="storage_usage_home">"Home feed"</string>
+
+    <!-- Storage usage section header for chats category -->
+    <string name="storage_usage_chats">"Chats"</string>
+
+    <!-- Storage usage section header for groups category -->
+    <string name="storage_usage_groups">"Groepen"</string>
+
+    <!-- Storage usage section header for other category -->
+    <string name="storage_usage_internal">"Overig"</string>
+
+    <!-- Storage usage section header for archive category -->
+    <string name="storage_usage_archive">"Archief"</string>
+
+    <!-- Text shown in button for inviting friends -->
+    <string name="invite_action">"Uitnodigen"</string>
+<string name="add_invite">"Toevoegen"</string><string name="share_option_group">"Post in groep"</string><string name="select_group">"Selecteer groep"</string></resources>
 
