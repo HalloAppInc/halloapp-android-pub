@@ -15,9 +15,9 @@ public  final class PushToken extends
     token_ = "";
   }
   /**
-   * Protobuf enum {@code server.PushToken.Os}
+   * Protobuf enum {@code server.PushToken.TokenType}
    */
-  public enum Os
+  public enum TokenType
       implements com.google.protobuf.Internal.EnumLite {
     /**
      * <code>ANDROID = 0;</code>
@@ -35,6 +35,10 @@ public  final class PushToken extends
      * <code>IOS_APPCLIP = 3;</code>
      */
     IOS_APPCLIP(3),
+    /**
+     * <code>IOS_VOIP = 4;</code>
+     */
+    IOS_VOIP(4),
     UNRECOGNIZED(-1),
     ;
 
@@ -54,6 +58,10 @@ public  final class PushToken extends
      * <code>IOS_APPCLIP = 3;</code>
      */
     public static final int IOS_APPCLIP_VALUE = 3;
+    /**
+     * <code>IOS_VOIP = 4;</code>
+     */
+    public static final int IOS_VOIP_VALUE = 4;
 
 
     @java.lang.Override
@@ -71,96 +79,97 @@ public  final class PushToken extends
      * @deprecated Use {@link #forNumber(int)} instead.
      */
     @java.lang.Deprecated
-    public static Os valueOf(int value) {
+    public static TokenType valueOf(int value) {
       return forNumber(value);
     }
 
-    public static Os forNumber(int value) {
+    public static TokenType forNumber(int value) {
       switch (value) {
         case 0: return ANDROID;
         case 1: return IOS;
         case 2: return IOS_DEV;
         case 3: return IOS_APPCLIP;
+        case 4: return IOS_VOIP;
         default: return null;
       }
     }
 
-    public static com.google.protobuf.Internal.EnumLiteMap<Os>
+    public static com.google.protobuf.Internal.EnumLiteMap<TokenType>
         internalGetValueMap() {
       return internalValueMap;
     }
     private static final com.google.protobuf.Internal.EnumLiteMap<
-        Os> internalValueMap =
-          new com.google.protobuf.Internal.EnumLiteMap<Os>() {
+        TokenType> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<TokenType>() {
             @java.lang.Override
-            public Os findValueByNumber(int number) {
-              return Os.forNumber(number);
+            public TokenType findValueByNumber(int number) {
+              return TokenType.forNumber(number);
             }
           };
 
     public static com.google.protobuf.Internal.EnumVerifier 
         internalGetVerifier() {
-      return OsVerifier.INSTANCE;
+      return TokenTypeVerifier.INSTANCE;
     }
 
-    private static final class OsVerifier implements 
+    private static final class TokenTypeVerifier implements 
          com.google.protobuf.Internal.EnumVerifier { 
-            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new OsVerifier();
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new TokenTypeVerifier();
             @java.lang.Override
             public boolean isInRange(int number) {
-              return Os.forNumber(number) != null;
+              return TokenType.forNumber(number) != null;
             }
           };
 
     private final int value;
 
-    private Os(int value) {
+    private TokenType(int value) {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:server.PushToken.Os)
+    // @@protoc_insertion_point(enum_scope:server.PushToken.TokenType)
   }
 
-  public static final int OS_FIELD_NUMBER = 1;
-  private int os_;
+  public static final int TOKEN_TYPE_FIELD_NUMBER = 1;
+  private int tokenType_;
   /**
-   * <code>.server.PushToken.Os os = 1;</code>
-   * @return The enum numeric value on the wire for os.
+   * <code>.server.PushToken.TokenType token_type = 1;</code>
+   * @return The enum numeric value on the wire for tokenType.
    */
   @java.lang.Override
-  public int getOsValue() {
-    return os_;
+  public int getTokenTypeValue() {
+    return tokenType_;
   }
   /**
-   * <code>.server.PushToken.Os os = 1;</code>
-   * @return The os.
+   * <code>.server.PushToken.TokenType token_type = 1;</code>
+   * @return The tokenType.
    */
   @java.lang.Override
-  public com.halloapp.proto.server.PushToken.Os getOs() {
-    com.halloapp.proto.server.PushToken.Os result = com.halloapp.proto.server.PushToken.Os.forNumber(os_);
-    return result == null ? com.halloapp.proto.server.PushToken.Os.UNRECOGNIZED : result;
+  public com.halloapp.proto.server.PushToken.TokenType getTokenType() {
+    com.halloapp.proto.server.PushToken.TokenType result = com.halloapp.proto.server.PushToken.TokenType.forNumber(tokenType_);
+    return result == null ? com.halloapp.proto.server.PushToken.TokenType.UNRECOGNIZED : result;
   }
   /**
-   * <code>.server.PushToken.Os os = 1;</code>
-   * @param value The enum numeric value on the wire for os to set.
+   * <code>.server.PushToken.TokenType token_type = 1;</code>
+   * @param value The enum numeric value on the wire for tokenType to set.
    */
-  private void setOsValue(int value) {
-      os_ = value;
+  private void setTokenTypeValue(int value) {
+      tokenType_ = value;
   }
   /**
-   * <code>.server.PushToken.Os os = 1;</code>
-   * @param value The os to set.
+   * <code>.server.PushToken.TokenType token_type = 1;</code>
+   * @param value The tokenType to set.
    */
-  private void setOs(com.halloapp.proto.server.PushToken.Os value) {
-    os_ = value.getNumber();
+  private void setTokenType(com.halloapp.proto.server.PushToken.TokenType value) {
+    tokenType_ = value.getNumber();
     
   }
   /**
-   * <code>.server.PushToken.Os os = 1;</code>
+   * <code>.server.PushToken.TokenType token_type = 1;</code>
    */
-  private void clearOs() {
+  private void clearTokenType() {
     
-    os_ = 0;
+    tokenType_ = 0;
   }
 
   public static final int TOKEN_FIELD_NUMBER = 2;
@@ -306,48 +315,48 @@ public  final class PushToken extends
 
 
     /**
-     * <code>.server.PushToken.Os os = 1;</code>
-     * @return The enum numeric value on the wire for os.
+     * <code>.server.PushToken.TokenType token_type = 1;</code>
+     * @return The enum numeric value on the wire for tokenType.
      */
     @java.lang.Override
-    public int getOsValue() {
-      return instance.getOsValue();
+    public int getTokenTypeValue() {
+      return instance.getTokenTypeValue();
     }
     /**
-     * <code>.server.PushToken.Os os = 1;</code>
-     * @param value The os to set.
+     * <code>.server.PushToken.TokenType token_type = 1;</code>
+     * @param value The tokenType to set.
      * @return This builder for chaining.
      */
-    public Builder setOsValue(int value) {
+    public Builder setTokenTypeValue(int value) {
       copyOnWrite();
-      instance.setOsValue(value);
+      instance.setTokenTypeValue(value);
       return this;
     }
     /**
-     * <code>.server.PushToken.Os os = 1;</code>
-     * @return The os.
+     * <code>.server.PushToken.TokenType token_type = 1;</code>
+     * @return The tokenType.
      */
     @java.lang.Override
-    public com.halloapp.proto.server.PushToken.Os getOs() {
-      return instance.getOs();
+    public com.halloapp.proto.server.PushToken.TokenType getTokenType() {
+      return instance.getTokenType();
     }
     /**
-     * <code>.server.PushToken.Os os = 1;</code>
-     * @param value The enum numeric value on the wire for os to set.
+     * <code>.server.PushToken.TokenType token_type = 1;</code>
+     * @param value The enum numeric value on the wire for tokenType to set.
      * @return This builder for chaining.
      */
-    public Builder setOs(com.halloapp.proto.server.PushToken.Os value) {
+    public Builder setTokenType(com.halloapp.proto.server.PushToken.TokenType value) {
       copyOnWrite();
-      instance.setOs(value);
+      instance.setTokenType(value);
       return this;
     }
     /**
-     * <code>.server.PushToken.Os os = 1;</code>
+     * <code>.server.PushToken.TokenType token_type = 1;</code>
      * @return This builder for chaining.
      */
-    public Builder clearOs() {
+    public Builder clearTokenType() {
       copyOnWrite();
-      instance.clearOs();
+      instance.clearTokenType();
       return this;
     }
 
@@ -416,7 +425,7 @@ public  final class PushToken extends
       }
       case BUILD_MESSAGE_INFO: {
           java.lang.Object[] objects = new java.lang.Object[] {
-            "os_",
+            "tokenType_",
             "token_",
           };
           java.lang.String info =

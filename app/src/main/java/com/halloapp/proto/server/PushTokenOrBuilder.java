@@ -8,15 +8,15 @@ public interface PushTokenOrBuilder extends
     com.google.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>.server.PushToken.Os os = 1;</code>
-   * @return The enum numeric value on the wire for os.
+   * <code>.server.PushToken.TokenType token_type = 1;</code>
+   * @return The enum numeric value on the wire for tokenType.
    */
-  int getOsValue();
+  int getTokenTypeValue();
   /**
-   * <code>.server.PushToken.Os os = 1;</code>
-   * @return The os.
+   * <code>.server.PushToken.TokenType token_type = 1;</code>
+   * @return The tokenType.
    */
-  com.halloapp.proto.server.PushToken.Os getOs();
+  com.halloapp.proto.server.PushToken.TokenType getTokenType();
 
   /**
    * <code>string token = 2;</code>

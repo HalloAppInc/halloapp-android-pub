@@ -24,21 +24,45 @@ public  final class EndCall extends
      */
     UNKNOWN(0),
     /**
+     * <pre>
+     * receiver rejects the incoming call
+     * </pre>
+     *
      * <code>REJECT = 1;</code>
      */
     REJECT(1),
     /**
+     * <pre>
+     * receiver is in another call
+     * </pre>
+     *
      * <code>BUSY = 2;</code>
      */
     BUSY(2),
     /**
+     * <pre>
+     * sender or receiver times out the call after ringing for some time.
+     * </pre>
+     *
      * <code>TIMEOUT = 3;</code>
      */
     TIMEOUT(3),
     /**
+     * <pre>
+     * initiator or receiver end the call.
+     * </pre>
+     *
      * <code>CALL_END = 4;</code>
      */
     CALL_END(4),
+    /**
+     * <pre>
+     * initiator hangups before the call connects.
+     * </pre>
+     *
+     * <code>CANCEL = 5;</code>
+     */
+    CANCEL(5),
     UNRECOGNIZED(-1),
     ;
 
@@ -47,21 +71,45 @@ public  final class EndCall extends
      */
     public static final int UNKNOWN_VALUE = 0;
     /**
+     * <pre>
+     * receiver rejects the incoming call
+     * </pre>
+     *
      * <code>REJECT = 1;</code>
      */
     public static final int REJECT_VALUE = 1;
     /**
+     * <pre>
+     * receiver is in another call
+     * </pre>
+     *
      * <code>BUSY = 2;</code>
      */
     public static final int BUSY_VALUE = 2;
     /**
+     * <pre>
+     * sender or receiver times out the call after ringing for some time.
+     * </pre>
+     *
      * <code>TIMEOUT = 3;</code>
      */
     public static final int TIMEOUT_VALUE = 3;
     /**
+     * <pre>
+     * initiator or receiver end the call.
+     * </pre>
+     *
      * <code>CALL_END = 4;</code>
      */
     public static final int CALL_END_VALUE = 4;
+    /**
+     * <pre>
+     * initiator hangups before the call connects.
+     * </pre>
+     *
+     * <code>CANCEL = 5;</code>
+     */
+    public static final int CANCEL_VALUE = 5;
 
 
     @java.lang.Override
@@ -90,6 +138,7 @@ public  final class EndCall extends
         case 2: return BUSY;
         case 3: return TIMEOUT;
         case 4: return CALL_END;
+        case 5: return CANCEL;
         default: return null;
       }
     }

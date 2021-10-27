@@ -6270,7 +6270,8 @@ export namespace server {
             REJECT = 1,
             BUSY = 2,
             TIMEOUT = 3,
-            CALL_END = 4
+            CALL_END = 4,
+            CANCEL = 5
         }
     }
 
@@ -7943,8 +7944,8 @@ export namespace server {
     /** Properties of a PushToken. */
     interface IPushToken {
 
-        /** PushToken os */
-        os?: (server.PushToken.Os|null);
+        /** PushToken tokenType */
+        tokenType?: (server.PushToken.TokenType|null);
 
         /** PushToken token */
         token?: (string|null);
@@ -7959,8 +7960,8 @@ export namespace server {
          */
         constructor(properties?: server.IPushToken);
 
-        /** PushToken os. */
-        public os: server.PushToken.Os;
+        /** PushToken tokenType. */
+        public tokenType: server.PushToken.TokenType;
 
         /** PushToken token. */
         public token: string;
@@ -8038,12 +8039,13 @@ export namespace server {
 
     namespace PushToken {
 
-        /** Os enum. */
-        enum Os {
+        /** TokenType enum. */
+        enum TokenType {
             ANDROID = 0,
             IOS = 1,
             IOS_DEV = 2,
-            IOS_APPCLIP = 3
+            IOS_APPCLIP = 3,
+            IOS_VOIP = 4
         }
     }
 

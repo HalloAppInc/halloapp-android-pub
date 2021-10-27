@@ -16208,6 +16208,7 @@ $root.server = (function() {
                 case 2:
                 case 3:
                 case 4:
+                case 5:
                     break;
                 }
             if (message.timestampMs != null && message.hasOwnProperty("timestampMs"))
@@ -16250,6 +16251,10 @@ $root.server = (function() {
             case "CALL_END":
             case 4:
                 message.reason = 4;
+                break;
+            case "CANCEL":
+            case 5:
+                message.reason = 5;
                 break;
             }
             if (object.timestampMs != null)
@@ -16318,6 +16323,7 @@ $root.server = (function() {
          * @property {number} BUSY=2 BUSY value
          * @property {number} TIMEOUT=3 TIMEOUT value
          * @property {number} CALL_END=4 CALL_END value
+         * @property {number} CANCEL=5 CANCEL value
          */
         EndCall.Reason = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -16326,6 +16332,7 @@ $root.server = (function() {
             values[valuesById[2] = "BUSY"] = 2;
             values[valuesById[3] = "TIMEOUT"] = 3;
             values[valuesById[4] = "CALL_END"] = 4;
+            values[valuesById[5] = "CANCEL"] = 5;
             return values;
         })();
 
@@ -21988,7 +21995,7 @@ $root.server = (function() {
          * Properties of a PushToken.
          * @memberof server
          * @interface IPushToken
-         * @property {server.PushToken.Os|null} [os] PushToken os
+         * @property {server.PushToken.TokenType|null} [tokenType] PushToken tokenType
          * @property {string|null} [token] PushToken token
          */
 
@@ -22008,12 +22015,12 @@ $root.server = (function() {
         }
 
         /**
-         * PushToken os.
-         * @member {server.PushToken.Os} os
+         * PushToken tokenType.
+         * @member {server.PushToken.TokenType} tokenType
          * @memberof server.PushToken
          * @instance
          */
-        PushToken.prototype.os = 0;
+        PushToken.prototype.tokenType = 0;
 
         /**
          * PushToken token.
@@ -22047,8 +22054,8 @@ $root.server = (function() {
         PushToken.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.os != null && Object.hasOwnProperty.call(message, "os"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.os);
+            if (message.tokenType != null && Object.hasOwnProperty.call(message, "tokenType"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.tokenType);
             if (message.token != null && Object.hasOwnProperty.call(message, "token"))
                 writer.uint32(/* id 2, wireType 2 =*/18).string(message.token);
             return writer;
@@ -22086,7 +22093,7 @@ $root.server = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.os = reader.int32();
+                    message.tokenType = reader.int32();
                     break;
                 case 2:
                     message.token = reader.string();
@@ -22126,14 +22133,15 @@ $root.server = (function() {
         PushToken.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.os != null && message.hasOwnProperty("os"))
-                switch (message.os) {
+            if (message.tokenType != null && message.hasOwnProperty("tokenType"))
+                switch (message.tokenType) {
                 default:
-                    return "os: enum value expected";
+                    return "tokenType: enum value expected";
                 case 0:
                 case 1:
                 case 2:
                 case 3:
+                case 4:
                     break;
                 }
             if (message.token != null && message.hasOwnProperty("token"))
@@ -22154,22 +22162,26 @@ $root.server = (function() {
             if (object instanceof $root.server.PushToken)
                 return object;
             var message = new $root.server.PushToken();
-            switch (object.os) {
+            switch (object.tokenType) {
             case "ANDROID":
             case 0:
-                message.os = 0;
+                message.tokenType = 0;
                 break;
             case "IOS":
             case 1:
-                message.os = 1;
+                message.tokenType = 1;
                 break;
             case "IOS_DEV":
             case 2:
-                message.os = 2;
+                message.tokenType = 2;
                 break;
             case "IOS_APPCLIP":
             case 3:
-                message.os = 3;
+                message.tokenType = 3;
+                break;
+            case "IOS_VOIP":
+            case 4:
+                message.tokenType = 4;
                 break;
             }
             if (object.token != null)
@@ -22191,11 +22203,11 @@ $root.server = (function() {
                 options = {};
             var object = {};
             if (options.defaults) {
-                object.os = options.enums === String ? "ANDROID" : 0;
+                object.tokenType = options.enums === String ? "ANDROID" : 0;
                 object.token = "";
             }
-            if (message.os != null && message.hasOwnProperty("os"))
-                object.os = options.enums === String ? $root.server.PushToken.Os[message.os] : message.os;
+            if (message.tokenType != null && message.hasOwnProperty("tokenType"))
+                object.tokenType = options.enums === String ? $root.server.PushToken.TokenType[message.tokenType] : message.tokenType;
             if (message.token != null && message.hasOwnProperty("token"))
                 object.token = message.token;
             return object;
@@ -22213,20 +22225,22 @@ $root.server = (function() {
         };
 
         /**
-         * Os enum.
-         * @name server.PushToken.Os
+         * TokenType enum.
+         * @name server.PushToken.TokenType
          * @enum {number}
          * @property {number} ANDROID=0 ANDROID value
          * @property {number} IOS=1 IOS value
          * @property {number} IOS_DEV=2 IOS_DEV value
          * @property {number} IOS_APPCLIP=3 IOS_APPCLIP value
+         * @property {number} IOS_VOIP=4 IOS_VOIP value
          */
-        PushToken.Os = (function() {
+        PushToken.TokenType = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "ANDROID"] = 0;
             values[valuesById[1] = "IOS"] = 1;
             values[valuesById[2] = "IOS_DEV"] = 2;
             values[valuesById[3] = "IOS_APPCLIP"] = 3;
+            values[valuesById[4] = "IOS_VOIP"] = 4;
             return values;
         })();
 
