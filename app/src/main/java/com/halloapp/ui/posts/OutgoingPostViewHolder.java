@@ -82,7 +82,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
             seenIndicator.setVisibility(View.GONE);
             seenButton.setVisibility(View.VISIBLE);
         }
-        if (TextUtils.isEmpty(post.text)) {
+        if (TextUtils.isEmpty(post.text) || post.urlPreview != null) {
             postActionsSeparator.setVisibility(View.GONE);
             footerSpacing.setVisibility(View.GONE);
         } else {
