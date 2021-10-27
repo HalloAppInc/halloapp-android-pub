@@ -719,6 +719,8 @@
     <string name="added_to_group">%1$s added you to the group %2$s</string>
     <!-- Name of channel of notifications for being added to a new group which is displayed in settings -->
     <string name="group_notifications_channel_name">Group membership notifications</string>
+    <!-- Name of channel of notifications for receiving calls which is displayed in settings -->
+    <string name="call_notifications_channel_name">Call notifications</string>
     <!-- Button that brings user to QR code for joining a group -->
     <string name="qr_code">QR Code</string>
     <!-- Explains QR code that allows users to automatically join a group -->
@@ -786,4 +788,11 @@
     <string name="ringing">Ringing</string>
     <!-- Displayed on the call screen to show what state the call is in -->
     <string name="calling">Calling</string>
+    <!-- The title of the notificaiton for incoming calls -->
+    <string name="incoming_call_notification_title">Incoming call</string>
+    <!-- The call notification accept button label -->
+    <string name="call_accept_button">Accept</string>
+    <!-- The call notification decline button label -->
+    <string name="call_decline_button">decline</string>
+
 </resources>

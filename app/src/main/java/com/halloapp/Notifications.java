@@ -1,5 +1,6 @@
 package com.halloapp;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -7,6 +8,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
@@ -15,6 +20,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.annotation.WorkerThread;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.Person;
@@ -23,6 +29,7 @@ import androidx.core.app.TaskStackBuilder;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.IconCompat;
 
+import com.halloapp.calling.CallNotificationBroadcastReceiver;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
@@ -40,6 +47,7 @@ import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.calling.CallActivity;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.markdown.MarkdownUtils;
@@ -72,6 +80,7 @@ public class Notifications {
     private static final String CRITICAL_NOTIFICATION_CHANNEL_ID = "critical_notifications";
     private static final String INVITE_NOTIFICATION_CHANNEL_ID = "invite_notifications";
     private static final String GROUPS_NOTIFICATION_CHANNEL_ID = "group_notifications";
+    private static final String CALLS_NOTIFICATION_CHANNEL_ID = "call_notifications";
     private static final String BROADCASTS_NOTIFICATION_CHANNEL_ID = "broadcast_notifications";
 
     private static final String MESSAGE_NOTIFICATION_GROUP_KEY = "message_notification";
@@ -82,6 +91,7 @@ public class Notifications {
     private static final int EXPIRATION_NOTIFICATION_ID = 2;
     private static final int LOGIN_FAILED_NOTIFICATION_ID = 3;
     private static final int GROUP_NOTIFICATION_ID = 4;
+    private static final int CALL_NOTIFICATION_ID = 5;
 
     public static final int FIRST_DYNAMIC_NOTIFICATION_ID = 2000;
 
@@ -141,6 +151,11 @@ public class Notifications {
             criticalNotificationsChannel.enableVibration(true);
             final NotificationChannel inviteNotificationsChannel = new NotificationChannel(INVITE_NOTIFICATION_CHANNEL_ID, context.getString(R.string.invite_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
             final NotificationChannel groupNotificationsChannel = new NotificationChannel(GROUPS_NOTIFICATION_CHANNEL_ID, context.getString(R.string.group_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
+            final NotificationChannel callNotificationsChannel = new NotificationChannel(CALLS_NOTIFICATION_CHANNEL_ID, context.getString(R.string.call_notifications_channel_name), NotificationManager.IMPORTANCE_HIGH);
+
+            callNotificationsChannel.enableLights(true);
+            callNotificationsChannel.enableVibration(true);
+            callNotificationsChannel.setSound(getCallRingtone(context), getCallNotificationAudioAttributes());
 
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             notificationManager.createNotificationChannel(feedNotificationsChannel);
@@ -148,6 +163,7 @@ public class Notifications {
             notificationManager.createNotificationChannel(criticalNotificationsChannel);
             notificationManager.createNotificationChannel(inviteNotificationsChannel);
             notificationManager.createNotificationChannel(groupNotificationsChannel);
+            notificationManager.createNotificationChannel(callNotificationsChannel);
             notificationManager.createNotificationChannel(broadcastNotificationsChannel);
         }
     }
@@ -606,6 +622,64 @@ public class Notifications {
         });
     }
 
+    @WorkerThread
+    public void showIncomingCallNotification(String callId, UserId peerUid) {
+        executor.execute(() -> {
+
+            Intent callIntent = CallActivity.incomingCallIntent(context, callId, peerUid);
+            Intent declineIntent = CallNotificationBroadcastReceiver.declineCallIntent(context, callId, peerUid);
+            Intent acceptIntent = CallActivity.acceptCallIntent(context, callId, peerUid);
+
+            PendingIntent callPendingIntent = PendingIntent.getActivity(context, 0, callIntent, getPendingIntentFlags());
+            PendingIntent declinePendingIntent = PendingIntent.getBroadcast(context, 0, declineIntent, Notifications.getPendingIntentFlags());
+            PendingIntent acceptPendingIntent = PendingIntent.getActivity(context, 0, acceptIntent, getPendingIntentFlags());
+
+            final Contact contact = ContactsDb.getInstance().getContact(peerUid);
+            String name = contact.getDisplayName();
+
+            final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CALLS_NOTIFICATION_CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    // TODO(nikola): improve the notification based on designs
+                    .setContentTitle(context.getString(R.string.incoming_call_notification_title))
+                    .setContentText(name)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setCategory(NotificationCompat.CATEGORY_CALL)
+                    .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
+                            NotificationCompat.DEFAULT_SOUND |
+                            NotificationCompat.DEFAULT_VIBRATE)
+                    .setSound(getCallRingtone(context), AudioManager.STREAM_RING)
+                    // TODO(nikola): icons are not shown in the notification somehow...
+                    .addAction(R.drawable.ic_call_end, context.getString(R.string.call_decline_button), declinePendingIntent)
+                    .addAction(R.drawable.ic_call, context.getString(R.string.call_accept_button), acceptPendingIntent)
+                    // TODO(nikola): Maybe try this for API 31 and above
+                    // .setStyle(Notifications.CallStyle.forIncomingCall(caller, declineIntent, answerIntent))
+
+                    .setFullScreenIntent(callPendingIntent, true);
+
+            // TODO(nikola): https://developer.android.com/training/notify-user/build-notification#metadata
+
+            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            Notification notification = builder.build();
+            notificationManager.notify(CALL_NOTIFICATION_ID, notification);
+        });
+    }
+
+    public void clearIncomingCallNotification() {
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.cancel(CALL_NOTIFICATION_ID);
+    }
+
+    public Uri getCallRingtone(Context context) {
+        return RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE);
+    }
+
+    public AudioAttributes getCallNotificationAudioAttributes() {
+        return new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION_COMMUNICATION_REQUEST)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+    }
+
     public void showExpirationNotification(int daysLeft) {
         final String title;
         if (daysLeft > 0) {
@@ -726,6 +800,14 @@ public class Notifications {
             Log.i("Notifications.MarkReadReceiver marking chat " + chatId + " as read");
             ContentDb.getInstance().setChatSeen(chatId);
             Notifications.getInstance(context).clearMessageNotifications(chatId);
+        }
+    }
+
+    public static int getPendingIntentFlags() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            return PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
+        } else {
+            return PendingIntent.FLAG_UPDATE_CURRENT;
         }
     }
 }

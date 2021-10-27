@@ -1,5 +1,7 @@
 package com.halloapp.calling;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -8,6 +10,7 @@ import androidx.annotation.WorkerThread;
 import com.google.firebase.crashlytics.internal.model.CrashlyticsReport;
 import com.halloapp.AppContext;
 import com.halloapp.ConnectionObservers;
+import com.halloapp.Notifications;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
@@ -25,6 +28,7 @@ import com.halloapp.xmpp.ConnectionImpl;
 import com.halloapp.xmpp.SeenReceiptElement;
 import com.halloapp.xmpp.calls.AnswerCallElement;
 import com.halloapp.xmpp.calls.CallsApi;
+import com.halloapp.xmpp.calls.EndCallElement;
 import com.halloapp.xmpp.calls.IceCandidateElement;
 import com.halloapp.xmpp.calls.StartCallResponseIq;
 import com.halloapp.xmpp.util.Observable;
@@ -136,6 +140,7 @@ public class CallManager {
     // TODO(nikola): Don't take the context as argument here use AppContext
     // TODO(nikola): Don't pass the callViewModel. Have the callViewModel subscribe on events
     public void startCall(CallViewModel callViewModel, UserId peerUid) {
+        Log.i("startCall");
         this.callViewModel = callViewModel;
         this.callId = RandomId.create();
         this.peerUid = peerUid;
@@ -177,9 +182,11 @@ public class CallManager {
         isStarted = false;
         callId = null;
         peerUid = null;
+        callViewModel = null;
     }
 
-    // TODO(nikola): temporary code until we have the notification.
+    // TODO(nikola): temporary code until we do the model to subscribe to the CallManager for events
+    // right now the CallManager calls functions in the model to change the UI
     public void setCallViewModel(CallViewModel callViewModel) {
         this.callViewModel = callViewModel;
     }
@@ -197,7 +204,14 @@ public class CallManager {
                 new SimpleSdpObserver(),
                 new SessionDescription(SessionDescription.Type.OFFER, webrtcOffer));
         setStunTurnServers(stunServers, turnServers);
-        callViewModel.onIncomingCall();
+        // if we have reference to the callViewModel the activity is already displayed.
+        // TODO(nikola): always display the notification. The CallActivity should
+        // not be displayed
+        if (callViewModel != null) {
+            callViewModel.onIncomingCall();
+        } else {
+            Notifications.getInstance(context).showIncomingCallNotification(callId, peerUid);
+        }
     }
 
     private void handleCallRinging(@NonNull String callId, @NonNull UserId peerUid, Long timestamp) {
@@ -229,7 +243,12 @@ public class CallManager {
     private void handleEndCall(@NonNull String callId, @NonNull UserId peerUid,
                                @NonNull EndCall.Reason reason, Long timestamp) {
         Log.i("got EndCall callId: " + callId + " peerUid: " + peerUid + " reason: " + reason.name());
-        callViewModel.onEndCall();
+        if (callViewModel != null) {
+            callViewModel.onEndCall();
+        }
+        // TODO(nikola): Handle multiple calls at the same time. We should only cancel the right
+        // notification
+        Notifications.getInstance(context).clearIncomingCallNotification();
     }
 
     private void handleIceCandidate(@NonNull String callId, @NonNull UserId peerUid,
@@ -486,5 +505,17 @@ public class CallManager {
     public void onMute(boolean mute) {
         // TODO(nikola): Use the audioManager here
         localAudioTrack.setEnabled(!mute);
+    }
+
+    public void onEndCall(EndCall.Reason reason) {
+        EndCallElement endCallElement = new EndCallElement(callId, reason);
+        String id = RandomId.create();
+        Msg msg = Msg.newBuilder()
+                .setId(id)
+                .setEndCall(endCallElement.toProto())
+                .setToUid(peerUid.rawIdLong())
+                .build();
+        Log.i("trying to send end_call msg " + msg);
+        ConnectionImpl.getInstance().sendCallMsg(msg);
     }
 }

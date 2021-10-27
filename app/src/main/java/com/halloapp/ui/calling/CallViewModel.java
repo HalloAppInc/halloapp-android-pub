@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -12,6 +13,7 @@ import androidx.lifecycle.ViewModel;
 import com.halloapp.calling.CallAudioManager;
 import com.halloapp.calling.CallManager;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.EndCall;
 import com.halloapp.util.logs.Log;
 
 import java.lang.annotation.Retention;
@@ -122,6 +124,8 @@ public class CallViewModel extends ViewModel {
     }
 
     public void onCancelCall() {
+        // TODO(nikola): add new reason Cancel
+        callManager.onEndCall(EndCall.Reason.REJECT);
         endCall();
     }
 
@@ -132,6 +136,7 @@ public class CallViewModel extends ViewModel {
 
     public void onDeclineCall() {
         Log.i("onDeclineCall");
+        callManager.onEndCall(EndCall.Reason.REJECT);
         endCall();
     }
 
@@ -153,20 +158,26 @@ public class CallViewModel extends ViewModel {
 
     public void onHangUp() {
         Log.i("onHangUp");
+        callManager.onEndCall(EndCall.Reason.CALL_END);
         endCall();
     }
 
+    // TODO(nikola): rename to onRemoteEndCall()
     public void onEndCall() {
         Log.i("onEndCall");
         endCall();
     }
 
-    private void endCall() {
-        state.postValue(State.STATE_END);
+    @UiThread
+    public void onEndCallCleanup() {
         if (callManager != null) {
             callManager.stop();
         }
         stopAudioManager();
+    }
+
+    private void endCall() {
+        state.postValue(State.STATE_END);
     }
 
     public void onMute() {

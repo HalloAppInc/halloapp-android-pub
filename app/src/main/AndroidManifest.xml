@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
     <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
 
@@ -350,6 +351,13 @@
             android:name=".Notifications$MarkReadReceiver"
             android:enabled="true"
             android:exported="false">
+        </receiver>
+
+        <receiver android:name=".calling.CallNotificationBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.halloapp.calling.CallNotificationBroadcastReceiver.DECLINE"/>
+            </intent-filter>
         </receiver>
 
         <provider

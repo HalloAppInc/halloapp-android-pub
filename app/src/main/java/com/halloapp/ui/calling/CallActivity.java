@@ -1,9 +1,9 @@
 package com.halloapp.ui.calling;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,15 +14,24 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+
+import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class CallActivity extends HalloActivity {
+public class CallActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks, EasyPermissions.RationaleCallbacks  {
 
+    public static final String EXTRA_CALL_ID = "call_id";
+    public static final String EXTRA_PEER_UID = "peer_uid";
+    public static final String EXTRA_IS_INITIATOR = "is_initiator";
+
+    public static final String ACTION_ACCEPT = "accept";
     private View callingView;
     private View ringingView;
     private View inCallView;
@@ -61,7 +70,8 @@ public class CallActivity extends HalloActivity {
         speakerButtonView = findViewById(R.id.in_call_speaker);
 
         callViewModel = new ViewModelProvider(this).get(CallViewModel.class);
-        String userUidStr = (String) getIntent().getExtras().get("peer_uid");
+        String userUidStr = getIntent().getStringExtra(EXTRA_PEER_UID);
+        Preconditions.checkNotNull(userUidStr);
         this.peerUid = new UserId(userUidStr);
         Log.i("peerUid is " + peerUid);
         callViewModel.setPeerUid(peerUid);
@@ -89,6 +99,7 @@ public class CallActivity extends HalloActivity {
                     break;
                 case CallViewModel.State.STATE_END:
                     Log.i("finishing the activity");
+                    callViewModel.onEndCallCleanup();
                     finish();
                     break;
             }
@@ -140,7 +151,22 @@ public class CallActivity extends HalloActivity {
             onCancelCall();
         });
 
+
         callViewModel.initAudioManager(getApplicationContext());
+
+        boolean isInitiator = getIntent().getBooleanExtra(EXTRA_IS_INITIATOR, false);
+        Log.i("isInitiator " + isInitiator);
+        if (isInitiator) {
+            Log.i("will start call");
+            startCall();
+        } else {
+            if (ACTION_ACCEPT.equals(getIntent().getAction())) {
+                Log.i("User accepted the call");
+                onAcceptCall();
+            } else {
+                callViewModel.onIncomingCall();
+            }
+        }
     }
 
     private void startCall() {
@@ -148,8 +174,10 @@ public class CallActivity extends HalloActivity {
         //String[] perms = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
         String[] perms = {Manifest.permission.RECORD_AUDIO};
         if (EasyPermissions.hasPermissions(this, perms)) {
+            Log.i("CallActivity.startCall we have permissions");
             onStartCall();
         } else {
+            Log.i("Call needs permissions");
             // TODO(nikola): Add better rationale
             EasyPermissions.requestPermissions(this, "Need mic perms", 0, perms);
         }
@@ -164,6 +192,7 @@ public class CallActivity extends HalloActivity {
     }
 
     private void onAcceptCall() {
+        Notifications.getInstance(getApplicationContext()).clearIncomingCallNotification();
         callViewModel.onAcceptCall();
     }
 
@@ -212,7 +241,47 @@ public class CallActivity extends HalloActivity {
         Intent intent = new Intent(context, CallActivity.class);
         // TODO(nikola): make peer_uid constant?
         intent.putExtra("peer_uid", userId.rawId());
+        intent.putExtra("is_initiator", true);
         return intent;
     }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        Log.i("Call permissions Granted " + requestCode + " " + perms);
+        // TODO(nikola): start/answer the call?
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        Log.i("Call permissions Denied " + requestCode + " " + perms);
+    }
+
+    @Override
+    public void onRationaleAccepted(int requestCode) {
+        Log.i("onRationaleAccepted(int requestCode:" + requestCode + ")");
+    }
+
+    @Override
+    public void onRationaleDenied(int requestCode) {
+        Log.i("onRationaleDeclined(int requestCode:" + requestCode + ")");
+    }
+
+    public static Intent incomingCallIntent(Context context, String callId, UserId peerUid) {
+        Intent intent = new Intent(context, CallActivity.class);
+        intent.putExtra(EXTRA_CALL_ID, callId);
+        intent.putExtra(EXTRA_PEER_UID, peerUid.rawId());
+        intent.putExtra(EXTRA_IS_INITIATOR, false);
+        return intent;
+    }
+
+    public static Intent acceptCallIntent(Context context, String callId, UserId peerUid) {
+        Intent intent = new Intent(context, CallActivity.class);
+        intent.setAction(CallActivity.ACTION_ACCEPT);
+        intent.putExtra(EXTRA_CALL_ID, callId);
+        intent.putExtra(EXTRA_PEER_UID, peerUid.rawId());
+        intent.putExtra(EXTRA_IS_INITIATOR, false);
+        return intent;
+    }
+
 }
 
