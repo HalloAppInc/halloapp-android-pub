@@ -65,44 +65,13 @@ public class MarkdownUtils {
         if (text == null) {
             return null;
         }
-        ArrayList<Integer> initialMentionIndices = new ArrayList<>();
-        for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) == MentionsFormatter.MENTION_CHARACTER) {
-                initialMentionIndices.add(i);
-            }
-        }
         Markwon markwon = createMarkwon(context);
         CharSequence markdown = markwon.toMarkdown(text);
         if (mentions == null || mentions.isEmpty()) {
             return markdown;
         }
-        ArrayList<Integer> newMentionIndices = new ArrayList<>();
-        for (int i = 0; i < markdown.length(); i++) {
-            if (markdown.charAt(i) == MentionsFormatter.MENTION_CHARACTER) {
-                newMentionIndices.add(i);
-            }
-        }
-        List<Mention> adjustedMentions = new ArrayList<>();
-        HashSet<Integer> addedMentionIndices = new HashSet<>();
-        for (Mention mention : mentions) {
-            if (!MentionsFormatter.isValidMention(text, mention)) {
-                Log.e("MarkdownUtils/formatMarkdownWithMentions invalid mention!");
-                continue;
-            }
-            int i = initialMentionIndices.indexOf(mention.index);
-            if (i < 0 || i >= newMentionIndices.size()) {
-                Log.e("MarkdownUtils/formatMarkdownWithMentions mention index out of bounds " + i);
-                continue;
-            }
-            int newIndex = newMentionIndices.get(i);
-            if (addedMentionIndices.contains(newIndex)) {
-                Log.e("MarkdownUtils/formatMarkdownWithMentions duplicated mention " + i);
-                continue;
-            }
-            Mention copy = new Mention(newIndex, mention.userId, mention.fallbackName);
-            adjustedMentions.add(copy);
-            addedMentionIndices.add(newIndex);
-        }
+
+        List<Mention> adjustedMentions = MentionsFormatter.recomputeMentionIndices(mentions, text, markdown);
         return MentionsFormatter.insertMentions(markdown, adjustedMentions, showAt, mentionClickListener);
     }
 }

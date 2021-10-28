@@ -523,7 +523,7 @@ public class CommentsActivity extends HalloActivity implements EasyPermissions.P
 
     private void sendComment() {
         final Pair<String, List<Mention>> textWithMentions = editText.getTextWithMentions();
-        final String postText = StringUtils.preparePostText(textWithMentions.first);
+        final String postText = textWithMentions.first;
         if (TextUtils.isEmpty(postText) && (viewModel.commentMedia.getValue() == null || !viewModel.commentMedia.getValue().isSuccess())) {
             Log.w("CommentsActivity: cannot send empty comment");
             return;

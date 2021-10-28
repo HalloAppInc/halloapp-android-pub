@@ -902,7 +902,7 @@ public class ContentComposerActivity extends HalloActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.share) {
             final Pair<String, List<Mention>> textAndMentions = editText.getTextWithMentions();
-            final String postText = StringUtils.preparePostText(textAndMentions.first);
+            final String postText = textAndMentions.first;
             if (TextUtils.isEmpty(postText) && viewModel.getEditMedia() == null) {
                 Log.w("ContentComposerActivity: cannot send empty content");
             } else {

@@ -14,7 +14,9 @@ import androidx.annotation.Nullable;
 import com.halloapp.content.Mention;
 import com.halloapp.util.logs.Log;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 public class MentionsFormatter {
@@ -52,6 +54,46 @@ public class MentionsFormatter {
         SpannableString mentionString = new SpannableString(showAt ? "@" + mention.fallbackName : mention.fallbackName);
         mentionString.setSpan(new MentionSpan(mention, mentionClickListener), 0, mentionString.length(),  Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return mentionString;
+    }
+
+    public static List<Mention> recomputeMentionIndices(@NonNull List<Mention> mentions, CharSequence before, CharSequence after) {
+        if (mentions.isEmpty()) {
+            return new ArrayList<>();
+        }
+        ArrayList<Integer> initialMentionIndices = new ArrayList<>();
+        for (int i = 0; i < before.length(); i++) {
+            if (before.charAt(i) == MentionsFormatter.MENTION_CHARACTER) {
+                initialMentionIndices.add(i);
+            }
+        }
+        ArrayList<Integer> newMentionIndices = new ArrayList<>();
+        for (int i = 0; i < after.length(); i++) {
+            if (after.charAt(i) == MentionsFormatter.MENTION_CHARACTER) {
+                newMentionIndices.add(i);
+            }
+        }
+        List<Mention> adjustedMentions = new ArrayList<>();
+        HashSet<Integer> addedMentionIndices = new HashSet<>();
+        for (Mention mention : mentions) {
+            if (!MentionsFormatter.isValidMention(before, mention)) {
+                Log.e("MentionsFormatter invalid mention!");
+                continue;
+            }
+            int i = initialMentionIndices.indexOf(mention.index);
+            if (i < 0 || i >= newMentionIndices.size()) {
+                Log.e("MentionsFormatter mention index out of bounds " + i);
+                continue;
+            }
+            int newIndex = newMentionIndices.get(i);
+            if (addedMentionIndices.contains(newIndex)) {
+                Log.e("MentionsFormatter duplicated mention " + i);
+                continue;
+            }
+            Mention copy = new Mention(newIndex, mention.userId, mention.fallbackName);
+            adjustedMentions.add(copy);
+            addedMentionIndices.add(newIndex);
+        }
+        return adjustedMentions;
     }
 
     static class MentionSpan extends ClickableSpan {

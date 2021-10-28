@@ -21,7 +21,9 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.content.Mention;
 import com.halloapp.ui.markdown.MarkdownUtils;
 import com.halloapp.ui.mentions.MentionPickerView;
+import com.halloapp.ui.mentions.MentionsFormatter;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -207,7 +209,11 @@ public class MentionableEntry extends PostEditText implements MentionPickerView.
         }
         Editable editable = Editable.Factory.getInstance().newEditable(getText());
         replaceMentionsWithPlaceholders(editable);
-        return new Pair<>(Preconditions.checkNotNull(editable).toString(), extractMentionsFromPlaceholders(editable));
+        String text = Preconditions.checkNotNull(editable).toString();
+        String textToPost = StringUtils.preparePostText(text);
+        List<Mention> mentions = extractMentionsFromPlaceholders(editable);
+        List<Mention> adjustedMentions = MentionsFormatter.recomputeMentionIndices(mentions, text, textToPost);
+        return new Pair<>(textToPost, adjustedMentions);
     }
 
     private List<Mention> extractMentionsFromPlaceholders(@NonNull Editable editable) {

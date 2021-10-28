@@ -1153,7 +1153,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
     private void sendMessage() {
         final Pair<String, List<Mention>> textAndMentions = editText.getTextWithMentions();
-        final String messageText = StringUtils.preparePostText(textAndMentions.first);
+        final String messageText = textAndMentions.first;
         if (TextUtils.isEmpty(messageText)) {
             Log.w("ChatActivity: cannot send empty message");
             return;
