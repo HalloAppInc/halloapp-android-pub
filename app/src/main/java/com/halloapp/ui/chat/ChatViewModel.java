@@ -408,22 +408,28 @@ public class ChatViewModel extends AndroidViewModel {
     }
 
     public void sendSystemMessage(@Message.Usage int usage, ChatId chatId) {
-        final Message message = new Message(0,
-                chatId,
-                UserId.ME,
-                RandomId.create(),
-                System.currentTimeMillis(),
-                Message.TYPE_SYSTEM,
-                usage,
-                Message.STATE_OUTGOING_DELIVERED,
-                null,
-                null,
-                -1,
-                null,
-                -1,
-                null,
-                0);
-        message.addToStorage(contentDb);
+        bgWorkers.execute(() -> {
+            if (contentDb.getChat(chatId) == null) {
+                Log.i("Skipping adding system message because chat " + chatId + " does not already exist");
+            } else {
+                final Message message = new Message(0,
+                        chatId,
+                        UserId.ME,
+                        RandomId.create(),
+                        System.currentTimeMillis(),
+                        Message.TYPE_SYSTEM,
+                        usage,
+                        Message.STATE_OUTGOING_DELIVERED,
+                        null,
+                        null,
+                        -1,
+                        null,
+                        -1,
+                        null,
+                        0);
+                message.addToStorage(contentDb);
+            }
+        });
     }
 
     @Override

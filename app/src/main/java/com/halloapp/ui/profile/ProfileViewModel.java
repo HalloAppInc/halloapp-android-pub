@@ -34,6 +34,7 @@ import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
+import com.halloapp.util.logs.Log;
 
 import java.util.Collection;
 import java.util.List;
@@ -243,23 +244,29 @@ public class ProfileViewModel extends ViewModel {
         return blockResult;
     }
 
-    public void sendSystemMessage(@Message.Usage int usage, ChatId chatId) {
-        final Message message = new Message(0,
-                chatId,
-                UserId.ME,
-                RandomId.create(),
-                System.currentTimeMillis(),
-                Message.TYPE_SYSTEM,
-                usage,
-                Message.STATE_OUTGOING_DELIVERED,
-                null,
-                null,
-                -1,
-                null,
-                -1,
-                null,
-                0);
-        message.addToStorage(contentDb);
+    public void sendSystemMessage(@Message.Usage int usage, UserId userId) {
+        bgWorkers.execute(() -> {
+            if (contentDb.getChat(userId) == null) {
+                Log.i("Skipping adding system message because chat with " + userId + " does not already exist");
+            } else {
+                final Message message = new Message(0,
+                        userId,
+                        UserId.ME,
+                        RandomId.create(),
+                        System.currentTimeMillis(),
+                        Message.TYPE_SYSTEM,
+                        usage,
+                        Message.STATE_OUTGOING_DELIVERED,
+                        null,
+                        null,
+                        -1,
+                        null,
+                        -1,
+                        null,
+                        0);
+                message.addToStorage(contentDb);
+            }
+        });
     }
 
     public void saveScrollState(@Nullable Parcelable savedScrollState) {
