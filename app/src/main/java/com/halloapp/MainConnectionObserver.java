@@ -10,6 +10,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.content.Chat;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
@@ -774,21 +775,28 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     private void addSystemMessage(@NonNull UserId sender, @Message.Usage int usage, @Nullable String text, @Nullable Runnable completionRunnable) {
-        Message message = new Message(0,
-                sender,
-                sender,
-                RandomId.create(),
-                System.currentTimeMillis(),
-                Message.TYPE_SYSTEM,
-                usage,
-                Message.STATE_OUTGOING_DELIVERED,
-                text,
-                null,
-                -1,
-                null,
-                -1,
-                null,
-                0);
-        contentDb.addMessage(message, false, completionRunnable);
+        if (contentDb.getChat(sender) == null) {
+            Log.i("Skipping adding system message because chat with " + sender + " does not already exist");
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        } else {
+            Message message = new Message(0,
+                    sender,
+                    sender,
+                    RandomId.create(),
+                    System.currentTimeMillis(),
+                    Message.TYPE_SYSTEM,
+                    usage,
+                    Message.STATE_OUTGOING_DELIVERED,
+                    text,
+                    null,
+                    -1,
+                    null,
+                    -1,
+                    null,
+                    0);
+            contentDb.addMessage(message, false, completionRunnable);
+        }
     }
 }
