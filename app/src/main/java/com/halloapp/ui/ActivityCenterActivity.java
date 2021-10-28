@@ -102,7 +102,7 @@ public class ActivityCenterActivity extends HalloActivity {
         clickListener = commentsGroup -> {
             final ActivityCenterViewModel.SocialHistory commentHistoryData = viewModel.socialHistory.getLiveData().getValue();
             if (commentHistoryData != null) {
-                final Intent intent = CommentsActivity.viewComments(this, commentsGroup.postId, commentsGroup.postSenderUserId);
+                final Intent intent = FlatCommentsActivity.viewComments(this, commentsGroup.postId, commentsGroup.postSenderUserId);
                 if (commentsGroup.involvedUsers.size() == 1 && commentsGroup.contentItem instanceof Comment) {
                     intent.putExtra(FlatCommentsActivity.EXTRA_NAVIGATE_TO_COMMENT_ID, commentsGroup.contentItem.id);
                 }
