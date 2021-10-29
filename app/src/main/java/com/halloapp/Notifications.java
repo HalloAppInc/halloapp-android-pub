@@ -673,13 +673,16 @@ public class Notifications {
         notificationManager.cancel(CALL_NOTIFICATION_ID);
     }
 
-    public Notification getOngoingCallNotification() {
+    @WorkerThread
+    public Notification getOngoingCallNotification(UserId peerUid) {
         Intent callIntent = new Intent(context, CallActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, callIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        final Contact contact = ContactsDb.getInstance().getContact(peerUid);
+        String name = contact.getDisplayName();
+
         Notification notification = new NotificationCompat.Builder(context, ONGOING_CALL_NOTIFICATION_CHANNEL_ID)
-                // TODO: display the user name
-                .setContentTitle("<User>")
+                .setContentTitle(name)
                 // TODO(nikola): Update this for video calls
                 .setContentText(context.getResources().getString(R.string.ongoing_voice_call))
                 .setSmallIcon(R.drawable.call)

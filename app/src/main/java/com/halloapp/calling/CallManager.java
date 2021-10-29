@@ -176,6 +176,16 @@ public class CallManager {
         });
     }
 
+    private ComponentName startCallService() {
+        Log.i("startCallService");
+        Intent serviceIntent = CallService.getIntent(peerUid);
+        if (Build.VERSION.SDK_INT >= 26) {
+            return context.startForegroundService(serviceIntent);
+        } else {
+            return context.startService(serviceIntent);
+        }
+    }
+
     @WorkerThread
     private void setup() {
         // TODO(nikola): assert this is called not on the UI thread
@@ -188,17 +198,6 @@ public class CallManager {
             doCall();
         }
     }
-
-    private ComponentName startCallService() {
-        Log.i("startCallService");
-        Intent serviceIntent = new Intent(context, CallService.class);
-        if (Build.VERSION.SDK_INT >= 26) {
-            return context.startForegroundService(serviceIntent);
-        } else {
-            return context.startService(serviceIntent);
-        }
-    }
-
     
     public void stop() {
         Log.i("stop callId: " + callId + " peerUid" + peerUid);
