@@ -457,15 +457,15 @@ public class StorageUsageActivity extends HalloActivity {
     }
 
     private static String readableSize(long size) {
-        long factor = 1024;
+        long factor = 1000;
         if (size < factor) {
             return size + " B";
         } else if (size < factor * factor) {
-            return String.format(Locale.US, "%.2f", ((float) size) / factor) + " KiB";
+            return String.format(Locale.US, "%.2f", ((float) size) / factor) + " KB";
         } else if (size < Math.pow(factor, 3)) {
-            return String.format(Locale.US, "%.2f", ((float) size) / (factor * factor)) + " MiB";
+            return String.format(Locale.US, "%.2f", ((float) size) / (factor * factor)) + " MB";
         } else {
-            return String.format(Locale.US, "%.2f", ((float) size) / Math.pow(factor, 3)) + " GiB";
+            return String.format(Locale.US, "%.2f", ((float) size) / Math.pow(factor, 3)) + " GB";
         }
     }
 }
