@@ -36,6 +36,7 @@
     <color name="read_more_link">@color/color_secondary</color>
     <color name="color_action_bar">#F3F2EF</color>
     <color name="window_background">#F3F2EF</color>
+    <color name="floating_search_bar_bg">#FFFFFF</color>
     <color name="group_bg_picker_background">#FFFFFF</color>
     <color name="dimmed_window_overlay">#80000000</color>
     <color name="post_actions_separator">#1a000000</color>

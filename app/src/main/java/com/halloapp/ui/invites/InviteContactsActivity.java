@@ -103,7 +103,6 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
                 adapter.getFilter().filter(s.toString());
             }
         });
-        searchBox.requestFocus();
         String searchText = getIntent().getStringExtra(EXTRA_SEARCH_TEXT);
         if (searchText != null) {
             searchBox.setText(searchText);

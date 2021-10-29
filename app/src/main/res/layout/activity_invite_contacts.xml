@@ -12,31 +12,32 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:elevation="@dimen/action_bar_elevation"
-        android:background="@color/window_background">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/window_background"
             app:layout_constraintTop_toTopOf="parent"
             android:gravity="center"
+            android:elevation="@dimen/action_bar_elevation"
+            android:background="@color/window_background"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents">
         </androidx.appcompat.widget.Toolbar>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="15dp"
-            android:paddingStart="70dp"
-            android:paddingEnd="16dp">
+            android:padding="12dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/bg_search_bar_rounded">
 
             <ImageView
                 android:id="@+id/search_icon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:src="@drawable/ic_search"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/search_text"
@@ -53,9 +54,9 @@
                 app:layout_constraintStart_toEndOf="@+id/search_icon"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:background="@null"
-                android:fontFamily="sans-serif-medium"
-                android:textSize="15sp"
-                android:hint="@string/search_contacts"
+                android:textSize="16sp"
+                android:textColorHint="@color/secondary_text"
+                android:hint="@string/invite_friends_header"
                 android:inputType="textPersonName"
                 android:importantForAutofill="no"/>
 
