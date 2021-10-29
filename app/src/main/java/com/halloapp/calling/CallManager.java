@@ -1,7 +1,6 @@
 package com.halloapp.calling;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -10,25 +9,20 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
-import com.google.firebase.crashlytics.internal.model.CrashlyticsReport;
 import com.halloapp.AppContext;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.Notifications;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
-import com.halloapp.proto.server.IceCandicate;
 import com.halloapp.proto.server.Msg;
-import com.halloapp.proto.server.Packet;
 import com.halloapp.proto.server.StartCallResult;
 import com.halloapp.proto.server.StunServer;
 import com.halloapp.proto.server.TurnServer;
-import com.halloapp.ui.calling.CallViewModel;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ConnectionImpl;
-import com.halloapp.xmpp.SeenReceiptElement;
 import com.halloapp.xmpp.calls.AnswerCallElement;
 import com.halloapp.xmpp.calls.CallsApi;
 import com.halloapp.xmpp.calls.EndCallElement;
@@ -37,8 +31,6 @@ import com.halloapp.xmpp.calls.StartCallResponseIq;
 import com.halloapp.xmpp.util.Observable;
 import com.halloapp.xmpp.util.ObservableErrorException;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.webrtc.AudioSource;
 import org.webrtc.AudioTrack;
 import org.webrtc.DataChannel;
@@ -49,13 +41,13 @@ import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.SessionDescription;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import io.socket.client.IO;
 import io.socket.client.Socket;
 
 public class CallManager {
@@ -71,9 +63,9 @@ public class CallManager {
     private PeerConnection peerConnection;
     private PeerConnectionFactory factory;
 
-    private CallViewModel callViewModel;
     private Context context;
     private final CallsApi callsApi;
+    private final CallAudioManager audioManager;
 
     private String callId;
     private UserId peerUid;
@@ -86,6 +78,7 @@ public class CallManager {
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private static CallManager instance;
+    private final Set<CallObserver> observers;
 
     public static CallManager getInstance() {
         if (instance == null) {
@@ -101,6 +94,9 @@ public class CallManager {
     private CallManager() {
         this.context = AppContext.getInstance().get();
         this.callsApi = CallsApi.getInstance();
+
+        this.audioManager = CallAudioManager.create(context);
+        this.observers = new HashSet<>();
 
         // adding listeners for incoming messages
         ConnectionObservers.getInstance().addObserver(new Connection.Observer() {
@@ -140,18 +136,36 @@ public class CallManager {
                 Connection.getInstance().sendAck(ackId);
             }
         });
-
     }
 
-    // TODO(nikola): Don't take the context as argument here use AppContext
-    // TODO(nikola): Don't pass the callViewModel. Have the callViewModel subscribe on events
-    public void startCall(CallViewModel callViewModel, UserId peerUid) {
+    public void addObserver(CallObserver observer) {
+        synchronized (observers) {
+            observers.add(observer);
+        }
+    }
+
+    public void removeObserver(CallObserver observer) {
+        synchronized (observers) {
+            observers.remove(observer);
+        }
+    }
+
+    public void startCall(@NonNull UserId peerUid) {
         Log.i("startCall");
-        this.callViewModel = callViewModel;
         this.callId = RandomId.create();
         this.peerUid = peerUid;
         this.isInitiator = true;
         this.callService = startCallService();
+
+        // Store existing audio settings and change audio mode to
+        // MODE_IN_COMMUNICATION for best possible VoIP performance.
+        Log.i("Starting the audio manager " + audioManager);
+        audioManager.start(new CallAudioManager.AudioManagerEvents() {
+            @Override
+            public void onAudioDeviceChanged(CallAudioManager.AudioDevice audioDevice, Set<CallAudioManager.AudioDevice> availableAudioDevices) {
+                Log.i("onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + audioDevice);
+            }
+        });
 
 
         // TODO(nikola): How to do this better, I need to execute some code on the background thread
@@ -160,6 +174,19 @@ public class CallManager {
         executor.execute(() -> {
             setup();
         });
+    }
+
+    @WorkerThread
+    private void setup() {
+        // TODO(nikola): assert this is called not on the UI thread
+        Log.i("Initialize WebRTC");
+        initializePeerConnectionFactory();
+        createAVTracks();
+        initializePeerConnections();
+        startStreams();
+        if (isInitiator) {
+            doCall();
+        }
     }
 
     private ComponentName startCallService() {
@@ -172,21 +199,10 @@ public class CallManager {
         }
     }
 
-    @WorkerThread
-    private void setup() {
-        // TODO(nikola): assert this is called not on the UI thread
-        Log.d("Initialize WebRTC");
-        initializePeerConnectionFactory();
-        createAVTracks();
-        initializePeerConnections();
-        startStreams();
-        if (isInitiator) {
-            doCall();
-        }
-    }
-
+    
     public void stop() {
         Log.i("stop callId: " + callId + " peerUid" + peerUid);
+        audioManager.stop();
         if (localAudioTrack != null) {
             localAudioTrack.setEnabled(false);
             localAudioTrack = null;
@@ -203,13 +219,6 @@ public class CallManager {
         isStarted = false;
         callId = null;
         peerUid = null;
-        callViewModel = null;
-    }
-
-    // TODO(nikola): temporary code until we do the model to subscribe to the CallManager for events
-    // right now the CallManager calls functions in the model to change the UI
-    public void setCallViewModel(CallViewModel callViewModel) {
-        this.callViewModel = callViewModel;
     }
 
     private void handleIncomingCall(String callId, UserId peerUid, String webrtcOffer,
@@ -225,14 +234,9 @@ public class CallManager {
                 new SimpleSdpObserver(),
                 new SessionDescription(SessionDescription.Type.OFFER, webrtcOffer));
         setStunTurnServers(stunServers, turnServers);
-        // if we have reference to the callViewModel the activity is already displayed.
-        // TODO(nikola): always display the notification. The CallActivity should
-        // not be displayed
-        if (callViewModel != null) {
-            callViewModel.onIncomingCall();
-        } else {
-            Notifications.getInstance(context).showIncomingCallNotification(callId, peerUid);
-        }
+
+        notifyOnIncomingCall();
+        Notifications.getInstance(context).showIncomingCallNotification(callId, peerUid);
     }
 
     private void handleCallRinging(@NonNull String callId, @NonNull UserId peerUid, Long timestamp) {
@@ -247,7 +251,7 @@ public class CallManager {
             Log.e("Error: unexpected call ringing, not initiator");
             return;
         }
-        callViewModel.onPeerIsRinging();
+        notifyOnPeerIsRinging();
     }
 
     private void handleAnswerCall(@NonNull String callId, @NonNull UserId peerUid,
@@ -258,15 +262,13 @@ public class CallManager {
                 new SimpleSdpObserver(),
                 new SessionDescription(SessionDescription.Type.ANSWER,
                         webrtcOffer));
-        callViewModel.onAnswerCall();
+        notifyOnAnsweredCall();
     }
 
     private void handleEndCall(@NonNull String callId, @NonNull UserId peerUid,
                                @NonNull EndCall.Reason reason, Long timestamp) {
         Log.i("got EndCall callId: " + callId + " peerUid: " + peerUid + " reason: " + reason.name());
-        if (callViewModel != null) {
-            callViewModel.onEndCall();
-        }
+        notifyOnEndCall();
         // TODO(nikola): Handle multiple calls at the same time. We should only cancel the right
         // notification
         Notifications.getInstance(context).clearIncomingCallNotification();
@@ -526,9 +528,17 @@ public class CallManager {
         }, new MediaConstraints());
     }
 
-    public void onMute(boolean mute) {
-        // TODO(nikola): Use the audioManager here
+    public void setMicrophoneMute(boolean mute) {
         localAudioTrack.setEnabled(!mute);
+        audioManager.setMicrophoneMute(mute);
+    }
+
+    public void setSpeakerPhoneOn(boolean on) {
+        if (on) {
+            audioManager.setDefaultAudioDevice(CallAudioManager.AudioDevice.SPEAKER_PHONE);
+        } else {
+            audioManager.setDefaultAudioDevice(CallAudioManager.AudioDevice.EARPIECE);
+        }
     }
 
     public void onEndCall(EndCall.Reason reason) {
@@ -542,4 +552,37 @@ public class CallManager {
         Log.i("trying to send end_call msg " + msg);
         ConnectionImpl.getInstance().sendCallMsg(msg);
     }
+
+    private void notifyOnIncomingCall() {
+        synchronized (observers) {
+            for (CallObserver o : observers) {
+                o.onIncomingCall(callId, peerUid);
+            }
+        }
+    }
+
+    private void notifyOnPeerIsRinging() {
+        synchronized (observers) {
+            for (CallObserver o : observers) {
+                o.onPeerIsRinging(callId, peerUid);
+            }
+        }
+    }
+
+    private void notifyOnAnsweredCall() {
+        synchronized (observers) {
+            for (CallObserver o : observers) {
+                o.onAnsweredCall(callId, peerUid);
+            }
+        }
+    }
+
+    private void notifyOnEndCall() {
+        synchronized (observers) {
+            for (CallObserver o : observers) {
+                o.onEndCall(callId, peerUid);
+            }
+        }
+    }
+
 }

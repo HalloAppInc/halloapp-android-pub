@@ -10,7 +10,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.halloapp.calling.CallAudioManager;
+import com.halloapp.calling.CallObserver;
 import com.halloapp.calling.CallManager;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.EndCall;
@@ -18,9 +18,8 @@ import com.halloapp.util.logs.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.Set;
 
-public class CallViewModel extends ViewModel {
+public class CallViewModel extends ViewModel implements CallObserver {
 
     @IntDef({State.STATE_INIT, State.STATE_CALLING, State.STATE_IN_CALL, State.STATE_RINGING})
     @Retention(RetentionPolicy.SOURCE)
@@ -37,52 +36,26 @@ public class CallViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isPeerRinging = new MutableLiveData<>(false);
     private final MutableLiveData<Integer> state = new MutableLiveData<>();
 
-    @Nullable
-    private CallAudioManager audioManager;
-    //TODO(nikola): Move the audio manager to the callManager
-    @Nullable
-    private CallManager callManager;
+    private final CallManager callManager;
 
     private UserId peerUid;
 
     public CallViewModel() {
         state.postValue(State.STATE_INIT);
+        callManager = CallManager.getInstance();
+        callManager.addObserver(this);
+    }
 
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        callManager.removeObserver(this);
     }
 
     public void setPeerUid(UserId peerUid) {
         this.peerUid = peerUid;
     }
 
-    public void initAudioManager(Context context) {
-        if (audioManager != null) {
-            return;
-        }
-        callManager = CallManager.getInstance();
-        // TODO(nikola): remove this call. switch to to observer pattern
-        callManager.setCallViewModel(this);
-        audioManager = CallAudioManager.create(context.getApplicationContext());
-        // Store existing audio settings and change audio mode to
-        // MODE_IN_COMMUNICATION for best possible VoIP performance.
-        Log.i("Starting the audio manager " + audioManager);
-        audioManager.start(new CallAudioManager.AudioManagerEvents() {
-            // This method will be called each time the number of available audio
-            // devices has changed.
-            @Override
-            public void onAudioDeviceChanged(
-                    CallAudioManager.AudioDevice audioDevice, Set<CallAudioManager.AudioDevice> availableAudioDevices) {
-                Log.d("onAudioManagerDevicesChanged: " +
-                        availableAudioDevices + ", " + "selected: " + audioDevice);
-            }
-        });
-    }
-
-    public void stopAudioManager() {
-        if (audioManager != null) {
-            audioManager.stop();
-            audioManager = null;
-        }
-    }
 
     @NonNull
     public LiveData<Integer> getState() {
@@ -118,14 +91,36 @@ public class CallViewModel extends ViewModel {
 
     public void onStart(Context context) {
         state.postValue(State.STATE_CALLING);
-        // had to move this to the constructor rather then here.
-        // initAudioManager(context);
-        callManager.startCall(this, peerUid);
+        callManager.startCall(peerUid);
     }
 
     public void onCancelCall() {
         // TODO(nikola): add new reason Cancel
         callManager.onEndCall(EndCall.Reason.REJECT);
+        endCall();
+    }
+
+
+    @Override
+    public void onIncomingCall(String callId, UserId peerUid) {
+        this.onIncomingCall();
+    }
+
+    @Override
+    public void onPeerIsRinging(String callId, UserId peerUid) {
+        Log.i("onPeerIsRinging");
+        isPeerRinging.postValue(true);
+    }
+
+    @Override
+    public void onAnsweredCall(String callId, UserId peerUid) {
+        Log.i("onAnswerCall");
+        state.postValue(State.STATE_IN_CALL);
+    }
+
+    @Override
+    public void onEndCall(String callId, UserId peerUid) {
+        Log.i("onEndCall");
         endCall();
     }
 
@@ -138,15 +133,6 @@ public class CallViewModel extends ViewModel {
         Log.i("onDeclineCall");
         callManager.onEndCall(EndCall.Reason.REJECT);
         endCall();
-    }
-
-    public void onPeerIsRinging() {
-        Log.i("onPeerIsRinging");
-        isPeerRinging.postValue(true);
-    }
-    public void onAnswerCall() {
-        Log.i("onAnswerCall");
-        state.postValue(State.STATE_IN_CALL);
     }
 
     public void onAcceptCall() {
@@ -162,18 +148,11 @@ public class CallViewModel extends ViewModel {
         endCall();
     }
 
-    // TODO(nikola): rename to onRemoteEndCall()
-    public void onEndCall() {
-        Log.i("onEndCall");
-        endCall();
-    }
-
     @UiThread
     public void onEndCallCleanup() {
         if (callManager != null) {
             callManager.stop();
         }
-        stopAudioManager();
     }
 
     private void endCall() {
@@ -185,7 +164,7 @@ public class CallViewModel extends ViewModel {
         Log.i("onMute " + curState + " " + !isMuted.getValue());
         // TODO(nikola): postValue or setValue?
         isMuted.setValue(!isMuted.getValue());
-        callManager.onMute(isMuted.getValue());
+        callManager.setMicrophoneMute(isMuted.getValue());
     }
 
     public void onSpeakerPhone() {
@@ -193,11 +172,8 @@ public class CallViewModel extends ViewModel {
         Boolean curState = isSpeakerOn.getValue();
         Log.i("onSpeakerPhone " + curState + " " + !isSpeakerOn.getValue());
         isSpeakerOn.setValue(!isSpeakerOn.getValue());
-        if (isSpeakerOn.getValue()) {
-            audioManager.setDefaultAudioDevice(CallAudioManager.AudioDevice.SPEAKER_PHONE);
-        } else {
-            audioManager.setDefaultAudioDevice(CallAudioManager.AudioDevice.EARPIECE);
-        }
+        // TODO(nikola): move the isSpeakerOn and isMuted states into the callManager
+        callManager.setSpeakerPhoneOn(isSpeakerOn.getValue());
     }
 
 }

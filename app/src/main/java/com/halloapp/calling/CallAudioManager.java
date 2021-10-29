@@ -10,6 +10,7 @@ import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 import android.os.Build;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.Nullable;
 
 import java.util.Collections;
@@ -287,6 +288,7 @@ public class CallAudioManager {
         Log.d("AudioManager started");
     }
 
+    @MainThread
     @SuppressWarnings("deprecation") // TODO(henrika): audioManager.abandonAudioFocus() is deprecated.
     public void stop() {
         Log.d("stop");
@@ -412,7 +414,7 @@ public class CallAudioManager {
     }
 
     /** Sets the microphone mute state. */
-    private void setMicrophoneMute(boolean on) {
+    public void setMicrophoneMute(boolean on) {
         boolean wasMuted = audioManager.isMicrophoneMute();
         if (wasMuted == on) {
             return;

@@ -151,9 +151,6 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             onCancelCall();
         });
 
-
-        callViewModel.initAudioManager(getApplicationContext());
-
         boolean isInitiator = getIntent().getBooleanExtra(EXTRA_IS_INITIATOR, false);
         Log.i("isInitiator " + isInitiator);
         if (isInitiator) {
