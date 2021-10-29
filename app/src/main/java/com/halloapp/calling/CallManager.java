@@ -2,7 +2,10 @@ package com.halloapp.calling;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
@@ -75,6 +78,8 @@ public class CallManager {
     private String callId;
     private UserId peerUid;
 
+    private ComponentName callService;
+
     // Executor thread is started once in private ctor and is used for all
     // peer connection API calls to ensure new peer connection factory is
     // created on the same thread as previously destroyed factory.
@@ -135,6 +140,7 @@ public class CallManager {
                 Connection.getInstance().sendAck(ackId);
             }
         });
+
     }
 
     // TODO(nikola): Don't take the context as argument here use AppContext
@@ -145,6 +151,7 @@ public class CallManager {
         this.callId = RandomId.create();
         this.peerUid = peerUid;
         this.isInitiator = true;
+        this.callService = startCallService();
 
 
         // TODO(nikola): How to do this better, I need to execute some code on the background thread
@@ -153,6 +160,16 @@ public class CallManager {
         executor.execute(() -> {
             setup();
         });
+    }
+
+    private ComponentName startCallService() {
+        Log.i("startCallService");
+        Intent serviceIntent = new Intent(context, CallService.class);
+        if (Build.VERSION.SDK_INT >= 26) {
+            return context.startForegroundService(serviceIntent);
+        } else {
+            return context.startService(serviceIntent);
+        }
     }
 
     @WorkerThread
@@ -177,6 +194,10 @@ public class CallManager {
         if (peerConnection != null) {
             peerConnection.close();
             peerConnection = null;
+        }
+        if (callService != null) {
+            context.stopService(new Intent(context, CallService.class));
+            callService = null;
         }
         isInitiator = false;
         isStarted = false;
@@ -481,6 +502,9 @@ public class CallManager {
 
     private void doAnswer() {
         Log.i("Answering callId: " + callId + " peerUid: " + peerUid);
+        if (this.callService == null) {
+            this.callService = startCallService();
+        }
         peerConnection.createAnswer(new SimpleSdpObserver() {
             @Override
             public void onCreateSuccess(SessionDescription sessionDescription) {

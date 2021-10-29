@@ -88,9 +88,13 @@
             android:theme="@style/AppTheme.Chat"
             android:label=""
             android:windowSoftInputMode="adjustResize"/>
-        <activity android:name=".ui.calling.CallActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/new_group_title"/>
+
+        <activity
+            android:name=".ui.calling.CallActivity"
+            android:label="@string/call_title"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <activity android:name=".ui.chat.KeyVerificationActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label=""/>
@@ -383,6 +387,13 @@
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
+        </service>
+
+        <service
+            android:name=".calling.CallService"
+            android:foregroundServiceType="phoneCall|microphone"
+            android:enabled="true"
+            android:exported="false">
         </service>
 
         <meta-data

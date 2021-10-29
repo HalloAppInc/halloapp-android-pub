@@ -81,6 +81,7 @@ public class Notifications {
     private static final String INVITE_NOTIFICATION_CHANNEL_ID = "invite_notifications";
     private static final String GROUPS_NOTIFICATION_CHANNEL_ID = "group_notifications";
     private static final String CALLS_NOTIFICATION_CHANNEL_ID = "call_notifications";
+    private static final String ONGOING_CALL_NOTIFICATION_CHANNEL_ID = "ongoing_call_notifications";
     private static final String BROADCASTS_NOTIFICATION_CHANNEL_ID = "broadcast_notifications";
 
     private static final String MESSAGE_NOTIFICATION_GROUP_KEY = "message_notification";
@@ -92,6 +93,7 @@ public class Notifications {
     private static final int LOGIN_FAILED_NOTIFICATION_ID = 3;
     private static final int GROUP_NOTIFICATION_ID = 4;
     private static final int CALL_NOTIFICATION_ID = 5;
+    public static final int ONGOING_CALL_NOTIFICATION_ID = 6;
 
     public static final int FIRST_DYNAMIC_NOTIFICATION_ID = 2000;
 
@@ -152,6 +154,7 @@ public class Notifications {
             final NotificationChannel inviteNotificationsChannel = new NotificationChannel(INVITE_NOTIFICATION_CHANNEL_ID, context.getString(R.string.invite_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
             final NotificationChannel groupNotificationsChannel = new NotificationChannel(GROUPS_NOTIFICATION_CHANNEL_ID, context.getString(R.string.group_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
             final NotificationChannel callNotificationsChannel = new NotificationChannel(CALLS_NOTIFICATION_CHANNEL_ID, context.getString(R.string.call_notifications_channel_name), NotificationManager.IMPORTANCE_HIGH);
+            final NotificationChannel ongoingCallNotificationsChannel = new NotificationChannel(ONGOING_CALL_NOTIFICATION_CHANNEL_ID, context.getString(R.string.ongoing_call_notifications_channel_name), NotificationManager.IMPORTANCE_LOW);
 
             callNotificationsChannel.enableLights(true);
             callNotificationsChannel.enableVibration(true);
@@ -164,6 +167,7 @@ public class Notifications {
             notificationManager.createNotificationChannel(inviteNotificationsChannel);
             notificationManager.createNotificationChannel(groupNotificationsChannel);
             notificationManager.createNotificationChannel(callNotificationsChannel);
+            notificationManager.createNotificationChannel(ongoingCallNotificationsChannel);
             notificationManager.createNotificationChannel(broadcastNotificationsChannel);
         }
     }
@@ -667,6 +671,22 @@ public class Notifications {
     public void clearIncomingCallNotification() {
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.cancel(CALL_NOTIFICATION_ID);
+    }
+
+    public Notification getOngoingCallNotification() {
+        Intent callIntent = new Intent(context, CallActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, callIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification notification = new NotificationCompat.Builder(context, ONGOING_CALL_NOTIFICATION_CHANNEL_ID)
+                // TODO: display the user name
+                .setContentTitle("<User>")
+                // TODO(nikola): Update this for video calls
+                .setContentText(context.getResources().getString(R.string.ongoing_voice_call))
+                .setSmallIcon(R.drawable.call)
+                .setContentIntent(pendingIntent)
+                .setTicker(context.getResources().getString(R.string.ongoing_voice_call))
+                .build();
+        return notification;
     }
 
     public Uri getCallRingtone(Context context) {
