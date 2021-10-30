@@ -57,6 +57,8 @@ public class PostContentActivity extends HalloActivity {
     public static final String EXTRA_POST_MEDIA_INDEX = "post_media_index";
     public static final String EXTRA_IS_ARCHIVED = "is_archived";
 
+    private static final int SWIPE_DOWN_VELOCITY_THRESHOLD = -1000;
+
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ChatLoader chatLoader;
     private ContactLoader contactLoader;
@@ -197,6 +199,8 @@ public class PostContentActivity extends HalloActivity {
         getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this) | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
+        postponeEnterTransition();
+
         setContentView(R.layout.activity_post_content);
 
         postRecyclerView = findViewById(R.id.post);
@@ -206,8 +210,19 @@ public class PostContentActivity extends HalloActivity {
         postRecyclerView.setAdapter(postAdapter);
         NestedHorizontalScrollHelper.applyDefaultScrollRatio(postRecyclerView);
 
+        postRecyclerView.setOnFlingListener(new RecyclerView.OnFlingListener() {
+            @Override
+            public boolean onFling(int velocityX, int velocityY) {
+                if (velocityY < SWIPE_DOWN_VELOCITY_THRESHOLD && postRecyclerView.computeVerticalScrollOffset() == 0) {
+                    onBackPressed();
+                }
+
+                return false;
+            }
+        });
+
         View content = findViewById(R.id.content);
-        content.setOnClickListener(v -> finishAfterTransition());
+        content.setOnClickListener(v -> onBackPressed());
 
         final Drawable overlay = content.getBackground();
 
@@ -241,6 +256,15 @@ public class PostContentActivity extends HalloActivity {
         drawDelegateView = Preconditions.checkNotNull(this).findViewById(R.id.draw_delegate);
 
         viewModel.post.getLiveData().observe(this, this::showPost);
+        viewModel.post.getLiveData().observe(this, post -> {
+            showPost(post);
+
+            if (post.media.size() > 0) {
+                MediaPagerAdapter.preparePagerForTransition(postRecyclerView, post.id, getIntent().getIntExtra(EXTRA_POST_MEDIA_INDEX, 0), this::startPostponedEnterTransition);
+            } else {
+                startPostponedEnterTransition();
+            }
+        });
     }
 
     @Override
@@ -251,6 +275,13 @@ public class PostContentActivity extends HalloActivity {
         contactLoader.destroy();
         seenByLoader.destroy();
         ContactsDb.getInstance().removeObserver(contactsObserver);
+    }
+
+    @Override
+    public void onBackPressed() {
+        String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
+        int mediaIndex = getIntent().getIntExtra(EXTRA_POST_MEDIA_INDEX, 0);
+        MediaPagerAdapter.preparePagerForTransition(postRecyclerView, postId, mediaIndex, this::finishAfterTransition);
     }
 
     private void showPost(@Nullable Post post) {
@@ -312,7 +343,6 @@ public class PostContentActivity extends HalloActivity {
             }
             final ViewGroup footer = layout.findViewById(R.id.post_footer);
             if (post.isArchived) {
-                LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_archive, footer, true);
                 return new ArchivedPostViewHolder(layout, postViewHolderParent);
             }
             switch (viewType & POST_DIRECTION_MASK) {

@@ -1,5 +1,6 @@
 package com.halloapp.ui.posts;
 
+import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -9,23 +10,20 @@ import androidx.annotation.NonNull;
 import com.halloapp.R;
 import com.halloapp.content.Post;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 public class ArchivedPostViewHolder extends PostViewHolder {
-
-    private final TextView archiveDate;
+    private final TextView timeView;
 
     public ArchivedPostViewHolder(@NonNull View itemView, @NonNull PostViewHolderParent parent) {
         super(itemView, parent);
-        archiveDate = itemView.findViewById(R.id.archive_date);
+        timeView = itemView.findViewById(R.id.time);
     }
 
     @CallSuper
     public void bindTo(@NonNull Post post) {
         super.bindTo(post);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        archiveDate.setText(String.format(itemView.getContext().getString(R.string.archived_on), dateFormat.format(new Date(post.archiveDate))));
+
+        String date = DateUtils.formatDateTime(itemView.getContext(), post.archiveDate, DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_SHOW_YEAR);
+        String format = String.format(itemView.getContext().getString(R.string.archived_on), date);
+        timeView.append(" • " + format);
     }
 }

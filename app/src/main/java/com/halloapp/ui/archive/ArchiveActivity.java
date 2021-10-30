@@ -1,11 +1,13 @@
 package com.halloapp.ui.archive;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,6 +27,7 @@ import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.PostContentActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.mentions.TextContentLoader;
@@ -50,6 +53,9 @@ public class ArchiveActivity extends HalloActivity  {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+
         setContentView(R.layout.activity_archive);
 
         final ActionBar actionBar = getSupportActionBar();
@@ -123,7 +129,16 @@ public class ArchiveActivity extends HalloActivity  {
                 Intent intent = new Intent(view.getContext(), PostContentActivity.class);
                 intent.putExtra(PostContentActivity.EXTRA_POST_ID, post.id);
                 intent.putExtra(PostContentActivity.EXTRA_IS_ARCHIVED, true);
-                startActivity(intent);
+
+                ActivityOptions options;
+                if (post.media.size() > 0) {
+                    imageView.setTransitionName(MediaPagerAdapter.getTransitionName(post.id, 0));
+                    options = ActivityOptions.makeSceneTransitionAnimation(ArchiveActivity.this, imageView, imageView.getTransitionName());
+                } else {
+                    options = ActivityOptions.makeSceneTransitionAnimation(ArchiveActivity.this);
+                }
+
+                startActivity(intent, options.toBundle());
             };
             itemView.setOnClickListener(clickListener);
             name.setOnClickListener(clickListener);
