@@ -738,7 +738,7 @@ Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
     <string name="archive">"Archiwum"</string>
 
     <!-- Label displaying the date when a post expired -->
-    <string name="archived_on">"Zarchiwizowano dnia"</string>
+    <string name="archived_on">"Zarchiwizowano dnia %s"</string>
 
     <!-- Error message when the group is full -->
     <string name="invite_link_failed_to_join_full">"Nie możesz dołączyć do grupy, ponieważ jest ona pełna"</string>
