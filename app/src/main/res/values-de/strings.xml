@@ -359,9 +359,7 @@ Version: %2$s
         <item quantity="other">"Du hast diese Woche noch %s Einladungen"</item>
     </plurals>
     <string name="invite_friends_title">"Freunde &amp; Familie einladen"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_title">"Einladen"</string>
+    <string name="invite_title">"Freunde einladen"</string>
     <string name="settings_invite_option">"Zu HalloApp einladen"</string>
     <string name="invite_already_on_halloapp">"Nutzt bereits HalloApp"</string>
     <string name="invite_invalid_phone_number">"Ungültige Handynummer"</string>

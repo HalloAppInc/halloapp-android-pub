@@ -18,9 +18,7 @@
     <string name="invite_notifications_channel_name">"Notificações de convites"</string>
     <string name="invite_notification_text">"%s acabou de aceitar seu convite para participar do HalloApp &#x1f389;"</string>
     <string name="me">"Eu"</string>
-
-    <!-- Fuzzy -->
-    <string name="you">"Você"</string>
+    <string name="you">"you"</string>
     <string name="camera_post">"Câmera"</string>
     <string name="gallery_post">"Galeria"</string>
     <string name="text_post">"Texto"</string>
@@ -60,11 +58,9 @@ Sujeito a cobrança da operadora."</string>
     <string name="invalid_phone_number">"Número de telefone inválido"</string>
     <string name="share_option_post">"Publicação"</string>
     <string name="share_option_message">"Mensagem"</string>
-
-    <!-- Fuzzy -->
     <plurals name="max_post_media_items">
-        <item quantity="one">"Você pode selecionar até %d item por publicação"</item>
-        <item quantity="other">"Você pode selecionar até %d itens por publicação"</item>
+        <item quantity="one">"You can select up to %d media item per post"</item>
+        <item quantity="other">"You can select up to %d media item per post"</item>
     </plurals>
     <string name="camera_record_audio_permission_rationale">"Para tirar fotos e gravar vídeos, precisamos de permissão para acessar a câmera e gravar áudio no seu dispositivo"</string>
     <string name="camera_record_audio_permission_rationale_denied">"Para tirar fotos e gravar vídeos, precisamos de permissão para acessar a câmera e gravar áudio no seu dispositivo.
@@ -153,17 +149,13 @@ Abra as configurações do aplicativo para modificar as permissões do aplicativ
         <item quantity="one">"%d nova mensagem"</item>
         <item quantity="other">"%d mensagens novas"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="new_comments_notification">
-        <item quantity="one">"%s comentou na sua publicação"</item>
-        <item quantity="other">"%s comentou na sua publicação"</item>
+        <item quantity="one">"%s commented on your post"</item>
+        <item quantity="other">"%s commented on your post"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="new_comments_on_multiple_posts_notification">
-        <item quantity="one">"%s comentou nas suas publicações"</item>
-        <item quantity="other">"%s comentou nas suas publicações"</item>
+        <item quantity="one">"%s commented on your posts"</item>
+        <item quantity="other">"%s commented on your posts"</item>
     </plurals>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"O HalloApp expirou"</string>
@@ -222,13 +214,9 @@ Abra as configurações do aplicativo para modificar as permissões do aplicativ
     <string name="last_seen_less_minute">"Visto por último: menos de 1 min"</string>
     <string name="online">"online"</string>
     <string name="today">"Hoje"</string>
-
-    <!-- Fuzzy -->
-    <string name="today_at_time">"hoje às %s"</string>
+    <string name="today_at_time">"today at %s"</string>
     <string name="yesterday">"Ontem"</string>
-
-    <!-- Fuzzy -->
-    <string name="yesterday_at_time">"ontem às %s"</string>
+    <string name="yesterday_at_time">"yesterday at %s"</string>
     <string name="day_of_week_at_time">"%1$s às %2$s"</string>
     <string name="unknown_contact">"Contato desconhecido"</string>
     <string name="select_contact">"Nova mensagem"</string>
@@ -238,9 +226,7 @@ Abra as configurações do aplicativo para modificar as permissões do aplicativ
     <string name="action_save">"Salvar"</string>
     <string name="invite_friends">"Convidar amigos e família"</string>
     <string name="invite_friend_chooser_title">"Convidar %s"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_text_with_name_and_number">"Oi, %1$s! Gostaria de convidar você a se juntar a mim no HalloApp, um aplicativo social simples para compartilhar momentos cotidianos. Use %2$s para se cadastrar. Baixe em %3$s"</string>
+    <string name="invite_text_with_name_and_number">"Hey %1$s, I have an invite for you to join me on HalloApp - a real-relationship network for those closest to me. Use %2$s to register. Get it at %3$s"</string>
     <string name="name_hint">"Seu nome"</string>
     <string name="name_must_be_specified">"O nome deve ser especificado"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -327,9 +313,7 @@ versão: %2$s"</string>
         <item quantity="other">"Você tem %s convites restantes esta semana"</item>
     </plurals>
     <string name="invite_friends_title">"Convide amigos e familiares"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_title">"Convidar"</string>
+    <string name="invite_title">"Invite friends"</string>
     <string name="settings_invite_option">"Convidar para o HalloApp"</string>
     <string name="invite_already_on_halloapp">"Já está no HalloApp"</string>
     <string name="invite_invalid_phone_number">"Número de telefone inválido"</string>
@@ -347,15 +331,13 @@ versão: %2$s"</string>
     <string name="failed_create_group">"Falha ao criar grupo. Tente novamente mais tarde"</string>
 
     <!-- Shown in options menu to remove a member of group -->
-    <!-- Fuzzy -->
-    <string name="group_remove_member">"Remover"</string>
+    <string name="group_remove_member">"Remove from group"</string>
     <string name="group_promote_to_admin">"Promover a administrador"</string>
     <string name="promote_admin_in_progress">"Promovendo a administrador…"</string>
     <string name="failed_promote_admin">"Falha ao promover administrador; Tente novamente mais tarde"</string>
 
     <!-- Option for removing a user from the list of admins of a group -->
-    <!-- Fuzzy -->
-    <string name="group_demote_from_admin">"Rebaixar administrador"</string>
+    <string name="group_demote_from_admin">"Dismiss as admin"</string>
     <string name="demote_admin_in_progress">"Rebaixando administrador…"</string>
     <string name="failed_demote_admin">"Falha ao rebaixar administrador. Tente novamente mais tarde"</string>
     <string name="remove_member_in_progress">"Removendo membro…"</string>
@@ -469,9 +451,7 @@ versão: %2$s"</string>
     <string name="not_now">"Agora não"</string>
     <string name="continue_button">"Continuar"</string>
     <string name="invite_link_load_failed">"Falha ao abrir o link do convite de grupo"</string>
-
-    <!-- Fuzzy -->
-    <string name="message_tombstone_placeholder">"Aguardando esta mensagem. Isso pode demorar um pouco. &lt;a href=\"learn-more\"&gt;Saiba mais&lt;/a&gt;."</string>
+    <string name="message_tombstone_placeholder">"Waiting for this message. This may take a while. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
     <string name="failed_no_longer_member">"Você não é mais membro deste grupo"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -502,8 +482,7 @@ versão: %2$s"</string>
     <string name="key_verification_tap_to_scan">"Toque para escanear"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <!-- Fuzzy -->
-    <string name="key_verification_explanation">"Para verificar a segurança de sua conexão com %s, verifique se os números acima coincidem com os exibidos em seu dispositivo ou escaneie o código QR em seu telefone. "<![CDATA[<a href="learn-more">Saiba mais</a>]]>"."</string>
+    <string name="key_verification_explanation">"To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Mais"</string>
@@ -607,8 +586,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="data_available_at">"Os dados estarão disponíveis em %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
-    <!-- Fuzzy -->
-    <string name="export_data_explanation">"Faça o download de uma cópia de todos os seus dados de usuário armazenados nos servidores do HalloApp. Não contém mensagens ou conteúdos de posts."</string>
+    <string name="export_data_explanation">"Download a copy of all your user data stored on HalloApp's servers. This does not contain message or post content."</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"Falha na solicitação"</string>
@@ -617,8 +595,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="export_account_data">"Exportar meus dados"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
-    <!-- Fuzzy -->
-    <string name="e2e_notice">"Os chats possuem criptografia de ponta a ponta, e o HalloApp não tem acesso a eles. &lt;b&gt;Toque para saber mais&lt;/b&gt;"</string>
+    <string name="e2e_notice">"All messages on HalloApp are end-to-end encrypted. &lt;b&gt;Tap to learn more&lt;/b&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"Exibir número de segurança"</string>
@@ -657,8 +634,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="settings_share_option">"Compartilhar o HalloApp"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <!-- Fuzzy -->
-    <string name="share_halloapp_text">"Junte-se a mim no HalloApp, faça o download gratuitamente em halloapp.com/dl"</string>
+    <string name="share_halloapp_text">"Join my real-relationship network on HalloApp. Download for free at halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
     <string name="contact_permissions_request">"Permitir que o HalloApp acesse seus contatos para que você possa enviar e receber atualizações"</string>

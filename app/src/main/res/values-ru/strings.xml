@@ -18,9 +18,7 @@
     <string name="invite_notifications_channel_name">"Уведомления о приглашениях"</string>
     <string name="invite_notification_text">"%s только что принял(-а) ваше приглашение присоединиться к HalloApp &#x1f389;"</string>
     <string name="me">"Я"</string>
-
-    <!-- Fuzzy -->
-    <string name="you">"Вы"</string>
+    <string name="you">"you"</string>
     <string name="camera_post">"Камера"</string>
     <string name="gallery_post">"Галерея"</string>
     <string name="text_post">"Текст"</string>
@@ -60,13 +58,11 @@
     <string name="invalid_phone_number">"Неверный номер телефона"</string>
     <string name="share_option_post">"Пост"</string>
     <string name="share_option_message">"Сообщение"</string>
-
-    <!-- Fuzzy -->
     <plurals name="max_post_media_items">
-        <item quantity="one">"Вы можете выбрать до %d элемента в сообщении"</item>
-        <item quantity="few">"Вы можете выбрать до %d элементов в сообщении"</item>
-        <item quantity="many">"Вы можете выбрать до %d элементов в сообщении"</item>
-        <item quantity="other">"Вы можете выбрать до %d элементов в сообщении"</item>
+        <item quantity="one">"You can select up to %d media item per post"</item>
+        <item quantity="few">"You can select up to %d media item per post"</item>
+        <item quantity="many">"You can select up to %d media item per post"</item>
+        <item quantity="other">"You can select up to %d media item per post"</item>
     </plurals>
     <string name="camera_record_audio_permission_rationale">"Чтобы снимать фото и записывать видео, нам необходимо разрешение на доступ к камере и запись звука на вашем устройстве"</string>
     <string name="camera_record_audio_permission_rationale_denied">"Чтобы снимать фото и записывать видео, нам необходимо разрешение на доступ к камере и запись звука на вашем устройстве.
@@ -165,21 +161,17 @@
         <item quantity="many">"%d новых сообщений"</item>
         <item quantity="other">"%d новых сообщения"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="new_comments_notification">
-        <item quantity="one">"%s прокомментировал(-а) твой пост"</item>
-        <item quantity="few">"%s прокомментировал(-а) твой пост"</item>
-        <item quantity="many">"%s прокомментировал(-а) твой пост"</item>
-        <item quantity="other">"%s прокомментировал(-а) твой пост"</item>
+        <item quantity="one">"%s commented on your post"</item>
+        <item quantity="few">"%s commented on your post"</item>
+        <item quantity="many">"%s commented on your post"</item>
+        <item quantity="other">"%s commented on your post"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="new_comments_on_multiple_posts_notification">
-        <item quantity="one">"%s прокомментировал(-а) твой посты"</item>
-        <item quantity="few">"%s прокомментировал(-а) твой посты"</item>
-        <item quantity="many">"%s прокомментировал(-а) твой посты"</item>
-        <item quantity="other">"%s прокомментировал(-а) твой посты"</item>
+        <item quantity="one">"%s commented on your posts"</item>
+        <item quantity="few">"%s commented on your posts"</item>
+        <item quantity="many">"%s commented on your posts"</item>
+        <item quantity="other">"%s commented on your posts"</item>
     </plurals>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"Срок HalloApp истек"</string>
@@ -246,13 +238,9 @@
     <string name="last_seen_less_minute">"Последний раз в сети менее минуты назад"</string>
     <string name="online">"в сети"</string>
     <string name="today">"Сегодня"</string>
-
-    <!-- Fuzzy -->
-    <string name="today_at_time">"Сегодня в %s"</string>
+    <string name="today_at_time">"today at %s"</string>
     <string name="yesterday">"Вчера"</string>
-
-    <!-- Fuzzy -->
-    <string name="yesterday_at_time">"Вчера в %s"</string>
+    <string name="yesterday_at_time">"yesterday at %s"</string>
     <string name="day_of_week_at_time">"%1$s в %2$s"</string>
     <string name="unknown_contact">"Неизвестный контакт"</string>
     <string name="select_contact">"Новое сообщение"</string>
@@ -262,9 +250,7 @@
     <string name="action_save">"Сохранить"</string>
     <string name="invite_friends">"Пригласить друзей и семью"</string>
     <string name="invite_friend_chooser_title">"Пригласить %s"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_text_with_name_and_number">"Привет, %1$s, приглашаю тебя присоединиться ко мне в HalloApp (простое социальное приложение для того, чтобы делиться повседневными впечатлениями). Используй %2$s для регистрации. Скачай на %3$s"</string>
+    <string name="invite_text_with_name_and_number">"Hey %1$s, I have an invite for you to join me on HalloApp - a real-relationship network for those closest to me. Use %2$s to register. Get it at %3$s"</string>
     <string name="name_hint">"Твое имя"</string>
     <string name="name_must_be_specified">"Нужно указать имя"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -354,9 +340,7 @@ uid: %1$s
         <item quantity="other">"У вас осталось %s приглашения на этой неделе"</item>
     </plurals>
     <string name="invite_friends_title">"Пригласите друзей и семью"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_title">"Пригласить"</string>
+    <string name="invite_title">"Invite friends"</string>
     <string name="settings_invite_option">"Пригласить в HalloApp"</string>
     <string name="invite_already_on_halloapp">"Уже в HalloApp"</string>
     <string name="invite_invalid_phone_number">"Неверный номер телефона"</string>
@@ -374,15 +358,13 @@ uid: %1$s
     <string name="failed_create_group">"Не удалось создать группу, повторите попытку позже"</string>
 
     <!-- Shown in options menu to remove a member of group -->
-    <!-- Fuzzy -->
-    <string name="group_remove_member">"Удалить"</string>
+    <string name="group_remove_member">"Remove from group"</string>
     <string name="group_promote_to_admin">"Повысить до администратора"</string>
     <string name="promote_admin_in_progress">"Повышение до администратора…"</string>
     <string name="failed_promote_admin">"Не удалось повысить до администратора, повторите попытку позже"</string>
 
     <!-- Option for removing a user from the list of admins of a group -->
-    <!-- Fuzzy -->
-    <string name="group_demote_from_admin">"Отменить админство"</string>
+    <string name="group_demote_from_admin">"Dismiss as admin"</string>
     <string name="demote_admin_in_progress">"Отмена админства"</string>
     <string name="failed_demote_admin">"Не удалось отменить админство, повторите попытку позже"</string>
     <string name="remove_member_in_progress">"Удаление участника…"</string>
@@ -516,9 +498,7 @@ uid: %1$s
     <string name="not_now">"Не сейчас"</string>
     <string name="continue_button">"Продолжить"</string>
     <string name="invite_link_load_failed">"Не удалось открыть ссылку для приглашения в группу"</string>
-
-    <!-- Fuzzy -->
-    <string name="message_tombstone_placeholder">"Ожидание этого сообщения. Это может занять некоторое время. &lt;a href=\"learn-more\"&gt;Подробнее…&lt;/a&gt;"</string>
+    <string name="message_tombstone_placeholder">"Waiting for this message. This may take a while. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
     <string name="failed_no_longer_member">"Вы больше не являетесь участником этой группы"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -549,8 +529,7 @@ uid: %1$s
     <string name="key_verification_tap_to_scan">"Нажмите, чтобы отсканировать"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <!-- Fuzzy -->
-    <string name="key_verification_explanation">"Чтобы проверить безопасность вашего соединения с %s , убедитесь, что приведенные выше цифры соответствуют номерам, указанным на устройстве, или отсканируйте QR-код на телефоне. "<![CDATA[<a href="learn-more">Подробнее</a>]]>"."</string>
+    <string name="key_verification_explanation">"To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Еще"</string>
@@ -657,8 +636,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="data_available_at">"Данные будут доступны %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
-    <!-- Fuzzy -->
-    <string name="export_data_explanation">"Загрузите копию всех своих пользовательских данных, хранящихся на серверах HalloApp. Здесь не содержатся сообщения или посты."</string>
+    <string name="export_data_explanation">"Download a copy of all your user data stored on HalloApp's servers. This does not contain message or post content."</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"Запрос не выполнен"</string>
@@ -667,8 +645,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="export_account_data">"Экспортировать мои данные"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
-    <!-- Fuzzy -->
-    <string name="e2e_notice">"Чаты зашифрованы сквозным шифрованием, и HalloApp не имеет к ним доступа. &lt;b&gt;Нажмите, чтобы узнать больше&lt;/b&gt;"</string>
+    <string name="e2e_notice">"All messages on HalloApp are end-to-end encrypted. &lt;b&gt;Tap to learn more&lt;/b&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"Посмотреть номер безопасности"</string>
@@ -707,8 +684,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="settings_share_option">"Поделиться HalloApp"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <!-- Fuzzy -->
-    <string name="share_halloapp_text">"Присоединяйтесь ко мне в HalloApp — загрузите приложение бесплатно на halloapp.com/dl"</string>
+    <string name="share_halloapp_text">"Join my real-relationship network on HalloApp. Download for free at halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
     <string name="contact_permissions_request">"Разрешите HalloApp доступ к вашим контактам, чтобы вы могли отправлять и получать обновления"</string>
@@ -780,8 +756,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="return_to_registration">"Вернуться к регистрации"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <!-- Fuzzy -->
-    <string name="archive_empty">"Здесь будут отображаться твои посты с истекшим сроком действия"</string>
+    <string name="archive_empty">"Your posts will appear here after they expire in 30 days"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"Неподдерживаемый контент"</string>

@@ -18,9 +18,7 @@
     <string name="invite_notifications_channel_name">"Notifications d'invitation"</string>
     <string name="invite_notification_text">"%s vient d'accepter ton invitation à rejoindre HalloAppli &#x1f389;"</string>
     <string name="me">"Moi"</string>
-
-    <!-- Fuzzy -->
-    <string name="you">"Toi"</string>
+    <string name="you">"you"</string>
     <string name="camera_post">"Caméra"</string>
     <string name="gallery_post">"Galerie"</string>
     <string name="text_post">"Texte"</string>
@@ -60,11 +58,9 @@ Des frais d'opérateur téléphonique peuvent être applicables."</string>
     <string name="invalid_phone_number">"Numéro de téléphone invalide"</string>
     <string name="share_option_post">"Publier"</string>
     <string name="share_option_message">"Envoyer un message"</string>
-
-    <!-- Fuzzy -->
     <plurals name="max_post_media_items">
-        <item quantity="one">"Tu peux sélectionner jusqu'à %d article par publication."</item>
-        <item quantity="other">"Tu peux sélectionner jusqu'à %d articles par publication."</item>
+        <item quantity="one">"You can select up to %d media item per post"</item>
+        <item quantity="other">"You can select up to %d media item per post"</item>
     </plurals>
     <string name="camera_record_audio_permission_rationale">"Pour prendre des photos et enregistrer des vidéos, nous avons besoin de l'autorisation d'accéder à l'appareil photo et d'enregistrer de l'audio sur ton appareil."</string>
     <string name="camera_record_audio_permission_rationale_denied">"Pour prendre des photos et enregistrer des vidéos, nous avons besoin de l'autorisation d'accéder à l'appareil photo et d'enregistrer de l'audio sur ton appareil.
@@ -153,17 +149,13 @@ Ouvre l'écran des paramètres de l'application pour modifier les autorisations 
         <item quantity="one">"%d nouveau message"</item>
         <item quantity="other">"%d nouveaux messages"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="new_comments_notification">
-        <item quantity="one">"%s a commenté votre publication"</item>
-        <item quantity="other">"%s a commenté votre publication"</item>
+        <item quantity="one">"%s commented on your post"</item>
+        <item quantity="other">"%s commented on your post"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="new_comments_on_multiple_posts_notification">
-        <item quantity="one">"%s a commenté vos publications"</item>
-        <item quantity="other">"%s a commenté vos publications"</item>
+        <item quantity="one">"%s commented on your posts"</item>
+        <item quantity="other">"%s commented on your posts"</item>
     </plurals>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"HalloApp a expiré"</string>
@@ -222,13 +214,9 @@ Ouvre l'écran des paramètres de l'application pour modifier les autorisations 
     <string name="last_seen_less_minute">"Vue pour la dernière fois il y a moins d'une minute"</string>
     <string name="online">"en ligne"</string>
     <string name="today">"Aujourd'hui"</string>
-
-    <!-- Fuzzy -->
-    <string name="today_at_time">"aujourd'hui à %s"</string>
+    <string name="today_at_time">"today at %s"</string>
     <string name="yesterday">"Hier"</string>
-
-    <!-- Fuzzy -->
-    <string name="yesterday_at_time">"hier à %s"</string>
+    <string name="yesterday_at_time">"yesterday at %s"</string>
     <string name="day_of_week_at_time">"%1$s à %2$s"</string>
     <string name="unknown_contact">"Contact inconnu"</string>
     <string name="select_contact">"Nouveau message"</string>
@@ -238,9 +226,7 @@ Ouvre l'écran des paramètres de l'application pour modifier les autorisations 
     <string name="action_save">"Enregistrer"</string>
     <string name="invite_friends">"Inviter des amis et des membres de la famille"</string>
     <string name="invite_friend_chooser_title">"Inviter %s"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_text_with_name_and_number">"Bonjour %1$s, je vous invite à me rejoindre sur HalloApp, un réseau de relations réelles pour les personnes les plus proches de moi. Utilisez %2$s pour vous inscrire. Obtenez-le sur %3$s"</string>
+    <string name="invite_text_with_name_and_number">"Hey %1$s, I have an invite for you to join me on HalloApp - a real-relationship network for those closest to me. Use %2$s to register. Get it at %3$s"</string>
     <string name="name_hint">"Votre nom"</string>
     <string name="name_must_be_specified">"Le nom doit être spécifié"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -328,9 +314,7 @@ version : %2$s
         <item quantity="other">"Il te reste %s invitations cette semaine"</item>
     </plurals>
     <string name="invite_friends_title">"Invite tes amis et ta famille"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_title">"Inviter"</string>
+    <string name="invite_title">"Invite friends"</string>
     <string name="settings_invite_option">"Inviter à rejoindre HalloApp"</string>
     <string name="invite_already_on_halloapp">"Déjà sur HalloApp"</string>
     <string name="invite_invalid_phone_number">"Le numéro de téléphone n'est pas valide"</string>
@@ -348,15 +332,13 @@ version : %2$s
     <string name="failed_create_group">"Le groupe n'a pas pu être créé, réessaie plus tard"</string>
 
     <!-- Shown in options menu to remove a member of group -->
-    <!-- Fuzzy -->
-    <string name="group_remove_member">"Supprimer"</string>
+    <string name="group_remove_member">"Remove from group"</string>
     <string name="group_promote_to_admin">"Attribuer le rôle d'administrateur"</string>
     <string name="promote_admin_in_progress">"Attribution du rôle d'administrateur…"</string>
     <string name="failed_promote_admin">"Le rôle d'administrateur n'a pas pu être attribué, réessaie plus tard"</string>
 
     <!-- Option for removing a user from the list of admins of a group -->
-    <!-- Fuzzy -->
-    <string name="group_demote_from_admin">"Retirer le rôle d'administrateur"</string>
+    <string name="group_demote_from_admin">"Dismiss as admin"</string>
     <string name="demote_admin_in_progress">"Retrait du rôle d'administrateur…"</string>
     <string name="failed_demote_admin">"Le rôle d'administrateur n'a pas pu être retiré, réessaie plus tard"</string>
     <string name="remove_member_in_progress">"Suppression du membre…"</string>
@@ -470,9 +452,7 @@ version : %2$s
     <string name="not_now">"Pas maintenant"</string>
     <string name="continue_button">"Continuer"</string>
     <string name="invite_link_load_failed">"Échec de l'ouverture du lien d'invitation au groupe"</string>
-
-    <!-- Fuzzy -->
-    <string name="message_tombstone_placeholder">"En attente de ce message. Cela peut prendre un moment. &lt;a href=\"learn-more\"&gt;En savoir plus&lt;/a&gt;."</string>
+    <string name="message_tombstone_placeholder">"Waiting for this message. This may take a while. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
     <string name="failed_no_longer_member">"Vous n'êtes plus membre de ce groupe."</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -503,8 +483,7 @@ version : %2$s
     <string name="key_verification_tap_to_scan">"Touchez pour scanner"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <!-- Fuzzy -->
-    <string name="key_verification_explanation">"Pour vérifier la sécurité de votre connexion avec %s, vérifiez si les chiffres au-dessus correspondent à ceux affichés sur son appareil ou scannez le code QR sur son téléphone. "<![CDATA[<a href="learn-more">En savoir plus</a>]]>"."</string>
+    <string name="key_verification_explanation">"To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Plus"</string>
@@ -609,8 +588,7 @@ Ouvrez la page des paramètres de l'application pour modifier les permissions de
     <string name="data_available_at">"Les données seront disponibles le %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
-    <!-- Fuzzy -->
-    <string name="export_data_explanation">"Téléchargez une copie de toutes vos données d'utilisateur stockées sur les serveurs de HalloApp. Cela n'inclut pas le contenu des messages ou des publications."</string>
+    <string name="export_data_explanation">"Download a copy of all your user data stored on HalloApp's servers. This does not contain message or post content."</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"La demande a échoué."</string>
@@ -619,8 +597,7 @@ Ouvrez la page des paramètres de l'application pour modifier les permissions de
     <string name="export_account_data">"Exporter mes données"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
-    <!-- Fuzzy -->
-    <string name="e2e_notice">"Les conversations sont chiffrées de bout en bout et HalloApp n'y a pas accès. &lt;b&gt;Touchez pour en savoir plus&lt;/b&gt;"</string>
+    <string name="e2e_notice">"All messages on HalloApp are end-to-end encrypted. &lt;b&gt;Tap to learn more&lt;/b&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"Voir le numéro de sécurité"</string>
@@ -659,8 +636,7 @@ Ouvrez la page des paramètres de l'application pour modifier les permissions de
     <string name="settings_share_option">"Partager HalloApp"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <!-- Fuzzy -->
-    <string name="share_halloapp_text">"Rejoignez moi sur HalloApp, téléchargez gratuitement sur halloapp.com/dl"</string>
+    <string name="share_halloapp_text">"Join my real-relationship network on HalloApp. Download for free at halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
     <string name="contact_permissions_request">"Autorisez HalloApp à accéder à vos contacts pour envoyer et recevoir des mises à jour."</string>
@@ -728,8 +704,7 @@ Ouvrez la page des paramètres de l'application pour modifier les permissions de
     <string name="return_to_registration">"Retour à l'inscription"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <!-- Fuzzy -->
-    <string name="archive_empty">"Tes publications expirées apparaîtront ici"</string>
+    <string name="archive_empty">"Your posts will appear here after they expire in 30 days"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"Contenu non pris en charge"</string>

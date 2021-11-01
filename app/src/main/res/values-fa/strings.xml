@@ -941,24 +941,24 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="delete_account_confirmation_message">"آیا مطمئن هستید میخواهید حساب کاربریتان را حذف کنید؟ این کار برگشت‌ناپذیر است"</string>
 
     <!-- Title for the screen where we display where your storage is being used -->
-    <string name="storage_usage_title">"Storage usage"</string>
+    <string name="storage_usage_title">"میزان استفاده از حافظه"</string>
 
     <!-- Storage usage section header for home feed category -->
-    <string name="storage_usage_home">"Home feed"</string>
+    <string name="storage_usage_home">"صفحه اصلی"</string>
 
     <!-- Storage usage section header for chats category -->
-    <string name="storage_usage_chats">"Chats"</string>
+    <string name="storage_usage_chats">"گفتگوها"</string>
 
     <!-- Storage usage section header for groups category -->
-    <string name="storage_usage_groups">"Groups"</string>
+    <string name="storage_usage_groups">"گروه‌ها"</string>
 
     <!-- Storage usage section header for other category -->
-    <string name="storage_usage_internal">"Other"</string>
+    <string name="storage_usage_internal">"سایر"</string>
 
     <!-- Storage usage section header for archive category -->
-    <string name="storage_usage_archive">"Archive"</string>
+    <string name="storage_usage_archive">"بایگانی"</string>
 
     <!-- Text shown in button for inviting friends -->
-    <string name="invite_action">"Invite"</string>
+    <string name="invite_action">"دعوت"</string>
 <string name="add_invite">"دعوت"</string><string name="share_option_group">"پست به گروه"</string><string name="select_group">"انتخاب گروه"</string></resources>
 

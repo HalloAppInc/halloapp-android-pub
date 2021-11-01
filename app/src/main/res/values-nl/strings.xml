@@ -325,9 +325,7 @@ versie: %2$s
         <item quantity="other">"Je hebt deze week nog %s uitnodigingen over"</item>
     </plurals>
     <string name="invite_friends_title">"Vrienden &amp; familie uitnodigen"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_title">"Uitnodigen"</string>
+    <string name="invite_title">"Vrienden uitnodigen"</string>
     <string name="settings_invite_option">"Uitnodigen voor HalloApp"</string>
     <string name="invite_already_on_halloapp">"Al op HalloApp"</string>
     <string name="invite_invalid_phone_number">"Ongeldig telefoonnummer"</string>
@@ -701,7 +699,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="archive">"Archief"</string>
 
     <!-- Label displaying the date when a post expired -->
-    <string name="archived_on">"Gearchiveerd %s"</string>
+    <string name="archived_on">"Gearchiveerd op %s"</string>
 
     <!-- Error message when the group is full -->
     <string name="invite_link_failed_to_join_full">"Je kunt niet deelnemen aan deze groep omdat het maximumaantal deelnemers is bereikt"</string>
@@ -809,7 +807,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
          %2$s is the number of other people, %3$s is the post author's name -->
     <plurals name="commented_on_someones_post_grouped_with_others">
         <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; ander persoon hebben gereageerd op de post van &lt;b&gt;%3$s&lt;/b&gt;"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; andere personen hebben gereageerd op de post van &lt;b&gt;%3$s&lt;/b&gt;"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt; anderen hebben gereageerd op de post van &lt;b&gt;%3$s&lt;/b&gt;"</item>
     </plurals>
 
     <!-- Activity center item when two non-contacts comment on your post %1$s is the first person name
