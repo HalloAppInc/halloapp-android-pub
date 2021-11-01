@@ -88,6 +88,9 @@ public class FeedUpdateIq extends HalloIq {
             if (feedItem.payload != null) {
                 pb.setPayload(ByteString.copyFrom(feedItem.payload));
             }
+            if (feedItem.mediaCounts != null) {
+                pb.setMediaCounters(feedItem.mediaCounts.toProto());
+            }
             builder.setPost(pb);
         } else if (feedItem != null && feedItem.type == FeedItem.Type.COMMENT) {
             Comment.Builder cb = Comment.newBuilder();
@@ -98,6 +101,9 @@ public class FeedUpdateIq extends HalloIq {
             }
             if (feedItem.payload != null) {
                 cb.setPayload(ByteString.copyFrom(feedItem.payload));
+            }
+            if (feedItem.mediaCounts != null) {
+                cb.setMediaCounters(feedItem.mediaCounts.toProto());
             }
             builder.setComment(cb);
         }

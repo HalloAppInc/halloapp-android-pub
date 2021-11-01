@@ -535,7 +535,8 @@ public class ConnectionImpl extends Connection {
             }
             ArrayList<FeedItem> itemList = new ArrayList<>(postsToShare.size());
             for (Post post : postsToShare) {
-                FeedItem sharedPost = new FeedItem(FeedItem.Type.POST, post.id, null);
+                MediaCounts mediaCounts = new MediaCounts(post.media);
+                FeedItem sharedPost = new FeedItem(FeedItem.Type.POST, post.id, null, mediaCounts);
                 itemList.add(sharedPost);
             }
             sharePosts.add(new SharePosts(user, itemList));
@@ -546,6 +547,8 @@ public class ConnectionImpl extends Connection {
 
     @Override
     public void sendPost(@NonNull Post post) {
+        MediaCounts mediaCounts = new MediaCounts(post.media);
+
         Container.Builder containerBuilder = Container.newBuilder();
         FeedContentEncoder.encodePost(containerBuilder, post);
         if (!containerBuilder.hasPostContainer()) {
@@ -555,7 +558,7 @@ public class ConnectionImpl extends Connection {
         HalloIq publishIq;
         if (post.getParentGroup() == null) {
             byte[] payload = containerBuilder.build().toByteArray();
-            FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload);
+            FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, mediaCounts);
             FeedUpdateIq updateIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, feedItem);
             updateIq.setPostAudience(post.getAudienceType(), post.getAudienceList());
             publishIq = updateIq;
@@ -585,7 +588,7 @@ public class ConnectionImpl extends Connection {
                 stats.reportGroupEncryptError(errorMessage, false);
             }
 
-            FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, encPayload, senderStateBundles, audienceHash);
+            FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, encPayload, senderStateBundles, audienceHash, mediaCounts);
             publishIq = new GroupFeedUpdateIq(post.getParentGroup(), GroupFeedUpdateIq.Action.PUBLISH, feedItem);
         }
         sendIqRequestAsync(publishIq, true)
@@ -669,7 +672,7 @@ public class ConnectionImpl extends Connection {
 
     @Override
     public void retractPost(@NonNull String postId) {
-        FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null));
+        FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null, null));
         sendIqRequestAsync(requestIq, true)
                 .onResponse(response -> connectionObservers.notifyOutgoingPostSent(postId))
                 .onError(e -> Log.e("connection: cannot retract post", e));
@@ -677,7 +680,7 @@ public class ConnectionImpl extends Connection {
 
     @Override
     public void retractGroupPost(@NonNull GroupId groupId, @NonNull String postId) {
-        GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null));
+        GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null, null));
         sendIqRequestAsync(requestIq, true)
                 .onResponse(response -> connectionObservers.notifyOutgoingPostSent(postId))
                 .onError(e -> Log.e("connection: cannot retract post", e));
@@ -687,9 +690,11 @@ public class ConnectionImpl extends Connection {
     public void sendComment(@NonNull Comment comment) {
         byte[] payload = FeedContentEncoder.encodeComment(comment);
 
+        MediaCounts mediaCounts = new MediaCounts(comment.media);
+
         HalloIq requestIq;
         if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
-            FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.id, comment.postId, payload);
+            FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.id, comment.postId, payload, mediaCounts);
             commentItem.parentCommentId = comment.parentCommentId;
             requestIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, commentItem);
         } else {
@@ -719,7 +724,7 @@ public class ConnectionImpl extends Connection {
                 stats.reportGroupEncryptError(errorMessage, true);
             }
 
-            FeedItem feedItem = new FeedItem(FeedItem.Type.COMMENT, comment.id, parentPost.id, payload, encPayload, senderStateBundles, audienceHash);
+            FeedItem feedItem = new FeedItem(FeedItem.Type.COMMENT, comment.id, parentPost.id, payload, encPayload, senderStateBundles, audienceHash, mediaCounts);
             feedItem.parentCommentId = comment.parentCommentId;
             requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.PUBLISH, feedItem);
         }
@@ -801,7 +806,7 @@ public class ConnectionImpl extends Connection {
 
     @Override
     public void retractComment(@NonNull String postId, @NonNull String commentId) {
-        FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null);
+        FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null, null);
         FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, commentItem);
         sendIqRequestAsync(requestIq, true)
                 .onResponse(response -> connectionObservers.notifyOutgoingCommentSent(postId, commentId))
@@ -831,7 +836,7 @@ public class ConnectionImpl extends Connection {
 
     @Override
     public void retractGroupComment(@NonNull GroupId groupId, @NonNull String postId, @NonNull String commentId) {
-        FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null);
+        FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null, null);
         GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, commentItem);
         sendIqRequestAsync(requestIq, true)
                 .onResponse(r -> connectionObservers.notifyOutgoingCommentSent(postId, commentId))

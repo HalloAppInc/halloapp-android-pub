@@ -26,6 +26,7 @@ import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.server.ChatStanza;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Stats;
+import com.halloapp.xmpp.MediaCounts;
 import com.halloapp.xmpp.MessageElementHelper;
 
 public class ChatMessageProtocol {
@@ -78,6 +79,8 @@ public class ChatMessageProtocol {
         if (encryptedEntry != null) {
             builder.setEncPayload(ByteString.copyFrom(encryptedEntry));
         }
+
+        builder.setMediaCounters(new MediaCounts(message.media).toProto());
 
         return builder.build();
     }

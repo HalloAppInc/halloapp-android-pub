@@ -69,6 +69,9 @@ public class GroupFeedUpdateIq extends HalloIq {
                         .build();
                 pb.setEncPayload(ByteString.copyFrom(encryptedPayload.toByteArray()));
             }
+            if (feedItem.mediaCounts != null) {
+                pb.setMediaCounters(feedItem.mediaCounts.toProto());
+            }
             pb.setId(feedItem.id);
             builder.setPost(pb);
         } else if (feedItem.type == FeedItem.Type.COMMENT) {
@@ -81,6 +84,9 @@ public class GroupFeedUpdateIq extends HalloIq {
                     .setSenderStateEncryptedPayload(ByteString.copyFrom(feedItem.encPayload))
                     .build();
                 cb.setEncPayload(ByteString.copyFrom(encryptedPayload.toByteArray()));
+            }
+            if (feedItem.mediaCounts != null) {
+                cb.setMediaCounters(feedItem.mediaCounts.toProto());
             }
             if (feedItem.parentCommentId != null) {
                 cb.setParentCommentId(feedItem.parentCommentId);
