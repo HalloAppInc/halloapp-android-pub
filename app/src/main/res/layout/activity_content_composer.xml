@@ -170,8 +170,7 @@
                             <LinearLayout
                                 android:orientation="vertical"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:minHeight="@dimen/entry_card_min_height">
+                                android:layout_height="wrap_content">
 
                                 <androidx.coordinatorlayout.widget.CoordinatorLayout
                                     android:layout_width="match_parent"
