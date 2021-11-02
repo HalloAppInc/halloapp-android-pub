@@ -234,7 +234,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
     }
 
-    public static Intent getStartCallIntent(Context context, UserId userId) {
+    public static Intent getStartCallIntent(@NonNull Context context, @NonNull UserId userId) {
         Intent intent = new Intent(context, CallActivity.class);
         // TODO(nikola): make peer_uid constant?
         intent.putExtra("peer_uid", userId.rawId());
@@ -263,7 +263,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         Log.i("onRationaleDeclined(int requestCode:" + requestCode + ")");
     }
 
-    public static Intent incomingCallIntent(Context context, String callId, UserId peerUid) {
+    public static Intent incomingCallIntent(@NonNull Context context, @NonNull String callId, @NonNull UserId peerUid) {
         Intent intent = new Intent(context, CallActivity.class);
         intent.putExtra(EXTRA_CALL_ID, callId);
         intent.putExtra(EXTRA_PEER_UID, peerUid.rawId());
@@ -271,7 +271,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         return intent;
     }
 
-    public static Intent acceptCallIntent(Context context, String callId, UserId peerUid) {
+    public static Intent acceptCallIntent(@NonNull Context context, @NonNull String callId, @NonNull UserId peerUid) {
         Intent intent = new Intent(context, CallActivity.class);
         intent.setAction(CallActivity.ACTION_ACCEPT);
         intent.putExtra(EXTRA_CALL_ID, callId);

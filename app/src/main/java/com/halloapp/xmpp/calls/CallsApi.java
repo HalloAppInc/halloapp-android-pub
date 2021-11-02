@@ -26,7 +26,7 @@ public class CallsApi {
         return instance;
     }
 
-    private CallsApi(Connection connection) {
+    private CallsApi(@NonNull Connection connection) {
         this.connection = connection;
     }
 

@@ -117,7 +117,4 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     // WebRTC
     implementation(name: 'libwebrtc', ext:'aar')
-    implementation('io.socket:socket.io-client:1.0.0') {
-        exclude group: 'org.json', module: 'json'
-    }
 }

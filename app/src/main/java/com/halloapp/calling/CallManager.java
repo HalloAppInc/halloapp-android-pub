@@ -1,6 +1,5 @@
 package com.halloapp.calling;
 
-import android.app.Notification;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -49,13 +48,9 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import io.socket.client.Socket;
-
 public class CallManager {
 
-    private Socket socket;
     private boolean isInitiator;
-    private boolean isStarted;
 
     MediaConstraints audioConstraints;
     AudioSource audioSource;
@@ -64,7 +59,7 @@ public class CallManager {
     private PeerConnection peerConnection;
     private PeerConnectionFactory factory;
 
-    private Context context;
+    private final Context context;
     private final CallsApi callsApi;
     private final CallAudioManager audioManager;
     private final OutgoingRingtone outgoingRingtone;
@@ -104,37 +99,38 @@ public class CallManager {
         // adding listeners for incoming messages
         ConnectionObservers.getInstance().addObserver(new Connection.Observer() {
             @Override
-            public void onIncomingCall(
-                    @NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer,
-                    List<StunServer> stunServers, List<TurnServer> turnServers, Long timestamp, String ackId) {
+            public void onIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer,
+                                       @NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers,
+                                       long timestamp, @NonNull String ackId) {
                 CallManager.getInstance().handleIncomingCall(
                         callId, peerUid, webrtcOffer, stunServers, turnServers, timestamp);
                 Connection.getInstance().sendAck(ackId);
             }
 
             @Override
-            public void onCallRinging(@NonNull String callId, @NonNull UserId peerUid, Long timestamp, String ackId) {
+            public void onCallRinging(@NonNull String callId, @NonNull UserId peerUid, long timestamp,
+                                      @NonNull String ackId) {
                 CallManager.getInstance().handleCallRinging(callId, peerUid, timestamp);
                 Connection.getInstance().sendAck(ackId);
             }
 
             @Override
             public void onAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer,
-                                     Long timestamp, String ackId) {
+                                     long timestamp, @NonNull String ackId) {
                 CallManager.getInstance().handleAnswerCall(callId, peerUid, webrtcOffer, timestamp);
                 Connection.getInstance().sendAck(ackId);
             }
 
             @Override
             public void onEndCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull EndCall.Reason reason,
-                                  Long timestamp, String ackId) {
+                                  long timestamp, @NonNull String ackId) {
                 CallManager.getInstance().handleEndCall(callId, peerUid, reason, timestamp);
                 Connection.getInstance().sendAck(ackId);
             }
 
             @Override
             public void onIceCandidate(@NonNull String callId, @NonNull UserId peerUid, @NonNull String sdpMediaId,
-                                       int sdpMediaLineIndex, @NonNull String sdp, String ackId) {
+                                       int sdpMediaLineIndex, @NonNull String sdp, @NonNull String ackId) {
                 CallManager.getInstance().handleIceCandidate(callId, peerUid, sdpMediaId, sdpMediaLineIndex, sdp);
                 Connection.getInstance().sendAck(ackId);
             }
@@ -174,9 +170,7 @@ public class CallManager {
         // TODO(nikola): How to do this better, I need to execute some code on the background thread
         // that loads the webrtc library. We can load this on app start also.
         // After that I need to start the actual call doCall()
-        executor.execute(() -> {
-            setup();
-        });
+        executor.execute(this::setup);
     }
 
     private ComponentName startCallService() {
@@ -219,13 +213,13 @@ public class CallManager {
             callService = null;
         }
         isInitiator = false;
-        isStarted = false;
         callId = null;
         peerUid = null;
     }
 
-    private void handleIncomingCall(String callId, UserId peerUid, String webrtcOffer,
-                                    List<StunServer> stunServers, List<TurnServer> turnServers, Long timestamp) {
+    private void handleIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer,
+                                    @NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers,
+                                    @NonNull Long timestamp) {
         Log.i("incoming call " + callId + " peerUid: " + peerUid);
         this.isInitiator = false;
         this.peerUid = peerUid;
@@ -256,15 +250,15 @@ public class CallManager {
         ConnectionImpl.getInstance().sendCallMsg(msg);
     }
 
-    private void handleCallRinging(@NonNull String callId, @NonNull UserId peerUid, Long timestamp) {
+    private void handleCallRinging(@NonNull String callId, @NonNull UserId peerUid,@NonNull Long timestamp) {
         Log.i("CallRinging callId: " + callId + " peerUid: " + peerUid + " ts: " + timestamp);
-        if (this.callId == null && !this.callId.equals(callId) ) {
+        if (this.callId == null || !this.callId.equals(callId) ) {
             Log.e("Error: got call ringing message for call " + callId +
                     " but my call id is " + this.callId);
             return;
         }
         // TODO(nikola): check the peerUid
-        if (this.isInitiator == false) {
+        if (!this.isInitiator) {
             Log.e("Error: unexpected call ringing, not initiator");
             return;
         }
@@ -272,8 +266,8 @@ public class CallManager {
         startOutgoingRingtone();
     }
 
-    private void handleAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer, Long timestamp) {
-        Log.i("AnswerCall callId: " + callId);
+    private void handleAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer, @NonNull Long timestamp) {
+        Log.i("AnswerCall callId: " + callId + " peerUid: " + peerUid);
 
         stopOutgoingRingtone();
 
@@ -285,7 +279,7 @@ public class CallManager {
     }
 
     private void handleEndCall(@NonNull String callId, @NonNull UserId peerUid,
-                               @NonNull EndCall.Reason reason, Long timestamp) {
+                               @NonNull EndCall.Reason reason, @NonNull Long timestamp) {
         Log.i("got EndCall callId: " + callId + " peerUid: " + peerUid + " reason: " + reason.name());
         notifyOnEndCall();
         stopOutgoingRingtone();
@@ -297,10 +291,7 @@ public class CallManager {
     private void handleIceCandidate(@NonNull String callId, @NonNull UserId peerUid,
                                     @NonNull String sdpMediaId, int sdpMediaLineIndex, @NonNull String sdp) {
         Log.i("got IceCandidate callId: " + callId + " sdp: " + sdp);
-        IceCandidate candidate = new IceCandidate(
-                sdpMediaId,
-                sdpMediaLineIndex,
-                sdp);
+        IceCandidate candidate = new IceCandidate(sdpMediaId, sdpMediaLineIndex, sdp);
         // TODO(nikola): more checks for callId and peerUid
         if (peerConnection != null) {
             peerConnection.addIceCandidate(candidate);
@@ -366,7 +357,7 @@ public class CallManager {
     }
 
 
-    private PeerConnection createPeerConnection(PeerConnectionFactory factory) {
+    private PeerConnection createPeerConnection(@NonNull PeerConnectionFactory factory) {
         ArrayList<PeerConnection.IceServer> iceServers = new ArrayList<>();
         // TODO(nikola): maybe we should have some default stun server?
 //        String URL = "stun:stun.l.google.com:19302";
@@ -457,15 +448,13 @@ public class CallManager {
     private void doCall() {
         MediaConstraints sdpMediaConstraints = new MediaConstraints();
 
-        sdpMediaConstraints.mandatory.add(
-                new MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"));
+        sdpMediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"));
         // TODO(nikola): add for video calls
-//        sdpMediaConstraints.mandatory.add(
-//                new MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"));
+        // sdpMediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"));
 
         peerConnection.createOffer(new SimpleSdpObserver() {
             @Override
-            public void onCreateSuccess(SessionDescription sessionDescription) {
+            public void onCreateSuccess(@NonNull SessionDescription sessionDescription) {
                 Log.i("onCreateSuccess: ");
                 peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
 
@@ -495,7 +484,7 @@ public class CallManager {
         }, sdpMediaConstraints);
     }
 
-    private void setStunTurnServers(List<StunServer> stunServers, List<TurnServer> turnServers) {
+    private void setStunTurnServers(@NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers) {
         if (peerConnection == null) {
             Log.e("peerConnection is null");
             return;
@@ -529,7 +518,7 @@ public class CallManager {
         }
         peerConnection.createAnswer(new SimpleSdpObserver() {
             @Override
-            public void onCreateSuccess(SessionDescription sessionDescription) {
+            public void onCreateSuccess(@NonNull SessionDescription sessionDescription) {
                 // TODO(nikola): don't print this in the logs.
                 Log.i("PeerConnection answer is ready " + sessionDescription);
                 peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
@@ -561,7 +550,7 @@ public class CallManager {
         }
     }
 
-    public void onEndCall(EndCall.Reason reason) {
+    public void onEndCall(@NonNull EndCall.Reason reason) {
         EndCallElement endCallElement = new EndCallElement(callId, reason);
         String id = RandomId.create();
         Msg msg = Msg.newBuilder()

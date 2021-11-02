@@ -96,10 +96,10 @@ public abstract class Connection {
         public void onPostRevoked(@NonNull UserId senderUserId, @NonNull String postId, GroupId groupId) {}
         public void onCommentRevoked(@NonNull String id, @NonNull UserId commentSenderId, @NonNull String postId, long timestamp) {}
         public void onMessageRevoked(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId, @NonNull String ackId) {}
-        public void onIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer, List<StunServer> stunServers, List<TurnServer> turnServers, Long timestamp, @NonNull String ackId) {}
-        public void onCallRinging(@NonNull String callId, @NonNull UserId peerUid, Long timestamp, @NonNull String ackId) {}
-        public void onAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer, Long timestamp, @NonNull String ackId) {}
-        public void onEndCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull EndCall.Reason reason, Long timestamp, @NonNull String ackId) {}
+        public void onIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer, @NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers, long timestamp, @NonNull String ackId) {}
+        public void onCallRinging(@NonNull String callId, @NonNull UserId peerUid, long timestamp, @NonNull String ackId) {}
+        public void onAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer, long timestamp, @NonNull String ackId) {}
+        public void onEndCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull EndCall.Reason reason, long timestamp, @NonNull String ackId) {}
         public void onIceCandidate(@NonNull String callId, @NonNull UserId peerUid, @NonNull String sdpMediaId, int sdpMediaLineIndex, @NonNull String sdp, @NonNull String ackId) {}
     }
 
