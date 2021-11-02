@@ -24,6 +24,7 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ConnectionImpl;
 import com.halloapp.xmpp.calls.AnswerCallElement;
+import com.halloapp.xmpp.calls.CallRingingElement;
 import com.halloapp.xmpp.calls.CallsApi;
 import com.halloapp.xmpp.calls.EndCallElement;
 import com.halloapp.xmpp.calls.IceCandidateElement;
@@ -66,6 +67,7 @@ public class CallManager {
     private Context context;
     private final CallsApi callsApi;
     private final CallAudioManager audioManager;
+    private final OutgoingRingtone outgoingRingtone;
 
     private String callId;
     private UserId peerUid;
@@ -94,6 +96,7 @@ public class CallManager {
     private CallManager() {
         this.context = AppContext.getInstance().get();
         this.callsApi = CallsApi.getInstance();
+        this.outgoingRingtone = new OutgoingRingtone(context);
 
         this.audioManager = CallAudioManager.create(context);
         this.observers = new HashSet<>();
@@ -202,6 +205,7 @@ public class CallManager {
     public void stop() {
         Log.i("stop callId: " + callId + " peerUid" + peerUid);
         audioManager.stop();
+        stopOutgoingRingtone();
         if (localAudioTrack != null) {
             localAudioTrack.setEnabled(false);
             localAudioTrack = null;
@@ -236,6 +240,20 @@ public class CallManager {
 
         notifyOnIncomingCall();
         Notifications.getInstance(context).showIncomingCallNotification(callId, peerUid);
+        sendRinging();
+    }
+
+    // TODO(nikola): Move this code to CallsApi
+    private void sendRinging() {
+        CallRingingElement callRingingElement = new CallRingingElement(callId);
+        String id = RandomId.create();
+        Msg msg = Msg.newBuilder()
+                .setId(id)
+                .setCallRinging(callRingingElement.toProto())
+                .setToUid(peerUid.rawIdLong())
+                .build();
+        Log.i("sending call_ringing msg " + msg);
+        ConnectionImpl.getInstance().sendCallMsg(msg);
     }
 
     private void handleCallRinging(@NonNull String callId, @NonNull UserId peerUid, Long timestamp) {
@@ -251,11 +269,13 @@ public class CallManager {
             return;
         }
         notifyOnPeerIsRinging();
+        startOutgoingRingtone();
     }
 
-    private void handleAnswerCall(@NonNull String callId, @NonNull UserId peerUid,
-                                  @NonNull String webrtcOffer, Long timestamp) {
+    private void handleAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer, Long timestamp) {
         Log.i("AnswerCall callId: " + callId);
+
+        stopOutgoingRingtone();
 
         peerConnection.setRemoteDescription(
                 new SimpleSdpObserver(),
@@ -268,6 +288,7 @@ public class CallManager {
                                @NonNull EndCall.Reason reason, Long timestamp) {
         Log.i("got EndCall callId: " + callId + " peerUid: " + peerUid + " reason: " + reason.name());
         notifyOnEndCall();
+        stopOutgoingRingtone();
         // TODO(nikola): Handle multiple calls at the same time. We should only cancel the right
         // notification
         Notifications.getInstance(context).clearIncomingCallNotification();
@@ -521,7 +542,7 @@ public class CallManager {
                         .setAnswerCall(answerCallElement.toProto())
                         .setToUid(peerUid.rawIdLong())
                         .build();
-                Log.i("trying to send call_answer msg " + msg);
+                Log.i("sending answer_call msg " + msg);
                 ConnectionImpl.getInstance().sendCallMsg(msg);
             }
         }, new MediaConstraints());
@@ -548,7 +569,7 @@ public class CallManager {
                 .setEndCall(endCallElement.toProto())
                 .setToUid(peerUid.rawIdLong())
                 .build();
-        Log.i("trying to send end_call msg " + msg);
+        Log.i("sending end_call msg " + msg);
         ConnectionImpl.getInstance().sendCallMsg(msg);
     }
 
@@ -584,4 +605,12 @@ public class CallManager {
         }
     }
 
+    // The android media player is not thread safe. Making sure it is always interacted on from the same thread.
+    private void startOutgoingRingtone() {
+        executor.execute(() -> outgoingRingtone.start(OutgoingRingtone.Type.RINGING));
+    };
+
+    private void stopOutgoingRingtone() {
+        executor.execute(() -> outgoingRingtone.stop());
+    }
 }

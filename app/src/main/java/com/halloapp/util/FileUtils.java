@@ -6,6 +6,7 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RawRes;
 
 import com.halloapp.AppContext;
 import com.halloapp.FileStore;
@@ -139,5 +140,9 @@ public class FileUtils {
                 copyFile(in, out);
             }
         }
+    }
+
+    public static Uri getUriFromResource(@NonNull Context context, @RawRes int resourceId) {
+        return Uri.parse("android.resource://" + context.getPackageName() + "/" + resourceId);
     }
 }
