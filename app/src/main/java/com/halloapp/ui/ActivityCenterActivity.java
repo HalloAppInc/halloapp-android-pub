@@ -232,7 +232,8 @@ public class ActivityCenterActivity extends HalloActivity {
                 final List<String> names = new ArrayList<>();
                 final Set<UserId> userIdSet = new HashSet<>();
                 long timestamp = socialEvent.timestamp;
-                for (UserId userId : socialEvent.involvedUsers) {
+                Set<UserId> uniqueUsers = new HashSet<>(socialEvent.involvedUsers);
+                for (UserId userId : uniqueUsers) {
                     if (userIdSet.contains(userId)) {
                         continue;
                     }
@@ -245,7 +246,7 @@ public class ActivityCenterActivity extends HalloActivity {
                 TimeFormatter.setTimePostsFormat(timeView, timestamp);
                 textContentLoader.cancel(infoView);
                 if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_COMMENT) {
-                    if (socialEvent.involvedUsers.size() == 1) {
+                    if (uniqueUsers.size() == 1) {
                         Comment comment = (Comment) socialEvent.contentItem;
                         @StringRes int commentString;
                         if (comment.parentCommentId == null) {
@@ -264,7 +265,7 @@ public class ActivityCenterActivity extends HalloActivity {
                                 infoView.setText(Html.fromHtml(getResources().getString(commentString, names.get(0), "")));
                             }
                         });
-                    } else if (socialEvent.involvedUsers.size() == 2){
+                    } else if (uniqueUsers.size() == 2){
                         if (socialEvent.postSenderUserId.isMe()) {
                             infoView.setText(Html.fromHtml(getResources().getString(R.string.two_unknown_contacts_commented_on_your_post, names.get(0), names.get(1))));
                         } else {
@@ -272,7 +273,7 @@ public class ActivityCenterActivity extends HalloActivity {
                             infoView.setText(Html.fromHtml(getResources().getString(R.string.two_unknown_contacts_commented_on_someones_post, names.get(0), names.get(1), contact.getDisplayName())));
                         }
                     } else {
-                        int commenters = socialEvent.involvedUsers.size() - 1;
+                        int commenters = uniqueUsers.size() - 1;
                         if (socialEvent.postSenderUserId.isMe()) {
                             infoView.setText(Html.fromHtml(getResources().getQuantityString(R.plurals.commented_on_your_post_grouped_with_others, commenters, names.get(0), commenters)));
                         } else {

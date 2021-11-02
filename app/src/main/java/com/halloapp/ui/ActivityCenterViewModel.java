@@ -26,12 +26,14 @@ import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.invites.InvitesApi;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -291,7 +293,10 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         final List<SocialActionEvent> unseenMentions = new ArrayList<>();
         final HashMap<String, SocialActionEvent> groupedPostMap = new HashMap<>();
         final Map<UserId, Contact> contacts = new HashMap<>();
-        for (Comment comment : comments) {
+
+        List<Comment> orderedComments = new ArrayList<>(comments);
+        Collections.sort(orderedComments, (o2, o1) -> Long.compare(o1.timestamp, o2.timestamp));
+        for (Comment comment : orderedComments) {
             Post parentPost = comment.getParentPost();
             if (!shouldShowPost(parentPost, hasContactPerms)) {
                 continue;
@@ -392,7 +397,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
         public final @Action int action;
 
-        public final Set<UserId> involvedUsers = new HashSet<>();
+        public final List<UserId> involvedUsers = new ArrayList<>();
 
         public int numInvites;
 

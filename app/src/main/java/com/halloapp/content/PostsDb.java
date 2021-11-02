@@ -2011,7 +2011,6 @@ class PostsDb {
                 (limit < 0 ? "" : "LIMIT " + limit);
         try (final Cursor cursor = db.rawQuery(sql, null)) {
             while (cursor.moveToNext()) {
-
                 final Comment comment = new Comment(
                         cursor.getLong(0),
                         cursor.getString(1),
