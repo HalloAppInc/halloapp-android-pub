@@ -4,8 +4,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.PowerManager;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.AppContext;
@@ -68,6 +70,8 @@ public class CallManager {
     private UserId peerUid;
 
     private ComponentName callService;
+    @Nullable
+    private PowerManager.WakeLock proximityLock;
 
     // Executor thread is started once in private ctor and is used for all
     // peer connection API calls to ensure new peer connection factory is
@@ -92,6 +96,7 @@ public class CallManager {
         this.context = AppContext.getInstance().get();
         this.callsApi = CallsApi.getInstance();
         this.outgoingRingtone = new OutgoingRingtone(context);
+        this.proximityLock = createProximityLock();
 
         this.audioManager = CallAudioManager.create(context);
         this.observers = new HashSet<>();
@@ -155,6 +160,7 @@ public class CallManager {
         this.peerUid = peerUid;
         this.isInitiator = true;
         this.callService = startCallService();
+        acquireLock();
 
         // Store existing audio settings and change audio mode to
         // MODE_IN_COMMUNICATION for best possible VoIP performance.
@@ -165,7 +171,6 @@ public class CallManager {
                 Log.i("onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + audioDevice);
             }
         });
-
 
         // TODO(nikola): How to do this better, I need to execute some code on the background thread
         // that loads the webrtc library. We can load this on app start also.
@@ -212,6 +217,7 @@ public class CallManager {
             context.stopService(new Intent(context, CallService.class));
             callService = null;
         }
+        releaseLock();
         isInitiator = false;
         callId = null;
         peerUid = null;
@@ -601,5 +607,26 @@ public class CallManager {
 
     private void stopOutgoingRingtone() {
         executor.execute(() -> outgoingRingtone.stop());
+    }
+
+    private @Nullable PowerManager.WakeLock createProximityLock() {
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        if (pm.isWakeLockLevelSupported(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK)) {
+            return pm.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK, "halloapp:call");
+        } else {
+            return null;
+        }
+    }
+
+    private void acquireLock() {
+        if (proximityLock != null && !proximityLock.isHeld()) {
+            proximityLock.acquire();
+        }
+    }
+
+    private void releaseLock() {
+        if (proximityLock != null && proximityLock.isHeld()) {
+            proximityLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY);
+        }
     }
 }
