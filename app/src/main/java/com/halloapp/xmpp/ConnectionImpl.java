@@ -1564,12 +1564,12 @@ public class ConnectionImpl extends Connection {
                             Log.e("Group Feed Encryption plaintext and decrypted differ");
                             throw new CryptoException("grp_payload_differs");
                         }
-                        stats.reportGroupDecryptSuccess(false);
+                        stats.reportGroupDecryptSuccess(false, senderPlatform, senderVersion);
                     } catch (CryptoException e) {
                         Log.e("Failed to decrypt group post", e);
                         errorMessage = e.getMessage();
                         Log.sendErrorReport("Group post decryption failed: " + errorMessage);
-                        stats.reportGroupDecryptError(errorMessage, false);
+                        stats.reportGroupDecryptError(errorMessage, false, senderPlatform, senderVersion);
 
                         Log.i("Rerequesting post " + protoPost.getId());
                         ContentDb contentDb = ContentDb.getInstance();
@@ -1675,12 +1675,12 @@ public class ConnectionImpl extends Connection {
                             Log.e("Group Feed Encryption plaintext and decrypted differ");
                             throw new CryptoException("grp_payload_differs");
                         }
-                        stats.reportGroupDecryptSuccess(true);
+                        stats.reportGroupDecryptSuccess(true, senderPlatform, senderVersion);
                     } catch (CryptoException e) {
                         Log.e("Failed to decrypt group comment", e);
                         errorMessage = e.getMessage();
                         Log.sendErrorReport("Group comment decryption failed: " + errorMessage);
-                        stats.reportGroupDecryptError(errorMessage, true);
+                        stats.reportGroupDecryptError(errorMessage, true, senderPlatform, senderVersion);
 
                         Log.i("Rerequesting comment " + protoComment.getId());
                         ContentDb contentDb = ContentDb.getInstance();

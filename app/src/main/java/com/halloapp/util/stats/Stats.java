@@ -81,12 +81,12 @@ public class Stats {
         groupEncryption.reportError(error, isComment);
     }
 
-    public void reportGroupDecryptSuccess(boolean isComment) {
-        groupDecryption.reportSuccess(isComment);
+    public void reportGroupDecryptSuccess(boolean isComment, String senderPlatform, String senderVersion) {
+        groupDecryption.reportSuccess(isComment, senderPlatform, senderVersion);
     }
 
-    public void reportGroupDecryptError(String error, boolean isComment) {
-        groupDecryption.reportError(error, isComment);
+    public void reportGroupDecryptError(String error, boolean isComment, String senderPlatform, String senderVersion) {
+        groupDecryption.reportError(error, isComment, senderPlatform, senderVersion);
     }
 
     public void reportSignalSessionEstablished(boolean isReset) {
@@ -182,23 +182,29 @@ public class Stats {
         private static final String DIM_RESULT = "result";
         private static final String DIM_FAILURE_REASON = "failure_reason";
         private static final String DIM_ITEM_TYPE = "item_type";
+        private static final String DIM_SENDER_PLATFORM = "senderPlatform";
+        private static final String DIM_SENDER_VERSION = "senderVersion";
 
         public GroupDecryptCounter() {
             super("crypto", "group_decryption");
         }
 
-        public void reportSuccess(boolean isComment) {
+        public void reportSuccess(boolean isComment, String senderPlatform, String senderVersion) {
             Dimensions.Builder builder = new Dimensions.Builder()
                     .put(DIM_RESULT, "ok")
-                    .put(DIM_ITEM_TYPE, isComment ? "comment" : "post");
+                    .put(DIM_ITEM_TYPE, isComment ? "comment" : "post")
+                    .put(DIM_SENDER_PLATFORM, senderPlatform)
+                    .put(DIM_SENDER_VERSION, senderVersion);
             reportEvent(builder.build());
         }
 
-        public void reportError(String error, boolean isComment) {
+        public void reportError(String error, boolean isComment, String senderPlatform, String senderVersion) {
             Dimensions.Builder builder = new Dimensions.Builder()
                     .put(DIM_RESULT, "fail")
                     .put(DIM_FAILURE_REASON, error)
-                    .put(DIM_ITEM_TYPE, isComment ? "comment" : "post");
+                    .put(DIM_ITEM_TYPE, isComment ? "comment" : "post")
+                    .put(DIM_SENDER_PLATFORM, senderPlatform)
+                    .put(DIM_SENDER_VERSION, senderVersion);
             reportEvent(builder.build());
         }
     }
