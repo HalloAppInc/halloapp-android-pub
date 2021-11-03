@@ -100,7 +100,7 @@
                 android:layout_height="wrap_content"
                 android:clickable="false"
                 android:visibility="visible"
-                android:text="@string/share" />
+                android:text="@string/share_action" />
 
         </LinearLayout>
 

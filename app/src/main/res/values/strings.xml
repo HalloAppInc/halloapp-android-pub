@@ -442,6 +442,8 @@
     <string name="email_logs_subject">HalloApp Android %1$s %2$s</string>
     <string name="email_logs_text">\n----------------------------------------\nPlease describe the issue above.\nuid: %1$s\nversion: %2$s\n----------------------------------------\n</string>
     <string name="share">Share</string>
+    <!-- action where the user shares -->
+    <string name="share_action">Share</string>
     <!-- Title for activity that lets user select who to share with -->
     <string name="share_with">Share with…</string>
     <string name="unblock">Unblock</string>
