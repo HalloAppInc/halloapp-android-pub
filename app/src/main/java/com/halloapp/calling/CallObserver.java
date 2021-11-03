@@ -11,4 +11,8 @@ public interface CallObserver {
     void onAnsweredCall(String callId, UserId peerUid);
 
     void onEndCall(String callId, UserId peerUid);
+
+    void onMicrophoneMute(boolean mute);
+
+    void onSpeakerPhoneOn(boolean on);
 }

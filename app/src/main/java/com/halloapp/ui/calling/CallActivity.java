@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.halloapp.Notifications;
 import com.halloapp.R;
+import com.halloapp.calling.CallManager;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.util.Preconditions;
@@ -85,19 +86,19 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             Log.i("State -> " + state);
 
             switch (state) {
-                case CallViewModel.State.STATE_INIT:
+                case CallManager.State.IDLE:
                     initView.setVisibility(View.VISIBLE);
                     break;
-                case CallViewModel.State.STATE_CALLING:
+                case CallManager.State.CALLING:
                     callingView.setVisibility(View.VISIBLE);
                     break;
-                case CallViewModel.State.STATE_IN_CALL:
+                case CallManager.State.IN_CALL:
                     inCallView.setVisibility(View.VISIBLE);
                     break;
-                case CallViewModel.State.STATE_RINGING:
+                case CallManager.State.RINGING:
                     ringingView.setVisibility(View.VISIBLE);
                     break;
-                case CallViewModel.State.STATE_END:
+                case CallManager.State.END:
                     Log.i("finishing the activity");
                     callViewModel.onEndCallCleanup();
                     finish();
@@ -109,6 +110,9 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             callingTextView.setText(R.string.ringing);
         });
 
+        callViewModel.getIsMicrophoneMuted().observe(this, this::updateMicrophoneMutedUI);
+        callViewModel.getIsSpekearPhoneOn().observe(this, this::updateSpeakerPhoneUI);
+
         findViewById(R.id.init_start).setOnClickListener(v -> startCall());
 
         findViewById(R.id.in_call_mute).setOnClickListener(v -> {
@@ -116,7 +120,6 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                 return;
             }
             onMute();
-
         });
         findViewById(R.id.in_call_speaker).setOnClickListener(v -> {
             if (!callViewModel.inCall()) {
@@ -202,27 +205,34 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void onMute() {
-        Log.i("onMute called");
-        callViewModel.onMute();
-        if (callViewModel.isMuted()) {
-            // TODO(nikola): Selected does not seem to do anything
+        Log.i("CallActivity onMute called");
+        callViewModel.toggleMicrophoneMute();
+    }
+
+    private void updateMicrophoneMutedUI(boolean mute) {
+        if (mute) {
+            Log.i("CallActivity muteButton selected");
             muteButtonView.setSelected(true);
             muteButtonView.setBackgroundColor(Color.GRAY);
         } else {
+            Log.i("CallActivity muteButton unselected");
             muteButtonView.setSelected(false);
             muteButtonView.setBackgroundColor(Color.TRANSPARENT);
         }
     }
 
     private void onSpeakerPhone() {
-        callViewModel.onSpeakerPhone();
+        Log.i("CallActivity onSpeakerPhone called");
+        callViewModel.toggleSpeakerPhone();
+    }
 
-        if(callViewModel.isSpeakerOn()) {
-            Log.i("going to speakerphone");
+    private void updateSpeakerPhoneUI(boolean on) {
+        if (on) {
+            Log.i("CallActivity speakerButton selected");
             speakerButtonView.setSelected(true);
             speakerButtonView.setBackgroundColor(Color.GRAY);
         } else {
-            Log.i("going to earpiece");
+            Log.i("CallActivity speakerButton unselected");
             speakerButtonView.setSelected(false);
             speakerButtonView.setBackgroundColor(Color.TRANSPARENT);
         }

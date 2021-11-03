@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.PowerManager;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
@@ -43,6 +44,8 @@ import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.SessionDescription;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -52,7 +55,21 @@ import java.util.concurrent.Executors;
 
 public class CallManager {
 
+    @IntDef({State.IDLE, State.CALLING, State.IN_CALL, State.RINGING, State.END})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface State {
+        int IDLE = 0;
+        int CALLING = 1;
+        int IN_CALL = 2;
+        int RINGING = 3;
+        int END = 4;
+    }
+
+    private @State int state;
     private boolean isInitiator;
+
+    private boolean isMicrophoneMuted = false;
+    private boolean isSpeakerPhoneOn = false;  // The default will have to change for video calls
 
     MediaConstraints audioConstraints;
     AudioSource audioSource;
@@ -97,6 +114,7 @@ public class CallManager {
         this.callsApi = CallsApi.getInstance();
         this.outgoingRingtone = new OutgoingRingtone(context);
         this.proximityLock = createProximityLock();
+        this.state = State.IDLE;
 
         this.audioManager = CallAudioManager.create(context);
         this.observers = new HashSet<>();
@@ -154,6 +172,10 @@ public class CallManager {
         }
     }
 
+    public @State int getState() {
+        return state;
+    }
+
     public void startCall(@NonNull UserId peerUid) {
         Log.i("startCall");
         this.callId = RandomId.create();
@@ -161,6 +183,7 @@ public class CallManager {
         this.isInitiator = true;
         this.callService = startCallService();
         acquireLock();
+        this.state = State.CALLING;
 
         // Store existing audio settings and change audio mode to
         // MODE_IN_COMMUNICATION for best possible VoIP performance.
@@ -219,8 +242,12 @@ public class CallManager {
         }
         releaseLock();
         isInitiator = false;
+        isMicrophoneMuted = false;
+        isSpeakerPhoneOn = false;
         callId = null;
         peerUid = null;
+        // TODO(nikola): Instead of STATE_INIT and STATE_END we need STATE_IDLE.
+        state = State.END;
     }
 
     private void handleIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer,
@@ -230,6 +257,7 @@ public class CallManager {
         this.isInitiator = false;
         this.peerUid = peerUid;
         this.callId = callId;
+
         // TODO(nikola): rename setup to something better
         setup();
         Log.i("Setting webrtc offer " + webrtcOffer);
@@ -238,6 +266,7 @@ public class CallManager {
                 new SessionDescription(SessionDescription.Type.OFFER, webrtcOffer));
         setStunTurnServers(stunServers, turnServers);
 
+        this.state = State.RINGING;
         notifyOnIncomingCall();
         Notifications.getInstance(context).showIncomingCallNotification(callId, peerUid);
         sendRinging();
@@ -281,12 +310,14 @@ public class CallManager {
                 new SimpleSdpObserver(),
                 new SessionDescription(SessionDescription.Type.ANSWER,
                         webrtcOffer));
+        this.state = State.IN_CALL;
         notifyOnAnsweredCall();
     }
 
     private void handleEndCall(@NonNull String callId, @NonNull UserId peerUid,
                                @NonNull EndCall.Reason reason, @NonNull Long timestamp) {
         Log.i("got EndCall callId: " + callId + " peerUid: " + peerUid + " reason: " + reason.name());
+        this.state = State.END;
         notifyOnEndCall();
         stopOutgoingRingtone();
         // TODO(nikola): Handle multiple calls at the same time. We should only cancel the right
@@ -311,6 +342,7 @@ public class CallManager {
         }
 
         doAnswer();
+        this.state = State.IN_CALL;
     }
 
     private void initializePeerConnectionFactory() {
@@ -543,17 +575,39 @@ public class CallManager {
         }, new MediaConstraints());
     }
 
+    public boolean isMicrophoneMuted() {
+        return isMicrophoneMuted;
+    }
+
     public void setMicrophoneMute(boolean mute) {
+        Log.i("CallManager.setMicrophoneMute(" + mute + ") was: " + this.isMicrophoneMuted);
         localAudioTrack.setEnabled(!mute);
         audioManager.setMicrophoneMute(mute);
+        isMicrophoneMuted = mute;
+        notifyOnMicrophoneMuteToggle();
+    }
+
+    public void toggleMicrophoneMute() {
+        setMicrophoneMute(!isMicrophoneMuted());
+    }
+
+    public boolean isSpeakerPhoneOn() {
+        return isSpeakerPhoneOn;
     }
 
     public void setSpeakerPhoneOn(boolean on) {
+        Log.i("CallManager.setSpeakerPhoneOn(" + on + ") was: " + isSpeakerPhoneOn);
         if (on) {
             audioManager.setDefaultAudioDevice(CallAudioManager.AudioDevice.SPEAKER_PHONE);
         } else {
             audioManager.setDefaultAudioDevice(CallAudioManager.AudioDevice.EARPIECE);
         }
+        isSpeakerPhoneOn = on;
+        notifyOnSpeakerPhoneToggle();
+    }
+
+    public void toggleSpeakerPhone() {
+        setSpeakerPhoneOn(!isSpeakerPhoneOn());
     }
 
     public void onEndCall(@NonNull EndCall.Reason reason) {
@@ -596,6 +650,22 @@ public class CallManager {
         synchronized (observers) {
             for (CallObserver o : observers) {
                 o.onEndCall(callId, peerUid);
+            }
+        }
+    }
+
+    private void notifyOnMicrophoneMuteToggle() {
+        synchronized (observers) {
+            for (CallObserver o : observers) {
+                o.onMicrophoneMute(isMicrophoneMuted);
+            }
+        }
+    }
+
+    private void notifyOnSpeakerPhoneToggle() {
+        synchronized (observers) {
+            for (CallObserver o : observers) {
+                o.onSpeakerPhoneOn(isSpeakerPhoneOn);
             }
         }
     }
