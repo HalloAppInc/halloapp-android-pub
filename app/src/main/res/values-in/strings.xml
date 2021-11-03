@@ -942,5 +942,8 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi."</string>
 
     <!-- Text shown in button for inviting friends -->
     <string name="invite_action">"Invite"</string>
+
+    <!-- action where the user shares -->
+    <string name="share_action">"Share"</string>
 <string name="add_invite">"Add"</string><string name="share_option_group">"Kirim ke Grup"</string><string name="select_group">"Pilih grup"</string></resources>
 

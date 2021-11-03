@@ -970,5 +970,8 @@ Abra as configurações da aplicação para modificar as permissões."</string>
 
     <!-- Text shown in button for inviting friends -->
     <string name="invite_action">"Invite"</string>
+
+    <!-- action where the user shares -->
+    <string name="share_action">"Share"</string>
 <string name="add_invite">"Add"</string><string name="share_option_group">"Postar para Grupo"</string><string name="select_group">"Selecionar grupo"</string></resources>
 

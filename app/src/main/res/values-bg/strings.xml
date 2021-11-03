@@ -978,5 +978,8 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Text shown in button for inviting friends -->
     <string name="invite_action">"Invite"</string>
+
+    <!-- action where the user shares -->
+    <string name="share_action">"Share"</string>
 <string name="add_invite">"Add"</string><string name="share_option_group">"Публикация в Група"</string><string name="select_group">"Избери група"</string></resources>
 

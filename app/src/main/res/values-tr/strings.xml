@@ -977,5 +977,8 @@ Uygulama izinlerini değiştirmek için Uygulama Ayarları ekranını aç."</str
 
     <!-- Text shown in button for inviting friends -->
     <string name="invite_action">"Invite"</string>
+
+    <!-- action where the user shares -->
+    <string name="share_action">"Share"</string>
 <string name="add_invite">"Add"</string><string name="share_option_group">"Gruba gönder"</string><string name="select_group">"Grup seç"</string></resources>
 

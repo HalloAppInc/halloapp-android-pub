@@ -1002,5 +1002,8 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Text shown in button for inviting friends -->
     <string name="invite_action">"Einladen"</string>
+
+    <!-- action where the user shares -->
+    <string name="share_action">"Teilen"</string>
 <string name="add_invite">"Hinzufügen"</string><string name="share_option_group">"In Gruppe teilen"</string><string name="select_group">"Gruppe auswählen"</string></resources>
 

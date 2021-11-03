@@ -18,7 +18,7 @@
     <string name="invite_notifications_channel_name">"Notifications d'invitation"</string>
     <string name="invite_notification_text">"%s vient d'accepter ton invitation à rejoindre HalloAppli &#x1f389;"</string>
     <string name="me">"Moi"</string>
-    <string name="you">"you"</string>
+    <string name="you">"vous"</string>
     <string name="camera_post">"Caméra"</string>
     <string name="gallery_post">"Galerie"</string>
     <string name="text_post">"Texte"</string>
@@ -214,9 +214,9 @@ Ouvre l'écran des paramètres de l'application pour modifier les autorisations 
     <string name="last_seen_less_minute">"Vue pour la dernière fois il y a moins d'une minute"</string>
     <string name="online">"en ligne"</string>
     <string name="today">"Aujourd'hui"</string>
-    <string name="today_at_time">"today at %s"</string>
+    <string name="today_at_time">"aujourd'hui à %s"</string>
     <string name="yesterday">"Hier"</string>
-    <string name="yesterday_at_time">"yesterday at %s"</string>
+    <string name="yesterday_at_time">"hier à %s"</string>
     <string name="day_of_week_at_time">"%1$s à %2$s"</string>
     <string name="unknown_contact">"Contact inconnu"</string>
     <string name="select_contact">"Nouveau message"</string>
@@ -226,7 +226,7 @@ Ouvre l'écran des paramètres de l'application pour modifier les autorisations 
     <string name="action_save">"Enregistrer"</string>
     <string name="invite_friends">"Inviter des amis et des membres de la famille"</string>
     <string name="invite_friend_chooser_title">"Inviter %s"</string>
-    <string name="invite_text_with_name_and_number">"Hey %1$s, I have an invite for you to join me on HalloApp - a real-relationship network for those closest to me. Use %2$s to register. Get it at %3$s"</string>
+    <string name="invite_text_with_name_and_number">"Bonjour %1$s, je vous invite à me rejoindre sur HalloApp ; un réseau de relations réelles pour les personnes les plus proches de moi. Utilisez %2$s pour vous inscrire. Obtenez-le à %3$s"</string>
     <string name="name_hint">"Votre nom"</string>
     <string name="name_must_be_specified">"Le nom doit être spécifié"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -314,7 +314,7 @@ version : %2$s
         <item quantity="other">"Il te reste %s invitations cette semaine"</item>
     </plurals>
     <string name="invite_friends_title">"Invite tes amis et ta famille"</string>
-    <string name="invite_title">"Invite friends"</string>
+    <string name="invite_title">"Inviter des amis"</string>
     <string name="settings_invite_option">"Inviter à rejoindre HalloApp"</string>
     <string name="invite_already_on_halloapp">"Déjà sur HalloApp"</string>
     <string name="invite_invalid_phone_number">"Le numéro de téléphone n'est pas valide"</string>
@@ -332,13 +332,13 @@ version : %2$s
     <string name="failed_create_group">"Le groupe n'a pas pu être créé, réessaie plus tard"</string>
 
     <!-- Shown in options menu to remove a member of group -->
-    <string name="group_remove_member">"Remove from group"</string>
+    <string name="group_remove_member">"Retirer du groupe"</string>
     <string name="group_promote_to_admin">"Attribuer le rôle d'administrateur"</string>
     <string name="promote_admin_in_progress">"Attribution du rôle d'administrateur…"</string>
     <string name="failed_promote_admin">"Le rôle d'administrateur n'a pas pu être attribué, réessaie plus tard"</string>
 
     <!-- Option for removing a user from the list of admins of a group -->
-    <string name="group_demote_from_admin">"Dismiss as admin"</string>
+    <string name="group_demote_from_admin">"Renvoyer en tant qu'administrateur"</string>
     <string name="demote_admin_in_progress">"Retrait du rôle d'administrateur…"</string>
     <string name="failed_demote_admin">"Le rôle d'administrateur n'a pas pu être retiré, réessaie plus tard"</string>
     <string name="remove_member_in_progress">"Suppression du membre…"</string>
@@ -452,7 +452,7 @@ version : %2$s
     <string name="not_now">"Pas maintenant"</string>
     <string name="continue_button">"Continuer"</string>
     <string name="invite_link_load_failed">"Échec de l'ouverture du lien d'invitation au groupe"</string>
-    <string name="message_tombstone_placeholder">"Waiting for this message. This may take a while. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
+    <string name="message_tombstone_placeholder">"En attente de ce message. Ça peut prendre quelques instants. "<![CDATA[<a href="learn-more">En savoir plus</a>]]>"."</string>
     <string name="failed_no_longer_member">"Vous n'êtes plus membre de ce groupe."</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -483,7 +483,7 @@ version : %2$s
     <string name="key_verification_tap_to_scan">"Touchez pour scanner"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
+    <string name="key_verification_explanation">"Pour vérifier la sécurité de votre connexion avec %s, vérifiez que les chiffres ci-dessus correspondent à ceux affichés sur leur appareil ou scannez le code QR sur son téléphone. "<![CDATA[<a href="learn-more">En savoir plus</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Plus"</string>
@@ -588,7 +588,7 @@ Ouvrez la page des paramètres de l'application pour modifier les permissions de
     <string name="data_available_at">"Les données seront disponibles le %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
-    <string name="export_data_explanation">"Download a copy of all your user data stored on HalloApp's servers. This does not contain message or post content."</string>
+    <string name="export_data_explanation">"Téléchargez une copie de toutes vos données utilisateur stockées sur les serveurs d'HalloApp. Cette copie ne contient pas le contenu des messages ou des publications."</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"La demande a échoué."</string>
@@ -597,7 +597,7 @@ Ouvrez la page des paramètres de l'application pour modifier les permissions de
     <string name="export_account_data">"Exporter mes données"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
-    <string name="e2e_notice">"All messages on HalloApp are end-to-end encrypted. &lt;b&gt;Tap to learn more&lt;/b&gt;"</string>
+    <string name="e2e_notice">"Tous les messages sur HalloApp sont chiffrés de bout en bout. &lt;b&gt;Tapez pour en savoir plus&lt;/b&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"Voir le numéro de sécurité"</string>
@@ -636,7 +636,7 @@ Ouvrez la page des paramètres de l'application pour modifier les permissions de
     <string name="settings_share_option">"Partager HalloApp"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <string name="share_halloapp_text">"Join my real-relationship network on HalloApp. Download for free at halloapp.com/dl"</string>
+    <string name="share_halloapp_text">"Rejoignez mon réseau de relations réelles sur HalloApp. Téléchargez-le gratuitement sur halloapp.com/dl."</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
     <string name="contact_permissions_request">"Autorisez HalloApp à accéder à vos contacts pour envoyer et recevoir des mises à jour."</string>
@@ -704,7 +704,7 @@ Ouvrez la page des paramètres de l'application pour modifier les permissions de
     <string name="return_to_registration">"Retour à l'inscription"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <string name="archive_empty">"Your posts will appear here after they expire in 30 days"</string>
+    <string name="archive_empty">"Vos messages apparaîtront ici après leur expiration dans 30 jours"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"Contenu non pris en charge"</string>
@@ -850,102 +850,105 @@ Ouvrez la page des paramètres de l'application pour modifier les permissions de
 
     <!-- New comment separator -->
     <plurals name="new_comment_separator">
-        <item quantity="one">"%d new comment"</item>
-        <item quantity="other">"%d new comment"</item>
+        <item quantity="one">"%d nouveau commentaire"</item>
+        <item quantity="other">"%d nouveaux commentaires"</item>
     </plurals>
 
     <!-- Title for activity that lets user select who to share with -->
-    <string name="share_with">"Share with…"</string>
+    <string name="share_with">"Partager avec…"</string>
 
     <!-- Title for feed privacy when setting it from a single post -->
-    <string name="setting_feed_privacy_single_post_title">"Who will see this post"</string>
+    <string name="setting_feed_privacy_single_post_title">"Qui verra ce message"</string>
 
     <!-- Text shown when sharing a post with a group -->
-    <string name="composer_sharing_group_post">"Sharing with group"</string>
+    <string name="composer_sharing_group_post">"Partage avec le groupe"</string>
 
     <!-- Title of section for recent groups -->
-    <string name="recent_groups">"Recent groups"</string>
+    <string name="recent_groups">"Groupes récents"</string>
 
     <!-- Item for creating a new group -->
-    <string name="create_new_group">"Create new group"</string>
+    <string name="create_new_group">"Créer un nouveau groupe"</string>
 
     <!-- Shown as a subtitle on the content composer screen when making a post. Tapping will
          allow user to change destination for the post -->
-    <string name="tap_to_change">"Tap to change"</string>
+    <string name="tap_to_change">"Appuyez pour modifier"</string>
 
     <!-- Title for bottom sheet that comes up telling a user to invite friends to a group -->
-    <string name="invite_group_zero_zone_title">"Invite a friend to your group"</string>
+    <string name="invite_group_zero_zone_title">"Invitez un ami à votre groupe"</string>
 
     <!-- Explanation text for bottom sheet shown telling user to share an invite link to invite friends -->
-    <string name="invite_group_zero_zone_details">"Share this link with friends and they'll automatically join your group."</string>
+    <string name="invite_group_zero_zone_details">"Partagez ce lien avec vos amis et ils rejoindront automatiquement votre groupe."</string>
 
     <!-- initial group created for the user where %s is replaced with their name. should indicate that it is their group -->
-    <string name="zero_zone_group_name">"%s's group"</string>
+    <string name="zero_zone_group_name">"Le groupe de %s"</string>
 
     <!-- Title for option to invite a contact using an invite link -->
-    <string name="invite_via_link">"Invite via link"</string>
+    <string name="invite_via_link">"Inviter via un lien"</string>
 
     <!-- Text shown as subheader for inviting friends section -->
-    <string name="invite_friends_header">"Invite friends"</string>
+    <string name="invite_friends_header">"Inviter des amis"</string>
 
     <!-- Text shown as preview for invite friends group post -->
-    <string name="invite_friends_post_preview">"Invite a friend to your group"</string>
+    <string name="invite_friends_post_preview">"Invitez un ami à votre groupe"</string>
 
     <!-- Title for home post explaining what HalloApp is -->
-    <string name="zero_zone_home_nux_header">"Welcome to HalloApp, a space for real relationships ✨"</string>
+    <string name="zero_zone_home_nux_header">"Bienvenue à HalloApp, un espace pour les relations réelles ✨"</string>
 
     <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
-    <string name="zero_zone_home_nux_text_one">"Use your phone number to connect with friends &amp; family in a space with no ads, no brands, no likes, and no influencers."</string>
+    <string name="zero_zone_home_nux_text_one">"Utilisez votre numéro de téléphone pour vous connecter avec vos amis et votre famille dans un espace sans publicités, sans marques, sans « J'aime » et sans influenceurs."</string>
 
     <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
-    <string name="zero_zone_home_nux_text_two">"HalloApp is for you, and those closest to you, in private. Invite your real friends to get started"</string>
+    <string name="zero_zone_home_nux_text_two">"HalloApp est pour vous, et vos proches, en privé. Invitez vos vrais amis pour commencer"</string>
 
     <!-- Action for user to start their delete accoount process under 'account' -->
-    <string name="delete_my_account_action">"Delete my account"</string>
+    <string name="delete_my_account_action">"Supprimer mon compte"</string>
 
     <!-- Top line before the other delete account bullets. Will explain what deleting your account entails -->
-    <string name="delete_account_explanation_title">"Deleting your account will:"</string>
+    <string name="delete_account_explanation_title">"En supprimant votre compte, vous allez :"</string>
 
     <!-- First account deletion bullet saying the profile photo will be deleted -->
-    <string name="delete_account_explanation_bullet_one">"• Delete your account information and profile photo"</string>
+    <string name="delete_account_explanation_bullet_one">"- Supprimer les informations de votre compte et votre photo de profil."</string>
 
     <!-- Second account deletion bullet saying the you will be removed from all group -->
-    <string name="delete_account_explanation_bullet_two">"• Remove you from all HalloApp groups"</string>
+    <string name="delete_account_explanation_bullet_two">"- Vous retirer de tous les groupes HalloApp"</string>
 
     <!-- Third account deletion bullet explaining message history will be deleted -->
-    <string name="delete_account_explanation_bullet_three">"• Delete your message history on this phone"</string>
+    <string name="delete_account_explanation_bullet_three">"- Supprimer l'historique de vos messages sur ce téléphone"</string>
 
     <!-- Instructions shown above delete account entry -->
-    <string name="delete_account_instructions">"To delete your account, confirm your phone number. This cannot be undone"</string>
+    <string name="delete_account_instructions">"Pour supprimer votre compte, confirmez votre numéro de téléphone. Cette opération ne peut être annulée."</string>
 
     <!-- Progress message while account is deleting -->
-    <string name="delete_account_in_progress">"Deleting your account…"</string>
+    <string name="delete_account_in_progress">"Suppression de votre compte…"</string>
 
     <!-- Text box hint for optional field for adding feedback for why you are deleting your account -->
-    <string name="delete_account_feedback_hint">"Feedback for HalloApp (Optional)"</string>
+    <string name="delete_account_feedback_hint">"Commentaires concernant HalloApp (facultatif)"</string>
 
     <!-- Message shown in dialog asking if user is sure they want to delete their account -->
-    <string name="delete_account_confirmation_message">"Are you sure that you want to delete your account? This cannot be undone"</string>
+    <string name="delete_account_confirmation_message">"Êtes-vous sûr de vouloir supprimer votre compte ? Cette opération ne peut pas être annulée"</string>
 
     <!-- Title for the screen where we display where your storage is being used -->
-    <string name="storage_usage_title">"Storage usage"</string>
+    <string name="storage_usage_title">"Utilisation du stockage"</string>
 
     <!-- Storage usage section header for home feed category -->
-    <string name="storage_usage_home">"Home feed"</string>
+    <string name="storage_usage_home">"Flux d'accueil"</string>
 
     <!-- Storage usage section header for chats category -->
     <string name="storage_usage_chats">"Chats"</string>
 
     <!-- Storage usage section header for groups category -->
-    <string name="storage_usage_groups">"Groups"</string>
+    <string name="storage_usage_groups">"Groupes"</string>
 
     <!-- Storage usage section header for other category -->
-    <string name="storage_usage_internal">"Other"</string>
+    <string name="storage_usage_internal">"Autres"</string>
 
     <!-- Storage usage section header for archive category -->
-    <string name="storage_usage_archive">"Archive"</string>
+    <string name="storage_usage_archive">"Archiver"</string>
 
     <!-- Text shown in button for inviting friends -->
-    <string name="invite_action">"Invite"</string>
+    <string name="invite_action">"Inviter"</string>
+
+    <!-- action where the user shares -->
+    <string name="share_action">"Share"</string>
 <string name="add_invite">"Add"</string><string name="share_option_group">"Publier dans le groupe"</string><string name="select_group">"Sélectionner le groupe"</string></resources>
 

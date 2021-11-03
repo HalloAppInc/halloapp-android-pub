@@ -908,7 +908,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="zero_zone_home_nux_header">"Welkom bij HalloApp, een digitale ruimte voor echte relaties ✨"</string>
 
     <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
-    <string name="zero_zone_home_nux_text_one">"Gebruik je telefoonnummer om je te verbinden met vrienden &amp; familie in een ruimte zonder advertenties, zonder merken, zonder likes en zonder influencers."</string>
+    <string name="zero_zone_home_nux_text_one">"Gebruik je telefoonnummer om je te verbinden met vrienden &amp; familie in een ruimte zonder advertenties, merken, likes en influencers."</string>
 
     <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
     <string name="zero_zone_home_nux_text_two">"HalloApp is voor jou en degenen die het dichtst bij je staan, volledig in privé. Nodig je echte vrienden uit om te beginnen"</string>
@@ -960,5 +960,8 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Text shown in button for inviting friends -->
     <string name="invite_action">"Uitnodigen"</string>
+
+    <!-- action where the user shares -->
+    <string name="share_action">"Delen"</string>
 <string name="add_invite">"Toevoegen"</string><string name="share_option_group">"Post in groep"</string><string name="select_group">"Selecteer groep"</string></resources>
 

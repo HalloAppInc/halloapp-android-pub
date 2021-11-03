@@ -960,5 +960,8 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Text shown in button for inviting friends -->
     <string name="invite_action">"دعوت"</string>
+
+    <!-- action where the user shares -->
+    <string name="share_action">"Share"</string>
 <string name="add_invite">"دعوت"</string><string name="share_option_group">"پست به گروه"</string><string name="select_group">"انتخاب گروه"</string></resources>
 

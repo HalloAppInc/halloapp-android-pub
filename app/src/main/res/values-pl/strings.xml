@@ -1005,5 +1005,8 @@ Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
 
     <!-- Text shown in button for inviting friends -->
     <string name="invite_action">"Zaproś"</string>
+
+    <!-- action where the user shares -->
+    <string name="share_action">"Share"</string>
 </resources>
 
