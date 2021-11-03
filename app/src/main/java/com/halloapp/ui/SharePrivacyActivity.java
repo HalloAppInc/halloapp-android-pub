@@ -86,11 +86,6 @@ public class SharePrivacyActivity extends HalloActivity {
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        View fab = findViewById(R.id.create_group_fab);
-        fab.setOnClickListener(v -> {
-            startActivityForResult(GroupCreationPickerActivity.newIntent(v.getContext(), null, false), REQUEST_CREATE_GROUP);
-        });
-
         RecyclerView shareListRv = findViewById(R.id.share_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         shareListRv.setLayoutManager(layoutManager);
