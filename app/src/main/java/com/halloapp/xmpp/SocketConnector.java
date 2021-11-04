@@ -85,14 +85,16 @@ public class SocketConnector {
     }
 
     private void cleanup() {
-        for (HANoiseSocket connectingSocket : connectingSockets) {
-            try {
-                connectingSocket.close();
-            } catch (IOException e) {
-                Log.e("SocketConnector/cleanup failed to close", e);
+        if (connectingSockets != null) {
+            for (HANoiseSocket connectingSocket : connectingSockets) {
+                try {
+                    connectingSocket.close();
+                } catch (IOException e) {
+                    Log.e("SocketConnector/cleanup failed to close", e);
+                }
             }
+            connectingSockets.clear();
         }
-        connectingSockets.clear();
         openAttempts = 0;
     }
 
