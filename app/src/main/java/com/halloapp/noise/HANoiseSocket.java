@@ -52,7 +52,7 @@ public class HANoiseSocket extends Socket {
 
     private static final int PUBLIC_KEY_SIZE = 32;
     private static final int BUFFER_SIZE = 4096;
-    private static final int CONNECT_TIMEOUT = 20_000;
+    private static final int CONNECT_TIMEOUT = 30_000;
     private static final int READ_TIMEOUT = 3 * (int)DateUtils.MINUTE_IN_MILLIS;
 
     private final Me me;
@@ -60,14 +60,20 @@ public class HANoiseSocket extends Socket {
     private HandshakeState handshakeState;
 
     private final ByteArrayOutputStream readerOutputStream = new ByteArrayOutputStream();
-    private final OutputStream writerOutputStream;
+    private OutputStream writerOutputStream;
 
     private CipherState sendCrypto;
     private CipherState recvCrypto;
 
-    public HANoiseSocket(@NonNull Me me, @NonNull InetAddress address, final int port) throws IOException {
+    private final InetSocketAddress address;
+
+    public HANoiseSocket(@NonNull Me me, @NonNull InetAddress address, final int port) {
         this.me = me;
-        connect(new InetSocketAddress(address, port), CONNECT_TIMEOUT);
+        this.address = new InetSocketAddress(address, port);
+    }
+
+    public void connect() throws IOException {
+        connect(address, CONNECT_TIMEOUT);
         setSoTimeout(READ_TIMEOUT);
         setTcpNoDelay(true);
         writerOutputStream = new BufferedOutputStream(getOutputStream());

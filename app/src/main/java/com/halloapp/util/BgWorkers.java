@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -74,5 +75,9 @@ public class BgWorkers {
 
     public <T> Future<T> submit(@NonNull Callable<T> callable) {
         return threadPool.submit(callable);
+    }
+
+    public Executor getExecutor() {
+        return threadPool;
     }
 }

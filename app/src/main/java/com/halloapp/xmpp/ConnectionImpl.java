@@ -109,6 +109,7 @@ import com.halloapp.xmpp.util.ResponseHandler;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
@@ -124,6 +125,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.WeakHashMap;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -211,8 +213,8 @@ public class ConnectionImpl extends Connection {
 
         final String host = preferences.getUseDebugHost() ? DEBUG_HOST : HOST;
         try {
-            final InetAddress address = InetAddress.getByName(host);
-            HANoiseSocket noiseSocket = new HANoiseSocket(me, address, NOISE_PORT);
+            SocketConnector connector = new SocketConnector(bgWorkers.getExecutor());
+            HANoiseSocket noiseSocket = connector.connect(me, host, NOISE_PORT);
             noiseSocket.initialize(createAuthRequest().toByteArray());
             this.socket = noiseSocket;
             isAuthenticated = true;

@@ -31,12 +31,14 @@ import com.halloapp.proto.server.RegisterRequest;
 import com.halloapp.proto.server.RegisterResponse;
 import com.halloapp.proto.server.VerifyOtpRequest;
 import com.halloapp.proto.server.VerifyOtpResponse;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.LanguageUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.SocketConnector;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;
@@ -226,8 +228,8 @@ public class Registration {
         }
         HANoiseSocket noiseSocket = null;
         try {
-            final InetAddress address = InetAddress.getByName(host);
-            noiseSocket = new HANoiseSocket(me, address, NOISE_PORT);
+            SocketConnector socketConnector = new SocketConnector(BgWorkers.getInstance().getExecutor());
+            noiseSocket = socketConnector.connect(me, host, NOISE_PORT);
             noiseSocket.initialize(noiseKey, RegisterRequest.newBuilder()
                     .setHashcashRequest(HashcashRequest.newBuilder().build())
                     .build().toByteArray());
@@ -280,8 +282,8 @@ public class Registration {
         }
         HANoiseSocket noiseSocket = null;
         try {
-            final InetAddress address = InetAddress.getByName(host);
-            noiseSocket = new HANoiseSocket(me, address, NOISE_PORT);
+            SocketConnector socketConnector = new SocketConnector(BgWorkers.getInstance().getExecutor());
+            noiseSocket = socketConnector.connect(me, host, NOISE_PORT);
             noiseSocket.initialize(noiseKey, RegisterRequest.newBuilder()
                     .setOtpRequest(otpRequestBuilder)
                     .build().toByteArray());
@@ -394,8 +396,8 @@ public class Registration {
         verifyOtpRequestBuilder.setSignedPhrase(ByteString.copyFrom(sign));
         HANoiseSocket noiseSocket = null;
         try {
-            final InetAddress address = InetAddress.getByName(host);
-            noiseSocket = new HANoiseSocket(me, address, NOISE_PORT);
+            SocketConnector socketConnector = new SocketConnector(BgWorkers.getInstance().getExecutor());
+            noiseSocket = socketConnector.connect(me, host, NOISE_PORT);
             byte[] noiseKey = me.getMyRegEd25519NoiseKey();
             if (noiseKey == null) {
                 noiseKey = CryptoUtils.generateEd25519KeyPair();
