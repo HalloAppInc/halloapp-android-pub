@@ -8,6 +8,7 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactSyncResult;
 import com.halloapp.content.Comment;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.keys.PublicEdECKey;
@@ -56,7 +57,7 @@ public abstract class Connection {
         public void onOutgoingPostSent(@NonNull String postId) {}
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId) {}
         public void onOutgoingCommentSent(@NonNull String postId, @NonNull String commentId) {}
-        public void onAudienceHashMismatch(@NonNull Post post) {}
+        public void onAudienceHashMismatch(@NonNull ContentItem contentItem) {}
         public void onIncomingFeedItemsReceived(@NonNull List<Post> posts, @NonNull List<Comment> comment, @NonNull String ackId) {}
         public void onIncomingPostSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onOutgoingMessageSent(@NonNull ChatId chatId, @NonNull String messageId) {}

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.content.Comment;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.keys.PublicEdECKey;
@@ -132,10 +133,10 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyAudienceHashMismatch(@NonNull Post post) {
+    public void notifyAudienceHashMismatch(@NonNull ContentItem contentItem) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onAudienceHashMismatch(post);
+                observer.onAudienceHashMismatch(contentItem);
             }
         }
     }

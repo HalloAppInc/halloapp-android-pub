@@ -13,6 +13,7 @@ import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.Chat;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostsManager;
@@ -252,8 +253,15 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onAudienceHashMismatch(@NonNull Post post) {
-        GroupId groupId = post.getParentGroup();
+    public void onAudienceHashMismatch(@NonNull ContentItem contentItem) {
+        GroupId groupId = contentItem instanceof Post
+                ? ((Post)contentItem).getParentGroup()
+                : contentItem instanceof Comment ? ((Comment) contentItem).getParentPost().getParentGroup() : null;
+
+        if (groupId == null) {
+            Log.e("Audience hash mismatch could not determine group for item " + contentItem);
+            return;
+        }
 
         bgWorkers.execute(() -> {
             try {
@@ -293,7 +301,13 @@ public class MainConnectionObserver extends Connection.Observer {
 
                 if (foundMismatch) {
                     groupFeedSessionManager.tearDownOutboundSession(groupId);
-                    connection.sendPost(post);
+                    if (contentItem instanceof Post) {
+                        connection.sendPost((Post)contentItem);
+                    } else if (contentItem instanceof Comment) {
+                        connection.sendComment((Comment)contentItem);
+                    } else {
+                        Log.e("Found mismatch for unknown content item " + contentItem);
+                    }
                 } else {
                     Log.w("Server said audience does not match but failed to find mismatch; not re-sending");
                     Log.sendErrorReport("no_local_audience_mismatch");

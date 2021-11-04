@@ -732,7 +732,15 @@ public class ConnectionImpl extends Connection {
         }
         sendIqRequestAsync(requestIq, true)
                 .onResponse(response -> connectionObservers.notifyOutgoingCommentSent(comment.postId, comment.id))
-                .onError(e -> Log.e("connection: cannot send comment", e));
+                .onError(e -> {
+                    Log.e("connection: cannot send comment", e);
+                    if (e instanceof IqErrorException) {
+                        String reason = ((IqErrorException) e).getReason();
+                        if ("audience_hash_mismatch".equals(reason)) {
+                            connectionObservers.notifyAudienceHashMismatch(comment);
+                        }
+                    }
+                });
     }
 
     @Override
