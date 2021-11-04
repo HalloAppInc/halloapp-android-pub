@@ -283,6 +283,7 @@ public class ContentComposerActivity extends HalloActivity {
             Log.i("ContentComposerActivity no uri list provided");
             loadingView.setVisibility(View.GONE);
             editText = findViewById(R.id.entry_card);
+            editText.setMinHeight(getResources().getDimensionPixelSize(R.dimen.entry_card_min_height));
             editText.requestFocus();
             editText.setPreImeListener((keyCode, event) -> {
                 if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {

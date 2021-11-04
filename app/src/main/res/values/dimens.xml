@@ -69,6 +69,7 @@
     <dimen name="content_composer_frame_border">20dp</dimen>
     <dimen name="content_composer_min_card_margin">40dp</dimen>
     <dimen name="mention_picker_elevation">2dp</dimen>
+    <dimen name="entry_card_min_height">265dp</dimen>
     <dimen name="entry_bottom_focused_min_height">80dp</dimen>
     <dimen name="entry_bottom_unfocused_min_height">100dp</dimen>
     <dimen name="entry_bottom_max_height">250dp</dimen>
