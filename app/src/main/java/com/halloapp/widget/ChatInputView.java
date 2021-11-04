@@ -201,13 +201,11 @@ public class ChatInputView extends ConstraintLayout {
             }
         });
 
-        if (ServerProps.getInstance().getIsInternalUser()) {
-            editText.addTextChangedListener(new UrlPreviewTextWatcher(url -> {
-                if (inputParent != null) {
-                    inputParent.onUrl(url);
-                }
-            }));
-        }
+        editText.addTextChangedListener(new UrlPreviewTextWatcher(url -> {
+            if (inputParent != null) {
+                inputParent.onUrl(url);
+            }
+        }));
 
         deleteVoiceDraft.setOnClickListener(v -> {
             audioDraft = null;

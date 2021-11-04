@@ -606,13 +606,11 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             }
         });
 
-        if (serverProps.getIsInternalUser()) {
-            linkPreviewComposeView.setOnRemovePreviewClickListener(v -> {
-                urlPreviewLoader.cancel(linkPreviewComposeView);
-                linkPreviewComposeView.setLoading(false);
-                linkPreviewComposeView.updateUrlPreview(null);
-            });
-        }
+        linkPreviewComposeView.setOnRemovePreviewClickListener(v -> {
+            urlPreviewLoader.cancel(linkPreviewComposeView);
+            linkPreviewComposeView.setLoading(false);
+            linkPreviewComposeView.updateUrlPreview(null);
+        });
 
         if (getIntent().getBooleanExtra(EXTRA_NO_POST_LENGTH_LIMIT, false)) {
             textLimits.put(POST_TEXT_LIMITS_ID, Integer.MAX_VALUE);

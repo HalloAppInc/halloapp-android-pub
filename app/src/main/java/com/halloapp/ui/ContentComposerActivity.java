@@ -528,7 +528,7 @@ public class ContentComposerActivity extends HalloActivity {
             replyContainer.setVisibility(View.GONE);
         }
 
-        if (chatId == null && ServerProps.getInstance().getIsInternalUser()) {
+        if (chatId == null) {
             editText.addTextChangedListener(new UrlPreviewTextWatcher(new UrlPreviewTextWatcher.UrlListener() {
                 @Override
                 public void onUrl(String url) {
