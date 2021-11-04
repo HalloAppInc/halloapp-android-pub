@@ -246,9 +246,8 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
 
     public static Intent getStartCallIntent(@NonNull Context context, @NonNull UserId userId) {
         Intent intent = new Intent(context, CallActivity.class);
-        // TODO(nikola): make peer_uid constant?
-        intent.putExtra("peer_uid", userId.rawId());
-        intent.putExtra("is_initiator", true);
+        intent.putExtra(EXTRA_PEER_UID, userId.rawId());
+        intent.putExtra(EXTRA_IS_INITIATOR, true);
         return intent;
     }
 
