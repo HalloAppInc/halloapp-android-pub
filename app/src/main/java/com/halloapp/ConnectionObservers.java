@@ -11,7 +11,11 @@ import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.AnswerCall;
+import com.halloapp.proto.server.CallRinging;
 import com.halloapp.proto.server.EndCall;
+import com.halloapp.proto.server.IceCandidate;
+import com.halloapp.proto.server.IncomingCall;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.StunServer;
 import com.halloapp.proto.server.TurnServer;
@@ -405,44 +409,43 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer, @NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers, long timestamp, @NonNull String ackId) {
+    public void notifyIncomingCall(@NonNull UserId peerUid, @NonNull IncomingCall incomingCall, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onIncomingCall(callId, peerUid, webrtcOffer, stunServers, turnServers, timestamp, ackId);
+                observer.onIncomingCall(peerUid, incomingCall, ackId);
             }
         }
     }
 
-    public void notifyAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcAnswer, long timestamp, @NonNull String ackId) {
+    public void notifyCallRinging(@NonNull UserId peerUid, @NonNull CallRinging callRinging, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onAnswerCall(callId, peerUid, webrtcAnswer, timestamp, ackId);
+                observer.onCallRinging(peerUid, callRinging, ackId);
             }
         }
     }
 
-    public void notifyCallRinging(@NonNull String callId, @NonNull UserId peerUid, long timestamp, @NonNull String ackId) {
+    public void notifyAnswerCall(@NonNull UserId peerUid, @NonNull AnswerCall answerCall, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onCallRinging(callId, peerUid, timestamp, ackId);
+                observer.onAnswerCall(peerUid, answerCall, ackId);
             }
         }
     }
 
-    public void notifyEndCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull EndCall.Reason reason, long timestamp, @NonNull String ackId) {
+    public void notifyEndCall(@NonNull UserId peerUid, @NonNull EndCall endCall, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onEndCall(callId, peerUid, reason, timestamp, ackId);
+                observer.onEndCall(peerUid, endCall, ackId);
             }
         }
     }
 
-    public void notifyIceCandidate(@NonNull String callId, @NonNull UserId peerUid, @NonNull String sdpMediaId, int sdpMediaLineIndex, @NonNull String sdp, @NonNull String ackId) {
+    public void notifyIceCandidate(@NonNull UserId peerUid, @NonNull IceCandidate iceCandidate, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onIceCandidate(callId, peerUid, sdpMediaId, sdpMediaLineIndex, sdp, ackId);
+                observer.onIceCandidate(peerUid, iceCandidate, ackId);
             }
         }
     }
-
 }

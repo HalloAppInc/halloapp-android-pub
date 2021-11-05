@@ -17,7 +17,11 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.log_events.EventData;
+import com.halloapp.proto.server.AnswerCall;
+import com.halloapp.proto.server.CallRinging;
 import com.halloapp.proto.server.EndCall;
+import com.halloapp.proto.server.IceCandidate;
+import com.halloapp.proto.server.IncomingCall;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.StunServer;
@@ -96,11 +100,11 @@ public abstract class Connection {
         public void onPostRevoked(@NonNull UserId senderUserId, @NonNull String postId, GroupId groupId) {}
         public void onCommentRevoked(@NonNull String id, @NonNull UserId commentSenderId, @NonNull String postId, long timestamp) {}
         public void onMessageRevoked(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId, @NonNull String ackId) {}
-        public void onIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer, @NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers, long timestamp, @NonNull String ackId) {}
-        public void onCallRinging(@NonNull String callId, @NonNull UserId peerUid, long timestamp, @NonNull String ackId) {}
-        public void onAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer, long timestamp, @NonNull String ackId) {}
-        public void onEndCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull EndCall.Reason reason, long timestamp, @NonNull String ackId) {}
-        public void onIceCandidate(@NonNull String callId, @NonNull UserId peerUid, @NonNull String sdpMediaId, int sdpMediaLineIndex, @NonNull String sdp, @NonNull String ackId) {}
+        public void onIncomingCall(@NonNull UserId peerUid, @NonNull IncomingCall incomingCall, @NonNull String ackId) {}
+        public void onCallRinging(@NonNull UserId peerUid, @NonNull CallRinging callRinging, @NonNull String ackId) {}
+        public void onAnswerCall(@NonNull UserId peerUid, @NonNull AnswerCall answerCall, @NonNull String ackId) {}
+        public void onEndCall(@NonNull UserId peerUid, @NonNull EndCall endCall, @NonNull String ackId) {}
+        public void onIceCandidate(@NonNull UserId peerUid, @NonNull IceCandidate iceCandidate, @NonNull String ackId) {}
     }
 
     public abstract Future<Boolean> connect();

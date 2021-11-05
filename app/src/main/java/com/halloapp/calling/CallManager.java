@@ -118,46 +118,6 @@ public class CallManager {
 
         this.audioManager = CallAudioManager.create(context);
         this.observers = new HashSet<>();
-
-        // adding listeners for incoming messages
-        ConnectionObservers.getInstance().addObserver(new Connection.Observer() {
-            @Override
-            public void onIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer,
-                                       @NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers,
-                                       long timestamp, @NonNull String ackId) {
-                CallManager.getInstance().handleIncomingCall(
-                        callId, peerUid, webrtcOffer, stunServers, turnServers, timestamp);
-                Connection.getInstance().sendAck(ackId);
-            }
-
-            @Override
-            public void onCallRinging(@NonNull String callId, @NonNull UserId peerUid, long timestamp,
-                                      @NonNull String ackId) {
-                CallManager.getInstance().handleCallRinging(callId, peerUid, timestamp);
-                Connection.getInstance().sendAck(ackId);
-            }
-
-            @Override
-            public void onAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer,
-                                     long timestamp, @NonNull String ackId) {
-                CallManager.getInstance().handleAnswerCall(callId, peerUid, webrtcOffer, timestamp);
-                Connection.getInstance().sendAck(ackId);
-            }
-
-            @Override
-            public void onEndCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull EndCall.Reason reason,
-                                  long timestamp, @NonNull String ackId) {
-                CallManager.getInstance().handleEndCall(callId, peerUid, reason, timestamp);
-                Connection.getInstance().sendAck(ackId);
-            }
-
-            @Override
-            public void onIceCandidate(@NonNull String callId, @NonNull UserId peerUid, @NonNull String sdpMediaId,
-                                       int sdpMediaLineIndex, @NonNull String sdp, @NonNull String ackId) {
-                CallManager.getInstance().handleIceCandidate(callId, peerUid, sdpMediaId, sdpMediaLineIndex, sdp);
-                Connection.getInstance().sendAck(ackId);
-            }
-        });
     }
 
     public void addObserver(CallObserver observer) {
@@ -250,7 +210,7 @@ public class CallManager {
         state = State.END;
     }
 
-    private void handleIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer,
+    public void handleIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer,
                                     @NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers,
                                     @NonNull Long timestamp) {
         Log.i("incoming call " + callId + " peerUid: " + peerUid);
@@ -269,23 +229,10 @@ public class CallManager {
         this.state = State.RINGING;
         notifyOnIncomingCall();
         Notifications.getInstance(context).showIncomingCallNotification(callId, peerUid);
-        sendRinging();
+        callsApi.sendRinging(callId, peerUid);
     }
 
-    // TODO(nikola): Move this code to CallsApi
-    private void sendRinging() {
-        CallRingingElement callRingingElement = new CallRingingElement(callId);
-        String id = RandomId.create();
-        Msg msg = Msg.newBuilder()
-                .setId(id)
-                .setCallRinging(callRingingElement.toProto())
-                .setToUid(peerUid.rawIdLong())
-                .build();
-        Log.i("sending call_ringing msg " + msg);
-        ConnectionImpl.getInstance().sendCallMsg(msg);
-    }
-
-    private void handleCallRinging(@NonNull String callId, @NonNull UserId peerUid,@NonNull Long timestamp) {
+    public void handleCallRinging(@NonNull String callId, @NonNull UserId peerUid,@NonNull Long timestamp) {
         Log.i("CallRinging callId: " + callId + " peerUid: " + peerUid + " ts: " + timestamp);
         if (this.callId == null || !this.callId.equals(callId) ) {
             Log.e("Error: got call ringing message for call " + callId +
@@ -301,11 +248,10 @@ public class CallManager {
         startOutgoingRingtone();
     }
 
-    private void handleAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer, @NonNull Long timestamp) {
+    public void handleAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer, @NonNull Long timestamp) {
         Log.i("AnswerCall callId: " + callId + " peerUid: " + peerUid);
 
         stopOutgoingRingtone();
-
         peerConnection.setRemoteDescription(
                 new SimpleSdpObserver(),
                 new SessionDescription(SessionDescription.Type.ANSWER,
@@ -314,7 +260,7 @@ public class CallManager {
         notifyOnAnsweredCall();
     }
 
-    private void handleEndCall(@NonNull String callId, @NonNull UserId peerUid,
+    public void handleEndCall(@NonNull String callId, @NonNull UserId peerUid,
                                @NonNull EndCall.Reason reason, @NonNull Long timestamp) {
         Log.i("got EndCall callId: " + callId + " peerUid: " + peerUid + " reason: " + reason.name());
         this.state = State.END;
@@ -325,7 +271,7 @@ public class CallManager {
         Notifications.getInstance(context).clearIncomingCallNotification();
     }
 
-    private void handleIceCandidate(@NonNull String callId, @NonNull UserId peerUid,
+    public void handleIceCandidate(@NonNull String callId, @NonNull UserId peerUid,
                                     @NonNull String sdpMediaId, int sdpMediaLineIndex, @NonNull String sdp) {
         Log.i("got IceCandidate callId: " + callId + " sdp: " + sdp);
         IceCandidate candidate = new IceCandidate(sdpMediaId, sdpMediaLineIndex, sdp);
@@ -430,18 +376,7 @@ public class CallManager {
             @Override
             public void onIceCandidate(IceCandidate iceCandidate) {
                 Log.i("onIceCandidate: " + iceCandidate);
-
-                IceCandidateElement iceCandidateElement = new IceCandidateElement(
-                        callId, iceCandidate.sdpMid, iceCandidate.sdpMLineIndex, iceCandidate.sdp);
-                String id = RandomId.create();
-                Msg msg = Msg.newBuilder()
-                        .setId(id)
-                        .setIceCandidate(iceCandidateElement.toProto())
-                        .setToUid(peerUid.rawIdLong())
-                        .build();
-
-                // TODO(nikola): Ask Android team about sending the messages like this.
-                Connection.getInstance().sendCallMsg(msg);
+                callsApi.sendIceCandidate(callId, peerUid, iceCandidate);
             }
 
             @Override
@@ -561,16 +496,7 @@ public class CallManager {
                 Log.i("PeerConnection answer is ready " + sessionDescription);
                 peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
 
-                AnswerCallElement answerCallElement = new AnswerCallElement(
-                        callId, sessionDescription.description);
-                String id = RandomId.create();
-                Msg msg = Msg.newBuilder()
-                        .setId(id)
-                        .setAnswerCall(answerCallElement.toProto())
-                        .setToUid(peerUid.rawIdLong())
-                        .build();
-                Log.i("sending answer_call msg " + msg);
-                ConnectionImpl.getInstance().sendCallMsg(msg);
+                callsApi.sendAnswerCall(callId, peerUid, sessionDescription.description);
             }
         }, new MediaConstraints());
     }
@@ -610,16 +536,8 @@ public class CallManager {
         setSpeakerPhoneOn(!isSpeakerPhoneOn());
     }
 
-    public void onEndCall(@NonNull EndCall.Reason reason) {
-        EndCallElement endCallElement = new EndCallElement(callId, reason);
-        String id = RandomId.create();
-        Msg msg = Msg.newBuilder()
-                .setId(id)
-                .setEndCall(endCallElement.toProto())
-                .setToUid(peerUid.rawIdLong())
-                .build();
-        Log.i("sending end_call msg " + msg);
-        ConnectionImpl.getInstance().sendCallMsg(msg);
+    public void onEndCall(EndCall.Reason reason) {
+        callsApi.sendEndCall(callId, peerUid, reason);
     }
 
     private void notifyOnIncomingCall() {

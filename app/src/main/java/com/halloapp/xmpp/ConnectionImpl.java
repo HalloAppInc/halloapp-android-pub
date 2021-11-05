@@ -1509,67 +1509,33 @@ public class ConnectionImpl extends Connection {
                     Log.i("connection: got log request message " + ProtoPrinter.toString(msg));
                     LogUploaderWorker.uploadLogs(AppContext.getInstance().get(), msg.getId());
                     handled = true;
-//                } else if (msg.getType() == Msg.Type.CALL) {
-//                    Log.i("connection: got call msg" + ProtoPrinter.toString(msg));
-//                    connectionObservers.notifyCallMsg(msg);
-//                    handled = true;
-//                }
-//              // TODO(nikola): Discuss this with the android team. I would rather want to do
-                    // msg.getType() == Msg.Type.CALL and just send the msg to be parsed by the
-                    // CallManager
                 } else if (msg.hasIncomingCall()) {
-                    Log.i("connection: got incoming call message " + ProtoPrinter.toString(msg));
-                    UserId userId = getUserId(Long.toString(msg.getFromUid()));
-                    IncomingCall incomingCall = msg.getIncomingCall();
-
-                    String callId = incomingCall.getCallId();
-                    // TODO(nikola): do decryption here
-                    String webrtcOffer = incomingCall.getWebrtcOffer().getEncPayload().toStringUtf8();
-                    List<StunServer> stunServers = incomingCall.getStunServersList();
-                    List<TurnServer> turnServers = incomingCall.getTurnServersList();
-                    long timestamp = incomingCall.getTimestampMs();
-                    connectionObservers.notifyIncomingCall(callId, userId, webrtcOffer, stunServers, turnServers, timestamp, msg.getId());
-                    handled = true;
-                } else if (msg.hasAnswerCall()) {
-                    Log.i("connection: got answer call message " + ProtoPrinter.toString(msg));
-                    UserId userId = getUserId(Long.toString(msg.getFromUid()));
-                    AnswerCall answerCall = msg.getAnswerCall();
-
-                    String callId = answerCall.getCallId();
-                    // TODO(nikola): do decryption here
-                    String answer = answerCall.getWebrtcAnswer().getEncPayload().toStringUtf8();
-                    long timestamp = answerCall.getTimestampMs();
-                    connectionObservers.notifyAnswerCall(callId, userId, answer, timestamp, msg.getId());
+                    // TODO(nikola): Discuss this with the android team. I would rather do this
+                    // } else if (msg.getType() == Msg.Type.CALL) {
+                    //      connectionObservers.notifyCallMsg(msg);
+                    Log.i("connection: got incoming call msg" + ProtoPrinter.toString(msg));
+                    UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
+                    connectionObservers.notifyIncomingCall(peerUid, msg.getIncomingCall(), msg.getId());
                     handled = true;
                 } else if (msg.hasCallRinging()) {
-                    Log.i("connection: got call ringing message " + ProtoPrinter.toString(msg));
-                    UserId userId = getUserId(Long.toString(msg.getFromUid()));
-                    CallRinging callRinging = msg.getCallRinging();
-
-                    String callId = callRinging.getCallId();
-                    long timestamp = callRinging.getTimestampMs();
-                    connectionObservers.notifyCallRinging(callId, userId, timestamp, msg.getId());
+                    Log.i("connection: got call ringing msg" + ProtoPrinter.toString(msg));
+                    UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
+                    connectionObservers.notifyCallRinging(peerUid, msg.getCallRinging(), msg.getId());
+                    handled = true;
+                } else if (msg.hasAnswerCall()) {
+                    Log.i("connection: got answer call msg" + ProtoPrinter.toString(msg));
+                    UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
+                    connectionObservers.notifyAnswerCall(peerUid, msg.getAnswerCall(), msg.getId());
                     handled = true;
                 } else if (msg.hasEndCall()) {
-                    Log.i("connection: got end call message " + ProtoPrinter.toString(msg));
-                    UserId userId = getUserId(Long.toString(msg.getFromUid()));
-                    EndCall endCall = msg.getEndCall();
-
-                    String callId = endCall.getCallId();
-                    EndCall.Reason reason = endCall.getReason();
-                    long timestamp = endCall.getTimestampMs();
-                    connectionObservers.notifyEndCall(callId, userId, reason, timestamp, msg.getId());
+                    Log.i("connection: got end call msg" + ProtoPrinter.toString(msg));
+                    UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
+                    connectionObservers.notifyEndCall(peerUid, msg.getEndCall(), msg.getId());
                     handled = true;
                 } else if (msg.hasIceCandidate()) {
-                    Log.i("connection: got ice candidate message " + ProtoPrinter.toString(msg));
-                    UserId userId = getUserId(Long.toString(msg.getFromUid()));
-                    IceCandidate iceCandicate = msg.getIceCandidate();
-
-                    String callId = iceCandicate.getCallId();
-                    String sdpMediaId = iceCandicate.getSdpMediaId();
-                    int sdpMediaLineIndex = iceCandicate.getSdpMediaLineIndex();
-                    String sdp = iceCandicate.getSdp();
-                    connectionObservers.notifyIceCandidate(callId, userId, sdpMediaId, sdpMediaLineIndex, sdp, msg.getId());
+                    Log.i("connection: got ice candidate msg" + ProtoPrinter.toString(msg));
+                    UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
+                    connectionObservers.notifyIceCandidate(peerUid, msg.getIceCandidate(), msg.getId());
                     handled = true;
                 }
             }
