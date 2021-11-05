@@ -13,6 +13,7 @@ import androidx.annotation.WorkerThread;
 
 import com.halloapp.AppContext;
 import com.halloapp.ConnectionObservers;
+import com.halloapp.Constants;
 import com.halloapp.Notifications;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.CallType;
@@ -50,6 +51,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -89,6 +92,12 @@ public class CallManager {
     private ComponentName callService;
     @Nullable
     private PowerManager.WakeLock proximityLock;
+
+    @NonNull
+    private final Timer timer = new Timer();
+
+    @Nullable
+    private TimerTask ringingTimeoutTimerTask;
 
     // Executor thread is started once in private ctor and is used for all
     // peer connection API calls to ensure new peer connection factory is
@@ -200,6 +209,7 @@ public class CallManager {
             context.stopService(new Intent(context, CallService.class));
             callService = null;
         }
+        cancelRingingTimeout();
         releaseLock();
         isInitiator = false;
         isMicrophoneMuted = false;
@@ -230,6 +240,7 @@ public class CallManager {
         notifyOnIncomingCall();
         Notifications.getInstance(context).showIncomingCallNotification(callId, peerUid);
         callsApi.sendRinging(callId, peerUid);
+        startRingingTimeoutTimer();
     }
 
     public void handleCallRinging(@NonNull String callId, @NonNull UserId peerUid,@NonNull Long timestamp) {
@@ -252,6 +263,8 @@ public class CallManager {
         Log.i("AnswerCall callId: " + callId + " peerUid: " + peerUid);
 
         stopOutgoingRingtone();
+        cancelRingingTimeout();
+
         peerConnection.setRemoteDescription(
                 new SimpleSdpObserver(),
                 new SessionDescription(SessionDescription.Type.ANSWER,
@@ -287,6 +300,7 @@ public class CallManager {
             return;
         }
 
+        cancelRingingTimeout();
         doAnswer();
         this.state = State.IN_CALL;
     }
@@ -441,6 +455,7 @@ public class CallManager {
                             " ts " + response.timestamp);
                     if (response.result == StartCallResult.Result.OK) {
                         setStunTurnServers(response.stunServers, response.turnServers);
+                        startRingingTimeoutTimer();
                     } else {
                         Log.w("StartCall failed " + response.result);
                         // TODO(nikola): handle call not ok
@@ -584,6 +599,48 @@ public class CallManager {
         synchronized (observers) {
             for (CallObserver o : observers) {
                 o.onSpeakerPhoneOn(isSpeakerPhoneOn);
+            }
+        }
+    }
+
+    private void startRingingTimeoutTimer() {
+        synchronized (timer) {
+            // TODO(nikola): maybe this should be always called on the executor?
+            if (ringingTimeoutTimerTask != null) {
+                Log.e("another outgoingRingTimerTask already exists");
+                ringingTimeoutTimerTask.cancel();
+            }
+            ringingTimeoutTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    onRingingTimeout(callId);
+                }
+            };
+            timer.schedule(ringingTimeoutTimerTask, Constants.CALL_RINGING_TIMEOUT_MS);
+        }
+    }
+
+    private void onRingingTimeout(@NonNull String callId) {
+        synchronized (timer) {
+            Log.i("onOutgoingCallTimeout");
+            if (this.callId != null && this.callId.equals(callId)) {
+                onEndCall(EndCall.Reason.TIMEOUT);
+                notifyOnEndCall();
+                // TODO(nikola): this could clear the wrong notification if we have multiple incoming calls.
+                Notifications.getInstance(context).clearIncomingCallNotification();
+                // TODO(nikola): Cleanup the code path of who is calling the stop. Make stop private.
+                // It is sometimes called from the UI and sometimes from here.
+                //stop();
+            }
+        }
+    }
+
+    private void cancelRingingTimeout() {
+        synchronized (timer) {
+            if (ringingTimeoutTimerTask != null) {
+                Log.i("canceling ringingTimeoutTimerTask");
+                ringingTimeoutTimerTask.cancel();
+                ringingTimeoutTimerTask = null;
             }
         }
     }

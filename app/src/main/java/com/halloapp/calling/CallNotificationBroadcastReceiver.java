@@ -19,6 +19,7 @@ public class CallNotificationBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i("Received " + intent);
+        // TODO(nikola): move the logic into the CallManager.
         Notifications.getInstance(context).clearIncomingCallNotification();
         CallManager callManager = CallManager.getInstance();
         if (DECLINE.equals(intent.getAction())) {
