@@ -2,7 +2,6 @@ package com.halloapp.ui.settings;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
@@ -21,6 +20,7 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloPreferenceFragment;
 import com.halloapp.ui.privacy.BlockListActivity;
 import com.halloapp.ui.privacy.FeedPrivacyActivity;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
@@ -93,8 +93,7 @@ public class SettingsPrivacy extends HalloActivity {
 
             privacyPolicyPreference = Preconditions.checkNotNull(findPreference("privacy_policy"));
             privacyPolicyPreference.setOnPreferenceClickListener(preference -> {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.PRIVACY_POLICY_URL));
-                startActivity(intent);
+                IntentUtils.openUrlInBrowser(requireActivity(), Constants.PRIVACY_POLICY_URL);
                 return false;
             });
         }

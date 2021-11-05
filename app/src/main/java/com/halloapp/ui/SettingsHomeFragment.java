@@ -2,7 +2,6 @@ package com.halloapp.ui;
 
 import android.Manifest;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +19,6 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.StorageUsageActivity;
 import com.halloapp.id.UserId;
-import com.halloapp.props.ServerProps;
 import com.halloapp.ui.archive.ArchiveActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
@@ -29,6 +27,7 @@ import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.ui.settings.SettingsNotifications;
 import com.halloapp.ui.settings.SettingsPrivacy;
 import com.halloapp.ui.settings.SettingsProfile;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.StringUtils;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 
@@ -64,11 +63,7 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
         });
 
         View about = root.findViewById(R.id.about);
-        about.setOnClickListener(v -> {
-            Uri uri = Uri.parse("de".equals(Locale.getDefault().getLanguage()) ? Constants.GERMAN_ABOUT_URL : Constants.ABOUT_PAGE_URL);
-            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            startActivity(intent);
-        });
+        about.setOnClickListener(v -> IntentUtils.openUrlInBrowser(about, "de".equals(Locale.getDefault().getLanguage()) ? Constants.GERMAN_ABOUT_URL : Constants.ABOUT_PAGE_URL));
         View myPosts = root.findViewById(R.id.my_posts);
         myPosts.setOnClickListener(v -> {
             startActivity(ViewProfileActivity.viewProfile(v.getContext(), UserId.ME));

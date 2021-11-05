@@ -5,7 +5,6 @@ import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,7 +26,6 @@ import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
-import android.text.style.TextAppearanceSpan;
 import android.text.style.URLSpan;
 import android.util.Pair;
 import android.util.TypedValue;
@@ -1312,15 +1310,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
                 @Override
                 public void onClick(@NonNull View widget) {
-                    try {
-                        final Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID));
-                        intent.setPackage("com.android.vending");
-                        startActivity(intent);
-                    } catch (ActivityNotFoundException e) {
-                        Log.i("CommentsActivity Play Store Not Installed", e);
-                        SnackbarHelper.showWarning(futureProofMessage,  R.string.app_expiration_no_play_store);
-                    }
+                    IntentUtils.openPlayStorePage(FlatCommentsActivity.this);
                 }
             };
             current.setSpan(learnMoreSpan, start, end, 0);
@@ -1418,7 +1408,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 linkPreviewContainer.setOnClickListener(v -> {
                     UrlPreview preview = comment == null ? null : comment.urlPreview;
                     if (preview != null && preview.url != null) {
-                        IntentUtils.openUrlInBrowser(linkPreviewContainer.getContext(), preview.url);
+                        IntentUtils.openUrlInBrowser(linkPreviewContainer, preview.url);
                     }
                 });
                 linkPreviewContainer.setClipToOutline(true);

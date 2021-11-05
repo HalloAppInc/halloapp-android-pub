@@ -3,11 +3,8 @@ package com.halloapp.ui.chat;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
 import android.graphics.Outline;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
@@ -32,7 +29,6 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
@@ -46,7 +42,6 @@ import com.halloapp.content.Message;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.media.VoiceNotePlayer;
-import com.halloapp.ui.ActivityCenterActivity;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
@@ -57,14 +52,10 @@ import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.TimeUtils;
-import com.halloapp.util.logs.Log;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.MessageTextLayout;
-import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.widget.SwipeListItemHelper;
 import com.halloapp.xmpp.Connection;
-
-import java.util.Locale;
 
 import me.relex.circleindicator.CircleIndicator3;
 
@@ -178,7 +169,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
             linkPreviewContainer.setOnClickListener(v -> {
                 UrlPreview preview = message == null ? null : message.urlPreview;
                 if (preview != null && preview.url != null) {
-                    IntentUtils.openUrlInBrowser(linkPreviewContainer.getContext(), preview.url);
+                    IntentUtils.openUrlInBrowser(linkPreviewContainer, preview.url);
                 }
             });
             linkPreviewContainer.setClipToOutline(true);
@@ -219,9 +210,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         if (tombstoneMessage != null) {
             CharSequence text = Html.fromHtml(tombstoneMessage.getContext().getString(R.string.message_tombstone_placeholder));
             text = StringUtils.replaceLink(tombstoneMessage.getContext(), text, "learn-more", () -> {
-                Uri uri = Uri.parse(Constants.FAQ_URL);
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                parent.startActivity(intent);
+                IntentUtils.openUrlInBrowser(tombstoneMessage, Constants.FAQ_URL);
             });
             tombstoneMessage.setText(text);
             tombstoneMessage.setMovementMethod(LinkMovementMethod.getInstance());
@@ -248,15 +237,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
 
                     @Override
                     public void onClick(@NonNull View widget) {
-                        try {
-                            final Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID));
-                            intent.setPackage("com.android.vending");
-                            parent.startActivity(intent);
-                        } catch (ActivityNotFoundException e) {
-                            Log.i("MessageViewHolder Play Store Not Installed", e);
-                            SnackbarHelper.showWarning(futureProofMessage,  R.string.app_expiration_no_play_store);
-                        }
+                        IntentUtils.openPlayStorePage(futureProofMessage);
                     }
                 };
                 current.setSpan(learnMoreSpan, start, end, 0);
@@ -518,11 +499,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
                 e2eNoticeView.setVisibility(View.GONE);
             } else {
                 e2eNoticeView.setVisibility(View.VISIBLE);
-                e2eNoticeView.setOnClickListener(v -> {
-                    Uri uri = Uri.parse(Constants.ENCRYPTED_CHAT_BLOG_URL);
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    parent.startActivity(intent);
-                });
+                e2eNoticeView.setOnClickListener(v -> IntentUtils.openUrlInBrowser(e2eNoticeView, Constants.ENCRYPTED_CHAT_BLOG_URL));
             }
         }
 

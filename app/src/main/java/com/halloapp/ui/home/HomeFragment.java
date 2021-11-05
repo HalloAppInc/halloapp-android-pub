@@ -37,8 +37,9 @@ import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.invites.InviteContactsActivity;
-import com.halloapp.util.logs.Log;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.BadgedDrawable;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
@@ -177,11 +178,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         contactsNag.setOnClickListener(v -> {}); // Don't let touches pass through
         contactsNagTextView = contactsNag.findViewById(R.id.contact_permissions_nag);
         contactsLearnMore = contactsNag.findViewById(R.id.learn_more);
-        contactsLearnMore.setOnClickListener(v -> {
-            Uri uri = Uri.parse(Constants.CONTACT_PERMISSIONS_LEARN_MORE_URL);
-            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            startActivity(intent);
-        });
+        contactsLearnMore.setOnClickListener(v -> IntentUtils.openUrlInBrowser(contactsLearnMore, Constants.CONTACT_PERMISSIONS_LEARN_MORE_URL));
         contactsSettingsButton = contactsNag.findViewById(R.id.settings_btn);
         contactsSettingsButton.setOnClickListener(v -> {
             if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)) {

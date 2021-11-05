@@ -7,6 +7,7 @@ public class Constants {
     public static final String FULL_VERSION = BuildConfig.VERSION_NAME + (BuildConfig.DEBUG ? "D" : "");
     public static final String USER_AGENT = "HalloApp/Android" + FULL_VERSION;
 
+    public static final String PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID;
     public static final String MAIN_WEBSITE_URL = "https://www.halloapp.com/";
     public static final String ABOUT_PAGE_URL = "https://www.halloapp.com/about";
     public static final String GERMAN_ABOUT_URL = "https://www.halloapp.com/de/about";

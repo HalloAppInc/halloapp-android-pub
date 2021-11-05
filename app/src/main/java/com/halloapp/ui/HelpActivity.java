@@ -1,7 +1,6 @@
 package com.halloapp.ui;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -18,6 +17,7 @@ import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.logs.LogProvider;
@@ -44,22 +44,13 @@ public class HelpActivity extends HalloActivity {
         versionTv.setText(getString(R.string.settings_version_footer, BuildConfig.VERSION_NAME));
 
         View faqView = findViewById(R.id.faq);
-        faqView.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.FAQ_URL));
-            startActivity(intent);
-        });
+        faqView.setOnClickListener(v -> IntentUtils.openUrlInBrowser(faqView, Constants.FAQ_URL));
 
         View termsOfServiceView = findViewById(R.id.terms_of_service);
-        termsOfServiceView.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.TERMS_OF_SERVICE_URL));
-            startActivity(intent);
-        });
+        termsOfServiceView.setOnClickListener(v -> IntentUtils.openUrlInBrowser(termsOfServiceView, Constants.TERMS_OF_SERVICE_URL));
 
         View privacyPolicyView = findViewById(R.id.privacy_policy);
-        privacyPolicyView.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.PRIVACY_POLICY_URL));
-            startActivity(intent);
-        });
+        privacyPolicyView.setOnClickListener(v -> IntentUtils.openUrlInBrowser(privacyPolicyView, Constants.PRIVACY_POLICY_URL));
 
         View sendLogs = findViewById(R.id.send_logs);
         sendLogs.setOnClickListener(v -> {

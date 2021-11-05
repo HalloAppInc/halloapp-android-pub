@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
@@ -33,6 +32,7 @@ import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
@@ -115,9 +115,7 @@ public class KeyVerificationActivity extends HalloActivity {
                 TextView explanationText = findViewById(R.id.explanation);
                 CharSequence text = Html.fromHtml(getString(R.string.key_verification_explanation, name));
                 text = StringUtils.replaceLink(explanationText.getContext(), text, "learn-more", () -> {
-                    Uri uri = Uri.parse(Constants.ENCRYPTED_CHAT_BLOG_URL);
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(intent);
+                    IntentUtils.openUrlInBrowser(explanationText, Constants.ENCRYPTED_CHAT_BLOG_URL);
                 });
                 explanationText.setText(text);
                 explanationText.setMovementMethod(LinkMovementMethod.getInstance());

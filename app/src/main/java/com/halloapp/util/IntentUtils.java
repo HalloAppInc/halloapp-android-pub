@@ -1,5 +1,7 @@
 package com.halloapp.util;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -11,16 +13,20 @@ import android.os.Build;
 import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.text.TextUtils;
+import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.SnackbarHelper;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -93,13 +99,47 @@ public class IntentUtils {
         return intent;
     }
 
-    public static void openUrlInBrowser(@NonNull Context context, @NonNull String url) {
+    public static void openUrlInBrowser(@NonNull View view, @NonNull String url) {
         try {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(URLUtil.guessUrl(url)));
-            context.startActivity(browserIntent);
-        } catch (Exception e) {
-            Toast.makeText(context, R.string.failed_to_open_link, Toast.LENGTH_SHORT).show();
+            view.getContext().startActivity(browserIntent);
+        } catch (ActivityNotFoundException e) {
+            SnackbarHelper.showWarning(view, R.string.failed_to_open_link);
             Log.e("PostViewHolder/linkPreview failed to open url " + url);
+        }
+    }
+
+    public static void openUrlInBrowser(@NonNull Activity activity, @NonNull String url) {
+        try {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(URLUtil.guessUrl(url)));
+            activity.startActivity(browserIntent);
+        } catch (ActivityNotFoundException e) {
+            SnackbarHelper.showWarning(activity, R.string.failed_to_open_link);
+            Log.e("PostViewHolder/linkPreview failed to open url " + url);
+        }
+    }
+
+    public static void openPlayStorePage(@NonNull Activity activity) {
+        try {
+            final Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(Constants.PLAY_STORE_URL));
+            intent.setPackage("com.android.vending");
+            activity.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Log.i("Play Store Not Installed", e);
+            SnackbarHelper.showWarning(activity, R.string.app_expiration_no_play_store);
+        }
+    }
+
+    public static void openPlayStorePage(@NonNull View view) {
+        try {
+            final Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(Constants.PLAY_STORE_URL));
+            intent.setPackage("com.android.vending");
+            view.getContext().startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Log.i("Play Store Not Installed", e);
+            SnackbarHelper.showWarning(view, R.string.app_expiration_no_play_store);
         }
     }
 

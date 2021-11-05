@@ -129,7 +129,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             postLinkPreviewView.setOnClickListener(v -> {
                 UrlPreview preview = postLinkPreviewView.getUrlPreview();
                 if (preview != null && preview.url != null) {
-                    IntentUtils.openUrlInBrowser(postLinkPreviewView.getContext(), preview.url);
+                    IntentUtils.openUrlInBrowser(postLinkPreviewView, preview.url);
                 }
             });
         }
