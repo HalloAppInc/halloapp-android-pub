@@ -1849,6 +1849,19 @@ class MessagesDb {
         return null;
     }
 
+    @WorkerThread
+    List<File> getReplyMediaFiles() {
+        List<File> ret = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(RepliesTable.TABLE_NAME,
+                new String [] {RepliesTable.COLUMN_MEDIA_PREVIEW_FILE}, null, null, null, null, null)) {
+            while (cursor.moveToNext()) {
+                ret.add(fileStore.getMediaFile(cursor.getString(0)));
+            }
+        }
+        return ret;
+    }
+
     private static long getMessageRetryExpirationTime() {
         return System.currentTimeMillis() - 24 * 60 * 60 * 1000L;
     }
