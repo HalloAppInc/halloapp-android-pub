@@ -14,7 +14,7 @@ public abstract class ViewHolderWithLifecycle extends RecyclerView.ViewHolder im
 
     public ViewHolderWithLifecycle(@NonNull View itemView) {
         super(itemView);
-        lifecycleRegistry.markState(Lifecycle.State.INITIALIZED);
+        lifecycleRegistry.markState(Lifecycle.State.CREATED);
     }
 
     public void markAttach() {
