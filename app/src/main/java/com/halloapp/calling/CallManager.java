@@ -504,6 +504,7 @@ public class CallManager {
         if (this.callService == null) {
             this.callService = startCallService();
         }
+        acquireLock();
         peerConnection.createAnswer(new SimpleSdpObserver() {
             @Override
             public void onCreateSuccess(@NonNull SessionDescription sessionDescription) {
