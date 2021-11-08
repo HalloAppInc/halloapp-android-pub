@@ -992,6 +992,6 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="invite_action">"Invitar"</string>
 
     <!-- action where the user shares -->
-    <string name="share_action">"Share"</string>
+    <string name="share_action">"Compartir"</string>
 <string name="add_invite">"Añadir"</string><string name="share_option_group">"Escribe en el grupo"</string><string name="select_group">"Selecciona grupo"</string></resources>
 

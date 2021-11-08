@@ -395,7 +395,7 @@ versie: %2$s
     <string name="blocking_user_failed_check_internet">"Kon %s niet blokkeren. Controleer je internetverbinding en probeer opnieuw."</string>
     <string name="blocking_user_successful">"%s is geblokkeerd"</string>
     <string name="blocking_user_in_progress">"%s wordt geblokkeerd…"</string>
-    <string name="unblocking_user_successful">"%s gedeblokkeerd"</string>
+    <string name="unblocking_user_successful">"%s is gedeblokkeerd"</string>
     <string name="unblocking_user_failed_check_internet">"Kon %s niet deblokkeren. Controleer je internetverbinding en probeer opnieuw."</string>
     <string name="unblocking_user_in_progress">"%s wordt gedeblokkeerd…"</string>
     <string name="are_you_sure_dialog_title">"Weet je het zeker?"</string>
@@ -887,7 +887,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="tap_to_change">"Tik om te wijzigen"</string>
 
     <!-- Title for bottom sheet that comes up telling a user to invite friends to a group -->
-    <string name="invite_group_zero_zone_title">"Nodig een vriend uit voor je groep"</string>
+    <string name="invite_group_zero_zone_title">"Nodig vrienden uit voor je groep"</string>
 
     <!-- Explanation text for bottom sheet shown telling user to share an invite link to invite friends -->
     <string name="invite_group_zero_zone_details">"Deel deze link met vrienden en ze worden automatisch toegevoegd aan je groep."</string>
@@ -902,7 +902,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="invite_friends_header">"Vrienden uitnodigen"</string>
 
     <!-- Text shown as preview for invite friends group post -->
-    <string name="invite_friends_post_preview">"Nodig een vriend uit voor je groep"</string>
+    <string name="invite_friends_post_preview">"Nodig vrienden uit voor je groep"</string>
 
     <!-- Title for home post explaining what HalloApp is -->
     <string name="zero_zone_home_nux_header">"Welkom bij HalloApp, een digitale ruimte voor echte relaties ✨"</string>
@@ -944,7 +944,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="storage_usage_title">"Opslaggebruik"</string>
 
     <!-- Storage usage section header for home feed category -->
-    <string name="storage_usage_home">"Home feed"</string>
+    <string name="storage_usage_home">"Home-feed"</string>
 
     <!-- Storage usage section header for chats category -->
     <string name="storage_usage_chats">"Chats"</string>

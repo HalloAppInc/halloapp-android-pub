@@ -163,13 +163,13 @@
 
     <!-- Fuzzy -->
     <plurals name="new_comments_notification">
-        <item quantity="one">"%s коментираха вашата публикация"</item>
+        <item quantity="one">"%s коментира вашата публикация"</item>
         <item quantity="other">"%s коментираха вашата публикация"</item>
     </plurals>
 
     <!-- Fuzzy -->
     <plurals name="new_comments_on_multiple_posts_notification">
-        <item quantity="one">"%s коментираха вашите публикации"</item>
+        <item quantity="one">"%s коментира вашите публикации"</item>
         <item quantity="other">"%s коментираха вашите публикации"</item>
     </plurals>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
@@ -664,322 +664,322 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="app_initializing">"Приготвяме HalloApp"</string>
 
     <!-- Shown on a button in settings which shares text with a link to download HalloApp into any other app -->
-    <string name="settings_share_option">"Share HalloApp"</string>
+    <string name="settings_share_option">"Сподели HalloApp"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <string name="share_halloapp_text">"Join my real-relationship network on HalloApp. Download for free at halloapp.com/dl"</string>
+    <string name="share_halloapp_text">"Включи се в моята мрежа със истински връзки в HalloApp. Свали безплатно от halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
-    <string name="contact_permissions_request">"Allow HalloApp access to your contacts so you can send and receive updates"</string>
+    <string name="contact_permissions_request">"Разреши на HalloApp достъп то твойте контакти за да можеш на публикуваш и получаваш ъпдейти"</string>
 
     <!-- Dialog shown to user before requesting contact permissions, but user has previously denied them, so they must go to settings -->
     <string name="contact_permissions_request_permanently_denied">"Allow HalloApp access to your contacts so you can send and receive updates. Tap Settings &gt; Permissions, and turn Contacts on"</string>
 
     <!-- Banner explaining why user can't leave a comment in a group they've left -->
-    <string name="no_longer_group_member">"You're no longer a member of this group"</string>
+    <string name="no_longer_group_member">"Ти вече не си член на тази група"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes -->
-    <string name="voice_note_record_audio_permission_rationale">"To record voice notes we need permission to access the microphone"</string>
+    <string name="voice_note_record_audio_permission_rationale">"За да запишеш гласово съобщение ние имаме нужда от разрешение да ползваме микрофона"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
-    <string name="voice_note_record_audio_permission_rationale_denied">"To record voice notes we need permission to access the microphone.
+    <string name="voice_note_record_audio_permission_rationale_denied">"За да запишеш гласово съобщение ние имаме нужда от разрешение да ползваме микрофона.
 
-Open the app settings screen to modify app permissions."</string>
+Отвори настройките на приложението за да дадеш разрешение."</string>
 
     <!-- Activity center item when someone replies. %1$s is the person, %2$s is their comment preview -->
-    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; replied: %2$s"</string>
+    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; отговори: %2$s"</string>
 
     <!-- Activity center item when someone comments. %1$s is the person, %2$s is their comment preview -->
-    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; commented: %2$s"</string>
+    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; коментира: %2$s"</string>
 
     <!-- Activity center item when non-contacts comment on your post -->
     <plurals name="commented_on_your_post_grouped">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; друг коментира на твоята публикация"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; други коментираха на твоята публикация"</item>
     </plurals>
 
     <!-- Activity center item when non-contacts comment on someones post -->
     <plurals name="commented_on_someones_post_grouped">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; other person commented on &lt;b&gt;%2$s&lt;/b&gt;'s post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; друг коментира на публикацията на &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; други коментираха на публикацията на &lt;b&gt;%2$s&lt;/b&gt;"</item>
     </plurals>
 
     <!-- Shown when an archived post's photo thumbnail can't be loaded -->
     <string name="couldnt_load_thumbnail">"Couldn't load thumbnail"</string>
 
     <!-- Button for user to re-share old posts which have expired -->
-    <string name="reshare_post">"Reshare post"</string>
+    <string name="reshare_post">"Сподели публикация"</string>
 
     <!-- Button for going to utility for viewing expired posts -->
-    <string name="archived_posts">"Archive"</string>
+    <string name="archived_posts">"Архив"</string>
 
     <!-- Title of utility for viewing expired posts -->
-    <string name="archive">"Archive"</string>
+    <string name="archive">"Архивирай"</string>
 
     <!-- Label displaying the date when a post expired -->
-    <string name="archived_on">"Archived %s"</string>
+    <string name="archived_on">"Архивиран на %s"</string>
 
     <!-- Error message when the group is full -->
-    <string name="invite_link_failed_to_join_full">"You cannot join the group because it is full"</string>
+    <string name="invite_link_failed_to_join_full">"Вие не може да присъедините към групата понеже тя е пълна"</string>
 
     <!-- Error message when the invite link is invalid -->
-    <string name="invite_link_failed_to_join_invalid">"The invite link is invalid"</string>
+    <string name="invite_link_failed_to_join_invalid">"Линка с поканата е невалиден"</string>
 
     <!-- Error message when user cannot join a group because they were previously removed by an admin -->
     <string name="invite_link_failed_to_join_removed">"You were removed and cannot rejoin via invite link"</string>
 
     <!-- Message that's displayed after a user deletes their account -->
-    <string name="deletion_confirmation_message">"Your HalloApp account has been successfully deleted."</string>
+    <string name="deletion_confirmation_message">"Вашия акаунт в HalloApp беше испешно изтрит."</string>
 
     <!-- Button that allows the user to return to registration after deleting their account -->
-    <string name="return_to_registration">"Return to registration"</string>
+    <string name="return_to_registration">"Върни се към регистрацията"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <string name="archive_empty">"Your posts will appear here after they expire in 30 days"</string>
+    <string name="archive_empty">"Вашите публикаций ще се появят тук след като те остареят след 30 дни"</string>
 
     <!-- Futureproof content we dont understand yet -->
-    <string name="unsupported_content">"Unsupported content"</string>
+    <string name="unsupported_content">"Съдържанието не се подържа"</string>
 
     <!-- Button opens up the chat to directly chat with another group member -->
-    <string name="send_message">"Send message"</string>
+    <string name="send_message">"Изпрати съобщение"</string>
 
     <!-- Body of a notification indicating that user has been added to a new group -->
-    <string name="added_to_group">"%1$s added you to the group %2$s"</string>
+    <string name="added_to_group">"%1$s ви добави в групата %2$s"</string>
 
     <!-- Name of channel of notifications for being added to a new group which is displayed in settings -->
-    <string name="group_notifications_channel_name">"Group membership notifications"</string>
+    <string name="group_notifications_channel_name">"Известия за членове на групата"</string>
 
     <!-- Button that brings user to QR code for joining a group -->
-    <string name="qr_code">"QR Code"</string>
+    <string name="qr_code">"QR код"</string>
 
     <!-- Explains QR code that allows users to automatically join a group -->
-    <string name="scan_qr_instructions">"Scan the QR code to join this HalloApp group"</string>
+    <string name="scan_qr_instructions">"Скенирайте този QR код за да се присъедините към групата в HalloApp"</string>
 
     <!-- Banner below the name of a HalloApp group -->
-    <string name="halloapp_group">"HalloApp Group"</string>
-    <string name="reply_original_comment_not_found">"Original comment not found"</string>
+    <string name="halloapp_group">"HalloApp Група"</string>
+    <string name="reply_original_comment_not_found">"Оригиналния коментар не е намерен"</string>
 
     <!-- Button on others' posts that allows the user to message them about their post in 1-1 messaging -->
-    <string name="reply_privately">"Reply privately"</string>
+    <string name="reply_privately">"Отговори лично"</string>
 
     <!-- Shown as title for a dialog explaining why permissions are needed when the user has rejected a necessary permission request at least twice but still tries to use the feature -->
-    <string name="title_settings_dialog">"Permissions required"</string>
+    <string name="title_settings_dialog">"Нужно е разрешение"</string>
 
     <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
-    <string name="voice_note_preview">"Voice note (%s)"</string>
+    <string name="voice_note_preview">"Гласово съобщение (%s)"</string>
 
     <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
-    <string name="dark_mode_dialog_title">"Select Theme"</string>
+    <string name="dark_mode_dialog_title">"Избери визуална тема"</string>
 
     <!-- Name of mode where screens are darker -->
-    <string name="dark_mode">"Dark"</string>
+    <string name="dark_mode">"Тъмна"</string>
 
     <!-- Name of mode where screens are lighter -->
-    <string name="light_mode">"Light"</string>
+    <string name="light_mode">"Светла"</string>
 
     <!-- Name of mode where screens default to system default -->
-    <string name="system_default">"System default"</string>
+    <string name="system_default">"По подразбиране за устройството"</string>
 
     <!-- Name of mode where screens default to system default for earlier phones that don't have a concept of system dark mode -->
-    <string name="default_setting">"Default"</string>
+    <string name="default_setting">"По подразбиране"</string>
 
     <!-- Name of setting where user can change between dark/light mode -->
-    <string name="dark_mode_setting_title">"Theme"</string>
+    <string name="dark_mode_setting_title">"Тема"</string>
 
     <!-- General error message shown when fail to update group description -->
-    <string name="failed_update_group_description">"Failed to update the group description"</string>
+    <string name="failed_update_group_description">"Неуспешно променяне на описанието на групата"</string>
 
     <!-- Success message shown when user updates group description -->
-    <string name="group_description_updated">"Group description updated"</string>
+    <string name="group_description_updated">"Описанието на групата е променено"</string>
 
     <!-- System message shown when someone else changes the group description, %s will be replaced with their name -->
-    <string name="system_message_group_description_changed">"%s changed the group description"</string>
+    <string name="system_message_group_description_changed">"%s промени описанието на групата"</string>
 
     <!-- System message shown when you change the group description -->
-    <string name="system_message_group_description_changed_by_you">"You changed the group description"</string>
+    <string name="system_message_group_description_changed_by_you">"Вие променихте описанието на групата"</string>
 
     <!-- Hint text for the group description field -->
-    <string name="group_description_hint">"Group description"</string>
+    <string name="group_description_hint">"Описание на групата"</string>
 
     <!-- Title text for the view to edit the group description -->
-    <string name="group_description_title">"Group description"</string>
+    <string name="group_description_title">"Описание на групата"</string>
 
     <!-- Text telling the user they can add a group description -->
-    <string name="add_group_description">"Add group description"</string>
-    <string name="action_clear_search">"Clear"</string>
+    <string name="add_group_description">"Добави описание на групата"</string>
+    <string name="action_clear_search">"Изчисти"</string>
 
     <!-- Shown above options when picking a new background color for a group -->
-    <string name="group_background_color_pick">"Pick a color"</string>
-    <string name="post_preview_no_caption_by_you">"You shared a post"</string>
-    <string name="post_preview_retracted_by_you">"You deleted a post"</string>
-    <string name="post_preview_with_caption_by_you">"You: %s"</string>
+    <string name="group_background_color_pick">"Избери цвет"</string>
+    <string name="post_preview_no_caption_by_you">"Вие споделихте публикация"</string>
+    <string name="post_preview_retracted_by_you">"Вие изтрихте публикация"</string>
+    <string name="post_preview_with_caption_by_you">"Аз: %s"</string>
 
     <!-- Activity center item when non-contacts comment on your post %1$s is the first person name
          %2$s is the number of other people -->
     <plurals name="commented_on_your_post_grouped_with_others">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other commented on your post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; и още &lt;b&gt;%2$s&lt;/b&gt; човек коментираха на вашата публикация"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; и още &lt;b&gt;%2$s&lt;/b&gt; човека коментираха на вашата публикация"</item>
     </plurals>
 
     <!-- Activity center item when non-contacts comment on someones post %1$s is the first person name
          %2$s is the number of other people, %3$s is the post author's name -->
     <plurals name="commented_on_someones_post_grouped_with_others">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; other person commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; и още &lt;b&gt;%2$s&lt;/b&gt; човек коментираха на публикацията на &lt;b&gt;%3$s&lt;/b&gt;"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; и още &lt;b&gt;%2$s&lt;/b&gt; човека коментираха на публикацията на &lt;b&gt;%3$s&lt;/b&gt;"</item>
     </plurals>
 
     <!-- Activity center item when two non-contacts comment on your post %1$s is the first person name
          %2$s second persons name -->
-    <string name="two_unknown_contacts_commented_on_your_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on your post"</string>
+    <string name="two_unknown_contacts_commented_on_your_post">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; коментираха на вашата публикация"</string>
 
     <!-- Activity center item when two non-contacts comment on someones post %1$s is the first person name
          %2$s second persons name, %3$s is the poster's name -->
-    <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; and &lt;b&gt;%2$s&lt;/b&gt; commented on &lt;b&gt;%3$s&lt;/b&gt;'s post"</string>
+    <string name="two_unknown_contacts_commented_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; и &lt;b&gt;%2$s&lt;/b&gt; коментираха на публикацията на &lt;b&gt;%3$s&lt;/b&gt;"</string>
 
     <!-- String that links the user to learn more info -->
-    <string name="learn_more">"Learn more"</string>
+    <string name="learn_more">"Научи повече"</string>
 
     <!-- Open up the group info page showing name, members, etc -->
-    <string name="view_group_info">"View group info"</string>
+    <string name="view_group_info">"Виште групата"</string>
 
     <!-- Shown when changing the group avatar or name fails -->
-    <string name="failed_update_group">"Failed to update group, try again later"</string>
+    <string name="failed_update_group">"Неуспешно променяне на групата, пробвайте по късно"</string>
 
     <!-- Shown when the group avatar or name has been successfully updated -->
-    <string name="group_updated">"Group updated"</string>
+    <string name="group_updated">"Групата е променена"</string>
 
     <!-- Text shown when the user has no groups in common -->
-    <string name="groups_in_common_empty">"You have no groups in common"</string>
+    <string name="groups_in_common_empty">"Нямате общи групи"</string>
 
     <!-- Title for page showing groups in common -->
-    <string name="groups_in_common">"Groups in common"</string>
+    <string name="groups_in_common">"Общи групи"</string>
 
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
     <string name="slide_to_cancel">"Slide to cancel"</string>
 
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
-    <string name="reply_notification_label">"Reply"</string>
+    <string name="reply_notification_label">"Отговори"</string>
 
     <!-- Action on messaging notifications allowing the user to mark the conversation as read -->
-    <string name="mark_read_notification_label">"Mark read"</string>
+    <string name="mark_read_notification_label">"Маркирай прочетено"</string>
 
     <!-- shows the name "home" as the first option in the share to group function -->
     <string name="home">"Home"</string>
 
     <!-- A new label used as the title/label of the GroupPickerActivity -->
-    <string name="select_post_destination">"Post to…"</string>
+    <string name="select_post_destination">"Публикувай във…"</string>
 
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
-    <string name="search_post_destination">"Search"</string>
+    <string name="search_post_destination">"Търси"</string>
     <string name="link_preview_loading">"Loading preview…"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
     <string name="add_to_contacts_notice">"To see posts from %s add their number to your address book. Tap to add."</string>
 
     <!-- Message showed when a link fails to open -->
-    <string name="failed_to_open_link">"Failed to open link"</string>
+    <string name="failed_to_open_link">"Отварянето на линка е неуспешно"</string>
 
     <!-- New comment separator -->
     <plurals name="new_comment_separator">
-        <item quantity="one">"%d new comment"</item>
-        <item quantity="other">"%d new comment"</item>
+        <item quantity="one">"%d нов коментар"</item>
+        <item quantity="other">"%d нови коментари"</item>
     </plurals>
 
     <!-- Title for activity that lets user select who to share with -->
-    <string name="share_with">"Share with…"</string>
+    <string name="share_with">"Сподели с…"</string>
 
     <!-- Title for feed privacy when setting it from a single post -->
-    <string name="setting_feed_privacy_single_post_title">"Who will see this post"</string>
+    <string name="setting_feed_privacy_single_post_title">"Кой ще види тази публикация"</string>
 
     <!-- Text shown when sharing a post with a group -->
-    <string name="composer_sharing_group_post">"Sharing with group"</string>
+    <string name="composer_sharing_group_post">"Сподели с групата"</string>
 
     <!-- Title of section for recent groups -->
-    <string name="recent_groups">"Recent groups"</string>
+    <string name="recent_groups">"Скорошни групи"</string>
 
     <!-- Item for creating a new group -->
-    <string name="create_new_group">"Create new group"</string>
+    <string name="create_new_group">"Създай нова група"</string>
 
     <!-- Shown as a subtitle on the content composer screen when making a post. Tapping will
          allow user to change destination for the post -->
-    <string name="tap_to_change">"Tap to change"</string>
+    <string name="tap_to_change">"Натисни за да промениш"</string>
 
     <!-- Title for bottom sheet that comes up telling a user to invite friends to a group -->
-    <string name="invite_group_zero_zone_title">"Invite a friend to your group"</string>
+    <string name="invite_group_zero_zone_title">"Покани приятел в твоята група"</string>
 
     <!-- Explanation text for bottom sheet shown telling user to share an invite link to invite friends -->
-    <string name="invite_group_zero_zone_details">"Share this link with friends and they'll automatically join your group."</string>
+    <string name="invite_group_zero_zone_details">"Сподели този линк с приятелите и те автоматично ще се присъединят към твоята група."</string>
 
     <!-- initial group created for the user where %s is replaced with their name. should indicate that it is their group -->
-    <string name="zero_zone_group_name">"%s's group"</string>
+    <string name="zero_zone_group_name">"Групата на %s"</string>
 
     <!-- Title for option to invite a contact using an invite link -->
-    <string name="invite_via_link">"Invite via link"</string>
+    <string name="invite_via_link">"Покани с линк"</string>
 
     <!-- Text shown as subheader for inviting friends section -->
-    <string name="invite_friends_header">"Invite friends"</string>
+    <string name="invite_friends_header">"Покани приятели"</string>
 
     <!-- Text shown as preview for invite friends group post -->
-    <string name="invite_friends_post_preview">"Invite a friend to your group"</string>
+    <string name="invite_friends_post_preview">"Покани приятел да се присъедини в групата"</string>
 
     <!-- Title for home post explaining what HalloApp is -->
-    <string name="zero_zone_home_nux_header">"Welcome to HalloApp, a space for real relationships ✨"</string>
+    <string name="zero_zone_home_nux_header">"Добре дошли в HalloApp, място за истински приятели ✨"</string>
 
     <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
-    <string name="zero_zone_home_nux_text_one">"Use your phone number to connect with friends &amp; family in a space with no ads, no brands, no likes, and no influencers."</string>
+    <string name="zero_zone_home_nux_text_one">"Използвай телефония си номер за да се свържеш с роднини и приятели в пространсво без реклами, без брандове, без ляйкове и без инфлуенсъри."</string>
 
     <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
-    <string name="zero_zone_home_nux_text_two">"HalloApp is for you, and those closest to you, in private. Invite your real friends to get started"</string>
+    <string name="zero_zone_home_nux_text_two">"HalloApp е за теб и твойте най - близки, на саме. Покани твойте истински приятели за да започнеш"</string>
 
     <!-- Action for user to start their delete accoount process under 'account' -->
-    <string name="delete_my_account_action">"Delete my account"</string>
+    <string name="delete_my_account_action">"Изтрий моя акаунт"</string>
 
     <!-- Top line before the other delete account bullets. Will explain what deleting your account entails -->
-    <string name="delete_account_explanation_title">"Deleting your account will:"</string>
+    <string name="delete_account_explanation_title">"Изтриването на вашия акаунт ще:"</string>
 
     <!-- First account deletion bullet saying the profile photo will be deleted -->
-    <string name="delete_account_explanation_bullet_one">"• Delete your account information and profile photo"</string>
+    <string name="delete_account_explanation_bullet_one">"• Изтрие вашата акаунт инфорция и профилната ви снимка"</string>
 
     <!-- Second account deletion bullet saying the you will be removed from all group -->
-    <string name="delete_account_explanation_bullet_two">"• Remove you from all HalloApp groups"</string>
+    <string name="delete_account_explanation_bullet_two">"• Премане вас от всички HalloApp групи"</string>
 
     <!-- Third account deletion bullet explaining message history will be deleted -->
-    <string name="delete_account_explanation_bullet_three">"• Delete your message history on this phone"</string>
+    <string name="delete_account_explanation_bullet_three">"• Изтрие вашите съобщения от този телефон"</string>
 
     <!-- Instructions shown above delete account entry -->
-    <string name="delete_account_instructions">"To delete your account, confirm your phone number. This cannot be undone"</string>
+    <string name="delete_account_instructions">"За да изтриете вашия акаунт потвърдете телефония си номер. Това действие е безвъзвратно"</string>
 
     <!-- Progress message while account is deleting -->
-    <string name="delete_account_in_progress">"Deleting your account…"</string>
+    <string name="delete_account_in_progress">"Изтриваме вашия акаунт"</string>
 
     <!-- Text box hint for optional field for adding feedback for why you are deleting your account -->
-    <string name="delete_account_feedback_hint">"Feedback for HalloApp (Optional)"</string>
+    <string name="delete_account_feedback_hint">"Защо истривате акаунта (по желание)"</string>
 
     <!-- Message shown in dialog asking if user is sure they want to delete their account -->
-    <string name="delete_account_confirmation_message">"Are you sure that you want to delete your account? This cannot be undone"</string>
+    <string name="delete_account_confirmation_message">"Сигурни ли сте че искате да изтриете акаунта. Това е безвъзвратно."</string>
 
     <!-- Title for the screen where we display where your storage is being used -->
-    <string name="storage_usage_title">"Storage usage"</string>
+    <string name="storage_usage_title">"Използване на диска"</string>
 
     <!-- Storage usage section header for home feed category -->
-    <string name="storage_usage_home">"Home feed"</string>
+    <string name="storage_usage_home">"Главния фид"</string>
 
     <!-- Storage usage section header for chats category -->
-    <string name="storage_usage_chats">"Chats"</string>
+    <string name="storage_usage_chats">"Чатове"</string>
 
     <!-- Storage usage section header for groups category -->
-    <string name="storage_usage_groups">"Groups"</string>
+    <string name="storage_usage_groups">"Групи"</string>
 
     <!-- Storage usage section header for other category -->
-    <string name="storage_usage_internal">"Other"</string>
+    <string name="storage_usage_internal">"Други"</string>
 
     <!-- Storage usage section header for archive category -->
-    <string name="storage_usage_archive">"Archive"</string>
+    <string name="storage_usage_archive">"Архив"</string>
 
     <!-- Text shown in button for inviting friends -->
-    <string name="invite_action">"Invite"</string>
+    <string name="invite_action">"Покани"</string>
 
     <!-- action where the user shares -->
-    <string name="share_action">"Share"</string>
+    <string name="share_action">"Сподели"</string>
 <string name="add_invite">"Add"</string><string name="share_option_group">"Публикация в Група"</string><string name="select_group">"Избери група"</string></resources>
 
