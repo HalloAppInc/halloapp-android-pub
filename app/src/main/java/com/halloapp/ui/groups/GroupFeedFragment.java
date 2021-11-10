@@ -21,6 +21,7 @@ import com.halloapp.ui.PostsFragment;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.widget.FabExpandOnScrollListener;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 
 public class GroupFeedFragment extends PostsFragment {
@@ -79,6 +80,7 @@ public class GroupFeedFragment extends PostsFragment {
         layoutManager = new LinearLayoutManager(getContext());
         postsView.setLayoutManager(layoutManager);
         postsView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
+        postsView.addOnScrollListener(new FabExpandOnScrollListener((AppCompatActivity) requireActivity()));
         NestedHorizontalScrollHelper.applyDefaultScrollRatio(postsView);
 
         Bundle args = getArguments();

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:parentTag="android.widget.LinearLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingBottom="10dp"
+    android:paddingTop="5dp">
+
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginEnd="19dp"
+        android:layout_marginStart="0dp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/fab_label_text"
+        android:textSize="13sp"
+        android:importantForAccessibility="no"
+        tools:text="Custom label"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_height="56dp"
+        android:layout_width="56dp"
+        app:fabSize="normal"
+        app:rippleColor="@color/white_20"
+        app:backgroundTint="@color/color_primary"
+        app:tint="@android:color/white"
+        tools:src="@drawable/ic_text"/>
+
+</merge>

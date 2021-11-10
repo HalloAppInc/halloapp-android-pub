@@ -60,36 +60,6 @@
             app:itemRippleColor="@color/bottom_nav_ripple"
             app:menu="@menu/bottom_nav_menu" />
 
-        <com.leinardi.android.speeddial.SpeedDialOverlayLayout
-            android:id="@+id/overlay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:importantForAccessibility="no"
-            app:layout_constraintStart_toStartOf="@id/speed_dial"
-            app:layout_constraintEnd_toEndOf="@id/speed_dial"
-            app:layout_constraintTop_toTopOf="@id/speed_dial"
-            app:layout_constraintBottom_toBottomOf="@id/speed_dial"
-            app:clickable_overlay="true"
-            android:background="@android:color/transparent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-        <com.leinardi.android.speeddial.SpeedDialView
-            android:id="@+id/speed_dial"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/nav_view"
-            app:layout_behavior="@string/speeddial_scrolling_view_snackbar_behavior"
-            android:contentDescription="@string/add_post"
-            app:sdExpansionMode="top"
-            app:sdMainFabClosedIconColor="@android:color/white"
-            app:sdMainFabOpenedIconColor="@color/color_primary"
-            app:sdMainFabOpenedBackgroundColor="@android:color/white"
-            app:sdMainFabClosedBackgroundColor="@color/fab_background"
-            app:sdUseReverseAnimationOnClose="true"
-            app:sdMainFabClosedSrc="@drawable/ic_add"
-            app:sdOverlayLayout="@+id/overlay"/>
-
         <FrameLayout
             android:id="@+id/progress"
             android:layout_width="match_parent"
@@ -97,6 +67,21 @@
             android:background="@color/window_background"
             android:elevation="6dp"/>
 
+        <View
+            android:id="@+id/fab_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_fab_open_overlay"
+            android:visibility="gone"
+            android:elevation="4dp"/>
+
+        <com.halloapp.widget.HACustomFab
+            android:id="@+id/ha_fab"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="5dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

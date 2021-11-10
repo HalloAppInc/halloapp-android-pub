@@ -118,6 +118,9 @@
 
     <color name="rippleColor">@color/black_5</color>
     <color name="bottom_nav_ripple">@color/color_secondary_5_alpha</color>
+    <color name="fab_overlay_gradient_bottom">#F5F3F2EF</color>
+    <color name="fab_overlay_gradient_top">#E7F3F2EF</color>
+    <color name="fab_label_text">#9A181818</color>
 
     <color name="chat_background">@color/window_background</color>
 

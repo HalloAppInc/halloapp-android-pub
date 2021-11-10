@@ -7,19 +7,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.SharedElementCallback;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -30,7 +29,6 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
 import com.halloapp.Notifications;
@@ -49,13 +47,12 @@ import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.widget.FabExpandOnScrollListener;
+import com.halloapp.widget.HACustomFab;
 import com.halloapp.widget.NetworkIndicatorView;
 import com.halloapp.xmpp.Connection;
-import com.leinardi.android.speeddial.SpeedDialActionItem;
-import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,7 +61,7 @@ import java.util.Map;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks, ActionBarShadowOnScrollListener.Host {
+public class MainActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks, ActionBarShadowOnScrollListener.Host, FabExpandOnScrollListener.Host {
 
     public static final String EXTRA_POST_ID = "target_post";
     public static final String EXTRA_POST_SHOW_COMMENTS = "show_comments";
@@ -86,10 +83,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE = 9;
 
 
-    private final ServerProps serverProps = ServerProps.getInstance();
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
 
-    private SpeedDialView fabView;
     private View toolbarContainer;
     private BottomNavigationView navView;
 
@@ -97,6 +92,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     private HomeViewModel homeViewModel;
 
     private NavController navController;
+    private HACustomFab haFabView;
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
@@ -196,11 +192,10 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                         badge.setNumber(unseenGroupsCount);
                     }
                 });
-        fabView = findViewById(R.id.speed_dial);
-        fabView.getMainFab().setRippleColor(ContextCompat.getColor(this, R.color.white_20));
+        haFabView = findViewById(R.id.ha_fab);
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            if (fabView.isOpen()) {
-                fabView.close();
+            if (haFabView.isOpen()) {
+                haFabView.close();
             }
             updateFab(destination.getId());
         });
@@ -273,87 +268,68 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void updateFab(@IdRes int id) {
-        fabView.clearActionItems();
+        haFabView.clearActionItems();
         if (id == R.id.navigation_messages) {
-            fabView.show();
-            fabView.findViewById(R.id.sd_main_fab).setContentDescription(getString(R.string.new_chat));
-            fabView.setMainFabClosedDrawable(ContextCompat.getDrawable(this, R.drawable.ic_chat));
-            fabView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
-                @Override
-                public boolean onMainActionSelected() {
-                    final String[] perms = {Manifest.permission.READ_CONTACTS};
-                    if (!EasyPermissions.hasPermissions(MainActivity.this, perms)) {
-                        ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_CHAT);
-                    } else {
-                        startNewChat();
-                    }
-                    return true;
-                }
-
-                @Override
-                public void onToggleChanged(boolean b) {
+            haFabView.show();
+            haFabView.setMainFabIcon(R.drawable.ic_chat, R.string.new_chat);
+            haFabView.setOnFabClickListener(v -> {
+                final String[] perms = {Manifest.permission.READ_CONTACTS};
+                if (!EasyPermissions.hasPermissions(MainActivity.this, perms)) {
+                    ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_CHAT);
+                } else {
+                    startNewChat();
                 }
             });
-            fabView.setOnActionSelectedListener(null);
+            haFabView.setOnActionSelectedListener(null);
         } else if (id == R.id.navigation_groups) {
-            fabView.show();
-            fabView.findViewById(R.id.sd_main_fab).setContentDescription(getString(R.string.new_group));
-            fabView.setMainFabClosedDrawable(ContextCompat.getDrawable(this, R.drawable.ic_group_add));
-            fabView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
-                @Override
-                public boolean onMainActionSelected() {
-                    final String[] perms = {Manifest.permission.READ_CONTACTS};
-                    if (!EasyPermissions.hasPermissions(MainActivity.this, perms)) {
-                        ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_CREATE_GROUP);
-                    } else {
-                        createNewGroup();
-                    }
-                    return true;
-                }
-
-                @Override
-                public void onToggleChanged(boolean b) {
+            haFabView.show();
+            haFabView.setMainFabIcon(R.drawable.ic_group_add, R.string.new_group);
+            haFabView.setOnFabClickListener(v -> {
+                final String[] perms = {Manifest.permission.READ_CONTACTS};
+                if (!EasyPermissions.hasPermissions(MainActivity.this, perms)) {
+                    ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_CREATE_GROUP);
+                } else {
+                    createNewGroup();
                 }
             });
-            fabView.setOnActionSelectedListener(null);
+            haFabView.setOnActionSelectedListener(null);
         } else if (id == R.id.navigation_home){
             if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS)) {
-                fabView.show();
-                fabView.findViewById(R.id.sd_main_fab).setContentDescription(getString(R.string.add_post));
-                fabView.setMainFabClosedDrawable(ContextCompat.getDrawable(this, R.drawable.ic_add));
-                fabView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
+                haFabView.show();
+                haFabView.setMainFabIcon(R.drawable.ic_fab_plus_expanded, R.string.add_post, true);
+                haFabView.setOnFabClickListener(null);
+                haFabView.setOnActionSelectedListener(new HACustomFab.OnActionSelectedListener() {
                     @Override
-                    public boolean onMainActionSelected() {
-                        return false;
+                    public void onActionSelected(int actionId) {
+                        onFabActionSelected(actionId);
                     }
 
                     @Override
-                    public void onToggleChanged(boolean isOpen) {
+                    public void onOverlay(boolean visible) {
+                        ConstraintLayout root = findViewById(R.id.container);
+                        for (int i = 0; i < root.getChildCount(); i++) {
+                            View child = root.getChildAt(i);
+                            if (child.getId() == R.id.ha_fab) {
+                                continue;
+                            }
+                            if (visible) {
+                                ViewCompat.setImportantForAccessibility(child, ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+                            } else {
+                                ViewCompat.setImportantForAccessibility(child, ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_YES);
+                            }
+                        }
                     }
                 });
-                fabView.setOnActionSelectedListener(actionItem -> {
-                    onFabActionSelected(actionItem.getId());
-                    return true;
-                });
-                addFabItem(fabView, R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);
-                addFabItem(fabView, R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
-                addFabItem(fabView, R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
+                haFabView.addSubFab(R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);
+                haFabView.addSubFab(R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
+                haFabView.addSubFab(R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
+                haFabView.addTitle(R.string.new_post);
             } else {
-                fabView.hide();
+                haFabView.hide();
             }
         } else {
-            fabView.hide();
+            haFabView.hide();
         }
-    }
-
-    private static void addFabItem(@NonNull SpeedDialView fabView, @IdRes int id, @DrawableRes int icon, @StringRes int label) {
-        final View itemView = fabView.addActionItem(
-                new SpeedDialActionItem.Builder(id, icon)
-                        .setFabSize(FloatingActionButton.SIZE_NORMAL)
-                        .setFabBackgroundColor(ContextCompat.getColor(fabView.getContext(), R.color.fab_background))
-                        .setFabImageTintColor(ContextCompat.getColor(fabView.getContext(), android.R.color.white))
-                        .create());
-        Preconditions.checkNotNull(itemView).findViewById(R.id.sd_fab).setContentDescription(fabView.getContext().getString(label));
     }
 
     private void onFabActionSelected(@IdRes int id) {
@@ -378,7 +354,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 startCameraPost();
             }
         }
-        fabView.close(false);
+        haFabView.close(false);
     }
 
     private void startTextPost() {
@@ -420,25 +396,11 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
     @Override
     public void onBackPressed() {
-        if (fabView.isOpen()) {
-            fabView.close();
+        if (haFabView.isOpen()) {
+            haFabView.close();
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        // Allow dismissal of FAB menu on scroll
-        if (fabView.isOpen()) {
-            if (ev.getX() < fabView.getX()
-                    || ev.getX() > fabView.getX() + fabView.getWidth()
-                    || ev.getY() > fabView.getY() + fabView.getHeight()
-                    || ev.getY() < fabView.getY()) {
-                fabView.close();
-            }
-        }
-        return super.dispatchTouchEvent(ev);
     }
 
     @Override
@@ -561,5 +523,10 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     @Override
     public View getToolbarView() {
         return toolbarContainer;
+    }
+
+    @Override
+    public HACustomFab getFab() {
+        return haFabView;
     }
 }

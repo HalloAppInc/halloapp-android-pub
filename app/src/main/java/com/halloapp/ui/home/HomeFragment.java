@@ -42,6 +42,8 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.BadgedDrawable;
+import com.halloapp.widget.FabExpandOnScrollListener;
+import com.halloapp.widget.HACustomFab;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 
 import java.util.List;
@@ -236,6 +238,8 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                 }
             }
         });
+
+        postsView.addOnScrollListener(new FabExpandOnScrollListener((AppCompatActivity) requireActivity()));
     }
 
     private void showNewPostsBanner() {

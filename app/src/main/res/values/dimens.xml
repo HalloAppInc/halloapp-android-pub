@@ -111,4 +111,16 @@
     
     <dimen name="share_privacy_avatar_corner_radius">8dp</dimen>
 
+    <dimen name="fab_padding">16dp</dimen>
+    <dimen name="fab_size">56dp</dimen>
+    <dimen name="expanded_fab_padding">19dp</dimen>
+    <dimen name="expanded_fab_icon_size">18dp</dimen>
+    <dimen name="fab_icon_size">24dp</dimen>
+
+    <dimen name="sub_fab_bottom_padding">10dp</dimen>
+    <dimen name="sub_fab_top_padding">5dp</dimen>
+    <dimen name="sub_fab_title_bottom_padding">15dp</dimen>
+
+    <integer name="sub_fab_open_animation_duration">150</integer>
+
 </resources>

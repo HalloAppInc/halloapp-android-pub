@@ -138,4 +138,8 @@
     <color name="group_theme_9_bg">#98704B</color>
     <color name="group_theme_10_bg">#756D51</color>
 
+    <color name="fab_overlay_gradient_bottom">#ED0E0E0E</color>
+    <color name="fab_overlay_gradient_top">#E10D0D0D</color>
+    <color name="fab_label_text">@color/white_70</color>
+
 </resources>

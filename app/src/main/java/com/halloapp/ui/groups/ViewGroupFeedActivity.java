@@ -18,8 +18,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.SharedElementCallback;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionManager;
 
@@ -39,15 +41,15 @@ import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
-import com.leinardi.android.speeddial.SpeedDialActionItem;
-import com.leinardi.android.speeddial.SpeedDialView;
+import com.halloapp.widget.FabExpandOnScrollListener;
+import com.halloapp.widget.HACustomFab;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class ViewGroupFeedActivity extends HalloActivity {
+public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnScrollListener.Host {
 
     private static final String KEY_INTERACTED_WITH = "interacted_with";
     private static final int INTERACTION_TIMEOUT_MS = 30_000;
@@ -77,7 +79,7 @@ public class ViewGroupFeedActivity extends HalloActivity {
 
     private GroupId groupId;
 
-    private SpeedDialView fabView;
+    private HACustomFab fabView;
 
     private TextView titleView;
     private TextView subtitleView;
@@ -158,15 +160,33 @@ public class ViewGroupFeedActivity extends HalloActivity {
         }
         avatarLoader.load(avatarView, groupId, false);
 
-        fabView = findViewById(R.id.speed_dial);
-        fabView.getMainFab().setRippleColor(ContextCompat.getColor(this, R.color.white_20));
-        fabView.setOnActionSelectedListener(actionItem -> {
-            onFabActionSelected(actionItem.getId());
-            return true;
+        fabView = findViewById(R.id.ha_fab);
+        fabView.setOnActionSelectedListener(new HACustomFab.OnActionSelectedListener() {
+            @Override
+            public void onActionSelected(int actionId) {
+                onFabActionSelected(actionId);
+            }
+
+            @Override
+            public void onOverlay(boolean visible) {
+                ConstraintLayout root = findViewById(R.id.container);
+                for (int i = 0; i < root.getChildCount(); i++) {
+                    View child = root.getChildAt(i);
+                    if (child.getId() == R.id.ha_fab) {
+                        continue;
+                    }
+                    if (visible) {
+                        ViewCompat.setImportantForAccessibility(child, ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+                    } else {
+                        ViewCompat.setImportantForAccessibility(child, ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_YES);
+                    }
+                }
+            }
         });
-        addFabItem(fabView, R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);
-        addFabItem(fabView, R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
-        addFabItem(fabView, R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
+        fabView.addSubFab(R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);
+        fabView.addSubFab(R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
+        fabView.addSubFab(R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
+        fabView.addTitle(R.string.new_post);
 
         viewModel.members.getLiveData().observe(this, members -> {
             if (members == null) {
@@ -215,16 +235,6 @@ public class ViewGroupFeedActivity extends HalloActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(KEY_INTERACTED_WITH, userInteracted);
-    }
-
-    private static void addFabItem(@NonNull SpeedDialView fabView, @IdRes int id, @DrawableRes int icon, @StringRes int label) {
-        final View itemView = fabView.addActionItem(
-                new SpeedDialActionItem.Builder(id, icon)
-                        .setFabSize(FloatingActionButton.SIZE_NORMAL)
-                        .setFabBackgroundColor(ContextCompat.getColor(fabView.getContext(), R.color.fab_background))
-                        .setFabImageTintColor(ContextCompat.getColor(fabView.getContext(), android.R.color.white))
-                        .create());
-        Preconditions.checkNotNull(itemView).findViewById(R.id.sd_fab).setContentDescription(fabView.getContext().getString(label));
     }
 
     private void onFabActionSelected(@IdRes int id) {
@@ -297,25 +307,16 @@ public class ViewGroupFeedActivity extends HalloActivity {
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        // Allow dismissal of FAB menu on scroll
-        if (fabView.isOpen()) {
-            if (ev.getX() < fabView.getX()
-                    || ev.getX() > fabView.getX() + fabView.getWidth()
-                    || ev.getY() > fabView.getY() + fabView.getHeight()
-                    || ev.getY() < fabView.getY()) {
-                fabView.close();
-            }
-        }
-        return super.dispatchTouchEvent(ev);
-    }
-
-    @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
         if (BuildConfig.DEBUG && keyCode == KeyEvent.KEYCODE_BACK) {
             Debug.showGroupDebugMenu(this, fabView, groupId);
             return true;
         }
         return super.onKeyLongPress(keyCode, event);
+    }
+
+    @Override
+    public HACustomFab getFab() {
+        return fabView;
     }
 }
