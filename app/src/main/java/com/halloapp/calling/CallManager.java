@@ -262,6 +262,15 @@ public class CallManager {
     public void handleAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer, @NonNull Long timestamp) {
         Log.i("AnswerCall callId: " + callId + " peerUid: " + peerUid);
 
+        if (this.callId == null || !this.callId.equals(callId)) {
+            Log.e("Ignoring incoming answer call msg callId: " + callId + " from peerUid: " + peerUid + " " + toString());
+            return;
+        }
+        if (this.peerConnection == null) {
+            Log.e("Ignoring incoming answer call msg. peerConnection is not initialized " + toString());
+            return;
+        }
+
         stopOutgoingRingtone();
         cancelRingingTimeout();
 
@@ -674,5 +683,26 @@ public class CallManager {
         if (proximityLock != null && proximityLock.isHeld()) {
             proximityLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY);
         }
+    }
+
+    public static String stateToString(@State int state) {
+        switch (state) {
+            case State.IDLE:
+                return "idle";
+            case State.CALLING:
+                return "calling";
+            case State.RINGING:
+                return "ringing";
+            case State.IN_CALL:
+                return "in-call";
+            case State.END:
+                return "end";
+            default:
+                return "unknown";
+        }
+    }
+
+    public String toString() {
+        return "CallManager{state=" + stateToString(this.state) + ",callId=" + this.callId + ",peerUid=" + peerUid + "}";
     }
 }
