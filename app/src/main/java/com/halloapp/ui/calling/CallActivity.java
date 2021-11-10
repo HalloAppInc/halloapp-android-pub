@@ -17,8 +17,10 @@ import android.widget.TextView;
 import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.calling.CallManager;
+import com.halloapp.contacts.ContactLoader;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 
@@ -36,17 +38,24 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     public static final int REQUEST_CODE_INCOMING_CALL = 2;
 
     public static final String ACTION_ACCEPT = "accept";
+
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
+
     private View callingView;
     private View ringingView;
     private View inCallView;
     private View initView;
 
-    private TextView callingTextView;
+    private ImageView avatarView;
+    private TextView nameTextView;
+    private TextView titleTextView;
     private ImageView muteButtonView;
     private ImageView speakerButtonView;
 
     private CallViewModel callViewModel;
     private UserId peerUid;
+
+    private ContactLoader contactLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,13 +72,16 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
 
         setContentView(R.layout.activity_call);
 
+        contactLoader = new ContactLoader();
+
         callingView = findViewById(R.id.calling_view);
         ringingView = findViewById(R.id.ringing_view);
         inCallView = findViewById(R.id.in_call_view);
         initView = findViewById(R.id.init_view);
 
-        callingTextView = findViewById(R.id.calling_text);
-        callingTextView.setText(R.string.calling);
+        avatarView = findViewById(R.id.avatar);
+        nameTextView = findViewById(R.id.name);
+        titleTextView = findViewById(R.id.title);
         muteButtonView = findViewById(R.id.in_call_mute);
         speakerButtonView = findViewById(R.id.in_call_speaker);
 
@@ -93,12 +105,15 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                     initView.setVisibility(View.VISIBLE);
                     break;
                 case CallManager.State.CALLING:
+                    titleTextView.setText(R.string.calling);
                     callingView.setVisibility(View.VISIBLE);
                     break;
                 case CallManager.State.IN_CALL:
+                    titleTextView.setText("");
                     inCallView.setVisibility(View.VISIBLE);
                     break;
                 case CallManager.State.RINGING:
+                    titleTextView.setText(R.string.ringing);
                     ringingView.setVisibility(View.VISIBLE);
                     break;
                 case CallManager.State.END:
@@ -110,11 +125,14 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         });
 
         callViewModel.isPeerRinging().observe(this, isPeerRinging -> {
-            callingTextView.setText(R.string.ringing);
+            titleTextView.setText(R.string.ringing);
         });
 
         callViewModel.getIsMicrophoneMuted().observe(this, this::updateMicrophoneMutedUI);
         callViewModel.getIsSpekearPhoneOn().observe(this, this::updateSpeakerPhoneUI);
+
+        avatarLoader.load(avatarView, peerUid, false);
+        contactLoader.load(nameTextView, peerUid, false);
 
         findViewById(R.id.init_start).setOnClickListener(v -> startCall());
 
@@ -170,6 +188,12 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                 callViewModel.onIncomingCall();
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        contactLoader.destroy();
     }
 
     private void startCall() {
