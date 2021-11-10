@@ -34,6 +34,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionManager;
 import androidx.viewpager.widget.PagerAdapter;
@@ -263,7 +264,6 @@ public class ContentComposerActivity extends HalloActivity {
         allowAddMedia = getIntent().getBooleanExtra(EXTRA_ALLOW_ADD_MEDIA, false);
 
         final Bundle editStates = getIntent().getParcelableExtra(MediaEditActivity.EXTRA_STATE);
-
         if (uris != null) {
             Log.i("ContentComposerActivity received " + uris.size() + " uris");
             loadingView.setVisibility(View.VISIBLE);
@@ -280,10 +280,11 @@ public class ContentComposerActivity extends HalloActivity {
                 return false;
             });
         } else {
+            View cardContainer = findViewById(R.id.card_container);
             Log.i("ContentComposerActivity no uri list provided");
             loadingView.setVisibility(View.GONE);
             editText = findViewById(R.id.entry_card);
-            editText.setMinHeight(getResources().getDimensionPixelSize(R.dimen.entry_card_min_height));
+            cardContainer.setMinimumHeight(getResources().getDimensionPixelSize(R.dimen.entry_card_min_height));
             editText.requestFocus();
             editText.setPreImeListener((keyCode, event) -> {
                 if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
