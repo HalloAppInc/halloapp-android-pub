@@ -18,12 +18,14 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.AppContext;
 import com.halloapp.Constants;
 import com.halloapp.Notifications;
+import com.halloapp.crypto.CryptoException;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
 import com.halloapp.proto.server.StartCallResult;
 import com.halloapp.proto.server.StunServer;
 import com.halloapp.proto.server.TurnServer;
+import com.halloapp.proto.server.WebRtcSessionDescription;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.calls.CallsApi;
@@ -205,13 +207,21 @@ public class CallManager {
         state = State.IDLE;
     }
 
-    public void handleIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer,
+    public void handleIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @Nullable String webrtcOffer,
                                     @NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers,
                                     @NonNull Long timestamp) {
         Log.i("incoming call " + callId + " peerUid: " + peerUid);
         this.isInitiator = false;
         this.peerUid = peerUid;
         this.callId = callId;
+
+        if (webrtcOffer == null) {
+            Log.e("handleIncomingCall() Failed to decrypt webrtcOffer callId:" + callId);
+            endCall(EndCall.Reason.REJECT);
+            notifyOnEndCall();
+            stop();
+            return;
+        }
 
         setupWebrtc();
         Log.i("Setting webrtc offer " + webrtcOffer);
@@ -243,7 +253,7 @@ public class CallManager {
         startOutgoingRingtone();
     }
 
-    public void handleAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer, @NonNull Long timestamp) {
+    public void handleAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @Nullable String webrtcOffer, @NonNull Long timestamp) {
         Log.i("AnswerCall callId: " + callId + " peerUid: " + peerUid);
 
         if (this.callId == null || !this.callId.equals(callId)) {
@@ -258,10 +268,15 @@ public class CallManager {
         stopOutgoingRingtone();
         cancelRingingTimeout();
 
-        peerConnection.setRemoteDescription(
-                new SimpleSdpObserver(),
-                new SessionDescription(SessionDescription.Type.ANSWER,
-                        webrtcOffer));
+        if (webrtcOffer == null) {
+            // TODO(nikola): fix this reasons. Maybe add a new reason for e2e errors
+            endCall(EndCall.Reason.REJECT);
+            notifyOnEndCall();
+            stop();
+            return;
+        }
+
+        peerConnection.setRemoteDescription(new SimpleSdpObserver(), new SessionDescription(SessionDescription.Type.ANSWER, webrtcOffer));
         this.state = State.IN_CALL;
         notifyOnAnsweredCall();
     }
@@ -279,7 +294,7 @@ public class CallManager {
 
     public void handleIceCandidate(@NonNull String callId, @NonNull UserId peerUid,
                                     @NonNull String sdpMediaId, int sdpMediaLineIndex, @NonNull String sdp) {
-        Log.i("got IceCandidate callId: " + callId + " sdp: " + sdp);
+        Log.i("CallManager: got IceCandidate callId: " + callId + " " + sdpMediaId + ":" + sdpMediaLineIndex + ": sdp: " + sdp);
         IceCandidate candidate = new IceCandidate(sdpMediaId, sdpMediaLineIndex, sdp);
         // TODO(nikola): more checks for callId and peerUid
         if (peerConnection != null) {
@@ -438,9 +453,10 @@ public class CallManager {
                 Log.i("onCreateSuccess: ");
                 peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
 
-                Observable<StartCallResponseIq> observable = callsApi.startCall(
-                        callId, peerUid, CallType.AUDIO, sessionDescription.description);
                 try {
+                    Observable<StartCallResponseIq> observable = callsApi.startCall(
+                            callId, peerUid, CallType.AUDIO, sessionDescription.description);
+
                     StartCallResponseIq response = observable.await();
                     Log.i("received StartCallResult " + response.result +
                             " turn " + response.turnServers +
@@ -453,13 +469,13 @@ public class CallManager {
                         Log.w("StartCall failed " + response.result);
                         // TODO(nikola): handle call not ok
                     }
-                    // TODO(nikola): handle the exceptions
+                    // TODO(nikola): handle the exceptions. Call stop()
                 } catch (ObservableErrorException e) {
-                    Log.e("Failed to send the start call IQ callId: " + callId + " peerUid: " + peerUid);
-                    e.printStackTrace();
+                    Log.e("CallManager: Failed to send the start call IQ callId: " + callId + " peerUid: " + peerUid, e);
+                } catch (CryptoException e) {
+                    Log.e("CallManager: CryptoException, Failed to send the start call IQ callId: " + callId + " peerUid: " + peerUid, e);
                 } catch (InterruptedException e) {
-                    Log.e("Failed to send the start call IQ callId: " + callId + " peerUid: " + peerUid);
-                    e.printStackTrace();
+                    Log.e("CallManager: Failed to send the start call IQ callId: " + callId + " peerUid: " + peerUid, e);
                 }
             }
         }, sdpMediaConstraints);
@@ -508,7 +524,17 @@ public class CallManager {
                 Log.i("PeerConnection answer is ready " + sessionDescription);
                 peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
 
-                callsApi.sendAnswerCall(callId, peerUid, sessionDescription.description);
+                try {
+                    WebRtcSessionDescription answer = CallsApi.encryptCallPayload(sessionDescription.description, peerUid);
+                    Log.i("CallManager: encrypted answer: size:" +  answer.getEncPayload().size());
+                    callsApi.sendAnswerCall(callId, peerUid, answer);
+                } catch (CryptoException e) {
+                    Log.e("CallManager: failed to encrypt webrtc Answer", e);
+                    // TODO(nikola): change reason to CRYPTO_FAIL
+                    endCall(EndCall.Reason.REJECT);
+                    notifyOnEndCall();
+                    stop();
+                }
             }
         }, new MediaConstraints());
     }

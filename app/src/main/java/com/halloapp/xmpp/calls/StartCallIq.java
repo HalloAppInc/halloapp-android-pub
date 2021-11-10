@@ -2,8 +2,10 @@ package com.halloapp.xmpp.calls;
 
 import androidx.annotation.NonNull;
 
+import com.google.protobuf.ByteString;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.signal.SignalSessionManager;
+import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.Iq;
@@ -18,9 +20,9 @@ public class StartCallIq extends HalloIq {
     private final String callId;
     private final UserId peerUid;
     private final CallType callType;
-    private final String webrtcOffer;
+    private final WebRtcSessionDescription webrtcOffer;
 
-    protected StartCallIq(@NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType, @NonNull String webrtcOffer) {
+    protected StartCallIq(@NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType, @NonNull WebRtcSessionDescription webrtcOffer) {
         this.callId = callId;
         this.peerUid = peerUid;
         this.callType = callType;
@@ -34,17 +36,7 @@ public class StartCallIq extends HalloIq {
         builder.setCallType(callType);
         builder.setPeerUid(peerUid.rawIdLong());
         builder.setCallId(callId);
-        WebRtcSessionDescription.Builder offerBuilder = WebRtcSessionDescription.newBuilder();
-        // TODO: do the encryption here
-//        byte[] bytes = webrtcOffer.getBytes(StandardCharsets.UTF_8);
-//        try {
-//            SignalSessionManager.getInstance().encryptMessage(bytes, peerUid);
-//        } catch (CryptoException e) {
-//            // TODO:
-//            e.printStackTrace();
-//        }
-        offerBuilder.setEncPayload(com.google.protobuf.ByteString.copyFromUtf8(webrtcOffer));
-        builder.setWebrtcOffer(offerBuilder.build());
+        builder.setWebrtcOffer(webrtcOffer);
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
                 .setId(getStanzaId())

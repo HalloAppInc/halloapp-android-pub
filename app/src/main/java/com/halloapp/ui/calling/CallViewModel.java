@@ -26,6 +26,7 @@ public class CallViewModel extends ViewModel implements CallObserver {
     public CallViewModel() {
         callManager = CallManager.getInstance();
         callManager.addObserver(this);
+        Log.i("CallViewModel/ state: " + state.getValue() + " -> " + callManager.getState());
         state.setValue(callManager.getState());
         isMicrophoneMuted.setValue(callManager.isMicrophoneMuted());
         isSpeakerPhoneOn.setValue(callManager.isSpeakerPhoneOn());

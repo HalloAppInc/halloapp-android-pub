@@ -1,5 +1,7 @@
 package com.halloapp.xmpp.calls;
 
+import androidx.annotation.NonNull;
+
 import com.google.protobuf.ByteString;
 import com.halloapp.proto.server.AnswerCall;
 import com.halloapp.proto.server.WebRtcSessionDescription;
@@ -7,10 +9,9 @@ import com.halloapp.proto.server.WebRtcSessionDescription;
 public class AnswerCallElement {
 
     private final String callId;
-    // TODO: change to the encrypted version
-    private final String webrtcAnswer;
+    private final WebRtcSessionDescription webrtcAnswer;
 
-    public AnswerCallElement(String callId, String webrtcAnswer) {
+    public AnswerCallElement(String callId, @NonNull WebRtcSessionDescription webrtcAnswer) {
         this.callId = callId;
         this.webrtcAnswer = webrtcAnswer;
     }
@@ -19,16 +20,14 @@ public class AnswerCallElement {
         return callId;
     }
 
-    public String getWebrtcAnswer() {
+    public WebRtcSessionDescription getWebrtcAnswer() {
         return webrtcAnswer;
     }
 
     public AnswerCall toProto() {
         return AnswerCall.newBuilder()
                 .setCallId(callId)
-                .setWebrtcAnswer(WebRtcSessionDescription.newBuilder()
-                        .setEncPayload(ByteString.copyFrom(webrtcAnswer.getBytes()))
-                        .build())
+                .setWebrtcAnswer(webrtcAnswer)
                 .build();
     }
 }
