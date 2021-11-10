@@ -128,6 +128,11 @@
     <string name="contacts_permission_rationale_denied">To connect with your friends and family we need permission to access contacts on your device.\n\nOpen the app settings screen to modify app permissions.</string>
     <string name="storage_permission_rationale">To pick media we need permission to access your device storage</string>
     <string name="storage_permission_rationale_denied">To pick media we need permission to access your device storage.\n\nOpen the app settings screen to modify app permissions.</string>
+    <!-- Rationale for when requesting microphone permission for voice calls -->
+    <string name="voice_call_record_audio_permission_rationale">To use voice calls we need permission to access the microphone</string>
+    <!-- Rationale for when requesting microphone permission for voice calls, but it has already been denied. -->
+    <string name="voice_call_record_audio_permission_rationale_denied">To use voice calls we need permission to access the microphone.\n\nOpen the app settings screen to modify app permissions.</string>
+
     <!-- Explanation for why we need storage permissions when using save to gallery feature -->
     <string name="save_to_gallery_storage_permission_rationale">To save the media to the gallery we need permission to access your device storage</string>
     <!-- Explanation for why we need storage permissions when using save to gallery feature. This is used when the user needs to manually go to their settings -->
