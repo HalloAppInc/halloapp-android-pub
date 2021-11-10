@@ -217,7 +217,7 @@ public class CallManager {
         callId = null;
         peerUid = null;
         // TODO(nikola): Instead of STATE_INIT and STATE_END we need STATE_IDLE.
-        state = State.END;
+        state = State.IDLE;
     }
 
     public void handleIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull String webrtcOffer,
