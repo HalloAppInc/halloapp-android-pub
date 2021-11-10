@@ -25,7 +25,7 @@ public class CallNotificationBroadcastReceiver extends BroadcastReceiver {
         if (DECLINE.equals(intent.getAction())) {
             Log.i("Call declined via notification button");
             // TODO: extract the call
-            callManager.onEndCall(EndCall.Reason.REJECT);
+            callManager.endCall(EndCall.Reason.REJECT);
             callManager.stop();
         } else {
             Log.e("Unknown intent action " + intent.getAction());

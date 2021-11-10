@@ -89,7 +89,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         String userUidStr = getIntent().getStringExtra(EXTRA_PEER_UID);
         Preconditions.checkNotNull(userUidStr);
         this.peerUid = new UserId(userUidStr);
-        Log.i("peerUid is " + peerUid);
+        Log.i("CallActivity/onCreate peerUid is " + peerUid);
         callViewModel.setPeerUid(peerUid);
 
         callViewModel.getState().observe(this, state -> {
@@ -97,26 +97,30 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             ringingView.setVisibility(View.GONE);
             inCallView.setVisibility(View.GONE);
             initView.setVisibility(View.GONE);
-            // TODO (nikola): print human name sor the new state
             Log.i("State -> " + state);
 
             switch (state) {
                 case CallManager.State.IDLE:
+                    Log.i("CallActivity/State -> IDLE");
                     initView.setVisibility(View.VISIBLE);
                     break;
                 case CallManager.State.CALLING:
+                    Log.i("CallActivity/State -> CALLING");
                     titleTextView.setText(R.string.calling);
                     callingView.setVisibility(View.VISIBLE);
                     break;
                 case CallManager.State.IN_CALL:
+                    Log.i("CallActivity/State -> IN_CALL");
                     titleTextView.setText("");
                     inCallView.setVisibility(View.VISIBLE);
                     break;
                 case CallManager.State.RINGING:
+                    Log.i("CallActivity/State -> RINGING");
                     titleTextView.setText(R.string.ringing);
                     ringingView.setVisibility(View.VISIBLE);
                     break;
                 case CallManager.State.END:
+                    Log.i("CallActivity/State -> END");
                     Log.i("finishing the activity");
                     callViewModel.onEndCallCleanup();
                     finish();
@@ -129,7 +133,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         });
 
         callViewModel.getIsMicrophoneMuted().observe(this, this::updateMicrophoneMutedUI);
-        callViewModel.getIsSpekearPhoneOn().observe(this, this::updateSpeakerPhoneUI);
+        callViewModel.getIsSpeakerPhoneOn().observe(this, this::updateSpeakerPhoneUI);
 
         avatarLoader.load(avatarView, peerUid, false);
         contactLoader.load(nameTextView, peerUid, false);
@@ -223,7 +227,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void onStartCall() {
-        callViewModel.onStart(this.getApplicationContext());
+        callViewModel.onStartCall();
     }
 
     private void onDeclineCall() {

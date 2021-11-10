@@ -1,7 +1,5 @@
 package com.halloapp.ui.calling;
 
-import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 import androidx.lifecycle.LiveData;
@@ -16,11 +14,10 @@ import com.halloapp.util.logs.Log;
 
 public class CallViewModel extends ViewModel implements CallObserver {
 
-    private final MutableLiveData<Boolean> isMicrophoneMuted = new MutableLiveData<>(false);
-    private final MutableLiveData<Boolean> isSpekearPhoneOn = new MutableLiveData<>(false);
-
-    private final MutableLiveData<Boolean> isPeerRinging = new MutableLiveData<>(false);
     private final MutableLiveData<Integer> state = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isMicrophoneMuted = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isSpeakerPhoneOn = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isPeerRinging = new MutableLiveData<>(false);
 
     private final CallManager callManager;
 
@@ -31,7 +28,7 @@ public class CallViewModel extends ViewModel implements CallObserver {
         callManager.addObserver(this);
         state.setValue(callManager.getState());
         isMicrophoneMuted.setValue(callManager.isMicrophoneMuted());
-        isSpekearPhoneOn.setValue(callManager.isSpeakerPhoneOn());
+        isSpeakerPhoneOn.setValue(callManager.isSpeakerPhoneOn());
     }
 
     @Override
@@ -40,10 +37,9 @@ public class CallViewModel extends ViewModel implements CallObserver {
         callManager.removeObserver(this);
     }
 
-    public void setPeerUid(UserId peerUid) {
+    public void setPeerUid(@NonNull UserId peerUid) {
         this.peerUid = peerUid;
     }
-
 
     @NonNull
     public LiveData<Integer> getState() {
@@ -56,8 +52,8 @@ public class CallViewModel extends ViewModel implements CallObserver {
     }
 
     @NonNull
-    public LiveData<Boolean> getIsSpekearPhoneOn() {
-        return isSpekearPhoneOn;
+    public LiveData<Boolean> getIsSpeakerPhoneOn() {
+        return isSpeakerPhoneOn;
     }
 
     @NonNull
@@ -77,14 +73,13 @@ public class CallViewModel extends ViewModel implements CallObserver {
         return state.getValue() != null && state.getValue() == CallManager.State.CALLING;
     }
 
-    public void onStart(Context context) {
+    public void onStartCall() {
         state.postValue(CallManager.State.CALLING);
         callManager.startCall(peerUid);
     }
 
     public void onCancelCall() {
-        // TODO(nikola): add new reason Cancel
-        callManager.onEndCall(EndCall.Reason.REJECT);
+        callManager.endCall(EndCall.Reason.CANCEL);
         endCall();
     }
 
@@ -119,7 +114,7 @@ public class CallViewModel extends ViewModel implements CallObserver {
 
     @Override
     public void onSpeakerPhoneOn(boolean on) {
-        isSpekearPhoneOn.postValue(on);
+        isSpeakerPhoneOn.postValue(on);
     }
 
     public void onIncomingCall() {
@@ -129,7 +124,7 @@ public class CallViewModel extends ViewModel implements CallObserver {
 
     public void onDeclineCall() {
         Log.i("onDeclineCall");
-        callManager.onEndCall(EndCall.Reason.REJECT);
+        callManager.endCall(EndCall.Reason.REJECT);
         endCall();
     }
 
@@ -137,12 +132,12 @@ public class CallViewModel extends ViewModel implements CallObserver {
         Log.i("onAcceptCall");
         state.postValue(CallManager.State.IN_CALL);
         // TODO(nikola): we should include the call id here.
-        callManager.onAcceptCall();
+        callManager.acceptCall();
     }
 
     public void onHangUp() {
         Log.i("onHangUp");
-        callManager.onEndCall(EndCall.Reason.CALL_END);
+        callManager.endCall(EndCall.Reason.CALL_END);
         endCall();
     }
 

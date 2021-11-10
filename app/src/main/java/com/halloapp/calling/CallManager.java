@@ -1,36 +1,32 @@
 package com.halloapp.calling;
 
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.PowerManager;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.AppContext;
-import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
 import com.halloapp.Notifications;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
-import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.StartCallResult;
 import com.halloapp.proto.server.StunServer;
 import com.halloapp.proto.server.TurnServer;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
-import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.ConnectionImpl;
-import com.halloapp.xmpp.calls.AnswerCallElement;
-import com.halloapp.xmpp.calls.CallRingingElement;
 import com.halloapp.xmpp.calls.CallsApi;
-import com.halloapp.xmpp.calls.EndCallElement;
-import com.halloapp.xmpp.calls.IceCandidateElement;
 import com.halloapp.xmpp.calls.StartCallResponseIq;
 import com.halloapp.xmpp.util.Observable;
 import com.halloapp.xmpp.util.ObservableErrorException;
@@ -102,6 +98,7 @@ public class CallManager {
     // peer connection API calls to ensure new peer connection factory is
     // created on the same thread as previously destroyed factory.
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private static CallManager instance;
     private final Set<CallObserver> observers;
@@ -145,6 +142,7 @@ public class CallManager {
         return state;
     }
 
+    @MainThread
     public void startCall(@NonNull UserId peerUid) {
         Log.i("startCall");
         this.callId = RandomId.create();
@@ -154,20 +152,9 @@ public class CallManager {
         acquireLock();
         this.state = State.CALLING;
 
-        // Store existing audio settings and change audio mode to
-        // MODE_IN_COMMUNICATION for best possible VoIP performance.
-        Log.i("Starting the audio manager " + audioManager);
-        audioManager.start(new CallAudioManager.AudioManagerEvents() {
-            @Override
-            public void onAudioDeviceChanged(CallAudioManager.AudioDevice audioDevice, Set<CallAudioManager.AudioDevice> availableAudioDevices) {
-                Log.i("onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + audioDevice);
-            }
-        });
+        startAudioManager();
 
-        // TODO(nikola): How to do this better, I need to execute some code on the background thread
-        // that loads the webrtc library. We can load this on app start also.
-        // After that I need to start the actual call doCall()
-        executor.execute(this::setup);
+        executor.execute(this::setupWebrtc);
     }
 
     private ComponentName startCallService() {
@@ -181,21 +168,20 @@ public class CallManager {
     }
 
     @WorkerThread
-    private void setup() {
-        // TODO(nikola): assert this is called not on the UI thread
+    private void setupWebrtc() {
         Log.i("Initialize WebRTC");
         initializePeerConnectionFactory();
         createAVTracks();
         initializePeerConnections();
         startStreams();
         if (isInitiator) {
-            doCall();
+            doStartCall();
         }
     }
     
     public void stop() {
         Log.i("stop callId: " + callId + " peerUid" + peerUid);
-        audioManager.stop();
+        stopAudioManager();
         stopOutgoingRingtone();
         if (localAudioTrack != null) {
             localAudioTrack.setEnabled(false);
@@ -216,7 +202,6 @@ public class CallManager {
         isSpeakerPhoneOn = false;
         callId = null;
         peerUid = null;
-        // TODO(nikola): Instead of STATE_INIT and STATE_END we need STATE_IDLE.
         state = State.IDLE;
     }
 
@@ -228,8 +213,7 @@ public class CallManager {
         this.peerUid = peerUid;
         this.callId = callId;
 
-        // TODO(nikola): rename setup to something better
-        setup();
+        setupWebrtc();
         Log.i("Setting webrtc offer " + webrtcOffer);
         peerConnection.setRemoteDescription(
                 new SimpleSdpObserver(),
@@ -303,7 +287,8 @@ public class CallManager {
         }
     }
 
-    public void onAcceptCall() {
+    @MainThread
+    public void acceptCall() {
         if (this.isInitiator) {
             Log.e("ERROR user clicked accept call but is the call initiator callId: " + callId);
             return;
@@ -440,8 +425,7 @@ public class CallManager {
         return factory.createPeerConnection(rtcConfig, pcObserver);
     }
 
-    // TODO(nikola): rename to startCall
-    private void doCall() {
+    private void doStartCall() {
         MediaConstraints sdpMediaConstraints = new MediaConstraints();
 
         sdpMediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"));
@@ -508,12 +492,15 @@ public class CallManager {
         peerConnection.setConfiguration(rtcConfig);
     }
 
+    @MainThread
     private void doAnswer() {
         Log.i("Answering callId: " + callId + " peerUid: " + peerUid);
         if (this.callService == null) {
             this.callService = startCallService();
         }
         acquireLock();
+        startAudioManager();
+
         peerConnection.createAnswer(new SimpleSdpObserver() {
             @Override
             public void onCreateSuccess(@NonNull SessionDescription sessionDescription) {
@@ -561,7 +548,7 @@ public class CallManager {
         setSpeakerPhoneOn(!isSpeakerPhoneOn());
     }
 
-    public void onEndCall(EndCall.Reason reason) {
+    public void endCall(@NonNull EndCall.Reason reason) {
         callsApi.sendEndCall(callId, peerUid, reason);
     }
 
@@ -634,7 +621,7 @@ public class CallManager {
         synchronized (timer) {
             Log.i("onOutgoingCallTimeout");
             if (this.callId != null && this.callId.equals(callId)) {
-                onEndCall(EndCall.Reason.TIMEOUT);
+                endCall(EndCall.Reason.TIMEOUT);
                 notifyOnEndCall();
                 // TODO(nikola): this could clear the wrong notification if we have multiple incoming calls.
                 Notifications.getInstance(appContext.get()).clearIncomingCallNotification();
@@ -658,10 +645,10 @@ public class CallManager {
     // The android media player is not thread safe. Making sure it is always interacted on from the same thread.
     private void startOutgoingRingtone() {
         executor.execute(() -> outgoingRingtone.start(OutgoingRingtone.Type.RINGING));
-    };
+    }
 
     private void stopOutgoingRingtone() {
-        executor.execute(() -> outgoingRingtone.stop());
+        executor.execute(outgoingRingtone::stop);
     }
 
     private @Nullable PowerManager.WakeLock createProximityLock() {
@@ -673,6 +660,7 @@ public class CallManager {
         }
     }
 
+    @SuppressLint("WakelockTimeout")
     private void acquireLock() {
         if (proximityLock != null && !proximityLock.isHeld()) {
             proximityLock.acquire();
@@ -704,5 +692,19 @@ public class CallManager {
 
     public String toString() {
         return "CallManager{state=" + stateToString(this.state) + ",callId=" + this.callId + ",peerUid=" + peerUid + "}";
+    }
+
+    @MainThread
+    private void startAudioManager() {
+        // Store existing audio settings and change audio mode to
+        // MODE_IN_COMMUNICATION for best possible VoIP performance.
+        Log.i("Starting the audio manager " + audioManager);
+        audioManager.start((audioDevice, availableAudioDevices) -> {
+            Log.i("onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + audioDevice);
+        });
+    }
+
+    private void stopAudioManager() {
+        mainHandler.post(() -> audioManager.stop());
     }
 }

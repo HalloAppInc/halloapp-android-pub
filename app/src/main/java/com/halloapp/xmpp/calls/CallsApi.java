@@ -2,7 +2,6 @@ package com.halloapp.xmpp.calls;
 
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 
 import com.halloapp.ConnectionObservers;
 import com.halloapp.calling.CallManager;
@@ -18,7 +17,6 @@ import com.halloapp.proto.server.TurnServer;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.ConnectionImpl;
 import com.halloapp.xmpp.ProtoPrinter;
 import com.halloapp.xmpp.util.Observable;
 
