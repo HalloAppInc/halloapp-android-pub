@@ -28,14 +28,9 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
-import androidx.transition.ChangeBounds;
-import androidx.transition.Fade;
-import androidx.transition.TransitionManager;
-import androidx.transition.TransitionSet;
 
 import com.halloapp.R;
 import com.halloapp.util.ContextUtils;
-import com.halloapp.util.Rtl;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -44,6 +39,7 @@ public class HACustomFab extends LinearLayout {
 
     private static final int SUB_ANIMATION_DELAY = 25;
     private static final int ANIMATION_DURATION = 200;
+    private static final int EXTEND_ANIMATION_DURATION = 150;
 
     public interface OnActionSelectedListener {
         void onActionSelected(@IdRes int actionId);
@@ -66,7 +62,6 @@ public class HACustomFab extends LinearLayout {
     private @Nullable OnActionSelectedListener onActionSelectedListener;
     private @Nullable View.OnClickListener onClickListener;
 
-    private int expandedFabPadding;
     private int fabPadding;
     private int fabSize;
 
@@ -109,7 +104,6 @@ public class HACustomFab extends LinearLayout {
         inflate(context, R.layout.view_halloapp_fab, this);
 
         fabPadding = context.getResources().getDimensionPixelSize(R.dimen.fab_padding);
-        expandedFabPadding = context.getResources().getDimensionPixelSize(R.dimen.expanded_fab_padding);
         fabSize = context.getResources().getDimensionPixelSize(R.dimen.fab_size);
 
         logoImageView = findViewById(R.id.hallo);
@@ -203,11 +197,6 @@ public class HACustomFab extends LinearLayout {
             if (expanded) {
                 ViewGroup.LayoutParams layoutParams = primaryFab.getLayoutParams();
                 layoutParams.width = LayoutParams.WRAP_CONTENT;
-                if (Rtl.isRtl(getContext())) {
-                    primaryFab.setPadding(fabPadding, 0, expandedFabPadding, 0);
-                } else {
-                    primaryFab.setPadding(expandedFabPadding, 0, fabPadding, 0);
-                }
                 primaryFab.setLayoutParams(layoutParams);
             }
         } else {
@@ -238,41 +227,42 @@ public class HACustomFab extends LinearLayout {
         subMenuOpen = isOpen;
     }
 
+    private float getCollapsePercentage() {
+        final int start = primaryFab.getWidth();
+        final int logoViewWidth = logoImageView.getDrawable().getIntrinsicWidth() + logoImageView.getPaddingEnd() + logoImageView.getPaddingStart();
+        return (float) (start - fabSize) / ((float)logoViewWidth);
+    }
+
     public void collapse() {
         if (!expanded) {
             return;
         }
-        final int start = primaryFab.getWidth();
-        final int logoStart = logoContainerView.getWidth();
-        final int end = getResources().getDimensionPixelSize(R.dimen.fab_size);
-        setAnimator(ValueAnimator.ofInt(start, end));
-        animator.setDuration(250);
+        createCollapseAnimator();
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
         fadeGradient.setVisibility(View.VISIBLE);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                int val = (Integer) animator.getAnimatedValue();
-                ViewGroup.LayoutParams layoutParams = primaryFab.getLayoutParams();
-                layoutParams.width = val;
-                primaryFab.setLayoutParams(layoutParams);
-
-                layoutParams = logoContainerView.getLayoutParams();
-                layoutParams.width = logoStart - (start - val);
-                logoContainerView.setLayoutParams(layoutParams);
-                float alpha = (float)((float)(val - end) / (float)(start - end));
-                logoContainerView.setAlpha(alpha);
-            }
-        });
-        animator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                logoContainerView.setVisibility(View.GONE);
-                fadeGradient.setVisibility(View.GONE);
-            }
-        });
         animator.start();
         expanded = false;
+    }
+
+    private void createCollapseAnimator() {
+        float initialPercentage = getCollapsePercentage();
+        setAnimator(ValueAnimator.ofFloat(0, 1));
+        animator.setDuration((int)(ANIMATION_DURATION * initialPercentage));
+
+        CollapseAnimator collapseAnimator = new CollapseAnimator();
+        animator.addUpdateListener(collapseAnimator);
+        animator.addListener(collapseAnimator);
+    }
+
+    private void createExtendAnimator() {
+        final int logoContainerWidth = logoImageView.getDrawable().getIntrinsicWidth() + logoImageView.getPaddingEnd() + logoImageView.getPaddingStart();
+        float initialPercentage = (float)((float)(primaryFab.getWidth() - fabSize) / (float)logoContainerWidth);
+        setAnimator(ValueAnimator.ofFloat(initialPercentage, 1));
+        animator.setDuration((int)(EXTEND_ANIMATION_DURATION * (1f - initialPercentage)));
+
+        ExtendAnimator extendAnimator = new ExtendAnimator();
+        animator.addUpdateListener(extendAnimator);
+        animator.addListener(extendAnimator);
     }
 
     private void setAnimator(ValueAnimator animator) {
@@ -331,8 +321,13 @@ public class HACustomFab extends LinearLayout {
     }
 
     private void transitionToClosed() {
-        setAnimator(ValueAnimator.ofFloat(0, 1));
-        animator.setDuration(ANIMATION_DURATION);
+        if (expanded) {
+            createExtendAnimator();
+            fadeGradient.setVisibility(View.GONE);
+        } else {
+            createCollapseAnimator();
+            animator.setDuration(ANIMATION_DURATION);
+        }
         animator.addUpdateListener(animation -> {
             float val = (Float) animator.getAnimatedValue();
             iconView.setRotation((1 - val) * 45f);
@@ -352,23 +347,83 @@ public class HACustomFab extends LinearLayout {
         });
         iconView.setColorFilter(0xFFFFFFFF);
         primaryFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.color_primary)));
-        if (expanded) {
-            TransitionSet transitionSet = new TransitionSet();
-            transitionSet.addTransition(new ChangeBounds());
-            transitionSet.addTransition(new Fade());
-            transitionSet.setDuration(150);
-            TransitionManager.beginDelayedTransition(primaryFab, transitionSet);
+        animator.start();
+        onStartHideOverlay();
+    }
+
+    private class CollapseAnimator extends AnimatorListenerAdapter implements ValueAnimator.AnimatorUpdateListener {
+
+        private final int logoViewWidth;
+        private float basePercentage;
+
+        public CollapseAnimator() {
+            logoViewWidth = logoImageView.getDrawable().getIntrinsicWidth() + logoImageView.getPaddingEnd() + logoImageView.getPaddingStart();
+            this.basePercentage = 1f - getCollapsePercentage();
+        }
+
+        @Override
+        public void onAnimationUpdate(ValueAnimator animation) {
+            float percent = basePercentage + (1f - basePercentage) * ((Float) animator.getAnimatedValue());
+            int curLogoWidth = (int)((1f - percent) * logoViewWidth);
+            ViewGroup.LayoutParams layoutParams = primaryFab.getLayoutParams();
+            layoutParams.width = fabSize + curLogoWidth;
+            primaryFab.setLayoutParams(layoutParams);
+
+            layoutParams = logoContainerView.getLayoutParams();
+            layoutParams.width = curLogoWidth;
+            logoContainerView.setLayoutParams(layoutParams);
+            float alpha = 1f - percent;
+            logoContainerView.setAlpha(alpha);
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation, boolean isReverse) {
+            logoContainerView.setVisibility(View.GONE);
+            fadeGradient.setVisibility(View.GONE);
+        }
+    }
+
+    private class ExtendAnimator extends AnimatorListenerAdapter implements ValueAnimator.AnimatorUpdateListener {
+
+        private final int logoContainerWidth;
+
+        public ExtendAnimator() {
+            logoContainerWidth = logoImageView.getDrawable().getIntrinsicWidth() + logoImageView.getPaddingEnd() + logoImageView.getPaddingStart();
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
             ViewGroup.LayoutParams layoutParams = primaryFab.getLayoutParams();
             layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
             primaryFab.setLayoutParams(layoutParams);
             layoutParams = logoContainerView.getLayoutParams();
             layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
             logoContainerView.setLayoutParams(layoutParams);
-            logoContainerView.setAlpha(1f);
             logoContainerView.setVisibility(View.VISIBLE);
+            fadeGradient.setVisibility(View.GONE);
         }
-        animator.start();
-        onStartHideOverlay();
+
+        @Override
+        public void onAnimationStart(Animator animation) {
+            logoContainerView.setVisibility(View.VISIBLE);
+            logoContainerView.setAlpha(0f);
+        }
+
+        @Override
+        public void onAnimationUpdate(ValueAnimator animation) {
+            float val = (Float) animator.getAnimatedValue();
+            ViewGroup.LayoutParams layoutParams = primaryFab.getLayoutParams();
+
+            final int width = (int)  (logoContainerWidth * val);
+
+            layoutParams.width = fabSize + width;
+            primaryFab.setLayoutParams(layoutParams);
+
+            layoutParams = logoContainerView.getLayoutParams();
+            layoutParams.width = width;
+            logoContainerView.setLayoutParams(layoutParams);
+            logoContainerView.setAlpha(val);
+        }
     }
 
     private void transitionToOpen() {
@@ -377,7 +432,7 @@ public class HACustomFab extends LinearLayout {
         final int end = getResources().getDimensionPixelSize(R.dimen.fab_size);
         setAnimator(ValueAnimator.ofFloat(0, 1));
         animator.setDuration(ANIMATION_DURATION);
-        final boolean isExpanded = expanded;
+        final boolean isExpanded = true;
         if (fabOverlay == null) {
             fabOverlay = ((View)getParent()).findViewById(R.id.fab_overlay);
             if (fabOverlay != null) {
@@ -427,38 +482,14 @@ public class HACustomFab extends LinearLayout {
         if (expanded) {
             return;
         }
-        final int start = primaryFab.getWidth();
-        final int logoWidth = logoImageView.getDrawable().getIntrinsicWidth();
-        setAnimator(ValueAnimator.ofFloat(0, 1));
+        createExtendAnimator();
         logoContainerView.setVisibility(View.VISIBLE);
         logoContainerView.setAlpha(0f);
-        animator.setDuration(ANIMATION_DURATION);
         fadeGradient.setVisibility(View.VISIBLE);
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
-        animator.addUpdateListener(animation -> {
-            float val = (Float) animator.getAnimatedValue();
-            ViewGroup.LayoutParams layoutParams = primaryFab.getLayoutParams();
-
-            layoutParams.width = start + (int) (logoWidth * val);
-            primaryFab.setLayoutParams(layoutParams);
-
-            layoutParams = logoContainerView.getLayoutParams();
-            layoutParams.width = (int) (val * logoWidth);
-            logoContainerView.setLayoutParams(layoutParams);
-            logoContainerView.setAlpha(Math.max(0,(2 * val) - 1));
-        });
-        animator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                ViewGroup.LayoutParams layoutParams = primaryFab.getLayoutParams();
-                layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
-                primaryFab.setLayoutParams(layoutParams);
-                layoutParams = logoContainerView.getLayoutParams();
-                layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
-                logoContainerView.setLayoutParams(layoutParams);
-                fadeGradient.setVisibility(View.GONE);
-            }
-        });
+        ExtendAnimator extendAnimator = new ExtendAnimator();
+        animator.addUpdateListener(extendAnimator);
+        animator.addListener(extendAnimator);
         animator.start();
         expanded = true;
     }

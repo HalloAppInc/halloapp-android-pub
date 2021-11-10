@@ -114,7 +114,7 @@
 
     <dimen name="fab_padding">16dp</dimen>
     <dimen name="fab_size">56dp</dimen>
-    <dimen name="expanded_fab_padding">19dp</dimen>
+    <dimen name="extended_fab_size">56dp</dimen>
     <dimen name="expanded_fab_icon_size">18dp</dimen>
     <dimen name="fab_icon_size">24dp</dimen>
 

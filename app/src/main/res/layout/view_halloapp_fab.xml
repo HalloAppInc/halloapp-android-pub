@@ -22,10 +22,10 @@
         <ImageView
             android:id="@+id/hallo"
             android:layout_width="wrap_content"
-            android:layout_height="18dp"
-            android:layout_gravity="center"
+            android:layout_height="24dp"
+            android:layout_gravity="end"
             android:scaleType="matrix"
-            android:paddingStart="0dp"
+            android:paddingStart="5dp"
             android:paddingEnd="5dp"
             android:src="@drawable/ic_hallo_fab_text" />
 
@@ -50,7 +50,7 @@
             android:layout_height="24dp"
             android:scaleType="center"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_fab_plus_expanded" />
+            android:src="@drawable/ic_plus_expanded" />
 
     </FrameLayout>
 

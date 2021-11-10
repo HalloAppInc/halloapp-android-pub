@@ -296,7 +296,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         } else if (id == R.id.navigation_home){
             if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS)) {
                 haFabView.show();
-                haFabView.setMainFabIcon(R.drawable.ic_fab_plus_expanded, R.string.add_post, true);
+                haFabView.setMainFabIcon(R.drawable.ic_plus_expanded, R.string.add_post, true);
                 haFabView.setOnFabClickListener(null);
                 haFabView.setOnActionSelectedListener(new HACustomFab.OnActionSelectedListener() {
                     @Override
