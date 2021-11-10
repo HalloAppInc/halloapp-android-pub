@@ -423,6 +423,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         scrollToBottom.setOnClickListener(v -> {
             scrollUpOnDataLoaded = true;
             viewModel.reloadMessagesAt(Long.MAX_VALUE);
+            scrollToBottom.setVisibility(View.GONE);
         });
 
         layoutManager = new LinearLayoutManager(this);
