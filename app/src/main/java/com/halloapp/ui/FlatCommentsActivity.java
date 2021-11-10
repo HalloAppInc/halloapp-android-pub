@@ -1376,7 +1376,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 replyMediaThumbView.setOutlineProvider(new ViewOutlineProvider() {
                     @Override
                     public void getOutline(View view, Outline outline) {
-                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), replyMediaThumbView.getContext().getResources().getDimension(R.dimen.reply_media_corner_radius));
+                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), replyMediaThumbView.getContext().getResources().getDimension(R.dimen.message_bubble_reply_corner_radius));
                     }
                 });
                 replyMediaThumbView.setClipToOutline(true);
@@ -1400,7 +1400,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                         int top = 0;
                         int right = view.getWidth();
                         int bottom = view.getHeight();
-                        float cornerRadius = itemView.getContext().getResources().getDimension(R.dimen.message_bubble_corner_radius);
+                        float cornerRadius = itemView.getContext().getResources().getDimension(R.dimen.message_bubble_reply_corner_radius);
                         outline.setRoundRect(left, top, right, bottom, cornerRadius);
 
                     }

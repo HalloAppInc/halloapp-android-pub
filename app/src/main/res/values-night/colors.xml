@@ -21,7 +21,7 @@
     <color name="text_post_thumbnail_color">#ffffffff</color>
     <color name="message_background_incoming">#3F3E3C</color>
     <color name="message_background_outgoing">#3C4757</color>
-    <color name="message_background_border">@color/white_30</color>
+    <color name="message_background_border">@color/white_20</color>
     <color name="message_background_reply_incoming">@color/black_30</color>
     <color name="message_background_reply_outgoing">#272E38</color>
     <color name="message_url_preview_background_outgoing">@color/black_54</color>

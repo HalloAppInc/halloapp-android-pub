@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:paddingStart="7dp"
     android:paddingEnd="7dp"
-    android:paddingTop="5dp"
+    android:paddingTop="4dp"
     android:paddingBottom="5dp"
     android:minWidth="@dimen/reply_min_width"
     tools:background="@drawable/reply_frame">
@@ -37,19 +37,20 @@
         android:layout_height="16dp"
         android:layout_marginEnd="6dp"
         android:layout_marginStart="3dp"
-        android:layout_marginTop="2dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/reply_text"
         app:layout_constraintTop_toTopOf="@+id/reply_text"
         app:layout_constraintBottom_toBottomOf="@+id/reply_text"
-        app:tint="?android:textColorSecondary"
+        app:tint="@color/tertiary_text"
         tools:src="@drawable/ic_camera"/>
 
     <TextView
         android:id="@+id/reply_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="2dp"
+        android:paddingStart="2dp"
+        android:paddingEnd="2dp"
+        android:paddingBottom="2dp"
         android:ellipsize="end"
         android:maxLines="2"
         android:textDirection="locale"
