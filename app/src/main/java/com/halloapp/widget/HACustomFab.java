@@ -3,13 +3,17 @@ package com.halloapp.widget;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -17,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
@@ -29,6 +34,7 @@ import androidx.transition.TransitionManager;
 import androidx.transition.TransitionSet;
 
 import com.halloapp.R;
+import com.halloapp.util.ContextUtils;
 import com.halloapp.util.Rtl;
 
 import java.util.ArrayList;
@@ -67,7 +73,10 @@ public class HACustomFab extends LinearLayout {
     private boolean expanded = true;
     private boolean subMenuOpen = false;
 
+    private @ColorInt int defaultSystemUiColor;
+
     private ValueAnimator animator;
+    private ValueAnimator systemUiAnimator;
 
     public HACustomFab(Context context) {
         super(context);
@@ -86,6 +95,12 @@ public class HACustomFab extends LinearLayout {
 
     private void init() {
         final Context context = getContext();
+
+        final TypedValue typedValue = new TypedValue();
+        final TypedArray a = context.obtainStyledAttributes(typedValue.data, new int[] { R.attr.colorPrimaryDark });
+        defaultSystemUiColor = a.getColor(0, 0);
+        a.recycle();
+
         setOrientation(VERTICAL);
         setGravity(Gravity.END);
         setClipToPadding(false);
@@ -267,6 +282,54 @@ public class HACustomFab extends LinearLayout {
         this.animator = animator;
     }
 
+    private void onShowOverlay() {
+        if (onActionSelectedListener != null) {
+            onActionSelectedListener.onOverlay(true);
+        }
+        if (systemUiAnimator != null) {
+            systemUiAnimator.cancel();
+        }
+        Activity activity = ContextUtils.getActivity(getContext());
+        if (activity != null) {
+            Window window = activity.getWindow();
+            @ColorInt int startColor = ContextCompat.getColor(getContext(), R.color.window_background);
+            @ColorInt int color = ContextCompat.getColor(getContext(), R.color.fab_overlay_gradient_top);
+            systemUiAnimator = ValueAnimator.ofArgb(startColor, color);
+            systemUiAnimator.addUpdateListener(animation -> {
+                int val = (Integer) animation.getAnimatedValue();
+                window.setStatusBarColor(val);
+                window.setNavigationBarColor(val);
+            });
+            systemUiAnimator.setDuration(ANIMATION_DURATION);
+            systemUiAnimator.start();
+        }
+    }
+
+    private void onStartHideOverlay() {
+        if (systemUiAnimator != null) {
+            systemUiAnimator.cancel();
+        }
+        Activity activity = ContextUtils.getActivity(getContext());
+        if (activity != null) {
+            Window window = activity.getWindow();
+            @ColorInt int color = ContextCompat.getColor(getContext(), R.color.fab_overlay_gradient_top);
+            systemUiAnimator = ValueAnimator.ofArgb(color, defaultSystemUiColor);
+            systemUiAnimator.addUpdateListener(animation -> {
+                int val = (Integer) animation.getAnimatedValue();
+                window.setStatusBarColor(val);
+                window.setNavigationBarColor(val);
+            });
+            systemUiAnimator.setDuration(ANIMATION_DURATION);
+            systemUiAnimator.start();
+        }
+    }
+
+    private void onHideOverlay() {
+        if (onActionSelectedListener != null) {
+            onActionSelectedListener.onOverlay(false);
+        }
+    }
+
     private void transitionToClosed() {
         setAnimator(ValueAnimator.ofFloat(0, 1));
         animator.setDuration(ANIMATION_DURATION);
@@ -282,9 +345,7 @@ public class HACustomFab extends LinearLayout {
             public void onAnimationEnd(Animator animation) {
                 if (fabOverlay != null) {
                     fabOverlay.setVisibility(View.GONE);
-                    if (onActionSelectedListener != null) {
-                        onActionSelectedListener.onOverlay(false);
-                    }
+                    onHideOverlay();
                 }
                 iconView.setRotation(0);
             }
@@ -307,6 +368,7 @@ public class HACustomFab extends LinearLayout {
             logoContainerView.setVisibility(View.VISIBLE);
         }
         animator.start();
+        onStartHideOverlay();
     }
 
     private void transitionToOpen() {
@@ -328,9 +390,7 @@ public class HACustomFab extends LinearLayout {
         if (fabOverlay != null) {
             fabOverlay.setVisibility(View.VISIBLE);
             fabOverlay.setAlpha(0f);
-            if (onActionSelectedListener != null) {
-                onActionSelectedListener.onOverlay(true);
-            }
+            onShowOverlay();
         }
         animator.addUpdateListener(animation -> {
             float val = (Float) animator.getAnimatedValue();
