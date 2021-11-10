@@ -29,7 +29,9 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.content.ContentDb;
 import com.halloapp.content.PostThumbnailLoader;
+import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.ui.ActivityCenterActivity;
 import com.halloapp.ui.ActivityCenterViewModel;
 import com.halloapp.ui.MainActivity;
@@ -37,6 +39,7 @@ import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.invites.InviteContactsActivity;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
@@ -53,7 +56,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class HomeFragment extends PostsFragment implements MainNavFragment, EasyPermissions.PermissionCallbacks {
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
-
+    private static final int NUX_POST_DELAY = 2000;
     private static final int NEW_POSTS_BANNER_DISAPPEAR_TIME_MS = 5000;
 
     private HomeViewModel viewModel;
@@ -73,6 +76,8 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     private View contactsLearnMore;
 
     private View inviteView;
+
+    private boolean addedHomeZeroZonePost = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -144,32 +149,44 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
             }
         });
 
-        viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> {
-            Log.i("HomeFragment: post list updated " + posts);
-            if (viewModel.checkPendingOutgoing() || scrollUpOnDataLoaded) {
-                scrollUpOnDataLoaded = false;
-                postsView.scrollToPosition(0);
-                newPostsView.setVisibility(View.GONE);
-                onScrollToTop();
-            } else if (viewModel.checkPendingIncoming()) {
-                final View childView = layoutManager.getChildAt(0);
-                final boolean scrolled = childView == null || layoutManager.getPosition(childView) != 0;
-                if (scrolled) {
-                    showNewPostsBanner();
-                } else {
+        viewModel.postList.observe(getViewLifecycleOwner(), posts -> {
+            if (posts.isEmpty() && !addedHomeZeroZonePost) {
+                postsView.postDelayed(() -> {
+                    if (adapter.getItemCount() == 0) {
+                        BgWorkers.getInstance().execute(() -> {
+                            ZeroZoneManager.addHomeZeroZonePost(ContentDb.getInstance());
+                        });
+                    }
+                }, NUX_POST_DELAY);
+                addedHomeZeroZonePost = true;
+            }
+            adapter.submitList(posts, () -> {
+                Log.i("HomeFragment: post list updated " + posts);
+                if (viewModel.checkPendingOutgoing() || scrollUpOnDataLoaded) {
                     scrollUpOnDataLoaded = false;
                     postsView.scrollToPosition(0);
                     newPostsView.setVisibility(View.GONE);
                     onScrollToTop();
+                } else if (viewModel.checkPendingIncoming()) {
+                    final View childView = layoutManager.getChildAt(0);
+                    final boolean scrolled = childView == null || layoutManager.getPosition(childView) != 0;
+                    if (scrolled) {
+                        showNewPostsBanner();
+                    } else {
+                        scrollUpOnDataLoaded = false;
+                        postsView.scrollToPosition(0);
+                        newPostsView.setVisibility(View.GONE);
+                        onScrollToTop();
+                    }
                 }
-            }
-            emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
-            if (restoreStateOnDataLoaded) {
-                layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
-                restoreStateOnDataLoaded = false;
-            }
-            inviteView.post(this::refreshInviteNux);
-        }));
+                emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
+                if (restoreStateOnDataLoaded) {
+                    layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
+                    restoreStateOnDataLoaded = false;
+                }
+                inviteView.post(this::refreshInviteNux);
+            });
+        });
         activityCenterViewModel.getSocialHistory().observe(getViewLifecycleOwner(), commentHistoryData -> {
             if (notificationDrawable != null) {
                 updateSocialHistory(commentHistoryData);

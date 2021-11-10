@@ -66,6 +66,20 @@ public class ZeroZoneManager {
         return contacts.size() <= 5;
     }
 
+    public static void addHomeZeroZonePost(@NonNull ContentDb contentDb) {
+        if (!contentDb.hasHomeZeroZonePost()) {
+            Post systemPost = new Post(0,
+                    UserId.ME,
+                    RandomId.create(),
+                    System.currentTimeMillis(),
+                    Post.TRANSFERRED_YES,
+                    Post.SEEN_YES,
+                    Post.TYPE_ZERO_ZONE,
+                    null);
+            systemPost.addToStorage(contentDb);
+        }
+    }
+
     public static class ZeroZoneWorker extends Worker {
 
         public ZeroZoneWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
@@ -85,17 +99,7 @@ public class ZeroZoneManager {
                 Log.i("ZeroZoneWorker/doWork not waiting for initialization, nothing to do");
                 return Result.success();
             }
-            if (!contentDb.hasHomeZeroZonePost()) {
-                Post systemPost = new Post(0,
-                        UserId.ME,
-                        RandomId.create(),
-                        System.currentTimeMillis(),
-                        Post.TRANSFERRED_YES,
-                        Post.SEEN_YES,
-                        Post.TYPE_ZERO_ZONE,
-                        null);
-                systemPost.addToStorage(contentDb);
-            }
+            addHomeZeroZonePost(contentDb);
 
             GroupId zeroZoneGid = preferences.getZeroZoneGroupId();
             if (zeroZoneGid == null) {
