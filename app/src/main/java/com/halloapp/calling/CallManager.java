@@ -81,7 +81,6 @@ public class CallManager {
     private PeerConnection peerConnection;
     private PeerConnectionFactory factory;
 
-    private final Context context;
     private final CallsApi callsApi;
     private final CallAudioManager audioManager;
     private final OutgoingRingtone outgoingRingtone;
@@ -106,6 +105,7 @@ public class CallManager {
 
     private static CallManager instance;
     private final Set<CallObserver> observers;
+    private final AppContext appContext;
 
     public static CallManager getInstance() {
         if (instance == null) {
@@ -119,13 +119,13 @@ public class CallManager {
     }
 
     private CallManager() {
-        this.context = AppContext.getInstance().get();
+        this.appContext = AppContext.getInstance();
         this.callsApi = CallsApi.getInstance();
-        this.outgoingRingtone = new OutgoingRingtone(context);
+        this.outgoingRingtone = new OutgoingRingtone(appContext.get());
         this.proximityLock = createProximityLock();
         this.state = State.IDLE;
 
-        this.audioManager = CallAudioManager.create(context);
+        this.audioManager = CallAudioManager.create(appContext.get());
         this.observers = new HashSet<>();
     }
 
@@ -174,9 +174,9 @@ public class CallManager {
         Log.i("startCallService");
         Intent serviceIntent = CallService.getIntent(peerUid);
         if (Build.VERSION.SDK_INT >= 26) {
-            return context.startForegroundService(serviceIntent);
+            return appContext.get().startForegroundService(serviceIntent);
         } else {
-            return context.startService(serviceIntent);
+            return appContext.get().startService(serviceIntent);
         }
     }
 
@@ -206,7 +206,7 @@ public class CallManager {
             peerConnection = null;
         }
         if (callService != null) {
-            context.stopService(new Intent(context, CallService.class));
+            appContext.get().stopService(new Intent(appContext.get(), CallService.class));
             callService = null;
         }
         cancelRingingTimeout();
@@ -238,7 +238,7 @@ public class CallManager {
 
         this.state = State.RINGING;
         notifyOnIncomingCall();
-        Notifications.getInstance(context).showIncomingCallNotification(callId, peerUid);
+        Notifications.getInstance(appContext.get()).showIncomingCallNotification(callId, peerUid);
         callsApi.sendRinging(callId, peerUid);
         startRingingTimeoutTimer();
     }
@@ -290,7 +290,7 @@ public class CallManager {
         stopOutgoingRingtone();
         // TODO(nikola): Handle multiple calls at the same time. We should only cancel the right
         // notification
-        Notifications.getInstance(context).clearIncomingCallNotification();
+        Notifications.getInstance(appContext.get()).clearIncomingCallNotification();
     }
 
     public void handleIceCandidate(@NonNull String callId, @NonNull UserId peerUid,
@@ -323,7 +323,7 @@ public class CallManager {
 //        decoderFactory = new DefaultVideoDecoderFactory(
 //                rootEglBase.getEglBaseContext());
         PeerConnectionFactory.initialize(
-                PeerConnectionFactory.InitializationOptions.builder(context)
+                PeerConnectionFactory.InitializationOptions.builder(appContext.get())
                         .setEnableInternalTracer(true)
                         .createInitializationOptions());
         PeerConnectionFactory.Builder builder = PeerConnectionFactory.builder();
@@ -637,7 +637,7 @@ public class CallManager {
                 onEndCall(EndCall.Reason.TIMEOUT);
                 notifyOnEndCall();
                 // TODO(nikola): this could clear the wrong notification if we have multiple incoming calls.
-                Notifications.getInstance(context).clearIncomingCallNotification();
+                Notifications.getInstance(appContext.get()).clearIncomingCallNotification();
                 // TODO(nikola): Cleanup the code path of who is calling the stop. Make stop private.
                 // It is sometimes called from the UI and sometimes from here.
                 //stop();
@@ -665,7 +665,7 @@ public class CallManager {
     }
 
     private @Nullable PowerManager.WakeLock createProximityLock() {
-        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        PowerManager pm = (PowerManager) appContext.get().getSystemService(Context.POWER_SERVICE);
         if (pm.isWakeLockLevelSupported(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK)) {
             return pm.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK, "halloapp:call");
         } else {
