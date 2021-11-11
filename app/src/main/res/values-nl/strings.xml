@@ -944,7 +944,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="storage_usage_title">"Opslaggebruik"</string>
 
     <!-- Storage usage section header for home feed category -->
-    <string name="storage_usage_home">"Home-feed"</string>
+    <string name="storage_usage_home">"Homefeed"</string>
 
     <!-- Storage usage section header for chats category -->
     <string name="storage_usage_chats">"Chats"</string>

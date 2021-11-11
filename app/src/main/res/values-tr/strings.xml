@@ -333,7 +333,7 @@ version: %2$s
     <string name="invite_friends_title">"Aileni ve arkadaşlarını davet et"</string>
 
     <!-- Fuzzy -->
-    <string name="invite_title">"Davet"</string>
+    <string name="invite_title">"Davetiye gönder"</string>
     <string name="settings_invite_option">"HalloApp'e davet et"</string>
     <string name="invite_already_on_halloapp">"Halihazırda HalloApp'te"</string>
     <string name="invite_invalid_phone_number">"Telefon numarası geçersiz"</string>
@@ -640,7 +640,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</str
     <string name="go_to_settings">"Ayarlara git"</string>
 
     <!-- Text shown in activity center upon successful registration -->
-    <string name="welcome_notification">"HalloApp'e hoş geldin! &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</string>
+    <string name="welcome_notification">"HalloApp'e hoş geldin! &lt;a href=\"invite-friend\"&gt;Arkadaşını davet et&lt;/a&gt;"</string>
 
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_groups">"Grupları ara"</string>
@@ -922,13 +922,13 @@ Uygulama izinlerini değiştirmek için Uygulama Ayarları ekranını aç."</str
     <string name="invite_friends_post_preview">"Invite a friend to your group"</string>
 
     <!-- Title for home post explaining what HalloApp is -->
-    <string name="zero_zone_home_nux_header">"Welcome to HalloApp, a space for real relationships ✨"</string>
+    <string name="zero_zone_home_nux_header">"HalloApp'e hoş geldin! HalloApp sana gerçek ilişkilerin için bir alan sunuyor ✨"</string>
 
     <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
-    <string name="zero_zone_home_nux_text_one">"Use your phone number to connect with friends &amp; family in a space with no ads, no brands, no likes, and no influencers."</string>
+    <string name="zero_zone_home_nux_text_one">"Bu alanda reklamlar, markalar, beğeniler ve influencerlar olmadan telefon numaranı kullanarak ailen ve arkadaşlarınla bağlantı kurabilirsin."</string>
 
     <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
-    <string name="zero_zone_home_nux_text_two">"HalloApp is for you, and those closest to you, in private. Invite your real friends to get started"</string>
+    <string name="zero_zone_home_nux_text_two">"HalloApp sen ve sana yakın olan insanlar için özel bir alan. Başlamak için arkadaşlarını davet et."</string>
 
     <!-- Action for user to start their delete accoount process under 'account' -->
     <string name="delete_my_account_action">"Delete my account"</string>
