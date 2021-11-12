@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
@@ -26,6 +27,7 @@ import com.halloapp.permissions.PermissionObserver;
 import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.HAThreadPolicyListener;
 import com.halloapp.util.LanguageUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
@@ -58,10 +60,14 @@ public class HalloApp extends Application {
             StrictMode.ThreadPolicy.Builder threadPolicyBuilder = new StrictMode.ThreadPolicy.Builder()
                     .detectAll()
                     .penaltyDeathOnNetwork();
-            if (AndroidHallOfShame.deviceDoesWorkOnUIThread()) {
-                threadPolicyBuilder.penaltyFlashScreen();
+            if (Build.VERSION.SDK_INT >= 28) {
+                threadPolicyBuilder.penaltyListener(BgWorkers.getInstance().getExecutor(), new HAThreadPolicyListener());
             } else {
-                threadPolicyBuilder.penaltyDeath();
+                if (AndroidHallOfShame.deviceDoesWorkOnUIThread()) {
+                    threadPolicyBuilder.penaltyFlashScreen();
+                } else {
+                    threadPolicyBuilder.penaltyDeath();
+                }
             }
             StrictMode.setThreadPolicy(threadPolicyBuilder.build());
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
