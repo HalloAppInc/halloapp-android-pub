@@ -70,7 +70,7 @@ public class SocketConnector {
                 connectCount++;
             }
 
-            if (socket == null && openAttempts > 0) {
+            while (socket == null && openAttempts > 0) {
                 socket = getNextSocketResult(CONNECT_WAIT_TIME);
             }
         } catch (InterruptedException e) {
