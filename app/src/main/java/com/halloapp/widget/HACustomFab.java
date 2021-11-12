@@ -230,7 +230,7 @@ public class HACustomFab extends LinearLayout {
     private float getCollapsePercentage() {
         final int start = primaryFab.getWidth();
         final int logoViewWidth = logoImageView.getDrawable().getIntrinsicWidth() + logoImageView.getPaddingEnd() + logoImageView.getPaddingStart();
-        return (float) (start - fabSize) / ((float)logoViewWidth);
+        return (float) Math.max(0, (start - fabSize) / ((float)logoViewWidth));
     }
 
     public void collapse() {
