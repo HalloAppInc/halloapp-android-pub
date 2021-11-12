@@ -50,6 +50,7 @@ public class EncryptedKeyStore {
     private static final String PREF_KEY_MY_ED25519_IDENTITY_KEY = "my_ed25519_identity_key";
     private static final String PREF_KEY_MY_PRIVATE_SIGNED_PRE_KEY = "my_private_signed_pre_key";
     private static final String PREF_KEY_LAST_ONE_TIME_PRE_KEY_ID = "last_one_time_pre_key_id";
+    private static final String PREF_KEY_MY_PREVIOUS_PUBLIC_ED25519_IK = "my_previous_ed25519_public_ik";
 
     private static final String PREF_KEY_ONE_TIME_PRE_KEY_ID_PREFIX = "one_time_pre_key";
     private static final String PREF_KEY_MESSAGE_KEY_PREFIX = "message_key";
@@ -202,6 +203,8 @@ public class EncryptedKeyStore {
     }
 
     public void generateClientPrivateKeys() {
+        Log.i("EncryptedKeyStore: Generating new keys");
+        clearMyPreviousPublicEd25519IdentityKey();
         setMyEd25519IdentityKey(CryptoUtils.generateEd25519KeyPair());
         setMyPrivateSignedPreKey(CryptoUtils.generateX25519PrivateKey());
     }
@@ -232,6 +235,36 @@ public class EncryptedKeyStore {
 
     public PrivateXECKey getMyPrivateX25519IdentityKey() throws CryptoException {
         return CryptoUtils.convertPrivateEdToX(getMyPrivateEd25519IdentityKey());
+    }
+
+    public void checkIdentityKeyChanges() {
+        PublicEdECKey current = getMyPublicEd25519IdentityKey();
+        PublicEdECKey previous = getMyPreviousPublicEd25519IdentityKey();
+        if (previous != null) {
+            Log.i("EncryptedKeyStore: Checking for identity key changes");
+            if (!Arrays.equals(current.getKeyMaterial(), previous.getKeyMaterial())) {
+                Log.e("EncryptedKeyStore: Previous identity key was " + Base64.encodeToString(previous.getKeyMaterial(), Base64.NO_WRAP)
+                        + " but current is " + Base64.encodeToString(current.getKeyMaterial(), Base64.NO_WRAP));
+                Log.sendErrorReport("Identity key changed");
+            }
+        }
+        setMyPreviousPublicEd25519IdentityKey(current);
+    }
+
+    private void setMyPreviousPublicEd25519IdentityKey(PublicEdECKey key) {
+        storeBytes(PREF_KEY_MY_PREVIOUS_PUBLIC_ED25519_IK, key.getKeyMaterial());
+    }
+
+    private void clearMyPreviousPublicEd25519IdentityKey() {
+        getPreferences().edit().remove(PREF_KEY_MY_PREVIOUS_PUBLIC_ED25519_IK).apply();
+    }
+
+    private PublicEdECKey getMyPreviousPublicEd25519IdentityKey() {
+        byte[] bytes = retrieveBytes(PREF_KEY_MY_PREVIOUS_PUBLIC_ED25519_IK);
+        if (bytes == null) {
+            return null;
+        }
+        return new PublicEdECKey(bytes);
     }
 
     private void setMyPrivateSignedPreKey(byte[] key) {
