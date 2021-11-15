@@ -41,6 +41,7 @@ public class ServerProps {
     private static final String PROP_STREAMING_UPLOAD_CHUNK_SIZE = "streaming_upload_chunk_size";
     private static final String PROP_STREAMING_INITIAL_DOWNLOAD_SIZE = "streaming_initial_download_size";
     private static final String PROP_STREAMING_SENDING_ENABLED = "streaming_sending_enabled";
+    private static final String PROP_AUDIO_CALLS_ENABLED = "audio_calls";
 
     private static final int WEEK_IN_SECONDS = (int) (DateUtils.WEEK_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
 
@@ -77,6 +78,7 @@ public class ServerProps {
     private final IntegerProp propStreamingUploadChunkSize = createProp(PROP_STREAMING_UPLOAD_CHUNK_SIZE, Constants.DEFAULT_STREAMING_UPLOAD_CHUNK_SIZE);
     private final IntegerProp propStreamingInitialDownloadSize = createProp(PROP_STREAMING_INITIAL_DOWNLOAD_SIZE, Constants.DEFAULT_STREAMING_INITIAL_DOWNLOAD_SIZE);
     private final BooleanProp propStreamingSendingEnabled = createProp(PROP_STREAMING_SENDING_ENABLED, false);
+    private final BooleanProp propAudioCallsEnabled = createProp(PROP_AUDIO_CALLS_ENABLED, false);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -243,5 +245,9 @@ public class ServerProps {
 
     public synchronized boolean getStreamingSendingEnabled() {
         return propStreamingSendingEnabled.getValue();
+    }
+
+    public synchronized boolean getAudioCallsEnabled() {
+        return propAudioCallsEnabled.getValue();
     }
 }

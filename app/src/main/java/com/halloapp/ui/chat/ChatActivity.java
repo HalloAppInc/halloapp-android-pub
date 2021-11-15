@@ -226,6 +226,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
     private boolean showKeyboardOnResume;
     private boolean allowVoiceNoteSending;
+    private boolean allowAudioCalls;
 
     private ChatInputView chatInputView;
 
@@ -305,6 +306,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         systemMessageTextResolver = new SystemMessageTextResolver(contactLoader);
 
         allowVoiceNoteSending = ServerProps.getInstance().getVoiceNoteSendingEnabled();
+        allowAudioCalls = ServerProps.getInstance().getAudioCallsEnabled();
 
         String rawChatId = getIntent().getStringExtra(EXTRA_CHAT_ID);
         chatId = ChatId.fromNullable(rawChatId);
@@ -926,6 +928,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         viewModel.contact.getLiveData().observe(this, contact -> {
             menu.findItem(R.id.add_to_contacts).setVisible(TextUtils.isEmpty(contact.addressBookName));
         });
+        menu.findItem(R.id.call).setVisible(allowAudioCalls);
         return true;
     }
 

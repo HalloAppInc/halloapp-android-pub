@@ -28,7 +28,7 @@
         android:id="@+id/call"
         android:title="Call"
         app:showAsAction="never"
-        android:visible="true"
+        android:visible="false"
         />
 
 </menu>
