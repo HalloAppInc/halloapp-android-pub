@@ -209,6 +209,10 @@ public class EncryptedKeyStore {
         setMyPrivateSignedPreKey(CryptoUtils.generateX25519PrivateKey());
     }
 
+    public boolean clientPrivateKeysSet() {
+        return getMyEd25519IdentityKey() != null;
+    }
+
     private void setMyEd25519IdentityKey(byte[] key) {
         storeBytes(PREF_KEY_MY_ED25519_IDENTITY_KEY, key);
     }
