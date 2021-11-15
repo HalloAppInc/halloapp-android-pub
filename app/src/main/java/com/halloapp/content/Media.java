@@ -5,6 +5,7 @@ import android.util.Size;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
+import com.halloapp.media.ChunkedMediaParameters;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.proto.clients.AlbumMedia;
 import com.halloapp.proto.clients.EncryptedResource;
@@ -18,6 +19,7 @@ import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.security.SecureRandom;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,13 +34,14 @@ public class Media {
     public static final int MEDIA_TYPE_AUDIO = 3;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TRANSFERRED_UNKNOWN, TRANSFERRED_NO, TRANSFERRED_YES, TRANSFERRED_FAILURE, TRANSFERRED_RESUME})
+    @IntDef({TRANSFERRED_UNKNOWN, TRANSFERRED_NO, TRANSFERRED_YES, TRANSFERRED_FAILURE, TRANSFERRED_RESUME, TRANSFERRED_PARTIAL_CHUNKED})
     public @interface TransferredState {}
     public static final int TRANSFERRED_UNKNOWN = -1;
     public static final int TRANSFERRED_NO = 0;
     public static final int TRANSFERRED_YES = 1;
     public static final int TRANSFERRED_FAILURE = 2;
     public static final int TRANSFERRED_RESUME = 3;
+    public static final int TRANSFERRED_PARTIAL_CHUNKED = 4;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({BLOB_VERSION_UNKNOWN, BLOB_VERSION_DEFAULT, BLOB_VERSION_CHUNKED})
@@ -173,11 +176,23 @@ public class Media {
             case TRANSFERRED_RESUME: {
                 return "resume";
             }
+            case TRANSFERRED_PARTIAL_CHUNKED: {
+                return "partial_chunked";
+            }
             case TRANSFERRED_UNKNOWN:
             default: {
                 return "unknown";
             }
         }
+    }
+
+    public static boolean canBeSavedToGallery(@NonNull Collection<Media> mediaCollection) {
+        for (Media media : mediaCollection) {
+            if (!media.canBeSavedToGallery()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public Media(long rowId, @MediaType int type, String url, File file, byte[] encKey, byte [] encSha256hash, byte [] decSha256hash, int width, int height, @TransferredState int transferred, @BlobVersion int blobVersion, int chunkSize, long blobSize) {
@@ -234,5 +249,14 @@ public class Media {
     @Override
     public String toString() {
         return "Media {rowId:" + rowId + ", type:" + type + ", initialState:" + initialState + ", transferred:" + transferred + '}';
+    }
+
+    public boolean isStreamingVideo() {
+        return blobVersion == BLOB_VERSION_CHUNKED && type == MEDIA_TYPE_VIDEO && blobSize > ChunkedMediaParameters.DEFAULT_INITIAL_FILE_SIZE && transferred == TRANSFERRED_PARTIAL_CHUNKED;
+    }
+
+    // TODO(Vasil): Remove the following method and the logic that depends on it once we have partial stream file copy code.
+    public boolean canBeSavedToGallery() {
+        return transferred == TRANSFERRED_YES;
     }
 }

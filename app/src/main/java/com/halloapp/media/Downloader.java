@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.security.DigestInputStream;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -112,7 +113,7 @@ public class Downloader {
             long byteWritten = 0L;
             boolean cancelled = false;
             final byte[] buffer = new byte[1024];
-            final ByteArrayOutputStream chunkBufferStream = new ByteArrayOutputStream(chunkedParameters.chunkSize);
+            final ByteArrayOutputStream chunkBufferStream = new ByteArrayOutputStream(chunkedParameters.regularChunkPtSize);
             for (int i = 0; i <= chunkedParameters.regularChunkCount; ++i) {
                 if (i == chunkedParameters.regularChunkCount && chunkedParameters.estimatedTrailingChunkPtSize == 0) {
                     break;
@@ -266,6 +267,27 @@ public class Downloader {
             FileUtils.closeSilently(inStream);
             if (connection != null) {
                 connection.disconnect();
+            }
+        }
+    }
+
+    @WorkerThread
+    public static void runForInitialChunks(long mediaId, @NonNull String remotePath, @NonNull byte[] mediaKey, int chunkSize, long blobSize, @NonNull File localFile, @Nullable DownloadListener downloadListener) throws IOException, ChunkedMediaParametersException, GeneralSecurityException {
+        final ChunkedMediaParameters chunkedParameters = ChunkedMediaParameters.computeFromBlobSize(blobSize, chunkSize);
+        final long roundedChunkCount = (ChunkedMediaParameters.DEFAULT_INITIAL_FILE_SIZE + chunkedParameters.chunkSize - 1) / chunkedParameters.chunkSize;
+        final int chunksToGet = (int) Math.min(roundedChunkCount, chunkedParameters.getChunkCount());
+        final ByteBuffer byteBuffer = ByteBuffer.allocate(chunkedParameters.regularChunkPtSize);
+
+        try (final RemoteChunkedMediaResource remoteResource = new RemoteChunkedMediaResource(remotePath, mediaKey, chunkedParameters, 0);
+             final CachedChunkMediaResource localResource = new CachedChunkMediaResource(mediaId, chunkedParameters, localFile)) {
+            for (int i = 0; i < chunksToGet; ++i) {
+                byteBuffer.clear();
+                remoteResource.readChunk(i, byteBuffer);
+                byteBuffer.flip();
+                localResource.writeChunk(i, byteBuffer);
+                if (downloadListener != null) {
+                    downloadListener.onProgress(byteBuffer.limit());
+                }
             }
         }
     }

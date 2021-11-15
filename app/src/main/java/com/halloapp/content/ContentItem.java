@@ -74,7 +74,7 @@ public abstract class ContentItem implements TextContent {
 
     public boolean isAllMediaTransferred() {
         for (Media mediaItem : media) {
-            if (mediaItem.transferred != Media.TRANSFERRED_YES) {
+            if (mediaItem.transferred != Media.TRANSFERRED_YES && mediaItem.transferred != Media.TRANSFERRED_PARTIAL_CHUNKED) {
                 return false;
             }
         }

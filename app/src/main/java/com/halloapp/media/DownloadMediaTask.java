@@ -116,7 +116,7 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                     case Media.MEDIA_TYPE_UNKNOWN:
                         break;
                 }
-                if (media.transferred == Media.TRANSFERRED_YES || media.transferred == Media.TRANSFERRED_FAILURE) {
+                if (media.transferred == Media.TRANSFERRED_YES || media.transferred == Media.TRANSFERRED_PARTIAL_CHUNKED || media.transferred == Media.TRANSFERRED_FAILURE) {
                     continue;
                 }
                 int attempts = 0;
@@ -170,24 +170,31 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                     retry = false;
                     success = false;
                     long attemptStartTime = System.currentTimeMillis();
+                    boolean isStreamingVideo = media.blobVersion == Media.BLOB_VERSION_CHUNKED && media.type == Media.MEDIA_TYPE_VIDEO && media.blobSize > ChunkedMediaParameters.DEFAULT_INITIAL_FILE_SIZE;
                     try {
-                        final File encFile = media.encFile != null ? media.encFile : fileStore.getTmpFile(RandomId.create() + ".enc");
                         final File file = fileStore.getMediaFile(RandomId.create() + "." + Media.getFileExt(media.type));
-                        media.encFile = encFile;
-                        contentItem.setMediaTransferred(media, contentDb);
-                        Downloader.run(media.url, media.encKey, media.encSha256hash, media.type, media.blobVersion, media.chunkSize, media.blobSize, encFile, file, downloadListener, mediaLogId);
+                        if (isStreamingVideo) {
+                            Downloader.runForInitialChunks(media.rowId, media.url, media.encKey, media.chunkSize, media.blobSize, file, downloadListener);
+                        } else {
+                            final File encFile = media.encFile != null ? media.encFile : fileStore.getTmpFile(RandomId.create() + ".enc");
+                            media.encFile = encFile;
+                            contentItem.setMediaTransferred(media, contentDb);
+                            Downloader.run(media.url, media.encKey, media.encSha256hash, media.type, media.blobVersion, media.chunkSize, media.blobSize, encFile, file, downloadListener, mediaLogId);
+                            if (!encFile.delete()) {
+                                Log.w("DownloadMediaTask: failed to delete temp enc file for " + mediaLogId);
+                            }
+                        }
                         if (!file.setLastModified(contentItem.timestamp)) {
                             Log.w("DownloadMediaTask: failed to set last modified to " + file.getAbsolutePath() + " for " + mediaLogId);
                         }
-                        if (!encFile.delete()) {
-                            Log.w("DownloadMediaTask: failed to delete temp enc file for " + mediaLogId);
-                        }
                         media.file = file;
-                        media.decSha256hash = FileUtils.getFileSha256(media.file);
-                        media.transferred = Media.TRANSFERRED_YES;
+                        if (!isStreamingVideo) {
+                            media.decSha256hash = FileUtils.getFileSha256(media.file);
+                        }
+                        totalSize += file.length();
+                        media.transferred = isStreamingVideo ? Media.TRANSFERRED_PARTIAL_CHUNKED : Media.TRANSFERRED_YES;
                         contentItem.setMediaTransferred(media, contentDb);
                         Log.i("DownloadMediaTask: transfer status for " + mediaLogId + " set to " + Media.getMediaTransferStateString(media.transferred));
-                        totalSize += file.length();
                         success = true;
                     } catch (ChunkedMediaParametersException e) {
                         Log.e("DownloadMediaTask: CMPE downloading " + media.url + " for " + mediaLogId, e);
@@ -230,6 +237,9 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                             } else if (!hashesMatch) {
                                 retry = true;
                             }
+                        } else if (isStreamingVideo) {
+                            media.transferred = Media.TRANSFERRED_FAILURE;
+                            contentItem.setMediaTransferred(media, contentDb);
                         }
                     }
                     downloadStatBuilder.setDurationMs(System.currentTimeMillis() - attemptStartTime);

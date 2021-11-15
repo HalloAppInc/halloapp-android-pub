@@ -8,6 +8,7 @@ import android.provider.BaseColumns;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.FileStore;
 import com.halloapp.content.tables.ArchiveTable;
 import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.content.tables.ChatsTable;
@@ -32,7 +33,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 55;
+    private static final int DATABASE_VERSION = 56;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -202,7 +203,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + MediaTable.COLUMN_DEC_SHA256_HASH + " BLOB,"
                 + MediaTable.COLUMN_BLOB_VERSION + " INTEGER DEFAULT 0,"
                 + MediaTable.COLUMN_CHUNK_SIZE + " INTEGER DEFAULT 0,"
-                + MediaTable.COLUMN_BLOB_SIZE + " INTEGER DEFAULT 0"
+                + MediaTable.COLUMN_BLOB_SIZE + " INTEGER DEFAULT 0,"
+                + MediaTable.COLUMN_CHUNK_SET + " BLOB"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + MediaTable.INDEX_MEDIA_KEY);
@@ -546,6 +548,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 54: {
                 upgradeFromVersion54(db);
+            }
+            case 55: {
+                upgradeFromVersion55(db);
             }
             break;
             default: {
@@ -1152,6 +1157,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
         db.execSQL("ALTER TABLE " + CommentsTable.TABLE_NAME + " ADD COLUMN " + CommentsTable.COLUMN_SENDER_PLATFORM + " TEXT");
         db.execSQL("ALTER TABLE " + CommentsTable.TABLE_NAME + " ADD COLUMN " + CommentsTable.COLUMN_SENDER_VERSION + " TEXT");
+    }
+
+    private void upgradeFromVersion55(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + MediaTable.TABLE_NAME + " ADD COLUMN " + MediaTable.COLUMN_CHUNK_SET + " BLOB");
     }
 
     /**

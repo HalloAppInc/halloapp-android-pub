@@ -1526,7 +1526,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                         colorRes = R.color.message_url_preview_background_incoming;
                     }
                     linkPreviewContainer.setBackgroundColor(ContextCompat.getColor(linkPreviewContainer.getContext(), colorRes));
-                    if (comment.urlPreview.imageMedia == null || comment.urlPreview.imageMedia.transferred != Media.TRANSFERRED_YES) {
+                    if (comment.urlPreview.imageMedia == null || (comment.urlPreview.imageMedia.transferred != Media.TRANSFERRED_YES && comment.urlPreview.imageMedia.transferred != Media.TRANSFERRED_PARTIAL_CHUNKED)) {
                         linkPreviewImg.setVisibility(View.GONE);
                     } else {
                         linkPreviewImg.setVisibility(View.VISIBLE);

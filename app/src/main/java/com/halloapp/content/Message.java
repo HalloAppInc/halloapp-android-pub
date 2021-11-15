@@ -266,7 +266,7 @@ public class Message extends ContentItem {
 
     @Override
     public byte[] getMediaEncKey(long rowId, @NonNull ContentDb contentDb) {
-        return contentDb.getMediaEncKey(this, rowId);
+        return contentDb.getMediaEncKey(rowId);
     }
 
     @Override

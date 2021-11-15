@@ -59,6 +59,10 @@ public class PostOptionsViewModel extends ViewModel {
         Context context = appContext.get();
         bgWorkers.execute(() -> {
             for (Media media : post.media) {
+                if (!Media.canBeSavedToGallery(post.media)) {
+                    Log.e("PostOptionsViewModel.savePostToGallery attempted to save an incomplete video stream");
+                    continue;
+                }
                 if (!MediaUtils.saveMediaToGallery(context, media)) {
                     success.postValue(false);
                     Log.e("PostOptionsViewModel/savePostToGallery failed to save media to gallery: " + media);

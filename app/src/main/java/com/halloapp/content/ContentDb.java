@@ -44,6 +44,7 @@ import com.halloapp.xmpp.feed.FeedContentParser;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -380,6 +381,24 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public BitSet getMediaChunkSet(long rowId) {
+        Log.i("Get media chunk set for media with rowId: " + rowId);
+        return mediaDb.getChunkSet(rowId);
+    }
+
+    @WorkerThread
+    public @Nullable void updateMediaChunkSet(long rowId, @NonNull BitSet chunkSet) {
+        Log.i("Update media chunk set for media with rowId: " + rowId);
+        mediaDb.updateChunkSet(rowId, chunkSet);
+    }
+
+    @WorkerThread
+    public void markChunkedMediaTransferComplete(long rowId) {
+        Log.i("Mark chunked media with rowId: " + rowId + " as complete");
+        mediaDb.markChunkedTransferComplete(rowId);
+    }
+
+    @WorkerThread
     public @Media.TransferredState int getMediaTransferred(@NonNull Post post, long rowId) {
         Log.i("Get transferred state from Post: "+ post);
         return postsDb.getMediaTransferred(rowId);
@@ -398,21 +417,9 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public byte[] getMediaEncKey(@NonNull Post post, long rowId) {
-        Log.i("Get Media encKey from Post: "+ post);
-        return postsDb.getMediaEncKey(rowId);
-    }
-
-    @WorkerThread
-    public byte[] getMediaEncKey(@NonNull Comment comment, long rowId) {
-        Log.i("Get Media encKey from Comment: "+ comment);
-        return postsDb.getMediaEncKey(rowId);
-    }
-
-    @WorkerThread
-    public byte[] getMediaEncKey(@NonNull Message message, long rowId) {
-        Log.i("Get Media encKey from Message: "+ message);
-        return messagesDb.getMediaEncKey(rowId);
+    public byte[] getMediaEncKey(long rowId) {
+        Log.i("Get media enc key for media with rowId: " + rowId);
+        return mediaDb.getEncKey(rowId);
     }
 
     @WorkerThread

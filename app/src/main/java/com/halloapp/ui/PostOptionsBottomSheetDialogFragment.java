@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.widget.SnackbarHelper;
 
@@ -75,7 +76,7 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
                 contactLoader.load(contactName, post.senderUserId, false);
                 deletePost.setVisibility(View.GONE);
             }
-            if (post.media.isEmpty()) {
+            if (post.media.isEmpty() || !Media.canBeSavedToGallery(post.media)) {
                 saveToGallery.setVisibility(View.GONE);
             } else {
                 saveToGallery.setVisibility(View.VISIBLE);

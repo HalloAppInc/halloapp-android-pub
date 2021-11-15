@@ -63,6 +63,7 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
+import com.halloapp.media.ExoUtils;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.privacy.FeedPrivacy;
@@ -1089,8 +1090,8 @@ public class ContentComposerActivity extends HalloActivity {
 
         if (player == null) {
             Log.d(String.format("ContentComposerActivity: initializeVideoPlayer %s", mediaPair.uri));
-            final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(), Constants.USER_AGENT);
-            final MediaItem mediaItem = MediaItem.fromUri(Uri.fromFile(mediaPair.getRelevantMedia().file));
+            final DataSource.Factory dataSourceFactory = ExoUtils.getDefaultDataSourceFactory(getApplicationContext());
+            final MediaItem mediaItem = ExoUtils.getUriMediaItem(Uri.fromFile(mediaPair.getRelevantMedia().file));
             final MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem);
 
             final AudioAttributes audioAttributes = new AudioAttributes.Builder()

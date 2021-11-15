@@ -50,11 +50,13 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.id.ChatId;
+import com.halloapp.media.ChunkedMediaParameters;
+import com.halloapp.media.ChunkedMediaParametersException;
+import com.halloapp.media.ExoUtils;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.MediaPagerAdapter;
@@ -69,6 +71,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import me.relex.circleindicator.CircleIndicator3;
 import pub.devrel.easypermissions.AppSettingsDialog;
@@ -169,6 +172,7 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
 
                 handlePlaybackOnPageChange(false);
                 updatePlaybackControlsVisibility();
+                invalidateOptionsMenu();
             }
         });
 
@@ -407,6 +411,23 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
             return false;
         }
         getMenuInflater().inflate(R.menu.media_explorer, menu);
+        return changeMenuVisibility(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (!allowSaving) {
+            return false;
+        }
+        return changeMenuVisibility(menu);
+    }
+
+    private boolean changeMenuVisibility(@NonNull Menu menu) {
+        final MenuItem saveToGalleryItem = menu.findItem(R.id.save_to_gallery);
+        final MediaExplorerViewModel.MediaModel currentItem = getCurrentItem();
+        if (saveToGalleryItem != null && currentItem != null) {
+            saveToGalleryItem.setVisible(currentItem.canBeSavedToGallery());
+        }
         return true;
     }
 
@@ -795,9 +816,28 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
         public void bindTo(@NonNull MediaExplorerViewModel.MediaModel model, int position) {
             playerView.setTag(model);
 
-            final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(playerView.getContext(), Constants.USER_AGENT);
-            MediaItem mediaItem = MediaItem.fromUri(model.uri);
-            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem);
+            final DataSource.Factory dataSourceFactory;
+            final MediaItem mediaItem;
+            Log.d("MediaExplorerActivity.bindTo model = " + model);
+            if (model.isStreamingVideo()) {
+                final ChunkedMediaParameters chunkedParameters;
+                try {
+                    chunkedParameters = ChunkedMediaParameters.computeFromBlobSize(model.blobSize, model.chunkSize);
+                } catch (ChunkedMediaParametersException e) {
+                    Log.e("MediaExplorerActivity.bindTo", e);
+                    return;
+                }
+                if (!Objects.equals(model.uri.getScheme(), "file")) {
+                    Log.e("MediaExplorerActivity.bindTo attempt to stream video with no local cache file");
+                    return;
+                }
+                dataSourceFactory = ExoUtils.getChunkedMediaDataSourceFactory(model.rowId, model.url, chunkedParameters, new File(model.uri.getPath()));
+                mediaItem = ExoUtils.getChunkedMediaItem(model.rowId, model.url);
+            } else {
+                dataSourceFactory = ExoUtils.getDefaultDataSourceFactory(playerView.getContext());
+                mediaItem = ExoUtils.getUriMediaItem(model.uri);
+            }
+            final MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem);
 
             if (playerView.getPlayer() != null) {
                 Player player = playerView.getPlayer();

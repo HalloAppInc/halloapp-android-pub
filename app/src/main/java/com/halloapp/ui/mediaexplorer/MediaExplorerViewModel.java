@@ -22,6 +22,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.id.ChatId;
+import com.halloapp.media.ChunkedMediaParameters;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
@@ -165,6 +166,12 @@ public class MediaExplorerViewModel extends AndroidViewModel {
         public final int type;
         public final long rowId;
 
+        public final String url;
+        public final @Media.TransferredState int transferred;
+        public final @Media.BlobVersion int blobVersion;
+        public final int chunkSize;
+        public final long blobSize;
+
         public static ArrayList<MediaModel> fromMedia(@NonNull List<Media> media) {
             ArrayList<MediaModel> models = new ArrayList<>(media.size());
 
@@ -180,22 +187,38 @@ public class MediaExplorerViewModel extends AndroidViewModel {
                     continue;
                 }
 
-                models.add(new MediaExplorerViewModel.MediaModel(uri, item.type, item.rowId));
+                models.add(new MediaExplorerViewModel.MediaModel(uri, item.type, item.rowId, item.url, item.transferred, item.blobVersion, item.chunkSize, item.blobSize));
             }
 
             return models;
         }
 
-        public MediaModel(@NonNull Uri uri, int type, long rowId) {
+        public MediaModel(@NonNull Uri uri, int type, long rowId, @NonNull String url, @Media.TransferredState int transferred, @Media.BlobVersion int blobVersion, int chunkSize, long blobSize) {
             this.uri = uri;
             this.type = type;
             this.rowId = rowId;
+
+            this.url = url;
+            this.transferred = transferred;
+            this.blobVersion = blobVersion;
+            this.chunkSize = chunkSize;
+            this.blobSize = blobSize;
         }
 
         private MediaModel(Parcel in) {
             uri = in.readParcelable(Uri.class.getClassLoader());
             type = in.readInt();
             rowId = in.readLong();
+
+            url = in.readString();
+            transferred = in.readInt();
+            blobVersion = in.readInt();
+            chunkSize = in.readInt();
+            blobSize = in.readLong();
+        }
+
+        public boolean isStreamingVideo() {
+            return blobVersion == Media.BLOB_VERSION_CHUNKED && type == Media.MEDIA_TYPE_VIDEO && blobSize > ChunkedMediaParameters.DEFAULT_INITIAL_FILE_SIZE && transferred == Media.TRANSFERRED_PARTIAL_CHUNKED;
         }
 
         @Override
@@ -208,6 +231,12 @@ public class MediaExplorerViewModel extends AndroidViewModel {
             parcel.writeParcelable(uri, flags);
             parcel.writeInt(type);
             parcel.writeLong(rowId);
+
+            parcel.writeString(url);
+            parcel.writeInt(transferred);
+            parcel.writeInt(blobVersion);
+            parcel.writeInt(chunkSize);
+            parcel.writeLong(blobSize);
         }
 
         public static final Parcelable.Creator<MediaModel> CREATOR = new Parcelable.Creator<MediaModel>() {
@@ -219,5 +248,16 @@ public class MediaExplorerViewModel extends AndroidViewModel {
                 return new MediaModel[size];
             }
         };
+
+        @NonNull
+        @Override
+        public String toString() {
+            return "MediaExplorerViewModel.MediaModel {uri:" + uri + " type:" + type + " rowId:" + rowId + " url:" + url + " transferred:" + transferred + " blobVersion:" + blobVersion + " chunkSize:" + chunkSize + " blobSize:" + blobSize + "}";
+        }
+
+        // TODO(Vasil): Remove the following method and the logic that depends on it once we have partial stream file copy code.
+        public boolean canBeSavedToGallery() {
+            return transferred == Media.TRANSFERRED_YES;
+        }
     }
 }

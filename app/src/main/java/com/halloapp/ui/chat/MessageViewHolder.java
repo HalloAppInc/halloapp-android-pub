@@ -381,7 +381,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
                 }
                 topPadding = R.dimen.message_top_padding_with_link;
                 linkPreviewContainer.setBackgroundColor(ContextCompat.getColor(linkPreviewContainer.getContext(), colorRes));
-                if (message.urlPreview.imageMedia == null || message.urlPreview.imageMedia.transferred != Media.TRANSFERRED_YES) {
+                if (message.urlPreview.imageMedia == null || (message.urlPreview.imageMedia.transferred != Media.TRANSFERRED_YES && message.urlPreview.imageMedia.transferred != Media.TRANSFERRED_PARTIAL_CHUNKED)) {
                     linkPreviewImg.setVisibility(View.GONE);
                 } else {
                     linkPreviewImg.setVisibility(View.VISIBLE);

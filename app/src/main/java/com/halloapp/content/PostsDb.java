@@ -28,6 +28,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.CommentContainer;
+import com.halloapp.proto.clients.Video;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptStats;
@@ -548,23 +549,6 @@ class PostsDb {
     }
 
     @WorkerThread
-    public byte[] getMediaEncKey(long rowId) {
-        final String sql =
-                "SELECT " + MediaTable.TABLE_NAME + "." + MediaTable.COLUMN_ENC_KEY + " "
-                        + "FROM " + MediaTable.TABLE_NAME + " "
-                        + "WHERE " + MediaTable.TABLE_NAME + "." + MediaTable._ID + "=? LIMIT " + 1;
-
-        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(rowId)})) {
-            if (cursor.moveToNext()) {
-                return cursor.getBlob(0);
-            }
-        }
-        Log.d("Resumable Uploader PostsDb.getMediaEncKey failed to get encKey");
-        return null;
-    }
-
-    @WorkerThread
     public void setUploadProgress(long rowId, long offset) {
         final ContentValues values = new ContentValues();
         values.put(MediaTable.COLUMN_UPLOAD_PROGRESS, offset);
@@ -1081,6 +1065,9 @@ class PostsDb {
                 "m." + MediaTable.COLUMN_WIDTH + "," +
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
                 "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
+                "m." + MediaTable.COLUMN_BLOB_VERSION + "," +
+                "m." + MediaTable.COLUMN_CHUNK_SIZE + "," +
+                "m." + MediaTable.COLUMN_BLOB_SIZE + "," +
                 "c.comment_count" + ", " +
                 "c.seen_comment_count" + ", " +
                 "fc.first_comment_row_id" + ", " +
@@ -1102,7 +1089,10 @@ class PostsDb {
                     MediaTable.COLUMN_ENC_FILE + "," +
                     MediaTable.COLUMN_WIDTH + "," +
                     MediaTable.COLUMN_HEIGHT + "," +
-                    MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                    MediaTable.COLUMN_TRANSFERRED + "," +
+                    MediaTable.COLUMN_BLOB_VERSION + "," +
+                    MediaTable.COLUMN_CHUNK_SIZE + "," +
+                    MediaTable.COLUMN_BLOB_SIZE + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                 "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
             "LEFT JOIN (" +
                 "SELECT " +
@@ -1162,27 +1152,27 @@ class PostsDb {
                     post.setAudience(cursor.getString(7), audienceList);
                     post.setExcludeList(excludeList);
                     post.usage = cursor.getInt(10);
-                    post.commentCount = cursor.getInt(19);
-                    post.unseenCommentCount = post.commentCount - cursor.getInt(20);
+                    post.commentCount = cursor.getInt(22);
+                    post.unseenCommentCount = post.commentCount - cursor.getInt(23);
                     GroupId parentGroupId = GroupId.fromNullable(cursor.getString(8));
                     if (parentGroupId != null) {
                         post.setParentGroup(parentGroupId);
                     }
-                    final String firstCommentId = cursor.getString(22);
+                    final String firstCommentId = cursor.getString(25);
                     if (firstCommentId != null) {
-                        post.firstComment = new Comment(cursor.getLong(21),
+                        post.firstComment = new Comment(cursor.getLong(24),
                                 post.id,
-                                new UserId(cursor.getString(23)),
+                                new UserId(cursor.getString(26)),
                                 firstCommentId,
                                 null,
-                                cursor.getLong(25),
+                                cursor.getLong(28),
                                 Comment.TRANSFERRED_YES,
                                 true,
-                                cursor.getString(24));
+                                cursor.getString(27));
                         post.firstComment.setParentPost(post);
                         mentionsDb.fillMentions(post.firstComment);
                     }
-                    post.seenByCount = cursor.getInt(26);
+                    post.seenByCount = cursor.getInt(29);
                 }
                 if (!cursor.isNull(11)) {
                     Media media = new Media(
@@ -1196,9 +1186,9 @@ class PostsDb {
                             cursor.getInt(16),
                             cursor.getInt(17),
                             cursor.getInt(18),
-                            Media.BLOB_VERSION_UNKNOWN,
-                            0,
-                            0);
+                            cursor.getInt(19),
+                            cursor.getInt(20),
+                            cursor.getLong(21));
                     media.encFile = fileStore.getTmpFile(cursor.getString(15));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
@@ -1370,7 +1360,7 @@ class PostsDb {
                             cursor.getInt(19),
                             cursor.getInt(22),
                             cursor.getInt(23),
-                            cursor.getInt(24));
+                            cursor.getLong(24));
                     media.encFile = fileStore.getTmpFile(cursor.getString(15));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
@@ -1399,7 +1389,10 @@ class PostsDb {
                         "m." + MediaTable.COLUMN_ENC_FILE + "," +
                         "m." + MediaTable.COLUMN_WIDTH + "," +
                         "m." + MediaTable.COLUMN_HEIGHT + "," +
-                        "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+                        "m." + MediaTable.COLUMN_TRANSFERRED+ "," +
+                        "m." + MediaTable.COLUMN_BLOB_VERSION+ "," +
+                        "m." + MediaTable.COLUMN_CHUNK_SIZE+ "," +
+                        "m." + MediaTable.COLUMN_BLOB_SIZE + " " +
                         "FROM " + ArchiveTable.TABLE_NAME + " " +
                         "LEFT JOIN (" +
                         "SELECT " +
@@ -1412,7 +1405,10 @@ class PostsDb {
                         MediaTable.COLUMN_ENC_FILE + "," +
                         MediaTable.COLUMN_WIDTH + "," +
                         MediaTable.COLUMN_HEIGHT + "," +
-                        MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                        MediaTable.COLUMN_TRANSFERRED + "," +
+                        MediaTable.COLUMN_BLOB_VERSION + "," +
+                        MediaTable.COLUMN_CHUNK_SIZE + "," +
+                        MediaTable.COLUMN_BLOB_SIZE + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                         "AS m ON " + ArchiveTable.TABLE_NAME + "." + ArchiveTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + ArchiveTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
                         "WHERE " + ArchiveTable.TABLE_NAME + "." + ArchiveTable.COLUMN_POST_ID + "=?";
 
@@ -1451,9 +1447,9 @@ class PostsDb {
                             cursor.getInt(11),
                             cursor.getInt(12),
                             cursor.getInt(13),
-                            Media.BLOB_VERSION_UNKNOWN,
-                            0,
-                            0);
+                            cursor.getInt(14),
+                            cursor.getInt(15),
+                            cursor.getLong(16));
                     media.encFile = fileStore.getTmpFile(cursor.getString(10));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
@@ -1821,7 +1817,10 @@ class PostsDb {
                         "m." + MediaTable.COLUMN_ENC_FILE + "," +
                         "m." + MediaTable.COLUMN_WIDTH + "," +
                         "m." + MediaTable.COLUMN_HEIGHT + "," +
-                        "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+                        "m." + MediaTable.COLUMN_TRANSFERRED + "," +
+                        "m." + MediaTable.COLUMN_BLOB_VERSION + "," +
+                        "m." + MediaTable.COLUMN_CHUNK_SIZE + "," +
+                        "m." + MediaTable.COLUMN_BLOB_SIZE + " " +
                         "FROM " + MentionsTable.TABLE_NAME + " " +
                         "LEFT JOIN " + PostsTable.TABLE_NAME + " " +
                         "AS p ON " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_ROW_ID + "=p." + PostsTable._ID + " " +
@@ -1836,7 +1835,10 @@ class PostsDb {
                         MediaTable.COLUMN_ENC_FILE + "," +
                         MediaTable.COLUMN_WIDTH + "," +
                         MediaTable.COLUMN_HEIGHT + "," +
-                        MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                        MediaTable.COLUMN_TRANSFERRED + "," +
+                        MediaTable.COLUMN_BLOB_VERSION + "," +
+                        MediaTable.COLUMN_CHUNK_SIZE + "," +
+                        MediaTable.COLUMN_BLOB_SIZE + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                         "AS m ON p." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
                         "WHERE " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_MENTION_USER_ID + "=? AND " + MentionsTable.TABLE_NAME + "." + MentionsTable.COLUMN_PARENT_TABLE + "=? " +
                         (limit < 0 ? "" : "LIMIT " + limit);
@@ -1869,9 +1871,9 @@ class PostsDb {
                             cursor.getInt(15),
                             cursor.getInt(16),
                             cursor.getInt(17),
-                            Media.BLOB_VERSION_UNKNOWN,
-                            0,
-                            0);
+                            cursor.getInt(18),
+                            cursor.getInt(19),
+                            cursor.getLong(20));
                     media.encFile = fileStore.getTmpFile(cursor.getString(14));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
@@ -2410,7 +2412,10 @@ class PostsDb {
                         "m." + MediaTable.COLUMN_ENC_FILE + "," +
                         "m." + MediaTable.COLUMN_WIDTH + "," +
                         "m." + MediaTable.COLUMN_HEIGHT + "," +
-                        "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+                        "m." + MediaTable.COLUMN_TRANSFERRED + "," +
+                        "m." + MediaTable.COLUMN_BLOB_VERSION + "," +
+                        "m." + MediaTable.COLUMN_CHUNK_SIZE + "," +
+                        "m." + MediaTable.COLUMN_BLOB_SIZE + " " +
                         "FROM " + ArchiveTable.TABLE_NAME + " " +
                         "LEFT JOIN (" +
                         "SELECT " +
@@ -2423,7 +2428,10 @@ class PostsDb {
                             MediaTable.COLUMN_ENC_FILE + "," +
                             MediaTable.COLUMN_WIDTH + "," +
                             MediaTable.COLUMN_HEIGHT + "," +
-                            MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                            MediaTable.COLUMN_TRANSFERRED + "," +
+                            MediaTable.COLUMN_BLOB_VERSION + "," +
+                            MediaTable.COLUMN_CHUNK_SIZE + "," +
+                            MediaTable.COLUMN_BLOB_SIZE + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                         "AS m ON " + ArchiveTable.TABLE_NAME + "." + ArchiveTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + ArchiveTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
                         where + "ORDER BY " + ArchiveTable.TABLE_NAME + "." + ArchiveTable.COLUMN_TIMESTAMP + (after ? " ASC " : " DESC ") +
                         (pageSize == null ? "" : ("LIMIT " + pageSize));
@@ -2469,9 +2477,9 @@ class PostsDb {
                             cursor.getInt(11),
                             cursor.getInt(12),
                             cursor.getInt(13),
-                            Media.BLOB_VERSION_UNKNOWN,
-                            0,
-                            0);
+                            cursor.getInt(14),
+                            cursor.getInt(15),
+                            cursor.getLong(16));
                     media.encFile = fileStore.getTmpFile(cursor.getString(10));
                     Preconditions.checkNotNull(post).media.add(media);
                 }

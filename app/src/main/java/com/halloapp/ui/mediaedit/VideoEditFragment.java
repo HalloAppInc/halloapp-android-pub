@@ -38,6 +38,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.Media;
+import com.halloapp.media.ExoUtils;
 import com.halloapp.media.VideoThumbnailsExtractor;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
@@ -177,8 +178,8 @@ public class VideoEditFragment extends Fragment {
     }
 
     private @NonNull MediaSource buildMediaSource(@NonNull Uri uri) {
-        DataSource.Factory factory = new DefaultDataSourceFactory(requireContext(), Constants.USER_AGENT);
-        return new ProgressiveMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(uri));
+        DataSource.Factory factory = ExoUtils.getDefaultDataSourceFactory(requireContext());
+        return new ProgressiveMediaSource.Factory(factory).createMediaSource(ExoUtils.getUriMediaItem(uri));
     }
 
     @SuppressLint("ClickableViewAccessibility")

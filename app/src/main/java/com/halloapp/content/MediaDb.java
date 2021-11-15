@@ -19,8 +19,10 @@ import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.UrlPreviewsTable;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.util.logs.Log;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 public class MediaDb {
@@ -33,7 +35,7 @@ public class MediaDb {
     }
 
     @WorkerThread
-    @Nullable Media getLatestMediaWithHash(@NonNull byte[] decSha256hash, @Media.BlobVersion int blobVersion) {
+    public @Nullable Media getLatestMediaWithHash(@NonNull byte[] decSha256hash, @Media.BlobVersion int blobVersion) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final String rowQuerySql =
                 "SELECT " + MediaTable._ID + " "
@@ -52,7 +54,7 @@ public class MediaDb {
             }
         }
 
-        final String uploadQuerySql =
+        final String selectQuerySql =
                 "SELECT " +
                         MediaTable.COLUMN_TYPE + "," +
                         MediaTable.COLUMN_URL + "," +
@@ -66,9 +68,10 @@ public class MediaDb {
                         MediaTable.COLUMN_BLOB_VERSION + "," +
                         MediaTable.COLUMN_CHUNK_SIZE + "," +
                         MediaTable.COLUMN_BLOB_SIZE + " " +
+                        MediaTable.COLUMN_BLOB_SIZE + " " +
                         "FROM " + MediaTable.TABLE_NAME + " " +
                         "WHERE " + MediaTable._ID + "=?";
-        try (final Cursor cursor = db.rawQuery(uploadQuerySql, new String[]{Long.toString(rowId)})) {
+        try (final Cursor cursor = db.rawQuery(selectQuerySql, new String[]{Long.toString(rowId)})) {
             if (cursor.moveToFirst()) {
                 return new Media(
                         rowId,
@@ -147,6 +150,75 @@ public class MediaDb {
         }
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         addMediaItem(db, UrlPreviewsTable.TABLE_NAME, urlPreview.rowId, urlPreview.imageMedia);
+    }
+
+    @WorkerThread
+    public byte[] getEncKey(long rowId) {
+        final String sql =
+                "SELECT " + MediaTable.TABLE_NAME + "." + MediaTable.COLUMN_ENC_KEY + " "
+                        + "FROM " + MediaTable.TABLE_NAME + " "
+                        + "WHERE " + MediaTable.TABLE_NAME + "." + MediaTable._ID + "=? LIMIT " + 1;
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(rowId)})) {
+            if (cursor.moveToNext()) {
+                return cursor.getBlob(0);
+            }
+        }
+        Log.d("MediaDb.getEncKey failed to get encKey");
+        return null;
+    }
+
+    private Cursor selectChunkSet(long rowId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String selectQuerySql =
+                "SELECT " +
+                        MediaTable.COLUMN_CHUNK_SET + " " +
+                        "FROM " + MediaTable.TABLE_NAME + " " +
+                        "WHERE " + MediaTable._ID + "=?";
+        return db.rawQuery(selectQuerySql, new String[]{Long.toString(rowId)});
+    }
+
+    @WorkerThread
+    public @Nullable BitSet getChunkSet(long rowId) {
+        try (final Cursor cursor = selectChunkSet(rowId)) {
+            if (cursor.moveToFirst()) {
+                final byte[] blobData = cursor.getBlob(0);
+                return blobData != null ? BitSet.valueOf(blobData) : null;
+            }
+        }
+        Log.d("MediaDb.getChunkSet failed to get chunk set");
+        return null;
+    }
+
+    @WorkerThread
+    public void updateChunkSet(long rowId, @NonNull BitSet chunkSet) {
+        try (final Cursor cursor = selectChunkSet(rowId)) {
+            if (cursor.moveToFirst()) {
+                final byte[] oldChunkSetBlob = cursor.getBlob(0);
+                if (oldChunkSetBlob != null) {
+                    final BitSet oldChunkSet = BitSet.valueOf(oldChunkSetBlob);
+                    chunkSet.or(oldChunkSet);
+                }
+
+                final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+                final ContentValues mediaItemValues = new ContentValues();
+                mediaItemValues.put(MediaTable.COLUMN_CHUNK_SET, chunkSet.toByteArray());
+                db.update(MediaTable.TABLE_NAME, mediaItemValues, MediaTable._ID + "=?", new String[]{Long.toString(rowId)});
+            } else {
+                Log.d("MediaDb.getChunkSet failed to update chunk set");
+            }
+        }
+    }
+
+    @WorkerThread
+    public void markChunkedTransferComplete(long rowId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final ContentValues mediaItemValues = new ContentValues();
+        mediaItemValues.put(MediaTable.COLUMN_TRANSFERRED, Media.TRANSFERRED_YES);
+        final String whereClause = MediaTable._ID + "=? AND " + MediaTable.COLUMN_TRANSFERRED + "=?";
+        final String[] whereArgs = new String[]{Long.toString(rowId), Integer.toString(Media.TRANSFERRED_PARTIAL_CHUNKED)};
+        db.update(MediaTable.TABLE_NAME, mediaItemValues, whereClause, whereArgs);
     }
 
     @WorkerThread

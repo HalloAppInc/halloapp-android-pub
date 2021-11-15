@@ -31,11 +31,12 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.id.ChatId;
+import com.halloapp.media.ChunkedMediaParameters;
+import com.halloapp.media.ChunkedMediaParametersException;
+import com.halloapp.media.ExoUtils;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerViewModel;
@@ -505,11 +506,27 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
 
         if (mediaItem.file != null) {
             Log.d("MediaPagerAdapter.initPlayer " + mediaItem);
+
+            final DataSource.Factory dataSourceFactory;
+            final MediaItem exoMediaItem;
+            if (mediaItem.isStreamingVideo()) {
+                final ChunkedMediaParameters chunkedParameters;
+                try {
+                    chunkedParameters = ChunkedMediaParameters.computeFromBlobSize(mediaItem.blobSize, mediaItem.chunkSize);
+                } catch (ChunkedMediaParametersException e) {
+                    Log.e("MediaPagerAdapter.initPlayer invalid chunk parameters", e);
+                    return;
+                }
+                dataSourceFactory = ExoUtils.getChunkedMediaDataSourceFactory(mediaItem.rowId, mediaItem.url, chunkedParameters, mediaItem.file);
+                exoMediaItem = ExoUtils.getChunkedMediaItem(mediaItem.rowId, mediaItem.url);
+            } else {
+                dataSourceFactory = ExoUtils.getDefaultDataSourceFactory(playerView.getContext());
+                exoMediaItem = ExoUtils.getUriMediaItem(Uri.fromFile(mediaItem.file));
+            }
+
             playerView.setPauseHiddenPlayerOnScroll(true);
             playerView.setControllerAutoShow(true);
-
-            final DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(playerView.getContext(), Constants.USER_AGENT);
-            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(Uri.fromFile(mediaItem.file)));
+            final MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(exoMediaItem);
 
             final SimpleExoPlayer player = new SimpleExoPlayer.Builder(playerView.getContext()).build();
             final WrappedPlayer wrappedPlayer = new WrappedPlayer(player);

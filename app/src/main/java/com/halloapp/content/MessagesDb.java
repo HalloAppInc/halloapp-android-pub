@@ -717,23 +717,6 @@ class MessagesDb {
     }
 
     @WorkerThread
-    public byte[] getMediaEncKey(long rowId) {
-        final String sql =
-                "SELECT " + MediaTable.TABLE_NAME + "." + MediaTable.COLUMN_ENC_KEY + " "
-                        + "FROM " + MediaTable.TABLE_NAME + " "
-                        + "WHERE " + MediaTable.TABLE_NAME + "." + MediaTable._ID + "=? LIMIT " + 1;
-
-        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(rowId)})) {
-            if (cursor.moveToNext()) {
-                return cursor.getBlob(0);
-            }
-        }
-        Log.d("Resumable Uploader MessageDb.getMediaEncKey failed to get encKey");
-        return null;
-    }
-
-    @WorkerThread
     public void setUploadProgress(long rowId, long offset) {
         final ContentValues values = new ContentValues();
         values.put(MediaTable.COLUMN_UPLOAD_PROGRESS, offset);
@@ -1139,6 +1122,9 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_WIDTH + "," +
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
                 "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
+                "m." + MediaTable.COLUMN_BLOB_VERSION + ", " +
+                "m." + MediaTable.COLUMN_CHUNK_SIZE + ", " +
+                "m." + MediaTable.COLUMN_BLOB_SIZE + ", " +
                 "r." + RepliesTable.COLUMN_POST_ID + ", " +
                 "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + ", " +
                 "r." + RepliesTable.COLUMN_REPLY_MESSAGE_ID + ", " +
@@ -1156,7 +1142,10 @@ class MessagesDb {
                     MediaTable.COLUMN_ENC_FILE + "," +
                     MediaTable.COLUMN_WIDTH + "," +
                     MediaTable.COLUMN_HEIGHT + "," +
-                    MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                    MediaTable.COLUMN_TRANSFERRED + "," +
+                    MediaTable.COLUMN_BLOB_VERSION + "," +
+                    MediaTable.COLUMN_CHUNK_SIZE + "," +
+                    MediaTable.COLUMN_BLOB_SIZE + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                 "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
             "LEFT JOIN (" +
                 "SELECT " +
@@ -1182,7 +1171,7 @@ class MessagesDb {
                     if (message != null) {
                         messages.add(message);
                     }
-                    String rawReplySenderId = cursor.getString(22);
+                    String rawReplySenderId = cursor.getString(25);
                     message = new Message(
                             rowId,
                             ChatId.fromNullable(cursor.getString(1)),
@@ -1193,10 +1182,10 @@ class MessagesDb {
                             cursor.getInt(6),
                             cursor.getInt(7),
                             cursor.getString(8),
-                            cursor.getString(18),
-                            cursor.getInt(19),
-                            cursor.getString(20),
-                            cursor.getInt(21),
+                            cursor.getString(21),
+                            cursor.getInt(22),
+                            cursor.getString(23),
+                            cursor.getInt(24),
                             rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
@@ -1214,9 +1203,9 @@ class MessagesDb {
                             cursor.getInt(15),
                             cursor.getInt(16),
                             cursor.getInt(17),
-                            Media.BLOB_VERSION_UNKNOWN,
-                            0,
-                            0);
+                            cursor.getInt(18),
+                            cursor.getInt(19),
+                            cursor.getLong(20));
                     media.encFile = fileStore.getTmpFile(cursor.getString(14));
                     Preconditions.checkNotNull(message).media.add(media);
                 }
@@ -1268,6 +1257,9 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_WIDTH + "," +
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
                 "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
+                "m." + MediaTable.COLUMN_BLOB_VERSION + ", " +
+                "m." + MediaTable.COLUMN_CHUNK_SIZE + ", " +
+                "m." + MediaTable.COLUMN_BLOB_SIZE + ", " +
                 "r." + RepliesTable.COLUMN_POST_ID + ", " +
                 "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + ", " +
                 "r." + RepliesTable.COLUMN_REPLY_MESSAGE_ID + ", " +
@@ -1285,7 +1277,10 @@ class MessagesDb {
                     MediaTable.COLUMN_ENC_FILE + "," +
                     MediaTable.COLUMN_WIDTH + "," +
                     MediaTable.COLUMN_HEIGHT + "," +
-                    MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                    MediaTable.COLUMN_TRANSFERRED + "," +
+                    MediaTable.COLUMN_BLOB_VERSION + "," +
+                    MediaTable.COLUMN_CHUNK_SIZE + "," +
+                    MediaTable.COLUMN_BLOB_SIZE + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                 "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
             "LEFT JOIN (" +
                 "SELECT " +
@@ -1301,7 +1296,7 @@ class MessagesDb {
         try (final Cursor cursor = db.rawQuery(sql, null)) {
             while (cursor.moveToNext()) {
                 if (message == null) {
-                    String rawReplySenderId = cursor.getString(22);
+                    String rawReplySenderId = cursor.getString(25);
                     message = new Message(
                             cursor.getLong(0),
                             ChatId.fromNullable(cursor.getString(1)),
@@ -1312,10 +1307,10 @@ class MessagesDb {
                             cursor.getInt(6),
                             cursor.getInt(7),
                             cursor.getString(8),
-                            cursor.getString(18),
-                            cursor.getInt(19),
-                            cursor.getString(20),
-                            cursor.getInt(21),
+                            cursor.getString(21),
+                            cursor.getInt(22),
+                            cursor.getString(23),
+                            cursor.getInt(24),
                             rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
@@ -1333,9 +1328,9 @@ class MessagesDb {
                             cursor.getInt(15),
                             cursor.getInt(16),
                             cursor.getInt(17),
-                            Media.BLOB_VERSION_UNKNOWN,
-                            0,
-                            0);
+                            cursor.getInt(18),
+                            cursor.getInt(19),
+                            cursor.getLong(20));
                     media.encFile = fileStore.getTmpFile(cursor.getString(14));
                     Preconditions.checkNotNull(message).media.add(media);
                 }
@@ -1525,6 +1520,9 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_WIDTH + "," +
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
                 "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
+                "m." + MediaTable.COLUMN_BLOB_VERSION + ", " +
+                "m." + MediaTable.COLUMN_CHUNK_SIZE + ", " +
+                "m." + MediaTable.COLUMN_BLOB_SIZE + ", " +
                 "r." + RepliesTable.COLUMN_POST_ID + ", " +
                 "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + ", " +
                 "r." + RepliesTable.COLUMN_REPLY_MESSAGE_ID + ", " +
@@ -1542,7 +1540,10 @@ class MessagesDb {
                     MediaTable.COLUMN_ENC_FILE + "," +
                     MediaTable.COLUMN_WIDTH + "," +
                     MediaTable.COLUMN_HEIGHT + "," +
-                    MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                    MediaTable.COLUMN_TRANSFERRED + "," +
+                    MediaTable.COLUMN_BLOB_VERSION + "," +
+                    MediaTable.COLUMN_CHUNK_SIZE + "," +
+                    MediaTable.COLUMN_BLOB_SIZE + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                 "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
             "LEFT JOIN (" +
                 "SELECT " +
@@ -1568,7 +1569,7 @@ class MessagesDb {
                     if (message != null) {
                         messages.add(message);
                     }
-                    String rawReplySenderId = cursor.getString(22);
+                    String rawReplySenderId = cursor.getString(25);
                     message = new Message(
                             rowId,
                             ChatId.fromNullable(cursor.getString(1)),
@@ -1579,10 +1580,10 @@ class MessagesDb {
                             cursor.getInt(6),
                             cursor.getInt(7),
                             cursor.getString(8),
-                            cursor.getString(18),
-                            cursor.getInt(19),
-                            cursor.getString(20),
-                            cursor.getInt(21),
+                            cursor.getString(21),
+                            cursor.getInt(22),
+                            cursor.getString(23),
+                            cursor.getInt(24),
                             rawReplySenderId == null ? null : new UserId(rawReplySenderId),
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
@@ -1600,9 +1601,9 @@ class MessagesDb {
                             cursor.getInt(15),
                             cursor.getInt(16),
                             cursor.getInt(17),
-                            Media.BLOB_VERSION_UNKNOWN,
-                            0,
-                            0);
+                            cursor.getInt(18),
+                            cursor.getInt(19),
+                            cursor.getLong(20));
                     media.encFile = fileStore.getTmpFile(cursor.getString(14));
                     Preconditions.checkNotNull(message).media.add(media);
                 }
@@ -1638,7 +1639,10 @@ class MessagesDb {
                 "m." + MediaTable.COLUMN_ENC_FILE + "," +
                 "m." + MediaTable.COLUMN_WIDTH + "," +
                 "m." + MediaTable.COLUMN_HEIGHT + "," +
-                "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+                "m." + MediaTable.COLUMN_TRANSFERRED + "," +
+                "m." + MediaTable.COLUMN_BLOB_VERSION + "," +
+                "m." + MediaTable.COLUMN_CHUNK_SIZE + "," +
+                "m." + MediaTable.COLUMN_BLOB_SIZE + " " +
             "FROM " + MessagesTable.TABLE_NAME + " " +
             "INNER JOIN " + MediaTable.TABLE_NAME + " " +
                 "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
@@ -1659,9 +1663,9 @@ class MessagesDb {
                     cursor.getInt(5),
                     cursor.getInt(6),
                     cursor.getInt(7),
-                    Media.BLOB_VERSION_UNKNOWN,
-                    0,
-                    0);
+                    cursor.getInt(8),
+                    cursor.getInt(9),
+                    cursor.getLong(10));
                 media.encFile = fileStore.getTmpFile(cursor.getString(4));
 
                 items.add(media);

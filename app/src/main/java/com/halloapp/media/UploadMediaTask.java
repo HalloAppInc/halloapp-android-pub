@@ -131,7 +131,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         for (Media media : mediaList) {
             String mediaLogId = contentItem.id + "." + index++;
             Log.i("Resumable Uploader " + mediaLogId + " transferred: " + media.transferred);
-            if (media.transferred == Media.TRANSFERRED_YES || media.transferred == Media.TRANSFERRED_FAILURE || media.transferred == Media.TRANSFERRED_UNKNOWN) {
+            if (media.transferred == Media.TRANSFERRED_YES || media.transferred == Media.TRANSFERRED_PARTIAL_CHUNKED || media.transferred == Media.TRANSFERRED_FAILURE || media.transferred == Media.TRANSFERRED_UNKNOWN) {
                 continue;
             }
             success = false;

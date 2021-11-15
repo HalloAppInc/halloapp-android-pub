@@ -2,6 +2,7 @@ package com.halloapp.media;
 
 public class ChunkedMediaParameters {
     public static final int DEFAULT_CHUNK_SIZE = 65536;
+    public static final long DEFAULT_INITIAL_FILE_SIZE = 5L * 1024 * 1024;
     public static final int BLOCK_SIZE = 16;
     public static final int MAC_SIZE = 32;
 
@@ -73,6 +74,35 @@ public class ChunkedMediaParameters {
                 0;
         final long estimatedPlaintextSize = ((long) regularChunkCount) * regularChunkPlaintextSize + estimatedTrailingChunkPlaintextSize;
         return new ChunkedMediaParameters(estimatedPlaintextSize, blobSize, chunkSize, regularChunkPlaintextSize, regularChunkCount, estimatedTrailingChunkPlaintextSize, trailingChunkSize);
+    }
+
+    public int getChunkCount() {
+        return regularChunkCount + (trailingChunkSize != 0 ? 1 : 0);
+    }
+
+    public int getChunkSize(int chunkIndex) {
+        return chunkIndex < regularChunkCount ? chunkSize : trailingChunkSize;
+    }
+
+    public int getChunkPtSize(int chunkIndex) {
+        return chunkIndex < regularChunkCount ? regularChunkPtSize : estimatedTrailingChunkPtSize;
+    }
+
+    public int getChunkIndex(long ptPosition) throws ChunkedMediaParametersException {
+        if (ptPosition / regularChunkPtSize > Integer.MAX_VALUE) {
+            throw new ChunkedMediaParametersException("ptPosition divided by regularChunkPtSize exceeds Integer.MAX_VALUE");
+        }
+        return (int) ptPosition / regularChunkPtSize;
+    }
+
+    public int getChunkPtOffset(long ptPosition) {
+        return (int) ptPosition % regularChunkPtSize;
+    }
+
+    public void assertChunkIndexInBounds(int chunkIndex) {
+        if (chunkIndex < 0 || chunkIndex > getChunkCount()) {
+            throw new IndexOutOfBoundsException("Chunk index " + chunkIndex + " is out of range");
+        }
     }
 
     @Override
