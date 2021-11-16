@@ -300,7 +300,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         private final Registration registration = Registration.getInstance();
 
         private final MutableLiveData<Registration.RegistrationRequestResult> registrationRequestResult = new MutableLiveData<>();
-        private final CountDownLatch hashcashLatch = new CountDownLatch(1);
+        private CountDownLatch hashcashLatch = new CountDownLatch(1);
 
         private String groupInviteToken;
         private Registration.HashcashResult hashcashResult;
@@ -317,6 +317,10 @@ public class RegistrationRequestActivity extends HalloActivity {
             };
             timer.schedule(timerTask, Constants.SEND_LOGS_BUTTON_DELAY_MS);
 
+            runHashcash();
+        }
+
+        private void runHashcash() {
             bgWorkers.execute(() -> {
                 hashcashResult = registration.getHashcashSolution();
                 if (hashcashResult.result != Registration.HashcashResult.RESULT_OK) {
@@ -349,7 +353,13 @@ public class RegistrationRequestActivity extends HalloActivity {
                     public void run() {
                         if (registerCalled.compareAndSet(false, true)) {
                             Log.i("RegistrationRequestViewModel InstallReferrer took too long");
-                            registrationRequestResult.postValue(registration.registerPhoneNumber(name, phone, null, hashcashResult == null ? null : hashcashResult.fullSolution));
+                            Registration.RegistrationRequestResult result = registration.registerPhoneNumber(name, phone, null, hashcashResult == null ? null : hashcashResult.fullSolution);
+                            if (result.result == Registration.RegistrationRequestResult.RESULT_FAILED_HASHCASH) {
+                                hashcashLatch = new CountDownLatch(1);
+                                hashcashResult = null;
+                                runHashcash();
+                            }
+                            registrationRequestResult.postValue(result);
                             referrerClient.endConnection();
                         }
                     }
@@ -390,7 +400,13 @@ public class RegistrationRequestActivity extends HalloActivity {
                         groupInviteToken = code;
                         bgWorkers.execute(() -> {
                             if (registerCalled.compareAndSet(false, true)) {
-                                registrationRequestResult.postValue(registration.registerPhoneNumber(name, phone, code, hashcashResult == null ? null : hashcashResult.fullSolution));
+                                Registration.RegistrationRequestResult result = registration.registerPhoneNumber(name, phone, null, hashcashResult == null ? null : hashcashResult.fullSolution);
+                                if (result.result == Registration.RegistrationRequestResult.RESULT_FAILED_HASHCASH) {
+                                    hashcashLatch = new CountDownLatch(1);
+                                    hashcashResult = null;
+                                    runHashcash();
+                                }
+                                registrationRequestResult.postValue(result);
                                 referrerClient.endConnection();
                             }
                         });

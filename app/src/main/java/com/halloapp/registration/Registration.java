@@ -472,7 +472,8 @@ public class Registration {
         @IntDef({RESULT_OK, RESULT_FAILED_SERVER, RESULT_FAILED_NETWORK, RESULT_FAILED_SERVER_SMS_FAIL,
                 RESULT_FAILED_SERVER_CANNOT_ENROLL, RESULT_FAILED_SERVER_NO_FRIENDS,
                 RESULT_FAILED_SERVER_NOT_INVITED, RESULT_FAILED_CLIENT_EXPIRED,
-                RESULT_FAILED_RETRIED_TOO_SOON, RESULT_FAILED_INVALID_PHONE_NUMBER})
+                RESULT_FAILED_RETRIED_TOO_SOON, RESULT_FAILED_INVALID_PHONE_NUMBER,
+                RESULT_FAILED_HASHCASH})
         @interface Result {}
         public static final int RESULT_OK = 0;
         public static final int RESULT_FAILED_NETWORK = 1;
@@ -484,6 +485,7 @@ public class Registration {
         public static final int RESULT_FAILED_CLIENT_EXPIRED = 7;
         public static final int RESULT_FAILED_RETRIED_TOO_SOON = 8;
         public static final int RESULT_FAILED_INVALID_PHONE_NUMBER = 9;
+        public static final int RESULT_FAILED_HASHCASH = 10;
 
         public final String phone;
         public final @Result int result;
@@ -517,6 +519,10 @@ public class Registration {
                 return RESULT_FAILED_RETRIED_TOO_SOON;
             } else if (OtpResponse.Reason.INVALID_PHONE_NUMBER.equals(reason)) {
                 return RESULT_FAILED_INVALID_PHONE_NUMBER;
+            } else if (OtpResponse.Reason.INVALID_HASHCASH_NONCE.equals(reason)) {
+                return RESULT_FAILED_HASHCASH;
+            } else if (OtpResponse.Reason.WRONG_HASHCASH_SOLUTION.equals(reason)) {
+                return RESULT_FAILED_HASHCASH;
             }
             return RESULT_FAILED_SERVER;
         }
