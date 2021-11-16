@@ -77,8 +77,8 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="camera_record_audio_permission_rationale_denied">"Um Fotos und Videos aufzunehmen, benötigen wir deine Erlaubnis, damit wir auf deine Kamera zugreifen und Audio aufnehmen können.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
-    <string name="contacts_permission_rationale">"Um den Kontakt zu deinen Freunden und zur Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können"</string>
-    <string name="contacts_permission_rationale_denied">"Um den Kontakt zu deinen Freunden und zur Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können.
+    <string name="contacts_permission_rationale">"Um den Kontakt zu deinen Freunden und deiner Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können"</string>
+    <string name="contacts_permission_rationale_denied">"Um den Kontakt zu deinen Freunden und deiner Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
 
@@ -262,7 +262,7 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="action_save">"Speichern"</string>
     <string name="invite_friends">"Freunde &amp; Familie einladen"</string>
     <string name="invite_friend_chooser_title">"%s einladen"</string>
-    <string name="invite_text_with_name_and_number">"Hey %1$s, ich lade dich ein, dich auch bei HalloApp anzumelden. Ein Netzwerk für echte Beziehungen und diejenigen, die einem am nächsten stehen. Nutze %2$s zur Registrierung und hol sie dir auf %3$s"</string>
+    <string name="invite_text_with_name_and_number">"Hey %1$s, ich lade dich ein, dich auch bei HalloApp anzumelden. Ein Netzwerk für echte Beziehungen und diejenigen, die dir am nächsten stehen. Nutze %2$s zur Registrierung und hol sie dir auf %3$s"</string>
     <string name="name_hint">"Dein Name"</string>
     <string name="name_must_be_specified">"Name muss angegeben werden"</string>
 
@@ -950,10 +950,10 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="zero_zone_home_nux_header">"Willkommen bei HalloApp, ein digitaler Raum für echte Beziehungen ✨"</string>
 
     <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
-    <string name="zero_zone_home_nux_text_one">"Verwende deine Handynummer, um dich mit Freunden und Familie in einem digitalen Raum ohne Werbung, Marken, Likes und Influencer zu verbinden."</string>
+    <string name="zero_zone_home_nux_text_one">"Verwende deine Handynummer, um dich mit deinen Freunden und deiner Familie in einem digitalen Raum ohne Werbung, Marken, Likes und Influencer zu verbinden."</string>
 
     <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
-    <string name="zero_zone_home_nux_text_two">"HalloApp ist für dich und die, die dir nahe stehen - ganz privat. Lade deine wahren Freunde ein, um loszulegen"</string>
+    <string name="zero_zone_home_nux_text_two">"HalloApp ist für dich und die, die dir nahe stehen - ganz privat. Leg los und lade deine echten Freunde ein"</string>
 
     <!-- Action for user to start their delete accoount process under 'account' -->
     <string name="delete_my_account_action">"Meinen Account löschen"</string>
