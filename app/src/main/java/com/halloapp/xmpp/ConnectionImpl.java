@@ -608,6 +608,37 @@ public class ConnectionImpl extends Connection {
 
     @Override
     public void sendRerequestedGroupPost(@NonNull Post post, @NonNull UserId userId) {
+        Container.Builder containerBuilder = Container.newBuilder();
+        FeedContentEncoder.encodePost(containerBuilder, post);
+        if (!containerBuilder.hasPostContainer()) {
+            Log.e("connection: sendRerequestedGroupPost no post content");
+            return;
+        }
+
+        GroupId groupId = post.getParentGroup();
+        SignalSessionSetupInfo signalSessionSetupInfo = null;
+        try {
+            signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(userId);
+        } catch (Exception e) {
+            Log.e("connection: sendRerequestedGroupPost failed to get session setup info for group post rerequest", e);
+            return;
+        }
+
+        SenderStateWithKeyInfo.Builder senderStateWithKeyInfoBuilder = SenderStateWithKeyInfo.newBuilder();
+        try {
+            SenderState senderState = GroupFeedSessionManager.getInstance().getSenderState(groupId);
+            byte[] encSenderState = SignalSessionManager.getInstance().encryptMessage(senderState.toByteArray(), userId);
+            senderStateWithKeyInfoBuilder.setEncSenderState(ByteString.copyFrom(encSenderState));
+            if (signalSessionSetupInfo != null) {
+                senderStateWithKeyInfoBuilder.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
+                if (signalSessionSetupInfo.oneTimePreKeyId != null) {
+                    senderStateWithKeyInfoBuilder.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
+                }
+            }
+        } catch (CryptoException e) {
+            Log.e("connection: sendRerequestedGroupPost failed to encrypt sender state for group post rerequest", e);
+        }
+
         executor.execute(() -> {
             if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot resend post, no connection");
@@ -615,32 +646,7 @@ public class ConnectionImpl extends Connection {
                 return;
             }
 
-            Container.Builder containerBuilder = Container.newBuilder();
-            FeedContentEncoder.encodePost(containerBuilder, post);
-            if (!containerBuilder.hasPostContainer()) {
-                Log.e("connection: sendRerequestedGroupPost no post content");
-                return;
-            }
-
-            GroupId groupId = post.getParentGroup();
             try {
-                SignalSessionSetupInfo signalSessionSetupInfo;
-                try {
-                    signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(userId);
-                } catch (Exception e) {
-                    throw new CryptoException("failed_get_session_setup_info", e);
-                }
-                SenderState senderState = GroupFeedSessionManager.getInstance().getSenderState(groupId);
-                byte[] encSenderState = SignalSessionManager.getInstance().encryptMessage(senderState.toByteArray(), userId);
-                SenderStateWithKeyInfo.Builder senderStateWithKeyInfoBuilder = SenderStateWithKeyInfo.newBuilder()
-                        .setEncSenderState(ByteString.copyFrom(encSenderState));
-                if (signalSessionSetupInfo != null) {
-                    senderStateWithKeyInfoBuilder.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
-                    if (signalSessionSetupInfo.oneTimePreKeyId != null) {
-                        senderStateWithKeyInfoBuilder.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
-                    }
-                }
-
                 GroupFeedItem.Builder builder = GroupFeedItem.newBuilder();
                 builder.setAction(GroupFeedItem.Action.PUBLISH);
                 builder.setGid(groupId.rawId());
@@ -745,6 +751,37 @@ public class ConnectionImpl extends Connection {
 
     @Override
     public void sendRerequestedGroupComment(@NonNull Comment comment, @NonNull UserId userId) {
+        Container.Builder containerBuilder = Container.newBuilder();
+        FeedContentEncoder.encodeComment(containerBuilder, comment);
+        if (!containerBuilder.hasCommentContainer()) {
+            Log.e("connection: sendRerequestedGroupComment no comment content");
+            return;
+        }
+
+        GroupId groupId = comment.getParentPost().getParentGroup();
+        SignalSessionSetupInfo signalSessionSetupInfo;
+        try {
+            signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(userId);
+        } catch (Exception e) {
+            Log.e("connection: sendRerequestedGroupComment failed to get setup info", e);
+            return;
+        }
+
+        SenderStateWithKeyInfo.Builder senderStateWithKeyInfoBuilder = SenderStateWithKeyInfo.newBuilder();
+        try {
+            SenderState senderState = GroupFeedSessionManager.getInstance().getSenderState(groupId);
+            byte[] encSenderState = SignalSessionManager.getInstance().encryptMessage(senderState.toByteArray(), userId);
+            senderStateWithKeyInfoBuilder.setEncSenderState(ByteString.copyFrom(encSenderState));
+            if (signalSessionSetupInfo != null) {
+                senderStateWithKeyInfoBuilder.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
+                if (signalSessionSetupInfo.oneTimePreKeyId != null) {
+                    senderStateWithKeyInfoBuilder.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
+                }
+            }
+        } catch (CryptoException e) {
+            Log.e("connection: sendRerequestedGroupComment failed to encrypt sender state", e);
+        }
+
         executor.execute(() -> {
             if (!reconnectIfNeeded() || socket == null) {
                 Log.e("connection: cannot resend comment, no connection");
@@ -752,32 +789,7 @@ public class ConnectionImpl extends Connection {
                 return;
             }
 
-            Container.Builder containerBuilder = Container.newBuilder();
-            FeedContentEncoder.encodeComment(containerBuilder, comment);
-            if (!containerBuilder.hasCommentContainer()) {
-                Log.e("connection: sendRerequestedGroupComment no comment content");
-                return;
-            }
-
-            GroupId groupId = comment.getParentPost().getParentGroup();
             try {
-                SignalSessionSetupInfo signalSessionSetupInfo;
-                try {
-                    signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(userId);
-                } catch (Exception e) {
-                    throw new CryptoException("failed_get_session_setup_info", e);
-                }
-                SenderState senderState = GroupFeedSessionManager.getInstance().getSenderState(groupId);
-                byte[] encSenderState = SignalSessionManager.getInstance().encryptMessage(senderState.toByteArray(), userId);
-                SenderStateWithKeyInfo.Builder senderStateWithKeyInfoBuilder = SenderStateWithKeyInfo.newBuilder()
-                        .setEncSenderState(ByteString.copyFrom(encSenderState));
-                if (signalSessionSetupInfo != null) {
-                    senderStateWithKeyInfoBuilder.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
-                    if (signalSessionSetupInfo.oneTimePreKeyId != null) {
-                        senderStateWithKeyInfoBuilder.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
-                    }
-                }
-
                 GroupFeedItem.Builder builder = GroupFeedItem.newBuilder();
                 builder.setAction(GroupFeedItem.Action.PUBLISH);
                 builder.setGid(groupId.rawId());
