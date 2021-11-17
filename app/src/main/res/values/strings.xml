@@ -235,7 +235,7 @@
     <!-- shows the name "home" as the first option in the share to group function -->
     <string name="home">Home</string>
     <string name="avatar_picker_title">Profile photo</string>
-    <string name="group_avatar_picker_title">Group avatar</string>
+    <string name="group_avatar_picker_title">Group icon</string>
     <string name="other_media">Other media</string>
     <string name="rotate">Rotate</string>
     <string name="seen_by">Seen by</string>
@@ -471,8 +471,8 @@
     <string name="system_message_member_auto_promoted_you">You were auto-promoted to admin</string>
     <string name="system_message_group_name_changed">%1$s changed the group name to %2$s</string>
     <string name="system_message_group_name_changed_by_you">You changed the group name to %s</string>
-    <string name="system_message_group_avatar_changed">%s changed the group avatar</string>
-    <string name="system_message_group_avatar_changed_by_you">You changed the group avatar</string>
+    <string name="system_message_group_avatar_changed">%s changed the group icon</string>
+    <string name="system_message_group_avatar_changed_by_you">You changed the group icon</string>
     <string name="system_message_group_deleted">%s deleted the group</string>
     <string name="system_message_group_deleted_by_you">You deleted the group</string>
     <string name="system_message_group_bg_changed">%s changed the background color</string>
@@ -502,8 +502,8 @@
     <string name="system_post_member_auto_promoted_you">You were auto-promoted to admin</string>
     <string name="system_post_group_name_changed">%1$s changed the group name to %2$s</string>
     <string name="system_post_group_name_changed_by_you">You changed the group name to %s</string>
-    <string name="system_post_group_avatar_changed">%s changed the group avatar</string>
-    <string name="system_post_group_avatar_changed_by_you">You changed the group avatar</string>
+    <string name="system_post_group_avatar_changed">%s changed the group icon</string>
+    <string name="system_post_group_avatar_changed_by_you">You changed the group icon</string>
     <string name="system_post_group_deleted">%s deleted the group</string>
     <string name="system_post_group_deleted_by_you">You deleted the group</string>
 
