@@ -29,6 +29,7 @@ import com.halloapp.proto.server.WebRtcSessionDescription;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.calls.CallsApi;
+import com.halloapp.xmpp.calls.GetCallServersResponseIq;
 import com.halloapp.xmpp.calls.StartCallResponseIq;
 import com.halloapp.xmpp.util.Observable;
 import com.halloapp.xmpp.util.ObservableErrorException;
@@ -177,7 +178,7 @@ public class CallManager {
         initializePeerConnections();
         startStreams();
         if (isInitiator) {
-            doStartCall();
+            getCallServersAndStartCall();
         }
     }
     
@@ -440,6 +441,18 @@ public class CallManager {
         return factory.createPeerConnection(rtcConfig, pcObserver);
     }
 
+    private void getCallServersAndStartCall() {
+        Observable<GetCallServersResponseIq> observable = callsApi.getCallServers(callId, peerUid, CallType.AUDIO);
+        observable.onResponse(response -> {
+            Log.i("CallManager: got call servers");
+            setStunTurnServers(response.stunServers, response.turnServers);
+            doStartCall();
+        }).onError(e -> {
+            Log.e("Failed to start call, did not get ice servers", e);
+            // TODO: Should we call stop?
+        });
+    }
+
     private void doStartCall() {
         MediaConstraints sdpMediaConstraints = new MediaConstraints();
 
@@ -502,7 +515,7 @@ public class CallManager {
                     .setPassword(turnServer.getPassword())
                     .createIceServer());
         }
-        Log.i("ice servers: " + iceServers);
+        Log.i("CallManager: iceservers: " + iceServers);
 
         PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(iceServers);
         peerConnection.setConfiguration(rtcConfig);

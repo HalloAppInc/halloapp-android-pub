@@ -164,6 +164,11 @@ public class CallsApi extends Connection.Observer {
         return connection.sendRequestIq(requestIq);
     }
 
+    public @Nullable Observable<GetCallServersResponseIq> getCallServers(@NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType) {
+        final GetCallServersIq requestIq = new GetCallServersIq(callId, peerUid, callType);
+        return connection.sendRequestIq(requestIq);
+    }
+
 
     public void sendAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull WebRtcSessionDescription webrtcAnswer) {
         AnswerCallElement answerCallElement = new AnswerCallElement(callId, webrtcAnswer);

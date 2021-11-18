@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.proto.server.Iq;
 import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.calls.GetCallServersResponseIq;
 import com.halloapp.xmpp.calls.StartCallResponseIq;
 import com.halloapp.xmpp.groups.GroupResponseIq;
 import com.halloapp.xmpp.groups.GroupsListResponseIq;
@@ -37,6 +38,8 @@ public abstract class HalloIq extends HalloStanza {
             return InvitesResponseIq.fromProto(iq.getInvitesResponse());
         } else if (iq.hasStartCallResult()) {
             return StartCallResponseIq.fromProto(iq.getStartCallResult());
+        } else if (iq.hasGetCallServersResult()) {
+            return GetCallServersResponseIq.fromProto(iq.getGetCallServersResult());
         }
         Log.w("Using empty result IQ due to unrecognized result IQ " + ProtoPrinter.toString(iq));
         return new EmptyResultIq(iq.getId());
