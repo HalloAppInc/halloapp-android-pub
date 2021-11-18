@@ -22,6 +22,8 @@ public class FileStore {
     private static final int MAX_LOG_FILES = 3;
     private static final int MAX_FILE_NAME_LENGTH = 255;
 
+    private static final String CRITICAL_LOG_FILE = "critical.perm";
+
     private static FileStore instance;
 
     private final File mediaDir;
@@ -157,6 +159,10 @@ public class FileStore {
 
     public File getLogFile(String timestamp) {
         return new File(logDir, "halloapp-" + timestamp + ".log");
+    }
+
+    public File getCriticalLogFile() {
+        return new File(logDir, CRITICAL_LOG_FILE);
     }
 
     public File getExportDataFile() {

@@ -14,12 +14,14 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
+import com.goterl.lazysodium.interfaces.Sign;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Me {
@@ -116,7 +118,7 @@ public class Me {
     @SuppressLint("ApplySharedPref")
     @WorkerThread
     private void reset(Context context) {
-        Log.i("Me.getPreferences resetting preferences");
+        Log.critical("Me.getPreferences resetting preferences");
         SharedPreferences tmp = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
         tmp.edit().clear().commit();
     }
@@ -189,20 +191,22 @@ public class Me {
         if (!getPreferences().edit().remove(PREF_KEY_PASSWORD).remove(PREF_KEY_PHONE).remove(PREF_KEY_MY_ED25519_NOISE_KEY).commit()) {
             Log.e("Me.resetRegistration: failed");
         } else {
-
             this.user.postValue(null);
         }
     }
 
     public void saveNoiseKey(byte[] noiseKeyPair) {
+        Log.critical("Saving noise key as " + Base64.encodeToString(Arrays.copyOfRange(noiseKeyPair, 0, Sign.ED25519_PUBLICKEYBYTES), Base64.NO_WRAP));
         setMyEd25519NoiseKey(noiseKeyPair);
     }
 
     public void saveNoiseRegKey(byte[] noiseKeyPair) {
+        Log.critical("Saving noise reg key as " + Base64.encodeToString(Arrays.copyOfRange(noiseKeyPair, 0, Sign.ED25519_PUBLICKEYBYTES), Base64.NO_WRAP));
         setMyRegEd25519NoiseKey(noiseKeyPair);
     }
 
     public void setServerStaticKey(byte[] publicServerStaticKey) {
+        Log.critical("Saving server static key as " + Base64.encodeToString(publicServerStaticKey, Base64.NO_WRAP));
         storeBytes(PREF_KEY_SERVER_PUBLIC_STATIC_KEY, publicServerStaticKey);
     }
 

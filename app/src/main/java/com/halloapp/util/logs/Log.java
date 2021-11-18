@@ -12,6 +12,7 @@ import com.halloapp.Me;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.Preconditions;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +24,7 @@ public class Log {
     private static final String TAG = "halloapp";
 
     private static ProductionLogger logger;
+    private static CriticalLogger criticalLogger;
 
     public static void v(String msg) {
         log(android.util.Log.VERBOSE, msg, null);
@@ -56,8 +58,23 @@ public class Log {
         log(android.util.Log.ERROR, msg, tr);
     }
 
+    public static void critical(String msg) {
+        critical(msg, null);
+    }
+
+    public static void critical(String msg, Throwable tr) {
+        i("CRITICAL: " + msg, tr);
+        try {
+            criticalLogger.log(msg, tr);
+        } catch (IOException e) {
+            e("Failed to write critical log", e);
+            sendErrorReport("Critical log failed");
+        }
+    }
+
     public static void init(@NonNull FileStore fileStore) {
         logger = new ProductionLogger(fileStore);
+        criticalLogger = new CriticalLogger(fileStore);
     }
 
     private static void log(int priority, String msg, @Nullable Throwable tr) {
