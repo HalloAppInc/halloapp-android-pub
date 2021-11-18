@@ -60,7 +60,8 @@ public class ZeroZonePostViewHolder extends ViewHolderWithLifecycle {
         }
         if (shareLinkButton != null) {
             shareLinkButton.setOnClickListener(v -> {
-                shareLinkButton.getContext().startActivity(IntentUtils.createShareUrlIntent(inviteLink));
+                String inviteText = shareLinkButton.getContext().getString(R.string.group_invite_link_context, inviteLink);
+                shareLinkButton.getContext().startActivity(IntentUtils.createShareUrlIntent(inviteText));
             });
         }
         if (this.inviteFriendsButton != null) {
