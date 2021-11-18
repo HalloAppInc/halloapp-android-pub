@@ -20,6 +20,7 @@ import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.media.ChunkedMediaParametersException;
 import com.halloapp.media.Downloader;
+import com.halloapp.media.ForeignRemoteAuthorityException;
 import com.halloapp.proto.server.ExportData;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
@@ -183,7 +184,7 @@ public class ExportDataActivity extends HalloActivity {
                                 return true;
                             }
                         }, "export-data");
-                    } catch (IOException | GeneralSecurityException | ChunkedMediaParametersException e) {
+                    } catch (IOException | GeneralSecurityException | ChunkedMediaParametersException | ForeignRemoteAuthorityException e) {
                         Log.w("Failed to save export data", e);
                     }
                 }

@@ -200,6 +200,10 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                         Log.e("DownloadMediaTask: CMPE downloading " + media.url + " for " + mediaLogId, e);
                         media.transferred = Media.TRANSFERRED_FAILURE;
                         contentItem.setMediaTransferred(media, contentDb);
+                    } catch (ForeignRemoteAuthorityException e) {
+                        Log.e("DownloadMediaTask: FRAE downloading " + media.url + " for " + mediaLogId, e);
+                        media.transferred = Media.TRANSFERRED_FAILURE;
+                        contentItem.setMediaTransferred(media, contentDb);
                     } catch (Downloader.DownloadException e) {
                         Log.e("DownloadMediaTask: download exception for " + media.url + " for " + mediaLogId, e);
                         if (media.encFile != null && e.code == 416) {

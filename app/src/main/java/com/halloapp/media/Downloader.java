@@ -197,11 +197,11 @@ public class Downloader {
         }
     }
 
-    public static void run(@NonNull String remotePath, @Nullable byte [] mediaKey, @Nullable byte [] encSha256hash, @Media.MediaType int type, @Nullable File partialEnc, @NonNull File localFile, @Nullable DownloadListener listener, @NonNull String mediaLogId) throws IOException, GeneralSecurityException, ChunkedMediaParametersException {
+    public static void run(@NonNull String remotePath, @Nullable byte [] mediaKey, @Nullable byte [] encSha256hash, @Media.MediaType int type, @Nullable File partialEnc, @NonNull File localFile, @Nullable DownloadListener listener, @NonNull String mediaLogId) throws IOException, GeneralSecurityException, ChunkedMediaParametersException, ForeignRemoteAuthorityException {
         run(remotePath, mediaKey, encSha256hash, type, Media.BLOB_VERSION_DEFAULT, 0, 0, partialEnc, localFile, listener, mediaLogId);
     }
 
-    public static void run(@NonNull String remotePath, @Nullable byte [] mediaKey, @Nullable byte [] encSha256hash, @Media.MediaType int type, @Media.BlobVersion int blobVersion, int chunkSize, long blobSize, @Nullable File partialEnc, @NonNull File localFile, @Nullable DownloadListener listener, @NonNull String mediaLogId) throws IOException, GeneralSecurityException, ChunkedMediaParametersException {
+    public static void run(@NonNull String remotePath, @Nullable byte [] mediaKey, @Nullable byte [] encSha256hash, @Media.MediaType int type, @Media.BlobVersion int blobVersion, int chunkSize, long blobSize, @Nullable File partialEnc, @NonNull File localFile, @Nullable DownloadListener listener, @NonNull String mediaLogId) throws IOException, GeneralSecurityException, ChunkedMediaParametersException, ForeignRemoteAuthorityException {
         ThreadUtils.setSocketTag();
         Log.i("Downloader starting download of " + mediaLogId + " from " + remotePath);
         InputStream inStream = null;
@@ -212,6 +212,10 @@ public class Downloader {
                 existingBytes = partialEnc.length();
             }
             final URL url = new URL(remotePath);
+            if (!url.getAuthority().endsWith("halloapp.net")) {
+                Log.e("Attempted to download content from foreign authority " + url.getAuthority());
+                throw new ForeignRemoteAuthorityException("Attempted to download from " + url.getAuthority());
+            }
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("User-Agent", Constants.USER_AGENT);
             connection.setRequestProperty("Cache-Control", "no-cache, no-store, must-revalidate");

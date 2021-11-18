@@ -31,6 +31,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.ChunkedMediaParametersException;
 import com.halloapp.media.Downloader;
+import com.halloapp.media.ForeignRemoteAuthorityException;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
@@ -295,7 +296,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         } catch (Downloader.DownloadException e) {
             Log.i("AvatarLoader: avatar not found on server");
             return false;
-        } catch (IOException | GeneralSecurityException | ChunkedMediaParametersException e) {
+        } catch (IOException | GeneralSecurityException | ChunkedMediaParametersException | ForeignRemoteAuthorityException e) {
             Log.w("AvatarLoader: Failed getting avatar " + avatarId + "; resetting values", e);
             if (large) {
                 contactAvatarInfo.largeCurrentId = null;
