@@ -466,7 +466,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
                     contentPost.setParentGroup(groupId);
 
                     Log.d("ContentComposerViewModel: PrepareContentTask groupId: " + groupId);
-                    GroupId[] testChunkGroups = {new GroupId("gmYchx3MBOXerd7QTmWqsO")};
+                    GroupId[] testChunkGroups = {new GroupId("gmYchx3MBOXerd7QTmWqsO"), new GroupId("gGSFDZYubalo4izDKhE-Vv")};
                     if (Arrays.asList(testChunkGroups).contains(groupId)) {
                         for (Media mediaItem : contentPost.media) {
                             if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
