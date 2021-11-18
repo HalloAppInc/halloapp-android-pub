@@ -487,7 +487,7 @@ class Log extends React.Component<Props, State>  {
       attrs.push(<span key={"spc-" + key} dangerouslySetInnerHTML={{ __html: "&nbsp;"}}/>)
       attrs.push(<span key={"key-" + key} style={{ color: keyColor, }}>{key}</span>)
       attrs.push("='")
-      attrs.push(<span key={"val-" + key} style={{ color: valueColor, }}>{attributes.get(key)}</span>)
+      attrs.push(<span key={"val-" + key} style={{ color: valueColor, cursor: "copy", }} onClick={() => navigator.clipboard.writeText(attributes.get(key) as string)}>{attributes.get(key)}</span>)
       attrs.push("'")
       next = keySet.next()
     }
