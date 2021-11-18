@@ -1544,39 +1544,49 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                             comment.isOutgoing()
                                     ? R.color.message_background_reply_outgoing
                                     : R.color.message_background_reply_incoming)));
-                    Contact senderContact = comment.parentComment.senderContact;
-                    replyNameView.setTextColor(GroupParticipants.getParticipantNameColor(FlatCommentsActivity.this, senderContact, true));
-                    replyNameView.setText(senderContact.userId.isMe() ? getString(R.string.me) : senderContact.getDisplayName());
-                    replyTextView.setTypeface(replyTextView.getTypeface(), Typeface.NORMAL);
-                    setCommentText(replyTextView, comment.parentComment);
-                    if (!comment.parentComment.media.isEmpty()) {
-                        mediaThumbnailLoader.load(replyMediaThumbView, comment.parentComment.media.get(0));
-                        replyMediaThumbView.setVisibility(View.VISIBLE);
-                        replyMediaIconView.setVisibility(View.VISIBLE);
-                        switch (comment.parentComment.media.get(0).type) {
-                            case Media.MEDIA_TYPE_IMAGE: {
-                                replyMediaIconView.setImageResource(R.drawable.ic_camera);
-                                break;
-                            }
-                            case Media.MEDIA_TYPE_VIDEO: {
-                                replyMediaIconView.setImageResource(R.drawable.ic_video);
-                                break;
-                            }
-                            case Media.MEDIA_TYPE_AUDIO: {
-                                replyMediaIconView.setImageResource(R.drawable.ic_keyboard_voice);
-                                replyMediaThumbView.setVisibility(View.GONE);
-                                break;
-                            }
-                            case Media.MEDIA_TYPE_UNKNOWN:
-                            default: {
-                                replyMediaIconView.setImageResource(R.drawable.ic_media_collection);
-                                break;
-                            }
-                        }
-                    } else {
+                    Comment parentComment = comment.parentComment;
+                    if (parentComment == null) {
                         mediaThumbnailLoader.cancel(replyMediaThumbView);
                         replyMediaThumbView.setVisibility(View.GONE);
                         replyMediaIconView.setVisibility(View.GONE);
+                        replyNameView.setText(R.string.unknown_contact);
+                        replyTextView.setText(R.string.reply_original_comment_not_found);
+                        replyTextView.setTypeface(replyTextView.getTypeface(), Typeface.ITALIC);
+                    } else {
+                        Contact senderContact = parentComment.senderContact;
+                        replyNameView.setTextColor(GroupParticipants.getParticipantNameColor(FlatCommentsActivity.this, senderContact, true));
+                        replyNameView.setText(senderContact.userId.isMe() ? getString(R.string.me) : senderContact.getDisplayName());
+                        replyTextView.setTypeface(replyTextView.getTypeface(), Typeface.NORMAL);
+                        setCommentText(replyTextView, parentComment);
+                        if (parentComment.media.isEmpty()) {
+                            mediaThumbnailLoader.cancel(replyMediaThumbView);
+                            replyMediaThumbView.setVisibility(View.GONE);
+                            replyMediaIconView.setVisibility(View.GONE);
+                        } else {
+                            mediaThumbnailLoader.load(replyMediaThumbView, parentComment.media.get(0));
+                            replyMediaThumbView.setVisibility(View.VISIBLE);
+                            replyMediaIconView.setVisibility(View.VISIBLE);
+                            switch (parentComment.media.get(0).type) {
+                                case Media.MEDIA_TYPE_IMAGE: {
+                                    replyMediaIconView.setImageResource(R.drawable.ic_camera);
+                                    break;
+                                }
+                                case Media.MEDIA_TYPE_VIDEO: {
+                                    replyMediaIconView.setImageResource(R.drawable.ic_video);
+                                    break;
+                                }
+                                case Media.MEDIA_TYPE_AUDIO: {
+                                    replyMediaIconView.setImageResource(R.drawable.ic_keyboard_voice);
+                                    replyMediaThumbView.setVisibility(View.GONE);
+                                    break;
+                                }
+                                case Media.MEDIA_TYPE_UNKNOWN:
+                                default: {
+                                    replyMediaIconView.setImageResource(R.drawable.ic_media_collection);
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
             }
