@@ -127,6 +127,8 @@
     <string name="no_photos_or_videos_found">"не найдены фото и видео"</string>
     <string name="gallery">"Галерея"</string>
     <string name="avatar_picker_title">"Фото профиля"</string>
+
+    <!-- Fuzzy -->
     <string name="group_avatar_picker_title">"Аватар группы"</string>
     <string name="other_media">"Другие медиа"</string>
     <string name="rotate">"Повернуть"</string>
@@ -290,7 +292,11 @@ uid: %1$s
     <string name="system_message_member_auto_promoted_you">"Ты был(-а) автоматически повышен(-а) до администратора"</string>
     <string name="system_message_group_name_changed">"%1$s изменил(-а) название группы на %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"Ты изменил(-а) название группы на %s"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed">"%s изменил(-а) аватар группы"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed_by_you">"Вы изменили аватар группы"</string>
     <string name="system_message_group_deleted">"%s удалил(-а) группу"</string>
     <string name="system_message_group_deleted_by_you">"Вы удалили группу"</string>
@@ -310,7 +316,11 @@ uid: %1$s
     <string name="system_post_member_auto_promoted_you">"Вы были автоматически повышены до администратора"</string>
     <string name="system_post_group_name_changed">"%1$s изменил(-а) название группы на %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"Вы изменили название группы на %s"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed">"%s изменил(-а) аватар группы"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed_by_you">"Вы изменили аватар группы"</string>
     <string name="system_post_group_deleted">"%s удалил(-а) группу"</string>
     <string name="system_post_group_deleted_by_you">"Вы удалили группу"</string>

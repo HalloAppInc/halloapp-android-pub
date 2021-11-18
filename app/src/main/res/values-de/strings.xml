@@ -140,6 +140,8 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="no_photos_or_videos_found">"Keine Fotos oder Videos gefunden"</string>
     <string name="gallery">"Galerie"</string>
     <string name="avatar_picker_title">"Profilbild"</string>
+
+    <!-- Fuzzy -->
     <string name="group_avatar_picker_title">"Gruppenbild"</string>
     <string name="other_media">"Andere Medien"</string>
     <string name="rotate">"Drehen"</string>
@@ -311,7 +313,11 @@ Version: %2$s
     <string name="system_message_member_auto_promoted_you">"Du wurdest automatisch zum Admin gemacht"</string>
     <string name="system_message_group_name_changed">"%1$s hat die Gruppe in %2$s umbenannt"</string>
     <string name="system_message_group_name_changed_by_you">"Du hast die Gruppe in %s umbenannt"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed">"%s hat das Gruppenbild geändert"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed_by_you">"Du hast das Gruppenbild geändert"</string>
     <string name="system_message_group_deleted">"%s hat die Gruppe gelöscht"</string>
     <string name="system_message_group_deleted_by_you">"Du hast die Gruppe gelöscht"</string>
@@ -331,7 +337,11 @@ Version: %2$s
     <string name="system_post_member_auto_promoted_you">"Du wurdest automatisch zum Admin gemacht"</string>
     <string name="system_post_group_name_changed">"%1$s hat die Gruppe in %2$s umbenannt"</string>
     <string name="system_post_group_name_changed_by_you">"Du hast die Gruppe in %s umbenannt"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed">"%s hat das Gruppenbild geändert"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed_by_you">"Du hast das Gruppenbild geändert"</string>
     <string name="system_post_group_deleted">"%s hat die Gruppe gelöscht"</string>
     <string name="system_post_group_deleted_by_you">"Du hast die Gruppe gelöscht"</string>

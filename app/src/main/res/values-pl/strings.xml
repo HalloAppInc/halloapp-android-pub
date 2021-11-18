@@ -127,6 +127,8 @@ Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
     <string name="no_photos_or_videos_found">"Nie znaleziono żadnych zdjęć ani filmów"</string>
     <string name="gallery">"Galeria"</string>
     <string name="avatar_picker_title">"Zdjęcie profilowe"</string>
+
+    <!-- Fuzzy -->
     <string name="group_avatar_picker_title">"Awatar grupy"</string>
     <string name="other_media">"Inne multimedia"</string>
     <string name="rotate">"Obróć"</string>
@@ -290,7 +292,11 @@ wersja: %2$s
     <string name="system_message_member_auto_promoted_you">"Automatycznie nadano ci rolę administratora"</string>
     <string name="system_message_group_name_changed">"Użytkownik %1$s zmienił nazwę grupy na %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"Zmieniono nazwę grupy na %s"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed">"Użytkownik %s zmienił awatar grupy"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed_by_you">"Zmieniono awatar grupy"</string>
     <string name="system_message_group_deleted">"Użytkownik %s usunął grupę"</string>
     <string name="system_message_group_deleted_by_you">"Usunięto grupę"</string>
@@ -310,7 +316,11 @@ wersja: %2$s
     <string name="system_post_member_auto_promoted_you">"Automatycznie nadano ci rolę administratora"</string>
     <string name="system_post_group_name_changed">"Użytkownik %1$s zmienił nazwę grupy na %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"Zmieniono nazwę grupy na %s"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed">"Użytkownik %s zmienił awatar grupy"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed_by_you">"Zmieniono awatar grupy"</string>
     <string name="system_post_group_deleted">"Użytkownik %s usunął grupę"</string>
     <string name="system_post_group_deleted_by_you">"Usunięto grupę"</string>

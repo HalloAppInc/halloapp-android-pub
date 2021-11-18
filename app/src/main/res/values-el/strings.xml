@@ -124,6 +124,8 @@
     <string name="no_photos_or_videos_found">"Δεν βρέθηκαν φωτογραφίες ή βίντεο"</string>
     <string name="gallery">"Συλλογή"</string>
     <string name="avatar_picker_title">"Φωτογραφία προφίλ"</string>
+
+    <!-- Fuzzy -->
     <string name="group_avatar_picker_title">"Εικόνα ομάδας"</string>
     <string name="other_media">"Άλλα μέσα"</string>
     <string name="rotate">"Περιστροφή"</string>
@@ -279,7 +281,11 @@ uid: %1$s
     <string name="system_message_member_auto_promoted_you">"Αναβαθμιστήκατε αυτόματα σε διαχειριστή"</string>
     <string name="system_message_group_name_changed">"Ο χρήστης %1$s άλλαξε το όνομα της ομάδας σε %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"Αλλάξατε το όνομα της ομάδας σε %s"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed">"Ο χρήστης %s άλλαξε την εικόνα της ομάδας"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed_by_you">"Αλλάξατε την εικόνα της ομάδας"</string>
     <string name="system_message_group_deleted">"Ο χρήστης %s διέγραψε την ομάδα"</string>
     <string name="system_message_group_deleted_by_you">"Διαγράψατε την ομάδα"</string>
@@ -299,7 +305,11 @@ uid: %1$s
     <string name="system_post_member_auto_promoted_you">"Προωθηθήκατε αυτόματα σε διαχειριστή"</string>
     <string name="system_post_group_name_changed">"Ο χρήστης %1$s άλλαξε το όνομα ομάδας σε %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"Αλλάξατε το όνομα ομάδας σε %s"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed">"Ο χρήστης %s άλλαξε την εικόνα της ομάδας"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed_by_you">"Αλλάξατε την εικόνα της ομάδας"</string>
     <string name="system_post_group_deleted">"Ο χρήστης %s διέγραψε την ομάδα"</string>
     <string name="system_post_group_deleted_by_you">"Διαγράψατε την ομάδα"</string>

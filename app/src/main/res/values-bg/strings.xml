@@ -132,6 +132,8 @@
     <string name="no_photos_or_videos_found">"Не са намерени снимки или видео"</string>
     <string name="gallery">"Галерия"</string>
     <string name="avatar_picker_title">"Профилна снимка"</string>
+
+    <!-- Fuzzy -->
     <string name="group_avatar_picker_title">"Аватар на група"</string>
     <string name="other_media">"Друга медия"</string>
     <string name="rotate">"Завърти"</string>
@@ -287,7 +289,11 @@ uid: %1$s
     <string name="system_message_member_auto_promoted_you">"Вие бяхте автоматично повишен до администратор"</string>
     <string name="system_message_group_name_changed">"%1$s промени името на групата на %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"Вие променихте името на групата на %s"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed">"%s промени аватара на групата"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed_by_you">"Вие променихте аватара на групата"</string>
     <string name="system_message_group_deleted">"%s изтри групата"</string>
     <string name="system_message_group_deleted_by_you">"Вие изтрихте тази група"</string>
@@ -307,7 +313,11 @@ uid: %1$s
     <string name="system_post_member_auto_promoted_you">"Бяхте автоматично повишени до администратор"</string>
     <string name="system_post_group_name_changed">"%1$s промени името на групата на %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"Променихте името на групата на %s"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed">"%s промени аватара на групата"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed_by_you">"Променихте аватара на групата"</string>
     <string name="system_post_group_deleted">"%s изтри групата"</string>
     <string name="system_post_group_deleted_by_you">"Изтрихте групата"</string>

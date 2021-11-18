@@ -131,6 +131,8 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="no_photos_or_videos_found">"Fotoğraf veya video bulunamadı"</string>
     <string name="gallery">"Galeri"</string>
     <string name="avatar_picker_title">"Profil fotoğrafı"</string>
+
+    <!-- Fuzzy -->
     <string name="group_avatar_picker_title">"Grup simgesi"</string>
     <string name="other_media">"Diğer görseller"</string>
     <string name="rotate">"Döndür"</string>
@@ -283,7 +285,11 @@ version: %2$s
     <string name="system_message_member_auto_promoted_you">"Otomatik olarak yönetici oldun"</string>
     <string name="system_message_group_name_changed">"%1$s, grubun adını %2$s olarak değiştirdi"</string>
     <string name="system_message_group_name_changed_by_you">"Grubun adını %s olarak değiştirdin"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed">"%s, grubun simgesini değiştirdi"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed_by_you">"Grubun simgesini değiştirdin"</string>
     <string name="system_message_group_deleted">"%s, grubu sildi"</string>
     <string name="system_message_group_deleted_by_you">"Grubu sildin"</string>
@@ -303,7 +309,11 @@ version: %2$s
     <string name="system_post_member_auto_promoted_you">"Otomatik olarak yönetici oldun"</string>
     <string name="system_post_group_name_changed">"%1$s, grubun adını %2$s olarak değiştirdi"</string>
     <string name="system_post_group_name_changed_by_you">"Grubun adını %s olarak değiştirdin"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed">"%s, grubun simgesini değiştirdi"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed_by_you">"Grubun simgesini değiştirdin"</string>
     <string name="system_post_group_deleted">"%s, grubu sildi"</string>
     <string name="system_post_group_deleted_by_you">"Grubu sildin"</string>

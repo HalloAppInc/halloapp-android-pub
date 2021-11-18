@@ -137,6 +137,8 @@
     <string name="no_photos_or_videos_found">"لم يتم العثور على أي صور أو مقاطع فيديو"</string>
     <string name="gallery">"المعرض"</string>
     <string name="avatar_picker_title">"صورة الملف الشخصي"</string>
+
+    <!-- Fuzzy -->
     <string name="group_avatar_picker_title">"صورة المجموعة"</string>
     <string name="other_media">"وسائط أخرى"</string>
     <string name="rotate">"تدوير"</string>
@@ -326,7 +328,11 @@
     <string name="system_message_member_auto_promoted_you">"تم تلقائياً تعيينك مشرفاً"</string>
     <string name="system_message_group_name_changed">"%1$s غيّر اسم المجموعة إلى %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"أنت غيّرت اسم المجموعة إلى %s"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed">"%s غيّر صورة المجموعة"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed_by_you">"أنت غيّرت صورة المجموعة"</string>
     <string name="system_message_group_deleted">"%s حذف المجموعة"</string>
     <string name="system_message_group_deleted_by_you">"أنت حذفت المجموعة"</string>
@@ -346,7 +352,11 @@
     <string name="system_post_member_auto_promoted_you">"أنت تم تلقائياً تعيينك مشرفاً"</string>
     <string name="system_post_group_name_changed">"%1$s غيّر اسم المجموعة إلى %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"أنت غيّرت اسم المجموعة إلى %s"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed">"%s غيّر صورة المجموعة"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed_by_you">"أنت غيّرت صورة المجموعة"</string>
     <string name="system_post_group_deleted">"%s حذف المجموعة"</string>
     <string name="system_post_group_deleted_by_you">"أنت حذفت المجموعة"</string>

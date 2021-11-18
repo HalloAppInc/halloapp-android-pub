@@ -125,6 +125,8 @@ Para modificar los permisos de la aplicación, abre la pantalla de configuració
     <string name="no_photos_or_videos_found">"No se encontraron fotos o videos"</string>
     <string name="gallery">"Galería de fotos"</string>
     <string name="avatar_picker_title">"Foto de perfil"</string>
+
+    <!-- Fuzzy -->
     <string name="group_avatar_picker_title">"Avatar del grupo"</string>
     <string name="other_media">"Otros medios"</string>
     <string name="rotate">"Girar"</string>
@@ -292,7 +294,11 @@ versión: %2$s
     <string name="system_message_member_auto_promoted_you">"Tú fuiste autopromovido como administrador"</string>
     <string name="system_message_group_name_changed">"%1$s cambió el nombre del grupo a %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"Tú cambiaste el nombre del grupo a %s"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed">"%s cambió el avatar del grupo"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed_by_you">"Tú cambiaste el avatar del grupo"</string>
     <string name="system_message_group_deleted">"%s eliminó el grupo"</string>
     <string name="system_message_group_deleted_by_you">"Tú eliminaste el grupo"</string>
@@ -312,7 +318,11 @@ versión: %2$s
     <string name="system_post_member_auto_promoted_you">"Tú fuiste ascendido a administrador"</string>
     <string name="system_post_group_name_changed">"%1$s cambió el nombre del grupo a %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"Tú cambiaste el nombre del grupo a %s"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed">"%s cambió el avatar del grupo"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed_by_you">"Tú cambiaste el avatar del grupo"</string>
     <string name="system_post_group_deleted">"%s eliminó el grupo"</string>
     <string name="system_post_group_deleted_by_you">"Tú eliminaste el grupo"</string>

@@ -126,6 +126,8 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="no_photos_or_videos_found">"Geen foto's of video's gevonden"</string>
     <string name="gallery">"Galerij"</string>
     <string name="avatar_picker_title">"Profielfoto"</string>
+
+    <!-- Fuzzy -->
     <string name="group_avatar_picker_title">"Groepsafbeelding"</string>
     <string name="other_media">"Andere media"</string>
     <string name="rotate">"Draaien"</string>
@@ -277,7 +279,11 @@ versie: %2$s
     <string name="system_message_member_auto_promoted_you">"Je bent automatisch beheerder geworden"</string>
     <string name="system_message_group_name_changed">"%1$s heeft de groepsnaam gewijzigd in %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"Je hebt de groepsnaam gewijzigd in %s"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed">"%s heeft de groepsafbeelding gewijzigd"</string>
+
+    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed_by_you">"Je hebt de groepsafbeelding gewijzigd"</string>
     <string name="system_message_group_deleted">"%s heeft de groep verwijderd"</string>
     <string name="system_message_group_deleted_by_you">"Je hebt de groep verwijderd"</string>
@@ -297,7 +303,11 @@ versie: %2$s
     <string name="system_post_member_auto_promoted_you">"Je bent automatisch beheerder geworden"</string>
     <string name="system_post_group_name_changed">"%1$s heeft de groepsnaam gewijzigd in %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"Je hebt de groepsnaam gewijzigd in %s"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed">"%s heeft de groepsafbeelding gewijzigd"</string>
+
+    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed_by_you">"Je hebt de groepsafbeelding gewijzigd"</string>
     <string name="system_post_group_deleted">"%s heeft de groep verwijderd"</string>
     <string name="system_post_group_deleted_by_you">"Je hebt de groep verwijderd"</string>
@@ -908,7 +918,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="zero_zone_home_nux_header">"Welkom bij HalloApp, een digitale ruimte voor echte relaties ✨"</string>
 
     <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
-    <string name="zero_zone_home_nux_text_one">"Gebruik je telefoonnummer om je te verbinden met vrienden &amp; familie in een ruimte zonder advertenties, merken, likes en influencers."</string>
+    <string name="zero_zone_home_nux_text_one">"Gebruik je telefoonnummer om je te verbinden met vrienden &amp; familie in een ruimte zonder advertenties, zonder merken, zonder likes en zonder influencers."</string>
 
     <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
     <string name="zero_zone_home_nux_text_two">"HalloApp is voor jou en degenen die het dichtst bij je staan, volledig in privé. Nodig je echte vrienden uit om te beginnen"</string>
