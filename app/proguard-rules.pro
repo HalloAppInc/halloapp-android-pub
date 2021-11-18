@@ -41,3 +41,5 @@
 # https://github.com/sannies/mp4parser/blob/master/isoparser/src/main/java/org/mp4parser/PropertyBoxParserImpl.java
 # is loading box classes using reflection.
 -keep class org.mp4parser.boxes.** { *; }
+
+-keep class org.webrtc.** { *; }
