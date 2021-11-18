@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.AppContext;
 import com.halloapp.Me;
 import com.halloapp.crypto.CryptoByteUtils;
@@ -19,8 +20,11 @@ import com.halloapp.crypto.group.GroupFeedMessageKey;
 import com.halloapp.crypto.signal.SignalMessageKey;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.IdentityKey;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.Connection;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -249,10 +253,30 @@ public class EncryptedKeyStore {
             if (!Arrays.equals(current.getKeyMaterial(), previous.getKeyMaterial())) {
                 Log.e("EncryptedKeyStore: Previous identity key was " + Base64.encodeToString(previous.getKeyMaterial(), Base64.NO_WRAP)
                         + " but current is " + Base64.encodeToString(current.getKeyMaterial(), Base64.NO_WRAP));
-                Log.sendErrorReport("Identity key changed");
+                Log.sendErrorReport("Local identity key changed");
             }
         }
         setMyPreviousPublicEd25519IdentityKey(current);
+
+        Me me = Me.getInstance();
+        Connection.getInstance().downloadKeys(new UserId(me.getUser()))
+                .onResponse(response -> {
+                    try {
+                        IdentityKey identityKeyProto = IdentityKey.parseFrom(response.identityKey);
+                        byte[] remote = identityKeyProto.getPublicKey().toByteArray();
+                        byte[] local = current.getKeyMaterial();
+                        Log.i("Remote identity key: " + StringUtils.bytesToHexString(remote));
+                        Log.i("Local identity key: " + StringUtils.bytesToHexString(local));
+                        if (!Arrays.equals(remote, local)) {
+                            Log.e("Remote and local identity key do not match");
+                            Log.sendErrorReport("Local identity key does not match remote");
+                        }
+                    } catch (InvalidProtocolBufferException e) {
+                        Log.e("Failed to parse own identity key proto", e);
+                    }
+                }).onError(err -> {
+                    Log.w("Failed to fetch own identity key for verification", err);
+                });
     }
 
     private void setMyPreviousPublicEd25519IdentityKey(PublicEdECKey key) {
