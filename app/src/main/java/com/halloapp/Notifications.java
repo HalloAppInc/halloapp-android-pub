@@ -32,7 +32,6 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
-import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -73,6 +72,7 @@ public class Notifications {
     private static final String CRITICAL_NOTIFICATION_CHANNEL_ID = "critical_notifications";
     private static final String INVITE_NOTIFICATION_CHANNEL_ID = "invite_notifications";
     private static final String GROUPS_NOTIFICATION_CHANNEL_ID = "group_notifications";
+    private static final String BROADCASTS_NOTIFICATION_CHANNEL_ID = "broadcast_notifications";
 
     private static final String MESSAGE_NOTIFICATION_GROUP_KEY = "message_notification";
     private static final String REPLY_TEXT_KEY = "reply_text";
@@ -136,6 +136,9 @@ public class Notifications {
             final NotificationChannel criticalNotificationsChannel = new NotificationChannel(CRITICAL_NOTIFICATION_CHANNEL_ID, context.getString(R.string.critical_notifications_channel_name), NotificationManager.IMPORTANCE_HIGH);
             criticalNotificationsChannel.enableLights(true);
             criticalNotificationsChannel.enableVibration(true);
+            final NotificationChannel broadcastNotificationsChannel = new NotificationChannel(BROADCASTS_NOTIFICATION_CHANNEL_ID, context.getString(R.string.broadcast_notifications_channel_name), NotificationManager.IMPORTANCE_HIGH);
+            criticalNotificationsChannel.enableLights(true);
+            criticalNotificationsChannel.enableVibration(true);
             final NotificationChannel inviteNotificationsChannel = new NotificationChannel(INVITE_NOTIFICATION_CHANNEL_ID, context.getString(R.string.invite_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
             final NotificationChannel groupNotificationsChannel = new NotificationChannel(GROUPS_NOTIFICATION_CHANNEL_ID, context.getString(R.string.group_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
 
@@ -145,6 +148,7 @@ public class Notifications {
             notificationManager.createNotificationChannel(criticalNotificationsChannel);
             notificationManager.createNotificationChannel(inviteNotificationsChannel);
             notificationManager.createNotificationChannel(groupNotificationsChannel);
+            notificationManager.createNotificationChannel(broadcastNotificationsChannel);
         }
     }
 

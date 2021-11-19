@@ -16,6 +16,8 @@
     <string name="feed_notifications_channel_name">Feed notifications</string>
     <string name="message_notifications_channel_name">Message notifications</string>
     <string name="critical_notifications_channel_name">Critical app alerts</string>
+    <!-- Name for notifications that come out as a broadcast from the server -->
+    <string name="broadcast_notifications_channel_name">Alerts from HalloApp</string>
     <string name="invite_notifications_channel_name">Invite notifications</string>
     <string name="invite_notification_text">%s just accepted your invite to join HalloApp 🎉</string>
     <string name="me">Me</string>
