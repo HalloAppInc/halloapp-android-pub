@@ -96,6 +96,7 @@ public class ContentDb {
         void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId);
         void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId);
         void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts);
+        void onGroupSeen(@NonNull GroupId groupId);
         void onChatDeleted(@NonNull ChatId chatId);
         void onFeedCleanup();
         void onDbCreated();
@@ -128,6 +129,7 @@ public class ContentDb {
         public void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {}
         public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {}
         public void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts) {}
+        public void onGroupSeen(@NonNull GroupId groupId) { }
         public void onChatDeleted(@NonNull ChatId chatId) {}
         public void onArchivedPostRemoved(@NonNull Post post) {}
 
@@ -1150,6 +1152,13 @@ public class ContentDb {
             }
             messagesDb.deleteChat(chatId);
             observers.notifyChatDeleted(chatId);
+        });
+    }
+
+    public void setGroupSeen(@NonNull GroupId groupId) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.setGroupSeen(groupId);
+            observers.notifyGroupSeen(groupId);
         });
     }
 

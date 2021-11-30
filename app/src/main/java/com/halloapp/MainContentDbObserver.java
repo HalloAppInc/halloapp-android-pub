@@ -223,6 +223,11 @@ public class MainContentDbObserver implements ContentDb.Observer {
     }
 
     @Override
+    public void onGroupSeen(@NonNull GroupId groupId) {
+
+    }
+
+    @Override
     public void onChatDeleted(@NonNull ChatId chatId) {
 
     }

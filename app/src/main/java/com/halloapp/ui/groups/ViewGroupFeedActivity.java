@@ -30,6 +30,7 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.content.ContentDb;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.ContentComposerActivity;
@@ -146,6 +147,7 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
             if (chat != null) {
                 titleView.setText(chat.name);
                 avatarLoader.load(avatarView, groupId, false);
+                ContentDb.getInstance().setGroupSeen((GroupId) chat.chatId);
             } else {
                 titleView.setText(null);
             }

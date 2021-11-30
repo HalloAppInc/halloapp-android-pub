@@ -61,6 +61,11 @@ public class MainViewModel extends AndroidViewModel {
             unseenChatsCount.invalidate();
         }
 
+        @Override
+        public void onGroupSeen(@NonNull GroupId groupId) {
+            unseenGroupsCount.invalidate();
+        }
+
         public void onChatDeleted(@NonNull ChatId chatId) {
             if (chatId instanceof GroupId) {
                 unseenGroupsCount.invalidate();

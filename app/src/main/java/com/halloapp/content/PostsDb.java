@@ -306,6 +306,24 @@ class PostsDb {
     }
 
     @WorkerThread
+    void setGroupSeen(@NonNull GroupId groupId) {
+        Log.i("ContentDb.setGroupSeen: groupId=" + groupId);
+        final ContentValues values = new ContentValues();
+        values.put(PostsTable.COLUMN_SEEN, Post.SEEN_NO_HIDDEN);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
+                    PostsTable.COLUMN_GROUP_ID + "=? AND " + PostsTable.COLUMN_SEEN + "=? AND " + PostsTable.COLUMN_TIMESTAMP + "<?",
+                    new String [] {groupId.rawId(), Integer.toString(Post.SEEN_NO), Long.toString(System.currentTimeMillis())},
+                    SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLException ex) {
+            Log.e("ContentDb.setIncomingPostSeen: failed");
+            throw ex;
+        }
+    }
+
+
+    @WorkerThread
     void setZeroZoneGroupPostSeen(@NonNull String postId) {
         Log.i("ContentDb.setZeroZoneGroupPostSeen: postId=" + postId);
         final ContentValues values = new ContentValues();
