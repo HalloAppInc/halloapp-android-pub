@@ -1017,5 +1017,8 @@ Otevři nastavení aplikace a uprav oprávnění aplikace."</string>
 
     <!-- action where the user shares -->
     <string name="share_action">"Share"</string>
+
+    <!-- Name for notifications that come out as a broadcast from the server -->
+    <string name="broadcast_notifications_channel_name">"Alerts from HalloApp"</string>
 <string name="add_invite">"Add"</string><string name="share_option_group">"Přidat příspěvek do skupiny"</string><string name="select_group">"Vybrat skupinu"</string></resources>
 

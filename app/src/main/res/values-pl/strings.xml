@@ -1018,5 +1018,8 @@ Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
 
     <!-- action where the user shares -->
     <string name="share_action">"Share"</string>
+
+    <!-- Name for notifications that come out as a broadcast from the server -->
+    <string name="broadcast_notifications_channel_name">"Alerts from HalloApp"</string>
 </resources>
 

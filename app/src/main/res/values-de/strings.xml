@@ -140,9 +140,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="no_photos_or_videos_found">"Keine Fotos oder Videos gefunden"</string>
     <string name="gallery">"Galerie"</string>
     <string name="avatar_picker_title">"Profilbild"</string>
-
-    <!-- Fuzzy -->
-    <string name="group_avatar_picker_title">"Gruppenbild"</string>
+    <string name="group_avatar_picker_title">"Gruppen-Symbol"</string>
     <string name="other_media">"Andere Medien"</string>
     <string name="rotate">"Drehen"</string>
 
@@ -313,12 +311,8 @@ Version: %2$s
     <string name="system_message_member_auto_promoted_you">"Du wurdest automatisch zum Admin gemacht"</string>
     <string name="system_message_group_name_changed">"%1$s hat die Gruppe in %2$s umbenannt"</string>
     <string name="system_message_group_name_changed_by_you">"Du hast die Gruppe in %s umbenannt"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_message_group_avatar_changed">"%s hat das Gruppenbild geändert"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_message_group_avatar_changed_by_you">"Du hast das Gruppenbild geändert"</string>
+    <string name="system_message_group_avatar_changed">"%s hat das Gruppen-Symbol geändert"</string>
+    <string name="system_message_group_avatar_changed_by_you">"Du hast das Gruppen-Symbol geändert"</string>
     <string name="system_message_group_deleted">"%s hat die Gruppe gelöscht"</string>
     <string name="system_message_group_deleted_by_you">"Du hast die Gruppe gelöscht"</string>
     <string name="system_post_group_created">"%s hat diese Gruppe gegründet"</string>
@@ -337,12 +331,8 @@ Version: %2$s
     <string name="system_post_member_auto_promoted_you">"Du wurdest automatisch zum Admin gemacht"</string>
     <string name="system_post_group_name_changed">"%1$s hat die Gruppe in %2$s umbenannt"</string>
     <string name="system_post_group_name_changed_by_you">"Du hast die Gruppe in %s umbenannt"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_post_group_avatar_changed">"%s hat das Gruppenbild geändert"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_post_group_avatar_changed_by_you">"Du hast das Gruppenbild geändert"</string>
+    <string name="system_post_group_avatar_changed">"%s hat das Gruppen-Symbol geändert"</string>
+    <string name="system_post_group_avatar_changed_by_you">"Du hast das Gruppen-Symbol geändert"</string>
     <string name="system_post_group_deleted">"%s hat die Gruppe gelöscht"</string>
     <string name="system_post_group_deleted_by_you">"Du hast die Gruppe gelöscht"</string>
     <string name="group_info_title">"Gruppen-Info"</string>
@@ -1015,5 +1005,8 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- action where the user shares -->
     <string name="share_action">"Teilen"</string>
+
+    <!-- Name for notifications that come out as a broadcast from the server -->
+    <string name="broadcast_notifications_channel_name">"Benachrichtigungen von HalloApp"</string>
 <string name="add_invite">"Hinzufügen"</string><string name="share_option_group">"In Gruppe teilen"</string><string name="select_group">"Gruppe auswählen"</string></resources>
 

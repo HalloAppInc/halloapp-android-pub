@@ -914,22 +914,22 @@ Uygulama izinlerini değiştirmek için Uygulama Ayarları ekranını aç."</str
     <string name="tap_to_change">"Değiştirmek için dokun"</string>
 
     <!-- Title for bottom sheet that comes up telling a user to invite friends to a group -->
-    <string name="invite_group_zero_zone_title">"Invite a friend to your group"</string>
+    <string name="invite_group_zero_zone_title">"Grubuna bir arkadaşını davet et"</string>
 
     <!-- Explanation text for bottom sheet shown telling user to share an invite link to invite friends -->
-    <string name="invite_group_zero_zone_details">"Share this link with friends and they'll automatically join your group."</string>
+    <string name="invite_group_zero_zone_details">"Bu ilişimi arkadaşlarınla paylaşarak otomatik olarak grubuna katılmalarını sağla"</string>
 
     <!-- initial group created for the user where %s is replaced with their name. should indicate that it is their group -->
-    <string name="zero_zone_group_name">"%s's group"</string>
+    <string name="zero_zone_group_name">"%s kişisinin grubu"</string>
 
     <!-- Title for option to invite a contact using an invite link -->
-    <string name="invite_via_link">"Invite via link"</string>
+    <string name="invite_via_link">"İlişim yoluyla davet et"</string>
 
     <!-- Text shown as subheader for inviting friends section -->
-    <string name="invite_friends_header">"Invite friends"</string>
+    <string name="invite_friends_header">"Arkadaşlarını davet et"</string>
 
     <!-- Text shown as preview for invite friends group post -->
-    <string name="invite_friends_post_preview">"Invite a friend to your group"</string>
+    <string name="invite_friends_post_preview">"Grubuna bir arkadaşını davet et"</string>
 
     <!-- Title for home post explaining what HalloApp is -->
     <string name="zero_zone_home_nux_header">"HalloApp'e hoş geldin! HalloApp sana gerçek ilişkilerin için bir alan sunuyor ✨"</string>
@@ -941,54 +941,57 @@ Uygulama izinlerini değiştirmek için Uygulama Ayarları ekranını aç."</str
     <string name="zero_zone_home_nux_text_two">"HalloApp sen ve sana yakın olan insanlar için özel bir alan. Başlamak için arkadaşlarını davet et."</string>
 
     <!-- Action for user to start their delete accoount process under 'account' -->
-    <string name="delete_my_account_action">"Delete my account"</string>
+    <string name="delete_my_account_action">"Hesabımı sil"</string>
 
     <!-- Top line before the other delete account bullets. Will explain what deleting your account entails -->
-    <string name="delete_account_explanation_title">"Deleting your account will:"</string>
+    <string name="delete_account_explanation_title">"Hesabın silinirse:"</string>
 
     <!-- First account deletion bullet saying the profile photo will be deleted -->
-    <string name="delete_account_explanation_bullet_one">"• Delete your account information and profile photo"</string>
+    <string name="delete_account_explanation_bullet_one">"• Hesap bilgilerin ve profil fotoğrafın silinir"</string>
 
     <!-- Second account deletion bullet saying the you will be removed from all group -->
-    <string name="delete_account_explanation_bullet_two">"• Remove you from all HalloApp groups"</string>
+    <string name="delete_account_explanation_bullet_two">"• Bütün HalloApp gruplarından çıkarsın"</string>
 
     <!-- Third account deletion bullet explaining message history will be deleted -->
-    <string name="delete_account_explanation_bullet_three">"• Delete your message history on this phone"</string>
+    <string name="delete_account_explanation_bullet_three">"• Bu telefondaki mesaj geçmişi silinir"</string>
 
     <!-- Instructions shown above delete account entry -->
-    <string name="delete_account_instructions">"To delete your account, confirm your phone number. This cannot be undone"</string>
+    <string name="delete_account_instructions">"Hesabının silinmesi için telefon numaranı doğrula. Bu işlem geri alınamaz. "</string>
 
     <!-- Progress message while account is deleting -->
-    <string name="delete_account_in_progress">"Deleting your account…"</string>
+    <string name="delete_account_in_progress">"Hesabın siliniyor…"</string>
 
     <!-- Text box hint for optional field for adding feedback for why you are deleting your account -->
-    <string name="delete_account_feedback_hint">"Feedback for HalloApp (Optional)"</string>
+    <string name="delete_account_feedback_hint">"HalloApp için geribildirim (isteğe bağlı)"</string>
 
     <!-- Message shown in dialog asking if user is sure they want to delete their account -->
-    <string name="delete_account_confirmation_message">"Are you sure that you want to delete your account? This cannot be undone"</string>
+    <string name="delete_account_confirmation_message">"Hesabını silmek istediğine emin misin? Bu işlem geri alınamaz."</string>
 
     <!-- Title for the screen where we display where your storage is being used -->
-    <string name="storage_usage_title">"Storage usage"</string>
+    <string name="storage_usage_title">"Depolama kullanımı"</string>
 
     <!-- Storage usage section header for home feed category -->
-    <string name="storage_usage_home">"Home feed"</string>
+    <string name="storage_usage_home">"Ana sayfa"</string>
 
     <!-- Storage usage section header for chats category -->
-    <string name="storage_usage_chats">"Chats"</string>
+    <string name="storage_usage_chats">"Sohbetler"</string>
 
     <!-- Storage usage section header for groups category -->
-    <string name="storage_usage_groups">"Groups"</string>
+    <string name="storage_usage_groups">"Gruplar"</string>
 
     <!-- Storage usage section header for other category -->
-    <string name="storage_usage_internal">"Other"</string>
+    <string name="storage_usage_internal">"Diğer"</string>
 
     <!-- Storage usage section header for archive category -->
-    <string name="storage_usage_archive">"Archive"</string>
+    <string name="storage_usage_archive">"Arşivle"</string>
 
     <!-- Text shown in button for inviting friends -->
-    <string name="invite_action">"Invite"</string>
+    <string name="invite_action">"Davet et"</string>
 
     <!-- action where the user shares -->
-    <string name="share_action">"Share"</string>
+    <string name="share_action">"Paylaş"</string>
+
+    <!-- Name for notifications that come out as a broadcast from the server -->
+    <string name="broadcast_notifications_channel_name">"Alerts from HalloApp"</string>
 <string name="add_invite">"Add"</string><string name="share_option_group">"Gruba gönder"</string><string name="select_group">"Grup seç"</string></resources>
 
