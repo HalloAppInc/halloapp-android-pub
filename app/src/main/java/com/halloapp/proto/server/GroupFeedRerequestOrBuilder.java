@@ -21,7 +21,7 @@ public interface GroupFeedRerequestOrBuilder extends
 
   /**
    * <pre>
-   * Post id or Comment id.
+   * Post id or Comment id or HistoryResend id
    * </pre>
    *
    * <code>string id = 2;</code>
@@ -30,7 +30,7 @@ public interface GroupFeedRerequestOrBuilder extends
   java.lang.String getId();
   /**
    * <pre>
-   * Post id or Comment id.
+   * Post id or Comment id or HistoryResend id
    * </pre>
    *
    * <code>string id = 2;</code>

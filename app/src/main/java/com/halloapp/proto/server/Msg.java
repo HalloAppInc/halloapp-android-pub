@@ -182,6 +182,7 @@ public  final class Msg extends
     ANSWER_CALL(36),
     END_CALL(37),
     ICE_CANDIDATE(38),
+    MARKETING_ALERT(39),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -229,6 +230,7 @@ public  final class Msg extends
         case 36: return ANSWER_CALL;
         case 37: return END_CALL;
         case 38: return ICE_CANDIDATE;
+        case 39: return MARKETING_ALERT;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2006,6 +2008,76 @@ public  final class Msg extends
    */
   private void clearIceCandidate() {
     if (payloadCase_ == 38) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int MARKETING_ALERT_FIELD_NUMBER = 39;
+  /**
+   * <pre>
+   * only for server use
+   * </pre>
+   *
+   * <code>.server.MarketingAlert marketing_alert = 39;</code>
+   */
+  @java.lang.Override
+  public boolean hasMarketingAlert() {
+    return payloadCase_ == 39;
+  }
+  /**
+   * <pre>
+   * only for server use
+   * </pre>
+   *
+   * <code>.server.MarketingAlert marketing_alert = 39;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.MarketingAlert getMarketingAlert() {
+    if (payloadCase_ == 39) {
+       return (com.halloapp.proto.server.MarketingAlert) payload_;
+    }
+    return com.halloapp.proto.server.MarketingAlert.getDefaultInstance();
+  }
+  /**
+   * <pre>
+   * only for server use
+   * </pre>
+   *
+   * <code>.server.MarketingAlert marketing_alert = 39;</code>
+   */
+  private void setMarketingAlert(com.halloapp.proto.server.MarketingAlert value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 39;
+  }
+  /**
+   * <pre>
+   * only for server use
+   * </pre>
+   *
+   * <code>.server.MarketingAlert marketing_alert = 39;</code>
+   */
+  private void mergeMarketingAlert(com.halloapp.proto.server.MarketingAlert value) {
+    value.getClass();
+  if (payloadCase_ == 39 &&
+        payload_ != com.halloapp.proto.server.MarketingAlert.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.MarketingAlert.newBuilder((com.halloapp.proto.server.MarketingAlert) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 39;
+  }
+  /**
+   * <pre>
+   * only for server use
+   * </pre>
+   *
+   * <code>.server.MarketingAlert marketing_alert = 39;</code>
+   */
+  private void clearMarketingAlert() {
+    if (payloadCase_ == 39) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -3882,6 +3954,78 @@ public  final class Msg extends
     }
 
     /**
+     * <pre>
+     * only for server use
+     * </pre>
+     *
+     * <code>.server.MarketingAlert marketing_alert = 39;</code>
+     */
+    @java.lang.Override
+    public boolean hasMarketingAlert() {
+      return instance.hasMarketingAlert();
+    }
+    /**
+     * <pre>
+     * only for server use
+     * </pre>
+     *
+     * <code>.server.MarketingAlert marketing_alert = 39;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.MarketingAlert getMarketingAlert() {
+      return instance.getMarketingAlert();
+    }
+    /**
+     * <pre>
+     * only for server use
+     * </pre>
+     *
+     * <code>.server.MarketingAlert marketing_alert = 39;</code>
+     */
+    public Builder setMarketingAlert(com.halloapp.proto.server.MarketingAlert value) {
+      copyOnWrite();
+      instance.setMarketingAlert(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * only for server use
+     * </pre>
+     *
+     * <code>.server.MarketingAlert marketing_alert = 39;</code>
+     */
+    public Builder setMarketingAlert(
+        com.halloapp.proto.server.MarketingAlert.Builder builderForValue) {
+      copyOnWrite();
+      instance.setMarketingAlert(builderForValue.build());
+      return this;
+    }
+    /**
+     * <pre>
+     * only for server use
+     * </pre>
+     *
+     * <code>.server.MarketingAlert marketing_alert = 39;</code>
+     */
+    public Builder mergeMarketingAlert(com.halloapp.proto.server.MarketingAlert value) {
+      copyOnWrite();
+      instance.mergeMarketingAlert(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * only for server use
+     * </pre>
+     *
+     * <code>.server.MarketingAlert marketing_alert = 39;</code>
+     */
+    public Builder clearMarketingAlert() {
+      copyOnWrite();
+      instance.clearMarketingAlert();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -3993,14 +4137,15 @@ public  final class Msg extends
             com.halloapp.proto.server.AnswerCall.class,
             com.halloapp.proto.server.EndCall.class,
             com.halloapp.proto.server.IceCandidate.class,
+            com.halloapp.proto.server.MarketingAlert.class,
           };
           java.lang.String info =
-              "\u0000&\u0001\u0000\u0001&&\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
-              "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
-              "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
-              "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
-              "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
-              " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000";
+              "\u0000\'\u0001\u0000\u0001\'\'\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002" +
+              "\u0004\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b" +
+              "<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012" +
+              "<\u0000\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000" +
+              "\u0019\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f" +
+              "<\u0000 <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -170,5 +170,16 @@ public interface EventDataOrBuilder extends
    */
   com.halloapp.proto.log_events.GroupDecryptionReport getGroupDecryptionReport();
 
+  /**
+   * <code>.server.Call call = 18;</code>
+   * @return Whether the call field is set.
+   */
+  boolean hasCall();
+  /**
+   * <code>.server.Call call = 18;</code>
+   * @return The call.
+   */
+  com.halloapp.proto.log_events.Call getCall();
+
   public com.halloapp.proto.log_events.EventData.EdataCase getEdataCase();
 }

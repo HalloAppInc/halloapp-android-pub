@@ -63,6 +63,30 @@ public  final class EndCall extends
      * <code>CANCEL = 5;</code>
      */
     CANCEL(5),
+    /**
+     * <pre>
+     * receiver could not decrypt the content.
+     * </pre>
+     *
+     * <code>DECRYPTION_FAILED = 6;</code>
+     */
+    DECRYPTION_FAILED(6),
+    /**
+     * <pre>
+     * receiver could not encrypt the answer.
+     * </pre>
+     *
+     * <code>ENCRYPTION_FAILED = 7;</code>
+     */
+    ENCRYPTION_FAILED(7),
+    /**
+     * <pre>
+     * system errors or crashes.
+     * </pre>
+     *
+     * <code>SYSTEM_ERROR = 8;</code>
+     */
+    SYSTEM_ERROR(8),
     UNRECOGNIZED(-1),
     ;
 
@@ -110,6 +134,30 @@ public  final class EndCall extends
      * <code>CANCEL = 5;</code>
      */
     public static final int CANCEL_VALUE = 5;
+    /**
+     * <pre>
+     * receiver could not decrypt the content.
+     * </pre>
+     *
+     * <code>DECRYPTION_FAILED = 6;</code>
+     */
+    public static final int DECRYPTION_FAILED_VALUE = 6;
+    /**
+     * <pre>
+     * receiver could not encrypt the answer.
+     * </pre>
+     *
+     * <code>ENCRYPTION_FAILED = 7;</code>
+     */
+    public static final int ENCRYPTION_FAILED_VALUE = 7;
+    /**
+     * <pre>
+     * system errors or crashes.
+     * </pre>
+     *
+     * <code>SYSTEM_ERROR = 8;</code>
+     */
+    public static final int SYSTEM_ERROR_VALUE = 8;
 
 
     @java.lang.Override
@@ -139,6 +187,9 @@ public  final class EndCall extends
         case 3: return TIMEOUT;
         case 4: return CALL_END;
         case 5: return CANCEL;
+        case 6: return DECRYPTION_FAILED;
+        case 7: return ENCRYPTION_FAILED;
+        case 8: return SYSTEM_ERROR;
         default: return null;
       }
     }

@@ -26,6 +26,7 @@ public  final class EventData extends
     PERMISSIONS(15),
     MEDIA_OBJECT_DOWNLOAD(16),
     GROUP_DECRYPTION_REPORT(17),
+    CALL(18),
     EDATA_NOT_SET(0);
     private final int value;
     private EdataCase(int value) {
@@ -49,6 +50,7 @@ public  final class EventData extends
         case 15: return PERMISSIONS;
         case 16: return MEDIA_OBJECT_DOWNLOAD;
         case 17: return GROUP_DECRYPTION_REPORT;
+        case 18: return CALL;
         case 0: return EDATA_NOT_SET;
         default: return null;
       }
@@ -725,6 +727,56 @@ public  final class EventData extends
    */
   private void clearGroupDecryptionReport() {
     if (edataCase_ == 17) {
+      edataCase_ = 0;
+      edata_ = null;
+    }
+  }
+
+  public static final int CALL_FIELD_NUMBER = 18;
+  /**
+   * <code>.server.Call call = 18;</code>
+   */
+  @java.lang.Override
+  public boolean hasCall() {
+    return edataCase_ == 18;
+  }
+  /**
+   * <code>.server.Call call = 18;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.log_events.Call getCall() {
+    if (edataCase_ == 18) {
+       return (com.halloapp.proto.log_events.Call) edata_;
+    }
+    return com.halloapp.proto.log_events.Call.getDefaultInstance();
+  }
+  /**
+   * <code>.server.Call call = 18;</code>
+   */
+  private void setCall(com.halloapp.proto.log_events.Call value) {
+    value.getClass();
+  edata_ = value;
+    edataCase_ = 18;
+  }
+  /**
+   * <code>.server.Call call = 18;</code>
+   */
+  private void mergeCall(com.halloapp.proto.log_events.Call value) {
+    value.getClass();
+  if (edataCase_ == 18 &&
+        edata_ != com.halloapp.proto.log_events.Call.getDefaultInstance()) {
+      edata_ = com.halloapp.proto.log_events.Call.newBuilder((com.halloapp.proto.log_events.Call) edata_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      edata_ = value;
+    }
+    edataCase_ = 18;
+  }
+  /**
+   * <code>.server.Call call = 18;</code>
+   */
+  private void clearCall() {
+    if (edataCase_ == 18) {
       edataCase_ = 0;
       edata_ = null;
     }
@@ -1493,6 +1545,54 @@ public  final class EventData extends
       return this;
     }
 
+    /**
+     * <code>.server.Call call = 18;</code>
+     */
+    @java.lang.Override
+    public boolean hasCall() {
+      return instance.hasCall();
+    }
+    /**
+     * <code>.server.Call call = 18;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.log_events.Call getCall() {
+      return instance.getCall();
+    }
+    /**
+     * <code>.server.Call call = 18;</code>
+     */
+    public Builder setCall(com.halloapp.proto.log_events.Call value) {
+      copyOnWrite();
+      instance.setCall(value);
+      return this;
+    }
+    /**
+     * <code>.server.Call call = 18;</code>
+     */
+    public Builder setCall(
+        com.halloapp.proto.log_events.Call.Builder builderForValue) {
+      copyOnWrite();
+      instance.setCall(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.Call call = 18;</code>
+     */
+    public Builder mergeCall(com.halloapp.proto.log_events.Call value) {
+      copyOnWrite();
+      instance.mergeCall(value);
+      return this;
+    }
+    /**
+     * <code>.server.Call call = 18;</code>
+     */
+    public Builder clearCall() {
+      copyOnWrite();
+      instance.clearCall();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.EventData)
   }
   @java.lang.Override
@@ -1524,11 +1624,12 @@ public  final class EventData extends
             com.halloapp.proto.log_events.Permissions.class,
             com.halloapp.proto.log_events.MediaObjectDownload.class,
             com.halloapp.proto.log_events.GroupDecryptionReport.class,
+            com.halloapp.proto.log_events.Call.class,
           };
           java.lang.String info =
-              "\u0000\r\u0001\u0000\u0001\u0011\r\u0000\u0000\u0000\u0001\u0003\u0002\f\u0003\u0208" +
-              "\u0004\u0003\u0005\u0208\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f" +
-              "<\u0000\u0010<\u0000\u0011<\u0000";
+              "\u0000\u000e\u0001\u0000\u0001\u0012\u000e\u0000\u0000\u0000\u0001\u0003\u0002\f" +
+              "\u0003\u0208\u0004\u0003\u0005\u0208\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e" +
+              "<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

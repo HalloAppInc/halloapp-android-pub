@@ -113,32 +113,6 @@ public  final class HistoryResend extends
     
   }
 
-  public static final int SENDER_UID_FIELD_NUMBER = 3;
-  private long senderUid_;
-  /**
-   * <code>int64 sender_uid = 3;</code>
-   * @return The senderUid.
-   */
-  @java.lang.Override
-  public long getSenderUid() {
-    return senderUid_;
-  }
-  /**
-   * <code>int64 sender_uid = 3;</code>
-   * @param value The senderUid to set.
-   */
-  private void setSenderUid(long value) {
-    
-    senderUid_ = value;
-  }
-  /**
-   * <code>int64 sender_uid = 3;</code>
-   */
-  private void clearSenderUid() {
-    
-    senderUid_ = 0L;
-  }
-
   public static final int PAYLOAD_FIELD_NUMBER = 4;
   private com.google.protobuf.ByteString payload_;
   /**
@@ -630,34 +604,6 @@ public  final class HistoryResend extends
     }
 
     /**
-     * <code>int64 sender_uid = 3;</code>
-     * @return The senderUid.
-     */
-    @java.lang.Override
-    public long getSenderUid() {
-      return instance.getSenderUid();
-    }
-    /**
-     * <code>int64 sender_uid = 3;</code>
-     * @param value The senderUid to set.
-     * @return This builder for chaining.
-     */
-    public Builder setSenderUid(long value) {
-      copyOnWrite();
-      instance.setSenderUid(value);
-      return this;
-    }
-    /**
-     * <code>int64 sender_uid = 3;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearSenderUid() {
-      copyOnWrite();
-      instance.clearSenderUid();
-      return this;
-    }
-
-    /**
      * <code>bytes payload = 4;</code>
      * @return The payload.
      */
@@ -992,7 +938,6 @@ public  final class HistoryResend extends
           java.lang.Object[] objects = new java.lang.Object[] {
             "gid_",
             "id_",
-            "senderUid_",
             "payload_",
             "encPayload_",
             "senderStateBundles_",
@@ -1001,7 +946,7 @@ public  final class HistoryResend extends
             "audienceHash_",
           };
           java.lang.String info =
-              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0001\u0000\u0001\u0208\u0002\u0208\u0003\u0002" +
+              "\u0000\u0007\u0000\u0000\u0001\b\u0007\u0000\u0001\u0000\u0001\u0208\u0002\u0208" +
               "\u0004\n\u0005\n\u0006\u001b\u0007\t\b\n";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }

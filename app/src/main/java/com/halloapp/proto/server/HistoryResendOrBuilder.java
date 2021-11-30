@@ -32,12 +32,6 @@ public interface HistoryResendOrBuilder extends
       getIdBytes();
 
   /**
-   * <code>int64 sender_uid = 3;</code>
-   * @return The senderUid.
-   */
-  long getSenderUid();
-
-  /**
    * <code>bytes payload = 4;</code>
    * @return The payload.
    */

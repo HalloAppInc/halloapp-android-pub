@@ -403,6 +403,25 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.IceCandidate getIceCandidate();
 
   /**
+   * <pre>
+   * only for server use
+   * </pre>
+   *
+   * <code>.server.MarketingAlert marketing_alert = 39;</code>
+   * @return Whether the marketingAlert field is set.
+   */
+  boolean hasMarketingAlert();
+  /**
+   * <pre>
+   * only for server use
+   * </pre>
+   *
+   * <code>.server.MarketingAlert marketing_alert = 39;</code>
+   * @return The marketingAlert.
+   */
+  com.halloapp.proto.server.MarketingAlert getMarketingAlert();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */

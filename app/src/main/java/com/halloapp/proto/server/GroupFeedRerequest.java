@@ -175,7 +175,7 @@ public  final class GroupFeedRerequest extends
   private java.lang.String id_;
   /**
    * <pre>
-   * Post id or Comment id.
+   * Post id or Comment id or HistoryResend id
    * </pre>
    *
    * <code>string id = 2;</code>
@@ -187,7 +187,7 @@ public  final class GroupFeedRerequest extends
   }
   /**
    * <pre>
-   * Post id or Comment id.
+   * Post id or Comment id or HistoryResend id
    * </pre>
    *
    * <code>string id = 2;</code>
@@ -200,7 +200,7 @@ public  final class GroupFeedRerequest extends
   }
   /**
    * <pre>
-   * Post id or Comment id.
+   * Post id or Comment id or HistoryResend id
    * </pre>
    *
    * <code>string id = 2;</code>
@@ -214,7 +214,7 @@ public  final class GroupFeedRerequest extends
   }
   /**
    * <pre>
-   * Post id or Comment id.
+   * Post id or Comment id or HistoryResend id
    * </pre>
    *
    * <code>string id = 2;</code>
@@ -225,7 +225,7 @@ public  final class GroupFeedRerequest extends
   }
   /**
    * <pre>
-   * Post id or Comment id.
+   * Post id or Comment id or HistoryResend id
    * </pre>
    *
    * <code>string id = 2;</code>
@@ -426,7 +426,7 @@ public  final class GroupFeedRerequest extends
 
     /**
      * <pre>
-     * Post id or Comment id.
+     * Post id or Comment id or HistoryResend id
      * </pre>
      *
      * <code>string id = 2;</code>
@@ -438,7 +438,7 @@ public  final class GroupFeedRerequest extends
     }
     /**
      * <pre>
-     * Post id or Comment id.
+     * Post id or Comment id or HistoryResend id
      * </pre>
      *
      * <code>string id = 2;</code>
@@ -451,7 +451,7 @@ public  final class GroupFeedRerequest extends
     }
     /**
      * <pre>
-     * Post id or Comment id.
+     * Post id or Comment id or HistoryResend id
      * </pre>
      *
      * <code>string id = 2;</code>
@@ -466,7 +466,7 @@ public  final class GroupFeedRerequest extends
     }
     /**
      * <pre>
-     * Post id or Comment id.
+     * Post id or Comment id or HistoryResend id
      * </pre>
      *
      * <code>string id = 2;</code>
@@ -479,7 +479,7 @@ public  final class GroupFeedRerequest extends
     }
     /**
      * <pre>
-     * Post id or Comment id.
+     * Post id or Comment id or HistoryResend id
      * </pre>
      *
      * <code>string id = 2;</code>
