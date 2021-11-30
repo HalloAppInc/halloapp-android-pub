@@ -13,7 +13,6 @@ import androidx.core.content.ContextCompat;
 
 import com.halloapp.R;
 import com.halloapp.content.Post;
-import com.halloapp.ui.CommentsActivity;
 import com.halloapp.ui.FlatCommentsActivity;
 import com.halloapp.ui.PostSeenByActivity;
 import com.halloapp.widget.AvatarsLayout;
@@ -39,7 +38,7 @@ public class OutgoingPostViewHolder extends PostViewHolder {
 
         itemView.findViewById(R.id.comment).setOnClickListener(view -> {
             final Intent intent = FlatCommentsActivity.viewComments(itemView.getContext(), post.id, post.senderUserId);
-            intent.putExtra(CommentsActivity.EXTRA_SHOW_KEYBOARD, post.commentCount == 0);
+            intent.putExtra(FlatCommentsActivity.EXTRA_SHOW_KEYBOARD, post.commentCount == 0);
             parent.startActivity(intent);
         });
 
