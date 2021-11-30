@@ -7,6 +7,7 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.Constants;
 import com.halloapp.content.Media;
 import com.halloapp.crypto.CryptoByteUtils;
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.TailInputStream;
 import com.halloapp.util.ThreadUtils;
@@ -278,7 +279,7 @@ public class Downloader {
     @WorkerThread
     public static void runForInitialChunks(long mediaId, @NonNull String remotePath, @NonNull byte[] mediaKey, int chunkSize, long blobSize, @NonNull File localFile, @Nullable DownloadListener downloadListener) throws IOException, ChunkedMediaParametersException, GeneralSecurityException {
         final ChunkedMediaParameters chunkedParameters = ChunkedMediaParameters.computeFromBlobSize(blobSize, chunkSize);
-        final long roundedChunkCount = (ChunkedMediaParameters.DEFAULT_INITIAL_FILE_SIZE + chunkedParameters.chunkSize - 1) / chunkedParameters.chunkSize;
+        final long roundedChunkCount = (((long) ServerProps.getInstance().getStreamingInitialDownloadSize()) + chunkedParameters.chunkSize - 1) / chunkedParameters.chunkSize;
         final int chunksToGet = (int) Math.min(roundedChunkCount, chunkedParameters.getChunkCount());
         final ByteBuffer byteBuffer = ByteBuffer.allocate(chunkedParameters.regularChunkPtSize);
 

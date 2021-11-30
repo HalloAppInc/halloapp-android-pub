@@ -5,7 +5,6 @@ import android.util.Size;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
-import com.halloapp.media.ChunkedMediaParameters;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.proto.clients.AlbumMedia;
 import com.halloapp.proto.clients.EncryptedResource;
@@ -252,7 +251,7 @@ public class Media {
     }
 
     public boolean isStreamingVideo() {
-        return blobVersion == BLOB_VERSION_CHUNKED && type == MEDIA_TYPE_VIDEO && blobSize > ChunkedMediaParameters.DEFAULT_INITIAL_FILE_SIZE && transferred == TRANSFERRED_PARTIAL_CHUNKED;
+        return blobVersion == BLOB_VERSION_CHUNKED && type == MEDIA_TYPE_VIDEO && transferred == TRANSFERRED_PARTIAL_CHUNKED;
     }
 
     // TODO(Vasil): Remove the following method and the logic that depends on it once we have partial stream file copy code.

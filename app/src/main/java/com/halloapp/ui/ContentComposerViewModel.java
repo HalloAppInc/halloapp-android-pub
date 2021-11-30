@@ -33,6 +33,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.privacy.FeedPrivacyManager;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.log_events.MediaComposeLoad;
 import com.halloapp.ui.mediaedit.EditImageView;
 import com.halloapp.util.ComputableLiveData;
@@ -467,7 +468,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
                     Log.d("ContentComposerViewModel: PrepareContentTask groupId: " + groupId);
                     GroupId[] testChunkGroups = {new GroupId("gmYchx3MBOXerd7QTmWqsO"), new GroupId("gGSFDZYubalo4izDKhE-Vv")};
-                    if (Arrays.asList(testChunkGroups).contains(groupId)) {
+                    if (ServerProps.getInstance().getStreamingSendingEnabled() && Arrays.asList(testChunkGroups).contains(groupId)) {
                         for (Media mediaItem : contentPost.media) {
                             if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
                                 mediaItem.blobVersion = Media.BLOB_VERSION_CHUNKED;

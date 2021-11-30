@@ -1,8 +1,6 @@
 package com.halloapp.media;
 
 public class ChunkedMediaParameters {
-    public static final int DEFAULT_CHUNK_SIZE = 65536;
-    public static final long DEFAULT_INITIAL_FILE_SIZE = 5L * 1024 * 1024;
     public static final int BLOCK_SIZE = 16;
     public static final int MAC_SIZE = 32;
 

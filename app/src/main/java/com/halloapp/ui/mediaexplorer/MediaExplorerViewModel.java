@@ -22,7 +22,6 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.id.ChatId;
-import com.halloapp.media.ChunkedMediaParameters;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
@@ -218,7 +217,7 @@ public class MediaExplorerViewModel extends AndroidViewModel {
         }
 
         public boolean isStreamingVideo() {
-            return blobVersion == Media.BLOB_VERSION_CHUNKED && type == Media.MEDIA_TYPE_VIDEO && blobSize > ChunkedMediaParameters.DEFAULT_INITIAL_FILE_SIZE && transferred == Media.TRANSFERRED_PARTIAL_CHUNKED;
+            return blobVersion == Media.BLOB_VERSION_CHUNKED && type == Media.MEDIA_TYPE_VIDEO && transferred == Media.TRANSFERRED_PARTIAL_CHUNKED;
         }
 
         @Override

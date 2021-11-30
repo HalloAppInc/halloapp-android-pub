@@ -38,6 +38,9 @@ public class ServerProps {
     private static final String PROP_VOICE_NOTE_SENDING_ENABLED = "voice_notes";
     private static final String PROP_CONTACT_SYNC_INTERVAL = "contact_sync_frequency";
     private static final String PROP_MEDIA_COMMENTS_ENABLED = "media_comments";
+    private static final String PROP_STREAMING_UPLOAD_CHUNK_SIZE = "streaming_upload_chunk_size";
+    private static final String PROP_STREAMING_INITIAL_DOWNLOAD_SIZE = "streaming_initial_download_size";
+    private static final String PROP_STREAMING_SENDING_ENABLED = "streaming_sending_enabled";
 
     private static final int WEEK_IN_SECONDS = (int) (DateUtils.WEEK_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
 
@@ -71,6 +74,9 @@ public class ServerProps {
     private final BooleanProp propVoiceNoteSendingEnabled = createProp(PROP_VOICE_NOTE_SENDING_ENABLED, false);
     private final IntegerProp propContactSyncIntervalSeconds = createProp(PROP_CONTACT_SYNC_INTERVAL, Constants.SECONDS_PER_DAY);
     private final BooleanProp propMediaCommentsEnabled = createProp(PROP_MEDIA_COMMENTS_ENABLED, false);
+    private final IntegerProp propStreamingUploadChunkSize = createProp(PROP_STREAMING_UPLOAD_CHUNK_SIZE, Constants.DEFAULT_STREAMING_UPLOAD_CHUNK_SIZE);
+    private final IntegerProp propStreamingInitialDownloadSize = createProp(PROP_STREAMING_INITIAL_DOWNLOAD_SIZE, Constants.DEFAULT_STREAMING_INITIAL_DOWNLOAD_SIZE);
+    private final BooleanProp propStreamingSendingEnabled = createProp(PROP_STREAMING_SENDING_ENABLED, false);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -225,5 +231,17 @@ public class ServerProps {
 
     public synchronized boolean getMediaCommentsEnabled() {
         return propMediaCommentsEnabled.getValue() || getIsInternalUser();
+    }
+
+    public synchronized int getStreamingUploadChunkSize() {
+        return propStreamingUploadChunkSize.getValue();
+    }
+
+    public synchronized int getStreamingInitialDownloadSize() {
+        return propStreamingInitialDownloadSize.getValue();
+    }
+
+    public synchronized boolean getStreamingSendingEnabled() {
+        return propStreamingSendingEnabled.getValue();
     }
 }

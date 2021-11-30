@@ -57,4 +57,7 @@ public class Constants {
 
     public static final int MAX_REREQUESTS_PER_MESSAGE = 5;
 
+    public static final int DEFAULT_STREAMING_UPLOAD_CHUNK_SIZE = 64 * 1024;
+    public static final int DEFAULT_STREAMING_INITIAL_DOWNLOAD_SIZE = 5 * 1024 * 1024;
+
 }

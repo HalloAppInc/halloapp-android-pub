@@ -40,7 +40,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Array;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -172,7 +171,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                     encryptedFile = encryptFile(media.file, media.encKey, media.type, contentItem.id);
                 } else if (media.blobVersion == Media.BLOB_VERSION_CHUNKED) {
                     if (media.encKey != null) {
-                        ChunkedMediaParameters chunkedParameters = ChunkedMediaParameters.computeFromPlaintextSize(media.file.length(), ChunkedMediaParameters.DEFAULT_CHUNK_SIZE);
+                        ChunkedMediaParameters chunkedParameters = ChunkedMediaParameters.computeFromPlaintextSize(media.file.length(), ServerProps.getInstance().getStreamingUploadChunkSize());
                         Log.d("Resumable Uploader chunkedParameters = " + chunkedParameters);
                         encryptedFile = encryptChunkedFile(chunkedParameters, media.file, media.encKey, media.type, contentItem.id);
                         media.blobSize = chunkedParameters.blobSize;

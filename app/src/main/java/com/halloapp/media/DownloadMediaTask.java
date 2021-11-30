@@ -11,6 +11,7 @@ import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.log_events.MediaDownload;
 import com.halloapp.proto.log_events.MediaObjectDownload;
 import com.halloapp.util.FileUtils;
@@ -170,7 +171,7 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                     retry = false;
                     success = false;
                     long attemptStartTime = System.currentTimeMillis();
-                    boolean isStreamingVideo = media.blobVersion == Media.BLOB_VERSION_CHUNKED && media.type == Media.MEDIA_TYPE_VIDEO && media.blobSize > ChunkedMediaParameters.DEFAULT_INITIAL_FILE_SIZE;
+                    boolean isStreamingVideo = media.blobVersion == Media.BLOB_VERSION_CHUNKED && media.type == Media.MEDIA_TYPE_VIDEO && media.blobSize > ServerProps.getInstance().getStreamingInitialDownloadSize();
                     try {
                         final File file = fileStore.getMediaFile(RandomId.create() + "." + Media.getFileExt(media.type));
                         if (isStreamingVideo) {
