@@ -44,6 +44,7 @@ import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
+import org.webrtc.RTCStatsCollectorCallback;
 import org.webrtc.SessionDescription;
 
 import java.lang.annotation.Retention;
@@ -71,6 +72,7 @@ public class CallManager {
 
     private @State int state;
     private boolean isInitiator;
+    private boolean isAnswered;
 
     private boolean isMicrophoneMuted = false;
     private boolean isSpeakerPhoneOn = false;  // The default will have to change for video calls
@@ -97,6 +99,10 @@ public class CallManager {
 
     @Nullable
     private TimerTask ringingTimeoutTimerTask;
+    @NonNull
+    private CallStats callStats;
+
+    private long callStartTimestamp = 0;
 
     // Executor thread is started once in private ctor and is used for all
     // peer connection API calls to ensure new peer connection factory is
@@ -131,6 +137,7 @@ public class CallManager {
 
         this.audioManager = CallAudioManager.create(appContext.get());
         this.observers = new HashSet<>();
+        this.callStats = new CallStats();
     }
 
     public void addObserver(CallObserver observer) {
@@ -159,8 +166,10 @@ public class CallManager {
         this.callId = RandomId.create();
         this.peerUid = peerUid;
         this.isInitiator = true;
+        this.isAnswered = false;
         this.callService = startCallService();
         acquireLock();
+        this.callStats.startStatsCollection();
         this.state = State.CALLING;
 
         startAudioManager();
@@ -191,8 +200,9 @@ public class CallManager {
         }
     }
     
-    public void stop() {
-        Log.i("stop callId: " + callId + " peerUid" + peerUid);
+    public void stop(EndCall.Reason reason) {
+        final long callDuration = (this.callStartTimestamp > 0)? System.currentTimeMillis() - this.callStartTimestamp : 0;
+        Log.i("stop callId: " + callId + " peerUid" + peerUid + " duration: " + callDuration / 1000);
         stopAudioManager();
         stopOutgoingRingtone();
         if (localAudioTrack != null) {
@@ -200,6 +210,7 @@ public class CallManager {
             localAudioTrack = null;
         }
         if (peerConnection != null) {
+            peerConnection.getStats(report -> CallStats.sendEndCallEvent(callId, peerUid, isInitiator, isAnswered, callDuration, reason, report));
             peerConnection.close();
             peerConnection = null;
         }
@@ -209,6 +220,7 @@ public class CallManager {
         }
         cancelRingingTimeout();
         releaseLock();
+        callStats.stopStatsCollection();
         isInitiator = false;
         isMicrophoneMuted = false;
         isSpeakerPhoneOn = false;
@@ -237,7 +249,8 @@ public class CallManager {
             // TODO(nikola): fix the end call reason for the encryption errors
             endCall(EndCall.Reason.REJECT);
             notifyOnEndCall();
-            stop();
+            // TODO(nikola): unify the endCall and stop funcitons
+            stop(EndCall.Reason.REJECT);
             return;
         }
 
@@ -290,12 +303,14 @@ public class CallManager {
             // TODO(nikola): fix this reasons. Maybe add a new reason for e2e errors
             endCall(EndCall.Reason.REJECT);
             notifyOnEndCall();
-            stop();
+            stop(EndCall.Reason.REJECT);
             return;
         }
 
         peerConnection.setRemoteDescription(new SimpleSdpObserver(), new SessionDescription(SessionDescription.Type.ANSWER, webrtcOffer));
         this.state = State.IN_CALL;
+        this.isAnswered = true;
+        this.callStartTimestamp = System.currentTimeMillis();
         notifyOnAnsweredCall();
     }
 
@@ -341,6 +356,8 @@ public class CallManager {
         cancelRingingTimeout();
         doAnswer();
         this.state = State.IN_CALL;
+        this.isAnswered = true;
+        this.callStartTimestamp = System.currentTimeMillis();
         return true;
     }
 
@@ -558,11 +575,11 @@ public class CallManager {
         }
         acquireLock();
         startAudioManager();
+        callStats.startStatsCollection();
 
         peerConnection.createAnswer(new SimpleSdpObserver() {
             @Override
             public void onCreateSuccess(@NonNull SessionDescription sessionDescription) {
-                // TODO(nikola): don't print this in the logs.
                 Log.i("PeerConnection answer is ready " + sessionDescription);
                 peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
 
@@ -575,10 +592,18 @@ public class CallManager {
                     // TODO(nikola): change reason to CRYPTO_FAIL
                     endCall(EndCall.Reason.REJECT);
                     notifyOnEndCall();
-                    stop();
+                    stop(EndCall.Reason.REJECT);
                 }
             }
         }, new MediaConstraints());
+    }
+
+    public boolean getPeerConnectionStats(RTCStatsCollectorCallback c) {
+        if (peerConnection != null) {
+            peerConnection.getStats(c);
+            return true;
+        }
+        return false;
     }
 
     public boolean isMicrophoneMuted() {
@@ -699,7 +724,7 @@ public class CallManager {
                 Notifications.getInstance(appContext.get()).clearIncomingCallNotification();
                 // TODO(nikola): Cleanup the code path of who is calling the stop. Make stop private.
                 // It is sometimes called from the UI and sometimes from here.
-                stop();
+                stop(EndCall.Reason.TIMEOUT);
             }
         }
     }

@@ -153,7 +153,8 @@ public class CallViewModel extends ViewModel implements CallObserver {
     public void onEndCallCleanup() {
         // TODO(nikola): remove this if. callManager is never null.
         if (callManager != null) {
-            callManager.stop();
+            // TODO(nikola): the reason is not correct here
+            callManager.stop(EndCall.Reason.CALL_END);
         }
     }
 

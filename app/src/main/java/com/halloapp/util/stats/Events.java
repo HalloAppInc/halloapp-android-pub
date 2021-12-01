@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Me;
+import com.halloapp.proto.log_events.Call;
 import com.halloapp.proto.log_events.DecryptionReport;
 import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.log_events.GroupDecryptionReport;
@@ -73,6 +74,10 @@ public class Events {
 
     public void sendEvent(@NonNull DecryptionReport decryptionReport) {
         sendEvent(EventData.newBuilder().setDecryptionReport(decryptionReport));
+    }
+
+    public void sendEvent(@NonNull Call call) {
+        sendEvent(EventData.newBuilder().setCall(call));
     }
 
     private void sendEvent(@NonNull EventData.Builder builder) {
