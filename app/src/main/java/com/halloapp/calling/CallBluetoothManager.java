@@ -226,7 +226,7 @@ public class CallBluetoothManager {
      */
     public void start() {
         ThreadUtils.checkIsOnMainThread();
-        Log.d("start");
+        Log.d("CallBluetoothManager.start");
         if (!hasPermission(apprtcContext, android.Manifest.permission.BLUETOOTH)) {
             Log.w("Process (pid=" + Process.myPid() + ") lacks BLUETOOTH permission");
             return;
@@ -364,7 +364,7 @@ public class CallBluetoothManager {
         if (bluetoothState == State.UNINITIALIZED || bluetoothHeadset == null) {
             return;
         }
-        Log.d("updateDevice");
+        Log.d("CallBluetoothManager.updateDevice");
         // Get connected devices for the headset profile. Returns the set of
         // devices which are in state STATE_CONNECTED. The BluetoothDevice class
         // is just a thin wrapper for a Bluetooth hardware address.

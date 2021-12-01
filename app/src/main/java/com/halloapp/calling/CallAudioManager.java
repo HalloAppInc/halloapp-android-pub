@@ -192,7 +192,7 @@ public class CallAudioManager {
 
     @SuppressWarnings("deprecation") // TODO(henrika): audioManager.requestAudioFocus() is deprecated.
     public void start(AudioManagerEvents audioManagerEvents) {
-        Log.d("start");
+        Log.d("CallAudioManager/start");
         ThreadUtils.checkIsOnMainThread();
         if (amState == AudioManagerState.RUNNING) {
             Log.e("AudioManager is already active");
@@ -200,7 +200,7 @@ public class CallAudioManager {
         }
         // TODO(henrika): perhaps call new method called preInitAudio() here if UNINITIALIZED.
 
-        Log.d("AudioManager starts...");
+        Log.d("CallAudioManager: starts...");
         this.audioManagerEvents = audioManagerEvents;
         amState = AudioManagerState.RUNNING;
 
@@ -260,28 +260,34 @@ public class CallAudioManager {
             Log.e("Audio focus request failed");
         }
 
+        Log.i("CallAudioManager: setMode");
         // Start by setting MODE_IN_COMMUNICATION as default audio mode. It is
         // required to be in this mode when playout and/or recording starts for
         // best possible VoIP performance.
         audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
 
+        Log.i("CallAudioManager: setMicrophoneMute");
         // Always disable microphone mute during a WebRTC call.
         setMicrophoneMute(false);
 
+        Log.i("CallAudioManager: set initial devices");
         // Set initial device states.
         userSelectedAudioDevice = AudioDevice.NONE;
         selectedAudioDevice = AudioDevice.NONE;
         audioDevices.clear();
 
+        Log.i("CallAudioManager: bluetoothManager start");
         // Initialize and start Bluetooth if a BT device is available or initiate
         // detection of new (enabled) BT devices.
         bluetoothManager.start();
 
+        Log.i("CallAudioManager: updateAudioDeviceState");
         // Do initial selection of audio device. This setting can later be changed
         // either by adding/removing a BT or wired headset or by covering/uncovering
         // the proximity sensor.
         updateAudioDeviceState();
 
+        Log.i("CallAudioManager: registerReceiver");
         // Register receiver for broadcast intents related to adding/removing a
         // wired headset.
         registerReceiver(wiredHeadsetReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
