@@ -74,9 +74,14 @@ public class CallViewModel extends ViewModel implements CallObserver {
         return state.getValue() != null && state.getValue() == CallManager.State.CALLING;
     }
 
+    public boolean isIdle() {
+        return state.getValue() != null && state.getValue() == CallManager.State.IDLE;
+    }
+
     public void onStartCall() {
-        state.postValue(CallManager.State.CALLING);
-        callManager.startCall(peerUid);
+        if (callManager.startCall(peerUid)) {
+            state.postValue(CallManager.State.CALLING);
+        }
     }
 
     public void onCancelCall() {
@@ -130,10 +135,11 @@ public class CallViewModel extends ViewModel implements CallObserver {
     }
 
     public void onAcceptCall() {
-        Log.i("onAcceptCall");
-        state.postValue(CallManager.State.IN_CALL);
+        Log.i("CallViewModel.onAcceptCall");
         // TODO(nikola): we should include the call id here.
-        callManager.acceptCall();
+        if (callManager.acceptCall()) {
+            state.postValue(CallManager.State.IN_CALL);
+        }
     }
 
     public void onHangUp() {

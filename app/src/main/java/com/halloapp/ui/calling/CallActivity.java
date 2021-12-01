@@ -61,7 +61,6 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.i("onCreate");
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN |
@@ -128,7 +127,9 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         });
 
         callViewModel.isPeerRinging().observe(this, isPeerRinging -> {
-            titleTextView.setText(R.string.ringing);
+            if (callViewModel.isCalling()) {
+                titleTextView.setText(R.string.ringing);
+            }
         });
 
         callViewModel.getIsMicrophoneMuted().observe(this, this::updateMicrophoneMutedUI);
@@ -136,8 +137,6 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
 
         avatarLoader.load(avatarView, peerUid, false);
         contactLoader.load(nameTextView, peerUid, false);
-
-        findViewById(R.id.init_start).setOnClickListener(v -> startCall());
 
         findViewById(R.id.in_call_mute).setOnClickListener(v -> {
             if (!callViewModel.inCall()) {
@@ -179,16 +178,14 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         });
 
         boolean isInitiator = getIntent().getBooleanExtra(EXTRA_IS_INITIATOR, false);
-        Log.i("isInitiator " + isInitiator);
-        if (isInitiator) {
-            Log.i("will start call");
+        Log.i("CallActivity: isInitiator " + isInitiator);
+        if (isInitiator && callViewModel.isIdle()) {
+            Log.i("CallActivity: will start call");
             startCall();
         } else {
-            if (ACTION_ACCEPT.equals(getIntent().getAction())) {
+            if (ACTION_ACCEPT.equals(getIntent().getAction()) && callViewModel.isRinging()) {
                 Log.i("User accepted the call");
                 checkPermissionsThenAcceptCall();
-            } else {
-                callViewModel.onIncomingCall();
             }
         }
     }
@@ -230,6 +227,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void onDeclineCall() {
+        Notifications.getInstance(getApplicationContext()).clearIncomingCallNotification();
         callViewModel.onDeclineCall();
     }
 

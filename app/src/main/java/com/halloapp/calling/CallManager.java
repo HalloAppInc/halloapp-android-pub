@@ -150,8 +150,12 @@ public class CallManager {
     }
 
     @MainThread
-    public void startCall(@NonNull UserId peerUid) {
-        Log.i("startCall");
+    public boolean startCall(@NonNull UserId peerUid) {
+        Log.i("CallManager.startCall");
+        if (this.state != State.IDLE) {
+            Log.w("CallManager.startCall failed: state is not idle. State: " + stateToString(this.state));
+            return false;
+        }
         this.callId = RandomId.create();
         this.peerUid = peerUid;
         this.isInitiator = true;
@@ -162,6 +166,7 @@ public class CallManager {
         startAudioManager();
 
         executor.execute(this::setupWebrtc);
+        return true;
     }
 
     private ComponentName startCallService() {
@@ -323,15 +328,20 @@ public class CallManager {
     }
 
     @MainThread
-    public void acceptCall() {
+    public boolean acceptCall() {
         if (this.isInitiator) {
             Log.e("ERROR user clicked accept call but is the call initiator callId: " + callId);
-            return;
+            return false;
+        }
+        if (this.state != State.RINGING) {
+            Log.w("CallManager.acceptCall call is not in RINGING state. State: " + stateToString(state));
+            return false;
         }
 
         cancelRingingTimeout();
         doAnswer();
         this.state = State.IN_CALL;
+        return true;
     }
 
     private void initializePeerConnectionFactory() {
