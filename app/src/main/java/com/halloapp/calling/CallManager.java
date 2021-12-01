@@ -18,6 +18,8 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.AppContext;
 import com.halloapp.Constants;
 import com.halloapp.Notifications;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.Message;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.CallType;
@@ -80,7 +82,6 @@ public class CallManager {
     private PeerConnection peerConnection;
     private PeerConnectionFactory factory;
 
-    private final CallsApi callsApi;
     private final CallAudioManager audioManager;
     private final OutgoingRingtone outgoingRingtone;
 
@@ -105,6 +106,8 @@ public class CallManager {
 
     private static CallManager instance;
     private final Set<CallObserver> observers;
+    private final CallsApi callsApi;
+    private final ContentDb contentDb;
     private final AppContext appContext;
 
     public static CallManager getInstance() {
@@ -119,8 +122,9 @@ public class CallManager {
     }
 
     private CallManager() {
-        this.appContext = AppContext.getInstance();
         this.callsApi = CallsApi.getInstance();
+        this.contentDb = ContentDb.getInstance();
+        this.appContext = AppContext.getInstance();
         this.outgoingRingtone = new OutgoingRingtone(appContext.get());
         this.proximityLock = createProximityLock();
         this.state = State.IDLE;
@@ -211,13 +215,21 @@ public class CallManager {
     public void handleIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @Nullable String webrtcOffer,
                                     @NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers,
                                     @NonNull Long timestamp) {
-        Log.i("incoming call " + callId + " peerUid: " + peerUid);
+        Log.i("CallManager.handleIncomingCall " + callId + " peerUid: " + peerUid);
+        if (this.state != State.IDLE) {
+            Log.i("CallManager: rejecting incoming call " + callId + " from (" + peerUid + ") because already in call.");
+            Log.i(toString());
+            callsApi.sendEndCall(callId, peerUid, EndCall.Reason.BUSY);
+            storeMissedCallMsg(peerUid, callId);
+            return;
+        }
         this.isInitiator = false;
         this.peerUid = peerUid;
         this.callId = callId;
 
         if (webrtcOffer == null) {
             Log.e("handleIncomingCall() Failed to decrypt webrtcOffer callId:" + callId);
+            // TODO(nikola): fix the end call reason for the encryption errors
             endCall(EndCall.Reason.REJECT);
             notifyOnEndCall();
             stop();
@@ -285,7 +297,14 @@ public class CallManager {
     public void handleEndCall(@NonNull String callId, @NonNull UserId peerUid,
                                @NonNull EndCall.Reason reason, @NonNull Long timestamp) {
         Log.i("got EndCall callId: " + callId + " peerUid: " + peerUid + " reason: " + reason.name());
-        this.state = State.END;
+        if (reason == EndCall.Reason.CANCEL || reason == EndCall.Reason.TIMEOUT) {
+            storeMissedCallMsg(peerUid, callId);
+        }
+        if (this.callId == null || !this.callId.equals(callId)) {
+            Log.i("got EndCall for wrong call. " + toString());
+            return;
+        }
+        this.state = State.IDLE;
         notifyOnEndCall();
         stopOutgoingRingtone();
         // TODO(nikola): Handle multiple calls at the same time. We should only cancel the right
@@ -658,15 +677,19 @@ public class CallManager {
 
     private void onRingingTimeout(@NonNull String callId) {
         synchronized (timer) {
-            Log.i("onOutgoingCallTimeout");
+            // this code runs for both incoming and outgoing call ringing timeout
+            Log.i("onCallTimeout");
             if (this.callId != null && this.callId.equals(callId)) {
                 endCall(EndCall.Reason.TIMEOUT);
+                if (this.isInitiator == false && this.callId != null && this.state == State.RINGING) {
+                    storeMissedCallMsg(this.peerUid, this.callId);
+                }
                 notifyOnEndCall();
                 // TODO(nikola): this could clear the wrong notification if we have multiple incoming calls.
                 Notifications.getInstance(appContext.get()).clearIncomingCallNotification();
                 // TODO(nikola): Cleanup the code path of who is calling the stop. Make stop private.
                 // It is sometimes called from the UI and sometimes from here.
-                //stop();
+                stop();
             }
         }
     }
@@ -745,5 +768,25 @@ public class CallManager {
 
     private void stopAudioManager() {
         mainHandler.post(() -> audioManager.stop());
+    }
+
+    private void storeMissedCallMsg(@NonNull UserId userId, @NonNull String callId) {
+        // TODO(nikola): maybe pass the timestamp from the server
+        final Message message = new Message(0,
+                userId,
+                UserId.ME,
+                callId,
+                System.currentTimeMillis(),
+                Message.TYPE_SYSTEM,
+                Message.USAGE_MISSED_AUDIO_CALL,
+                Message.STATE_OUTGOING_DELIVERED,
+                null,
+                null,
+                -1,
+                null,
+                -1,
+                null,
+                0);
+        message.addToStorage(contentDb);
     }
 }

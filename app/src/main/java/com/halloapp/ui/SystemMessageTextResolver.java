@@ -15,6 +15,7 @@ import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 
@@ -111,6 +112,10 @@ public class SystemMessageTextResolver {
                         view.setText("");
                     }
                 });
+                break;
+            }
+            case Message.USAGE_MISSED_AUDIO_CALL: {
+                textView.setText(textView.getContext().getString(R.string.system_message_missed_call, TimeFormatter.formatMessageTime(textView.getContext(), message.timestamp)));
                 break;
             }
             case Message.USAGE_CHAT:

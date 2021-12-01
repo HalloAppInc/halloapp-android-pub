@@ -142,8 +142,10 @@ public class CallViewModel extends ViewModel implements CallObserver {
         endCall();
     }
 
+    // TODO(nikola): We probably no longer need to call stop from the UI thread. We should be able to delete this function
     @UiThread
     public void onEndCallCleanup() {
+        // TODO(nikola): remove this if. callManager is never null.
         if (callManager != null) {
             callManager.stop();
         }
