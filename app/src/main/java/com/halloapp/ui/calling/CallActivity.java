@@ -1,9 +1,11 @@
 package com.halloapp.ui.calling;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -25,6 +27,8 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -56,6 +60,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private UserId peerUid;
 
     private ContactLoader contactLoader;
+    private Timer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -190,6 +195,32 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        timer = new Timer();
+        TimerTask timerTaskAsync = new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override public void run() {
+                        updateCallTimer();
+                    }
+                });
+            }
+        };
+        timer.scheduleAtFixedRate(timerTaskAsync, 0, 1000);
+    }
+
+    @Override
+    protected void onPause() {
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+        }
+        super.onPause();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         contactLoader.destroy();
@@ -308,6 +339,11 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     @Override
     public void onRationaleDenied(int requestCode) {
         Log.i("onRationaleDeclined(int requestCode:" + requestCode + ")");
+    }
+
+    @UiThread
+    private void updateCallTimer() {
+        CallManager.getInstance().
     }
 
     public static Intent incomingCallIntent(@NonNull Context context, @NonNull String callId, @NonNull UserId peerUid) {
