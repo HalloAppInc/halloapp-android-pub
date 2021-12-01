@@ -224,6 +224,8 @@ public class CallBluetoothManager {
      * Note that the AVAudioManager is also involved in driving this state
      * change.
      */
+    // TODO(nikola): When updating to API 31 we need to ask for BLUETOOTH_CONNECT permission
+    @SuppressLint("MissingPermission")
     public void start() {
         ThreadUtils.checkIsOnMainThread();
         Log.d("CallBluetoothManager.start");
@@ -360,6 +362,8 @@ public class CallBluetoothManager {
      * HEADSET_AVAILABLE and `bluetoothDevice` will be mapped to the connected
      * device if available.
      */
+    // TODO(nikola): When updating to API 31 we need to ask for BLUETOOTH_CONNECT permission
+    @SuppressLint("MissingPermission")
     public void updateDevice() {
         if (bluetoothState == State.UNINITIALIZED || bluetoothHeadset == null) {
             return;
@@ -412,7 +416,8 @@ public class CallBluetoothManager {
     }
 
     /** Logs the state of the local Bluetooth adapter. */
-    @SuppressLint("HardwareIds")
+    // TODO(nikola): When updating to API 31 we need to ask for BLUETOOTH_CONNECT permission
+    @SuppressLint("MissingPermission")
     protected void logBluetoothAdapterInfo(BluetoothAdapter localAdapter) {
         Log.d("BluetoothAdapter: "
                 + "enabled=" + localAdapter.isEnabled() + ", "
@@ -454,6 +459,8 @@ public class CallBluetoothManager {
      * Called when start of the BT SCO channel takes too long time. Usually
      * happens when the BT device has been turned on during an ongoing call.
      */
+    // TODO(nikola): When updating to API 31 we need to ask for BLUETOOTH_CONNECT permission
+    @SuppressLint("MissingPermission")
     private void bluetoothTimeout() {
         ThreadUtils.checkIsOnMainThread();
         if (bluetoothState == State.UNINITIALIZED || bluetoothHeadset == null) {
