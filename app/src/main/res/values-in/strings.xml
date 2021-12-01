@@ -958,5 +958,43 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi."</string>
 
     <!-- Name for notifications that come out as a broadcast from the server -->
     <string name="broadcast_notifications_channel_name">"Alerts from HalloApp"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice calls -->
+    <string name="voice_call_record_audio_permission_rationale">"To use voice calls we need permission to access the microphone"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice calls, but it has already been denied. -->
+    <string name="voice_call_record_audio_permission_rationale_denied">"To use voice calls we need permission to access the microphone.
+
+Open the app settings screen to modify app permissions."</string>
+
+    <!-- Shown inline in a chat when the user missed an incoming call, %s will represent the time of the call. eg 4:20pm -->
+    <string name="system_message_missed_call">"Missed call at %s"</string>
+
+    <!-- Name of channel of notifications for receiving calls which is displayed in settings -->
+    <string name="call_notifications_channel_name">"Call notifications"</string>
+
+    <!-- Name of channel of notifications for ongoing audio/video calls -->
+    <string name="ongoing_call_notifications_channel_name">"Ongoing Call notifications"</string>
+
+    <!-- Displayed on the call screen to show what state the call is in -->
+    <string name="ringing">"Ringing"</string>
+
+    <!-- Displayed on the call screen to show what state the call is in -->
+    <string name="calling">"Calling"</string>
+
+    <!-- The title of the notificaiton for incoming calls -->
+    <string name="incoming_call_notification_title">"Incoming call"</string>
+
+    <!-- The call notification accept button label -->
+    <string name="call_accept_button">"Accept"</string>
+
+    <!-- The call notification decline button label -->
+    <string name="call_decline_button">"Decline"</string>
+
+    <!-- Displayed as title for the Call Screen -->
+    <string name="call_title">"Call"</string>
+
+    <!-- Displayed in an ongoing notification while the user is in a voice call -->
+    <string name="ongoing_voice_call">"Ongoing voice call"</string>
 <string name="add_invite">"Add"</string><string name="share_option_group">"Kirim ke Grup"</string><string name="select_group">"Pilih grup"</string></resources>
 

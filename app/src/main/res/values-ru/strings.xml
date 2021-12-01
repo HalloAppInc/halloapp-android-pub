@@ -59,10 +59,10 @@
     <string name="share_option_post">"Пост"</string>
     <string name="share_option_message">"Сообщение"</string>
     <plurals name="max_post_media_items">
-        <item quantity="one">"You can select up to %d media item per post"</item>
-        <item quantity="few">"You can select up to %d media item per post"</item>
-        <item quantity="many">"You can select up to %d media item per post"</item>
-        <item quantity="other">"You can select up to %d media item per post"</item>
+        <item quantity="one">"Вы можете выбрать %d медиафайл для каждого сообщения"</item>
+        <item quantity="few">"Вы можете выбрать до %d медиафайлов для каждого сообщения."</item>
+        <item quantity="many">"Вы можете выбрать до %d медиафайла для каждого сообщения"</item>
+        <item quantity="other">"Вы можете выбрать до %d медиафайлов для каждого сообщения"</item>
     </plurals>
     <string name="camera_record_audio_permission_rationale">"Чтобы снимать фото и записывать видео, нам необходимо разрешение на доступ к камере и запись звука на вашем устройстве"</string>
     <string name="camera_record_audio_permission_rationale_denied">"Чтобы снимать фото и записывать видео, нам необходимо разрешение на доступ к камере и запись звука на вашем устройстве.
@@ -164,16 +164,16 @@
         <item quantity="other">"%d новых сообщения"</item>
     </plurals>
     <plurals name="new_comments_notification">
-        <item quantity="one">"%s commented on your post"</item>
-        <item quantity="few">"%s commented on your post"</item>
-        <item quantity="many">"%s commented on your post"</item>
-        <item quantity="other">"%s commented on your post"</item>
+        <item quantity="one">"%s прокомментировал ваше сообщение"</item>
+        <item quantity="few">"%s прокомментировали ваше сообщение"</item>
+        <item quantity="many">"%s прокомментировали ваше сообщение"</item>
+        <item quantity="other">"%s прокомментировали ваше сообщение"</item>
     </plurals>
     <plurals name="new_comments_on_multiple_posts_notification">
-        <item quantity="one">"%s commented on your posts"</item>
-        <item quantity="few">"%s commented on your posts"</item>
-        <item quantity="many">"%s commented on your posts"</item>
-        <item quantity="other">"%s commented on your posts"</item>
+        <item quantity="one">"%s прокомментировал ваше сообщения"</item>
+        <item quantity="few">"%s прокомментировали ваше сообщения"</item>
+        <item quantity="many">"%s прокомментировали ваше сообщения"</item>
+        <item quantity="other">"%s прокомментировали ваше сообщения"</item>
     </plurals>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"Срок HalloApp истек"</string>
@@ -1017,9 +1017,47 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="invite_action">"Пригласить"</string>
 
     <!-- action where the user shares -->
-    <string name="share_action">"Share"</string>
+    <string name="share_action">"Поделиться"</string>
 
     <!-- Name for notifications that come out as a broadcast from the server -->
-    <string name="broadcast_notifications_channel_name">"Alerts from HalloApp"</string>
+    <string name="broadcast_notifications_channel_name">"Оповещения от HalloApp"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice calls -->
+    <string name="voice_call_record_audio_permission_rationale">"To use voice calls we need permission to access the microphone"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice calls, but it has already been denied. -->
+    <string name="voice_call_record_audio_permission_rationale_denied">"To use voice calls we need permission to access the microphone.
+
+Open the app settings screen to modify app permissions."</string>
+
+    <!-- Shown inline in a chat when the user missed an incoming call, %s will represent the time of the call. eg 4:20pm -->
+    <string name="system_message_missed_call">"Missed call at %s"</string>
+
+    <!-- Name of channel of notifications for receiving calls which is displayed in settings -->
+    <string name="call_notifications_channel_name">"Call notifications"</string>
+
+    <!-- Name of channel of notifications for ongoing audio/video calls -->
+    <string name="ongoing_call_notifications_channel_name">"Ongoing Call notifications"</string>
+
+    <!-- Displayed on the call screen to show what state the call is in -->
+    <string name="ringing">"Ringing"</string>
+
+    <!-- Displayed on the call screen to show what state the call is in -->
+    <string name="calling">"Calling"</string>
+
+    <!-- The title of the notificaiton for incoming calls -->
+    <string name="incoming_call_notification_title">"Incoming call"</string>
+
+    <!-- The call notification accept button label -->
+    <string name="call_accept_button">"Accept"</string>
+
+    <!-- The call notification decline button label -->
+    <string name="call_decline_button">"Decline"</string>
+
+    <!-- Displayed as title for the Call Screen -->
+    <string name="call_title">"Call"</string>
+
+    <!-- Displayed in an ongoing notification while the user is in a voice call -->
+    <string name="ongoing_voice_call">"Ongoing voice call"</string>
 <string name="add_invite">"Add"</string><string name="share_option_group">"Опубликовать в группе"</string><string name="select_group">"Выбрать группу"</string></resources>
 
