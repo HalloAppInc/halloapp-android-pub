@@ -246,8 +246,7 @@ public class CallManager {
 
         if (webrtcOffer == null) {
             Log.e("handleIncomingCall() Failed to decrypt webrtcOffer callId:" + callId);
-            // TODO(nikola): fix the end call reason for the encryption errors
-            endCall(EndCall.Reason.REJECT);
+            endCall(EndCall.Reason.DECRYPTION_FAILED);
             notifyOnEndCall();
             // TODO(nikola): unify the endCall and stop funcitons
             stop(EndCall.Reason.REJECT);
@@ -300,8 +299,7 @@ public class CallManager {
         cancelRingingTimeout();
 
         if (webrtcOffer == null) {
-            // TODO(nikola): fix this reasons. Maybe add a new reason for e2e errors
-            endCall(EndCall.Reason.REJECT);
+            endCall(EndCall.Reason.DECRYPTION_FAILED);
             notifyOnEndCall();
             stop(EndCall.Reason.REJECT);
             return;
@@ -589,8 +587,7 @@ public class CallManager {
                     callsApi.sendAnswerCall(callId, peerUid, answer);
                 } catch (CryptoException e) {
                     Log.e("CallManager: failed to encrypt webrtc Answer", e);
-                    // TODO(nikola): change reason to CRYPTO_FAIL
-                    endCall(EndCall.Reason.REJECT);
+                    endCall(EndCall.Reason.ENCRYPTION_FAILED);
                     notifyOnEndCall();
                     stop(EndCall.Reason.REJECT);
                 }
