@@ -646,6 +646,7 @@ public class Notifications {
                     // TODO(nikola): improve the notification based on designs
                     .setContentTitle(context.getString(R.string.incoming_call_notification_title))
                     .setContentText(name)
+                    .setOngoing(true)
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setCategory(NotificationCompat.CATEGORY_CALL)
                     .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
@@ -664,6 +665,7 @@ public class Notifications {
 
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             Notification notification = builder.build();
+            notification.flags |= Notification.FLAG_INSISTENT;
             notificationManager.notify(CALL_NOTIFICATION_ID, notification);
         });
     }
