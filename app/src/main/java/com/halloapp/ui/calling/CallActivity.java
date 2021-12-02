@@ -34,8 +34,8 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     public static final String EXTRA_PEER_UID = "peer_uid";
     public static final String EXTRA_IS_INITIATOR = "is_initiator";
 
-    public static final int REQUEST_CODE_START_CALL = 1;
-    public static final int REQUEST_CODE_INCOMING_CALL = 2;
+    public static final int START_CALL_ACTION = 1;
+    public static final int ANSWER_CALL_ACTION = 2;
 
     public static final String ACTION_ACCEPT = "accept";
 
@@ -161,7 +161,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             if (!callViewModel.isRinging()) {
                 return;
             }
-            checkPermissionsThenAcceptCall();
+            checkPermissionsThen(ANSWER_CALL_ACTION);
         });
         findViewById(R.id.decline_view).setOnClickListener(v -> {
             if (!callViewModel.isRinging()) {
@@ -178,15 +178,14 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         });
 
         boolean isInitiator = getIntent().getBooleanExtra(EXTRA_IS_INITIATOR, false);
-        Log.i("CallActivity: isInitiator " + isInitiator);
+        Log.i("CallActivity: isInitiator=" + isInitiator);
+
         if (isInitiator && callViewModel.isIdle()) {
-            Log.i("CallActivity: will start call");
-            startCall();
-        } else {
-            if (ACTION_ACCEPT.equals(getIntent().getAction()) && callViewModel.isRinging()) {
-                Log.i("User accepted the call");
-                checkPermissionsThenAcceptCall();
-            }
+            Log.i("CallActivity: Starting call");
+            checkPermissionsThen(START_CALL_ACTION);
+        } else if (ACTION_ACCEPT.equals(getIntent().getAction()) && callViewModel.isRinging()) {
+            Log.i("CallActivity: User accepted the call");
+            checkPermissionsThen(ANSWER_CALL_ACTION);
         }
     }
 
@@ -196,29 +195,24 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         contactLoader.destroy();
     }
 
-    private void startCall() {
+    private void checkPermissionsThen(int action) {
         // TODO(nikola): When we want to do video.
         //String[] perms = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
         String[] perms = {Manifest.permission.RECORD_AUDIO};
         if (EasyPermissions.hasPermissions(this, perms)) {
-            Log.i("CallActivity/startCall we have permissions");
-            onStartCall();
+            doAction(action);
         } else {
-            Log.i("StartCall needs permissions");
-            EasyPermissions.requestPermissions(this, getString(R.string.voice_call_record_audio_permission_rationale), REQUEST_CODE_START_CALL, perms);
+            EasyPermissions.requestPermissions(this, getString(R.string.voice_call_record_audio_permission_rationale), action, perms);
         }
     }
 
-    private void checkPermissionsThenAcceptCall() {
-        // TODO(nikola): When we want to do video.
-        //String[] perms = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
-        String[] perms = {Manifest.permission.RECORD_AUDIO};
-        if (EasyPermissions.hasPermissions(this, perms)) {
-            Log.i("CallActivity/acceptCall we have permissions");
+    private void doAction(int action) {
+        if (action == START_CALL_ACTION) {
+            onStartCall();
+        } else if (action == ANSWER_CALL_ACTION) {
             onAcceptCall();
         } else {
-            Log.i("AcceptCall needs permissions");
-            EasyPermissions.requestPermissions(this, getString(R.string.voice_call_record_audio_permission_rationale), REQUEST_CODE_INCOMING_CALL, perms);
+            Log.w("CallActivity.doAction unknown action " + action);
         }
     }
 
@@ -294,15 +288,11 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         Log.i("Call permissions Granted " + requestCode + " " + perms);
-        if (requestCode == REQUEST_CODE_START_CALL && perms.contains(Manifest.permission.RECORD_AUDIO)) {
-            onStartCall();
+        // TODO(nikola): update here for video calls
+        if (perms.contains(Manifest.permission.RECORD_AUDIO)) {
+            doAction(requestCode);
             return;
         }
-        if (requestCode == REQUEST_CODE_INCOMING_CALL && perms.contains(Manifest.permission.RECORD_AUDIO)) {
-            onAcceptCall();
-            return;
-        }
-        Log.w("Call permissions granted, but nothing is happening after it");
     }
 
     @Override
