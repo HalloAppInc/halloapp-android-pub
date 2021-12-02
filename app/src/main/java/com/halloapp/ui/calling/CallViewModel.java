@@ -1,5 +1,7 @@
 package com.halloapp.ui.calling;
 
+import android.os.SystemClock;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 import androidx.lifecycle.LiveData;
@@ -18,6 +20,7 @@ public class CallViewModel extends ViewModel implements CallObserver {
     private final MutableLiveData<Boolean> isMicrophoneMuted = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isSpeakerPhoneOn = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isPeerRinging = new MutableLiveData<>(false);
+    private long callStartTime = 0;
 
     private final CallManager callManager;
 
@@ -105,6 +108,7 @@ public class CallViewModel extends ViewModel implements CallObserver {
     public void onAnsweredCall(String callId, UserId peerUid) {
         Log.i("onAnswerCall");
         state.postValue(CallManager.State.IN_CALL);
+        callStartTime = SystemClock.elapsedRealtime();
     }
 
     @Override
@@ -138,6 +142,7 @@ public class CallViewModel extends ViewModel implements CallObserver {
         Log.i("CallViewModel.onAcceptCall");
         // TODO(nikola): we should include the call id here.
         if (callManager.acceptCall()) {
+            callStartTime = SystemClock.elapsedRealtime();
             state.postValue(CallManager.State.IN_CALL);
         }
     }
@@ -168,6 +173,10 @@ public class CallViewModel extends ViewModel implements CallObserver {
 
     public void toggleSpeakerPhone() {
         callManager.toggleSpeakerPhone();
+    }
+
+    public long getCallStartTime() {
+        return callStartTime;
     }
 
 }

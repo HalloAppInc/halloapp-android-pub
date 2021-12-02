@@ -23,9 +23,6 @@
             android:fontFamily="sans-serif-medium"
             android:textSize="20sp"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/avatar"
             android:layout_marginBottom="20dp"
             tools:text="Calling..." />
 
@@ -36,9 +33,6 @@
             android:layout_height="100dp"
             android:src="@drawable/avatar_person"
             app:civ_border_color="@color/card_background"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             tools:layout_editor_absoluteY="48dp" />
 
         <TextView
@@ -49,9 +43,6 @@
             android:fontFamily="sans-serif-medium"
             android:textSize="17sp"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/avatar"
             tools:text="Ded Pihtov" />
 
         <TextView
@@ -59,11 +50,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/name"
             android:textSize="16sp"
             android:textColor="@color/tertiary_text"/>
+
+        <Chronometer
+            android:id="@+id/call_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:textSize="20sp"
+            android:visibility="gone"
+            app:layout_drawOnPreview="true"
+            app:layout_drawOnPictureSnapshot="false"
+            app:layout_drawOnVideoSnapshot="false"/>
 
     </LinearLayout>
 
