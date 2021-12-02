@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -26,8 +28,6 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -41,6 +41,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     public static final int REQUEST_ANSWER_CALL = 2;
 
     public static final String ACTION_ACCEPT = "accept";
+    public static final int CALL_TIMER_UPDATE_INTERVAL = 1000;
 
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
@@ -59,7 +60,8 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private UserId peerUid;
 
     private ContactLoader contactLoader;
-    private Timer timer;
+
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +117,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                     Log.i("CallActivity/State -> IN_CALL");
                     titleTextView.setText("00:00");
                     inCallView.setVisibility(View.VISIBLE);
+                    mainHandler.post(inCallTimerRunnable);
                     break;
                 case CallManager.State.RINGING:
                     Log.i("CallActivity/State -> RINGING");
@@ -196,22 +199,14 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     @Override
     protected void onResume() {
         super.onResume();
-        timer = new Timer();
-        TimerTask timerTaskAsync = new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(() -> updateCallTimer());
-            }
-        };
-        timer.scheduleAtFixedRate(timerTaskAsync, 0, 1000);
+        if (callViewModel.inCall()) {
+            mainHandler.post(inCallTimerRunnable);
+        }
     }
 
     @Override
     protected void onPause() {
-        if (timer != null) {
-            timer.purge();
-            timer.cancel();
-        }
+        mainHandler.removeCallbacks(inCallTimerRunnable);
         super.onPause();
     }
 
@@ -336,10 +331,19 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         Log.i("onRationaleDeclined(int requestCode:" + requestCode + ")");
     }
 
+    private Runnable inCallTimerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            updateCallTimer();
+            mainHandler.postDelayed(this, CALL_TIMER_UPDATE_INTERVAL);
+        }
+    };
+
     @UiThread
     private void updateCallTimer() {
         long startTime = CallManager.getInstance().getCallStartTimestamp();
         if (startTime == 0) {
+            Log.w("CallActivity.updateCallTimer should not be running when the call has not active");
             return;
         }
         long durationSec = (System.currentTimeMillis() - startTime) / 1000;
