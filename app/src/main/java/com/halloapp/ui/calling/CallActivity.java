@@ -1,11 +1,6 @@
 package com.halloapp.ui.calling;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.UiThread;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,6 +10,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Notifications;
 import com.halloapp.R;
@@ -114,7 +113,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                     break;
                 case CallManager.State.IN_CALL:
                     Log.i("CallActivity/State -> IN_CALL");
-                    titleTextView.setText("");
+                    titleTextView.setText("00:00");
                     inCallView.setVisibility(View.VISIBLE);
                     break;
                 case CallManager.State.RINGING:
@@ -201,11 +200,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         TimerTask timerTaskAsync = new TimerTask() {
             @Override
             public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override public void run() {
-                        updateCallTimer();
-                    }
-                });
+                runOnUiThread(() -> updateCallTimer());
             }
         };
         timer.scheduleAtFixedRate(timerTaskAsync, 0, 1000);
@@ -343,7 +338,15 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
 
     @UiThread
     private void updateCallTimer() {
-        CallManager.getInstance().
+        long startTime = CallManager.getInstance().getCallStartTimestamp();
+        if (startTime == 0) {
+            return;
+        }
+        long durationSec = (System.currentTimeMillis() - startTime) / 1000;
+        long sec = durationSec % 60;
+        long min = durationSec / 60;
+        String callTime = String.format("%02d:%02d", min, sec);
+        titleTextView.setText(callTime);
     }
 
     public static Intent incomingCallIntent(@NonNull Context context, @NonNull String callId, @NonNull UserId peerUid) {

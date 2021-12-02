@@ -156,6 +156,10 @@ public class CallManager {
         return state;
     }
 
+    public long getCallStartTimestamp() {
+        return callStartTimestamp;
+    }
+
     @MainThread
     public boolean startCall(@NonNull UserId peerUid) {
         Log.i("CallManager.startCall");
