@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,7 +26,6 @@ import com.halloapp.id.GroupId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.GridAutofitLayoutManager;
-import com.halloapp.widget.SnackbarHelper;
 
 public class GroupBackgroundActivity extends HalloActivity {
 
@@ -102,11 +102,7 @@ public class GroupBackgroundActivity extends HalloActivity {
                     return;
                 }
                 progressDialog.dismiss();
-                if (result) {
-                    SnackbarHelper.showInfo(this, R.string.group_background_save_success);
-                } else {
-                    SnackbarHelper.showInfo(this, R.string.group_background_save_failed);
-                }
+                Toast.makeText(this, result ? R.string.group_background_save_success : R.string.group_background_save_failed, Toast.LENGTH_LONG).show();
                 finish();
             });
             return true;
