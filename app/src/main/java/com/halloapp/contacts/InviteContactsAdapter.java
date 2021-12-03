@@ -37,6 +37,11 @@ public class InviteContactsAdapter extends RecyclerView.Adapter<InviteContactsAd
     private static final int TYPE_CONTACT = 1;
     private static final int TYPE_INVITE_VIA_LINK = 2;
 
+    private static final String[] BANNED_NAME_TOKENS = new String[] {
+            "spam",
+            "taxi"
+    };
+
     public interface InviteContactsAdapterParent {
         void onInvite(@NonNull Contact contact);
         void onFiltered(@NonNull CharSequence constraint, @NonNull List<Contact> contacts);
@@ -227,11 +232,27 @@ public class InviteContactsAdapter extends RecyclerView.Adapter<InviteContactsAd
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             //noinspection unchecked
-            final List<Contact> filteredContacts = (List<Contact>) results.values;
-            if (listener != null) {
-                listener.onFiltered(constraint, filteredContacts);
+            final List<Contact> tokenFilteredContacts = (List<Contact>) results.values;
+            final List<Contact> bannedStringsRemoved = new ArrayList<>();
+            for (Contact contact : tokenFilteredContacts) {
+                boolean allowed = true;
+                List<String> tokens = FilterUtils.getFilterTokens(itemToString(contact));
+                if (TextUtils.isEmpty(constraint) && tokens != null) {
+                    for (String token : BANNED_NAME_TOKENS) {
+                        if (tokens.contains(token)) {
+                            allowed = false;
+                            break;
+                        }
+                    }
+                }
+                if (allowed) {
+                    bannedStringsRemoved.add(contact);
+                }
             }
-            setFilteredContacts(filteredContacts, constraint);
+            if (listener != null) {
+                listener.onFiltered(constraint, bannedStringsRemoved);
+            }
+            setFilteredContacts(bannedStringsRemoved, constraint);
         }
     }
 }
