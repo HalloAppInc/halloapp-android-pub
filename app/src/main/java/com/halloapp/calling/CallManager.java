@@ -229,15 +229,22 @@ public class CallManager {
         state = State.IDLE;
     }
 
-    public void handleIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @Nullable String webrtcOffer,
+    public void handleIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType, @Nullable String webrtcOffer,
                                     @NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers,
                                     @NonNull Long timestamp) {
-        Log.i("CallManager.handleIncomingCall " + callId + " peerUid: " + peerUid);
+        Log.i("CallManager.handleIncomingCall " + callId + " peerUid: " + peerUid + " " + callType);
         if (this.state != State.IDLE) {
-            Log.i("CallManager: rejecting incoming call " + callId + " from (" + peerUid + ") because already in call.");
+            Log.i("CallManager: rejecting incoming call " + callId + " from " + peerUid + " because already in call.");
             Log.i(toString());
             callsApi.sendEndCall(callId, peerUid, EndCall.Reason.BUSY);
-            storeMissedCallMsg(peerUid, callId);
+            storeMissedCallMsg(peerUid, callId, callType);
+            return;
+        }
+        if (!CallType.AUDIO.equals(callType)) {
+            Log.i("CallManager: rejecting incoming call " + callId + " from " + peerUid + " because it's not audio");
+            callsApi.sendEndCall(callId, peerUid, EndCall.Reason.BUSY);
+            // TODO(nikola): missed call msg assumes it is audio only
+            storeMissedCallMsg(peerUid, callId, callType);
             return;
         }
         this.isInitiator = false;
@@ -316,7 +323,8 @@ public class CallManager {
                                @NonNull EndCall.Reason reason, @NonNull Long timestamp) {
         Log.i("got EndCall callId: " + callId + " peerUid: " + peerUid + " reason: " + reason.name());
         if (reason == EndCall.Reason.CANCEL || reason == EndCall.Reason.TIMEOUT) {
-            storeMissedCallMsg(peerUid, callId);
+            // TODO(nikola): fix here when we do video calls
+            storeMissedCallMsg(peerUid, callId, CallType.AUDIO);
         }
         if (this.callId == null || !this.callId.equals(callId)) {
             Log.i("got EndCall for wrong call. " + toString());
@@ -714,7 +722,8 @@ public class CallManager {
             if (this.callId != null && this.callId.equals(callId)) {
                 endCall(EndCall.Reason.TIMEOUT);
                 if (this.isInitiator == false && this.callId != null && this.state == State.RINGING) {
-                    storeMissedCallMsg(this.peerUid, this.callId);
+                    // TODO(nikola): fix here when we do video)
+                    storeMissedCallMsg(this.peerUid, this.callId, CallType.AUDIO);
                 }
                 notifyOnEndCall();
                 // TODO(nikola): this could clear the wrong notification if we have multiple incoming calls.
@@ -802,7 +811,11 @@ public class CallManager {
         mainHandler.post(() -> audioManager.stop());
     }
 
-    private void storeMissedCallMsg(@NonNull UserId userId, @NonNull String callId) {
+    private void storeMissedCallMsg(@NonNull UserId userId, @NonNull String callId, @NonNull CallType callType) {
+        int msgType = Message.USAGE_MISSED_AUDIO_CALL;
+        if (callType == CallType.VIDEO) {
+            msgType = Message.USAGE_MISSED_VIDEO_CALL;
+        }
         // TODO(nikola): maybe pass the timestamp from the server
         final Message message = new Message(0,
                 userId,
@@ -810,7 +823,7 @@ public class CallManager {
                 callId,
                 System.currentTimeMillis(),
                 Message.TYPE_SYSTEM,
-                Message.USAGE_MISSED_AUDIO_CALL,
+                msgType,
                 Message.STATE_OUTGOING_DELIVERED,
                 null,
                 null,

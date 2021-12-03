@@ -492,8 +492,10 @@
     <string name="system_message_group_description_changed_by_you">You changed the group description</string>
     <!-- Shown inline in a chat when the e2e keys securing the messages have changed, i.e. if the other user changes phones or reinstalls -->
     <string name="system_message_keys_changed">Security keys with %s changed</string>
-    <!-- Shown inline in a chat when the user missed an incoming call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_call">Missed call at %s</string>
+    <!-- Shown inline in a chat when the user missed an incoming audio call, %s will represent the time of the call. eg 4:20pm -->
+    <string name="system_message_missed_audio_call">Missed audio call at %s</string>
+    <!-- Shown inline in a chat when the user missed an incoming video call, %s will represent the time of the call. eg 4:20pm -->
+    <string name="system_message_missed_video_call">Missed video call at %s</string>
 
     <string name="system_post_group_created">This group was created by %s</string>
     <string name="system_post_group_created_by_you">This group was created by you</string>

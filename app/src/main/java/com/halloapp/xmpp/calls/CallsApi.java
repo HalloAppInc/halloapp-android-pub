@@ -109,8 +109,9 @@ public class CallsApi extends Connection.Observer {
         // String webrtcOffer = incomingCall.getWebrtcOffer().getEncPayload().toStringUtf8();
         List<StunServer> stunServers = incomingCall.getStunServersList();
         List<TurnServer> turnServers = incomingCall.getTurnServersList();
+        CallType callType = incomingCall.getCallType();
         long timestamp = incomingCall.getTimestampMs();
-        CallManager.getInstance().handleIncomingCall(callId, peerUid, webrtcOffer, stunServers, turnServers, timestamp);
+        CallManager.getInstance().handleIncomingCall(callId, peerUid, callType, webrtcOffer, stunServers, turnServers, timestamp);
         connection.sendAck(ackId);
     }
 

@@ -115,7 +115,11 @@ public class SystemMessageTextResolver {
                 break;
             }
             case Message.USAGE_MISSED_AUDIO_CALL: {
-                textView.setText(textView.getContext().getString(R.string.system_message_missed_call, TimeFormatter.formatMessageTime(textView.getContext(), message.timestamp)));
+                textView.setText(textView.getContext().getString(R.string.system_message_missed_audio_call, TimeFormatter.formatMessageTime(textView.getContext(), message.timestamp)));
+                break;
+            }
+            case Message.USAGE_MISSED_VIDEO_CALL: {
+                textView.setText(textView.getContext().getString(R.string.system_message_missed_video_call, TimeFormatter.formatMessageTime(textView.getContext(), message.timestamp)));
                 break;
             }
             case Message.USAGE_CHAT:

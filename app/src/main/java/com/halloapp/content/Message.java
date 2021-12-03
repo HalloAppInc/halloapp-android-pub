@@ -58,7 +58,7 @@ public class Message extends ContentItem {
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({USAGE_CHAT, USAGE_BLOCK, USAGE_UNBLOCK, USAGE_CREATE_GROUP, USAGE_ADD_MEMBERS, USAGE_REMOVE_MEMBER, USAGE_MEMBER_LEFT, USAGE_PROMOTE, USAGE_DEMOTE, USAGE_AUTO_PROMOTE, USAGE_NAME_CHANGE, USAGE_AVATAR_CHANGE, USAGE_GROUP_DELETED, USAGE_KEYS_CHANGED, USAGE_MISSED_AUDIO_CALL})
+    @IntDef({USAGE_CHAT, USAGE_BLOCK, USAGE_UNBLOCK, USAGE_CREATE_GROUP, USAGE_ADD_MEMBERS, USAGE_REMOVE_MEMBER, USAGE_MEMBER_LEFT, USAGE_PROMOTE, USAGE_DEMOTE, USAGE_AUTO_PROMOTE, USAGE_NAME_CHANGE, USAGE_AVATAR_CHANGE, USAGE_GROUP_DELETED, USAGE_KEYS_CHANGED, USAGE_MISSED_AUDIO_CALL, USAGE_MISSED_VIDEO_CALL})
     public @interface Usage {}
     public static final int USAGE_CHAT = 0;
     public static final int USAGE_BLOCK = 1;
@@ -75,6 +75,7 @@ public class Message extends ContentItem {
     public static final int USAGE_GROUP_DELETED = 12;
     public static final int USAGE_KEYS_CHANGED = 13;
     public static final int USAGE_MISSED_AUDIO_CALL = 14;
+    public static final int USAGE_MISSED_VIDEO_CALL = 15;
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
