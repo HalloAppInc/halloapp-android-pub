@@ -34,8 +34,8 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     public static final String EXTRA_PEER_UID = "peer_uid";
     public static final String EXTRA_IS_INITIATOR = "is_initiator";
 
-    public static final int START_CALL_ACTION = 1;
-    public static final int ANSWER_CALL_ACTION = 2;
+    public static final int REQUEST_START_CALL = 1;
+    public static final int REQUEST_ANSWER_CALL = 2;
 
     public static final String ACTION_ACCEPT = "accept";
 
@@ -161,7 +161,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             if (!callViewModel.isRinging()) {
                 return;
             }
-            checkPermissionsThen(ANSWER_CALL_ACTION);
+            checkPermissionsThen(REQUEST_ANSWER_CALL);
         });
         findViewById(R.id.decline_view).setOnClickListener(v -> {
             if (!callViewModel.isRinging()) {
@@ -182,10 +182,10 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
 
         if (isInitiator && callViewModel.isIdle()) {
             Log.i("CallActivity: Starting call");
-            checkPermissionsThen(START_CALL_ACTION);
+            checkPermissionsThen(REQUEST_START_CALL);
         } else if (ACTION_ACCEPT.equals(getIntent().getAction()) && callViewModel.isRinging()) {
             Log.i("CallActivity: User accepted the call");
-            checkPermissionsThen(ANSWER_CALL_ACTION);
+            checkPermissionsThen(REQUEST_ANSWER_CALL);
         }
     }
 
@@ -195,24 +195,24 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         contactLoader.destroy();
     }
 
-    private void checkPermissionsThen(int action) {
+    private void checkPermissionsThen(int request) {
         // TODO(nikola): When we want to do video.
         //String[] perms = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
         String[] perms = {Manifest.permission.RECORD_AUDIO};
         if (EasyPermissions.hasPermissions(this, perms)) {
-            doAction(action);
+            handleRequest(request);
         } else {
-            EasyPermissions.requestPermissions(this, getString(R.string.voice_call_record_audio_permission_rationale), action, perms);
+            EasyPermissions.requestPermissions(this, getString(R.string.voice_call_record_audio_permission_rationale), request, perms);
         }
     }
 
-    private void doAction(int action) {
-        if (action == START_CALL_ACTION) {
+    private void handleRequest(int request) {
+        if (request == REQUEST_START_CALL) {
             onStartCall();
-        } else if (action == ANSWER_CALL_ACTION) {
+        } else if (request == REQUEST_ANSWER_CALL) {
             onAcceptCall();
         } else {
-            Log.w("CallActivity.doAction unknown action " + action);
+            Log.w("CallActivity.handleRequest unknown request " + request);
         }
     }
 
@@ -290,7 +290,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         Log.i("Call permissions Granted " + requestCode + " " + perms);
         // TODO(nikola): update here for video calls
         if (perms.contains(Manifest.permission.RECORD_AUDIO)) {
-            doAction(requestCode);
+            handleRequest(requestCode);
             return;
         }
     }
