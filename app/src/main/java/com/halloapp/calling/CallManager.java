@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
+import android.os.SystemClock;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.MainThread;
@@ -205,7 +206,7 @@ public class CallManager {
     }
     
     public void stop(EndCall.Reason reason) {
-        final long callDuration = (this.callStartTimestamp > 0)? System.currentTimeMillis() - this.callStartTimestamp : 0;
+        final long callDuration = (this.callStartTimestamp > 0)? SystemClock.elapsedRealtime() - this.callStartTimestamp : 0;
         Log.i("stop callId: " + callId + " peerUid" + peerUid + " duration: " + callDuration / 1000);
         stopAudioManager();
         stopOutgoingRingtone();
@@ -230,6 +231,7 @@ public class CallManager {
         isSpeakerPhoneOn = false;
         callId = null;
         peerUid = null;
+        callStartTimestamp = 0;
         state = State.IDLE;
     }
 
@@ -318,7 +320,7 @@ public class CallManager {
         peerConnection.setRemoteDescription(new SimpleSdpObserver(), new SessionDescription(SessionDescription.Type.ANSWER, webrtcOffer));
         this.state = State.IN_CALL;
         this.isAnswered = true;
-        this.callStartTimestamp = System.currentTimeMillis();
+        this.callStartTimestamp = SystemClock.elapsedRealtime();
         notifyOnAnsweredCall();
     }
 
@@ -366,7 +368,7 @@ public class CallManager {
         doAnswer();
         this.state = State.IN_CALL;
         this.isAnswered = true;
-        this.callStartTimestamp = System.currentTimeMillis();
+        this.callStartTimestamp = SystemClock.elapsedRealtime();
         return true;
     }
 
