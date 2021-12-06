@@ -146,7 +146,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             }
             try {
                 prepareMedia(media, maxVideoDurationSeconds);
-            } catch (IOException | MediaConversionException | RuntimeException e) {
+            } catch (IOException | MediaConversionException | RuntimeException | Mp4Utils.Mp4OperationException e) {
                 Log.e("UploadMediaTask media preparation failed for " + mediaLogId, e);
                 break;
             }
@@ -452,7 +452,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         return newEncryptedFile;
     }
 
-    private void prepareMedia(@NonNull Media media, long maxVideoDurationSeconds) throws IOException, MediaConversionException {
+    private void prepareMedia(@NonNull Media media, long maxVideoDurationSeconds) throws IOException, MediaConversionException, Mp4Utils.Mp4OperationException {
         Log.d("UploadMediaTask.prepareMedia start size " + media.file.length());
         if (media.type == Media.MEDIA_TYPE_VIDEO && MediaUtils.shouldConvertVideo(media.file, maxVideoDurationSeconds)) {
             final File file = fileStore.getTmpFile(RandomId.create());
@@ -498,8 +498,10 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
 
         if (media.type == Media.MEDIA_TYPE_VIDEO) {
             Mp4Utils.zeroMp4Timestamps(media.file);
-            Mp4Utils.makeMp4Streamable(media.file);
             Mp4Utils.removeMp4Location(media.file);
+            if (media.blobVersion == Media.BLOB_VERSION_CHUNKED) {
+                Mp4Utils.makeMp4Streamable(media.file);
+            }
         }
     }
 

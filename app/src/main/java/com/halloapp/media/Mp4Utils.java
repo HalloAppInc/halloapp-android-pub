@@ -83,6 +83,12 @@ public class Mp4Utils {
         STCO_ATOM_CONTAINER_SET.add(MP4_ATOM_TYPE_STBL);
     }
 
+    public static class Mp4OperationException extends Exception {
+        public Mp4OperationException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
     private static final class Mp4Atom {
         int type;
         long start;
@@ -544,6 +550,10 @@ public class Mp4Utils {
                 inFileChannel.transferTo(ftypSize, lastAtom.start - ftypSize, outFileChannel);
                 return true;
             } else {
+                final int moovIndex = ftypSize > 0 ? 1 : 0;
+                if (moovIndex >= mp4AtomList.size() || mp4AtomList.get(moovIndex).type != MP4_ATOM_TYPE_MOOV) {
+                    throw new Mp4FormatException("Could not find moov atom at the beginning or at the end of the file");
+                }
                 Log.i("Mp4Utils.putMoovAtomAtStart: Last atom in mp4 was not moov, nothing more to do.");
             }
         } else {
@@ -592,7 +602,7 @@ public class Mp4Utils {
     }
 
     @WorkerThread
-    public static void makeMp4Streamable(@NonNull File mp4File) throws IOException {
+    public static void makeMp4Streamable(@NonNull File mp4File) throws IOException, Mp4OperationException {
         Log.d("Mp4Utils.makeMp4Streamable start size " + mp4File.length());
         final File tempFile = FileStore.getInstance().getTmpFile(RandomId.create());
 
@@ -611,6 +621,7 @@ public class Mp4Utils {
             }
         } catch (Mp4FormatException e) {
             Log.e("MediaUtils.makeMp4Streamable: " + e);
+            throw new Mp4OperationException("Failed to make mp4 streamable", e);
         } finally {
             tempFile.delete();
         }
