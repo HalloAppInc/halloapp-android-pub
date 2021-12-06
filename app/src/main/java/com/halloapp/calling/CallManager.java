@@ -243,7 +243,6 @@ public class CallManager {
         if (!CallType.AUDIO.equals(callType)) {
             Log.i("CallManager: rejecting incoming call " + callId + " from " + peerUid + " because it's not audio");
             callsApi.sendEndCall(callId, peerUid, EndCall.Reason.BUSY);
-            // TODO(nikola): missed call msg assumes it is audio only
             storeMissedCallMsg(peerUid, callId, callType);
             return;
         }
