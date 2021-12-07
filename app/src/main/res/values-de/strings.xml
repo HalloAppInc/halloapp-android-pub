@@ -660,7 +660,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="verify_safety_number">"Sicherheitsnummer überprüfen"</string>
 
     <!-- Shown when user has contact permissions disabled on the home feed -->
-    <string name="enable_contacts_rationale">"Erlaube den Zugriff auf deine Kontakte, um die Updates deiner Freunde und Familie zu sehen"</string>
+    <string name="enable_contacts_rationale">"Du erhälst Updates von deinen Freunden und deiner Familie, indem du den Zugriff auf deine Kontakte aktivierst"</string>
 
     <!-- Button that takes users to system settings -->
     <string name="go_to_settings">"Zu meinen Einstellungen"</string>
@@ -1010,41 +1010,44 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="broadcast_notifications_channel_name">"Benachrichtigungen von HalloApp"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls -->
-    <string name="voice_call_record_audio_permission_rationale">"To use voice calls we need permission to access the microphone"</string>
+    <string name="voice_call_record_audio_permission_rationale">"Für Sprachanrufe benötigen wir deine Erlaubnis, um auf das Mikrofon zugreifen zu können"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls, but it has already been denied. -->
-    <string name="voice_call_record_audio_permission_rationale_denied">"To use voice calls we need permission to access the microphone.
+    <string name="voice_call_record_audio_permission_rationale_denied">"Für Sprachanrufe benötigen wir deine Erlaubnis, um auf das Mikrofon zugreifen zu können.
 
-Open the app settings screen to modify app permissions."</string>
-
-    <!-- Shown inline in a chat when the user missed an incoming call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_call">"Missed call at %s"</string>
+Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
 
     <!-- Name of channel of notifications for receiving calls which is displayed in settings -->
-    <string name="call_notifications_channel_name">"Call notifications"</string>
+    <string name="call_notifications_channel_name">"Mitteilungen für Anrufe"</string>
 
     <!-- Name of channel of notifications for ongoing audio/video calls -->
-    <string name="ongoing_call_notifications_channel_name">"Ongoing Call notifications"</string>
+    <string name="ongoing_call_notifications_channel_name">"Mitteilungen für laufende Anrufe"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="ringing">"Ringing"</string>
+    <string name="ringing">"Klingelt"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="calling">"Calling"</string>
+    <string name="calling">"Ruft an"</string>
 
     <!-- The title of the notificaiton for incoming calls -->
-    <string name="incoming_call_notification_title">"Incoming call"</string>
+    <string name="incoming_call_notification_title">"Eingehender Anruf"</string>
 
     <!-- The call notification accept button label -->
-    <string name="call_accept_button">"Accept"</string>
+    <string name="call_accept_button">"Annehmen"</string>
 
     <!-- The call notification decline button label -->
-    <string name="call_decline_button">"Decline"</string>
+    <string name="call_decline_button">"Ablehnen"</string>
 
     <!-- Displayed as title for the Call Screen -->
-    <string name="call_title">"Call"</string>
+    <string name="call_title">"Anruf"</string>
 
     <!-- Displayed in an ongoing notification while the user is in a voice call -->
-    <string name="ongoing_voice_call">"Ongoing voice call"</string>
-<string name="add_invite">"Hinzufügen"</string><string name="share_option_group">"In Gruppe teilen"</string><string name="select_group">"Gruppe auswählen"</string></resources>
+    <string name="ongoing_voice_call">"Laufender Sprachanruf"</string>
+
+    <!-- Shown inline in a chat when the user missed an incoming audio call, %s will represent the time of the call. eg 4:20pm -->
+    <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>
+
+    <!-- Shown inline in a chat when the user missed an incoming video call, %s will represent the time of the call. eg 4:20pm -->
+    <string name="system_message_missed_video_call">"Missed video call at %s"</string>
+<string name="system_message_missed_call">"Missed call at %s"</string><string name="add_invite">"Hinzufügen"</string><string name="share_option_group">"In Gruppe teilen"</string><string name="select_group">"Gruppe auswählen"</string></resources>
 

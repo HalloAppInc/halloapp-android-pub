@@ -126,8 +126,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="no_photos_or_videos_found">"Geen foto's of video's gevonden"</string>
     <string name="gallery">"Galerij"</string>
     <string name="avatar_picker_title">"Profielfoto"</string>
-
-    <!-- Fuzzy -->
     <string name="group_avatar_picker_title">"Groepsafbeelding"</string>
     <string name="other_media">"Andere media"</string>
     <string name="rotate">"Draaien"</string>
@@ -279,11 +277,7 @@ versie: %2$s
     <string name="system_message_member_auto_promoted_you">"Je bent automatisch beheerder geworden"</string>
     <string name="system_message_group_name_changed">"%1$s heeft de groepsnaam gewijzigd in %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"Je hebt de groepsnaam gewijzigd in %s"</string>
-
-    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed">"%s heeft de groepsafbeelding gewijzigd"</string>
-
-    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed_by_you">"Je hebt de groepsafbeelding gewijzigd"</string>
     <string name="system_message_group_deleted">"%s heeft de groep verwijderd"</string>
     <string name="system_message_group_deleted_by_you">"Je hebt de groep verwijderd"</string>
@@ -303,11 +297,7 @@ versie: %2$s
     <string name="system_post_member_auto_promoted_you">"Je bent automatisch beheerder geworden"</string>
     <string name="system_post_group_name_changed">"%1$s heeft de groepsnaam gewijzigd in %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"Je hebt de groepsnaam gewijzigd in %s"</string>
-
-    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed">"%s heeft de groepsafbeelding gewijzigd"</string>
-
-    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed_by_you">"Je hebt de groepsafbeelding gewijzigd"</string>
     <string name="system_post_group_deleted">"%s heeft de groep verwijderd"</string>
     <string name="system_post_group_deleted_by_you">"Je hebt de groep verwijderd"</string>
@@ -671,10 +661,10 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="no_longer_group_member">"Je bent geen deelnemer meer van deze groep"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes -->
-    <string name="voice_note_record_audio_permission_rationale">"Om spraakberichten op te nemen hebben we toegang nodig tot de microfoon"</string>
+    <string name="voice_note_record_audio_permission_rationale">"Om spraakberichten op te nemen, hebben we toegang nodig tot de microfoon"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
-    <string name="voice_note_record_audio_permission_rationale_denied">"Om spraakberichten op te nemen hebben we toegang nodig tot de microfoon.
+    <string name="voice_note_record_audio_permission_rationale_denied">"Om spraakberichten op te nemen, hebben we toegang nodig tot de microfoon.
 
 Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
@@ -978,41 +968,45 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="broadcast_notifications_channel_name">"Meldingen van HalloApp"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls -->
-    <string name="voice_call_record_audio_permission_rationale">"To use voice calls we need permission to access the microphone"</string>
+    <string name="voice_call_record_audio_permission_rationale">"Om spraakoproepen te gebruiken, hebben we toegang nodig tot de microfoon"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls, but it has already been denied. -->
-    <string name="voice_call_record_audio_permission_rationale_denied">"To use voice calls we need permission to access the microphone.
+    <string name="voice_call_record_audio_permission_rationale_denied">"Om spraakoproepen te gebruiken, hebben we toegang nodig tot de microfoon.
 
-Open the app settings screen to modify app permissions."</string>
-
-    <!-- Shown inline in a chat when the user missed an incoming call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_call">"Missed call at %s"</string>
+Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Name of channel of notifications for receiving calls which is displayed in settings -->
-    <string name="call_notifications_channel_name">"Call notifications"</string>
+    <string name="call_notifications_channel_name">"Oproepmeldingen"</string>
 
     <!-- Name of channel of notifications for ongoing audio/video calls -->
-    <string name="ongoing_call_notifications_channel_name">"Ongoing Call notifications"</string>
+    <string name="ongoing_call_notifications_channel_name">"Meldingen lopende oproep"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="ringing">"Ringing"</string>
+    <string name="ringing">"Gaat over"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="calling">"Calling"</string>
+    <string name="calling">"Bellen"</string>
 
     <!-- The title of the notificaiton for incoming calls -->
-    <string name="incoming_call_notification_title">"Incoming call"</string>
+    <string name="incoming_call_notification_title">"Inkomende oproep"</string>
 
     <!-- The call notification accept button label -->
-    <string name="call_accept_button">"Accept"</string>
+    <string name="call_accept_button">"Beantwoorden"</string>
 
     <!-- The call notification decline button label -->
-    <string name="call_decline_button">"Decline"</string>
+    <string name="call_decline_button">"Afwijzen"</string>
 
     <!-- Displayed as title for the Call Screen -->
-    <string name="call_title">"Call"</string>
+    <string name="call_title">"Oproep"</string>
 
     <!-- Displayed in an ongoing notification while the user is in a voice call -->
-    <string name="ongoing_voice_call">"Ongoing voice call"</string>
-<string name="add_invite">"Toevoegen"</string><string name="share_option_group">"Post in groep"</string><string name="select_group">"Selecteer groep"</string></resources>
+    <string name="ongoing_voice_call">"Lopende spraakoproep"</string>
+
+    <!-- Shown inline in a chat when the user missed an incoming audio call, %s will represent the time of the call. eg 4:20pm -->
+    <!-- Fuzzy -->
+    <string name="system_message_missed_audio_call">"Gemiste spraakoproep om %s"</string>
+
+    <!-- Shown inline in a chat when the user missed an incoming video call, %s will represent the time of the call. eg 4:20pm -->
+    <string name="system_message_missed_video_call">"Gemiste video-oproep om %s"</string>
+<string name="system_message_missed_call">"Missed call at %s"</string><string name="add_invite">"Toevoegen"</string><string name="share_option_group">"Post in groep"</string><string name="select_group">"Selecteer groep"</string></resources>
 
