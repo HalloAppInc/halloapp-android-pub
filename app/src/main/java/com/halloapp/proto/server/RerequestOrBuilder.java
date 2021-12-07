@@ -48,4 +48,15 @@ public interface RerequestOrBuilder extends
    * @return The messageEphemeralKey.
    */
   com.google.protobuf.ByteString getMessageEphemeralKey();
+
+  /**
+   * <code>.server.Rerequest.ContentType content_type = 7;</code>
+   * @return The enum numeric value on the wire for contentType.
+   */
+  int getContentTypeValue();
+  /**
+   * <code>.server.Rerequest.ContentType content_type = 7;</code>
+   * @return The contentType.
+   */
+  com.halloapp.proto.server.Rerequest.ContentType getContentType();
 }

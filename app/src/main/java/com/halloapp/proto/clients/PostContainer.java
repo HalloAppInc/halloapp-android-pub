@@ -18,6 +18,7 @@ public  final class PostContainer extends
   public enum PostCase {
     TEXT(1),
     ALBUM(2),
+    VOICE_NOTE(3),
     POST_NOT_SET(0);
     private final int value;
     private PostCase(int value) {
@@ -35,6 +36,7 @@ public  final class PostContainer extends
       switch (value) {
         case 1: return TEXT;
         case 2: return ALBUM;
+        case 3: return VOICE_NOTE;
         case 0: return POST_NOT_SET;
         default: return null;
       }
@@ -151,6 +153,56 @@ public  final class PostContainer extends
    */
   private void clearAlbum() {
     if (postCase_ == 2) {
+      postCase_ = 0;
+      post_ = null;
+    }
+  }
+
+  public static final int VOICE_NOTE_FIELD_NUMBER = 3;
+  /**
+   * <code>.clients.VoiceNote voice_note = 3;</code>
+   */
+  @java.lang.Override
+  public boolean hasVoiceNote() {
+    return postCase_ == 3;
+  }
+  /**
+   * <code>.clients.VoiceNote voice_note = 3;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.VoiceNote getVoiceNote() {
+    if (postCase_ == 3) {
+       return (com.halloapp.proto.clients.VoiceNote) post_;
+    }
+    return com.halloapp.proto.clients.VoiceNote.getDefaultInstance();
+  }
+  /**
+   * <code>.clients.VoiceNote voice_note = 3;</code>
+   */
+  private void setVoiceNote(com.halloapp.proto.clients.VoiceNote value) {
+    value.getClass();
+  post_ = value;
+    postCase_ = 3;
+  }
+  /**
+   * <code>.clients.VoiceNote voice_note = 3;</code>
+   */
+  private void mergeVoiceNote(com.halloapp.proto.clients.VoiceNote value) {
+    value.getClass();
+  if (postCase_ == 3 &&
+        post_ != com.halloapp.proto.clients.VoiceNote.getDefaultInstance()) {
+      post_ = com.halloapp.proto.clients.VoiceNote.newBuilder((com.halloapp.proto.clients.VoiceNote) post_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      post_ = value;
+    }
+    postCase_ = 3;
+  }
+  /**
+   * <code>.clients.VoiceNote voice_note = 3;</code>
+   */
+  private void clearVoiceNote() {
+    if (postCase_ == 3) {
       postCase_ = 0;
       post_ = null;
     }
@@ -359,6 +411,54 @@ public  final class PostContainer extends
       return this;
     }
 
+    /**
+     * <code>.clients.VoiceNote voice_note = 3;</code>
+     */
+    @java.lang.Override
+    public boolean hasVoiceNote() {
+      return instance.hasVoiceNote();
+    }
+    /**
+     * <code>.clients.VoiceNote voice_note = 3;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.VoiceNote getVoiceNote() {
+      return instance.getVoiceNote();
+    }
+    /**
+     * <code>.clients.VoiceNote voice_note = 3;</code>
+     */
+    public Builder setVoiceNote(com.halloapp.proto.clients.VoiceNote value) {
+      copyOnWrite();
+      instance.setVoiceNote(value);
+      return this;
+    }
+    /**
+     * <code>.clients.VoiceNote voice_note = 3;</code>
+     */
+    public Builder setVoiceNote(
+        com.halloapp.proto.clients.VoiceNote.Builder builderForValue) {
+      copyOnWrite();
+      instance.setVoiceNote(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.clients.VoiceNote voice_note = 3;</code>
+     */
+    public Builder mergeVoiceNote(com.halloapp.proto.clients.VoiceNote value) {
+      copyOnWrite();
+      instance.mergeVoiceNote(value);
+      return this;
+    }
+    /**
+     * <code>.clients.VoiceNote voice_note = 3;</code>
+     */
+    public Builder clearVoiceNote() {
+      copyOnWrite();
+      instance.clearVoiceNote();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.PostContainer)
   }
   @java.lang.Override
@@ -379,10 +479,11 @@ public  final class PostContainer extends
             "postCase_",
             com.halloapp.proto.clients.Text.class,
             com.halloapp.proto.clients.Album.class,
+            com.halloapp.proto.clients.VoiceNote.class,
           };
           java.lang.String info =
-              "\u0000\u0002\u0001\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001<\u0000\u0002<" +
-              "\u0000";
+              "\u0000\u0003\u0001\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001<\u0000\u0002<" +
+              "\u0000\u0003<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

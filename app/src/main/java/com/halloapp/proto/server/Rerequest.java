@@ -17,6 +17,95 @@ public  final class Rerequest extends
     sessionSetupEphemeralKey_ = com.google.protobuf.ByteString.EMPTY;
     messageEphemeralKey_ = com.google.protobuf.ByteString.EMPTY;
   }
+  /**
+   * Protobuf enum {@code server.Rerequest.ContentType}
+   */
+  public enum ContentType
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>CHAT = 0;</code>
+     */
+    CHAT(0),
+    /**
+     * <code>CALL = 1;</code>
+     */
+    CALL(1),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>CHAT = 0;</code>
+     */
+    public static final int CHAT_VALUE = 0;
+    /**
+     * <code>CALL = 1;</code>
+     */
+    public static final int CALL_VALUE = 1;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static ContentType valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static ContentType forNumber(int value) {
+      switch (value) {
+        case 0: return CHAT;
+        case 1: return CALL;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<ContentType>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        ContentType> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<ContentType>() {
+            @java.lang.Override
+            public ContentType findValueByNumber(int number) {
+              return ContentType.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return ContentTypeVerifier.INSTANCE;
+    }
+
+    private static final class ContentTypeVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new ContentTypeVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return ContentType.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private ContentType(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.Rerequest.ContentType)
+  }
+
   public static final int ID_FIELD_NUMBER = 1;
   private java.lang.String id_;
   /**
@@ -195,6 +284,48 @@ public  final class Rerequest extends
   private void clearMessageEphemeralKey() {
     
     messageEphemeralKey_ = getDefaultInstance().getMessageEphemeralKey();
+  }
+
+  public static final int CONTENT_TYPE_FIELD_NUMBER = 7;
+  private int contentType_;
+  /**
+   * <code>.server.Rerequest.ContentType content_type = 7;</code>
+   * @return The enum numeric value on the wire for contentType.
+   */
+  @java.lang.Override
+  public int getContentTypeValue() {
+    return contentType_;
+  }
+  /**
+   * <code>.server.Rerequest.ContentType content_type = 7;</code>
+   * @return The contentType.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.Rerequest.ContentType getContentType() {
+    com.halloapp.proto.server.Rerequest.ContentType result = com.halloapp.proto.server.Rerequest.ContentType.forNumber(contentType_);
+    return result == null ? com.halloapp.proto.server.Rerequest.ContentType.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.Rerequest.ContentType content_type = 7;</code>
+   * @param value The enum numeric value on the wire for contentType to set.
+   */
+  private void setContentTypeValue(int value) {
+      contentType_ = value;
+  }
+  /**
+   * <code>.server.Rerequest.ContentType content_type = 7;</code>
+   * @param value The contentType to set.
+   */
+  private void setContentType(com.halloapp.proto.server.Rerequest.ContentType value) {
+    contentType_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.Rerequest.ContentType content_type = 7;</code>
+   */
+  private void clearContentType() {
+    
+    contentType_ = 0;
   }
 
   public static com.halloapp.proto.server.Rerequest parseFrom(
@@ -481,6 +612,52 @@ public  final class Rerequest extends
       return this;
     }
 
+    /**
+     * <code>.server.Rerequest.ContentType content_type = 7;</code>
+     * @return The enum numeric value on the wire for contentType.
+     */
+    @java.lang.Override
+    public int getContentTypeValue() {
+      return instance.getContentTypeValue();
+    }
+    /**
+     * <code>.server.Rerequest.ContentType content_type = 7;</code>
+     * @param value The contentType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setContentTypeValue(int value) {
+      copyOnWrite();
+      instance.setContentTypeValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.Rerequest.ContentType content_type = 7;</code>
+     * @return The contentType.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.Rerequest.ContentType getContentType() {
+      return instance.getContentType();
+    }
+    /**
+     * <code>.server.Rerequest.ContentType content_type = 7;</code>
+     * @param value The enum numeric value on the wire for contentType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setContentType(com.halloapp.proto.server.Rerequest.ContentType value) {
+      copyOnWrite();
+      instance.setContentType(value);
+      return this;
+    }
+    /**
+     * <code>.server.Rerequest.ContentType content_type = 7;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearContentType() {
+      copyOnWrite();
+      instance.clearContentType();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Rerequest)
   }
   @java.lang.Override
@@ -503,10 +680,11 @@ public  final class Rerequest extends
             "oneTimePreKeyId_",
             "sessionSetupEphemeralKey_",
             "messageEphemeralKey_",
+            "contentType_",
           };
           java.lang.String info =
-              "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\u0208\u0002\n" +
-              "\u0003\u0002\u0004\u0002\u0005\n\u0006\n";
+              "\u0000\u0007\u0000\u0000\u0001\u0007\u0007\u0000\u0000\u0000\u0001\u0208\u0002\n" +
+              "\u0003\u0002\u0004\u0002\u0005\n\u0006\n\u0007\f";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

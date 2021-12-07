@@ -87,6 +87,22 @@ public  final class EndCall extends
      * <code>SYSTEM_ERROR = 8;</code>
      */
     SYSTEM_ERROR(8),
+    /**
+     * <pre>
+     * unsupported video calls.
+     * </pre>
+     *
+     * <code>VIDEO_UNSUPPORTED = 9;</code>
+     */
+    VIDEO_UNSUPPORTED(9),
+    /**
+     * <pre>
+     * ice connection state error.
+     * </pre>
+     *
+     * <code>CONNECTION_ERROR = 10;</code>
+     */
+    CONNECTION_ERROR(10),
     UNRECOGNIZED(-1),
     ;
 
@@ -158,6 +174,22 @@ public  final class EndCall extends
      * <code>SYSTEM_ERROR = 8;</code>
      */
     public static final int SYSTEM_ERROR_VALUE = 8;
+    /**
+     * <pre>
+     * unsupported video calls.
+     * </pre>
+     *
+     * <code>VIDEO_UNSUPPORTED = 9;</code>
+     */
+    public static final int VIDEO_UNSUPPORTED_VALUE = 9;
+    /**
+     * <pre>
+     * ice connection state error.
+     * </pre>
+     *
+     * <code>CONNECTION_ERROR = 10;</code>
+     */
+    public static final int CONNECTION_ERROR_VALUE = 10;
 
 
     @java.lang.Override
@@ -190,6 +222,8 @@ public  final class EndCall extends
         case 6: return DECRYPTION_FAILED;
         case 7: return ENCRYPTION_FAILED;
         case 8: return SYSTEM_ERROR;
+        case 9: return VIDEO_UNSUPPORTED;
+        case 10: return CONNECTION_ERROR;
         default: return null;
       }
     }

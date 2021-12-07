@@ -154,6 +154,52 @@ public  final class Album extends
     
   }
 
+  public static final int VOICE_NOTE_FIELD_NUMBER = 3;
+  private com.halloapp.proto.clients.VoiceNote voiceNote_;
+  /**
+   * <code>.clients.VoiceNote voice_note = 3;</code>
+   */
+  @java.lang.Override
+  public boolean hasVoiceNote() {
+    return voiceNote_ != null;
+  }
+  /**
+   * <code>.clients.VoiceNote voice_note = 3;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.VoiceNote getVoiceNote() {
+    return voiceNote_ == null ? com.halloapp.proto.clients.VoiceNote.getDefaultInstance() : voiceNote_;
+  }
+  /**
+   * <code>.clients.VoiceNote voice_note = 3;</code>
+   */
+  private void setVoiceNote(com.halloapp.proto.clients.VoiceNote value) {
+    value.getClass();
+  voiceNote_ = value;
+    
+    }
+  /**
+   * <code>.clients.VoiceNote voice_note = 3;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeVoiceNote(com.halloapp.proto.clients.VoiceNote value) {
+    value.getClass();
+  if (voiceNote_ != null &&
+        voiceNote_ != com.halloapp.proto.clients.VoiceNote.getDefaultInstance()) {
+      voiceNote_ =
+        com.halloapp.proto.clients.VoiceNote.newBuilder(voiceNote_).mergeFrom(value).buildPartial();
+    } else {
+      voiceNote_ = value;
+    }
+    
+  }
+  /**
+   * <code>.clients.VoiceNote voice_note = 3;</code>
+   */
+  private void clearVoiceNote() {  voiceNote_ = null;
+    
+  }
+
   public static com.halloapp.proto.clients.Album parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -398,6 +444,53 @@ public  final class Album extends
       return this;
     }
 
+    /**
+     * <code>.clients.VoiceNote voice_note = 3;</code>
+     */
+    @java.lang.Override
+    public boolean hasVoiceNote() {
+      return instance.hasVoiceNote();
+    }
+    /**
+     * <code>.clients.VoiceNote voice_note = 3;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.VoiceNote getVoiceNote() {
+      return instance.getVoiceNote();
+    }
+    /**
+     * <code>.clients.VoiceNote voice_note = 3;</code>
+     */
+    public Builder setVoiceNote(com.halloapp.proto.clients.VoiceNote value) {
+      copyOnWrite();
+      instance.setVoiceNote(value);
+      return this;
+      }
+    /**
+     * <code>.clients.VoiceNote voice_note = 3;</code>
+     */
+    public Builder setVoiceNote(
+        com.halloapp.proto.clients.VoiceNote.Builder builderForValue) {
+      copyOnWrite();
+      instance.setVoiceNote(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.clients.VoiceNote voice_note = 3;</code>
+     */
+    public Builder mergeVoiceNote(com.halloapp.proto.clients.VoiceNote value) {
+      copyOnWrite();
+      instance.mergeVoiceNote(value);
+      return this;
+    }
+    /**
+     * <code>.clients.VoiceNote voice_note = 3;</code>
+     */
+    public Builder clearVoiceNote() {  copyOnWrite();
+      instance.clearVoiceNote();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.Album)
   }
   @java.lang.Override
@@ -417,10 +510,11 @@ public  final class Album extends
             "media_",
             com.halloapp.proto.clients.AlbumMedia.class,
             "text_",
+            "voiceNote_",
           };
           java.lang.String info =
-              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u001b\u0002\t" +
-              "";
+              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0001\u0000\u0001\u001b\u0002\t" +
+              "\u0003\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

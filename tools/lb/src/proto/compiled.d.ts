@@ -4858,9 +4858,6 @@ export namespace server {
         /** HistoryResend id */
         id?: (string|null);
 
-        /** HistoryResend senderUid */
-        senderUid?: (number|Long|null);
-
         /** HistoryResend payload */
         payload?: (Uint8Array|null);
 
@@ -4891,9 +4888,6 @@ export namespace server {
 
         /** HistoryResend id. */
         public id: string;
-
-        /** HistoryResend senderUid. */
-        public senderUid: (number|Long);
 
         /** HistoryResend payload. */
         public payload: Uint8Array;
@@ -5754,6 +5748,9 @@ export namespace server {
 
         /** IncomingCall timestampMs */
         timestampMs?: (number|Long|null);
+
+        /** IncomingCall serverSentTsMs */
+        serverSentTsMs?: (number|Long|null);
     }
 
     /** Represents an IncomingCall. */
@@ -5782,6 +5779,9 @@ export namespace server {
 
         /** IncomingCall timestampMs. */
         public timestampMs: (number|Long);
+
+        /** IncomingCall serverSentTsMs. */
+        public serverSentTsMs: (number|Long);
 
         /**
          * Creates a new IncomingCall instance using the specified properties.
@@ -6271,7 +6271,12 @@ export namespace server {
             BUSY = 2,
             TIMEOUT = 3,
             CALL_END = 4,
-            CANCEL = 5
+            CANCEL = 5,
+            DECRYPTION_FAILED = 6,
+            ENCRYPTION_FAILED = 7,
+            SYSTEM_ERROR = 8,
+            VIDEO_UNSUPPORTED = 9,
+            CONNECTION_ERROR = 10
         }
     }
 
@@ -6718,6 +6723,9 @@ export namespace server {
         /** Msg iceCandidate */
         iceCandidate?: (server.IIceCandidate|null);
 
+        /** Msg marketingAlert */
+        marketingAlert?: (server.IMarketingAlert|null);
+
         /** Msg retryCount */
         retryCount?: (number|null);
 
@@ -6842,6 +6850,9 @@ export namespace server {
         /** Msg iceCandidate. */
         public iceCandidate?: (server.IIceCandidate|null);
 
+        /** Msg marketingAlert. */
+        public marketingAlert?: (server.IMarketingAlert|null);
+
         /** Msg retryCount. */
         public retryCount: number;
 
@@ -6849,7 +6860,7 @@ export namespace server {
         public rerequestCount: number;
 
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert");
 
         /**
          * Creates a new Msg instance using the specified properties.
@@ -8360,6 +8371,9 @@ export namespace server {
 
         /** Rerequest messageEphemeralKey */
         messageEphemeralKey?: (Uint8Array|null);
+
+        /** Rerequest contentType */
+        contentType?: (server.Rerequest.ContentType|null);
     }
 
     /** Represents a Rerequest. */
@@ -8388,6 +8402,9 @@ export namespace server {
 
         /** Rerequest messageEphemeralKey. */
         public messageEphemeralKey: Uint8Array;
+
+        /** Rerequest contentType. */
+        public contentType: server.Rerequest.ContentType;
 
         /**
          * Creates a new Rerequest instance using the specified properties.
@@ -8458,6 +8475,15 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    namespace Rerequest {
+
+        /** ContentType enum. */
+        enum ContentType {
+            CHAT = 0,
+            CALL = 1
+        }
     }
 
     /** Properties of a GroupFeedRerequest. */
@@ -11859,6 +11885,90 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a MarketingAlert. */
+    interface IMarketingAlert {
+    }
+
+    /** Represents a MarketingAlert. */
+    class MarketingAlert implements IMarketingAlert {
+
+        /**
+         * Constructs a new MarketingAlert.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IMarketingAlert);
+
+        /**
+         * Creates a new MarketingAlert instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns MarketingAlert instance
+         */
+        public static create(properties?: server.IMarketingAlert): server.MarketingAlert;
+
+        /**
+         * Encodes the specified MarketingAlert message. Does not implicitly {@link server.MarketingAlert.verify|verify} messages.
+         * @param message MarketingAlert message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IMarketingAlert, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified MarketingAlert message, length delimited. Does not implicitly {@link server.MarketingAlert.verify|verify} messages.
+         * @param message MarketingAlert message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IMarketingAlert, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a MarketingAlert message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns MarketingAlert
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.MarketingAlert;
+
+        /**
+         * Decodes a MarketingAlert message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns MarketingAlert
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.MarketingAlert;
+
+        /**
+         * Verifies a MarketingAlert message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a MarketingAlert message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns MarketingAlert
+         */
+        public static fromObject(object: { [k: string]: any }): server.MarketingAlert;
+
+        /**
+         * Creates a plain object from a MarketingAlert message. Also converts values to other types if specified.
+         * @param message MarketingAlert
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.MarketingAlert, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this MarketingAlert to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an EventData. */
     interface IEventData {
 
@@ -11900,6 +12010,9 @@ export namespace server {
 
         /** EventData groupDecryptionReport */
         groupDecryptionReport?: (server.IGroupDecryptionReport|null);
+
+        /** EventData call */
+        call?: (server.ICall|null);
     }
 
     /** Represents an EventData. */
@@ -11950,8 +12063,11 @@ export namespace server {
         /** EventData groupDecryptionReport. */
         public groupDecryptionReport?: (server.IGroupDecryptionReport|null);
 
+        /** EventData call. */
+        public call?: (server.ICall|null);
+
         /** EventData edata. */
-        public edata?: ("mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport"|"permissions"|"mediaObjectDownload"|"groupDecryptionReport");
+        public edata?: ("mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport"|"permissions"|"mediaObjectDownload"|"groupDecryptionReport"|"call");
 
         /**
          * Creates a new EventData instance using the specified properties.
@@ -13147,6 +13263,180 @@ export namespace server {
         enum Status {
             ALLOWED = 0,
             DENIED = 1
+        }
+    }
+
+    /** Properties of a Call. */
+    interface ICall {
+
+        /** Call callId */
+        callId?: (string|null);
+
+        /** Call peerUid */
+        peerUid?: (number|Long|null);
+
+        /** Call type */
+        type?: (server.Call.CallType|null);
+
+        /** Call direction */
+        direction?: (server.Call.CallDirection|null);
+
+        /** Call answered */
+        answered?: (boolean|null);
+
+        /** Call connected */
+        connected?: (boolean|null);
+
+        /** Call durationMs */
+        durationMs?: (number|Long|null);
+
+        /** Call endCallReason */
+        endCallReason?: (string|null);
+
+        /** Call localEndCall */
+        localEndCall?: (boolean|null);
+
+        /** Call networkType */
+        networkType?: (server.Call.NetworkType|null);
+
+        /** Call webrtcStats */
+        webrtcStats?: (string|null);
+    }
+
+    /** Represents a Call. */
+    class Call implements ICall {
+
+        /**
+         * Constructs a new Call.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.ICall);
+
+        /** Call callId. */
+        public callId: string;
+
+        /** Call peerUid. */
+        public peerUid: (number|Long);
+
+        /** Call type. */
+        public type: server.Call.CallType;
+
+        /** Call direction. */
+        public direction: server.Call.CallDirection;
+
+        /** Call answered. */
+        public answered: boolean;
+
+        /** Call connected. */
+        public connected: boolean;
+
+        /** Call durationMs. */
+        public durationMs: (number|Long);
+
+        /** Call endCallReason. */
+        public endCallReason: string;
+
+        /** Call localEndCall. */
+        public localEndCall: boolean;
+
+        /** Call networkType. */
+        public networkType: server.Call.NetworkType;
+
+        /** Call webrtcStats. */
+        public webrtcStats: string;
+
+        /**
+         * Creates a new Call instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Call instance
+         */
+        public static create(properties?: server.ICall): server.Call;
+
+        /**
+         * Encodes the specified Call message. Does not implicitly {@link server.Call.verify|verify} messages.
+         * @param message Call message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.ICall, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified Call message, length delimited. Does not implicitly {@link server.Call.verify|verify} messages.
+         * @param message Call message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.ICall, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a Call message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Call
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.Call;
+
+        /**
+         * Decodes a Call message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Call
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.Call;
+
+        /**
+         * Verifies a Call message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a Call message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns Call
+         */
+        public static fromObject(object: { [k: string]: any }): server.Call;
+
+        /**
+         * Creates a plain object from a Call message. Also converts values to other types if specified.
+         * @param message Call
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.Call, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this Call to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace Call {
+
+        /** CallType enum. */
+        enum CallType {
+            UNKNOWN_TYPE = 0,
+            AUDIO = 1,
+            VIDEO = 2
+        }
+
+        /** CallDirection enum. */
+        enum CallDirection {
+            UNKNOWN_DIRECTION = 0,
+            OUTGOING = 1,
+            INCOMING = 2
+        }
+
+        /** NetworkType enum. */
+        enum NetworkType {
+            UNKNOWN_NETWORK = 0,
+            WIFI = 1,
+            CELLULAR = 2
         }
     }
 }

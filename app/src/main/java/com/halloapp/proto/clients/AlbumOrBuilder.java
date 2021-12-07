@@ -31,4 +31,15 @@ public interface AlbumOrBuilder extends
    * @return The text.
    */
   com.halloapp.proto.clients.Text getText();
+
+  /**
+   * <code>.clients.VoiceNote voice_note = 3;</code>
+   * @return Whether the voiceNote field is set.
+   */
+  boolean hasVoiceNote();
+  /**
+   * <code>.clients.VoiceNote voice_note = 3;</code>
+   * @return The voiceNote.
+   */
+  com.halloapp.proto.clients.VoiceNote getVoiceNote();
 }

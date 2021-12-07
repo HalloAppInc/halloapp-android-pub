@@ -12588,7 +12588,6 @@ $root.server = (function() {
          * @interface IHistoryResend
          * @property {string|null} [gid] HistoryResend gid
          * @property {string|null} [id] HistoryResend id
-         * @property {number|Long|null} [senderUid] HistoryResend senderUid
          * @property {Uint8Array|null} [payload] HistoryResend payload
          * @property {Uint8Array|null} [encPayload] HistoryResend encPayload
          * @property {Array.<server.ISenderStateBundle>|null} [senderStateBundles] HistoryResend senderStateBundles
@@ -12627,14 +12626,6 @@ $root.server = (function() {
          * @instance
          */
         HistoryResend.prototype.id = "";
-
-        /**
-         * HistoryResend senderUid.
-         * @member {number|Long} senderUid
-         * @memberof server.HistoryResend
-         * @instance
-         */
-        HistoryResend.prototype.senderUid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
         /**
          * HistoryResend payload.
@@ -12704,8 +12695,6 @@ $root.server = (function() {
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.gid);
             if (message.id != null && Object.hasOwnProperty.call(message, "id"))
                 writer.uint32(/* id 2, wireType 2 =*/18).string(message.id);
-            if (message.senderUid != null && Object.hasOwnProperty.call(message, "senderUid"))
-                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.senderUid);
             if (message.payload != null && Object.hasOwnProperty.call(message, "payload"))
                 writer.uint32(/* id 4, wireType 2 =*/34).bytes(message.payload);
             if (message.encPayload != null && Object.hasOwnProperty.call(message, "encPayload"))
@@ -12756,9 +12745,6 @@ $root.server = (function() {
                     break;
                 case 2:
                     message.id = reader.string();
-                    break;
-                case 3:
-                    message.senderUid = reader.int64();
                     break;
                 case 4:
                     message.payload = reader.bytes();
@@ -12818,9 +12804,6 @@ $root.server = (function() {
             if (message.id != null && message.hasOwnProperty("id"))
                 if (!$util.isString(message.id))
                     return "id: string expected";
-            if (message.senderUid != null && message.hasOwnProperty("senderUid"))
-                if (!$util.isInteger(message.senderUid) && !(message.senderUid && $util.isInteger(message.senderUid.low) && $util.isInteger(message.senderUid.high)))
-                    return "senderUid: integer|Long expected";
             if (message.payload != null && message.hasOwnProperty("payload"))
                 if (!(message.payload && typeof message.payload.length === "number" || $util.isString(message.payload)))
                     return "payload: buffer expected";
@@ -12863,15 +12846,6 @@ $root.server = (function() {
                 message.gid = String(object.gid);
             if (object.id != null)
                 message.id = String(object.id);
-            if (object.senderUid != null)
-                if ($util.Long)
-                    (message.senderUid = $util.Long.fromValue(object.senderUid)).unsigned = false;
-                else if (typeof object.senderUid === "string")
-                    message.senderUid = parseInt(object.senderUid, 10);
-                else if (typeof object.senderUid === "number")
-                    message.senderUid = object.senderUid;
-                else if (typeof object.senderUid === "object")
-                    message.senderUid = new $util.LongBits(object.senderUid.low >>> 0, object.senderUid.high >>> 0).toNumber();
             if (object.payload != null)
                 if (typeof object.payload === "string")
                     $util.base64.decode(object.payload, message.payload = $util.newBuffer($util.base64.length(object.payload)), 0);
@@ -12923,11 +12897,6 @@ $root.server = (function() {
             if (options.defaults) {
                 object.gid = "";
                 object.id = "";
-                if ($util.Long) {
-                    var long = new $util.Long(0, 0, false);
-                    object.senderUid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
-                } else
-                    object.senderUid = options.longs === String ? "0" : 0;
                 if (options.bytes === String)
                     object.payload = "";
                 else {
@@ -12955,11 +12924,6 @@ $root.server = (function() {
                 object.gid = message.gid;
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
-            if (message.senderUid != null && message.hasOwnProperty("senderUid"))
-                if (typeof message.senderUid === "number")
-                    object.senderUid = options.longs === String ? String(message.senderUid) : message.senderUid;
-                else
-                    object.senderUid = options.longs === String ? $util.Long.prototype.toString.call(message.senderUid) : options.longs === Number ? new $util.LongBits(message.senderUid.low >>> 0, message.senderUid.high >>> 0).toNumber() : message.senderUid;
             if (message.payload != null && message.hasOwnProperty("payload"))
                 object.payload = options.bytes === String ? $util.base64.encode(message.payload, 0, message.payload.length) : options.bytes === Array ? Array.prototype.slice.call(message.payload) : message.payload;
             if (message.encPayload != null && message.hasOwnProperty("encPayload"))
@@ -14942,6 +14906,7 @@ $root.server = (function() {
          * @property {Array.<server.IStunServer>|null} [stunServers] IncomingCall stunServers
          * @property {Array.<server.ITurnServer>|null} [turnServers] IncomingCall turnServers
          * @property {number|Long|null} [timestampMs] IncomingCall timestampMs
+         * @property {number|Long|null} [serverSentTsMs] IncomingCall serverSentTsMs
          */
 
         /**
@@ -15010,6 +14975,14 @@ $root.server = (function() {
         IncomingCall.prototype.timestampMs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
         /**
+         * IncomingCall serverSentTsMs.
+         * @member {number|Long} serverSentTsMs
+         * @memberof server.IncomingCall
+         * @instance
+         */
+        IncomingCall.prototype.serverSentTsMs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
          * Creates a new IncomingCall instance using the specified properties.
          * @function create
          * @memberof server.IncomingCall
@@ -15047,6 +15020,8 @@ $root.server = (function() {
                     $root.server.TurnServer.encode(message.turnServers[i], writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
             if (message.timestampMs != null && Object.hasOwnProperty.call(message, "timestampMs"))
                 writer.uint32(/* id 6, wireType 0 =*/48).int64(message.timestampMs);
+            if (message.serverSentTsMs != null && Object.hasOwnProperty.call(message, "serverSentTsMs"))
+                writer.uint32(/* id 7, wireType 0 =*/56).int64(message.serverSentTsMs);
             return writer;
         };
 
@@ -15102,6 +15077,9 @@ $root.server = (function() {
                     break;
                 case 6:
                     message.timestampMs = reader.int64();
+                    break;
+                case 7:
+                    message.serverSentTsMs = reader.int64();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -15176,6 +15154,9 @@ $root.server = (function() {
             if (message.timestampMs != null && message.hasOwnProperty("timestampMs"))
                 if (!$util.isInteger(message.timestampMs) && !(message.timestampMs && $util.isInteger(message.timestampMs.low) && $util.isInteger(message.timestampMs.high)))
                     return "timestampMs: integer|Long expected";
+            if (message.serverSentTsMs != null && message.hasOwnProperty("serverSentTsMs"))
+                if (!$util.isInteger(message.serverSentTsMs) && !(message.serverSentTsMs && $util.isInteger(message.serverSentTsMs.low) && $util.isInteger(message.serverSentTsMs.high)))
+                    return "serverSentTsMs: integer|Long expected";
             return null;
         };
 
@@ -15241,6 +15222,15 @@ $root.server = (function() {
                     message.timestampMs = object.timestampMs;
                 else if (typeof object.timestampMs === "object")
                     message.timestampMs = new $util.LongBits(object.timestampMs.low >>> 0, object.timestampMs.high >>> 0).toNumber();
+            if (object.serverSentTsMs != null)
+                if ($util.Long)
+                    (message.serverSentTsMs = $util.Long.fromValue(object.serverSentTsMs)).unsigned = false;
+                else if (typeof object.serverSentTsMs === "string")
+                    message.serverSentTsMs = parseInt(object.serverSentTsMs, 10);
+                else if (typeof object.serverSentTsMs === "number")
+                    message.serverSentTsMs = object.serverSentTsMs;
+                else if (typeof object.serverSentTsMs === "object")
+                    message.serverSentTsMs = new $util.LongBits(object.serverSentTsMs.low >>> 0, object.serverSentTsMs.high >>> 0).toNumber();
             return message;
         };
 
@@ -15270,6 +15260,11 @@ $root.server = (function() {
                     object.timestampMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.timestampMs = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.serverSentTsMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.serverSentTsMs = options.longs === String ? "0" : 0;
             }
             if (message.callId != null && message.hasOwnProperty("callId"))
                 object.callId = message.callId;
@@ -15292,6 +15287,11 @@ $root.server = (function() {
                     object.timestampMs = options.longs === String ? String(message.timestampMs) : message.timestampMs;
                 else
                     object.timestampMs = options.longs === String ? $util.Long.prototype.toString.call(message.timestampMs) : options.longs === Number ? new $util.LongBits(message.timestampMs.low >>> 0, message.timestampMs.high >>> 0).toNumber() : message.timestampMs;
+            if (message.serverSentTsMs != null && message.hasOwnProperty("serverSentTsMs"))
+                if (typeof message.serverSentTsMs === "number")
+                    object.serverSentTsMs = options.longs === String ? String(message.serverSentTsMs) : message.serverSentTsMs;
+                else
+                    object.serverSentTsMs = options.longs === String ? $util.Long.prototype.toString.call(message.serverSentTsMs) : options.longs === Number ? new $util.LongBits(message.serverSentTsMs.low >>> 0, message.serverSentTsMs.high >>> 0).toNumber() : message.serverSentTsMs;
             return object;
         };
 
@@ -16209,6 +16209,11 @@ $root.server = (function() {
                 case 3:
                 case 4:
                 case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                case 10:
                     break;
                 }
             if (message.timestampMs != null && message.hasOwnProperty("timestampMs"))
@@ -16255,6 +16260,26 @@ $root.server = (function() {
             case "CANCEL":
             case 5:
                 message.reason = 5;
+                break;
+            case "DECRYPTION_FAILED":
+            case 6:
+                message.reason = 6;
+                break;
+            case "ENCRYPTION_FAILED":
+            case 7:
+                message.reason = 7;
+                break;
+            case "SYSTEM_ERROR":
+            case 8:
+                message.reason = 8;
+                break;
+            case "VIDEO_UNSUPPORTED":
+            case 9:
+                message.reason = 9;
+                break;
+            case "CONNECTION_ERROR":
+            case 10:
+                message.reason = 10;
                 break;
             }
             if (object.timestampMs != null)
@@ -16324,6 +16349,11 @@ $root.server = (function() {
          * @property {number} TIMEOUT=3 TIMEOUT value
          * @property {number} CALL_END=4 CALL_END value
          * @property {number} CANCEL=5 CANCEL value
+         * @property {number} DECRYPTION_FAILED=6 DECRYPTION_FAILED value
+         * @property {number} ENCRYPTION_FAILED=7 ENCRYPTION_FAILED value
+         * @property {number} SYSTEM_ERROR=8 SYSTEM_ERROR value
+         * @property {number} VIDEO_UNSUPPORTED=9 VIDEO_UNSUPPORTED value
+         * @property {number} CONNECTION_ERROR=10 CONNECTION_ERROR value
          */
         EndCall.Reason = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -16333,6 +16363,11 @@ $root.server = (function() {
             values[valuesById[3] = "TIMEOUT"] = 3;
             values[valuesById[4] = "CALL_END"] = 4;
             values[valuesById[5] = "CANCEL"] = 5;
+            values[valuesById[6] = "DECRYPTION_FAILED"] = 6;
+            values[valuesById[7] = "ENCRYPTION_FAILED"] = 7;
+            values[valuesById[8] = "SYSTEM_ERROR"] = 8;
+            values[valuesById[9] = "VIDEO_UNSUPPORTED"] = 9;
+            values[valuesById[10] = "CONNECTION_ERROR"] = 10;
             return values;
         })();
 
@@ -17903,6 +17938,7 @@ $root.server = (function() {
          * @property {server.IAnswerCall|null} [answerCall] Msg answerCall
          * @property {server.IEndCall|null} [endCall] Msg endCall
          * @property {server.IIceCandidate|null} [iceCandidate] Msg iceCandidate
+         * @property {server.IMarketingAlert|null} [marketingAlert] Msg marketingAlert
          * @property {number|null} [retryCount] Msg retryCount
          * @property {number|null} [rerequestCount] Msg rerequestCount
          */
@@ -18211,6 +18247,14 @@ $root.server = (function() {
         Msg.prototype.iceCandidate = null;
 
         /**
+         * Msg marketingAlert.
+         * @member {server.IMarketingAlert|null|undefined} marketingAlert
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.marketingAlert = null;
+
+        /**
          * Msg retryCount.
          * @member {number} retryCount
          * @memberof server.Msg
@@ -18231,12 +18275,12 @@ $root.server = (function() {
 
         /**
          * Msg payload.
-         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|undefined} payload
+         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|undefined} payload
          * @memberof server.Msg
          * @instance
          */
         Object.defineProperty(Msg.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate"]),
+            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -18340,6 +18384,8 @@ $root.server = (function() {
                 $root.server.EndCall.encode(message.endCall, writer.uint32(/* id 37, wireType 2 =*/298).fork()).ldelim();
             if (message.iceCandidate != null && Object.hasOwnProperty.call(message, "iceCandidate"))
                 $root.server.IceCandidate.encode(message.iceCandidate, writer.uint32(/* id 38, wireType 2 =*/306).fork()).ldelim();
+            if (message.marketingAlert != null && Object.hasOwnProperty.call(message, "marketingAlert"))
+                $root.server.MarketingAlert.encode(message.marketingAlert, writer.uint32(/* id 39, wireType 2 =*/314).fork()).ldelim();
             return writer;
         };
 
@@ -18481,6 +18527,9 @@ $root.server = (function() {
                     break;
                 case 38:
                     message.iceCandidate = $root.server.IceCandidate.decode(reader, reader.uint32());
+                    break;
+                case 39:
+                    message.marketingAlert = $root.server.MarketingAlert.decode(reader, reader.uint32());
                     break;
                 case 21:
                     message.retryCount = reader.int32();
@@ -18863,6 +18912,16 @@ $root.server = (function() {
                         return "iceCandidate." + error;
                 }
             }
+            if (message.marketingAlert != null && message.hasOwnProperty("marketingAlert")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.MarketingAlert.verify(message.marketingAlert);
+                    if (error)
+                        return "marketingAlert." + error;
+                }
+            }
             if (message.retryCount != null && message.hasOwnProperty("retryCount"))
                 if (!$util.isInteger(message.retryCount))
                     return "retryCount: integer expected";
@@ -19090,6 +19149,11 @@ $root.server = (function() {
                     throw TypeError(".server.Msg.iceCandidate: object expected");
                 message.iceCandidate = $root.server.IceCandidate.fromObject(object.iceCandidate);
             }
+            if (object.marketingAlert != null) {
+                if (typeof object.marketingAlert !== "object")
+                    throw TypeError(".server.Msg.marketingAlert: object expected");
+                message.marketingAlert = $root.server.MarketingAlert.fromObject(object.marketingAlert);
+            }
             if (object.retryCount != null)
                 message.retryCount = object.retryCount | 0;
             if (object.rerequestCount != null)
@@ -19303,6 +19367,11 @@ $root.server = (function() {
                 object.iceCandidate = $root.server.IceCandidate.toObject(message.iceCandidate, options);
                 if (options.oneofs)
                     object.payload = "iceCandidate";
+            }
+            if (message.marketingAlert != null && message.hasOwnProperty("marketingAlert")) {
+                object.marketingAlert = $root.server.MarketingAlert.toObject(message.marketingAlert, options);
+                if (options.oneofs)
+                    object.payload = "marketingAlert";
             }
             return object;
         };
@@ -22919,6 +22988,7 @@ $root.server = (function() {
          * @property {number|Long|null} [oneTimePreKeyId] Rerequest oneTimePreKeyId
          * @property {Uint8Array|null} [sessionSetupEphemeralKey] Rerequest sessionSetupEphemeralKey
          * @property {Uint8Array|null} [messageEphemeralKey] Rerequest messageEphemeralKey
+         * @property {server.Rerequest.ContentType|null} [contentType] Rerequest contentType
          */
 
         /**
@@ -22985,6 +23055,14 @@ $root.server = (function() {
         Rerequest.prototype.messageEphemeralKey = $util.newBuffer([]);
 
         /**
+         * Rerequest contentType.
+         * @member {server.Rerequest.ContentType} contentType
+         * @memberof server.Rerequest
+         * @instance
+         */
+        Rerequest.prototype.contentType = 0;
+
+        /**
          * Creates a new Rerequest instance using the specified properties.
          * @function create
          * @memberof server.Rerequest
@@ -23020,6 +23098,8 @@ $root.server = (function() {
                 writer.uint32(/* id 5, wireType 2 =*/42).bytes(message.sessionSetupEphemeralKey);
             if (message.messageEphemeralKey != null && Object.hasOwnProperty.call(message, "messageEphemeralKey"))
                 writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.messageEphemeralKey);
+            if (message.contentType != null && Object.hasOwnProperty.call(message, "contentType"))
+                writer.uint32(/* id 7, wireType 0 =*/56).int32(message.contentType);
             return writer;
         };
 
@@ -23071,6 +23151,9 @@ $root.server = (function() {
                     break;
                 case 6:
                     message.messageEphemeralKey = reader.bytes();
+                    break;
+                case 7:
+                    message.contentType = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -23125,6 +23208,14 @@ $root.server = (function() {
             if (message.messageEphemeralKey != null && message.hasOwnProperty("messageEphemeralKey"))
                 if (!(message.messageEphemeralKey && typeof message.messageEphemeralKey.length === "number" || $util.isString(message.messageEphemeralKey)))
                     return "messageEphemeralKey: buffer expected";
+            if (message.contentType != null && message.hasOwnProperty("contentType"))
+                switch (message.contentType) {
+                default:
+                    return "contentType: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
             return null;
         };
 
@@ -23175,6 +23266,16 @@ $root.server = (function() {
                     $util.base64.decode(object.messageEphemeralKey, message.messageEphemeralKey = $util.newBuffer($util.base64.length(object.messageEphemeralKey)), 0);
                 else if (object.messageEphemeralKey.length)
                     message.messageEphemeralKey = object.messageEphemeralKey;
+            switch (object.contentType) {
+            case "CHAT":
+            case 0:
+                message.contentType = 0;
+                break;
+            case "CALL":
+            case 1:
+                message.contentType = 1;
+                break;
+            }
             return message;
         };
 
@@ -23224,6 +23325,7 @@ $root.server = (function() {
                     if (options.bytes !== Array)
                         object.messageEphemeralKey = $util.newBuffer(object.messageEphemeralKey);
                 }
+                object.contentType = options.enums === String ? "CHAT" : 0;
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
@@ -23243,6 +23345,8 @@ $root.server = (function() {
                 object.sessionSetupEphemeralKey = options.bytes === String ? $util.base64.encode(message.sessionSetupEphemeralKey, 0, message.sessionSetupEphemeralKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.sessionSetupEphemeralKey) : message.sessionSetupEphemeralKey;
             if (message.messageEphemeralKey != null && message.hasOwnProperty("messageEphemeralKey"))
                 object.messageEphemeralKey = options.bytes === String ? $util.base64.encode(message.messageEphemeralKey, 0, message.messageEphemeralKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.messageEphemeralKey) : message.messageEphemeralKey;
+            if (message.contentType != null && message.hasOwnProperty("contentType"))
+                object.contentType = options.enums === String ? $root.server.Rerequest.ContentType[message.contentType] : message.contentType;
             return object;
         };
 
@@ -23256,6 +23360,20 @@ $root.server = (function() {
         Rerequest.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
+
+        /**
+         * ContentType enum.
+         * @name server.Rerequest.ContentType
+         * @enum {number}
+         * @property {number} CHAT=0 CHAT value
+         * @property {number} CALL=1 CALL value
+         */
+        Rerequest.ContentType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "CHAT"] = 0;
+            values[valuesById[1] = "CALL"] = 1;
+            return values;
+        })();
 
         return Rerequest;
     })();
@@ -31765,6 +31883,166 @@ $root.server = (function() {
         return WakeUp;
     })();
 
+    server.MarketingAlert = (function() {
+
+        /**
+         * Properties of a MarketingAlert.
+         * @memberof server
+         * @interface IMarketingAlert
+         */
+
+        /**
+         * Constructs a new MarketingAlert.
+         * @memberof server
+         * @classdesc Represents a MarketingAlert.
+         * @implements IMarketingAlert
+         * @constructor
+         * @param {server.IMarketingAlert=} [properties] Properties to set
+         */
+        function MarketingAlert(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * Creates a new MarketingAlert instance using the specified properties.
+         * @function create
+         * @memberof server.MarketingAlert
+         * @static
+         * @param {server.IMarketingAlert=} [properties] Properties to set
+         * @returns {server.MarketingAlert} MarketingAlert instance
+         */
+        MarketingAlert.create = function create(properties) {
+            return new MarketingAlert(properties);
+        };
+
+        /**
+         * Encodes the specified MarketingAlert message. Does not implicitly {@link server.MarketingAlert.verify|verify} messages.
+         * @function encode
+         * @memberof server.MarketingAlert
+         * @static
+         * @param {server.IMarketingAlert} message MarketingAlert message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MarketingAlert.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified MarketingAlert message, length delimited. Does not implicitly {@link server.MarketingAlert.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.MarketingAlert
+         * @static
+         * @param {server.IMarketingAlert} message MarketingAlert message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MarketingAlert.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a MarketingAlert message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.MarketingAlert
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.MarketingAlert} MarketingAlert
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MarketingAlert.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.MarketingAlert();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a MarketingAlert message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.MarketingAlert
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.MarketingAlert} MarketingAlert
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MarketingAlert.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a MarketingAlert message.
+         * @function verify
+         * @memberof server.MarketingAlert
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        MarketingAlert.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            return null;
+        };
+
+        /**
+         * Creates a MarketingAlert message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.MarketingAlert
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.MarketingAlert} MarketingAlert
+         */
+        MarketingAlert.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.MarketingAlert)
+                return object;
+            return new $root.server.MarketingAlert();
+        };
+
+        /**
+         * Creates a plain object from a MarketingAlert message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.MarketingAlert
+         * @static
+         * @param {server.MarketingAlert} message MarketingAlert
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        MarketingAlert.toObject = function toObject() {
+            return {};
+        };
+
+        /**
+         * Converts this MarketingAlert to JSON.
+         * @function toJSON
+         * @memberof server.MarketingAlert
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        MarketingAlert.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return MarketingAlert;
+    })();
+
     server.EventData = (function() {
 
         /**
@@ -31784,6 +32062,7 @@ $root.server = (function() {
          * @property {server.IPermissions|null} [permissions] EventData permissions
          * @property {server.IMediaObjectDownload|null} [mediaObjectDownload] EventData mediaObjectDownload
          * @property {server.IGroupDecryptionReport|null} [groupDecryptionReport] EventData groupDecryptionReport
+         * @property {server.ICall|null} [call] EventData call
          */
 
         /**
@@ -31905,17 +32184,25 @@ $root.server = (function() {
          */
         EventData.prototype.groupDecryptionReport = null;
 
+        /**
+         * EventData call.
+         * @member {server.ICall|null|undefined} call
+         * @memberof server.EventData
+         * @instance
+         */
+        EventData.prototype.call = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * EventData edata.
-         * @member {"mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport"|"permissions"|"mediaObjectDownload"|"groupDecryptionReport"|undefined} edata
+         * @member {"mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport"|"permissions"|"mediaObjectDownload"|"groupDecryptionReport"|"call"|undefined} edata
          * @memberof server.EventData
          * @instance
          */
         Object.defineProperty(EventData.prototype, "edata", {
-            get: $util.oneOfGetter($oneOfFields = ["mediaUpload", "mediaDownload", "mediaComposeLoad", "pushReceived", "decryptionReport", "permissions", "mediaObjectDownload", "groupDecryptionReport"]),
+            get: $util.oneOfGetter($oneOfFields = ["mediaUpload", "mediaDownload", "mediaComposeLoad", "pushReceived", "decryptionReport", "permissions", "mediaObjectDownload", "groupDecryptionReport", "call"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -31969,6 +32256,8 @@ $root.server = (function() {
                 $root.server.MediaObjectDownload.encode(message.mediaObjectDownload, writer.uint32(/* id 16, wireType 2 =*/130).fork()).ldelim();
             if (message.groupDecryptionReport != null && Object.hasOwnProperty.call(message, "groupDecryptionReport"))
                 $root.server.GroupDecryptionReport.encode(message.groupDecryptionReport, writer.uint32(/* id 17, wireType 2 =*/138).fork()).ldelim();
+            if (message.call != null && Object.hasOwnProperty.call(message, "call"))
+                $root.server.Call.encode(message.call, writer.uint32(/* id 18, wireType 2 =*/146).fork()).ldelim();
             return writer;
         };
 
@@ -32041,6 +32330,9 @@ $root.server = (function() {
                     break;
                 case 17:
                     message.groupDecryptionReport = $root.server.GroupDecryptionReport.decode(reader, reader.uint32());
+                    break;
+                case 18:
+                    message.call = $root.server.Call.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -32177,6 +32469,16 @@ $root.server = (function() {
                         return "groupDecryptionReport." + error;
                 }
             }
+            if (message.call != null && message.hasOwnProperty("call")) {
+                if (properties.edata === 1)
+                    return "edata: multiple values";
+                properties.edata = 1;
+                {
+                    var error = $root.server.Call.verify(message.call);
+                    if (error)
+                        return "call." + error;
+                }
+            }
             return null;
         };
 
@@ -32268,6 +32570,11 @@ $root.server = (function() {
                     throw TypeError(".server.EventData.groupDecryptionReport: object expected");
                 message.groupDecryptionReport = $root.server.GroupDecryptionReport.fromObject(object.groupDecryptionReport);
             }
+            if (object.call != null) {
+                if (typeof object.call !== "object")
+                    throw TypeError(".server.EventData.call: object expected");
+                message.call = $root.server.Call.fromObject(object.call);
+            }
             return message;
         };
 
@@ -32354,6 +32661,11 @@ $root.server = (function() {
                 object.groupDecryptionReport = $root.server.GroupDecryptionReport.toObject(message.groupDecryptionReport, options);
                 if (options.oneofs)
                     object.edata = "groupDecryptionReport";
+            }
+            if (message.call != null && message.hasOwnProperty("call")) {
+                object.call = $root.server.Call.toObject(message.call, options);
+                if (options.oneofs)
+                    object.edata = "call";
             }
             return object;
         };
@@ -35507,6 +35819,544 @@ $root.server = (function() {
         })();
 
         return Permissions;
+    })();
+
+    server.Call = (function() {
+
+        /**
+         * Properties of a Call.
+         * @memberof server
+         * @interface ICall
+         * @property {string|null} [callId] Call callId
+         * @property {number|Long|null} [peerUid] Call peerUid
+         * @property {server.Call.CallType|null} [type] Call type
+         * @property {server.Call.CallDirection|null} [direction] Call direction
+         * @property {boolean|null} [answered] Call answered
+         * @property {boolean|null} [connected] Call connected
+         * @property {number|Long|null} [durationMs] Call durationMs
+         * @property {string|null} [endCallReason] Call endCallReason
+         * @property {boolean|null} [localEndCall] Call localEndCall
+         * @property {server.Call.NetworkType|null} [networkType] Call networkType
+         * @property {string|null} [webrtcStats] Call webrtcStats
+         */
+
+        /**
+         * Constructs a new Call.
+         * @memberof server
+         * @classdesc Represents a Call.
+         * @implements ICall
+         * @constructor
+         * @param {server.ICall=} [properties] Properties to set
+         */
+        function Call(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * Call callId.
+         * @member {string} callId
+         * @memberof server.Call
+         * @instance
+         */
+        Call.prototype.callId = "";
+
+        /**
+         * Call peerUid.
+         * @member {number|Long} peerUid
+         * @memberof server.Call
+         * @instance
+         */
+        Call.prototype.peerUid = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * Call type.
+         * @member {server.Call.CallType} type
+         * @memberof server.Call
+         * @instance
+         */
+        Call.prototype.type = 0;
+
+        /**
+         * Call direction.
+         * @member {server.Call.CallDirection} direction
+         * @memberof server.Call
+         * @instance
+         */
+        Call.prototype.direction = 0;
+
+        /**
+         * Call answered.
+         * @member {boolean} answered
+         * @memberof server.Call
+         * @instance
+         */
+        Call.prototype.answered = false;
+
+        /**
+         * Call connected.
+         * @member {boolean} connected
+         * @memberof server.Call
+         * @instance
+         */
+        Call.prototype.connected = false;
+
+        /**
+         * Call durationMs.
+         * @member {number|Long} durationMs
+         * @memberof server.Call
+         * @instance
+         */
+        Call.prototype.durationMs = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * Call endCallReason.
+         * @member {string} endCallReason
+         * @memberof server.Call
+         * @instance
+         */
+        Call.prototype.endCallReason = "";
+
+        /**
+         * Call localEndCall.
+         * @member {boolean} localEndCall
+         * @memberof server.Call
+         * @instance
+         */
+        Call.prototype.localEndCall = false;
+
+        /**
+         * Call networkType.
+         * @member {server.Call.NetworkType} networkType
+         * @memberof server.Call
+         * @instance
+         */
+        Call.prototype.networkType = 0;
+
+        /**
+         * Call webrtcStats.
+         * @member {string} webrtcStats
+         * @memberof server.Call
+         * @instance
+         */
+        Call.prototype.webrtcStats = "";
+
+        /**
+         * Creates a new Call instance using the specified properties.
+         * @function create
+         * @memberof server.Call
+         * @static
+         * @param {server.ICall=} [properties] Properties to set
+         * @returns {server.Call} Call instance
+         */
+        Call.create = function create(properties) {
+            return new Call(properties);
+        };
+
+        /**
+         * Encodes the specified Call message. Does not implicitly {@link server.Call.verify|verify} messages.
+         * @function encode
+         * @memberof server.Call
+         * @static
+         * @param {server.ICall} message Call message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        Call.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.callId != null && Object.hasOwnProperty.call(message, "callId"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.callId);
+            if (message.peerUid != null && Object.hasOwnProperty.call(message, "peerUid"))
+                writer.uint32(/* id 2, wireType 0 =*/16).uint64(message.peerUid);
+            if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.type);
+            if (message.direction != null && Object.hasOwnProperty.call(message, "direction"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.direction);
+            if (message.answered != null && Object.hasOwnProperty.call(message, "answered"))
+                writer.uint32(/* id 5, wireType 0 =*/40).bool(message.answered);
+            if (message.connected != null && Object.hasOwnProperty.call(message, "connected"))
+                writer.uint32(/* id 6, wireType 0 =*/48).bool(message.connected);
+            if (message.durationMs != null && Object.hasOwnProperty.call(message, "durationMs"))
+                writer.uint32(/* id 7, wireType 0 =*/56).uint64(message.durationMs);
+            if (message.endCallReason != null && Object.hasOwnProperty.call(message, "endCallReason"))
+                writer.uint32(/* id 9, wireType 2 =*/74).string(message.endCallReason);
+            if (message.localEndCall != null && Object.hasOwnProperty.call(message, "localEndCall"))
+                writer.uint32(/* id 10, wireType 0 =*/80).bool(message.localEndCall);
+            if (message.networkType != null && Object.hasOwnProperty.call(message, "networkType"))
+                writer.uint32(/* id 11, wireType 0 =*/88).int32(message.networkType);
+            if (message.webrtcStats != null && Object.hasOwnProperty.call(message, "webrtcStats"))
+                writer.uint32(/* id 20, wireType 2 =*/162).string(message.webrtcStats);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified Call message, length delimited. Does not implicitly {@link server.Call.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.Call
+         * @static
+         * @param {server.ICall} message Call message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        Call.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a Call message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.Call
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.Call} Call
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        Call.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.Call();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.callId = reader.string();
+                    break;
+                case 2:
+                    message.peerUid = reader.uint64();
+                    break;
+                case 3:
+                    message.type = reader.int32();
+                    break;
+                case 4:
+                    message.direction = reader.int32();
+                    break;
+                case 5:
+                    message.answered = reader.bool();
+                    break;
+                case 6:
+                    message.connected = reader.bool();
+                    break;
+                case 7:
+                    message.durationMs = reader.uint64();
+                    break;
+                case 9:
+                    message.endCallReason = reader.string();
+                    break;
+                case 10:
+                    message.localEndCall = reader.bool();
+                    break;
+                case 11:
+                    message.networkType = reader.int32();
+                    break;
+                case 20:
+                    message.webrtcStats = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a Call message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.Call
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.Call} Call
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        Call.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a Call message.
+         * @function verify
+         * @memberof server.Call
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        Call.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.callId != null && message.hasOwnProperty("callId"))
+                if (!$util.isString(message.callId))
+                    return "callId: string expected";
+            if (message.peerUid != null && message.hasOwnProperty("peerUid"))
+                if (!$util.isInteger(message.peerUid) && !(message.peerUid && $util.isInteger(message.peerUid.low) && $util.isInteger(message.peerUid.high)))
+                    return "peerUid: integer|Long expected";
+            if (message.type != null && message.hasOwnProperty("type"))
+                switch (message.type) {
+                default:
+                    return "type: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.direction != null && message.hasOwnProperty("direction"))
+                switch (message.direction) {
+                default:
+                    return "direction: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.answered != null && message.hasOwnProperty("answered"))
+                if (typeof message.answered !== "boolean")
+                    return "answered: boolean expected";
+            if (message.connected != null && message.hasOwnProperty("connected"))
+                if (typeof message.connected !== "boolean")
+                    return "connected: boolean expected";
+            if (message.durationMs != null && message.hasOwnProperty("durationMs"))
+                if (!$util.isInteger(message.durationMs) && !(message.durationMs && $util.isInteger(message.durationMs.low) && $util.isInteger(message.durationMs.high)))
+                    return "durationMs: integer|Long expected";
+            if (message.endCallReason != null && message.hasOwnProperty("endCallReason"))
+                if (!$util.isString(message.endCallReason))
+                    return "endCallReason: string expected";
+            if (message.localEndCall != null && message.hasOwnProperty("localEndCall"))
+                if (typeof message.localEndCall !== "boolean")
+                    return "localEndCall: boolean expected";
+            if (message.networkType != null && message.hasOwnProperty("networkType"))
+                switch (message.networkType) {
+                default:
+                    return "networkType: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.webrtcStats != null && message.hasOwnProperty("webrtcStats"))
+                if (!$util.isString(message.webrtcStats))
+                    return "webrtcStats: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a Call message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.Call
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.Call} Call
+         */
+        Call.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.Call)
+                return object;
+            var message = new $root.server.Call();
+            if (object.callId != null)
+                message.callId = String(object.callId);
+            if (object.peerUid != null)
+                if ($util.Long)
+                    (message.peerUid = $util.Long.fromValue(object.peerUid)).unsigned = true;
+                else if (typeof object.peerUid === "string")
+                    message.peerUid = parseInt(object.peerUid, 10);
+                else if (typeof object.peerUid === "number")
+                    message.peerUid = object.peerUid;
+                else if (typeof object.peerUid === "object")
+                    message.peerUid = new $util.LongBits(object.peerUid.low >>> 0, object.peerUid.high >>> 0).toNumber(true);
+            switch (object.type) {
+            case "UNKNOWN_TYPE":
+            case 0:
+                message.type = 0;
+                break;
+            case "AUDIO":
+            case 1:
+                message.type = 1;
+                break;
+            case "VIDEO":
+            case 2:
+                message.type = 2;
+                break;
+            }
+            switch (object.direction) {
+            case "UNKNOWN_DIRECTION":
+            case 0:
+                message.direction = 0;
+                break;
+            case "OUTGOING":
+            case 1:
+                message.direction = 1;
+                break;
+            case "INCOMING":
+            case 2:
+                message.direction = 2;
+                break;
+            }
+            if (object.answered != null)
+                message.answered = Boolean(object.answered);
+            if (object.connected != null)
+                message.connected = Boolean(object.connected);
+            if (object.durationMs != null)
+                if ($util.Long)
+                    (message.durationMs = $util.Long.fromValue(object.durationMs)).unsigned = true;
+                else if (typeof object.durationMs === "string")
+                    message.durationMs = parseInt(object.durationMs, 10);
+                else if (typeof object.durationMs === "number")
+                    message.durationMs = object.durationMs;
+                else if (typeof object.durationMs === "object")
+                    message.durationMs = new $util.LongBits(object.durationMs.low >>> 0, object.durationMs.high >>> 0).toNumber(true);
+            if (object.endCallReason != null)
+                message.endCallReason = String(object.endCallReason);
+            if (object.localEndCall != null)
+                message.localEndCall = Boolean(object.localEndCall);
+            switch (object.networkType) {
+            case "UNKNOWN_NETWORK":
+            case 0:
+                message.networkType = 0;
+                break;
+            case "WIFI":
+            case 1:
+                message.networkType = 1;
+                break;
+            case "CELLULAR":
+            case 2:
+                message.networkType = 2;
+                break;
+            }
+            if (object.webrtcStats != null)
+                message.webrtcStats = String(object.webrtcStats);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a Call message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.Call
+         * @static
+         * @param {server.Call} message Call
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        Call.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.callId = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.peerUid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.peerUid = options.longs === String ? "0" : 0;
+                object.type = options.enums === String ? "UNKNOWN_TYPE" : 0;
+                object.direction = options.enums === String ? "UNKNOWN_DIRECTION" : 0;
+                object.answered = false;
+                object.connected = false;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.durationMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.durationMs = options.longs === String ? "0" : 0;
+                object.endCallReason = "";
+                object.localEndCall = false;
+                object.networkType = options.enums === String ? "UNKNOWN_NETWORK" : 0;
+                object.webrtcStats = "";
+            }
+            if (message.callId != null && message.hasOwnProperty("callId"))
+                object.callId = message.callId;
+            if (message.peerUid != null && message.hasOwnProperty("peerUid"))
+                if (typeof message.peerUid === "number")
+                    object.peerUid = options.longs === String ? String(message.peerUid) : message.peerUid;
+                else
+                    object.peerUid = options.longs === String ? $util.Long.prototype.toString.call(message.peerUid) : options.longs === Number ? new $util.LongBits(message.peerUid.low >>> 0, message.peerUid.high >>> 0).toNumber(true) : message.peerUid;
+            if (message.type != null && message.hasOwnProperty("type"))
+                object.type = options.enums === String ? $root.server.Call.CallType[message.type] : message.type;
+            if (message.direction != null && message.hasOwnProperty("direction"))
+                object.direction = options.enums === String ? $root.server.Call.CallDirection[message.direction] : message.direction;
+            if (message.answered != null && message.hasOwnProperty("answered"))
+                object.answered = message.answered;
+            if (message.connected != null && message.hasOwnProperty("connected"))
+                object.connected = message.connected;
+            if (message.durationMs != null && message.hasOwnProperty("durationMs"))
+                if (typeof message.durationMs === "number")
+                    object.durationMs = options.longs === String ? String(message.durationMs) : message.durationMs;
+                else
+                    object.durationMs = options.longs === String ? $util.Long.prototype.toString.call(message.durationMs) : options.longs === Number ? new $util.LongBits(message.durationMs.low >>> 0, message.durationMs.high >>> 0).toNumber(true) : message.durationMs;
+            if (message.endCallReason != null && message.hasOwnProperty("endCallReason"))
+                object.endCallReason = message.endCallReason;
+            if (message.localEndCall != null && message.hasOwnProperty("localEndCall"))
+                object.localEndCall = message.localEndCall;
+            if (message.networkType != null && message.hasOwnProperty("networkType"))
+                object.networkType = options.enums === String ? $root.server.Call.NetworkType[message.networkType] : message.networkType;
+            if (message.webrtcStats != null && message.hasOwnProperty("webrtcStats"))
+                object.webrtcStats = message.webrtcStats;
+            return object;
+        };
+
+        /**
+         * Converts this Call to JSON.
+         * @function toJSON
+         * @memberof server.Call
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        Call.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * CallType enum.
+         * @name server.Call.CallType
+         * @enum {number}
+         * @property {number} UNKNOWN_TYPE=0 UNKNOWN_TYPE value
+         * @property {number} AUDIO=1 AUDIO value
+         * @property {number} VIDEO=2 VIDEO value
+         */
+        Call.CallType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_TYPE"] = 0;
+            values[valuesById[1] = "AUDIO"] = 1;
+            values[valuesById[2] = "VIDEO"] = 2;
+            return values;
+        })();
+
+        /**
+         * CallDirection enum.
+         * @name server.Call.CallDirection
+         * @enum {number}
+         * @property {number} UNKNOWN_DIRECTION=0 UNKNOWN_DIRECTION value
+         * @property {number} OUTGOING=1 OUTGOING value
+         * @property {number} INCOMING=2 INCOMING value
+         */
+        Call.CallDirection = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_DIRECTION"] = 0;
+            values[valuesById[1] = "OUTGOING"] = 1;
+            values[valuesById[2] = "INCOMING"] = 2;
+            return values;
+        })();
+
+        /**
+         * NetworkType enum.
+         * @name server.Call.NetworkType
+         * @enum {number}
+         * @property {number} UNKNOWN_NETWORK=0 UNKNOWN_NETWORK value
+         * @property {number} WIFI=1 WIFI value
+         * @property {number} CELLULAR=2 CELLULAR value
+         */
+        Call.NetworkType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_NETWORK"] = 0;
+            values[valuesById[1] = "WIFI"] = 1;
+            values[valuesById[2] = "CELLULAR"] = 2;
+            return values;
+        })();
+
+        return Call;
     })();
 
     return server;
