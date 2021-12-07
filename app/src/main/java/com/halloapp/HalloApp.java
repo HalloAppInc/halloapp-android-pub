@@ -217,6 +217,7 @@ public class HalloApp extends Application {
         void onForeground() {
             Log.i("halloapp: onForeground");
             Notifications.getInstance(HalloApp.this).setEnabled(false);
+            Connection.getInstance().resetConnectionBackoff();
             connect();
             registerReceiver(receiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
             registerReceiver(airplaneModeChangeReceiver, new IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED));

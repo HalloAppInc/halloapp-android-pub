@@ -1,5 +1,7 @@
 package com.halloapp.xmpp;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -12,9 +14,9 @@ import com.google.android.gms.common.util.Hex;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.AppContext;
-import com.halloapp.ConnectRetryWorker;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
+import com.halloapp.ForegroundObserver;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactSyncResult;
@@ -109,8 +111,6 @@ import com.halloapp.xmpp.util.ResponseHandler;
 
 import java.io.IOException;
 import java.net.ConnectException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -124,8 +124,6 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.WeakHashMap;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -141,6 +139,8 @@ public class ConnectionImpl extends Connection {
     private static final int NOISE_PORT = 5222;
 
     public static final String FEED_THREAD_ID = "feed";
+
+    private static final long PACKET_DROP_TIME_MS = 30_000;
 
     private final Me me;
     private final BgWorkers bgWorkers;
@@ -161,6 +161,8 @@ public class ConnectionImpl extends Connection {
     private final PacketReader packetReader = new PacketReader();
     private final IqRouter iqRouter = new IqRouter();
 
+    private final SocketConnectorAsync socketConnectorAsync;
+
     private final FeedContentParser feedContentParser;
 
     private int iqShortId;
@@ -176,8 +178,26 @@ public class ConnectionImpl extends Connection {
         this.connectionObservers = connectionObservers;
 
         this.feedContentParser = new FeedContentParser(me);
+        this.socketConnectorAsync = new SocketConnectorAsync(me, bgWorkers, ForegroundObserver.getInstance(), new SocketConnectorAsync.SocketListener() {
+            @Override
+            public void onConnected(@NonNull HANoiseSocket socket) {
+                executor.submit(() -> {
+                    ConnectionImpl.this.onSocketConnected(socket);
+                });
+            }
+
+            @Override
+            public boolean isConnected() {
+                return ConnectionImpl.this.isConnected();
+            }
+        });
 
         randomizeShortId();
+    }
+
+    @Override
+    public void resetConnectionBackoff() {
+        socketConnectorAsync.resetConnectionBackoff();
     }
 
     @Override
@@ -204,6 +224,16 @@ public class ConnectionImpl extends Connection {
             Log.i("connection: expired client");
             throw new ConnectException("Client expired");
         }
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) AppContext.getInstance().get().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager.getActiveNetworkInfo() == null) {
+            Log.i("connection: no network connections available");
+            return false;
+        }
+        if (socketConnectorAsync.isConnecting()) {
+            Log.i("connection: currently connecting");
+            return true;
+        }
         if (!ackHandlers.isEmpty()) {
             Log.i("connection: " + ackHandlers.size() + " ack handlers cleared");
         }
@@ -212,9 +242,12 @@ public class ConnectionImpl extends Connection {
         Log.i("connection: connecting...");
 
         final String host = preferences.getUseDebugHost() ? DEBUG_HOST : HOST;
+        socketConnectorAsync.connect(host, NOISE_PORT);
+        return true;
+    }
+
+    private void onSocketConnected(@NonNull HANoiseSocket noiseSocket) {
         try {
-            SocketConnector connector = new SocketConnector(bgWorkers.getExecutor());
-            HANoiseSocket noiseSocket = connector.connect(me, host, NOISE_PORT);
             noiseSocket.initialize(createAuthRequest().toByteArray());
             this.socket = noiseSocket;
             isAuthenticated = true;
@@ -227,12 +260,9 @@ public class ConnectionImpl extends Connection {
             randomizeShortId();
             connectionObservers.notifyConnected();
             isAuthenticated = true;
-            Log.i("connection: established");
-            return true;
         } catch (IOException | NoiseException e) {
             Log.e("connection: cannot create connection", e);
         }
-        return false;
     }
 
     @WorkerThread
@@ -286,8 +316,41 @@ public class ConnectionImpl extends Connection {
         }
     }
 
+
     public void sendPacket(Packet packet) {
-        packetWriter.sendPacket(packet);
+        if (!reconnectIfNeeded()) {
+            Log.e("connection: can't connect; dropping: " + ProtoPrinter.toString(packet));
+            return;
+        }
+        packetWriter.sendPacket(packet, null, PACKET_DROP_TIME_MS);
+    }
+
+    public void sendPacket(Packet packet, @Nullable PacketCallback packetCallback, long timeout) {
+        if (!reconnectIfNeeded()) {
+            Log.e("connection: can't connect; dropping: " + ProtoPrinter.toString(packet));
+            if (packetCallback != null) {
+                packetCallback.onPacketDropped();
+            }
+            return;
+        }
+        packetWriter.sendPacket(packet, packetCallback, timeout);
+    }
+
+    public void sendMsg(Msg msg, @Nullable Runnable ackHandler) {
+        Packet packet = Packet.newBuilder().setMsg(msg).build();
+        sendPacket(packet, new PacketCallback() {
+            @Override
+            public void onPreparePacketSend() {
+                if (ackHandler != null) {
+                    ackHandlers.put(msg.getId(), ackHandler);
+                }
+            }
+
+            @Override
+            public void onPacketDropped() {
+
+            }
+        }, PACKET_DROP_TIME_MS);
     }
 
     private boolean isConnected() {
@@ -425,10 +488,6 @@ public class ConnectionImpl extends Connection {
     @Override
     public void subscribePresence(UserId userId) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: request presence subscription: no connection");
-                return;
-            }
             PresenceStanza stanza = new PresenceStanza(userId, "subscribe");
             sendPacket(Packet.newBuilder().setPresence(stanza.toProto()).build());
         });
@@ -437,10 +496,6 @@ public class ConnectionImpl extends Connection {
     @Override
     public void updatePresence(boolean available) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: update presence: no connection");
-                return;
-            }
             PresenceStanza stanza = new PresenceStanza(null, available ? "available" : "away");
             Packet packet = Packet.newBuilder().setPresence(stanza.toProto()).build();
             sendPacket(packet);
@@ -450,10 +505,6 @@ public class ConnectionImpl extends Connection {
     @Override
     public void updateChatState(@NonNull ChatId chat, int state) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: update chat state: no connection");
-                return;
-            }
             ChatStateStanza stanza = new ChatStateStanza(state == com.halloapp.xmpp.ChatState.Type.TYPING ? "typing" : "available", chat);
             sendPacket(Packet.newBuilder().setChatState(stanza.toProto()).build());
         });
@@ -640,12 +691,6 @@ public class ConnectionImpl extends Connection {
         }
 
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot resend post, no connection");
-                ConnectRetryWorker.schedule(AppContext.getInstance().get());
-                return;
-            }
-
             try {
                 GroupFeedItem.Builder builder = GroupFeedItem.newBuilder();
                 builder.setAction(GroupFeedItem.Action.PUBLISH);
@@ -671,7 +716,7 @@ public class ConnectionImpl extends Connection {
                         .setToUid(Long.parseLong(userId.rawId()))
                         .setGroupFeedItem(builder.build())
                         .build();
-                sendPacket(Packet.newBuilder().setMsg(msg).build());
+                sendMsg(msg, null);
             } catch (CryptoException e) {
                 Log.e("Failed to send rerequested group post", e);
             }
@@ -783,12 +828,6 @@ public class ConnectionImpl extends Connection {
         }
 
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot resend comment, no connection");
-                ConnectRetryWorker.schedule(AppContext.getInstance().get());
-                return;
-            }
-
             try {
                 GroupFeedItem.Builder builder = GroupFeedItem.newBuilder();
                 builder.setAction(GroupFeedItem.Action.PUBLISH);
@@ -819,7 +858,7 @@ public class ConnectionImpl extends Connection {
                         .setToUid(Long.parseLong(userId.rawId()))
                         .setGroupFeedItem(builder.build())
                         .build();
-                sendPacket(Packet.newBuilder().setMsg(msg).build());
+                sendMsg(msg, null);
             } catch (CryptoException e) {
                 Log.e("Failed to send rerequested group comment", e);
             }
@@ -837,12 +876,6 @@ public class ConnectionImpl extends Connection {
 
     public void retractMessage(@NonNull UserId chatUserId, @NonNull String messageId) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot send message, no connection");
-                ConnectRetryWorker.schedule(AppContext.getInstance().get());
-                return;
-            }
-
             String id = RandomId.create();
 
             Msg msg = Msg.newBuilder()
@@ -851,8 +884,7 @@ public class ConnectionImpl extends Connection {
                     .setType(Msg.Type.CHAT)
                     .setChatRetract(ChatRetract.newBuilder().setId(messageId).build())
                     .build();
-            ackHandlers.put(messageId, () -> connectionObservers.notifyOutgoingMessageSent(chatUserId, messageId));
-            sendPacket(Packet.newBuilder().setMsg(msg).build());
+            sendMsg(msg, () -> ackHandlers.put(messageId, () -> connectionObservers.notifyOutgoingMessageSent(chatUserId, messageId)));
         });
     }
 
@@ -872,11 +904,6 @@ public class ConnectionImpl extends Connection {
                 Log.i("connection: System message shouldn't be sent");
                 return;
             }
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot send message, no connection");
-                ConnectRetryWorker.schedule(AppContext.getInstance().get());
-                return;
-            }
             final UserId recipientUserId = (UserId)message.chatId;
 
             Msg msg = Msg.newBuilder()
@@ -885,8 +912,7 @@ public class ConnectionImpl extends Connection {
                     .setToUid(Long.parseLong(message.chatId.rawId()))
                     .setChatStanza(ChatMessageProtocol.getInstance().serializeMessage(message, recipientUserId, signalSessionSetupInfo))
                     .build();
-            ackHandlers.put(message.id, () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
-            sendPacket(Packet.newBuilder().setMsg(msg).build());
+            sendMsg(msg, () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
         });
     }
 
@@ -897,12 +923,6 @@ public class ConnectionImpl extends Connection {
                 Log.i("connection: System message shouldn't be sent");
                 return;
             }
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot send message, no connection");
-                ConnectRetryWorker.schedule(AppContext.getInstance().get());
-                return;
-            }
-
             GroupChatMessage groupChatMessage = new GroupChatMessage((GroupId)message.chatId, message);
 
             Msg msg = Msg.newBuilder()
@@ -911,9 +931,8 @@ public class ConnectionImpl extends Connection {
                     .setGroupChat(groupChatMessage.toProto())
                     .build();
 
-            ackHandlers.put(message.id, () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
+            sendMsg(msg, () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
             Log.i("connection: sending group message " + message.id + " to " + message.chatId);
-            sendPacket(Packet.newBuilder().setMsg(msg).build());
         });
     }
 
@@ -953,14 +972,6 @@ public class ConnectionImpl extends Connection {
     private Observable<Iq> sendIqRequestAsync(@NonNull HalloIq iq, boolean retryConnection) {
         BackgroundObservable<Iq> iqResponse = new BackgroundObservable<>(bgWorkers);
         executor.executeWithDropHandler(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot send iq " + iq + ", no connection");
-                iqResponse.setException(new NotConnectedException());
-                if (retryConnection) {
-                    ConnectRetryWorker.schedule(AppContext.getInstance().get());
-                }
-                return;
-            }
             Iq protoIq = iq.toProtoIq();
             iqRouter.sendAsync(protoIq)
                     .onResponse(iqResponse::setResponse)
@@ -972,10 +983,6 @@ public class ConnectionImpl extends Connection {
     @Override
     public void sendRerequest(final @NonNull UserId senderUserId, @NonNull String messageId, int rerequestCount, @Nullable byte[] teardownKey) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot send rerequest, no connection");
-                return;
-            }
             RerequestElement rerequestElement = new RerequestElement(messageId, senderUserId, rerequestCount, teardownKey);
             Log.i("connection: sending rerequest for " + messageId + " to " + senderUserId);
             sendPacket(Packet.newBuilder().setMsg(rerequestElement.toProto()).build());
@@ -985,10 +992,6 @@ public class ConnectionImpl extends Connection {
     @Override
     public void sendGroupPostRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String postId, boolean senderStateIssue) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot send group post rerequest, no connection");
-                return;
-            }
             int rerequestCount = ContentDb.getInstance().getPostRerequestCount(groupId, senderUserId, postId);
             GroupRerequestElement groupRerequestElement = new GroupRerequestElement(senderUserId, groupId, postId, senderStateIssue, rerequestCount);
             Log.i("connection: sending group post rerequest for " + postId + " in " + groupId + " to " + senderUserId);
@@ -999,10 +1002,6 @@ public class ConnectionImpl extends Connection {
     @Override
     public void sendGroupCommentRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String commentId, boolean senderStateIssue) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot send group comment rerequest, no connection");
-                return;
-            }
             int rerequestCount = ContentDb.getInstance().getCommentRerequestCount(groupId, senderUserId, commentId);
             GroupRerequestElement groupRerequestElement = new GroupRerequestElement(senderUserId, groupId, commentId, senderStateIssue, rerequestCount);
             Log.i("connection: sending group comment rerequest for " + commentId + " in " + groupId + " to " + senderUserId);
@@ -1013,10 +1012,6 @@ public class ConnectionImpl extends Connection {
     @Override
     public void sendAck(@NonNull String id) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot send ack, no connection");
-                return;
-            }
             final AckStanza ack = new AckStanza(id);
             Log.i("connection: sending ack for " + id);
             sendPacket(Packet.newBuilder().setAck(ack.toProto()).build());
@@ -1026,11 +1021,6 @@ public class ConnectionImpl extends Connection {
     @Override
     public void sendPostSeenReceipt(@NonNull UserId senderUserId, @NonNull String postId) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot send seen receipt, no connection");
-                ConnectRetryWorker.schedule(AppContext.getInstance().get());
-                return;
-            }
             String id = RandomId.create();
 
             SeenReceiptElement seenReceiptElement = new SeenReceiptElement(FEED_THREAD_ID, postId);
@@ -1040,20 +1030,14 @@ public class ConnectionImpl extends Connection {
                     .setToUid(Long.parseLong(senderUserId.rawId()))
                     .build();
 
-            ackHandlers.put(id, () -> connectionObservers.notifyIncomingPostSeenReceiptSent(senderUserId, postId));
-            sendPacket(Packet.newBuilder().setMsg(msg).build());
             Log.i("connection: sending post seen receipt " + postId + " to " + senderUserId);
+            sendMsg(msg, () -> connectionObservers.notifyIncomingPostSeenReceiptSent(senderUserId, postId));
         });
     }
 
     @Override
     public void sendMessageSeenReceipt(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot send message seen receipt, no connection");
-                ConnectRetryWorker.schedule(AppContext.getInstance().get());
-                return;
-            }
             String id = RandomId.create();
 
             SeenReceiptElement seenReceiptElement = new SeenReceiptElement(senderUserId.equals(chatId) ? null : chatId.rawId(), messageId);
@@ -1062,8 +1046,7 @@ public class ConnectionImpl extends Connection {
                     .setSeenReceipt(seenReceiptElement.toProto())
                     .setToUid(Long.parseLong(senderUserId.rawId()))
                     .build();
-            ackHandlers.put(id, () -> connectionObservers.notifyIncomingMessageSeenReceiptSent(chatId, senderUserId, messageId));
-            sendPacket(Packet.newBuilder().setMsg(msg).build());
+            sendMsg(msg, () -> connectionObservers.notifyIncomingMessageSeenReceiptSent(chatId, senderUserId, messageId));
             Log.i("connection: sending message seen receipt " + messageId + " to " + senderUserId);
         });
     }
@@ -1071,11 +1054,6 @@ public class ConnectionImpl extends Connection {
     @Override
     public void sendMessagePlayedReceipt(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot send message seen receipt, no connection");
-                ConnectRetryWorker.schedule(AppContext.getInstance().get());
-                return;
-            }
             String id = RandomId.create();
 
             PlayedReceipt playedReceipt = PlayedReceipt.newBuilder()
@@ -1087,8 +1065,7 @@ public class ConnectionImpl extends Connection {
                     .setPlayedReceipt(playedReceipt)
                     .setToUid(Long.parseLong(senderUserId.rawId()))
                     .build();
-            ackHandlers.put(id, () -> connectionObservers.notifyIncomingMessagePlayedReceiptSent(chatId, senderUserId, messageId));
-            sendPacket(Packet.newBuilder().setMsg(msg).build());
+            sendMsg(msg, () -> connectionObservers.notifyIncomingMessagePlayedReceiptSent(chatId, senderUserId, messageId));
             Log.i("connection: sending message seen receipt " + messageId + " to " + senderUserId);
         });
     }
@@ -1096,16 +1073,7 @@ public class ConnectionImpl extends Connection {
     @Override
     public void sendCallMsg(@NonNull Msg msg) {
         executor.execute(() -> {
-            if (!reconnectIfNeeded() || socket == null) {
-                Log.e("connection: cannot send call msg, no connection");
-                ConnectRetryWorker.schedule(AppContext.getInstance().get());
-                return;
-            }
-            // TODO(nikola): Msg is not reset automatically on the next connection.
-            // We will have to store the messages in some database and resend them on the next
-            // connection.
-            ackHandlers.put(msg.getId(), () -> Log.i("call msg " + msg.getId() + " acked"));
-            sendPacket(Packet.newBuilder().setMsg(msg).build());
+            sendMsg(msg, () -> Log.i("call msg " + msg.getId() + " acked"));
             Log.i("connection: sending call msg " + msg.getId() + " to " + msg.getToUid());
         });
     }
@@ -1963,38 +1931,72 @@ public class ConnectionImpl extends Connection {
         }
     }
 
+    interface PacketCallback {
+        void onPreparePacketSend();
+        void onPacketDropped();
+    }
+
     private class PacketWriter {
         private static final int QUEUE_CAPACITY = 100;
 
-        private final ArrayBlockingQueue<Packet> queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY, true);
+        private final LinkedBlockingQueue<Packet> queue = new LinkedBlockingQueue<>(QUEUE_CAPACITY);
 
-        private volatile boolean done;
+        private final Object callbackLock = new Object();
+
+        private final HashMap<Packet, PacketCallback> packetCallbacks = new HashMap<>();
+        private final HashMap<Packet, TimerTask> packetTimers = new HashMap<>();
+
+        private final Timer timer = new Timer();
 
         private Thread writerThread;
+        private WriterRunnable writerRunnable;
+
 
         void init() {
+            cleanQueue();
+            startWriter();
+        }
+
+        void cleanQueue() {
             queue.clear();
-            done = false;
-            writerThread = ThreadUtils.go(this::writePackets, "Packet Writer"); // TODO(jack): Connection counter
         }
 
         void shutdown() {
-            done = true;
-            if (writerThread != null) {
-                writerThread.interrupt();
-                writerThread = null;
-            }
-            queue.clear();
+            stopWriter();
+            cleanQueue();
         }
 
-        void sendPacket(Packet packet) {
-            boolean success = false;
-            while (!success && !done) {
-                try {
-                    enqueue(packet);
-                    success = true;
-                } catch (InterruptedException e) {
-                    Log.w("Interrupted while enqueueing packet for send", e);
+        void sendPacket(Packet packet, @Nullable PacketCallback callback, long timeout) {
+            try {
+                synchronized (callbackLock) {
+                    if (callback != null) {
+                        packetCallbacks.put(packet, callback);
+                    }
+
+                    TimerTask t = new TimerTask() {
+                        @Override
+                        public void run() {
+                            if (!queue.remove(packet)) {
+                                return;
+                            }
+                            synchronized (callbackLock) {
+                                PacketCallback c = packetCallbacks.remove(packet);
+                                if (c != null) {
+                                    c.onPacketDropped();
+                                }
+                                packetTimers.remove(packet);
+                                Log.i("connection: dropped: " + ProtoPrinter.toString(packet));
+                            }
+                        }
+                    };
+                    packetTimers.put(packet, t);
+                    timer.schedule(t, timeout);
+                }
+                enqueue(packet);
+            } catch (InterruptedException e) {
+                Log.w("Interrupted while enqueueing packet for send. dropping", e);
+                if (callback != null) {
+                    callback.onPacketDropped();
                 }
             }
         }
@@ -2003,27 +2005,79 @@ public class ConnectionImpl extends Connection {
             queue.put(packet);
         }
 
-        private void writePackets() {
-            ThreadUtils.setSocketTag();
-            try {
-                while (!done) {
-                    try {
-                        if (socket == null) {
-                            throw new IOException("Socket is null");
-                        }
-                        Packet packet = queue.take();
-                        Log.i("connection: send: " + ProtoPrinter.toString(packet));
+        private synchronized void startWriter() {
+            stopWriter();
 
-                        socket.writePacket(packet);
-                    } catch (InterruptedException e) {
-                        Log.w("Packet writing interrupted", e);
+            writerRunnable = new WriterRunnable();
+            writerThread = ThreadUtils.go(writerRunnable, "Packet Writer");
+        }
+
+        private synchronized void stopWriter() {
+            if (writerRunnable != null) {
+                writerRunnable.shutdown();
+                writerRunnable = null;
+            }
+            if (writerThread != null) {
+                writerThread.interrupt();
+                writerThread = null;
+            }
+            synchronized (callbackLock) {
+                for (TimerTask t : packetTimers.values()) {
+                    if (t != null) {
+                        t.cancel();
                     }
                 }
-            } catch (Exception e) {
-                if (!done) {
-                    Log.e("Packet Writer error", e);
-                    disconnect();
+                packetTimers.clear();
+
+                for (PacketCallback callback : packetCallbacks.values()) {
+                    if (callback != null) {
+                        callback.onPacketDropped();
+                    }
                 }
+                packetCallbacks.clear();
+            }
+        }
+
+        private class WriterRunnable implements Runnable {
+
+            private volatile boolean done = false;
+
+            @Override
+            public void run() {
+                ThreadUtils.setSocketTag();
+                try {
+                    while (!done) {
+                        try {
+                            if (socket == null) {
+                                throw new IOException("Socket is null");
+                            }
+                            Packet packet = queue.take();
+                            Log.i("connection: send: " + ProtoPrinter.toString(packet));
+                            synchronized (callbackLock) {
+                                TimerTask timeout = packetTimers.remove(packet);
+                                if (timeout != null && !timeout.cancel()) {
+                                    continue;
+                                }
+                                PacketCallback callback = packetCallbacks.remove(packet);
+                                if (callback != null) {
+                                    callback.onPreparePacketSend();
+                                }
+                            }
+                            socket.writePacket(packet);
+                        } catch (InterruptedException e) {
+                            Log.w("Packet writing interrupted", e);
+                        }
+                    }
+                } catch (Exception e) {
+                    if (!done) {
+                        Log.e("Packet Writer error", e);
+                        disconnect();
+                    }
+                }
+            }
+
+            public void shutdown() {
+                done = true;
             }
         }
     }
@@ -2085,15 +2139,19 @@ public class ConnectionImpl extends Connection {
         }
 
         public Observable<Iq> sendAsync(Iq iq) {
-            if (done) {
-                MutableObservable<Iq> observable = new MutableObservable<>();
-                observable.setException(new NotConnectedException());
-                return observable;
-            }
             BackgroundObservable<Iq> observable = new BackgroundObservable<>(bgWorkers);
             Packet packet = Packet.newBuilder().setIq(iq).build();
-            setCallbacks(iq.getId(), observable::setResponse, observable::setException);
-            sendPacket(packet);
+            sendPacket(packet, new PacketCallback() {
+                @Override
+                public void onPreparePacketSend() {
+                    setCallbacks(iq.getId(), observable::setResponse, observable::setException);
+                }
+
+                @Override
+                public void onPacketDropped() {
+                    observable.setException(new NotConnectedException());
+                }
+            }, IQ_TIMEOUT_MS);
             return observable;
         }
 
