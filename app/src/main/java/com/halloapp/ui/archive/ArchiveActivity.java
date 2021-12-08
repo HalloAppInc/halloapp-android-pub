@@ -156,6 +156,7 @@ public class ArchiveActivity extends HalloActivity  {
             if (post.media.size() > 0) {
                 Media media = post.media.get(0);
                 pictureFrameLayout.setVisibility(View.VISIBLE);
+                name.setText("");
                 if (media.type == Media.MEDIA_TYPE_IMAGE) {
                     mediaThumbnailLoader.load(imageView, post.media.get(0));
                 } else if (media.type == Media.MEDIA_TYPE_VIDEO) {
@@ -168,7 +169,6 @@ public class ArchiveActivity extends HalloActivity  {
                     });
                     mediaThumbnailLoader.load(imageView, media);
                 }
-                name.setText(R.string.couldnt_load_thumbnail);
             }
         }
     }
