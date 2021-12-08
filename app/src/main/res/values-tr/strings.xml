@@ -711,9 +711,6 @@ Uygulama izinlerini değiştirmek için Uygulama Ayarları ekranını aç."</str
         <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; kişi, &lt;b&gt;%2$s&lt;/b&gt; kişisinin gönderisine yorum yaptı"</item>
     </plurals>
 
-    <!-- Shown when an archived post's photo thumbnail can't be loaded -->
-    <string name="couldnt_load_thumbnail">"Küçük resim yüklenemedi"</string>
-
     <!-- Button for user to re-share old posts which have expired -->
     <string name="reshare_post">"Yeniden paylaş"</string>
 
@@ -1029,10 +1026,10 @@ Open the app settings screen to modify app permissions."</string>
     <!-- Displayed in an ongoing notification while the user is in a voice call -->
     <string name="ongoing_voice_call">"Ongoing voice call"</string>
 
-    <!-- Shown inline in a chat when the user missed an incoming audio call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>
-
     <!-- Shown inline in a chat when the user missed an incoming video call, %s will represent the time of the call. eg 4:20pm -->
     <string name="system_message_missed_video_call">"Missed video call at %s"</string>
-<string name="system_message_missed_call">"Missed call at %s"</string><string name="add_invite">"Add"</string><string name="share_option_group">"Gruba gönder"</string><string name="select_group">"Grup seç"</string></resources>
+
+    <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
+    <string name="system_message_missed_voice_call">"Missed voice call at %s"</string>
+<string name="couldnt_load_thumbnail">"Küçük resim yüklenemedi"</string><string name="system_message_missed_audio_call">"Missed audio call at %s"</string><string name="system_message_missed_call">"Missed call at %s"</string><string name="add_invite">"Add"</string><string name="share_option_group">"Gruba gönder"</string><string name="select_group">"Grup seç"</string></resources>
 

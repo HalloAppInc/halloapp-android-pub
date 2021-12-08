@@ -728,9 +728,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
         <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; andere Personen haben &lt;b&gt;%2$s&lt;/b&gt;'s Beitrag kommentiert"</item>
     </plurals>
 
-    <!-- Shown when an archived post's photo thumbnail can't be loaded -->
-    <string name="couldnt_load_thumbnail">"Miniaturansicht kann nicht geladen werden"</string>
-
     <!-- Button for user to re-share old posts which have expired -->
     <string name="reshare_post">"Beitrag erneut teilen"</string>
 
@@ -1044,10 +1041,10 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Displayed in an ongoing notification while the user is in a voice call -->
     <string name="ongoing_voice_call">"Laufender Sprachanruf"</string>
 
-    <!-- Shown inline in a chat when the user missed an incoming audio call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>
-
     <!-- Shown inline in a chat when the user missed an incoming video call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_video_call">"Missed video call at %s"</string>
-<string name="system_message_missed_call">"Missed call at %s"</string><string name="add_invite">"Hinzufügen"</string><string name="share_option_group">"In Gruppe teilen"</string><string name="select_group">"Gruppe auswählen"</string></resources>
+    <string name="system_message_missed_video_call">"Verpasster Videoanruf um %s"</string>
+
+    <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
+    <string name="system_message_missed_voice_call">"Verpasster Sprachanruf um %s"</string>
+<string name="couldnt_load_thumbnail">"Miniaturansicht kann nicht geladen werden"</string><string name="system_message_missed_audio_call">"Missed audio call at %s"</string><string name="system_message_missed_call">"Missed call at %s"</string><string name="add_invite">"Hinzufügen"</string><string name="share_option_group">"In Gruppe teilen"</string><string name="select_group">"Gruppe auswählen"</string></resources>
 

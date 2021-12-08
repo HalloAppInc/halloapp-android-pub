@@ -686,9 +686,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
         <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; anderen hebben gereageerd op de post van &lt;b&gt;%2$s&lt;/b&gt;"</item>
     </plurals>
 
-    <!-- Shown when an archived post's photo thumbnail can't be loaded -->
-    <string name="couldnt_load_thumbnail">"Kon voorvertoning niet laden"</string>
-
     <!-- Button for user to re-share old posts which have expired -->
     <string name="reshare_post">"Post opnieuw delen"</string>
 
@@ -1002,11 +999,10 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <!-- Displayed in an ongoing notification while the user is in a voice call -->
     <string name="ongoing_voice_call">"Lopende spraakoproep"</string>
 
-    <!-- Shown inline in a chat when the user missed an incoming audio call, %s will represent the time of the call. eg 4:20pm -->
-    <!-- Fuzzy -->
-    <string name="system_message_missed_audio_call">"Gemiste spraakoproep om %s"</string>
-
     <!-- Shown inline in a chat when the user missed an incoming video call, %s will represent the time of the call. eg 4:20pm -->
     <string name="system_message_missed_video_call">"Gemiste video-oproep om %s"</string>
-<string name="system_message_missed_call">"Missed call at %s"</string><string name="add_invite">"Toevoegen"</string><string name="share_option_group">"Post in groep"</string><string name="select_group">"Selecteer groep"</string></resources>
+
+    <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
+    <string name="system_message_missed_voice_call">"Gemiste spraakoproep om %s"</string>
+<string name="couldnt_load_thumbnail">"Kon voorvertoning niet laden"</string><string name="system_message_missed_audio_call">"Gemiste spraakoproep om %s"</string><string name="system_message_missed_call">"Missed call at %s"</string><string name="add_invite">"Toevoegen"</string><string name="share_option_group">"Post in groep"</string><string name="select_group">"Selecteer groep"</string></resources>
 
