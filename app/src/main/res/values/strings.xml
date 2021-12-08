@@ -805,6 +805,8 @@
     <string name="call_decline_button">Decline</string>
     <!-- Displayed as title for the Call Screen-->
     <string name="call_title">Call</string>
+    <!-- Action in menu for calling a user -->
+    <string name="call_action">Call</string>
     <!-- Displayed in an ongoing notification while the user is in a voice call-->
     <string name="ongoing_voice_call">Ongoing voice call</string>
 </resources>

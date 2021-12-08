@@ -26,8 +26,10 @@
         />
     <item
         android:id="@+id/call"
-        android:title="Call"
-        app:showAsAction="never"
+        android:title="@string/call_action"
+        app:showAsAction="ifRoom"
+        app:iconTint="?colorControlNormal"
+        android:icon="@drawable/ic_call"
         android:visible="false"
         />
 
