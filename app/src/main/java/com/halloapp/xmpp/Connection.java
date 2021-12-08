@@ -109,8 +109,6 @@ public abstract class Connection {
 
     public abstract Future<Boolean> connect();
 
-    public abstract void resetConnectionBackoff();
-
     public abstract void clientExpired();
 
     public abstract void disconnect();

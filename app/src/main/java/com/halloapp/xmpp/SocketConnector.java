@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.Me;
 import com.halloapp.noise.HANoiseSocket;
-import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
 
 import java.io.IOException;
@@ -168,7 +167,6 @@ public class SocketConnector {
 
         @Override
         public HANoiseSocket call() throws Exception {
-            ThreadUtils.setSocketTag();
             socket.connect();
             return socket;
         }
