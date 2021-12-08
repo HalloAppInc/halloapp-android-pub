@@ -213,6 +213,9 @@ public class DebugStorageActivity extends HalloActivity {
 
     private class StorageAdapter extends RecyclerView.Adapter<ViewHolder> {
 
+        private final int TYPE_HEADER = 1;
+        private final int TYPE_ITEM = 2;
+
         private List<Item> storageItems;
 
         public StorageAdapter() {
@@ -227,6 +230,9 @@ public class DebugStorageActivity extends HalloActivity {
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            if (viewType == TYPE_HEADER) {
+                return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.storage_usage_category_header, parent, false));
+            }
             return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.storage_usage_item, parent, false));
         }
 
@@ -235,10 +241,8 @@ public class DebugStorageActivity extends HalloActivity {
             Item item = storageItems.get(position);
             if (item instanceof StorageItem) {
                 holder.itemName.setVisibility(View.VISIBLE);
-                holder.categoryName.setVisibility(View.GONE);
                 holder.itemName.setText(item.name);
             } else {
-                holder.itemName.setVisibility(View.GONE);
                 holder.categoryName.setVisibility(View.VISIBLE);
                 holder.categoryName.setText(item.name);
             }
@@ -254,7 +258,11 @@ public class DebugStorageActivity extends HalloActivity {
 
         @Override
         public int getItemViewType(int position) {
-            return 1;
+            Item item = storageItems.get(position);
+            if (item instanceof StorageItem) {
+                return TYPE_ITEM;
+            }
+            return TYPE_HEADER;
         }
 
         @Override
