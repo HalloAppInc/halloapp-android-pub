@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:parentTag="LinearLayout"
+    tools:orientation="vertical">
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/media_pager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout_height="192dp"/>
+
+    <me.relex.circleindicator.CircleIndicator3
+        android:id="@+id/media_pager_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="8dp"
+        android:layout_gravity="center_horizontal"
+        app:ci_width="5dp"
+        app:ci_height="5dp"
+        app:ci_margin="4dp"
+        app:ci_drawable="@drawable/pager_item_indicator_selected"
+        app:ci_drawable_unselected="@drawable/pager_item_indicator_unselected"
+        app:ci_animator="@animator/pager_indicator"
+        android:layoutDirection="ltr"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:paddingEnd="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_voice_note_post_controls">
+
+        <FrameLayout
+            android:layout_width="36dp"
+            android:layout_height="36dp">
+
+            <ImageView
+                android:id="@+id/control_btn"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                app:layout_constraintStart_toEndOf="@id/ptt_avatar"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/color_secondary"
+                android:src="@drawable/ic_play_arrow"/>
+
+            <ProgressBar
+                android:id="@+id/loading"
+                android:layout_width="36dp"
+                android:layout_height="36dp"/>
+
+        </FrameLayout>
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/voice_note_seekbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="10dp"
+            android:paddingEnd="12dp"
+            android:progressDrawable="@drawable/voice_note_seekbar" />
+
+        <TextView
+            android:id="@+id/seek_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-medium"
+            tools:text="0:06"/>
+
+    </LinearLayout>
+
+    <com.halloapp.widget.LimitingTextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="4dp"
+        android:layout_marginTop="8dp"
+        android:textAppearance="?textAppearanceListItemSmall"
+        android:textSize="@dimen/post_text_size"
+        android:lineSpacingMultiplier="1.1"
+        android:autoLink="web"
+        android:visibility="gone"
+        app:ltvReadMore="@string/read_more"
+        tools:text="This is image caption"/>
+
+    <Space
+        android:id="@+id/footer_spacing"
+        android:layout_width="0dp"
+        android:layout_height="8dp"/>
+
+</merge>

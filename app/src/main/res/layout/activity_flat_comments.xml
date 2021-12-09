@@ -28,8 +28,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="?actionBarSize"
-            android:background="@color/window_background"
-            app:statusBarForeground="@color/window_background">
+            android:background="@color/post_card_background"
+            app:statusBarForeground="@color/post_card_background">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:layout_width="match_parent"
@@ -107,7 +107,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:elevation="4dp"
-            android:background="@color/window_background"
+            android:background="@color/post_card_background"
             app:layout_constraintTop_toTopOf="parent"
             android:outlineProvider="none"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents">

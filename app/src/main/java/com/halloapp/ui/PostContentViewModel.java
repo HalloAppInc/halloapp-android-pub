@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.halloapp.id.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
+import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.util.ComputableLiveData;
 
 public class PostContentViewModel extends AndroidViewModel {
@@ -19,6 +20,8 @@ public class PostContentViewModel extends AndroidViewModel {
 
     private final String postId;
     private final ContentDb contentDb;
+
+    private VoiceNotePlayer voiceNotePlayer;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
@@ -43,6 +46,8 @@ public class PostContentViewModel extends AndroidViewModel {
         contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
 
+        voiceNotePlayer = new VoiceNotePlayer(application);
+
         post = new ComputableLiveData<Post>() {
             @Override
             protected Post compute() {
@@ -51,9 +56,15 @@ public class PostContentViewModel extends AndroidViewModel {
         };
     }
 
+    @NonNull
+    public VoiceNotePlayer getVoiceNotePlayer() {
+        return voiceNotePlayer;
+    }
+
     @Override
     protected void onCleared() {
         contentDb.removeObserver(contentObserver);
+        voiceNotePlayer.onCleared();
     }
 
     private void invalidatePost() {

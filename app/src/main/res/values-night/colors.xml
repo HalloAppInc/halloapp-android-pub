@@ -45,6 +45,7 @@
     <color name="overflow_menu_bg">#393939</color>
 
     <color name="color_danger">#c2103f</color>
+    <color name="voice_note_post_bg">@color/window_background</color>
 
     <color name="selected_chat_highlight">@color/white_5</color>
 

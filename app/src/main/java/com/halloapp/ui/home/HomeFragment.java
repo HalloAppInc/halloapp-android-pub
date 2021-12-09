@@ -31,6 +31,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.PostThumbnailLoader;
+import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.ui.ActivityCenterActivity;
 import com.halloapp.ui.ActivityCenterViewModel;
@@ -257,6 +258,11 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         });
 
         postsView.addOnScrollListener(new FabExpandOnScrollListener((AppCompatActivity) requireActivity()));
+    }
+
+    @Override
+    protected VoiceNotePlayer getVoiceNotePlayer() {
+        return viewModel.getVoiceNotePlayer();
     }
 
     private void showNewPostsBanner() {

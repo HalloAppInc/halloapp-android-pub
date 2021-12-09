@@ -41,13 +41,14 @@ public class Post extends ContentItem {
     public static final int TRANSFERRED_DECRYPT_FAILED = 2;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TYPE_USER, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_RETRACTED, TYPE_ZERO_ZONE})
+    @IntDef({TYPE_USER, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_RETRACTED, TYPE_ZERO_ZONE, TYPE_VOICE_NOTE})
     public @interface Type {}
     public static final int TYPE_USER = 0;
     public static final int TYPE_SYSTEM = 1;
     public static final int TYPE_FUTURE_PROOF = 2;
     public static final int TYPE_RETRACTED = 3;
     public static final int TYPE_ZERO_ZONE = 4;
+    public static final int TYPE_VOICE_NOTE = 5;
 
     public int commentCount;
     public int unseenCommentCount;
@@ -118,6 +119,23 @@ public class Post extends ContentItem {
         this.type = type;
         this.transferred = transferred;
         this.seen = seen;
+    }
+
+    public static Post build(
+            long rowId,
+            UserId senderUserId,
+            String postId,
+            long timestamp,
+            @TransferredState int transferred,
+            @SeenState int seen,
+            @Type int type,
+            String text) {
+        switch (type) {
+            case Post.TYPE_VOICE_NOTE:
+                return new VoiceNotePost(rowId, senderUserId, postId, timestamp, transferred, seen);
+        }
+
+        return new Post(rowId, senderUserId, postId, timestamp, transferred, seen, type, text);
     }
 
     @Override
@@ -255,5 +273,10 @@ public class Post extends ContentItem {
                 return isIncoming();
         }
         return false;
+    }
+
+    @NonNull
+    public List<Media> getMedia() {
+        return media;
     }
 }

@@ -24,10 +24,12 @@ import com.halloapp.R;
 import com.halloapp.UrlPreview;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.UploadMediaTask;
+import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.PostOptionsBottomSheetDialogFragment;
@@ -44,6 +46,8 @@ import com.halloapp.widget.PostLinkPreviewView;
 import com.halloapp.widget.SeenDetectorLayout;
 import com.halloapp.xmpp.Connection;
 
+import java.util.List;
+
 import me.relex.circleindicator.CircleIndicator3;
 
 public class PostViewHolder extends ViewHolderWithLifecycle {
@@ -56,8 +60,8 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final ImageView statusView;
     private final View progressView;
     private final View moreOptionsView;
-    private final ViewPager2 mediaPagerView;
-    private final CircleIndicator3 mediaPagerIndicator;
+    protected final ViewPager2 mediaPagerView;
+    protected final CircleIndicator3 mediaPagerIndicator;
     private final LimitingTextView textView;
     private final PostAttributionLayout postHeader;
     protected final MediaPagerAdapter mediaPagerAdapter;
@@ -73,6 +77,8 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final GroupContentDecryptStatLoader groupContentDecryptStatLoader;
     Post post;
 
+    protected PostFooterViewHolder postFooterViewHolder;
+
     private boolean showGroupName;
     private @ColorRes int cardBgColor;
 
@@ -81,6 +87,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             return true;
         }
         public abstract void showDialogFragment(@NonNull DialogFragment dialogFragment);
+        public abstract VoiceNotePlayer getVoiceNotePlayer();
     }
 
     public void setShowGroupName(boolean visible) {
@@ -98,7 +105,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         }
     }
 
-    PostViewHolder(@NonNull View itemView, @NonNull PostViewHolderParent parent) {
+    public PostViewHolder(@NonNull View itemView, @NonNull PostViewHolderParent parent) {
         super(itemView);
 
         this.parent = parent;
@@ -198,10 +205,16 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         }
     }
 
+    public void setFooter(@NonNull PostFooterViewHolder postFooterViewHolder) {
+        this.postFooterViewHolder = postFooterViewHolder;
+    }
+
     @CallSuper
     public void bindTo(@NonNull Post post) {
-
         this.post = post;
+        if (postFooterViewHolder != null) {
+            postFooterViewHolder.bindTo(post);
+        }
         parent.getAvatarLoader().load(avatarView, post.senderUserId, parent.shouldOpenProfileOnNamePress());
         if (post.isOutgoing()) {
             nameView.setText(nameView.getContext().getString(R.string.me));
@@ -276,14 +289,15 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         final boolean noCaption = TextUtils.isEmpty(post.text);
 
         final Integer selPos = parent.getMediaPagerPositionMap().get(post.rowId);
-        if (!post.media.isEmpty()) {
+        List<Media> postMedia = post.getMedia();
+        if (!postMedia.isEmpty()) {
             mediaPagerAdapter.setAllowSaving(shouldShowMoreOptions());
-            mediaPagerAdapter.setMedia(post.media);
+            mediaPagerAdapter.setMedia(postMedia);
             if (!post.id.equals(mediaPagerAdapter.getContentId())) {
-                Log.i("PostViewHolder.bindTo: post " + post.id + " has " + post.media.size() + " media: " + post.media);
+                Log.i("PostViewHolder.bindTo: post " + post.id + " has " + postMedia.size() + " media: " + postMedia);
                 mediaPagerAdapter.setContentId(post.id);
                 final int defaultMediaInset = mediaPagerView.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);
-                if (post.media.size() > 1) {
+                if (postMedia.size() > 1) {
                     mediaPagerIndicator.setVisibility(View.VISIBLE);
                     mediaPagerIndicator.setViewPager(mediaPagerView);
                     mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, defaultMediaInset);
@@ -291,7 +305,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                     mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, 0);
                     mediaPagerIndicator.setVisibility(View.GONE);
                 }
-                mediaPagerView.setCurrentItem(selPos == null ? (Rtl.isRtl(mediaPagerView.getContext()) ? post.media.size() - 1 : 0) : selPos, false);
+                mediaPagerView.setCurrentItem(selPos == null ? (Rtl.isRtl(mediaPagerView.getContext()) ? postMedia.size() - 1 : 0) : selPos, false);
                 mediaPagerView.setNestedScrollingEnabled(false);
                 mediaPagerView.setTag(MediaPagerAdapter.getPagerTag(post.id));
             }
@@ -299,7 +313,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         if (textView != null) {
             final Integer textLimit = parent.getTextLimits().get(post.rowId);
             textView.setLineLimit(textLimit != null ? textLimit :
-                    (post.media.isEmpty() ? Constants.TEXT_POST_LINE_LIMIT : Constants.MEDIA_POST_LINE_LIMIT));
+                    (postMedia.isEmpty() ? Constants.TEXT_POST_LINE_LIMIT : Constants.MEDIA_POST_LINE_LIMIT));
             textView.setLineLimitTolerance(textLimit != null ? Constants.POST_LINE_LIMIT_TOLERANCE : 0);
             if (post.text != null) {
                 parent.getTextContentLoader().load(textView, post);
@@ -312,7 +326,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             } else {
                 textView.setVisibility(View.VISIBLE);
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getContext().getResources().getDimension(
-                        (post.text.length() < 180 && post.media.isEmpty()) ? R.dimen.post_text_size_large : R.dimen.post_text_size));
+                        (post.text.length() < 180 && postMedia.isEmpty()) ? R.dimen.post_text_size_large : R.dimen.post_text_size));
             }
         }
 
@@ -331,7 +345,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         if (post.senderUserId.isMe()) {
             return true;
         }
-        return post.getParentGroup() != null && !post.media.isEmpty();
+        return post.getParentGroup() != null && !post.getMedia().isEmpty();
     }
 
     public void selectMedia(int index) {

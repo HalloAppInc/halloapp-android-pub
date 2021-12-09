@@ -12,6 +12,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
 import com.halloapp.content.VoiceNoteComment;
+import com.halloapp.content.VoiceNotePost;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.Album;
 import com.halloapp.proto.clients.AlbumMedia;
@@ -164,10 +165,31 @@ public class FeedContentParser {
                 }
                 return np;
             }
+            case VOICE_NOTE: {
+                VoiceNotePost np = new VoiceNotePost(-1, posterUserId, id, timestamp, decryptFailure ? Post.TRANSFERRED_DECRYPT_FAILED : posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO, Post.SEEN_NO);
+                VoiceNote voiceNote = postContainer.getVoiceNote();
+                np.media.add(Media.parseFromProto(voiceNote));
+                return np;
+            }
             case ALBUM: {
                 Album album = postContainer.getAlbum();
-                Text caption = album.getText();
-                Post np = new Post(-1, posterUserId, id, timestamp, decryptFailure ? Post.TRANSFERRED_DECRYPT_FAILED : posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO, Post.SEEN_NO, caption.getText());
+                Post np;
+                if (album.hasVoiceNote()) {
+                    np = new VoiceNotePost(-1, posterUserId, id, timestamp, decryptFailure ? Post.TRANSFERRED_DECRYPT_FAILED : posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO, Post.SEEN_NO);
+                    VoiceNote voiceNote = album.getVoiceNote();
+                    np.media.add(Media.parseFromProto(voiceNote));
+                } else {
+                    Text caption = album.getText();
+                    np = new Post(-1, posterUserId, id, timestamp, decryptFailure ? Post.TRANSFERRED_DECRYPT_FAILED : posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO, Post.SEEN_NO, caption.getText());
+                    if (caption.hasLink()) {
+                        np.urlPreview = UrlPreview.fromProto(caption.getLink());
+                    }
+                    for (com.halloapp.proto.clients.Mention mentionProto : caption.getMentionsList()) {
+                        Mention mention = Mention.parseFromProto(mentionProto);
+                        processMention(mention);
+                        np.mentions.add(mention);
+                    }
+                }
                 for (AlbumMedia albumMedia : album.getMediaList()) {
                     switch (albumMedia.getMediaCase()) {
                         case IMAGE: {
@@ -181,14 +203,6 @@ public class FeedContentParser {
                             break;
                         }
                     }
-                }
-                for (com.halloapp.proto.clients.Mention mentionProto : caption.getMentionsList()) {
-                    Mention mention = Mention.parseFromProto(mentionProto);
-                    processMention(mention);
-                    np.mentions.add(mention);
-                }
-                if (caption.hasLink()) {
-                    np.urlPreview = UrlPreview.fromProto(caption.getLink());
                 }
                 return np;
             }

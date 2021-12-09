@@ -1,5 +1,6 @@
 package com.halloapp.ui.profile;
 
+import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
@@ -17,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.halloapp.AppContext;
 import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
@@ -28,7 +30,9 @@ import com.halloapp.content.PostsDataSource;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.privacy.BlockListManager;
+import com.halloapp.proto.clients.VoiceNote;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
@@ -61,6 +65,8 @@ public class ProfileViewModel extends ViewModel {
     private final UserId userId;
 
     private Parcelable savedScrollState;
+
+    private final VoiceNotePlayer voiceNotePlayer;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
@@ -146,6 +152,8 @@ public class ProfileViewModel extends ViewModel {
         contentDb.addObserver(contentObserver);
 
         dataSourceFactory = new PostsDataSource.Factory(contentDb, userId);
+
+        voiceNotePlayer = new VoiceNotePlayer((Application)AppContext.getInstance().get());
 
         hasGroupsInCommonLiveData = new ComputableLiveData<Boolean>() {
             @Override
@@ -282,6 +290,7 @@ public class ProfileViewModel extends ViewModel {
         contactsDb.removeObserver(contactsObserver);
         contentDb.removeObserver(contentObserver);
         blockListManager.removeObserver(this::updateIsBlocked);
+        voiceNotePlayer.onCleared();
     }
 
     public static class Factory implements ViewModelProvider.Factory {
@@ -300,5 +309,10 @@ public class ProfileViewModel extends ViewModel {
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
+    }
+
+    @NonNull
+    public VoiceNotePlayer getVoiceNotePlayer() {
+        return voiceNotePlayer;
     }
 }

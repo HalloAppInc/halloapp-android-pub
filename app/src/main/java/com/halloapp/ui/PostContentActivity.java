@@ -36,15 +36,20 @@ import com.halloapp.content.Post;
 import com.halloapp.groups.ChatLoader;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.media.VoiceNotePlayer;
+import com.halloapp.proto.clients.VoiceNote;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.ArchivedPostViewHolder;
 import com.halloapp.ui.posts.FutureProofPostViewHolder;
+import com.halloapp.ui.posts.IncomingPostFooterViewHolder;
 import com.halloapp.ui.posts.IncomingPostViewHolder;
+import com.halloapp.ui.posts.OutgoingPostFooterViewHolder;
 import com.halloapp.ui.posts.OutgoingPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
 import com.halloapp.ui.posts.RetractedPostViewHolder;
 import com.halloapp.ui.posts.SeenByLoader;
+import com.halloapp.ui.posts.VoiceNotePostViewHolder;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
@@ -69,6 +74,8 @@ public class PostContentActivity extends HalloActivity {
     private AudioDurationLoader audioDurationLoader;
     private SystemMessageTextResolver systemMessageTextResolver;
 
+    private PostContentViewModel viewModel;
+
     private DrawDelegateView drawDelegateView;
     private final RecyclerView.RecycledViewPool recycledMediaViews = new RecyclerView.RecycledViewPool();
 
@@ -89,6 +96,7 @@ public class PostContentActivity extends HalloActivity {
     static final int POST_TYPE_MEDIA = 0x01;
     static final int POST_TYPE_RETRACTED = 0x02;
     static final int POST_TYPE_FUTURE_PROOF = 0x03;
+    static final int POST_TYPE_VOICE_NOTE = 0x04;
     static final int POST_TYPE_MASK = 0xFF;
 
     static final int POST_DIRECTION_OUTGOING = 0x0000;
@@ -100,6 +108,11 @@ public class PostContentActivity extends HalloActivity {
         @Override
         public void showDialogFragment(@NonNull DialogFragment dialogFragment) {
             DialogFragmentUtils.showDialogFragmentOnce(dialogFragment, getSupportFragmentManager());
+        }
+
+        @Override
+        public VoiceNotePlayer getVoiceNotePlayer() {
+            return viewModel.getVoiceNotePlayer();
         }
 
         private final LongSparseArray<Integer> mediaPagerPositionMap = new LongSparseArray<>();
@@ -237,7 +250,7 @@ public class PostContentActivity extends HalloActivity {
         final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
         final boolean isArchivedPost = getIntent().getBooleanExtra(EXTRA_IS_ARCHIVED, false);
 
-        final PostContentViewModel viewModel = new ViewModelProvider(this, new PostContentViewModel.Factory(getApplication(), postId, isArchivedPost)).get(PostContentViewModel.class);
+        viewModel = new ViewModelProvider(this, new PostContentViewModel.Factory(getApplication(), postId, isArchivedPost)).get(PostContentViewModel.class);
 
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
@@ -292,7 +305,7 @@ public class PostContentActivity extends HalloActivity {
         postAdapter.notifyDataSetChanged();
     }
 
-    private class SinglePostAdapter extends RecyclerView.Adapter<PostViewHolder> {
+    private class SinglePostAdapter extends AdapterWithLifecycle<PostViewHolder> {
 
         private Post post;
 
@@ -331,7 +344,9 @@ public class PostContentActivity extends HalloActivity {
                     contentLayoutRes = R.layout.post_item_future_proof;
                     break;
                 }
-
+                case POST_TYPE_VOICE_NOTE:
+                    contentLayoutRes = R.layout.post_item_voice_note;
+                    break;
                 default: {
                     throw new IllegalArgumentException();
                 }
@@ -341,27 +356,36 @@ public class PostContentActivity extends HalloActivity {
             if ((viewType & POST_TYPE_MASK) == POST_TYPE_RETRACTED) {
                 return new RetractedPostViewHolder(layout, postViewHolderParent);
             }
-            final ViewGroup footer = layout.findViewById(R.id.post_footer);
             if (post.isArchived) {
                 return new ArchivedPostViewHolder(layout, postViewHolderParent);
             }
-            switch (viewType & POST_DIRECTION_MASK) {
-                case POST_DIRECTION_INCOMING: {
-                    LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_incoming, footer, true);
-                    if ((viewType & POST_TYPE_MASK) == POST_TYPE_FUTURE_PROOF) {
-                        return new FutureProofPostViewHolder(layout, postViewHolderParent);
-                    } else {
-                        return new IncomingPostViewHolder(layout, postViewHolderParent);
+            final ViewGroup footer = layout.findViewById(R.id.post_footer);
+            PostViewHolder postViewHolder;
+            if ((viewType & POST_TYPE_MASK) == POST_TYPE_FUTURE_PROOF) {
+                postViewHolder = new FutureProofPostViewHolder(layout, postViewHolderParent);
+            } else {
+                if ((viewType & POST_TYPE_MASK) == POST_TYPE_VOICE_NOTE) {
+                    postViewHolder = new VoiceNotePostViewHolder(layout, postViewHolderParent);
+                } else {
+                    postViewHolder = new PostViewHolder(layout, postViewHolderParent);
+                }
+                switch (viewType & POST_DIRECTION_MASK) {
+                    case POST_DIRECTION_INCOMING: {
+                        LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_incoming, footer, true);
+                        postViewHolder.setFooter(new IncomingPostFooterViewHolder(layout, postViewHolderParent));
+                        break;
+                    }
+                    case POST_DIRECTION_OUTGOING: {
+                        LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_outgoing, footer, true);
+                        postViewHolder.setFooter(new OutgoingPostFooterViewHolder(layout, postViewHolderParent));
+                        break;
+                    }
+                    default: {
+                        throw new IllegalArgumentException();
                     }
                 }
-                case POST_DIRECTION_OUTGOING: {
-                    LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_outgoing, footer, true);
-                    return new OutgoingPostViewHolder(layout, postViewHolderParent);
-                }
-                default: {
-                    throw new IllegalArgumentException();
-                }
             }
+            return postViewHolder;
         }
 
         @Override
@@ -389,6 +413,10 @@ public class PostContentActivity extends HalloActivity {
                 }
                 case Post.TYPE_RETRACTED: {
                     type = POST_TYPE_RETRACTED;
+                    break;
+                }
+                case Post.TYPE_VOICE_NOTE: {
+                    type = POST_TYPE_VOICE_NOTE;
                     break;
                 }
             }

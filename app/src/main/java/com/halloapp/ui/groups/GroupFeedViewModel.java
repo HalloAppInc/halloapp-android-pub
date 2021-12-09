@@ -1,5 +1,6 @@
 package com.halloapp.ui.groups;
 
+import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
@@ -12,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.halloapp.AppContext;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
@@ -22,6 +24,7 @@ import com.halloapp.content.PostsDataSource;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.util.ComputableLiveData;
 
 import java.util.ArrayList;
@@ -48,6 +51,8 @@ public class GroupFeedViewModel extends ViewModel {
     public final ComputableLiveData<Chat> chat;
 
     public final ComputableLiveData<List<Contact>> members;
+
+    private final VoiceNotePlayer voiceNotePlayer;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
@@ -129,6 +134,8 @@ public class GroupFeedViewModel extends ViewModel {
 
         contentDb.addObserver(contentObserver);
 
+        voiceNotePlayer = new VoiceNotePlayer((Application)AppContext.getInstance().get());
+
         dataSourceFactory = new PostsDataSource.Factory(contentDb, null, groupId);
         postList = new LivePagedListBuilder<>(dataSourceFactory, ADAPTER_PAGE_SIZE).build();
 
@@ -163,6 +170,8 @@ public class GroupFeedViewModel extends ViewModel {
     @Override
     protected void onCleared() {
         contentDb.removeObserver(contentObserver);
+
+        voiceNotePlayer.onCleared();
     }
 
     boolean checkLoadedOutgoingPost() {
@@ -192,5 +201,10 @@ public class GroupFeedViewModel extends ViewModel {
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
+    }
+
+    @NonNull
+    public VoiceNotePlayer getVoiceNotePlayer() {
+        return voiceNotePlayer;
     }
 }

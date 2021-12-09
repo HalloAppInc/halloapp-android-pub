@@ -240,6 +240,13 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private int postType = -1;
     private int scrollToPos = -1;
 
+    private boolean playing;
+
+    private String audioPath;
+    private boolean wasPlaying;
+
+    private Observer<VoiceNotePlayer.PlaybackState> playbackStateObserver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -247,6 +254,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.post_card_background));
 
         TextView titleView = findViewById(R.id.title);
         titleView.setText(R.string.comments);
@@ -841,8 +850,13 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             postContentContainer.removeAllViews();
 
             @LayoutRes int layout = R.layout.flat_comment_post_item;
-            if (post.type == Post.TYPE_FUTURE_PROOF) {
-                layout = R.layout.flat_comment_future_proof_post_item;
+            switch (post.type) {
+                case Post.TYPE_FUTURE_PROOF:
+                    layout = R.layout.flat_comment_future_proof_post_item;
+                    break;
+                case Post.TYPE_VOICE_NOTE:
+                    layout = R.layout.flat_comment_voice_note_post_item;
+                    break;
             }
             LayoutInflater.from(postContentContainer.getContext()).inflate(layout, postContentContainer, true);
             postType = post.type;
@@ -854,16 +868,90 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     postMediaGallery.setLayoutManager(layoutManager);
                     postMediaGallery.addItemDecoration(new LinearSpacingItemDecoration(layoutManager, getResources().getDimensionPixelSize(R.dimen.comment_media_list_spacing)));
                 }
+                if (postType == Post.TYPE_VOICE_NOTE) {
+                    SeekBar seekBar = postContentContainer.findViewById(R.id.voice_note_seekbar);
+                    ImageView controlButton = postContentContainer.findViewById(R.id.control_btn);
+                    TextView seekTime = postContentContainer.findViewById(R.id.seek_time);
+
+                    controlButton.setOnClickListener(v -> {
+                        if (playing) {
+                            viewModel.getVoiceNotePlayer().pause();
+                        } else if (audioPath != null) {
+                            viewModel.getVoiceNotePlayer().playFile(audioPath, seekBar.getProgress());
+                        }
+                    });
+
+                    playbackStateObserver = state -> {
+                        if (state == null || audioPath == null || !audioPath.equals(state.playingTag)) {
+                            return;
+                        }
+                        if (playing != state.playing) {
+                            playing = state.playing;
+                        }
+                        if (playing) {
+                            controlButton.setImageResource(R.drawable.ic_pause);
+                            seekTime.setText(StringUtils.formatVoiceNoteDuration(seekTime.getContext(), state.seek));
+                        } else {
+                            controlButton.setImageResource(R.drawable.ic_play_arrow);
+                            seekTime.setText(StringUtils.formatVoiceNoteDuration(seekTime.getContext(), state.seekMax));
+                        }
+                        seekBar.setMax(state.seekMax);
+                        seekBar.setProgress(state.seek);
+                        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                            @Override
+                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                            }
+
+                            @Override
+                            public void onStartTrackingTouch(SeekBar seekBar) {
+                                wasPlaying = playing;
+                                if (playing) {
+                                    viewModel.getVoiceNotePlayer().pause();
+                                }
+                            }
+
+                            @Override
+                            public void onStopTrackingTouch(SeekBar seekBar) {
+                                if (wasPlaying) {
+                                    viewModel.getVoiceNotePlayer().playFile(audioPath, seekBar.getProgress());
+                                }
+                            }
+                        });
+                    };
+                }
             }
         }
         if (postType == Post.TYPE_FUTURE_PROOF) {
             TextView futureProofMessage = postContentContainer.findViewById(R.id.future_proof_text);
             linkifyFutureProof(futureProofMessage);
             return;
+        } else if (postType == Post.TYPE_VOICE_NOTE) {
+            ImageView controlButton = postContentContainer.findViewById(R.id.control_btn);
+            TextView seekTime = postContentContainer.findViewById(R.id.seek_time);
+            ProgressBar loading = postContentContainer.findViewById(R.id.loading);
+            if (!post.media.isEmpty()) {
+                Media media = post.media.get(0);
+                if (media.transferred == Media.TRANSFERRED_YES) {
+                    if (media.file != null) {
+                        String newPath = media.file.getAbsolutePath();
+                        if (!newPath.equals(audioPath)) {
+                            this.audioPath = media.file.getAbsolutePath();
+                            audioDurationLoader.load(seekTime, media);
+                        }
+                    }
+                    loading.setVisibility(View.GONE);
+                    controlButton.setVisibility(View.VISIBLE);
+                } else {
+                    loading.setVisibility(View.VISIBLE);
+                    controlButton.setVisibility(View.INVISIBLE);
+                }
+            }
+            viewModel.getVoiceNotePlayer().getPlaybackState().observe(this, playbackStateObserver);
         }
         RecyclerView postMediaGallery = postContentContainer.findViewById(R.id.media);
         postMediaGallery.setTag(post);
-        if (post.media.isEmpty()) {
+        if (post.getMedia().isEmpty()) {
             postMediaGallery.setVisibility(View.GONE);
         } else {
             postMediaGallery.setVisibility(View.VISIBLE);
@@ -1734,7 +1822,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         MediaAdapter(Post post) {
             this.post = post;
-            this.media = post.media;
+            this.media = post.getMedia();
             Log.i("CommentsActivity.MediaAdapter: post " + post.id + " has " + media.size() + " media: " + media);
         }
 

@@ -105,12 +105,34 @@ public class FeedContentEncoder {
         }
 
         if (!post.media.isEmpty()) {
-            Album.Builder albumBuilder = Album.newBuilder();
-            albumBuilder.addAllMedia(getAlbumMediaProtos(post.media));
-            if (textContainer != null) {
-                albumBuilder.setText(textContainer);
+            if (post.type == Post.TYPE_VOICE_NOTE) {
+                VoiceNote.Builder voiceNoteBuilder = VoiceNote.newBuilder();
+                if (!post.media.isEmpty()) {
+                    Media media = post.media.get(0);
+                    if (media.type == Media.MEDIA_TYPE_AUDIO) {
+                        EncryptedResource resource = EncryptedResource.newBuilder()
+                                .setDownloadUrl(media.url)
+                                .setCiphertextHash(ByteString.copyFrom(media.encSha256hash))
+                                .setEncryptionKey(ByteString.copyFrom(media.encKey)).build();
+                        voiceNoteBuilder.setAudio(resource);
+                    }
+                    if (post.media.size() > 1) {
+                        Album.Builder albumBuilder = Album.newBuilder();
+                        albumBuilder.addAllMedia(getAlbumMediaProtos(post.media.subList(1, post.media.size())));
+                        albumBuilder.setVoiceNote(voiceNoteBuilder);
+                        builder.setAlbum(albumBuilder);
+                    } else {
+                        builder.setVoiceNote(voiceNoteBuilder);
+                    }
+                }
+            } else {
+                Album.Builder albumBuilder = Album.newBuilder();
+                albumBuilder.addAllMedia(getAlbumMediaProtos(post.media));
+                if (textContainer != null) {
+                    albumBuilder.setText(textContainer);
+                }
+                builder.setAlbum(albumBuilder);
             }
-            builder.setAlbum(albumBuilder);
         } else if (textContainer != null) {
             builder.setText(textContainer);
         } else {

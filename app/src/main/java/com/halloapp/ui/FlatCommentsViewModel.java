@@ -17,6 +17,7 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.FlatCommentsDataSource;
 import com.halloapp.id.UserId;
+import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.util.ComputableLiveData;
 
 import java.util.Objects;
@@ -38,6 +39,8 @@ class FlatCommentsViewModel extends CommentsViewModel {
 
     private String replyCommentId;
     private String navCommentId;
+
+    private VoiceNotePlayer voiceNotePlayer;
 
     private ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
 
@@ -62,6 +65,8 @@ class FlatCommentsViewModel extends CommentsViewModel {
         this.postId = postId;
 
         contactsDb.addObserver(contactsObserver);
+
+        voiceNotePlayer = new VoiceNotePlayer(application);
 
         replyComputableLiveData = new ComputableLiveData<Reply>() {
             @Override
@@ -147,6 +152,11 @@ class FlatCommentsViewModel extends CommentsViewModel {
         }
     }
 
+    @NonNull
+    public VoiceNotePlayer getVoiceNotePlayer() {
+        return voiceNotePlayer;
+    }
+
     @Override
     protected void invalidateLatestDataSource() {
         dataSourceFactory.invalidateLatestDataSource();
@@ -156,6 +166,7 @@ class FlatCommentsViewModel extends CommentsViewModel {
     protected void onCleared() {
         super.onCleared();
         contactsDb.removeObserver(contactsObserver);
+        voiceNotePlayer.onCleared();
     }
 
     public static class Factory implements ViewModelProvider.Factory {

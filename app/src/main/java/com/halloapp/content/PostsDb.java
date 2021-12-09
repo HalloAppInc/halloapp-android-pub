@@ -167,7 +167,6 @@ class PostsDb {
                 values.put(PostsTable.COLUMN_USAGE, post.usage);
                 values.put(PostsTable.COLUMN_RECEIVE_TIME, now);
                 post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
-
                 mediaDb.addMedia(post);
 
                 final List<UserId> audienceList = post.getAudienceList();
@@ -1057,6 +1056,7 @@ class PostsDb {
             where += " AND ("
                     + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_USER + " OR "
                     + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_FUTURE_PROOF + " OR "
+                    + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_VOICE_NOTE + " OR "
                     + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + " IS NULL)";
         }
         if (!args.isEmpty()) {
@@ -1155,7 +1155,7 @@ class PostsDb {
                         urlPreviewsDb.fillUrlPreview(post);
                         posts.add(post);
                     }
-                    post = new Post(
+                    post = Post.build(
                             rowId,
                             new UserId(cursor.getString(1)),
                             cursor.getString(2),
@@ -1342,7 +1342,7 @@ class PostsDb {
             while (cursor.moveToNext()) {
                 long rowId = cursor.getLong(0);
                 if (post == null) {
-                    post = new Post(
+                    post = Post.build(
                             rowId,
                             new UserId(cursor.getString(1)),
                             cursor.getString(2),
@@ -1435,7 +1435,7 @@ class PostsDb {
             while (cursor.moveToNext()) {
                 long rowId = cursor.getLong(0);
                 if (post == null) {
-                    post = new Post(
+                    post = Post.build(
                             rowId,
                             UserId.ME,
                             cursor.getString(1),
@@ -2215,7 +2215,7 @@ class PostsDb {
                     if (post != null) {
                         posts.add(post);
                     }
-                    post = new Post(
+                    post = Post.build(
                             rowId,
                             new UserId(cursor.getString(1)),
                             cursor.getString(2),
@@ -2465,7 +2465,7 @@ class PostsDb {
                     if (post != null) {
                         posts.add(post);
                     }
-                    post = new Post(
+                    post = Post.build(
                             rowId,
                             UserId.ME,
                             cursor.getString(1),

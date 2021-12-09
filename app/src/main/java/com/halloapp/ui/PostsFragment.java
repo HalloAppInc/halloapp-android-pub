@@ -31,23 +31,28 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Post;
+import com.halloapp.content.VoiceNotePost;
 import com.halloapp.groups.ChatLoader;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.FutureProofPostViewHolder;
+import com.halloapp.ui.posts.IncomingPostFooterViewHolder;
 import com.halloapp.ui.posts.IncomingPostViewHolder;
+import com.halloapp.ui.posts.OutgoingPostFooterViewHolder;
 import com.halloapp.ui.posts.OutgoingPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.ui.posts.SubtlePostViewHolder;
+import com.halloapp.ui.posts.VoiceNotePostViewHolder;
 import com.halloapp.ui.posts.ZeroZonePostViewHolder;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
 
-public class PostsFragment extends HalloFragment {
+public abstract class PostsFragment extends HalloFragment {
 
     protected final PostsAdapter adapter = new PostsAdapter();
     protected ViewGroup parentViewGroup;
@@ -142,6 +147,7 @@ public class PostsFragment extends HalloFragment {
         static final int POST_TYPE_FUTURE_PROOF = 0x04;
         static final int POST_TYPE_ZERO_ZONE_HOME = 0x05;
         static final int POST_TYPE_ZERO_ZONE_GROUP = 0x06;
+        static final int POST_TYPE_VOICE_NOTE = 0x07;
         static final int POST_TYPE_MASK = 0xFF;
 
         static final int POST_DIRECTION_OUTGOING = 0x0000;
@@ -243,6 +249,11 @@ public class PostsFragment extends HalloFragment {
             public void showDialogFragment(@NonNull DialogFragment dialogFragment) {
                 DialogFragmentUtils.showDialogFragmentOnce(dialogFragment, getParentFragmentManager());
             }
+
+            @Override
+            public VoiceNotePlayer getVoiceNotePlayer() {
+                return PostsFragment.this.getVoiceNotePlayer();
+            }
         };
 
         PostsAdapter() {
@@ -315,6 +326,9 @@ public class PostsFragment extends HalloFragment {
                 case Post.TYPE_ZERO_ZONE:
                     type = post.getParentGroup() != null ? POST_TYPE_ZERO_ZONE_GROUP : POST_TYPE_ZERO_ZONE_HOME;
                     break;
+                case Post.TYPE_VOICE_NOTE:
+                    type = POST_TYPE_VOICE_NOTE;
+                    break;
             }
             if (post.isRetracted()) {
                 type = POST_TYPE_RETRACTED;
@@ -356,6 +370,10 @@ public class PostsFragment extends HalloFragment {
                     contentLayoutRes = R.layout.post_item_future_proof;
                     break;
                 }
+                case POST_TYPE_VOICE_NOTE: {
+                    contentLayoutRes = R.layout.post_item_voice_note;
+                    break;
+                }
                 default: {
                     throw new IllegalArgumentException();
                 }
@@ -363,21 +381,32 @@ public class PostsFragment extends HalloFragment {
             final ViewGroup content = layout.findViewById(R.id.post_content);
             LayoutInflater.from(content.getContext()).inflate(contentLayoutRes, content, true);
             final ViewGroup footer = layout.findViewById(R.id.post_footer);
-            switch (viewType & POST_DIRECTION_MASK) {
-                case POST_DIRECTION_INCOMING: {
-                    LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_incoming, footer, true);
-                    if (postType == POST_TYPE_FUTURE_PROOF) {
-                        return new FutureProofPostViewHolder(layout, postViewHolderParent);
-                    } else {
-                        return new IncomingPostViewHolder(layout, postViewHolderParent);
+            PostViewHolder postViewHolder;
+            if ((viewType & POST_TYPE_MASK) == POST_TYPE_FUTURE_PROOF) {
+                postViewHolder = new FutureProofPostViewHolder(layout, postViewHolderParent);
+            } else {
+                if ((viewType & POST_TYPE_MASK) == POST_TYPE_VOICE_NOTE) {
+                    postViewHolder = new VoiceNotePostViewHolder(layout, postViewHolderParent);
+                } else {
+                    postViewHolder = new PostViewHolder(layout, postViewHolderParent);
+                }
+                switch (viewType & POST_DIRECTION_MASK) {
+                    case POST_DIRECTION_INCOMING: {
+                        LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_incoming, footer, true);
+                        postViewHolder.setFooter(new IncomingPostFooterViewHolder(layout, postViewHolderParent));
+                        break;
+                    }
+                    case POST_DIRECTION_OUTGOING: {
+                        LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_outgoing, footer, true);
+                        postViewHolder.setFooter(new OutgoingPostFooterViewHolder(layout, postViewHolderParent));
+                        break;
+                    }
+                    default: {
+                        throw new IllegalArgumentException();
                     }
                 }
-                case POST_DIRECTION_OUTGOING: {
-                    LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_outgoing, footer, true);
-                    return new OutgoingPostViewHolder(layout, postViewHolderParent);
-                }
             }
-            throw new IllegalArgumentException();
+            return postViewHolder;
         }
 
         @Override
@@ -397,4 +426,6 @@ public class PostsFragment extends HalloFragment {
             }
         }
     }
+
+    protected abstract VoiceNotePlayer getVoiceNotePlayer();
 }

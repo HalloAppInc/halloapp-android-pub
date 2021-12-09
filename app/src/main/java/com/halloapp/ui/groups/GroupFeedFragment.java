@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.R;
 import com.halloapp.id.GroupId;
+import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
@@ -137,5 +138,10 @@ public class GroupFeedFragment extends PostsFragment {
     @Override
     protected boolean shouldOpenProfileOnNamePress() {
         return true;
+    }
+
+    @Override
+    protected VoiceNotePlayer getVoiceNotePlayer() {
+        return viewModel.getVoiceNotePlayer();
     }
 }

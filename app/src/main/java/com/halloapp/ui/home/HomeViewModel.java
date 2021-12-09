@@ -16,6 +16,7 @@ import androidx.paging.PagedList;
 
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
+import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactsDb;
@@ -53,6 +54,8 @@ public class HomeViewModel extends AndroidViewModel {
 
     private long lastSeenTimestamp;
     private long lastSavedTimestamp;
+
+    private final VoiceNotePlayer voiceNotePlayer;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
         @Override
@@ -133,6 +136,8 @@ public class HomeViewModel extends AndroidViewModel {
         dataSourceFactory = new PostsDataSource.Factory(contentDb, null, null);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
+        voiceNotePlayer = new VoiceNotePlayer(application);
+
         unseenHomePosts = new ComputableLiveData<Boolean>() {
             @Override
             protected Boolean compute() {
@@ -165,6 +170,7 @@ public class HomeViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         contentDb.removeObserver(contentObserver);
+        voiceNotePlayer.onCleared();
     }
 
     boolean checkPendingOutgoing() {
@@ -202,6 +208,11 @@ public class HomeViewModel extends AndroidViewModel {
                 unseenHomePosts.invalidate();
             });
         }
+    }
+
+    @NonNull
+    public VoiceNotePlayer getVoiceNotePlayer() {
+        return voiceNotePlayer;
     }
 
 }
