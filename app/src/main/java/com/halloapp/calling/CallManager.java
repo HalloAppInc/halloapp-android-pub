@@ -67,8 +67,8 @@ public class CallManager {
         int IDLE = 0;
         int CALLING = 1;
         int CALLING_RINGING = 2;
-        int IN_CALL = 3;
-        int INCOMING_RINGING = 4;
+        int INCOMING_RINGING = 3;
+        int IN_CALL = 4;
         int END = 5;
     }
 
@@ -362,7 +362,7 @@ public class CallManager {
             return false;
         }
         if (this.state != State.INCOMING_RINGING) {
-            Log.w("CallManager.acceptCall call is not in RINGING state. State: " + stateToString(state));
+            Log.w("CallManager.acceptCall call is not in INCOMING_RINGING state. State: " + stateToString(state));
             return false;
         }
 
