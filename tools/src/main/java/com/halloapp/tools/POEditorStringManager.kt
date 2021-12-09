@@ -163,8 +163,10 @@ object POEditorStringManager {
     private fun importElements(element : String, toDoc : Document, fromDoc : Document, ignoreSet : HashSet<String>) {
         forEachTranslatableElement(element, fromDoc)  { node: Node, s: String ->
             if (!ignoreSet.contains(s)) {
+                toDoc.firstChild.appendChild(toDoc.createTextNode("    "))
                 val importedNode: Node = toDoc.importNode(node, true)
                 toDoc.firstChild.appendChild(importedNode)
+                toDoc.firstChild.appendChild(toDoc.createTextNode("\n"))
             }
         };
     }
