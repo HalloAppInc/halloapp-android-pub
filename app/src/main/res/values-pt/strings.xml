@@ -1024,5 +1024,14 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
     <string name="system_message_missed_voice_call">"Missed voice call at %s"</string>
-<string name="couldnt_load_thumbnail">"Não foi possível carregar a pré-visualização"</string><string name="system_message_missed_audio_call">"Missed audio call at %s"</string><string name="system_message_missed_call">"Missed call at %s"</string><string name="add_invite">"Add"</string><string name="share_option_group">"Postar para Grupo"</string><string name="select_group">"Selecionar grupo"</string></resources>
+
+    <!-- Action in menu for calling a user -->
+    <string name="call_action">"Call"</string>
+    <string name="couldnt_load_thumbnail">"Não foi possível carregar a pré-visualização"</string>
+    <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>
+    <string name="system_message_missed_call">"Missed call at %s"</string>
+    <string name="add_invite">"Add"</string>
+    <string name="share_option_group">"Postar para Grupo"</string>
+    <string name="select_group">"Selecionar grupo"</string>
+</resources>
 

@@ -1042,5 +1042,14 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
 
     <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
     <string name="system_message_missed_voice_call">"Lalmada de voz perdida en %s"</string>
-<string name="couldnt_load_thumbnail">"No se pudo cargar la foto en miniatura"</string><string name="system_message_missed_audio_call">"Missed audio call at %s"</string><string name="system_message_missed_call">"Missed call at %s"</string><string name="add_invite">"Añadir"</string><string name="share_option_group">"Escribe en el grupo"</string><string name="select_group">"Selecciona grupo"</string></resources>
+
+    <!-- Action in menu for calling a user -->
+    <string name="call_action">"Call"</string>
+    <string name="couldnt_load_thumbnail">"No se pudo cargar la foto en miniatura"</string>
+    <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>
+    <string name="system_message_missed_call">"Missed call at %s"</string>
+    <string name="add_invite">"Añadir"</string>
+    <string name="share_option_group">"Escribe en el grupo"</string>
+    <string name="select_group">"Selecciona grupo"</string>
+</resources>
 
