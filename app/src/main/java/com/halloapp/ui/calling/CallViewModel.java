@@ -17,7 +17,6 @@ public class CallViewModel extends ViewModel implements CallObserver {
     private final MutableLiveData<Integer> state = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isMicrophoneMuted = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isSpeakerPhoneOn = new MutableLiveData<>(false);
-    private final MutableLiveData<Boolean> isPeerRinging = new MutableLiveData<>(false);
 
     private final CallManager callManager;
 
@@ -57,17 +56,12 @@ public class CallViewModel extends ViewModel implements CallObserver {
         return isSpeakerPhoneOn;
     }
 
-    @NonNull
-    public LiveData<Boolean> isPeerRinging() {
-        return isPeerRinging;
-    }
-
     public boolean inCall() {
         return state.getValue() != null && state.getValue() == CallManager.State.IN_CALL;
     }
 
     public boolean isRinging() {
-        return state.getValue() != null && state.getValue() == CallManager.State.RINGING;
+        return state.getValue() != null && state.getValue() == CallManager.State.INCOMING_RINGING;
     }
 
     public boolean isCalling() {
@@ -98,7 +92,7 @@ public class CallViewModel extends ViewModel implements CallObserver {
     @Override
     public void onPeerIsRinging(String callId, UserId peerUid) {
         Log.i("onPeerIsRinging");
-        isPeerRinging.postValue(true);
+        state.postValue(CallManager.State.CALLING_RINGING);
     }
 
     @Override
@@ -125,7 +119,7 @@ public class CallViewModel extends ViewModel implements CallObserver {
 
     public void onIncomingCall() {
         Log.i("onIncomingCall");
-        state.postValue(CallManager.State.RINGING);
+        state.postValue(CallManager.State.INCOMING_RINGING);
     }
 
     public void onDeclineCall() {

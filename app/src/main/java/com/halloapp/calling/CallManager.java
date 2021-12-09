@@ -61,14 +61,15 @@ import java.util.concurrent.Executors;
 
 public class CallManager {
 
-    @IntDef({State.IDLE, State.CALLING, State.IN_CALL, State.RINGING, State.END})
+    @IntDef({State.IDLE, State.CALLING, State.CALLING_RINGING, State.IN_CALL, State.INCOMING_RINGING, State.END})
     @Retention(RetentionPolicy.SOURCE)
     public @interface State {
         int IDLE = 0;
         int CALLING = 1;
-        int IN_CALL = 2;
-        int RINGING = 3;
-        int END = 4;
+        int CALLING_RINGING = 2;
+        int IN_CALL = 3;
+        int INCOMING_RINGING = 4;
+        int END = 5;
     }
 
     private @State int state;
@@ -272,7 +273,7 @@ public class CallManager {
                 new SessionDescription(SessionDescription.Type.OFFER, webrtcOffer));
         setStunTurnServers(stunServers, turnServers);
 
-        this.state = State.RINGING;
+        this.state = State.INCOMING_RINGING;
         notifyOnIncomingCall();
         Notifications.getInstance(appContext.get()).showIncomingCallNotification(callId, peerUid);
         callsApi.sendRinging(callId, peerUid);
@@ -291,6 +292,7 @@ public class CallManager {
             Log.e("Error: unexpected call ringing, not initiator");
             return;
         }
+        this.state = State.CALLING_RINGING;
         notifyOnPeerIsRinging();
         startOutgoingRingtone();
     }
@@ -359,7 +361,7 @@ public class CallManager {
             Log.e("ERROR user clicked accept call but is the call initiator callId: " + callId);
             return false;
         }
-        if (this.state != State.RINGING) {
+        if (this.state != State.INCOMING_RINGING) {
             Log.w("CallManager.acceptCall call is not in RINGING state. State: " + stateToString(state));
             return false;
         }
@@ -726,7 +728,7 @@ public class CallManager {
             Log.i("onCallTimeout");
             if (this.callId != null && this.callId.equals(callId)) {
                 endCall(EndCall.Reason.TIMEOUT);
-                if (this.isInitiator == false && this.callId != null && this.state == State.RINGING) {
+                if (this.isInitiator == false && this.callId != null && this.state == State.INCOMING_RINGING) {
                     // TODO(nikola): fix here when we do video)
                     storeMissedCallMsg(this.peerUid, this.callId, CallType.AUDIO);
                 }
@@ -787,12 +789,12 @@ public class CallManager {
                 return "idle";
             case State.CALLING:
                 return "calling";
-            case State.RINGING:
+            case State.CALLING_RINGING:
+                return "calling-ringing";
+            case State.INCOMING_RINGING:
                 return "ringing";
             case State.IN_CALL:
                 return "in-call";
-            case State.END:
-                return "end";
             default:
                 return "unknown";
         }

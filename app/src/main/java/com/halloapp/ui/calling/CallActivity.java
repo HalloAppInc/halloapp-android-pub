@@ -113,6 +113,11 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                     titleTextView.setText(R.string.calling);
                     inCallView.setVisibility(View.VISIBLE);
                     break;
+                case CallManager.State.CALLING_RINGING:
+                    Log.i("CallActivity/State -> CALLING_RINGING");
+                    titleTextView.setText(R.string.ringing);
+                    callingView.setVisibility(View.VISIBLE);
+                    break;
                 case CallManager.State.IN_CALL:
                     Log.i("CallActivity/State -> IN_CALL");
                     inCallView.setVisibility(View.VISIBLE);
@@ -120,7 +125,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                     titleTextView.setVisibility(View.GONE);
                     startCallTimer();
                     break;
-                case CallManager.State.RINGING:
+                case CallManager.State.INCOMING_RINGING:
                     Log.i("CallActivity/State -> RINGING");
                     titleTextView.setText(R.string.incoming_call_notification_title);
                     ringingView.setVisibility(View.VISIBLE);
@@ -131,12 +136,6 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                     callViewModel.onEndCallCleanup();
                     finish();
                     break;
-            }
-        });
-
-        callViewModel.isPeerRinging().observe(this, isPeerRinging -> {
-            if (callViewModel.isCalling()) {
-                titleTextView.setText(R.string.ringing);
             }
         });
 
