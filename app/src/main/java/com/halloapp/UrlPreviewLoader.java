@@ -37,7 +37,11 @@ public class UrlPreviewLoader extends ViewDataLoader<View, UrlPreview, String> {
             if (TextUtils.isEmpty(url)) {
                 return null;
             }
-            Document document = Jsoup.connect(url).get();
+            String userAgent = Constants.USER_AGENT;
+            if (url.toLowerCase().contains("twitter.com")) {
+                userAgent = Constants.USER_AGENT + " (url bot)";
+            }
+            Document document = Jsoup.connect(url).userAgent(userAgent).get();
             if (document == null) {
                 return null;
             }
@@ -46,7 +50,7 @@ public class UrlPreviewLoader extends ViewDataLoader<View, UrlPreview, String> {
             if (imgUrl != null) {
                 final File file = FileStore.getInstance().getTmpFile(RandomId.create());
                 try {
-                    Downloader.run(imgUrl, null, null, Media.MEDIA_TYPE_UNKNOWN, null, file, new Downloader.DownloadListener() {
+                    Downloader.runExternal(imgUrl, file, new Downloader.DownloadListener() {
                         @Override
                         public boolean onProgress(long bytesWritten) {
                             return true;

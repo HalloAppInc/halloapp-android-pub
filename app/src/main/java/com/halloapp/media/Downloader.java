@@ -96,6 +96,31 @@ public class Downloader {
     }
 
     @WorkerThread
+    private static void downloadPlaintext(@NonNull InputStream inStream, long contentLength, @NonNull File unencryptedFile, @Nullable DownloadListener listener) throws IOException, GeneralSecurityException {
+        Log.i("Downloader.downloadPlaintext");
+        OutputStream outStream = null;
+        try {
+            outStream = new BufferedOutputStream(new FileOutputStream(unencryptedFile));
+            int byteRead;
+            long byteWritten = 0;
+            final byte[] buffer = new byte[1024];
+            boolean cancelled = false;
+            while (!cancelled && (byteRead = inStream.read(buffer)) > 0) {
+                outStream.write(buffer, 0, byteRead);
+                byteWritten += byteRead;
+                if (contentLength != 0 && listener != null) {
+                    cancelled = !listener.onProgress(byteWritten);
+                }
+            }
+            inStream.close();
+            outStream.close();
+        } finally {
+            FileUtils.closeSilently(inStream);
+            FileUtils.closeSilently(outStream);
+        }
+    }
+
+    @WorkerThread
     public static void decryptChunkedFile(@NonNull ChunkedMediaParameters chunkedParameters, @NonNull InputStream inStream, long contentLength, @NonNull File unencryptedFile, @NonNull byte[] mediaKey, @NonNull byte[] encSha256hash, @Media.MediaType int type, @Nullable DownloadListener listener) throws IOException, GeneralSecurityException {
         Log.i("Downloader.decryptChunkedFile using media key hash " + CryptoByteUtils.obfuscate(mediaKey));
 
@@ -268,6 +293,49 @@ public class Downloader {
                 }
                 throw e;
             }
+        } finally {
+            FileUtils.closeSilently(inStream);
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+    }
+
+    public static void runExternal(@NonNull String remotePath, @NonNull File localFile, @Nullable DownloadListener listener, @NonNull String mediaLogId) throws IOException, GeneralSecurityException, ChunkedMediaParametersException, ForeignRemoteAuthorityException {
+        ThreadUtils.setSocketTag();
+        Log.i("Downloader starting download of " + mediaLogId + " from " + remotePath);
+        InputStream inStream = null;
+        HttpURLConnection connection = null;
+        try {
+            long existingBytes = 0;
+            final URL url = new URL(remotePath);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestProperty("User-Agent", Constants.USER_AGENT);
+            connection.setRequestProperty("Cache-Control", "no-cache, no-store, must-revalidate");
+            connection.setRequestProperty("Pragma", "no-cache");
+            connection.setRequestProperty("Expires", "0");
+            if (existingBytes > 0) {
+                connection.setRequestProperty("Range", "bytes=" + existingBytes + "-");
+            }
+            connection.setAllowUserInteraction(false);
+            connection.setConnectTimeout(30_000);
+            connection.setReadTimeout(30_000);
+            connection.connect();
+            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK && connection.getResponseCode() != HttpURLConnection.HTTP_PARTIAL) {
+                throw new DownloadException(connection.getResponseCode());
+            }
+            inStream = connection.getInputStream();
+
+            int contentLength = connection.getContentLength();
+            Log.i("Downloader: content length for " + mediaLogId + ": " + contentLength);
+            Log.i("Downloader: full headers for " + mediaLogId + ": " + connection.getHeaderFields());
+            if (listener != null) {
+                String cdnPop = connection.getHeaderField("x-amz-cf-pop");
+                String cdnId = connection.getHeaderField("x-amz-cf-id");
+                String cdnCache = connection.getHeaderField("x-cache");
+                listener.onLogInfo(contentLength, cdnPop, cdnId, cdnCache);
+            }
+            downloadPlaintext(inStream, connection.getContentLength(), localFile, listener);
         } finally {
             FileUtils.closeSilently(inStream);
             if (connection != null) {
