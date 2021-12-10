@@ -7,94 +7,143 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="30dp"
-        android:background="?selectableItemBackground">
-
-        <ImageView
-            android:id="@+id/home_icon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginTop="11dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="13dp"
-            android:layout_marginBottom="11dp"
-            android:padding="6dp"
-            android:background="@android:color/white"
-            android:src="@drawable/ic_home_selected"
-            app:tint="@color/color_secondary"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            />
-
-        <TextView
-            android:id="@+id/home_header"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/home"
-            android:textColor="@color/primary_text"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="13dp"
-            app:layout_constraintBottom_toTopOf="@id/home_privacy_setting"
-            app:layout_constraintStart_toEndOf="@id/home_icon"
-            app:layout_constraintVertical_chainStyle="packed"
-            android:textSize="17sp"/>
-
-        <TextView
-            android:id="@+id/home_privacy_setting"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            tools:text="Share with all my contacts"
-            android:textColor="@color/tertiary_text"
-            app:layout_constraintTop_toBottomOf="@id/home_header"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="@id/home_header"
-            android:textSize="12sp"/>
-
-        <ImageView
-            android:id="@+id/change_privacy_setting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_settings_gear"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/secondary_text"
-            android:padding="4dp"
-            android:layout_marginEnd="16dp"
-            android:background="?selectableItemBackgroundBorderless"
-            app:layout_constraintEnd_toStartOf="@id/selection_indicator"/>
-
-        <ImageView
-            android:id="@+id/selection_indicator"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:padding="2dp"
-            android:background="@drawable/contact_selection_background"
-            android:src="@drawable/ic_check"
-            app:tint="@android:color/white"
-            android:scaleType="fitCenter"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-    
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="15sp"
+        android:textSize="11sp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="9dp"
-        android:textColor="@color/tertiary_text"
-        android:text="@string/recent_groups"/>
+        android:layout_marginTop="9dp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/secondary_text"
+        android:textAllCaps="true"
+        android:letterSpacing=".1"
+        android:text="@string/setting_feed_privacy_single_post_title"/>
+
+    <LinearLayout
+        android:id="@+id/my_contacts"
+        android:layout_width="match_parent"
+        android:layout_height="64sp"
+        android:orientation="horizontal"
+        android:layout_marginTop="18dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="0dp"
+        android:background="?selectableItemBackground">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/my_contacts_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/my_contacts_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setting_feed_all"
+                android:textColor="@color/primary_text"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="17sp"/>
+
+            <TextView
+                android:id="@+id/my_contacts_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/composer_sharing_all_summary"
+                android:textColor="@color/tertiary_text"
+                android:textSize="12sp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/contacts_except"
+        android:layout_width="match_parent"
+        android:layout_height="64sp"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="0dp"
+        android:background="?selectableItemBackground">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/contacts_except_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/contacts_except_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setting_feed_except"
+                android:textColor="@color/primary_text"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="17sp"/>
+
+            <TextView
+                android:id="@+id/contacts_except_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Share with all my contacts"
+                android:textColor="@color/tertiary_text"
+                android:textSize="12sp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/only_share_with"
+        android:layout_width="match_parent"
+        android:layout_height="64sp"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="0dp"
+        android:background="?selectableItemBackground">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/only_with_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setting_feed_only"
+                android:textColor="@color/primary_text"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="17sp"/>
+
+            <TextView
+                android:id="@+id/only_with_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Share with all my contacts"
+                android:textColor="@color/tertiary_text"
+                android:textSize="12sp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

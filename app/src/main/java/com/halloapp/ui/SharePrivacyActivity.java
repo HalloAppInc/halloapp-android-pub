@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
@@ -14,10 +15,13 @@ import android.view.ViewOutlineProvider;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,24 +31,37 @@ import com.halloapp.R;
 import com.halloapp.content.Chat;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
+import com.halloapp.ui.contacts.MultipleContactPickerActivity;
 import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.groups.GroupCreationPickerActivity;
 import com.halloapp.ui.privacy.FeedPrivacyActivity;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class SharePrivacyActivity extends HalloActivity {
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class SharePrivacyActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
     public static final String RESULT_GROUP_ID = "selected_group_id";
 
     private static final String EXTRA_CURRENT_SELECTION = "current_selection";
+
     private static final int REQUEST_CREATE_GROUP = 1;
+    private static final int REQUEST_CODE_SELECT_EXCEPT_LIST = 2;
+    private static final int REQUEST_CODE_SELECT_ONLY_LIST = 3;
+
+    public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY = 1;
+    public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_EXCEPT = 2;
 
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
@@ -73,6 +90,18 @@ public class SharePrivacyActivity extends HalloActivity {
                     if (groupId != null) {
                         onSelectChat(groupId);
                     }
+                }
+                break;
+            case REQUEST_CODE_SELECT_EXCEPT_LIST:
+                if (resultCode == RESULT_OK && data != null) {
+                    List<UserId> exceptList = data.getParcelableArrayListExtra(MultipleContactPickerActivity.EXTRA_RESULT_SELECTED_IDS);
+                    saveList(PrivacyList.Type.EXCEPT, exceptList);
+                }
+                break;
+            case REQUEST_CODE_SELECT_ONLY_LIST:
+                if (resultCode == RESULT_OK && data != null) {
+                    List<UserId> onlyList = data.getParcelableArrayListExtra(MultipleContactPickerActivity.EXTRA_RESULT_SELECTED_IDS);
+                    saveList(PrivacyList.Type.ONLY, onlyList);
                 }
                 break;
         }
@@ -131,6 +160,66 @@ public class SharePrivacyActivity extends HalloActivity {
         return true;
     }
 
+    private void openMultipleContactPicker(int requestCode, List<UserId> currentList, @StringRes int title) {
+        startActivityForResult(MultipleContactPickerActivity.newPickerIntentAllowEmpty(this, currentList, title), requestCode);
+    }
+
+    private void editExceptList() {
+        openMultipleContactPicker(REQUEST_CODE_SELECT_EXCEPT_LIST, getExceptList(), R.string.contact_picker_feed_except_title);
+    }
+
+    private void editOnlyList() {
+        openMultipleContactPicker(REQUEST_CODE_SELECT_ONLY_LIST, getOnlyList(), R.string.contact_picker_feed_only_title);
+    }
+
+    private List<UserId> getOnlyList() {
+        FeedPrivacy privacy = viewModel.getFeedPrivacy().getValue();
+        if (privacy != null) {
+            return privacy.onlyList;
+        }
+        return null;
+    }
+
+    private List<UserId> getExceptList() {
+        FeedPrivacy privacy = viewModel.getFeedPrivacy().getValue();
+        if (privacy != null) {
+            return privacy.exceptList;
+        }
+        return null;
+    }
+
+    private void saveList(@PrivacyList.Type @NonNull String listType, List<UserId> userId) {
+        viewModel.savePrivacy(listType, userId).observe(this, done -> {
+            if (done != null) {
+                if (done) {
+                    Toast.makeText(this, R.string.feed_privacy_update_success, Toast.LENGTH_LONG).show();
+                    onSelectChat(null);
+                } else {
+                    SnackbarHelper.showWarning(this, R.string.feed_privacy_update_failure);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_CONTACTS_PERMISSION_EXCEPT: {
+                editExceptList();
+                break;
+            }
+            case REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY: {
+                editOnlyList();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+
+    }
+
     private class GroupsFilter extends FilterUtils.ItemFilter<Chat> {
 
         GroupsFilter(@NonNull List<Chat> chats) {
@@ -152,7 +241,6 @@ public class SharePrivacyActivity extends HalloActivity {
 
     private static final int TYPE_HOME = 1;
     private static final int TYPE_GROUP = 2;
-    private static final int TYPE_CREATE_GROUP = 3;
 
     private class ShareItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
@@ -198,10 +286,8 @@ public class SharePrivacyActivity extends HalloActivity {
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             if (viewType == TYPE_HOME) {
                 return new HomeViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.share_list_header, parent, false));
-            } else if (viewType == TYPE_GROUP) {
-                return new ItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.share_list_item, parent, false));
             } else {
-                return new CreateGroupViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.share_list_create_group, parent, false));
+                return new ItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.share_list_item, parent, false));
             }
         }
 
@@ -211,13 +297,8 @@ public class SharePrivacyActivity extends HalloActivity {
                 ((HomeViewHolder)holder).bind(feedPrivacy, selectedId == null);
             } else if (holder instanceof ItemViewHolder) {
                 ItemViewHolder viewHolder = (ItemViewHolder) holder;
-                int type = getItemViewType(position);
-                if (type == TYPE_CREATE_GROUP) {
-                    viewHolder.bindCreateGroup();
-                } else {
-                    Chat chat = filteredGroupsList.get(position - 1);
-                    viewHolder.bindChat(chat, chat.chatId.equals(selectedId));
-                }
+                Chat chat = filteredGroupsList.get(position - 1);
+                viewHolder.bindChat(chat, chat.chatId.equals(selectedId));
             }
         }
 
@@ -225,15 +306,13 @@ public class SharePrivacyActivity extends HalloActivity {
         public int getItemViewType(int position) {
             if (position == 0) {
                 return TYPE_HOME;
-            } else if (position == getItemCount() - 1) {
-                return TYPE_CREATE_GROUP;
             }
             return TYPE_GROUP;
         }
 
         @Override
         public int getItemCount() {
-            return 2 + getFilteredGroupsCount();
+            return 1 + getFilteredGroupsCount();
         }
 
         private int getFilteredGroupsCount() {
@@ -281,10 +360,6 @@ public class SharePrivacyActivity extends HalloActivity {
             });
         }
 
-        public void bindCreateGroup() {
-
-        }
-
         public void bindChat(@NonNull Chat chat, boolean selected) {
             nameView.setText(chat.name);
             avatarLoader.load(avatarIconView, chat.chatId);
@@ -293,75 +368,72 @@ public class SharePrivacyActivity extends HalloActivity {
         }
     }
 
-    private class CreateGroupViewHolder extends RecyclerView.ViewHolder {
-        private ImageView createIcon;
-
-        public CreateGroupViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            createIcon = itemView.findViewById(R.id.create_group_icon);
-            createIcon.setOutlineProvider(new ViewOutlineProvider() {
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), itemView.getContext().getResources().getDimension(R.dimen.share_privacy_avatar_corner_radius));
-                }
-            });
-            createIcon.setClipToOutline(true);
-
-            itemView.setOnClickListener(v -> {
-                startActivityForResult(GroupCreationPickerActivity.newIntent(v.getContext(), null, false), REQUEST_CREATE_GROUP);
-            });
-        }
-    }
-
     private class HomeViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView homeIconView;
-        private TextView homePrivacySetting;
-        private View selectionView;
-        private View changePrivacySetting;
+        private TextView exceptContactsSetting;
+        private TextView onlyContactsSetting;
+
+        private RadioButton selMyContacts;
+        private RadioButton selExceptContacts;
+        private RadioButton selOnlyContacts;
 
         public HomeViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            homeIconView = itemView.findViewById(R.id.home_icon);
-            homePrivacySetting = itemView.findViewById(R.id.home_privacy_setting);
-            selectionView = itemView.findViewById(R.id.selection_indicator);
-            changePrivacySetting = itemView.findViewById(R.id.change_privacy_setting);
-            selectionView.setSelected(true);
-            selectionView.setVisibility(View.GONE);
+            selMyContacts = itemView.findViewById(R.id.my_contacts_selection);
+            selExceptContacts = itemView.findViewById(R.id.contacts_except_selection);
+            selOnlyContacts = itemView.findViewById(R.id.only_with_selection);
 
-            homeIconView.setOutlineProvider(new ViewOutlineProvider() {
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), itemView.getContext().getResources().getDimension(R.dimen.share_privacy_avatar_corner_radius));
+            exceptContactsSetting = itemView.findViewById(R.id.contacts_except_setting);
+            onlyContactsSetting = itemView.findViewById(R.id.only_with_setting);
+
+            itemView.findViewById(R.id.my_contacts).setOnClickListener(v -> {
+                if (selMyContacts.isChecked()) {
+                    onSelectChat(null);
+                } else {
+                    saveList(PrivacyList.Type.ALL, Collections.emptyList());
                 }
             });
-            homeIconView.setClipToOutline(true);
-
-            itemView.setOnClickListener(v -> {
-                onSelectChat(null);
+            itemView.findViewById(R.id.contacts_except).setOnClickListener(v -> {
+                if (EasyPermissions.hasPermissions(itemView.getContext(), Manifest.permission.READ_CONTACTS)) {
+                    editExceptList();
+                } else {
+                    ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_EXCEPT);
+                }
             });
-
-            changePrivacySetting.setOnClickListener(v -> {
-                startActivity(FeedPrivacyActivity.editFeedPrivacy(v.getContext()));
+            itemView.findViewById(R.id.only_share_with).setOnClickListener(v -> {
+                if (EasyPermissions.hasPermissions(itemView.getContext(), Manifest.permission.READ_CONTACTS)) {
+                    editOnlyList();
+                } else {
+                    ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY);
+                }
             });
         }
 
         public void bind(FeedPrivacy feedPrivacy, boolean selected) {
-            selectionView.setVisibility(selected ? View.VISIBLE : View.GONE);
+            int selection = 0;
             if (feedPrivacy == null) {
-                homePrivacySetting.setText("");
+                onlyContactsSetting.setText("");
+                exceptContactsSetting.setText("");
             } else if (PrivacyList.Type.ALL.equals(feedPrivacy.activeList)) {
-                homePrivacySetting.setText(R.string.composer_sharing_all_summary);
+                selection = 0;
             } else if (PrivacyList.Type.EXCEPT.equals(feedPrivacy.activeList)) {
-                homePrivacySetting.setText(R.string.composer_sharing_except_summary);
+                selection = 1;
             } else if (PrivacyList.Type.ONLY.equals(feedPrivacy.activeList)) {
-                final int onlySize = feedPrivacy.onlyList.size();
-                homePrivacySetting.setText(getResources().getQuantityString(R.plurals.composer_sharing_only_summary, onlySize, onlySize));
-            } else {
-                homePrivacySetting.setText("");
+                selection = 2;
             }
+            setSelection(selected ? selection : -1);
+            if (feedPrivacy != null) {
+                onlyContactsSetting.setText(getResources().getQuantityString(R.plurals.composer_sharing_only_summary, feedPrivacy.onlyList.size(), feedPrivacy.onlyList.size()));
+                exceptContactsSetting.setText(R.string.composer_sharing_except_summary);
+
+            }
+        }
+
+        private void setSelection(int sel) {
+            selMyContacts.setChecked(sel == 0);
+            selExceptContacts.setChecked(sel == 1);
+            selOnlyContacts.setChecked(sel >= 2);
         }
     }
 }

@@ -2,17 +2,22 @@ package com.halloapp.ui;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.privacy.FeedPrivacyManager;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -23,6 +28,7 @@ public class SharePrivacyViewModel extends ViewModel {
     private final ComputableLiveData<List<Chat>> groupsList;
     private ComputableLiveData<FeedPrivacy> feedPrivacyLiveData;
 
+    private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final ContentDb contentDb = ContentDb.getInstance();
     private final FeedPrivacyManager feedPrivacyManager = FeedPrivacyManager.getInstance();
 
@@ -97,5 +103,12 @@ public class SharePrivacyViewModel extends ViewModel {
     @NonNull
     public LiveData<List<Chat>> getGroupList() {
         return groupsList.getLiveData();
+    }
+
+    @NonNull
+    public LiveData<Boolean> savePrivacy(@PrivacyList.Type String newSetting, @NonNull List<UserId> userIds) {
+        MutableLiveData<Boolean> savingLiveData = new MutableLiveData<>();
+        bgWorkers.execute(() -> savingLiveData.postValue(feedPrivacyManager.updateFeedPrivacy(newSetting, new ArrayList<>(userIds))));
+        return savingLiveData;
     }
 }

@@ -662,11 +662,11 @@
         <item quantity="other">%d members</item>
     </plurals>
     <string name="group_info_members">Members (%d)</string>
-    <string name="composer_sharing_all_summary">Sharing with my contacts</string>
-    <string name="composer_sharing_except_summary">Sharing with some of my contacts</string>
+    <string name="composer_sharing_all_summary">Share with my contacts</string>
+    <string name="composer_sharing_except_summary">Share with some of my contacts</string>
     <plurals name="composer_sharing_only_summary">
-        <item quantity="one">Sharing with %d of my contacts</item>
-        <item quantity="other">Sharing with %d of my contacts</item>
+        <item quantity="one">Share with %d of my contacts</item>
+        <item quantity="other">Share with %d of my contacts</item>
     </plurals>
     <string name="post_preview_no_caption">%s shared a post</string>
     <string name="post_preview_retracted">%s deleted a post</string>
