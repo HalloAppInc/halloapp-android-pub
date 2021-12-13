@@ -684,6 +684,8 @@
     </plurals>
     <string name="video_countdown_message">Recording will end in %s</string>
     <string name="mute">Mute</string>
+    <!-- Button to unmute -->
+    <string name="unmute">Unmute</string>
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">More</string>
     <!-- Button to manage your feed privacy settings -->
@@ -807,4 +809,11 @@
     <string name="call_action">Call</string>
     <!-- Displayed in an ongoing notification while the user is in a voice call-->
     <string name="ongoing_voice_call">Ongoing voice call</string>
+    <!-- Label for speaker phone button -->
+    <string name="call_speaker_button">Speaker</string>
+    <!-- Label for button to disable speaker phone -->
+    <string name="call_speaker_off_button">Speaker off</string>
+    <!-- Label for button to end the call -->
+    <string name="end_call">End call</string>
+
 </resources>

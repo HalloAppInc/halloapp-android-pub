@@ -111,6 +111,10 @@
 
     <color name="voice_note_seekbar_bg">@color/white_20</color>
 
+    <color name="call_neutral">#29DBD8C5</color>
+    <color name="call_neutral_selected">#7FDBD8C5</color>
+    <color name="call_neutral_icon">@android:color/white</color>
+
     <color name="group_me">#C3DDFF</color>
     <color name="group_me_bg">#495D78</color>
 

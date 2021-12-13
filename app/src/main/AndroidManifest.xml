@@ -92,7 +92,7 @@
             android:name=".ui.calling.CallActivity"
             android:label="@string/call_title"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme" />
 
         <activity android:name=".ui.chat.KeyVerificationActivity"
             android:theme="@style/AppTheme.NoActionBar"

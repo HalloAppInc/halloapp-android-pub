@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Notifications;
@@ -42,10 +43,8 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
 
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
-    private View callingView;
     private View ringingView;
     private View inCallView;
-    private View initView;
 
     private ImageView avatarView;
     private TextView nameTextView;
@@ -53,6 +52,9 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private Chronometer callTimerView;
     private ImageView muteButtonView;
     private ImageView speakerButtonView;
+
+    private TextView muteLabelView;
+    private TextView speakerLabelView;
 
     private CallViewModel callViewModel;
     private UserId peerUid;
@@ -63,22 +65,21 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN |
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-        getWindow().getDecorView().setSystemUiVisibility(getSystemUiVisibility());
 
         setContentView(R.layout.activity_call);
 
+        ActionBar actionBar = Preconditions.checkNotNull(getSupportActionBar());
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle("");
+
         contactLoader = new ContactLoader();
 
-        callingView = findViewById(R.id.calling_view);
         ringingView = findViewById(R.id.ringing_view);
         inCallView = findViewById(R.id.in_call_view);
-        initView = findViewById(R.id.init_view);
 
         avatarView = findViewById(R.id.avatar);
         nameTextView = findViewById(R.id.name);
@@ -86,6 +87,9 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         callTimerView = findViewById(R.id.call_timer);
         muteButtonView = findViewById(R.id.in_call_mute);
         speakerButtonView = findViewById(R.id.in_call_speaker);
+
+        speakerLabelView = findViewById(R.id.speaker_label);
+        muteLabelView = findViewById(R.id.mute_label);
 
         callViewModel = new ViewModelProvider(this).get(CallViewModel.class);
         String userUidStr = getIntent().getStringExtra(EXTRA_PEER_UID);
@@ -95,32 +99,30 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         callViewModel.setPeerUid(peerUid);
 
         callViewModel.getState().observe(this, state -> {
-            callingView.setVisibility(View.GONE);
             ringingView.setVisibility(View.GONE);
             inCallView.setVisibility(View.GONE);
-            initView.setVisibility(View.GONE);
             callTimerView.setVisibility(View.GONE);
+            titleTextView.setVisibility(View.VISIBLE);
             Log.i("CallActivity: State -> " + CallManager.stateToString(state));
             switch (state) {
                 case CallManager.State.IDLE:
                     Log.i("CallActivity/State -> IDLE");
-                    initView.setVisibility(View.VISIBLE);
                     break;
                 case CallManager.State.CALLING:
                     Log.i("CallActivity/State -> CALLING");
                     titleTextView.setText(R.string.calling);
-                    callingView.setVisibility(View.VISIBLE);
+                    inCallView.setVisibility(View.VISIBLE);
                     break;
                 case CallManager.State.IN_CALL:
                     Log.i("CallActivity/State -> IN_CALL");
-                    titleTextView.setText("");
                     inCallView.setVisibility(View.VISIBLE);
                     callTimerView.setVisibility(View.VISIBLE);
+                    titleTextView.setVisibility(View.GONE);
                     startCallTimer();
                     break;
                 case CallManager.State.RINGING:
                     Log.i("CallActivity/State -> RINGING");
-                    titleTextView.setText(R.string.ringing);
+                    titleTextView.setText(R.string.incoming_call_notification_title);
                     ringingView.setVisibility(View.VISIBLE);
                     break;
                 case CallManager.State.END:
@@ -145,22 +147,17 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         contactLoader.load(nameTextView, peerUid, false);
 
         findViewById(R.id.in_call_mute).setOnClickListener(v -> {
-            if (!callViewModel.inCall()) {
-                return;
-            }
             onMute();
         });
         findViewById(R.id.in_call_speaker).setOnClickListener(v -> {
-            if (!callViewModel.inCall()) {
-                return;
-            }
             onSpeakerPhone();
         });
         findViewById(R.id.in_call_hangup).setOnClickListener(v -> {
-            if (!callViewModel.inCall()) {
-                return;
+            if (callViewModel.isCalling()) {
+                onCancelCall();
+            } else if (callViewModel.inCall()) {
+                onHangUp();
             }
-            onHangUp();
         });
 
         findViewById(R.id.accept_view).setOnClickListener(v -> {
@@ -174,13 +171,6 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                 return;
             }
             onDeclineCall();
-        });
-
-        findViewById(R.id.calling_cancel).setOnClickListener(v -> {
-            if (!callViewModel.isCalling()) {
-                return;
-            }
-            onCancelCall();
         });
 
         boolean isInitiator = getIntent().getBooleanExtra(EXTRA_IS_INITIATOR, false);
@@ -263,11 +253,13 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         if (mute) {
             Log.i("CallActivity muteButton selected");
             muteButtonView.setSelected(true);
-            muteButtonView.setBackgroundColor(Color.GRAY);
+            muteButtonView.setImageResource(R.drawable.ic_keyboard_voice);
+            muteLabelView.setText(R.string.unmute);
         } else {
             Log.i("CallActivity muteButton unselected");
             muteButtonView.setSelected(false);
-            muteButtonView.setBackgroundColor(Color.TRANSPARENT);
+            muteButtonView.setImageResource(R.drawable.ic_mic_mute);
+            muteLabelView.setText(R.string.mute);
         }
     }
 
@@ -280,18 +272,14 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         if (on) {
             Log.i("CallActivity speakerButton selected");
             speakerButtonView.setSelected(true);
-            speakerButtonView.setBackgroundColor(Color.GRAY);
+            speakerButtonView.setImageResource(R.drawable.ic_speaker_phone_off);
+            speakerLabelView.setText(R.string.call_speaker_off_button);
         } else {
             Log.i("CallActivity speakerButton unselected");
             speakerButtonView.setSelected(false);
-            speakerButtonView.setBackgroundColor(Color.TRANSPARENT);
+            speakerButtonView.setImageResource(R.drawable.ic_speaker_phone);
+            speakerLabelView.setText(R.string.call_speaker_button);
         }
-    }
-
-    private static int getSystemUiVisibility() {
-        return View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
     }
 
     public static Intent getStartCallIntent(@NonNull Context context, @NonNull UserId userId) {
