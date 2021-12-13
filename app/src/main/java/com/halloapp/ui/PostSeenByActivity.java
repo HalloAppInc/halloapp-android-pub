@@ -96,35 +96,7 @@ public class PostSeenByActivity extends HalloActivity {
         mediaThumbnailLoader.destroy();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
-        getMenuInflater().inflate(R.menu.post_seen_by_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.retract) {
-            onRetractPost();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void onRetractPost() {
-        if (post != null) {
-            new AlertDialog.Builder(this)
-                    .setMessage(getString(R.string.retract_post_confirmation))
-                    .setCancelable(true)
-                    .setPositiveButton(R.string.yes, (dialog, which) ->
-                            ContentDb.getInstance().retractPost(post))
-                    .setNegativeButton(R.string.no, null)
-                    .show();
-        }
-    }
-
     interface ListItem {
-
         int getType();
     }
 
