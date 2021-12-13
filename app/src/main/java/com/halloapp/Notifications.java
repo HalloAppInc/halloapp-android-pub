@@ -647,6 +647,7 @@ public class Notifications {
                     .setContentTitle(context.getString(R.string.incoming_call_notification_title))
                     .setContentText(name)
                     .setOngoing(true)
+                    .setColor(ContextCompat.getColor(context, R.color.color_accent))
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setCategory(NotificationCompat.CATEGORY_CALL)
                     .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
