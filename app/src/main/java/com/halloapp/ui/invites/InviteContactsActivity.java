@@ -131,6 +131,14 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
         listView.setLayoutManager(layoutManager);
         listView.setAdapter(adapter);
 
+        View searchContainer = findViewById(R.id.search_container);
+        searchContainer.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                listView.setPadding(0, searchContainer.getHeight(), 0, 0);
+            }
+        });
+
         emptyView = findViewById(android.R.id.empty);
 
         viewModel = new ViewModelProvider(this).get(InviteContactsViewModel.class);
