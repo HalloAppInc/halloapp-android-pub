@@ -763,8 +763,6 @@
     <string name="invite_group_zero_zone_details">Share this link with friends and they\'ll automatically join your group.</string>
     <!-- initial group created for the user where %s is replaced with their name. should indicate that it is their group -->
     <string name="zero_zone_group_name">%s\'s group</string>
-    <!-- Title for option to invite a contact using an invite link -->
-    <string name="invite_via_link">Invite via link</string>
     <!-- Text shown in button for inviting friends -->
     <string name="invite_action">Invite</string>
     <!-- Text shown as subheader for inviting friends section -->

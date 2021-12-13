@@ -35,7 +35,6 @@ public class InviteContactsAdapter extends RecyclerView.Adapter<InviteContactsAd
     private InviteContactsAdapterParent listener;
 
     private static final int TYPE_CONTACT = 1;
-    private static final int TYPE_INVITE_VIA_LINK = 2;
 
     private static final String[] BANNED_NAME_TOKENS = new String[] {
             "spam",
@@ -75,20 +74,11 @@ public class InviteContactsAdapter extends RecyclerView.Adapter<InviteContactsAd
     @Override
     public @NonNull
     ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == TYPE_CONTACT) {
-            return new ContactViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_invite_item, parent, false));
-        } else {
-            return new InviteLinkViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_invite_link_item, parent, false));
-        }
+        return new ContactViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_invite_item, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
-        position -= 1;
-        if (holder instanceof InviteLinkViewHolder) {
-            ((InviteLinkViewHolder)holder).bind(showHeader);
-            return;
-        }
         if (position < getFilteredContactsCount()) {
             holder.bindTo(filteredContacts.get(position), filterTokens);
         }
@@ -96,15 +86,12 @@ public class InviteContactsAdapter extends RecyclerView.Adapter<InviteContactsAd
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) {
-            return TYPE_INVITE_VIA_LINK;
-        }
         return TYPE_CONTACT;
     }
 
     @Override
     public int getItemCount() {
-        return getFilteredContactsCount() + 1;
+        return getFilteredContactsCount();
     }
 
     @NonNull
@@ -128,29 +115,6 @@ public class InviteContactsAdapter extends RecyclerView.Adapter<InviteContactsAd
 
     private int getFilteredContactsCount() {
         return filteredContacts == null ? 0 : filteredContacts.size();
-    }
-
-
-    class InviteLinkViewHolder extends ContactViewHolder {
-
-        final View container;
-        final View header;
-        final TextView linkView;
-
-        InviteLinkViewHolder(@NonNull View itemView) {
-            super(itemView);
-            container = itemView.findViewById(R.id.invite_container);
-            header = itemView.findViewById(R.id.invite_header);
-            linkView = itemView.findViewById(R.id.download_link);
-            container.setOnClickListener(v -> {
-                container.getContext().startActivity(IntentUtils.createShareDlIntent());
-            });
-            linkView.setText(Constants.DOWNLOAD_LINK_URL);
-        }
-
-        void bind(boolean showHeader) {
-            header.setVisibility(showHeader ? View.VISIBLE : View.GONE);
-        }
     }
 
     class ContactViewHolder extends RecyclerView.ViewHolder {

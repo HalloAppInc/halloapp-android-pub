@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/share_link"
+        android:title="@string/share_link"
+        android:icon="@drawable/ic_share"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/refresh_contacts"
         android:title="@string/refresh_contacts"
         app:showAsAction="never"/>
