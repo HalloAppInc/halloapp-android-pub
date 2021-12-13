@@ -453,8 +453,14 @@ wersja: %2$s
         <item quantity="many">"%d członek"</item>
         <item quantity="other">"%d członków"</item>
     </plurals>
+
+    <!-- Fuzzy -->
     <string name="composer_sharing_all_summary">"Udostępnianie moim kontaktom"</string>
+
+    <!-- Fuzzy -->
     <string name="composer_sharing_except_summary">"Udostępnianie niektórym z moich kontaktów"</string>
+
+    <!-- Fuzzy -->
     <plurals name="composer_sharing_only_summary">
         <item quantity="one">"Udostępnianie %d z moich kontaktów"</item>
         <item quantity="few">"Udostępnianie %d z moich kontaktów"</item>
@@ -947,9 +953,6 @@ Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
     <!-- initial group created for the user where %s is replaced with their name. should indicate that it is their group -->
     <string name="zero_zone_group_name">"Grupa użytkownika %s"</string>
 
-    <!-- Title for option to invite a contact using an invite link -->
-    <string name="invite_via_link">"Zaproś za pomocą łącza"</string>
-
     <!-- Text shown as subheader for inviting friends section -->
     <string name="invite_friends_header">"Zaproś znajomych"</string>
 
@@ -1062,6 +1065,19 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Action in menu for calling a user -->
     <string name="call_action">"Call"</string>
+
+    <!-- Button to unmute -->
+    <string name="unmute">"Unmute"</string>
+
+    <!-- Label for speaker phone button -->
+    <string name="call_speaker_button">"Speaker"</string>
+
+    <!-- Label for button to disable speaker phone -->
+    <string name="call_speaker_off_button">"Speaker off"</string>
+
+    <!-- Label for button to end the call -->
+    <string name="end_call">"End call"</string>
+    <string name="invite_via_link">"Zaproś za pomocą łącza"</string>
     <string name="couldnt_load_thumbnail">"Nie można załadować miniatury"</string>
     <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>
     <string name="system_message_missed_call">"Missed call at %s"</string>

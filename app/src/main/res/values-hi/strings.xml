@@ -413,11 +413,15 @@ version: %2$s
         <item quantity="one">"%d member"</item>
         <item quantity="other">"%d member"</item>
     </plurals>
+
+    <!-- Fuzzy -->
     <string name="composer_sharing_all_summary">"मेरे संपर्कों के साथ साझा करें"</string>
+
+    <!-- Fuzzy -->
     <string name="composer_sharing_except_summary">"मेरे कुछ संपर्कों के साथ साझा करें"</string>
     <plurals name="composer_sharing_only_summary">
-        <item quantity="one">"Sharing with %d of my contacts"</item>
-        <item quantity="other">"Sharing with %d of my contacts"</item>
+        <item quantity="one">"Share with %d of my contacts"</item>
+        <item quantity="other">"Share with %d of my contacts"</item>
     </plurals>
     <string name="post_preview_no_caption">"%s shared a post"</string>
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
@@ -891,9 +895,6 @@ Open the app settings screen to modify app permissions."</string>
     <!-- initial group created for the user where %s is replaced with their name. should indicate that it is their group -->
     <string name="zero_zone_group_name">"%s's group"</string>
 
-    <!-- Title for option to invite a contact using an invite link -->
-    <string name="invite_via_link">"Invite via link"</string>
-
     <!-- Text shown as subheader for inviting friends section -->
     <string name="invite_friends_header">"Invite friends"</string>
 
@@ -1006,6 +1007,19 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Action in menu for calling a user -->
     <string name="call_action">"Call"</string>
+
+    <!-- Button to unmute -->
+    <string name="unmute">"Unmute"</string>
+
+    <!-- Label for speaker phone button -->
+    <string name="call_speaker_button">"Speaker"</string>
+
+    <!-- Label for button to disable speaker phone -->
+    <string name="call_speaker_off_button">"Speaker off"</string>
+
+    <!-- Label for button to end the call -->
+    <string name="end_call">"End call"</string>
+    <string name="invite_via_link">"Invite via link"</string>
     <string name="couldnt_load_thumbnail">"Couldn't load thumbnail"</string>
     <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>
     <string name="system_message_missed_call">"Missed call at %s"</string>

@@ -449,8 +449,8 @@ Version: %2$s
     <string name="composer_sharing_all_summary">"Mit meinen Kontakten teilen"</string>
     <string name="composer_sharing_except_summary">"Mit bestimmten Kontakten teilen"</string>
     <plurals name="composer_sharing_only_summary">
-        <item quantity="one">"Mit %d meiner Kontakte geteilt"</item>
-        <item quantity="other">"Mit %d meiner Kontakte geteilt"</item>
+        <item quantity="one">"Mit %d meiner Kontakte teilen"</item>
+        <item quantity="other">"Mit %d meiner Kontakte teilen"</item>
     </plurals>
 
     <!-- Note: This is translated when someone else did it. Need new string for when "you" did it. -->
@@ -934,9 +934,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- initial group created for the user where %s is replaced with their name. should indicate that it is their group -->
     <string name="zero_zone_group_name">"%s's Gruppe"</string>
 
-    <!-- Title for option to invite a contact using an invite link -->
-    <string name="invite_via_link">"Per Link einladen"</string>
-
     <!-- Text shown as subheader for inviting friends section -->
     <string name="invite_friends_header">"Freunde einladen"</string>
 
@@ -1048,7 +1045,20 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="system_message_missed_voice_call">"Verpasster Sprachanruf um %s"</string>
 
     <!-- Action in menu for calling a user -->
-    <string name="call_action">"Call"</string>
+    <string name="call_action">"Anrufen"</string>
+
+    <!-- Button to unmute -->
+    <string name="unmute">"Unmute"</string>
+
+    <!-- Label for speaker phone button -->
+    <string name="call_speaker_button">"Speaker"</string>
+
+    <!-- Label for button to disable speaker phone -->
+    <string name="call_speaker_off_button">"Speaker off"</string>
+
+    <!-- Label for button to end the call -->
+    <string name="end_call">"End call"</string>
+    <string name="invite_via_link">"Per Link einladen"</string>
     <string name="couldnt_load_thumbnail">"Miniaturansicht kann nicht geladen werden"</string>
     <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>
     <string name="system_message_missed_call">"Missed call at %s"</string>

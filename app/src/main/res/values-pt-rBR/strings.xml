@@ -41,7 +41,7 @@ Sujeito a cobrança da operadora."</string>
     <string name="write_a_post">"Escreva um post"</string>
     <string name="send">"Enviar"</string>
     <string name="set_avatar_done">"Feito"</string>
-    <string name="set_avatar_reset">"Reiniciar"</string>
+    <string name="set_avatar_reset">"Redefinir"</string>
     <string name="new_post">"Nova publicação"</string>
     <string name="new_message">"Nova mensagem"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
@@ -59,8 +59,8 @@ Sujeito a cobrança da operadora."</string>
     <string name="share_option_post">"Publicação"</string>
     <string name="share_option_message">"Mensagem"</string>
     <plurals name="max_post_media_items">
-        <item quantity="one">"You can select up to %d media item per post"</item>
-        <item quantity="other">"You can select up to %d media item per post"</item>
+        <item quantity="one">"Você pode selecionar até %d de item de mídia por postagem "</item>
+        <item quantity="other">"Você pode selecionar até %d de itens de mídia por postagem "</item>
     </plurals>
     <string name="camera_record_audio_permission_rationale">"Para tirar fotos e gravar vídeos, precisamos de permissão para acessar a câmera e gravar áudio no seu dispositivo"</string>
     <string name="camera_record_audio_permission_rationale_denied">"Para tirar fotos e gravar vídeos, precisamos de permissão para acessar a câmera e gravar áudio no seu dispositivo.
@@ -141,7 +141,7 @@ Abra as configurações do aplicativo para modificar as permissões do aplicativ
     <string name="new_post_notification">"Nova publicação de %s"</string>
     <plurals name="new_posts_notification">
         <item quantity="one">"%1$d nova publicação de %2$s"</item>
-        <item quantity="other">"%1$d publicações novas de %2$s"</item>
+        <item quantity="other">"%1$d novas publicações de %2$s"</item>
     </plurals>
     <plurals name="new_messages_notification">
         <item quantity="one">"%1$d mensagem de %2$s"</item>
@@ -149,15 +149,15 @@ Abra as configurações do aplicativo para modificar as permissões do aplicativ
     </plurals>
     <plurals name="new_messages_separator">
         <item quantity="one">"%d nova mensagem"</item>
-        <item quantity="other">"%d mensagens novas"</item>
+        <item quantity="other">"%d novas mensagens "</item>
     </plurals>
     <plurals name="new_comments_notification">
-        <item quantity="one">"%s commented on your post"</item>
-        <item quantity="other">"%s commented on your post"</item>
+        <item quantity="one">"%s comentou em sua publicação "</item>
+        <item quantity="other">"%s comentaram em sua publicação"</item>
     </plurals>
     <plurals name="new_comments_on_multiple_posts_notification">
-        <item quantity="one">"%s commented on your posts"</item>
-        <item quantity="other">"%s commented on your posts"</item>
+        <item quantity="one">"%s comentaram em suas publicações"</item>
+        <item quantity="other">"%s comentaram em suas publicações"</item>
     </plurals>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"O HalloApp expirou"</string>
@@ -180,11 +180,11 @@ Abra as configurações do aplicativo para modificar as permissões do aplicativ
     <string name="retract_comment_confirmation">"Deseja apagar o seu comentário?"</string>
     <plurals name="delete_chats_confirmation">
         <item quantity="one">"Deseja apagar esta conversa?"</item>
-        <item quantity="other">"Deseja apagar as %d conversas selecionadas?"</item>
+        <item quantity="other">"Deseja apagar as %d das conversas selecionadas?"</item>
     </plurals>
     <plurals name="delete_groups_confirmation">
         <item quantity="one">"Deseja apagar este grupo?"</item>
-        <item quantity="other">"Deseja apagar os %d grupos selecionados?"</item>
+        <item quantity="other">"Deseja apagar os %d dos grupos selecionados?"</item>
     </plurals>
     <string name="delete_chat_confirmation">"Deseja apagar esta conversa?"</string>
     <string name="yes">"Sim"</string>
@@ -238,7 +238,7 @@ Abra as configurações do aplicativo para modificar as permissões do aplicativ
     <string name="flip">"Inverter"</string>
     <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
     <string name="email_logs_text">"----------------------------------------
-Descreva o problema acima.
+Por favor descreva o problema acima.
 uid: %1$s
 versão: %2$s"</string>
     <string name="share">"Compartilhar"</string>
@@ -410,8 +410,14 @@ versão: %2$s"</string>
         <item quantity="one">"%d membro"</item>
         <item quantity="other">"%d membros"</item>
     </plurals>
+
+    <!-- Fuzzy -->
     <string name="composer_sharing_all_summary">"Compartilhando com meus contatos"</string>
+
+    <!-- Fuzzy -->
     <string name="composer_sharing_except_summary">"Compartilhando com alguns dos meus contatos"</string>
+
+    <!-- Fuzzy -->
     <plurals name="composer_sharing_only_summary">
         <item quantity="one">"Compartilhando com %d dos meus contatos"</item>
         <item quantity="other">"Compartilhando com %d dos meus contatos"</item>
@@ -887,9 +893,6 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <!-- initial group created for the user where %s is replaced with their name. should indicate that it is their group -->
     <string name="zero_zone_group_name">"Grupo de %s"</string>
 
-    <!-- Title for option to invite a contact using an invite link -->
-    <string name="invite_via_link">"Convidar via link"</string>
-
     <!-- Text shown as subheader for inviting friends section -->
     <string name="invite_friends_header">"Convide amigos"</string>
 
@@ -939,7 +942,8 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="storage_usage_home">"Feed da Página Inicial"</string>
 
     <!-- Storage usage section header for chats category -->
-    <string name="storage_usage_chats">"Chats"</string>
+    <string name="storage_usage_chats">"Conversas
+"</string>
 
     <!-- Storage usage section header for groups category -->
     <string name="storage_usage_groups">"Grupos"</string>
@@ -954,54 +958,68 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="invite_action">"Convidar"</string>
 
     <!-- action where the user shares -->
-    <string name="share_action">"Share"</string>
+    <string name="share_action">"Compartilhar"</string>
 
     <!-- Name for notifications that come out as a broadcast from the server -->
-    <string name="broadcast_notifications_channel_name">"Alerts from HalloApp"</string>
+    <string name="broadcast_notifications_channel_name">"Alertas do HalloApp"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls -->
-    <string name="voice_call_record_audio_permission_rationale">"To use voice calls we need permission to access the microphone"</string>
+    <string name="voice_call_record_audio_permission_rationale">"Para efetuar chamadas de voz precisamos de sua permissão para acessar o microfone"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls, but it has already been denied. -->
-    <string name="voice_call_record_audio_permission_rationale_denied">"To use voice calls we need permission to access the microphone.
+    <string name="voice_call_record_audio_permission_rationale_denied">"Para efetuar chamadas de voz necessitamos de sua permissão para acessar o microfone.
 
-Open the app settings screen to modify app permissions."</string>
+Abra a tela de configurações do aplicativo para modificar as permissões do aplicativo."</string>
 
     <!-- Name of channel of notifications for receiving calls which is displayed in settings -->
-    <string name="call_notifications_channel_name">"Call notifications"</string>
+    <string name="call_notifications_channel_name">"Notificações de chamadas"</string>
 
     <!-- Name of channel of notifications for ongoing audio/video calls -->
-    <string name="ongoing_call_notifications_channel_name">"Ongoing Call notifications"</string>
+    <string name="ongoing_call_notifications_channel_name">"Notificações de chamadas em andamento"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="ringing">"Ringing"</string>
+    <string name="ringing">"Chamando"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="calling">"Calling"</string>
+    <string name="calling">"Ligando"</string>
 
     <!-- The title of the notificaiton for incoming calls -->
-    <string name="incoming_call_notification_title">"Incoming call"</string>
+    <string name="incoming_call_notification_title">"Recebendo ligação"</string>
 
     <!-- The call notification accept button label -->
-    <string name="call_accept_button">"Accept"</string>
+    <string name="call_accept_button">"Aceitar "</string>
 
     <!-- The call notification decline button label -->
-    <string name="call_decline_button">"Decline"</string>
+    <string name="call_decline_button">"Recusar
+"</string>
 
     <!-- Displayed as title for the Call Screen -->
-    <string name="call_title">"Call"</string>
+    <string name="call_title">"Ligação"</string>
 
     <!-- Displayed in an ongoing notification while the user is in a voice call -->
-    <string name="ongoing_voice_call">"Ongoing voice call"</string>
+    <string name="ongoing_voice_call">"Chamada de voz em andamento"</string>
 
     <!-- Shown inline in a chat when the user missed an incoming video call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_video_call">"Missed video call at %s"</string>
+    <string name="system_message_missed_video_call">"Chamada de vídeo perdida em %s"</string>
 
     <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_voice_call">"Missed voice call at %s"</string>
+    <string name="system_message_missed_voice_call">"Chamada de voz perdida em %s"</string>
 
     <!-- Action in menu for calling a user -->
-    <string name="call_action">"Call"</string>
+    <string name="call_action">"Ligar"</string>
+
+    <!-- Button to unmute -->
+    <string name="unmute">"Unmute"</string>
+
+    <!-- Label for speaker phone button -->
+    <string name="call_speaker_button">"Speaker"</string>
+
+    <!-- Label for button to disable speaker phone -->
+    <string name="call_speaker_off_button">"Speaker off"</string>
+
+    <!-- Label for button to end the call -->
+    <string name="end_call">"End call"</string>
+    <string name="invite_via_link">"Convidar via link"</string>
     <string name="couldnt_load_thumbnail">"Não foi possível carregar a miniatura"</string>
     <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>
     <string name="system_message_missed_call">"Missed call at %s"</string>

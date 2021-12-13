@@ -892,9 +892,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <!-- initial group created for the user where %s is replaced with their name. should indicate that it is their group -->
     <string name="zero_zone_group_name">"Groep van %s"</string>
 
-    <!-- Title for option to invite a contact using an invite link -->
-    <string name="invite_via_link">"Uitnodigen via link"</string>
-
     <!-- Text shown as subheader for inviting friends section -->
     <string name="invite_friends_header">"Vrienden uitnodigen"</string>
 
@@ -982,7 +979,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="ringing">"Gaat over"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="calling">"Bellen"</string>
+    <string name="calling">"Belt"</string>
 
     <!-- The title of the notificaiton for incoming calls -->
     <string name="incoming_call_notification_title">"Inkomende oproep"</string>
@@ -1006,7 +1003,20 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="system_message_missed_voice_call">"Gemiste spraakoproep om %s"</string>
 
     <!-- Action in menu for calling a user -->
-    <string name="call_action">"Call"</string>
+    <string name="call_action">"Bellen"</string>
+
+    <!-- Button to unmute -->
+    <string name="unmute">"Unmute"</string>
+
+    <!-- Label for speaker phone button -->
+    <string name="call_speaker_button">"Speaker"</string>
+
+    <!-- Label for button to disable speaker phone -->
+    <string name="call_speaker_off_button">"Speaker off"</string>
+
+    <!-- Label for button to end the call -->
+    <string name="end_call">"End call"</string>
+    <string name="invite_via_link">"Uitnodigen via link"</string>
     <string name="couldnt_load_thumbnail">"Kon voorvertoning niet laden"</string>
     <string name="system_message_missed_audio_call">"Gemiste spraakoproep om %s"</string>
     <string name="system_message_missed_call">"Missed call at %s"</string>
