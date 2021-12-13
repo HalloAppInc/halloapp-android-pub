@@ -1015,7 +1015,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="system_message_missed_video_call">"تماس ویدیویی از دست رفته در %s"</string>
 
     <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_voice_call">"تماس‌های از دست رفته در s%"</string>
+    <string name="system_message_missed_voice_call">"تماس‌های از دست رفته در %s"</string>
 
     <!-- Action in menu for calling a user -->
     <string name="call_action">"تماس"</string>
