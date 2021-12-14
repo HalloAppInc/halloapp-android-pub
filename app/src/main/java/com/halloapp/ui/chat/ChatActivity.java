@@ -82,8 +82,8 @@ import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.SystemMessageTextResolver;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
-import com.halloapp.ui.calling.CallActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.calling.CallActivity;
 import com.halloapp.ui.groups.GroupInfoActivity;
 import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
@@ -209,7 +209,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private long highlightedMessageRowId = -1;
     private String copyText;
     private boolean blocked;
-    private String chatName;
 
     private ItemSwipeHelper itemSwipeHelper;
     private LinearLayoutManager layoutManager;
@@ -574,7 +573,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 });
             } else if (chatId instanceof GroupId) {
                 if (chat != null) {
-                    chatName = chat.name;
                     setTitle(chat.name);
                 }
                 presenceLoader.getChatStateLiveData((GroupId)chatId).observe(this, groupChatState -> {

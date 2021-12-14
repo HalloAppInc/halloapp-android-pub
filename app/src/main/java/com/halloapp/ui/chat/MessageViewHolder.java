@@ -31,7 +31,6 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
-import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.UrlPreview;
 import com.halloapp.contacts.Contact;
@@ -85,7 +84,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
     private @Nullable ReplyContainer replyContainer;
     protected final MessageViewHolderParent parent;
 
-    private final Me me;
     private final Connection connection;
     private final FileStore fileStore;
     private final ContentDb contentDb;
@@ -134,7 +132,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
 
         this.parent = parent;
 
-        this.me = Me.getInstance();
         this.connection = Connection.getInstance();
         this.fileStore = FileStore.getInstance();
         this.contentDb = ContentDb.getInstance();

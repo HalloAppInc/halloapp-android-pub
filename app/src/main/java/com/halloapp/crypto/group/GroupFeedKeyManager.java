@@ -233,12 +233,10 @@ public class GroupFeedKeyManager {
                 .setPublicSignatureKey(ByteString.copyFrom(publicSignatureKey.getKeyMaterial()))
                 .build();
 
-        SenderState senderState = SenderState.newBuilder()
+        return SenderState.newBuilder()
                 .setSenderKey(senderKey)
                 .setCurrentChainIndex(currentChainIndex)
                 .build();
-
-        return senderState;
     }
 
     private void skipInboundKeys(GroupId groupId, UserId peerUserId, int count, int startIndex) throws CryptoException {

@@ -152,9 +152,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         progressBar = findViewById(R.id.progress);
 
         viewModel = new ViewModelProvider(this).get(ContactsViewModel.class);
-        viewModel.contactList.getLiveData().observe(this, contacts -> {
-            adapter.setContacts(contacts);
-        });
+        viewModel.contactList.getLiveData().observe(this, adapter::setContacts);
 
         boolean showInviteOption = getIntent().getBooleanExtra(EXTRA_SHOW_INVITE, true);
         adapter.setInviteVisible(showInviteOption);
@@ -254,7 +252,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
                         finish();
                         break;
                     }
-                    GroupId groupId = data.getParcelableExtra(CreateGroupActivity.RESULT_GROUP_ID);
+                    GroupId groupId = Preconditions.checkNotNull(data.getParcelableExtra(CreateGroupActivity.RESULT_GROUP_ID));
                     final Intent intent = ChatActivity.open(this, groupId);
                     startActivity(intent);
                     finish();
@@ -284,7 +282,6 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
     private static final int ITEM_TYPE_CONTACT = 0;
     private static final int ITEM_TYPE_INVITE = 1;
-    private static final int ITEM_TYPE_GROUP = 2;
 
     private class ContactsAdapter extends RecyclerView.Adapter<ViewHolder> implements FastScrollRecyclerView.SectionedAdapter, Filterable {
 
@@ -470,19 +467,8 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
         InviteViewHolder(@NonNull View itemView) {
             super(itemView);
-            itemView.setOnClickListener(v -> {
-                onInviteFriends();
-            });
+            itemView.setOnClickListener(v -> onInviteFriends());
         }
     }
 
-    class CreateGroupViewHolder extends ViewHolder {
-
-        CreateGroupViewHolder(@NonNull View itemView) {
-            super(itemView);
-            itemView.setOnClickListener(v -> {
-                onCreateGroup(null);
-            });
-        }
-    }
 }

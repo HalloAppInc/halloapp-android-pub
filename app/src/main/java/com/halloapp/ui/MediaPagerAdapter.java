@@ -719,10 +719,6 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
                 seekToThumbnailFrame();
             }
         }
-
-        boolean isPlaying() {
-            return exoPlayer != null && exoPlayer.isPlaying();
-        }
     }
 
     public class MediaViewHolder extends RecyclerView.ViewHolder {
