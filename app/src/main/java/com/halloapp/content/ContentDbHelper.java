@@ -2,13 +2,13 @@ package com.halloapp.content;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
 import androidx.annotation.NonNull;
 
-import com.halloapp.FileStore;
 import com.halloapp.content.tables.ArchiveTable;
 import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.content.tables.ChatsTable;
@@ -33,7 +33,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 56;
+    private static final int DATABASE_VERSION = 57;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -551,6 +551,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 55: {
                 upgradeFromVersion55(db);
+            }
+            case 56: {
+                upgradeFromVersion56(db);
             }
             break;
             default: {
@@ -1161,6 +1164,30 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion55(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + MediaTable.TABLE_NAME + " ADD COLUMN " + MediaTable.COLUMN_CHUNK_SET + " BLOB");
+    }
+
+    // Fixes issue where chat only contains key change notifications
+    private void upgradeFromVersion56(@NonNull SQLiteDatabase db) {
+        Cursor cursor = db.query(MessagesTable.TABLE_NAME,
+                new String[]{ChatsTable.COLUMN_CHAT_ID},
+                "(SELECT COUNT(*)) = (SELECT COUNT(*) WHERE " + MessagesTable.COLUMN_USAGE + "=" + Message.USAGE_KEYS_CHANGED + ")",
+                null,
+                ChatsTable.COLUMN_CHAT_ID,
+                null,
+                null);
+        StringBuilder idList = null;
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                String s = cursor.getString(0);
+                if (idList == null) {
+                    idList = new StringBuilder(s);
+                } else {
+                    idList.append(",").append(s);
+                }
+            }
+        }
+        db.execSQL("DELETE FROM " + ChatsTable.TABLE_NAME + " WHERE " + ChatsTable.COLUMN_CHAT_ID + " IN (" + idList + ")");
+        db.execSQL("DELETE FROM " + MessagesTable.TABLE_NAME + " WHERE " + MessagesTable.COLUMN_CHAT_ID + " IN (" + idList + ")");
     }
 
     /**
