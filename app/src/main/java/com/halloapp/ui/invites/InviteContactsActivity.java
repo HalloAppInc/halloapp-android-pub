@@ -31,6 +31,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.WorkInfo;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
@@ -44,6 +45,7 @@ import com.halloapp.util.FilterUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
@@ -67,7 +69,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
     private InviteContactsViewModel viewModel;
     private TextView emptyView;
     private RecyclerView listView;
-
+    private View refreshProgressView;
     private TextView bannerView;
 
     @Override
@@ -140,6 +142,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
         });
 
         emptyView = findViewById(android.R.id.empty);
+        refreshProgressView = findViewById(R.id.refresh_progress);
 
         viewModel = new ViewModelProvider(this).get(InviteContactsViewModel.class);
         viewModel.getContactList().observe(this, adapter::setContacts);
@@ -195,6 +198,25 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.refresh_contacts) {
+            refreshProgressView.setVisibility(View.VISIBLE);
+            final ContactsSync contactsSync = ContactsSync.getInstance();
+            contactsSync.cancelContactsSync();
+            contactsSync.getWorkInfoLiveData()
+                    .observe(this, workInfos -> {
+                        if (workInfos != null) {
+                            for (WorkInfo workInfo : workInfos) {
+                                if (workInfo.getId().equals(contactsSync.getLastSyncRequestId())) {
+                                    if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+                                        refreshProgressView.setVisibility(View.GONE);
+                                    } else if (workInfo.getState().isFinished()) {
+                                        refreshProgressView.setVisibility(View.GONE);
+                                        SnackbarHelper.showWarning(this, R.string.refresh_contacts_failed);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    });
             ContactsSync.getInstance().forceFullContactsSync();
             return true;
         } else if (item.getItemId() == R.id.share_link) {

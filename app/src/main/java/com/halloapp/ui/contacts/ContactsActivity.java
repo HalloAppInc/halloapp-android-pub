@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.WorkInfo;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
@@ -42,6 +44,7 @@ import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.SnackbarHelper;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
@@ -73,6 +76,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
     private ContactsViewModel viewModel;
     private TextView emptyView;
+    private ProgressBar progressBar;
 
     public static Intent createBlocklistContactPicker(@NonNull Context context, @Nullable List<UserId> disabledUserIds) {
         Intent intent = new Intent(context, ContactsActivity.class);
@@ -145,6 +149,8 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
         emptyView = findViewById(android.R.id.empty);
 
+        progressBar = findViewById(R.id.progress);
+
         viewModel = new ViewModelProvider(this).get(ContactsViewModel.class);
         viewModel.contactList.getLiveData().observe(this, contacts -> {
             adapter.setContacts(contacts);
@@ -168,7 +174,26 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.refresh_contacts) {
-            ContactsSync.getInstance().forceFullContactsSync();
+            progressBar.setVisibility(View.VISIBLE);
+            final ContactsSync contactsSync = ContactsSync.getInstance();
+            contactsSync.cancelContactsSync();
+            contactsSync.getWorkInfoLiveData()
+                    .observe(this, workInfos -> {
+                        if (workInfos != null) {
+                            for (WorkInfo workInfo : workInfos) {
+                                if (workInfo.getId().equals(contactsSync.getLastSyncRequestId())) {
+                                    if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+                                        progressBar.setVisibility(View.GONE);
+                                    } else if (workInfo.getState().isFinished()) {
+                                        progressBar.setVisibility(View.GONE);
+                                        SnackbarHelper.showWarning(this, R.string.refresh_contacts_failed);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    });
+            contactsSync.forceFullContactsSync();
             return true;
         } else if (item.getItemId() == R.id.invite_friends) {
             onInviteFriends();
