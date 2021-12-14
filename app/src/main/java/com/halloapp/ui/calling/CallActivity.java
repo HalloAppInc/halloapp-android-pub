@@ -116,7 +116,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                 case CallManager.State.CALLING_RINGING:
                     Log.i("CallActivity/State -> CALLING_RINGING");
                     titleTextView.setText(R.string.ringing);
-                    callingView.setVisibility(View.VISIBLE);
+                    inCallView.setVisibility(View.VISIBLE);
                     break;
                 case CallManager.State.IN_CALL:
                     Log.i("CallActivity/State -> IN_CALL");
