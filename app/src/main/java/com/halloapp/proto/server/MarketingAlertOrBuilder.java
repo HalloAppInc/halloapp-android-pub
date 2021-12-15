@@ -6,4 +6,15 @@ package com.halloapp.proto.server;
 public interface MarketingAlertOrBuilder extends
     // @@protoc_insertion_point(interface_extends:server.MarketingAlert)
     com.google.protobuf.MessageLiteOrBuilder {
+
+  /**
+   * <code>.server.MarketingAlert.Type type = 1;</code>
+   * @return The enum numeric value on the wire for type.
+   */
+  int getTypeValue();
+  /**
+   * <code>.server.MarketingAlert.Type type = 1;</code>
+   * @return The type.
+   */
+  com.halloapp.proto.server.MarketingAlert.Type getType();
 }

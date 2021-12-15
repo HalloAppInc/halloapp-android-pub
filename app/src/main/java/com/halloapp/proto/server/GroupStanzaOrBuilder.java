@@ -119,4 +119,23 @@ public interface GroupStanzaOrBuilder extends
    */
   com.google.protobuf.ByteString
       getDescriptionBytes();
+
+  /**
+   * <pre>
+   * HistoryResend to be sent or received only on adding-members iq.
+   * </pre>
+   *
+   * <code>.server.HistoryResend history_resend = 11;</code>
+   * @return Whether the historyResend field is set.
+   */
+  boolean hasHistoryResend();
+  /**
+   * <pre>
+   * HistoryResend to be sent or received only on adding-members iq.
+   * </pre>
+   *
+   * <code>.server.HistoryResend history_resend = 11;</code>
+   * @return The historyResend.
+   */
+  com.halloapp.proto.server.HistoryResend getHistoryResend();
 }

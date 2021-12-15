@@ -2989,6 +2989,9 @@ export namespace server {
 
         /** GroupStanza description */
         description?: (string|null);
+
+        /** GroupStanza historyResend */
+        historyResend?: (server.IHistoryResend|null);
     }
 
     /** Represents a GroupStanza. */
@@ -3029,6 +3032,9 @@ export namespace server {
 
         /** GroupStanza description. */
         public description: string;
+
+        /** GroupStanza historyResend. */
+        public historyResend?: (server.IHistoryResend|null);
 
         /**
          * Creates a new GroupStanza instance using the specified properties.
@@ -11887,6 +11893,9 @@ export namespace server {
 
     /** Properties of a MarketingAlert. */
     interface IMarketingAlert {
+
+        /** MarketingAlert type */
+        type?: (server.MarketingAlert.Type|null);
     }
 
     /** Represents a MarketingAlert. */
@@ -11897,6 +11906,9 @@ export namespace server {
          * @param [properties] Properties to set
          */
         constructor(properties?: server.IMarketingAlert);
+
+        /** MarketingAlert type. */
+        public type: server.MarketingAlert.Type;
 
         /**
          * Creates a new MarketingAlert instance using the specified properties.
@@ -11967,6 +11979,16 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    namespace MarketingAlert {
+
+        /** Type enum. */
+        enum Type {
+            UNKNOWN = 0,
+            INVITE_FRIENDS = 1,
+            SHARE_POST = 2
+        }
     }
 
     /** Properties of an EventData. */

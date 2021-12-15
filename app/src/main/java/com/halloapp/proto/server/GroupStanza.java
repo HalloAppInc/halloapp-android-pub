@@ -719,6 +719,72 @@ public  final class GroupStanza extends
     
   }
 
+  public static final int HISTORY_RESEND_FIELD_NUMBER = 11;
+  private com.halloapp.proto.server.HistoryResend historyResend_;
+  /**
+   * <pre>
+   * HistoryResend to be sent or received only on adding-members iq.
+   * </pre>
+   *
+   * <code>.server.HistoryResend history_resend = 11;</code>
+   */
+  @java.lang.Override
+  public boolean hasHistoryResend() {
+    return historyResend_ != null;
+  }
+  /**
+   * <pre>
+   * HistoryResend to be sent or received only on adding-members iq.
+   * </pre>
+   *
+   * <code>.server.HistoryResend history_resend = 11;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.HistoryResend getHistoryResend() {
+    return historyResend_ == null ? com.halloapp.proto.server.HistoryResend.getDefaultInstance() : historyResend_;
+  }
+  /**
+   * <pre>
+   * HistoryResend to be sent or received only on adding-members iq.
+   * </pre>
+   *
+   * <code>.server.HistoryResend history_resend = 11;</code>
+   */
+  private void setHistoryResend(com.halloapp.proto.server.HistoryResend value) {
+    value.getClass();
+  historyResend_ = value;
+    
+    }
+  /**
+   * <pre>
+   * HistoryResend to be sent or received only on adding-members iq.
+   * </pre>
+   *
+   * <code>.server.HistoryResend history_resend = 11;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeHistoryResend(com.halloapp.proto.server.HistoryResend value) {
+    value.getClass();
+  if (historyResend_ != null &&
+        historyResend_ != com.halloapp.proto.server.HistoryResend.getDefaultInstance()) {
+      historyResend_ =
+        com.halloapp.proto.server.HistoryResend.newBuilder(historyResend_).mergeFrom(value).buildPartial();
+    } else {
+      historyResend_ = value;
+    }
+    
+  }
+  /**
+   * <pre>
+   * HistoryResend to be sent or received only on adding-members iq.
+   * </pre>
+   *
+   * <code>.server.HistoryResend history_resend = 11;</code>
+   */
+  private void clearHistoryResend() {  historyResend_ = null;
+    
+  }
+
   public static com.halloapp.proto.server.GroupStanza parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1324,6 +1390,77 @@ public  final class GroupStanza extends
       return this;
     }
 
+    /**
+     * <pre>
+     * HistoryResend to be sent or received only on adding-members iq.
+     * </pre>
+     *
+     * <code>.server.HistoryResend history_resend = 11;</code>
+     */
+    @java.lang.Override
+    public boolean hasHistoryResend() {
+      return instance.hasHistoryResend();
+    }
+    /**
+     * <pre>
+     * HistoryResend to be sent or received only on adding-members iq.
+     * </pre>
+     *
+     * <code>.server.HistoryResend history_resend = 11;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.HistoryResend getHistoryResend() {
+      return instance.getHistoryResend();
+    }
+    /**
+     * <pre>
+     * HistoryResend to be sent or received only on adding-members iq.
+     * </pre>
+     *
+     * <code>.server.HistoryResend history_resend = 11;</code>
+     */
+    public Builder setHistoryResend(com.halloapp.proto.server.HistoryResend value) {
+      copyOnWrite();
+      instance.setHistoryResend(value);
+      return this;
+      }
+    /**
+     * <pre>
+     * HistoryResend to be sent or received only on adding-members iq.
+     * </pre>
+     *
+     * <code>.server.HistoryResend history_resend = 11;</code>
+     */
+    public Builder setHistoryResend(
+        com.halloapp.proto.server.HistoryResend.Builder builderForValue) {
+      copyOnWrite();
+      instance.setHistoryResend(builderForValue.build());
+      return this;
+    }
+    /**
+     * <pre>
+     * HistoryResend to be sent or received only on adding-members iq.
+     * </pre>
+     *
+     * <code>.server.HistoryResend history_resend = 11;</code>
+     */
+    public Builder mergeHistoryResend(com.halloapp.proto.server.HistoryResend value) {
+      copyOnWrite();
+      instance.mergeHistoryResend(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * HistoryResend to be sent or received only on adding-members iq.
+     * </pre>
+     *
+     * <code>.server.HistoryResend history_resend = 11;</code>
+     */
+    public Builder clearHistoryResend() {  copyOnWrite();
+      instance.clearHistoryResend();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.GroupStanza)
   }
   @java.lang.Override
@@ -1351,10 +1488,12 @@ public  final class GroupStanza extends
             "background_",
             "audienceHash_",
             "description_",
+            "historyResend_",
           };
           java.lang.String info =
-              "\u0000\n\u0000\u0000\u0001\n\n\u0000\u0001\u0000\u0001\f\u0002\u0208\u0003\u0208" +
-              "\u0004\u0208\u0005\u0002\u0006\u0208\u0007\u001b\b\u0208\t\n\n\u0208";
+              "\u0000\u000b\u0000\u0000\u0001\u000b\u000b\u0000\u0001\u0000\u0001\f\u0002\u0208" +
+              "\u0003\u0208\u0004\u0208\u0005\u0002\u0006\u0208\u0007\u001b\b\u0208\t\n\n\u0208" +
+              "\u000b\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

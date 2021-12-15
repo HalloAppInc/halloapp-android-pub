@@ -29,5 +29,11 @@ public interface ContentDetailsOrBuilder extends
    */
   com.halloapp.proto.clients.CommentIdContext getCommentIdContext();
 
+  /**
+   * <code>bytes content_hash = 3;</code>
+   * @return The contentHash.
+   */
+  com.google.protobuf.ByteString getContentHash();
+
   public com.halloapp.proto.clients.ContentDetails.ContentIdCase getContentIdCase();
 }

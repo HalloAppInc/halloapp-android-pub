@@ -12,6 +12,7 @@ public  final class ContentDetails extends
     // @@protoc_insertion_point(message_implements:clients.ContentDetails)
     ContentDetailsOrBuilder {
   private ContentDetails() {
+    contentHash_ = com.google.protobuf.ByteString.EMPTY;
   }
   private int contentIdCase_ = 0;
   private java.lang.Object contentId_;
@@ -154,6 +155,33 @@ public  final class ContentDetails extends
       contentIdCase_ = 0;
       contentId_ = null;
     }
+  }
+
+  public static final int CONTENT_HASH_FIELD_NUMBER = 3;
+  private com.google.protobuf.ByteString contentHash_;
+  /**
+   * <code>bytes content_hash = 3;</code>
+   * @return The contentHash.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getContentHash() {
+    return contentHash_;
+  }
+  /**
+   * <code>bytes content_hash = 3;</code>
+   * @param value The contentHash to set.
+   */
+  private void setContentHash(com.google.protobuf.ByteString value) {
+    value.getClass();
+  
+    contentHash_ = value;
+  }
+  /**
+   * <code>bytes content_hash = 3;</code>
+   */
+  private void clearContentHash() {
+    
+    contentHash_ = getDefaultInstance().getContentHash();
   }
 
   public static com.halloapp.proto.clients.ContentDetails parseFrom(
@@ -359,6 +387,34 @@ public  final class ContentDetails extends
       return this;
     }
 
+    /**
+     * <code>bytes content_hash = 3;</code>
+     * @return The contentHash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getContentHash() {
+      return instance.getContentHash();
+    }
+    /**
+     * <code>bytes content_hash = 3;</code>
+     * @param value The contentHash to set.
+     * @return This builder for chaining.
+     */
+    public Builder setContentHash(com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setContentHash(value);
+      return this;
+    }
+    /**
+     * <code>bytes content_hash = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearContentHash() {
+      copyOnWrite();
+      instance.clearContentHash();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.ContentDetails)
   }
   @java.lang.Override
@@ -379,10 +435,11 @@ public  final class ContentDetails extends
             "contentIdCase_",
             com.halloapp.proto.clients.PostIdContext.class,
             com.halloapp.proto.clients.CommentIdContext.class,
+            "contentHash_",
           };
           java.lang.String info =
-              "\u0000\u0002\u0001\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001<\u0000\u0002<" +
-              "\u0000";
+              "\u0000\u0003\u0001\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001<\u0000\u0002<" +
+              "\u0000\u0003\n";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

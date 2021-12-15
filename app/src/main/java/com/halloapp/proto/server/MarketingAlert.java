@@ -13,6 +13,146 @@ public  final class MarketingAlert extends
     MarketingAlertOrBuilder {
   private MarketingAlert() {
   }
+  /**
+   * Protobuf enum {@code server.MarketingAlert.Type}
+   */
+  public enum Type
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>UNKNOWN = 0;</code>
+     */
+    UNKNOWN(0),
+    /**
+     * <code>INVITE_FRIENDS = 1;</code>
+     */
+    INVITE_FRIENDS(1),
+    /**
+     * <code>SHARE_POST = 2;</code>
+     */
+    SHARE_POST(2),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>UNKNOWN = 0;</code>
+     */
+    public static final int UNKNOWN_VALUE = 0;
+    /**
+     * <code>INVITE_FRIENDS = 1;</code>
+     */
+    public static final int INVITE_FRIENDS_VALUE = 1;
+    /**
+     * <code>SHARE_POST = 2;</code>
+     */
+    public static final int SHARE_POST_VALUE = 2;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static Type valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static Type forNumber(int value) {
+      switch (value) {
+        case 0: return UNKNOWN;
+        case 1: return INVITE_FRIENDS;
+        case 2: return SHARE_POST;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<Type>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        Type> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<Type>() {
+            @java.lang.Override
+            public Type findValueByNumber(int number) {
+              return Type.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return TypeVerifier.INSTANCE;
+    }
+
+    private static final class TypeVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new TypeVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return Type.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private Type(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.MarketingAlert.Type)
+  }
+
+  public static final int TYPE_FIELD_NUMBER = 1;
+  private int type_;
+  /**
+   * <code>.server.MarketingAlert.Type type = 1;</code>
+   * @return The enum numeric value on the wire for type.
+   */
+  @java.lang.Override
+  public int getTypeValue() {
+    return type_;
+  }
+  /**
+   * <code>.server.MarketingAlert.Type type = 1;</code>
+   * @return The type.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.MarketingAlert.Type getType() {
+    com.halloapp.proto.server.MarketingAlert.Type result = com.halloapp.proto.server.MarketingAlert.Type.forNumber(type_);
+    return result == null ? com.halloapp.proto.server.MarketingAlert.Type.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.MarketingAlert.Type type = 1;</code>
+   * @param value The enum numeric value on the wire for type to set.
+   */
+  private void setTypeValue(int value) {
+      type_ = value;
+  }
+  /**
+   * <code>.server.MarketingAlert.Type type = 1;</code>
+   * @param value The type to set.
+   */
+  private void setType(com.halloapp.proto.server.MarketingAlert.Type value) {
+    type_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.MarketingAlert.Type type = 1;</code>
+   */
+  private void clearType() {
+    
+    type_ = 0;
+  }
+
   public static com.halloapp.proto.server.MarketingAlert parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -108,6 +248,52 @@ public  final class MarketingAlert extends
     }
 
 
+    /**
+     * <code>.server.MarketingAlert.Type type = 1;</code>
+     * @return The enum numeric value on the wire for type.
+     */
+    @java.lang.Override
+    public int getTypeValue() {
+      return instance.getTypeValue();
+    }
+    /**
+     * <code>.server.MarketingAlert.Type type = 1;</code>
+     * @param value The type to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTypeValue(int value) {
+      copyOnWrite();
+      instance.setTypeValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.MarketingAlert.Type type = 1;</code>
+     * @return The type.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.MarketingAlert.Type getType() {
+      return instance.getType();
+    }
+    /**
+     * <code>.server.MarketingAlert.Type type = 1;</code>
+     * @param value The enum numeric value on the wire for type to set.
+     * @return This builder for chaining.
+     */
+    public Builder setType(com.halloapp.proto.server.MarketingAlert.Type value) {
+      copyOnWrite();
+      instance.setType(value);
+      return this;
+    }
+    /**
+     * <code>.server.MarketingAlert.Type type = 1;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearType() {
+      copyOnWrite();
+      instance.clearType();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.MarketingAlert)
   }
   @java.lang.Override
@@ -123,8 +309,11 @@ public  final class MarketingAlert extends
         return new Builder();
       }
       case BUILD_MESSAGE_INFO: {
-          java.lang.Object[] objects = null;java.lang.String info =
-              "\u0000\u0000";
+          java.lang.Object[] objects = new java.lang.Object[] {
+            "type_",
+          };
+          java.lang.String info =
+              "\u0000\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0000\u0000\u0001\f";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -7721,6 +7721,7 @@ $root.server = (function() {
          * @property {string|null} [background] GroupStanza background
          * @property {Uint8Array|null} [audienceHash] GroupStanza audienceHash
          * @property {string|null} [description] GroupStanza description
+         * @property {server.IHistoryResend|null} [historyResend] GroupStanza historyResend
          */
 
         /**
@@ -7820,6 +7821,14 @@ $root.server = (function() {
         GroupStanza.prototype.description = "";
 
         /**
+         * GroupStanza historyResend.
+         * @member {server.IHistoryResend|null|undefined} historyResend
+         * @memberof server.GroupStanza
+         * @instance
+         */
+        GroupStanza.prototype.historyResend = null;
+
+        /**
          * Creates a new GroupStanza instance using the specified properties.
          * @function create
          * @memberof server.GroupStanza
@@ -7864,6 +7873,8 @@ $root.server = (function() {
                 writer.uint32(/* id 9, wireType 2 =*/74).bytes(message.audienceHash);
             if (message.description != null && Object.hasOwnProperty.call(message, "description"))
                 writer.uint32(/* id 10, wireType 2 =*/82).string(message.description);
+            if (message.historyResend != null && Object.hasOwnProperty.call(message, "historyResend"))
+                $root.server.HistoryResend.encode(message.historyResend, writer.uint32(/* id 11, wireType 2 =*/90).fork()).ldelim();
             return writer;
         };
 
@@ -7929,6 +7940,9 @@ $root.server = (function() {
                     break;
                 case 10:
                     message.description = reader.string();
+                    break;
+                case 11:
+                    message.historyResend = $root.server.HistoryResend.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -8020,6 +8034,11 @@ $root.server = (function() {
             if (message.description != null && message.hasOwnProperty("description"))
                 if (!$util.isString(message.description))
                     return "description: string expected";
+            if (message.historyResend != null && message.hasOwnProperty("historyResend")) {
+                var error = $root.server.HistoryResend.verify(message.historyResend);
+                if (error)
+                    return "historyResend." + error;
+            }
             return null;
         };
 
@@ -8137,6 +8156,11 @@ $root.server = (function() {
                     message.audienceHash = object.audienceHash;
             if (object.description != null)
                 message.description = String(object.description);
+            if (object.historyResend != null) {
+                if (typeof object.historyResend !== "object")
+                    throw TypeError(".server.GroupStanza.historyResend: object expected");
+                message.historyResend = $root.server.HistoryResend.fromObject(object.historyResend);
+            }
             return message;
         };
 
@@ -8175,6 +8199,7 @@ $root.server = (function() {
                         object.audienceHash = $util.newBuffer(object.audienceHash);
                 }
                 object.description = "";
+                object.historyResend = null;
             }
             if (message.action != null && message.hasOwnProperty("action"))
                 object.action = options.enums === String ? $root.server.GroupStanza.Action[message.action] : message.action;
@@ -8202,6 +8227,8 @@ $root.server = (function() {
                 object.audienceHash = options.bytes === String ? $util.base64.encode(message.audienceHash, 0, message.audienceHash.length) : options.bytes === Array ? Array.prototype.slice.call(message.audienceHash) : message.audienceHash;
             if (message.description != null && message.hasOwnProperty("description"))
                 object.description = message.description;
+            if (message.historyResend != null && message.hasOwnProperty("historyResend"))
+                object.historyResend = $root.server.HistoryResend.toObject(message.historyResend, options);
             return object;
         };
 
@@ -31889,6 +31916,7 @@ $root.server = (function() {
          * Properties of a MarketingAlert.
          * @memberof server
          * @interface IMarketingAlert
+         * @property {server.MarketingAlert.Type|null} [type] MarketingAlert type
          */
 
         /**
@@ -31905,6 +31933,14 @@ $root.server = (function() {
                     if (properties[keys[i]] != null)
                         this[keys[i]] = properties[keys[i]];
         }
+
+        /**
+         * MarketingAlert type.
+         * @member {server.MarketingAlert.Type} type
+         * @memberof server.MarketingAlert
+         * @instance
+         */
+        MarketingAlert.prototype.type = 0;
 
         /**
          * Creates a new MarketingAlert instance using the specified properties.
@@ -31930,6 +31966,8 @@ $root.server = (function() {
         MarketingAlert.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
+            if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.type);
             return writer;
         };
 
@@ -31964,6 +32002,9 @@ $root.server = (function() {
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
+                case 1:
+                    message.type = reader.int32();
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -31999,6 +32040,15 @@ $root.server = (function() {
         MarketingAlert.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
+            if (message.type != null && message.hasOwnProperty("type"))
+                switch (message.type) {
+                default:
+                    return "type: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
             return null;
         };
 
@@ -32013,7 +32063,22 @@ $root.server = (function() {
         MarketingAlert.fromObject = function fromObject(object) {
             if (object instanceof $root.server.MarketingAlert)
                 return object;
-            return new $root.server.MarketingAlert();
+            var message = new $root.server.MarketingAlert();
+            switch (object.type) {
+            case "UNKNOWN":
+            case 0:
+                message.type = 0;
+                break;
+            case "INVITE_FRIENDS":
+            case 1:
+                message.type = 1;
+                break;
+            case "SHARE_POST":
+            case 2:
+                message.type = 2;
+                break;
+            }
+            return message;
         };
 
         /**
@@ -32025,8 +32090,15 @@ $root.server = (function() {
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        MarketingAlert.toObject = function toObject() {
-            return {};
+        MarketingAlert.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.type = options.enums === String ? "UNKNOWN" : 0;
+            if (message.type != null && message.hasOwnProperty("type"))
+                object.type = options.enums === String ? $root.server.MarketingAlert.Type[message.type] : message.type;
+            return object;
         };
 
         /**
@@ -32039,6 +32111,22 @@ $root.server = (function() {
         MarketingAlert.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
+
+        /**
+         * Type enum.
+         * @name server.MarketingAlert.Type
+         * @enum {number}
+         * @property {number} UNKNOWN=0 UNKNOWN value
+         * @property {number} INVITE_FRIENDS=1 INVITE_FRIENDS value
+         * @property {number} SHARE_POST=2 SHARE_POST value
+         */
+        MarketingAlert.Type = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN"] = 0;
+            values[valuesById[1] = "INVITE_FRIENDS"] = 1;
+            values[valuesById[2] = "SHARE_POST"] = 2;
+            return values;
+        })();
 
         return MarketingAlert;
     })();
