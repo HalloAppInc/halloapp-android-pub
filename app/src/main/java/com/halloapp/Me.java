@@ -24,6 +24,10 @@ import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Objects;
 
+import io.michaelrocks.libphonenumber.android.NumberParseException;
+import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
+import io.michaelrocks.libphonenumber.android.Phonenumber;
+
 public class Me {
 
     private static Me instance;
@@ -155,6 +159,19 @@ public class Me {
     @WorkerThread
     public synchronized String getPhone() {
         return getPreferences().getString(PREF_KEY_PHONE, null);
+    }
+
+    @WorkerThread
+    public synchronized String getCC() {
+        String myPhone = getPhone();
+        PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.createInstance(AppContext.getInstance().get());
+        try {
+            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse("+" + myPhone, null);
+            return phoneNumberUtil.getRegionCodeForCountryCode(phoneNumber.getCountryCode());
+        } catch (NumberParseException e) {
+            Log.e("Me: Can not parse my own number " + myPhone, e);
+            return "ZZ";
+        }
     }
 
     @WorkerThread

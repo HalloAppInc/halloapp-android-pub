@@ -19,6 +19,8 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.AppContext;
 import com.halloapp.Constants;
 import com.halloapp.Notifications;
+import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.crypto.CryptoException;
@@ -58,6 +60,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import io.michaelrocks.libphonenumber.android.NumberParseException;
+import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
+import io.michaelrocks.libphonenumber.android.Phonenumber;
 
 public class CallManager {
 
@@ -133,7 +139,7 @@ public class CallManager {
         this.callsApi = CallsApi.getInstance();
         this.contentDb = ContentDb.getInstance();
         this.appContext = AppContext.getInstance();
-        this.outgoingRingtone = new OutgoingRingtone(appContext.get());
+        this.outgoingRingtone = new OutgoingRingtone();
         this.proximityLock = createProximityLock();
         this.state = State.IDLE;
 
@@ -754,7 +760,24 @@ public class CallManager {
 
     // The android media player is not thread safe. Making sure it is always interacted on from the same thread.
     private void startOutgoingRingtone() {
-        executor.execute(() -> outgoingRingtone.start(OutgoingRingtone.Type.RINGING));
+        executor.execute(() -> {
+            ContactsDb contactsDb = ContactsDb.getInstance();
+            Contact contact = contactsDb.getContact(peerUid);
+            String phone = contact.normalizedPhone;
+            PhoneNumberUtil phoneUtil = PhoneNumberUtil.createInstance(AppContext.getInstance().get());
+            Log.i("CallManager: peerUid " + peerUid.rawId() + " phone: " + phone);
+            String peerCC = "ZZ";
+            try {
+                Phonenumber.PhoneNumber phoneNumber = phoneUtil.parse("+" + phone, null);
+                peerCC = phoneUtil.getRegionCodeForCountryCode(phoneNumber.getCountryCode());
+            } catch (NumberParseException e) {
+                Log.e("Failed to parse peerUid phone " + phone, e);
+                Log.sendErrorReport("Failed to parse peerUid phone");
+            }
+            Log.i("CallManager: peerUid phone: " + phone + " CC: " + peerCC);
+
+            outgoingRingtone.start(OutgoingRingtone.Type.RINGING, peerCC);
+        });
     }
 
     private void stopOutgoingRingtone() {
