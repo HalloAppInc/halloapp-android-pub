@@ -1050,6 +1050,9 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Label for button to end the call -->
     <string name="end_call">"End call"</string>
+
+    <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
+    <string name="refresh_contacts_failed">"Failed to refresh contacts"</string>
     <string name="invite_via_link">"Покани с линк"</string>
     <string name="couldnt_load_thumbnail">"Couldn't load thumbnail"</string>
     <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>

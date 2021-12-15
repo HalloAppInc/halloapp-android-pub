@@ -1006,16 +1006,19 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="call_action">"Bellen"</string>
 
     <!-- Button to unmute -->
-    <string name="unmute">"Unmute"</string>
+    <string name="unmute">"Dempen opheffen"</string>
 
     <!-- Label for speaker phone button -->
-    <string name="call_speaker_button">"Speaker"</string>
+    <string name="call_speaker_button">"Luidspreker"</string>
 
     <!-- Label for button to disable speaker phone -->
-    <string name="call_speaker_off_button">"Speaker off"</string>
+    <string name="call_speaker_off_button">"Luidspreker uit"</string>
 
     <!-- Label for button to end the call -->
-    <string name="end_call">"End call"</string>
+    <string name="end_call">"Oproep beëindigen"</string>
+
+    <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
+    <string name="refresh_contacts_failed">"Verversen contacten mislukt"</string>
     <string name="invite_via_link">"Uitnodigen via link"</string>
     <string name="couldnt_load_thumbnail">"Kon voorvertoning niet laden"</string>
     <string name="system_message_missed_audio_call">"Gemiste spraakoproep om %s"</string>

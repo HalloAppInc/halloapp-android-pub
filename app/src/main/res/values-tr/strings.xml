@@ -1049,6 +1049,9 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını açın."</
 
     <!-- Label for button to end the call -->
     <string name="end_call">"End call"</string>
+
+    <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
+    <string name="refresh_contacts_failed">"Failed to refresh contacts"</string>
     <string name="invite_via_link">"İlişim yoluyla davet et"</string>
     <string name="couldnt_load_thumbnail">"Küçük resim yüklenemedi"</string>
     <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>

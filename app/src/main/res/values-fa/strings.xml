@@ -1021,16 +1021,19 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="call_action">"تماس"</string>
 
     <!-- Button to unmute -->
-    <string name="unmute">"Unmute"</string>
+    <string name="unmute">"صدادار کردن"</string>
 
     <!-- Label for speaker phone button -->
-    <string name="call_speaker_button">"Speaker"</string>
+    <string name="call_speaker_button">"بلندگو"</string>
 
     <!-- Label for button to disable speaker phone -->
-    <string name="call_speaker_off_button">"Speaker off"</string>
+    <string name="call_speaker_off_button">"خاموش کردن بلندگو"</string>
 
     <!-- Label for button to end the call -->
-    <string name="end_call">"End call"</string>
+    <string name="end_call">"اتمام تماس"</string>
+
+    <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
+    <string name="refresh_contacts_failed">"Failed to refresh contacts"</string>
     <string name="invite_via_link">"دعوت از طریق لینک"</string>
     <string name="couldnt_load_thumbnail">"تصویر بارگذاری نشد"</string>
     <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>
