@@ -28,7 +28,6 @@ import com.halloapp.ui.settings.SettingsNotifications;
 import com.halloapp.ui.settings.SettingsPrivacy;
 import com.halloapp.ui.settings.SettingsProfile;
 import com.halloapp.util.IntentUtils;
-import com.halloapp.util.StringUtils;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 
 import java.util.Locale;
@@ -131,9 +130,7 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
         avatarView = root.findViewById(R.id.avatar);
 
         viewModel.getName().observe(getViewLifecycleOwner(), name::setText);
-        viewModel.getPhone().observe(getViewLifecycleOwner(), phoneNumber -> {
-            number.setText(StringUtils.formatPhoneNumber(phoneNumber));
-        });
+        viewModel.getPhone().observe(getViewLifecycleOwner(), number::setText);
 
         avatarLoader.load(avatarView, UserId.ME, false);
 
