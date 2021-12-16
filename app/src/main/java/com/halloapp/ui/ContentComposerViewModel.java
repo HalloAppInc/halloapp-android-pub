@@ -26,16 +26,21 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.content.VoiceNotePost;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.media.VoiceNotePlayer;
+import com.halloapp.media.VoiceNoteRecorder;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.clients.VoiceNote;
 import com.halloapp.proto.log_events.MediaComposeLoad;
 import com.halloapp.ui.mediaedit.EditImageView;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Preconditions;
@@ -76,6 +81,11 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
     private boolean shouldDeleteTempFiles = true;
 
+    private final VoiceNotePlayer voiceNotePlayer;
+    private final VoiceNoteRecorder voiceNoteRecorder;
+
+    private File voiceDraft;
+
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsChanged() {
@@ -102,6 +112,9 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
         this.targetChatId = chatId;
         this.targetGroupId = groupFeedId;
+
+        this.voiceNotePlayer = new VoiceNotePlayer(application);
+        this.voiceNoteRecorder = new VoiceNoteRecorder();
 
         if (uris != null) {
             loadUris(uris, editStates);
@@ -180,6 +193,8 @@ public class ContentComposerViewModel extends AndroidViewModel {
         }
         contactsDb.removeObserver(contactsObserver);
         feedPrivacyManager.removeObserver(feedPrivacyObserver);
+        voiceNoteRecorder.onCleared();
+        voiceNotePlayer.onCleared();
     }
 
     @Nullable List<EditMediaPair> getEditMedia() {
@@ -221,14 +236,45 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
     private @Nullable List<Media> getSendMediaList() {
         final List<EditMediaPair> mediaPairList = getEditMedia();
-        if (mediaPairList == null) {
+        if (voiceDraft == null && mediaPairList == null) {
             return null;
         }
         final List<Media> sendmediaPairList = new ArrayList<>();
-        for (EditMediaPair mediaPair : mediaPairList) {
-            sendmediaPairList.add(mediaPair.getRelevantMedia());
+        if (voiceDraft != null) {
+            sendmediaPairList.add(Media.createFromFile(Media.MEDIA_TYPE_AUDIO, voiceDraft));
+        }
+        if (mediaPairList != null) {
+            for (EditMediaPair mediaPair : mediaPairList) {
+                sendmediaPairList.add(mediaPair.getRelevantMedia());
+            }
         }
         return sendmediaPairList;
+    }
+
+    public VoiceNoteRecorder getVoiceNoteRecorder() {
+        return voiceNoteRecorder;
+    }
+
+    public VoiceNotePlayer getVoiceNotePlayer() {
+        return voiceNotePlayer;
+    }
+
+    public void finishRecording() {
+        voiceDraft = voiceNoteRecorder.finishRecording();
+    }
+
+    public File getVoiceDraft() {
+        return voiceDraft;
+    }
+
+    public void deleteDraft() {
+        if (voiceDraft != null) {
+            final File draft = voiceDraft;
+            voiceDraft = null;
+            BgWorkers.getInstance().execute(() -> {
+                draft.delete();
+            });
+        }
     }
 
     public static class Factory implements ViewModelProvider.Factory {
@@ -425,9 +471,15 @@ public class ContentComposerViewModel extends AndroidViewModel {
         protected Void doInBackground(Void... voids) {
 
             Post replyPost = replyPostId == null ? null : contentDb.getPost(replyPostId);
-            final ContentItem contentItem = chatId == null ?
-                    new Post(0, UserId.ME, RandomId.create(), System.currentTimeMillis(),Post.TRANSFERRED_NO, Post.SEEN_YES, text) :
-                    new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.TYPE_CHAT, Message.USAGE_CHAT, Message.STATE_INITIAL, text, replyPostId, replyPostMediaIndex, null, -1, replyPost == null ? null : replyPost.senderUserId, 0);
+            final ContentItem contentItem;
+            if (chatId == null && media != null && media.size() >= 1 && media.get(0).type == Media.MEDIA_TYPE_AUDIO) {
+                // Audio post
+                contentItem = new VoiceNotePost(0, UserId.ME, RandomId.create(), System.currentTimeMillis(), Post.TRANSFERRED_NO, Post.SEEN_YES);
+            } else {
+                contentItem = chatId == null ?
+                        new Post(0, UserId.ME, RandomId.create(), System.currentTimeMillis(), Post.TRANSFERRED_NO, Post.SEEN_YES, text) :
+                        new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.TYPE_CHAT, Message.USAGE_CHAT, Message.STATE_INITIAL, text, replyPostId, replyPostMediaIndex, null, -1, replyPost == null ? null : replyPost.senderUserId, 0);
+            }
             if (media != null) {
                 for (Media mediaItem : media) {
                     final File postFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(mediaItem.type));
@@ -441,6 +493,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
                             }
                             break;
                         }
+                        case Media.MEDIA_TYPE_AUDIO:
                         case Media.MEDIA_TYPE_VIDEO: {
                             if (!mediaItem.file.renameTo(postFile)) {
                                 Log.e("failed to rename " + mediaItem.file.getAbsolutePath() + " to " + postFile.getAbsolutePath());

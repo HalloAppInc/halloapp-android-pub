@@ -1,0 +1,214 @@
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="340dp"
+    tools:parentTag="com.halloapp.ui.VoicePostComposerView">
+
+    <LinearLayout
+        android:id="@+id/recording_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:id="@+id/recording_indicator"
+            android:layout_width="9dp"
+            android:layout_height="9dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/recording_indicator"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            app:layout_constraintBottom_toBottomOf="@id/record_voice"
+            app:layout_constraintStart_toStartOf="@id/entry_card"
+            app:layout_constraintTop_toTopOf="@id/record_voice"
+            tools:text="00:01" />
+
+        <Chronometer
+            android:id="@+id/recording_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_vertical"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:textColor="@color/color_primary"
+            android:textSize="21sp"
+            app:layout_constraintBottom_toBottomOf="@id/record_voice"
+            app:layout_constraintStart_toEndOf="@id/recording_indicator"
+            app:layout_constraintTop_toTopOf="@id/record_voice" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/record_voice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_voice_post_record"
+        android:elevation="2dp"
+        android:foreground="?selectableItemBackgroundBorderless"
+        android:outlineProvider="background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="78dp"
+            android:layout_height="78dp"
+            android:padding="20dp"
+            android:src="@drawable/ic_keyboard_voice"
+            app:tint="@android:color/white" />
+
+    </FrameLayout>
+
+    <com.halloapp.widget.VoicePostVisualizerView
+        android:id="@+id/voice_visualizer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <FrameLayout
+        android:id="@+id/stop_record"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:background="@drawable/bg_voice_post_stop"
+        android:elevation="2dp"
+        android:foreground="?selectableItemBackgroundBorderless"
+        android:outlineProvider="background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/voice_draft"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_voice_note_post_controls"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="16dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:id="@+id/delete_btn"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/bg_circle"
+            android:backgroundTint="@color/voice_post_delete_bg"
+            android:foreground="?selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_delete"
+                app:tint="@android:color/white" />
+
+        </FrameLayout>
+
+
+        <FrameLayout
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:foreground="?selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:id="@+id/control_btn"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_play_arrow"
+                app:tint="@color/secondary_text" />
+
+        </FrameLayout>
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/voice_note_seekbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="10dp"
+            android:paddingEnd="12dp"
+            android:progressDrawable="@drawable/voice_note_seekbar" />
+
+        <TextView
+            android:id="@+id/seek_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="16sp"
+            tools:text="0:06" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tap_to_record"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="18dp"
+        android:text="Tap to record"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/record_voice" />
+
+    <TextView
+        android:id="@+id/compose_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:textColor="@color/secondary_text"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="New audio post" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:padding="14dp"
+        android:src="@drawable/ic_post_add_photo"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/composer_send"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/bg_send_fab"
+        android:foreground="?selectableItemBackgroundBorderless"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_round_send" />
+
+    </FrameLayout>
+
+</merge>

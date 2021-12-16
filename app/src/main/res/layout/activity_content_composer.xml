@@ -162,6 +162,21 @@
                         android:clipToPadding="false">
 
                         <androidx.cardview.widget.CardView
+                            android:id="@+id/voice_composer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:cardCornerRadius="@dimen/content_composer_frame_border"
+                            app:cardElevation="2dp">
+                            
+                            <com.halloapp.ui.VoicePostComposerView
+                                android:id="@+id/voice_composer_view"
+                                android:layout_width="match_parent"
+                                android:layout_height="340dp"/>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/composer_card"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:cardCornerRadius="@dimen/content_composer_frame_border"

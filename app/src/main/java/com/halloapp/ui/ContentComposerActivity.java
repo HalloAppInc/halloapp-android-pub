@@ -63,6 +63,7 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
+import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.ExoUtils;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
@@ -111,6 +112,7 @@ public class ContentComposerActivity extends HalloActivity {
     public static final String EXTRA_GROUP_ID = "group_id";
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
+    public static final String EXTRA_VOICE_NOTE_POST = "voice_note_post";
 
     private static final int REQUEST_CODE_CROP = 1;
     private static final int REQUEST_CODE_MORE_MEDIA = 2;
@@ -136,8 +138,12 @@ public class ContentComposerActivity extends HalloActivity {
     private TextView tapToChangeSubtitle;
     private TextView subtitleView;
 
+    private View audioComposer;
+    private View oldComposer;
+
     private PostLinkPreviewView postLinkPreviewView;
     private UrlPreviewLoader urlPreviewLoader;
+    private AudioDurationLoader audioDurationLoader;
     private MediaThumbnailLoader mediaThumbnailLoader;
 
     private ImageView avatarView;
@@ -146,10 +152,13 @@ public class ContentComposerActivity extends HalloActivity {
     private boolean allowAddMedia;
     private boolean calledFromCamera;
     private boolean calledFromPicker;
+    private boolean voiceNotePost;
 
     private ImageButton addMediaButton;
     private ImageButton deletePictureButton;
     private ImageButton cropPictureButton;
+
+    private VoicePostComposerView voicePostComposerView;
 
     @Nullable
     private ChatId chatId;
@@ -229,6 +238,10 @@ public class ContentComposerActivity extends HalloActivity {
         fullThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         textContentLoader = new TextContentLoader();
         avatarLoader = AvatarLoader.getInstance();
+        audioDurationLoader = new AudioDurationLoader(this);
+
+        audioComposer = findViewById(R.id.voice_composer);
+        oldComposer = findViewById(R.id.composer_card);
 
         mentionPickerView = findViewById(R.id.mention_picker_view);
 
@@ -241,8 +254,9 @@ public class ContentComposerActivity extends HalloActivity {
         addMediaButton.setOnClickListener(v -> addAdditionalMedia());
         cropPictureButton.setOnClickListener(v -> cropItem(getCurrentItem()));
 
-        deletePictureButton.setOnClickListener(v -> deleteItem(getCurrentItem()));
+        voicePostComposerView = findViewById(R.id.voice_composer_view);
 
+        deletePictureButton.setOnClickListener(v -> deleteItem(getCurrentItem()));
         final ArrayList<Uri> uris;
         if (Intent.ACTION_SEND.equals(getIntent().getAction())) {
             calledFromPicker = false;
@@ -263,7 +277,7 @@ public class ContentComposerActivity extends HalloActivity {
         }
         calledFromCamera = getIntent().getBooleanExtra(EXTRA_CALLED_FROM_CAMERA, false);
         allowAddMedia = getIntent().getBooleanExtra(EXTRA_ALLOW_ADD_MEDIA, false);
-
+        voiceNotePost = getIntent().getBooleanExtra(EXTRA_VOICE_NOTE_POST, false);
         final Bundle editStates = getIntent().getParcelableExtra(MediaEditActivity.EXTRA_STATE);
         if (uris != null) {
             Log.i("ContentComposerActivity received " + uris.size() + " uris");
@@ -281,12 +295,15 @@ public class ContentComposerActivity extends HalloActivity {
                 return false;
             });
         } else {
+            audioComposer.setVisibility(View.GONE);
             View cardContainer = findViewById(R.id.card_container);
             Log.i("ContentComposerActivity no uri list provided");
             loadingView.setVisibility(View.GONE);
             editText = findViewById(R.id.entry_card);
             cardContainer.setMinimumHeight(getResources().getDimensionPixelSize(R.dimen.entry_card_min_height));
-            editText.requestFocus();
+            if (!voiceNotePost) {
+                editText.requestFocus();
+            }
             editText.setPreImeListener((keyCode, event) -> {
                 if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
                     finish();
@@ -294,6 +311,14 @@ public class ContentComposerActivity extends HalloActivity {
                 }
                 return false;
             });
+        }
+
+        if (voiceNotePost) {
+            audioComposer.setVisibility(View.VISIBLE);
+            oldComposer.setVisibility(View.GONE);
+        } else {
+            audioComposer.setVisibility(View.GONE);
+            oldComposer.setVisibility(View.VISIBLE);
         }
 
         if (savedInstanceState == null) {
@@ -382,7 +407,7 @@ public class ContentComposerActivity extends HalloActivity {
             mediaVerticalScrollView.setShouldScrollToBottom(hasFocus);
         });
 
-        if (replyPostId != null || !isMediaPost) {
+        if (replyPostId != null || (!isMediaPost && !voiceNotePost)) {
             editText.requestFocus();
         }
 
@@ -560,6 +585,38 @@ public class ContentComposerActivity extends HalloActivity {
                 postLinkPreviewView.setLoading(false);
                 postLinkPreviewView.updateUrlPreview(null);
             });
+
+            voicePostComposerView.bindHost(this, new VoicePostComposerView.Host() {
+                @Override
+                public void onStartRecording() {
+                    viewModel.getVoiceNoteRecorder().record();
+                }
+
+                @Override
+                public void onStopRecording() {
+                    viewModel.finishRecording();
+                    voicePostComposerView.bindAudioDraft(audioDurationLoader, viewModel.getVoiceDraft());
+                }
+
+                @Override
+                public void onSend() {
+                    final boolean supportsWideColor = ActivityUtils.supportsWideColor(ContentComposerActivity.this);
+                    verifyVideosDurationWithinLimit(
+                            () -> {},
+                            () -> viewModel.prepareContent(chatId, groupId, null, null, supportsWideColor));
+                }
+
+                @Override
+                public void onAttachMedia() {
+
+                }
+
+                @Override
+                public void onDeleteRecording() {
+                    viewModel.deleteDraft();
+                    voicePostComposerView.bindAudioDraft(audioDurationLoader, null);
+                }
+            }, viewModel.getVoiceNotePlayer(), viewModel.getVoiceNoteRecorder());
         }
     }
 
@@ -738,6 +795,7 @@ public class ContentComposerActivity extends HalloActivity {
         urlPreviewLoader.destroy();
         mediaThumbnailLoader.destroy();
         textContentLoader.destroy();
+        audioDurationLoader.destroy();
     }
 
     @Override

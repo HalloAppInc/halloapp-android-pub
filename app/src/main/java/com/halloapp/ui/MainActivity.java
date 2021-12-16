@@ -321,8 +321,9 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                     }
                 });
                 haFabView.addSubFab(R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);
-                haFabView.addSubFab(R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
+                haFabView.addSubFab(R.id.add_post_voice, R.drawable.ic_keyboard_voice, R.string.voice_post);
                 haFabView.addSubFab(R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
+                haFabView.addSubFab(R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
                 haFabView.addTitle(R.string.new_post);
             } else {
                 haFabView.hide();
@@ -340,6 +341,12 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_TEXT);
             } else {
                 startTextPost();
+            }
+        } else if (id == R.id.add_post_voice) {
+            if (!hasPermissions) {
+                ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_TEXT);
+            } else {
+                startVoicePost();
             }
         } else if (id == R.id.add_post_gallery) {
             if (!hasPermissions) {
@@ -359,6 +366,12 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
     private void startTextPost() {
         startActivity(new Intent(this, ContentComposerActivity.class));
+    }
+
+    private void startVoicePost() {
+        Intent i = new Intent(this, ContentComposerActivity.class);
+        i.putExtra(ContentComposerActivity.EXTRA_VOICE_NOTE_POST, true);
+        startActivity(i);
     }
 
     private void startMediaPost() {

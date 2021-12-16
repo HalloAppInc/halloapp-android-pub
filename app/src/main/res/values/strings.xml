@@ -25,6 +25,8 @@
     <string name="camera_post">Camera</string>
     <string name="gallery_post">Gallery</string>
     <string name="text_post">Text</string>
+    <!-- Label for voice post option -->
+    <string name="voice_post">Voice</string>
     <string name="bad_image">Unsupported media type</string>
     <string name="time_diff_now">Now</string>
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
