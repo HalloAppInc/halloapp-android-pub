@@ -255,7 +255,7 @@ public class CallManager {
         }
         if (!CallType.AUDIO.equals(callType)) {
             Log.i("CallManager: rejecting incoming call " + callId + " from " + peerUid + " because it's not audio");
-            callsApi.sendEndCall(callId, peerUid, EndCall.Reason.BUSY);
+            callsApi.sendEndCall(callId, peerUid, EndCall.Reason.VIDEO_UNSUPPORTED);
             storeMissedCallMsg(peerUid, callId, callType);
             return;
         }
