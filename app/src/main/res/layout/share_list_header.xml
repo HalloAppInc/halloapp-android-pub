@@ -34,7 +34,9 @@
             android:id="@+id/my_contacts_selection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"/>
+            android:layout_gravity="center_vertical"
+            android:clickable="false"
+            android:focusable="false"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -76,7 +78,9 @@
             android:id="@+id/contacts_except_selection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"/>
+            android:layout_gravity="center_vertical"
+            android:clickable="false"
+            android:focusable="false"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -118,7 +122,9 @@
             android:id="@+id/only_with_selection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"/>
+            android:layout_gravity="center_vertical"
+            android:clickable="false"
+            android:focusable="false"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
