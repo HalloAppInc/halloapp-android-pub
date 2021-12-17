@@ -243,9 +243,15 @@ public class CallManager {
     }
 
     public void handleIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType, @Nullable String webrtcOffer,
-                                    @NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers,
-                                    @NonNull Long timestamp) {
+                                   @NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers,
+                                   long timestamp, long serverSentTimestamp) {
         Log.i("CallManager.handleIncomingCall " + callId + " peerUid: " + peerUid + " " + callType + " " + timestamp);
+        if (serverSentTimestamp > 0 && timestamp > 0 && serverSentTimestamp - timestamp > Constants.CALL_RINGING_TIMEOUT_MS) {
+            Log.i("CallManager: received stale call " + callId + " from " + peerUid);
+            Log.i("CallManager: timestamp: " + timestamp + " serverSentTimestamp: " + serverSentTimestamp + " diff: " + (serverSentTimestamp - timestamp));
+            storeMissedCallMsg(peerUid, callId, callType);
+            return;
+        }
         if (this.state != State.IDLE) {
             Log.i("CallManager: rejecting incoming call " + callId + " from " + peerUid + " because already in call.");
             Log.i(toString());

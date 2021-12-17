@@ -111,7 +111,8 @@ public class CallsApi extends Connection.Observer {
         List<TurnServer> turnServers = incomingCall.getTurnServersList();
         CallType callType = incomingCall.getCallType();
         long timestamp = incomingCall.getTimestampMs();
-        CallManager.getInstance().handleIncomingCall(callId, peerUid, callType, webrtcOffer, stunServers, turnServers, timestamp);
+        long serverSentTimestamp = incomingCall.getServerSentTsMs();
+        CallManager.getInstance().handleIncomingCall(callId, peerUid, callType, webrtcOffer, stunServers, turnServers, timestamp, serverSentTimestamp);
         connection.sendAck(ackId);
     }
 
