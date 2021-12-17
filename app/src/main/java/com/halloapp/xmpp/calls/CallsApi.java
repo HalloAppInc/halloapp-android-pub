@@ -158,14 +158,14 @@ public class CallsApi extends Connection.Observer {
         connection.sendAck(ackId);
     }
 
-    public @Nullable Observable<StartCallResponseIq> startCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType, @NonNull String webrtcOfferString) throws CryptoException {
+    public Observable<StartCallResponseIq> startCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType, @NonNull String webrtcOfferString) throws CryptoException {
         WebRtcSessionDescription webrtcOffer = encryptCallPayload(webrtcOfferString, peerUid);
         Log.i("CallsApi: encrypted offer: " + webrtcOffer.getEncPayload().size());
         final StartCallIq requestIq = new StartCallIq(callId, peerUid, callType, webrtcOffer);
         return connection.sendRequestIq(requestIq);
     }
 
-    public @Nullable Observable<GetCallServersResponseIq> getCallServers(@NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType) {
+    public Observable<GetCallServersResponseIq> getCallServers(@NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType) {
         final GetCallServersIq requestIq = new GetCallServersIq(callId, peerUid, callType);
         return connection.sendRequestIq(requestIq);
     }

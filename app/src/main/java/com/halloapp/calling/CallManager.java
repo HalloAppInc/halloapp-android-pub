@@ -100,7 +100,7 @@ public class CallManager {
 
     private ComponentName callService;
     @Nullable
-    private PowerManager.WakeLock proximityLock;
+    private final PowerManager.WakeLock proximityLock;
 
     @NonNull
     private final Timer timer = new Timer();
@@ -108,7 +108,7 @@ public class CallManager {
     @Nullable
     private TimerTask ringingTimeoutTimerTask;
     @NonNull
-    private CallStats callStats;
+    private final CallStats callStats;
 
     private long callStartTimestamp = 0;
 
@@ -245,7 +245,7 @@ public class CallManager {
     public void handleIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType, @Nullable String webrtcOffer,
                                     @NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers,
                                     @NonNull Long timestamp) {
-        Log.i("CallManager.handleIncomingCall " + callId + " peerUid: " + peerUid + " " + callType);
+        Log.i("CallManager.handleIncomingCall " + callId + " peerUid: " + peerUid + " " + callType + " " + timestamp);
         if (this.state != State.IDLE) {
             Log.i("CallManager: rejecting incoming call " + callId + " from " + peerUid + " because already in call.");
             Log.i(toString());
@@ -304,7 +304,7 @@ public class CallManager {
     }
 
     public void handleAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @Nullable String webrtcOffer, @NonNull Long timestamp) {
-        Log.i("AnswerCall callId: " + callId + " peerUid: " + peerUid);
+        Log.i("AnswerCall callId: " + callId + " peerUid: " + peerUid + " " + timestamp);
 
         if (this.callId == null || !this.callId.equals(callId)) {
             Log.e("Ignoring incoming answer call msg callId: " + callId + " from peerUid: " + peerUid + " " + toString());
@@ -334,7 +334,7 @@ public class CallManager {
 
     public void handleEndCall(@NonNull String callId, @NonNull UserId peerUid,
                                @NonNull EndCall.Reason reason, @NonNull Long timestamp) {
-        Log.i("got EndCall callId: " + callId + " peerUid: " + peerUid + " reason: " + reason.name());
+        Log.i("got EndCall callId: " + callId + " peerUid: " + peerUid + " reason: " + reason.name() + " " + timestamp);
         if (reason == EndCall.Reason.CANCEL || reason == EndCall.Reason.TIMEOUT) {
             // TODO(nikola): fix here when we do video calls
             storeMissedCallMsg(peerUid, callId, CallType.AUDIO);
@@ -355,7 +355,11 @@ public class CallManager {
                                     @NonNull String sdpMediaId, int sdpMediaLineIndex, @NonNull String sdp) {
         Log.i("CallManager: got IceCandidate callId: " + callId + " " + sdpMediaId + ":" + sdpMediaLineIndex + ": sdp: " + sdp);
         IceCandidate candidate = new IceCandidate(sdpMediaId, sdpMediaLineIndex, sdp);
-        // TODO(nikola): more checks for callId and peerUid
+        if (this.callId == null || !this.callId.equals(callId)) {
+            // TODO(nikola): This code is similar to many other messages
+            Log.i("CallManager: got IceCandidates for the wrong callId: " + callId + " peerUid: " + peerUid + " state: " + toString());
+            return;
+        }
         if (peerConnection != null) {
             peerConnection.addIceCandidate(candidate);
         }
@@ -510,6 +514,7 @@ public class CallManager {
         Observable<GetCallServersResponseIq> observable = callsApi.getCallServers(callId, peerUid, CallType.AUDIO);
         observable.onResponse(response -> {
             Log.i("CallManager: got call servers");
+            // TODO(nikola): if we don't get any servers from the backend we should fail the call.
             setStunTurnServers(response.stunServers, response.turnServers);
             doStartCall();
         }).onError(e -> {
@@ -548,11 +553,9 @@ public class CallManager {
                         // TODO(nikola): handle call not ok
                     }
                     // TODO(nikola): handle the exceptions. Call stop()
-                } catch (ObservableErrorException e) {
-                    Log.e("CallManager: Failed to send the start call IQ callId: " + callId + " peerUid: " + peerUid, e);
                 } catch (CryptoException e) {
                     Log.e("CallManager: CryptoException, Failed to send the start call IQ callId: " + callId + " peerUid: " + peerUid, e);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException | ObservableErrorException e) {
                     Log.e("CallManager: Failed to send the start call IQ callId: " + callId + " peerUid: " + peerUid, e);
                 }
             }
@@ -734,7 +737,7 @@ public class CallManager {
             Log.i("onCallTimeout");
             if (this.callId != null && this.callId.equals(callId)) {
                 endCall(EndCall.Reason.TIMEOUT);
-                if (this.isInitiator == false && this.callId != null && this.state == State.INCOMING_RINGING) {
+                if (!this.isInitiator && this.callId != null && this.state == State.INCOMING_RINGING) {
                     // TODO(nikola): fix here when we do video)
                     storeMissedCallMsg(this.peerUid, this.callId, CallType.AUDIO);
                 }
@@ -818,12 +821,14 @@ public class CallManager {
                 return "ringing";
             case State.IN_CALL:
                 return "in-call";
+            case State.END:
+                return "end";
             default:
                 return "unknown";
         }
     }
 
-    public String toString() {
+    public @NonNull String toString() {
         return "CallManager{state=" + stateToString(this.state) + ",callId=" + this.callId + ",peerUid=" + peerUid + "}";
     }
 
@@ -832,13 +837,11 @@ public class CallManager {
         // Store existing audio settings and change audio mode to
         // MODE_IN_COMMUNICATION for best possible VoIP performance.
         Log.i("Starting the audio manager " + audioManager);
-        audioManager.start((audioDevice, availableAudioDevices) -> {
-            Log.i("onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + audioDevice);
-        });
+        audioManager.start((audioDevice, availableAudioDevices) -> Log.i("onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + audioDevice));
     }
 
     private void stopAudioManager() {
-        mainHandler.post(() -> audioManager.stop());
+        mainHandler.post(audioManager::stop);
     }
 
     private void storeMissedCallMsg(@NonNull UserId userId, @NonNull String callId, @NonNull CallType callType) {
