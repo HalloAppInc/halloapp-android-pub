@@ -33,11 +33,13 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.content.ContentDb;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.camera.CameraActivity;
+import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Preconditions;
@@ -186,8 +188,11 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
             }
         });
         fabView.addSubFab(R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);
-        fabView.addSubFab(R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
+        if (ServerProps.getInstance().getVoicePostsEnabled()) {
+            fabView.addSubFab(R.id.add_post_voice, R.drawable.ic_keyboard_voice, R.string.voice_post);
+        }
         fabView.addSubFab(R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
+        fabView.addSubFab(R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
         fabView.addTitle(R.string.new_post);
 
         viewModel.members.getLiveData().observe(this, members -> {
@@ -251,6 +256,11 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
             final Intent intent = new Intent(this, CameraActivity.class);
             intent.putExtra(CameraActivity.EXTRA_GROUP_ID, groupId);
             startActivity(intent);
+        } else if (id == R.id.add_post_voice) {
+            Intent i = new Intent(this, ContentComposerActivity.class);
+            i.putExtra(CameraActivity.EXTRA_GROUP_ID, groupId);
+            i.putExtra(ContentComposerActivity.EXTRA_VOICE_NOTE_POST, true);
+            startActivity(i);
         }
         fabView.close(false);
     }
