@@ -119,6 +119,7 @@
     <color name="share_link_post_bg">#F3F2EF</color>
 
     <color name="voice_note_circle">#E6CAE3FF</color>
+    <color name="voice_post_circle">#4D3A82F7</color>
     <color name="voice_note_droplet_bg">@color/color_secondary</color>
     <color name="voice_draft_button">#777260</color>
     <color name="voice_draft_bg">@color/black_10</color>
