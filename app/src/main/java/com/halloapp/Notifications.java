@@ -29,6 +29,7 @@ import androidx.core.app.TaskStackBuilder;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.IconCompat;
 
+import com.halloapp.calling.CallManager;
 import com.halloapp.calling.CallNotificationBroadcastReceiver;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
@@ -677,8 +678,8 @@ public class Notifications {
     }
 
     @WorkerThread
-    public Notification getOngoingCallNotification(UserId peerUid) {
-        Intent callIntent = new Intent(context, CallActivity.class);
+    public Notification getOngoingCallNotification(UserId peerUid, boolean isInitiator) {
+        Intent callIntent = CallActivity.getOngoingCallIntent(context, peerUid, isInitiator);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, callIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         final Contact contact = ContactsDb.getInstance().getContact(peerUid);

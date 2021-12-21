@@ -192,7 +192,7 @@ public class CallManager {
 
     private ComponentName startCallService() {
         Log.i("startCallService");
-        Intent serviceIntent = CallService.getIntent(peerUid);
+        Intent serviceIntent = CallService.getIntent(peerUid, isInitiator);
         if (Build.VERSION.SDK_INT >= 26) {
             return appContext.get().startForegroundService(serviceIntent);
         } else {

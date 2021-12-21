@@ -288,6 +288,13 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         return intent;
     }
 
+    public static Intent getOngoingCallIntent(@NonNull Context context, @NonNull UserId userId, boolean isInitiator) {
+        Intent intent = new Intent(context, CallActivity.class);
+        intent.putExtra(EXTRA_PEER_UID, userId.rawId());
+        intent.putExtra(EXTRA_IS_INITIATOR, isInitiator);
+        return intent;
+    }
+
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         Log.i("Call permissions Granted " + requestCode + " " + perms);
