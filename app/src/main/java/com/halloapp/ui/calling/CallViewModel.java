@@ -65,7 +65,7 @@ public class CallViewModel extends ViewModel implements CallObserver {
     }
 
     public boolean isCalling() {
-        return state.getValue() != null && state.getValue() == CallManager.State.CALLING;
+        return state.getValue() != null && (state.getValue() == CallManager.State.CALLING || state.getValue() == CallManager.State.CALLING_RINGING);
     }
 
     public boolean isIdle() {
