@@ -307,10 +307,10 @@ public class Registration {
             }
             return new RegistrationRequestResult(phone, retryTime);
         } catch (IOException e) {
-            Log.e("Registration.requestRegistration", e);
+            Log.e("Registration.requestRegistration network failed", e);
             return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_NETWORK, 0);
         } catch (NoiseException | BadPaddingException | ShortBufferException e) {
-            Log.e("Registration.requestRegistration", e);
+            Log.e("Registration.requestRegistration noise failed", e);
             return new RegistrationRequestResult(RegistrationRequestResult.RESULT_FAILED_SERVER, RETRY_DEFAULT_WAIT_TIME_SECONDS);
         } finally {
             if (noiseSocket != null && !noiseSocket.isClosed()) {
@@ -418,10 +418,10 @@ public class Registration {
             me.saveNoiseKey(keypair);
             return new RegistrationVerificationResult(uid, null, phone);
         } catch (IOException e) {
-            Log.e("Registration.verifyRegistration", e);
+            Log.e("Registration.verifyRegistration network failed", e);
             return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_NETWORK);
         } catch (BadPaddingException | NoiseException | ShortBufferException e) {
-            Log.e("Registration.verifyRegistration", e);
+            Log.e("Registration.verifyRegistration noise failed", e);
             return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
         } finally {
             if (noiseSocket != null && !noiseSocket.isClosed()) {
