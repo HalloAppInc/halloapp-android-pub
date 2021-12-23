@@ -156,6 +156,10 @@
     <string name="mark_read_notification_label">Mark read</string>
     <string name="reply">Reply</string>
     <string name="close">Close</string>
+    <!-- Audio post composer title -->
+    <string name="audio_post_compose_title">New audio post</string>
+    <!-- Audio post record instruction -->
+    <string name="audio_post_tap_to_record">Tap to record</string>
     <!-- Dialog shown to user before requesting contact permissions -->
     <string name="contact_permissions_request">Allow HalloApp access to your contacts so you can send and receive updates</string>
     <!-- Dialog shown to user before requesting contact permissions, but user has previously denied them, so they must go to settings -->
