@@ -26,26 +26,6 @@ import java.util.Objects;
 
 public class Message extends ContentItem {
 
-    public final ChatId chatId;
-
-    public final @Type int type;
-    public final @Usage int usage;
-    public final @State int state;
-
-    public final int rerequestCount;
-
-    public final String replyPostId;
-    public final int replyPostMediaIndex;
-    public final String replyMessageId;
-    public final int replyMessageMediaIndex;
-    public final UserId replyMessageSenderId;
-
-    // stats not read from DB
-    public String failureReason;
-    public String clientVersion;
-    public String senderVersion;
-    public String senderPlatform;
-
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({TYPE_CHAT, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_VOICE_NOTE, TYPE_RETRACTED})
@@ -89,6 +69,26 @@ public class Message extends ContentItem {
     public static final int STATE_INCOMING_DECRYPT_FAILED = 4;
     public static final int STATE_OUTGOING_PLAYED = 5;
     public static final int STATE_INCOMING_PLAYED = 6;
+
+    public final ChatId chatId;
+
+    public final @Type int type;
+    public final @Usage int usage;
+    public final @State int state;
+
+    public final int rerequestCount;
+
+    public final String replyPostId;
+    public final int replyPostMediaIndex;
+    public final String replyMessageId;
+    public final int replyMessageMediaIndex;
+    public final UserId replyMessageSenderId;
+
+    // stats not read from DB
+    public String failureReason;
+    public String clientVersion;
+    public String senderVersion;
+    public String senderPlatform;
 
 
     public Message(

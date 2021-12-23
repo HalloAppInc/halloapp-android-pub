@@ -20,29 +20,6 @@ import java.util.Objects;
 
 public class Comment extends ContentItem {
 
-    public final String postId;
-    public final String parentCommentId;
-
-    private Post parentPost;
-
-    public final @TransferredState int transferred;
-    public boolean seen;
-    public boolean played;
-    public int rerequestCount;
-
-    // stats not read from DB
-    public String failureReason;
-    public String clientVersion;
-    public String senderVersion;
-    public String senderPlatform;
-
-    @Nullable
-    public Contact senderContact;
-
-    public Comment parentComment;
-
-    public final List<Mention> mentions = new ArrayList<>();
-
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({TRANSFERRED_NO, TRANSFERRED_YES, TRANSFERRED_DECRYPT_FAILED})
     public @interface TransferredState {}
@@ -58,7 +35,27 @@ public class Comment extends ContentItem {
     public static final int TYPE_VOICE_NOTE = 2;
     public static final int TYPE_RETRACTED = 3;
 
+    public final String postId;
+    public final String parentCommentId;
+    private Post parentPost;
+
+    public final @TransferredState int transferred;
+    public boolean seen;
     public @Type int type;
+    public boolean played;
+    public int rerequestCount;
+
+    // stats not read from DB
+    public String failureReason;
+    public String clientVersion;
+    public String senderVersion;
+    public String senderPlatform;
+
+    @Nullable
+    public Contact senderContact;
+    public Comment parentComment;
+
+    public final List<Mention> mentions = new ArrayList<>();
 
     public Comment(
             long rowId,

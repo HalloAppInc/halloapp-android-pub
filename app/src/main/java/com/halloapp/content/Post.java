@@ -17,14 +17,6 @@ import java.util.Objects;
 
 public class Post extends ContentItem {
 
-    public final @TransferredState int transferred;
-    public @SeenState int seen;
-
-    @Override
-    public List<Mention> getMentions() {
-        return mentions;
-    }
-
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({SEEN_NO, SEEN_YES_PENDING, SEEN_YES, SEEN_NO_HIDDEN})
     public @interface SeenState {}
@@ -50,24 +42,6 @@ public class Post extends ContentItem {
     public static final int TYPE_ZERO_ZONE = 4;
     public static final int TYPE_VOICE_NOTE = 5;
 
-    public int commentCount;
-    public int unseenCommentCount;
-    public int seenByCount;
-    public int rerequestCount;
-    public Comment firstComment;
-
-    // stats not read from DB
-    public String failureReason;
-    public String clientVersion;
-    public String senderVersion;
-    public String senderPlatform;
-
-    private @PrivacyList.Type String audienceType;
-    private List<UserId> audienceList;
-    private List<UserId> excludeList;
-
-    public @Type int type;
-
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({USAGE_POST, USAGE_CREATE_GROUP, USAGE_ADD_MEMBERS, USAGE_REMOVE_MEMBER, USAGE_MEMBER_LEFT, USAGE_PROMOTE, USAGE_DEMOTE, USAGE_AUTO_PROMOTE, USAGE_NAME_CHANGE, USAGE_AVATAR_CHANGE, USAGE_GROUP_DELETED, USAGE_MEMBER_JOINED, USAGE_GROUP_THEME_CHANGED, USAGE_GROUP_DESCRIPTION_CHANGED})
     public @interface Usage {}
@@ -86,7 +60,43 @@ public class Post extends ContentItem {
     public static final int USAGE_GROUP_THEME_CHANGED = 12;
     public static final int USAGE_GROUP_DESCRIPTION_CHANGED = 13;
 
+    public static Post build(
+            long rowId,
+            UserId senderUserId,
+            String postId,
+            long timestamp,
+            @TransferredState int transferred,
+            @SeenState int seen,
+            @Type int type,
+            String text) {
+        switch (type) {
+            case Post.TYPE_VOICE_NOTE:
+                return new VoiceNotePost(rowId, senderUserId, postId, timestamp, transferred, seen);
+        }
+
+        return new Post(rowId, senderUserId, postId, timestamp, transferred, seen, type, text);
+    }
+
+    public final @TransferredState int transferred;
+    public @SeenState int seen;
+    public @Type int type;
     public @Usage int usage;
+
+    public int commentCount;
+    public int unseenCommentCount;
+    public int seenByCount;
+    public int rerequestCount;
+    public Comment firstComment;
+
+    // stats not read from DB
+    public String failureReason;
+    public String clientVersion;
+    public String senderVersion;
+    public String senderPlatform;
+
+    private @PrivacyList.Type String audienceType;
+    private List<UserId> audienceList;
+    private List<UserId> excludeList;
 
     public GroupId parentGroup;
 
@@ -121,21 +131,9 @@ public class Post extends ContentItem {
         this.seen = seen;
     }
 
-    public static Post build(
-            long rowId,
-            UserId senderUserId,
-            String postId,
-            long timestamp,
-            @TransferredState int transferred,
-            @SeenState int seen,
-            @Type int type,
-            String text) {
-        switch (type) {
-            case Post.TYPE_VOICE_NOTE:
-                return new VoiceNotePost(rowId, senderUserId, postId, timestamp, transferred, seen);
-        }
-
-        return new Post(rowId, senderUserId, postId, timestamp, transferred, seen, type, text);
+    @Override
+    public List<Mention> getMentions() {
+        return mentions;
     }
 
     @Override
