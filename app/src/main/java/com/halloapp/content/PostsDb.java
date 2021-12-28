@@ -30,6 +30,7 @@ import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.CommentContainer;
 import com.halloapp.proto.clients.Video;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptStats;
 import com.halloapp.util.stats.GroupDecryptStats;
@@ -166,6 +167,7 @@ class PostsDb {
                 values.put(PostsTable.COLUMN_TYPE, post.type);
                 values.put(PostsTable.COLUMN_USAGE, post.usage);
                 values.put(PostsTable.COLUMN_RECEIVE_TIME, now);
+                values.put(PostsTable.COLUMN_PROTO_HASH, post.protoHash);
                 post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
                 mediaDb.addMedia(post);
 
@@ -435,6 +437,23 @@ class PostsDb {
     }
 
     @WorkerThread
+    void setPostProtoHash(@NonNull UserId senderUserId, @NonNull String postId, @Nullable byte[] protoHash) {
+        Log.i("ContentDb.setPostProtoHash: senderUserId=" + senderUserId + " postId=" + postId + " protoHash=" + (protoHash == null ? null : StringUtils.bytesToHexString(protoHash)));
+        final ContentValues values = new ContentValues();
+        values.put(PostsTable.COLUMN_PROTO_HASH, protoHash);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
+                    PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=? AND " + PostsTable.COLUMN_PROTO_HASH + " IS NULL",
+                    new String [] {senderUserId.rawId(), postId},
+                    SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLException ex) {
+            Log.e("ContentDb.setPostProtoHash: failed");
+            throw ex;
+        }
+    }
+
+    @WorkerThread
     void setMediaTransferred(@NonNull Post post, @NonNull Media media) {
         Log.i("ContentDb.setMediaTransferred: post=" + post + " media=" + media);
         final ContentValues values = new ContentValues();
@@ -677,6 +696,7 @@ class PostsDb {
                 values.put(CommentsTable.COLUMN_TEXT, comment.text);
                 values.put(CommentsTable.COLUMN_TYPE, comment.type);
                 values.put(CommentsTable.COLUMN_RECEIVE_TIME, now);
+                values.put(CommentsTable.COLUMN_PROTO_HASH, comment.protoHash);
                 comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
 
                 mediaDb.addMedia(comment);
@@ -761,6 +781,26 @@ class PostsDb {
                     SQLiteDatabase.CONFLICT_ABORT);
         } catch (SQLException ex) {
             Log.e("ContentDb.setCommentTransferred: failed");
+            throw ex;
+        }
+    }
+
+    @WorkerThread
+    void setCommentProtoHash(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId, @Nullable byte[] protoHash) {
+        Log.i("ContentDb.setCommentProtoHash: senderUserId=" + commentSenderUserId + " commentId=" + commentId + " protoHash=" + (protoHash == null ? null : StringUtils.bytesToHexString(protoHash)));
+        final ContentValues values = new ContentValues();
+        values.put(CommentsTable.COLUMN_PROTO_HASH, protoHash);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
+                            CommentsTable.COLUMN_POST_ID + "=? AND " +
+                            CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "=? AND " +
+                            CommentsTable.COLUMN_COMMENT_ID + "=? AND " +
+                            CommentsTable.COLUMN_PROTO_HASH + " IS NULL",
+                    new String [] {postId, commentSenderUserId.rawId(), commentId},
+                    SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLException ex) {
+            Log.e("ContentDb.setCommentProtoHash: failed");
             throw ex;
         }
     }

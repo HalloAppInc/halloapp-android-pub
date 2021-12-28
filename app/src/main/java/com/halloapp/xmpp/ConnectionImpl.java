@@ -27,6 +27,7 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.CryptoException;
+import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.group.GroupFeedSessionManager;
 import com.halloapp.crypto.group.GroupSetupInfo;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
@@ -112,6 +113,7 @@ import com.halloapp.xmpp.util.ResponseHandler;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.nio.ByteBuffer;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -609,15 +611,16 @@ public class ConnectionImpl extends Connection {
             return;
         }
         HalloIq publishIq;
+        byte[] payload = containerBuilder.build().toByteArray();
+        final byte[] protoHash = CryptoUtils.sha256(payload);
+
         if (post.getParentGroup() == null) {
-            byte[] payload = containerBuilder.build().toByteArray();
             FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, mediaCounts);
             FeedUpdateIq updateIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, feedItem);
             updateIq.setPostAudience(post.getAudienceType(), post.getAudienceList());
             publishIq = updateIq;
         } else {
             GroupId groupId = post.getParentGroup();
-            byte[] payload = containerBuilder.build().toByteArray();
             byte[] encPayload = null;
             List<SenderStateBundle> senderStateBundles = new ArrayList<>();
             byte[] audienceHash = null;
@@ -645,7 +648,7 @@ public class ConnectionImpl extends Connection {
             publishIq = new GroupFeedUpdateIq(post.getParentGroup(), GroupFeedUpdateIq.Action.PUBLISH, feedItem);
         }
         sendIqRequestAsync(publishIq, true)
-                .onResponse(response -> connectionObservers.notifyOutgoingPostSent(post.id))
+                .onResponse(response -> connectionObservers.notifyOutgoingPostSent(post.id, protoHash))
                 .onError(e -> {
                     Log.e("connection: cannot send post", e);
                     if (e instanceof IqErrorException) {
@@ -727,7 +730,7 @@ public class ConnectionImpl extends Connection {
     public void retractPost(@NonNull String postId) {
         FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null, null));
         sendIqRequestAsync(requestIq, true)
-                .onResponse(response -> connectionObservers.notifyOutgoingPostSent(postId))
+                .onResponse(response -> connectionObservers.notifyOutgoingPostSent(postId, null))
                 .onError(e -> Log.e("connection: cannot retract post", e));
     }
 
@@ -735,13 +738,14 @@ public class ConnectionImpl extends Connection {
     public void retractGroupPost(@NonNull GroupId groupId, @NonNull String postId) {
         GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null, null));
         sendIqRequestAsync(requestIq, true)
-                .onResponse(response -> connectionObservers.notifyOutgoingPostSent(postId))
+                .onResponse(response -> connectionObservers.notifyOutgoingPostSent(postId, null))
                 .onError(e -> Log.e("connection: cannot retract post", e));
     }
 
     @Override
     public void sendComment(@NonNull Comment comment) {
         byte[] payload = FeedContentEncoder.encodeComment(comment);
+        final byte[] protoHash = CryptoUtils.sha256(payload);
 
         MediaCounts mediaCounts = new MediaCounts(comment.media);
 
@@ -782,7 +786,7 @@ public class ConnectionImpl extends Connection {
             requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.PUBLISH, feedItem);
         }
         sendIqRequestAsync(requestIq, true)
-                .onResponse(response -> connectionObservers.notifyOutgoingCommentSent(comment.postId, comment.id))
+                .onResponse(response -> connectionObservers.notifyOutgoingCommentSent(comment.postId, comment.id, protoHash))
                 .onError(e -> {
                     Log.e("connection: cannot send comment", e);
                     if (e instanceof IqErrorException) {
@@ -870,7 +874,7 @@ public class ConnectionImpl extends Connection {
         FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null, null);
         FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, commentItem);
         sendIqRequestAsync(requestIq, true)
-                .onResponse(response -> connectionObservers.notifyOutgoingCommentSent(postId, commentId))
+                .onResponse(response -> connectionObservers.notifyOutgoingCommentSent(postId, commentId, null))
                 .onError(e -> Log.e("connection: cannot retract comment", e));
     }
 
@@ -893,7 +897,7 @@ public class ConnectionImpl extends Connection {
         FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null, null);
         GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, commentItem);
         sendIqRequestAsync(requestIq, true)
-                .onResponse(r -> connectionObservers.notifyOutgoingCommentSent(postId, commentId))
+                .onResponse(r -> connectionObservers.notifyOutgoingCommentSent(postId, commentId, null))
                 .onError(e -> Log.e("connection: cannot retract comment", e));
     }
 
@@ -1621,6 +1625,8 @@ public class ConnectionImpl extends Connection {
                 }
             }
 
+            final byte[] protoHash = CryptoUtils.sha256(payload);
+
             Container container;
             try {
                 container = Container.parseFrom(payload);
@@ -1650,6 +1656,7 @@ public class ConnectionImpl extends Connection {
                     np.mentions.add(mention);
                 }
 
+                np.protoHash = protoHash;
                 np.clientVersion = Constants.FULL_VERSION;
                 np.senderPlatform = senderPlatform;
                 np.senderVersion = senderVersion;
@@ -1662,6 +1669,7 @@ public class ConnectionImpl extends Connection {
                 long timeStamp = 1000L * protoPost.getTimestamp();
 
                 Post post = feedContentParser.parsePost(protoPost.getId(), posterUserId, timeStamp, postContainer, errorMessage != null);
+                post.protoHash = protoHash;
                 post.clientVersion = Constants.FULL_VERSION;
                 post.senderPlatform = senderPlatform;
                 post.senderVersion = senderVersion;
@@ -1732,6 +1740,8 @@ public class ConnectionImpl extends Connection {
                 }
             }
 
+            final byte[] protoHash = CryptoUtils.sha256(payload);
+
             Container container;
             try {
                 container = Container.parseFrom(payload);
@@ -1765,6 +1775,7 @@ public class ConnectionImpl extends Connection {
                     comment.mentions.add(mention);
                 }
 
+                comment.protoHash = protoHash;
                 comment.clientVersion = Constants.FULL_VERSION;
                 comment.senderPlatform = senderPlatform;
                 comment.senderVersion = senderVersion;
@@ -1778,6 +1789,7 @@ public class ConnectionImpl extends Connection {
 
                 Comment comment = feedContentParser.parseComment(protoComment.getId(), protoComment.getParentCommentId(), publisherId, timestamp, commentContainer, errorMessage != null);
 
+                comment.protoHash = protoHash;
                 comment.clientVersion = Constants.FULL_VERSION;
                 comment.senderPlatform = senderPlatform;
                 comment.senderVersion = senderVersion;

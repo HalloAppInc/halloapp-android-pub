@@ -18,6 +18,7 @@ import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.server.GroupInviteLink;
 import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
+import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.IdentityKey;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
@@ -66,8 +67,8 @@ public class GroupsApi {
         });
     }
 
-    public Observable<Boolean> addRemoveMembers(@NonNull GroupId groupId, @Nullable List<UserId> addUids, @Nullable List<UserId> removeUids) {
-        final AddRemoveMembersIq requestIq = new AddRemoveMembersIq(groupId, addUids, removeUids);
+    public Observable<Boolean> addRemoveMembers(@NonNull GroupId groupId, @Nullable List<UserId> addUids, @Nullable List<UserId> removeUids, @Nullable HistoryResend historyResend) {
+        final AddRemoveMembersIq requestIq = new AddRemoveMembersIq(groupId, addUids, removeUids, historyResend);
         final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
             boolean success = true;
@@ -80,28 +81,8 @@ public class GroupsApi {
                 }
             }
 
-
             if (!addedUsers.isEmpty()) {
-                contentDb.addRemoveGroupMembers(groupId, null, null, addedUsers, new ArrayList<>(), () -> {
-                    StringBuilder sb = new StringBuilder();
-                    for (MemberInfo memberInfo : addedUsers) {
-                        sb.append(memberInfo.userId.rawId()).append(",");
-                    }
-                    byte[] payload = sb.toString().getBytes();
-                    try {
-                        GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
-                        byte[] encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
-                        GroupsHistoryResendIq historyResendIq = new GroupsHistoryResendIq(groupId, groupSetupInfo, encPayload);
-                        final Observable<HalloIq> resendObservable = connection.sendRequestIq(historyResendIq);
-                        resendObservable.onResponse(res -> {
-                            Log.d("History resend request succeeded");
-                        }).onError(e -> {
-                            Log.w("History resend request failed", e);
-                        });
-                    } catch (CryptoException | NoSuchAlgorithmException e) {
-                        Log.e("Failed to encrypt member list for history resend request", e);
-                    }
-                });
+                contentDb.addRemoveGroupMembers(groupId, null, null, addedUsers, new ArrayList<>(), null);
             }
 
             return success;

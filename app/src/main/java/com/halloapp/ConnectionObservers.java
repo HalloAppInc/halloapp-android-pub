@@ -109,10 +109,10 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyOutgoingPostSent(@NonNull String postId) {
+    public void notifyOutgoingPostSent(@NonNull String postId, @Nullable byte[] protoHash) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onOutgoingPostSent(postId);
+                observer.onOutgoingPostSent(postId, protoHash);
             }
         }
     }
@@ -133,10 +133,10 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyOutgoingCommentSent(@NonNull String postId, @NonNull String commentId) {
+    public void notifyOutgoingCommentSent(@NonNull String postId, @NonNull String commentId, @Nullable byte[] protoHash) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onOutgoingCommentSent(postId, commentId);
+                observer.onOutgoingCommentSent(postId, commentId, protoHash);
             }
         }
     }

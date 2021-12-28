@@ -62,9 +62,9 @@ public abstract class Connection {
         public void onOfflineQueueComplete() {}
         public void onLoginFailed(boolean deleted) {}
         public void onClientVersionExpiringSoon(int daysLeft) {}
-        public void onOutgoingPostSent(@NonNull String postId) {}
+        public void onOutgoingPostSent(@NonNull String postId, @Nullable byte[] protoHash) {}
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId) {}
-        public void onOutgoingCommentSent(@NonNull String postId, @NonNull String commentId) {}
+        public void onOutgoingCommentSent(@NonNull String postId, @NonNull String commentId, @Nullable byte[] protoHash) {}
         public void onAudienceHashMismatch(@NonNull ContentItem contentItem) {}
         public void onIncomingFeedItemsReceived(@NonNull List<Post> posts, @NonNull List<Comment> comment, @NonNull String ackId) {}
         public void onIncomingPostSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {}

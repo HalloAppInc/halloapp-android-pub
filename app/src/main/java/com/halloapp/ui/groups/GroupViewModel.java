@@ -9,6 +9,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
@@ -16,17 +18,30 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.crypto.CryptoException;
+import com.halloapp.crypto.group.GroupFeedSessionManager;
+import com.halloapp.crypto.group.GroupSetupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.nux.ZeroZoneManager;
+import com.halloapp.props.ServerProps;
+import com.halloapp.proto.clients.GroupHistoryPayload;
+import com.halloapp.proto.clients.MemberDetails;
+import com.halloapp.proto.server.HistoryResend;
+import com.halloapp.proto.server.IdentityKey;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.groups.GroupsApi;
 import com.halloapp.xmpp.groups.MemberElement;
+import com.halloapp.xmpp.util.ObservableErrorException;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -179,18 +194,55 @@ public class GroupViewModel extends AndroidViewModel {
 
     public LiveData<Boolean> addMembers(List<UserId> userIds) {
         MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
-        groupsApi.addRemoveMembers(groupId, userIds, null)
-                .onResponse(result::postValue)
-                .onError(error -> {
-                    Log.e("Add members failed", error);
-                    result.postValue(false);
-                });
+        BgWorkers.getInstance().execute(() -> {
+            HistoryResend historyResend = null;
+            try {
+                GroupHistoryPayload.Builder groupHistoryPayload = GroupHistoryPayload.newBuilder();
+                for (UserId userId : userIds) {
+                    try {
+                        long uid = Long.parseLong(userId.rawId());
+                        byte[] encodedIk = Connection.getInstance().downloadKeys(userId).await().identityKey;
+                        IdentityKey identityKeyProto = IdentityKey.parseFrom(encodedIk);
+                        byte[] ik = identityKeyProto.getPublicKey().toByteArray();
+                        groupHistoryPayload.addMemberDetails(MemberDetails.newBuilder().setUid(uid).setPublicIdentityKey(ByteString.copyFrom(ik)));
+                    } catch (ObservableErrorException | InterruptedException e) {
+                        Log.e("Failed to get identity key for " + userId + "; skipping", e);
+                    } catch (InvalidProtocolBufferException e) {
+                        Log.e("Received invalid identity key proto for " + userId + "; skipping", e);
+                    }
+                }
+                byte[] payload = groupHistoryPayload.build().toByteArray();
+
+                GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
+                byte[] encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
+                HistoryResend.Builder builder = HistoryResend.newBuilder()
+                        .setGid(groupId.rawId())
+                        .setId(RandomId.create())
+                        .setPayload(ByteString.copyFrom(payload)) // TODO(jack): Remove once plaintext sending is off
+                        .setEncPayload(ByteString.copyFrom(encPayload));
+                if (groupSetupInfo.senderStateBundles != null) {
+                    builder.addAllSenderStateBundles(groupSetupInfo.senderStateBundles);
+                }
+                if (groupSetupInfo.audienceHash != null) {
+                    builder.setAudienceHash(ByteString.copyFrom(groupSetupInfo.audienceHash));
+                }
+                historyResend = builder.build();
+            } catch (CryptoException | NoSuchAlgorithmException e) {
+                Log.e("Failed to encrypt details for history resend", e);
+            }
+            groupsApi.addRemoveMembers(groupId, userIds, null, historyResend)
+                    .onResponse(result::postValue)
+                    .onError(error -> {
+                        Log.e("Add members failed", error);
+                        result.postValue(false);
+                    });
+        });
         return result;
     }
 
     public LiveData<Boolean> removeMember(UserId userId) {
         MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
-        groupsApi.addRemoveMembers(groupId, null, Collections.singletonList(userId))
+        groupsApi.addRemoveMembers(groupId, null, Collections.singletonList(userId), null)
                 .onResponse(result::postValue)
                 .onError(error -> {
                     Log.e("Remove member failed", error);

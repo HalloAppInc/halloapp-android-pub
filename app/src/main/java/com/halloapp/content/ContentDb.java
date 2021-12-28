@@ -314,6 +314,10 @@ public class ContentDb {
         });
     }
 
+    public void setPostProtoHash(@NonNull UserId senderUserId, @NonNull String postId, @Nullable byte[] protoHash) {
+        databaseWriteExecutor.execute(() -> postsDb.setPostProtoHash(senderUserId, postId, protoHash));
+    }
+
     public void setMediaTransferred(@NonNull Post post, @NonNull Media media) {
         databaseWriteExecutor.execute(() -> {
             postsDb.setMediaTransferred(post, media);
@@ -632,6 +636,10 @@ public class ContentDb {
             postsDb.setCommentTransferred(postId, commentSenderUserId, commentId);
             observers.notifyCommentUpdated(postId, commentSenderUserId, commentId);
         });
+    }
+
+    public void setCommentProtoHash(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId, @Nullable byte[] protoHash) {
+        databaseWriteExecutor.execute(() -> postsDb.setCommentProtoHash(postId, commentSenderUserId, commentId, protoHash));
     }
 
     // for debug only

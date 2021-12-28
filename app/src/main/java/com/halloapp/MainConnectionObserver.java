@@ -233,8 +233,9 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onOutgoingPostSent(@NonNull String postId) {
+    public void onOutgoingPostSent(@NonNull String postId, @Nullable byte[] protoHash) {
         contentDb.setPostTransferred(UserId.ME, postId);
+        contentDb.setPostProtoHash(UserId.ME, postId, protoHash);
     }
 
     @Override
@@ -248,8 +249,8 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onOutgoingCommentSent(@NonNull String postId, @NonNull String commentId) {
-        contentDb.setCommentTransferred(postId, UserId.ME, commentId);
+    public void onOutgoingCommentSent(@NonNull String postId, @NonNull String commentId, @Nullable byte[] protoHash) {
+        contentDb.setCommentProtoHash(postId, UserId.ME, commentId, protoHash);
     }
 
     @Override

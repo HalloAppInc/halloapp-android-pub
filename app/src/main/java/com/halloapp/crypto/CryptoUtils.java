@@ -17,6 +17,8 @@ import com.halloapp.util.logs.Log;
 
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class CryptoUtils {
     // not instantiable
@@ -42,6 +44,18 @@ public class CryptoUtils {
         byte[] ret = new byte[Auth.HMACSHA256_BYTES];
         auth.cryptoAuthHMACSha256(ret, input, input.length, key);
         return ret;
+    }
+
+    @Nullable
+    public static byte[] sha256(byte[] bytes) {
+        byte[] hash = null;
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+            hash = messageDigest.digest(bytes);
+        } catch (NoSuchAlgorithmException e) {
+            Log.e("Failed to get sha256 digest", e);
+        }
+        return hash;
     }
 
     public static byte[] generateEd25519KeyPair() {

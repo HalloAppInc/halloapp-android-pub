@@ -33,7 +33,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 57;
+    private static final int DATABASE_VERSION = 58;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -61,6 +61,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + PostsTable.COLUMN_TYPE + " INTEGER DEFAULT 0,"
                 + PostsTable.COLUMN_USAGE + " INTEGER DEFAULT 0,"
                 + PostsTable.COLUMN_REREQUEST_COUNT + " INTEGER DEFAULT 0,"
+                + PostsTable.COLUMN_PROTO_HASH + " BLOB,"
                 + PostsTable.COLUMN_FAILURE_REASON + " TEXT,"
                 + PostsTable.COLUMN_CLIENT_VERSION + " TEXT,"
                 + PostsTable.COLUMN_SENDER_PLATFORM + " TEXT,"
@@ -248,6 +249,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + CommentsTable.COLUMN_TEXT + " TEXT,"
                 + CommentsTable.COLUMN_TYPE + " INTEGER,"
                 + CommentsTable.COLUMN_REREQUEST_COUNT + " INTEGER DEFAULT 0,"
+                + CommentsTable.COLUMN_PROTO_HASH + " BLOB,"
                 + CommentsTable.COLUMN_FAILURE_REASON + " TEXT,"
                 + CommentsTable.COLUMN_CLIENT_VERSION + " TEXT,"
                 + CommentsTable.COLUMN_SENDER_PLATFORM + " TEXT,"
@@ -554,6 +556,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 56: {
                 upgradeFromVersion56(db);
+            }
+            case 57: {
+                upgradeFromVersion57(db);
             }
             break;
             default: {
@@ -1188,6 +1193,11 @@ class ContentDbHelper extends SQLiteOpenHelper {
         }
         db.execSQL("DELETE FROM " + ChatsTable.TABLE_NAME + " WHERE " + ChatsTable.COLUMN_CHAT_ID + " IN (" + idList + ")");
         db.execSQL("DELETE FROM " + MessagesTable.TABLE_NAME + " WHERE " + MessagesTable.COLUMN_CHAT_ID + " IN (" + idList + ")");
+    }
+
+    private void upgradeFromVersion57(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_PROTO_HASH + " BLOB");
+        db.execSQL("ALTER TABLE " + CommentsTable.TABLE_NAME + " ADD COLUMN " + CommentsTable.COLUMN_PROTO_HASH + " BLOB");
     }
 
     /**
