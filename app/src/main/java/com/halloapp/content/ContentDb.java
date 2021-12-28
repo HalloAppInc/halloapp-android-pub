@@ -37,6 +37,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.clients.ContentDetails;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptStats;
 import com.halloapp.util.stats.GroupDecryptStats;
@@ -510,6 +511,11 @@ public class ContentDb {
     public int getRetryCount(@NonNull Message message, long rowId) {
         Log.i("Get retry count in Message: " + message);
         return messagesDb.getRetryCount(rowId);
+    }
+
+    @WorkerThread
+    public List<ContentDetails> getHistoryResendContent(@NonNull GroupId groupId) {
+        return postsDb.getHistoryResendContent(groupId);
     }
 
     @WorkerThread

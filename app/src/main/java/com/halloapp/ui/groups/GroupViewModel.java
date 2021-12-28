@@ -211,6 +211,7 @@ public class GroupViewModel extends AndroidViewModel {
                         Log.e("Received invalid identity key proto for " + userId + "; skipping", e);
                     }
                 }
+                groupHistoryPayload.addAllContentDetails(contentDb.getHistoryResendContent(groupId));
                 byte[] payload = groupHistoryPayload.build().toByteArray();
 
                 GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);

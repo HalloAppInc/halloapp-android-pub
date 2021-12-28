@@ -28,6 +28,9 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.CommentContainer;
+import com.halloapp.proto.clients.CommentIdContext;
+import com.halloapp.proto.clients.ContentDetails;
+import com.halloapp.proto.clients.PostIdContext;
 import com.halloapp.proto.clients.Video;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
@@ -550,6 +553,36 @@ class PostsDb {
             Log.e("Resumable Uploader PostDb setPatchUrl: failed " + ex);
             throw ex;
         }
+    }
+
+    @WorkerThread
+    public List<ContentDetails> getHistoryResendContent(@NonNull GroupId groupId) {
+        List<ContentDetails> ret = new ArrayList<>();
+        final String sql =
+                "SELECT rowid, id, hash, post_id, parent_id, gid FROM "
+                        + "(SELECT _id as rowid, post_id as id, proto_hash as hash, NULL as post_id, NULL as parent_id, group_id as gid from posts "
+                        + " UNION SELECT " + CommentsTable.TABLE_NAME + "._id as rowid, " + CommentsTable.TABLE_NAME + ".comment_id as id, " + CommentsTable.TABLE_NAME + ".proto_hash as hash, " + CommentsTable.TABLE_NAME + ".post_id as post_id, parent_id as parent_id, group_id as gid from comments LEFT JOIN posts ON comments.post_id = posts.post_id) "
+                        + "WHERE hash IS NOT NULL AND gid=? ORDER BY rowid DESC LIMIT 200";
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{groupId.rawId()})) {
+            while (cursor.moveToNext()) {
+                String id = cursor.getString(1);
+                String postId = cursor.getString(3);
+                if (postId == null) { // is a post
+                    ret.add(ContentDetails.newBuilder().setPostIdContext(PostIdContext.newBuilder().setFeedPostId(id)).build());
+                } else { // is a comment
+                    String parentId = cursor.getString(4);
+                    CommentIdContext.Builder builder = CommentIdContext.newBuilder()
+                            .setCommentId(id)
+                            .setFeedPostId(postId);
+                    if (parentId != null) {
+                        builder.setParentCommentId(parentId);
+                    }
+                    ret.add(ContentDetails.newBuilder().setCommentIdContext(builder).build());
+                }
+            }
+        }
+        return ret;
     }
 
     @WorkerThread
