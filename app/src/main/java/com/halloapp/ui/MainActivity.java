@@ -367,13 +367,11 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void startTextPost() {
-        startActivity(new Intent(this, ContentComposerActivity.class));
+        startActivity(ContentComposerActivity.newTextPost(this));
     }
 
     private void startVoicePost() {
-        Intent i = new Intent(this, ContentComposerActivity.class);
-        i.putExtra(ContentComposerActivity.EXTRA_VOICE_NOTE_POST, true);
-        startActivity(i);
+        startActivity(ContentComposerActivity.newAudioPost(this));
     }
 
     private void startMediaPost() {

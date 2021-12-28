@@ -39,6 +39,7 @@
     <color name="group_bg_picker_background">@android:color/black</color>
     <color name="post_card_color_background">@color/black_40</color>
     <color name="post_card_background">@color/cardview_dark_background</color>
+    <color name="text_post_compose_footer_overlay">#CC424242</color>
 
     <color name="white_button_background">@color/white_20</color>
 
@@ -117,6 +118,9 @@
 
     <color name="voice_post_delete_bg">#4DC6C6C4</color>
     <color name="voice_post_stop_bg">#D8D8DB</color>
+
+    <color name="media_button_background">#E6535353</color>
+    <color name="media_button_background_pressed">#535353</color>
 
     <color name="group_me">#C3DDFF</color>
     <color name="group_me_bg">#495D78</color>

@@ -158,6 +158,9 @@
     <string name="close">Close</string>
     <!-- Audio post composer title -->
     <string name="audio_post_compose_title">New audio post</string>
+    <!-- Text post hint -->
+    <string name="text_post_compose_hint">Write a description</string>
+
     <!-- Audio post record instruction -->
     <string name="audio_post_tap_to_record">Tap to record</string>
     <!-- Dialog shown to user before requesting contact permissions -->
@@ -582,6 +585,8 @@
     <string name="group_picker_title">New group</string>
     <string name="button_create_group">Create</string>
     <string name="group_name_hint">Group name</string>
+    <!-- Text shown below the media composer that allows adding more media -->
+    <string name="post_add_more">Add more</string>
     <string name="group_background_hint">Background</string>
     <!-- Hint text for the group description field -->
     <string name="group_description_hint">Group description</string>

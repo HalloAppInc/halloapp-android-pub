@@ -177,6 +177,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         final View progressView = findViewById(R.id.progress);
         final View emptyView = findViewById(android.R.id.empty);
 
+        setResult(RESULT_CANCELED);
+
         viewModel = buildViewModel(savedInstanceState);
         viewModel.original = getIntent().getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA);
         viewModel.state = getIntent().getBundleExtra(MediaEditActivity.EXTRA_STATE);
@@ -507,7 +509,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                         actionMode = null;
 
                         if (size > 0) {
-                            finishWithSelected(new ArrayList<>());
+                            setResult(RESULT_CANCELED);
+                            finish();
                         }
                     }
                 });

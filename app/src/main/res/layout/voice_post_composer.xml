@@ -184,12 +184,13 @@
         android:text="@string/audio_post_compose_title" />
 
     <ImageView
+        android:id="@+id/voice_add_media"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:padding="14dp"
         android:src="@drawable/ic_post_add_photo"
-        android:visibility="gone"
+        android:background="?selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

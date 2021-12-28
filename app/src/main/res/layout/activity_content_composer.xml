@@ -22,127 +22,221 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/window_background"
-            android:gravity="center_vertical"
+            android:gravity="top"
             app:contentInsetLeft="0dp"
             app:contentInsetStart="0dp"
             app:contentInsetStartWithNavigation="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/media_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents"
             app:theme="@style/ActionBar.Composer">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/change_privacy"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:background="?selectableItemBackground">
-
-                <ImageView
-                    android:id="@+id/home_icon"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:padding="6dp"
-                    android:background="@android:color/white"
-                    android:src="@drawable/ic_home_selected"
-                    app:tint="@color/color_secondary"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:visibility="gone"
-                    />
-
-                <ImageView
-                    android:id="@+id/avatar"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="@android:color/white"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:visibility="gone"
-                    />
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical">
 
                     <TextView
                         android:id="@+id/toolbar_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/new_post"
-                        android:layout_marginStart="8dp"
-                        android:maxLines="1"
+                        android:layout_gravity="center_vertical"
                         android:ellipsize="end"
-                        app:layout_constraintStart_toEndOf="@id/avatar"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_chainStyle="packed"
-                        app:layout_constraintHorizontal_chainStyle="packed"
-                        app:layout_constrainedWidth="true"
-                        app:layout_constraintHorizontal_bias="0"
-                        app:layout_constraintBottom_toTopOf="@id/toolbar_subtitle"
-                        app:layout_constraintEnd_toStartOf="@id/spinner_drop_down"
-                        android:textAppearance="@style/TextAppearance.Toolbar.Title.Composer"/>
-
-                <ImageView
-                    android:id="@+id/spinner_drop_down"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_drop_down"
-                    android:paddingStart="5dp"
-                    android:paddingEnd="5dp"
-                    android:paddingTop="5dp"
-                    app:layout_constraintStart_toEndOf="@id/toolbar_title"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0"
-                    app:layout_constraintTop_toTopOf="@id/toolbar_title"
-                    app:layout_constraintBottom_toBottomOf="@id/toolbar_title"
-                    app:tint="@color/primary_text"
-                    tools:visibility="visible"
-                    android:visibility="gone"/>
+                        android:maxLines="1"
+                        android:text="@string/new_post"
+                        android:textAppearance="@style/TextAppearance.Toolbar.Title.Composer" />
 
                     <TextView
                         android:id="@+id/toolbar_subtitle"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        app:layout_constraintStart_toEndOf="@id/avatar"
-                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_gravity="center_vertical"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        app:layout_constraintVertical_chainStyle="packed"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/toolbar_title"
-                        tools:text="Sharing with my contacts"
-                        android:textAppearance="@style/TextAppearance.Toolbar.Subtitle.Composer"/>
+                        android:visibility="gone"
+                        android:textAppearance="@style/TextAppearance.Toolbar.Subtitle.Composer"
+                        app:layout_constrainedWidth="true" />
 
-                <TextView
-                    android:id="@+id/tap_to_change_subtitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    app:layout_constraintStart_toEndOf="@id/avatar"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    app:layout_constraintBottom_toBottomOf="@id/toolbar_subtitle"
-                    app:layout_constraintTop_toTopOf="@id/toolbar_subtitle"
-                    android:text="@string/tap_to_change"
-                    android:visibility="gone"
-                    android:textAppearance="@style/TextAppearance.Toolbar.Subtitle.Composer"/>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
         </androidx.appcompat.widget.Toolbar>
+
+        <LinearLayout
+            android:id="@+id/change_privacy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="13dp"
+            android:paddingEnd="13dp"
+            android:layout_marginStart="56dp"
+            android:visibility="gone"
+            android:background="@drawable/bg_privacy_pill"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+            <TextView
+                android:id="@+id/privacy_destination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@android:color/white"
+                android:paddingTop="5dp"
+                android:paddingBottom="7dp"
+                tools:text="Home"/>
+
+            <ImageView
+                android:id="@+id/spinner_drop_down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:paddingEnd="0dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_drop_down"
+                app:tint="@android:color/white"
+                tools:visibility="visible" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/voice_composer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:padding="8dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/change_privacy">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="@dimen/content_composer_frame_border"
+                app:cardElevation="2dp">
+
+                <com.halloapp.ui.VoicePostComposerView
+                    android:id="@+id/voice_composer_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="340dp" />
+
+            </androidx.cardview.widget.CardView>
+
+        </FrameLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/text_entry_card"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:minHeight="340dp"
+            app:layout_constraintHeight_default="wrap"
+            app:cardCornerRadius="@dimen/content_composer_frame_border"
+            app:cardElevation="2dp"
+            android:layout_margin="8dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/change_privacy">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:clipChildren="false">
+
+                <LinearLayout
+                    android:id="@+id/text_only_entry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="83dp">
+
+                    <com.halloapp.widget.MentionableEntry
+                        android:id="@+id/entry_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:gravity="top"
+                        android:hint="@string/write_a_post"
+                        android:importantForAutofill="no"
+                        android:inputType="textCapSentences|textMultiLine"
+                        android:lineSpacingMultiplier="1.1"
+
+                        android:padding="16dp"
+
+                        android:textAppearance="?textAppearanceListItemSmall"
+                        android:textColorHint="@color/secondary_text"
+                        android:textSize="@dimen/composer_text_size_large"
+                        android:visibility="gone" />
+
+                    <com.halloapp.widget.PostLinkPreviewView
+                        android:id="@+id/link_preview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+            </ScrollView>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:padding="14dp"
+                android:background="@color/text_post_compose_footer_overlay">
+
+                <ImageView
+                    android:id="@+id/text_add_media"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center"
+                    android:padding="14dp"
+                    android:src="@drawable/ic_post_add_photo"
+                    android:background="?selectableItemBackgroundBorderless"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <FrameLayout
+                    android:id="@+id/text_only_send"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_gravity="end|center"
+                    android:background="@drawable/bg_send_fab">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_round_send" />
+
+                </FrameLayout>
+
+            </FrameLayout>
+
+        </androidx.cardview.widget.CardView>
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/media_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/footer"
+            app:layout_constraintBottom_toTopOf="@+id/post_entry"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar">
+            app:layout_constraintTop_toBottomOf="@+id/change_privacy">
 
             <com.halloapp.widget.ContentComposerScrollView
                 android:id="@+id/media_vertical_scroll"
@@ -155,192 +249,128 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <FrameLayout
+                    <androidx.coordinatorlayout.widget.CoordinatorLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:clipToPadding="false">
+                        android:layout_height="wrap_content">
 
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/voice_composer"
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/media_loading"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:cardCornerRadius="@dimen/content_composer_frame_border"
-                            app:cardElevation="2dp">
-                            
-                            <com.halloapp.ui.VoicePostComposerView
-                                android:id="@+id/voice_composer_view"
+                            android:padding="@dimen/media_pager_child_padding">
+
+                            <com.halloapp.widget.ContentPhotoView
+                                android:id="@+id/preview"
                                 android:layout_width="match_parent"
-                                android:layout_height="340dp"/>
+                                android:layout_height="wrap_content"
+                                android:visibility="gone"
+                                app:contentPvCornerRadius="@dimen/content_composer_media_border"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
 
-                        </androidx.cardview.widget.CardView>
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/composer_card"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:cardCornerRadius="@dimen/content_composer_frame_border"
-                            app:cardElevation="2dp">
-
-                            <LinearLayout
-                                android:id="@+id/card_container"
-                                android:orientation="vertical"
+                            <FrameLayout
+                                android:id="@+id/progress"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="0dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintDimensionRatio="0.8"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                app:layout_constraintTop_toTopOf="parent">
 
-                                <androidx.coordinatorlayout.widget.CoordinatorLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
-
-                                    <androidx.constraintlayout.widget.ConstraintLayout
-                                        android:id="@+id/loading"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:padding="@dimen/media_pager_child_padding">
-
-                                        <com.halloapp.widget.ContentPhotoView
-                                            android:id="@+id/preview"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:visibility="gone"
-                                            app:layout_constraintLeft_toLeftOf="parent"
-                                            app:layout_constraintRight_toRightOf="parent"
-                                            app:layout_constraintTop_toTopOf="parent"
-                                            app:layout_constraintBottom_toBottomOf="parent"
-                                            app:contentPvCornerRadius="@dimen/content_composer_media_border"/>
-
-                                        <FrameLayout
-                                            android:id="@+id/progress"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="0dp"
-                                            app:layout_constraintDimensionRatio="0.8"
-                                            app:layout_constraintLeft_toLeftOf="parent"
-                                            app:layout_constraintRight_toRightOf="parent"
-                                            app:layout_constraintTop_toTopOf="parent"
-                                            app:layout_constraintBottom_toBottomOf="parent">
-
-                                            <ProgressBar
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:layout_gravity="center"/>
-
-                                        </FrameLayout>
-
-                                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                                    <com.halloapp.widget.MediaViewPager
-                                        android:id="@+id/media_pager"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        tools:layout_height="192dp"/>
-
-                                    <LinearLayout
-                                        android:orientation="horizontal"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginStart="@dimen/content_composer_button_margins"
-                                        android:layout_marginEnd="@dimen/content_composer_button_margins"
-                                        android:translationY="@dimen/content_composer_button_bottom_offset"
-                                        app:layout_anchor="@id/media_pager"
-                                        app:layout_anchorGravity="bottom|start">
-
-                                        <ImageButton
-                                            android:id="@+id/add_media"
-                                            android:layout_height="@dimen/content_composer_button_size"
-                                            android:layout_width="@dimen/content_composer_button_size"
-                                            android:padding="@dimen/content_composer_button_padding"
-                                            android:scaleType="centerInside"
-                                            android:src="@drawable/ic_add_media_white"
-                                            android:background="@drawable/media_edit_button"
-                                            android:visibility="gone"/>
-
-                                    </LinearLayout>
-
-                                    <LinearLayout
-                                        android:orientation="horizontal"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginStart="@dimen/content_composer_button_margins"
-                                        android:layout_marginEnd="@dimen/content_composer_button_margins"
-                                        android:translationY="@dimen/content_composer_button_bottom_offset"
-                                        app:layout_anchor="@id/media_pager"
-                                        app:layout_anchorGravity="bottom|end">
-
-
-                                        <ImageButton
-                                            android:id="@+id/delete"
-                                            android:layout_height="@dimen/content_composer_button_size"
-                                            android:layout_width="@dimen/content_composer_button_size"
-                                            android:padding="@dimen/content_composer_button_padding_delete"
-                                            android:scaleType="centerInside"
-                                            android:src="@drawable/ic_delete_white"
-                                            android:background="@drawable/media_edit_button"
-                                            android:visibility="gone"/>
-
-                                        <ImageButton
-                                            android:id="@+id/crop"
-                                            android:layout_height="@dimen/content_composer_button_size"
-                                            android:layout_width="@dimen/content_composer_button_size"
-                                            android:padding="@dimen/content_composer_button_padding"
-                                            android:scaleType="centerInside"
-                                            android:src="@drawable/ic_crop_white"
-                                            android:background="@drawable/media_edit_button"
-                                            android:layout_marginStart="@dimen/content_composer_button_margins"
-                                            android:visibility="gone"/>
-
-                                    </LinearLayout>
-
-                                </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-                                <me.relex.circleindicator.CircleIndicator
-                                    android:id="@+id/media_pager_indicator"
+                                <ProgressBar
                                     android:layout_width="wrap_content"
-                                    android:layout_height="8dp"
-                                    android:layout_gravity="center_horizontal"
-                                    android:layout_marginBottom="8dp"
-                                    app:ci_width="5dp"
-                                    app:ci_height="5dp"
-                                    app:ci_margin="4dp"
-                                    app:ci_drawable="@drawable/pager_item_indicator_selected"
-                                    app:ci_drawable_unselected="@drawable/pager_item_indicator_unselected"
-                                    app:ci_animator="@animator/pager_indicator_composer"/>
-
-                                <com.halloapp.widget.MentionableEntry
-                                    android:id="@+id/entry_card"
-                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:background="@null"
-                                    android:hint="@string/write_a_post"
-                                    android:textColorHint="@color/secondary_text"
-                                    android:importantForAutofill="no"
-                                    android:gravity="top"
-                                    android:inputType="textCapSentences|textMultiLine"
+                                    android:layout_gravity="center" />
 
-                                    android:paddingHorizontal="16dp"
+                            </FrameLayout>
 
-                                    android:textAppearance="?textAppearanceListItemSmall"
-                                    android:textSize="@dimen/composer_text_size_large"
-                                    android:lineSpacingMultiplier="1.1"
-                                    android:visibility="gone" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                                <com.halloapp.widget.PostLinkPreviewView
-                                    android:id="@+id/link_preview"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="bottom"
-                                    android:layout_marginStart="8dp"
-                                    android:layout_marginBottom="8dp"
-                                    android:layout_marginEnd="8dp"
-                                    android:layout_marginTop="30dp"
-                                    android:visibility="gone"
-                                    />
+                        <com.halloapp.widget.MediaViewPager
+                            android:id="@+id/media_pager"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            tools:layout_height="192dp" />
 
-                            </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/content_composer_button_margins"
+                            android:layout_marginEnd="@dimen/content_composer_button_margins"
+                            android:orientation="horizontal"
+                            android:translationY="@dimen/content_composer_button_bottom_offset"
+                            app:layout_anchor="@id/media_pager"
+                            app:layout_anchorGravity="bottom|end">
 
-                        </androidx.cardview.widget.CardView>
 
-                    </FrameLayout>
+                            <ImageButton
+                                android:id="@+id/delete"
+                                android:layout_width="@dimen/content_composer_button_size"
+                                android:layout_height="@dimen/content_composer_button_size"
+                                android:background="@drawable/media_edit_button"
+                                android:padding="@dimen/content_composer_button_padding_delete"
+                                android:scaleType="centerInside"
+                                android:src="@drawable/ic_delete_white"
+                                android:visibility="gone" />
+
+                            <ImageButton
+                                android:id="@+id/crop"
+                                android:layout_width="@dimen/content_composer_button_size"
+                                android:layout_height="@dimen/content_composer_button_size"
+                                android:layout_marginStart="@dimen/content_composer_button_margins"
+                                android:background="@drawable/media_edit_button"
+                                android:padding="@dimen/content_composer_button_padding"
+                                android:scaleType="centerInside"
+                                android:src="@drawable/ic_crop_white"
+                                android:visibility="gone" />
+
+                        </LinearLayout>
+
+                    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="8dp">
+                        
+                        <TextView
+                            android:id="@+id/add_more_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/post_add_more"
+                            android:textSize="14sp"
+                            android:visibility="gone"
+                            android:layout_gravity="center_vertical"
+                            android:textColor="@color/hint_text"/>
+
+                        <me.relex.circleindicator.CircleIndicator
+                            android:id="@+id/media_pager_indicator"
+                            android:layout_width="wrap_content"
+                            android:layout_height="8dp"
+                            android:layout_gravity="center_vertical"
+                            app:ci_animator="@animator/pager_indicator_composer"
+                            app:ci_drawable="@drawable/pager_item_indicator_selected"
+                            app:ci_drawable_unselected="@drawable/pager_item_indicator_unselected"
+                            app:ci_height="5dp"
+                            app:ci_margin="4dp"
+                            app:ci_width="5dp" />
+
+                        <ImageButton
+                            android:id="@+id/add_media"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_circle"
+                            android:padding="6dp"
+                            android:backgroundTint="@color/media_button_background_color_selector"
+                            android:layout_marginStart="4dp"
+                            android:src="@drawable/ic_composer_add_more"/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -352,134 +382,67 @@
             android:id="@+id/mention_picker_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/post_entry"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/footer"
-            android:visibility="invisible"/>
-
-        <LinearLayout
-            android:id="@+id/footer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/card_background"
-            android:elevation="3dp"
-            android:orientation="vertical"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/media_container"
-            app:layout_constraintEnd_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/reply_container"
-                android:layout_width="match_parent"
+        <com.halloapp.widget.PostEntryView
+            android:id="@+id/post_entry"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/bottom_composer_send"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/media_container" />
+
+        <FrameLayout
+            android:id="@+id/bottom_composer_send"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/bg_send_fab"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/post_entry">
+
+            <ImageView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="0dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:background="@drawable/reply_frame">
+                android:layout_gravity="center"
+                android:background="?selectableItemBackground"
+                android:src="@drawable/ic_round_send" />
 
-                <TextView
-                    android:id="@+id/reply_name"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:ellipsize="end"
-                    android:textAppearance="?textAppearanceListItem"
-                    android:fontFamily="sans-serif-medium"
-                    android:textDirection="locale"
-                    android:textAlignment="gravity"
-                    android:padding="2dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/reply_media_thumb"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toTopOf="@+id/reply_text"
-                    app:layout_constraintVertical_chainStyle="packed"
-                    tools:text="Ded Pihtov"/>
+        </FrameLayout>
 
-                <ImageView
-                    android:id="@+id/reply_media_icon"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_marginEnd="6dp"
-                    android:layout_marginTop="2dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/reply_text"
-                    app:layout_constraintTop_toTopOf="@+id/reply_text"
-                    app:layout_constraintBottom_toBottomOf="@+id/reply_text"
-                    app:tint="?android:textColorSecondary"
-                    tools:src="@drawable/ic_camera"/>
+        <com.halloapp.widget.VoiceVisualizerView
+            android:id="@+id/bottom_visualizer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="10dp"
+            android:visibility="gone"
+            android:paddingEnd="71dp"
+            app:vvvMax="100dp"
+            app:vvvMin="71dp"/>
 
-                <TextView
-                    android:id="@+id/reply_text"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:padding="2dp"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:textDirection="locale"
-                    android:textAlignment="gravity"
-                    app:layout_constraintStart_toEndOf="@+id/reply_media_icon"
-                    app:layout_constraintEnd_toStartOf="@+id/reply_media_thumb"
-                    app:layout_constraintTop_toBottomOf="@+id/reply_name"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    tools:text="Have a nice day"/>
-
-                <ImageView
-                    android:id="@+id/reply_media_thumb"
-                    android:layout_width="52dp"
-                    android:layout_height="52dp"
-                    android:scaleType="centerCrop"
-                    app:layout_constraintStart_toEndOf="@+id/reply_name"
-                    app:layout_constraintEnd_toStartOf="@+id/reply_close"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    tools:src="@drawable/avatar_person"/>
-
-                <ImageView
-                    android:id="@+id/reply_close"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:paddingBottom="16dp"
-                    android:src="@drawable/ic_close"
-                    app:layout_constraintStart_toEndOf="@+id/reply_media_thumb"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <com.halloapp.widget.MentionableEntry
-                android:id="@+id/entry_bottom"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="@dimen/entry_bottom_unfocused_min_height"
-                android:maxHeight="@dimen/entry_bottom_max_height"
-                android:scrollbars="vertical"
-                android:layout_weight="0"
-                android:background="@null"
-                android:hint="@string/write_a_description"
-                android:textColorHint="@color/secondary_text"
-                android:importantForAutofill="no"
-                android:gravity="top"
-                android:inputType="textCapSentences|textMultiLine"
-
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="12dp"
-
-                android:textAppearance="?textAppearanceListItemSmall"
-                android:textSize="@dimen/composer_text_size"
-                android:lineSpacingMultiplier="1.1"
-                android:visibility="gone" />
-
-        </LinearLayout>
+        <com.halloapp.widget.VoicePostRecorderControlView
+            android:id="@+id/recording_ui"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/post_entry"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="bottom|end"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.halloapp.widget.DrawDelegateView
         android:id="@+id/draw_delegate"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </FrameLayout>

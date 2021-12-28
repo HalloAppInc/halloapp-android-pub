@@ -55,6 +55,7 @@
     <color name="seen_comment_background">#f0f0f0</color>
     <color name="remove_link_preview_background">#544F46</color>
     <color name="card_background">@color/cardview_light_background</color>
+    <color name="text_post_compose_footer_overlay">@color/white_80</color>
     <color name="dummy_post_background">@color/cardview_light_background</color>
     <color name="dummy_post_content_background">#DBD7CA</color>
     <color name="date_separator">@color/message_background_incoming</color>
@@ -154,8 +155,8 @@
     <color name="message_state_clock">#9DBBDD</color>
     <color name="message_state_sent">#660063E4</color>
     <color name="message_state_read">#0063E4</color>
-    <color name="media_button_background">#98535353</color>
-    <color name="media_button_background_pressed">#535353</color>
+    <color name="media_button_background">#E6ADADAD</color>
+    <color name="media_button_background_pressed">#ADADAD</color>
     <color name="camera_button_background">@color/cardview_light_background</color>
     <color name="camera_button_background_pressed">@color/window_background</color>
 

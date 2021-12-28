@@ -2,6 +2,7 @@ package com.halloapp.widget;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
@@ -32,26 +33,32 @@ public class VoiceVisualizerView extends View {
     public VoiceVisualizerView(Context context) {
         super(context);
 
-        init();
+        init(null);
     }
 
     public VoiceVisualizerView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
-        init();
+        init(attrs);
     }
 
     public VoiceVisualizerView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        init();
+        init(attrs);
     }
 
-    private void init() {
+    private void init(@Nullable AttributeSet attrs) {
         paint.setColor(getContext().getResources().getColor(R.color.voice_note_circle));
 
+        final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.VoiceVisualizerView, 0, 0);
         minCircleRadius = getResources().getDimensionPixelSize(R.dimen.voice_note_circle_min_radius);
         maxCircleRadius = getResources().getDimensionPixelSize(R.dimen.voice_note_circle_max_radius);
+
+        maxCircleRadius = a.getDimensionPixelSize(R.styleable.VoiceVisualizerView_vvvMax, maxCircleRadius);
+        minCircleRadius = a.getDimensionPixelSize(R.styleable.VoiceVisualizerView_vvvMin, minCircleRadius);
+
+        a.recycle();
 
         centerOffset = getResources().getDimensionPixelSize(R.dimen.voice_note_circle_offset);
 
@@ -66,7 +73,8 @@ public class VoiceVisualizerView extends View {
         radius *= scale;
 
         float centerX = rtl ? centerOffset : getWidth() - centerOffset;
-        canvas.drawCircle(centerX, getHeight() - centerOffset, radius, paint);
+        centerX -= getPaddingEnd();
+        canvas.drawCircle(centerX, getHeight() - centerOffset - getPaddingBottom(), radius, paint);
     }
 
     public void updateAmplitude(int amplitude) {

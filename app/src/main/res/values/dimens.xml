@@ -113,6 +113,8 @@
     <dimen name="voice_post_circle_max_radius">100dp</dimen>
     <dimen name="voice_post_circle_min_inner_radius">45dp</dimen>
     <dimen name="voice_post_circle_min_outer_radius">55dp</dimen>
+
+    <dimen name="bottom_voice_note_levitate_distance">6dp</dimen>
     
     <dimen name="share_privacy_avatar_corner_radius">8dp</dimen>
 

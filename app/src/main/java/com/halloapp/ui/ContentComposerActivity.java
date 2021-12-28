@@ -3,6 +3,7 @@ package com.halloapp.ui;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.SharedElementCallback;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
 import android.graphics.Point;
@@ -17,8 +18,6 @@ import android.util.Pair;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,12 +30,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.transition.TransitionManager;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -50,7 +48,6 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
@@ -69,7 +66,6 @@ import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.props.ServerProps;
-import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.mediaedit.MediaEditActivity;
@@ -81,7 +77,6 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.Rtl;
-import com.halloapp.util.StringUtils;
 import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
@@ -91,12 +86,16 @@ import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.MentionableEntry;
+import com.halloapp.widget.PostEntryView;
 import com.halloapp.widget.PostLinkPreviewView;
 import com.halloapp.widget.SnackbarHelper;
+import com.halloapp.widget.VoicePostRecorderControlView;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -120,14 +119,35 @@ public class ContentComposerActivity extends HalloActivity {
 
     private static final int EXO_PLAYER_BUFFER_MS = 25000;
 
+    public static Intent newTextPost(@NonNull Context context) {
+        Intent i = new Intent(context, ContentComposerActivity.class);
+        i.putExtra(EXTRA_ALLOW_ADD_MEDIA, true);
+        return i;
+    }
+
+    public static Intent newAudioPost(@NonNull Context context) {
+        Intent i = new Intent(context, ContentComposerActivity.class);
+        i.putExtra(EXTRA_ALLOW_ADD_MEDIA, true);
+        i.putExtra(EXTRA_VOICE_NOTE_POST, true);
+        return i;
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef ({ComposeMode.TEXT, ComposeMode.AUDIO, ComposeMode.MEDIA})
+    public @interface ComposeMode {
+        int TEXT = 1;
+        int AUDIO = 2;
+        int MEDIA = 3;
+    }
+
     private final Map<ContentComposerViewModel.EditMediaPair, SimpleExoPlayer> playerMap = new HashMap<>();
 
     private ContentComposerViewModel viewModel;
     private MediaThumbnailLoader fullThumbnailLoader;
     private TextContentLoader textContentLoader;
-    private AvatarLoader avatarLoader;
     private ContentComposerScrollView mediaVerticalScrollView;
-    private MentionableEntry editText;
+    private MentionableEntry textPostEntry;
+    private MentionableEntry bottomEditText;
     private MentionPickerView mentionPickerView;
     private MediaViewPager mediaPager;
     private CircleIndicator mediaPagerIndicator;
@@ -135,30 +155,35 @@ public class ContentComposerActivity extends HalloActivity {
     private DrawDelegateView drawDelegateView;
     private Toolbar toolbar;
     private View replyContainer;
-    private TextView tapToChangeSubtitle;
-    private TextView subtitleView;
 
     private View audioComposer;
-    private View oldComposer;
+
+    private PostEntryView postEntryView;
+    private View bottomSendButton;
+    private View textEntryCard;
+    private View mediaContainer;
+
+    private View textAddMedia;
+    private View voiceAddMedia;
+
+    private TextView privacyDestination;
 
     private PostLinkPreviewView postLinkPreviewView;
     private UrlPreviewLoader urlPreviewLoader;
     private AudioDurationLoader audioDurationLoader;
     private MediaThumbnailLoader mediaThumbnailLoader;
 
-    private ImageView avatarView;
-    private ImageView homeIconView;
-
     private boolean allowAddMedia;
     private boolean calledFromCamera;
     private boolean calledFromPicker;
-    private boolean voiceNotePost;
 
     private ImageButton addMediaButton;
     private ImageButton deletePictureButton;
     private ImageButton cropPictureButton;
+    private View addMoreText;
 
     private VoicePostComposerView voicePostComposerView;
+    private VoicePostRecorderControlView voiceNoteRecorderControlView;
 
     @Nullable
     private ChatId chatId;
@@ -173,13 +198,9 @@ public class ContentComposerActivity extends HalloActivity {
     private boolean updatedMediaProcessed = false;
     private int currentItemToSet = -1;
 
-    private final Runnable hideTapToChangeSubtitle = () -> {
-        if (tapToChangeSubtitle != null) {
-            TransitionManager.beginDelayedTransition((ViewGroup) tapToChangeSubtitle.getParent());
-            tapToChangeSubtitle.setVisibility(View.GONE);
-            subtitleView.setVisibility(View.VISIBLE);
-        }
-    };
+    private boolean allowVoiceNotes;
+
+    private @ComposeMode int composeMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -219,8 +240,8 @@ public class ContentComposerActivity extends HalloActivity {
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        mediaVerticalScrollView = findViewById(R.id.media_vertical_scroll);
         final float scrolledElevation = getResources().getDimension(R.dimen.action_bar_elevation);
+        mediaVerticalScrollView = findViewById(R.id.media_vertical_scroll);
         mediaVerticalScrollView.setOnScrollChangeListener((ContentComposerScrollView.OnScrollChangeListener) (view, scrollX, scrollY, oldScrollX, oldScrollY) -> {
             final float elevation = scrollY > 0 ? scrolledElevation : 0;
             if (toolbar.getElevation() != elevation) {
@@ -237,17 +258,46 @@ public class ContentComposerActivity extends HalloActivity {
         getWindowManager().getDefaultDisplay().getSize(point);
         fullThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         textContentLoader = new TextContentLoader();
-        avatarLoader = AvatarLoader.getInstance();
         audioDurationLoader = new AudioDurationLoader(this);
 
+        voiceNoteRecorderControlView = findViewById(R.id.recording_ui);
+        voiceNoteRecorderControlView.setVoiceVisualizerView(findViewById(R.id.bottom_visualizer));
         audioComposer = findViewById(R.id.voice_composer);
-        oldComposer = findViewById(R.id.composer_card);
+        postEntryView = findViewById(R.id.post_entry);
+        postEntryView.setInputParent(new PostEntryView.InputParent() {
+            @Override
+            public void onSendVoiceNote() {
+                viewModel.finishRecording();
+                postEntryView.bindAudioDraft(audioDurationLoader, viewModel.getVoiceDraft());
+            }
+
+            @Override
+            public void requestVoicePermissions() {
+
+            }
+
+            @Override
+            public void onUrl(String url) {
+
+            }
+        });
+        voiceNoteRecorderControlView.setRecordingTimeView(postEntryView.getRecordingTimeView());
+        bottomSendButton = findViewById(R.id.bottom_composer_send);
+        bottomSendButton.setOnClickListener(v -> {
+            sharePost();
+        });
+        View textOnlySend = findViewById(R.id.text_only_send);
+        textOnlySend.setEnabled(false);
+        textOnlySend.setOnClickListener(v -> {
+            sharePost();
+        });
 
         mentionPickerView = findViewById(R.id.mention_picker_view);
 
-        final View loadingView = findViewById(R.id.loading);
+        final View loadingView = findViewById(R.id.media_loading);
 
         addMediaButton = findViewById(R.id.add_media);
+        addMoreText = findViewById(R.id.add_more_text);
         cropPictureButton = findViewById(R.id.crop);
         deletePictureButton = findViewById(R.id.delete);
 
@@ -255,6 +305,11 @@ public class ContentComposerActivity extends HalloActivity {
         cropPictureButton.setOnClickListener(v -> cropItem(getCurrentItem()));
 
         voicePostComposerView = findViewById(R.id.voice_composer_view);
+        textEntryCard = findViewById(R.id.text_entry_card);
+        mediaContainer = findViewById(R.id.media_container);
+
+        voiceAddMedia = findViewById(R.id.voice_add_media);
+        textAddMedia = findViewById(R.id.text_add_media);
 
         deletePictureButton.setOnClickListener(v -> deleteItem(getCurrentItem()));
         final ArrayList<Uri> uris;
@@ -277,7 +332,16 @@ public class ContentComposerActivity extends HalloActivity {
         }
         calledFromCamera = getIntent().getBooleanExtra(EXTRA_CALLED_FROM_CAMERA, false);
         allowAddMedia = getIntent().getBooleanExtra(EXTRA_ALLOW_ADD_MEDIA, false);
-        voiceNotePost = getIntent().getBooleanExtra(EXTRA_VOICE_NOTE_POST, false);
+        boolean voiceNotePost = getIntent().getBooleanExtra(EXTRA_VOICE_NOTE_POST, false);
+        bottomEditText = findViewById(R.id.entry_bottom);
+        bottomEditText.setPreImeListener((keyCode, event) -> {
+            if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+                clearEditFocus();
+                return true;
+            }
+            return false;
+        });
+        textPostEntry = findViewById(R.id.entry_card);
         final Bundle editStates = getIntent().getParcelableExtra(MediaEditActivity.EXTRA_STATE);
         if (uris != null) {
             Log.i("ContentComposerActivity received " + uris.size() + " uris");
@@ -286,39 +350,18 @@ public class ContentComposerActivity extends HalloActivity {
                 SnackbarHelper.showInfo(mediaVerticalScrollView, getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS));
                 uris.subList(Constants.MAX_POST_MEDIA_ITEMS, uris.size()).clear();
             }
-            editText = findViewById(R.id.entry_bottom);
-            editText.setPreImeListener((keyCode, event) -> {
-                if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-                    clearEditFocus();
-                    return true;
-                }
-                return false;
-            });
+            showMixedMediaCompose();
+            composeMode = ComposeMode.MEDIA;
         } else {
-            audioComposer.setVisibility(View.GONE);
-            View cardContainer = findViewById(R.id.card_container);
             Log.i("ContentComposerActivity no uri list provided");
-            loadingView.setVisibility(View.GONE);
-            editText = findViewById(R.id.entry_card);
-            cardContainer.setMinimumHeight(getResources().getDimensionPixelSize(R.dimen.entry_card_min_height));
-            if (!voiceNotePost) {
-                editText.requestFocus();
+            if (voiceNotePost) {
+                showAudioOnlyCompose();
+                composeMode = ComposeMode.AUDIO;
+            } else {
+                composeMode = ComposeMode.TEXT;
+                showTextOnlyCompose();
+                textPostEntry.requestFocus();
             }
-            editText.setPreImeListener((keyCode, event) -> {
-                if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-                    finish();
-                    return true;
-                }
-                return false;
-            });
-        }
-
-        if (voiceNotePost) {
-            audioComposer.setVisibility(View.VISIBLE);
-            oldComposer.setVisibility(View.GONE);
-        } else {
-            audioComposer.setVisibility(View.GONE);
-            oldComposer.setVisibility(View.VISIBLE);
         }
 
         if (savedInstanceState == null) {
@@ -362,56 +405,44 @@ public class ContentComposerActivity extends HalloActivity {
             }
         });
 
-        avatarView = findViewById(R.id.avatar);
-        homeIconView = findViewById(R.id.home_icon);
-        if (chatId == null) {
-            View changePrivacy = findViewById(R.id.change_privacy);
-            changePrivacy.setOnClickListener(v -> {
-                startActivityForResult(SharePrivacyActivity.openPostPrivacy(this, groupId), REQUEST_CODE_CHANGE_PRIVACY);
-            });
-            avatarView.setVisibility(View.VISIBLE);
-            avatarView.setOutlineProvider(new ViewOutlineProvider() {
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), avatarView.getContext().getResources().getDimension(R.dimen.share_privacy_avatar_corner_radius));
-                }
-            });
-            avatarView.setClipToOutline(true);
-            homeIconView.setOutlineProvider(new ViewOutlineProvider() {
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), avatarView.getContext().getResources().getDimension(R.dimen.share_privacy_avatar_corner_radius));
-                }
-            });
-            homeIconView.setClipToOutline(true);
-        }
-
         mediaPagerIndicator = findViewById(R.id.media_pager_indicator);
         mediaPagerAdapter = new MediaPagerAdapter();
         mediaPager.setAdapter(mediaPagerAdapter);
 
-        editText.setVisibility(View.VISIBLE);
-        editText.setMentionPickerView(mentionPickerView);
-        editText.setText(getIntent().getStringExtra(Intent.EXTRA_TEXT));
+        String initialText = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+
+        textPostEntry.setVisibility(View.VISIBLE);
+        textPostEntry.setMentionPickerView(mentionPickerView);
+        textPostEntry.setText(initialText);
+
+        bottomEditText.setVisibility(View.VISIBLE);
+        bottomEditText.setMentionPickerView(mentionPickerView);
+        bottomEditText.setText(initialText);
+
+        allowVoiceNotes = chatId == null && ServerProps.getInstance().getVoicePostsEnabled();
+        postEntryView.setAllowVoiceNoteRecording(allowVoiceNotes && TextUtils.isEmpty(initialText));
+
+        textAddMedia.setOnClickListener(v -> {
+            addAdditionalMedia();
+        });
+
+        voiceAddMedia.setOnClickListener(v -> {
+            addAdditionalMedia();
+        });
 
         final boolean isMediaPost = uris != null;
         final int minHeightUnfocused = getResources().getDimensionPixelSize(R.dimen.entry_bottom_unfocused_min_height);
         final int minHeightFocused = getResources().getDimensionPixelSize(R.dimen.entry_bottom_focused_min_height);
-        editText.setOnFocusChangeListener((view, hasFocus) -> {
+        bottomEditText.setOnFocusChangeListener((view, hasFocus) -> {
             updateMediaButtons();
-            if (isMediaPost) {
-                final int minHeight = hasFocus ? minHeightFocused : minHeightUnfocused;
-                editText.setMinHeight(minHeight);
-                editText.setMinimumHeight(minHeight);
-            }
             mediaVerticalScrollView.setShouldScrollToBottom(hasFocus);
         });
 
         if (replyPostId != null || (!isMediaPost && !voiceNotePost)) {
-            editText.requestFocus();
+            textPostEntry.requestFocus();
         }
 
-        editText.addTextChangedListener(new TextWatcher() {
+        textPostEntry.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 prevEditEmpty = TextUtils.isEmpty(charSequence);
@@ -419,13 +450,32 @@ public class ContentComposerActivity extends HalloActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (prevEditEmpty != TextUtils.isEmpty(charSequence)) {
-                    invalidateOptionsMenu();
+                boolean isEmpty = TextUtils.isEmpty(charSequence);
+                if (prevEditEmpty != isEmpty) {
+                    textOnlySend.setEnabled(!isEmpty);
                 }
 
                 final boolean useLargeText = (charSequence.length() < 180 && mediaPager.getVisibility() == View.GONE);
-                editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(
+                textPostEntry.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(
                         useLargeText ? R.dimen.composer_text_size_large : R.dimen.composer_text_size));
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        bottomEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                prevEditEmpty = TextUtils.isEmpty(charSequence);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                boolean isEmpty = TextUtils.isEmpty(charSequence);
+                if (allowVoiceNotes && prevEditEmpty != isEmpty) {
+                    postEntryView.setAllowVoiceNoteRecording(isEmpty);
+                }
             }
 
             @Override
@@ -445,18 +495,20 @@ public class ContentComposerActivity extends HalloActivity {
             if (!media.isEmpty()) {
                 mediaPager.setVisibility(View.VISIBLE);
                 mediaPager.setOffscreenPageLimit(media.size());
+                updateComposeMode(ComposeMode.MEDIA);
             }
             mediaPagerAdapter.setMediaPairList(media);
             if (media.size() <= 1) {
                 mediaPagerIndicator.setVisibility(View.GONE);
+                addMoreText.setVisibility(allowAddMedia ? View.VISIBLE : View.GONE);
             } else {
                 mediaPagerIndicator.setVisibility(View.VISIBLE);
+                addMoreText.setVisibility(View.GONE);
                 mediaPagerIndicator.setViewPager(mediaPager);
             }
             if (media.size() != expectedMediaCount) {
                 SnackbarHelper.showWarning(mediaVerticalScrollView, R.string.failed_to_load_media);
             }
-            invalidateOptionsMenu();
             updateMediaButtons();
             updateAspectRatioForMedia(media);
             if (chatId != null) {
@@ -514,10 +566,8 @@ public class ContentComposerActivity extends HalloActivity {
                 }
             }
         });
+        privacyDestination = findViewById(R.id.privacy_destination);
         final TextView titleView = toolbar.findViewById(R.id.toolbar_title);
-        final View spinner = toolbar.findViewById(R.id.spinner_drop_down);
-        tapToChangeSubtitle = toolbar.findViewById(R.id.tap_to_change_subtitle);
-        subtitleView = toolbar.findViewById(R.id.toolbar_subtitle);
         if (chatId != null) {
             titleView.setText(R.string.new_message);
             viewModel.shareTargetName.getLiveData().observe(this, name -> {
@@ -527,25 +577,21 @@ public class ContentComposerActivity extends HalloActivity {
                     replyNameView.setText(name);
                 }
             });
-            subtitleView.setVisibility(View.VISIBLE);
-            tapToChangeSubtitle.setVisibility(View.GONE);
         } else {
             viewModel.shareTargetName.getLiveData().observe(this, name -> {
-                if (groupId == null) {
-                    titleView.setText(R.string.home);
-                } else {
-                    titleView.setText(name);
-                    updatePostSubtitle(name);
+                if (groupId != null) {
+                    privacyDestination.setText(name);
                 }
             });
             updateDestination(groupId);
-            spinner.setVisibility(View.VISIBLE);
-            subtitleView.setVisibility(View.INVISIBLE);
-            tapToChangeSubtitle.setVisibility(View.VISIBLE);
-            tapToChangeSubtitle.removeCallbacks(hideTapToChangeSubtitle);
-            subtitleView.setVisibility(View.INVISIBLE);
-            tapToChangeSubtitle.setVisibility(View.VISIBLE);
-            tapToChangeSubtitle.postDelayed(hideTapToChangeSubtitle, 3000);
+        }
+
+        if (chatId == null) {
+            View changePrivacy = findViewById(R.id.change_privacy);
+            changePrivacy.setVisibility(View.VISIBLE);
+            changePrivacy.setOnClickListener(v -> {
+                startActivityForResult(SharePrivacyActivity.openPostPrivacy(this, groupId), REQUEST_CODE_CHANGE_PRIVACY);
+            });
         }
 
         replyContainer = findViewById(R.id.reply_container);
@@ -556,29 +602,26 @@ public class ContentComposerActivity extends HalloActivity {
         }
 
         if (chatId == null) {
-            editText.addTextChangedListener(new UrlPreviewTextWatcher(new UrlPreviewTextWatcher.UrlListener() {
-                @Override
-                public void onUrl(String url) {
-                    if (isFinishing() || isDestroyed()) {
-                        return;
-                    }
-                    if (mediaPager.getVisibility() == View.VISIBLE) {
-                        urlPreviewLoader.cancel(postLinkPreviewView);
-                        return;
-                    }
-                    urlPreviewLoader.load(postLinkPreviewView, url, new ViewDataLoader.Displayer<View, UrlPreview>() {
-                        @Override
-                        public void showResult(@NonNull View view, @Nullable UrlPreview result) {
-                            postLinkPreviewView.updateUrlPreview(result);
-                        }
-
-                        @Override
-                        public void showLoading(@NonNull View view) {
-                            postLinkPreviewView.setLoadingUrl(url);
-                            postLinkPreviewView.setLoading(!TextUtils.isEmpty(url));
-                        }
-                    });
+            textPostEntry.addTextChangedListener(new UrlPreviewTextWatcher(url -> {
+                if (isFinishing() || isDestroyed()) {
+                    return;
                 }
+                if (mediaPager.getVisibility() == View.VISIBLE) {
+                    urlPreviewLoader.cancel(postLinkPreviewView);
+                    return;
+                }
+                urlPreviewLoader.load(postLinkPreviewView, url, new ViewDataLoader.Displayer<View, UrlPreview>() {
+                    @Override
+                    public void showResult(@NonNull View view, @Nullable UrlPreview result) {
+                        postLinkPreviewView.updateUrlPreview(result);
+                    }
+
+                    @Override
+                    public void showLoading(@NonNull View view) {
+                        postLinkPreviewView.setLoadingUrl(url);
+                        postLinkPreviewView.setLoading(!TextUtils.isEmpty(url));
+                    }
+                });
             }));
             postLinkPreviewView.setOnRemovePreviewClickListener(v -> {
                 urlPreviewLoader.cancel(postLinkPreviewView);
@@ -617,32 +660,67 @@ public class ContentComposerActivity extends HalloActivity {
                     voicePostComposerView.bindAudioDraft(audioDurationLoader, null);
                 }
             }, viewModel.getVoiceNotePlayer(), viewModel.getVoiceNoteRecorder());
+
+            postEntryView.setVoiceNoteControlView(voiceNoteRecorderControlView);
+            postEntryView.bindVoicePlayer(this, viewModel.getVoiceNotePlayer());
+            postEntryView.bindVoiceRecorder(this, viewModel.getVoiceNoteRecorder());
         }
     }
 
-    private void updatePostSubtitle(final FeedPrivacy feedPrivacy) {
-        if (feedPrivacy == null) {
-            Log.e("ContentComposerActivity: updatePostSubtitle received null FeedPrivacy");
-            subtitleView.setText("");
-        } else if (PrivacyList.Type.ALL.equals(feedPrivacy.activeList)) {
-            subtitleView.setText(R.string.composer_sharing_all_summary);
-        } else if (PrivacyList.Type.EXCEPT.equals(feedPrivacy.activeList)) {
-            subtitleView.setText(R.string.composer_sharing_except_summary);
-        } else if (PrivacyList.Type.ONLY.equals(feedPrivacy.activeList)) {
-            final int onlySize = feedPrivacy.onlyList.size();
-            subtitleView.setText(getResources().getQuantityString(R.plurals.composer_sharing_only_summary, onlySize, onlySize));
-        } else {
-            Log.e("ContentComposerActivity: updatePostSubtitle received unexpected activeList - " + feedPrivacy.activeList);
-            subtitleView.setText("");
+    private void updateComposeMode(@ComposeMode int newComposeMode) {
+        if (newComposeMode == composeMode) {
+            return;
         }
+        if (composeMode == ComposeMode.TEXT) {
+            bottomEditText.setText(textPostEntry.getText());
+        } else if (composeMode == ComposeMode.MEDIA) {
+            textPostEntry.setText(bottomEditText.getText());
+        }
+
+        switch (newComposeMode) {
+            case ComposeMode.MEDIA:
+                postEntryView.bindAudioDraft(audioDurationLoader, viewModel.getVoiceDraft());
+                showMixedMediaCompose();
+                break;
+            case ComposeMode.AUDIO:
+                showAudioOnlyCompose();
+                voicePostComposerView.bindAudioDraft(audioDurationLoader, viewModel.getVoiceDraft());
+                break;
+            case ComposeMode.TEXT:
+                showTextOnlyCompose();
+                break;
+        }
+        composeMode = newComposeMode;
     }
 
-    private void updatePostSubtitle(final String name) {
-        subtitleView.setText(getString(R.string.composer_sharing_group_post));
+    private void showMixedMediaCompose() {
+        textEntryCard.setVisibility(View.GONE);
+        audioComposer.setVisibility(View.GONE);
+        bottomSendButton.setVisibility(View.VISIBLE);
+        postEntryView.setVisibility(View.VISIBLE);
+        mediaContainer.setVisibility(View.VISIBLE);
+    }
+
+    private void showTextOnlyCompose() {
+        textEntryCard.setVisibility(View.VISIBLE);
+        audioComposer.setVisibility(View.GONE);
+        bottomSendButton.setVisibility(View.GONE);
+        postEntryView.setVisibility(View.GONE);
+        mediaContainer.setVisibility(View.GONE);
+    }
+
+    private void showAudioOnlyCompose() {
+        textEntryCard.setVisibility(View.GONE);
+        audioComposer.setVisibility(View.VISIBLE);
+        bottomSendButton.setVisibility(View.GONE);
+        postEntryView.setVisibility(View.GONE);
+        mediaContainer.setVisibility(View.GONE);
+        voiceNoteRecorderControlView.setVisibility(View.GONE);
     }
 
     private void updateMessageSubtitle(final String name) {
         final TextView subtitleView = toolbar.findViewById(R.id.toolbar_subtitle);
+        subtitleView.setVisibility(View.VISIBLE);
         if (name == null) {
             Log.e("ContentComposerActivity: updateMessageSubtitle received null name");
             subtitleView.setText("");
@@ -668,15 +746,6 @@ public class ContentComposerActivity extends HalloActivity {
             viewModel.getFeedPrivacy().removeObservers(this);
         } else {
             viewModel.getFeedPrivacy().observe(this, this::updatePostSubtitle);
-        }
-        avatarLoader.cancel(avatarView);
-        if (groupId == null) {
-            homeIconView.setVisibility(View.VISIBLE);
-            avatarView.setVisibility(View.INVISIBLE);
-        } else {
-            homeIconView.setVisibility(View.GONE);
-            avatarView.setVisibility(View.VISIBLE);
-            avatarLoader.load(avatarView, groupId);
         }
     }
 
@@ -717,6 +786,22 @@ public class ContentComposerActivity extends HalloActivity {
         final Intent intent = new Intent();
         putExtraMediaDataInIntent(intent);
         setResult(MediaPickerActivity.RESULT_SELECT_MORE, intent);
+    }
+
+    public void updatePostSubtitle(FeedPrivacy feedPrivacy) {
+        if (feedPrivacy == null) {
+            Log.e("ContentComposerActivity: updatePostSubtitle received null FeedPrivacy");
+            privacyDestination.setText(R.string.home);
+        } else if (PrivacyList.Type.ALL.equals(feedPrivacy.activeList)) {
+            privacyDestination.setText(R.string.setting_feed_all);
+        } else if (PrivacyList.Type.EXCEPT.equals(feedPrivacy.activeList)) {
+            privacyDestination.setText(R.string.setting_feed_except);
+        } else if (PrivacyList.Type.ONLY.equals(feedPrivacy.activeList)) {
+            privacyDestination.setText(R.string.setting_feed_only);
+        } else {
+            Log.e("ContentComposerActivity: updatePostSubtitle received unexpected activeList - " + feedPrivacy.activeList);
+            privacyDestination.setText("");
+        }
     }
 
     private void updatePostReply(@Nullable Post post) {
@@ -834,24 +919,6 @@ public class ContentComposerActivity extends HalloActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
-        getMenuInflater().inflate(R.menu.content_composer_menu, menu);
-        return true;
-    }
-
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        final MenuItem shareMenuItem = menu.findItem(R.id.share);
-        final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
-        shareMenuItem.setVisible((mediaPairList != null && !mediaPairList.isEmpty()) || !TextUtils.isEmpty(editText.getText()));
-        if (chatId != null) {
-            shareMenuItem.setTitle(R.string.send);
-        } else {
-            shareMenuItem.setTitle(R.string.share);
-        }
-        return true;
-    }
-
     private void addAdditionalMedia() {
         final Intent intent = MediaPickerActivity.pickMoreMedia(this);
         putExtraMediaDataInIntent(intent);
@@ -906,17 +973,25 @@ public class ContentComposerActivity extends HalloActivity {
         if (!mediaPairList.isEmpty()) {
             setCurrentItem(currentItem > mediaPairList.size() ? mediaPairList.size() - 1 : currentItem, true);
         } else {
-            openMediaPicker();
+            if (viewModel.getVoiceDraft() != null) {
+                updateComposeMode(ComposeMode.AUDIO);
+            } else if (TextUtils.isEmpty(bottomEditText.getText())) {
+                openMediaPicker();
+                return;
+            } else {
+                updateComposeMode(ComposeMode.TEXT);
+            }
             return;
         }
         if (mediaPairList.size() <= 1) {
             mediaPagerIndicator.setVisibility(View.GONE);
+            addMoreText.setVisibility(View.VISIBLE);
         } else {
             mediaPagerIndicator.setVisibility(View.VISIBLE);
             mediaPagerIndicator.setViewPager(mediaPager);
+            addMoreText.setVisibility(View.GONE);
         }
         updateAspectRatioForMedia(mediaPairList);
-        invalidateOptionsMenu();
         updateMediaButtons();
         refreshVideoPlayers(getCurrentItem());
     }
@@ -959,24 +1034,27 @@ public class ContentComposerActivity extends HalloActivity {
 
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.share) {
-            final Pair<String, List<Mention>> textAndMentions = editText.getTextWithMentions();
-            final String postText = textAndMentions.first;
-            if (TextUtils.isEmpty(postText) && viewModel.getEditMedia() == null) {
-                Log.w("ContentComposerActivity: cannot send empty content");
-            } else {
-                item.setEnabled(false);
-                final boolean supportsWideColor = ActivityUtils.supportsWideColor(this);
-                verifyVideosDurationWithinLimit(
-                    () -> item.setEnabled(true),
-                    () -> viewModel.prepareContent(chatId, groupId, postText.trim(), textAndMentions.second, supportsWideColor)
-                );
-            }
-            return true;
+    private void sharePost() {
+        if (Boolean.TRUE.equals(viewModel.getVoiceNoteRecorder().isLocked().getValue())) {
+            viewModel.finishRecording();
         }
-        return super.onOptionsItemSelected(item);
+        final Pair<String, List<Mention>> textAndMentions;
+        if (composeMode == ComposeMode.TEXT) {
+            textAndMentions = textPostEntry.getTextWithMentions();
+        } else {
+            textAndMentions = bottomEditText.getTextWithMentions();
+        }
+        final String postText = textAndMentions.first;
+        if (TextUtils.isEmpty(postText) && viewModel.getEditMedia() == null) {
+            Log.w("ContentComposerActivity: cannot send empty content");
+        } else {
+            postEntryView.setCanSend(false);
+            final boolean supportsWideColor = ActivityUtils.supportsWideColor(this);
+            verifyVideosDurationWithinLimit(
+                    () -> postEntryView.setCanSend(true),
+                    () -> viewModel.prepareContent(chatId, groupId, postText.trim(), textAndMentions.second, supportsWideColor)
+            );
+        }
     }
 
     @Override
@@ -1063,7 +1141,7 @@ public class ContentComposerActivity extends HalloActivity {
             }
 
             // Load new data
-            final View loadingView = findViewById(R.id.loading);
+            final View loadingView = findViewById(R.id.media_loading);
             loadingView.setVisibility(View.VISIBLE);
             mediaPager.setVisibility(View.GONE);
             expectedMediaCount = uris.size();
@@ -1092,7 +1170,7 @@ public class ContentComposerActivity extends HalloActivity {
 
     private void updateMediaButtons() {
         final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.getEditMedia();
-        final boolean editIsFocused = editText != null && editText.isFocused();
+        final boolean editIsFocused = textPostEntry != null && textPostEntry.isFocused();
         if (mediaPairList != null && !mediaPairList.isEmpty() && !editIsFocused) {
             addMediaButton.setVisibility(allowAddMedia ? View.VISIBLE : View.GONE);
             deletePictureButton.setVisibility(View.VISIBLE);
@@ -1105,10 +1183,10 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     private void clearEditFocus() {
-        if (editText.hasFocus()) {
-            editText.clearFocus();
+        if (bottomEditText.hasFocus()) {
+            bottomEditText.clearFocus();
             InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(bottomEditText.getWindowToken(), 0);
         }
     }
 
