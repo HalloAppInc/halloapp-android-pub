@@ -14,6 +14,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
 
@@ -159,7 +160,7 @@ public class Notifications {
 
             callNotificationsChannel.enableLights(true);
             callNotificationsChannel.enableVibration(true);
-            callNotificationsChannel.setSound(getCallRingtone(context), getCallNotificationAudioAttributes());
+            callNotificationsChannel.setSound(Settings.System.DEFAULT_RINGTONE_URI, getCallNotificationAudioAttributes());
 
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             notificationManager.createNotificationChannel(feedNotificationsChannel);
@@ -654,7 +655,7 @@ public class Notifications {
                     .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
                             NotificationCompat.DEFAULT_SOUND |
                             NotificationCompat.DEFAULT_VIBRATE)
-                    .setSound(getCallRingtone(context), AudioManager.STREAM_RING)
+                    .setSound(Settings.System.DEFAULT_RINGTONE_URI, AudioManager.STREAM_RING)
                     // TODO(nikola): icons are not shown in the notification somehow...
                     .addAction(R.drawable.ic_call_end, context.getString(R.string.call_decline_button), declinePendingIntent)
                     .addAction(R.drawable.ic_call, context.getString(R.string.call_accept_button), acceptPendingIntent)
@@ -694,10 +695,6 @@ public class Notifications {
                 .setTicker(context.getResources().getString(R.string.ongoing_voice_call))
                 .build();
         return notification;
-    }
-
-    public Uri getCallRingtone(Context context) {
-        return RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE);
     }
 
     public AudioAttributes getCallNotificationAudioAttributes() {
