@@ -97,38 +97,41 @@ public class MainContentDbObserver implements ContentDb.Observer {
 
     @Override
     public void onCommentAdded(@NonNull Comment comment) {
-        if (comment.isOutgoing()) {
-            if (comment.shouldSend()) {
-                if (!comment.hasMedia()) {
-                    connection.sendComment(comment);
-                } else {
-                    new UploadMediaTask(comment, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+        bgWorkers.execute(() -> {
+            if (comment.isOutgoing()) {
+                if (comment.shouldSend()) {
+                    if (!comment.hasMedia()) {
+                        connection.sendComment(comment);
+                    } else {
+                        new UploadMediaTask(comment, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+                    }
+                }
+            } else { // if (comment.isIncoming())
+                if (comment.hasMedia()) {
+                    DownloadMediaTask.download(comment, fileStore, contentDb);
+                }
+                Post parentPost = comment.getParentPost();
+                if (parentPost != null) {
+                    if (parentPost.senderUserId.isMe()) {
+                        notifications.updateFeedNotifications();
+                    }
                 }
             }
-        } else { // if (comment.isIncoming())
-            if (comment.hasMedia()) {
-                DownloadMediaTask.download(comment, fileStore, contentDb);
-            }
-            Post parentPost = comment.getParentPost();
-            if (parentPost != null) {
-                if (parentPost.senderUserId.isMe()) {
-                    notifications.updateFeedNotifications();
-                }
-            }
-        }
+        });
     }
 
     @Override
     public void onCommentRetracted(@NonNull Comment comment) {
-        if (comment.senderUserId.isMe()) {
-            if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
-                connection.retractComment(comment.postId, comment.id);
-            } else {
-                connection.retractGroupComment(comment.getParentPost().getParentGroup(), comment.postId, comment.id);
+        bgWorkers.execute(() -> {
+            if (comment.senderUserId.isMe()) {
+                if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
+                    connection.retractComment(comment.postId, comment.id);
+                } else {
+                    connection.retractGroupComment(comment.getParentPost().getParentGroup(), comment.postId, comment.id);
+                }
             }
-        }
-        notifications.updateFeedNotifications(comment);
-
+            notifications.updateFeedNotifications(comment);
+        });
     }
 
     @Override
