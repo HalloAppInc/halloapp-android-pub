@@ -861,6 +861,15 @@ public class ContentDb {
         });
     }
 
+    public void setUnknownContactAllowed(@NonNull UserId userId, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            messagesDb.setUnknownContactAllowed(userId);
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
     public void setGroupInactive(@NonNull GroupId groupId, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
             if (messagesDb.setGroupInactive(groupId)) {

@@ -310,6 +310,16 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
+    <style name="Widget.Button.Neutral" parent="Widget.Button">
+        <item name="backgroundTint">@color/neutral_button_background</item>
+        <item name="android:textColor">@color/secondary_text_button</item>
+    </style>
+
+    <style name="Widget.Button.TextOnly" parent="@style/Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/secondary_text_button</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
     <style name="Widget.Button" parent="@style/Widget.MaterialComponents.Button">
         <item name="android:textAllCaps">false</item>
     </style>

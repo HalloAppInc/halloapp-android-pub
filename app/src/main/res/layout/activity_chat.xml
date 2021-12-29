@@ -162,6 +162,75 @@
             </FrameLayout>
 
             <LinearLayout
+                android:id="@+id/unknown_contact_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:background="@color/window_background">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/home_navigation_divider"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/not_in_address_book_alert"
+                    android:textSize="14sp"
+                    android:layout_marginTop="15dp"
+                    android:textColor="@color/primary_text"
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/unknown_accept"
+                    style="@style/Widget.Button.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:letterSpacing=".02"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:layout_marginStart="80dp"
+                    android:layout_marginEnd="80dp"
+                    app:cornerRadius="10dp"
+                    android:text="@string/accept_message"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/unknown_add"
+                    style="@style/Widget.Button.Neutral"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:letterSpacing=".02"
+                    android:layout_marginTop="2dp"
+                    app:cornerRadius="10dp"
+                    android:layout_marginStart="80dp"
+                    android:layout_marginEnd="80dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/add_to_contacts"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/unknown_block"
+                    style="@style/Widget.Button.TextOnly"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:letterSpacing=".02"
+                    android:layout_marginTop="2dp"
+                    app:cornerRadius="10dp"
+                    android:layout_marginStart="80dp"
+                    android:layout_marginEnd="80dp"
+                    android:layout_marginBottom="8dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:textColor="@color/color_primary"
+                    android:text="@string/block"/>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/footer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

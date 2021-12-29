@@ -13,6 +13,10 @@
     <string name="notifications">Notifications</string>
     <!-- Button text on profile of a user not in the user's contacts; tapping takes the user to the contacts app with data prefilled -->
     <string name="add_to_contacts">Add to contacts</string>
+    <!-- Button text allowing user to accept a message not from their contacts. Short if possible -->
+    <string name="accept_message">Accept message</string>
+    <!-- Message alerting the user that the person messaging them is not in their address book -->
+    <string name="not_in_address_book_alert">This person is not in your address book</string>
     <string name="feed_notifications_channel_name">Feed notifications</string>
     <string name="message_notifications_channel_name">Message notifications</string>
     <string name="critical_notifications_channel_name">Critical app alerts</string>

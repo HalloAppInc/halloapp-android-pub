@@ -19,6 +19,8 @@ import androidx.annotation.WorkerThread;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.AppContext;
 import com.halloapp.FileStore;
+import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.DeletedGroupNameTable;
 import com.halloapp.content.tables.GroupMembersTable;
@@ -231,6 +233,12 @@ class MessagesDb {
                     if (message.type != Message.TYPE_SYSTEM) {
                         chatValues.put(ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID, message.rowId);
                         chatValues.put(ChatsTable.COLUMN_TIMESTAMP, message.timestamp);
+                        if (message.chatId instanceof UserId) {
+                            Contact contact = ContactsDb.getInstance().getContact((UserId) message.chatId);
+                            if (!contact.inAddressBook()) {
+                                chatValues.put(ChatsTable.COLUMN_IS_ACTIVE, false);
+                            }
+                        }
                     }
                     if (unseen) {
                         chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 1);
@@ -462,6 +470,27 @@ class MessagesDb {
             Log.i("ContentDb.setGroupInactive: success " + groupId);
         } catch (SQLiteConstraintException ex) {
             Log.w("ContentDb.setGroupInactive: " + ex.getMessage() + " " + groupId);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    @WorkerThread
+    boolean setUnknownContactAllowed(@NonNull UserId userId) {
+        Log.i("MessagesDb.setUnknownContactAllowed " + userId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            final ContentValues chatValues = new ContentValues();
+            chatValues.put(ChatsTable.COLUMN_IS_ACTIVE, 1);
+            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{userId.rawId()});
+
+            db.setTransactionSuccessful();
+            Log.i("ContentDb.setUnknownContactAllowed: success " + userId);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("ContentDb.setUnknownContactAllowed: " + ex.getMessage() + " " + userId);
             return false;
         } finally {
             db.endTransaction();

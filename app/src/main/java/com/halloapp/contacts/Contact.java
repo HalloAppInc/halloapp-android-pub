@@ -115,6 +115,10 @@ public class Contact implements Parcelable {
         return contacts;
     }
 
+    public boolean inAddressBook() {
+        return !TextUtils.isEmpty(addressBookName);
+    }
+
     public static final Parcelable.Creator<Contact> CREATOR = new Parcelable.Creator<Contact>() {
         public Contact createFromParcel(Parcel in) {
             long rowId = in.readLong();

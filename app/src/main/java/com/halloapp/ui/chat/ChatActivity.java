@@ -29,6 +29,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -62,6 +63,7 @@ import com.halloapp.UrlPreview;
 import com.halloapp.UrlPreviewLoader;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
+import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
@@ -223,6 +225,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private MenuItem blockMenuItem;
     private final Map<Long, Integer> replyMessageMediaIndexMap = new HashMap<>();
 
+    private View unknownContactsContainer;
+
     private boolean showKeyboardOnResume;
     private boolean allowVoiceNoteSending;
     private boolean allowAudioCalls;
@@ -281,6 +285,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         subtitleView = findViewById(R.id.subtitle);
         avatarView = findViewById(R.id.avatar);
         footer = findViewById(R.id.footer);
+        unknownContactsContainer = findViewById(R.id.unknown_contact_container);
 
         chatInputView = findViewById(R.id.entry_view);
 
@@ -364,6 +369,47 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                         linkPreviewComposeView.setLoading(!TextUtils.isEmpty(url));
                     }
                 });
+            }
+        });
+
+        findViewById(R.id.unknown_block).setOnClickListener(v -> {
+            final String chatName = viewModel.name.getLiveData().getValue();
+            ProgressDialog blockDialog = ProgressDialog.show(this, null, getString(R.string.blocking_user_in_progress, chatName), true);
+            blockDialog.show();
+
+            viewModel.blockContact((UserId)chatId).observe(this, success -> {
+                if (success == null) {
+                    return;
+                }
+                blockDialog.cancel();
+                if (success) {
+                    SnackbarHelper.showInfo(chatView, getString(R.string.blocking_user_successful, chatName));
+                    ContentDb.getInstance().setUnknownContactAllowed((UserId) chatId, () -> {
+                        viewModel.chat.invalidate();
+                    });
+                    finish();
+                } else {
+                    SnackbarHelper.showWarning(chatView, getString(R.string.blocking_user_failed_check_internet, chatName));
+                }
+            });
+        });
+
+        findViewById(R.id.unknown_accept).setOnClickListener(v -> {
+            if (chatId instanceof UserId) {
+                ContentDb.getInstance().setUnknownContactAllowed((UserId) chatId, () -> {
+                    viewModel.chat.invalidate();
+                });
+                ContentDb.getInstance().setChatSeen(chatId);
+            }
+        });
+
+        findViewById(R.id.unknown_add).setOnClickListener(v -> {
+            if (chatId instanceof UserId) {
+                ContentDb.getInstance().setUnknownContactAllowed((UserId) chatId, () -> {
+                    viewModel.chat.invalidate();
+                });
+                ContentDb.getInstance().setChatSeen(chatId);
+                addToContacts();
             }
         });
 
@@ -556,6 +602,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 adapter.setFirstUnseenMessageRowId(chat.firstUnseenMessageRowId);
                 adapter.setNewMessageCount(chat.newMessageCount);
                 footer.setVisibility(chat.isActive ? View.VISIBLE : View.GONE);
+                unknownContactsContainer.setVisibility((!chat.isGroup && !chat.isActive) ? View.VISIBLE : View.GONE);
             }
 
             if (chatId instanceof UserId) {
@@ -593,7 +640,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     }
                 });
             }
-            ContentDb.getInstance().setChatSeen(chatId);
+            if (chat == null || chat.isGroup || chat.isActive) {
+                ContentDb.getInstance().setChatSeen(chatId);
+            }
         });
         avatarLoader.load(avatarView, chatId);
         viewModel.deleted.observe(this, deleted -> {
@@ -853,9 +902,12 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         Log.i("ChatActivity.onStart " + chatId);
         ForegroundChat.getInstance().setForegroundChatId(chatId);
         Notifications.getInstance(this).clearMessageNotifications(chatId);
-        if (adapter.firstUnseenMessageRowId >= 0) {
-            Log.i("ChatActivity.onStart mark " + chatId + " as seen");
-            ContentDb.getInstance().setChatSeen(chatId);
+        Chat chat = viewModel.chat.getLiveData().getValue();
+        if (chat == null || chat.isGroup || chat.isActive) {
+            if (adapter.firstUnseenMessageRowId >= 0) {
+                Log.i("ChatActivity.onStart mark " + chatId + " as seen");
+                ContentDb.getInstance().setChatSeen(chatId);
+            }
         }
     }
 
@@ -1649,7 +1701,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
         @Override
         void addToContacts() {
-            startActivity(IntentUtils.createContactIntent(viewModel.contact.getLiveData().getValue(), viewModel.phone.getValue()));
+            ChatActivity.this.addToContacts();
         }
 
         @Override
@@ -1662,4 +1714,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             return viewModel.phone;
         }
     };
+
+    private void addToContacts() {
+        startActivity(IntentUtils.createContactIntent(viewModel.contact.getLiveData().getValue(), viewModel.phone.getValue()));
+    }
 }
