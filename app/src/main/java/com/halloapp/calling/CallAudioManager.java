@@ -142,7 +142,7 @@ public class CallAudioManager {
             int state = intent.getIntExtra("state", STATE_UNPLUGGED);
             int microphone = intent.getIntExtra("microphone", HAS_NO_MIC);
             String name = intent.getStringExtra("name");
-            Log.d("WiredHeadsetReceiver.onReceive" + RtcUtils.getThreadInfo() + ": "
+            Log.d("CallAudioManager WiredHeadsetReceiver.onReceive" + RtcUtils.getThreadInfo() + ": "
                     + "a=" + intent.getAction() + ", s="
                     + (state == STATE_UNPLUGGED ? "unplugged" : "plugged") + ", m="
                     + (microphone == HAS_MIC ? "mic" : "no mic") + ", n=" + name + ", sb="
@@ -158,7 +158,7 @@ public class CallAudioManager {
     }
 
     private CallAudioManager(Context context) {
-        Log.d("ctor");
+        Log.d("CallAudioManager create");
         ThreadUtils.checkIsOnMainThread();
         apprtcContext = context;
         audioManager = ((AudioManager) context.getSystemService(Context.AUDIO_SERVICE));
@@ -186,21 +186,21 @@ public class CallAudioManager {
 //                // or removes their hand from the device.
 //                this ::onProximitySensorChangedState);
 
-        Log.d("defaultAudioDevice: " + defaultAudioDevice);
+        Log.d("CallAudioManager defaultAudioDevice: " + defaultAudioDevice);
         RtcUtils.logDeviceInfo();
     }
 
     @SuppressWarnings("deprecation") // TODO(henrika): audioManager.requestAudioFocus() is deprecated.
     public void start(AudioManagerEvents audioManagerEvents) {
-        Log.d("CallAudioManager/start");
+        Log.d("CallAudioManager.start");
         ThreadUtils.checkIsOnMainThread();
         if (amState == AudioManagerState.RUNNING) {
-            Log.e("AudioManager is already active");
+            Log.e("CallAudioManager is already active");
             return;
         }
         // TODO(henrika): perhaps call new method called preInitAudio() here if UNINITIALIZED.
 
-        Log.d("CallAudioManager: starts...");
+        Log.d("CallAudioManager starts...");
         this.audioManagerEvents = audioManagerEvents;
         amState = AudioManagerState.RUNNING;
 
@@ -247,7 +247,7 @@ public class CallAudioManager {
                         typeOfChange = "AUDIOFOCUS_INVALID";
                         break;
                 }
-                Log.d("onAudioFocusChange: " + typeOfChange);
+                Log.d("CallAudioManager.onAudioFocusChange: " + typeOfChange);
             }
         };
 
@@ -255,9 +255,9 @@ public class CallAudioManager {
         int result = audioManager.requestAudioFocus(audioFocusChangeListener,
                 AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            Log.d("Audio focus request granted for VOICE_CALL streams");
+            Log.d("CallAudioManager: Audio focus request granted for VOICE_CALL streams");
         } else {
-            Log.e("Audio focus request failed");
+            Log.e("CallAudioManager: Audio focus request failed");
         }
 
         Log.i("CallAudioManager: setMode");
@@ -291,16 +291,16 @@ public class CallAudioManager {
         // Register receiver for broadcast intents related to adding/removing a
         // wired headset.
         registerReceiver(wiredHeadsetReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
-        Log.d("AudioManager started");
+        Log.d("CallAudioManager: started");
     }
 
     @MainThread
     @SuppressWarnings("deprecation") // TODO(henrika): audioManager.abandonAudioFocus() is deprecated.
     public void stop() {
-        Log.d("stop");
+        Log.d("CallAudioManager: stop");
         ThreadUtils.checkIsOnMainThread();
         if (amState != AudioManagerState.RUNNING) {
-            Log.e("Trying to stop AudioManager in incorrect state: " + amState);
+            Log.e("CallAudioManager: Trying to stop AudioManager in incorrect state: " + amState);
             return;
         }
         amState = AudioManagerState.UNINITIALIZED;
@@ -317,7 +317,7 @@ public class CallAudioManager {
         // Abandon audio focus. Gives the previous focus owner, if any, focus.
         audioManager.abandonAudioFocus(audioFocusChangeListener);
         audioFocusChangeListener = null;
-        Log.d("Abandoned audio focus for VOICE_CALL streams");
+        Log.d("CallAudioManager: Abandoned audio focus for VOICE_CALL streams");
 
 //        if (proximitySensor != null) {
 //            proximitySensor.stop();
@@ -325,12 +325,12 @@ public class CallAudioManager {
 //        }
 
         audioManagerEvents = null;
-        Log.d("AudioManager stopped");
+        Log.d("CallAudioManager: AudioManager stopped");
     }
 
     /** Changes selection of the currently active audio device. */
     private void setAudioDeviceInternal(AudioDevice device) {
-        Log.d("setAudioDeviceInternal(device=" + device + ")");
+        Log.d("CallAudioManager.setAudioDeviceInternal(device=" + device + ")");
         RtcUtils.assertIsTrue(audioDevices.contains(device));
 
         switch (device) {
@@ -347,7 +347,7 @@ public class CallAudioManager {
                 setSpeakerphoneOn(false);
                 break;
             default:
-                Log.e("Invalid audio device selection");
+                Log.e("CallAudioManager: Invalid audio device selection");
                 break;
         }
         selectedAudioDevice = device;
@@ -371,10 +371,10 @@ public class CallAudioManager {
                 }
                 break;
             default:
-                Log.e("Invalid default audio device selection");
+                Log.e("CallAudioManager:Invalid default audio device selection");
                 break;
         }
-        Log.d("setDefaultAudioDevice(device=" + defaultAudioDevice + ")");
+        Log.d("CallAudioManager: setDefaultAudioDevice(device=" + defaultAudioDevice + ")");
         updateAudioDeviceState();
     }
 
@@ -382,7 +382,7 @@ public class CallAudioManager {
     public void selectAudioDevice(AudioDevice device) {
         ThreadUtils.checkIsOnMainThread();
         if (!audioDevices.contains(device)) {
-            Log.e("Can not select " + device + " from available " + audioDevices);
+            Log.e("CallAudioManager: Can not select " + device + " from available " + audioDevices);
         }
         userSelectedAudioDevice = device;
         updateAudioDeviceState();
@@ -450,10 +450,10 @@ public class CallAudioManager {
             for (AudioDeviceInfo device : devices) {
                 final int type = device.getType();
                 if (type == AudioDeviceInfo.TYPE_WIRED_HEADSET) {
-                    Log.d("hasWiredHeadset: found wired headset");
+                    Log.d("CallAudioManager: hasWiredHeadset: found wired headset");
                     return true;
                 } else if (type == AudioDeviceInfo.TYPE_USB_DEVICE) {
-                    Log.d("hasWiredHeadset: found USB audio device");
+                    Log.d("CallAudioManager: hasWiredHeadset: found USB audio device");
                     return true;
                 }
             }
@@ -467,10 +467,10 @@ public class CallAudioManager {
      */
     public void updateAudioDeviceState() {
         ThreadUtils.checkIsOnMainThread();
-        Log.d("--- updateAudioDeviceState: "
+        Log.d("CallAudioManager --- updateAudioDeviceState: "
                 + "wired headset=" + hasWiredHeadset + ", "
                 + "BT state=" + bluetoothManager.getState());
-        Log.d("Device status: "
+        Log.d("CallAudioManager Device status: "
                 + "available=" + audioDevices + ", "
                 + "selected=" + selectedAudioDevice + ", "
                 + "user selected=" + userSelectedAudioDevice);
@@ -543,7 +543,7 @@ public class CallAudioManager {
         if (bluetoothManager.getState() == CallBluetoothManager.State.HEADSET_AVAILABLE
                 || bluetoothManager.getState() == CallBluetoothManager.State.SCO_CONNECTING
                 || bluetoothManager.getState() == CallBluetoothManager.State.SCO_CONNECTED) {
-            Log.d("Need BT audio: start=" + needBluetoothAudioStart + ", "
+            Log.d("CallAudioManager Need BT audio: start=" + needBluetoothAudioStart + ", "
                     + "stop=" + needBluetoothAudioStop + ", "
                     + "BT state=" + bluetoothManager.getState());
         }
@@ -586,7 +586,7 @@ public class CallAudioManager {
         if (newAudioDevice != selectedAudioDevice || audioDeviceSetUpdated) {
             // Do the required device switch.
             setAudioDeviceInternal(newAudioDevice);
-            Log.d("New device status: "
+            Log.d("CallAudioManager: New device status: "
                     + "available=" + audioDevices + ", "
                     + "selected=" + newAudioDevice);
             if (audioManagerEvents != null) {
@@ -594,6 +594,6 @@ public class CallAudioManager {
                 audioManagerEvents.onAudioDeviceChanged(selectedAudioDevice, audioDevices);
             }
         }
-        Log.d("--- updateAudioDeviceState done");
+        Log.d("CallAudioManager --- updateAudioDeviceState done");
     }
 }
