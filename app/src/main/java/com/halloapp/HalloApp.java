@@ -76,7 +76,6 @@ public class HalloApp extends Application {
                     .penaltyLog()
                     .build());
         }
-        // TODO:(nikola) temp code
         CallManager.getInstance();
 
         ConnectionObservers.getInstance().addObserver(MainConnectionObserver.getInstance(this));

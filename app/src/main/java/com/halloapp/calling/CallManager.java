@@ -4,21 +4,32 @@ import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Icon;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.os.SystemClock;
+import android.telecom.CallAudioState;
+import android.telecom.Connection;
+import android.telecom.DisconnectCause;
+import android.telecom.PhoneAccount;
+import android.telecom.PhoneAccountHandle;
+import android.telecom.TelecomManager;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.AppContext;
 import com.halloapp.Constants;
 import com.halloapp.Notifications;
+import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.ContentDb;
@@ -98,6 +109,11 @@ public class CallManager {
     private String callId;
     private UserId peerUid;
 
+    @Nullable
+    private PhoneAccountHandle phoneAccountHandle = null;
+    @Nullable
+    private HaTelecomConnection telecomConnection;
+
     private ComponentName callService;
     @Nullable
     private final PowerManager.WakeLock proximityLock;
@@ -146,6 +162,28 @@ public class CallManager {
         this.audioManager = CallAudioManager.create(appContext.get());
         this.observers = new HashSet<>();
         this.callStats = new CallStats();
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            telecomRegisterAccount();
+        }
+    }
+
+    @RequiresApi(api = 23)
+    public void telecomRegisterAccount() {
+        TelecomManager tm = (TelecomManager) appContext.get().getSystemService(Context.TELECOM_SERVICE);
+        if (tm != null) {
+            ComponentName cName = new ComponentName(appContext.get(), HaTelecomConnectionService.class);
+            this.phoneAccountHandle = new PhoneAccountHandle(cName, "HalloApp");
+
+            final Icon icon = Icon.createWithResource(appContext.get(), R.drawable.ic_launcher_foreground);
+            PhoneAccount phoneAccount = PhoneAccount.builder(phoneAccountHandle, "HalloApp")
+                    // TODO(nikola): Add here for video calls: CAPABILITY_VIDEO_CALLING
+                    .setCapabilities(PhoneAccount.CAPABILITY_SELF_MANAGED)
+                    .setIcon(icon)
+                    .build();
+
+            tm.registerPhoneAccount(phoneAccount);
+        }
     }
 
     public void addObserver(CallObserver observer) {
@@ -184,10 +222,43 @@ public class CallManager {
         this.callStats.startStatsCollection();
         this.state = State.CALLING;
 
-        startAudioManager();
-
-        executor.execute(this::setupWebrtc);
+        if (Build.VERSION.SDK_INT >= 23) {
+            telecomPlaceCall();
+        } else {
+            finishStartCall();
+        }
         return true;
+    }
+
+    public void finishStartCall() {
+        startAudioManager();
+        executor.execute(this::setupWebrtc);
+    }
+
+    @RequiresApi(api = 23)
+    private void telecomPlaceCall() {
+        TelecomManager tm = (TelecomManager) appContext.get().getSystemService(Context.TELECOM_SERVICE);
+        if (tm != null) {
+            Bundle extras = new Bundle();
+            Contact contact = ContactsDb.getInstance().getContact(peerUid);
+            Bundle innerExtras = new Bundle();
+            innerExtras.putString(HaTelecomConnectionService.EXTRA_CALL_ID, callId);
+            innerExtras.putString(HaTelecomConnectionService.EXTRA_PEER_UID, peerUid.rawId());
+            innerExtras.putString(HaTelecomConnectionService.EXTRA_PEER_UID_NAME, contact.getDisplayName());
+            innerExtras.putString(HaTelecomConnectionService.EXTRA_PEER_UID_PHONE, contact.getDisplayPhone());
+            extras.putBundle(TelecomManager.EXTRA_OUTGOING_CALL_EXTRAS, innerExtras);
+            extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, this.phoneAccountHandle);
+            Uri uri = Uri.fromParts("tel", contact.normalizedPhone, null);
+            try {
+                // If the telecom framework approves the call it will call HaTelecomService.onCreateOutgoingConnection
+                // which will come back here and call finishStartCall
+                tm.placeCall(uri, extras);
+            } catch (SecurityException e) {
+                Log.e("TelecomManager.placeCall raised SecurityException " + e);
+                Log.sendErrorReport("SecurityException while calling TelecomManager.placeCall");
+                finishStartCall();
+            }
+        }
     }
 
     private ComponentName startCallService() {
@@ -240,6 +311,12 @@ public class CallManager {
         peerUid = null;
         callStartTimestamp = 0;
         state = State.IDLE;
+        if (telecomConnection != null) {
+            if (Build.VERSION.SDK_INT >= 23) {
+                telecomConnection.stop(reason);
+            }
+            telecomConnection = null;
+        }
     }
 
     public void handleIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType, @Nullable String webrtcOffer,
@@ -287,9 +364,47 @@ public class CallManager {
 
         this.state = State.INCOMING_RINGING;
         notifyOnIncomingCall();
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            telecomHandleIncomingCall();
+        } else {
+            showIncomingCallNotification();
+        }
+    }
+
+    public void showIncomingCallNotification() {
         Notifications.getInstance(appContext.get()).showIncomingCallNotification(callId, peerUid);
         callsApi.sendRinging(callId, peerUid);
         startRingingTimeoutTimer();
+    }
+
+    @RequiresApi(api = 23)
+    public void telecomHandleIncomingCall() {
+        TelecomManager tm = (TelecomManager) appContext.get().getSystemService(Context.TELECOM_SERVICE);
+        if (tm != null && phoneAccountHandle != null) {
+            Bundle extras = new Bundle();
+            Contact c = ContactsDb.getInstance().getContact(peerUid);
+            extras.putString(HaTelecomConnectionService.EXTRA_CALL_ID, callId);
+            extras.putString(HaTelecomConnectionService.EXTRA_PEER_UID, peerUid.rawId());
+            extras.putString(HaTelecomConnectionService.EXTRA_PEER_UID_NAME, c.getDisplayName());
+            extras.putString(HaTelecomConnectionService.EXTRA_PEER_UID_PHONE, c.getDisplayPhone());
+            tm.addNewIncomingCall(phoneAccountHandle, extras);
+        }
+    }
+
+    public void telecomSetActive() {
+        if (telecomConnection != null && Build.VERSION.SDK_INT >= 23) {
+            telecomConnection.setActive();
+        }
+    }
+
+    public void telecomOnAnswer() {
+        Notifications.getInstance(appContext.get()).clearIncomingCallNotification();
+        mainHandler.post(this::acceptCall);
+    }
+
+    public void setTelecomConnection(HaTelecomConnection telecomConnection) {
+        this.telecomConnection = telecomConnection;
     }
 
     public void handleCallRinging(@NonNull String callId, @NonNull UserId peerUid,@NonNull Long timestamp) {
@@ -335,6 +450,7 @@ public class CallManager {
         this.state = State.IN_CALL;
         this.isAnswered = true;
         this.callStartTimestamp = SystemClock.elapsedRealtime();
+        telecomSetActive();
         notifyOnAnsweredCall();
     }
 
@@ -387,6 +503,8 @@ public class CallManager {
         this.state = State.IN_CALL;
         this.isAnswered = true;
         this.callStartTimestamp = SystemClock.elapsedRealtime();
+        notifyOnAnsweredCall();
+        telecomSetActive();
         return true;
     }
 
@@ -625,6 +743,13 @@ public class CallManager {
         }, new MediaConstraints());
     }
 
+    // TODO(nikola): Convert other place in the CallManager to use this function
+    public void endCallAndStop(EndCall.Reason reason) {
+        endCall(reason);
+        notifyOnEndCall();
+        stop(reason);
+    }
+
     public boolean getPeerConnectionStats(RTCStatsCollectorCallback c) {
         if (peerConnection != null) {
             peerConnection.getStats(c);
@@ -639,9 +764,13 @@ public class CallManager {
 
     public void setMicrophoneMute(boolean mute) {
         Log.i("CallManager.setMicrophoneMute(" + mute + ") was: " + this.isMicrophoneMuted);
-        localAudioTrack.setEnabled(!mute);
-        audioManager.setMicrophoneMute(mute);
         isMicrophoneMuted = mute;
+
+        if (Build.VERSION.SDK_INT >= 26) {
+            localAudioTrack.setEnabled(!mute);
+        } else {
+            audioManager.setMicrophoneMute(mute);
+        }
         notifyOnMicrophoneMuteToggle();
     }
 
@@ -655,10 +784,11 @@ public class CallManager {
 
     public void setSpeakerPhoneOn(boolean on) {
         Log.i("CallManager.setSpeakerPhoneOn(" + on + ") was: " + isSpeakerPhoneOn);
-        if (on) {
-            audioManager.setDefaultAudioDevice(CallAudioManager.AudioDevice.SPEAKER_PHONE);
+        if (Build.VERSION.SDK_INT >= 26) {
+            // TODO(nikola): what if the call is going to bluetooth right now?
+            telecomConnection.setAudioRoute(on ? CallAudioState.ROUTE_SPEAKER : CallAudioState.ROUTE_EARPIECE);
         } else {
-            audioManager.setDefaultAudioDevice(CallAudioManager.AudioDevice.EARPIECE);
+            audioManager.setDefaultAudioDevice(on ? CallAudioManager.AudioDevice.SPEAKER_PHONE : CallAudioManager.AudioDevice.EARPIECE);
         }
         isSpeakerPhoneOn = on;
         notifyOnSpeakerPhoneToggle();
@@ -842,12 +972,17 @@ public class CallManager {
     private void startAudioManager() {
         // Store existing audio settings and change audio mode to
         // MODE_IN_COMMUNICATION for best possible VoIP performance.
-        Log.i("Starting the audio manager " + audioManager);
-        audioManager.start((audioDevice, availableAudioDevices) -> Log.i("onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + audioDevice));
+        if (Build.VERSION.SDK_INT < 26) {
+            Log.i("Starting the audio manager " + audioManager);
+            audioManager.start((audioDevice, availableAudioDevices) -> Log.i("onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + audioDevice));
+        }
     }
 
     private void stopAudioManager() {
-        mainHandler.post(audioManager::stop);
+        Log.i("CallManager: stoping CallAudioManager");
+        if (Build.VERSION.SDK_INT < 26) {
+            mainHandler.post(audioManager::stop);
+        }
     }
 
     private void storeMissedCallMsg(@NonNull UserId userId, @NonNull String callId, @NonNull CallType callType) {
