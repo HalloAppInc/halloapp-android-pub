@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
@@ -572,7 +573,10 @@ class PostsDb {
                 String id = cursor.getString(1);
                 String postId = cursor.getString(3);
                 if (postId == null) { // is a post
-                    ret.add(ContentDetails.newBuilder().setPostIdContext(PostIdContext.newBuilder().setFeedPostId(id)).build());
+                    ret.add(ContentDetails.newBuilder()
+                            .setPostIdContext(PostIdContext.newBuilder().setFeedPostId(id))
+                            .setContentHash(ByteString.copyFrom(cursor.getBlob(2)))
+                            .build());
                 } else { // is a comment
                     String parentId = cursor.getString(4);
                     CommentIdContext.Builder builder = CommentIdContext.newBuilder()
@@ -581,7 +585,10 @@ class PostsDb {
                     if (parentId != null) {
                         builder.setParentCommentId(parentId);
                     }
-                    ret.add(ContentDetails.newBuilder().setCommentIdContext(builder).build());
+                    ret.add(ContentDetails.newBuilder()
+                            .setCommentIdContext(builder)
+                            .setContentHash(ByteString.copyFrom(cursor.getBlob(2)))
+                            .build());
                 }
             }
         }
@@ -1834,6 +1841,30 @@ class PostsDb {
         }
         Log.i("ContentDb.getCommentCount: count=" + count);
         return count;
+    }
+
+    @WorkerThread
+    byte[] getPostProtoHash(@NonNull String postId) {
+        final String sql = "SELECT " + PostsTable.COLUMN_PROTO_HASH + " FROM " + PostsTable.TABLE_NAME + " WHERE " + PostsTable.COLUMN_POST_ID + " =?";
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String [] {postId})) {
+            if (cursor.moveToNext()) {
+                return cursor.getBlob(0);
+            }
+        }
+        return null;
+    }
+
+    @WorkerThread
+    byte[] getCommentProtoHash(@NonNull String commentId) {
+        final String sql = "SELECT " + CommentsTable.COLUMN_PROTO_HASH + " FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_COMMENT_ID + " =?";
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String [] {commentId})) {
+            if (cursor.moveToNext()) {
+                return cursor.getBlob(0);
+            }
+        }
+        return null;
     }
 
     // TODO(jack): Switch to this style for loading media everywhere and move to MediaDb (Terlici team adding)

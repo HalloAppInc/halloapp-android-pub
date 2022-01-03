@@ -20,6 +20,8 @@ import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.server.AnswerCall;
 import com.halloapp.proto.server.CallRinging;
 import com.halloapp.proto.server.EndCall;
+import com.halloapp.proto.server.GroupFeedHistory;
+import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.IceCandidate;
 import com.halloapp.proto.server.IceRestartAnswer;
 import com.halloapp.proto.server.IceRestartOffer;
@@ -84,7 +86,7 @@ public abstract class Connection {
         public void onWhisperKeysMessage(@NonNull WhisperKeysMessage message, @NonNull String ackId) {}
         public void onAvatarChangeMessageReceived(UserId userId, String avatarId, @NonNull String ackId) {}
         public void onGroupCreated(@NonNull GroupId groupId, @NonNull String name, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
-        public void onGroupMemberChangeReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
+        public void onGroupMemberChangeReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @Nullable HistoryResend historyResend, @NonNull String ackId) {}
         public void onGroupMemberJoinReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
         public void onGroupMemberLeftReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {}
         public void onGroupAdminChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {}
@@ -170,6 +172,8 @@ public abstract class Connection {
     public abstract void sendComment(final @NonNull Comment comment);
 
     public abstract void sendRerequestedGroupComment(@NonNull Comment comment, @NonNull UserId userId);
+
+    public abstract void sendGroupHistory(@NonNull GroupFeedHistory groupFeedHistory, @NonNull UserId userId);
 
     public abstract void retractMessage(final @NonNull UserId chatUserId, final @NonNull String messageId);
 

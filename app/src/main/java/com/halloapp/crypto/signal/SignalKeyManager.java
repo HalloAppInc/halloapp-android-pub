@@ -201,7 +201,7 @@ public class SignalKeyManager {
         int latestStoredChainIndex = encryptedKeyStore.getInboundCurrentChainIndex(peerUserId);
 
         if (ephemeralKeyId < latestStoredEphemeralKeyId || (ephemeralKeyId == latestStoredEphemeralKeyId && currentChainIndex < latestStoredChainIndex)) {
-            Log.i("SignalKeyManager retrieving stored message key");
+            Log.i("SignalKeyManager retrieving stored message key cci " + currentChainIndex + " pcl " + previousChainLength);
             byte[] messageKey = encryptedKeyStore.removeSkippedMessageKey(peerUserId, ephemeralKeyId, currentChainIndex);
             if (messageKey == null) {
                 throw new CryptoException("old_message_key_not_found");

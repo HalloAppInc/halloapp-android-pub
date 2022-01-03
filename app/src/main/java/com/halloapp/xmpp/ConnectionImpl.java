@@ -66,12 +66,14 @@ import com.halloapp.proto.server.DeviceInfo;
 import com.halloapp.proto.server.ErrorStanza;
 import com.halloapp.proto.server.ExportData;
 import com.halloapp.proto.server.FeedItems;
+import com.halloapp.proto.server.GroupFeedHistory;
 import com.halloapp.proto.server.GroupFeedItem;
 import com.halloapp.proto.server.GroupFeedItems;
 import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.HaError;
+import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.Packet;
@@ -870,6 +872,13 @@ public class ConnectionImpl extends Connection {
         });
     }
 
+    public void sendGroupHistory(@NonNull GroupFeedHistory groupFeedHistory, @NonNull UserId userId) {
+        Msg msg = Msg.newBuilder()
+                .setGroupFeedHistory(groupFeedHistory).setId(RandomId.create()).setType(Msg.Type.NORMAL).setToUid(Long.parseLong(userId.rawId()))
+                .build();
+        sendMsg(msg, () -> Log.i("History resend made it to server for " + userId));
+    }
+
     @Override
     public void retractComment(@NonNull String postId, @NonNull String commentId) {
         FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null, null);
@@ -1424,7 +1433,8 @@ public class ConnectionImpl extends Connection {
                     if (groupStanza.getAction().equals(GroupStanza.Action.CREATE)) {
                         connectionObservers.notifyGroupCreated(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, Preconditions.checkNotNull(senderUserId), senderName, ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.MODIFY_MEMBERS)) {
-                        connectionObservers.notifyGroupMemberChangeReceived(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, Preconditions.checkNotNull(senderUserId), senderName, ackId);
+                        HistoryResend historyResend = groupStanza.hasHistoryResend() ? groupStanza.getHistoryResend() : null;
+                        connectionObservers.notifyGroupMemberChangeReceived(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, Preconditions.checkNotNull(senderUserId), senderName, historyResend, ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.LEAVE)) {
                         connectionObservers.notifyGroupMemberLeftReceived(groupId, elements, ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.MODIFY_ADMINS)) {

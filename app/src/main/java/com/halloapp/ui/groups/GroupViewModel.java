@@ -214,12 +214,14 @@ public class GroupViewModel extends AndroidViewModel {
                     }
                     groupHistoryPayload.addAllContentDetails(contentDb.getHistoryResendContent(groupId));
                     byte[] payload = groupHistoryPayload.build().toByteArray();
+                    String id = RandomId.create();
+                    // TODO(jack): Store plaintext payload with id in db for rerequests and clean up occasionally
 
                     GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
                     byte[] encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
                     HistoryResend.Builder builder = HistoryResend.newBuilder()
                             .setGid(groupId.rawId())
-                            .setId(RandomId.create())
+                            .setId(id)
                             .setPayload(ByteString.copyFrom(payload)) // TODO(jack): Remove once plaintext sending is off
                             .setEncPayload(ByteString.copyFrom(encPayload));
                     if (groupSetupInfo.senderStateBundles != null) {

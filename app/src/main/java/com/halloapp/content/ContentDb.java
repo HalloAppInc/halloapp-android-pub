@@ -763,6 +763,16 @@ public class ContentDb {
         return postsDb.getCommentCount(postId);
     }
 
+    @WorkerThread
+    public byte[] getPostProtoHash(@NonNull String postId) {
+        return postsDb.getPostProtoHash(postId);
+    }
+
+    @WorkerThread
+    public byte[] getCommentProtoHash(@NonNull String commentId) {
+        return postsDb.getCommentProtoHash(commentId);
+    }
+
     /*
      * Returns posts that the userid is mentioned in
      * */

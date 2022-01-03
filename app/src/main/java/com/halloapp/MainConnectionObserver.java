@@ -6,11 +6,11 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
-import com.halloapp.content.Chat;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
@@ -34,7 +34,20 @@ import com.halloapp.id.UserId;
 import com.halloapp.privacy.BlockListManager;
 import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.proto.clients.Background;
+import com.halloapp.proto.clients.CommentIdContext;
+import com.halloapp.proto.clients.Container;
+import com.halloapp.proto.clients.ContentDetails;
+import com.halloapp.proto.clients.GroupHistoryPayload;
+import com.halloapp.proto.clients.MemberDetails;
+import com.halloapp.proto.clients.PostIdContext;
+import com.halloapp.proto.clients.SenderKey;
+import com.halloapp.proto.clients.SenderState;
+import com.halloapp.proto.server.GroupFeedHistory;
+import com.halloapp.proto.server.GroupFeedItem;
+import com.halloapp.proto.server.GroupFeedItems;
+import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.IdentityKey;
+import com.halloapp.proto.server.SenderStateWithKeyInfo;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.DeleteAccountActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
@@ -51,8 +64,9 @@ import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
 import com.halloapp.xmpp.PresenceLoader;
+import com.halloapp.xmpp.ProtoPrinter;
 import com.halloapp.xmpp.WhisperKeysMessage;
-import com.halloapp.xmpp.WhisperKeysResponseIq;
+import com.halloapp.xmpp.feed.FeedContentEncoder;
 import com.halloapp.xmpp.groups.GroupsApi;
 import com.halloapp.xmpp.groups.MemberElement;
 import com.halloapp.xmpp.util.ObservableErrorException;
@@ -580,7 +594,7 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onGroupMemberChangeReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+    public void onGroupMemberChangeReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @Nullable HistoryResend historyResend, @NonNull String ackId) {
         List<MemberInfo> added = new ArrayList<>();
         List<MemberInfo> removed = new ArrayList<>();
         for (MemberElement memberElement : members) {
@@ -622,7 +636,13 @@ public class MainConnectionObserver extends Connection.Observer {
                 }
             }
 
-            connection.sendAck(ackId);
+            if (historyResend == null) {
+                connection.sendAck(ackId);
+            } else if (sender.isMe()) {
+                // TODO(jack): Handle for admin's own content
+            } else {
+                handleHistoryResend(historyResend, Long.parseLong(sender.rawId()), ackId);
+            }
         });
     }
 
@@ -761,6 +781,149 @@ public class MainConnectionObserver extends Connection.Observer {
                 connection.sendAck(ackId);
             });
         });
+    }
+
+    private void handleHistoryResend(@NonNull HistoryResend historyResend, long publisherUid, @NonNull String ackId) {
+        if (!Constants.HISTORY_RESEND_ENABLED) {
+            Log.i("Ignoring history resend because history resend is not enabled");
+            connection.sendAck(ackId);
+            return;
+        }
+        ByteString encrypted = historyResend.getEncPayload();
+        UserId publisherUserId = new UserId(Long.toString(publisherUid));
+        if (encrypted != null && encrypted.size() > 0) {
+            GroupId groupId = new GroupId(historyResend.getGid());
+            if (historyResend.hasSenderState()) {
+                SenderStateWithKeyInfo senderStateWithKeyInfo = historyResend.getSenderState();
+
+                byte[] encSenderState = senderStateWithKeyInfo.getEncSenderState().toByteArray();
+                try {
+                    byte[] peerPublicIdentityKey = senderStateWithKeyInfo.getPublicKey().toByteArray();
+                    long oneTimePreKeyId = senderStateWithKeyInfo.getOneTimePreKeyId();
+                    SignalSessionSetupInfo signalSessionSetupInfo = peerPublicIdentityKey == null || peerPublicIdentityKey.length == 0 ? null : new SignalSessionSetupInfo(new PublicEdECKey(peerPublicIdentityKey), (int) oneTimePreKeyId);
+                    byte[] senderStateDec = SignalSessionManager.getInstance().decryptMessage(encSenderState, publisherUserId, signalSessionSetupInfo);
+                    SenderState senderState = SenderState.parseFrom(senderStateDec);
+                    SenderKey senderKey = senderState.getSenderKey();
+                    int currentChainIndex = senderState.getCurrentChainIndex();
+                    byte[] chainKey = senderKey.getChainKey().toByteArray();
+                    byte[] publicSignatureKeyBytes = senderKey.getPublicSignatureKey().toByteArray();
+                    PublicEdECKey publicSignatureKey = new PublicEdECKey(publicSignatureKeyBytes);
+                    Log.i("Received sender state with current chain index of " + currentChainIndex + " from " + publisherUid);
+
+                    EncryptedKeyStore encryptedKeyStore = EncryptedKeyStore.getInstance();
+                    encryptedKeyStore.setPeerGroupCurrentChainIndex(groupId, publisherUserId, currentChainIndex);
+                    encryptedKeyStore.setPeerGroupChainKey(groupId, publisherUserId, chainKey);
+                    encryptedKeyStore.setPeerGroupSigningKey(groupId, publisherUserId, publicSignatureKey);
+                } catch (CryptoException e) {
+                    Log.e("Failed to decrypt sender state for " + ProtoPrinter.toString(historyResend), e);
+                } catch (InvalidProtocolBufferException e) {
+                    Log.e("Failed to parse sender state for " + ProtoPrinter.toString(historyResend), e);
+                }
+            }
+
+            // TODO(jack): Move to background thread
+            byte[] encryptedBytes = encrypted.toByteArray();
+            try {
+                byte[] decrypted = GroupFeedSessionManager.getInstance().decryptMessage(encryptedBytes, groupId, publisherUserId);
+                GroupHistoryPayload groupHistoryPayload = GroupHistoryPayload.parseFrom(decrypted);
+
+                long myUid = Long.parseLong(me.getUser());
+                for (MemberDetails memberDetails : groupHistoryPayload.getMemberDetailsList()) {
+                    if (myUid == memberDetails.getUid()) {
+                        Log.i("This history resend includes me as recipient; dropping");
+                        connection.sendAck(ackId);
+                        return;
+                    }
+                }
+
+                GroupFeedItems.Builder groupFeedItems = GroupFeedItems.newBuilder();
+                for (ContentDetails contentDetails : groupHistoryPayload.getContentDetailsList()) {
+                    ContentDb contentDb = ContentDb.getInstance();
+                    byte[] remoteHash = contentDetails.getContentHash().toByteArray();
+                    if (contentDetails.hasPostIdContext()) {
+                        PostIdContext postIdContext = contentDetails.getPostIdContext();
+                        String id = postIdContext.getFeedPostId();
+                        Post post = contentDb.getPost(id);
+                        if (post != null && post.senderUserId.isMe()) {
+                            byte[] localHash = contentDb.getPostProtoHash(id);
+                            if (!Arrays.equals(remoteHash, localHash)) {
+                                Log.w("Skipping sharing post " + id + " because hashes do not match");
+                            } else {
+                                Container.Builder container = Container.newBuilder();
+                                FeedContentEncoder.encodePost(container, post);
+                                byte[] payload = container.build().toByteArray();
+
+                                com.halloapp.proto.server.Post.Builder postBuilder = com.halloapp.proto.server.Post.newBuilder();
+                                postBuilder.setId(id);
+                                postBuilder.setPublisherUid(myUid);
+                                postBuilder.setPayload(ByteString.copyFrom(payload));
+                                postBuilder.setTimestamp(post.timestamp);
+
+                                groupFeedItems.addItems(GroupFeedItem.newBuilder().setPost(postBuilder));
+                            }
+                        }
+                    } else if (contentDetails.hasCommentIdContext()) {
+                        CommentIdContext commentIdContext = contentDetails.getCommentIdContext();
+                        String id = commentIdContext.getCommentId();
+                        Comment comment = contentDb.getComment(id);
+                        if (comment != null) {
+                            byte[] localHash = contentDb.getCommentProtoHash(id);
+                            if (!Arrays.equals(remoteHash, localHash)) {
+                                Log.w("Skipping sharing comment " + id + " because hashes do not match (" + StringUtils.bytesToHexString(remoteHash) + " and " + StringUtils.bytesToHexString(localHash) + ")");
+                            } else {
+                                Container.Builder container = Container.newBuilder();
+                                FeedContentEncoder.encodeComment(container, comment);
+                                byte[] payload = container.build().toByteArray();
+
+                                com.halloapp.proto.server.Comment.Builder commentBuilder = com.halloapp.proto.server.Comment.newBuilder();
+                                commentBuilder.setId(id);
+                                commentBuilder.setPostId(comment.postId);
+                                commentBuilder.setPublisherUid(myUid);
+                                commentBuilder.setPayload(ByteString.copyFrom(payload));
+                                commentBuilder.setTimestamp(comment.timestamp);
+
+                                groupFeedItems.addItems(GroupFeedItem.newBuilder().setComment(commentBuilder));
+                            }
+                        }
+                    } else {
+                        Log.e("History resend content details have neither post nor comment");
+                    }
+                }
+
+                if (groupFeedItems.getItemsCount() > 0) {
+                    byte[] groupFeedItemsPayload = groupFeedItems.build().toByteArray();
+
+                    for (MemberDetails memberDetails : groupHistoryPayload.getMemberDetailsList()) {
+                        // TODO(jack): Verify that identity key matches one provided
+                        UserId peerUserId = new UserId(Long.toString(memberDetails.getUid()));
+                        GroupFeedHistory.Builder builder = GroupFeedHistory.newBuilder();
+
+                        try {
+                            SignalSessionSetupInfo signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(peerUserId);
+                            byte[] encryptedPayload = SignalSessionManager.getInstance().encryptMessage(groupFeedItemsPayload, peerUserId);
+                            builder.setEncPayload(ByteString.copyFrom(encryptedPayload));
+                            if (signalSessionSetupInfo != null) {
+                                builder.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
+                                if (signalSessionSetupInfo.oneTimePreKeyId != null) {
+                                    builder.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
+                                }
+                            }
+
+                            connection.sendGroupHistory(builder.build(), peerUserId);
+                        } catch (Exception e) {
+                            Log.e("Failed to encrypt history resend to " + peerUserId, e);
+                        }
+                    }
+                }
+            } catch (CryptoException e) {
+                Log.e("Failed to decrypt history resend", e);
+            } catch (InvalidProtocolBufferException e) {
+                Log.e("Failed to parse history resend", e);
+            }
+        }
+        connection.sendAck(ackId);
+
+        // TODO(jack): handle history resend rerequests
     }
 
     private String toUserIdList(@NonNull List<MemberInfo> members) {

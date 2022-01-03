@@ -14,6 +14,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.proto.server.AnswerCall;
 import com.halloapp.proto.server.CallRinging;
 import com.halloapp.proto.server.EndCall;
+import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.IceCandidate;
 import com.halloapp.proto.server.IceRestartAnswer;
 import com.halloapp.proto.server.IceRestartOffer;
@@ -295,10 +296,10 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyGroupMemberChangeReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+    public void notifyGroupMemberChangeReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @Nullable HistoryResend historyResend, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onGroupMemberChangeReceived(groupId, groupName, avatarId, members, sender, senderName, ackId);
+                observer.onGroupMemberChangeReceived(groupId, groupName, avatarId, members, sender, senderName, historyResend, ackId);
             }
         }
     }
