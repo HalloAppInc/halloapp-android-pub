@@ -19,10 +19,10 @@
     <dimen name="comment_history_thumbnail_size">48dp</dimen>
     <dimen name="media_gallery_grid_size">84dp</dimen>
     <dimen name="media_gallery_grid_spacing">2dp</dimen>
-    <dimen name="media_gallery_selection_padding">6dp</dimen>
     <dimen name="media_gallery_selection_radius">7dp</dimen>
     <dimen name="media_gallery_preview_radius">16dp</dimen>
     <dimen name="media_gallery_preview_padding">20dp</dimen>
+    <dimen name="media_gallery_actions_height">85dp</dimen>
     <dimen name="media_crop_preview_list_spacing">4dp</dimen>
     <dimen name="media_crop_region_border">4dp</dimen>
     <dimen name="media_crop_region_radius">15dp</dimen>

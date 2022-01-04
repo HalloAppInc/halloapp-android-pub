@@ -10,9 +10,7 @@ import android.graphics.Outline;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.text.SpannableString;
 import android.text.format.DateUtils;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,13 +19,13 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.view.ActionMode;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -88,6 +86,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         intent.putExtra(EXTRA_REPLY_POST_ID, replyPostId);
         intent.putExtra(EXTRA_REPLY_POST_MEDIA_INDEX, replyPostMediaIndex);
         intent.putExtra(EXTRA_SHOW_CAMERA, true);
+        intent.putExtra(EXTRA_TITLE_ID, R.string.new_message);
         return intent;
     }
 
@@ -136,8 +135,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     private static final boolean SHOW_VIDEOS_DEFAULT = true;
     private static final boolean SHOW_CAMERA_DEFAULT = false;
     private static final boolean ALLOW_MULTIPLE_DEFAULT = true;
-    private static final int TITLE_ID_DEFAULT = R.string.gallery;
-    private static final int NEXT_BUTTON_TEXT_ID_DEFAULT = R.string.next;
+    private static final int TITLE_ID_DEFAULT = R.string.new_post;
     private static final int CAMERA_PURPOSE_DEFAULT = CameraActivity.PURPOSE_COMPOSE;
 
     private static final int PICKER_PURPOSE_SEND = 1;
@@ -160,6 +158,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     private MediaItemsAdapter adapter;
     private GalleryThumbnailLoader thumbnailLoader;
     private MediaPickerPreview preview;
+    private View actionsView;
     final private List<Long> selected = new ArrayList<>();
 
     private ActionMode actionMode;
@@ -174,8 +173,10 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
         setTitle(getIntent().getIntExtra(EXTRA_TITLE_ID, TITLE_ID_DEFAULT));
 
+        actionsView = findViewById(R.id.actions);
         final View progressView = findViewById(R.id.progress);
         final View emptyView = findViewById(android.R.id.empty);
+        final ImageButton nextButton = actionsView.findViewById(R.id.next);
 
         setResult(RESULT_CANCELED);
 
@@ -208,6 +209,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         viewModel.getSelected().observe(this, selected -> {
             notifyAdapterOnSelection(selected);
             updateActionMode(selected);
+            updateActions(!selected.isEmpty());
         });
         viewModel.getLayout().observe(this, layout -> {
             switch (layout) {
@@ -231,6 +233,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         });
 
         requestPermissions();
+
+        nextButton.setOnClickListener((v) -> handleSelection(viewModel.getSelectedUris()));
     }
 
     private void notifyAdapterOnSelection(List<Long> selected) {
@@ -468,6 +472,14 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         }
     }
 
+    private void updateActions(boolean hasSelected) {
+        if (!hasSelected || !getIntent().getBooleanExtra(EXTRA_ALLOW_MULTIPLE, ALLOW_MULTIPLE_DEFAULT)) {
+            actionsView.setVisibility(View.GONE);
+        } else {
+            actionsView.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void updateActionMode(List<Long> selected) {
         if (selected.isEmpty()) {
             if (actionMode != null) {
@@ -479,13 +491,6 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
                 actionMode = startSupportActionMode(new ActionMode.Callback() {
                     @Override
                     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                        getMenuInflater().inflate(R.menu.media_picker_action_mode, menu);
-
-                        MenuItem menuItem = menu.findItem(R.id.select);
-                        SpannableString ss = new SpannableString(getString(getIntent().getIntExtra(EXTRA_NEXT_BUTTON_TEXT_ID, NEXT_BUTTON_TEXT_ID_DEFAULT)));
-                        ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), R.color.color_secondary)), 0, ss.length(), 0);
-                        menuItem.setTitle(ss);
-
                         return true;
                     }
 
@@ -693,10 +698,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             selectionCounter.setText(String.format(Locale.getDefault(), "%d", index + 1));
             selectionIndicator.setVisibility(View.GONE);
 
-            int mediaGallerySelectionPadding = getResources().getDimensionPixelSize(R.dimen.media_gallery_selection_padding);
-            thumbnailFrame.setPadding(mediaGallerySelectionPadding, mediaGallerySelectionPadding, mediaGallerySelectionPadding, mediaGallerySelectionPadding);
             thumbnailView.setSelected(true);
-
             thumbnailView.setOutlineProvider(vop);
             thumbnailView.setClipToOutline(true);
         }
@@ -706,9 +708,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             selectionCounter.setVisibility(View.GONE);
             selectionIndicator.setVisibility(View.VISIBLE);
 
-            thumbnailFrame.setPadding(0, 0, 0, 0);
             thumbnailView.setSelected(false);
-
             thumbnailView.setOutlineProvider(null);
             thumbnailView.setClipToOutline(false);
         }

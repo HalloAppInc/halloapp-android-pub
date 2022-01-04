@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.mediapicker.MediaPickerActivity">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -28,5 +28,29 @@
         android:textColor="@color/colorPrimary"
         android:text="@string/no_photos_or_videos_found"
         android:visibility="gone"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/actions"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/media_gallery_actions_height"
+        android:layout_gravity="bottom"
+        android:background="@color/media_gallery_actions_background"
+        android:visibility="gone"
+        >
+
+        <ImageButton
+            android:id="@+id/next"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@drawable/bg_media_gallery_next"
+            android:src="@drawable/ic_media_gallery_next"
+            app:tint="@android:color/white"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

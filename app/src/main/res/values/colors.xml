@@ -127,6 +127,8 @@
     <color name="voice_draft_bg">@color/black_10</color>
     <color name="voice_note_played">#777260</color>
 
+    <color name="media_gallery_actions_background">#E5F3F2EF</color>
+
     <color name="selected_chat_highlight">@color/color_secondary_10_alpha</color>
 
     <color name="rippleColor">@color/black_5</color>
