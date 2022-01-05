@@ -183,6 +183,8 @@ public  final class Msg extends
     END_CALL(37),
     ICE_CANDIDATE(38),
     MARKETING_ALERT(39),
+    ICE_RESTART_OFFER(40),
+    ICE_RESTART_ANSWER(41),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -231,6 +233,8 @@ public  final class Msg extends
         case 37: return END_CALL;
         case 38: return ICE_CANDIDATE;
         case 39: return MARKETING_ALERT;
+        case 40: return ICE_RESTART_OFFER;
+        case 41: return ICE_RESTART_ANSWER;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2078,6 +2082,106 @@ public  final class Msg extends
    */
   private void clearMarketingAlert() {
     if (payloadCase_ == 39) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int ICE_RESTART_OFFER_FIELD_NUMBER = 40;
+  /**
+   * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
+   */
+  @java.lang.Override
+  public boolean hasIceRestartOffer() {
+    return payloadCase_ == 40;
+  }
+  /**
+   * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.IceRestartOffer getIceRestartOffer() {
+    if (payloadCase_ == 40) {
+       return (com.halloapp.proto.server.IceRestartOffer) payload_;
+    }
+    return com.halloapp.proto.server.IceRestartOffer.getDefaultInstance();
+  }
+  /**
+   * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
+   */
+  private void setIceRestartOffer(com.halloapp.proto.server.IceRestartOffer value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 40;
+  }
+  /**
+   * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
+   */
+  private void mergeIceRestartOffer(com.halloapp.proto.server.IceRestartOffer value) {
+    value.getClass();
+  if (payloadCase_ == 40 &&
+        payload_ != com.halloapp.proto.server.IceRestartOffer.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.IceRestartOffer.newBuilder((com.halloapp.proto.server.IceRestartOffer) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 40;
+  }
+  /**
+   * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
+   */
+  private void clearIceRestartOffer() {
+    if (payloadCase_ == 40) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int ICE_RESTART_ANSWER_FIELD_NUMBER = 41;
+  /**
+   * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
+   */
+  @java.lang.Override
+  public boolean hasIceRestartAnswer() {
+    return payloadCase_ == 41;
+  }
+  /**
+   * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.IceRestartAnswer getIceRestartAnswer() {
+    if (payloadCase_ == 41) {
+       return (com.halloapp.proto.server.IceRestartAnswer) payload_;
+    }
+    return com.halloapp.proto.server.IceRestartAnswer.getDefaultInstance();
+  }
+  /**
+   * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
+   */
+  private void setIceRestartAnswer(com.halloapp.proto.server.IceRestartAnswer value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 41;
+  }
+  /**
+   * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
+   */
+  private void mergeIceRestartAnswer(com.halloapp.proto.server.IceRestartAnswer value) {
+    value.getClass();
+  if (payloadCase_ == 41 &&
+        payload_ != com.halloapp.proto.server.IceRestartAnswer.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.IceRestartAnswer.newBuilder((com.halloapp.proto.server.IceRestartAnswer) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 41;
+  }
+  /**
+   * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
+   */
+  private void clearIceRestartAnswer() {
+    if (payloadCase_ == 41) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -4026,6 +4130,102 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
+     */
+    @java.lang.Override
+    public boolean hasIceRestartOffer() {
+      return instance.hasIceRestartOffer();
+    }
+    /**
+     * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.IceRestartOffer getIceRestartOffer() {
+      return instance.getIceRestartOffer();
+    }
+    /**
+     * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
+     */
+    public Builder setIceRestartOffer(com.halloapp.proto.server.IceRestartOffer value) {
+      copyOnWrite();
+      instance.setIceRestartOffer(value);
+      return this;
+    }
+    /**
+     * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
+     */
+    public Builder setIceRestartOffer(
+        com.halloapp.proto.server.IceRestartOffer.Builder builderForValue) {
+      copyOnWrite();
+      instance.setIceRestartOffer(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
+     */
+    public Builder mergeIceRestartOffer(com.halloapp.proto.server.IceRestartOffer value) {
+      copyOnWrite();
+      instance.mergeIceRestartOffer(value);
+      return this;
+    }
+    /**
+     * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
+     */
+    public Builder clearIceRestartOffer() {
+      copyOnWrite();
+      instance.clearIceRestartOffer();
+      return this;
+    }
+
+    /**
+     * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
+     */
+    @java.lang.Override
+    public boolean hasIceRestartAnswer() {
+      return instance.hasIceRestartAnswer();
+    }
+    /**
+     * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.IceRestartAnswer getIceRestartAnswer() {
+      return instance.getIceRestartAnswer();
+    }
+    /**
+     * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
+     */
+    public Builder setIceRestartAnswer(com.halloapp.proto.server.IceRestartAnswer value) {
+      copyOnWrite();
+      instance.setIceRestartAnswer(value);
+      return this;
+    }
+    /**
+     * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
+     */
+    public Builder setIceRestartAnswer(
+        com.halloapp.proto.server.IceRestartAnswer.Builder builderForValue) {
+      copyOnWrite();
+      instance.setIceRestartAnswer(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
+     */
+    public Builder mergeIceRestartAnswer(com.halloapp.proto.server.IceRestartAnswer value) {
+      copyOnWrite();
+      instance.mergeIceRestartAnswer(value);
+      return this;
+    }
+    /**
+     * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
+     */
+    public Builder clearIceRestartAnswer() {
+      copyOnWrite();
+      instance.clearIceRestartAnswer();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -4138,14 +4338,17 @@ public  final class Msg extends
             com.halloapp.proto.server.EndCall.class,
             com.halloapp.proto.server.IceCandidate.class,
             com.halloapp.proto.server.MarketingAlert.class,
+            com.halloapp.proto.server.IceRestartOffer.class,
+            com.halloapp.proto.server.IceRestartAnswer.class,
           };
           java.lang.String info =
-              "\u0000\'\u0001\u0000\u0001\'\'\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002" +
-              "\u0004\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b" +
-              "<\u0000\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012" +
-              "<\u0000\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000" +
-              "\u0019\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f" +
-              "<\u0000 <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000";
+              "\u0000)\u0001\u0000\u0001))\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
+              "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
+              "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
+              "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
+              "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
+              " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000" +
+              "";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

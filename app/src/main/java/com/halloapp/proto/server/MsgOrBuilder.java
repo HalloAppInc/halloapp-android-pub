@@ -422,6 +422,28 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.MarketingAlert getMarketingAlert();
 
   /**
+   * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
+   * @return Whether the iceRestartOffer field is set.
+   */
+  boolean hasIceRestartOffer();
+  /**
+   * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
+   * @return The iceRestartOffer.
+   */
+  com.halloapp.proto.server.IceRestartOffer getIceRestartOffer();
+
+  /**
+   * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
+   * @return Whether the iceRestartAnswer field is set.
+   */
+  boolean hasIceRestartAnswer();
+  /**
+   * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
+   * @return The iceRestartAnswer.
+   */
+  com.halloapp.proto.server.IceRestartAnswer getIceRestartAnswer();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */
