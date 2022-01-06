@@ -5,6 +5,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Icon;
+import android.net.ConnectivityManager;
+import android.net.LinkProperties;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,6 +33,8 @@ import androidx.annotation.WorkerThread;
 
 import com.halloapp.AppContext;
 import com.halloapp.Constants;
+import com.halloapp.NetworkChangeReceiver;
+import com.halloapp.NetworkConnectivityManager;
 import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
@@ -166,6 +173,37 @@ public class CallManager {
         if (Build.VERSION.SDK_INT >= 23) {
             telecomRegisterAccount();
         }
+
+        NetworkConnectivityManager.getInstance().getNetworkInfo().observeForever(
+                networkInfo -> Log.i("CallManager: network changed: " + networkInfo.getTypeName())
+        );
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) appContext.get().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkRequest networkRequest = new NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .build();
+        connectivityManager.registerNetworkCallback(networkRequest, new ConnectivityManager.NetworkCallback() {
+            @Override
+            public void onAvailable(Network network) {
+                Log.e("CallManager: NETWORK: onAvailable(" + network + ")");
+            }
+
+            @Override
+            public void onLost(Network network) {
+                Log.e("CallManager: NETWORK: onLost(" + network + ")");
+            }
+
+            @Override
+            public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
+                Log.e("CallManager: NETWORK: onCapabilitiesChanged() network:" + network + " cap:" + networkCapabilities);
+            }
+
+            @Override
+            public void onLinkPropertiesChanged(Network network, LinkProperties linkProperties) {
+                Log.e("CallManager: NETWORK: onLinkPropertiesChanged() network:" + network + " props:" + linkProperties);
+            }
+        });
+
     }
 
     @RequiresApi(api = 23)
