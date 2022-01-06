@@ -4,6 +4,8 @@ import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 
+import com.halloapp.Constants;
+
 public class ToneUtils {
 
     public static final int SAMPLE_RATE = 44100;
@@ -43,7 +45,8 @@ public class ToneUtils {
                 AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT,
                 count * (Short.SIZE / 8), AudioTrack.MODE_STATIC);
         track.write(samples, 0, count);
-        track.setLoopPoints(0, count, 1);
+        int loops = 1 + Constants.CALL_RINGING_TIMEOUT_MS / (int)(totalDuration * 1000);
+        track.setLoopPoints(0, count, loops);
         return track;
     }
 }
