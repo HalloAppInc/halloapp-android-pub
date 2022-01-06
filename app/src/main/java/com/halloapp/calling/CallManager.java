@@ -171,7 +171,7 @@ public class CallManager {
         this.callStats = new CallStats();
 
         if (Build.VERSION.SDK_INT >= 23) {
-            telecomRegisterAccount();
+            executor.execute(this::telecomRegisterAccount);
         }
 
         NetworkConnectivityManager.getInstance().getNetworkInfo().observeForever(
@@ -206,8 +206,9 @@ public class CallManager {
 
     }
 
+    @WorkerThread
     @RequiresApi(api = 23)
-    public void telecomRegisterAccount() {
+    private void telecomRegisterAccount() {
         TelecomManager tm = (TelecomManager) appContext.get().getSystemService(Context.TELECOM_SERVICE);
         if (tm != null) {
             ComponentName cName = new ComponentName(appContext.get(), HaTelecomConnectionService.class);
@@ -261,7 +262,7 @@ public class CallManager {
         this.state = State.CALLING;
 
         if (Build.VERSION.SDK_INT >= 23) {
-            telecomPlaceCall();
+            executor.execute(this::telecomPlaceCall);
         } else {
             finishStartCall();
         }
@@ -269,7 +270,7 @@ public class CallManager {
     }
 
     public void finishStartCall() {
-        startAudioManager();
+        mainHandler.post(this::startAudioManager);
         executor.execute(this::setupWebrtc);
     }
 
