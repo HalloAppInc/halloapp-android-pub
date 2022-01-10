@@ -1063,6 +1063,27 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
 
     <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
     <string name="refresh_contacts_failed">"No se pudieron actualizar los contactos"</string>
+
+    <!-- Label for voice post option -->
+    <string name="voice_post">"Voz"</string>
+
+    <!-- Audio post composer title -->
+    <string name="audio_post_compose_title">"Nueva nota de voz"</string>
+
+    <!-- Text post hint -->
+    <string name="text_post_compose_hint">"Escribe una descripción"</string>
+
+    <!-- Audio post record instruction -->
+    <string name="audio_post_tap_to_record">"Toca para grabar"</string>
+
+    <!-- Text shown below the media composer that allows adding more media -->
+    <string name="post_add_more">"Añade más"</string>
+
+    <!-- Button text allowing user to accept a message not from their contacts. Short if possible -->
+    <string name="accept_message">"Aceptar mensaje"</string>
+
+    <!-- Message alerting the user that the person messaging them is not in their address book -->
+    <string name="not_in_address_book_alert">"Esta persona no está en tu agenda de contactos"</string>
     <string name="invite_via_link">"Invitar por un enlace"</string>
     <string name="couldnt_load_thumbnail">"No se pudo cargar la foto en miniatura"</string>
     <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>

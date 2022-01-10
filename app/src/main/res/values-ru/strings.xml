@@ -1023,63 +1023,83 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="broadcast_notifications_channel_name">"Оповещения от HalloApp"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls -->
-    <string name="voice_call_record_audio_permission_rationale">"To use voice calls we need permission to access the microphone"</string>
+    <string name="voice_call_record_audio_permission_rationale">"Чтобы позвонить, нам нужен доступ к микрофону"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls, but it has already been denied. -->
-    <string name="voice_call_record_audio_permission_rationale_denied">"To use voice calls we need permission to access the microphone.
-
-Open the app settings screen to modify app permissions."</string>
+    <string name="voice_call_record_audio_permission_rationale_denied">"Чтобы позвонить, нам нужен доступ к микрофону.
+Откройте настройки, чтобы изменить разрешения приложения."</string>
 
     <!-- Name of channel of notifications for receiving calls which is displayed in settings -->
-    <string name="call_notifications_channel_name">"Call notifications"</string>
+    <string name="call_notifications_channel_name">"Уведомления о звонках"</string>
 
     <!-- Name of channel of notifications for ongoing audio/video calls -->
-    <string name="ongoing_call_notifications_channel_name">"Ongoing Call notifications"</string>
+    <string name="ongoing_call_notifications_channel_name">"Уведомления о текущих звонках"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="ringing">"Ringing"</string>
+    <string name="ringing">"Соединяется"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="calling">"Calling"</string>
+    <string name="calling">"Звонит"</string>
 
     <!-- The title of the notificaiton for incoming calls -->
-    <string name="incoming_call_notification_title">"Incoming call"</string>
+    <string name="incoming_call_notification_title">"Входящий звонок"</string>
 
     <!-- The call notification accept button label -->
-    <string name="call_accept_button">"Accept"</string>
+    <string name="call_accept_button">"Принять"</string>
 
     <!-- The call notification decline button label -->
-    <string name="call_decline_button">"Decline"</string>
+    <string name="call_decline_button">"Отклонить"</string>
 
     <!-- Displayed as title for the Call Screen -->
-    <string name="call_title">"Call"</string>
+    <string name="call_title">"Звонок"</string>
 
     <!-- Displayed in an ongoing notification while the user is in a voice call -->
-    <string name="ongoing_voice_call">"Ongoing voice call"</string>
+    <string name="ongoing_voice_call">"Текущий голосовой звонок"</string>
 
     <!-- Shown inline in a chat when the user missed an incoming video call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_video_call">"Missed video call at %s"</string>
+    <string name="system_message_missed_video_call">"Пропущенный видеовызов в %s"</string>
 
     <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_voice_call">"Missed voice call at %s"</string>
+    <string name="system_message_missed_voice_call">"Пропущенный звонок в %s"</string>
 
     <!-- Action in menu for calling a user -->
-    <string name="call_action">"Call"</string>
+    <string name="call_action">"Звонок"</string>
 
     <!-- Button to unmute -->
-    <string name="unmute">"Unmute"</string>
+    <string name="unmute">"Включить звук"</string>
 
     <!-- Label for speaker phone button -->
-    <string name="call_speaker_button">"Speaker"</string>
+    <string name="call_speaker_button">"Спикер"</string>
 
     <!-- Label for button to disable speaker phone -->
-    <string name="call_speaker_off_button">"Speaker off"</string>
+    <string name="call_speaker_off_button">"Спикер выключен"</string>
 
     <!-- Label for button to end the call -->
-    <string name="end_call">"End call"</string>
+    <string name="end_call">"Завершить звонок"</string>
 
     <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
-    <string name="refresh_contacts_failed">"Failed to refresh contacts"</string>
+    <string name="refresh_contacts_failed">"Не удалось обновить контакты"</string>
+
+    <!-- Label for voice post option -->
+    <string name="voice_post">"Голос"</string>
+
+    <!-- Audio post composer title -->
+    <string name="audio_post_compose_title">"New audio post"</string>
+
+    <!-- Text post hint -->
+    <string name="text_post_compose_hint">"Write a description"</string>
+
+    <!-- Audio post record instruction -->
+    <string name="audio_post_tap_to_record">"Tap to record"</string>
+
+    <!-- Text shown below the media composer that allows adding more media -->
+    <string name="post_add_more">"Add more"</string>
+
+    <!-- Button text allowing user to accept a message not from their contacts. Short if possible -->
+    <string name="accept_message">"Accept message"</string>
+
+    <!-- Message alerting the user that the person messaging them is not in their address book -->
+    <string name="not_in_address_book_alert">"This person is not in your address book"</string>
     <string name="invite_via_link">"Пригласить с помощью ссылки"</string>
     <string name="couldnt_load_thumbnail">"Не удалось загрузить миниатюру"</string>
     <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>

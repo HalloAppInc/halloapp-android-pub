@@ -1061,6 +1061,27 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
     <string name="refresh_contacts_failed">"Fehler beim Aktualisieren der Kontakte"</string>
+
+    <!-- Label for voice post option -->
+    <string name="voice_post">"Sprachnotiz"</string>
+
+    <!-- Audio post composer title -->
+    <string name="audio_post_compose_title">"Neuer Audiobeitrag"</string>
+
+    <!-- Text post hint -->
+    <string name="text_post_compose_hint">"Eine Beschreibung eingeben"</string>
+
+    <!-- Audio post record instruction -->
+    <string name="audio_post_tap_to_record">"Zur Aufnahme hier tippen"</string>
+
+    <!-- Text shown below the media composer that allows adding more media -->
+    <string name="post_add_more">"Mehr hinzufügen"</string>
+
+    <!-- Button text allowing user to accept a message not from their contacts. Short if possible -->
+    <string name="accept_message">"Nachricht annehmen"</string>
+
+    <!-- Message alerting the user that the person messaging them is not in their address book -->
+    <string name="not_in_address_book_alert">"Diese Person ist nicht in deinen Kontakten"</string>
     <string name="invite_via_link">"Per Link einladen"</string>
     <string name="couldnt_load_thumbnail">"Miniaturansicht kann nicht geladen werden"</string>
     <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>

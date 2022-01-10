@@ -8,7 +8,7 @@
     <string name="comment">"Comentar"</string>
     <string name="next">"Próximo"</string>
     <string name="message">"Mensagem"</string>
-    <string name="add_post">"Postar"</string>
+    <string name="add_post">"Adicionar Postagem"</string>
     <string name="new_chat">"Nova conversa"</string>
     <string name="new_group">"Novo grupo"</string>
     <string name="notifications">"Notificações"</string>
@@ -98,7 +98,7 @@ Abra as configurações do aplicativo para modificar as permissões do aplicativ
     <string name="no_activity">"Nenhuma atividade"</string>
     <string name="failed_to_load_media">"Falha ao carregar mídia"</string>
     <string name="settings">"Configurações"</string>
-    <string name="send_logs">"Compartilhar feedback e registros"</string>
+    <string name="send_logs">"Compartilhar comentários e registros"</string>
     <string name="terms_of_service">"Termos de serviço"</string>
     <string name="privacy_policy">"Política de privacidade"</string>
     <string name="settings_block_list">"Contatos bloqueados"</string>
@@ -121,9 +121,7 @@ Abra as configurações do aplicativo para modificar as permissões do aplicativ
     <string name="no_photos_or_videos_found">"Nenhuma foto ou vídeo encontrado"</string>
     <string name="gallery">"Galeria"</string>
     <string name="avatar_picker_title">"Foto de perfil"</string>
-
-    <!-- Fuzzy -->
-    <string name="group_avatar_picker_title">"Avatar do grupo"</string>
+    <string name="group_avatar_picker_title">"Ícone do Grupo"</string>
     <string name="other_media">"Outras mídias"</string>
     <string name="rotate">"Girar"</string>
     <string name="seen_by">"Visto por"</string>
@@ -267,12 +265,8 @@ versão: %2$s"</string>
     <string name="system_message_member_auto_promoted_you">"Você foi promovido automaticamente a administrador"</string>
     <string name="system_message_group_name_changed">"%1$s mudou o nome do grupo para %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"Você mudou o nome do grupo para %s"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_message_group_avatar_changed">"%s alterou o avatar do grupo"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_message_group_avatar_changed_by_you">"Você alterou o avatar do grupo"</string>
+    <string name="system_message_group_avatar_changed">"%s alterou o ícone do grupo"</string>
+    <string name="system_message_group_avatar_changed_by_you">"Você alterou o ícone do grupo"</string>
     <string name="system_message_group_deleted">"%s apagou o grupo"</string>
     <string name="system_message_group_deleted_by_you">"Você apagou o grupo"</string>
     <string name="system_post_group_created">"Este grupo foi criado por %s"</string>
@@ -291,12 +285,8 @@ versão: %2$s"</string>
     <string name="system_post_member_auto_promoted_you">"Você foi promovido automaticamente a administrador"</string>
     <string name="system_post_group_name_changed">"%1$s mudou o nome do grupo para %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"Você mudou o nome do grupo para %s"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_post_group_avatar_changed">"%s alterou o avatar do grupo"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_post_group_avatar_changed_by_you">"Você alterou o avatar do grupo"</string>
+    <string name="system_post_group_avatar_changed">"%s alterou o ícone do grupo"</string>
+    <string name="system_post_group_avatar_changed_by_you">"Você alterou o ícone do grupo"</string>
     <string name="system_post_group_deleted">"%s apagou o grupo"</string>
     <string name="system_post_group_deleted_by_you">"Você apagou o grupo"</string>
     <string name="group_info_title">"Informações do grupo"</string>
@@ -410,17 +400,11 @@ versão: %2$s"</string>
         <item quantity="one">"%d membro"</item>
         <item quantity="other">"%d membros"</item>
     </plurals>
-
-    <!-- Fuzzy -->
-    <string name="composer_sharing_all_summary">"Compartilhando com meus contatos"</string>
-
-    <!-- Fuzzy -->
-    <string name="composer_sharing_except_summary">"Compartilhando com alguns dos meus contatos"</string>
-
-    <!-- Fuzzy -->
+    <string name="composer_sharing_all_summary">"Compartilhar com os meus contatos"</string>
+    <string name="composer_sharing_except_summary">"Compartilhar com alguns dos meus contatos"</string>
     <plurals name="composer_sharing_only_summary">
-        <item quantity="one">"Compartilhando com %d dos meus contatos"</item>
-        <item quantity="other">"Compartilhando com %d dos meus contatos"</item>
+        <item quantity="one">"Compartilhar com %d dos meus contatos"</item>
+        <item quantity="other">"Compartilhar com %d dos meus contatos"</item>
     </plurals>
     <string name="post_preview_no_caption">"%s compartilhou uma postagem"</string>
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
@@ -930,7 +914,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="delete_account_in_progress">"Excluindo sua conta…"</string>
 
     <!-- Text box hint for optional field for adding feedback for why you are deleting your account -->
-    <string name="delete_account_feedback_hint">"Feedback para o HalloApp (opcional)"</string>
+    <string name="delete_account_feedback_hint">"Comentários para o HalloApp (opcional)"</string>
 
     <!-- Message shown in dialog asking if user is sure they want to delete their account -->
     <string name="delete_account_confirmation_message">"Tem certeza que você deseja excluir sua conta? Isso não pode ser desfeito"</string>
@@ -1009,19 +993,40 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="call_action">"Ligar"</string>
 
     <!-- Button to unmute -->
-    <string name="unmute">"Unmute"</string>
+    <string name="unmute">"Ativar som"</string>
 
     <!-- Label for speaker phone button -->
-    <string name="call_speaker_button">"Speaker"</string>
+    <string name="call_speaker_button">"Viva-voz"</string>
 
     <!-- Label for button to disable speaker phone -->
-    <string name="call_speaker_off_button">"Speaker off"</string>
+    <string name="call_speaker_off_button">"Desativar viva-voz"</string>
 
     <!-- Label for button to end the call -->
-    <string name="end_call">"End call"</string>
+    <string name="end_call">"Encerrar Chamada"</string>
 
     <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
-    <string name="refresh_contacts_failed">"Failed to refresh contacts"</string>
+    <string name="refresh_contacts_failed">"Falha ao atualizar os contatos"</string>
+
+    <!-- Label for voice post option -->
+    <string name="voice_post">"Voz"</string>
+
+    <!-- Audio post composer title -->
+    <string name="audio_post_compose_title">"Nova postagem de áudio"</string>
+
+    <!-- Text post hint -->
+    <string name="text_post_compose_hint">"Escreva uma descrição"</string>
+
+    <!-- Audio post record instruction -->
+    <string name="audio_post_tap_to_record">"Toque para gravar"</string>
+
+    <!-- Text shown below the media composer that allows adding more media -->
+    <string name="post_add_more">"Adicione mais"</string>
+
+    <!-- Button text allowing user to accept a message not from their contacts. Short if possible -->
+    <string name="accept_message">"Aceitar mensagem"</string>
+
+    <!-- Message alerting the user that the person messaging them is not in their address book -->
+    <string name="not_in_address_book_alert">"Esta pessoa não está na sua lista de contatos"</string>
     <string name="invite_via_link">"Convidar via link"</string>
     <string name="couldnt_load_thumbnail">"Não foi possível carregar a miniatura"</string>
     <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>

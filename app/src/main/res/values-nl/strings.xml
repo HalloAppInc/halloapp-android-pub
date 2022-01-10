@@ -1019,6 +1019,27 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
     <string name="refresh_contacts_failed">"Verversen contacten mislukt"</string>
+
+    <!-- Label for voice post option -->
+    <string name="voice_post">"Spraak"</string>
+
+    <!-- Audio post composer title -->
+    <string name="audio_post_compose_title">"Nieuw audiobericht"</string>
+
+    <!-- Text post hint -->
+    <string name="text_post_compose_hint">"Voeg een omschrijving toe"</string>
+
+    <!-- Audio post record instruction -->
+    <string name="audio_post_tap_to_record">"Tik om op te nemen"</string>
+
+    <!-- Text shown below the media composer that allows adding more media -->
+    <string name="post_add_more">"Meer toevoegen"</string>
+
+    <!-- Button text allowing user to accept a message not from their contacts. Short if possible -->
+    <string name="accept_message">"Bericht accepteren"</string>
+
+    <!-- Message alerting the user that the person messaging them is not in their address book -->
+    <string name="not_in_address_book_alert">"Deze persoon staat niet in je adresboek"</string>
     <string name="invite_via_link">"Uitnodigen via link"</string>
     <string name="couldnt_load_thumbnail">"Kon voorvertoning niet laden"</string>
     <string name="system_message_missed_audio_call">"Gemiste spraakoproep om %s"</string>

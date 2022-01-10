@@ -1053,6 +1053,27 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
     <string name="refresh_contacts_failed">"Failed to refresh contacts"</string>
+
+    <!-- Label for voice post option -->
+    <string name="voice_post">"Voice"</string>
+
+    <!-- Audio post composer title -->
+    <string name="audio_post_compose_title">"New audio post"</string>
+
+    <!-- Text post hint -->
+    <string name="text_post_compose_hint">"Write a description"</string>
+
+    <!-- Audio post record instruction -->
+    <string name="audio_post_tap_to_record">"Tap to record"</string>
+
+    <!-- Text shown below the media composer that allows adding more media -->
+    <string name="post_add_more">"Add more"</string>
+
+    <!-- Button text allowing user to accept a message not from their contacts. Short if possible -->
+    <string name="accept_message">"Accept message"</string>
+
+    <!-- Message alerting the user that the person messaging them is not in their address book -->
+    <string name="not_in_address_book_alert">"This person is not in your address book"</string>
     <string name="invite_via_link">"Покани с линк"</string>
     <string name="couldnt_load_thumbnail">"Couldn't load thumbnail"</string>
     <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>

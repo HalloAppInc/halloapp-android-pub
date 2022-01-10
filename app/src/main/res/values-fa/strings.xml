@@ -1033,7 +1033,28 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="end_call">"اتمام تماس"</string>
 
     <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
-    <string name="refresh_contacts_failed">"Failed to refresh contacts"</string>
+    <string name="refresh_contacts_failed">"خطا در بارگذاری مخاطبین"</string>
+
+    <!-- Label for voice post option -->
+    <string name="voice_post">"پست صوتی"</string>
+
+    <!-- Audio post composer title -->
+    <string name="audio_post_compose_title">"پیام صوتی جدید"</string>
+
+    <!-- Text post hint -->
+    <string name="text_post_compose_hint">"توضیح بنویسید"</string>
+
+    <!-- Audio post record instruction -->
+    <string name="audio_post_tap_to_record">"برای ضبط کلیک کنید"</string>
+
+    <!-- Text shown below the media composer that allows adding more media -->
+    <string name="post_add_more">"بیشتر اضافه کنید"</string>
+
+    <!-- Button text allowing user to accept a message not from their contacts. Short if possible -->
+    <string name="accept_message">"قبول کردن پیام"</string>
+
+    <!-- Message alerting the user that the person messaging them is not in their address book -->
+    <string name="not_in_address_book_alert">"این شخص در لیست مخاطبین شما نیست"</string>
     <string name="invite_via_link">"دعوت از طریق لینک"</string>
     <string name="couldnt_load_thumbnail">"تصویر بارگذاری نشد"</string>
     <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>
