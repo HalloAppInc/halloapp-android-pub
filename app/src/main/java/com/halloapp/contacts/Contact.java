@@ -119,6 +119,10 @@ public class Contact implements Parcelable {
         return !TextUtils.isEmpty(addressBookName);
     }
 
+    public boolean isDeleted() {
+        return rowId == 0;
+    }
+
     public static final Parcelable.Creator<Contact> CREATOR = new Parcelable.Creator<Contact>() {
         public Contact createFromParcel(Parcel in) {
             long rowId = in.readLong();

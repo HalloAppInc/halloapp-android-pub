@@ -977,6 +977,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         });
         viewModel.contact.getLiveData().observe(this, contact -> {
             menu.findItem(R.id.add_to_contacts).setVisible(TextUtils.isEmpty(contact.addressBookName));
+            menu.findItem(R.id.call).setVisible(!contact.isDeleted());
         });
         menu.findItem(R.id.call).setVisible(allowAudioCalls);
         return true;
