@@ -197,37 +197,39 @@ public class GroupViewModel extends AndroidViewModel {
         BgWorkers.getInstance().execute(() -> {
             HistoryResend historyResend = null;
             try {
-                GroupHistoryPayload.Builder groupHistoryPayload = GroupHistoryPayload.newBuilder();
-                for (UserId userId : userIds) {
-                    try {
-                        long uid = Long.parseLong(userId.rawId());
-                        byte[] encodedIk = Connection.getInstance().downloadKeys(userId).await().identityKey;
-                        IdentityKey identityKeyProto = IdentityKey.parseFrom(encodedIk);
-                        byte[] ik = identityKeyProto.getPublicKey().toByteArray();
-                        groupHistoryPayload.addMemberDetails(MemberDetails.newBuilder().setUid(uid).setPublicIdentityKey(ByteString.copyFrom(ik)));
-                    } catch (ObservableErrorException | InterruptedException e) {
-                        Log.e("Failed to get identity key for " + userId + "; skipping", e);
-                    } catch (InvalidProtocolBufferException e) {
-                        Log.e("Received invalid identity key proto for " + userId + "; skipping", e);
+                if (Constants.HISTORY_RESEND_ENABLED) {
+                    GroupHistoryPayload.Builder groupHistoryPayload = GroupHistoryPayload.newBuilder();
+                    for (UserId userId : userIds) {
+                        try {
+                            long uid = Long.parseLong(userId.rawId());
+                            byte[] encodedIk = Connection.getInstance().downloadKeys(userId).await().identityKey;
+                            IdentityKey identityKeyProto = IdentityKey.parseFrom(encodedIk);
+                            byte[] ik = identityKeyProto.getPublicKey().toByteArray();
+                            groupHistoryPayload.addMemberDetails(MemberDetails.newBuilder().setUid(uid).setPublicIdentityKey(ByteString.copyFrom(ik)));
+                        } catch (ObservableErrorException | InterruptedException e) {
+                            Log.e("Failed to get identity key for " + userId + "; skipping", e);
+                        } catch (InvalidProtocolBufferException e) {
+                            Log.e("Received invalid identity key proto for " + userId + "; skipping", e);
+                        }
                     }
-                }
-                groupHistoryPayload.addAllContentDetails(contentDb.getHistoryResendContent(groupId));
-                byte[] payload = groupHistoryPayload.build().toByteArray();
+                    groupHistoryPayload.addAllContentDetails(contentDb.getHistoryResendContent(groupId));
+                    byte[] payload = groupHistoryPayload.build().toByteArray();
 
-                GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
-                byte[] encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
-                HistoryResend.Builder builder = HistoryResend.newBuilder()
-                        .setGid(groupId.rawId())
-                        .setId(RandomId.create())
-                        .setPayload(ByteString.copyFrom(payload)) // TODO(jack): Remove once plaintext sending is off
-                        .setEncPayload(ByteString.copyFrom(encPayload));
-                if (groupSetupInfo.senderStateBundles != null) {
-                    builder.addAllSenderStateBundles(groupSetupInfo.senderStateBundles);
+                    GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
+                    byte[] encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
+                    HistoryResend.Builder builder = HistoryResend.newBuilder()
+                            .setGid(groupId.rawId())
+                            .setId(RandomId.create())
+                            .setPayload(ByteString.copyFrom(payload)) // TODO(jack): Remove once plaintext sending is off
+                            .setEncPayload(ByteString.copyFrom(encPayload));
+                    if (groupSetupInfo.senderStateBundles != null) {
+                        builder.addAllSenderStateBundles(groupSetupInfo.senderStateBundles);
+                    }
+                    if (groupSetupInfo.audienceHash != null) {
+                        builder.setAudienceHash(ByteString.copyFrom(groupSetupInfo.audienceHash));
+                    }
+                    historyResend = builder.build();
                 }
-                if (groupSetupInfo.audienceHash != null) {
-                    builder.setAudienceHash(ByteString.copyFrom(groupSetupInfo.audienceHash));
-                }
-                historyResend = builder.build();
             } catch (CryptoException | NoSuchAlgorithmException e) {
                 Log.e("Failed to encrypt details for history resend", e);
             }
