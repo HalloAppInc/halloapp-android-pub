@@ -102,7 +102,7 @@ public class CallsApi extends Connection.Observer {
         @Nullable String webrtcOffer = null;
         try {
             webrtcOffer = CallsApi.decryptCallPayload(incomingCall.getWebrtcOffer(), peerUid);
-            Log.i("CallsApi: Decrypted offer: " + webrtcOffer);
+            Log.d("CallsApi: Decrypted offer: " + webrtcOffer);
         } catch (CryptoException e) {
             Log.e("CallsApi: Decryption error onIncomingCall", e);
         }
