@@ -451,7 +451,7 @@ versão: %2$s"</string>
     <string name="not_now">"Agora não"</string>
     <string name="continue_button">"Continuar"</string>
     <string name="invite_link_load_failed">"Falha ao abrir o link de convite de grupo"</string>
-    <string name="message_tombstone_placeholder">"Aguardando por esta mensagem. Isso pode demorar um pouco. &lt;![CDATA [&lt;a href=\"saiba-mais\"&gt;Saiba mais&lt;/a&gt;]]&gt;."</string>
+    <string name="message_tombstone_placeholder">"Aguardando por esta mensagem. Isso pode demorar um pouco. "<![CDATA[<a href="saiba-mais">Saiba mais</a>]]>"."</string>
     <string name="failed_no_longer_member">"Já não é mais membro deste grupo"</string>
 
     <!-- Placeholder when we do not understand the received message -->

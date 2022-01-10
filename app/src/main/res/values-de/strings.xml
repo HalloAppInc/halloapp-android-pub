@@ -971,7 +971,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="delete_account_in_progress">"Account wird gelöscht…"</string>
 
     <!-- Text box hint for optional field for adding feedback for why you are deleting your account -->
-    <string name="delete_account_feedback_hint">"Feedback für HalloApp (optional)"</string>
+    <string name="delete_account_feedback_hint">"Feedback an HalloApp (optional)"</string>
 
     <!-- Message shown in dialog asking if user is sure they want to delete their account -->
     <string name="delete_account_confirmation_message">"Möchtest du deinen Account wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden"</string>
