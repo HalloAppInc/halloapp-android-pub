@@ -83,6 +83,9 @@ public class StringUtils {
     }
 
     public static String bytesToHexString(byte[] bytes) {
+        if (bytes == null) {
+            return "null";
+        }
         StringBuilder hexString = new StringBuilder();
         for (byte aByte : bytes) {
             hexString.append(Integer.toHexString((aByte & 0xFF) | 0x100).substring(1, 3));
