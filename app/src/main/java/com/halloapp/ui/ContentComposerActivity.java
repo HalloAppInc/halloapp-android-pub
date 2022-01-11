@@ -302,6 +302,7 @@ public class ContentComposerActivity extends HalloActivity {
         deletePictureButton = findViewById(R.id.delete);
 
         addMediaButton.setOnClickListener(v -> addAdditionalMedia());
+        addMoreText.setOnClickListener(v -> addAdditionalMedia());
         cropPictureButton.setOnClickListener(v -> cropItem(getCurrentItem()));
 
         voicePostComposerView = findViewById(R.id.voice_composer_view);
