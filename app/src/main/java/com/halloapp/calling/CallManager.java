@@ -243,7 +243,7 @@ public class CallManager {
     }
 
     @MainThread
-    public boolean startCall(@NonNull UserId peerUid) {
+    public synchronized boolean startCall(@NonNull UserId peerUid) {
         Log.i("CallManager.startCall");
         if (this.state != State.IDLE) {
             Log.w("CallManager.startCall failed: state is not idle. State: " + stateToString(this.state));
@@ -319,9 +319,7 @@ public class CallManager {
         }
     }
 
-    // TODO(nikola): Cleanup the code path of who is calling the stop. Make stop private. use endCallandStop instead
-    // It is sometimes called from the UI and sometimes from here.
-    public void stop(EndCall.Reason reason) {
+    public synchronized void stop(EndCall.Reason reason) {
         final long callDuration = (this.callStartTimestamp > 0)? SystemClock.elapsedRealtime() - this.callStartTimestamp : 0;
         Log.i("stop callId: " + callId + " peerUid" + peerUid + " duration: " + callDuration / 1000);
         stopAudioManager();
@@ -357,7 +355,7 @@ public class CallManager {
         }
     }
 
-    public void handleIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType, @Nullable String webrtcOffer,
+    public synchronized void handleIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType, @Nullable String webrtcOffer,
                                    @NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers,
                                    long timestamp, long serverSentTimestamp) {
         Log.i("CallManager.handleIncomingCall " + callId + " peerUid: " + peerUid + " " + callType + " " + timestamp);
@@ -442,7 +440,7 @@ public class CallManager {
         this.telecomConnection = telecomConnection;
     }
 
-    public void handleCallRinging(@NonNull String callId, @NonNull UserId peerUid,@NonNull Long timestamp) {
+    public synchronized void handleCallRinging(@NonNull String callId, @NonNull UserId peerUid,@NonNull Long timestamp) {
         Log.i("CallRinging callId: " + callId + " peerUid: " + peerUid + " ts: " + timestamp);
         if (this.callId == null || !this.callId.equals(callId) ) {
             Log.e("Error: got call ringing message for call " + callId +
@@ -459,7 +457,7 @@ public class CallManager {
         startOutgoingRingtone();
     }
 
-    public void handleAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @Nullable String webrtcOffer, @NonNull Long timestamp) {
+    public synchronized void handleAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @Nullable String webrtcOffer, @NonNull Long timestamp) {
         Log.i("AnswerCall callId: " + callId + " peerUid: " + peerUid + " " + timestamp);
 
         if (this.callId == null || !this.callId.equals(callId)) {
@@ -487,7 +485,7 @@ public class CallManager {
         notifyOnAnsweredCall();
     }
 
-    public void handleEndCall(@NonNull String callId, @NonNull UserId peerUid,
+    public synchronized void handleEndCall(@NonNull String callId, @NonNull UserId peerUid,
                                @NonNull EndCall.Reason reason, @NonNull Long timestamp) {
         Log.i("got EndCall callId: " + callId + " peerUid: " + peerUid + " reason: " + reason.name() + " " + timestamp);
         if (reason == EndCall.Reason.CANCEL || reason == EndCall.Reason.TIMEOUT) {
@@ -521,7 +519,7 @@ public class CallManager {
     }
 
     @MainThread
-    public boolean acceptCall() {
+    public synchronized boolean acceptCall() {
         if (this.isInitiator) {
             Log.e("ERROR user clicked accept call but is the call initiator callId: " + callId);
             return false;
