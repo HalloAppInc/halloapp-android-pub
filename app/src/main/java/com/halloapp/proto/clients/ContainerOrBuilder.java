@@ -8,39 +8,6 @@ public interface ContainerOrBuilder extends
     com.google.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>.clients.Post post = 1;</code>
-   * @return Whether the post field is set.
-   */
-  boolean hasPost();
-  /**
-   * <code>.clients.Post post = 1;</code>
-   * @return The post.
-   */
-  com.halloapp.proto.clients.Post getPost();
-
-  /**
-   * <code>.clients.Comment comment = 2;</code>
-   * @return Whether the comment field is set.
-   */
-  boolean hasComment();
-  /**
-   * <code>.clients.Comment comment = 2;</code>
-   * @return The comment.
-   */
-  com.halloapp.proto.clients.Comment getComment();
-
-  /**
-   * <code>.clients.ChatMessage chat_message = 3;</code>
-   * @return Whether the chatMessage field is set.
-   */
-  boolean hasChatMessage();
-  /**
-   * <code>.clients.ChatMessage chat_message = 3;</code>
-   * @return The chatMessage.
-   */
-  com.halloapp.proto.clients.ChatMessage getChatMessage();
-
-  /**
    * <code>.clients.PostContainer post_container = 4;</code>
    * @return Whether the postContainer field is set.
    */

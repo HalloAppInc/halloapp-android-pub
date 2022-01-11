@@ -185,6 +185,7 @@ public  final class Msg extends
     MARKETING_ALERT(39),
     ICE_RESTART_OFFER(40),
     ICE_RESTART_ANSWER(41),
+    GROUP_FEED_HISTORY(42),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -235,6 +236,7 @@ public  final class Msg extends
         case 39: return MARKETING_ALERT;
         case 40: return ICE_RESTART_OFFER;
         case 41: return ICE_RESTART_ANSWER;
+        case 42: return GROUP_FEED_HISTORY;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2182,6 +2184,56 @@ public  final class Msg extends
    */
   private void clearIceRestartAnswer() {
     if (payloadCase_ == 41) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int GROUP_FEED_HISTORY_FIELD_NUMBER = 42;
+  /**
+   * <code>.server.GroupFeedHistory group_feed_history = 42;</code>
+   */
+  @java.lang.Override
+  public boolean hasGroupFeedHistory() {
+    return payloadCase_ == 42;
+  }
+  /**
+   * <code>.server.GroupFeedHistory group_feed_history = 42;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.GroupFeedHistory getGroupFeedHistory() {
+    if (payloadCase_ == 42) {
+       return (com.halloapp.proto.server.GroupFeedHistory) payload_;
+    }
+    return com.halloapp.proto.server.GroupFeedHistory.getDefaultInstance();
+  }
+  /**
+   * <code>.server.GroupFeedHistory group_feed_history = 42;</code>
+   */
+  private void setGroupFeedHistory(com.halloapp.proto.server.GroupFeedHistory value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 42;
+  }
+  /**
+   * <code>.server.GroupFeedHistory group_feed_history = 42;</code>
+   */
+  private void mergeGroupFeedHistory(com.halloapp.proto.server.GroupFeedHistory value) {
+    value.getClass();
+  if (payloadCase_ == 42 &&
+        payload_ != com.halloapp.proto.server.GroupFeedHistory.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.GroupFeedHistory.newBuilder((com.halloapp.proto.server.GroupFeedHistory) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 42;
+  }
+  /**
+   * <code>.server.GroupFeedHistory group_feed_history = 42;</code>
+   */
+  private void clearGroupFeedHistory() {
+    if (payloadCase_ == 42) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -4226,6 +4278,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.GroupFeedHistory group_feed_history = 42;</code>
+     */
+    @java.lang.Override
+    public boolean hasGroupFeedHistory() {
+      return instance.hasGroupFeedHistory();
+    }
+    /**
+     * <code>.server.GroupFeedHistory group_feed_history = 42;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.GroupFeedHistory getGroupFeedHistory() {
+      return instance.getGroupFeedHistory();
+    }
+    /**
+     * <code>.server.GroupFeedHistory group_feed_history = 42;</code>
+     */
+    public Builder setGroupFeedHistory(com.halloapp.proto.server.GroupFeedHistory value) {
+      copyOnWrite();
+      instance.setGroupFeedHistory(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupFeedHistory group_feed_history = 42;</code>
+     */
+    public Builder setGroupFeedHistory(
+        com.halloapp.proto.server.GroupFeedHistory.Builder builderForValue) {
+      copyOnWrite();
+      instance.setGroupFeedHistory(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.GroupFeedHistory group_feed_history = 42;</code>
+     */
+    public Builder mergeGroupFeedHistory(com.halloapp.proto.server.GroupFeedHistory value) {
+      copyOnWrite();
+      instance.mergeGroupFeedHistory(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupFeedHistory group_feed_history = 42;</code>
+     */
+    public Builder clearGroupFeedHistory() {
+      copyOnWrite();
+      instance.clearGroupFeedHistory();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -4340,15 +4440,16 @@ public  final class Msg extends
             com.halloapp.proto.server.MarketingAlert.class,
             com.halloapp.proto.server.IceRestartOffer.class,
             com.halloapp.proto.server.IceRestartAnswer.class,
+            com.halloapp.proto.server.GroupFeedHistory.class,
           };
           java.lang.String info =
-              "\u0000)\u0001\u0000\u0001))\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
+              "\u0000*\u0001\u0000\u0001**\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
               "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
               "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
               "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
               "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
               " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000" +
-              "";
+              "*<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

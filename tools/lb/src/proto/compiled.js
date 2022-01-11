@@ -7258,6 +7258,331 @@ $root.server = (function() {
         return GroupFeedItems;
     })();
 
+    server.GroupFeedHistory = (function() {
+
+        /**
+         * Properties of a GroupFeedHistory.
+         * @memberof server
+         * @interface IGroupFeedHistory
+         * @property {string|null} [gid] GroupFeedHistory gid
+         * @property {string|null} [id] GroupFeedHistory id
+         * @property {Uint8Array|null} [payload] GroupFeedHistory payload
+         * @property {Uint8Array|null} [encPayload] GroupFeedHistory encPayload
+         * @property {Uint8Array|null} [publicKey] GroupFeedHistory publicKey
+         * @property {number|null} [oneTimePreKeyId] GroupFeedHistory oneTimePreKeyId
+         */
+
+        /**
+         * Constructs a new GroupFeedHistory.
+         * @memberof server
+         * @classdesc Represents a GroupFeedHistory.
+         * @implements IGroupFeedHistory
+         * @constructor
+         * @param {server.IGroupFeedHistory=} [properties] Properties to set
+         */
+        function GroupFeedHistory(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * GroupFeedHistory gid.
+         * @member {string} gid
+         * @memberof server.GroupFeedHistory
+         * @instance
+         */
+        GroupFeedHistory.prototype.gid = "";
+
+        /**
+         * GroupFeedHistory id.
+         * @member {string} id
+         * @memberof server.GroupFeedHistory
+         * @instance
+         */
+        GroupFeedHistory.prototype.id = "";
+
+        /**
+         * GroupFeedHistory payload.
+         * @member {Uint8Array} payload
+         * @memberof server.GroupFeedHistory
+         * @instance
+         */
+        GroupFeedHistory.prototype.payload = $util.newBuffer([]);
+
+        /**
+         * GroupFeedHistory encPayload.
+         * @member {Uint8Array} encPayload
+         * @memberof server.GroupFeedHistory
+         * @instance
+         */
+        GroupFeedHistory.prototype.encPayload = $util.newBuffer([]);
+
+        /**
+         * GroupFeedHistory publicKey.
+         * @member {Uint8Array} publicKey
+         * @memberof server.GroupFeedHistory
+         * @instance
+         */
+        GroupFeedHistory.prototype.publicKey = $util.newBuffer([]);
+
+        /**
+         * GroupFeedHistory oneTimePreKeyId.
+         * @member {number} oneTimePreKeyId
+         * @memberof server.GroupFeedHistory
+         * @instance
+         */
+        GroupFeedHistory.prototype.oneTimePreKeyId = 0;
+
+        /**
+         * Creates a new GroupFeedHistory instance using the specified properties.
+         * @function create
+         * @memberof server.GroupFeedHistory
+         * @static
+         * @param {server.IGroupFeedHistory=} [properties] Properties to set
+         * @returns {server.GroupFeedHistory} GroupFeedHistory instance
+         */
+        GroupFeedHistory.create = function create(properties) {
+            return new GroupFeedHistory(properties);
+        };
+
+        /**
+         * Encodes the specified GroupFeedHistory message. Does not implicitly {@link server.GroupFeedHistory.verify|verify} messages.
+         * @function encode
+         * @memberof server.GroupFeedHistory
+         * @static
+         * @param {server.IGroupFeedHistory} message GroupFeedHistory message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GroupFeedHistory.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.gid != null && Object.hasOwnProperty.call(message, "gid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.gid);
+            if (message.id != null && Object.hasOwnProperty.call(message, "id"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.id);
+            if (message.payload != null && Object.hasOwnProperty.call(message, "payload"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.payload);
+            if (message.encPayload != null && Object.hasOwnProperty.call(message, "encPayload"))
+                writer.uint32(/* id 4, wireType 2 =*/34).bytes(message.encPayload);
+            if (message.publicKey != null && Object.hasOwnProperty.call(message, "publicKey"))
+                writer.uint32(/* id 5, wireType 2 =*/42).bytes(message.publicKey);
+            if (message.oneTimePreKeyId != null && Object.hasOwnProperty.call(message, "oneTimePreKeyId"))
+                writer.uint32(/* id 6, wireType 0 =*/48).int32(message.oneTimePreKeyId);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified GroupFeedHistory message, length delimited. Does not implicitly {@link server.GroupFeedHistory.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.GroupFeedHistory
+         * @static
+         * @param {server.IGroupFeedHistory} message GroupFeedHistory message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GroupFeedHistory.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a GroupFeedHistory message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.GroupFeedHistory
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.GroupFeedHistory} GroupFeedHistory
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GroupFeedHistory.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.GroupFeedHistory();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.gid = reader.string();
+                    break;
+                case 2:
+                    message.id = reader.string();
+                    break;
+                case 3:
+                    message.payload = reader.bytes();
+                    break;
+                case 4:
+                    message.encPayload = reader.bytes();
+                    break;
+                case 5:
+                    message.publicKey = reader.bytes();
+                    break;
+                case 6:
+                    message.oneTimePreKeyId = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a GroupFeedHistory message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.GroupFeedHistory
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.GroupFeedHistory} GroupFeedHistory
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GroupFeedHistory.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a GroupFeedHistory message.
+         * @function verify
+         * @memberof server.GroupFeedHistory
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        GroupFeedHistory.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.gid != null && message.hasOwnProperty("gid"))
+                if (!$util.isString(message.gid))
+                    return "gid: string expected";
+            if (message.id != null && message.hasOwnProperty("id"))
+                if (!$util.isString(message.id))
+                    return "id: string expected";
+            if (message.payload != null && message.hasOwnProperty("payload"))
+                if (!(message.payload && typeof message.payload.length === "number" || $util.isString(message.payload)))
+                    return "payload: buffer expected";
+            if (message.encPayload != null && message.hasOwnProperty("encPayload"))
+                if (!(message.encPayload && typeof message.encPayload.length === "number" || $util.isString(message.encPayload)))
+                    return "encPayload: buffer expected";
+            if (message.publicKey != null && message.hasOwnProperty("publicKey"))
+                if (!(message.publicKey && typeof message.publicKey.length === "number" || $util.isString(message.publicKey)))
+                    return "publicKey: buffer expected";
+            if (message.oneTimePreKeyId != null && message.hasOwnProperty("oneTimePreKeyId"))
+                if (!$util.isInteger(message.oneTimePreKeyId))
+                    return "oneTimePreKeyId: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates a GroupFeedHistory message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.GroupFeedHistory
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.GroupFeedHistory} GroupFeedHistory
+         */
+        GroupFeedHistory.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.GroupFeedHistory)
+                return object;
+            var message = new $root.server.GroupFeedHistory();
+            if (object.gid != null)
+                message.gid = String(object.gid);
+            if (object.id != null)
+                message.id = String(object.id);
+            if (object.payload != null)
+                if (typeof object.payload === "string")
+                    $util.base64.decode(object.payload, message.payload = $util.newBuffer($util.base64.length(object.payload)), 0);
+                else if (object.payload.length)
+                    message.payload = object.payload;
+            if (object.encPayload != null)
+                if (typeof object.encPayload === "string")
+                    $util.base64.decode(object.encPayload, message.encPayload = $util.newBuffer($util.base64.length(object.encPayload)), 0);
+                else if (object.encPayload.length)
+                    message.encPayload = object.encPayload;
+            if (object.publicKey != null)
+                if (typeof object.publicKey === "string")
+                    $util.base64.decode(object.publicKey, message.publicKey = $util.newBuffer($util.base64.length(object.publicKey)), 0);
+                else if (object.publicKey.length)
+                    message.publicKey = object.publicKey;
+            if (object.oneTimePreKeyId != null)
+                message.oneTimePreKeyId = object.oneTimePreKeyId | 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a GroupFeedHistory message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.GroupFeedHistory
+         * @static
+         * @param {server.GroupFeedHistory} message GroupFeedHistory
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        GroupFeedHistory.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.gid = "";
+                object.id = "";
+                if (options.bytes === String)
+                    object.payload = "";
+                else {
+                    object.payload = [];
+                    if (options.bytes !== Array)
+                        object.payload = $util.newBuffer(object.payload);
+                }
+                if (options.bytes === String)
+                    object.encPayload = "";
+                else {
+                    object.encPayload = [];
+                    if (options.bytes !== Array)
+                        object.encPayload = $util.newBuffer(object.encPayload);
+                }
+                if (options.bytes === String)
+                    object.publicKey = "";
+                else {
+                    object.publicKey = [];
+                    if (options.bytes !== Array)
+                        object.publicKey = $util.newBuffer(object.publicKey);
+                }
+                object.oneTimePreKeyId = 0;
+            }
+            if (message.gid != null && message.hasOwnProperty("gid"))
+                object.gid = message.gid;
+            if (message.id != null && message.hasOwnProperty("id"))
+                object.id = message.id;
+            if (message.payload != null && message.hasOwnProperty("payload"))
+                object.payload = options.bytes === String ? $util.base64.encode(message.payload, 0, message.payload.length) : options.bytes === Array ? Array.prototype.slice.call(message.payload) : message.payload;
+            if (message.encPayload != null && message.hasOwnProperty("encPayload"))
+                object.encPayload = options.bytes === String ? $util.base64.encode(message.encPayload, 0, message.encPayload.length) : options.bytes === Array ? Array.prototype.slice.call(message.encPayload) : message.encPayload;
+            if (message.publicKey != null && message.hasOwnProperty("publicKey"))
+                object.publicKey = options.bytes === String ? $util.base64.encode(message.publicKey, 0, message.publicKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.publicKey) : message.publicKey;
+            if (message.oneTimePreKeyId != null && message.hasOwnProperty("oneTimePreKeyId"))
+                object.oneTimePreKeyId = message.oneTimePreKeyId;
+            return object;
+        };
+
+        /**
+         * Converts this GroupFeedHistory to JSON.
+         * @function toJSON
+         * @memberof server.GroupFeedHistory
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        GroupFeedHistory.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return GroupFeedHistory;
+    })();
+
     server.GroupMember = (function() {
 
         /**
@@ -16401,6 +16726,480 @@ $root.server = (function() {
         return EndCall;
     })();
 
+    server.IceRestartOffer = (function() {
+
+        /**
+         * Properties of an IceRestartOffer.
+         * @memberof server
+         * @interface IIceRestartOffer
+         * @property {string|null} [callId] IceRestartOffer callId
+         * @property {number|null} [idx] IceRestartOffer idx
+         * @property {server.IWebRtcSessionDescription|null} [webrtcOffer] IceRestartOffer webrtcOffer
+         */
+
+        /**
+         * Constructs a new IceRestartOffer.
+         * @memberof server
+         * @classdesc Represents an IceRestartOffer.
+         * @implements IIceRestartOffer
+         * @constructor
+         * @param {server.IIceRestartOffer=} [properties] Properties to set
+         */
+        function IceRestartOffer(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * IceRestartOffer callId.
+         * @member {string} callId
+         * @memberof server.IceRestartOffer
+         * @instance
+         */
+        IceRestartOffer.prototype.callId = "";
+
+        /**
+         * IceRestartOffer idx.
+         * @member {number} idx
+         * @memberof server.IceRestartOffer
+         * @instance
+         */
+        IceRestartOffer.prototype.idx = 0;
+
+        /**
+         * IceRestartOffer webrtcOffer.
+         * @member {server.IWebRtcSessionDescription|null|undefined} webrtcOffer
+         * @memberof server.IceRestartOffer
+         * @instance
+         */
+        IceRestartOffer.prototype.webrtcOffer = null;
+
+        /**
+         * Creates a new IceRestartOffer instance using the specified properties.
+         * @function create
+         * @memberof server.IceRestartOffer
+         * @static
+         * @param {server.IIceRestartOffer=} [properties] Properties to set
+         * @returns {server.IceRestartOffer} IceRestartOffer instance
+         */
+        IceRestartOffer.create = function create(properties) {
+            return new IceRestartOffer(properties);
+        };
+
+        /**
+         * Encodes the specified IceRestartOffer message. Does not implicitly {@link server.IceRestartOffer.verify|verify} messages.
+         * @function encode
+         * @memberof server.IceRestartOffer
+         * @static
+         * @param {server.IIceRestartOffer} message IceRestartOffer message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IceRestartOffer.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.callId != null && Object.hasOwnProperty.call(message, "callId"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.callId);
+            if (message.idx != null && Object.hasOwnProperty.call(message, "idx"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.idx);
+            if (message.webrtcOffer != null && Object.hasOwnProperty.call(message, "webrtcOffer"))
+                $root.server.WebRtcSessionDescription.encode(message.webrtcOffer, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified IceRestartOffer message, length delimited. Does not implicitly {@link server.IceRestartOffer.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.IceRestartOffer
+         * @static
+         * @param {server.IIceRestartOffer} message IceRestartOffer message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IceRestartOffer.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an IceRestartOffer message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.IceRestartOffer
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.IceRestartOffer} IceRestartOffer
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IceRestartOffer.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.IceRestartOffer();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.callId = reader.string();
+                    break;
+                case 2:
+                    message.idx = reader.int32();
+                    break;
+                case 3:
+                    message.webrtcOffer = $root.server.WebRtcSessionDescription.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an IceRestartOffer message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.IceRestartOffer
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.IceRestartOffer} IceRestartOffer
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IceRestartOffer.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an IceRestartOffer message.
+         * @function verify
+         * @memberof server.IceRestartOffer
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        IceRestartOffer.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.callId != null && message.hasOwnProperty("callId"))
+                if (!$util.isString(message.callId))
+                    return "callId: string expected";
+            if (message.idx != null && message.hasOwnProperty("idx"))
+                if (!$util.isInteger(message.idx))
+                    return "idx: integer expected";
+            if (message.webrtcOffer != null && message.hasOwnProperty("webrtcOffer")) {
+                var error = $root.server.WebRtcSessionDescription.verify(message.webrtcOffer);
+                if (error)
+                    return "webrtcOffer." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates an IceRestartOffer message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.IceRestartOffer
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.IceRestartOffer} IceRestartOffer
+         */
+        IceRestartOffer.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.IceRestartOffer)
+                return object;
+            var message = new $root.server.IceRestartOffer();
+            if (object.callId != null)
+                message.callId = String(object.callId);
+            if (object.idx != null)
+                message.idx = object.idx | 0;
+            if (object.webrtcOffer != null) {
+                if (typeof object.webrtcOffer !== "object")
+                    throw TypeError(".server.IceRestartOffer.webrtcOffer: object expected");
+                message.webrtcOffer = $root.server.WebRtcSessionDescription.fromObject(object.webrtcOffer);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an IceRestartOffer message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.IceRestartOffer
+         * @static
+         * @param {server.IceRestartOffer} message IceRestartOffer
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        IceRestartOffer.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.callId = "";
+                object.idx = 0;
+                object.webrtcOffer = null;
+            }
+            if (message.callId != null && message.hasOwnProperty("callId"))
+                object.callId = message.callId;
+            if (message.idx != null && message.hasOwnProperty("idx"))
+                object.idx = message.idx;
+            if (message.webrtcOffer != null && message.hasOwnProperty("webrtcOffer"))
+                object.webrtcOffer = $root.server.WebRtcSessionDescription.toObject(message.webrtcOffer, options);
+            return object;
+        };
+
+        /**
+         * Converts this IceRestartOffer to JSON.
+         * @function toJSON
+         * @memberof server.IceRestartOffer
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        IceRestartOffer.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return IceRestartOffer;
+    })();
+
+    server.IceRestartAnswer = (function() {
+
+        /**
+         * Properties of an IceRestartAnswer.
+         * @memberof server
+         * @interface IIceRestartAnswer
+         * @property {string|null} [callId] IceRestartAnswer callId
+         * @property {number|null} [idx] IceRestartAnswer idx
+         * @property {server.IWebRtcSessionDescription|null} [webrtcAnswer] IceRestartAnswer webrtcAnswer
+         */
+
+        /**
+         * Constructs a new IceRestartAnswer.
+         * @memberof server
+         * @classdesc Represents an IceRestartAnswer.
+         * @implements IIceRestartAnswer
+         * @constructor
+         * @param {server.IIceRestartAnswer=} [properties] Properties to set
+         */
+        function IceRestartAnswer(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * IceRestartAnswer callId.
+         * @member {string} callId
+         * @memberof server.IceRestartAnswer
+         * @instance
+         */
+        IceRestartAnswer.prototype.callId = "";
+
+        /**
+         * IceRestartAnswer idx.
+         * @member {number} idx
+         * @memberof server.IceRestartAnswer
+         * @instance
+         */
+        IceRestartAnswer.prototype.idx = 0;
+
+        /**
+         * IceRestartAnswer webrtcAnswer.
+         * @member {server.IWebRtcSessionDescription|null|undefined} webrtcAnswer
+         * @memberof server.IceRestartAnswer
+         * @instance
+         */
+        IceRestartAnswer.prototype.webrtcAnswer = null;
+
+        /**
+         * Creates a new IceRestartAnswer instance using the specified properties.
+         * @function create
+         * @memberof server.IceRestartAnswer
+         * @static
+         * @param {server.IIceRestartAnswer=} [properties] Properties to set
+         * @returns {server.IceRestartAnswer} IceRestartAnswer instance
+         */
+        IceRestartAnswer.create = function create(properties) {
+            return new IceRestartAnswer(properties);
+        };
+
+        /**
+         * Encodes the specified IceRestartAnswer message. Does not implicitly {@link server.IceRestartAnswer.verify|verify} messages.
+         * @function encode
+         * @memberof server.IceRestartAnswer
+         * @static
+         * @param {server.IIceRestartAnswer} message IceRestartAnswer message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IceRestartAnswer.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.callId != null && Object.hasOwnProperty.call(message, "callId"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.callId);
+            if (message.idx != null && Object.hasOwnProperty.call(message, "idx"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.idx);
+            if (message.webrtcAnswer != null && Object.hasOwnProperty.call(message, "webrtcAnswer"))
+                $root.server.WebRtcSessionDescription.encode(message.webrtcAnswer, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified IceRestartAnswer message, length delimited. Does not implicitly {@link server.IceRestartAnswer.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.IceRestartAnswer
+         * @static
+         * @param {server.IIceRestartAnswer} message IceRestartAnswer message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IceRestartAnswer.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an IceRestartAnswer message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.IceRestartAnswer
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.IceRestartAnswer} IceRestartAnswer
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IceRestartAnswer.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.IceRestartAnswer();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.callId = reader.string();
+                    break;
+                case 2:
+                    message.idx = reader.int32();
+                    break;
+                case 3:
+                    message.webrtcAnswer = $root.server.WebRtcSessionDescription.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an IceRestartAnswer message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.IceRestartAnswer
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.IceRestartAnswer} IceRestartAnswer
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IceRestartAnswer.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an IceRestartAnswer message.
+         * @function verify
+         * @memberof server.IceRestartAnswer
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        IceRestartAnswer.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.callId != null && message.hasOwnProperty("callId"))
+                if (!$util.isString(message.callId))
+                    return "callId: string expected";
+            if (message.idx != null && message.hasOwnProperty("idx"))
+                if (!$util.isInteger(message.idx))
+                    return "idx: integer expected";
+            if (message.webrtcAnswer != null && message.hasOwnProperty("webrtcAnswer")) {
+                var error = $root.server.WebRtcSessionDescription.verify(message.webrtcAnswer);
+                if (error)
+                    return "webrtcAnswer." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates an IceRestartAnswer message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.IceRestartAnswer
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.IceRestartAnswer} IceRestartAnswer
+         */
+        IceRestartAnswer.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.IceRestartAnswer)
+                return object;
+            var message = new $root.server.IceRestartAnswer();
+            if (object.callId != null)
+                message.callId = String(object.callId);
+            if (object.idx != null)
+                message.idx = object.idx | 0;
+            if (object.webrtcAnswer != null) {
+                if (typeof object.webrtcAnswer !== "object")
+                    throw TypeError(".server.IceRestartAnswer.webrtcAnswer: object expected");
+                message.webrtcAnswer = $root.server.WebRtcSessionDescription.fromObject(object.webrtcAnswer);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an IceRestartAnswer message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.IceRestartAnswer
+         * @static
+         * @param {server.IceRestartAnswer} message IceRestartAnswer
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        IceRestartAnswer.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.callId = "";
+                object.idx = 0;
+                object.webrtcAnswer = null;
+            }
+            if (message.callId != null && message.hasOwnProperty("callId"))
+                object.callId = message.callId;
+            if (message.idx != null && message.hasOwnProperty("idx"))
+                object.idx = message.idx;
+            if (message.webrtcAnswer != null && message.hasOwnProperty("webrtcAnswer"))
+                object.webrtcAnswer = $root.server.WebRtcSessionDescription.toObject(message.webrtcAnswer, options);
+            return object;
+        };
+
+        /**
+         * Converts this IceRestartAnswer to JSON.
+         * @function toJSON
+         * @memberof server.IceRestartAnswer
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        IceRestartAnswer.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return IceRestartAnswer;
+    })();
+
     server.Iq = (function() {
 
         /**
@@ -17966,6 +18765,9 @@ $root.server = (function() {
          * @property {server.IEndCall|null} [endCall] Msg endCall
          * @property {server.IIceCandidate|null} [iceCandidate] Msg iceCandidate
          * @property {server.IMarketingAlert|null} [marketingAlert] Msg marketingAlert
+         * @property {server.IIceRestartOffer|null} [iceRestartOffer] Msg iceRestartOffer
+         * @property {server.IIceRestartAnswer|null} [iceRestartAnswer] Msg iceRestartAnswer
+         * @property {server.IGroupFeedHistory|null} [groupFeedHistory] Msg groupFeedHistory
          * @property {number|null} [retryCount] Msg retryCount
          * @property {number|null} [rerequestCount] Msg rerequestCount
          */
@@ -18282,6 +19084,30 @@ $root.server = (function() {
         Msg.prototype.marketingAlert = null;
 
         /**
+         * Msg iceRestartOffer.
+         * @member {server.IIceRestartOffer|null|undefined} iceRestartOffer
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.iceRestartOffer = null;
+
+        /**
+         * Msg iceRestartAnswer.
+         * @member {server.IIceRestartAnswer|null|undefined} iceRestartAnswer
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.iceRestartAnswer = null;
+
+        /**
+         * Msg groupFeedHistory.
+         * @member {server.IGroupFeedHistory|null|undefined} groupFeedHistory
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.groupFeedHistory = null;
+
+        /**
          * Msg retryCount.
          * @member {number} retryCount
          * @memberof server.Msg
@@ -18302,12 +19128,12 @@ $root.server = (function() {
 
         /**
          * Msg payload.
-         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|undefined} payload
+         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|undefined} payload
          * @memberof server.Msg
          * @instance
          */
         Object.defineProperty(Msg.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert"]),
+            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -18413,6 +19239,12 @@ $root.server = (function() {
                 $root.server.IceCandidate.encode(message.iceCandidate, writer.uint32(/* id 38, wireType 2 =*/306).fork()).ldelim();
             if (message.marketingAlert != null && Object.hasOwnProperty.call(message, "marketingAlert"))
                 $root.server.MarketingAlert.encode(message.marketingAlert, writer.uint32(/* id 39, wireType 2 =*/314).fork()).ldelim();
+            if (message.iceRestartOffer != null && Object.hasOwnProperty.call(message, "iceRestartOffer"))
+                $root.server.IceRestartOffer.encode(message.iceRestartOffer, writer.uint32(/* id 40, wireType 2 =*/322).fork()).ldelim();
+            if (message.iceRestartAnswer != null && Object.hasOwnProperty.call(message, "iceRestartAnswer"))
+                $root.server.IceRestartAnswer.encode(message.iceRestartAnswer, writer.uint32(/* id 41, wireType 2 =*/330).fork()).ldelim();
+            if (message.groupFeedHistory != null && Object.hasOwnProperty.call(message, "groupFeedHistory"))
+                $root.server.GroupFeedHistory.encode(message.groupFeedHistory, writer.uint32(/* id 42, wireType 2 =*/338).fork()).ldelim();
             return writer;
         };
 
@@ -18557,6 +19389,15 @@ $root.server = (function() {
                     break;
                 case 39:
                     message.marketingAlert = $root.server.MarketingAlert.decode(reader, reader.uint32());
+                    break;
+                case 40:
+                    message.iceRestartOffer = $root.server.IceRestartOffer.decode(reader, reader.uint32());
+                    break;
+                case 41:
+                    message.iceRestartAnswer = $root.server.IceRestartAnswer.decode(reader, reader.uint32());
+                    break;
+                case 42:
+                    message.groupFeedHistory = $root.server.GroupFeedHistory.decode(reader, reader.uint32());
                     break;
                 case 21:
                     message.retryCount = reader.int32();
@@ -18949,6 +19790,36 @@ $root.server = (function() {
                         return "marketingAlert." + error;
                 }
             }
+            if (message.iceRestartOffer != null && message.hasOwnProperty("iceRestartOffer")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.IceRestartOffer.verify(message.iceRestartOffer);
+                    if (error)
+                        return "iceRestartOffer." + error;
+                }
+            }
+            if (message.iceRestartAnswer != null && message.hasOwnProperty("iceRestartAnswer")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.IceRestartAnswer.verify(message.iceRestartAnswer);
+                    if (error)
+                        return "iceRestartAnswer." + error;
+                }
+            }
+            if (message.groupFeedHistory != null && message.hasOwnProperty("groupFeedHistory")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.GroupFeedHistory.verify(message.groupFeedHistory);
+                    if (error)
+                        return "groupFeedHistory." + error;
+                }
+            }
             if (message.retryCount != null && message.hasOwnProperty("retryCount"))
                 if (!$util.isInteger(message.retryCount))
                     return "retryCount: integer expected";
@@ -19181,6 +20052,21 @@ $root.server = (function() {
                     throw TypeError(".server.Msg.marketingAlert: object expected");
                 message.marketingAlert = $root.server.MarketingAlert.fromObject(object.marketingAlert);
             }
+            if (object.iceRestartOffer != null) {
+                if (typeof object.iceRestartOffer !== "object")
+                    throw TypeError(".server.Msg.iceRestartOffer: object expected");
+                message.iceRestartOffer = $root.server.IceRestartOffer.fromObject(object.iceRestartOffer);
+            }
+            if (object.iceRestartAnswer != null) {
+                if (typeof object.iceRestartAnswer !== "object")
+                    throw TypeError(".server.Msg.iceRestartAnswer: object expected");
+                message.iceRestartAnswer = $root.server.IceRestartAnswer.fromObject(object.iceRestartAnswer);
+            }
+            if (object.groupFeedHistory != null) {
+                if (typeof object.groupFeedHistory !== "object")
+                    throw TypeError(".server.Msg.groupFeedHistory: object expected");
+                message.groupFeedHistory = $root.server.GroupFeedHistory.fromObject(object.groupFeedHistory);
+            }
             if (object.retryCount != null)
                 message.retryCount = object.retryCount | 0;
             if (object.rerequestCount != null)
@@ -19399,6 +20285,21 @@ $root.server = (function() {
                 object.marketingAlert = $root.server.MarketingAlert.toObject(message.marketingAlert, options);
                 if (options.oneofs)
                     object.payload = "marketingAlert";
+            }
+            if (message.iceRestartOffer != null && message.hasOwnProperty("iceRestartOffer")) {
+                object.iceRestartOffer = $root.server.IceRestartOffer.toObject(message.iceRestartOffer, options);
+                if (options.oneofs)
+                    object.payload = "iceRestartOffer";
+            }
+            if (message.iceRestartAnswer != null && message.hasOwnProperty("iceRestartAnswer")) {
+                object.iceRestartAnswer = $root.server.IceRestartAnswer.toObject(message.iceRestartAnswer, options);
+                if (options.oneofs)
+                    object.payload = "iceRestartAnswer";
+            }
+            if (message.groupFeedHistory != null && message.hasOwnProperty("groupFeedHistory")) {
+                object.groupFeedHistory = $root.server.GroupFeedHistory.toObject(message.groupFeedHistory, options);
+                if (options.oneofs)
+                    object.payload = "groupFeedHistory";
             }
             return object;
         };

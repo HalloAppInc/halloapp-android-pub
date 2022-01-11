@@ -444,6 +444,17 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.IceRestartAnswer getIceRestartAnswer();
 
   /**
+   * <code>.server.GroupFeedHistory group_feed_history = 42;</code>
+   * @return Whether the groupFeedHistory field is set.
+   */
+  boolean hasGroupFeedHistory();
+  /**
+   * <code>.server.GroupFeedHistory group_feed_history = 42;</code>
+   * @return The groupFeedHistory.
+   */
+  com.halloapp.proto.server.GroupFeedHistory getGroupFeedHistory();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */

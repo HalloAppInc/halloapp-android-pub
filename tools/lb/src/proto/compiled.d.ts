@@ -2806,6 +2806,126 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a GroupFeedHistory. */
+    interface IGroupFeedHistory {
+
+        /** GroupFeedHistory gid */
+        gid?: (string|null);
+
+        /** GroupFeedHistory id */
+        id?: (string|null);
+
+        /** GroupFeedHistory payload */
+        payload?: (Uint8Array|null);
+
+        /** GroupFeedHistory encPayload */
+        encPayload?: (Uint8Array|null);
+
+        /** GroupFeedHistory publicKey */
+        publicKey?: (Uint8Array|null);
+
+        /** GroupFeedHistory oneTimePreKeyId */
+        oneTimePreKeyId?: (number|null);
+    }
+
+    /** Represents a GroupFeedHistory. */
+    class GroupFeedHistory implements IGroupFeedHistory {
+
+        /**
+         * Constructs a new GroupFeedHistory.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IGroupFeedHistory);
+
+        /** GroupFeedHistory gid. */
+        public gid: string;
+
+        /** GroupFeedHistory id. */
+        public id: string;
+
+        /** GroupFeedHistory payload. */
+        public payload: Uint8Array;
+
+        /** GroupFeedHistory encPayload. */
+        public encPayload: Uint8Array;
+
+        /** GroupFeedHistory publicKey. */
+        public publicKey: Uint8Array;
+
+        /** GroupFeedHistory oneTimePreKeyId. */
+        public oneTimePreKeyId: number;
+
+        /**
+         * Creates a new GroupFeedHistory instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GroupFeedHistory instance
+         */
+        public static create(properties?: server.IGroupFeedHistory): server.GroupFeedHistory;
+
+        /**
+         * Encodes the specified GroupFeedHistory message. Does not implicitly {@link server.GroupFeedHistory.verify|verify} messages.
+         * @param message GroupFeedHistory message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IGroupFeedHistory, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GroupFeedHistory message, length delimited. Does not implicitly {@link server.GroupFeedHistory.verify|verify} messages.
+         * @param message GroupFeedHistory message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IGroupFeedHistory, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GroupFeedHistory message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GroupFeedHistory
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.GroupFeedHistory;
+
+        /**
+         * Decodes a GroupFeedHistory message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GroupFeedHistory
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.GroupFeedHistory;
+
+        /**
+         * Verifies a GroupFeedHistory message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GroupFeedHistory message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GroupFeedHistory
+         */
+        public static fromObject(object: { [k: string]: any }): server.GroupFeedHistory;
+
+        /**
+         * Creates a plain object from a GroupFeedHistory message. Also converts values to other types if specified.
+         * @param message GroupFeedHistory
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.GroupFeedHistory, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GroupFeedHistory to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a GroupMember. */
     interface IGroupMember {
 
@@ -6286,6 +6406,210 @@ export namespace server {
         }
     }
 
+    /** Properties of an IceRestartOffer. */
+    interface IIceRestartOffer {
+
+        /** IceRestartOffer callId */
+        callId?: (string|null);
+
+        /** IceRestartOffer idx */
+        idx?: (number|null);
+
+        /** IceRestartOffer webrtcOffer */
+        webrtcOffer?: (server.IWebRtcSessionDescription|null);
+    }
+
+    /** Represents an IceRestartOffer. */
+    class IceRestartOffer implements IIceRestartOffer {
+
+        /**
+         * Constructs a new IceRestartOffer.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IIceRestartOffer);
+
+        /** IceRestartOffer callId. */
+        public callId: string;
+
+        /** IceRestartOffer idx. */
+        public idx: number;
+
+        /** IceRestartOffer webrtcOffer. */
+        public webrtcOffer?: (server.IWebRtcSessionDescription|null);
+
+        /**
+         * Creates a new IceRestartOffer instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns IceRestartOffer instance
+         */
+        public static create(properties?: server.IIceRestartOffer): server.IceRestartOffer;
+
+        /**
+         * Encodes the specified IceRestartOffer message. Does not implicitly {@link server.IceRestartOffer.verify|verify} messages.
+         * @param message IceRestartOffer message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IIceRestartOffer, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified IceRestartOffer message, length delimited. Does not implicitly {@link server.IceRestartOffer.verify|verify} messages.
+         * @param message IceRestartOffer message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IIceRestartOffer, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an IceRestartOffer message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns IceRestartOffer
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.IceRestartOffer;
+
+        /**
+         * Decodes an IceRestartOffer message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns IceRestartOffer
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.IceRestartOffer;
+
+        /**
+         * Verifies an IceRestartOffer message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an IceRestartOffer message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns IceRestartOffer
+         */
+        public static fromObject(object: { [k: string]: any }): server.IceRestartOffer;
+
+        /**
+         * Creates a plain object from an IceRestartOffer message. Also converts values to other types if specified.
+         * @param message IceRestartOffer
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.IceRestartOffer, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this IceRestartOffer to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an IceRestartAnswer. */
+    interface IIceRestartAnswer {
+
+        /** IceRestartAnswer callId */
+        callId?: (string|null);
+
+        /** IceRestartAnswer idx */
+        idx?: (number|null);
+
+        /** IceRestartAnswer webrtcAnswer */
+        webrtcAnswer?: (server.IWebRtcSessionDescription|null);
+    }
+
+    /** Represents an IceRestartAnswer. */
+    class IceRestartAnswer implements IIceRestartAnswer {
+
+        /**
+         * Constructs a new IceRestartAnswer.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IIceRestartAnswer);
+
+        /** IceRestartAnswer callId. */
+        public callId: string;
+
+        /** IceRestartAnswer idx. */
+        public idx: number;
+
+        /** IceRestartAnswer webrtcAnswer. */
+        public webrtcAnswer?: (server.IWebRtcSessionDescription|null);
+
+        /**
+         * Creates a new IceRestartAnswer instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns IceRestartAnswer instance
+         */
+        public static create(properties?: server.IIceRestartAnswer): server.IceRestartAnswer;
+
+        /**
+         * Encodes the specified IceRestartAnswer message. Does not implicitly {@link server.IceRestartAnswer.verify|verify} messages.
+         * @param message IceRestartAnswer message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IIceRestartAnswer, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified IceRestartAnswer message, length delimited. Does not implicitly {@link server.IceRestartAnswer.verify|verify} messages.
+         * @param message IceRestartAnswer message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IIceRestartAnswer, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an IceRestartAnswer message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns IceRestartAnswer
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.IceRestartAnswer;
+
+        /**
+         * Decodes an IceRestartAnswer message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns IceRestartAnswer
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.IceRestartAnswer;
+
+        /**
+         * Verifies an IceRestartAnswer message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an IceRestartAnswer message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns IceRestartAnswer
+         */
+        public static fromObject(object: { [k: string]: any }): server.IceRestartAnswer;
+
+        /**
+         * Creates a plain object from an IceRestartAnswer message. Also converts values to other types if specified.
+         * @param message IceRestartAnswer
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.IceRestartAnswer, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this IceRestartAnswer to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an Iq. */
     interface IIq {
 
@@ -6732,6 +7056,15 @@ export namespace server {
         /** Msg marketingAlert */
         marketingAlert?: (server.IMarketingAlert|null);
 
+        /** Msg iceRestartOffer */
+        iceRestartOffer?: (server.IIceRestartOffer|null);
+
+        /** Msg iceRestartAnswer */
+        iceRestartAnswer?: (server.IIceRestartAnswer|null);
+
+        /** Msg groupFeedHistory */
+        groupFeedHistory?: (server.IGroupFeedHistory|null);
+
         /** Msg retryCount */
         retryCount?: (number|null);
 
@@ -6859,6 +7192,15 @@ export namespace server {
         /** Msg marketingAlert. */
         public marketingAlert?: (server.IMarketingAlert|null);
 
+        /** Msg iceRestartOffer. */
+        public iceRestartOffer?: (server.IIceRestartOffer|null);
+
+        /** Msg iceRestartAnswer. */
+        public iceRestartAnswer?: (server.IIceRestartAnswer|null);
+
+        /** Msg groupFeedHistory. */
+        public groupFeedHistory?: (server.IGroupFeedHistory|null);
+
         /** Msg retryCount. */
         public retryCount: number;
 
@@ -6866,7 +7208,7 @@ export namespace server {
         public rerequestCount: number;
 
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory");
 
         /**
          * Creates a new Msg instance using the specified properties.
