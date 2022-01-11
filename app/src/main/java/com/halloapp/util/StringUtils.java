@@ -20,6 +20,8 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 
 import java.text.BreakIterator;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -27,11 +29,48 @@ public class StringUtils {
 
     private static final int EMOJI_LIMIT = 3;
 
+    private static final List<Character> UNICODE_SPACE_LIST = new ArrayList<>(Arrays.asList(
+            '\u00A0', // no-break space
+            '\u2000', // en quad
+            '\u2001', // em quad
+            '\u2002', // en space
+            '\u2003', // em space
+            '\u2004', // three-per-em space
+            '\u2005', // four-per-em space
+            '\u2006', // six-per-em space
+            '\u2007', // figure space
+            '\u2008', // punctuation space
+            '\u2009', // thin space
+            '\u200A', // hair space
+            '\u202F', // narrow no-break space
+            '\u205F', // medium mathematical space
+            '\u2800', // braille pattern blank
+            '\u3000'  // ideographic space (CJK)
+    ));
+
+    public static String unicodeTrim(String s) {
+        int len = s.length();
+        int start = 0;
+
+        while (start < len && shouldTrim(s.charAt(start))) {
+            start++;
+        }
+        while (start < len && shouldTrim(s.charAt(len - 1))) {
+            len--;
+        }
+
+        return ((start > 0) || (len < s.length())) ? s.substring(start, len) : s;
+    }
+
+    private static boolean shouldTrim(char c) {
+        return c <= ' ' || UNICODE_SPACE_LIST.contains(c);
+    }
+
     public static String preparePostText(final String text) {
         if (TextUtils.isEmpty(text)) {
             return text;
         }
-        String postText = text.trim();
+        String postText = unicodeTrim(text);
         return postText.length() < Constants.MAX_TEXT_LENGTH ? postText : postText.substring(0, Constants.MAX_TEXT_LENGTH);
     }
 
@@ -39,7 +78,7 @@ public class StringUtils {
         if (TextUtils.isEmpty(text)) {
             return text;
         }
-        String postText = text.trim();
+        String postText = unicodeTrim(text);
         return postText.length() < Constants.MAX_GROUP_DESCRIPTION_LENGTH ? postText : postText.substring(0, Constants.MAX_GROUP_DESCRIPTION_LENGTH);
     }
 
