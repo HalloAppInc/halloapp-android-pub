@@ -1,7 +1,6 @@
 package com.halloapp.ui.calling;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.UiThread;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -142,15 +141,6 @@ public class CallViewModel extends ViewModel implements CallObserver {
         endCall();
     }
 
-    // TODO(nikola): We probably no longer need to call stop from the UI thread. We should be able to delete this function
-    @UiThread
-    public void onEndCallCleanup() {
-        // TODO(nikola): remove this if. callManager is never null.
-        if (callManager != null) {
-            // TODO(nikola): the reason is not correct here
-            callManager.stop(EndCall.Reason.CALL_END);
-        }
-    }
 
     private void endCall() {
         state.postValue(CallManager.State.END);

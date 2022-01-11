@@ -18,8 +18,6 @@ import android.os.Looper;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.telecom.CallAudioState;
-import android.telecom.Connection;
-import android.telecom.DisconnectCause;
 import android.telecom.PhoneAccount;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
@@ -33,7 +31,6 @@ import androidx.annotation.WorkerThread;
 
 import com.halloapp.AppContext;
 import com.halloapp.Constants;
-import com.halloapp.NetworkChangeReceiver;
 import com.halloapp.NetworkConnectivityManager;
 import com.halloapp.Notifications;
 import com.halloapp.R;
@@ -185,22 +182,22 @@ public class CallManager {
         connectivityManager.registerNetworkCallback(networkRequest, new ConnectivityManager.NetworkCallback() {
             @Override
             public void onAvailable(Network network) {
-                Log.e("CallManager: NETWORK: onAvailable(" + network + ")");
+                Log.i("CallManager: NETWORK: onAvailable(" + network + ")");
             }
 
             @Override
             public void onLost(Network network) {
-                Log.e("CallManager: NETWORK: onLost(" + network + ")");
+                Log.i("CallManager: NETWORK: onLost(" + network + ")");
             }
 
             @Override
             public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
-                Log.e("CallManager: NETWORK: onCapabilitiesChanged() network:" + network + " cap:" + networkCapabilities);
+                Log.i("CallManager: NETWORK: onCapabilitiesChanged() network:" + network + " cap:" + networkCapabilities);
             }
 
             @Override
             public void onLinkPropertiesChanged(Network network, LinkProperties linkProperties) {
-                Log.e("CallManager: NETWORK: onLinkPropertiesChanged() network:" + network + " props:" + linkProperties);
+                Log.i("CallManager: NETWORK: onLinkPropertiesChanged() network:" + network + " props:" + linkProperties);
             }
         });
 
@@ -321,7 +318,9 @@ public class CallManager {
             getCallServersAndStartCall();
         }
     }
-    
+
+    // TODO(nikola): Cleanup the code path of who is calling the stop. Make stop private. use endCallandStop instead
+    // It is sometimes called from the UI and sometimes from here.
     public void stop(EndCall.Reason reason) {
         final long callDuration = (this.callStartTimestamp > 0)? SystemClock.elapsedRealtime() - this.callStartTimestamp : 0;
         Log.i("stop callId: " + callId + " peerUid" + peerUid + " duration: " + callDuration / 1000);
@@ -388,9 +387,6 @@ public class CallManager {
         if (webrtcOffer == null) {
             Log.e("handleIncomingCall() Failed to decrypt webrtcOffer callId:" + callId);
             endCall(EndCall.Reason.DECRYPTION_FAILED);
-            notifyOnEndCall();
-            // TODO(nikola): unify the endCall and stop funcitons
-            stop(EndCall.Reason.REJECT);
             return;
         }
 
@@ -480,8 +476,6 @@ public class CallManager {
 
         if (webrtcOffer == null) {
             endCall(EndCall.Reason.DECRYPTION_FAILED);
-            notifyOnEndCall();
-            stop(EndCall.Reason.REJECT);
             return;
         }
 
@@ -506,7 +500,7 @@ public class CallManager {
         }
         this.state = State.IDLE;
         notifyOnEndCall();
-        stopOutgoingRingtone();
+        stop(reason);
         // TODO(nikola): Handle multiple calls at the same time. We should only cancel the right
         // notification
         Notifications.getInstance(appContext.get()).clearIncomingCallNotification();
@@ -775,16 +769,13 @@ public class CallManager {
                 } catch (CryptoException e) {
                     Log.e("CallManager: failed to encrypt webrtc Answer", e);
                     endCall(EndCall.Reason.ENCRYPTION_FAILED);
-                    notifyOnEndCall();
-                    stop(EndCall.Reason.REJECT);
                 }
             }
         }, new MediaConstraints());
     }
 
-    // TODO(nikola): Convert other place in the CallManager to use this function
-    public void endCallAndStop(EndCall.Reason reason) {
-        endCall(reason);
+    public void endCall(EndCall.Reason reason) {
+        callsApi.sendEndCall(callId, peerUid, reason);
         notifyOnEndCall();
         stop(reason);
     }
@@ -835,10 +826,6 @@ public class CallManager {
 
     public void toggleSpeakerPhone() {
         setSpeakerPhoneOn(!isSpeakerPhoneOn());
-    }
-
-    public void endCall(@NonNull EndCall.Reason reason) {
-        callsApi.sendEndCall(callId, peerUid, reason);
     }
 
     private void notifyOnIncomingCall() {
@@ -911,17 +898,13 @@ public class CallManager {
             // this code runs for both incoming and outgoing call ringing timeout
             Log.i("onCallTimeout");
             if (this.callId != null && this.callId.equals(callId)) {
-                endCall(EndCall.Reason.TIMEOUT);
                 if (!this.isInitiator && this.callId != null && this.state == State.INCOMING_RINGING) {
                     // TODO(nikola): fix here when we do video)
                     storeMissedCallMsg(this.peerUid, this.callId, CallType.AUDIO);
                 }
-                notifyOnEndCall();
                 // TODO(nikola): this could clear the wrong notification if we have multiple incoming calls.
                 Notifications.getInstance(appContext.get()).clearIncomingCallNotification();
-                // TODO(nikola): Cleanup the code path of who is calling the stop. Make stop private.
-                // It is sometimes called from the UI and sometimes from here.
-                stop(EndCall.Reason.TIMEOUT);
+                endCall(EndCall.Reason.TIMEOUT);
             }
         }
     }

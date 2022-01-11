@@ -48,7 +48,7 @@ public class HaTelecomConnection extends Connection {
     @Override
     public void onDisconnect() {
         Log.i("HaTelecomConnection.onDisconnect()");
-        callManager.endCallAndStop(EndCall.Reason.CALL_END);
+        callManager.endCall(EndCall.Reason.CALL_END);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class HaTelecomConnection extends Connection {
         super.onReject();
         //TODO(nikola): clearing the notification should be moved in endCallAndStop
         Notifications.getInstance(AppContext.getInstance().get()).clearIncomingCallNotification();
-        callManager.endCallAndStop(EndCall.Reason.REJECT);
+        callManager.endCall(EndCall.Reason.REJECT);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class HaTelecomConnection extends Connection {
         Log.i("HaTelecomConnection.onReject(rejectReason: " + rejectReason + ")");
         super.onReject(rejectReason);
         // TODO(nikola): use the right reject reason
-        callManager.endCallAndStop(EndCall.Reason.REJECT);
+        callManager.endCall(EndCall.Reason.REJECT);
     }
 
     @Override
@@ -126,6 +126,7 @@ public class HaTelecomConnection extends Connection {
     }
 
     public void stop(EndCall.Reason reason) {
+        Log.i("HaTelecomConnection.stop(" + reason + ")");
         if (reason == EndCall.Reason.TIMEOUT) {
             setDisconnected(new DisconnectCause(DisconnectCause.MISSED));
         } else if (reason == EndCall.Reason.REJECT) {
