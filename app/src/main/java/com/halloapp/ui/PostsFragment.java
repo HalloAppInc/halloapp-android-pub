@@ -38,11 +38,13 @@ import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
+import com.halloapp.ui.posts.CollapsedPostViewHolder;
 import com.halloapp.ui.posts.FutureProofPostViewHolder;
 import com.halloapp.ui.posts.IncomingPostFooterViewHolder;
 import com.halloapp.ui.posts.IncomingPostViewHolder;
 import com.halloapp.ui.posts.OutgoingPostFooterViewHolder;
 import com.halloapp.ui.posts.OutgoingPostViewHolder;
+import com.halloapp.ui.posts.PostListDiffer;
 import com.halloapp.ui.posts.PostViewHolder;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.ui.posts.SubtlePostViewHolder;
@@ -148,6 +150,7 @@ public abstract class PostsFragment extends HalloFragment {
         static final int POST_TYPE_ZERO_ZONE_HOME = 0x05;
         static final int POST_TYPE_ZERO_ZONE_GROUP = 0x06;
         static final int POST_TYPE_VOICE_NOTE = 0x07;
+        static final int POST_TYPE_COLLAPSED = 0x08;
         static final int POST_TYPE_MASK = 0xFF;
 
         static final int POST_DIRECTION_OUTGOING = 0x0000;
@@ -157,6 +160,8 @@ public abstract class PostsFragment extends HalloFragment {
         private boolean showGroup = true;
 
         private int theme;
+
+        private PostListDiffer postListDiffer;
 
         private final PostViewHolder.PostViewHolderParent postViewHolderParent = new PostViewHolder.PostViewHolderParent() {
 
@@ -293,7 +298,8 @@ public abstract class PostsFragment extends HalloFragment {
                 }
             };
 
-            setDiffer(new AsyncPagedListDiffer<>(listUpdateCallback, new AsyncDifferConfig.Builder<>(DIFF_CALLBACK).build()));
+            postListDiffer = new PostListDiffer(listUpdateCallback);
+            setDiffer(postListDiffer);
         }
 
         public void applyTheme(int theme) {
@@ -309,6 +315,11 @@ public abstract class PostsFragment extends HalloFragment {
 
         @Override
         public int getViewTypeForItem(Post post) {
+            if (post instanceof PostListDiffer.PostCollection) {
+                return POST_TYPE_COLLAPSED;
+            } else if (post instanceof PostListDiffer.ExpandedPost) {
+                post = ((PostListDiffer.ExpandedPost) post).wrappedPost;
+            }
             int type = Post.TYPE_USER;
             switch (post.type) {
                 case Post.TYPE_SYSTEM:
@@ -348,6 +359,9 @@ public abstract class PostsFragment extends HalloFragment {
             int postType = viewType & POST_TYPE_MASK;
             if (postType == POST_TYPE_RETRACTED || postType == POST_TYPE_SYSTEM) {
                 return new SubtlePostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.centered_post_item, parent, false), postViewHolderParent);
+            }
+            if (postType == POST_TYPE_COLLAPSED) {
+                return new CollapsedPostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.centered_post_item, parent, false), postViewHolderParent);
             }
             if (postType == POST_TYPE_ZERO_ZONE_HOME) {
                 return new ZeroZonePostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item_zero_zone_home, parent, false), postViewHolderParent);
@@ -419,10 +433,28 @@ public abstract class PostsFragment extends HalloFragment {
             } else if (holder instanceof SubtlePostViewHolder) {
                 SubtlePostViewHolder postViewHolder = (SubtlePostViewHolder) holder;
                 postViewHolder.applyTheme(theme);
-                postViewHolder.bindTo(Preconditions.checkNotNull(getItem(position)), position == 0);
+                Post post = Preconditions.checkNotNull(getItem(position));
+                if (post instanceof PostListDiffer.ExpandedPost) {
+                    final PostListDiffer.ExpandedPost expandedPost = (PostListDiffer.ExpandedPost) post;
+                    holder.itemView.setOnClickListener(v -> {
+                        postListDiffer.collapse(expandedPost.parent.getAdapterIndex());
+                    });
+                    post = expandedPost.wrappedPost;
+                } else {
+                    holder.itemView.setOnClickListener(null);
+                }
+                postViewHolder.bindTo(post, position == 0);
             } else if (holder instanceof ZeroZonePostViewHolder) {
                 ZeroZonePostViewHolder postViewHolder = (ZeroZonePostViewHolder) holder;
                 postViewHolder.bindTo(Preconditions.checkNotNull(getItem(position)), position == 0);
+            } else if (holder instanceof CollapsedPostViewHolder) {
+                CollapsedPostViewHolder postViewHolder = (CollapsedPostViewHolder) holder;
+                postViewHolder.applyTheme(theme);
+                PostListDiffer.PostCollection postCollection = (PostListDiffer.PostCollection) getItem(position);
+                postViewHolder.bindTo(postCollection, position == 0);
+                postViewHolder.itemView.setOnClickListener(v -> {
+                    postListDiffer.expand(postCollection.parent.getAdapterIndex());
+                });
             }
         }
     }

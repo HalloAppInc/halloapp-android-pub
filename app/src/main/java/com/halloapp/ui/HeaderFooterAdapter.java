@@ -12,8 +12,11 @@ import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
 
 import com.halloapp.util.Preconditions;
+import com.halloapp.widget.AsyncListDifferWrapper;
+import com.halloapp.widget.ListDiffer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public abstract class HeaderFooterAdapter<Item> extends AdapterWithLifecycle<ViewHolderWithLifecycle> {
@@ -24,7 +27,7 @@ public abstract class HeaderFooterAdapter<Item> extends AdapterWithLifecycle<Vie
 
     // Exactly one of these two is used
     private List<Item> items = new ArrayList<>();
-    private AsyncPagedListDiffer<Item> differ;
+    private ListDiffer<Item> differ;
 
     public HeaderFooterAdapter(@NonNull HeaderFooterAdapterParent parent) {
         this.parent = parent;
@@ -32,6 +35,10 @@ public abstract class HeaderFooterAdapter<Item> extends AdapterWithLifecycle<Vie
     }
 
     public void setDiffer(@NonNull AsyncPagedListDiffer<Item> differ) {
+        this.differ = new AsyncListDifferWrapper<>(differ);
+    }
+
+    public void setDiffer(@NonNull ListDiffer<Item> differ) {
         this.differ = differ;
     }
 

@@ -171,6 +171,36 @@
     <!-- Text post hint -->
     <string name="text_post_compose_hint">Write a description</string>
 
+    <!-- Collapsed multiple deleted posts -->
+    <plurals name="collapsed_deleted_posts">
+        <item quantity="one">%d deleted post</item>
+        <item quantity="other">%d deleted posts</item>
+    </plurals>
+
+    <!-- Collapsed multiple add user posts -->
+    <plurals name="collapsed_added_user_posts">
+        <item quantity="one">%d person was added</item>
+        <item quantity="other">%d people were added</item>
+    </plurals>
+
+    <!-- Collapsed multiple remove user posts -->
+    <plurals name="collapsed_removed_user_posts">
+        <item quantity="one">%d person was removed</item>
+        <item quantity="other">%d people were removed</item>
+    </plurals>
+
+    <!-- Collapsed multiple user left posts -->
+    <plurals name="collapsed_user_left_posts">
+        <item quantity="one">%d person left</item>
+        <item quantity="other">%d people left</item>
+    </plurals>
+
+    <!-- Collapsed multiple user joined posts -->
+    <plurals name="collapsed_user_joined_posts">
+        <item quantity="one">%d person joined</item>
+        <item quantity="other">%d people joined</item>
+    </plurals>
+
     <!-- Audio post record instruction -->
     <string name="audio_post_tap_to_record">Tap to record</string>
     <!-- Dialog shown to user before requesting contact permissions -->
