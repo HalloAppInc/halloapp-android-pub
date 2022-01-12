@@ -99,7 +99,6 @@ import com.halloapp.xmpp.feed.FeedItem;
 import com.halloapp.xmpp.feed.FeedUpdateIq;
 import com.halloapp.xmpp.feed.GroupFeedUpdateIq;
 import com.halloapp.xmpp.feed.SharePosts;
-import com.halloapp.xmpp.groups.GroupChatMessage;
 import com.halloapp.xmpp.groups.GroupResponseIq;
 import com.halloapp.xmpp.groups.MemberElement;
 import com.halloapp.xmpp.props.ServerPropsRequestIq;
@@ -920,26 +919,6 @@ public class ConnectionImpl extends Connection {
         });
     }
 
-    @Override
-    public void sendGroupMessage(@NonNull Message message, @Nullable SignalSessionSetupInfo signalSessionSetupInfo) {
-        executor.execute(() -> {
-            if (message.isLocalMessage()) {
-                Log.i("connection: System message shouldn't be sent");
-                return;
-            }
-            GroupChatMessage groupChatMessage = new GroupChatMessage((GroupId)message.chatId, message);
-
-            Msg msg = Msg.newBuilder()
-                    .setId(message.id)
-                    .setType(Msg.Type.GROUPCHAT)
-                    .setGroupChat(groupChatMessage.toProto())
-                    .build();
-
-            sendMsg(msg, () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
-            Log.i("connection: sending group message " + message.id + " to " + message.chatId);
-        });
-    }
-
     // NOTE: Should NOT be called from executor.
     @Override
     public Observable<Iq> sendIqRequest(@NonNull HalloIq iq) {
@@ -1644,49 +1623,19 @@ public class ConnectionImpl extends Connection {
                 Log.e("connection: invalid post payload", e);
                 return null;
             }
-            if (!container.hasPostContainer()) {
-                PublishedEntry publishedEntry = PublishedEntry.getFeedEntry(Base64.encodeToString(payload, Base64.NO_WRAP), protoPost.getId(), protoPost.getTimestamp(), Long.toString(protoPost.getPublisherUid()));
 
-                // NOTE: publishedEntry.timestamp == 1000L * protoPost.getTimestamp()
-                UserId posterUserId = getUserId(Long.toString(protoPost.getPublisherUid()));
-                @Post.TransferredState int transferState = publishedEntry.media.isEmpty() || posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO;
-                if (errorMessage != null) {
-                    transferState = Post.TRANSFERRED_DECRYPT_FAILED;
-                }
-                Post np = new Post(-1, posterUserId, protoPost.getId(), publishedEntry.timestamp, transferState, Post.SEEN_NO, publishedEntry.text);
-                for (PublishedEntry.Media entryMedia : publishedEntry.media) {
-                    np.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
-                            entryMedia.encKey, entryMedia.encSha256hash,
-                            entryMedia.width, entryMedia.height,
-                            entryMedia.blobVersion, entryMedia.chunkSize, entryMedia.blobSize));
-                }
-                for (com.halloapp.proto.clients.Mention mentionProto : publishedEntry.mentions) {
-                    Mention mention = Mention.parseFromProto(mentionProto);
-                    processMention(mention);
-                    np.mentions.add(mention);
-                }
+            PostContainer postContainer = container.getPostContainer();
+            UserId posterUserId = getUserId(Long.toString(protoPost.getPublisherUid()));
+            long timeStamp = 1000L * protoPost.getTimestamp();
 
-                np.protoHash = protoHash;
-                np.clientVersion = Constants.FULL_VERSION;
-                np.senderPlatform = senderPlatform;
-                np.senderVersion = senderVersion;
-                np.failureReason = errorMessage;
+            Post post = feedContentParser.parsePost(protoPost.getId(), posterUserId, timeStamp, postContainer, errorMessage != null);
+            post.protoHash = protoHash;
+            post.clientVersion = Constants.FULL_VERSION;
+            post.senderPlatform = senderPlatform;
+            post.senderVersion = senderVersion;
+            post.failureReason = errorMessage;
 
-                return np;
-            } else {
-                PostContainer postContainer = container.getPostContainer();
-                UserId posterUserId = getUserId(Long.toString(protoPost.getPublisherUid()));
-                long timeStamp = 1000L * protoPost.getTimestamp();
-
-                Post post = feedContentParser.parsePost(protoPost.getId(), posterUserId, timeStamp, postContainer, errorMessage != null);
-                post.protoHash = protoHash;
-                post.clientVersion = Constants.FULL_VERSION;
-                post.senderPlatform = senderPlatform;
-                post.senderVersion = senderVersion;
-                post.failureReason = errorMessage;
-
-                return post;
-            }
+            return post;
         }
 
         private Comment processComment(com.halloapp.proto.server.Comment protoComment, Map<UserId, String> names, @Nullable GroupId groupId, boolean senderStateIssue, @Nullable String senderPlatform, @Nullable String senderVersion) {
@@ -1760,53 +1709,19 @@ public class ConnectionImpl extends Connection {
                 return null;
             }
 
-            if (!container.hasCommentContainer()) {
-                PublishedEntry publishedEntry = PublishedEntry.getFeedEntry(Base64.encodeToString(payload, Base64.NO_WRAP), protoComment.getId(), protoComment.getTimestamp(), Long.toString(protoComment.getPublisherUid()));
+            CommentContainer commentContainer = container.getCommentContainer();
+            long timestamp = protoComment.getTimestamp() * 1000L;
+            UserId publisherId = getUserId(Long.toString(protoComment.getPublisherUid()));
 
-                final Comment comment = new Comment(0,
-                        publishedEntry.feedItemId,
-                        publisherUserId,
-                        publishedEntry.id,
-                        publishedEntry.parentCommentId,
-                        publishedEntry.timestamp,
-                        errorMessage == null ? publishedEntry.media.isEmpty() || publisherUserId.isMe() ? Comment.TRANSFERRED_YES : Comment.TRANSFERRED_NO : Comment.TRANSFERRED_DECRYPT_FAILED,
-                        false,
-                        publishedEntry.text
-                );
-                for (PublishedEntry.Media entryMedia : publishedEntry.media) {
-                    comment.media.add(Media.createFromUrl(PublishedEntry.getMediaType(entryMedia.type), entryMedia.url,
-                            entryMedia.encKey, entryMedia.encSha256hash,
-                            entryMedia.width, entryMedia.height,
-                            entryMedia.blobVersion, entryMedia.chunkSize, entryMedia.blobSize));
-                }
-                for (com.halloapp.proto.clients.Mention mentionProto : publishedEntry.mentions) {
-                    Mention mention = Mention.parseFromProto(mentionProto);
-                    processMention(mention);
-                    comment.mentions.add(mention);
-                }
+            Comment comment = feedContentParser.parseComment(protoComment.getId(), protoComment.getParentCommentId(), publisherId, timestamp, commentContainer, errorMessage != null);
 
-                comment.protoHash = protoHash;
-                comment.clientVersion = Constants.FULL_VERSION;
-                comment.senderPlatform = senderPlatform;
-                comment.senderVersion = senderVersion;
-                comment.failureReason = errorMessage;
+            comment.protoHash = protoHash;
+            comment.clientVersion = Constants.FULL_VERSION;
+            comment.senderPlatform = senderPlatform;
+            comment.senderVersion = senderVersion;
+            comment.failureReason = errorMessage;
 
-                return comment;
-            } else {
-                CommentContainer commentContainer = container.getCommentContainer();
-                long timestamp = protoComment.getTimestamp() * 1000L;
-                UserId publisherId = getUserId(Long.toString(protoComment.getPublisherUid()));
-
-                Comment comment = feedContentParser.parseComment(protoComment.getId(), protoComment.getParentCommentId(), publisherId, timestamp, commentContainer, errorMessage != null);
-
-                comment.protoHash = protoHash;
-                comment.clientVersion = Constants.FULL_VERSION;
-                comment.senderPlatform = senderPlatform;
-                comment.senderVersion = senderVersion;
-                comment.failureReason = errorMessage;
-
-                return comment;
-            }
+            return comment;
         }
 
 

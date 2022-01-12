@@ -134,12 +134,7 @@ public class ChatMessageProtocol {
                 final byte[] dec = signalSessionManager.decryptMessage(encryptedBytes, fromUserId, signalSessionSetupInfo);
                 try {
                     Container container = Container.parseFrom(dec);
-                    // TODO: (clarkc) remove legacy proto format once clients are all sending new format
-                    if (!container.hasChatContainer()) {
-                        chatMessage = MessageElementHelper.readEncodedEntry(dec);
-                    } else {
-                        chatContainer = container.getChatContainer();
-                    }
+                    chatContainer = container.getChatContainer();
                     stats.reportDecryptSuccess(senderPlatform, senderVersion);
                 } catch (InvalidProtocolBufferException e) {
                     Log.e("Payload not a valid container", e);

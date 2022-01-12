@@ -65,22 +65,6 @@ public class MessageElementHelper {
         return BlobVersion.BLOB_VERSION_DEFAULT;
     }
 
-    public static ChatMessage readEncodedEntry(byte[] entry) {
-        final Container container;
-        try {
-            container = Container.parseFrom(entry);
-        } catch (InvalidProtocolBufferException e) {
-            Log.w("Error reading encoded entry", e);
-            return null;
-        }
-        if (container.hasChatMessage()) {
-            return container.getChatMessage();
-        } else {
-            Log.i("Unknown encoded entry type");
-        }
-        return null;
-    }
-
     public static ChatContainer readEncodedContainer(byte[] entry) {
         final Container container;
         try {

@@ -126,8 +126,7 @@ public class SignalSessionManager {
 
     public void sendMessage(final @NonNull Message message) {
         if (message.chatId instanceof GroupId) {
-            // TODO(jack): support groups encryption
-            connection.sendGroupMessage(message, null);
+            Log.e("Group messaging not supported");
             return;
         }
 
