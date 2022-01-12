@@ -21,6 +21,8 @@ import com.halloapp.proto.server.AnswerCall;
 import com.halloapp.proto.server.CallRinging;
 import com.halloapp.proto.server.EndCall;
 import com.halloapp.proto.server.IceCandidate;
+import com.halloapp.proto.server.IceRestartAnswer;
+import com.halloapp.proto.server.IceRestartOffer;
 import com.halloapp.proto.server.IncomingCall;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.Msg;
@@ -105,6 +107,8 @@ public abstract class Connection {
         public void onAnswerCall(@NonNull UserId peerUid, @NonNull AnswerCall answerCall, @NonNull String ackId) {}
         public void onEndCall(@NonNull UserId peerUid, @NonNull EndCall endCall, @NonNull String ackId) {}
         public void onIceCandidate(@NonNull UserId peerUid, @NonNull IceCandidate iceCandidate, @NonNull String ackId) {}
+        public void onIceRestartOffer(@NonNull UserId peerUid, @NonNull IceRestartOffer iceRestartOffer, @NonNull String ackId) {}
+        public void onIceRestartAnswer(@NonNull UserId peerUid, @NonNull IceRestartAnswer iceRestartAnswer, @NonNull String ackId) {}
     }
 
     public abstract Future<Boolean> connect();
@@ -195,7 +199,7 @@ public abstract class Connection {
 
     public abstract void sendMessagePlayedReceipt(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
 
-    public abstract void sendCallMsg(@NonNull Msg msg);
+    public abstract void sendCallMsg(@NonNull Msg msg, @NonNull Runnable ackHandler);
 
     public abstract UserId getUserId(@NonNull String user);
 

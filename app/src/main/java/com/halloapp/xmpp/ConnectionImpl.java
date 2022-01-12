@@ -1075,10 +1075,10 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public void sendCallMsg(@NonNull Msg msg) {
+    public void sendCallMsg(@NonNull Msg msg, @NonNull Runnable ackHandler) {
         executor.execute(() -> {
-            sendMsg(msg, () -> Log.i("call msg " + msg.getId() + " acked"));
             Log.i("connection: sending call msg " + msg.getId() + " to " + msg.getToUid());
+            sendMsg(msg, ackHandler);
         });
     }
 
@@ -1500,6 +1500,16 @@ public class ConnectionImpl extends Connection {
                     Log.i("connection: got ice candidate msg" + ProtoPrinter.toString(msg));
                     UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
                     connectionObservers.notifyIceCandidate(peerUid, msg.getIceCandidate(), msg.getId());
+                    handled = true;
+                } else if (msg.hasIceRestartOffer()) {
+                    Log.i("connection: got ice restart offer msg" + ProtoPrinter.toString(msg));
+                    UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
+                    connectionObservers.notifyIceRestartOffer(peerUid, msg.getIceRestartOffer(), msg.getId());
+                    handled = true;
+                } else if (msg.hasIceRestartAnswer()) {
+                    Log.i("connection: got ice restart answer msg" + ProtoPrinter.toString(msg));
+                    UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
+                    connectionObservers.notifyIceRestartAnswer(peerUid, msg.getIceRestartAnswer(), msg.getId());
                     handled = true;
                 }
             }

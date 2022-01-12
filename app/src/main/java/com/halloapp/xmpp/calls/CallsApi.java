@@ -2,7 +2,6 @@ package com.halloapp.xmpp.calls;
 
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.google.protobuf.ByteString;
 import com.halloapp.ConnectionObservers;
@@ -16,6 +15,8 @@ import com.halloapp.proto.server.AnswerCall;
 import com.halloapp.proto.server.CallRinging;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
+import com.halloapp.proto.server.IceRestartAnswer;
+import com.halloapp.proto.server.IceRestartOffer;
 import com.halloapp.proto.server.IncomingCall;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.StunServer;
@@ -30,7 +31,9 @@ import com.halloapp.xmpp.util.Observable;
 import org.webrtc.IceCandidate;
 
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 
 /**
@@ -42,16 +45,43 @@ public class CallsApi extends Connection.Observer {
     private static CallsApi instance;
 
     private final Connection connection;
+    private final CallManager callManager;
+    private final Queue<Msg> outgoingQueue = new LinkedList<Msg>();
 
-    public static CallsApi getInstance() {
+    public static CallsApi getInstance(@NonNull CallManager callManager) {
         if (instance == null) {
             synchronized (CallsApi.class) {
                 if (instance == null) {
-                    instance = new CallsApi(Connection.getInstance());
+                    instance = new CallsApi(Connection.getInstance(), callManager);
                 }
             }
         }
         return instance;
+    }
+
+    private CallsApi(@NonNull Connection connection, @NonNull CallManager callManager) {
+        this.connection = connection;
+        this.callManager = callManager;
+        ConnectionObservers.getInstance().addObserver(this);
+    }
+
+    @Override
+    public void onConnected() {
+        super.onConnected();
+        synchronized (outgoingQueue) {
+            Log.i("CallsApi.onConnected() flushing " + outgoingQueue.size() + " messages");
+            for (Msg msg : outgoingQueue) {
+                Log.i("resending msgId: " + msg.getId());
+                connection.sendCallMsg(msg, () -> msgAcked(msg));
+            }
+        }
+    }
+
+    public void msgAcked(Msg msg) {
+        synchronized (outgoingQueue) {
+            boolean removed = outgoingQueue.remove(msg);
+            Log.i("CallsApi: msgId: " + msg.getId() + " acked. removed=" + removed);
+        }
     }
 
     public static @NonNull WebRtcSessionDescription encryptCallPayload(String sessionDescription, UserId peerUid) throws CryptoException {
@@ -89,17 +119,11 @@ public class CallsApi extends Connection.Observer {
         return new String(dec, StandardCharsets.UTF_8);
     }
 
-
-    private CallsApi(@NonNull Connection connection) {
-        this.connection = connection;
-        ConnectionObservers.getInstance().addObserver(this);
-    }
-
     @Override
     public void onIncomingCall(@NonNull UserId peerUid, @NonNull IncomingCall incomingCall, @NonNull String ackId) {
         String callId = incomingCall.getCallId();
 
-        @Nullable String webrtcOffer = null;
+        String webrtcOffer = null;
         try {
             webrtcOffer = CallsApi.decryptCallPayload(incomingCall.getWebrtcOffer(), peerUid);
             Log.d("CallsApi: Decrypted offer: " + webrtcOffer);
@@ -112,7 +136,7 @@ public class CallsApi extends Connection.Observer {
         CallType callType = incomingCall.getCallType();
         long timestamp = incomingCall.getTimestampMs();
         long serverSentTimestamp = incomingCall.getServerSentTsMs();
-        CallManager.getInstance().handleIncomingCall(callId, peerUid, callType, webrtcOffer, stunServers, turnServers, timestamp, serverSentTimestamp);
+        callManager.handleIncomingCall(callId, peerUid, callType, webrtcOffer, stunServers, turnServers, timestamp, serverSentTimestamp);
         connection.sendAck(ackId);
     }
 
@@ -120,7 +144,7 @@ public class CallsApi extends Connection.Observer {
     public void onCallRinging(@NonNull UserId peerUid, @NonNull CallRinging callRinging, @NonNull String ackId) {
         String callId = callRinging.getCallId();
         long timestamp = callRinging.getTimestampMs();
-        CallManager.getInstance().handleCallRinging(callId, peerUid, timestamp);
+        callManager.handleCallRinging(callId, peerUid, timestamp);
         connection.sendAck(ackId);
     }
 
@@ -136,7 +160,7 @@ public class CallsApi extends Connection.Observer {
         }
         // String answer = answerCall.getWebrtcAnswer().getEncPayload().toStringUtf8();
         long timestamp = answerCall.getTimestampMs();
-        CallManager.getInstance().handleAnswerCall(callId, peerUid, answer, timestamp);
+        callManager.handleAnswerCall(callId, peerUid, answer, timestamp);
         connection.sendAck(ackId);
     }
 
@@ -145,7 +169,7 @@ public class CallsApi extends Connection.Observer {
         String callId = endCall.getCallId();
         EndCall.Reason reason = endCall.getReason();
         long timestamp = endCall.getTimestampMs();
-        CallManager.getInstance().handleEndCall(callId, peerUid, reason, timestamp);
+        callManager.handleEndCall(callId, peerUid, reason, timestamp);
         connection.sendAck(ackId);
     }
 
@@ -155,7 +179,41 @@ public class CallsApi extends Connection.Observer {
         String sdpMediaId = iceCandidate.getSdpMediaId();
         int sdpMediaLineIndex = iceCandidate.getSdpMediaLineIndex();
         String sdp = iceCandidate.getSdp();
-        CallManager.getInstance().handleIceCandidate(callId, peerUid, sdpMediaId, sdpMediaLineIndex, sdp);
+        callManager.handleIceCandidate(callId, peerUid, sdpMediaId, sdpMediaLineIndex, sdp);
+        connection.sendAck(ackId);
+    }
+
+    @Override
+    public void onIceRestartOffer(@NonNull UserId peerUid, @NonNull IceRestartOffer iceRestartOffer, @NonNull String ackId) {
+        String callId = iceRestartOffer.getCallId();
+        int restartIndex = iceRestartOffer.getIdx();
+
+        String webrtcOffer = null;
+        try {
+            webrtcOffer = CallsApi.decryptCallPayload(iceRestartOffer.getWebrtcOffer(), peerUid);
+            Log.i("CallsApi: Decrypted iceRestartOffer: " + webrtcOffer);
+        } catch (CryptoException e) {
+            Log.e("CallsApi: Decryption error onIceRestartOffer", e);
+        }
+
+        callManager.handleIceRestartOffer(callId, restartIndex, webrtcOffer);
+        connection.sendAck(ackId);
+    }
+
+    @Override
+    public void onIceRestartAnswer(@NonNull UserId peerUid, @NonNull IceRestartAnswer iceRestartAnswer, @NonNull String ackId) {
+        String callId = iceRestartAnswer.getCallId();
+        int restartIndex = iceRestartAnswer.getIdx();
+
+        String webrtcAnswer = null;
+        try {
+            webrtcAnswer = CallsApi.decryptCallPayload(iceRestartAnswer.getWebrtcAnswer(), peerUid);
+            Log.i("CallsApi: Decrypted iceRestartAnswer: " + webrtcAnswer);
+        } catch (CryptoException e) {
+            Log.e("CallsApi: Decryption error onIceRestartAnswer", e);
+        }
+
+        callManager.handleIceRestartAnswer(callId, restartIndex, webrtcAnswer);
         connection.sendAck(ackId);
     }
 
@@ -177,11 +235,12 @@ public class CallsApi extends Connection.Observer {
         String id = RandomId.create();
         Msg msg = Msg.newBuilder()
                 .setId(id)
+                .setType(Msg.Type.CALL)
                 .setAnswerCall(answerCallElement.toProto())
                 .setToUid(peerUid.rawIdLong())
                 .build();
-        Log.i("CallsApi: send call_answer msg " + ProtoPrinter.toString(msg));
-        connection.sendCallMsg(msg);
+        Log.d("CallsApi: send call_answer msg " + ProtoPrinter.toString(msg));
+        sendCallMsg(msg);
     }
 
     public void sendIceCandidate(@NonNull String callId, @NonNull UserId peerUid, @NonNull IceCandidate iceCandidate) {
@@ -190,12 +249,12 @@ public class CallsApi extends Connection.Observer {
         String id = RandomId.create();
         Msg msg = Msg.newBuilder()
                 .setId(id)
+                .setType(Msg.Type.CALL)
                 .setIceCandidate(iceCandidateElement.toProto())
                 .setToUid(peerUid.rawIdLong())
                 .build();
 
-        // TODO(nikola): Ask Android team about sending the messages like this. Is this ok?
-        connection.sendCallMsg(msg);
+        sendCallMsg(msg);
     }
 
     public void sendEndCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull EndCall.Reason reason) {
@@ -203,11 +262,12 @@ public class CallsApi extends Connection.Observer {
         String id = RandomId.create();
         Msg msg = Msg.newBuilder()
                 .setId(id)
+                .setType(Msg.Type.CALL)
                 .setEndCall(endCallElement.toProto())
                 .setToUid(peerUid.rawIdLong())
                 .build();
-        Log.i("CallsApi: sending end_call msg " + ProtoPrinter.toString(msg));
-        connection.sendCallMsg(msg);
+        Log.d("CallsApi: sending end_call msg " + ProtoPrinter.toString(msg));
+        sendCallMsg(msg);
     }
 
     public void sendRinging(@NonNull String callId, @NonNull UserId peerUid) {
@@ -215,10 +275,53 @@ public class CallsApi extends Connection.Observer {
         String id = RandomId.create();
         Msg msg = Msg.newBuilder()
                 .setId(id)
+                .setType(Msg.Type.CALL)
                 .setCallRinging(callRingingElement.toProto())
                 .setToUid(peerUid.rawIdLong())
                 .build();
-        Log.i("CallsApi: sending call_ringing msg " + msg);
-        connection.sendCallMsg(msg);
+        Log.d("CallsApi: sending call_ringing msg " + ProtoPrinter.toString(msg));
+        sendCallMsg(msg);
+    }
+
+    public void sendIceRestartOffer(@NonNull String callId, @NonNull UserId peerUid, int restartIndex, @NonNull String webrtcOfferString) throws CryptoException {
+        WebRtcSessionDescription webrtcOffer = encryptCallPayload(webrtcOfferString, peerUid);
+        Log.i("CallsApi: encrypted restart offer: " + webrtcOffer.getEncPayload().size());
+
+        IceRestartOfferElement iceRestartOfferElement = new IceRestartOfferElement(callId, restartIndex, webrtcOffer);
+
+        String id = RandomId.create();
+        Msg msg = Msg.newBuilder()
+                .setId(id)
+                .setType(Msg.Type.CALL)
+                .setIceRestartOffer(iceRestartOfferElement.toProto())
+                .setToUid(peerUid.rawIdLong())
+                .build();
+
+        sendCallMsg(msg);
+    }
+
+    public void sendIceRestartAnswer(@NonNull String callId, @NonNull UserId peerUid, int restartIndex, @NonNull String webrtcAnswerString) throws CryptoException {
+        WebRtcSessionDescription webrtcAnswer = encryptCallPayload(webrtcAnswerString, peerUid);
+        Log.i("CallsApi: encrypted restart answer: " + webrtcAnswer.getEncPayload().size());
+
+        IceRestartAnswerElement iceRestartAnswerElement = new IceRestartAnswerElement(callId, restartIndex, webrtcAnswer);
+
+        String id = RandomId.create();
+        Msg msg = Msg.newBuilder()
+                .setId(id)
+                .setType(Msg.Type.CALL)
+                .setIceRestartAnswer(iceRestartAnswerElement.toProto())
+                .setToUid(peerUid.rawIdLong())
+                .build();
+
+        sendCallMsg(msg);
+    }
+
+    private void sendCallMsg(@NonNull Msg msg) {
+        synchronized (outgoingQueue) {
+            Log.i("CallsApi: sending " + ProtoPrinter.toString(msg));
+            outgoingQueue.add(msg);
+            connection.sendCallMsg(msg, () -> msgAcked(msg));
+        }
     }
 }

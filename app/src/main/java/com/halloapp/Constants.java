@@ -43,6 +43,7 @@ public class Constants {
     public static final int SEND_LOGS_BUTTON_DELAY_MS = 15000;
     public static final int MINIMUM_AUDIO_NOTE_DURATION_MS = 1000;
     public static final int CALL_RINGING_TIMEOUT_MS = 60000;
+    public static final int CALL_ICE_RESTART_TIMEOUT_MS = 3000;
     public static final boolean HISTORY_RESEND_ENABLED = BuildConfig.DEBUG;
 
     public static final int BUILD_EXPIRES_SOON_THRESHOLD_DAYS = 7;

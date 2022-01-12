@@ -114,6 +114,8 @@ public class CallManager {
     private String callId;
     private UserId peerUid;
 
+    private int restartIndex = 0;
+
     @Nullable
     private PhoneAccountHandle phoneAccountHandle = null;
     @Nullable
@@ -128,6 +130,8 @@ public class CallManager {
 
     @Nullable
     private TimerTask ringingTimeoutTimerTask;
+    @Nullable
+    private TimerTask iceRestartTimerTask;
     @NonNull
     private final CallStats callStats;
 
@@ -157,7 +161,8 @@ public class CallManager {
     }
 
     private CallManager() {
-        this.callsApi = CallsApi.getInstance();
+        // TODO(nikola): CallsManager should observe the CallsApi for incoming events instead of passing this in the constructor
+        this.callsApi = CallsApi.getInstance(this);
         this.contentDb = ContentDb.getInstance();
         this.appContext = AppContext.getInstance();
         this.outgoingRingtone = new OutgoingRingtone();
@@ -350,6 +355,7 @@ public class CallManager {
         callId = null;
         peerUid = null;
         callStartTimestamp = 0;
+        restartIndex = 0;
         state = State.IDLE;
         if (telecomConnection != null) {
             if (Build.VERSION.SDK_INT >= 23) {
@@ -522,6 +528,53 @@ public class CallManager {
         }
     }
 
+    public void handleIceRestartOffer(@NonNull String callId, int restartIndex, @NonNull String webrtcRestartOffer) {
+        Log.i("CallManager: got iceRestartOffer callId: " + callId);
+        if (this.callId == null || !this.callId.equals(callId)) {
+            // TODO(nikola): This code is similar to many other messages
+            Log.i("CallManager: got IceRestartOffer for the wrong callId: " + callId + " peerUid: " + peerUid + " state: " + toString());
+            return;
+        }
+        if (webrtcRestartOffer == null) {
+            Log.e("CallManager: failed to decrypt iceRestartOffer...");
+            return;
+        }
+        if (peerConnection != null) {
+            Log.i("CallManager peerConnection.setRemoteDescription called after receiving iceRestartOffer");
+            peerConnection.setRemoteDescription(new SimpleSdpObserver(), new SessionDescription(SessionDescription.Type.OFFER, webrtcRestartOffer));
+            peerConnection.createAnswer(new SimpleSdpObserver() {
+                @Override
+                public void onCreateSuccess(@NonNull SessionDescription sessionDescription) {
+                    Log.i("PeerConnection ice restart answer is ready " + sessionDescription);
+                    peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
+
+                    try {
+                        callsApi.sendIceRestartAnswer(callId, peerUid, restartIndex, sessionDescription.description);
+                    } catch (CryptoException e) {
+                        Log.e("CallManager: failed to encrypt ice restart Answer", e);
+                    }
+                }
+            }, new MediaConstraints());
+        }
+    }
+
+    public void handleIceRestartAnswer(@NonNull String callId, int restartIndex, @NonNull String webrtcRestartAnswer) {
+        Log.i("CallManager: got iceRestartAnswer callId: " + callId);
+        if (this.callId == null || !this.callId.equals(callId)) {
+            // TODO(nikola): This code is similar to many other messages
+            Log.i("CallManager: got IceRestartAnswer for the wrong callId: " + callId + " peerUid: " + peerUid + " state: " + toString());
+            return;
+        }
+        if (webrtcRestartAnswer == null) {
+            Log.e("CallManager: failed to decrypt iceRestartAnswer...");
+            return;
+        }
+        if (peerConnection != null) {
+            Log.i("CallManager peerConnection.setRemoteDescription called after receiving iceRestartAnswer");
+            peerConnection.setRemoteDescription(new SimpleSdpObserver(), new SessionDescription(SessionDescription.Type.ANSWER, webrtcRestartAnswer));
+        }
+    }
+
     @MainThread
     public synchronized boolean acceptCall() {
         if (this.isInitiator) {
@@ -613,6 +666,9 @@ public class CallManager {
             @Override
             public void onIceConnectionChange(PeerConnection.IceConnectionState iceConnectionState) {
                 Log.i("onIceConnectionChange: " + iceConnectionState);
+                if (iceConnectionState == PeerConnection.IceConnectionState.DISCONNECTED) {
+                    startIceReconnectTimer();
+                }
             }
 
             @Override
@@ -945,6 +1001,55 @@ public class CallManager {
 
     private void stopOutgoingRingtone() {
         executor.execute(outgoingRingtone::stop);
+    }
+
+    private void startIceReconnectTimer() {
+        synchronized (timer) {
+            if (iceRestartTimerTask != null) {
+                Log.i("CallManager: another iceRestartTimerTask already exists");
+                iceRestartTimerTask.cancel();
+            }
+            iceRestartTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    maybeRestartIce();
+                }
+            };
+            Log.i("CallManager: start IceRestartTimerTask");
+            timer.schedule(iceRestartTimerTask, Constants.CALL_ICE_RESTART_TIMEOUT_MS);
+        }
+    }
+
+    private void maybeRestartIce() {
+        Log.i("CallManager.maybeRestartIce()");
+        if (state == State.IN_CALL && isInitiator && peerConnection != null) {
+            PeerConnection.IceConnectionState iceConnectionState = peerConnection.iceConnectionState();
+            if (iceConnectionState == PeerConnection.IceConnectionState.DISCONNECTED || iceConnectionState == PeerConnection.IceConnectionState.FAILED) {
+                Log.i("CallManager: Performing ICE Restart");
+                peerConnection.restartIce();
+
+                MediaConstraints sdpMediaConstraints = new MediaConstraints();
+                // TODO(nikola): code is duplicated with startCall
+                sdpMediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"));
+                // TODO(nikola): add for video calls
+                // sdpMediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"));
+
+                peerConnection.createOffer(new SimpleSdpObserver() {
+                    @Override
+                    public void onCreateSuccess(@NonNull SessionDescription sessionDescription) {
+                        Log.i("CallManager: offerCreated: ");
+                        peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
+                        try {
+                            Log.i("CallManager: sending iceRestartOffer");
+                            callsApi.sendIceRestartOffer(callId, peerUid, restartIndex, sessionDescription.description);
+                            // TODO(nikola): handle the exceptions. Call stop()
+                        } catch (CryptoException e) {
+                            Log.e("CallManager: CryptoException, Failed to send the iceRestartOffer Msg callId: " + callId + " peerUid: " + peerUid, e);
+                        }
+                    }
+                }, sdpMediaConstraints);
+            }
+        }
     }
 
     private @Nullable PowerManager.WakeLock createProximityLock() {
