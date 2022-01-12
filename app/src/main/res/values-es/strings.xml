@@ -1084,6 +1084,15 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
 
     <!-- Message alerting the user that the person messaging them is not in their address book -->
     <string name="not_in_address_book_alert">"Esta persona no está en tu agenda de contactos"</string>
+
+    <!-- Text shown in chat view telling user they had a missed call -->
+    <string name="log_missed_call">"Llamada perdida"</string>
+
+    <!-- Text shown in chat view telling user they had a voice call -->
+    <string name="log_voice_call">"Llamada de voz"</string>
+
+    <!-- Text shown in message preview telling user they had a voice call %s is replaced with the call duration -->
+    <string name="log_voice_call_with_duration">"Llamada de voz (%s)"</string>
     <string name="invite_via_link">"Invitar por un enlace"</string>
     <string name="couldnt_load_thumbnail">"No se pudo cargar la foto en miniatura"</string>
     <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>
