@@ -66,6 +66,7 @@ public class ContentDb {
     private final ContentDbHelper databaseHelper;
 
     private final Me me;
+    private final CallsDb callsDb;
     private final MediaDb mediaDb;
     private final PostsDb postsDb;
     private final MentionsDb mentionsDb;
@@ -160,11 +161,12 @@ public class ContentDb {
         this.me = me;
         this.preferences = preferences;
 
+        callsDb = new CallsDb(databaseHelper);
         mentionsDb = new MentionsDb(databaseHelper);
         mediaDb = new MediaDb(databaseHelper, fileStore);
         futureProofDb = new FutureProofDb(databaseHelper);
         urlPreviewsDb = new UrlPreviewsDb(mediaDb, databaseHelper);
-        messagesDb = new MessagesDb(fileStore, mentionsDb, futureProofDb, urlPreviewsDb, serverProps, databaseHelper);
+        messagesDb = new MessagesDb(fileStore, callsDb, mentionsDb, futureProofDb, urlPreviewsDb, serverProps, databaseHelper);
         postsDb = new PostsDb(mediaDb, mentionsDb, futureProofDb, urlPreviewsDb, databaseHelper, fileStore, serverProps);
     }
 

@@ -36,6 +36,7 @@ import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.CallMessage;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.crypto.CryptoException;
@@ -336,6 +337,9 @@ public class CallManager {
         if (callService != null) {
             appContext.get().stopService(new Intent(appContext.get(), CallService.class));
             callService = null;
+        }
+        if (callDuration > 0) {
+            storeCallLogMsg(peerUid, callId, callDuration);
         }
         cancelRingingTimeout();
         releaseLock();
@@ -1005,27 +1009,32 @@ public class CallManager {
         }
     }
 
-    private void storeMissedCallMsg(@NonNull UserId userId, @NonNull String callId, @NonNull CallType callType) {
-        int msgType = Message.USAGE_MISSED_AUDIO_CALL;
-        if (callType == CallType.VIDEO) {
-            msgType = Message.USAGE_MISSED_VIDEO_CALL;
-        }
-        // TODO(nikola): maybe pass the timestamp from the server
-        final Message message = new Message(0,
+    private void storeCallLogMsg(@NonNull UserId userId, @NonNull String callId, long callDuration) {
+        int msgType = CallMessage.Usage.LOGGED_VOICE_CALL;
+        final CallMessage message = new CallMessage(0,
                 userId,
-                UserId.ME,
+                isInitiator ? UserId.ME : userId,
                 callId,
                 System.currentTimeMillis(),
-                Message.TYPE_SYSTEM,
                 msgType,
-                Message.STATE_OUTGOING_DELIVERED,
-                null,
-                null,
-                -1,
-                null,
-                -1,
-                null,
-                0);
+                Message.STATE_OUTGOING_DELIVERED);
+        message.callDuration = callDuration;
+        message.addToStorage(contentDb);
+    }
+
+    private void storeMissedCallMsg(@NonNull UserId userId, @NonNull String callId, @NonNull CallType callType) {
+        int msgType = CallMessage.Usage.MISSED_VOICE_CALL;
+        if (callType == CallType.VIDEO) {
+            msgType = CallMessage.Usage.MISSED_VIDEO_CALL;
+        }
+        // TODO(nikola): maybe pass the timestamp from the server
+        final Message message = new CallMessage(0,
+                userId,
+                userId,
+                callId,
+                System.currentTimeMillis(),
+                msgType,
+                Message.STATE_OUTGOING_DELIVERED);
         message.addToStorage(contentDb);
     }
 }

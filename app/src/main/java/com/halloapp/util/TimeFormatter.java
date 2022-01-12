@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import com.halloapp.R;
 
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.Locale;
 
 public class TimeFormatter {
@@ -84,6 +85,31 @@ public class TimeFormatter {
         } else {
             return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_SHOW_YEAR);
         }
+    }
+
+    public static CharSequence formatCallDuration(long durationMs) {
+        // For 1h2m3s but I think that doesn't localize as well.
+        /*long hours = 0;
+        long seconds = durationMs / 1_000;
+        long minutes = seconds / 60;
+        seconds -= minutes * 60;
+        hours = minutes / 60;
+        minutes -= hours * 60;
+
+        StringBuilder sb = new StringBuilder();
+        if (hours > 0) {
+            sb.append(hours);
+            sb.append("h");
+        }
+        if (minutes > 0) {
+            sb.append(minutes);
+            sb.append("m");
+        }
+        if (seconds > 0) {
+            sb.append(seconds);
+            sb.append("s");
+        }*/
+        return DateUtils.formatElapsedTime(durationMs / 1_000);
     }
 
     public static CharSequence formatLastSeen(@NonNull Context context, long timestamp) {

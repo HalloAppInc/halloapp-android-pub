@@ -41,6 +41,7 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.InviteContactsAdapter;
+import com.halloapp.content.CallMessage;
 import com.halloapp.content.Chat;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
@@ -656,14 +657,32 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             }
 
             private void bindMessagePreview(@NonNull Message message) {
-                if (message.isIncoming() || message.isRetracted()) {
+                if (message.isIncoming() || message.isRetracted() || message.type == Message.TYPE_CALL) {
                     statusView.setVisibility(View.GONE);
                 } else {
                     statusView.setVisibility(View.VISIBLE);
                     statusView.setImageResource(MessageViewHolder.getStatusImageResource(message.state));
                 }
                 if (message.media.size() == 0) {
-                    mediaIcon.setVisibility(View.GONE);
+                    if (message instanceof CallMessage) {
+                        mediaIcon.setVisibility(View.VISIBLE);
+                        @ColorRes int tintColor = R.color.primary_text;
+                        switch (((CallMessage) message).callUsage) {
+                            case CallMessage.Usage.MISSED_VOICE_CALL: {
+                                mediaIcon.setImageResource(R.drawable.ic_missed_call);
+                                tintColor = R.color.color_primary;
+                                break;
+                            }
+                            case CallMessage.Usage.LOGGED_VOICE_CALL:
+                            default: {
+                                mediaIcon.setImageResource(R.drawable.ic_call);
+                                break;
+                            }
+                        }
+                        mediaIcon.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(mediaIcon.getContext(), tintColor)));
+                    } else {
+                        mediaIcon.setVisibility(View.GONE);
+                    }
                 } else if (message.media.size() == 1) {
                     mediaIcon.setVisibility(View.VISIBLE);
                     @ColorRes int tintColor = R.color.primary_text;
@@ -722,6 +741,23 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                     SpannableString ss = new SpannableString(getString(R.string.message_retracted_placeholder));
                     ss.setSpan(new StyleSpan(Typeface.ITALIC), 0, ss.length(), 0);
                     infoView.setText(ss);
+                } else if (message.type == Message.TYPE_CALL) {
+                    if (message instanceof CallMessage) {
+                        int callUsage = ((CallMessage) message).callUsage;
+                        if (callUsage == CallMessage.Usage.MISSED_VOICE_CALL) {
+                            text = itemView.getContext().getString(R.string.log_missed_call);
+                        } else {
+                            long callDuration = ((CallMessage) message).callDuration;
+                            if (callDuration > 0) {
+                                text = itemView.getContext().getString(R.string.log_voice_call_with_duration, TimeFormatter.formatCallDuration(callDuration));
+                            } else {
+                                text = itemView.getContext().getString(R.string.log_voice_call);
+                            }
+                        }
+                    } else {
+                        text = "";
+                    }
+                    infoView.setText(sender == null ? text : getString(R.string.chat_message_attribution, sender, text));
                 } else if (TextUtils.isEmpty(message.text)) {
                     if (message.media.size() == 1) {
                         final Media media = message.media.get(0);

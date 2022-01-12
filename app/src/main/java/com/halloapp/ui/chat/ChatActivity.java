@@ -693,6 +693,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     case ChatAdapter.VIEW_TYPE_INCOMING_RETRACTED:
                     case ChatAdapter.VIEW_TYPE_OUTGOING_RETRACTED:
                     case ChatAdapter.VIEW_TYPE_INCOMING_FUTURE_PROOF:
+                    case ChatAdapter.VIEW_TYPE_INCOMING_CALL_LOG:
+                    case ChatAdapter.VIEW_TYPE_OUTGOING_CALL_LOG:
                         return false;
                 }
                 return true;
@@ -706,7 +708,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 itemSwipeHelper.attachToRecyclerView(chatView);
 
                 final Message message = ((MessageViewHolder)viewHolder).getMessage();
-                if (message == null || message.isRetracted() || message.type == Message.TYPE_SYSTEM) {
+                if (message == null || message.isRetracted() || message.type == Message.TYPE_SYSTEM || message.type == Message.TYPE_CALL) {
                     return;
                 }
 
@@ -1322,6 +1324,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         static final int VIEW_TYPE_INCOMING_FUTURE_PROOF = 10;
         static final int VIEW_TYPE_INCOMING_VOICE_NOTE = 11;
         static final int VIEW_TYPE_OUTGOING_VOICE_NOTE = 12;
+        static final int VIEW_TYPE_INCOMING_CALL_LOG = 13;
+        static final int VIEW_TYPE_OUTGOING_CALL_LOG = 14;
 
         long firstUnseenMessageRowId = -1L;
         int newMessageCount;
@@ -1375,6 +1379,12 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 return VIEW_TYPE_SYSTEM;
             } else if (message.type == Message.TYPE_FUTURE_PROOF) {
                 return VIEW_TYPE_INCOMING_FUTURE_PROOF;
+            } else if (message.type == Message.TYPE_CALL) {
+                if (message.isIncoming()) {
+                    return VIEW_TYPE_INCOMING_CALL_LOG;
+                } else {
+                    return VIEW_TYPE_OUTGOING_CALL_LOG;
+                }
             } else if (message.isIncoming()) {
                 if (message.isTombstone()) {
                     return VIEW_TYPE_INCOMING_TOMBSTONE;
@@ -1453,6 +1463,16 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     layoutRes = R.layout.message_item_voice_note_outgoing;
                     LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
                     return new VoiceNoteMessageViewHolder(root, messageViewHolderParent);
+                }
+                case VIEW_TYPE_OUTGOING_CALL_LOG: {
+                    layoutRes = R.layout.message_item_outgoing_call;
+                    LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
+                    return new CallMessageViewHolder(root, messageViewHolderParent);
+                }
+                case VIEW_TYPE_INCOMING_CALL_LOG: {
+                    layoutRes = R.layout.message_item_incoming_call;
+                    LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
+                    return new CallMessageViewHolder(root, messageViewHolderParent);
                 }
                 default: {
                     throw new IllegalArgumentException();

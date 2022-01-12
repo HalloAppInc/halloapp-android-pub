@@ -28,13 +28,14 @@ public class Message extends ContentItem {
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TYPE_CHAT, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_VOICE_NOTE, TYPE_RETRACTED})
+    @IntDef({TYPE_CHAT, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_VOICE_NOTE, TYPE_RETRACTED, TYPE_CALL})
     public @interface Type {}
     public static final int TYPE_CHAT = 0;
     public static final int TYPE_SYSTEM = 1;
     public static final int TYPE_FUTURE_PROOF = 2;
     public static final int TYPE_VOICE_NOTE = 3;
     public static final int TYPE_RETRACTED = 4;
+    public static final int TYPE_CALL = 5;
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
@@ -90,6 +91,29 @@ public class Message extends ContentItem {
     public String senderVersion;
     public String senderPlatform;
 
+    public static Message readFromDb(
+            long rowId,
+            ChatId chatId,
+            UserId senderUserId,
+            String messageId,
+            long timestamp,
+            @Type int messageType,
+            @Usage int usage,
+            @State int state,
+            String text,
+            String replyPostId,
+            int replyPostMediaIndex,
+            String replyMessageId,
+            int replyMessageMediaIndex,
+            UserId replyMessageSenderId,
+            int rerequestCount) {
+        switch (messageType) {
+            case TYPE_CALL:
+                return new CallMessage(rowId, chatId, senderUserId, messageId, timestamp, usage, state);
+        }
+        return new Message(rowId, chatId, senderUserId, messageId, timestamp, messageType, usage, state, text
+        , replyPostId, replyPostMediaIndex, replyMessageId, replyMessageMediaIndex, replyMessageSenderId, rerequestCount);
+    }
 
     public Message(
             long rowId,

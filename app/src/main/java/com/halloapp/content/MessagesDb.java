@@ -53,6 +53,7 @@ import java.util.List;
 
 class MessagesDb {
 
+    private final CallsDb callsDb;
     private final FileStore fileStore;
     private final MentionsDb mentionsDb;
     private final FutureProofDb futureProofDb;
@@ -62,12 +63,15 @@ class MessagesDb {
 
     MessagesDb(
             FileStore fileStore,
+            CallsDb callsDb,
             MentionsDb mentionsDb,
             FutureProofDb futureProofDb,
             UrlPreviewsDb urlPreviewsDb,
             ServerProps serverProps,
             ContentDbHelper databaseHelper) {
         this.fileStore = fileStore;
+
+        this.callsDb = callsDb;
         this.mentionsDb = mentionsDb;
         this.futureProofDb = futureProofDb;
         this.urlPreviewsDb = urlPreviewsDb;
@@ -159,6 +163,10 @@ class MessagesDb {
                 }
                 mentionsDb.addMentions(message);
                 urlPreviewsDb.addUrlPreview(message);
+
+                if (message instanceof CallMessage) {
+                    callsDb.addCall(message.id, ((CallMessage)message).callDuration);
+                }
 
                 if (message instanceof FutureProofMessage) {
                     futureProofDb.saveFutureProof((FutureProofMessage) message);
@@ -1201,7 +1209,7 @@ class MessagesDb {
                         messages.add(message);
                     }
                     String rawReplySenderId = cursor.getString(25);
-                    message = new Message(
+                    message = Message.readFromDb(
                             rowId,
                             ChatId.fromNullable(cursor.getString(1)),
                             new UserId(cursor.getString(2)),
@@ -1219,6 +1227,9 @@ class MessagesDb {
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                     urlPreviewsDb.fillUrlPreview(message);
+                    if (message instanceof CallMessage) {
+                        callsDb.fillCallMessage((CallMessage) message);
+                    }
                 }
                 if (!cursor.isNull(10)) {
                     Media media = new Media(
@@ -1326,7 +1337,7 @@ class MessagesDb {
             while (cursor.moveToNext()) {
                 if (message == null) {
                     String rawReplySenderId = cursor.getString(25);
-                    message = new Message(
+                    message = Message.readFromDb(
                             cursor.getLong(0),
                             ChatId.fromNullable(cursor.getString(1)),
                             new UserId(cursor.getString(2)),
@@ -1344,6 +1355,9 @@ class MessagesDb {
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                     urlPreviewsDb.fillUrlPreview(message);
+                    if (message instanceof CallMessage) {
+                        callsDb.fillCallMessage((CallMessage) message);
+                    }
                 }
                 if (!cursor.isNull(10)) {
                     Media media = new Media(
@@ -1439,7 +1453,7 @@ class MessagesDb {
             while (cursor.moveToNext()) {
                 if (message == null) {
                     String rawReplySenderId = cursor.getString(28);
-                    message = new Message(
+                    message = Message.readFromDb(
                             cursor.getLong(0),
                             ChatId.fromNullable(cursor.getString(1)),
                             new UserId(cursor.getString(2)),
@@ -1457,6 +1471,9 @@ class MessagesDb {
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                     urlPreviewsDb.fillUrlPreview(message);
+                    if (message instanceof CallMessage) {
+                        callsDb.fillCallMessage((CallMessage) message);
+                    }
                 }
                 if (!cursor.isNull(10)) {
                     Media media = new Media(
@@ -1599,7 +1616,7 @@ class MessagesDb {
                         messages.add(message);
                     }
                     String rawReplySenderId = cursor.getString(25);
-                    message = new Message(
+                    message = Message.readFromDb(
                             rowId,
                             ChatId.fromNullable(cursor.getString(1)),
                             new UserId(cursor.getString(2)),
@@ -1617,6 +1634,10 @@ class MessagesDb {
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                     urlPreviewsDb.fillUrlPreview(message);
+
+                    if (message instanceof CallMessage) {
+                        callsDb.fillCallMessage((CallMessage) message);
+                    }
                 }
                 if (!cursor.isNull(10)) {
                     Media media = new Media(
@@ -1812,7 +1833,7 @@ class MessagesDb {
                         messages.add(message);
                     }
                     String rawReplySenderId = cursor.getString(28);
-                    message = new Message(
+                    message = Message.readFromDb(
                             rowId,
                             ChatId.fromNullable(cursor.getString(1)),
                             new UserId(cursor.getString(2)),
@@ -1830,6 +1851,9 @@ class MessagesDb {
                             cursor.getInt(9));
                     mentionsDb.fillMentions(message);
                     urlPreviewsDb.fillUrlPreview(message);
+                    if (message instanceof CallMessage) {
+                        callsDb.fillCallMessage((CallMessage) message);
+                    }
                 }
                 if (!cursor.isNull(10)) {
                     Media media = new Media(

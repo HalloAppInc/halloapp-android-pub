@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ripple
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?colorControlHighlight">
+    <item>
+        <shape
+            android:shape="rectangle">
+            <corners android:radius="20dp"/>
+            <solid android:color="@color/bg_call_button_neutral"/>
+        </shape>
+    </item>
+</ripple>
