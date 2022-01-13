@@ -420,7 +420,7 @@ class Log extends React.Component<Props, State>  {
           return (
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start' }}>
               <div>{before}</div>
-              <div style={{ backgroundColor: "#ccc" }}>{this.messageObjectToElement(obj, messageTypeName)}</div>
+              <div style={{ backgroundColor: "#ccc" }}>{this.messageObjectToElement(obj, messageTypeName, 0)}</div>
               <div>{after}</div>
             </div>
           )
@@ -470,7 +470,7 @@ class Log extends React.Component<Props, State>  {
     return ret
   }
 
-  messageObjectToElement(obj: any, name: string) {
+  messageObjectToElement(obj: any, name: string, i: number) {
     let keys = Object.keys(obj)
     let attributes = new Map<string, string>()
     let children: any[][] = []
@@ -502,7 +502,7 @@ class Log extends React.Component<Props, State>  {
     }
     if (children.length <= 0) {
       return (
-        <span key={obj} style={{ display: 'inline-block', }}>
+        <span key={i} style={{ display: 'inline-block', }}>
           {"<"}
           <span key="name" style={{ color: nameColor, }}>{name}</span>
           {attrs}
@@ -510,9 +510,9 @@ class Log extends React.Component<Props, State>  {
         </span>
       )
     } else {
-      let childElems = children.map(c => this.messageObjectToElement(c[1], c[0]))
+      let childElems = children.map((c, i) => this.messageObjectToElement(c[1], c[0], i))
       return (
-        <span key={obj} style={{ display: 'inline-block', }}>
+        <span key={i} style={{ display: 'inline-block', }}>
           {"<"}
           <span key="name-start" style={{ color: nameColor, }}>{name}</span>
           {attrs}
