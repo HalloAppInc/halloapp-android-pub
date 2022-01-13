@@ -1063,7 +1063,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="log_voice_call">"تماس صوتی"</string>
 
     <!-- Text shown in message preview telling user they had a voice call %s is replaced with the call duration -->
-    <string name="log_voice_call_with_duration">"تماس صوتی (s%)"</string>
+    <string name="log_voice_call_with_duration">"تماس صوتی (%s)"</string>
     <string name="invite_via_link">"دعوت از طریق لینک"</string>
     <string name="couldnt_load_thumbnail">"تصویر بارگذاری نشد"</string>
     <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>
