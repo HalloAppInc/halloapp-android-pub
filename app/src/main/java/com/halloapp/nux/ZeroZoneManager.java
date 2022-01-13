@@ -68,15 +68,7 @@ public class ZeroZoneManager {
 
     public static void addHomeZeroZonePost(@NonNull ContentDb contentDb) {
         if (!contentDb.hasHomeZeroZonePost()) {
-            Post systemPost = new Post(0,
-                    UserId.ME,
-                    RandomId.create(),
-                    System.currentTimeMillis(),
-                    Post.TRANSFERRED_YES,
-                    Post.SEEN_YES,
-                    Post.TYPE_ZERO_ZONE,
-                    null);
-            systemPost.addToStorage(contentDb);
+            contentDb.addHomeZeroZonePost();
         }
     }
 

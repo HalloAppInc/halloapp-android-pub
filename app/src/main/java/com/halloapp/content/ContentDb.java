@@ -38,6 +38,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.ContentDetails;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptStats;
 import com.halloapp.util.stats.GroupDecryptStats;
@@ -193,68 +194,73 @@ public class ContentDb {
 
     public void addFeedItems(@NonNull List<Post> posts, @NonNull List<Comment> comments, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            for (Post post : posts) {
-                boolean duplicate = false;
-                final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-                db.beginTransaction();
-                try {
-                    if (post.isRetracted()) {
-                        postsDb.retractPost(post);
-                    } else {
-                        try {
-                            postsDb.addPost(post);
-                            if (post.getParentGroup() != null) {
-                                messagesDb.updateGroupTimestamp(post.getParentGroup(), post.timestamp);
-                            }
-                        } catch (SQLiteConstraintException ex) {
-                            Log.w("ContentDb.addPost: duplicate " + ex.getMessage() + " " + post);
-                            duplicate = true;
-                        }
-                    }
-                    db.setTransactionSuccessful();
-                } finally {
-                    db.endTransaction();
-                }
-                // important to notify outside of transaction
-                if (!duplicate) {
-                    if (post.isRetracted()) {
-                        observers.notifyPostRetracted(post);
-                    } else {
-                        observers.notifyPostAdded(post);
-                    }
-                }
-            }
+            addFeedItemsSync(posts, comments, completionRunnable);
+        });
+    }
 
-            final HashMap<String, Post> postCache = new HashMap<>();
-            final HashSet<String> checkedIds = new HashSet<>();
-            for (Comment comment : comments) {
-                if (checkedIds.contains(comment.postId)) {
-                    comment.setParentPost(postCache.get(comment.postId));
-                } else {
-                    Post parentPost = postsDb.getPost(comment.postId);
-                    if (parentPost != null) {
-                        comment.setParentPost(parentPost);
-                        postCache.put(comment.postId, parentPost);
-                    }
-                    checkedIds.add(comment.postId);
-                }
-                if (comment.isRetracted()) {
-                    postsDb.retractComment(comment);
-                    observers.notifyCommentRetracted(comment);
+    @WorkerThread
+    private void addFeedItemsSync(@NonNull List<Post> posts, @NonNull List<Comment> comments, @Nullable Runnable completionRunnable) {
+        for (Post post : posts) {
+            boolean duplicate = false;
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            db.beginTransaction();
+            try {
+                if (post.isRetracted()) {
+                    postsDb.retractPost(post);
                 } else {
                     try {
-                        postsDb.addComment(comment);
-                        observers.notifyCommentAdded(comment);
+                        postsDb.addPost(post);
+                        if (post.getParentGroup() != null) {
+                            messagesDb.updateGroupTimestamp(post.getParentGroup(), post.timestamp);
+                        }
                     } catch (SQLiteConstraintException ex) {
-                        Log.w("ContentDb.addComment: duplicate " + ex.getMessage() + " " + comment);
+                        Log.w("ContentDb.addPost: duplicate " + ex.getMessage() + " " + post);
+                        duplicate = true;
                     }
                 }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
             }
+            // important to notify outside of transaction
+            if (!duplicate) {
+                if (post.isRetracted()) {
+                    observers.notifyPostRetracted(post);
+                } else {
+                    observers.notifyPostAdded(post);
+                }
+            }
+        }
 
-            if (completionRunnable != null) {
-                completionRunnable.run();
+        final HashMap<String, Post> postCache = new HashMap<>();
+        final HashSet<String> checkedIds = new HashSet<>();
+        for (Comment comment : comments) {
+            if (checkedIds.contains(comment.postId)) {
+                comment.setParentPost(postCache.get(comment.postId));
+            } else {
+                Post parentPost = postsDb.getPost(comment.postId);
+                if (parentPost != null) {
+                    comment.setParentPost(parentPost);
+                    postCache.put(comment.postId, parentPost);
+                }
+                checkedIds.add(comment.postId);
             }
-        });
+            if (comment.isRetracted()) {
+                postsDb.retractComment(comment);
+                observers.notifyCommentRetracted(comment);
+            } else {
+                try {
+                    postsDb.addComment(comment);
+                    observers.notifyCommentAdded(comment);
+                } catch (SQLiteConstraintException ex) {
+                    Log.w("ContentDb.addComment: duplicate " + ex.getMessage() + " " + comment);
+                }
+            }
+        }
+
+        if (completionRunnable != null) {
+            completionRunnable.run();
+        }
     }
 
     public void retractPost(@NonNull Post post) {
@@ -633,6 +639,23 @@ public class ContentDb {
 
     public boolean hasHomeZeroZonePost() {
         return postsDb.hasZeroZoneHomePost();
+    }
+
+    public void addHomeZeroZonePost() {
+        databaseWriteExecutor.execute(() -> {
+            if (postsDb.hasZeroZoneHomePost()) {
+                return;
+            }
+            Post systemPost = new Post(0,
+                    UserId.ME,
+                    RandomId.create(),
+                    System.currentTimeMillis(),
+                    Post.TRANSFERRED_YES,
+                    Post.SEEN_YES,
+                    Post.TYPE_ZERO_ZONE,
+                    null);
+            addFeedItemsSync(Collections.singletonList(systemPost), new ArrayList<>(), null);
+        });
     }
 
     public boolean hasGroupZeroZonePost(@NonNull GroupId groupId) {
