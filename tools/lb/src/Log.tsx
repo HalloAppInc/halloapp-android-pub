@@ -140,10 +140,19 @@ class Log extends React.Component<Props, State>  {
       return logs
     }
     if (filterRegex) {
-      let re = new RegExp(filterText)
-      return logs.filter(log => re.test(log.flat))
+      try {
+        let re = new RegExp(filterText)
+        let ret = logs.filter(log => re.test(log.flat))
+        console.log("Filtered count: " + ret.length)
+        return ret
+      }
+      catch (err) {
+        console.log("Failed to parse regex; using as plain string")
+      }
     }
-    return logs.filter(log => log.flat.includes(filterText))
+    let ret = logs.filter(log => log.flat.includes(filterText))
+    console.log("Filtered count: " + ret.length)
+    return ret
   }
 
   getVersionFF(fileName: string) {
