@@ -183,6 +183,8 @@ public class ContentComposerActivity extends HalloActivity {
     private ImageButton cropPictureButton;
     private View addMoreText;
 
+    private View root;
+
     private VoicePostComposerView voicePostComposerView;
     private VoicePostRecorderControlView voiceNoteRecorderControlView;
 
@@ -202,6 +204,8 @@ public class ContentComposerActivity extends HalloActivity {
     private boolean allowVoiceNotes;
 
     private @ComposeMode int composeMode;
+
+    private int minSoftKeyboardHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -282,6 +286,8 @@ public class ContentComposerActivity extends HalloActivity {
 
             }
         });
+        root = findViewById(R.id.root);
+        minSoftKeyboardHeight = getResources().getDimensionPixelSize(R.dimen.min_softkeyboard_height);
         voiceNoteRecorderControlView.setRecordingTimeView(postEntryView.getRecordingTimeView());
         bottomSendButton = findViewById(R.id.bottom_composer_send);
         bottomSendButton.setOnClickListener(v -> {
@@ -433,8 +439,6 @@ public class ContentComposerActivity extends HalloActivity {
         });
 
         final boolean isMediaPost = uris != null;
-        final int minHeightUnfocused = getResources().getDimensionPixelSize(R.dimen.entry_bottom_unfocused_min_height);
-        final int minHeightFocused = getResources().getDimensionPixelSize(R.dimen.entry_bottom_focused_min_height);
         bottomEditText.setOnFocusChangeListener((view, hasFocus) -> {
             updateMediaButtons();
             mediaVerticalScrollView.setShouldScrollToBottom(hasFocus);
@@ -713,17 +717,17 @@ public class ContentComposerActivity extends HalloActivity {
     private void showTextOnlyCompose() {
         textEntryCard.setVisibility(View.VISIBLE);
         audioComposer.setVisibility(View.GONE);
-        bottomSendButton.setVisibility(View.GONE);
-        postEntryView.setVisibility(View.GONE);
-        mediaContainer.setVisibility(View.GONE);
+        bottomSendButton.setVisibility(View.INVISIBLE);
+        postEntryView.setVisibility(View.INVISIBLE);
+        mediaContainer.setVisibility(View.INVISIBLE);
     }
 
     private void showAudioOnlyCompose() {
         textEntryCard.setVisibility(View.GONE);
         audioComposer.setVisibility(View.VISIBLE);
-        bottomSendButton.setVisibility(View.GONE);
-        postEntryView.setVisibility(View.GONE);
-        mediaContainer.setVisibility(View.GONE);
+        bottomSendButton.setVisibility(View.INVISIBLE);
+        postEntryView.setVisibility(View.INVISIBLE);
+        mediaContainer.setVisibility(View.INVISIBLE);
         voiceNoteRecorderControlView.setVisibility(View.GONE);
     }
 
@@ -738,8 +742,16 @@ public class ContentComposerActivity extends HalloActivity {
         }
     }
 
+    private int getMediaMaxHeight() {
+        int height = mediaContainer.getHeight() - getResources().getDimensionPixelSize(R.dimen.content_composer_min_card_margin);
+        if (root.getPaddingBottom() >= minSoftKeyboardHeight) {
+            height += root.getPaddingBottom();
+        }
+        return height;
+    }
+
     private void updateAspectRatioForMedia(List<ContentComposerViewModel.EditMediaPair> mediaPairList) {
-        int maxHeight = findViewById(R.id.media_container).getHeight() - getResources().getDimensionPixelSize(R.dimen.content_composer_min_card_margin);
+        int maxHeight = getMediaMaxHeight();
 
         if (mediaPairList.size() > 1) {
             maxHeight -= mediaPagerIndicator.getHeight();
