@@ -755,6 +755,8 @@ public class ContentComposerActivity extends HalloActivity {
         if (calledFromPicker) {
             viewModel.doNotDeleteTempFiles();
             prepareResult();
+        } else if (composeMode == ComposeMode.MEDIA) {
+            finishToMediaPicker();
         }
         super.onBackPressed();
     }
@@ -764,6 +766,13 @@ public class ContentComposerActivity extends HalloActivity {
             viewModel.doNotDeleteTempFiles();
             prepareResult();
         }
+        finish();
+    }
+
+    private void finishToMediaPicker() {
+        Intent i = MediaPickerActivity.pickForPost(this, groupId);
+        putExtraMediaDataInIntent(i);
+        startActivity(i);
         finish();
     }
 
