@@ -22,7 +22,7 @@
             android:layout_height="9dp"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="1dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginEnd="2dp"
             android:background="@drawable/recording_indicator"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
