@@ -322,7 +322,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 });
                 haFabView.addSubFab(R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);
                 if (ServerProps.getInstance().getVoicePostsEnabled()) {
-                    haFabView.addSubFab(R.id.add_post_voice, R.drawable.ic_keyboard_voice, R.string.voice_post);
+                    haFabView.addSubFab(R.id.add_post_voice, R.drawable.ic_voice_post, R.string.voice_post);
                 }
                 haFabView.addSubFab(R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
                 haFabView.addSubFab(R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
