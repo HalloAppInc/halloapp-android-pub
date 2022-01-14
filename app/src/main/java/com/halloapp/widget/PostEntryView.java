@@ -153,7 +153,9 @@ public class PostEntryView extends FrameLayout {
         });
 
         deleteVoiceNote.setOnClickListener(v -> {
-            voiceNoteRecorder.finishRecording();
+            if (inputParent != null) {
+                inputParent.onSendVoiceNote();
+            }
         });
 
         editText.addTextChangedListener(new TextWatcher() {

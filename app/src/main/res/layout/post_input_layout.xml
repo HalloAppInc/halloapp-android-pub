@@ -143,6 +143,7 @@
             android:paddingEnd="5dp"
             android:layout_marginTop="1dp"
             android:layout_marginStart="15dp"
+            android:layout_marginEnd="5dp"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/record_voice"
@@ -167,7 +168,7 @@
 
         <TextView
             android:id="@+id/cancel_voice_note"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/recording_time"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -176,12 +177,12 @@
             android:textSize="18sp"
             android:paddingTop="6dp"
             android:paddingBottom="6dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="15dp"
             android:background="?selectableItemBackground"
             android:textColor="@color/color_secondary"
             android:visibility="gone"
-            android:text="@string/cancel"/>
+            android:text="@string/stop_recording"/>
 
         <ImageButton
             android:id="@+id/delete_voice_draft"
@@ -189,7 +190,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_delete"
-            android:contentDescription="@string/send"
+            android:contentDescription="@string/delete"
             app:tint="@android:color/white"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"

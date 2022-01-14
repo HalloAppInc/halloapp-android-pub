@@ -509,6 +509,8 @@
     <string name="menu_item_block_user">Block user</string>
     <string name="picker_title_block_user">Block user</string>
     <string name="cancel">Cancel</string>
+    <!-- Action to stop recording -->
+    <string name="stop_recording">Stop</string>
     <string name="group_subtitle">tap here for group info</string>
     <string name="empty_block_list">No blocked contacts</string>
     <string name="block_notification">You blocked this contact. Tap to unblock</string>
