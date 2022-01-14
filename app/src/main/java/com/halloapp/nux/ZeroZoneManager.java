@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.work.Constraints;
 import androidx.work.ExistingWorkPolicy;
+import androidx.work.ListenableWorker;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -17,9 +18,11 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.groups.GroupInfo;
+import com.halloapp.groups.GroupsSync;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.util.RandomId;
@@ -49,7 +52,7 @@ public class ZeroZoneManager {
             ZeroZoneState.WAITING_FOR_SYNC,
             ZeroZoneState.NOT_IN_ZERO_ZONE,
             ZeroZoneState.NEEDS_INITIALIZATION,
-            ZeroZoneState.INITIALIZED
+            ZeroZoneState.INITIALIZED,
     })
     public @interface ZeroZoneState {
         int WAITING_FOR_SYNC = 0;
@@ -92,7 +95,19 @@ public class ZeroZoneManager {
                 return Result.success();
             }
             addHomeZeroZonePost(contentDb);
-
+            if (preferences.getLastGroupSyncTime() == 0) {
+                Result result = GroupsSync.getInstance(getApplicationContext()).forceGroupSync();
+                if (!(result instanceof Result.Success)) {
+                    Log.e("ZeroZoneManager groupSync failed");
+                    return Result.failure();
+                }
+            }
+            List<Chat> groups = contentDb.getGroups();
+            if (!groups.isEmpty()) {
+                preferences.setZeroZoneState(ZeroZoneManager.ZeroZoneState.INITIALIZED);
+                return Result.success();
+            }
+            // Zero zone group
             GroupId zeroZoneGid = preferences.getZeroZoneGroupId();
             if (zeroZoneGid == null) {
                 String groupName = getApplicationContext().getString(R.string.zero_zone_group_name, me.getName());
@@ -100,22 +115,24 @@ public class ZeroZoneManager {
                 try {
                     zeroZoneGroup = groupsApi.createGroup(groupName, new ArrayList<>()).await();
                 } catch (ObservableErrorException | InterruptedException e) {
+                    // Force another sync in case it was created but we were interrupted
+                    preferences.setLastGroupSyncTime(0);
                     Log.e("ZeroZoneWorker/doWork failed to create group", e);
-                    return Result.retry();
+                    return ListenableWorker.Result.retry();
                 }
                 zeroZoneGid = zeroZoneGroup.groupId;
                 preferences.setZeroZoneGroupId(zeroZoneGid);
             }
             if (zeroZoneGid == null) {
                 Log.e("ZeroZoneWorker/doWork no group created?");
-                return Result.retry();
+                return ListenableWorker.Result.retry();
             }
             if (!contentDb.hasGroupZeroZonePost(zeroZoneGid)) {
                 try {
                     groupsApi.getGroupInviteLink(zeroZoneGid).await();
                 } catch (ObservableErrorException | InterruptedException e) {
                     Log.e("ZeroZoneWorker/doWork failed to get invite link", e);
-                    return Result.retry();
+                    return ListenableWorker.Result.retry();
                 }
                 Post systemPost = new Post(0,
                         UserId.ME,

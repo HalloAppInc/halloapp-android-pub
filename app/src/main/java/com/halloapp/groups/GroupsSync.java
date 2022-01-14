@@ -21,6 +21,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
@@ -65,10 +66,10 @@ public class GroupsSync {
         this.serverProps = ServerProps.getInstance();
     }
 
-    public void forceGroupSync() {
+    public ListenableWorker.Result forceGroupSync() {
         Log.d("GroupSync.forcingGroupSync");
         preferences.setLastGroupSyncTime(0);
-        performGroupSync();
+        return performGroupSync();
     }
 
     public void startGroupsSync() {
@@ -142,6 +143,8 @@ public class GroupsSync {
             contactsDb.updateUserNames(nameMap);
 
             preferences.setLastGroupSyncTime(now);
+
+            ZeroZoneManager.initialize(context);
             return ListenableWorker.Result.success();
         } catch (ObservableErrorException e) {
             Log.e("GroupsSync.perfromGroupSync observable error", e);
