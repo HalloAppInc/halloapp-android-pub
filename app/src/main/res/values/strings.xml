@@ -400,6 +400,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="ok">OK</string>
+    <!-- Confirmation dialog asking if user is sure they want to discard their recorded audio -->
+    <string name="post_audio_draft_discard_confirmation">Are you sure you want to discard your recorded audio?</string>
     <string name="activity">Activity</string>
     <!-- In activity center, mark all comments/mentions as read -->
     <string name="mark_all_read">Read all</string>

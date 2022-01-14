@@ -33,6 +33,7 @@ import android.widget.TextView;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerAdapter;
@@ -657,8 +658,15 @@ public class ContentComposerActivity extends HalloActivity {
 
                 @Override
                 public void onDeleteRecording() {
-                    viewModel.deleteDraft();
-                    voicePostComposerView.bindAudioDraft(audioDurationLoader, null);
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(ContentComposerActivity.this);
+                    builder.setMessage(getResources().getString(R.string.post_audio_draft_discard_confirmation));
+                    builder.setCancelable(true);
+                    builder.setPositiveButton(R.string.action_discard, (dialog, which) -> {
+                        viewModel.deleteDraft();
+                        voicePostComposerView.bindAudioDraft(audioDurationLoader, null);
+                    });
+                    builder.setNegativeButton(R.string.cancel, null);
+                    builder.show();
                 }
             }, viewModel.getVoiceNotePlayer(), viewModel.getVoiceNoteRecorder());
 
@@ -752,10 +760,11 @@ public class ContentComposerActivity extends HalloActivity {
 
     @Override
     public void onBackPressed() {
-        if (calledFromPicker) {
-            viewModel.doNotDeleteTempFiles();
-            prepareResult();
-        } else if (composeMode == ComposeMode.MEDIA) {
+        if (viewModel.getVoiceDraft() != null) {
+            deleteAudioConfirm();
+            return;
+        }
+        if (composeMode == ComposeMode.MEDIA) {
             finishToMediaPicker();
         }
         super.onBackPressed();
@@ -770,10 +779,29 @@ public class ContentComposerActivity extends HalloActivity {
     }
 
     private void finishToMediaPicker() {
-        Intent i = MediaPickerActivity.pickForPost(this, groupId);
-        putExtraMediaDataInIntent(i);
-        startActivity(i);
-        finish();
+        if (calledFromPicker) {
+            openMediaPicker();
+        } else {
+            Intent i = MediaPickerActivity.pickForPost(this, groupId);
+            putExtraMediaDataInIntent(i);
+            startActivity(i);
+            finish();
+        }
+    }
+
+    private void deleteAudioConfirm() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getResources().getString(R.string.post_audio_draft_discard_confirmation));
+        builder.setCancelable(true);
+        builder.setPositiveButton(R.string.action_discard, (dialog, which) -> {
+            if (composeMode == ComposeMode.MEDIA) {
+                finishToMediaPicker();
+            } else {
+                finish();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.show();
     }
 
     private void putExtraMediaDataInIntent(@NonNull final Intent intent) {

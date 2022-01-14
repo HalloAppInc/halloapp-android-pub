@@ -17,12 +17,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.halloapp.R;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.media.VoiceNoteRecorder;
+import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.UrlPreviewTextWatcher;
 import com.halloapp.util.StringUtils;
 
@@ -182,8 +184,15 @@ public class PostEntryView extends FrameLayout {
         }));
 
         deleteVoiceDraft.setOnClickListener(v -> {
-            audioDraft = null;
-            updateEntry();
+            final AlertDialog.Builder builder = new AlertDialog.Builder(deleteVoiceDraft.getContext());
+            builder.setMessage(getResources().getString(R.string.post_audio_draft_discard_confirmation));
+            builder.setCancelable(true);
+            builder.setPositiveButton(R.string.action_discard, (dialog, which) -> {
+                audioDraft = null;
+                updateEntry();
+            });
+            builder.setNegativeButton(R.string.cancel, null);
+            builder.show();
             if (playing) {
                 voiceNotePlayer.pause();
             }
