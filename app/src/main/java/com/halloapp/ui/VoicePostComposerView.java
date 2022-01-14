@@ -49,6 +49,8 @@ public class VoicePostComposerView extends ConstraintLayout {
     private SeekBar draftSeekbar;
     private View draftDeleteButton;
 
+    private View addMediaButton;
+
     private VoicePostVisualizerView visualizerView;
 
     private boolean playing;
@@ -115,6 +117,8 @@ public class VoicePostComposerView extends ConstraintLayout {
 
         visualizerView = findViewById(R.id.voice_visualizer);
 
+        addMediaButton = findViewById(R.id.voice_add_media);
+
         startRecordingBtn.setOnClickListener(v -> {
             if (host != null) {
                 host.onStartRecording();
@@ -159,6 +163,7 @@ public class VoicePostComposerView extends ConstraintLayout {
         sendBtn.setEnabled(false);
         composeTitle.setVisibility(View.VISIBLE);
         draftContainer.setVisibility(View.GONE);
+        addMediaButton.setVisibility(View.GONE);
     }
 
     private void showRecordingState() {
@@ -170,6 +175,7 @@ public class VoicePostComposerView extends ConstraintLayout {
         composeTitle.setVisibility(View.GONE);
         draftContainer.setVisibility(View.GONE);
         visualizerView.setVisibility(View.VISIBLE);
+        addMediaButton.setVisibility(View.GONE);
         if (recordingIndicator.getAnimation() == null) {
             Animation anim = new AlphaAnimation(0.0f, 1.0f);
             anim.setDuration(500);
@@ -187,6 +193,7 @@ public class VoicePostComposerView extends ConstraintLayout {
         sendBtn.setEnabled(true);
         composeTitle.setVisibility(View.VISIBLE);
         draftContainer.setVisibility(View.VISIBLE);
+        addMediaButton.setVisibility(View.VISIBLE);
     }
 
     private void hideRecordingContainer() {
