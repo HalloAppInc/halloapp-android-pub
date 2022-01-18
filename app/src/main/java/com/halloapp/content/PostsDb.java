@@ -154,9 +154,12 @@ class PostsDb {
                 values.put(PostsTable.COLUMN_TEXT, post.text);
             }
 
+            // TODO(jack): turning off plaintext sending requires changing much of this portion to wait for successful decrypt
+            // i.e. without the plaintext media can't be added, and therefore with a tombstone media row ids can't be loaded
             if (tombstoneRowId != null) {
                 db.update(PostsTable.TABLE_NAME, values, PostsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
                 post.rowId = tombstoneRowId;
+                mediaDb.getMediaRowIds(post);
             } else {
                 values.put(PostsTable.COLUMN_CLIENT_VERSION, post.clientVersion);
                 values.put(PostsTable.COLUMN_SENDER_VERSION, post.senderVersion);

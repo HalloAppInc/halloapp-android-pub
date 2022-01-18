@@ -263,4 +263,25 @@ public class MediaDb {
         }
         mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
     }
+
+    public void getMediaRowIds(Post post) {
+        for (Media media : post.media) {
+            media.rowId = getMediaRowId(media.url, post.rowId);
+        }
+    }
+
+    private long getMediaRowId(String url, long parentRowId) {
+        final String sql =
+                "SELECT " + MediaTable.TABLE_NAME + "." + MediaTable._ID + " "
+                        + "FROM " + MediaTable.TABLE_NAME + " "
+                        + "WHERE " + MediaTable.TABLE_NAME + "." + MediaTable.COLUMN_PARENT_ROW_ID + "=? AND " + MediaTable.TABLE_NAME + "." + MediaTable.COLUMN_URL + "=? LIMIT " + 1;
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(parentRowId), url})) {
+            if (cursor.moveToNext()) {
+                return cursor.getLong(0);
+            }
+        }
+        Log.d("MediaDb.getMediaRowId failed");
+        return 0;
+    }
 }
