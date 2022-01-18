@@ -386,7 +386,6 @@ public class ContentComposerActivity extends HalloActivity {
 
         viewModel = new ViewModelProvider(this,
                 new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
-
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
         urlPreviewLoader = new UrlPreviewLoader();
         postLinkPreviewView = findViewById(R.id.link_preview);
@@ -488,6 +487,11 @@ public class ContentComposerActivity extends HalloActivity {
             public void afterTextChanged(Editable editable) {
             }
         });
+
+        if (viewModel.getVoiceDraft() != null) {
+            voicePostComposerView.bindAudioDraft(audioDurationLoader, viewModel.getVoiceDraft());
+            postEntryView.bindAudioDraft(audioDurationLoader, viewModel.getVoiceDraft());
+        }
 
         drawDelegateView = findViewById(R.id.draw_delegate);
 
