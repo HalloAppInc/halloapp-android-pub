@@ -1297,14 +1297,14 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 @Override
                 public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                     getMenuInflater().inflate(R.menu.comment_select, menu);
-                    if (selectedComment == null || !selectedComment.senderUserId.isMe()) {
-                        menu.findItem(R.id.delete).setVisible(false);
-                    }
                     return true;
                 }
 
                 @Override
                 public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    if (selectedComment == null || !selectedComment.senderUserId.isMe()) {
+                        menu.findItem(R.id.delete).setVisible(false);
+                    }
                     return true;
                 }
 
@@ -1349,6 +1349,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     actionMode = null;
                 }
             });
+        } else {
+            actionMode.invalidate();
         }
         adapter.notifyDataSetChanged();
         return true;
