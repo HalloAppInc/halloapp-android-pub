@@ -16,6 +16,8 @@ import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.media.AudioFocusRequestCompat;
+import androidx.media.AudioManagerCompat;
 
 import com.halloapp.util.logs.Log;
 
@@ -36,6 +38,7 @@ public class VoiceNotePlayer implements SensorEventListener {
 
     private PlaybackState playbackState;
 
+    private AudioManager audioManager;
     private SensorManager sensorManager;
     private Sensor proximitySensor;
 
@@ -44,11 +47,13 @@ public class VoiceNotePlayer implements SensorEventListener {
 
     private int currentAudioStream;
 
+    private AudioFocusRequestCompat audioFocusRequest;
 
     public VoiceNotePlayer(@NonNull Application application) {
         sensorManager = (SensorManager) application.getSystemService(Context.SENSOR_SERVICE);
         proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 
+        audioManager = (AudioManager) application.getSystemService(Context.AUDIO_SERVICE);
         powerManager = (PowerManager) application.getSystemService(Context.POWER_SERVICE);
 
         voiceNoteHandlerThread = new HandlerThread("VoiceNoteHandlerThread");
@@ -171,8 +176,33 @@ public class VoiceNotePlayer implements SensorEventListener {
                 playbackState.seek = mediaPlayer.getCurrentPosition();
                 playbackStateLiveData.postValue(playbackState);
                 unregisterProximityListener();
+                abandonAudioFocus();
             }
         });
+    }
+
+    private void abandonAudioFocus() {
+        if (audioFocusRequest != null) {
+            AudioManagerCompat.abandonAudioFocusRequest(audioManager, audioFocusRequest);
+        }
+    }
+
+    private void acquireAudioFocus() {
+        AudioFocusRequestCompat.Builder builder = new AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE);
+        builder.setOnAudioFocusChangeListener(focusChange -> {
+            switch (focusChange) {
+                case AudioManager.AUDIOFOCUS_LOSS:
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                    pause();
+                    break;
+            }
+        });
+        if (audioFocusRequest != null) {
+            AudioManagerCompat.abandonAudioFocusRequest(audioManager, audioFocusRequest);
+        }
+        audioFocusRequest = builder.build();
+        AudioManagerCompat.requestAudioFocus(audioManager, audioFocusRequest);
     }
 
     @AnyThread
@@ -202,6 +232,7 @@ public class VoiceNotePlayer implements SensorEventListener {
             playbackState.seekMax = mediaPlayer.getDuration();
             playbackState.playing = true;
             playbackState.playingTag = absFilePath;
+            acquireAudioFocus();
             mediaPlayer.seekTo(seekTo);
             mediaPlayer.start();
             mediaPlayer.setOnCompletionListener(mp -> {
