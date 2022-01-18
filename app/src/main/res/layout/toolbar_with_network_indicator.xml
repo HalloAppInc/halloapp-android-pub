@@ -8,6 +8,8 @@
     android:id="@+id/toolbar_container"
     android:background="@color/window_background">
 
+    <include layout="@layout/call_toolbar" />
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"

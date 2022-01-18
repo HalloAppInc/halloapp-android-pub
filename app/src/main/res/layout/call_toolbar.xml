@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.halloapp.widget.InCallToolbarView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/call_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:paddingStart="22dp"
+        android:paddingEnd="22dp"
+        android:visibility="gone"/>
+

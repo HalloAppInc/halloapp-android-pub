@@ -28,6 +28,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.WorkerThread;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.halloapp.AppContext;
 import com.halloapp.Constants;
@@ -136,6 +138,7 @@ public class CallManager {
     private final CallStats callStats;
 
     private long callStartTimestamp = 0;
+    private final MutableLiveData<Long> callStartLiveData = new MutableLiveData<>();
 
     // Executor thread is started once in private ctor and is used for all
     // peer connection API calls to ensure new peer connection factory is
@@ -248,6 +251,10 @@ public class CallManager {
         return callStartTimestamp;
     }
 
+    public UserId getPeerUid() {
+        return peerUid;
+    }
+
     @MainThread
     public synchronized boolean startCall(@NonNull UserId peerUid) {
         Log.i("CallManager.startCall");
@@ -354,7 +361,7 @@ public class CallManager {
         isSpeakerPhoneOn = false;
         callId = null;
         peerUid = null;
-        callStartTimestamp = 0;
+        clearCallTimer();
         restartIndex = 0;
         state = State.IDLE;
         if (telecomConnection != null) {
@@ -490,7 +497,7 @@ public class CallManager {
         peerConnection.setRemoteDescription(new SimpleSdpObserver(), new SessionDescription(SessionDescription.Type.ANSWER, webrtcOffer));
         this.state = State.IN_CALL;
         this.isAnswered = true;
-        this.callStartTimestamp = SystemClock.elapsedRealtime();
+        initializeCallTimer();
         telecomSetActive();
         notifyOnAnsweredCall();
     }
@@ -590,10 +597,14 @@ public class CallManager {
         doAnswer();
         this.state = State.IN_CALL;
         this.isAnswered = true;
-        this.callStartTimestamp = SystemClock.elapsedRealtime();
+        initializeCallTimer();
         notifyOnAnsweredCall();
         telecomSetActive();
         return true;
+    }
+
+    public LiveData<Long> getCallStartTimeLiveData() {
+        return callStartLiveData;
     }
 
     private void initializePeerConnectionFactory() {
@@ -636,6 +647,15 @@ public class CallManager {
         Log.i("PeerConnection " + peerConnection + " created");
     }
 
+    private void clearCallTimer() {
+        callStartTimestamp = 0;
+        callStartLiveData.postValue(null);
+    }
+
+    private void initializeCallTimer() {
+        callStartTimestamp = SystemClock.elapsedRealtime();
+        callStartLiveData.postValue(callStartTimestamp);
+    }
 
     private void startStreams() {
         MediaStream mediaStream = factory.createLocalMediaStream("ARDAMS");

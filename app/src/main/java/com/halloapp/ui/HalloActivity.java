@@ -10,9 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.halloapp.R;
 import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.ThreadUtils;
+import com.halloapp.widget.InCallToolbarView;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -40,6 +42,8 @@ public class HalloActivity extends AppCompatActivity {
         Log.i(sb.toString());
     }
 
+    private InCallToolbarView inCallToolbarView;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         logTrace("onCreate");
@@ -59,6 +63,12 @@ public class HalloActivity extends AppCompatActivity {
     protected void onStart() {
         logTrace("onStart");
         super.onStart();
+        if (inCallToolbarView == null) {
+            inCallToolbarView = findViewById(R.id.call_toolbar);
+            if (inCallToolbarView != null) {
+                inCallToolbarView.bind(this);
+            }
+        }
     }
 
     @Override

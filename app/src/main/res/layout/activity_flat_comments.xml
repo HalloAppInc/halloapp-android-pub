@@ -6,11 +6,16 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <include
+        android:id="@+id/call_toolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        layout="@layout/call_toolbar" />
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/comments_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/call_toolbar"
         app:layout_constraintBottom_toTopOf="@+id/attachment_container">
 
         <androidx.recyclerview.widget.RecyclerView

@@ -294,6 +294,12 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         return intent;
     }
 
+    public static Intent getReturnToCallIntent(@NonNull Context context, @NonNull UserId peerUid) {
+        Intent intent = new Intent(context, CallActivity.class);
+        intent.putExtra(EXTRA_PEER_UID, peerUid.rawId());
+        return intent;
+    }
+
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         Log.i("Call permissions Granted " + requestCode + " " + perms);
