@@ -92,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:autoLink="web"
                     android:lineSpacingMultiplier="1.1"
-                    android:paddingStart="4dp"
+                    android:paddingStart="1dp"
                     android:paddingEnd="14dp"
                     android:layout_gravity="start"
                     android:textAppearance="?textAppearanceListItemSmall"
