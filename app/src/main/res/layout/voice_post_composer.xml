@@ -149,6 +149,8 @@
             android:layout_weight="1"
             android:paddingStart="10dp"
             android:paddingEnd="12dp"
+            android:progressTint="@color/voice_note_played"
+            android:thumbTint="@color/voice_note_played"
             android:progressDrawable="@drawable/voice_note_seekbar" />
 
         <TextView
