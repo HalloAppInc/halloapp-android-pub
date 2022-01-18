@@ -2,6 +2,7 @@ package com.halloapp.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -123,6 +124,15 @@ public class VoicePostComposerView extends ConstraintLayout {
             if (host != null) {
                 host.onStartRecording();
             }
+        });
+        startRecordingBtn.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (host != null) {
+                    host.onStartRecording();
+                }
+                return true;
+            }
+            return false;
         });
 
         stopRecordingBtn.setOnClickListener(v -> {
