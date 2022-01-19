@@ -257,12 +257,12 @@ public class CallManager {
 
     @MainThread
     public synchronized boolean startCall(@NonNull UserId peerUid) {
-        Log.i("CallManager.startCall");
         if (this.state != State.IDLE) {
             Log.w("CallManager.startCall failed: state is not idle. State: " + stateToString(this.state));
             return false;
         }
         this.callId = RandomId.create();
+        Log.i("CallManager.startCall callId: " + callId + " peerUid: " + peerUid);
         this.peerUid = peerUid;
         this.isInitiator = true;
         this.isAnswered = false;
