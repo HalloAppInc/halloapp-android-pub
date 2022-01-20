@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
@@ -22,7 +23,6 @@ import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactSyncResult;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
-import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
@@ -112,7 +112,6 @@ import com.halloapp.xmpp.util.ResponseHandler;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.nio.ByteBuffer;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -142,6 +141,7 @@ public class ConnectionImpl extends Connection {
     public static final String FEED_THREAD_ID = "feed";
 
     private static final long PACKET_DROP_TIME_MS = 30_000;
+    private static final long READ_TIMEOUT_MS = 150 * DateUtils.SECOND_IN_MILLIS;
 
     private final Me me;
     private final BgWorkers bgWorkers;
@@ -165,6 +165,8 @@ public class ConnectionImpl extends Connection {
     private final SocketConnectorAsync socketConnectorAsync;
 
     private final FeedContentParser feedContentParser;
+
+    private final Timer timer = new Timer();
 
     private int iqShortId;
 
@@ -1120,6 +1122,8 @@ public class ConnectionImpl extends Connection {
         private volatile boolean done;
         private Thread readerThread;
 
+        private TimerTask readTimeoutTimer;
+
         void init() {
             done = false;
             readerThread = ThreadUtils.go(this::parsePackets, "Packet Reader"); // TODO(jack): Connection counter
@@ -1135,6 +1139,7 @@ public class ConnectionImpl extends Connection {
 
         private void parsePackets() {
             ThreadUtils.setSocketTag();
+            scheduleReadTimeout();
             while (!done) {
                 try {
                     if (socket == null) {
@@ -1145,12 +1150,36 @@ public class ConnectionImpl extends Connection {
                     if (packet == null) {
                         throw new IOException("No more packets");
                     }
+                    scheduleReadTimeout();
                     parsePacket(packet);
                 } catch (Exception e) {
                     Log.e("Packet Reader error; maybe disconnecting", e);
                     if (!done) {
                         disconnect();
                     }
+                }
+            }
+            if (readTimeoutTimer != null) {
+                readTimeoutTimer.cancel();
+                readTimeoutTimer = null;
+            }
+        }
+
+        private void scheduleReadTimeout() {
+            if (readTimeoutTimer != null) {
+                readTimeoutTimer.cancel();
+            }
+            readTimeoutTimer = new ReadTimeoutTask();
+            timer.schedule(readTimeoutTimer, READ_TIMEOUT_MS);
+        }
+
+        private class ReadTimeoutTask extends TimerTask {
+
+            @Override
+            public void run() {
+                Log.e("connection: havent received packet from server, disconnecting");
+                if (!done) {
+                    disconnect();
                 }
             }
         }
@@ -1882,8 +1911,6 @@ public class ConnectionImpl extends Connection {
 
         private final HashMap<Packet, PacketCallback> packetCallbacks = new HashMap<>();
         private final HashMap<Packet, TimerTask> packetTimers = new HashMap<>();
-
-        private final Timer timer = new Timer();
 
         private Thread writerThread;
         private WriterRunnable writerRunnable;
