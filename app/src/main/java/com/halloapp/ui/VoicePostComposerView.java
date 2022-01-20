@@ -30,6 +30,7 @@ public class VoicePostComposerView extends ConstraintLayout {
     private View startRecordingBtn;
 
     private View tapToRecordText;
+    private View stopRecordText;
 
     private View sendBtn;
 
@@ -100,6 +101,7 @@ public class VoicePostComposerView extends ConstraintLayout {
         startRecordingBtn = findViewById(R.id.record_voice);
 
         tapToRecordText = findViewById(R.id.tap_to_record);
+        stopRecordText = findViewById(R.id.stop_record_text);
         sendBtn = findViewById(R.id.composer_send);
         composeTitle = findViewById(R.id.compose_title);
 
@@ -135,6 +137,11 @@ public class VoicePostComposerView extends ConstraintLayout {
             return false;
         });
 
+        stopRecordText.setOnClickListener(v -> {
+            if (host != null) {
+                host.onStopRecording();
+            }
+        });
         stopRecordingBtn.setOnClickListener(v -> {
             if (host != null) {
                 host.onStopRecording();
@@ -169,6 +176,7 @@ public class VoicePostComposerView extends ConstraintLayout {
         stopRecordingBtn.setVisibility(View.GONE);
         startRecordingBtn.setVisibility(View.VISIBLE);
         tapToRecordText.setVisibility(View.VISIBLE);
+        stopRecordText.setVisibility(View.GONE);
         hideRecordingContainer();
         sendBtn.setEnabled(false);
         composeTitle.setVisibility(View.VISIBLE);
@@ -180,6 +188,7 @@ public class VoicePostComposerView extends ConstraintLayout {
         stopRecordingBtn.setVisibility(View.VISIBLE);
         startRecordingBtn.setVisibility(View.GONE);
         tapToRecordText.setVisibility(View.GONE);
+        stopRecordText.setVisibility(View.VISIBLE);
         recordingContainer.setVisibility(View.VISIBLE);
         sendBtn.setEnabled(false);
         composeTitle.setVisibility(View.GONE);
@@ -199,6 +208,7 @@ public class VoicePostComposerView extends ConstraintLayout {
         stopRecordingBtn.setVisibility(View.GONE);
         startRecordingBtn.setVisibility(View.GONE);
         tapToRecordText.setVisibility(View.GONE);
+        stopRecordText.setVisibility(View.GONE);
         hideRecordingContainer();
         sendBtn.setEnabled(true);
         composeTitle.setVisibility(View.VISIBLE);
