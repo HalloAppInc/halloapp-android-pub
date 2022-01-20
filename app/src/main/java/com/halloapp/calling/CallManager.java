@@ -72,7 +72,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -139,6 +141,8 @@ public class CallManager {
 
     private long callStartTimestamp = 0;
     private final MutableLiveData<Long> callStartLiveData = new MutableLiveData<>();
+
+    private final Queue<HaIceCandidate> iceCandidateQueue = new LinkedList<>();
 
     // Executor thread is started once in private ctor and is used for all
     // peer connection API calls to ensure new peer connection factory is
@@ -420,6 +424,7 @@ public class CallManager {
         } else {
             showIncomingCallNotification();
         }
+        processQueuedIceCandidates();
     }
 
     public void showIncomingCallNotification() {
@@ -500,6 +505,7 @@ public class CallManager {
         initializeCallTimer();
         telecomSetActive();
         notifyOnAnsweredCall();
+        processQueuedIceCandidates();
     }
 
     public synchronized void handleEndCall(@NonNull String callId, @NonNull UserId peerUid,
@@ -525,13 +531,17 @@ public class CallManager {
                                     @NonNull String sdpMediaId, int sdpMediaLineIndex, @NonNull String sdp) {
         Log.i("CallManager: got IceCandidate callId: " + callId + " " + sdpMediaId + ":" + sdpMediaLineIndex + ": sdp: " + sdp);
         IceCandidate candidate = new IceCandidate(sdpMediaId, sdpMediaLineIndex, sdp);
-        if (this.callId == null || !this.callId.equals(callId)) {
+
+        if (this.callId != null && !this.callId.equals(callId)) {
             // TODO(nikola): This code is similar to many other messages
             Log.i("CallManager: got IceCandidates for the wrong callId: " + callId + " peerUid: " + peerUid + " state: " + toString());
             return;
         }
-        if (peerConnection != null) {
+        if (state == State.IN_CALL || state == State.INCOMING_RINGING) {
             peerConnection.addIceCandidate(candidate);
+        } else {
+            HaIceCandidate haIceCandidate = new HaIceCandidate(callId, candidate);
+            iceCandidateQueue.offer(haIceCandidate);
         }
     }
 
@@ -605,6 +615,20 @@ public class CallManager {
 
     public LiveData<Long> getCallStartTimeLiveData() {
         return callStartLiveData;
+    }
+
+    private void processQueuedIceCandidates() {
+        Log.i("CallManager: processing iceCandidateQueue: " + iceCandidateQueue.size());
+        while (!iceCandidateQueue.isEmpty()) {
+            HaIceCandidate haIceCandidate = iceCandidateQueue.poll();
+            if (haIceCandidate.getCallId().equals(this.callId)) {
+                IceCandidate ic = haIceCandidate.getIceCandidate();
+                Log.i("CallManager: adding queued IceCandidate " + ic);
+                peerConnection.addIceCandidate(ic);
+            } else {
+                Log.w("CallManager: dropping IceCandidate callId:" + haIceCandidate.getCallId() +  " ic: " + haIceCandidate.getIceCandidate());
+            }
+        }
     }
 
     private void initializePeerConnectionFactory() {
