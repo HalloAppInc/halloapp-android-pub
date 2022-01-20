@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
@@ -46,6 +47,7 @@ public class HACustomFab extends LinearLayout {
         void onOverlay(boolean visible);
     }
 
+    private FabResizingTextView fabTextView;
     private ImageView logoImageView;
     private View logoContainerView;
     private View fadeGradient;
@@ -65,6 +67,7 @@ public class HACustomFab extends LinearLayout {
     private int fabPadding;
     private int fabSize;
 
+    private boolean useText = true;
     private boolean expanded = true;
     private boolean subMenuOpen = false;
 
@@ -106,6 +109,7 @@ public class HACustomFab extends LinearLayout {
         fabPadding = context.getResources().getDimensionPixelSize(R.dimen.fab_padding);
         fabSize = context.getResources().getDimensionPixelSize(R.dimen.fab_size);
 
+        fabTextView = findViewById(R.id.fab_text);
         logoImageView = findViewById(R.id.hallo);
         logoContainerView = findViewById(R.id.hallo_container);
         iconView = findViewById(R.id.icon);
@@ -185,26 +189,21 @@ public class HACustomFab extends LinearLayout {
         setVisibility(View.GONE);
     }
 
-    public void setMainFabIcon(@DrawableRes int iconRes, @StringRes int contentDescRes) {
-        setMainFabIcon(iconRes, contentDescRes, false);
-    }
-
-    public void setMainFabIcon(@DrawableRes int iconRes, @StringRes int contentDescRes, boolean showLogo) {
+    public void setMainFabIcon(@DrawableRes int iconRes, @StringRes int contentDescRes, @StringRes int label) {
         iconView.setImageResource(iconRes);
         iconView.setContentDescription(getResources().getString(contentDescRes));
-        logoContainerView.setVisibility(showLogo ? View.VISIBLE : View.GONE);
-        if (showLogo) {
-            if (expanded) {
-                ViewGroup.LayoutParams layoutParams = primaryFab.getLayoutParams();
-                layoutParams.width = LayoutParams.WRAP_CONTENT;
-                primaryFab.setLayoutParams(layoutParams);
-            }
-        } else {
+        fabTextView.setText(label);
+        if (expanded) {
             ViewGroup.LayoutParams layoutParams = primaryFab.getLayoutParams();
-            layoutParams.width = fabSize;
+            layoutParams.width = LayoutParams.WRAP_CONTENT;
             primaryFab.setLayoutParams(layoutParams);
-            primaryFab.setPadding(fabPadding, 0, fabPadding, 0);
         }
+    }
+
+    public void setUseText(boolean useText) {
+        logoImageView.setVisibility(useText ? View.GONE : View.VISIBLE);
+        fabTextView.setVisibility(useText ? View.VISIBLE : View.GONE);
+        this.useText = useText;
     }
 
     private void transitionToOpen(boolean isOpen) {
@@ -227,9 +226,29 @@ public class HACustomFab extends LinearLayout {
         subMenuOpen = isOpen;
     }
 
+    public void setFabBackgroundTint(@ColorRes int colorRes) {
+        @ColorInt int color = ContextCompat.getColor(getContext(), colorRes);
+        primaryFab.setBackgroundTintList(ColorStateList.valueOf(color));
+        fadeGradient.setBackgroundTintList(ColorStateList.valueOf(color));
+    }
+
+    public void setIconTint(@ColorRes int colorRes) {
+        @ColorInt int color = ContextCompat.getColor(getContext(), colorRes);
+        iconView.setColorFilter(color);
+        fabTextView.setTextColor(color);
+    }
+
+    private int getFabTextWidth() {
+        if (useText) {
+            return fabTextView.getIntrinsicWidth();
+        } else {
+            return logoImageView.getDrawable().getIntrinsicWidth() + logoImageView.getPaddingEnd() + logoImageView.getPaddingStart();
+        }
+    }
+
     private float getCollapsePercentage() {
         final int start = primaryFab.getWidth();
-        final int logoViewWidth = logoImageView.getDrawable().getIntrinsicWidth() + logoImageView.getPaddingEnd() + logoImageView.getPaddingStart();
+        final int logoViewWidth = getFabTextWidth();
         return (float) Math.max(0, (start - fabSize) / ((float)logoViewWidth));
     }
 
@@ -255,7 +274,7 @@ public class HACustomFab extends LinearLayout {
     }
 
     private void createExtendAnimator() {
-        final int logoContainerWidth = logoImageView.getDrawable().getIntrinsicWidth() + logoImageView.getPaddingEnd() + logoImageView.getPaddingStart();
+        final int logoContainerWidth = getFabTextWidth();
         float initialPercentage = (float)((float)(primaryFab.getWidth() - fabSize) / (float)logoContainerWidth);
         setAnimator(ValueAnimator.ofFloat(initialPercentage, 1));
         animator.setDuration((int)(EXTEND_ANIMATION_DURATION * (1f - initialPercentage)));
@@ -357,7 +376,7 @@ public class HACustomFab extends LinearLayout {
         private float basePercentage;
 
         public CollapseAnimator() {
-            logoViewWidth = logoImageView.getDrawable().getIntrinsicWidth() + logoImageView.getPaddingEnd() + logoImageView.getPaddingStart();
+            logoViewWidth = getFabTextWidth();
             this.basePercentage = 1f - getCollapsePercentage();
         }
 
@@ -388,7 +407,7 @@ public class HACustomFab extends LinearLayout {
         private final int logoContainerWidth;
 
         public ExtendAnimator() {
-            logoContainerWidth = logoImageView.getDrawable().getIntrinsicWidth() + logoImageView.getPaddingEnd() + logoImageView.getPaddingStart();
+            logoContainerWidth = getFabTextWidth();
         }
 
         @Override

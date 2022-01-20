@@ -53,6 +53,7 @@ import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.widget.FabExpandOnScrollListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -186,6 +187,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         groupsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
+        groupsView.addOnScrollListener(new FabExpandOnScrollListener((AppCompatActivity) requireActivity()));
     }
 
     @Override

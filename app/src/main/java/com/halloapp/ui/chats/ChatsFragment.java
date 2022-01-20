@@ -69,6 +69,7 @@ import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.widget.FabExpandOnScrollListener;
 import com.halloapp.xmpp.PresenceLoader;
 
 import java.util.ArrayList;
@@ -247,6 +248,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         chatsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
+        chatsView.addOnScrollListener(new FabExpandOnScrollListener((AppCompatActivity) requireActivity()));
     }
 
     @Override

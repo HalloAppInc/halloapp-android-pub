@@ -11,6 +11,12 @@
     <string name="new_chat">New chat</string>
     <string name="new_group">New group</string>
     <string name="notifications">Notifications</string>
+    <!-- Text in fab for post action -->
+    <string name="post_fab_label">Post</string>
+    <!-- Text in fab for new group action -->
+    <string name="new_group_fab_label">New group</string>
+    <!-- Text in fab for chat action -->
+    <string name="compose_fab_label">Compose</string>
     <!-- Button text on profile of a user not in the user's contacts; tapping takes the user to the contacts app with data prefilled -->
     <string name="add_to_contacts">Add to contacts</string>
     <!-- Button text allowing user to accept a message not from their contacts. Short if possible -->

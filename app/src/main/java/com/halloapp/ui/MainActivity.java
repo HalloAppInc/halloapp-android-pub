@@ -271,7 +271,10 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         haFabView.clearActionItems();
         if (id == R.id.navigation_messages) {
             haFabView.show();
-            haFabView.setMainFabIcon(R.drawable.ic_chat, R.string.new_chat);
+            haFabView.setFabBackgroundTint(R.color.white);
+            haFabView.setIconTint(R.color.color_primary);
+            haFabView.setUseText(true);
+            haFabView.setMainFabIcon(R.drawable.ic_compose, R.string.new_chat, R.string.compose_fab_label);
             haFabView.setOnFabClickListener(v -> {
                 final String[] perms = {Manifest.permission.READ_CONTACTS};
                 if (!EasyPermissions.hasPermissions(MainActivity.this, perms)) {
@@ -283,7 +286,10 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             haFabView.setOnActionSelectedListener(null);
         } else if (id == R.id.navigation_groups) {
             haFabView.show();
-            haFabView.setMainFabIcon(R.drawable.ic_group_add, R.string.new_group);
+            haFabView.setUseText(true);
+            haFabView.setFabBackgroundTint(R.color.white);
+            haFabView.setIconTint(R.color.color_primary);
+            haFabView.setMainFabIcon(R.drawable.ic_group_add, R.string.new_group, R.string.new_group_fab_label);
             haFabView.setOnFabClickListener(v -> {
                 final String[] perms = {Manifest.permission.READ_CONTACTS};
                 if (!EasyPermissions.hasPermissions(MainActivity.this, perms)) {
@@ -294,9 +300,12 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             });
             haFabView.setOnActionSelectedListener(null);
         } else if (id == R.id.navigation_home){
+            haFabView.setUseText(false);
+            haFabView.setFabBackgroundTint(R.color.color_primary);
+            haFabView.setIconTint(R.color.white);
             if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS)) {
                 haFabView.show();
-                haFabView.setMainFabIcon(R.drawable.ic_plus_expanded, R.string.add_post, true);
+                haFabView.setMainFabIcon(R.drawable.ic_plus_expanded, R.string.add_post, R.string.post_fab_label);
                 haFabView.setOnFabClickListener(null);
                 haFabView.setOnActionSelectedListener(new HACustomFab.OnActionSelectedListener() {
                     @Override

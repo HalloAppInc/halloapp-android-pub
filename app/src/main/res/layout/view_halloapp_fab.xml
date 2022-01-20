@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fab"
     android:layout_width="wrap_content"
     android:layout_height="56dp"
@@ -15,16 +16,32 @@
     <FrameLayout
         android:id="@+id/hallo_container"
         android:layout_width="wrap_content"
-        android:layout_height="24dp"
+        android:layout_height="32dp"
         android:clipToPadding="false"
         android:clipChildren="false">
+
+        <com.halloapp.widget.FabResizingTextView
+            android:id="@+id/fab_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:textSize="19dp"
+            android:paddingBottom="2dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:maxLines="1"
+            android:gravity="center_vertical"
+            android:textColor="@android:color/white"
+            android:fontFamily="@font/quicksand_bold"
+            android:text="@string/post_fab_label"/>
 
         <ImageView
             android:id="@+id/hallo"
             android:layout_width="wrap_content"
             android:layout_height="24dp"
-            android:layout_gravity="end"
+            android:layout_gravity="end|center_vertical"
             android:scaleType="matrix"
+            android:visibility="gone"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
             android:src="@drawable/ic_hallo_fab_text" />
