@@ -44,6 +44,7 @@ import com.halloapp.ui.posts.IncomingPostFooterViewHolder;
 import com.halloapp.ui.posts.IncomingPostViewHolder;
 import com.halloapp.ui.posts.OutgoingPostFooterViewHolder;
 import com.halloapp.ui.posts.OutgoingPostViewHolder;
+import com.halloapp.ui.posts.PostFooterViewHolder;
 import com.halloapp.ui.posts.PostListDiffer;
 import com.halloapp.ui.posts.PostViewHolder;
 import com.halloapp.ui.posts.SeenByLoader;
@@ -395,31 +396,34 @@ public abstract class PostsFragment extends HalloFragment {
             final ViewGroup content = layout.findViewById(R.id.post_content);
             LayoutInflater.from(content.getContext()).inflate(contentLayoutRes, content, true);
             final ViewGroup footer = layout.findViewById(R.id.post_footer);
-            PostViewHolder postViewHolder;
-            if ((viewType & POST_TYPE_MASK) == POST_TYPE_FUTURE_PROOF) {
-                postViewHolder = new FutureProofPostViewHolder(layout, postViewHolderParent);
-            } else {
-                if ((viewType & POST_TYPE_MASK) == POST_TYPE_VOICE_NOTE) {
-                    postViewHolder = new VoiceNotePostViewHolder(layout, postViewHolderParent);
-                } else {
-                    postViewHolder = new PostViewHolder(layout, postViewHolderParent);
+            PostFooterViewHolder postFooterViewHolder = null;
+            switch (viewType & POST_DIRECTION_MASK) {
+                case POST_DIRECTION_INCOMING: {
+                    LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_incoming, footer, true);
+                    postFooterViewHolder = new IncomingPostFooterViewHolder(layout, postViewHolderParent);
+                    break;
                 }
-                switch (viewType & POST_DIRECTION_MASK) {
-                    case POST_DIRECTION_INCOMING: {
-                        LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_incoming, footer, true);
-                        postViewHolder.setFooter(new IncomingPostFooterViewHolder(layout, postViewHolderParent));
-                        break;
-                    }
-                    case POST_DIRECTION_OUTGOING: {
-                        LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_outgoing, footer, true);
-                        postViewHolder.setFooter(new OutgoingPostFooterViewHolder(layout, postViewHolderParent));
-                        break;
-                    }
-                    default: {
-                        throw new IllegalArgumentException();
-                    }
+                case POST_DIRECTION_OUTGOING: {
+                    LayoutInflater.from(footer.getContext()).inflate(R.layout.post_footer_outgoing, footer, true);
+                    postFooterViewHolder = new OutgoingPostFooterViewHolder(layout, postViewHolderParent);
+                    break;
+                }
+                default: {
+                    throw new IllegalArgumentException();
                 }
             }
+            PostViewHolder postViewHolder;
+            switch (viewType & POST_TYPE_MASK) {
+                case POST_TYPE_FUTURE_PROOF:
+                    postViewHolder = new FutureProofPostViewHolder(layout, postViewHolderParent);
+                    break;
+                case POST_TYPE_VOICE_NOTE:
+                    postViewHolder = new VoiceNotePostViewHolder(layout, postViewHolderParent);
+                    break;
+                default:
+                    postViewHolder = new PostViewHolder(layout, postViewHolderParent);
+            }
+            postViewHolder.setFooter(postFooterViewHolder);
             return postViewHolder;
         }
 

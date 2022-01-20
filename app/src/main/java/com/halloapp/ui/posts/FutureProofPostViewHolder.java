@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat;
 import com.halloapp.R;
 import com.halloapp.util.IntentUtils;
 
-public class FutureProofPostViewHolder extends IncomingPostViewHolder {
+public class FutureProofPostViewHolder extends PostViewHolder {
 
     private final TextView futureProofMessage;
 
