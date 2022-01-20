@@ -90,7 +90,7 @@ public class GroupFeedSessionManager {
     }
 
     public void sendCommentRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String commentId, boolean senderStateIssue) {
-        connection.sendGroupPostRerequest(senderUserId, groupId, commentId, senderStateIssue);
+        connection.sendGroupCommentRerequest(senderUserId, groupId, commentId, senderStateIssue);
     }
 
     public SenderState getSenderState(GroupId groupId) throws CryptoException {
