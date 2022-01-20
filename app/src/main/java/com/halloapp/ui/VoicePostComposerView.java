@@ -132,6 +132,7 @@ public class VoicePostComposerView extends ConstraintLayout {
                 if (host != null) {
                     host.onStartRecording();
                 }
+                stopRecordingBtn.setKeepScreenOn(true);
                 return true;
             }
             return false;
@@ -141,11 +142,13 @@ public class VoicePostComposerView extends ConstraintLayout {
             if (host != null) {
                 host.onStopRecording();
             }
+            stopRecordingBtn.setKeepScreenOn(false);
         });
         stopRecordingBtn.setOnClickListener(v -> {
             if (host != null) {
                 host.onStopRecording();
             }
+            stopRecordingBtn.setKeepScreenOn(false);
         });
 
         sendBtn.setOnClickListener(v -> {
