@@ -734,9 +734,6 @@
     <string name="post_preview_retracted_by_you">You deleted a post</string>
     <string name="post_preview_with_caption_by_you">You: %s</string>
     <string name="composer_sharing_message">Sending to %s</string>
-    <string name="composer_sharing_post">Sharing with %s</string>
-    <!-- Text shown when sharing a post with a group -->
-    <string name="composer_sharing_group_post">Sharing with group</string>
     <plurals name="max_video_length">
         <item quantity="one">Your video is over %d second long. Please select another video or edit it.</item>
         <item quantity="other">Your video is over %d seconds long. Please select another video or edit it.</item>
