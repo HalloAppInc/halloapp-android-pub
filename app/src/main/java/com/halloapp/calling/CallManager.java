@@ -184,9 +184,13 @@ public class CallManager {
             executor.execute(this::telecomRegisterAccount);
         }
 
-        NetworkConnectivityManager.getInstance().getNetworkInfo().observeForever(
-                networkInfo -> Log.i("CallManager: network changed: " + networkInfo.getTypeName())
-        );
+        NetworkConnectivityManager.getInstance().getNetworkInfo().observeForever(networkInfo -> {
+            if (networkInfo != null) {
+                Log.i("CallManager: network changed: " + networkInfo.getTypeName());
+            } else {
+                Log.i("CallManager: network changed: null");
+            }
+        });
 
         ConnectivityManager connectivityManager = (ConnectivityManager) appContext.get().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkRequest networkRequest = new NetworkRequest.Builder()
