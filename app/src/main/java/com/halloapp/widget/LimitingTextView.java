@@ -24,7 +24,7 @@ import androidx.core.content.ContextCompat;
 
 import com.halloapp.R;
 
-public class LimitingTextView extends AppCompatTextView {
+public class LimitingTextView extends HAEmojiTextView {
 
     private int lineLimit = 12;
     private int lineStep = 12;

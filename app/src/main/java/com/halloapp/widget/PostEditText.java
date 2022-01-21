@@ -12,7 +12,7 @@ import androidx.core.os.BuildCompat;
 import androidx.core.view.inputmethod.EditorInfoCompat;
 import androidx.core.view.inputmethod.InputConnectionCompat;
 
-public class PostEditText extends AppCompatEditText {
+public class PostEditText extends HAEmojiEditTextView {
 
     private PreImeListener preImeListener;
     private MediaInputListener mediaInputListener;
