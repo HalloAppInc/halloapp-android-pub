@@ -307,7 +307,7 @@ public class Notifications {
                         context.getApplicationContext(),
                         (int) Long.parseLong(chatId.rawId()),
                         replyIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
+                        getPendingIntentFlags(true)
                 );
                 NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder(R.drawable.ic_reply, replyLabel, replyPendingIntent)
                         .addRemoteInput(remoteInput)
@@ -320,7 +320,7 @@ public class Notifications {
                         context.getApplicationContext(),
                         (int) Long.parseLong(chatId.rawId()),
                         markReadIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
+                        getPendingIntentFlags(true)
                 );
                 NotificationCompat.Action markReadAction = new NotificationCompat.Action.Builder(R.drawable.ic_messaging_seen, markReadLabel, markReadPendingIntent).build();
 
@@ -370,7 +370,7 @@ public class Notifications {
                 stackBuilder.addNextIntent(parentIntent);
                 stackBuilder.addNextIntent(contentIntent);
 
-                builder.setContentIntent(stackBuilder.getPendingIntent(chatIndex, PendingIntent.FLAG_UPDATE_CURRENT));
+                builder.setContentIntent(stackBuilder.getPendingIntent(chatIndex, getPendingIntentFlags(true)));
                 chatIndex++;
 
                 notificationManager.notify(chatId.rawId(), MESSAGE_NOTIFICATION_ID, builder.build());
@@ -390,7 +390,7 @@ public class Notifications {
                 final Intent contentIntent = new Intent(context, MainActivity.class);
                 contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_MESSAGES);
-                builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE_MESSAGES, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+                builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE_MESSAGES, contentIntent, getPendingIntentFlags(true)));
             } else {
                 final ChatId chatId = chatsIds.get(0);
                 final Intent contentIntent = ChatActivity.open(context, chatId, true);
@@ -400,7 +400,7 @@ public class Notifications {
                 parentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_MESSAGES);
                 stackBuilder.addNextIntent(parentIntent);
                 stackBuilder.addNextIntent(contentIntent);
-                builder.setContentIntent(stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT));
+                builder.setContentIntent(stackBuilder.getPendingIntent(0, getPendingIntentFlags(true)));
             }
             notificationManager.notify(MESSAGE_NOTIFICATION_ID, builder.build());
         });
@@ -596,10 +596,10 @@ public class Notifications {
         } else {
             contentIntent.putExtra(MainActivity.EXTRA_SCROLL_TO_TOP, true);
         }
-        builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE_FEED, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE_FEED, contentIntent, getPendingIntentFlags(true)));
         final Intent deleteIntent = new Intent(context, DeleteNotificationReceiver.class);
         deleteIntent.putExtra(EXTRA_FEED_NOTIFICATION_TIME_CUTOFF, feedNotificationTimeCutoff) ;
-        builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0 , deleteIntent, PendingIntent. FLAG_CANCEL_CURRENT));
+        builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0 , deleteIntent, PendingIntent. FLAG_CANCEL_CURRENT | getPendingIntentFlags(false)));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(FEED_NOTIFICATION_ID, builder.build());
     }
@@ -616,7 +616,7 @@ public class Notifications {
                 .setAutoCancel(true)
                 .setContentText(body);
         final Intent groupIntent = ViewGroupFeedActivity.viewFeed(context, groupId);
-        builder.setContentIntent(PendingIntent.getActivity(context, 0, groupIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        builder.setContentIntent(PendingIntent.getActivity(context, 0, groupIntent, getPendingIntentFlags(true)));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(GROUP_NOTIFICATION_ID, builder.build());
     }
@@ -636,9 +636,9 @@ public class Notifications {
             Intent declineIntent = CallNotificationBroadcastReceiver.declineCallIntent(context, callId, peerUid);
             Intent acceptIntent = CallActivity.acceptCallIntent(context, callId, peerUid);
 
-            PendingIntent callPendingIntent = PendingIntent.getActivity(context, 0, callIntent, getPendingIntentFlags());
-            PendingIntent declinePendingIntent = PendingIntent.getBroadcast(context, 0, declineIntent, Notifications.getPendingIntentFlags());
-            PendingIntent acceptPendingIntent = PendingIntent.getActivity(context, 0, acceptIntent, getPendingIntentFlags());
+            PendingIntent callPendingIntent = PendingIntent.getActivity(context, 0, callIntent, getPendingIntentFlags(false));
+            PendingIntent declinePendingIntent = PendingIntent.getBroadcast(context, 0, declineIntent, getPendingIntentFlags(false));
+            PendingIntent acceptPendingIntent = PendingIntent.getActivity(context, 0, acceptIntent, getPendingIntentFlags(false));
 
             final Contact contact = ContactsDb.getInstance().getContact(peerUid);
             String name = contact.getDisplayName();
@@ -681,7 +681,7 @@ public class Notifications {
     @WorkerThread
     public Notification getOngoingCallNotification(UserId peerUid, boolean isInitiator) {
         Intent callIntent = CallActivity.getOngoingCallIntent(context, peerUid, isInitiator);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, callIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, callIntent, getPendingIntentFlags(true));
 
         final Contact contact = ContactsDb.getInstance().getContact(peerUid);
         String name = contact.getDisplayName();
@@ -719,7 +719,7 @@ public class Notifications {
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
         final Intent contentIntent = new Intent(context, AppExpirationActivity.class);
         contentIntent.putExtra(AppExpirationActivity.EXTRA_DAYS_LEFT, daysLeft);
-        builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, getPendingIntentFlags(true)));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(EXPIRATION_NOTIFICATION_ID, builder.build());
     }
@@ -733,7 +733,7 @@ public class Notifications {
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
         final Intent contentIntent = new Intent(context, RegistrationRequestActivity.class);
         contentIntent.putExtra(RegistrationRequestActivity.EXTRA_RE_VERIFY, true);
-        builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, getPendingIntentFlags(true)));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(LOGIN_FAILED_NOTIFICATION_ID, builder.build());
     }
@@ -748,7 +748,7 @@ public class Notifications {
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         final Intent contentIntent = ChatActivity.open(context, Preconditions.checkNotNull(contact.userId), true);
-        builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, getPendingIntentFlags(true)));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(id, builder.build());
     }
@@ -827,9 +827,21 @@ public class Notifications {
         }
     }
 
-    public static int getPendingIntentFlags() {
+    public static int getMutableIntentFlag(boolean mutable) {
         if (Build.VERSION.SDK_INT >= 23) {
-            return PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
+            return (mutable
+                    ? (Build.VERSION.SDK_INT >= 31
+                        ? PendingIntent.FLAG_MUTABLE
+                        : 0)
+                    : PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            return 0;
+        }
+    }
+
+    public static int getPendingIntentFlags(boolean mutable) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            return PendingIntent.FLAG_UPDATE_CURRENT | getMutableIntentFlag(mutable);
         } else {
             return PendingIntent.FLAG_UPDATE_CURRENT;
         }
