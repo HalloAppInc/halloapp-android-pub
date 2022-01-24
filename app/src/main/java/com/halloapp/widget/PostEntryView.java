@@ -208,9 +208,10 @@ public class PostEntryView extends FrameLayout {
     }
 
     public void setAllowVoiceNoteRecording(boolean allow) {
-        this.allowVoiceNoteRecording = allow;
-
-        updateEntry();
+        if (this.allowVoiceNoteRecording != allow) {
+            this.allowVoiceNoteRecording = allow;
+            updateEntry();
+        }
     }
     
     public void setCanSend(boolean canSend) {

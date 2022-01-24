@@ -420,11 +420,9 @@ public class ContentComposerActivity extends HalloActivity {
 
         textPostEntry.setVisibility(View.VISIBLE);
         textPostEntry.setMentionPickerView(mentionPickerView);
-        textPostEntry.setText(initialText);
 
         bottomEditText.setVisibility(View.VISIBLE);
         bottomEditText.setMentionPickerView(mentionPickerView);
-        bottomEditText.setText(initialText);
 
         allowVoiceNotes = chatId == null && ServerProps.getInstance().getVoicePostsEnabled();
         postEntryView.setAllowVoiceNoteRecording(allowVoiceNotes && TextUtils.isEmpty(initialText));
@@ -450,15 +448,12 @@ public class ContentComposerActivity extends HalloActivity {
         textPostEntry.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                prevEditEmpty = TextUtils.isEmpty(charSequence);
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 boolean isEmpty = TextUtils.isEmpty(charSequence);
-                if (prevEditEmpty != isEmpty) {
-                    textOnlySend.setEnabled(!isEmpty);
-                }
+                textOnlySend.setEnabled(!isEmpty);
 
                 final boolean useLargeText = (charSequence.length() < 180 && mediaPager.getVisibility() == View.GONE);
                 textPostEntry.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(
@@ -472,14 +467,12 @@ public class ContentComposerActivity extends HalloActivity {
         bottomEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                prevEditEmpty = TextUtils.isEmpty(charSequence);
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                boolean isEmpty = TextUtils.isEmpty(charSequence);
-                if (allowVoiceNotes && prevEditEmpty != isEmpty) {
-                    postEntryView.setAllowVoiceNoteRecording(isEmpty);
+                if (allowVoiceNotes) {
+                    postEntryView.setAllowVoiceNoteRecording(TextUtils.isEmpty(charSequence));
                 }
             }
 
@@ -682,6 +675,9 @@ public class ContentComposerActivity extends HalloActivity {
             postEntryView.bindVoicePlayer(this, viewModel.getVoiceNotePlayer());
             postEntryView.bindVoiceRecorder(this, viewModel.getVoiceNoteRecorder());
         }
+
+        bottomEditText.setText(initialText);
+        textPostEntry.setText(initialText);
     }
 
     private void updateComposeMode(@ComposeMode int newComposeMode) {
