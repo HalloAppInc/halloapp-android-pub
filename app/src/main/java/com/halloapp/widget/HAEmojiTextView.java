@@ -54,7 +54,7 @@ public class HAEmojiTextView extends AppCompatTextView {
 
     private EmojiTextViewHelper getEmojiTextViewHelper() {
         if (emojiTextViewHelper == null) {
-            emojiTextViewHelper = new EmojiTextViewHelper(this);
+            emojiTextViewHelper = new EmojiTextViewHelper(this, false);
         }
         return emojiTextViewHelper;
     }

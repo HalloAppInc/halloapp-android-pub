@@ -55,7 +55,7 @@ public class HAEmojiEditTextView extends AppCompatEditText {
 
     private EmojiEditTextHelper getEmojiEditTextHelper() {
         if (emojiEditTextHelper == null) {
-            emojiEditTextHelper = new EmojiEditTextHelper(this);
+            emojiEditTextHelper = new EmojiEditTextHelper(this, false);
         }
         return emojiEditTextHelper;
     }
