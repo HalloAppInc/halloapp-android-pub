@@ -44,7 +44,7 @@
         android:visibility="gone"
         android:background="@drawable/bg_selected_badge"/>
 
-    <com.halloapp.widget.HAEmojiTextView
+    <TextView
         android:id="@+id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
         app:layout_constraintTop_toBottomOf="@+id/name"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <com.halloapp.widget.HAEmojiTextView
+        <TextView
             android:id="@+id/info"
             android:layout_width="0dp"
             android:layout_weight="1"

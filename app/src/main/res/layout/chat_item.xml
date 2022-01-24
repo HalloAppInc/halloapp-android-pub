@@ -110,7 +110,7 @@
             app:barrierDirection="end"
             app:constraint_referenced_ids="media_icon,status"/>
 
-        <com.halloapp.widget.HAEmojiTextView
+        <TextView
             android:id="@+id/info"
             android:layout_width="0dp"
             android:layout_weight="1"
