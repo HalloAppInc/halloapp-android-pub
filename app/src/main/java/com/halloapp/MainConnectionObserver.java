@@ -250,6 +250,7 @@ public class MainConnectionObserver extends Connection.Observer {
 
     @Override
     public void onOutgoingCommentSent(@NonNull String postId, @NonNull String commentId, @Nullable byte[] protoHash) {
+        contentDb.setCommentTransferred(postId, UserId.ME, commentId);
         contentDb.setCommentProtoHash(postId, UserId.ME, commentId, protoHash);
     }
 
