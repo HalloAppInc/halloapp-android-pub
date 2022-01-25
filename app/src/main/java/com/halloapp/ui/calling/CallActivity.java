@@ -32,14 +32,14 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class CallActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks, EasyPermissions.RationaleCallbacks  {
 
-    public static final String EXTRA_CALL_ID = "call_id";
-    public static final String EXTRA_PEER_UID = "peer_uid";
-    public static final String EXTRA_IS_INITIATOR = "is_initiator";
+    private static final String EXTRA_CALL_ID = "call_id";
+    private static final String EXTRA_PEER_UID = "peer_uid";
+    private static final String EXTRA_IS_INITIATOR = "is_initiator";
 
-    public static final int REQUEST_START_CALL = 1;
-    public static final int REQUEST_ANSWER_CALL = 2;
+    private static final int REQUEST_START_CALL = 1;
+    private static final int REQUEST_ANSWER_CALL = 2;
 
-    public static final String ACTION_ACCEPT = "accept";
+    private static final String ACTION_ACCEPT = "accept";
 
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
