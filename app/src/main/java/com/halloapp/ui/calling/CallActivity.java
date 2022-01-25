@@ -41,6 +41,43 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
 
     private static final String ACTION_ACCEPT = "accept";
 
+    public static Intent getStartCallIntent(@NonNull Context context, @NonNull UserId userId) {
+        Intent intent = new Intent(context, CallActivity.class);
+        intent.putExtra(EXTRA_PEER_UID, userId.rawId());
+        intent.putExtra(EXTRA_IS_INITIATOR, true);
+        return intent;
+    }
+
+    public static Intent getOngoingCallIntent(@NonNull Context context, @NonNull UserId userId, boolean isInitiator) {
+        Intent intent = new Intent(context, CallActivity.class);
+        intent.putExtra(EXTRA_PEER_UID, userId.rawId());
+        intent.putExtra(EXTRA_IS_INITIATOR, isInitiator);
+        return intent;
+    }
+
+    public static Intent getReturnToCallIntent(@NonNull Context context, @NonNull UserId peerUid) {
+        Intent intent = new Intent(context, CallActivity.class);
+        intent.putExtra(EXTRA_PEER_UID, peerUid.rawId());
+        return intent;
+    }
+
+    public static Intent incomingCallIntent(@NonNull Context context, @NonNull String callId, @NonNull UserId peerUid) {
+        Intent intent = new Intent(context, CallActivity.class);
+        intent.putExtra(EXTRA_CALL_ID, callId);
+        intent.putExtra(EXTRA_PEER_UID, peerUid.rawId());
+        intent.putExtra(EXTRA_IS_INITIATOR, false);
+        return intent;
+    }
+
+    public static Intent acceptCallIntent(@NonNull Context context, @NonNull String callId, @NonNull UserId peerUid) {
+        Intent intent = new Intent(context, CallActivity.class);
+        intent.setAction(CallActivity.ACTION_ACCEPT);
+        intent.putExtra(EXTRA_CALL_ID, callId);
+        intent.putExtra(EXTRA_PEER_UID, peerUid.rawId());
+        intent.putExtra(EXTRA_IS_INITIATOR, false);
+        return intent;
+    }
+
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
     private View ringingView;
@@ -285,26 +322,6 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         }
     }
 
-    public static Intent getStartCallIntent(@NonNull Context context, @NonNull UserId userId) {
-        Intent intent = new Intent(context, CallActivity.class);
-        intent.putExtra(EXTRA_PEER_UID, userId.rawId());
-        intent.putExtra(EXTRA_IS_INITIATOR, true);
-        return intent;
-    }
-
-    public static Intent getOngoingCallIntent(@NonNull Context context, @NonNull UserId userId, boolean isInitiator) {
-        Intent intent = new Intent(context, CallActivity.class);
-        intent.putExtra(EXTRA_PEER_UID, userId.rawId());
-        intent.putExtra(EXTRA_IS_INITIATOR, isInitiator);
-        return intent;
-    }
-
-    public static Intent getReturnToCallIntent(@NonNull Context context, @NonNull UserId peerUid) {
-        Intent intent = new Intent(context, CallActivity.class);
-        intent.putExtra(EXTRA_PEER_UID, peerUid.rawId());
-        return intent;
-    }
-
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         Log.i("Call permissions Granted " + requestCode + " " + perms);
@@ -339,23 +356,4 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             Log.e("CallActivity.startCallTimer the call start time is not set");
         }
     }
-
-    public static Intent incomingCallIntent(@NonNull Context context, @NonNull String callId, @NonNull UserId peerUid) {
-        Intent intent = new Intent(context, CallActivity.class);
-        intent.putExtra(EXTRA_CALL_ID, callId);
-        intent.putExtra(EXTRA_PEER_UID, peerUid.rawId());
-        intent.putExtra(EXTRA_IS_INITIATOR, false);
-        return intent;
-    }
-
-    public static Intent acceptCallIntent(@NonNull Context context, @NonNull String callId, @NonNull UserId peerUid) {
-        Intent intent = new Intent(context, CallActivity.class);
-        intent.setAction(CallActivity.ACTION_ACCEPT);
-        intent.putExtra(EXTRA_CALL_ID, callId);
-        intent.putExtra(EXTRA_PEER_UID, peerUid.rawId());
-        intent.putExtra(EXTRA_IS_INITIATOR, false);
-        return intent;
-    }
-
 }
-
