@@ -121,7 +121,7 @@ public class SocketConnector {
                     connectingSockets.remove(socket);
                 }
             } catch (ExecutionException e) {
-                Log.e("Connection Attempt failed", e);
+                Log.e("Connection Attempt failed");
             }
         }
         return socket;

@@ -147,7 +147,7 @@ public class SocketConnectorAsync {
         try {
             socket = completedFuture.get();
         } catch (ExecutionException e) {
-            Log.e("Connection Attempt failed", e);
+            Log.e("Async Connection Attempt failed");
         }
         if (socket != null) {
             connectingSockets.remove(socket);
