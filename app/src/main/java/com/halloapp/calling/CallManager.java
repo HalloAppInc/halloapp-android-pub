@@ -59,13 +59,17 @@ import com.halloapp.xmpp.util.ObservableErrorException;
 
 import org.webrtc.AudioSource;
 import org.webrtc.AudioTrack;
+import org.webrtc.CandidatePairChangeEvent;
 import org.webrtc.DataChannel;
 import org.webrtc.IceCandidate;
 import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
+import org.webrtc.MediaStreamTrack;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.RTCStatsCollectorCallback;
+import org.webrtc.RtpReceiver;
+import org.webrtc.RtpTransceiver;
 import org.webrtc.SessionDescription;
 
 import java.lang.annotation.Retention;
@@ -87,15 +91,16 @@ import io.michaelrocks.libphonenumber.android.Phonenumber;
 
 public class CallManager {
 
-    @IntDef({State.IDLE, State.CALLING, State.CALLING_RINGING, State.IN_CALL, State.INCOMING_RINGING, State.END})
+    @IntDef({State.IDLE, State.CALLING, State.CALLING_RINGING, State.IN_CALL_CONNECTING, State.IN_CALL, State.INCOMING_RINGING, State.END})
     @Retention(RetentionPolicy.SOURCE)
     public @interface State {
         int IDLE = 0;
         int CALLING = 1;
         int CALLING_RINGING = 2;
         int INCOMING_RINGING = 3;
-        int IN_CALL = 4;
-        int END = 5;
+        int IN_CALL_CONNECTING = 4;
+        int IN_CALL = 5;
+        int END = 6;
     }
 
     private @State int state;
@@ -139,6 +144,7 @@ public class CallManager {
     @NonNull
     private final CallStats callStats;
 
+    private long callAnswerTimestamp = 0;
     private long callStartTimestamp = 0;
     private final MutableLiveData<Long> callStartLiveData = new MutableLiveData<>();
 
@@ -504,9 +510,9 @@ public class CallManager {
         }
 
         peerConnection.setRemoteDescription(new SimpleSdpObserver(), new SessionDescription(SessionDescription.Type.ANSWER, webrtcOffer));
-        this.state = State.IN_CALL;
+        this.state = State.IN_CALL_CONNECTING;
         this.isAnswered = true;
-        initializeCallTimer();
+        this.callAnswerTimestamp = SystemClock.elapsedRealtime();
         telecomSetActive();
         notifyOnAnsweredCall();
         processQueuedIceCandidates();
@@ -541,7 +547,7 @@ public class CallManager {
             Log.i("CallManager: got IceCandidates for the wrong callId: " + callId + " peerUid: " + peerUid + " state: " + toString());
             return;
         }
-        if (state == State.IN_CALL || state == State.INCOMING_RINGING) {
+        if (state == State.IN_CALL || state == State.IN_CALL_CONNECTING || state == State.INCOMING_RINGING) {
             peerConnection.addIceCandidate(candidate);
         } else {
             HaIceCandidate haIceCandidate = new HaIceCandidate(callId, candidate);
@@ -609,9 +615,9 @@ public class CallManager {
 
         cancelRingingTimeout();
         doAnswer();
-        this.state = State.IN_CALL;
+        this.state = State.IN_CALL_CONNECTING;
         this.isAnswered = true;
-        initializeCallTimer();
+        this.callAnswerTimestamp = SystemClock.elapsedRealtime();
         notifyOnAnsweredCall();
         telecomSetActive();
         return true;
@@ -681,8 +687,10 @@ public class CallManager {
     }
 
     private void initializeCallTimer() {
-        callStartTimestamp = SystemClock.elapsedRealtime();
-        callStartLiveData.postValue(callStartTimestamp);
+        if (callStartTimestamp == 0) {
+            callStartTimestamp = SystemClock.elapsedRealtime();
+            callStartLiveData.postValue(callStartTimestamp);
+        }
     }
 
     private void startStreams() {
@@ -708,41 +716,45 @@ public class CallManager {
         PeerConnection.Observer pcObserver = new PeerConnection.Observer() {
             @Override
             public void onSignalingChange(PeerConnection.SignalingState signalingState) {
-                Log.i("onSignalingChange: ");
+                Log.i("PeerConnection: onSignalingChange: ");
             }
 
             @Override
             public void onIceConnectionChange(PeerConnection.IceConnectionState iceConnectionState) {
-                Log.i("onIceConnectionChange: " + iceConnectionState);
+                Log.i("PeerConnection: onIceConnectionChange: " + iceConnectionState);
                 if (iceConnectionState == PeerConnection.IceConnectionState.DISCONNECTED) {
+                    // TODO(nikola): Maybe do a IN_CALL_RECONNECTING state if the IceConnectionState is FAILED/DISCONNECTED
                     startIceReconnectTimer();
+                }
+                if (iceConnectionState == PeerConnection.IceConnectionState.CONNECTED && state == State.IN_CALL_CONNECTING) {
+                    iceConnected();
                 }
             }
 
             @Override
             public void onIceConnectionReceivingChange(boolean b) {
-                Log.i("onIceConnectionReceivingChange: ");
+                Log.i("PeerConnection: onIceConnectionReceivingChange: ");
             }
 
             @Override
             public void onIceGatheringChange(PeerConnection.IceGatheringState iceGatheringState) {
-                Log.i("onIceGatheringChange: ");
+                Log.i("PeerConnection: onIceGatheringChange: ");
             }
 
             @Override
             public void onIceCandidate(IceCandidate iceCandidate) {
-                Log.i("onIceCandidate: " + iceCandidate);
+                Log.i("PeerConnection: onIceCandidate: " + iceCandidate);
                 callsApi.sendIceCandidate(callId, peerUid, iceCandidate);
             }
 
             @Override
             public void onIceCandidatesRemoved(IceCandidate[] iceCandidates) {
-                Log.i("onIceCandidatesRemoved: ");
+                Log.i("PeerConnection: onIceCandidatesRemoved: ");
             }
 
             @Override
             public void onAddStream(MediaStream mediaStream) {
-                Log.i("onAddStream: " + mediaStream.audioTracks.size() + " "
+                Log.i("PeerConnection: onAddStream: " + mediaStream.audioTracks.size() + " "
                         + mediaStream.videoTracks.size());
                 // TODO: enable for video calls
                 //VideoTrack remoteVideoTrack = mediaStream.videoTracks.get(0);
@@ -756,21 +768,64 @@ public class CallManager {
 
             @Override
             public void onRemoveStream(MediaStream mediaStream) {
-                Log.i("onRemoveStream: ");
+                Log.i("PeerConnection: onRemoveStream: ");
             }
 
             @Override
             public void onDataChannel(DataChannel dataChannel) {
-                Log.i("onDataChannel: ");
+                Log.i("PeerConnection: onDataChannel: ");
             }
 
             @Override
             public void onRenegotiationNeeded() {
-                Log.i("onRenegotiationNeeded: ");
+                Log.i("PeerConnection: onRenegotiationNeeded: ");
+            }
+
+            @Override
+            public void onStandardizedIceConnectionChange(PeerConnection.IceConnectionState newState) {
+                Log.i("PeerConnection: onStandardizedIceConnectionChange: " + newState);
+            }
+
+            @Override
+            public void onConnectionChange(PeerConnection.PeerConnectionState newState) {
+                Log.i("PeerConnection: onConnectionChange: newState:" + newState);
+            }
+
+            @Override
+            public void onSelectedCandidatePairChanged(CandidatePairChangeEvent event) {
+                Log.i("PeerConnection: onSelectedCandidatePairChanged: local:" + event.local + " remote:" + event.remote + " reason:" + event.reason);
+            }
+
+            @Override
+            public void onAddTrack(RtpReceiver receiver, MediaStream[] mediaStreams) {
+                receiver.SetObserver(new RtpReceiver.Observer() {
+                    @Override
+                    public void onFirstPacketReceived(MediaStreamTrack.MediaType mediaType) {
+                        Log.i("PeerConnection: OnFirestPacketReceived: RtpReceiver: " + receiver.id() + " mediaType:" + mediaType);
+                    }
+                });
+                Log.i("PeerConnection: onAddTrack: RtpReceiver: " + receiver.id() + " mediaStreams:" + mediaStreams.toString());
+            }
+
+            @Override
+            public void onRemoveTrack(RtpReceiver receiver) {
+                Log.i("PeerConnection: onAddTrack: RtpReceiver: " + receiver.id());
+            }
+
+            @Override
+            public void onTrack(RtpTransceiver transceiver) {
+                Log.i("PeerConnection: onAddTrack: RtpTransceiver: " + transceiver);
             }
         };
 
         return factory.createPeerConnection(rtcConfig, pcObserver);
+    }
+
+    public void iceConnected() {
+        this.state = State.IN_CALL;
+        initializeCallTimer();
+        notifyOnCallConnected();
+        Log.i(String.format("CallManager: ice is now connected. Took %dms", this.callStartTimestamp - this.callAnswerTimestamp));
     }
 
     private void getCallServersAndStartCall() {
@@ -982,6 +1037,14 @@ public class CallManager {
         }
     }
 
+    private void notifyOnCallConnected() {
+        synchronized (observers) {
+            for (CallObserver o : observers) {
+                o.onCallConnected(callId);
+            }
+        }
+    }
+
     private void startRingingTimeoutTimer() {
         synchronized (timer) {
             // TODO(nikola): maybe this should be always called on the executor?
@@ -1070,7 +1133,7 @@ public class CallManager {
 
     private void maybeRestartIce() {
         Log.i("CallManager.maybeRestartIce()");
-        if (state == State.IN_CALL && isInitiator && peerConnection != null) {
+        if ((state == State.IN_CALL || state == State.IN_CALL_CONNECTING) && isInitiator && peerConnection != null) {
             PeerConnection.IceConnectionState iceConnectionState = peerConnection.iceConnectionState();
             if (iceConnectionState == PeerConnection.IceConnectionState.DISCONNECTED || iceConnectionState == PeerConnection.IceConnectionState.FAILED) {
                 Log.i("CallManager: Performing ICE Restart");
@@ -1132,6 +1195,8 @@ public class CallManager {
                 return "calling-ringing";
             case State.INCOMING_RINGING:
                 return "ringing";
+            case State.IN_CALL_CONNECTING:
+                return "in-call-connecting";
             case State.IN_CALL:
                 return "in-call";
             case State.END:

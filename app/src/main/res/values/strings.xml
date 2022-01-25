@@ -849,10 +849,12 @@
     <string name="delete_account_feedback_hint">Feedback for HalloApp (Optional)</string>
     <!-- Message shown in dialog asking if user is sure they want to delete their account -->
     <string name="delete_account_confirmation_message">Are you sure that you want to delete your account? This cannot be undone</string>
-    <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="ringing">Ringing</string>
-    <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="calling">Calling</string>
+    <!-- Displayed on the call screen to show that the other side is ringing -->
+    <string name="ringing">Ringing…</string>
+    <!-- Displayed on the call screen to show that the call is connecting -->
+    <string name="connecting">Connecting…</string>
+    <!-- Displayed on the call screen to show what the call is being initiated -->
+    <string name="calling">Calling…</string>
     <!-- The title of the notificaiton for incoming calls -->
     <string name="incoming_call_notification_title">Incoming call</string>
     <!-- The call notification accept button label -->

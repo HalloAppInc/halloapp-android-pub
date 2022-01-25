@@ -15,4 +15,6 @@ public interface CallObserver {
     void onMicrophoneMute(boolean mute);
 
     void onSpeakerPhoneOn(boolean on);
+
+    void onCallConnected(String callId);
 }

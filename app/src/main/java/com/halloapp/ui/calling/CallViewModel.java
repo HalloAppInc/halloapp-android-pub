@@ -59,6 +59,10 @@ public class CallViewModel extends ViewModel implements CallObserver {
         return state.getValue() != null && state.getValue() == CallManager.State.IN_CALL;
     }
 
+    public boolean isCallConnecting() {
+        return state.getValue() != null && state.getValue() == CallManager.State.IN_CALL_CONNECTING;
+    }
+
     public boolean isRinging() {
         return state.getValue() != null && state.getValue() == CallManager.State.INCOMING_RINGING;
     }
@@ -97,7 +101,7 @@ public class CallViewModel extends ViewModel implements CallObserver {
     @Override
     public void onAnsweredCall(String callId, UserId peerUid) {
         Log.i("onAnswerCall");
-        state.postValue(CallManager.State.IN_CALL);
+        state.postValue(CallManager.State.IN_CALL_CONNECTING);
     }
 
     @Override
@@ -116,6 +120,12 @@ public class CallViewModel extends ViewModel implements CallObserver {
         isSpeakerPhoneOn.postValue(on);
     }
 
+    @Override
+    public void onCallConnected(String callId) {
+        Log.i("onCallConnected");
+        state.postValue(CallManager.State.IN_CALL);
+    }
+
     public void onIncomingCall() {
         Log.i("onIncomingCall");
         state.postValue(CallManager.State.INCOMING_RINGING);
@@ -131,7 +141,7 @@ public class CallViewModel extends ViewModel implements CallObserver {
         Log.i("CallViewModel.onAcceptCall");
         // TODO(nikola): we should include the call id here.
         if (callManager.acceptCall()) {
-            state.postValue(CallManager.State.IN_CALL);
+            state.postValue(CallManager.State.IN_CALL_CONNECTING);
         }
     }
 
