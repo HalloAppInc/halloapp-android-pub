@@ -1632,17 +1632,13 @@ public class ConnectionImpl extends Connection {
                         ContentDb contentDb = ContentDb.getInstance();
                         int count;
                         count = contentDb.getPostRerequestCount(groupId, publisherUserId, protoPost.getId());
+                        count += 1;
+                        contentDb.setPostRerequestCount(groupId, publisherUserId, protoPost.getId(), count);
                         if (senderStateIssue) {
                             Log.i("Tearing down session because of sender state issue");
                             SignalSessionManager.getInstance().tearDownSession(publisherUserId);
                         }
-                        if (count < Constants.MAX_REREQUESTS_PER_MESSAGE) {
-                            count++;
-                            contentDb.setPostRerequestCount(groupId, publisherUserId, protoPost.getId(), count);
-                            GroupFeedSessionManager.getInstance().sendPostRerequest(publisherUserId, groupId, protoPost.getId(), senderStateIssue);
-                        } else {
-                            Log.w("Aborting, reached rerequest limit for post " + protoPost.getId());
-                        }
+                        GroupFeedSessionManager.getInstance().sendPostRerequest(publisherUserId, groupId, protoPost.getId(), senderStateIssue);
                     }
                 }
             }
@@ -1719,18 +1715,15 @@ public class ConnectionImpl extends Connection {
 
                         Log.i("Rerequesting comment " + protoComment.getId());
                         ContentDb contentDb = ContentDb.getInstance();
-                        int count = contentDb.getCommentRerequestCount(groupId, publisherUserId, protoComment.getId());
+                        int count;
+                        count = contentDb.getCommentRerequestCount(groupId, publisherUserId, protoComment.getId());
+                        count += 1;
+                        contentDb.setCommentRerequestCount(groupId, publisherUserId, protoComment.getId(), count);
                         if (senderStateIssue) {
                             Log.i("Tearing down session because of sender state issue");
                             SignalSessionManager.getInstance().tearDownSession(publisherUserId);
                         }
-                        if (count < Constants.MAX_REREQUESTS_PER_MESSAGE) {
-                            count += 1;
-                            contentDb.setCommentRerequestCount(groupId, publisherUserId, protoComment.getId(), count);
-                            GroupFeedSessionManager.getInstance().sendCommentRerequest(publisherUserId, groupId, protoComment.getId(), senderStateIssue);
-                        } else {
-                            Log.w("Aborting, reached rerequest limit for comment " + protoComment.getId());
-                        }
+                        GroupFeedSessionManager.getInstance().sendCommentRerequest(publisherUserId, groupId, protoComment.getId(), senderStateIssue);
                     }
                 }
             }
