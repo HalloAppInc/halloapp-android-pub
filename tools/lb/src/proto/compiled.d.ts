@@ -6184,6 +6184,108 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a PreAnswerCall. */
+    interface IPreAnswerCall {
+
+        /** PreAnswerCall callId */
+        callId?: (string|null);
+
+        /** PreAnswerCall webrtcAnswer */
+        webrtcAnswer?: (server.IWebRtcSessionDescription|null);
+
+        /** PreAnswerCall timestampMs */
+        timestampMs?: (number|Long|null);
+    }
+
+    /** Represents a PreAnswerCall. */
+    class PreAnswerCall implements IPreAnswerCall {
+
+        /**
+         * Constructs a new PreAnswerCall.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IPreAnswerCall);
+
+        /** PreAnswerCall callId. */
+        public callId: string;
+
+        /** PreAnswerCall webrtcAnswer. */
+        public webrtcAnswer?: (server.IWebRtcSessionDescription|null);
+
+        /** PreAnswerCall timestampMs. */
+        public timestampMs: (number|Long);
+
+        /**
+         * Creates a new PreAnswerCall instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PreAnswerCall instance
+         */
+        public static create(properties?: server.IPreAnswerCall): server.PreAnswerCall;
+
+        /**
+         * Encodes the specified PreAnswerCall message. Does not implicitly {@link server.PreAnswerCall.verify|verify} messages.
+         * @param message PreAnswerCall message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IPreAnswerCall, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PreAnswerCall message, length delimited. Does not implicitly {@link server.PreAnswerCall.verify|verify} messages.
+         * @param message PreAnswerCall message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IPreAnswerCall, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PreAnswerCall message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PreAnswerCall
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.PreAnswerCall;
+
+        /**
+         * Decodes a PreAnswerCall message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PreAnswerCall
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.PreAnswerCall;
+
+        /**
+         * Verifies a PreAnswerCall message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PreAnswerCall message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PreAnswerCall
+         */
+        public static fromObject(object: { [k: string]: any }): server.PreAnswerCall;
+
+        /**
+         * Creates a plain object from a PreAnswerCall message. Also converts values to other types if specified.
+         * @param message PreAnswerCall
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.PreAnswerCall, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PreAnswerCall to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an AnswerCall. */
     interface IAnswerCall {
 
@@ -7188,6 +7290,9 @@ export namespace server {
         /** Msg groupFeedHistory */
         groupFeedHistory?: (server.IGroupFeedHistory|null);
 
+        /** Msg preAnswerCall */
+        preAnswerCall?: (server.IPreAnswerCall|null);
+
         /** Msg retryCount */
         retryCount?: (number|null);
 
@@ -7324,6 +7429,9 @@ export namespace server {
         /** Msg groupFeedHistory. */
         public groupFeedHistory?: (server.IGroupFeedHistory|null);
 
+        /** Msg preAnswerCall. */
+        public preAnswerCall?: (server.IPreAnswerCall|null);
+
         /** Msg retryCount. */
         public retryCount: number;
 
@@ -7331,7 +7439,7 @@ export namespace server {
         public rerequestCount: number;
 
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall");
 
         /**
          * Creates a new Msg instance using the specified properties.

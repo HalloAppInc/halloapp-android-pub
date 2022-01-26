@@ -186,6 +186,7 @@ public  final class Msg extends
     ICE_RESTART_OFFER(40),
     ICE_RESTART_ANSWER(41),
     GROUP_FEED_HISTORY(42),
+    PRE_ANSWER_CALL(43),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -237,6 +238,7 @@ public  final class Msg extends
         case 40: return ICE_RESTART_OFFER;
         case 41: return ICE_RESTART_ANSWER;
         case 42: return GROUP_FEED_HISTORY;
+        case 43: return PRE_ANSWER_CALL;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2234,6 +2236,56 @@ public  final class Msg extends
    */
   private void clearGroupFeedHistory() {
     if (payloadCase_ == 42) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int PRE_ANSWER_CALL_FIELD_NUMBER = 43;
+  /**
+   * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
+   */
+  @java.lang.Override
+  public boolean hasPreAnswerCall() {
+    return payloadCase_ == 43;
+  }
+  /**
+   * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.PreAnswerCall getPreAnswerCall() {
+    if (payloadCase_ == 43) {
+       return (com.halloapp.proto.server.PreAnswerCall) payload_;
+    }
+    return com.halloapp.proto.server.PreAnswerCall.getDefaultInstance();
+  }
+  /**
+   * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
+   */
+  private void setPreAnswerCall(com.halloapp.proto.server.PreAnswerCall value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 43;
+  }
+  /**
+   * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
+   */
+  private void mergePreAnswerCall(com.halloapp.proto.server.PreAnswerCall value) {
+    value.getClass();
+  if (payloadCase_ == 43 &&
+        payload_ != com.halloapp.proto.server.PreAnswerCall.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.PreAnswerCall.newBuilder((com.halloapp.proto.server.PreAnswerCall) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 43;
+  }
+  /**
+   * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
+   */
+  private void clearPreAnswerCall() {
+    if (payloadCase_ == 43) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -4326,6 +4378,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
+     */
+    @java.lang.Override
+    public boolean hasPreAnswerCall() {
+      return instance.hasPreAnswerCall();
+    }
+    /**
+     * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.PreAnswerCall getPreAnswerCall() {
+      return instance.getPreAnswerCall();
+    }
+    /**
+     * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
+     */
+    public Builder setPreAnswerCall(com.halloapp.proto.server.PreAnswerCall value) {
+      copyOnWrite();
+      instance.setPreAnswerCall(value);
+      return this;
+    }
+    /**
+     * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
+     */
+    public Builder setPreAnswerCall(
+        com.halloapp.proto.server.PreAnswerCall.Builder builderForValue) {
+      copyOnWrite();
+      instance.setPreAnswerCall(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
+     */
+    public Builder mergePreAnswerCall(com.halloapp.proto.server.PreAnswerCall value) {
+      copyOnWrite();
+      instance.mergePreAnswerCall(value);
+      return this;
+    }
+    /**
+     * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
+     */
+    public Builder clearPreAnswerCall() {
+      copyOnWrite();
+      instance.clearPreAnswerCall();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -4441,15 +4541,16 @@ public  final class Msg extends
             com.halloapp.proto.server.IceRestartOffer.class,
             com.halloapp.proto.server.IceRestartAnswer.class,
             com.halloapp.proto.server.GroupFeedHistory.class,
+            com.halloapp.proto.server.PreAnswerCall.class,
           };
           java.lang.String info =
-              "\u0000*\u0001\u0000\u0001**\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
+              "\u0000+\u0001\u0000\u0001++\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
               "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
               "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
               "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
               "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
               " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000" +
-              "*<\u0000";
+              "*<\u0000+<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

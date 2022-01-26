@@ -16139,6 +16139,257 @@ $root.server = (function() {
         return CallRinging;
     })();
 
+    server.PreAnswerCall = (function() {
+
+        /**
+         * Properties of a PreAnswerCall.
+         * @memberof server
+         * @interface IPreAnswerCall
+         * @property {string|null} [callId] PreAnswerCall callId
+         * @property {server.IWebRtcSessionDescription|null} [webrtcAnswer] PreAnswerCall webrtcAnswer
+         * @property {number|Long|null} [timestampMs] PreAnswerCall timestampMs
+         */
+
+        /**
+         * Constructs a new PreAnswerCall.
+         * @memberof server
+         * @classdesc Represents a PreAnswerCall.
+         * @implements IPreAnswerCall
+         * @constructor
+         * @param {server.IPreAnswerCall=} [properties] Properties to set
+         */
+        function PreAnswerCall(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PreAnswerCall callId.
+         * @member {string} callId
+         * @memberof server.PreAnswerCall
+         * @instance
+         */
+        PreAnswerCall.prototype.callId = "";
+
+        /**
+         * PreAnswerCall webrtcAnswer.
+         * @member {server.IWebRtcSessionDescription|null|undefined} webrtcAnswer
+         * @memberof server.PreAnswerCall
+         * @instance
+         */
+        PreAnswerCall.prototype.webrtcAnswer = null;
+
+        /**
+         * PreAnswerCall timestampMs.
+         * @member {number|Long} timestampMs
+         * @memberof server.PreAnswerCall
+         * @instance
+         */
+        PreAnswerCall.prototype.timestampMs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new PreAnswerCall instance using the specified properties.
+         * @function create
+         * @memberof server.PreAnswerCall
+         * @static
+         * @param {server.IPreAnswerCall=} [properties] Properties to set
+         * @returns {server.PreAnswerCall} PreAnswerCall instance
+         */
+        PreAnswerCall.create = function create(properties) {
+            return new PreAnswerCall(properties);
+        };
+
+        /**
+         * Encodes the specified PreAnswerCall message. Does not implicitly {@link server.PreAnswerCall.verify|verify} messages.
+         * @function encode
+         * @memberof server.PreAnswerCall
+         * @static
+         * @param {server.IPreAnswerCall} message PreAnswerCall message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PreAnswerCall.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.callId != null && Object.hasOwnProperty.call(message, "callId"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.callId);
+            if (message.webrtcAnswer != null && Object.hasOwnProperty.call(message, "webrtcAnswer"))
+                $root.server.WebRtcSessionDescription.encode(message.webrtcAnswer, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            if (message.timestampMs != null && Object.hasOwnProperty.call(message, "timestampMs"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.timestampMs);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified PreAnswerCall message, length delimited. Does not implicitly {@link server.PreAnswerCall.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.PreAnswerCall
+         * @static
+         * @param {server.IPreAnswerCall} message PreAnswerCall message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PreAnswerCall.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a PreAnswerCall message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.PreAnswerCall
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.PreAnswerCall} PreAnswerCall
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PreAnswerCall.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.PreAnswerCall();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.callId = reader.string();
+                    break;
+                case 2:
+                    message.webrtcAnswer = $root.server.WebRtcSessionDescription.decode(reader, reader.uint32());
+                    break;
+                case 3:
+                    message.timestampMs = reader.int64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a PreAnswerCall message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.PreAnswerCall
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.PreAnswerCall} PreAnswerCall
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PreAnswerCall.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a PreAnswerCall message.
+         * @function verify
+         * @memberof server.PreAnswerCall
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        PreAnswerCall.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.callId != null && message.hasOwnProperty("callId"))
+                if (!$util.isString(message.callId))
+                    return "callId: string expected";
+            if (message.webrtcAnswer != null && message.hasOwnProperty("webrtcAnswer")) {
+                var error = $root.server.WebRtcSessionDescription.verify(message.webrtcAnswer);
+                if (error)
+                    return "webrtcAnswer." + error;
+            }
+            if (message.timestampMs != null && message.hasOwnProperty("timestampMs"))
+                if (!$util.isInteger(message.timestampMs) && !(message.timestampMs && $util.isInteger(message.timestampMs.low) && $util.isInteger(message.timestampMs.high)))
+                    return "timestampMs: integer|Long expected";
+            return null;
+        };
+
+        /**
+         * Creates a PreAnswerCall message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.PreAnswerCall
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.PreAnswerCall} PreAnswerCall
+         */
+        PreAnswerCall.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.PreAnswerCall)
+                return object;
+            var message = new $root.server.PreAnswerCall();
+            if (object.callId != null)
+                message.callId = String(object.callId);
+            if (object.webrtcAnswer != null) {
+                if (typeof object.webrtcAnswer !== "object")
+                    throw TypeError(".server.PreAnswerCall.webrtcAnswer: object expected");
+                message.webrtcAnswer = $root.server.WebRtcSessionDescription.fromObject(object.webrtcAnswer);
+            }
+            if (object.timestampMs != null)
+                if ($util.Long)
+                    (message.timestampMs = $util.Long.fromValue(object.timestampMs)).unsigned = false;
+                else if (typeof object.timestampMs === "string")
+                    message.timestampMs = parseInt(object.timestampMs, 10);
+                else if (typeof object.timestampMs === "number")
+                    message.timestampMs = object.timestampMs;
+                else if (typeof object.timestampMs === "object")
+                    message.timestampMs = new $util.LongBits(object.timestampMs.low >>> 0, object.timestampMs.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PreAnswerCall message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.PreAnswerCall
+         * @static
+         * @param {server.PreAnswerCall} message PreAnswerCall
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PreAnswerCall.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.callId = "";
+                object.webrtcAnswer = null;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.timestampMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.timestampMs = options.longs === String ? "0" : 0;
+            }
+            if (message.callId != null && message.hasOwnProperty("callId"))
+                object.callId = message.callId;
+            if (message.webrtcAnswer != null && message.hasOwnProperty("webrtcAnswer"))
+                object.webrtcAnswer = $root.server.WebRtcSessionDescription.toObject(message.webrtcAnswer, options);
+            if (message.timestampMs != null && message.hasOwnProperty("timestampMs"))
+                if (typeof message.timestampMs === "number")
+                    object.timestampMs = options.longs === String ? String(message.timestampMs) : message.timestampMs;
+                else
+                    object.timestampMs = options.longs === String ? $util.Long.prototype.toString.call(message.timestampMs) : options.longs === Number ? new $util.LongBits(message.timestampMs.low >>> 0, message.timestampMs.high >>> 0).toNumber() : message.timestampMs;
+            return object;
+        };
+
+        /**
+         * Converts this PreAnswerCall to JSON.
+         * @function toJSON
+         * @memberof server.PreAnswerCall
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PreAnswerCall.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return PreAnswerCall;
+    })();
+
     server.AnswerCall = (function() {
 
         /**
@@ -19106,6 +19357,7 @@ $root.server = (function() {
          * @property {server.IIceRestartOffer|null} [iceRestartOffer] Msg iceRestartOffer
          * @property {server.IIceRestartAnswer|null} [iceRestartAnswer] Msg iceRestartAnswer
          * @property {server.IGroupFeedHistory|null} [groupFeedHistory] Msg groupFeedHistory
+         * @property {server.IPreAnswerCall|null} [preAnswerCall] Msg preAnswerCall
          * @property {number|null} [retryCount] Msg retryCount
          * @property {number|null} [rerequestCount] Msg rerequestCount
          */
@@ -19446,6 +19698,14 @@ $root.server = (function() {
         Msg.prototype.groupFeedHistory = null;
 
         /**
+         * Msg preAnswerCall.
+         * @member {server.IPreAnswerCall|null|undefined} preAnswerCall
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.preAnswerCall = null;
+
+        /**
          * Msg retryCount.
          * @member {number} retryCount
          * @memberof server.Msg
@@ -19466,12 +19726,12 @@ $root.server = (function() {
 
         /**
          * Msg payload.
-         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|undefined} payload
+         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|undefined} payload
          * @memberof server.Msg
          * @instance
          */
         Object.defineProperty(Msg.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory"]),
+            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -19583,6 +19843,8 @@ $root.server = (function() {
                 $root.server.IceRestartAnswer.encode(message.iceRestartAnswer, writer.uint32(/* id 41, wireType 2 =*/330).fork()).ldelim();
             if (message.groupFeedHistory != null && Object.hasOwnProperty.call(message, "groupFeedHistory"))
                 $root.server.GroupFeedHistory.encode(message.groupFeedHistory, writer.uint32(/* id 42, wireType 2 =*/338).fork()).ldelim();
+            if (message.preAnswerCall != null && Object.hasOwnProperty.call(message, "preAnswerCall"))
+                $root.server.PreAnswerCall.encode(message.preAnswerCall, writer.uint32(/* id 43, wireType 2 =*/346).fork()).ldelim();
             return writer;
         };
 
@@ -19736,6 +19998,9 @@ $root.server = (function() {
                     break;
                 case 42:
                     message.groupFeedHistory = $root.server.GroupFeedHistory.decode(reader, reader.uint32());
+                    break;
+                case 43:
+                    message.preAnswerCall = $root.server.PreAnswerCall.decode(reader, reader.uint32());
                     break;
                 case 21:
                     message.retryCount = reader.int32();
@@ -20158,6 +20423,16 @@ $root.server = (function() {
                         return "groupFeedHistory." + error;
                 }
             }
+            if (message.preAnswerCall != null && message.hasOwnProperty("preAnswerCall")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.PreAnswerCall.verify(message.preAnswerCall);
+                    if (error)
+                        return "preAnswerCall." + error;
+                }
+            }
             if (message.retryCount != null && message.hasOwnProperty("retryCount"))
                 if (!$util.isInteger(message.retryCount))
                     return "retryCount: integer expected";
@@ -20405,6 +20680,11 @@ $root.server = (function() {
                     throw TypeError(".server.Msg.groupFeedHistory: object expected");
                 message.groupFeedHistory = $root.server.GroupFeedHistory.fromObject(object.groupFeedHistory);
             }
+            if (object.preAnswerCall != null) {
+                if (typeof object.preAnswerCall !== "object")
+                    throw TypeError(".server.Msg.preAnswerCall: object expected");
+                message.preAnswerCall = $root.server.PreAnswerCall.fromObject(object.preAnswerCall);
+            }
             if (object.retryCount != null)
                 message.retryCount = object.retryCount | 0;
             if (object.rerequestCount != null)
@@ -20638,6 +20918,11 @@ $root.server = (function() {
                 object.groupFeedHistory = $root.server.GroupFeedHistory.toObject(message.groupFeedHistory, options);
                 if (options.oneofs)
                     object.payload = "groupFeedHistory";
+            }
+            if (message.preAnswerCall != null && message.hasOwnProperty("preAnswerCall")) {
+                object.preAnswerCall = $root.server.PreAnswerCall.toObject(message.preAnswerCall, options);
+                if (options.oneofs)
+                    object.payload = "preAnswerCall";
             }
             return object;
         };

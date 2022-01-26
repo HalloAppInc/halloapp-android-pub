@@ -455,6 +455,17 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.GroupFeedHistory getGroupFeedHistory();
 
   /**
+   * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
+   * @return Whether the preAnswerCall field is set.
+   */
+  boolean hasPreAnswerCall();
+  /**
+   * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
+   * @return The preAnswerCall.
+   */
+  com.halloapp.proto.server.PreAnswerCall getPreAnswerCall();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */
