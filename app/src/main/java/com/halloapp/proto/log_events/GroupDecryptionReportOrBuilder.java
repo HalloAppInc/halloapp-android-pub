@@ -119,4 +119,15 @@ public interface GroupDecryptionReportOrBuilder extends
    */
   com.google.protobuf.ByteString
       getSenderVersionBytes();
+
+  /**
+   * <code>.server.GroupDecryptionReport.Schedule schedule = 11;</code>
+   * @return The enum numeric value on the wire for schedule.
+   */
+  int getScheduleValue();
+  /**
+   * <code>.server.GroupDecryptionReport.Schedule schedule = 11;</code>
+   * @return The schedule.
+   */
+  com.halloapp.proto.log_events.GroupDecryptionReport.Schedule getSchedule();
 }

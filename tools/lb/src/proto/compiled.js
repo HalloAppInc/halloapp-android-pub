@@ -17200,6 +17200,310 @@ $root.server = (function() {
         return IceRestartAnswer;
     })();
 
+    server.ExternalSharePost = (function() {
+
+        /**
+         * Properties of an ExternalSharePost.
+         * @memberof server
+         * @interface IExternalSharePost
+         * @property {server.ExternalSharePost.Action|null} [action] ExternalSharePost action
+         * @property {string|null} [blobId] ExternalSharePost blobId
+         * @property {Uint8Array|null} [blob] ExternalSharePost blob
+         * @property {number|Long|null} [expiresInSeconds] ExternalSharePost expiresInSeconds
+         */
+
+        /**
+         * Constructs a new ExternalSharePost.
+         * @memberof server
+         * @classdesc Represents an ExternalSharePost.
+         * @implements IExternalSharePost
+         * @constructor
+         * @param {server.IExternalSharePost=} [properties] Properties to set
+         */
+        function ExternalSharePost(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ExternalSharePost action.
+         * @member {server.ExternalSharePost.Action} action
+         * @memberof server.ExternalSharePost
+         * @instance
+         */
+        ExternalSharePost.prototype.action = 0;
+
+        /**
+         * ExternalSharePost blobId.
+         * @member {string} blobId
+         * @memberof server.ExternalSharePost
+         * @instance
+         */
+        ExternalSharePost.prototype.blobId = "";
+
+        /**
+         * ExternalSharePost blob.
+         * @member {Uint8Array} blob
+         * @memberof server.ExternalSharePost
+         * @instance
+         */
+        ExternalSharePost.prototype.blob = $util.newBuffer([]);
+
+        /**
+         * ExternalSharePost expiresInSeconds.
+         * @member {number|Long} expiresInSeconds
+         * @memberof server.ExternalSharePost
+         * @instance
+         */
+        ExternalSharePost.prototype.expiresInSeconds = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new ExternalSharePost instance using the specified properties.
+         * @function create
+         * @memberof server.ExternalSharePost
+         * @static
+         * @param {server.IExternalSharePost=} [properties] Properties to set
+         * @returns {server.ExternalSharePost} ExternalSharePost instance
+         */
+        ExternalSharePost.create = function create(properties) {
+            return new ExternalSharePost(properties);
+        };
+
+        /**
+         * Encodes the specified ExternalSharePost message. Does not implicitly {@link server.ExternalSharePost.verify|verify} messages.
+         * @function encode
+         * @memberof server.ExternalSharePost
+         * @static
+         * @param {server.IExternalSharePost} message ExternalSharePost message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ExternalSharePost.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.action);
+            if (message.blobId != null && Object.hasOwnProperty.call(message, "blobId"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.blobId);
+            if (message.blob != null && Object.hasOwnProperty.call(message, "blob"))
+                writer.uint32(/* id 3, wireType 2 =*/26).bytes(message.blob);
+            if (message.expiresInSeconds != null && Object.hasOwnProperty.call(message, "expiresInSeconds"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.expiresInSeconds);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ExternalSharePost message, length delimited. Does not implicitly {@link server.ExternalSharePost.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.ExternalSharePost
+         * @static
+         * @param {server.IExternalSharePost} message ExternalSharePost message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ExternalSharePost.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an ExternalSharePost message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.ExternalSharePost
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.ExternalSharePost} ExternalSharePost
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ExternalSharePost.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.ExternalSharePost();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.action = reader.int32();
+                    break;
+                case 2:
+                    message.blobId = reader.string();
+                    break;
+                case 3:
+                    message.blob = reader.bytes();
+                    break;
+                case 4:
+                    message.expiresInSeconds = reader.int64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an ExternalSharePost message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.ExternalSharePost
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.ExternalSharePost} ExternalSharePost
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ExternalSharePost.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an ExternalSharePost message.
+         * @function verify
+         * @memberof server.ExternalSharePost
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ExternalSharePost.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.action != null && message.hasOwnProperty("action"))
+                switch (message.action) {
+                default:
+                    return "action: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.blobId != null && message.hasOwnProperty("blobId"))
+                if (!$util.isString(message.blobId))
+                    return "blobId: string expected";
+            if (message.blob != null && message.hasOwnProperty("blob"))
+                if (!(message.blob && typeof message.blob.length === "number" || $util.isString(message.blob)))
+                    return "blob: buffer expected";
+            if (message.expiresInSeconds != null && message.hasOwnProperty("expiresInSeconds"))
+                if (!$util.isInteger(message.expiresInSeconds) && !(message.expiresInSeconds && $util.isInteger(message.expiresInSeconds.low) && $util.isInteger(message.expiresInSeconds.high)))
+                    return "expiresInSeconds: integer|Long expected";
+            return null;
+        };
+
+        /**
+         * Creates an ExternalSharePost message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.ExternalSharePost
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.ExternalSharePost} ExternalSharePost
+         */
+        ExternalSharePost.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.ExternalSharePost)
+                return object;
+            var message = new $root.server.ExternalSharePost();
+            switch (object.action) {
+            case "STORE":
+            case 0:
+                message.action = 0;
+                break;
+            case "DELETE":
+            case 1:
+                message.action = 1;
+                break;
+            }
+            if (object.blobId != null)
+                message.blobId = String(object.blobId);
+            if (object.blob != null)
+                if (typeof object.blob === "string")
+                    $util.base64.decode(object.blob, message.blob = $util.newBuffer($util.base64.length(object.blob)), 0);
+                else if (object.blob.length)
+                    message.blob = object.blob;
+            if (object.expiresInSeconds != null)
+                if ($util.Long)
+                    (message.expiresInSeconds = $util.Long.fromValue(object.expiresInSeconds)).unsigned = false;
+                else if (typeof object.expiresInSeconds === "string")
+                    message.expiresInSeconds = parseInt(object.expiresInSeconds, 10);
+                else if (typeof object.expiresInSeconds === "number")
+                    message.expiresInSeconds = object.expiresInSeconds;
+                else if (typeof object.expiresInSeconds === "object")
+                    message.expiresInSeconds = new $util.LongBits(object.expiresInSeconds.low >>> 0, object.expiresInSeconds.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an ExternalSharePost message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.ExternalSharePost
+         * @static
+         * @param {server.ExternalSharePost} message ExternalSharePost
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ExternalSharePost.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.action = options.enums === String ? "STORE" : 0;
+                object.blobId = "";
+                if (options.bytes === String)
+                    object.blob = "";
+                else {
+                    object.blob = [];
+                    if (options.bytes !== Array)
+                        object.blob = $util.newBuffer(object.blob);
+                }
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.expiresInSeconds = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.expiresInSeconds = options.longs === String ? "0" : 0;
+            }
+            if (message.action != null && message.hasOwnProperty("action"))
+                object.action = options.enums === String ? $root.server.ExternalSharePost.Action[message.action] : message.action;
+            if (message.blobId != null && message.hasOwnProperty("blobId"))
+                object.blobId = message.blobId;
+            if (message.blob != null && message.hasOwnProperty("blob"))
+                object.blob = options.bytes === String ? $util.base64.encode(message.blob, 0, message.blob.length) : options.bytes === Array ? Array.prototype.slice.call(message.blob) : message.blob;
+            if (message.expiresInSeconds != null && message.hasOwnProperty("expiresInSeconds"))
+                if (typeof message.expiresInSeconds === "number")
+                    object.expiresInSeconds = options.longs === String ? String(message.expiresInSeconds) : message.expiresInSeconds;
+                else
+                    object.expiresInSeconds = options.longs === String ? $util.Long.prototype.toString.call(message.expiresInSeconds) : options.longs === Number ? new $util.LongBits(message.expiresInSeconds.low >>> 0, message.expiresInSeconds.high >>> 0).toNumber() : message.expiresInSeconds;
+            return object;
+        };
+
+        /**
+         * Converts this ExternalSharePost to JSON.
+         * @function toJSON
+         * @memberof server.ExternalSharePost
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ExternalSharePost.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Action enum.
+         * @name server.ExternalSharePost.Action
+         * @enum {number}
+         * @property {number} STORE=0 STORE value
+         * @property {number} DELETE=1 DELETE value
+         */
+        ExternalSharePost.Action = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "STORE"] = 0;
+            values[valuesById[1] = "DELETE"] = 1;
+            return values;
+        })();
+
+        return ExternalSharePost;
+    })();
+
     server.Iq = (function() {
 
         /**
@@ -17245,6 +17549,7 @@ $root.server = (function() {
          * @property {server.IStartCall|null} [startCall] Iq startCall
          * @property {server.IStartCallResult|null} [startCallResult] Iq startCallResult
          * @property {server.ITruncWhisperKeysCollection|null} [truncWhisperKeysCollection] Iq truncWhisperKeysCollection
+         * @property {server.IExternalSharePost|null} [externalSharePost] Iq externalSharePost
          */
 
         /**
@@ -17574,17 +17879,25 @@ $root.server = (function() {
          */
         Iq.prototype.truncWhisperKeysCollection = null;
 
+        /**
+         * Iq externalSharePost.
+         * @member {server.IExternalSharePost|null|undefined} externalSharePost
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.externalSharePost = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * Iq payload.
-         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|undefined} payload
+         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|undefined} payload
          * @memberof server.Iq
          * @instance
          */
         Object.defineProperty(Iq.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection"]),
+            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -17690,6 +18003,8 @@ $root.server = (function() {
                 $root.server.StartCallResult.encode(message.startCallResult, writer.uint32(/* id 41, wireType 2 =*/330).fork()).ldelim();
             if (message.truncWhisperKeysCollection != null && Object.hasOwnProperty.call(message, "truncWhisperKeysCollection"))
                 $root.server.TruncWhisperKeysCollection.encode(message.truncWhisperKeysCollection, writer.uint32(/* id 42, wireType 2 =*/338).fork()).ldelim();
+            if (message.externalSharePost != null && Object.hasOwnProperty.call(message, "externalSharePost"))
+                $root.server.ExternalSharePost.encode(message.externalSharePost, writer.uint32(/* id 43, wireType 2 =*/346).fork()).ldelim();
             return writer;
         };
 
@@ -17840,6 +18155,9 @@ $root.server = (function() {
                     break;
                 case 42:
                     message.truncWhisperKeysCollection = $root.server.TruncWhisperKeysCollection.decode(reader, reader.uint32());
+                    break;
+                case 43:
+                    message.externalSharePost = $root.server.ExternalSharePost.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -18258,6 +18576,16 @@ $root.server = (function() {
                         return "truncWhisperKeysCollection." + error;
                 }
             }
+            if (message.externalSharePost != null && message.hasOwnProperty("externalSharePost")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.ExternalSharePost.verify(message.externalSharePost);
+                    if (error)
+                        return "externalSharePost." + error;
+                }
+            }
             return null;
         };
 
@@ -18478,6 +18806,11 @@ $root.server = (function() {
                     throw TypeError(".server.Iq.truncWhisperKeysCollection: object expected");
                 message.truncWhisperKeysCollection = $root.server.TruncWhisperKeysCollection.fromObject(object.truncWhisperKeysCollection);
             }
+            if (object.externalSharePost != null) {
+                if (typeof object.externalSharePost !== "object")
+                    throw TypeError(".server.Iq.externalSharePost: object expected");
+                message.externalSharePost = $root.server.ExternalSharePost.fromObject(object.externalSharePost);
+            }
             return message;
         };
 
@@ -18686,6 +19019,11 @@ $root.server = (function() {
                 object.truncWhisperKeysCollection = $root.server.TruncWhisperKeysCollection.toObject(message.truncWhisperKeysCollection, options);
                 if (options.oneofs)
                     object.payload = "truncWhisperKeysCollection";
+            }
+            if (message.externalSharePost != null && message.hasOwnProperty("externalSharePost")) {
+                object.externalSharePost = $root.server.ExternalSharePost.toObject(message.externalSharePost, options);
+                if (options.oneofs)
+                    object.payload = "externalSharePost";
             }
             return object;
         };
@@ -36090,6 +36428,7 @@ $root.server = (function() {
          * @property {number|null} [timeTakenS] GroupDecryptionReport timeTakenS
          * @property {server.Platform|null} [senderPlatform] GroupDecryptionReport senderPlatform
          * @property {string|null} [senderVersion] GroupDecryptionReport senderVersion
+         * @property {server.GroupDecryptionReport.Schedule|null} [schedule] GroupDecryptionReport schedule
          */
 
         /**
@@ -36188,6 +36527,14 @@ $root.server = (function() {
         GroupDecryptionReport.prototype.senderVersion = "";
 
         /**
+         * GroupDecryptionReport schedule.
+         * @member {server.GroupDecryptionReport.Schedule} schedule
+         * @memberof server.GroupDecryptionReport
+         * @instance
+         */
+        GroupDecryptionReport.prototype.schedule = 0;
+
+        /**
          * Creates a new GroupDecryptionReport instance using the specified properties.
          * @function create
          * @memberof server.GroupDecryptionReport
@@ -36231,6 +36578,8 @@ $root.server = (function() {
                 writer.uint32(/* id 9, wireType 0 =*/72).int32(message.senderPlatform);
             if (message.senderVersion != null && Object.hasOwnProperty.call(message, "senderVersion"))
                 writer.uint32(/* id 10, wireType 2 =*/82).string(message.senderVersion);
+            if (message.schedule != null && Object.hasOwnProperty.call(message, "schedule"))
+                writer.uint32(/* id 11, wireType 0 =*/88).int32(message.schedule);
             return writer;
         };
 
@@ -36295,6 +36644,9 @@ $root.server = (function() {
                 case 10:
                     message.senderVersion = reader.string();
                     break;
+                case 11:
+                    message.schedule = reader.int32();
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -36355,6 +36707,7 @@ $root.server = (function() {
                 case 0:
                 case 1:
                 case 2:
+                case 3:
                     break;
                 }
             if (message.originalVersion != null && message.hasOwnProperty("originalVersion"))
@@ -36378,6 +36731,14 @@ $root.server = (function() {
             if (message.senderVersion != null && message.hasOwnProperty("senderVersion"))
                 if (!$util.isString(message.senderVersion))
                     return "senderVersion: string expected";
+            if (message.schedule != null && message.hasOwnProperty("schedule"))
+                switch (message.schedule) {
+                default:
+                    return "schedule: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
             return null;
         };
 
@@ -36426,6 +36787,10 @@ $root.server = (function() {
             case 2:
                 message.itemType = 2;
                 break;
+            case "HISTORY_RESEND":
+            case 3:
+                message.itemType = 3;
+                break;
             }
             if (object.originalVersion != null)
                 message.originalVersion = String(object.originalVersion);
@@ -36449,6 +36814,16 @@ $root.server = (function() {
             }
             if (object.senderVersion != null)
                 message.senderVersion = String(object.senderVersion);
+            switch (object.schedule) {
+            case "DAILY":
+            case 0:
+                message.schedule = 0;
+                break;
+            case "RESULT_BASED":
+            case 1:
+                message.schedule = 1;
+                break;
+            }
             return message;
         };
 
@@ -36476,6 +36851,7 @@ $root.server = (function() {
                 object.timeTakenS = 0;
                 object.senderPlatform = options.enums === String ? "UNKNOWN" : 0;
                 object.senderVersion = "";
+                object.schedule = options.enums === String ? "DAILY" : 0;
             }
             if (message.result != null && message.hasOwnProperty("result"))
                 object.result = options.enums === String ? $root.server.GroupDecryptionReport.Status[message.result] : message.result;
@@ -36497,6 +36873,8 @@ $root.server = (function() {
                 object.senderPlatform = options.enums === String ? $root.server.Platform[message.senderPlatform] : message.senderPlatform;
             if (message.senderVersion != null && message.hasOwnProperty("senderVersion"))
                 object.senderVersion = message.senderVersion;
+            if (message.schedule != null && message.hasOwnProperty("schedule"))
+                object.schedule = options.enums === String ? $root.server.GroupDecryptionReport.Schedule[message.schedule] : message.schedule;
             return object;
         };
 
@@ -36534,12 +36912,28 @@ $root.server = (function() {
          * @property {number} UNKNOWN_TYPE=0 UNKNOWN_TYPE value
          * @property {number} POST=1 POST value
          * @property {number} COMMENT=2 COMMENT value
+         * @property {number} HISTORY_RESEND=3 HISTORY_RESEND value
          */
         GroupDecryptionReport.ItemType = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "UNKNOWN_TYPE"] = 0;
             values[valuesById[1] = "POST"] = 1;
             values[valuesById[2] = "COMMENT"] = 2;
+            values[valuesById[3] = "HISTORY_RESEND"] = 3;
+            return values;
+        })();
+
+        /**
+         * Schedule enum.
+         * @name server.GroupDecryptionReport.Schedule
+         * @enum {number}
+         * @property {number} DAILY=0 DAILY value
+         * @property {number} RESULT_BASED=1 RESULT_BASED value
+         */
+        GroupDecryptionReport.Schedule = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "DAILY"] = 0;
+            values[valuesById[1] = "RESULT_BASED"] = 1;
             return values;
         })();
 

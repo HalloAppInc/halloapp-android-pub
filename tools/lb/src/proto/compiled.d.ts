@@ -6610,6 +6610,123 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of an ExternalSharePost. */
+    interface IExternalSharePost {
+
+        /** ExternalSharePost action */
+        action?: (server.ExternalSharePost.Action|null);
+
+        /** ExternalSharePost blobId */
+        blobId?: (string|null);
+
+        /** ExternalSharePost blob */
+        blob?: (Uint8Array|null);
+
+        /** ExternalSharePost expiresInSeconds */
+        expiresInSeconds?: (number|Long|null);
+    }
+
+    /** Represents an ExternalSharePost. */
+    class ExternalSharePost implements IExternalSharePost {
+
+        /**
+         * Constructs a new ExternalSharePost.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IExternalSharePost);
+
+        /** ExternalSharePost action. */
+        public action: server.ExternalSharePost.Action;
+
+        /** ExternalSharePost blobId. */
+        public blobId: string;
+
+        /** ExternalSharePost blob. */
+        public blob: Uint8Array;
+
+        /** ExternalSharePost expiresInSeconds. */
+        public expiresInSeconds: (number|Long);
+
+        /**
+         * Creates a new ExternalSharePost instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ExternalSharePost instance
+         */
+        public static create(properties?: server.IExternalSharePost): server.ExternalSharePost;
+
+        /**
+         * Encodes the specified ExternalSharePost message. Does not implicitly {@link server.ExternalSharePost.verify|verify} messages.
+         * @param message ExternalSharePost message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IExternalSharePost, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ExternalSharePost message, length delimited. Does not implicitly {@link server.ExternalSharePost.verify|verify} messages.
+         * @param message ExternalSharePost message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IExternalSharePost, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ExternalSharePost message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ExternalSharePost
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.ExternalSharePost;
+
+        /**
+         * Decodes an ExternalSharePost message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ExternalSharePost
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.ExternalSharePost;
+
+        /**
+         * Verifies an ExternalSharePost message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ExternalSharePost message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ExternalSharePost
+         */
+        public static fromObject(object: { [k: string]: any }): server.ExternalSharePost;
+
+        /**
+         * Creates a plain object from an ExternalSharePost message. Also converts values to other types if specified.
+         * @param message ExternalSharePost
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.ExternalSharePost, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ExternalSharePost to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace ExternalSharePost {
+
+        /** Action enum. */
+        enum Action {
+            STORE = 0,
+            DELETE = 1
+        }
+    }
+
     /** Properties of an Iq. */
     interface IIq {
 
@@ -6729,6 +6846,9 @@ export namespace server {
 
         /** Iq truncWhisperKeysCollection */
         truncWhisperKeysCollection?: (server.ITruncWhisperKeysCollection|null);
+
+        /** Iq externalSharePost */
+        externalSharePost?: (server.IExternalSharePost|null);
     }
 
     /** Represents an Iq. */
@@ -6857,8 +6977,11 @@ export namespace server {
         /** Iq truncWhisperKeysCollection. */
         public truncWhisperKeysCollection?: (server.ITruncWhisperKeysCollection|null);
 
+        /** Iq externalSharePost. */
+        public externalSharePost?: (server.IExternalSharePost|null);
+
         /** Iq payload. */
-        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection");
+        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost");
 
         /**
          * Creates a new Iq instance using the specified properties.
@@ -13390,6 +13513,9 @@ export namespace server {
 
         /** GroupDecryptionReport senderVersion */
         senderVersion?: (string|null);
+
+        /** GroupDecryptionReport schedule */
+        schedule?: (server.GroupDecryptionReport.Schedule|null);
     }
 
     /** Represents a GroupDecryptionReport. */
@@ -13430,6 +13556,9 @@ export namespace server {
 
         /** GroupDecryptionReport senderVersion. */
         public senderVersion: string;
+
+        /** GroupDecryptionReport schedule. */
+        public schedule: server.GroupDecryptionReport.Schedule;
 
         /**
          * Creates a new GroupDecryptionReport instance using the specified properties.
@@ -13515,7 +13644,14 @@ export namespace server {
         enum ItemType {
             UNKNOWN_TYPE = 0,
             POST = 1,
-            COMMENT = 2
+            COMMENT = 2,
+            HISTORY_RESEND = 3
+        }
+
+        /** Schedule enum. */
+        enum Schedule {
+            DAILY = 0,
+            RESULT_BASED = 1
         }
     }
 

@@ -133,6 +133,10 @@ public  final class GroupDecryptionReport extends
      * <code>COMMENT = 2;</code>
      */
     COMMENT(2),
+    /**
+     * <code>HISTORY_RESEND = 3;</code>
+     */
+    HISTORY_RESEND(3),
     UNRECOGNIZED(-1),
     ;
 
@@ -148,6 +152,10 @@ public  final class GroupDecryptionReport extends
      * <code>COMMENT = 2;</code>
      */
     public static final int COMMENT_VALUE = 2;
+    /**
+     * <code>HISTORY_RESEND = 3;</code>
+     */
+    public static final int HISTORY_RESEND_VALUE = 3;
 
 
     @java.lang.Override
@@ -174,6 +182,7 @@ public  final class GroupDecryptionReport extends
         case 0: return UNKNOWN_TYPE;
         case 1: return POST;
         case 2: return COMMENT;
+        case 3: return HISTORY_RESEND;
         default: return null;
       }
     }
@@ -212,6 +221,95 @@ public  final class GroupDecryptionReport extends
     }
 
     // @@protoc_insertion_point(enum_scope:server.GroupDecryptionReport.ItemType)
+  }
+
+  /**
+   * Protobuf enum {@code server.GroupDecryptionReport.Schedule}
+   */
+  public enum Schedule
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>DAILY = 0;</code>
+     */
+    DAILY(0),
+    /**
+     * <code>RESULT_BASED = 1;</code>
+     */
+    RESULT_BASED(1),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>DAILY = 0;</code>
+     */
+    public static final int DAILY_VALUE = 0;
+    /**
+     * <code>RESULT_BASED = 1;</code>
+     */
+    public static final int RESULT_BASED_VALUE = 1;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static Schedule valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static Schedule forNumber(int value) {
+      switch (value) {
+        case 0: return DAILY;
+        case 1: return RESULT_BASED;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<Schedule>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        Schedule> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<Schedule>() {
+            @java.lang.Override
+            public Schedule findValueByNumber(int number) {
+              return Schedule.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return ScheduleVerifier.INSTANCE;
+    }
+
+    private static final class ScheduleVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new ScheduleVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return Schedule.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private Schedule(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.GroupDecryptionReport.Schedule)
   }
 
   public static final int RESULT_FIELD_NUMBER = 1;
@@ -645,6 +743,48 @@ public  final class GroupDecryptionReport extends
     checkByteStringIsUtf8(value);
     senderVersion_ = value.toStringUtf8();
     
+  }
+
+  public static final int SCHEDULE_FIELD_NUMBER = 11;
+  private int schedule_;
+  /**
+   * <code>.server.GroupDecryptionReport.Schedule schedule = 11;</code>
+   * @return The enum numeric value on the wire for schedule.
+   */
+  @java.lang.Override
+  public int getScheduleValue() {
+    return schedule_;
+  }
+  /**
+   * <code>.server.GroupDecryptionReport.Schedule schedule = 11;</code>
+   * @return The schedule.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.log_events.GroupDecryptionReport.Schedule getSchedule() {
+    com.halloapp.proto.log_events.GroupDecryptionReport.Schedule result = com.halloapp.proto.log_events.GroupDecryptionReport.Schedule.forNumber(schedule_);
+    return result == null ? com.halloapp.proto.log_events.GroupDecryptionReport.Schedule.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.GroupDecryptionReport.Schedule schedule = 11;</code>
+   * @param value The enum numeric value on the wire for schedule to set.
+   */
+  private void setScheduleValue(int value) {
+      schedule_ = value;
+  }
+  /**
+   * <code>.server.GroupDecryptionReport.Schedule schedule = 11;</code>
+   * @param value The schedule to set.
+   */
+  private void setSchedule(com.halloapp.proto.log_events.GroupDecryptionReport.Schedule value) {
+    schedule_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.GroupDecryptionReport.Schedule schedule = 11;</code>
+   */
+  private void clearSchedule() {
+    
+    schedule_ = 0;
   }
 
   public static com.halloapp.proto.log_events.GroupDecryptionReport parseFrom(
@@ -1201,6 +1341,52 @@ public  final class GroupDecryptionReport extends
       return this;
     }
 
+    /**
+     * <code>.server.GroupDecryptionReport.Schedule schedule = 11;</code>
+     * @return The enum numeric value on the wire for schedule.
+     */
+    @java.lang.Override
+    public int getScheduleValue() {
+      return instance.getScheduleValue();
+    }
+    /**
+     * <code>.server.GroupDecryptionReport.Schedule schedule = 11;</code>
+     * @param value The schedule to set.
+     * @return This builder for chaining.
+     */
+    public Builder setScheduleValue(int value) {
+      copyOnWrite();
+      instance.setScheduleValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupDecryptionReport.Schedule schedule = 11;</code>
+     * @return The schedule.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.log_events.GroupDecryptionReport.Schedule getSchedule() {
+      return instance.getSchedule();
+    }
+    /**
+     * <code>.server.GroupDecryptionReport.Schedule schedule = 11;</code>
+     * @param value The enum numeric value on the wire for schedule to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSchedule(com.halloapp.proto.log_events.GroupDecryptionReport.Schedule value) {
+      copyOnWrite();
+      instance.setSchedule(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupDecryptionReport.Schedule schedule = 11;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSchedule() {
+      copyOnWrite();
+      instance.clearSchedule();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.GroupDecryptionReport)
   }
   @java.lang.Override
@@ -1227,10 +1413,12 @@ public  final class GroupDecryptionReport extends
             "timeTakenS_",
             "senderPlatform_",
             "senderVersion_",
+            "schedule_",
           };
           java.lang.String info =
-              "\u0000\n\u0000\u0000\u0001\n\n\u0000\u0000\u0000\u0001\f\u0002\u0208\u0003\u0208" +
-              "\u0004\u0208\u0005\f\u0006\u0208\u0007\u000b\b\u000b\t\f\n\u0208";
+              "\u0000\u000b\u0000\u0000\u0001\u000b\u000b\u0000\u0000\u0000\u0001\f\u0002\u0208" +
+              "\u0003\u0208\u0004\u0208\u0005\f\u0006\u0208\u0007\u000b\b\u000b\t\f\n\u0208\u000b" +
+              "\f";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

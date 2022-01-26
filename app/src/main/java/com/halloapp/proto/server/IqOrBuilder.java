@@ -453,5 +453,16 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.TruncWhisperKeysCollection getTruncWhisperKeysCollection();
 
+  /**
+   * <code>.server.ExternalSharePost external_share_post = 43;</code>
+   * @return Whether the externalSharePost field is set.
+   */
+  boolean hasExternalSharePost();
+  /**
+   * <code>.server.ExternalSharePost external_share_post = 43;</code>
+   * @return The externalSharePost.
+   */
+  com.halloapp.proto.server.ExternalSharePost getExternalSharePost();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }
