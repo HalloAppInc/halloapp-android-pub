@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:background="?selectableItemBackground"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
+
+    <ImageView
+        android:id="@+id/selected"
+        android:layout_width="44dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_check"
+        app:tint="@color/color_secondary"
+        android:paddingHorizontal="8dp"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/avatar"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="21dp"
+        android:padding="11dp"
+        android:src="@drawable/ic_home_selected"
+        android:background="@color/color_primary"
+        app:tint="@android:color/white"
+        tools:ignore="ContentDescription" />
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_marginStart="16dp"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        >
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-medium"
+            android:singleLine="true"
+            android:textSize="17sp"
+            android:textColor="@color/primary_text"
+            android:text="@string/home" />
+
+        <TextView
+            android:id="@+id/subtitle"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textSize="14sp"
+            android:textColor="@color/secondary_text"
+            tools:text="Share with all my contacts" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/privacy"
+        android:layout_width="44dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_more"
+        app:tint="@color/secondary_text"
+        tools:ignore="ContentDescription" />
+
+</LinearLayout>
+

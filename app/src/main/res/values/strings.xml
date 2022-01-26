@@ -514,6 +514,8 @@
     <string name="share_action">Share</string>
     <!-- Title for activity that lets user select who to share with -->
     <string name="share_with">Share with…</string>
+    <!-- Label on selected destinations when sharing from another app -->
+    <string name="share_with_label">Share with</string>
     <string name="unblock">Unblock</string>
     <string name="unblock_user_confirmation">Would you like to unblock %s?</string>
     <string name="menu_item_block_user">Block user</string>
@@ -816,6 +818,10 @@
     <string name="dark_mode_setting_title">Theme</string>
     <!-- Title of section for recent groups -->
     <string name="recent_groups">Recent groups</string>
+    <!-- Title of section for your groups -->
+    <string name="your_groups">Your groups</string>
+    <!-- Title of section for recent contacts -->
+    <string name="recent_contacts">Recent contacts</string>
     <!-- Item for creating a new group -->
     <string name="create_new_group">Create new group</string>
     <!-- Shown as a subtitle on the content composer screen when making a post. Tapping will
@@ -879,5 +885,7 @@
     <string name="call_speaker_off_button">Speaker off</string>
     <!-- Label for button to end the call -->
     <string name="end_call">End call</string>
+    <!-- Label for button to see all rows -->
+    <string name="see_all">See all</string>
 
 </resources>

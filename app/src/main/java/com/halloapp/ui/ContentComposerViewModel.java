@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Size;
 
-import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
@@ -38,9 +37,9 @@ import com.halloapp.media.VoiceNoteRecorder;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.props.ServerProps;
-import com.halloapp.proto.clients.VoiceNote;
 import com.halloapp.proto.log_events.MediaComposeLoad;
 import com.halloapp.ui.mediaedit.EditImageView;
+import com.halloapp.ui.share.ShareDestination;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
@@ -52,8 +51,6 @@ import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -70,7 +67,8 @@ public class ContentComposerViewModel extends AndroidViewModel {
     final MutableLiveData<List<EditMediaPair>> editMedia = new MutableLiveData<>();
     final MutableLiveData<EditMediaPair> loadingItem = new MutableLiveData<>();
 
-    final MutableLiveData<ContentItem> contentItem = new MutableLiveData<>();
+    final MutableLiveData<List<ShareDestination>> destinationList =  new MutableLiveData<>(new ArrayList<>());
+    final MutableLiveData<List<ContentItem>> contentItems = new MutableLiveData<>();
     final ComputableLiveData<String> shareTargetName;
     final ComputableLiveData<Post> replyPost;
     final ComputableLiveData<List<Contact>> mentionableContacts;
@@ -105,7 +103,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
     private GroupId targetGroupId;
     private ChatId targetChatId;
 
-    ContentComposerViewModel(@NonNull Application application, @Nullable ChatId chatId, @Nullable GroupId groupFeedId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable String replyPostId, int replyPostMediaIndex) {
+    ContentComposerViewModel(@NonNull Application application, @Nullable ChatId chatId, @Nullable GroupId groupFeedId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable List<ShareDestination> destinations, @Nullable String replyPostId, int replyPostMediaIndex) {
         super(application);
         me = Me.getInstance();
         contentDb = ContentDb.getInstance();
@@ -118,6 +116,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
         this.voiceNotePlayer = new VoiceNotePlayer(application);
         this.voiceNoteRecorder = new VoiceNoteRecorder();
+        this.destinationList.setValue(destinations);
 
         if (uris != null) {
             loadUris(uris, editStates);
@@ -213,7 +212,12 @@ public class ContentComposerViewModel extends AndroidViewModel {
     }
 
     void prepareContent(@Nullable ChatId chatId, @Nullable GroupId groupFeedGroupId, @Nullable String text, @Nullable List<Mention> mentions, boolean supportsWideColor) {
-        new PrepareContentTask(chatId, groupFeedGroupId, text, getSendMediaList(), mentions, contentItem, replyPostId, replyPostMediaIndex, !supportsWideColor).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        ArrayList<ShareDestination> destinations = null;
+        if (destinationList.getValue() != null) {
+            destinations = new ArrayList<>(destinationList.getValue());
+        }
+
+        new PrepareContentTask(chatId, groupFeedGroupId, destinations, text, getSendMediaList(), mentions, contentItems, replyPostId, replyPostMediaIndex, !supportsWideColor).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     void cleanTmpFiles() {
@@ -287,15 +291,17 @@ public class ContentComposerViewModel extends AndroidViewModel {
         private final GroupId groupFeedId;
         private final Collection<Uri> uris;
         private final Bundle editStates;
+        private final List<ShareDestination> destinations;
         private final String replyId;
         private final int replyPostMediaIndex;
 
-        Factory(@NonNull Application application, @Nullable ChatId chatId, @Nullable GroupId groupFeedId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable String replyId, int replyPostMediaIndex) {
+        Factory(@NonNull Application application, @Nullable ChatId chatId, @Nullable GroupId groupFeedId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable List<ShareDestination> destinations, @Nullable String replyId, int replyPostMediaIndex) {
             this.application = application;
             this.chatId = chatId;
             this.groupFeedId = groupFeedId;
             this.uris = uris;
             this.editStates = editStates;
+            this.destinations = destinations;
             this.replyId = replyId;
             this.replyPostMediaIndex = replyPostMediaIndex;
         }
@@ -304,7 +310,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(ContentComposerViewModel.class)) {
                 //noinspection unchecked
-                return (T) new ContentComposerViewModel(application, chatId, groupFeedId, uris, editStates, replyId, replyPostMediaIndex);
+                return (T) new ContentComposerViewModel(application, chatId, groupFeedId, uris, editStates, destinations, replyId, replyPostMediaIndex);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
@@ -450,117 +456,188 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
         private final ChatId chatId;
         private final GroupId groupId;
+        private final List<ShareDestination> destinations;
         private final String text;
         private final List<Media> media;
         private final List<Mention> mentions;
-        private final MutableLiveData<ContentItem> contentItem;
+        private final MutableLiveData<List<ContentItem>> contentItems;
         private final String replyPostId;
         private final int replyPostMediaIndex;
         private final boolean forcesRGB;
 
-        PrepareContentTask(@Nullable ChatId chatId, @Nullable GroupId groupId, @Nullable String text, @Nullable List<Media> media, @Nullable List<Mention> mentions, @NonNull MutableLiveData<ContentItem> contentItem, @Nullable String replyPostId, int replyPostMediaIndex, boolean forcesRGB) {
+        PrepareContentTask(@Nullable ChatId chatId, @Nullable GroupId groupId, @Nullable List<ShareDestination> destinations, @Nullable String text, @Nullable List<Media> media, @Nullable List<Mention> mentions, @NonNull MutableLiveData<List<ContentItem>> contentItems, @Nullable String replyPostId, int replyPostMediaIndex, boolean forcesRGB) {
             this.chatId = chatId;
             this.groupId = groupId;
+            this.destinations = destinations;
             this.text = text;
             this.media = media;
             this.mentions = mentions;
-            this.contentItem = contentItem;
+            this.contentItems = contentItems;
             this.replyPostId = replyPostId;
             this.replyPostMediaIndex = replyPostMediaIndex;
             this.forcesRGB = forcesRGB;
         }
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-
-            Post replyPost = replyPostId == null ? null : contentDb.getPost(replyPostId);
-            final ContentItem contentItem;
+        private ContentItem createContentItem(@Nullable ChatId chatId, @Nullable GroupId groupId, @Nullable Post replyPost) {
             if (chatId == null && media != null && media.size() >= 1 && media.get(0).type == Media.MEDIA_TYPE_AUDIO) {
-                // Audio post
-                contentItem = new VoiceNotePost(0, UserId.ME, RandomId.create(), System.currentTimeMillis(), Post.TRANSFERRED_NO, Post.SEEN_YES);
+                return new VoiceNotePost(0, UserId.ME, RandomId.create(), System.currentTimeMillis(), Post.TRANSFERRED_NO, Post.SEEN_YES);
+            } else if (chatId != null) {
+                return new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.TYPE_CHAT, Message.USAGE_CHAT, Message.STATE_INITIAL, text, replyPostId, replyPostMediaIndex, null, -1, replyPost == null ? null : replyPost.senderUserId, 0);
             } else {
-                contentItem = chatId == null ?
-                        new Post(0, UserId.ME, RandomId.create(), System.currentTimeMillis(), Post.TRANSFERRED_NO, Post.SEEN_YES, text) :
-                        new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.TYPE_CHAT, Message.USAGE_CHAT, Message.STATE_INITIAL, text, replyPostId, replyPostMediaIndex, null, -1, replyPost == null ? null : replyPost.senderUserId, 0);
+                Post post = new Post(0, UserId.ME, RandomId.create(), System.currentTimeMillis(), Post.TRANSFERRED_NO, Post.SEEN_YES, text);
+
+                if (groupId != null) {
+                    post.setParentGroup(groupId);
+                }
+
+                return post;
             }
-            if (media != null) {
-                for (Media mediaItem : media) {
-                    final File postFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(mediaItem.type));
-                    switch (mediaItem.type) {
-                        case Media.MEDIA_TYPE_IMAGE: {
-                            try {
-                                MediaUtils.transcodeImage(mediaItem.file, postFile, null, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, forcesRGB);
-                            } catch (IOException e) {
-                                Log.e("failed to transcode image", e);
-                                return null;
-                            }
-                            break;
-                        }
-                        case Media.MEDIA_TYPE_AUDIO:
-                        case Media.MEDIA_TYPE_VIDEO: {
-                            if (!mediaItem.file.renameTo(postFile)) {
-                                Log.e("failed to rename " + mediaItem.file.getAbsolutePath() + " to " + postFile.getAbsolutePath());
-                                return null;
-                            }
-                            break;
-                        }
-                        case Media.MEDIA_TYPE_UNKNOWN:
-                        default: {
-                            Log.e("unknown media type " + mediaItem.file.getAbsolutePath());
-                            return null;
-                        }
+        }
+
+        private List<ContentItem> createContentItems() {
+            ArrayList<ContentItem> items = new ArrayList<>();
+            Post replyPost = replyPostId == null ? null : contentDb.getPost(replyPostId);
+
+            if (destinations != null && destinations.size() > 0) {
+                for (ShareDestination dest: destinations) {
+                    if (dest.type == ShareDestination.TYPE_CONTACT) {
+                        items.add(createContentItem(dest.id, null, replyPost));
+                    } else if (dest.type == ShareDestination.TYPE_GROUP) {
+                        items.add(createContentItem(null, (GroupId) dest.id, null));
+                    } else {
+                        items.add(createContentItem(null, null, null));
                     }
-                    final Media sendMedia = Media.createFromFile(mediaItem.type, postFile);
-                    contentItem.media.add(sendMedia);
+                }
+            } else {
+                items.add(createContentItem(chatId, groupId, replyPost));
+            }
+
+            return items;
+        }
+
+        private boolean prepareMedia(List<ContentItem> items) {
+            if (media == null) {
+                return true;
+            }
+
+            for (Media mediaItem : media) {
+                final File postFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(mediaItem.type));
+                switch (mediaItem.type) {
+                    case Media.MEDIA_TYPE_IMAGE: {
+                        try {
+                            MediaUtils.transcodeImage(mediaItem.file, postFile, null, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, forcesRGB);
+                        } catch (IOException e) {
+                            Log.e("failed to transcode image", e);
+                            return false;
+                        }
+                        break;
+                    }
+                    case Media.MEDIA_TYPE_AUDIO:
+                    case Media.MEDIA_TYPE_VIDEO: {
+                        if (!mediaItem.file.renameTo(postFile)) {
+                            Log.e("failed to rename " + mediaItem.file.getAbsolutePath() + " to " + postFile.getAbsolutePath());
+                            return false;
+                        }
+                        break;
+                    }
+                    case Media.MEDIA_TYPE_UNKNOWN:
+                    default: {
+                        Log.e("unknown media type " + mediaItem.file.getAbsolutePath());
+                        return false;
+                    }
+                }
+
+                Media sendMedia = Media.createFromFile(mediaItem.type, postFile);
+                for (ContentItem item : items) {
+                    item.media.add(new Media(sendMedia));
                 }
             }
-            if (mentions != null) {
-                contentItem.mentions.addAll(mentions);
-            }
-            if (contentItem instanceof Post) {
-                Post contentPost = (Post) contentItem;
-                if (groupId != null) {
-                    contentPost.setParentGroup(groupId);
 
-                    Log.d("ContentComposerViewModel: PrepareContentTask groupId: " + groupId);
-                    GroupId[] testChunkGroups = {new GroupId("gmYchx3MBOXerd7QTmWqsO"), new GroupId("gGSFDZYubalo4izDKhE-Vv")};
-                    if (ServerProps.getInstance().getStreamingSendingEnabled() && Arrays.asList(testChunkGroups).contains(groupId)) {
-                        for (Media mediaItem : contentPost.media) {
+            return true;
+        }
+
+        private void setPrivacy(List<ContentItem> items) {
+            @PrivacyList.Type String audienceType;
+            List<UserId> audienceList;
+            List<UserId> excludeList = null;
+
+            FeedPrivacy feedPrivacy = feedPrivacyManager.getFeedPrivacy();
+            if (feedPrivacy == null || PrivacyList.Type.ALL.equals(feedPrivacy.activeList)) {
+                List<Contact> contacts = contactsDb.getUsers();
+                audienceList = new ArrayList<>(contacts.size());
+                for (Contact contact : contacts) {
+                    audienceList.add(contact.userId);
+                }
+                audienceType = PrivacyList.Type.ALL;
+            } else if (PrivacyList.Type.ONLY.equals(feedPrivacy.activeList)) {
+                audienceList = feedPrivacy.onlyList;
+                audienceType = PrivacyList.Type.ONLY;
+            } else {
+                HashSet<UserId> excludedSet = new HashSet<>(feedPrivacy.exceptList);
+                audienceType = PrivacyList.Type.EXCEPT;
+                List<Contact> contacts = contactsDb.getUsers();
+                audienceList = new ArrayList<>(contacts.size());
+                for (Contact contact : contacts) {
+                    if (!excludedSet.contains(contact.userId)) {
+                        audienceList.add(contact.userId);
+                    }
+                }
+
+                excludeList = feedPrivacy.exceptList;
+            }
+
+            for (ContentItem item : items) {
+                if (item instanceof Post) {
+                    Post post = (Post) item;
+
+                    if (post.getParentGroup() == null) {
+                        post.setExcludeList(excludeList);
+                        post.setAudience(audienceType, audienceList);
+                    }
+                }
+            }
+        }
+
+        private void setChunkedUploadsOnTestGroups(List<ContentItem> items) {
+            if (!ServerProps.getInstance().getStreamingSendingEnabled()) {
+                return;
+            }
+
+            List<GroupId> testChunkGroups = Arrays.asList(new GroupId("gmYchx3MBOXerd7QTmWqsO"), new GroupId("gGSFDZYubalo4izDKhE-Vv"));
+            for (ContentItem item : items) {
+                if (item instanceof Post) {
+                    Post post = (Post) item;
+                    GroupId groupId = post.getParentGroup();
+
+                    if (groupId != null && testChunkGroups.contains(groupId)) {
+                        for (Media mediaItem : post.media) {
                             if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
                                 mediaItem.blobVersion = Media.BLOB_VERSION_CHUNKED;
                             }
                         }
                     }
-                } else {
-                    FeedPrivacy feedPrivacy = feedPrivacyManager.getFeedPrivacy();
-                    List<UserId> audienceList;
-                    @PrivacyList.Type String audienceType;
-                    if (feedPrivacy == null || PrivacyList.Type.ALL.equals(feedPrivacy.activeList)) {
-                        List<Contact> contacts = contactsDb.getUsers();
-                        audienceList = new ArrayList<>(contacts.size());
-                        for (Contact contact : contacts) {
-                            audienceList.add(contact.userId);
-                        }
-                        audienceType = PrivacyList.Type.ALL;
-                    } else if (PrivacyList.Type.ONLY.equals(feedPrivacy.activeList)) {
-                        audienceList = feedPrivacy.onlyList;
-                        audienceType = PrivacyList.Type.ONLY;
-                    } else {
-                        HashSet<UserId> excludedSet = new HashSet<>(feedPrivacy.exceptList);
-                        audienceType = PrivacyList.Type.EXCEPT;
-                        List<Contact> contacts = contactsDb.getUsers();
-                        audienceList = new ArrayList<>(contacts.size());
-                        for (Contact contact : contacts) {
-                            if (!excludedSet.contains(contact.userId)) {
-                                audienceList.add(contact.userId);
-                            }
-                        }
-                        contentPost.setExcludeList(feedPrivacy.exceptList);
-                    }
-                    contentPost.setAudience(audienceType, audienceList);
                 }
             }
-            this.contentItem.postValue(contentItem);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            List<ContentItem> items = createContentItems();
+
+            if (!prepareMedia(items)) {
+                return null;
+            }
+
+            if (mentions != null) {
+                for (ContentItem item : items) {
+                    item.mentions.addAll(mentions);
+                }
+            }
+
+            setPrivacy(items);
+            setChunkedUploadsOnTestGroups(items);
+
+            contentItems.postValue(items);
             return null;
         }
     }

@@ -210,6 +210,24 @@ public class Media {
         this.blobSize = blobSize;
     }
 
+    public Media(Media other) {
+        this.rowId = other.rowId;
+        this.type = other.type;
+        this.url = other.url;
+        this.file = other.file;
+        this.encKey = other.encKey;
+        this.encSha256hash = other.encSha256hash;
+        this.decSha256hash = other.decSha256hash;
+        this.width = other.width;
+        this.height = other.height;
+        this.transferred = other.transferred;
+        this.blobVersion = other.blobVersion;
+        this.chunkSize = other.chunkSize;
+        this.blobSize = other.blobSize;
+        this.encFile = other.encFile;
+        this.initialState = other.initialState;
+    }
+
     private static byte [] generateEncKey() {
         final SecureRandom random = new SecureRandom();
         final byte [] encKey = new byte[32];

@@ -121,11 +121,6 @@
             android:label="@string/share_with"/>
 
         <activity
-            android:name=".ui.groups.PostSharePickerActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/select_post_destination"/>
-
-        <activity
             android:name=".ui.GroupsInCommonActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/groups_in_common"/>
@@ -215,38 +210,18 @@
             android:name=".ui.ContentComposerActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 
-        <activity android:name=".ShareActivity"
+        <activity
+            android:name=".ui.share.ShareActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:exported="true">
-            <intent-filter
-                android:label="@string/share_option_message">
+            <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="image/*" />
                 <data android:mimeType="video/*" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
-            <intent-filter
-                android:label="@string/share_option_message">
-                <action android:name="android.intent.action.SEND_MULTIPLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="image/*" />
-                <data android:mimeType="video/*" />
-                <data android:mimeType="text/plain" />
-            </intent-filter>
-        </activity>
-
-        <activity android:name=".ShareActivityPost"
-            android:exported="true">
-            <intent-filter
-                android:label="@string/share_option_post">
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="image/*" />
-                <data android:mimeType="video/*" />
-                <data android:mimeType="text/plain" />
-            </intent-filter>
-            <intent-filter
-                android:label="@string/share_option_post">
+            <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="image/*" />

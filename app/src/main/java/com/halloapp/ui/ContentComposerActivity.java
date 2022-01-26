@@ -56,6 +56,7 @@ import com.halloapp.R;
 import com.halloapp.UrlPreview;
 import com.halloapp.UrlPreviewLoader;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
@@ -73,6 +74,8 @@ import com.halloapp.ui.mediaedit.MediaEditActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
+import com.halloapp.ui.share.ShareDestination;
+import com.halloapp.ui.share.ShareDestinationListView;
 import com.halloapp.util.ActivityUtils;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
@@ -113,6 +116,7 @@ public class ContentComposerActivity extends HalloActivity {
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
     public static final String EXTRA_VOICE_NOTE_POST = "voice_note_post";
+    public static final String EXTRA_DESTINATIONS = "destinations";
 
     private static final int REQUEST_CODE_CROP = 1;
     private static final int REQUEST_CODE_MORE_MEDIA = 2;
@@ -130,6 +134,13 @@ public class ContentComposerActivity extends HalloActivity {
         Intent i = new Intent(context, ContentComposerActivity.class);
         i.putExtra(EXTRA_ALLOW_ADD_MEDIA, true);
         i.putExtra(EXTRA_VOICE_NOTE_POST, true);
+        return i;
+    }
+
+    public static Intent newSharePost(@NonNull Context context, List<ShareDestination> destinations) {
+        Intent i = new Intent(context, ContentComposerActivity.class);
+        i.putExtra(EXTRA_ALLOW_ADD_MEDIA, false);
+        i.putExtra(EXTRA_DESTINATIONS, new ArrayList<>(destinations));
         return i;
     }
 
@@ -194,6 +205,7 @@ public class ContentComposerActivity extends HalloActivity {
     private GroupId groupId;
     private String replyPostId;
     private int replyPostMediaIndex;
+    private ArrayList<ShareDestination> destinations;
 
     private int expectedMediaCount;
 
@@ -290,14 +302,7 @@ public class ContentComposerActivity extends HalloActivity {
         minSoftKeyboardHeight = getResources().getDimensionPixelSize(R.dimen.min_softkeyboard_height);
         voiceNoteRecorderControlView.setRecordingTimeView(postEntryView.getRecordingTimeView());
         bottomSendButton = findViewById(R.id.bottom_composer_send);
-        bottomSendButton.setOnClickListener(v -> {
-            sharePost();
-        });
-        View textOnlySend = findViewById(R.id.text_only_send);
-        textOnlySend.setEnabled(false);
-        textOnlySend.setOnClickListener(v -> {
-            sharePost();
-        });
+        bottomSendButton.setOnClickListener(v -> sharePost());
 
         mentionPickerView = findViewById(R.id.mention_picker_view);
 
@@ -318,6 +323,8 @@ public class ContentComposerActivity extends HalloActivity {
 
         voiceAddMedia = findViewById(R.id.voice_add_media);
         textAddMedia = findViewById(R.id.text_add_media);
+
+        ShareDestinationListView destinationListView = findViewById(R.id.destinationList);
 
         deletePictureButton.setOnClickListener(v -> deleteItem(getCurrentItem()));
         final ArrayList<Uri> uris;
@@ -375,21 +382,37 @@ public class ContentComposerActivity extends HalloActivity {
         if (savedInstanceState == null) {
             chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
             groupId = getIntent().getParcelableExtra(EXTRA_GROUP_ID);
+            destinations = getIntent().getParcelableArrayListExtra(EXTRA_DESTINATIONS);
             replyPostId = getIntent().getStringExtra(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
         } else {
             chatId = savedInstanceState.getParcelable(EXTRA_CHAT_ID);
             groupId = savedInstanceState.getParcelable(EXTRA_GROUP_ID);
+            destinations = savedInstanceState.getParcelableArrayList(EXTRA_DESTINATIONS);
             replyPostId = savedInstanceState.getString(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
         }
 
         viewModel = new ViewModelProvider(this,
-                new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
+                new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, destinations, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
+
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
         urlPreviewLoader = new UrlPreviewLoader();
         postLinkPreviewView = findViewById(R.id.link_preview);
         postLinkPreviewView.setMediaThumbnailLoader(mediaThumbnailLoader);
+
+        final TextView shareBtn = findViewById(R.id.share_btn);
+        shareBtn.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                float radius = getResources().getDimension(R.dimen.share_destination_next_radius);
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
+            }
+        });
+        shareBtn.setClipToOutline(true);
+        shareBtn.setOnClickListener(v -> sharePost());
+        shareBtn.setVisibility(destinations != null && destinations.size() > 0 ? View.VISIBLE : View.GONE);
+        bottomSendButton.setVisibility(destinations != null && destinations.size() > 0 ? View.GONE : View.VISIBLE);
 
         mediaPager = findViewById(R.id.media_pager);
         mediaPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
@@ -418,13 +441,28 @@ public class ContentComposerActivity extends HalloActivity {
 
         String initialText = getIntent().getStringExtra(Intent.EXTRA_TEXT);
 
+        View textOnlySend = findViewById(R.id.text_only_send);
+        textOnlySend.setEnabled(!TextUtils.isEmpty(initialText));
+        textOnlySend.setOnClickListener(v -> sharePost());
+        textOnlySend.setVisibility(destinations != null && destinations.size() > 0 ? View.GONE : View.VISIBLE);
+
         textPostEntry.setVisibility(View.VISIBLE);
         textPostEntry.setMentionPickerView(mentionPickerView);
 
         bottomEditText.setVisibility(View.VISIBLE);
         bottomEditText.setMentionPickerView(mentionPickerView);
 
-        allowVoiceNotes = chatId == null && ServerProps.getInstance().getVoicePostsEnabled();
+        boolean hasChatDestination = false;
+        if (destinations != null) {
+            for (ShareDestination dest : destinations) {
+                if (dest.type == ShareDestination.TYPE_CONTACT) {
+                    hasChatDestination = true;
+                    break;
+                }
+            }
+        }
+
+        allowVoiceNotes = !hasChatDestination && chatId == null && ServerProps.getInstance().getVoicePostsEnabled();
         postEntryView.setAllowVoiceNoteRecording(allowVoiceNotes && TextUtils.isEmpty(initialText));
 
         textAddMedia.setOnClickListener(v -> {
@@ -439,6 +477,9 @@ public class ContentComposerActivity extends HalloActivity {
         bottomEditText.setOnFocusChangeListener((view, hasFocus) -> {
             updateMediaButtons();
             mediaVerticalScrollView.setShouldScrollToBottom(hasFocus);
+
+            int destinationsCount =  viewModel.destinationList.getValue() != null ?  viewModel.destinationList.getValue().size() : 0;
+            destinationListView.setVisibility(!hasFocus && destinationsCount > 0 ? View.VISIBLE : View.GONE);
         });
 
         if (replyPostId != null || (!isMediaPost && !voiceNotePost)) {
@@ -454,6 +495,10 @@ public class ContentComposerActivity extends HalloActivity {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 boolean isEmpty = TextUtils.isEmpty(charSequence);
                 textOnlySend.setEnabled(!isEmpty);
+
+                if (destinations != null && destinations.size() > 0) {
+                    shareBtn.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+                }
 
                 final boolean useLargeText = (charSequence.length() < 180 && mediaPager.getVisibility() == View.GONE);
                 textPostEntry.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(
@@ -523,52 +568,76 @@ public class ContentComposerActivity extends HalloActivity {
             }
         });
         viewModel.mentionableContacts.getLiveData().observe(this, contacts -> mentionPickerView.setMentionableContacts(contacts));
-        viewModel.contentItem.observe(this, contentItem -> {
-            if (contentItem != null) {
-                if (!contentItem.hasMedia() && contentItem instanceof Post) {
-                    postLinkPreviewView.attachPreview(contentItem);
+        viewModel.contentItems.observe(this, contentItems -> {
+            if (contentItems == null || contentItems.size() == 0) {
+                return;
+            }
+
+            for (ContentItem item : contentItems) {
+                if (!item.hasMedia() && item instanceof Post) {
+                    postLinkPreviewView.attachPreview(item);
                     urlPreviewLoader.cancel(postLinkPreviewView, true);
                 }
-                if (contentItem.urlPreview != null) {
+
+                if (item.urlPreview != null) {
                     BgWorkers.getInstance().execute(() -> {
-                        if (contentItem.urlPreview.imageMedia != null) {
+                        if (item.urlPreview.imageMedia != null) {
                             final File imagePreview = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_IMAGE));
                             try {
-                                MediaUtils.transcodeImage(contentItem.urlPreview.imageMedia.file, imagePreview, null, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, false);
-                                contentItem.urlPreview.imageMedia.file = imagePreview;
+                                MediaUtils.transcodeImage(item.urlPreview.imageMedia.file, imagePreview, null, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, false);
+                                item.urlPreview.imageMedia.file = imagePreview;
                             } catch (IOException e) {
                                 Log.e("failed to transcode url preview image", e);
-                                contentItem.urlPreview.imageMedia = null;
+                                item.urlPreview.imageMedia = null;
                             }
                         }
-                        contentItem.addToStorage(ContentDb.getInstance());
+                        item.addToStorage(ContentDb.getInstance());
                     });
                 } else {
-                    if (contentItem.loadingUrlPreview != null) {
-                        urlPreviewLoader.addWaitingContentItem(contentItem);
+                    if (item.loadingUrlPreview != null) {
+                        urlPreviewLoader.addWaitingContentItem(item);
                     }
-                    contentItem.addToStorage(ContentDb.getInstance());
-                }
-                setResult(RESULT_OK);
-                finish();
-                if (chatId != null) {
-                    final Intent intent = ChatActivity.open(this, chatId);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                } else if (groupId != null) {
-                    final Intent intent = ViewGroupFeedActivity.viewFeed(this, groupId, true);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(intent);
-                } else if (calledFromCamera ||
-                        Intent.ACTION_SEND.equals(getIntent().getAction()) ||
-                        Intent.ACTION_SEND_MULTIPLE.equals(getIntent().getAction())) {
-                    final Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                    intent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    item.addToStorage(ContentDb.getInstance());
                 }
             }
+
+            setResult(RESULT_OK);
+            finish();
+
+            boolean isMultiSharedToFeed = false;
+            if (viewModel.destinationList.getValue() != null && viewModel.destinationList.getValue().size() > 0) {
+                for (ShareDestination dest : viewModel.destinationList.getValue()) {
+                    if (dest.type == ShareDestination.TYPE_FEED) {
+                        isMultiSharedToFeed = true;
+                        groupId = null;
+                        chatId = null;
+                        break;
+                    } else if (dest.type == ShareDestination.TYPE_GROUP) {
+                        groupId = (GroupId) dest.id;
+                    } else if (dest.type == ShareDestination.TYPE_CONTACT) {
+                        chatId = dest.id;
+                    }
+                }
+            }
+
+            if (chatId != null) {
+                final Intent intent = ChatActivity.open(this, chatId);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            } else if (groupId != null) {
+                final Intent intent = ViewGroupFeedActivity.viewFeed(this, groupId, true);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+            } else if (isMultiSharedToFeed || calledFromCamera ||
+                    Intent.ACTION_SEND.equals(getIntent().getAction()) ||
+                    Intent.ACTION_SEND_MULTIPLE.equals(getIntent().getAction())) {
+                final Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                intent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
         });
+
         privacyDestination = findViewById(R.id.privacy_destination);
         final TextView titleView = toolbar.findViewById(R.id.toolbar_title);
         if (chatId != null) {
@@ -589,12 +658,33 @@ public class ContentComposerActivity extends HalloActivity {
             updateDestination(groupId);
         }
 
-        if (chatId == null) {
+        if (chatId == null && destinations == null) {
             View changePrivacy = findViewById(R.id.change_privacy);
             changePrivacy.setVisibility(View.VISIBLE);
             changePrivacy.setOnClickListener(v -> {
                 startActivityForResult(SharePrivacyActivity.openPostPrivacy(this, groupId), REQUEST_CODE_CHANGE_PRIVACY);
             });
+        }
+
+        if (destinations != null && destinations.size() > 0) {
+            destinationListView.setVisibility(View.VISIBLE);
+            destinationListView.submitList(destinations);
+            destinationListView.setOnRemoveListener(destination -> {
+                List<ShareDestination> destinations = viewModel.destinationList.getValue();
+                if (destinations == null) {
+                    return;
+                }
+
+                ArrayList<ShareDestination> updated = new ArrayList<>(destinations);
+                updated.remove(destination);
+
+                viewModel.destinationList.postValue(updated);
+
+                if (updated.size() == 0) {
+                    finish();
+                }
+            });
+            viewModel.destinationList.observe(this, destinationListView::submitList);
         }
 
         replyContainer = findViewById(R.id.reply_container);
@@ -709,7 +799,7 @@ public class ContentComposerActivity extends HalloActivity {
     private void showMixedMediaCompose() {
         textEntryCard.setVisibility(View.GONE);
         audioComposer.setVisibility(View.GONE);
-        bottomSendButton.setVisibility(View.VISIBLE);
+        bottomSendButton.setVisibility(destinations != null && destinations.size() > 0 ? View.GONE : View.VISIBLE);
         postEntryView.setVisibility(View.VISIBLE);
         mediaContainer.setVisibility(View.VISIBLE);
     }
@@ -920,6 +1010,9 @@ public class ContentComposerActivity extends HalloActivity {
         }
         if (groupId != null) {
             outState.putParcelable(EXTRA_GROUP_ID, groupId);
+        }
+        if (destinations != null) {
+            outState.putParcelableArrayList(EXTRA_DESTINATIONS, destinations);
         }
     }
 

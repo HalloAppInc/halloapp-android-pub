@@ -117,7 +117,7 @@
     <dimen name="voice_post_circle_min_outer_radius">55dp</dimen>
 
     <dimen name="bottom_voice_note_levitate_distance">6dp</dimen>
-    
+
     <dimen name="share_privacy_avatar_corner_radius">8dp</dimen>
 
     <dimen name="fab_padding">16dp</dimen>
@@ -131,5 +131,8 @@
     <dimen name="sub_fab_title_bottom_padding">15dp</dimen>
 
     <integer name="sub_fab_open_animation_duration">150</integer>
+
+    <dimen name="share_destination_item_radius">14dp</dimen>
+    <dimen name="share_destination_next_radius">20dp</dimen>
 
 </resources>
