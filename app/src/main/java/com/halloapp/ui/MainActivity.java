@@ -289,7 +289,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             haFabView.setUseText(true);
             haFabView.setFabBackgroundTint(R.color.white);
             haFabView.setIconTint(R.color.color_primary);
-            haFabView.setMainFabIcon(R.drawable.ic_group_add, R.string.new_group, R.string.new_group_fab_label);
+            haFabView.setMainFabIcon(R.drawable.ic_fab_group_add, R.string.new_group, R.string.new_group_fab_label);
             haFabView.setOnFabClickListener(v -> {
                 final String[] perms = {Manifest.permission.READ_CONTACTS};
                 if (!EasyPermissions.hasPermissions(MainActivity.this, perms)) {
