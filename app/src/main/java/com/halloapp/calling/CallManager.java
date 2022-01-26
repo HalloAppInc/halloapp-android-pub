@@ -396,13 +396,19 @@ public class CallManager {
             storeMissedCallMsg(peerUid, callId, callType);
             return;
         }
-        if (this.state != State.IDLE) {
+        if (this.callId != null && this.callId.equals(callId)) {
+            Log.i("CallManager: duplicate incoming-call msg CallId: " + callId + " peerUid: " + peerUid);
+            Log.i(toString());
+            return;
+        }
+        if (this.state != State.IDLE && !callId.equals(this.callId)) {
             Log.i("CallManager: rejecting incoming call " + callId + " from " + peerUid + " because already in call.");
             Log.i(toString());
             callsApi.sendEndCall(callId, peerUid, EndCall.Reason.BUSY);
             storeMissedCallMsg(peerUid, callId, callType);
             return;
         }
+
         if (!CallType.AUDIO.equals(callType)) {
             Log.i("CallManager: rejecting incoming call " + callId + " from " + peerUid + " because it's not audio");
             callsApi.sendEndCall(callId, peerUid, EndCall.Reason.VIDEO_UNSUPPORTED);
@@ -473,15 +479,20 @@ public class CallManager {
     }
 
     public synchronized void handleCallRinging(@NonNull String callId, @NonNull UserId peerUid,@NonNull Long timestamp) {
-        Log.i("CallRinging callId: " + callId + " peerUid: " + peerUid + " ts: " + timestamp);
+        Log.i("CallManager: CallRinging callId: " + callId + " peerUid: " + peerUid + " ts: " + timestamp);
         if (this.callId == null || !this.callId.equals(callId) ) {
-            Log.e("Error: got call ringing message for call " + callId +
+            Log.e("CallManager: Error: got call ringing message for call " + callId +
                     " but my call id is " + this.callId);
             return;
         }
         // TODO(nikola): check the peerUid
         if (!this.isInitiator) {
-            Log.e("Error: unexpected call ringing, not initiator");
+            Log.e("CallManager: Error: unexpected call ringing, not initiator");
+            return;
+        }
+        if (this.state != State.CALLING) {
+            Log.w("CallManager: Unexpected call-ringing message callId: " + callId + " peerUid: " + peerUid);
+            Log.i("CallManager: " + toString());
             return;
         }
         this.state = State.CALLING_RINGING;
@@ -506,6 +517,10 @@ public class CallManager {
 
         if (webrtcOffer == null) {
             endCall(EndCall.Reason.DECRYPTION_FAILED);
+            return;
+        }
+        if (this.isAnswered && callId.equals(this.callId)) {
+            Log.w("CallManager: Duplicate answer-call msg " + toString());
             return;
         }
 
