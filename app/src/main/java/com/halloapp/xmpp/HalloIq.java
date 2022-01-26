@@ -40,6 +40,8 @@ public abstract class HalloIq extends HalloStanza {
             return StartCallResponseIq.fromProto(iq.getStartCallResult());
         } else if (iq.hasGetCallServersResult()) {
             return GetCallServersResponseIq.fromProto(iq.getGetCallServersResult());
+        } else if (iq.hasExternalSharePost()) {
+            return ExternalShareResponseIq.fromProto(iq.getExternalSharePost());
         }
         Log.w("Using empty result IQ due to unrecognized result IQ " + ProtoPrinter.toString(iq));
         return new EmptyResultIq(iq.getId());
