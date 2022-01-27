@@ -789,139 +789,141 @@ public class MainConnectionObserver extends Connection.Observer {
             connection.sendAck(ackId);
             return;
         }
-        ByteString encrypted = historyResend.getEncPayload();
-        UserId publisherUserId = new UserId(Long.toString(publisherUid));
-        if (encrypted != null && encrypted.size() > 0) {
-            GroupId groupId = new GroupId(historyResend.getGid());
-            if (historyResend.hasSenderState()) {
-                SenderStateWithKeyInfo senderStateWithKeyInfo = historyResend.getSenderState();
 
-                byte[] encSenderState = senderStateWithKeyInfo.getEncSenderState().toByteArray();
+        bgWorkers.execute(() -> {
+            ByteString encrypted = historyResend.getEncPayload();
+            UserId publisherUserId = new UserId(Long.toString(publisherUid));
+            if (encrypted != null && encrypted.size() > 0) {
+                GroupId groupId = new GroupId(historyResend.getGid());
+                if (historyResend.hasSenderState()) {
+                    SenderStateWithKeyInfo senderStateWithKeyInfo = historyResend.getSenderState();
+
+                    byte[] encSenderState = senderStateWithKeyInfo.getEncSenderState().toByteArray();
+                    try {
+                        byte[] peerPublicIdentityKey = senderStateWithKeyInfo.getPublicKey().toByteArray();
+                        long oneTimePreKeyId = senderStateWithKeyInfo.getOneTimePreKeyId();
+                        SignalSessionSetupInfo signalSessionSetupInfo = peerPublicIdentityKey == null || peerPublicIdentityKey.length == 0 ? null : new SignalSessionSetupInfo(new PublicEdECKey(peerPublicIdentityKey), (int) oneTimePreKeyId);
+                        byte[] senderStateDec = SignalSessionManager.getInstance().decryptMessage(encSenderState, publisherUserId, signalSessionSetupInfo);
+                        SenderState senderState = SenderState.parseFrom(senderStateDec);
+                        SenderKey senderKey = senderState.getSenderKey();
+                        int currentChainIndex = senderState.getCurrentChainIndex();
+                        byte[] chainKey = senderKey.getChainKey().toByteArray();
+                        byte[] publicSignatureKeyBytes = senderKey.getPublicSignatureKey().toByteArray();
+                        PublicEdECKey publicSignatureKey = new PublicEdECKey(publicSignatureKeyBytes);
+                        Log.i("Received sender state with current chain index of " + currentChainIndex + " from " + publisherUid);
+
+                        EncryptedKeyStore encryptedKeyStore = EncryptedKeyStore.getInstance();
+                        encryptedKeyStore.setPeerGroupCurrentChainIndex(groupId, publisherUserId, currentChainIndex);
+                        encryptedKeyStore.setPeerGroupChainKey(groupId, publisherUserId, chainKey);
+                        encryptedKeyStore.setPeerGroupSigningKey(groupId, publisherUserId, publicSignatureKey);
+                    } catch (CryptoException e) {
+                        Log.e("Failed to decrypt sender state for " + ProtoPrinter.toString(historyResend), e);
+                    } catch (InvalidProtocolBufferException e) {
+                        Log.e("Failed to parse sender state for " + ProtoPrinter.toString(historyResend), e);
+                    }
+                }
+
+                byte[] encryptedBytes = encrypted.toByteArray();
                 try {
-                    byte[] peerPublicIdentityKey = senderStateWithKeyInfo.getPublicKey().toByteArray();
-                    long oneTimePreKeyId = senderStateWithKeyInfo.getOneTimePreKeyId();
-                    SignalSessionSetupInfo signalSessionSetupInfo = peerPublicIdentityKey == null || peerPublicIdentityKey.length == 0 ? null : new SignalSessionSetupInfo(new PublicEdECKey(peerPublicIdentityKey), (int) oneTimePreKeyId);
-                    byte[] senderStateDec = SignalSessionManager.getInstance().decryptMessage(encSenderState, publisherUserId, signalSessionSetupInfo);
-                    SenderState senderState = SenderState.parseFrom(senderStateDec);
-                    SenderKey senderKey = senderState.getSenderKey();
-                    int currentChainIndex = senderState.getCurrentChainIndex();
-                    byte[] chainKey = senderKey.getChainKey().toByteArray();
-                    byte[] publicSignatureKeyBytes = senderKey.getPublicSignatureKey().toByteArray();
-                    PublicEdECKey publicSignatureKey = new PublicEdECKey(publicSignatureKeyBytes);
-                    Log.i("Received sender state with current chain index of " + currentChainIndex + " from " + publisherUid);
+                    byte[] decrypted = GroupFeedSessionManager.getInstance().decryptMessage(encryptedBytes, groupId, publisherUserId);
+                    GroupHistoryPayload groupHistoryPayload = GroupHistoryPayload.parseFrom(decrypted);
 
-                    EncryptedKeyStore encryptedKeyStore = EncryptedKeyStore.getInstance();
-                    encryptedKeyStore.setPeerGroupCurrentChainIndex(groupId, publisherUserId, currentChainIndex);
-                    encryptedKeyStore.setPeerGroupChainKey(groupId, publisherUserId, chainKey);
-                    encryptedKeyStore.setPeerGroupSigningKey(groupId, publisherUserId, publicSignatureKey);
-                } catch (CryptoException e) {
-                    Log.e("Failed to decrypt sender state for " + ProtoPrinter.toString(historyResend), e);
-                } catch (InvalidProtocolBufferException e) {
-                    Log.e("Failed to parse sender state for " + ProtoPrinter.toString(historyResend), e);
-                }
-            }
-
-            // TODO(jack): Move to background thread
-            byte[] encryptedBytes = encrypted.toByteArray();
-            try {
-                byte[] decrypted = GroupFeedSessionManager.getInstance().decryptMessage(encryptedBytes, groupId, publisherUserId);
-                GroupHistoryPayload groupHistoryPayload = GroupHistoryPayload.parseFrom(decrypted);
-
-                long myUid = Long.parseLong(me.getUser());
-                for (MemberDetails memberDetails : groupHistoryPayload.getMemberDetailsList()) {
-                    if (myUid == memberDetails.getUid()) {
-                        Log.i("This history resend includes me as recipient; dropping");
-                        connection.sendAck(ackId);
-                        return;
-                    }
-                }
-
-                GroupFeedItems.Builder groupFeedItems = GroupFeedItems.newBuilder();
-                for (ContentDetails contentDetails : groupHistoryPayload.getContentDetailsList()) {
-                    ContentDb contentDb = ContentDb.getInstance();
-                    byte[] remoteHash = contentDetails.getContentHash().toByteArray();
-                    if (contentDetails.hasPostIdContext()) {
-                        PostIdContext postIdContext = contentDetails.getPostIdContext();
-                        String id = postIdContext.getFeedPostId();
-                        Post post = contentDb.getPost(id);
-                        if (post != null && post.senderUserId.isMe()) {
-                            byte[] localHash = contentDb.getPostProtoHash(id);
-                            if (!Arrays.equals(remoteHash, localHash)) {
-                                Log.w("Skipping sharing post " + id + " because hashes do not match");
-                            } else {
-                                Container.Builder container = Container.newBuilder();
-                                FeedContentEncoder.encodePost(container, post);
-                                byte[] payload = container.build().toByteArray();
-
-                                com.halloapp.proto.server.Post.Builder postBuilder = com.halloapp.proto.server.Post.newBuilder();
-                                postBuilder.setId(id);
-                                postBuilder.setPublisherUid(myUid);
-                                postBuilder.setPayload(ByteString.copyFrom(payload));
-                                postBuilder.setTimestamp(post.timestamp);
-
-                                groupFeedItems.addItems(GroupFeedItem.newBuilder().setPost(postBuilder));
-                            }
-                        }
-                    } else if (contentDetails.hasCommentIdContext()) {
-                        CommentIdContext commentIdContext = contentDetails.getCommentIdContext();
-                        String id = commentIdContext.getCommentId();
-                        Comment comment = contentDb.getComment(id);
-                        if (comment != null) {
-                            byte[] localHash = contentDb.getCommentProtoHash(id);
-                            if (!Arrays.equals(remoteHash, localHash)) {
-                                Log.w("Skipping sharing comment " + id + " because hashes do not match (" + StringUtils.bytesToHexString(remoteHash) + " and " + StringUtils.bytesToHexString(localHash) + ")");
-                            } else {
-                                Container.Builder container = Container.newBuilder();
-                                FeedContentEncoder.encodeComment(container, comment);
-                                byte[] payload = container.build().toByteArray();
-
-                                com.halloapp.proto.server.Comment.Builder commentBuilder = com.halloapp.proto.server.Comment.newBuilder();
-                                commentBuilder.setId(id);
-                                commentBuilder.setPostId(comment.postId);
-                                commentBuilder.setPublisherUid(myUid);
-                                commentBuilder.setPayload(ByteString.copyFrom(payload));
-                                commentBuilder.setTimestamp(comment.timestamp);
-
-                                groupFeedItems.addItems(GroupFeedItem.newBuilder().setComment(commentBuilder));
-                            }
-                        }
-                    } else {
-                        Log.e("History resend content details have neither post nor comment");
-                    }
-                }
-
-                if (groupFeedItems.getItemsCount() > 0) {
-                    byte[] groupFeedItemsPayload = groupFeedItems.build().toByteArray();
-
+                    long myUid = Long.parseLong(me.getUser());
                     for (MemberDetails memberDetails : groupHistoryPayload.getMemberDetailsList()) {
-                        // TODO(jack): Verify that identity key matches one provided
-                        UserId peerUserId = new UserId(Long.toString(memberDetails.getUid()));
-                        GroupFeedHistory.Builder builder = GroupFeedHistory.newBuilder();
+                        if (myUid == memberDetails.getUid()) {
+                            Log.i("This history resend includes me as recipient; dropping");
+                            connection.sendAck(ackId);
+                            return;
+                        }
+                    }
 
-                        try {
-                            SignalSessionSetupInfo signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(peerUserId);
-                            byte[] encryptedPayload = SignalSessionManager.getInstance().encryptMessage(groupFeedItemsPayload, peerUserId);
-                            builder.setEncPayload(ByteString.copyFrom(encryptedPayload));
-                            if (signalSessionSetupInfo != null) {
-                                builder.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
-                                if (signalSessionSetupInfo.oneTimePreKeyId != null) {
-                                    builder.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
+                    GroupFeedItems.Builder groupFeedItems = GroupFeedItems.newBuilder();
+                    for (ContentDetails contentDetails : groupHistoryPayload.getContentDetailsList()) {
+                        ContentDb contentDb = ContentDb.getInstance();
+                        byte[] remoteHash = contentDetails.getContentHash().toByteArray();
+                        if (contentDetails.hasPostIdContext()) {
+                            PostIdContext postIdContext = contentDetails.getPostIdContext();
+                            String id = postIdContext.getFeedPostId();
+                            Post post = contentDb.getPost(id);
+                            if (post != null && post.senderUserId.isMe()) {
+                                byte[] localHash = contentDb.getPostProtoHash(id);
+                                if (!Arrays.equals(remoteHash, localHash)) {
+                                    Log.w("Skipping sharing post " + id + " because hashes do not match");
+                                } else {
+                                    Container.Builder container = Container.newBuilder();
+                                    FeedContentEncoder.encodePost(container, post);
+                                    byte[] payload = container.build().toByteArray();
+
+                                    com.halloapp.proto.server.Post.Builder postBuilder = com.halloapp.proto.server.Post.newBuilder();
+                                    postBuilder.setId(id);
+                                    postBuilder.setPublisherUid(myUid);
+                                    postBuilder.setPayload(ByteString.copyFrom(payload));
+                                    postBuilder.setTimestamp(post.timestamp);
+
+                                    groupFeedItems.addItems(GroupFeedItem.newBuilder().setPost(postBuilder));
                                 }
                             }
+                        } else if (contentDetails.hasCommentIdContext()) {
+                            CommentIdContext commentIdContext = contentDetails.getCommentIdContext();
+                            String id = commentIdContext.getCommentId();
+                            Comment comment = contentDb.getComment(id);
+                            if (comment != null) {
+                                byte[] localHash = contentDb.getCommentProtoHash(id);
+                                if (!Arrays.equals(remoteHash, localHash)) {
+                                    Log.w("Skipping sharing comment " + id + " because hashes do not match (" + StringUtils.bytesToHexString(remoteHash) + " and " + StringUtils.bytesToHexString(localHash) + ")");
+                                } else {
+                                    Container.Builder container = Container.newBuilder();
+                                    FeedContentEncoder.encodeComment(container, comment);
+                                    byte[] payload = container.build().toByteArray();
 
-                            connection.sendGroupHistory(builder.build(), peerUserId);
-                        } catch (Exception e) {
-                            Log.e("Failed to encrypt history resend to " + peerUserId, e);
+                                    com.halloapp.proto.server.Comment.Builder commentBuilder = com.halloapp.proto.server.Comment.newBuilder();
+                                    commentBuilder.setId(id);
+                                    commentBuilder.setPostId(comment.postId);
+                                    commentBuilder.setPublisherUid(myUid);
+                                    commentBuilder.setPayload(ByteString.copyFrom(payload));
+                                    commentBuilder.setTimestamp(comment.timestamp);
+
+                                    groupFeedItems.addItems(GroupFeedItem.newBuilder().setComment(commentBuilder));
+                                }
+                            }
+                        } else {
+                            Log.e("History resend content details have neither post nor comment");
                         }
                     }
+
+                    if (groupFeedItems.getItemsCount() > 0) {
+                        byte[] groupFeedItemsPayload = groupFeedItems.build().toByteArray();
+
+                        for (MemberDetails memberDetails : groupHistoryPayload.getMemberDetailsList()) {
+                            // TODO(jack): Verify that identity key matches one provided
+                            UserId peerUserId = new UserId(Long.toString(memberDetails.getUid()));
+                            GroupFeedHistory.Builder builder = GroupFeedHistory.newBuilder();
+
+                            try {
+                                SignalSessionSetupInfo signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(peerUserId);
+                                byte[] encryptedPayload = SignalSessionManager.getInstance().encryptMessage(groupFeedItemsPayload, peerUserId);
+                                builder.setEncPayload(ByteString.copyFrom(encryptedPayload));
+                                if (signalSessionSetupInfo != null) {
+                                    builder.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
+                                    if (signalSessionSetupInfo.oneTimePreKeyId != null) {
+                                        builder.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
+                                    }
+                                }
+
+                                connection.sendGroupHistory(builder.build(), peerUserId);
+                            } catch (Exception e) {
+                                Log.e("Failed to encrypt history resend to " + peerUserId, e);
+                            }
+                        }
+                    }
+                } catch (CryptoException e) {
+                    Log.e("Failed to decrypt history resend", e);
+                } catch (InvalidProtocolBufferException e) {
+                    Log.e("Failed to parse history resend", e);
                 }
-            } catch (CryptoException e) {
-                Log.e("Failed to decrypt history resend", e);
-            } catch (InvalidProtocolBufferException e) {
-                Log.e("Failed to parse history resend", e);
             }
-        }
-        connection.sendAck(ackId);
+            connection.sendAck(ackId);
+        });
 
         // TODO(jack): handle history resend rerequests
     }
