@@ -158,6 +158,7 @@ public class ArchiveActivity extends HalloActivity  {
                 pictureFrameLayout.setVisibility(View.VISIBLE);
                 name.setText("");
                 if (media.type == Media.MEDIA_TYPE_IMAGE) {
+                    durationText.setVisibility(View.GONE);
                     mediaThumbnailLoader.load(imageView, post.media.get(0));
                 } else if (media.type == Media.MEDIA_TYPE_VIDEO) {
                     bgWorkers.execute(() -> {
