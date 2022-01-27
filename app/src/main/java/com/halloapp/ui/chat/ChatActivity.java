@@ -69,6 +69,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.emoji.EmojiPickerView;
 import com.halloapp.groups.ChatLoader;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
@@ -950,6 +951,13 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             outState.putParcelable(EXTRA_SELECTED_MESSAGE_SENDER_ID, selectedMessageSenderId);
             outState.putLong(EXTRA_SELECTED_MESSAGE_ROW_ID, selectedMessageRowId);
             outState.putString(EXTRA_COPY_TEXT, copyText);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!chatInputView.onBackPressed()) {
+            super.onBackPressed();
         }
     }
 

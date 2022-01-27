@@ -111,6 +111,8 @@
     <dimen name="voice_note_levitate_distance">10dp</dimen>
 
     <dimen name="min_softkeyboard_height">120dp</dimen>
+    <dimen name="default_emoji_keyboard_height">240dp</dimen>
+    <dimen name="emoji_column_width">48dp</dimen>
 
     <dimen name="voice_post_circle_max_radius">100dp</dimen>
     <dimen name="voice_post_circle_min_inner_radius">45dp</dimen>

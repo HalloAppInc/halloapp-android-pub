@@ -766,6 +766,13 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        if (!chatInputView.onBackPressed()) {
+            super.onBackPressed();
+        }
+    }
+
     private void sendComment() {
         final Pair<String, List<Mention>> textWithMentions = editText.getTextWithMentions();
         final String postText = textWithMentions.first;

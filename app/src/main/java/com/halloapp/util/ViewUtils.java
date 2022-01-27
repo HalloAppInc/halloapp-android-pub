@@ -1,7 +1,10 @@
 package com.halloapp.util;
 
+import android.content.Context;
+import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 
 public class ViewUtils {
     public static void setViewAndChildrenEnabled(View view, boolean enabled) {
@@ -13,5 +16,12 @@ public class ViewUtils {
                 setViewAndChildrenEnabled(child, enabled);
             }
         }
+    }
+
+    public static int getStatusBarHeight(Context context) {
+        Rect rectangle = new Rect();
+        Window window = ContextUtils.getActivity(context).getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(rectangle);
+        return rectangle.top;
     }
 }

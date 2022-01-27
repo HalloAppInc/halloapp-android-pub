@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -16,23 +17,22 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.emoji.EmojiKeyboardLayout;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.media.VoiceNoteRecorder;
-import com.halloapp.props.ServerProps;
 import com.halloapp.ui.UrlPreviewTextWatcher;
 import com.halloapp.util.StringUtils;
 import java.io.File;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class ChatInputView extends ConstraintLayout {
+public class ChatInputView extends LinearLayoutCompat {
     private ImageView recordBtn;
     private ImageView sendButton;
     private TextView recordingTime;
@@ -66,6 +66,8 @@ public class ChatInputView extends ConstraintLayout {
     private boolean playing;
     private boolean wasPlaying;
 
+    private EmojiKeyboardLayout emojiKeyboardLayout;
+
     public interface InputParent {
         void onSendText();
         void onSendVoiceNote();
@@ -88,6 +90,24 @@ public class ChatInputView extends ConstraintLayout {
     public ChatInputView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
+    }
+
+    public boolean onBackPressed() {
+        if (emojiKeyboardLayout != null && emojiKeyboardLayout.isEmojiKeyboardOpen()) {
+            emojiKeyboardLayout.hideEmojiKeyboard();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean dispatchKeyEventPreIme(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            if (onBackPressed()) {
+                return true;
+            }
+        }
+        return super.dispatchKeyEventPreIme(event);
     }
 
     public void setVoiceNoteControlView(@NonNull VoiceNoteRecorderControlView controlView) {
@@ -126,8 +146,11 @@ public class ChatInputView extends ConstraintLayout {
     }
 
     private void init() {
+        setOrientation(VERTICAL);
         inflate(getContext(), R.layout.input_layout, this);
         editText = findViewById(R.id.entry_card);
+        emojiKeyboardLayout = findViewById(R.id.emoji_keyboard);
+        emojiKeyboardLayout.bind(findViewById(R.id.kb_toggle), editText);
 
         recordBtn = findViewById(R.id.record_voice);
         sendButton = findViewById(R.id.send);

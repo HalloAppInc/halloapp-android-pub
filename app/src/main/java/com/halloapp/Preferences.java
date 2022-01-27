@@ -75,6 +75,9 @@ public class Preferences {
     private static final String PREF_KEY_REGISTRATION_TIME = "registration_time";
     private static final String PREF_KEY_INVITE_NOTIFICATION_SEEN = "welcome_invite_seen";
 
+    private static final String PREF_KEY_KEYBOARD_HEIGHT_PORTRAIT = "keyboard_height_portrait";
+    private static final String PREF_KEY_KEYBOARD_HEIGHT_LANDSCAPE = "keyboard_height_landscape";
+
     private final AppContext appContext;
     private SharedPreferences backedUpPreferences;
     private SharedPreferences deviceLocalPreferences;
@@ -92,6 +95,12 @@ public class Preferences {
 
     private Preferences(@NonNull AppContext appContext) {
         this.appContext = appContext;
+    }
+
+    public synchronized void init() {
+        getKeyboardHeightLandscape(0);
+        getKeyboardHeightPortrait(0);
+        ensureMigrated();
     }
 
     public synchronized void ensureMigrated() {
@@ -148,6 +157,9 @@ public class Preferences {
     private final IntPreference prefExportDataState = createPref(true, PREF_KEY_EXPORT_DATA_STATE, ExportDataActivity.EXPORT_STATE_INITIAL);
     private final BooleanPreference prefNotifyPosts = createPref(true, PREF_KEY_NOTIFY_POSTS, true);
     private final BooleanPreference prefNotifyComments = createPref(true, PREF_KEY_NOTIFY_COMMENTS, true);
+
+    private final IntPreference prefKeyboardHeightPortrait = createPref(false, PREF_KEY_KEYBOARD_HEIGHT_PORTRAIT, 0);
+    private final IntPreference prefKeyboardHeightLandscape = createPref(false, PREF_KEY_KEYBOARD_HEIGHT_LANDSCAPE, 0);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -243,10 +255,18 @@ public class Preferences {
             return getPreferences().getInt(this.prefKey, this.defaultValue);
         }
 
+        public Integer get(int def) {
+            return getPreferences().getInt(this.prefKey, def);
+        }
+
         public void set(Integer v) {
             if (!getPreferences().edit().putInt(this.prefKey, v).commit()) {
                 Log.e("Preferences: failed to set " + this.prefKey);
             }
+        }
+
+        public void apply(Integer v) {
+            getPreferences().edit().putInt(this.prefKey, v).apply();
         }
 
         public void migrate() {
@@ -648,5 +668,23 @@ public class Preferences {
     @WorkerThread
     public boolean isForcedZeroZone() {
         return prefForceZeroZone.get();
+    }
+
+    @WorkerThread
+    public int getKeyboardHeightPortrait(int defaultValue) {
+        return prefKeyboardHeightPortrait.get(defaultValue);
+    }
+
+    @WorkerThread
+    public int getKeyboardHeightLandscape(int defaultValue) {
+        return prefKeyboardHeightLandscape.get(defaultValue);
+    }
+
+    public void setKeyboardHeightPortrait(int height) {
+        prefKeyboardHeightPortrait.apply(height);
+    }
+
+    public void setKeyboardHeightLandscape(int height) {
+        prefKeyboardHeightLandscape.apply(height);
     }
 }

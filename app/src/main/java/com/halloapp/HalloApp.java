@@ -26,6 +26,7 @@ import com.halloapp.calling.CallManager;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.ContentDb;
+import com.halloapp.emoji.EmojiManager;
 import com.halloapp.permissions.PermissionObserver;
 import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.props.ServerProps;
@@ -136,6 +137,8 @@ public class HalloApp extends Application {
 
         // Init server props synchronously so we have the correct values loaded
         ServerProps.getInstance().init();
+        Preferences.getInstance().init();
+        EmojiManager.getInstance().init();
 
         Preferences.getInstance().ensureMigrated();
         EmojiCompat.Config config = DefaultEmojiCompatConfig.create(this);
