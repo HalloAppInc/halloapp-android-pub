@@ -137,18 +137,10 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
             saveToGalleryAndDismiss();
         });
         resharePost.setOnClickListener(v -> {
-            PostContainer.Builder builder = PostContainer.newBuilder();
-            // TODO(jack): Fix for voice notes
             Container.Builder containerBuilder = Container.newBuilder();
             FeedContentEncoder.encodePost(containerBuilder, viewModel.post.getLiveData().getValue());
             PostContainer postContainer = containerBuilder.getPostContainer();
-            if (postContainer.hasAlbum()) {
-                builder.setAlbum(postContainer.getAlbum());
-            } else if (postContainer.hasText()) {
-                builder.setText(postContainer.getText());
-            }
-
-            byte[] payload = builder.build().toByteArray();
+            byte[] payload = postContainer.toByteArray();
 
             byte[] attachmentKey = new byte[15];
             new SecureRandom().nextBytes(attachmentKey);
