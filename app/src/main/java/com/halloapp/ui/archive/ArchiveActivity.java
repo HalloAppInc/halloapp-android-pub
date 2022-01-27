@@ -31,10 +31,12 @@ import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.PostContentActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.mentions.TextContentLoader;
-import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.SquareImageView;
+
+import java.io.File;
 
 public class ArchiveActivity extends HalloActivity  {
 
@@ -46,9 +48,8 @@ public class ArchiveActivity extends HalloActivity  {
     private static final int GRID_SPAN = 3;
     private static final int TEXTVIEW_LINE_LIMIT = 5;
 
-    private final BgWorkers bgWorkers = BgWorkers.getInstance();
-
     private MediaThumbnailLoader mediaThumbnailLoader;
+    private DurationLoader durationLoader;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,6 +88,27 @@ public class ArchiveActivity extends HalloActivity  {
         archiveRecyclerView.setAdapter(adapter);
 
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * (int) getResources().getDimension(R.dimen.media_gallery_grid_size));
+        durationLoader = new DurationLoader();
+    }
+
+    public static class DurationLoader extends ViewDataLoader<TextView, Long, File> {
+        public void load(TextView view, File file) {
+            final ViewDataLoader.Displayer<TextView, Long> displayer = new Displayer<TextView, Long>() {
+                @Override
+                public void showResult(@NonNull TextView view, @Nullable @org.jetbrains.annotations.Nullable Long result) {
+                    if (result != null) {
+                        view.setText(DateUtils.formatElapsedTime(result / 1000));
+                    }
+                }
+
+                @Override
+                public void showLoading(@NonNull TextView view) {
+                    view.setText("");
+                }
+            };
+
+            load(view, () -> MediaUtils.getVideoDuration(file), displayer, file, null);
+        }
     }
 
     public static class ArchiveSpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
@@ -147,6 +169,7 @@ public class ArchiveActivity extends HalloActivity  {
 
         public void bindTo(@NonNull Post post) {
             this.post = post;
+            durationLoader.cancel(durationText);
             name.setText(getString(R.string.post_retracted_by_me));
             if (post.text != null) {
                 name.setLineLimit(TEXTVIEW_LINE_LIMIT);
@@ -161,13 +184,8 @@ public class ArchiveActivity extends HalloActivity  {
                     durationText.setVisibility(View.GONE);
                     mediaThumbnailLoader.load(imageView, post.media.get(0));
                 } else if (media.type == Media.MEDIA_TYPE_VIDEO) {
-                    bgWorkers.execute(() -> {
-                        long duration = MediaUtils.getVideoDuration(media.file);
-                        durationText.post(() -> {
-                            durationText.setVisibility(View.VISIBLE);
-                            durationText.setText(DateUtils.formatElapsedTime(duration / 1000));
-                        });
-                    });
+                    durationText.setVisibility(View.VISIBLE);
+                    durationLoader.load(durationText, media.file);
                     mediaThumbnailLoader.load(imageView, media);
                 }
             }
