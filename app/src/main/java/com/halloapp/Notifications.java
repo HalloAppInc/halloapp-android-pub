@@ -674,8 +674,10 @@ public class Notifications {
     }
 
     public void clearIncomingCallNotification() {
-        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.cancel(CALL_NOTIFICATION_ID);
+        executor.execute(() -> {
+            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            notificationManager.cancel(CALL_NOTIFICATION_ID);
+        });
     }
 
     @WorkerThread

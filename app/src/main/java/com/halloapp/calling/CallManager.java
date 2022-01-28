@@ -561,10 +561,10 @@ public class CallManager {
         }
         this.state = State.IDLE;
         notifyOnEndCall();
-        stop(reason);
         // TODO(nikola): Handle multiple calls at the same time. We should only cancel the right
         // notification
         Notifications.getInstance(appContext.get()).clearIncomingCallNotification();
+        stop(reason);
     }
 
     public void handleIceCandidate(@NonNull String callId, @NonNull UserId peerUid,
@@ -969,6 +969,9 @@ public class CallManager {
     }
 
     public void endCall(EndCall.Reason reason) {
+        if (callId == null) {
+            return;
+        }
         callsApi.sendEndCall(callId, peerUid, reason);
         notifyOnEndCall();
         stop(reason);
