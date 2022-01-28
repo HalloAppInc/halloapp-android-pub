@@ -293,7 +293,12 @@ public class CallManager {
         return true;
     }
 
-    public void finishStartCall() {
+    public synchronized void finishStartCall() {
+        if (callId == null) {
+            Log.i("CallManager: finishStartCall() call already stopped");
+            return;
+        }
+        Log.i("CallManager: finishStartCall()");
         mainHandler.post(this::startAudioManager);
         executor.execute(this::setupWebrtc);
     }
@@ -444,6 +449,10 @@ public class CallManager {
     }
 
     public void showIncomingCallNotification() {
+        if (callId == null) {
+            Log.w("CallManager: showIncomingCallNotification(): callId is null. call was already canceled");
+            return;
+        }
         Notifications.getInstance(appContext.get()).showIncomingCallNotification(callId, peerUid);
         callsApi.sendRinging(callId, peerUid);
         startRingingTimeoutTimer();
@@ -474,7 +483,13 @@ public class CallManager {
         mainHandler.post(this::acceptCall);
     }
 
-    public void setTelecomConnection(HaTelecomConnection telecomConnection) {
+    public synchronized void setTelecomConnection(HaTelecomConnection telecomConnection) {
+        if (callId == null) {
+            if (Build.VERSION.SDK_INT >= 23) {
+                telecomConnection.stop(EndCall.Reason.CALL_END);
+            }
+            return;
+        }
         this.telecomConnection = telecomConnection;
     }
 
@@ -846,13 +861,22 @@ public class CallManager {
     private void getCallServersAndStartCall() {
         Observable<GetCallServersResponseIq> observable = callsApi.getCallServers(callId, peerUid, CallType.AUDIO);
         observable.onResponse(response -> {
-            Log.i("CallManager: got call servers");
-            // TODO(nikola): if we don't get any servers from the backend we should fail the call.
-            setStunTurnServers(response.stunServers, response.turnServers);
-            doStartCall();
+            Log.i("CallManager: got call servers " + response);
+            if (peerConnection == null) {
+                // call probably was canceled while we were waiting for the server response.
+                return;
+            }
+            if ((response.turnServers != null && response.turnServers.size() > 0) ||
+                    (response.stunServers != null && response.stunServers.size() > 0)) {
+                setStunTurnServers(response.stunServers, response.turnServers);
+                doStartCall();
+            } else {
+                Log.e("CallManager: Did not get any stun or turn servers " + response);
+                stop(EndCall.Reason.SYSTEM_ERROR);
+            }
         }).onError(e -> {
-            Log.e("Failed to start call, did not get ice servers", e);
-            // TODO: Should we call stop?
+            Log.e("CallManager: Failed to start call, did not get ice servers", e);
+            stop(EndCall.Reason.SYSTEM_ERROR);
         });
     }
 
@@ -879,7 +903,6 @@ public class CallManager {
                             " stun " + response.stunServers +
                             " ts " + response.timestamp);
                     if (response.result == StartCallResult.Result.OK) {
-                        setStunTurnServers(response.stunServers, response.turnServers);
                         startRingingTimeoutTimer();
                     } else {
                         Log.w("StartCall failed " + response.result);
@@ -896,11 +919,6 @@ public class CallManager {
     }
 
     private void setStunTurnServers(@NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers) {
-        if (peerConnection == null) {
-            Log.e("peerConnection is null");
-            return;
-        }
-
         // insert the stun and turn servers and update the peerConnection configuration.
         // stun/turn servers URLS look like this "stun:stun.l.google.com:19302";
         ArrayList<PeerConnection.IceServer> iceServers = new ArrayList<>();
