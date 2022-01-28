@@ -196,9 +196,9 @@ public class GroupViewModel extends AndroidViewModel {
         MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
         BgWorkers.getInstance().execute(() -> {
             HistoryResend historyResend = null;
+            GroupHistoryPayload.Builder groupHistoryPayload = GroupHistoryPayload.newBuilder();
             try {
                 if (Constants.HISTORY_RESEND_ENABLED) {
-                    GroupHistoryPayload.Builder groupHistoryPayload = GroupHistoryPayload.newBuilder();
                     for (UserId userId : userIds) {
                         try {
                             long uid = Long.parseLong(userId.rawId());
@@ -236,7 +236,13 @@ public class GroupViewModel extends AndroidViewModel {
                 Log.e("Failed to encrypt details for history resend", e);
             }
             groupsApi.addRemoveMembers(groupId, userIds, null, historyResend)
-                    .onResponse(result::postValue)
+                    .onResponse(response -> {
+                        result.postValue(response);
+
+                        if (Constants.HISTORY_RESEND_ENABLED) {
+                            groupsApi.handleGroupHistoryPayload(groupHistoryPayload.build());
+                        }
+                    })
                     .onError(error -> {
                         Log.e("Add members failed", error);
                         result.postValue(false);
