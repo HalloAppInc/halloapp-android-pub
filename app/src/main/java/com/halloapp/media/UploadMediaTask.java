@@ -146,6 +146,10 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             }
             try {
                 prepareMedia(media, maxVideoDurationSeconds);
+            } catch (IllegalArgumentException e) {
+                Log.e("UploadMediaTask media preparation failed for " + mediaLogId + "; maybe bad mime", e);
+                media.transferred = Media.TRANSFERRED_FAILURE;
+                contentItem.setMediaTransferred(media, contentDb);
             } catch (IOException | MediaConversionException | RuntimeException | Mp4Utils.Mp4OperationException e) {
                 Log.e("UploadMediaTask media preparation failed for " + mediaLogId, e);
                 break;
