@@ -457,7 +457,6 @@ Version: %2$s
     <string name="post_preview_no_caption">"%s hat einen Beitrag geteilt"</string>
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
     <string name="composer_sharing_message">"Wird an %s gesendet"</string>
-    <string name="composer_sharing_post">"Wird mit %s geteilt"</string>
     <plurals name="max_video_length">
         <item quantity="one">"Dein Video ist über %d Sekunde lang. Bitte bearbeite es oder wähle ein anderes Video aus."</item>
         <item quantity="other">"Dein Video ist über %d Sekunden lang. Bitte bearbeite es oder wähle ein anderes Video aus."</item>
@@ -470,7 +469,7 @@ Version: %2$s
     <string name="reset_link">"Link zurücksetzen"</string>
     <string name="view_group_invite_link_action">"Gruppeneinladung anzeigen"</string>
     <string name="invite_link_resetting_progress">"Link wird zurückgesetzt…"</string>
-    <string name="invite_link_reset">"Link zurücksetzen"</string>
+    <string name="invite_link_reset">"Link zurückgesetzt"</string>
     <string name="invite_link_reset_failed">"Link konnte nicht zurückgesetzt werden"</string>
     <string name="reset_invite_link_confirmation">"Möchtest du den Link zur Gruppeneinladung zurücksetzen?"</string>
     <string name="invite_link_joining">"Der Gruppe wird beigetreten…"</string>
@@ -912,11 +911,8 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Title for feed privacy when setting it from a single post -->
     <string name="setting_feed_privacy_single_post_title">"Wer sieht diesen Beitrag"</string>
 
-    <!-- Text shown when sharing a post with a group -->
-    <string name="composer_sharing_group_post">"Mit der Gruppe teilen"</string>
-
     <!-- Title of section for recent groups -->
-    <string name="recent_groups">"Neueste Gruppen"</string>
+    <string name="recent_groups">"Neue Gruppen"</string>
 
     <!-- Item for creating a new group -->
     <string name="create_new_group">"Neue Gruppe erstellen"</string>
@@ -1018,10 +1014,10 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="ongoing_call_notifications_channel_name">"Mitteilungen für laufende Anrufe"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="ringing">"Klingelt"</string>
+    <string name="ringing">"Klingelt…"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="calling">"Ruft an"</string>
+    <string name="calling">"Ausgehender Anruf…"</string>
 
     <!-- The title of the notificaiton for incoming calls -->
     <string name="incoming_call_notification_title">"Eingehender Anruf"</string>
@@ -1084,6 +1080,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="not_in_address_book_alert">"Diese Person ist nicht in deinen Kontakten"</string>
 
     <!-- Text shown in chat view telling user they had a missed call -->
+    <!-- Fuzzy -->
     <string name="log_missed_call">"Verpasster Anruf"</string>
 
     <!-- Text shown in chat view telling user they had a voice call -->
@@ -1091,6 +1088,71 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Text shown in message preview telling user they had a voice call %s is replaced with the call duration -->
     <string name="log_voice_call_with_duration">"Sprachanruf (%s)"</string>
+
+    <!-- Collapsed multiple deleted posts -->
+    <plurals name="collapsed_deleted_posts">
+        <item quantity="one">"%d gelöschter Beitrag"</item>
+        <item quantity="other">"%d gelöschte Beiträge"</item>
+    </plurals>
+
+    <!-- Collapsed multiple add user posts -->
+    <plurals name="collapsed_added_user_posts">
+        <item quantity="one">"%d Person wurde hinzugefügt"</item>
+        <item quantity="other">"%d Personen wurden hinzugefügt"</item>
+    </plurals>
+
+    <!-- Collapsed multiple remove user posts -->
+    <plurals name="collapsed_removed_user_posts">
+        <item quantity="one">"%d Person wurde entfernt"</item>
+        <item quantity="other">"%d Personen wurden entfernt"</item>
+    </plurals>
+
+    <!-- Collapsed multiple user left posts -->
+    <plurals name="collapsed_user_left_posts">
+        <item quantity="one">"%d Person hat die Gruppe verlassen"</item>
+        <item quantity="other">"%d Personen haben die Gruppe verlassen"</item>
+    </plurals>
+
+    <!-- Collapsed multiple user joined posts -->
+    <plurals name="collapsed_user_joined_posts">
+        <item quantity="one">"%d Person ist beigetreten"</item>
+        <item quantity="other">"%d Personen sind beigetreten"</item>
+    </plurals>
+
+    <!-- Action to stop recording -->
+    <string name="stop_recording">"Stopp"</string>
+
+    <!-- Confirmation dialog asking if user is sure they want to discard their recorded audio -->
+    <string name="post_audio_draft_discard_confirmation">"Möchtest du dein aufgezeichnetes Audio wirklich verwerfen?"</string>
+
+    <!-- Keep relatively short (try to fit on one line), shows at top of screen. User can tap to return to current ongoing call -->
+    <string name="tap_to_return_to_call">"Tippen, um zum Anruf zurückzukehren"</string>
+
+    <!-- Displayed on the call screen to show that the call is connecting -->
+    <string name="connecting">"Verbindet…"</string>
+
+    <!-- Text in fab for post action -->
+    <string name="post_fab_label">"Beitrag"</string>
+
+    <!-- Text in fab for new group action -->
+    <string name="new_group_fab_label">"Neue Gruppe"</string>
+
+    <!-- Text in fab for chat action -->
+    <string name="compose_fab_label">"Verfassen"</string>
+
+    <!-- Label on selected destinations when sharing from another app -->
+    <string name="share_with_label">"Share with"</string>
+
+    <!-- Title of section for your groups -->
+    <string name="your_groups">"Your groups"</string>
+
+    <!-- Title of section for recent contacts -->
+    <string name="recent_contacts">"Recent contacts"</string>
+
+    <!-- Label for button to see all rows -->
+    <string name="see_all">"See all"</string>
+    <string name="composer_sharing_post">"Wird mit %s geteilt"</string>
+    <string name="composer_sharing_group_post">"Mit der Gruppe teilen"</string>
     <string name="invite_via_link">"Per Link einladen"</string>
     <string name="couldnt_load_thumbnail">"Miniaturansicht kann nicht geladen werden"</string>
     <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>

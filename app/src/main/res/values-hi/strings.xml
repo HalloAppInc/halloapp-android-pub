@@ -426,7 +426,6 @@ version: %2$s
     <string name="post_preview_no_caption">"%s shared a post"</string>
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
     <string name="composer_sharing_message">"Sending to %s"</string>
-    <string name="composer_sharing_post">"Sharing with %s"</string>
     <plurals name="max_video_length">
         <item quantity="one">"Your video is over %d second long. Please select another video or edit it."</item>
         <item quantity="other">"Your video is over %d second long. Please select another video or edit it."</item>
@@ -873,9 +872,6 @@ Open the app settings screen to modify app permissions."</string>
     <!-- Title for feed privacy when setting it from a single post -->
     <string name="setting_feed_privacy_single_post_title">"Who will see this post"</string>
 
-    <!-- Text shown when sharing a post with a group -->
-    <string name="composer_sharing_group_post">"Sharing with group"</string>
-
     <!-- Title of section for recent groups -->
     <string name="recent_groups">"Recent groups"</string>
 
@@ -979,10 +975,10 @@ Open the app settings screen to modify app permissions."</string>
     <string name="ongoing_call_notifications_channel_name">"Ongoing Call notifications"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="ringing">"Ringing"</string>
+    <string name="ringing">"Ringing…"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="calling">"Calling"</string>
+    <string name="calling">"Calling…"</string>
 
     <!-- The title of the notificaiton for incoming calls -->
     <string name="incoming_call_notification_title">"Incoming call"</string>
@@ -1045,13 +1041,78 @@ Open the app settings screen to modify app permissions."</string>
     <string name="not_in_address_book_alert">"This person is not in your address book"</string>
 
     <!-- Text shown in chat view telling user they had a missed call -->
-    <string name="log_missed_call">"Missed call"</string>
+    <string name="log_missed_call">"Missed voice call"</string>
 
     <!-- Text shown in chat view telling user they had a voice call -->
     <string name="log_voice_call">"Voice call"</string>
 
     <!-- Text shown in message preview telling user they had a voice call %s is replaced with the call duration -->
     <string name="log_voice_call_with_duration">"Voice call (%s)"</string>
+
+    <!-- Collapsed multiple deleted posts -->
+    <plurals name="collapsed_deleted_posts">
+        <item quantity="one">"%d deleted post"</item>
+        <item quantity="other">"%d deleted post"</item>
+    </plurals>
+
+    <!-- Collapsed multiple add user posts -->
+    <plurals name="collapsed_added_user_posts">
+        <item quantity="one">"%d person was added"</item>
+        <item quantity="other">"%d person was added"</item>
+    </plurals>
+
+    <!-- Collapsed multiple remove user posts -->
+    <plurals name="collapsed_removed_user_posts">
+        <item quantity="one">"%d person was removed"</item>
+        <item quantity="other">"%d person was removed"</item>
+    </plurals>
+
+    <!-- Collapsed multiple user left posts -->
+    <plurals name="collapsed_user_left_posts">
+        <item quantity="one">"%d person left"</item>
+        <item quantity="other">"%d person left"</item>
+    </plurals>
+
+    <!-- Collapsed multiple user joined posts -->
+    <plurals name="collapsed_user_joined_posts">
+        <item quantity="one">"%d person joined"</item>
+        <item quantity="other">"%d person joined"</item>
+    </plurals>
+
+    <!-- Action to stop recording -->
+    <string name="stop_recording">"Stop"</string>
+
+    <!-- Confirmation dialog asking if user is sure they want to discard their recorded audio -->
+    <string name="post_audio_draft_discard_confirmation">"Are you sure you want to discard your recorded audio?"</string>
+
+    <!-- Keep relatively short (try to fit on one line), shows at top of screen. User can tap to return to current ongoing call -->
+    <string name="tap_to_return_to_call">"Tap to return to call"</string>
+
+    <!-- Displayed on the call screen to show that the call is connecting -->
+    <string name="connecting">"Connecting…"</string>
+
+    <!-- Text in fab for post action -->
+    <string name="post_fab_label">"Post"</string>
+
+    <!-- Text in fab for new group action -->
+    <string name="new_group_fab_label">"New group"</string>
+
+    <!-- Text in fab for chat action -->
+    <string name="compose_fab_label">"Compose"</string>
+
+    <!-- Label on selected destinations when sharing from another app -->
+    <string name="share_with_label">"Share with"</string>
+
+    <!-- Title of section for your groups -->
+    <string name="your_groups">"Your groups"</string>
+
+    <!-- Title of section for recent contacts -->
+    <string name="recent_contacts">"Recent contacts"</string>
+
+    <!-- Label for button to see all rows -->
+    <string name="see_all">"See all"</string>
+    <string name="composer_sharing_post">"Sharing with %s"</string>
+    <string name="composer_sharing_group_post">"Sharing with group"</string>
     <string name="invite_via_link">"Invite via link"</string>
     <string name="couldnt_load_thumbnail">"Couldn't load thumbnail"</string>
     <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>

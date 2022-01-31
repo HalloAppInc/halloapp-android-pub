@@ -421,7 +421,6 @@ versie: %2$s
     <string name="post_preview_no_caption">"%s heeft een post gedeeld"</string>
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
     <string name="composer_sharing_message">"Verzenden naar %s"</string>
-    <string name="composer_sharing_post">"Delen met %s"</string>
     <plurals name="max_video_length">
         <item quantity="one">"Je video is langer dan %d seconde. Selecteer alsjeblieft een andere video of bewerk deze."</item>
         <item quantity="other">"Je video is langer dan %d seconden. Selecteer alsjeblieft een andere video of bewerk deze."</item>
@@ -870,9 +869,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <!-- Title for feed privacy when setting it from a single post -->
     <string name="setting_feed_privacy_single_post_title">"Wie kan deze post zien"</string>
 
-    <!-- Text shown when sharing a post with a group -->
-    <string name="composer_sharing_group_post">"Delen met groep"</string>
-
     <!-- Title of section for recent groups -->
     <string name="recent_groups">"Recente groepen"</string>
 
@@ -976,10 +972,10 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="ongoing_call_notifications_channel_name">"Meldingen lopende oproep"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="ringing">"Gaat over"</string>
+    <string name="ringing">"Gaat over…"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="calling">"Belt"</string>
+    <string name="calling">"Wordt gebeld…"</string>
 
     <!-- The title of the notificaiton for incoming calls -->
     <string name="incoming_call_notification_title">"Inkomende oproep"</string>
@@ -1042,13 +1038,78 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="not_in_address_book_alert">"Deze persoon staat niet in je adresboek"</string>
 
     <!-- Text shown in chat view telling user they had a missed call -->
-    <string name="log_missed_call">"Gemiste oproep"</string>
+    <string name="log_missed_call">"Gemiste spraakoproep"</string>
 
     <!-- Text shown in chat view telling user they had a voice call -->
     <string name="log_voice_call">"Spraakoproep"</string>
 
     <!-- Text shown in message preview telling user they had a voice call %s is replaced with the call duration -->
     <string name="log_voice_call_with_duration">"Spraakoproep (%s)"</string>
+
+    <!-- Collapsed multiple deleted posts -->
+    <plurals name="collapsed_deleted_posts">
+        <item quantity="one">"%d verwijderde post"</item>
+        <item quantity="other">"%d verwijderde posts"</item>
+    </plurals>
+
+    <!-- Collapsed multiple add user posts -->
+    <plurals name="collapsed_added_user_posts">
+        <item quantity="one">"%d persoon is toegevoegd"</item>
+        <item quantity="other">"%d personen zijn toegevoegd"</item>
+    </plurals>
+
+    <!-- Collapsed multiple remove user posts -->
+    <plurals name="collapsed_removed_user_posts">
+        <item quantity="one">"%d persoon is verwijderd"</item>
+        <item quantity="other">"%d personen zijn verwijderd"</item>
+    </plurals>
+
+    <!-- Collapsed multiple user left posts -->
+    <plurals name="collapsed_user_left_posts">
+        <item quantity="one">"%d persoon heeft de groep verlaten"</item>
+        <item quantity="other">"%d personen hebben de groep verlaten"</item>
+    </plurals>
+
+    <!-- Collapsed multiple user joined posts -->
+    <plurals name="collapsed_user_joined_posts">
+        <item quantity="one">"%d persoon neemt deel aan de groep"</item>
+        <item quantity="other">"%d personen nemen deel aan de groep"</item>
+    </plurals>
+
+    <!-- Action to stop recording -->
+    <string name="stop_recording">"Stop"</string>
+
+    <!-- Confirmation dialog asking if user is sure they want to discard their recorded audio -->
+    <string name="post_audio_draft_discard_confirmation">"Weet je zeker dat je je opgenomen audio wilt verwijderen?"</string>
+
+    <!-- Keep relatively short (try to fit on one line), shows at top of screen. User can tap to return to current ongoing call -->
+    <string name="tap_to_return_to_call">"Tik om terug te gaan naar oproep"</string>
+
+    <!-- Displayed on the call screen to show that the call is connecting -->
+    <string name="connecting">"Verbinding maken…"</string>
+
+    <!-- Text in fab for post action -->
+    <string name="post_fab_label">"Post"</string>
+
+    <!-- Text in fab for new group action -->
+    <string name="new_group_fab_label">"Nieuwe groep"</string>
+
+    <!-- Text in fab for chat action -->
+    <string name="compose_fab_label">"Opstellen"</string>
+
+    <!-- Label on selected destinations when sharing from another app -->
+    <string name="share_with_label">"Delen met"</string>
+
+    <!-- Title of section for your groups -->
+    <string name="your_groups">"Jouw groepen"</string>
+
+    <!-- Title of section for recent contacts -->
+    <string name="recent_contacts">"Recente contacten"</string>
+
+    <!-- Label for button to see all rows -->
+    <string name="see_all">"Alles bekijken"</string>
+    <string name="composer_sharing_post">"Delen met %s"</string>
+    <string name="composer_sharing_group_post">"Delen met groep"</string>
     <string name="invite_via_link">"Uitnodigen via link"</string>
     <string name="couldnt_load_thumbnail">"Kon voorvertoning niet laden"</string>
     <string name="system_message_missed_audio_call">"Gemiste spraakoproep om %s"</string>

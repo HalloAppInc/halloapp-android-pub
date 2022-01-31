@@ -8,38 +8,39 @@
     <string name="comment">"تعليق"</string>
     <string name="next">"التالي"</string>
     <string name="message">"رسالة"</string>
-    <string name="add_post">"إضافة تعليق"</string>
+    <string name="add_post">"إضافة منشور"</string>
     <string name="new_chat">"دردشة جديدة"</string>
     <string name="new_group">"مجموعة جديدة"</string>
     <string name="notifications">"إشعارات"</string>
-    <string name="feed_notifications_channel_name">"إشعارات الموجزات"</string>
+    <string name="feed_notifications_channel_name">"إشعارات الموجز"</string>
     <string name="message_notifications_channel_name">"إشعارات الرسائل"</string>
     <string name="critical_notifications_channel_name">"تنبيهات التطبيق الهامة"</string>
     <string name="invite_notifications_channel_name">"إشعارات الدعوة"</string>
-    <string name="invite_notification_text">"%s قبل دعوتك للانضمام إلى هالوآب&#x1f389;"</string>
+    <string name="invite_notification_text">"%s قبل دعوتك للانضمام إلى هالوآب &#x1f389;"</string>
     <string name="me">"أنا"</string>
     <string name="you">"أنت"</string>
     <string name="camera_post">"الكاميرا"</string>
     <string name="gallery_post">"المعرض"</string>
     <string name="text_post">"نص"</string>
-    <string name="bad_image">"ملف الوسائط غير متوافق مع التطبيق"</string>
+    <string name="bad_image">"ملف وسائط غير متوافق"</string>
     <string name="time_diff_now">"الآن"</string>
     <string name="phone_number_hint">"رقم الهاتف"</string>
     <string name="request_registration_title">"أهلاً!"</string>
     <string name="reverify_registration_title">"الرجاء إعادة تأكيد رقم هاتفك"</string>
     <string name="request_registration_subtitle">"ستتلقى رمز التأكيد. 
-قد تطبق رسوم من شركة الهاتف التابع لها."</string>
-    <string name="verify_registration_title">"أدخل رمز التأكيد الذي أرسلناه إلى %s"</string>
+قد تطبق رسوم من شركة الاتصالات التابع لها."</string>
+    <string name="verify_registration_title">"أدخل رمز التأكيد الذي أرسلناه إلى
+%s"</string>
     <string name="contact_permission_title">"أمر أخير"</string>
     <string name="registration_code_invalid">"رمز التسجيل غير صحيح، حاول مجددًا"</string>
     <string name="registration_failed">"تعذَر تسجيل رقم الهاتف، حاول مجددًا"</string>
-    <string name="registration_failed_no_friends">"لا يمكن استخدام التطبيق الآن إلا إذا تمت دعوتك إليه. إذا كان أصدقاؤك أو أفراد أسرتك يستخدمون هالوآب، اطلب منهم دعوتك من خلال استعمال رقم هاتفك."</string>
+    <string name="registration_failed_no_friends">"لا يمكن استخدام التطبيق الآن إلا إذا تمت دعوتك إليه. إذا كان أصدقاؤك أو أفراد أسرتك يستخدمون هالوآب، اطلب منهم دعوتك عن طريق رقم هاتفك."</string>
 
     <!-- can you use something that is international, i live in the US and had to google "Shucks" -->
     <string name="registration_failed_no_friends_title">"عذرًا!"</string>
-    <string name="type_a_message_hint">"اطبع رسالة"</string>
-    <string name="write_a_description">"اكتب وصفاً"</string>
-    <string name="write_a_post">"اكتب منشوراً"</string>
+    <string name="type_a_message_hint">"اكتب رسالة"</string>
+    <string name="write_a_description">"اكتب وصفًا"</string>
+    <string name="write_a_post">"اكتب منشورًا"</string>
     <string name="send">"إرسال"</string>
     <string name="set_avatar_done">"تم"</string>
     <string name="set_avatar_reset">"إعادة التعيين"</string>
@@ -60,12 +61,12 @@
     <string name="share_option_post">"منشور"</string>
     <string name="share_option_message">"رسالة"</string>
     <plurals name="max_post_media_items">
-        <item quantity="zero">"يمكنك اختيار %d من الوسائط لكل منشور "</item>
+        <item quantity="zero">"يمكنك اختيار %d من ملفات الوسائط لكل منشور "</item>
         <item quantity="one">"يمكنك اختيار ملف وسائط %d لكل منشور "</item>
         <item quantity="two">"يمكنك اختيار ملفي وسائط %d لكل منشور"</item>
         <item quantity="few">"يمكنك اختيار %d ملفات وسائط لكل منشور"</item>
         <item quantity="many">"يمكنك اختيار %d ملف وسائط لكل منشور"</item>
-        <item quantity="other">"يمكنك اختيار %d من ملفات الوسائط لكل منشور"</item>
+        <item quantity="other">"يمكنك اختيار %d ملف وسائط لكل منشور"</item>
     </plurals>
     <string name="camera_record_audio_permission_rationale">"لالتقاط الصور ومقاطع الفيديو يجب أن تمنح التطبيق إذن الوصول إلى الكاميرا وتسجيل الصوت على جهازك"</string>
     <string name="camera_record_audio_permission_rationale_denied">"لالتقاط الصور ومقاطع الفيديو يجب أن تمنح التطبيق إذن الوصول إلى الكاميرا وتسجيل الصوت على جهازك.
@@ -79,8 +80,8 @@
     <string name="storage_permission_rationale_denied">"لاختيار الوسائط يجب أن تمنح التطبيق إذن الوصول إلى وحدة تخزين جهازك.
 
 افتح شاشة إعدادات التطبيق لتعديل أذونات التطبيق."</string>
-    <string name="retry">"حاول مجدداً"</string>
-    <string name="contact_rationale_upload">"لنتمكن من وصلك بأصدقائك وأفراد أسرتك يجب أن تمنح التطبيق إذن الوصول إلى جهات اتصالك. &lt;a href=\"learn-more\"&gt;تعرّف على المزيد&lt;/a&gt; 
+    <string name="retry">"حاول مجددًا"</string>
+    <string name="contact_rationale_upload">"للتواصل مع أصدقائك وأفراد أسرتك يجب أن تمنح التطبيق إذن الوصول إلى جهات اتصالك. &lt;a href=\"learn-more\"&gt;تعرّف على المزيد&lt;/a&gt;
 "</string>
     <string name="failed_to_initialize">"تعذّر بدء التهيئة"</string>
     <string name="type_a_comment_hint">"إضافة تعليق"</string>
@@ -92,19 +93,21 @@
     <string name="reply_original_not_found">"لم يتم العثور على الرسالة الأصلية"</string>
     <string name="reply_original_post_not_found">"لم يتم العثور على المنشور الأصلي"</string>
     <string name="mentioned_you_in_their_post">"تمت الإشارة إليك في منشور &lt;b&gt;%s&lt;/b&gt;"</string>
-    <string name="mentioned_you_in_comment_on_your_post">"تمت الإشارة إليك في ملاحظة &lt;b&gt;%s&lt;/b&gt; على منشورك"</string>
-    <string name="mentioned_you_in_comment_on_own_post">"تمت الإشارة إليك في ملاحظة &lt;b&gt;%s&lt;/b&gt; على منشورهم"</string>
-    <string name="mentioned_you_in_comment_on_someones_post">"تمت الإشارة إليك في ملاحظة &lt;b&gt;%1$s&lt;/b&gt; على منشور &lt;b&gt;%2$s&lt;/b&gt;"</string>
-    <string name="contact_hashing_faq_dialog_title">"خصوصيتك من أولوياتنا"</string>
-    <string name="contact_hashing_faq_dialog_info">"يستخدم هالوآب فقط حقل رقم الهاتف لمطابقتك بأصدقائك على هالوآب، ولا يسجل أي بيانات إضافية من سجل جهات الاتصال الخاص بك."</string>
-    <string name="list_of_two">"%1$s من أصل %2$s"</string>
+    <string name="mentioned_you_in_comment_on_your_post">"تمت الإشارة إليك في تعليق &lt;b&gt;%s&lt;/b&gt; على منشورك"</string>
+
+    <!-- Gender issue in the possessive pronoun. In Arabic, we have masculine and feminine possessive pronouns. -->
+    <string name="mentioned_you_in_comment_on_own_post">"تمت الإشارة إليك في تعليق &lt;b&gt;%s&lt;/b&gt; على منشوره"</string>
+    <string name="mentioned_you_in_comment_on_someones_post">"تمت الإشارة إليك في تعليق &lt;b&gt;%1$s&lt;/b&gt; على منشور &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="contact_hashing_faq_dialog_title">"خصوصيتك على رأس أولوياتنا"</string>
+    <string name="contact_hashing_faq_dialog_info">"لا يستخدم هالوآب حقل رقم الهاتف إلا لمطابقتك بأصدقائك على هالوآب، ولا يسجل أي بيانات إضافية من قائمة جهات اتصالك."</string>
+    <string name="list_of_two">"%1$s و%2$s"</string>
     <string name="list_of_many_start">"%s"</string>
-    <string name="list_of_many_middle">"%s، "</string>
-    <string name="list_of_many_end">"، و%s"</string>
+    <string name="list_of_many_middle">"و%s"</string>
+    <string name="list_of_many_end">"و%s"</string>
     <string name="no_activity">"لا يوجد نشاط"</string>
     <string name="failed_to_load_media">"تعذّر تحميل الوسائط"</string>
     <string name="settings">"الإعدادات"</string>
-    <string name="send_logs">"إرسال التعليقات وسجلات الأداء"</string>
+    <string name="send_logs">"إرسال التعليقات والسجلات"</string>
     <string name="terms_of_service">"شروط الخدمة"</string>
     <string name="privacy_policy">"سياسة الخصوصية"</string>
     <string name="settings_block_list">"جهات الاتصال المحظورة"</string>
@@ -116,7 +119,7 @@
         <item quantity="two">"تم اختيار جهتي اتصال %d"</item>
         <item quantity="few">"تم اختيار %d جهات اتصال"</item>
         <item quantity="many">"تم اختيار %d جهة اتصال"</item>
-        <item quantity="other">"تم اختيار %d جهات اتصال "</item>
+        <item quantity="other">"تم اختيار %d جهة اتصال"</item>
     </plurals>
     <plurals name="contact_maximum_selection">
         <item quantity="zero">"يمكنك اختيار %d من جهات الاتصال كحد أقصى"</item>
@@ -128,15 +131,13 @@
     </plurals>
     <string name="no_contacts_selected_subtitle">"لم يتم اختيار أي جهة اتصال"</string>
     <string name="help">"المساعدة"</string>
-    <string name="about">"حول"</string>
+    <string name="about">"حول هالوآب"</string>
     <string name="notify_posts">"المنشورات"</string>
     <string name="notify_comments">"التعليقات"</string>
     <string name="read_more">"قراءة المزيد"</string>
     <string name="no_photos_or_videos_found">"لم يتم العثور على أي صور أو مقاطع فيديو"</string>
     <string name="gallery">"المعرض"</string>
     <string name="avatar_picker_title">"صورة الملف الشخصي"</string>
-
-    <!-- Fuzzy -->
     <string name="group_avatar_picker_title">"صورة المجموعة"</string>
     <string name="other_media">"وسائط أخرى"</string>
     <string name="rotate">"تدوير"</string>
@@ -148,18 +149,18 @@
     <string name="new_posts">"منشورات جديدة"</string>
 
     <!-- Confirmation dialog message when user tries to exit with unsaved changes. Options are cancel (keep editing) and discard (exit). -->
-    <string name="alert_discard_changes_message">"إلغاء التعديلات"</string>
+    <string name="alert_discard_changes_message">"إلغاء التعديلات؟"</string>
 
     <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
     <string name="action_discard">"إلغاء"</string>
     <string name="new_post_notification">"منشور جديد من %s"</string>
     <plurals name="new_posts_notification">
-        <item quantity="zero">"%1$d من المنشورات من %2$s"</item>
-        <item quantity="one">"منشور %1$d من %2$s"</item>
-        <item quantity="two">"منشوران %1$d من %2$s"</item>
-        <item quantity="few">"%1$d منشورات من %2$s"</item>
-        <item quantity="many">"%1$d مناشير من %2$s"</item>
-        <item quantity="other">"%1$d منشور من %2$s"</item>
+        <item quantity="zero">"%1$d من المنشورات الجديدة من %2$s"</item>
+        <item quantity="one">"منشور %1$d جديد من %2$s"</item>
+        <item quantity="two">"منشوران %1$d جديدان من %2$s"</item>
+        <item quantity="few">"%1$d منشورات جديدة من %2$s"</item>
+        <item quantity="many">"%1$d منشورًا جديدًا من %2$s"</item>
+        <item quantity="other">"%1$d منشور جديد من %2$s"</item>
     </plurals>
     <plurals name="new_messages_notification">
         <item quantity="zero">"%1$d من الرسائل من %2$s"</item>
@@ -177,8 +178,6 @@
         <item quantity="many">"%d رسالة جديدة"</item>
         <item quantity="other">"%d رسالة جديدة"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="new_comments_notification">
         <item quantity="zero">"%s من التعليقات على منشورك"</item>
         <item quantity="one">"تعليق %s على منشورك"</item>
@@ -203,11 +202,11 @@
         <item quantity="one">"تنتهي صلاحية هالوآب خلال يوم %d"</item>
         <item quantity="two">"تنتهي صلاحية هالوآب خلال يومين %d"</item>
         <item quantity="few">"تنتهي صلاحية هالوآب خلال %d أيام"</item>
-        <item quantity="many">"تنتهي صلاحية هالوآب خلال %d يوماً"</item>
+        <item quantity="many">"تنتهي صلاحية هالوآب خلال %d يومًا"</item>
         <item quantity="other">"تنتهي صلاحية هالوآب خلال %d يوم"</item>
     </plurals>
     <string name="app_expiration_download_button">"تنزيل إصدار حديث"</string>
-    <string name="app_expired_explanation">"إن هذا الإصدار من هالوآب بات قديماً ولم يعد بالإمكان استخدامه. الرجاء الذهاب إلى متجر Play وتنزيل أحدث إصدار. "</string>
+    <string name="app_expired_explanation">"إن هذا الإصدار من هالوآب قديم ولم يعد بالإمكان استخدامه. الرجاء الذهاب إلى متجر Play وتنزيل أحدث إصدار."</string>
     <string name="app_expiration_no_play_store">"لم يتم تثبيت متجر Play على هاتفك"</string>
     <string name="refresh_contacts">"إعادة تحميل جهات الاتصال"</string>
     <string name="post_retracted_with_name">"%s حذف منشوره"</string>
@@ -219,7 +218,7 @@
     <string name="retract_post_confirmation">"هل تريد حذف منشورك؟"</string>
     <string name="retract_comment_confirmation">"هل تريد حذف تعليقك؟"</string>
     <plurals name="delete_chats_confirmation">
-        <item quantity="zero">"لا تريد حذف أي الدردشة؟"</item>
+        <item quantity="zero">"لا تريد حذف أي دردشة؟"</item>
         <item quantity="one">"هل تريد حذف هذه الدردشة؟"</item>
         <item quantity="two">"هل تريد حذف هاتين الدردشتين؟"</item>
         <item quantity="few">"هل تريد حذف هذه الدردشات؟"</item>
@@ -234,26 +233,26 @@
         <item quantity="many">"هل تريد حذف هذه المجموعات؟"</item>
         <item quantity="other">"هل تريد حذف هذه المجموعات؟"</item>
     </plurals>
-    <string name="delete_chat_confirmation">"هل تريد حذف هذه المجموعة؟"</string>
+    <string name="delete_chat_confirmation">"هل تريد حذف هذه الدردشة؟"</string>
     <string name="yes">"نعم"</string>
     <string name="no">"لا"</string>
     <string name="ok">"موافق"</string>
     <string name="activity">"النشاط"</string>
 
     <!-- In activity center, mark all comments/mentions as read -->
-    <string name="mark_all_read">"قراءة الجميع"</string>
+    <string name="mark_all_read">"قراءة الكل"</string>
     <string name="login_failed">"تعذّر تسجيل الدخول"</string>
-    <string name="login_failed_explanation">"الرجاء إعادة التحقق من رقم هاتفك"</string>
+    <string name="login_failed_explanation">"الرجاء إعادة تأكيد رقم هاتفك"</string>
     <plurals name="app_expiration_days_left">
-        <item quantity="zero">"إصدار هالوآب هذا ستنتهي صلاحيته بعد %d من الأيام. الرجاء الذهاب إلى متجر Play وتنزيل أحدث إصدار. "</item>
-        <item quantity="one">"إصدار هالوآب هذا ستنتهي صلاحيته بعد يوم %d. الرجاء الذهاب إلى متجر Play وتنزيل أحدث إصدار. "</item>
-        <item quantity="two">"إصدار هالوآب هذا ستنتهي صلاحيته بعد يومين %d. الرجاء الذهاب إلى متجر Play وتنزيل أحدث إصدار. "</item>
-        <item quantity="few">"إصدار هالوآب هذا ستنتهي صلاحيته بعد %d أيام. الرجاء الذهاب إلى متجر Play وتنزيل أحدث إصدار. "</item>
-        <item quantity="many">"إصدار هالوآب هذا ستنتهي صلاحيته بعد %d يوماً. الرجاء الذهاب إلى متجر Play وتنزيل أحدث إصدار. "</item>
-        <item quantity="other">"إصدار هالوآب هذا ستنتهي صلاحيته بعد %d يوم. الرجاء الذهاب إلى متجر Play وتنزيل أحدث إصدار. "</item>
+        <item quantity="zero">"إصدار هالوآب هذا ستنتهي صلاحيته بعد %d من الأيام. الرجاء الذهاب إلى متجر Play وتنزيل أحدث إصدار."</item>
+        <item quantity="one">"إصدار هالوآب هذا ستنتهي صلاحيته بعد يوم %d. الرجاء الذهاب إلى متجر Play وتنزيل أحدث إصدار."</item>
+        <item quantity="two">"إصدار هالوآب هذا ستنتهي صلاحيته بعد يومين %d. الرجاء الذهاب إلى متجر Play وتنزيل أحدث إصدار."</item>
+        <item quantity="few">"إصدار هالوآب هذا ستنتهي صلاحيته بعد %d أيام. الرجاء الذهاب إلى متجر Play وتنزيل أحدث إصدار."</item>
+        <item quantity="many">"إصدار هالوآب هذا ستنتهي صلاحيته بعد %d يومًا. الرجاء الذهاب إلى متجر Play وتنزيل أحدث إصدار."</item>
+        <item quantity="other">"إصدار هالوآب هذا ستنتهي صلاحيته بعد %d يوم. الرجاء الذهاب إلى متجر Play وتنزيل أحدث إصدار."</item>
     </plurals>
     <string name="could_not_set_avatar">"الرجاء محاولة استخدام صورة أخرى"</string>
-    <string name="pick_media">"اختيار ملف وسائط"</string>
+    <string name="pick_media">"اختيار ملفات وسائط"</string>
     <string name="video">"مقطع فيديو"</string>
     <string name="photo">"صورة"</string>
     <string name="album">"ألبوم"</string>
@@ -268,28 +267,24 @@
     <string name="last_seen_less_minute">"آخر ظهور منذ أقل من دقيقة"</string>
     <string name="online">"متصل الآن"</string>
     <string name="today">"اليوم"</string>
-
-    <!-- Fuzzy -->
     <string name="today_at_time">"اليوم عند %s"</string>
     <string name="yesterday">"الأمس"</string>
-
-    <!-- Fuzzy -->
     <string name="yesterday_at_time">"الأمس عند %s"</string>
     <string name="day_of_week_at_time">"%1$s عند %2$s"</string>
     <string name="unknown_contact">"جهة اتصال مجهولة"</string>
     <string name="select_contact">"رسالة جديدة"</string>
     <string name="search_contacts">"البحث في جهات الاتصال"</string>
     <string name="search">"بحث"</string>
-    <string name="contact_search_empty">"لم يتم العثور على أي شيء خاص بـ '%s'"</string>
+    <string name="contact_search_empty">"لم يتم العثور على شيء خاص بـ '%s'"</string>
     <string name="action_save">"حفظ"</string>
     <string name="invite_friends">"دعوة أفراد العائلة والأصدقاء"</string>
     <string name="invite_friend_chooser_title">"دعوة %s"</string>
-    <string name="invite_text_with_name_and_number">"مرحبًا %1$s هذه دعوة مني لتنضم إليّ في استخدام هالوآب - وهو عبارة عن شبكة للعلاقات الفعلية بين الأشخاص المقربين. استخدم %2$s للتسجيل في التطبيق. يمكنك تنزيله من %3$s"</string>
+    <string name="invite_text_with_name_and_number">"مرحبًا %1$s، هذه دعوة مني لتنضم إليّ في استخدام هالوآب - وهو عبارة عن شبكة للعلاقات الفعلية بين الأشخاص المقربين. استخدم %2$s للتسجيل في التطبيق. يمكنك تنزيله من %3$s"</string>
     <string name="name_hint">"اسمك"</string>
     <string name="name_must_be_specified">"يجب تحديد اسم"</string>
     <string name="counter">"%1$d / %2$d"</string>
     <string name="invite_pending">"الدعوة معلّقة"</string>
-    <string name="failed_update_profile">"تعذّر تحديث الملف الشخصي، الرجاء المحاولة لاحقاً"</string>
+    <string name="failed_update_profile">"تعذّر تحديث الملف الشخصي، الرجاء المحاولة لاحقًا"</string>
     <string name="profile_updated">"تم تحديث الملف الشخصي"</string>
     <string name="flip">"قلب"</string>
     <string name="email_logs_subject">"هالوآب لجهاز Android %1$s %2$s"</string>
@@ -300,7 +295,7 @@
 ----------------------------------------"</string>
     <string name="share">"مشاركة"</string>
     <string name="unblock">"رفع الحظر"</string>
-    <string name="unblock_user_confirmation">"هل تريد رفع الحظر عن %s؟ "</string>
+    <string name="unblock_user_confirmation">"هل تريد رفع الحظر عن %s؟"</string>
     <string name="menu_item_block_user">"حظر المستخدم"</string>
     <string name="picker_title_block_user">"حظر المستخدم"</string>
     <string name="cancel">"إلغاء"</string>
@@ -316,19 +311,15 @@
     <string name="system_message_members_removed_by_you">"أنت أزلت %s"</string>
     <string name="system_message_member_left">"%s غادر"</string>
     <string name="system_message_member_you_left">"أنت غادرت"</string>
-    <string name="system_message_members_promoted">"%1$s عيّن %2$s مشرفاً"</string>
-    <string name="system_message_members_promoted_by_you">"أنت عيّنت %s مشرفاً"</string>
+    <string name="system_message_members_promoted">"%1$s عيّن %2$s مشرفًا"</string>
+    <string name="system_message_members_promoted_by_you">"أنت عيّنت %s مشرفًا"</string>
     <string name="system_message_members_demoted">"%1$s أزال %2$s من منصب مشرف"</string>
     <string name="system_message_members_demoted_by_you">"أنت أزلت %s من منصب مشرف"</string>
-    <string name="system_message_member_auto_promoted">"تم تلقائياً تعيين %s مشرفاً"</string>
-    <string name="system_message_member_auto_promoted_you">"تم تلقائياً تعيينك مشرفاً"</string>
+    <string name="system_message_member_auto_promoted">"تم تلقائيًا تعيين %s مشرفًا"</string>
+    <string name="system_message_member_auto_promoted_you">"تم تلقائيًا تعيينك مشرفًا"</string>
     <string name="system_message_group_name_changed">"%1$s غيّر اسم المجموعة إلى %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"أنت غيّرت اسم المجموعة إلى %s"</string>
-
-    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed">"%s غيّر صورة المجموعة"</string>
-
-    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed_by_you">"أنت غيّرت صورة المجموعة"</string>
     <string name="system_message_group_deleted">"%s حذف المجموعة"</string>
     <string name="system_message_group_deleted_by_you">"أنت حذفت المجموعة"</string>
@@ -340,25 +331,23 @@
     <string name="system_post_members_removed_by_you">"أنت أزلت %s"</string>
     <string name="system_post_member_left">"%s غادر"</string>
     <string name="system_post_member_you_left">"أنت غادرت"</string>
-    <string name="system_post_members_promoted">"%1$s عيّن %2$s مشرفاً"</string>
-    <string name="system_post_members_promoted_by_you">"أنت عيّنت %s مشرفاً"</string>
+    <string name="system_post_members_promoted">"%1$s عيّن %2$s مشرفًا"</string>
+    <string name="system_post_members_promoted_by_you">"أنت عيّنت %s مشرفًا"</string>
     <string name="system_post_members_demoted">"%1$s أزال %2$s من منصب مشرف"</string>
     <string name="system_post_members_demoted_by_you">"أنت أزلت %s من منصب مشرف"</string>
-    <string name="system_post_member_auto_promoted">"%s تم تلقائياً تعيينه مشرفاً"</string>
-    <string name="system_post_member_auto_promoted_you">"أنت تم تلقائياً تعيينك مشرفاً"</string>
+    <string name="system_post_member_auto_promoted">"تم تلقائيًا تعيين %s مشرفًا"</string>
+    <string name="system_post_member_auto_promoted_you">"تم تلقائيًا تعيينك مشرفًا"</string>
     <string name="system_post_group_name_changed">"%1$s غيّر اسم المجموعة إلى %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"أنت غيّرت اسم المجموعة إلى %s"</string>
-
-    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed">"%s غيّر صورة المجموعة"</string>
-
-    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed_by_you">"أنت غيّرت صورة المجموعة"</string>
     <string name="system_post_group_deleted">"%s حذف المجموعة"</string>
     <string name="system_post_group_deleted_by_you">"أنت حذفت المجموعة"</string>
     <string name="group_info_title">"معلومات المجموعة"</string>
     <string name="admin">"المشرف"</string>
     <string name="save">"حفظ"</string>
+
+    <!-- Hi, does this string mean "Hide posts created by...", or "Hide posts so that they cannot be seen by..."? -->
     <string name="contact_picker_feed_except_title">"إخفاء المنشورات عن…"</string>
     <string name="contact_picker_feed_only_title">"مشاركة المنشورات مع…"</string>
     <string name="setting_feed_privacy_title">"من يمكنه مشاهدة منشوراتي"</string>
@@ -368,13 +357,13 @@
     <string name="feed_privacy_fail_to_load">"تعذّر تحميل إعدادات الخصوصية"</string>
     <string name="feed_privacy_update_success">"تم تحديث الإعدادات بنجاح"</string>
     <string name="feed_privacy_update_failure">"تعذّر تحديث الإعدادات"</string>
-    <string name="invite_failed_internet">"تعذّر إرسال الدعوة، تأكد من اتصالك بالإنترنت وحاول مجدداً"</string>
-    <string name="invite_failed_no_invites">"عذراً، لقد استخدمت كافة الدعوات، الرجاء المحاولة لاحقاً"</string>
+    <string name="invite_failed_internet">"تعذّر إرسال الدعوة، تأكد من اتصالك بالإنترنت وحاول مجددًا"</string>
+    <string name="invite_failed_no_invites">"عذرًا، لقد استخدمت كافة الدعوات، الرجاء المحاولة لاحقًا"</string>
     <string name="invite_failed_invalid_number">"رقم الهاتف هذا غير صالح"</string>
-    <string name="invite_failed_existing_user">"إن صديقك من مستخدمي هالوآب!"</string>
+    <string name="invite_failed_existing_user">"من مستخدمي هالوآب!"</string>
     <string name="invite_failed_unknown">"تعذّر إرسال الدعوة"</string>
-    <string name="invite_creation_in_progress">"جاري إنشاء الدعوة…"</string>
-    <string name="invite_info_fetch_internet">"تعذر سحب معلومات الدعوة، تأكد من اتصالك بالإنترنت وحاول مجدداً"</string>
+    <string name="invite_creation_in_progress">"جارٍ إنشاء الدعوة…"</string>
+    <string name="invite_info_fetch_internet">"تعذر سحب معلومات الدعوة، تأكد من اتصالك بالإنترنت وحاول مجددًا"</string>
     <plurals name="invites_remaining">
         <item quantity="zero">"لم يتبقَ لديك أي دعوة (%s) هذا الأسبوع"</item>
         <item quantity="one">"تبقى لديك دعوة %s هذا الأسبوع"</item>
@@ -384,9 +373,7 @@
         <item quantity="other">"تبقى لديك %s دعوة هذا الأسبوع"</item>
     </plurals>
     <string name="invite_friends_title">"دعوة أفراد الأسرة والأصدقاء"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_title">"دعوة"</string>
+    <string name="invite_title">"دعوة الأصدقاء"</string>
     <string name="settings_invite_option">"دعوة إلى هالوآب"</string>
     <string name="invite_already_on_halloapp">"من مستخدمي هالوآب"</string>
     <string name="invite_invalid_phone_number">"رقم الهاتف غير صالح"</string>
@@ -394,35 +381,35 @@
     <string name="done">"تم"</string>
     <string name="members_header">"الأعضاء (%s)"</string>
     <string name="add_members">"إضافة أعضاء"</string>
-    <string name="add_members_in_progress">"جاري إضافة أعضاء…"</string>
-    <string name="failed_add_members">"تعذرت إضافة الأعضاء، الرجاء المحاولة مجدداً"</string>
-    <string name="create_group_in_progress">"جاري إنشاء مجموعة %s…"</string>
-    <string name="new_group_title">"قم بتسمية مجموعتك"</string>
+    <string name="add_members_in_progress">"جارٍ إضافة أعضاء…"</string>
+    <string name="failed_add_members">"تعذرت إضافة الأعضاء، الرجاء المحاولة مجددًا"</string>
+    <string name="create_group_in_progress">"جارٍ إنشاء مجموعة %s…"</string>
+    <string name="new_group_title">"تسمية المجموعة"</string>
     <string name="group_picker_title">"مجموعة جديدة"</string>
     <string name="button_create_group">"إنشاء"</string>
     <string name="group_name_hint">"اسم المجموعة"</string>
-    <string name="failed_create_group">"تعذر إنشاء المجموعة، الرجاء المحاولة مجدداً"</string>
+    <string name="failed_create_group">"تعذر إنشاء المجموعة، الرجاء المحاولة مجددًا"</string>
 
     <!-- Shown in options menu to remove a member of group -->
-    <string name="group_remove_member">"أزالة من المجموعة"</string>
+    <string name="group_remove_member">"إزالة من المجموعة"</string>
     <string name="group_promote_to_admin">"تعيين كمشرف"</string>
-    <string name="promote_admin_in_progress">"جاري التعيين كمشرف…"</string>
-    <string name="failed_promote_admin">"تعذّر التعيين كمشرف، الرجاء المحاولة لاحقاً"</string>
+    <string name="promote_admin_in_progress">"جارٍ التعيين كمشرف…"</string>
+    <string name="failed_promote_admin">"تعذّر التعيين كمشرف، الرجاء المحاولة لاحقًا"</string>
 
     <!-- Option for removing a user from the list of admins of a group -->
     <string name="group_demote_from_admin">"إزالة من منصب مشرف"</string>
-    <string name="demote_admin_in_progress">"جاري الإزالة من منصب مشرف…"</string>
-    <string name="failed_demote_admin">"تعذّرت الإزالة من منصب مشرف، الرجاء المحاولة لاحقاً"</string>
-    <string name="remove_member_in_progress">"جاري إزالة العضو…"</string>
-    <string name="failed_remove_member">"تعذّرت إزالة العضو، الرجاء المحاولة لاحقاً"</string>
+    <string name="demote_admin_in_progress">"جارٍ الإزالة من منصب مشرف…"</string>
+    <string name="failed_demote_admin">"تعذّرت الإزالة من منصب مشرف، الرجاء المحاولة لاحقًا"</string>
+    <string name="remove_member_in_progress">"جارٍ إزالة العضو…"</string>
+    <string name="failed_remove_member">"تعذّرت إزالة العضو، الرجاء المحاولة لاحقًا"</string>
     <string name="leave_group">"مغادرة المجموعة"</string>
     <plurals name="leave_group_plural">
-        <item quantity="zero">"لم يغادر أحد المجموعة"</item>
-        <item quantity="one">"غادر المجموعة"</item>
-        <item quantity="two">"غادرا المجموعة"</item>
-        <item quantity="few">"غادروا المجموعة"</item>
-        <item quantity="many">"غادروا المجموعة"</item>
-        <item quantity="other">"غادروا المجموعة"</item>
+        <item quantity="zero">"عدم مغادرة أي مجموعة"</item>
+        <item quantity="one">"مغادرة مجموعة"</item>
+        <item quantity="two">"مغادرة مجموعتين"</item>
+        <item quantity="few">"مغادرة المجموعات"</item>
+        <item quantity="many">"مغادرة المجموعات"</item>
+        <item quantity="other">"مغادرة المجموعات"</item>
     </plurals>
     <string name="leave_group_confirmation">"هل تود مغادرة هذه المجموعة؟"</string>
     <plurals name="leave_multiple_groups_confirmation">
@@ -433,16 +420,16 @@
         <item quantity="many">"هل تود مغادرة هذه المجموعات الـ %d؟"</item>
         <item quantity="other">"هل تود مغادرة هذه المجموعات الـ %d؟"</item>
     </plurals>
-    <string name="leave_group_in_progress">"جاري مغادرة المجموعة…"</string>
+    <string name="leave_group_in_progress">"جارٍ مغادرة المجموعة…"</string>
     <plurals name="leave_groups_progress">
-        <item quantity="zero">"جاري مغادرة المجموعة…"</item>
-        <item quantity="one">"جاري مغادرة المجموعة…"</item>
-        <item quantity="two">"جاري مغادرة المجموعتين…"</item>
-        <item quantity="few">"جاري مغادرة المجموعات…"</item>
-        <item quantity="many">"جاري مغادرة المجموعات…"</item>
-        <item quantity="other">"جاري مغادرة المجموعات…"</item>
+        <item quantity="zero">"جارٍ مغادرة المجموعة…"</item>
+        <item quantity="one">"جارٍ مغادرة المجموعة…"</item>
+        <item quantity="two">"جارٍ مغادرة المجموعتين…"</item>
+        <item quantity="few">"جارٍ مغادرة المجموعات…"</item>
+        <item quantity="many">"جارٍ مغادرة المجموعات…"</item>
+        <item quantity="other">"جارٍ مغادرة المجموعات…"</item>
     </plurals>
-    <string name="failed_leave_group">"تعذّرت مغادرة المجموعة، حاول مجدداً"</string>
+    <string name="failed_leave_group">"تعذّرت مغادرة المجموعة، حاول مجددًا"</string>
     <plurals name="friends_on_halloapp">
         <item quantity="zero">"ليس لديك أي جهة اتصال تستخدم هالوآب (%d)"</item>
         <item quantity="one">"لديك جهة اتصال %d تستخدم هالوآب"</item>
@@ -460,7 +447,7 @@
         <item quantity="other">"%d جهة اتصال"</item>
     </plurals>
     <string name="settings_block_list_none_summary">"لا يوجد"</string>
-    <string name="settings_feed_contacts_summary">"جهات اتصال هاتفي"</string>
+    <string name="settings_feed_contacts_summary">"جهات اتصال الهاتف"</string>
     <plurals name="settings_feed_excluded_summary">
         <item quantity="zero">"%d من جهات الاتصال المستبعدة"</item>
         <item quantity="one">"جهة اتصال مستبعدة %d"</item>
@@ -481,84 +468,86 @@
     <string name="settings_version_footer">"إصدار هالوآب رقم %s"</string>
     <string name="connectivity_info_airplane_mode">"وضع الطائرة يعمل"</string>
     <string name="connectivity_info_not_connected">"غير متصل بالشبكة"</string>
-    <string name="blocking_user_failed_check_internet">"تعذّر حظر %s. الرجاء التأكد من الاتصال بالشبكة والمحاولة مجدداً."</string>
+    <string name="blocking_user_failed_check_internet">"تعذّر حظر %s. الرجاء التأكد من الاتصال بالشبكة والمحاولة مجددًا."</string>
     <string name="blocking_user_successful">"تم حظر %s"</string>
-    <string name="blocking_user_in_progress">"جاري حظر %s …"</string>
+    <string name="blocking_user_in_progress">"جارٍ حظر %s …"</string>
     <string name="unblocking_user_successful">"تم رفع الحظر عن %s"</string>
-    <string name="unblocking_user_failed_check_internet">"تعذّر حظر %s. الرجاء التأكد من الاتصال بالشبكة والمحاولة مجدداً. "</string>
-    <string name="unblocking_user_in_progress">"جاري رفع الحظر عن %s …"</string>
-    <string name="are_you_sure_dialog_title">"هل أنت متأكد من الأمر؟"</string>
-    <string name="hide_future_posts_confirmation">"هل أنت متأكد من إخفاء كافة منشوراتك المستقبلية عن %s؟ يمكنك تغيير ذلك لاحقاً. "</string>
-    <string name="feed_privacy_hide_success">"تم تحديث خصوصية الموجز. جاري إخفاء المنشورات عن %s"</string>
-    <string name="feed_privacy_hide_failure">"تعذّر تحديث خصوصية الموجز، الرجاء التأكد من الاتصال بالشبكة والمحاولة مجدداً"</string>
-    <string name="user_typing">"جاري الكتابة…"</string>
+    <string name="unblocking_user_failed_check_internet">"تعذّر حظر %s. الرجاء التأكد من الاتصال بالشبكة والمحاولة مجددًا."</string>
+    <string name="unblocking_user_in_progress">"جارٍ رفع الحظر عن %s …"</string>
+    <string name="are_you_sure_dialog_title">"هل أنت متأكد؟"</string>
+    <string name="hide_future_posts_confirmation">"هل تريد فعلاً إخفاء كافة منشوراتك المستقبلية عن %s؟ يمكنك تغيير ذلك لاحقًا."</string>
+    <string name="feed_privacy_hide_success">"تم تحديث خصوصية الموجز. جارٍ إخفاء المنشورات عن %s"</string>
+    <string name="feed_privacy_hide_failure">"تعذّر تحديث خصوصية الموجز، الرجاء التأكد من الاتصال بالشبكة والمحاولة مجددًا"</string>
+    <string name="user_typing">"جارٍ الكتابة…"</string>
     <string name="group_user_typing">"%s يكتب…"</string>
     <string name="group_many_users_typing">"العديد من المستخدمين يكتبون…"</string>
-    <string name="camera_error_generic">"فشل تشغيل الكاميرا."</string>
-    <string name="camera_error_photo">"تعذّر التقاط صورة. "</string>
+    <string name="camera_error_generic">"تعذّر تشغيل الكاميرا."</string>
+    <string name="camera_error_photo">"تعذّر التقاط صورة."</string>
     <string name="camera_error_video">"تعذّر تسجيل فيديو."</string>
     <plurals name="group_feed_members">
         <item quantity="zero">"%d من الأعضاء"</item>
         <item quantity="one">"عضو %d"</item>
         <item quantity="two">"عضوان %d"</item>
         <item quantity="few">"%d أعضاء"</item>
-        <item quantity="many">"%d عضواً"</item>
+        <item quantity="many">"%d عضوًا"</item>
         <item quantity="other">"%d عضو"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <string name="composer_sharing_all_summary">"المشاركة مع جهات اتصالي"</string>
-
-    <!-- Fuzzy -->
     <string name="composer_sharing_except_summary">"المشاركة مع بعض جهات اتصالي"</string>
-
-    <!-- Fuzzy -->
     <plurals name="composer_sharing_only_summary">
-        <item quantity="zero">"المشاركة مع %d من جهات اتصالي "</item>
+        <item quantity="zero">"المشاركة مع %d من جهات اتصالي"</item>
         <item quantity="one">"المشاركة مع %d من جهات اتصالي"</item>
-        <item quantity="two">"المشاركة مع %d من جهات اتصالي "</item>
-        <item quantity="few">"المشاركة مع %d من جهات اتصالي "</item>
-        <item quantity="many">"المشاركة مع %d من جهات اتصالي "</item>
-        <item quantity="other">"المشاركة مع %d من جهات اتصالي "</item>
+        <item quantity="two">"المشاركة مع %d من جهات اتصالي"</item>
+        <item quantity="few">"المشاركة مع %d من جهات اتصالي"</item>
+        <item quantity="many">"المشاركة مع %d من جهات اتصالي"</item>
+        <item quantity="other">"المشاركة مع %d من جهات اتصالي"</item>
     </plurals>
-    <string name="post_preview_no_caption">"%s شارك منشوراً"</string>
+    <string name="post_preview_no_caption">"%s شارك منشورًا"</string>
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
-    <string name="composer_sharing_message">"الإرسال إلى %s"</string>
-    <string name="composer_sharing_post">"المشاركة مع %s"</string>
+    <string name="composer_sharing_message">"جارٍ الإرسال إلى %s"</string>
+
+    <!-- Will the number here refer to the max length of the video? Or the difference between max length allowed and current video length?
+In other words, can we translate as: 
+Your video is longer than %d seconds
+Or
+Your video is %d seconds longer
+? -->
     <plurals name="max_video_length">
-        <item quantity="zero">"مقطع الفيديو هذا أطول بـ %d من الثواني. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
-        <item quantity="one">"مقطع الفيديو هذا أطول بثانية %d. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
-        <item quantity="two">"مقطع الفيديو هذا أطول بثانيتين %d. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
-        <item quantity="few">"مقطع الفيديو هذا أطول بـ %d ثوان. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
-        <item quantity="many">"مقطع الفيديو هذا أطول بـ %d ثانية. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
-        <item quantity="other">"مقطع الفيديو هذا أطول بـ %d ثانية. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
+        <item quantity="zero">"مقطع الفيديو هذا أطول من %d من الثواني. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
+        <item quantity="one">"مقطع الفيديو هذا أطول من ثانية %d. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
+        <item quantity="two">"مقطع الفيديو هذا أطول من ثانيتين %d. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
+        <item quantity="few">"مقطع الفيديو هذا أطول من %d ثوانٍ. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
+        <item quantity="many">"مقطع الفيديو هذا أطول من %d ثانية. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
+        <item quantity="other">"مقطع الفيديو هذا أطول من %d ثانية. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
     </plurals>
     <string name="mute">"كتم الإشعارات"</string>
     <string name="share_link">"مشاركة الرابط"</string>
     <string name="copy_link">"نسخ الرابط"</string>
     <string name="reset_link">"إعادة ضبط الرابط"</string>
     <string name="view_group_invite_link_action">"عرض الدعوة إلى المجموعة"</string>
-    <string name="invite_link_resetting_progress">"جاري إعادة ضبط الرابط…"</string>
-    <string name="invite_link_reset">"إعادة ضبط الرابط"</string>
+    <string name="invite_link_resetting_progress">"جارٍ إعادة ضبط الرابط…"</string>
+
+    <!-- Does this mean: "Link has been reset" ? -->
+    <string name="invite_link_reset">"تمت إعادة ضبط الرابط"</string>
     <string name="invite_link_reset_failed">"تعذّرت إعادة ضبط الرابط"</string>
-    <string name="reset_invite_link_confirmation">"هل تريد إعادة ضبط رابط الدعوة إلى المجموعة؟ "</string>
-    <string name="invite_link_joining">"جاري الانضمام إلى المجموعة…"</string>
-    <string name="invite_link_loading">"جاري تحميل المجموعة…"</string>
+    <string name="reset_invite_link_confirmation">"هل تريد إعادة ضبط رابط الدعوة إلى المجموعة؟"</string>
+    <string name="invite_link_joining">"جارٍ الانضمام إلى المجموعة…"</string>
+    <string name="invite_link_loading">"جارٍ تحميل المجموعة…"</string>
     <string name="invite_link_copied">"تم نسخ الرابط!"</string>
     <string name="invite_link_title">"رابط الدعوة"</string>
-    <string name="invite_link_summary">"يمكن لأي من مستخدمي هالوآب استعمال هذا الرابط للانضمام إلى هذه المجموعة"</string>
+    <string name="invite_link_summary">"يمكن لأي من مستخدمي هالوآب استخدام هذا الرابط للانضمام إلى هذه المجموعة."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->
-    <string name="invite_link_failed_to_join">"تعذّر الانضمام إلى المجموعة"</string>
-    <string name="join_group_action">"الانضمام إلى المجموعة"</string>
-    <string name="system_message_you_joined">"أنت انضميت إلى المجموعة من خلال رابط الدعوة"</string>
+    <string name="invite_link_failed_to_join">"تعذّر الانضمام للمجموعة"</string>
+    <string name="join_group_action">"الانضمام للمجموعة"</string>
+    <string name="system_message_you_joined">"أنت انضممت إلى المجموعة من خلال رابط الدعوة"</string>
     <string name="system_message_joined">"%s  انضم إلى المجموعة من خلال رابط الدعوة"</string>
-    <string name="post_preview_retracted">"%s حذف منشور"</string>
+    <string name="post_preview_retracted">"%s حذف منشورًا"</string>
     <string name="system_message_group_bg_changed">"%s غيّر لون الخلفية"</string>
-    <string name="system_message_group_bg_changed_by_you">"أنت غيّرت لون الخلفية "</string>
+    <string name="system_message_group_bg_changed_by_you">"أنت غيّرت لون الخلفية"</string>
     <string name="group_background_hint">"الخلفية"</string>
-    <string name="group_background_saving_dialog">"جاري تحديد الخلفية…"</string>
-    <string name="group_background_save_failed">"تعذّر تحديد خلفية المجموعة"</string>
+    <string name="group_background_saving_dialog">"جارٍ تعيين الخلفية…"</string>
+    <string name="group_background_save_failed">"تعذّر تعيين خلفية المجموعة"</string>
     <string name="group_background_save_success">"تم تحديث خلفية المجموعة"</string>
     <string name="group_background_color">"اللون"</string>
     <string name="group_background_default">"افتراضي"</string>
@@ -570,13 +559,11 @@
     <string name="not_now">"ليس الآن"</string>
     <string name="continue_button">"المتابعة"</string>
     <string name="invite_link_load_failed">"تعذّر فتح رابط الدعوة إلى المجموعة"</string>
-
-    <!-- Fuzzy -->
-    <string name="message_tombstone_placeholder">"بانتظار هذه الصورة. قد يستغرق الأمر بعض الوقت. &lt;a href= learn-more\"&gt;تعرّف على المزيد&lt;/a&gt;."</string>
-    <string name="failed_no_longer_member">"لم تعد عضواً في هذه المجموعة"</string>
+    <string name="message_tombstone_placeholder">"بانتظار هذه الرسالة. قد يستغرق الأمر بعض الوقت. "<![CDATA[<a href="learn-more">تعرّف على المزيد</a>]]>"."</string>
+    <string name="failed_no_longer_member">"لم تعد عضوًا في هذه المجموعة"</string>
 
     <!-- Placeholder when we do not understand the received message -->
-    <string name="message_upgrade_placeholder">"لا يدعم إصدار هالوآب الذي تستخدمه نوع الصور هذا. الرجاء &lt;a href=\"update-app\"&gt;تحديث تطبيقك&lt;/a&gt;"</string>
+    <string name="message_upgrade_placeholder">"لا يدعم إصدار هالوآب الذي تستخدمه نوع الرسائل هذا. الرجاء &lt;a href=\"update-app\"&gt;تحديث تطبيقك&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received post -->
     <string name="post_upgrade_placeholder">"لا يدعم إصدار هالوآب الذي تستخدمه نوع المنشورات هذا. الرجاء &lt;a href=\"update-app\"&gt;تحديث تطبيقك&lt;/a&gt;"</string>
@@ -585,13 +572,13 @@
     <string name="comment_upgrade_placeholder">"لا يدعم إصدار هالوآب الذي تستخدمه نوع التعليقات هذا. الرجاء &lt;a href=\"update-app\"&gt;تحديث تطبيقك&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
-    <string name="registration_sms_retry_progress">"جاري طلب رمز جديد عبر رسالة نصية…"</string>
+    <string name="registration_sms_retry_progress">"جارٍ طلب الرمز عبر رسالة نصية جديدة…"</string>
 
     <!-- message when user requests a voice call -->
-    <string name="registration_phone_code_progress">"جاري طلب رمز عبر مكالمة هاتفية…"</string>
+    <string name="registration_phone_code_progress">"جارٍ طلب الرمز عبر مكالمة هاتفية…"</string>
 
     <!-- button to request another sms code -->
-    <string name="resend_sms">"إعادة أرسال الرمز عبر رسالة نصية"</string>
+    <string name="resend_sms">"إعادة إرسال الرمز عبر رسالة نصية"</string>
 
     <!-- Shown when the information scanned from the QR code matches what was expected, confirming the keys match -->
     <string name="key_verification_success">"تم التحقق بنجاح"</string>
@@ -609,19 +596,19 @@
     <string name="view_more">"المزيد"</string>
 
     <!-- Button to manage your feed privacy settings -->
-    <string name="manage_feed_privacy">"إدارة الخصوصية "</string>
+    <string name="manage_feed_privacy">"إدارة الخصوصية"</string>
 
     <!-- Button to invite a contact to a group with an invite link -->
     <string name="group_invite_via_link">"الدعوة إلى المجموعة عبر رابط"</string>
 
     <!-- Shown below on seen by to explain that posts disappear -->
-    <string name="seen_by_post_expiration_notice">"ستختفي منشوراتك بعد مرور ٣٠ يوم. "</string>
+    <string name="seen_by_post_expiration_notice">"ستختفي منشوراتك بعد مرور ٣٠ يومًا."</string>
 
     <!-- Frequently asked questions option in help menu -->
-    <string name="faq">"المقالات الرائجة"</string>
+    <string name="faq">"الأسئلة الشائعة"</string>
 
     <!-- Shown in progress dialog when loading key verification info -->
-    <string name="key_verification_fetching_keys">"جاري إحضار أرقام الأمان…"</string>
+    <string name="key_verification_fetching_keys">"جارٍ إحضار أرقام الأمان…"</string>
 
     <!-- Shown when we fail to get key verification info -->
     <string name="key_verification_key_fetch_failed">"تعذّر إحضار أرقام الأمان"</string>
@@ -643,9 +630,9 @@
     <plurals name="seen_by_people">
         <item quantity="zero">"شاهده %d من الأشخاص"</item>
         <item quantity="one">"شاهده شخص %d"</item>
-        <item quantity="two">"شاهده شخصان %d "</item>
+        <item quantity="two">"شاهده شخصان %d"</item>
         <item quantity="few">"شاهده %d أشخاص"</item>
-        <item quantity="many">"شاهده %d شخصاً"</item>
+        <item quantity="many">"شاهده %d شخصًا"</item>
         <item quantity="other">"شاهده %d شخص"</item>
     </plurals>
 
@@ -656,7 +643,7 @@
     <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
 This string is used in InviteContactsActivity.java line 160 to show the time that invites will be refreshed after invite count is 0
 example: More invites coming on [Saturday, June 19, 7:59 PM], where content in the brackets is displayed by %s -->
-    <string name="server_invite_refresh_time">"هنالك المزيد من الدعوات التي سيتم إرسالها في %s"</string>
+    <string name="server_invite_refresh_time">"سيتم إرسال المزيد من الدعوات يوم %s"</string>
 
     <!-- Button text on profile of a user not in the user's contacts; tapping takes the user to the contacts app with data prefilled -->
     <string name="add_to_contacts">"الإضافة إلى جهات الاتصال"</string>
@@ -680,10 +667,10 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="request_data_title">"طلب بياناتي"</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature -->
-    <string name="save_to_gallery_storage_permission_rationale">"لحفظ الوسائط في المعرض يجب أن تمنح التطبيق إذن الوصول إلى التخزين في جهازك"</string>
+    <string name="save_to_gallery_storage_permission_rationale">"لحفظ الوسائط في المعرض، يجب أن تمنح التطبيق إذن الوصول إلى التخزين في جهازك"</string>
 
     <!-- Explanation for why we need storage permissions when using save to gallery feature. This is used when the user needs to manually go to their settings -->
-    <string name="save_to_gallery_storage_permission_rationale_denied">"لحفظ الوسائط في المعرض يجب أن تمنح التطبيق إذن الوصول إلى التخزين في جهازك.
+    <string name="save_to_gallery_storage_permission_rationale_denied">"لحفظ الوسائط في المعرض، يجب أن تمنح التطبيق إذن الوصول إلى التخزين في جهازك.
 
 افتح شاشة إعدادات التطبيق لتعديل أذونات التطبيق."</string>
 
@@ -712,28 +699,28 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="data_available_at">"ستتوفر البيانات بتاريخ %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
-    <string name="export_data_explanation">"قم بتنزيل نسخة عن كافة بياناتك كمستخدم التي تم حفظها على خوادم هالوآب. لا تتضمن هذه البيانات محتوى الرسائل أو المنشورات. "</string>
+    <string name="export_data_explanation">"يمكنك تنزيل نسخة لجميع بياناتك التي تم حفظها على خوادم هالوآب. لا تتضمن هذه البيانات محتوى الرسائل أو المنشورات."</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"تعذّر طلب نقل البيانات"</string>
 
     <!-- Button for exporting account information requested for download -->
-    <string name="export_account_data">"تصدير بياناتي"</string>
+    <string name="export_account_data">"نقل بياناتي"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
-    <string name="e2e_notice">"إن كافة الرسائل على هالوآب مشفرة تشفيراً تاماً. &lt;b&gt;انقر للمزيد من المعلومات&lt;/b&gt;"</string>
+    <string name="e2e_notice">"إن كافة الرسائل على هالوآب مشفرة تشفيرًا تامًا. &lt;b&gt;انقر للمزيد من المعلومات&lt;/b&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"عرض رقم الأمان"</string>
 
     <!-- Shown as title of key verification activity -->
-    <string name="verify_safety_number">"تحقق من رقم الأمان"</string>
+    <string name="verify_safety_number">"التحقق من رقم الأمان"</string>
 
     <!-- Shown when user has contact permissions disabled on the home feed -->
-    <string name="enable_contacts_rationale">"احصل على التحديثات من أفراد العائلة والأصدقاء من خلال تشغيل أذونات جهات الاتصال"</string>
+    <string name="enable_contacts_rationale">"تابع أخبار العائلة والأصدقاء من خلال تفعيل أذونات جهات الاتصال"</string>
 
     <!-- Button that takes users to system settings -->
-    <string name="go_to_settings">"اذهب إلى الإعدادات"</string>
+    <string name="go_to_settings">"الانتقال إلى الإعدادات"</string>
 
     <!-- Text shown in activity center upon successful registration -->
     <string name="welcome_notification">"أهلاً بك في هالوآب! &lt;a href=\"invite-friend\"&gt;قم بدعوة صديق&lt;/a&gt;"</string>
@@ -754,37 +741,36 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="your_profile_photo">"صورة ملفك الشخصي"</string>
 
     <!-- Text shown under progress bar when first setting up HalloApp -->
-    <string name="app_initializing">"إعداد هالوآب"</string>
+    <string name="app_initializing">"جارٍ إعداد هالوآب"</string>
 
     <!-- Shown on a button in settings which shares text with a link to download HalloApp into any other app -->
     <string name="settings_share_option">"مشاركة هالوآب"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <string name="share_halloapp_text">"انضم إلى شبكة العلاقات الفعلية الخاصة بي على هالوآب. قم بتنزيل التطبيق مجاناً من halloapp.com/dl"</string>
+    <string name="share_halloapp_text">"انضم إلى شبكة العلاقات الفعلية الخاصة بي على هالوآب. قم بتنزيل التطبيق مجانًا من halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
     <string name="contact_permissions_request">"امنح هالوآب إذن الوصول إلى جهات اتصالك لتتمكن من إرسال التحديثات وتلقيها"</string>
 
     <!-- Dialog shown to user before requesting contact permissions, but user has previously denied them, so they must go to settings -->
-    <string name="contact_permissions_request_permanently_denied">"امنح هالوآب إذن الوصول إلى جهات اتصالك لتتمكن من إرسال التحديثات وتلقيها. انقر على الإعدادات &gt; الأذونات وقم بتشغيل جهات الاتصال"</string>
+    <string name="contact_permissions_request_permanently_denied">"امنح هالوآب إذن الوصول إلى جهات اتصالك لتتمكن من إرسال التحديثات وتلقيها. انقر على الإعدادات &gt; الأذونات وقم بتفعيل \"جهات الاتصال\""</string>
 
     <!-- Banner explaining why user can't leave a comment in a group they've left -->
-    <string name="no_longer_group_member">"لم تعد عضواً في هذه المجموعة"</string>
+    <string name="no_longer_group_member">"لم تعد عضوًا في هذه المجموعة"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes -->
-    <string name="voice_note_record_audio_permission_rationale">"لتسجيل الرسائل الصوتية يجب أن تمنح التطبيق إذن الوصول إلى المايكروفون
-"</string>
+    <string name="voice_note_record_audio_permission_rationale">"لتسجيل الرسائل الصوتية يجب أن تمنح التطبيق إذن الوصول إلى الميكروفون"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
-    <string name="voice_note_record_audio_permission_rationale_denied">"لتسجيل الرسائل الصوتية يجب أن تمنح التطبيق إذن الوصول إلى المايكروفون. 
+    <string name="voice_note_record_audio_permission_rationale_denied">"لتسجيل الرسائل الصوتية يجب أن تمنح التطبيق إذن الوصول إلى الميكروفون. 
 
 افتح شاشة إعدادات التطبيق لتعديل أذونات التطبيق."</string>
 
     <!-- Activity center item when someone replies. %1$s is the person, %2$s is their comment preview -->
-    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; رد: %2$s"</string>
+    <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; ردّ: %2$s"</string>
 
     <!-- Activity center item when someone comments. %1$s is the person, %2$s is their comment preview -->
-    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt;علّق: %2$s"</string>
+    <string name="commented_on_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; علّق: %2$s"</string>
 
     <!-- Activity center item when non-contacts comment on your post -->
     <plurals name="commented_on_your_post_grouped">
@@ -798,44 +784,43 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Activity center item when non-contacts comment on someones post -->
     <plurals name="commented_on_someones_post_grouped">
-        <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt; من الأشخاص الإضافيين علّقوا على منشور &lt;b&gt;%2$s&lt;/b&gt;"</item>
-        <item quantity="one">"شخص إضافي &lt;b&gt;%1$s&lt;/b&gt; علّق على منشور &lt;b&gt;%2$s&lt;/b&gt;"</item>
-        <item quantity="two">"شخصان إضافيان &lt;b&gt;%1$s&lt;/b&gt; علّقا على منشور &lt;b&gt;%2$s&lt;/b&gt;"</item>
-        <item quantity="few">" &lt;b&gt;%1$s&lt;/b&gt; أشخاص إضافيين علّقوا على منشور &lt;b&gt;%2$s&lt;/b&gt;"</item>
-        <item quantity="many">" &lt;b&gt;%1$s&lt;/b&gt; شخصاً إضافياً علّقوا على منشور &lt;b&gt;%2$s&lt;/b&gt;"</item>
-        <item quantity="other">" &lt;b&gt;%1$s&lt;/b&gt; شخص إضافي علّقوا على منشور &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="zero">"&lt;b&gt;%1$s&lt;/b&gt; من الآخرين علّقوا على منشور &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="one">"شخص آخر &lt;b&gt;%1$s&lt;/b&gt; علّق على منشور &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="two">"شخصان آخران &lt;b&gt;%1$s&lt;/b&gt; علّقا على منشور &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt; أشخاص آخرين علّقوا على منشور &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt; شخصًا آخر علّقوا على منشور &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; شخص آخر علّقوا على منشور &lt;b&gt;%2$s&lt;/b&gt;"</item>
     </plurals>
 
     <!-- Button for user to re-share old posts which have expired -->
     <string name="reshare_post">"إعادة مشاركة المنشور"</string>
 
     <!-- Button for going to utility for viewing expired posts -->
-    <string name="archived_posts">"أرشفة"</string>
+    <string name="archived_posts">"الأرشيف"</string>
 
     <!-- Title of utility for viewing expired posts -->
-    <string name="archive">"أرشفة"</string>
+    <string name="archive">"الأرشيف"</string>
 
     <!-- Label displaying the date when a post expired -->
     <string name="archived_on">"تمت الأرشفة بتاريخ %s"</string>
 
     <!-- Error message when the group is full -->
-    <string name="invite_link_failed_to_join_full">"لا يمكنك الانضمام إلى المجموعة لأنها ممتلئة"</string>
+    <string name="invite_link_failed_to_join_full">"لا يمكنك الانضمام إلى المجموعة لأنها مكتملة العدد"</string>
 
     <!-- Error message when the invite link is invalid -->
-    <string name="invite_link_failed_to_join_invalid">"إن رابط الدعوة غير صالح"</string>
+    <string name="invite_link_failed_to_join_invalid">"رابط الدعوة غير صالح"</string>
 
     <!-- Error message when user cannot join a group because they were previously removed by an admin -->
     <string name="invite_link_failed_to_join_removed">"تم حذفك من المجموعة ولا يمكنك العودة إليها عبر رابط الدعوة"</string>
 
     <!-- Message that's displayed after a user deletes their account -->
-    <string name="deletion_confirmation_message">"تم حذف حساب هالوآب الخاص بك بنجاح."</string>
+    <string name="deletion_confirmation_message">"تم حذف حسابك في هالوآب بنجاح."</string>
 
     <!-- Button that allows the user to return to registration after deleting their account -->
     <string name="return_to_registration">"العودة إلى التسجيل"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <!-- Fuzzy -->
-    <string name="archive_empty">"سيتم عرض منشوراتك الفائتة هنا"</string>
+    <string name="archive_empty">"سيتم عرض منشوراتك هنا بعد انتهاء صلاحيتها خلال 30 يومًا"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"محتوى غير مدعوم"</string>
@@ -853,14 +838,14 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="qr_code">"رمز الاستجابة السريعة"</string>
 
     <!-- Explains QR code that allows users to automatically join a group -->
-    <string name="scan_qr_instructions">"امسح رمز الاستجابة السريعة للانضمام إلى مجموعة هالوآب هذه "</string>
+    <string name="scan_qr_instructions">"امسح رمز الاستجابة السريعة للانضمام إلى مجموعة هالوآب هذه"</string>
 
     <!-- Banner below the name of a HalloApp group -->
     <string name="halloapp_group">"مجموعة هالوآب"</string>
     <string name="reply_original_comment_not_found">"لم يتم العثور على التعليق الأصلي"</string>
 
     <!-- Button on others' posts that allows the user to message them about their post in 1-1 messaging -->
-    <string name="reply_privately">"الرد فردياً بشكل خاص"</string>
+    <string name="reply_privately">"الرد بشكل خاص"</string>
 
     <!-- Shown as title for a dialog explaining why permissions are needed when the user has rejected a necessary permission request at least twice but still tries to use the feature -->
     <string name="title_settings_dialog">"الأذونات ضرورية"</string>
@@ -1003,9 +988,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Title for feed privacy when setting it from a single post -->
     <string name="setting_feed_privacy_single_post_title">"من سيرى هذا المنشور"</string>
 
-    <!-- Text shown when sharing a post with a group -->
-    <string name="composer_sharing_group_post">"المشاركة مع المجموعة"</string>
-
     <!-- Title of section for recent groups -->
     <string name="recent_groups">"مجموعات حديثة"</string>
 
@@ -1083,7 +1065,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="storage_usage_internal">"أخرى"</string>
 
     <!-- Storage usage section header for archive category -->
-    <string name="storage_usage_archive">"أرشفة"</string>
+    <string name="storage_usage_archive">"الأرشيف"</string>
 
     <!-- Text shown in button for inviting friends -->
     <string name="invite_action">"دعوة"</string>
@@ -1109,9 +1091,11 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="ongoing_call_notifications_channel_name">"إشعارات المكالمات الجارية"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
+    <!-- Fuzzy -->
     <string name="ringing">"رنين"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
+    <!-- Fuzzy -->
     <string name="calling">"جارٍ الاتصال"</string>
 
     <!-- The title of the notificaiton for incoming calls -->
@@ -1160,7 +1144,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="audio_post_compose_title">"منشور صوتي جديد"</string>
 
     <!-- Text post hint -->
-    <string name="text_post_compose_hint">"كتابة وصف"</string>
+    <string name="text_post_compose_hint">"اكتب وصفًا"</string>
 
     <!-- Audio post record instruction -->
     <string name="audio_post_tap_to_record">"انقر للتسجيل"</string>
@@ -1175,6 +1159,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="not_in_address_book_alert">"هذا الشخص ليس في دفتر عناوينك"</string>
 
     <!-- Text shown in chat view telling user they had a missed call -->
+    <!-- Fuzzy -->
     <string name="log_missed_call">"مكالمة فائتة"</string>
 
     <!-- Text shown in chat view telling user they had a voice call -->
@@ -1182,6 +1167,91 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Text shown in message preview telling user they had a voice call %s is replaced with the call duration -->
     <string name="log_voice_call_with_duration">"مكالمة صوتية (%s)"</string>
+
+    <!-- Collapsed multiple deleted posts -->
+    <plurals name="collapsed_deleted_posts">
+        <item quantity="zero">"تم حذف %d من المنشورات"</item>
+        <item quantity="one">"تم حذف منشور %d"</item>
+        <item quantity="two">"تم حذف منشورَين %d"</item>
+        <item quantity="few">"تم حذف %d منشورات"</item>
+        <item quantity="many">"تم حذف %d منشورًا"</item>
+        <item quantity="other">"تم حذف %d منشور"</item>
+    </plurals>
+
+    <!-- Collapsed multiple add user posts -->
+    <plurals name="collapsed_added_user_posts">
+        <item quantity="zero">"تمت إضافة %d من الأشخاص"</item>
+        <item quantity="one">"تمت إضافة شخص %d"</item>
+        <item quantity="two">"تمت إضافة شخصَين %d"</item>
+        <item quantity="few">"تمت إضافة %d أشخاص"</item>
+        <item quantity="many">"تمت إضافة %d شخصًا"</item>
+        <item quantity="other">"تمت إضافة %d شخص"</item>
+    </plurals>
+
+    <!-- Collapsed multiple remove user posts -->
+    <plurals name="collapsed_removed_user_posts">
+        <item quantity="zero">"تمت إزالة %d من الأشخاص"</item>
+        <item quantity="one">"تمت إزالة شخص %d"</item>
+        <item quantity="two">"تمت إزالة شخصَين %d"</item>
+        <item quantity="few">"تمت إزالة %d أشخاص"</item>
+        <item quantity="many">"تمت إزالة %d شخصًا"</item>
+        <item quantity="other">"تمت إزالة %d شخص"</item>
+    </plurals>
+
+    <!-- Collapsed multiple user left posts -->
+    <plurals name="collapsed_user_left_posts">
+        <item quantity="zero">"غادر %d من الأشخاص"</item>
+        <item quantity="one">"غادر شخص %d"</item>
+        <item quantity="two">"غادر شخصان %d"</item>
+        <item quantity="few">"غادر %d أشخاص"</item>
+        <item quantity="many">"غادر %d شخصًا"</item>
+        <item quantity="other">"غادر %d شخص"</item>
+    </plurals>
+
+    <!-- Collapsed multiple user joined posts -->
+    <plurals name="collapsed_user_joined_posts">
+        <item quantity="zero">"انضمّ %d من الأشخاص"</item>
+        <item quantity="one">"انضمَ شخص %d"</item>
+        <item quantity="two">"انضمّ شخصان %d"</item>
+        <item quantity="few">"انضمّ %d أشخاص"</item>
+        <item quantity="many">"انضمّ %d شخصًا"</item>
+        <item quantity="other">"انضمّ %d شخص"</item>
+    </plurals>
+
+    <!-- Action to stop recording -->
+    <string name="stop_recording">"إيقاف"</string>
+
+    <!-- Confirmation dialog asking if user is sure they want to discard their recorded audio -->
+    <string name="post_audio_draft_discard_confirmation">"هل تريد فعلاً إلغاء التسجيل الصوتي؟"</string>
+
+    <!-- Keep relatively short (try to fit on one line), shows at top of screen. User can tap to return to current ongoing call -->
+    <string name="tap_to_return_to_call">"انقر للعودة إلى المكالمة"</string>
+
+    <!-- Displayed on the call screen to show that the call is connecting -->
+    <string name="connecting">"Connecting…"</string>
+
+    <!-- Text in fab for post action -->
+    <string name="post_fab_label">"Post"</string>
+
+    <!-- Text in fab for new group action -->
+    <string name="new_group_fab_label">"New group"</string>
+
+    <!-- Text in fab for chat action -->
+    <string name="compose_fab_label">"Compose"</string>
+
+    <!-- Label on selected destinations when sharing from another app -->
+    <string name="share_with_label">"Share with"</string>
+
+    <!-- Title of section for your groups -->
+    <string name="your_groups">"Your groups"</string>
+
+    <!-- Title of section for recent contacts -->
+    <string name="recent_contacts">"Recent contacts"</string>
+
+    <!-- Label for button to see all rows -->
+    <string name="see_all">"See all"</string>
+    <string name="composer_sharing_post">"المشاركة مع %s"</string>
+    <string name="composer_sharing_group_post">"المشاركة مع المجموعة"</string>
     <string name="invite_via_link">"Invite via link"</string>
     <string name="couldnt_load_thumbnail">"تعذّر تحميل الصورة المصغّرة"</string>
     <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>
