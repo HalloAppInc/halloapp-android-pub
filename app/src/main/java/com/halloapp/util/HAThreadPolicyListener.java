@@ -30,12 +30,6 @@ public class HAThreadPolicyListener implements StrictMode.OnThreadViolationListe
         String error = android.util.Log.getStackTraceString(v);
         if (error.contains("com.halloapp")) {
             throw new RuntimeException("StrictMode ThreadPolicy violation", v);
-        } else {
-            mainHandler.post(() -> {
-                ThreadUtils.runWithoutStrictModeRestrictions(() -> {
-                    Toast.makeText(appContext.get(), "Potential thread policy violation, check logs", Toast.LENGTH_SHORT).show();
-                });
-            });
         }
     }
 }
