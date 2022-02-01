@@ -36,7 +36,7 @@
     <string name="gallery_post">Gallery</string>
     <string name="text_post">Text</string>
     <!-- Label for voice post option -->
-    <string name="voice_post">Voice</string>
+    <string name="voice_post">Audio</string>
     <string name="bad_image">Unsupported media type</string>
     <string name="time_diff_now">Now</string>
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
@@ -138,9 +138,9 @@
         <item quantity="other">You can select up to %d media items per post</item>
     </plurals>
     <!-- Rationale for when requesting microphone permission for voice posts-->
-    <string name="voice_post_record_audio_permission_rationale">To record voice posts we need permission to access the microphone</string>
+    <string name="voice_post_record_audio_permission_rationale">To record audio posts we need permission to access the microphone</string>
     <!-- Rationale for when requesting microphone permission for voice posts, but it has already been denied. -->
-    <string name="voice_post_record_audio_permission_rationale_denied">To record voice posts we need permission to access the microphone.\n\nOpen the app settings screen to modify app permissions.</string>
+    <string name="voice_post_record_audio_permission_rationale_denied">To record audio posts we need permission to access the microphone.\n\nOpen the app settings screen to modify app permissions.</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes-->
     <string name="voice_note_record_audio_permission_rationale">To record voice notes we need permission to access the microphone</string>
