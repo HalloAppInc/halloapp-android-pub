@@ -137,6 +137,10 @@
         <item quantity="one">You can select up to %d media item per post</item>
         <item quantity="other">You can select up to %d media items per post</item>
     </plurals>
+    <!-- Rationale for when requesting microphone permission for voice posts-->
+    <string name="voice_post_record_audio_permission_rationale">To record voice posts we need permission to access the microphone</string>
+    <!-- Rationale for when requesting microphone permission for voice posts, but it has already been denied. -->
+    <string name="voice_post_record_audio_permission_rationale_denied">To record voice posts we need permission to access the microphone.\n\nOpen the app settings screen to modify app permissions.</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes-->
     <string name="voice_note_record_audio_permission_rationale">To record voice notes we need permission to access the microphone</string>

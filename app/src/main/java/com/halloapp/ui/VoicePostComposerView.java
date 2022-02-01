@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.Manifest;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -23,6 +24,8 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.widget.VoicePostVisualizerView;
 
 import java.io.File;
+
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class VoicePostComposerView extends ConstraintLayout {
 
@@ -64,6 +67,7 @@ public class VoicePostComposerView extends ConstraintLayout {
         void onSend();
         void onAttachMedia();
         void onDeleteRecording();
+        void requestVoicePermissions();
     }
 
     private Host host;
@@ -121,14 +125,15 @@ public class VoicePostComposerView extends ConstraintLayout {
         visualizerView = findViewById(R.id.voice_visualizer);
 
         addMediaButton = findViewById(R.id.voice_add_media);
-
-        startRecordingBtn.setOnClickListener(v -> {
-            if (host != null) {
-                host.onStartRecording();
-            }
-        });
+        
         startRecordingBtn.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (!EasyPermissions.hasPermissions(getContext(), Manifest.permission.RECORD_AUDIO)) {
+                    if (host != null) {
+                        host.requestVoicePermissions();
+                    }
+                    return false;
+                }
                 if (host != null) {
                     host.onStartRecording();
                 }

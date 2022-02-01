@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.SharedElementCallback;
@@ -107,6 +108,8 @@ import java.util.List;
 import java.util.Map;
 
 import me.relex.circleindicator.CircleIndicator;
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class ContentComposerActivity extends HalloActivity {
     public static final String EXTRA_CALLED_FROM_CAMERA = "called_from_camera";
@@ -121,6 +124,7 @@ public class ContentComposerActivity extends HalloActivity {
     private static final int REQUEST_CODE_CROP = 1;
     private static final int REQUEST_CODE_MORE_MEDIA = 2;
     private static final int REQUEST_CODE_CHANGE_PRIVACY = 3;
+    private static final int REQUEST_CODE_VOICE_PERMISSIONS = 4;
 
     private static final int EXO_PLAYER_BUFFER_MS = 25000;
 
@@ -290,7 +294,7 @@ public class ContentComposerActivity extends HalloActivity {
 
             @Override
             public void requestVoicePermissions() {
-
+                requestVoicePostPermissions();
             }
 
             @Override
@@ -761,6 +765,11 @@ public class ContentComposerActivity extends HalloActivity {
                     builder.setNegativeButton(R.string.cancel, null);
                     builder.show();
                 }
+
+                @Override
+                public void requestVoicePermissions() {
+                    requestVoicePostPermissions();
+                }
             }, viewModel.getVoiceNotePlayer(), viewModel.getVoiceNoteRecorder());
 
             postEntryView.setVoiceNoteControlView(voiceNoteRecorderControlView);
@@ -770,6 +779,16 @@ public class ContentComposerActivity extends HalloActivity {
 
         bottomEditText.setText(initialText);
         textPostEntry.setText(initialText);
+    }
+
+    private void requestVoicePostPermissions() {
+        if (EasyPermissions.permissionPermanentlyDenied(this, Manifest.permission.RECORD_AUDIO)) {
+            new AppSettingsDialog.Builder(this)
+                    .setRationale(getString(R.string.voice_post_record_audio_permission_rationale_denied))
+                    .build().show();
+        } else {
+            EasyPermissions.requestPermissions(this, getString(R.string.voice_post_record_audio_permission_rationale), REQUEST_CODE_VOICE_PERMISSIONS, Manifest.permission.RECORD_AUDIO);
+        }
     }
 
     private void updateComposeMode(@ComposeMode int newComposeMode) {
