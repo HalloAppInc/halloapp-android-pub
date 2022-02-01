@@ -6,6 +6,7 @@
         android:id="@+id/share_link"
         android:title="@string/share_link"
         android:icon="@drawable/ic_share"
+        app:iconTint="?colorControlNormal"
         app:showAsAction="ifRoom"/>
 
     <item
