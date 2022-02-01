@@ -570,7 +570,7 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
             if (success) {
                 SnackbarHelper.showInfo(getWindow().getDecorView(), R.string.media_saved_to_gallery);
             } else {
-                SnackbarHelper.showInfo(getWindow().getDecorView(), R.string.media_save_to_gallery_failed);
+                SnackbarHelper.showWarning(getWindow().getDecorView(), R.string.media_save_to_gallery_failed);
             }
         });
     }

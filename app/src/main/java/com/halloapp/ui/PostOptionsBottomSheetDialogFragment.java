@@ -216,7 +216,7 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
             if (success) {
                 SnackbarHelper.showInfo(parent, R.string.media_saved_to_gallery);
             } else {
-                SnackbarHelper.showInfo(parent, R.string.media_save_to_gallery_failed);
+                SnackbarHelper.showWarning(parent, R.string.media_save_to_gallery_failed);
             }
         });
         dismiss();
