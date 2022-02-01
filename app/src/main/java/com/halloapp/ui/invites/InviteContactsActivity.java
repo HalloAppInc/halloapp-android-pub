@@ -3,6 +3,7 @@ package com.halloapp.ui.invites;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,6 +12,7 @@ import android.text.TextWatcher;
 import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -36,6 +38,7 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.util.IntentUtils;
+import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
@@ -61,6 +64,9 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
     private View refreshProgressView;
     private TextView bannerView;
 
+    private final Rect editHitRect = new Rect();
+    private EditText searchBox;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +83,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
         setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        EditText searchBox = findViewById(R.id.search_text);
+        searchBox = findViewById(R.id.search_text);
         searchBox.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -121,7 +127,6 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         listView.setLayoutManager(layoutManager);
         listView.setAdapter(adapter);
-
         View searchContainer = findViewById(R.id.search_container);
         searchContainer.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
@@ -176,6 +181,17 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            searchBox.getGlobalVisibleRect(editHitRect);
+            if (!editHitRect.contains((int) ev.getX(), (int) ev.getY())) {
+                KeyboardUtils.hideSoftKeyboard(searchBox);
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
     @Override
