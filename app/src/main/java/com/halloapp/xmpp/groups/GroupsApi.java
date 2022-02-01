@@ -251,7 +251,7 @@ public class GroupsApi {
         });
     }
 
-    public void handleGroupHistoryPayload(@NonNull GroupHistoryPayload groupHistoryPayload) {
+    public void handleGroupHistoryPayload(@NonNull GroupHistoryPayload groupHistoryPayload, @NonNull GroupId groupId) {
         long myUid = Long.parseLong(me.getUser());
         for (MemberDetails memberDetails : groupHistoryPayload.getMemberDetailsList()) {
             if (myUid == memberDetails.getUid()) {
@@ -321,6 +321,7 @@ public class GroupsApi {
                 // TODO(jack): Verify that identity key matches one provided
                 UserId peerUserId = new UserId(Long.toString(memberDetails.getUid()));
                 GroupFeedHistory.Builder builder = GroupFeedHistory.newBuilder();
+                builder.setGid(groupId.rawId());
 
                 try {
                     SignalSessionSetupInfo signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(peerUserId);

@@ -69,7 +69,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainConnectionObserver extends Connection.Observer {
 
@@ -789,10 +788,10 @@ public class MainConnectionObserver extends Connection.Observer {
         }
 
         bgWorkers.execute(() -> {
-            ByteString encrypted = historyResend.getEncPayload();
+            ByteString encrypted = historyResend.getEncPayload(); // TODO(jack): Verify plaintext matches if present
             UserId publisherUserId = new UserId(Long.toString(publisherUid));
+            GroupId groupId = new GroupId(historyResend.getGid());
             if (encrypted != null && encrypted.size() > 0) {
-                GroupId groupId = new GroupId(historyResend.getGid());
                 if (historyResend.hasSenderState()) {
                     SenderStateWithKeyInfo senderStateWithKeyInfo = historyResend.getSenderState();
 
@@ -825,7 +824,7 @@ public class MainConnectionObserver extends Connection.Observer {
                 try {
                     byte[] decrypted = GroupFeedSessionManager.getInstance().decryptMessage(encryptedBytes, groupId, publisherUserId);
                     GroupHistoryPayload groupHistoryPayload = GroupHistoryPayload.parseFrom(decrypted);
-                    groupsApi.handleGroupHistoryPayload(groupHistoryPayload);
+                    groupsApi.handleGroupHistoryPayload(groupHistoryPayload, groupId);
                 } catch (CryptoException e) {
                     Log.e("Failed to decrypt history resend", e);
                 } catch (InvalidProtocolBufferException e) {

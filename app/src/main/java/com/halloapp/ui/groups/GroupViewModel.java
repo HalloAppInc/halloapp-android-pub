@@ -240,7 +240,7 @@ public class GroupViewModel extends AndroidViewModel {
                         result.postValue(response);
 
                         if (Constants.HISTORY_RESEND_ENABLED) {
-                            groupsApi.handleGroupHistoryPayload(groupHistoryPayload.build());
+                            groupsApi.handleGroupHistoryPayload(groupHistoryPayload.build(), groupId);
                         }
                     })
                     .onError(error -> {

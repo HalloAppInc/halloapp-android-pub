@@ -1531,6 +1531,45 @@ public class ConnectionImpl extends Connection {
                     UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
                     connectionObservers.notifyIceRestartAnswer(peerUid, msg.getIceRestartAnswer(), msg.getId());
                     handled = true;
+                } else if (msg.hasGroupFeedHistory()) {
+                    if (!Constants.HISTORY_RESEND_ENABLED) {
+                        Log.i("Ignoring group feed history because history resend is not enabled");
+                        sendAck(msg.getId());
+                    } else {
+                        bgWorkers.execute(() -> {
+                            GroupFeedHistory groupFeedHistory = msg.getGroupFeedHistory();
+                            ByteString encrypted = groupFeedHistory.getEncPayload(); // TODO(jack): Verify plaintext matches if present
+                            if (encrypted != null && encrypted.size() > 0) {
+                                UserId peerUserId = new UserId(Long.toString(msg.getFromUid()));
+
+                                byte[] identityKeyBytes = groupFeedHistory.getPublicKey().toByteArray();
+                                PublicEdECKey identityKey = identityKeyBytes == null || identityKeyBytes.length == 0 ? null : new PublicEdECKey(identityKeyBytes);
+                                SignalSessionSetupInfo signalSessionSetupInfo = new SignalSessionSetupInfo(identityKey, groupFeedHistory.getOneTimePreKeyId());
+
+                                try {
+                                    byte[] decrypted = SignalSessionManager.getInstance().decryptMessage(encrypted.toByteArray(), peerUserId, signalSessionSetupInfo);
+                                    GroupFeedItems groupFeedItems = GroupFeedItems.parseFrom(decrypted);
+
+                                    List<GroupFeedItem> inList = groupFeedItems.getItemsList();
+                                    List<GroupFeedItem> outList = new ArrayList<>();
+                                    for (GroupFeedItem item : inList) {
+                                        GroupFeedItem newItem = GroupFeedItem.newBuilder(item)
+                                                .setGid(groupFeedHistory.getGid())
+                                                .build();
+                                        outList.add(newItem);
+                                    }
+                                    processGroupFeedItems(outList, msg.getId());
+                                } catch (CryptoException e) {
+                                    Log.e("Failed to decrypt group feed history", e);
+                                    sendAck(msg.getId());
+                                } catch (InvalidProtocolBufferException e) {
+                                    Log.e("Failed to parse group feed items for group feed history", e);
+                                    sendAck(msg.getId());
+                                }
+                            }
+                        });
+                    }
+                    handled = true;
                 }
             }
             if (!handled) {
