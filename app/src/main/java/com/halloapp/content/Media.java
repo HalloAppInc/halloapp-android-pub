@@ -187,6 +187,9 @@ public class Media {
 
     public static boolean canBeSavedToGallery(@NonNull Collection<Media> mediaCollection) {
         for (Media media : mediaCollection) {
+            if (media.type == MEDIA_TYPE_AUDIO) {
+                continue;
+            }
             if (!media.canBeSavedToGallery()) {
                 return false;
             }
@@ -274,6 +277,6 @@ public class Media {
 
     // TODO(Vasil): Remove the following method and the logic that depends on it once we have partial stream file copy code.
     public boolean canBeSavedToGallery() {
-        return transferred == TRANSFERRED_YES;
+        return transferred == TRANSFERRED_YES && type != MEDIA_TYPE_AUDIO;
     }
 }
