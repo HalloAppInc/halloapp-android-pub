@@ -69,6 +69,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainConnectionObserver extends Connection.Observer {
 
@@ -588,12 +589,14 @@ public class MainConnectionObserver extends Connection.Observer {
     public void onGroupMemberChangeReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @Nullable HistoryResend historyResend, @NonNull String ackId) {
         List<MemberInfo> added = new ArrayList<>();
         List<MemberInfo> removed = new ArrayList<>();
+        AtomicBoolean addedIncludesMe = new AtomicBoolean(false);
         for (MemberElement memberElement : members) {
             MemberInfo memberInfo = new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name);
             if (MemberElement.Action.ADD.equals(memberElement.action)) {
                 added.add(memberInfo);
                 if (memberInfo.userId.isMe()) {
                     notifications.showNewGroupNotification(groupId, senderName, groupName);
+                    addedIncludesMe.set(true);
                 }
             } else if (MemberElement.Action.REMOVE.equals(memberElement.action)) {
                 removed.add(memberInfo);
@@ -631,6 +634,9 @@ public class MainConnectionObserver extends Connection.Observer {
                 connection.sendAck(ackId);
             } else if (sender.isMe()) {
                 // TODO(jack): Handle for admin's own content
+            } else if (addedIncludesMe.get()) {
+                Log.i("User is in added list; ignoring history resend");
+                connection.sendAck(ackId);
             } else {
                 handleHistoryResend(historyResend, Long.parseLong(sender.rawId()), ackId);
             }
