@@ -480,7 +480,13 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
         private ContentItem createContentItem(@Nullable ChatId chatId, @Nullable GroupId groupId, @Nullable Post replyPost) {
             if (chatId == null && media != null && media.size() >= 1 && media.get(0).type == Media.MEDIA_TYPE_AUDIO) {
-                return new VoiceNotePost(0, UserId.ME, RandomId.create(), System.currentTimeMillis(), Post.TRANSFERRED_NO, Post.SEEN_YES);
+                Post post = new VoiceNotePost(0, UserId.ME, RandomId.create(), System.currentTimeMillis(), Post.TRANSFERRED_NO, Post.SEEN_YES);
+
+                if (groupId != null) {
+                    post.setParentGroup(groupId);
+                }
+
+                return post;
             } else if (chatId != null) {
                 return new Message(0, chatId, UserId.ME, RandomId.create(), System.currentTimeMillis(), Message.TYPE_CHAT, Message.USAGE_CHAT, Message.STATE_INITIAL, text, replyPostId, replyPostMediaIndex, null, -1, replyPost == null ? null : replyPost.senderUserId, 0);
             } else {
