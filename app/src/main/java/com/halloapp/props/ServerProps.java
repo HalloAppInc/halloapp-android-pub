@@ -43,6 +43,7 @@ public class ServerProps {
     private static final String PROP_STREAMING_SENDING_ENABLED = "streaming_sending_enabled";
     private static final String PROP_AUDIO_CALLS_ENABLED = "audio_calls";
     private static final String PROP_VOICE_POSTS_ENABLED = "voice_posts";
+    private static final String PROP_EMOJI_VERSION = "emoji_version";
 
     private static final int WEEK_IN_SECONDS = (int) (DateUtils.WEEK_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
 
@@ -81,6 +82,7 @@ public class ServerProps {
     private final BooleanProp propStreamingSendingEnabled = createProp(PROP_STREAMING_SENDING_ENABLED, false);
     private final BooleanProp propAudioCallsEnabled = createProp(PROP_AUDIO_CALLS_ENABLED, false);
     private final BooleanProp propVoicePostsEnabled = createProp(PROP_VOICE_POSTS_ENABLED, false);
+    private final IntegerProp propEmojiVersion = createProp(PROP_EMOJI_VERSION, 1);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -255,5 +257,9 @@ public class ServerProps {
 
     public synchronized boolean getVoicePostsEnabled() {
         return BuildConfig.DEBUG || propVoicePostsEnabled.getValue();
+    }
+
+    public synchronized int getEmojiVersion() {
+        return propEmojiVersion.getValue();
     }
 }

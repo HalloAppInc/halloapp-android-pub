@@ -12,6 +12,8 @@ import androidx.work.WorkerParameters;
 
 import com.halloapp.content.ContentDb;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
+import com.halloapp.emoji.EmojiManager;
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.logs.Log;
 
 import java.util.Calendar;
@@ -55,6 +57,7 @@ public class DailyWorker extends Worker {
         FileStore.getInstance().cleanup();
         EncryptedKeyStore.getInstance().checkIdentityKeyChanges();
         schedule(getApplicationContext());
+        EmojiManager.getInstance().checkUpdate();
         return Result.success();
     }
 }

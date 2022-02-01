@@ -14,8 +14,6 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.emoji2.text.DefaultEmojiCompatConfig;
-import androidx.emoji2.text.EmojiCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
@@ -138,21 +136,9 @@ public class HalloApp extends Application {
         // Init server props synchronously so we have the correct values loaded
         ServerProps.getInstance().init();
         Preferences.getInstance().init();
-        EmojiManager.getInstance().init();
-
         Preferences.getInstance().ensureMigrated();
-        EmojiCompat.Config config = DefaultEmojiCompatConfig.create(this);
-        EmojiCompat emojiCompat;
-        if (config != null) {
-            config.setReplaceAll(true)
-                    .setMetadataLoadStrategy(EmojiCompat.LOAD_STRATEGY_MANUAL);
-            emojiCompat = EmojiCompat.init(config);
-        } else {
-            emojiCompat = EmojiCompat.init(this);
-        }
-        if (emojiCompat != null) {
-            BgWorkers.getInstance().execute(emojiCompat::load);
-        }
+
+        EmojiManager.getInstance().init(this);
     }
 
     private void connect() {

@@ -29,6 +29,27 @@ import java.security.NoSuchAlgorithmException;
 
 public class FileUtils {
 
+    public static byte[] getFileMd5(@NonNull File file) throws IOException, NoSuchAlgorithmException {
+        final InputStream fileInputStream =  new FileInputStream(file);
+        final byte[] buffer = new byte[1024];
+        final MessageDigest messageDigest;
+        try {
+            messageDigest = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            Log.e("FileUtils: no md5");
+            throw e;
+        }
+        int numRead;
+        do {
+            numRead = fileInputStream.read(buffer);
+            if (numRead > 0) {
+                messageDigest.update(buffer, 0, numRead);
+            }
+        }
+        while (numRead != -1);
+        fileInputStream.close();
+        return messageDigest.digest();
+    }
 
     public static byte[] getFileSha256(@NonNull File file) throws IOException, NoSuchAlgorithmException {
         final InputStream fileInputStream =  new FileInputStream(file);

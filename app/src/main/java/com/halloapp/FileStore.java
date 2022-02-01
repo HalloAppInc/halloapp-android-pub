@@ -32,6 +32,7 @@ public class FileStore {
     private final File avatarDir;
     private final File logDir;
     private final File exportDir;
+    private final File emojiDir;
 
     public static FileStore getInstance() {
         if (instance == null) {
@@ -63,6 +64,7 @@ public class FileStore {
             avatarDir = prepareDir(new File(context.getFilesDir(), "avatars"));
             logDir = prepareDir(new File(context.getFilesDir(), "logs"));
             exportDir = prepareDir(new File(context.getCacheDir(), "export"));
+            emojiDir = prepareDir(new File(context.getFilesDir(), "emoji"));
         } finally {
             StrictMode.setThreadPolicy(threadPolicy);
         }
@@ -83,6 +85,10 @@ public class FileStore {
 
     public File getMediaFile(@Nullable String name) {
         return name == null ? null : new File(getMediaDir(), name);
+    }
+
+    public File getEmojiDir() {
+        return emojiDir;
     }
 
     public void purgeOldLogFiles() {

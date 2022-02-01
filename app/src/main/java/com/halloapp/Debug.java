@@ -82,6 +82,7 @@ public class Debug {
     private static final String DEBUG_MENU_SKIP_OUTBOUND_GROUP_FEED_KEY = "Skip outbound key";
     private static final String DEBUG_MENU_SKIP_INBOUND_GROUP_FEED_KEY = "Skip inbound key";
     private static final String DEBUG_MENU_CORRUPT_GROUP_KEY_STORE = "Corrupt group key store";
+    private static final String DEBUG_MENU_CLEAR_DOWNLOADED_EMOJIS = "Clear downloaded emojis";
 
     private static final BgWorkers bgWorkers = BgWorkers.getInstance();
 
@@ -111,6 +112,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_REMOVE_ARCHIVE);
         menu.getMenu().add(DEBUG_MENU_FORCE_ZERO_ZONE);
         menu.getMenu().add(DEBUG_MENU_FORCE_LEAVE_ZERO_ZONE);
+        menu.getMenu().add(DEBUG_MENU_CLEAR_DOWNLOADED_EMOJIS);
         menu.setOnMenuItemClickListener(item -> {
             SnackbarHelper.showInfo(activity, item.getTitle());
             switch (item.getTitle().toString()) {
@@ -124,6 +126,12 @@ public class Debug {
                 }
                 case DEBUG_MENU_DELETE_CONTENT_DB: {
                     new DeleteContentDbTask(activity.getApplication()).execute();
+                    break;
+                }
+                case DEBUG_MENU_CLEAR_DOWNLOADED_EMOJIS: {
+                    bgWorkers.execute(() -> {
+                        Preferences.getInstance().setLocalEmojiVersion(0);
+                    });
                     break;
                 }
                 case DEBUG_MENU_DELETE_CONTACTS_DB: {

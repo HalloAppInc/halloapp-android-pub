@@ -78,6 +78,8 @@ public class Preferences {
     private static final String PREF_KEY_KEYBOARD_HEIGHT_PORTRAIT = "keyboard_height_portrait";
     private static final String PREF_KEY_KEYBOARD_HEIGHT_LANDSCAPE = "keyboard_height_landscape";
 
+    private static final String PREF_KEY_LOCAL_EMOJI_VERSION = "local_emoji_version";
+
     private final AppContext appContext;
     private SharedPreferences backedUpPreferences;
     private SharedPreferences deviceLocalPreferences;
@@ -160,6 +162,8 @@ public class Preferences {
 
     private final IntPreference prefKeyboardHeightPortrait = createPref(false, PREF_KEY_KEYBOARD_HEIGHT_PORTRAIT, 0);
     private final IntPreference prefKeyboardHeightLandscape = createPref(false, PREF_KEY_KEYBOARD_HEIGHT_LANDSCAPE, 0);
+
+    private final IntPreference prefLocalEmojiVersion = createPref(true, PREF_KEY_LOCAL_EMOJI_VERSION, 0);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -686,5 +690,15 @@ public class Preferences {
 
     public void setKeyboardHeightLandscape(int height) {
         prefKeyboardHeightLandscape.apply(height);
+    }
+
+    @WorkerThread
+    public int getLocalEmojiVersion() {
+        return prefLocalEmojiVersion.get();
+    }
+
+    @WorkerThread
+    public void setLocalEmojiVersion(int version) {
+        prefLocalEmojiVersion.set(version);
     }
 }
