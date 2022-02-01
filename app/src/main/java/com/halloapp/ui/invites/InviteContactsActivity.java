@@ -12,6 +12,7 @@ import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -125,7 +126,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
         searchContainer.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                listView.setPadding(0, searchContainer.getHeight(), 0, 0);
+                listView.setPadding(0, searchContainer.getHeight() + ((ViewGroup.MarginLayoutParams)searchContainer.getLayoutParams()).topMargin, 0, 0);
             }
         });
 
