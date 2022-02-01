@@ -73,6 +73,7 @@
                     android:gravity="center"
                     android:clickable="true"
                     android:focusable="true"
+                    android:visibility="gone"
                     android:fontFamily="sans-serif-medium"
                     android:text="@string/share"
                     android:textSize="18sp"

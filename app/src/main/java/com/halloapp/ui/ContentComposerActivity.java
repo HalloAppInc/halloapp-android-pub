@@ -402,17 +402,19 @@ public class ContentComposerActivity extends HalloActivity {
         postLinkPreviewView.setMediaThumbnailLoader(mediaThumbnailLoader);
 
         final TextView shareBtn = findViewById(R.id.share_btn);
-        shareBtn.setOutlineProvider(new ViewOutlineProvider() {
-            @Override
-            public void getOutline(View view, Outline outline) {
-                float radius = getResources().getDimension(R.dimen.share_destination_next_radius);
-                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
-            }
-        });
-        shareBtn.setClipToOutline(true);
-        shareBtn.setOnClickListener(v -> sharePost());
-        shareBtn.setVisibility(destinations != null && destinations.size() > 0 ? View.VISIBLE : View.GONE);
-        bottomSendButton.setVisibility(destinations != null && destinations.size() > 0 ? View.GONE : View.VISIBLE);
+        if (destinations != null && destinations.size() > 0) {
+            shareBtn.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    float radius = getResources().getDimension(R.dimen.share_destination_next_radius);
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
+                }
+            });
+            shareBtn.setClipToOutline(true);
+            shareBtn.setOnClickListener(v -> sharePost());
+            shareBtn.setVisibility(View.VISIBLE);
+            bottomSendButton.setVisibility(View.GONE);
+        }
 
         mediaPager = findViewById(R.id.media_pager);
         mediaPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.media_pager_margin));
@@ -496,7 +498,7 @@ public class ContentComposerActivity extends HalloActivity {
                 boolean isEmpty = TextUtils.isEmpty(charSequence);
                 textOnlySend.setEnabled(!isEmpty);
 
-                if (destinations != null && destinations.size() > 0) {
+                if (composeMode == ComposeMode.TEXT && destinations != null && destinations.size() > 0) {
                     shareBtn.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
                 }
 
