@@ -171,11 +171,14 @@ public class InviteContactsAdapter extends RecyclerView.Adapter<InviteContactsAd
             if (contact.userId != null) {
                 captionView.setVisibility(View.VISIBLE);
                 captionView.setText(captionView.getContext().getString(R.string.invite_already_on_halloapp));
+                inviteView.setVisibility(View.GONE);
             } else if (contact.numPotentialFriends > 0) {
                 captionView.setText(captionView.getContext().getResources().getQuantityString(R.plurals.friends_on_halloapp, (int) contact.numPotentialFriends, (int) contact.numPotentialFriends));
                 captionView.setVisibility(View.VISIBLE);
+                inviteView.setVisibility(View.VISIBLE);
             } else {
                 captionView.setVisibility(View.GONE);
+                inviteView.setVisibility(View.VISIBLE);
             }
 
             inviteView.setEnabled(!contact.invited);
