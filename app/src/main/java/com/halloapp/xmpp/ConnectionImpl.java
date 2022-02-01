@@ -1495,37 +1495,37 @@ public class ConnectionImpl extends Connection {
                     // TODO(nikola): Discuss this with the android team. I would rather do this
                     // } else if (msg.getType() == Msg.Type.CALL) {
                     //      connectionObservers.notifyCallMsg(msg);
-                    Log.i("connection: got incoming call msg" + ProtoPrinter.toString(msg));
+                    Log.i("connection: got incoming call message " + ProtoPrinter.toString(msg));
                     UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
                     connectionObservers.notifyIncomingCall(peerUid, msg.getIncomingCall(), msg.getId());
                     handled = true;
                 } else if (msg.hasCallRinging()) {
-                    Log.i("connection: got call ringing msg" + ProtoPrinter.toString(msg));
+                    Log.i("connection: got call ringing message " + ProtoPrinter.toString(msg));
                     UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
                     connectionObservers.notifyCallRinging(peerUid, msg.getCallRinging(), msg.getId());
                     handled = true;
                 } else if (msg.hasAnswerCall()) {
-                    Log.i("connection: got answer call msg" + ProtoPrinter.toString(msg));
+                    Log.i("connection: got answer call message " + ProtoPrinter.toString(msg));
                     UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
                     connectionObservers.notifyAnswerCall(peerUid, msg.getAnswerCall(), msg.getId());
                     handled = true;
                 } else if (msg.hasEndCall()) {
-                    Log.i("connection: got end call msg" + ProtoPrinter.toString(msg));
+                    Log.i("connection: got end call message " + ProtoPrinter.toString(msg));
                     UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
                     connectionObservers.notifyEndCall(peerUid, msg.getEndCall(), msg.getId());
                     handled = true;
                 } else if (msg.hasIceCandidate()) {
-                    Log.i("connection: got ice candidate msg" + ProtoPrinter.toString(msg));
+                    Log.i("connection: got ice candidate message " + ProtoPrinter.toString(msg));
                     UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
                     connectionObservers.notifyIceCandidate(peerUid, msg.getIceCandidate(), msg.getId());
                     handled = true;
                 } else if (msg.hasIceRestartOffer()) {
-                    Log.i("connection: got ice restart offer msg" + ProtoPrinter.toString(msg));
+                    Log.i("connection: got ice restart offer message " + ProtoPrinter.toString(msg));
                     UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
                     connectionObservers.notifyIceRestartOffer(peerUid, msg.getIceRestartOffer(), msg.getId());
                     handled = true;
                 } else if (msg.hasIceRestartAnswer()) {
-                    Log.i("connection: got ice restart answer msg" + ProtoPrinter.toString(msg));
+                    Log.i("connection: got ice restart answer message " + ProtoPrinter.toString(msg));
                     UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
                     connectionObservers.notifyIceRestartAnswer(peerUid, msg.getIceRestartAnswer(), msg.getId());
                     handled = true;
