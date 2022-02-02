@@ -1079,6 +1079,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="refresh_contacts_failed">"Не удалось обновить контакты"</string>
 
     <!-- Label for voice post option -->
+    <!-- Fuzzy -->
     <string name="voice_post">"Голос"</string>
 
     <!-- Audio post composer title -->
@@ -1181,6 +1182,17 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Label for button to see all rows -->
     <string name="see_all">"Увидеть все"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice posts -->
+    <string name="voice_post_record_audio_permission_rationale">"Для записи аудиопостов нам нужно разрешение на доступ к микрофону"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice posts, but it has already been denied. -->
+    <string name="voice_post_record_audio_permission_rationale_denied">"Для записи аудиопостов нам нужно разрешение на доступ к микрофону.
+
+Откройте экран настроек приложения, чтобы изменить разрешения приложения."</string>
+
+    <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
+    <string name="unable_to_start_call">"Не удается начать вызов."</string>
     <string name="composer_sharing_post">"Поделиться с %s"</string>
     <string name="composer_sharing_group_post">"Делимся с групой"</string>
     <string name="invite_via_link">"Пригласить с помощью ссылки"</string>

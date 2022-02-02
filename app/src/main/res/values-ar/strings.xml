@@ -34,7 +34,7 @@
     <string name="contact_permission_title">"أمر أخير"</string>
     <string name="registration_code_invalid">"رمز التسجيل غير صحيح، حاول مجددًا"</string>
     <string name="registration_failed">"تعذَر تسجيل رقم الهاتف، حاول مجددًا"</string>
-    <string name="registration_failed_no_friends">"لا يمكن استخدام التطبيق الآن إلا إذا تمت دعوتك إليه. إذا كان أصدقاؤك أو أفراد أسرتك يستخدمون هالوآب، اطلب منهم دعوتك عن طريق رقم هاتفك."</string>
+    <string name="registration_failed_no_friends">"لا يمكن استخدام التطبيق الآن إلا إذا تمت دعوتك إليه. إذا كان أصدقاؤك أو أفراد عائلتك يستخدمون هالوآب، اطلب منهم دعوتك عن طريق رقم هاتفك."</string>
 
     <!-- can you use something that is international, i live in the US and had to google "Shucks" -->
     <string name="registration_failed_no_friends_title">"عذرًا!"</string>
@@ -43,7 +43,7 @@
     <string name="write_a_post">"اكتب منشورًا"</string>
     <string name="send">"إرسال"</string>
     <string name="set_avatar_done">"تم"</string>
-    <string name="set_avatar_reset">"إعادة التعيين"</string>
+    <string name="set_avatar_reset">"إعادة تعيين"</string>
     <string name="new_post">"منشور جديد"</string>
     <string name="new_message">"رسالة جديدة"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
@@ -72,8 +72,8 @@
     <string name="camera_record_audio_permission_rationale_denied">"لالتقاط الصور ومقاطع الفيديو يجب أن تمنح التطبيق إذن الوصول إلى الكاميرا وتسجيل الصوت على جهازك.
 
 افتح شاشة إعدادات التطبيق لتعديل أذونات التطبيق."</string>
-    <string name="contacts_permission_rationale">"للتواصل مع أصدقائك وأفراد أسرتك يجب أن تمنح التطبيق إذن الوصول إلى جهات الاتصال على جهازك"</string>
-    <string name="contacts_permission_rationale_denied">"للتواصل مع أصدقائك وأفراد أسرتك يجب أن تمنح التطبيق إذن الوصول إلى جهات الاتصال على جهازك. 
+    <string name="contacts_permission_rationale">"للتواصل مع أصدقائك وأفراد عائلتك يجب أن تمنح التطبيق إذن الوصول إلى جهات الاتصال على جهازك"</string>
+    <string name="contacts_permission_rationale_denied">"للتواصل مع أصدقائك وأفراد عائلتك يجب أن تمنح التطبيق إذن الوصول إلى جهات الاتصال على جهازك. 
 
 افتح شاشة إعدادات التطبيق لتعديل أذونات التطبيق."</string>
     <string name="storage_permission_rationale">"لاختيار الوسائط يجب أن تمنح التطبيق إذن الوصول إلى وحدة تخزين جهازك"</string>
@@ -81,7 +81,7 @@
 
 افتح شاشة إعدادات التطبيق لتعديل أذونات التطبيق."</string>
     <string name="retry">"حاول مجددًا"</string>
-    <string name="contact_rationale_upload">"للتواصل مع أصدقائك وأفراد أسرتك يجب أن تمنح التطبيق إذن الوصول إلى جهات اتصالك. &lt;a href=\"learn-more\"&gt;تعرّف على المزيد&lt;/a&gt;
+    <string name="contact_rationale_upload">"للتواصل مع أصدقائك وأفراد عائلتك يجب أن تمنح التطبيق إذن الوصول إلى جهات اتصالك. &lt;a href=\"learn-more\"&gt;تعرّف على المزيد&lt;/a&gt;
 "</string>
     <string name="failed_to_initialize">"تعذّر بدء التهيئة"</string>
     <string name="type_a_comment_hint">"إضافة تعليق"</string>
@@ -372,7 +372,7 @@
         <item quantity="many">"تبقى لديك %s دعوة هذا الأسبوع"</item>
         <item quantity="other">"تبقى لديك %s دعوة هذا الأسبوع"</item>
     </plurals>
-    <string name="invite_friends_title">"دعوة أفراد الأسرة والأصدقاء"</string>
+    <string name="invite_friends_title">"دعوة أفراد العائلة والأصدقاء"</string>
     <string name="invite_title">"دعوة الأصدقاء"</string>
     <string name="settings_invite_option">"دعوة إلى هالوآب"</string>
     <string name="invite_already_on_halloapp">"من مستخدمي هالوآب"</string>
@@ -550,7 +550,7 @@ Your video is %d seconds longer
     <string name="group_background_save_failed">"تعذّر تعيين خلفية المجموعة"</string>
     <string name="group_background_save_success">"تم تحديث خلفية المجموعة"</string>
     <string name="group_background_color">"اللون"</string>
-    <string name="group_background_default">"افتراضي"</string>
+    <string name="group_background_default">"تلقائي"</string>
     <string name="group_info_members">"الأعضاء (%d)"</string>
     <string name="delete_message_confirmation">"حذف الرسالة المحددة؟"</string>
     <string name="retract_message_option">"الحذف لدى الجميع"</string>
@@ -1138,6 +1138,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="refresh_contacts_failed">"تعذر إعادة تحميل جهات الاتصال"</string>
 
     <!-- Label for voice post option -->
+    <!-- Fuzzy -->
     <string name="voice_post">"صوت"</string>
 
     <!-- Audio post composer title -->
@@ -1228,28 +1229,39 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="tap_to_return_to_call">"انقر للعودة إلى المكالمة"</string>
 
     <!-- Displayed on the call screen to show that the call is connecting -->
-    <string name="connecting">"Connecting…"</string>
+    <string name="connecting">"جارٍ الاتصال…"</string>
 
     <!-- Text in fab for post action -->
-    <string name="post_fab_label">"Post"</string>
+    <string name="post_fab_label">"نشر"</string>
 
     <!-- Text in fab for new group action -->
-    <string name="new_group_fab_label">"New group"</string>
+    <string name="new_group_fab_label">"مجموعة جديدة"</string>
 
     <!-- Text in fab for chat action -->
-    <string name="compose_fab_label">"Compose"</string>
+    <string name="compose_fab_label">"رسالة"</string>
 
     <!-- Label on selected destinations when sharing from another app -->
-    <string name="share_with_label">"Share with"</string>
+    <string name="share_with_label">"مشاركة مع"</string>
 
     <!-- Title of section for your groups -->
-    <string name="your_groups">"Your groups"</string>
+    <string name="your_groups">"مجموعاتك"</string>
 
     <!-- Title of section for recent contacts -->
-    <string name="recent_contacts">"Recent contacts"</string>
+    <string name="recent_contacts">"جهات اتصال حديثة"</string>
 
     <!-- Label for button to see all rows -->
-    <string name="see_all">"See all"</string>
+    <string name="see_all">"عرض الكل"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice posts -->
+    <string name="voice_post_record_audio_permission_rationale">"To record audio posts we need permission to access the microphone"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice posts, but it has already been denied. -->
+    <string name="voice_post_record_audio_permission_rationale_denied">"To record audio posts we need permission to access the microphone.
+
+Open the app settings screen to modify app permissions."</string>
+
+    <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
+    <string name="unable_to_start_call">"Unable to start call."</string>
     <string name="composer_sharing_post">"المشاركة مع %s"</string>
     <string name="composer_sharing_group_post">"المشاركة مع المجموعة"</string>
     <string name="invite_via_link">"Invite via link"</string>

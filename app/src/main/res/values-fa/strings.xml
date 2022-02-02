@@ -1034,6 +1034,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="refresh_contacts_failed">"خطا در بارگذاری مخاطبین"</string>
 
     <!-- Label for voice post option -->
+    <!-- Fuzzy -->
     <string name="voice_post">"پست صوتی"</string>
 
     <!-- Audio post composer title -->
@@ -1126,6 +1127,17 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Label for button to see all rows -->
     <string name="see_all">"مشاهده کل"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice posts -->
+    <string name="voice_post_record_audio_permission_rationale">"برای ضبط صدا نیاز به دسترسی به میکروفن داریم"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice posts, but it has already been denied. -->
+    <string name="voice_post_record_audio_permission_rationale_denied">"برای ضبط صدا نیاز به دسترسی به میکروفن داریم.
+
+برای تغییر اجازه‌ها تنظیمات برنامه را باز کنید."</string>
+
+    <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
+    <string name="unable_to_start_call">"خطا در شروع تماس."</string>
     <string name="composer_sharing_post">"به اشتراک گذاشتن با %s"</string>
     <string name="composer_sharing_group_post">"اشتراک با گروه"</string>
     <string name="invite_via_link">"دعوت از طریق لینک"</string>

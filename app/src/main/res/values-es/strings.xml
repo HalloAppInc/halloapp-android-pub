@@ -1063,6 +1063,7 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="refresh_contacts_failed">"No se pudieron actualizar los contactos"</string>
 
     <!-- Label for voice post option -->
+    <!-- Fuzzy -->
     <string name="voice_post">"Voz"</string>
 
     <!-- Audio post composer title -->
@@ -1133,28 +1134,39 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="tap_to_return_to_call">"Toca para devolver la llamada"</string>
 
     <!-- Displayed on the call screen to show that the call is connecting -->
-    <string name="connecting">"Connecting…"</string>
+    <string name="connecting">"Conectando…"</string>
 
     <!-- Text in fab for post action -->
-    <string name="post_fab_label">"Post"</string>
+    <string name="post_fab_label">"Publicar"</string>
 
     <!-- Text in fab for new group action -->
-    <string name="new_group_fab_label">"New group"</string>
+    <string name="new_group_fab_label">"Grupo nuevo"</string>
 
     <!-- Text in fab for chat action -->
-    <string name="compose_fab_label">"Compose"</string>
+    <string name="compose_fab_label">"Crear"</string>
 
     <!-- Label on selected destinations when sharing from another app -->
-    <string name="share_with_label">"Share with"</string>
+    <string name="share_with_label">"Compartir con"</string>
 
     <!-- Title of section for your groups -->
-    <string name="your_groups">"Your groups"</string>
+    <string name="your_groups">"Tus grupos"</string>
 
     <!-- Title of section for recent contacts -->
-    <string name="recent_contacts">"Recent contacts"</string>
+    <string name="recent_contacts">"Contactos recientes"</string>
 
     <!-- Label for button to see all rows -->
-    <string name="see_all">"See all"</string>
+    <string name="see_all">"Ver todo"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice posts -->
+    <string name="voice_post_record_audio_permission_rationale">"Para grabar publicaciones de sonido necesitamos permiso para acceder al micrófono"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice posts, but it has already been denied. -->
+    <string name="voice_post_record_audio_permission_rationale_denied">"Para grabar publicaciones de sonido necesitamos permiso para acceder al micrófono.
+
+Abre la pantalla de configuración para modificar los permisos de la aplicación."</string>
+
+    <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
+    <string name="unable_to_start_call">"Incapaz de empezar la llamada."</string>
     <string name="composer_sharing_post">"Compartiendo con %s"</string>
     <string name="composer_sharing_group_post">"Compartiendo con el grupo"</string>
     <string name="invite_via_link">"Invitar por un enlace"</string>

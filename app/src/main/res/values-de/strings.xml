@@ -502,7 +502,7 @@ Version: %2$s
     <string name="not_now">"Jetzt nicht"</string>
     <string name="continue_button">"Weiter"</string>
     <string name="invite_link_load_failed">"Fehler beim Öffnen des Links zur Gruppeneinladung"</string>
-    <string name="message_tombstone_placeholder">"Auf Nachrichteneingang wird gewartet. Dies kann eine Weile dauern. "<![CDATA[<a href="learn-more">Mehr erfahren</a>]]>"."</string>
+    <string name="message_tombstone_placeholder">"Warten auf Eingang dieser Nachricht. Dies kann eine Weile dauern. "<![CDATA[<a href="learn-more">Mehr erfahren</a>]]>"."</string>
     <string name="failed_no_longer_member">"Du bist nicht mehr ein Mitglied dieser Gruppe"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -1059,6 +1059,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="refresh_contacts_failed">"Fehler beim Aktualisieren der Kontakte"</string>
 
     <!-- Label for voice post option -->
+    <!-- Fuzzy -->
     <string name="voice_post">"Sprachnotiz"</string>
 
     <!-- Audio post composer title -->
@@ -1080,8 +1081,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="not_in_address_book_alert">"Diese Person ist nicht in deinen Kontakten"</string>
 
     <!-- Text shown in chat view telling user they had a missed call -->
-    <!-- Fuzzy -->
-    <string name="log_missed_call">"Verpasster Anruf"</string>
+    <string name="log_missed_call">"Verpasster Sprachanruf"</string>
 
     <!-- Text shown in chat view telling user they had a voice call -->
     <string name="log_voice_call">"Sprachanruf"</string>
@@ -1141,16 +1141,27 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="compose_fab_label">"Verfassen"</string>
 
     <!-- Label on selected destinations when sharing from another app -->
-    <string name="share_with_label">"Share with"</string>
+    <string name="share_with_label">"Teilen mit"</string>
 
     <!-- Title of section for your groups -->
-    <string name="your_groups">"Your groups"</string>
+    <string name="your_groups">"Deine Gruppen"</string>
 
     <!-- Title of section for recent contacts -->
-    <string name="recent_contacts">"Recent contacts"</string>
+    <string name="recent_contacts">"Neue Kontakte"</string>
 
     <!-- Label for button to see all rows -->
-    <string name="see_all">"See all"</string>
+    <string name="see_all">"Alle anzeigen"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice posts -->
+    <string name="voice_post_record_audio_permission_rationale">"To record audio posts we need permission to access the microphone"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice posts, but it has already been denied. -->
+    <string name="voice_post_record_audio_permission_rationale_denied">"To record audio posts we need permission to access the microphone.
+
+Open the app settings screen to modify app permissions."</string>
+
+    <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
+    <string name="unable_to_start_call">"Unable to start call."</string>
     <string name="composer_sharing_post">"Wird mit %s geteilt"</string>
     <string name="composer_sharing_group_post">"Mit der Gruppe teilen"</string>
     <string name="invite_via_link">"Per Link einladen"</string>

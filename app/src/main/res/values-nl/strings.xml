@@ -1017,10 +1017,10 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="refresh_contacts_failed">"Verversen contacten mislukt"</string>
 
     <!-- Label for voice post option -->
-    <string name="voice_post">"Spraak"</string>
+    <string name="voice_post">"Audio"</string>
 
     <!-- Audio post composer title -->
-    <string name="audio_post_compose_title">"Nieuw audiobericht"</string>
+    <string name="audio_post_compose_title">"Nieuwe audiopost"</string>
 
     <!-- Text post hint -->
     <string name="text_post_compose_hint">"Voeg een omschrijving toe"</string>
@@ -1108,6 +1108,17 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Label for button to see all rows -->
     <string name="see_all">"Alles bekijken"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice posts -->
+    <string name="voice_post_record_audio_permission_rationale">"Om audioposts op te nemen, hebben we toegang nodig tot de microfoon"</string>
+
+    <!-- Rationale for when requesting microphone permission for voice posts, but it has already been denied. -->
+    <string name="voice_post_record_audio_permission_rationale_denied">"Om audioposts op te nemen, hebben we toegang nodig tot de microfoon.
+
+Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
+
+    <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
+    <string name="unable_to_start_call">"Kan geen oproep starten."</string>
     <string name="composer_sharing_post">"Delen met %s"</string>
     <string name="composer_sharing_group_post">"Delen met groep"</string>
     <string name="invite_via_link">"Uitnodigen via link"</string>
