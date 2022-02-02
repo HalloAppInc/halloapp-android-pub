@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
 
 import com.halloapp.Me;
@@ -23,6 +24,7 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.widget.PlaceholderDrawable;
 import com.halloapp.widget.TextDrawable;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -91,21 +93,14 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
                 }
                 return new TextDrawable(text, textSizeMax, textSizeMin, textPadding, textColor);
             } else {
-                final Media media = post.media.get(0);
-                Bitmap bitmap = null;
-                if (media.file != null) {
-                    if (media.file.exists()) {
-                        bitmap = MediaUtils.decode(media.file, media.type, dimensionLimit);
-                    } else {
-                        Log.i("MediaThumbnailLoader.load: file " + media.file.getAbsolutePath() + " doesn't exist");
+                Drawable drawable = null;
+                for (Media media : post.media) {
+                    drawable = getDrawable(media);
+                    if (drawable != null) {
+                        return drawable;
                     }
                 }
-                if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
-                    Log.i("MediaThumbnailLoader.load: cannot decode " + media.file);
-                    return new PlaceholderDrawable(media.width, media.height, placeholderColor);
-                } else {
-                    return new BitmapDrawable(context.getResources(), bitmap);
-                }
+                return drawable;
             }
         };
         final ViewDataLoader.Displayer<ImageView, Drawable> displayer = new ViewDataLoader.Displayer<ImageView, Drawable>() {
@@ -126,5 +121,28 @@ public class PostThumbnailLoader extends ViewDataLoader<ImageView, Drawable, Str
             }
         };
         load(view, loader, displayer, userId.rawId() + "_" + postId, cache);
+    }
+
+    @Nullable
+    private Drawable getDrawable(Media media) throws IOException {
+        switch (media.type) {
+            case Media.MEDIA_TYPE_IMAGE:
+            case Media.MEDIA_TYPE_VIDEO:
+                Bitmap bitmap = null;
+                if (media.file != null) {
+                    if (media.file.exists()) {
+                        bitmap = MediaUtils.decode(media.file, media.type, dimensionLimit);
+                    } else {
+                        Log.i("MediaThumbnailLoader.load: file " + media.file.getAbsolutePath() + " doesn't exist");
+                    }
+                }
+                if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
+                    Log.i("MediaThumbnailLoader.load: cannot decode " + media.file);
+                    return new PlaceholderDrawable(media.width, media.height, placeholderColor);
+                } else {
+                    return new BitmapDrawable(context.getResources(), bitmap);
+                }
+        }
+        return null;
     }
 }
