@@ -153,6 +153,9 @@ public class CallManager {
 
     private final Queue<HaIceCandidate> iceCandidateQueue = new LinkedList<>();
 
+    private int outboundRerequestCount = 0;
+    private static final int MAX_CALL_REREQUESTS = 5;
+
     // Executor thread is started once in private ctor and is used for all
     // peer connection API calls to ensure new peer connection factory is
     // created on the same thread as previously destroyed factory.
@@ -406,6 +409,7 @@ public class CallManager {
         peerUid = null;
         clearCallTimer();
         restartIndex = 0;
+        outboundRerequestCount = 0;
         state = State.IDLE;
         isInCall.postValue(false);
         if (telecomConnection != null) {
@@ -418,7 +422,7 @@ public class CallManager {
 
     public synchronized void handleIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType, @Nullable String webrtcOffer,
                                    @NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers,
-                                   long timestamp, long serverSentTimestamp) {
+                                   long timestamp, long serverSentTimestamp, @Nullable CryptoException cryptoException) {
         Log.i("CallManager.handleIncomingCall " + callId + " peerUid: " + peerUid + " " + callType + " " + timestamp);
         if (serverSentTimestamp > 0 && timestamp > 0 && serverSentTimestamp - timestamp > Constants.CALL_RINGING_TIMEOUT_MS) {
             Log.i("CallManager: received stale call " + callId + " from " + peerUid);
@@ -451,6 +455,7 @@ public class CallManager {
 
         if (webrtcOffer == null) {
             Log.e("handleIncomingCall() Failed to decrypt webrtcOffer callId:" + callId);
+            sendRerequest(cryptoException);
             endCall(EndCall.Reason.DECRYPTION_FAILED);
             return;
         }
@@ -541,7 +546,8 @@ public class CallManager {
         startOutgoingRingtone();
     }
 
-    public synchronized void handleAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @Nullable String webrtcOffer, @NonNull Long timestamp) {
+    public synchronized void handleAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @Nullable String webrtcOffer, @NonNull Long timestamp,
+                                              @Nullable CryptoException cryptoException) {
         Log.i("AnswerCall callId: " + callId + " peerUid: " + peerUid + " " + timestamp);
 
         if (this.callId == null || !this.callId.equals(callId)) {
@@ -557,6 +563,7 @@ public class CallManager {
         cancelRingingTimeout();
 
         if (webrtcOffer == null) {
+            sendRerequest(cryptoException);
             endCall(EndCall.Reason.DECRYPTION_FAILED);
             return;
         }
@@ -611,7 +618,8 @@ public class CallManager {
         }
     }
 
-    public void handleIceRestartOffer(@NonNull String callId, int restartIndex, @NonNull String webrtcRestartOffer) {
+    public void handleIceRestartOffer(@NonNull String callId, int restartIndex, @NonNull String webrtcRestartOffer,
+                                      @Nullable CryptoException cryptoException) {
         Log.i("CallManager: got iceRestartOffer callId: " + callId);
         if (this.callId == null || !this.callId.equals(callId)) {
             // TODO(nikola): This code is similar to many other messages
@@ -620,6 +628,7 @@ public class CallManager {
         }
         if (webrtcRestartOffer == null) {
             Log.e("CallManager: failed to decrypt iceRestartOffer...");
+            sendRerequest(cryptoException);
             return;
         }
         if (peerConnection != null) {
@@ -641,7 +650,8 @@ public class CallManager {
         }
     }
 
-    public void handleIceRestartAnswer(@NonNull String callId, int restartIndex, @NonNull String webrtcRestartAnswer) {
+    public void handleIceRestartAnswer(@NonNull String callId, int restartIndex, @NonNull String webrtcRestartAnswer,
+                                       @Nullable CryptoException cryptoException) {
         Log.i("CallManager: got iceRestartAnswer callId: " + callId);
         if (this.callId == null || !this.callId.equals(callId)) {
             // TODO(nikola): This code is similar to many other messages
@@ -650,6 +660,7 @@ public class CallManager {
         }
         if (webrtcRestartAnswer == null) {
             Log.e("CallManager: failed to decrypt iceRestartAnswer...");
+            sendRerequest(cryptoException);
             return;
         }
         if (peerConnection != null) {
@@ -992,6 +1003,18 @@ public class CallManager {
                 }
             }
         }, new MediaConstraints());
+    }
+
+    private boolean sendRerequest(CryptoException e) {
+        byte[] teardownKey = (e != null) ? e.teardownKey : null;
+        outboundRerequestCount++;
+        if (outboundRerequestCount <= MAX_CALL_REREQUESTS) {
+            callsApi.sendCallRerequest(callId, peerUid, outboundRerequestCount, teardownKey);
+            return true;
+        } else {
+            Log.e("CallManager: reached max rerequest count. Not sending any more rerequests");
+            return false;
+        }
     }
 
     public void endCall(EndCall.Reason reason) {

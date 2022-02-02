@@ -2,6 +2,7 @@ package com.halloapp.xmpp.calls;
 
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.protobuf.ByteString;
 import com.halloapp.ConnectionObservers;
@@ -19,6 +20,7 @@ import com.halloapp.proto.server.IceRestartAnswer;
 import com.halloapp.proto.server.IceRestartOffer;
 import com.halloapp.proto.server.IncomingCall;
 import com.halloapp.proto.server.Msg;
+import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.StunServer;
 import com.halloapp.proto.server.TurnServer;
 import com.halloapp.proto.server.WebRtcSessionDescription;
@@ -26,6 +28,7 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ProtoPrinter;
+import com.halloapp.xmpp.RerequestElement;
 import com.halloapp.xmpp.util.Observable;
 
 import org.webrtc.IceCandidate;
@@ -124,11 +127,13 @@ public class CallsApi extends Connection.Observer {
         String callId = incomingCall.getCallId();
 
         String webrtcOffer = null;
+        CryptoException cryptoException = null;
         try {
             webrtcOffer = CallsApi.decryptCallPayload(incomingCall.getWebrtcOffer(), peerUid);
             Log.d("CallsApi: Decrypted offer: " + webrtcOffer);
         } catch (CryptoException e) {
             Log.e("CallsApi: Decryption error onIncomingCall", e);
+            cryptoException = e;
         }
         // String webrtcOffer = incomingCall.getWebrtcOffer().getEncPayload().toStringUtf8();
         List<StunServer> stunServers = incomingCall.getStunServersList();
@@ -136,7 +141,7 @@ public class CallsApi extends Connection.Observer {
         CallType callType = incomingCall.getCallType();
         long timestamp = incomingCall.getTimestampMs();
         long serverSentTimestamp = incomingCall.getServerSentTsMs();
-        callManager.handleIncomingCall(callId, peerUid, callType, webrtcOffer, stunServers, turnServers, timestamp, serverSentTimestamp);
+        callManager.handleIncomingCall(callId, peerUid, callType, webrtcOffer, stunServers, turnServers, timestamp, serverSentTimestamp, cryptoException);
         connection.sendAck(ackId);
     }
 
@@ -152,15 +157,17 @@ public class CallsApi extends Connection.Observer {
     public void onAnswerCall(@NonNull UserId peerUid, @NonNull AnswerCall answerCall, @NonNull String ackId) {
         String callId = answerCall.getCallId();
         String answer = null;
+        CryptoException cryptoException = null;
         try {
             answer = CallsApi.decryptCallPayload(answerCall.getWebrtcAnswer(), peerUid);
             Log.i("CallsApi: Decrypted answer:" + answer);
         } catch (CryptoException e) {
             Log.e("CallsApi: Decryption error onAnswerCall", e);
+            cryptoException = e;
         }
         // String answer = answerCall.getWebrtcAnswer().getEncPayload().toStringUtf8();
         long timestamp = answerCall.getTimestampMs();
-        callManager.handleAnswerCall(callId, peerUid, answer, timestamp);
+        callManager.handleAnswerCall(callId, peerUid, answer, timestamp, cryptoException);
         connection.sendAck(ackId);
     }
 
@@ -189,14 +196,16 @@ public class CallsApi extends Connection.Observer {
         int restartIndex = iceRestartOffer.getIdx();
 
         String webrtcOffer = null;
+        CryptoException cryptoException = null;
         try {
             webrtcOffer = CallsApi.decryptCallPayload(iceRestartOffer.getWebrtcOffer(), peerUid);
             Log.i("CallsApi: Decrypted iceRestartOffer: " + webrtcOffer);
         } catch (CryptoException e) {
             Log.e("CallsApi: Decryption error onIceRestartOffer", e);
+            cryptoException = e;
         }
 
-        callManager.handleIceRestartOffer(callId, restartIndex, webrtcOffer);
+        callManager.handleIceRestartOffer(callId, restartIndex, webrtcOffer, cryptoException);
         connection.sendAck(ackId);
     }
 
@@ -206,14 +215,16 @@ public class CallsApi extends Connection.Observer {
         int restartIndex = iceRestartAnswer.getIdx();
 
         String webrtcAnswer = null;
+        CryptoException cryptoException = null;
         try {
             webrtcAnswer = CallsApi.decryptCallPayload(iceRestartAnswer.getWebrtcAnswer(), peerUid);
             Log.i("CallsApi: Decrypted iceRestartAnswer: " + webrtcAnswer);
         } catch (CryptoException e) {
             Log.e("CallsApi: Decryption error onIceRestartAnswer", e);
+            cryptoException = e;
         }
 
-        callManager.handleIceRestartAnswer(callId, restartIndex, webrtcAnswer);
+        callManager.handleIceRestartAnswer(callId, restartIndex, webrtcAnswer, cryptoException);
         connection.sendAck(ackId);
     }
 
@@ -316,6 +327,12 @@ public class CallsApi extends Connection.Observer {
 
         sendCallMsg(msg);
     }
+
+    public void sendCallRerequest(@NonNull String callId, @NonNull UserId peerUid, int rerequestCount, @Nullable byte[] teardownKey) {
+        RerequestElement rerequestElement = new RerequestElement(callId,  peerUid, rerequestCount, teardownKey, Rerequest.ContentType.CALL);
+        sendCallMsg(rerequestElement.toProto());
+    }
+
 
     private void sendCallMsg(@NonNull Msg msg) {
         synchronized (outgoingQueue) {

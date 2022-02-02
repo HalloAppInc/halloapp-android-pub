@@ -16,13 +16,15 @@ public class RerequestElement {
     public final UserId originalSender;
     public final int rerequestCount;
     public final byte[] teardownKey;
+    public final Rerequest.ContentType contentType;
 
-    public RerequestElement(String messageId, UserId originalSender, int rerequestCount, byte[] teardownKey) {
+    public RerequestElement(String messageId, UserId originalSender, int rerequestCount, byte[] teardownKey, Rerequest.ContentType contentType) {
         this.id = RandomId.create();
         this.messageId = messageId;
         this.originalSender = originalSender;
         this.rerequestCount = rerequestCount;
         this.teardownKey = teardownKey;
+        this.contentType = contentType;
     }
 
     public Msg toProto() {
@@ -58,6 +60,9 @@ public class RerequestElement {
         }
         if (outboundEphemeralKey != null) {
             builder.setSessionSetupEphemeralKey(ByteString.copyFrom(outboundEphemeralKey));
+        }
+        if (contentType != null) {
+            builder.setContentType(contentType);
         }
 
         return Msg.newBuilder()
