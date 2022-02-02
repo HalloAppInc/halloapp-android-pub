@@ -229,10 +229,12 @@ public class CallManager {
     @WorkerThread
     @RequiresApi(api = 23)
     private void telecomRegisterAccount() {
+        Log.i("CallManager: telecomRegisterAccount()");
         TelecomManager tm = (TelecomManager) appContext.get().getSystemService(Context.TELECOM_SERVICE);
         if (tm != null) {
             ComponentName cName = new ComponentName(appContext.get(), HaTelecomConnectionService.class);
             this.phoneAccountHandle = new PhoneAccountHandle(cName, "HalloApp");
+            Log.i("CallManager: telecomRegisterAccount: phoneAccountHandle: " + phoneAccountHandle);
 
             final Icon icon = Icon.createWithResource(appContext.get(), R.drawable.ic_launcher_foreground);
             PhoneAccount phoneAccount = PhoneAccount.builder(phoneAccountHandle, "HalloApp")
@@ -242,6 +244,7 @@ public class CallManager {
                     .build();
 
             tm.registerPhoneAccount(phoneAccount);
+            Log.i("CallManager: phone account registered with telecom manager: " + phoneAccount);
         }
     }
 
