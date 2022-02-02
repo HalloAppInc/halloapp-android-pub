@@ -21,6 +21,8 @@ import com.halloapp.util.TimeUtils;
 
 public class CallMessageViewHolder extends MessageViewHolder {
 
+    private static final float DISABLED_BUTTON_ALPHA = 0.5f;
+
     private TextView logTitleView;
     private TextView durationView;
     private TextView callActionTextView;
@@ -45,6 +47,7 @@ public class CallMessageViewHolder extends MessageViewHolder {
         });
         callManager.getIsInCall().observe(this, (inCall) -> {
             callButton.setEnabled(!inCall);
+            callButton.setAlpha(inCall ? DISABLED_BUTTON_ALPHA : 1f);
         });
     }
 
