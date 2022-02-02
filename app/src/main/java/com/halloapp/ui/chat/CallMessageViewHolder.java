@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.halloapp.R;
+import com.halloapp.calling.CallManager;
 import com.halloapp.content.CallMessage;
 import com.halloapp.content.Message;
 import com.halloapp.id.UserId;
@@ -27,6 +28,8 @@ public class CallMessageViewHolder extends MessageViewHolder {
 
     private View callButton;
 
+    private final CallManager callManager = CallManager.getInstance();
+
     CallMessageViewHolder(@NonNull View itemView, @NonNull MessageViewHolderParent parent) {
         super(itemView, parent);
 
@@ -37,10 +40,12 @@ public class CallMessageViewHolder extends MessageViewHolder {
         callButton = itemView.findViewById(R.id.call_button);
         callButton.setOnClickListener(v -> {
             if (message != null) {
-                v.getContext().startActivity(CallActivity.getStartCallIntent(v.getContext(), (UserId) message.chatId));
+                callManager.startCallActivity(v.getContext(), (UserId) message.chatId);
             }
         });
-
+        callManager.getIsInCall().observe(this, (inCall) -> {
+            callButton.setEnabled(!inCall);
+        });
     }
 
     @Override

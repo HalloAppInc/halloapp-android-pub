@@ -61,6 +61,7 @@ import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.UrlPreview;
 import com.halloapp.UrlPreviewLoader;
+import com.halloapp.calling.CallManager;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Chat;
@@ -170,6 +171,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private static final int LAST_SEEN_MARQUEE_DELAY = 2000;
 
     private final ContentDraftManager contentDraftManager = ContentDraftManager.getInstance();
+    private final CallManager callManager = CallManager.getInstance();
 
     private final ChatAdapter adapter = new ChatAdapter();
     private ChatViewModel viewModel;
@@ -231,6 +233,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private boolean showKeyboardOnResume;
     private boolean allowVoiceNoteSending;
     private boolean allowAudioCalls;
+
+    private boolean isContactDeleted = false;
+    private boolean isCallOngoing = false;
 
     private ChatInputView chatInputView;
 
@@ -985,12 +990,23 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 blockMenuItem.setTitle(getString(R.string.block));
             }
         });
-        menu.findItem(R.id.call).setVisible(allowAudioCalls);
+        MenuItem callButton = menu.findItem(R.id.call);
+        callButton.setVisible(allowAudioCalls);
         viewModel.contact.getLiveData().observe(this, contact -> {
             menu.findItem(R.id.add_to_contacts).setVisible(TextUtils.isEmpty(contact.addressBookName));
-            menu.findItem(R.id.call).setVisible(allowAudioCalls && !contact.isDeleted());
+            this.isContactDeleted = contact.isDeleted();
+            updateCallButtons(callButton);
+
+        });
+        callManager.getIsInCall().observe(this, (inCall) -> {
+            this.isCallOngoing = inCall;
+            updateCallButtons(callButton);
         });
         return true;
+    }
+
+    private void updateCallButtons(@NonNull MenuItem callButton) {
+        callButton.setEnabled(!this.isCallOngoing && !this.isContactDeleted);
     }
 
     @Override
@@ -1018,8 +1034,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             Intent intent = IntentUtils.createContactIntent(contact, phone);
             startActivity(intent);
         } else if (item.getItemId() == R.id.call) {
-            Log.i("starting a call with Uid: " + (UserId) chatId);
-            startActivity(CallActivity.getStartCallIntent(this, (UserId) chatId));
+            Log.i("ChatActivity: starting a call with Uid: " + chatId);
+            callManager.startCallActivity(this, (UserId) chatId);
         }
         return super.onOptionsItemSelected(item);
     }

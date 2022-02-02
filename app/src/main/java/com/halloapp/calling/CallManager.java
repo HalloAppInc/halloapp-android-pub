@@ -21,6 +21,7 @@ import android.telecom.CallAudioState;
 import android.telecom.PhoneAccount;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
+import android.widget.Toast;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.MainThread;
@@ -49,6 +50,7 @@ import com.halloapp.proto.server.StartCallResult;
 import com.halloapp.proto.server.StunServer;
 import com.halloapp.proto.server.TurnServer;
 import com.halloapp.proto.server.WebRtcSessionDescription;
+import com.halloapp.ui.calling.CallActivity;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.calls.CallsApi;
@@ -147,6 +149,7 @@ public class CallManager {
     private long callAnswerTimestamp = 0;
     private long callStartTimestamp = 0;
     private final MutableLiveData<Long> callStartLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isInCall = new MutableLiveData<>(false);
 
     private final Queue<HaIceCandidate> iceCandidateQueue = new LinkedList<>();
 
@@ -190,6 +193,7 @@ public class CallManager {
             executor.execute(this::telecomRegisterAccount);
         }
 
+        // TODO(nikola): move the connectivity manager our of CallManager
         NetworkConnectivityManager.getInstance().getNetworkInfo().observeForever(networkInfo -> {
             if (networkInfo != null) {
                 Log.i("CallManager: network changed: " + networkInfo.getTypeName());
@@ -224,6 +228,18 @@ public class CallManager {
             }
         });
 
+    }
+
+    public boolean startCallActivity(Context context, UserId userId) {
+        if (state == CallManager.State.IDLE) {
+            context.startActivity(CallActivity.getStartCallIntent(context, userId));
+            return true;
+        } else {
+            Log.w("CallManager: user is already in a call " + toString() + ". Can not start new call to " + userId);
+            String text = context.getString(R.string.unable_to_start_call);;
+            Toast.makeText(AppContext.getInstance().get(), text, Toast.LENGTH_SHORT).show();
+            return false;
+        }
     }
 
     @WorkerThread
@@ -272,6 +288,10 @@ public class CallManager {
         return peerUid;
     }
 
+    public LiveData<Boolean> getIsInCall() {
+        return isInCall;
+    }
+
     @MainThread
     public synchronized boolean startCall(@NonNull UserId peerUid) {
         if (this.state != State.IDLE) {
@@ -284,9 +304,10 @@ public class CallManager {
         this.isInitiator = true;
         this.isAnswered = false;
         this.callService = startCallService();
-        acquireLock();
         this.callStats.startStatsCollection();
         this.state = State.CALLING;
+        this.isInCall.postValue(true);
+        acquireLock();
 
         if (Build.VERSION.SDK_INT >= 23) {
             executor.execute(this::telecomPlaceCall);
@@ -386,6 +407,7 @@ public class CallManager {
         clearCallTimer();
         restartIndex = 0;
         state = State.IDLE;
+        isInCall.postValue(false);
         if (telecomConnection != null) {
             if (Build.VERSION.SDK_INT >= 23) {
                 telecomConnection.stop(reason);
@@ -441,6 +463,7 @@ public class CallManager {
         setStunTurnServers(stunServers, turnServers);
 
         this.state = State.INCOMING_RINGING;
+        this.isInCall.postValue(true);
         notifyOnIncomingCall();
 
         if (Build.VERSION.SDK_INT >= 23) {
