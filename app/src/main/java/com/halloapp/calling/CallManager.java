@@ -380,7 +380,7 @@ public class CallManager {
 
     public synchronized void stop(EndCall.Reason reason) {
         final long callDuration = (this.callStartTimestamp > 0)? SystemClock.elapsedRealtime() - this.callStartTimestamp : 0;
-        Log.i("stop callId: " + callId + " peerUid" + peerUid + " duration: " + callDuration / 1000);
+        Log.i("stop callId: " + callId + " peerUid" + peerUid + " reason: " + reason + " duration: " + callDuration / 1000);
         stopAudioManager();
         stopOutgoingRingtone();
         if (localAudioTrack != null) {
@@ -1021,6 +1021,7 @@ public class CallManager {
         if (callId == null) {
             return;
         }
+        Log.i("CallManager.endCall callId: " + callId + " reason: " + reason);
         callsApi.sendEndCall(callId, peerUid, reason);
         notifyOnEndCall();
         stop(reason);
