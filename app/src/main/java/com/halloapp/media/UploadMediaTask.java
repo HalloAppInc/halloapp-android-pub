@@ -22,6 +22,8 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.CryptoByteUtils;
+import com.halloapp.id.ChatId;
+import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.log_events.MediaUpload;
 import com.halloapp.util.FileUtils;
@@ -52,10 +54,43 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     private final FileStore fileStore;
     private final ContentDb contentDb;
     private final Connection connection;
-    public static final ConcurrentHashMap<String, Boolean> contentItemIds = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, UploadMediaTask> contentItemIds = new ConcurrentHashMap<>();
 
     private static final int RETRY_LIMIT = 3;
     public static final int PENDING_URL_PREVIEW_WAIT_MS = 10_000;
+
+    private static final ContentDb.Observer contentDbObserver = new ContentDb.DefaultObserver() {
+        @Override
+        public void onPostRetracted(@NonNull Post post) {
+            UploadMediaTask uploadMediaTask = contentItemIds.remove(post.id);
+            if (uploadMediaTask != null) {
+                uploadMediaTask.cancel(true);
+                Log.i("Requested cancellation of media upload for retracted post with id " + post.id);
+            }
+        }
+
+        @Override
+        public void onCommentRetracted(@NonNull Comment comment) {
+            UploadMediaTask uploadMediaTask = contentItemIds.remove(comment.id);
+            if (uploadMediaTask != null) {
+                uploadMediaTask.cancel(true);
+                Log.i("Requested cancellation of media upload for retracted comment with id " + comment.id);
+            }
+        }
+
+        @Override
+        public void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+            UploadMediaTask uploadMediaTask = contentItemIds.remove(messageId);
+            if (uploadMediaTask != null) {
+                uploadMediaTask.cancel(true);
+                Log.i("Requested cancellation of media upload for retracted message with id " + messageId);
+            }
+        }
+    };
+
+    static {
+        ContentDb.getInstance().addObserver(contentDbObserver);
+    }
 
     public UploadMediaTask(@NonNull ContentItem contentItem, @NonNull FileStore fileStore, @NonNull ContentDb contentDb, @NonNull Connection connection) {
         this.contentItem = contentItem;
@@ -77,7 +112,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             Log.i("Resumable Uploader: duplicate contentItem " + contentItem.id + " is currently uploading");
             return null;
         }
-        UploadMediaTask.contentItemIds.put(contentItem.id, true);
+        UploadMediaTask.contentItemIds.put(contentItem.id, this);
 
         MediaUpload.Builder uploadEvent = MediaUpload.newBuilder();
         if (contentItem instanceof Post) {
@@ -128,6 +163,12 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         }
 
         for (Media media : mediaList) {
+            if (isCancelled()) {
+                Log.i("Resumable Uploader cancelling during media");
+                markTransferComplete(contentItem);
+                return null;
+            }
+
             String mediaLogId = contentItem.id + "." + index++;
             Log.i("Resumable Uploader " + mediaLogId + " transferred: " + media.transferred);
             if (media.transferred == Media.TRANSFERRED_YES || media.transferred == Media.TRANSFERRED_PARTIAL_CHUNKED || media.transferred == Media.TRANSFERRED_FAILURE || media.transferred == Media.TRANSFERRED_UNKNOWN) {
@@ -332,6 +373,11 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             Log.i("UploadMediaTask: set transfer state for " + contentItem.id + "." + index++ + " to " + Media.getMediaTransferStateString(media.transferred));
         }
 
+        if (isCancelled()) {
+            Log.i("UploadMediaTask: cancelling just before sending on connection for " + contentItem.id);
+            markTransferComplete(contentItem);
+            return null;
+        }
         if (contentItem.isAllMediaTransferred()) {
             contentItem.send(connection);
         } else {
@@ -349,6 +395,19 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         uploadEvent.setRetryCount(totalRetries);
         Events.getInstance().sendEvent(uploadEvent.build());
         return null;
+    }
+
+    private void markTransferComplete(ContentItem contentItem) {
+        if (contentItem instanceof Post) {
+            Post post = (Post)contentItem;
+            contentDb.setPostTransferred(UserId.ME, post.id);
+        } else if (contentItem instanceof Comment) {
+            Comment comment = (Comment)contentItem;
+            contentDb.setCommentTransferred(comment.postId, UserId.ME, comment.id);
+        } else if (contentItem instanceof Message) {
+            Message message = (Message)contentItem;
+            contentDb.setMessageTransferred(message.chatId, UserId.ME, message.id);
+        }
     }
 
     private File encryptFile(@NonNull File file, @Nullable byte[] mediaKey, @Media.MediaType int type, @NonNull String postId) throws IOException {
