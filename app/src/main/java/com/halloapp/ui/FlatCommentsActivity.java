@@ -1309,9 +1309,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
                 @Override
                 public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                    if (selectedComment == null || !selectedComment.senderUserId.isMe()) {
-                        menu.findItem(R.id.delete).setVisible(false);
-                    }
+                    menu.findItem(R.id.delete).setVisible(!(selectedComment == null || !selectedComment.senderUserId.isMe()));
                     return true;
                 }
 
