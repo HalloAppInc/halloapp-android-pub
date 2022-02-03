@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<resources>
+<?xml version="1.0" encoding="UTF-8"?><resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Inicio"</string>
     <string name="title_messages">"Conversaciones"</string>
@@ -16,7 +15,7 @@
     <string name="message_notifications_channel_name">"Notificaciones de mensajes"</string>
     <string name="critical_notifications_channel_name">"Alertas importantes de la aplicación"</string>
     <string name="invite_notifications_channel_name">"Notificaciones de invitaciones"</string>
-    <string name="invite_notification_text">"%s acaba de aceptar tu invitación a HalloApp &#x1f389;"</string>
+    <string name="invite_notification_text">"%s acaba de aceptar tu invitación a HalloApp &#127881;"</string>
     <string name="me">"Yo"</string>
     <string name="you">"tú"</string>
     <string name="camera_post">"Cámara"</string>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<resources>
+<?xml version="1.0" encoding="UTF-8"?><resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Início"</string>
     <string name="title_messages">"Conversas"</string>
@@ -16,7 +15,7 @@
     <string name="message_notifications_channel_name">"Notificações de mensagens"</string>
     <string name="critical_notifications_channel_name">"Alertas críticos da aplicação"</string>
     <string name="invite_notifications_channel_name">"Notificações de convites"</string>
-    <string name="invite_notification_text">"%s acabou de aceitar seu convite para se juntar ao HalloApp &#x1f389;"</string>
+    <string name="invite_notification_text">"%s acabou de aceitar seu convite para se juntar ao HalloApp &#127881;"</string>
     <string name="me">"Eu"</string>
     <string name="you">"você"</string>
     <string name="camera_post">"Câmara"</string>
@@ -46,7 +45,7 @@ Sujeito a cobrança da operadora."</string>
     <string name="new_message">"Nova mensagem"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s está no HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s está a usar o HalloApp! &#x1f389;"</string>
+    <string name="new_chat_name_placeholder">"%s está a usar o HalloApp! &#127881;"</string>
     <string name="posts_empty">"As suas publicações aparecerão aqui"</string>
     <string name="posts_exchange_numbers">"Para se ligar, devem trocar números de telefone"</string>
     <string name="home_page_empty">"Publicações dos seus contatos aparecerão aqui"</string>
@@ -1103,7 +1102,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 Abra a tela de configurações do aplicativo para modificar as permissões do aplicativo."</string>
 
     <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
-    <string name="unable_to_start_call">"Unable to start call."</string>
+    <string name="unable_to_start_call">"Não foi possível iniciar a chamada."</string>
     <string name="composer_sharing_post">"A partilhar com %s"</string>
     <string name="composer_sharing_group_post">"Compartilhar com grupo"</string>
     <string name="invite_via_link">"Invite via link"</string>
