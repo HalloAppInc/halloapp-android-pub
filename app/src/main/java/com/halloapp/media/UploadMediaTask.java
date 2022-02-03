@@ -59,38 +59,40 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     private static final int RETRY_LIMIT = 3;
     public static final int PENDING_URL_PREVIEW_WAIT_MS = 10_000;
 
-    private static final ContentDb.Observer contentDbObserver = new ContentDb.DefaultObserver() {
+    private final ContentDb.Observer contentDbObserver = new ContentDb.DefaultObserver() {
         @Override
         public void onPostRetracted(@NonNull Post post) {
-            UploadMediaTask uploadMediaTask = contentItemIds.remove(post.id);
-            if (uploadMediaTask != null) {
-                uploadMediaTask.cancel(true);
-                Log.i("Requested cancellation of media upload for retracted post with id " + post.id);
+            if (post.id.equals(contentItem.id)) {
+                UploadMediaTask uploadMediaTask = contentItemIds.remove(post.id);
+                if (uploadMediaTask != null) {
+                    uploadMediaTask.cancel(true);
+                    Log.i("Requested cancellation of media upload for retracted post with id " + post.id);
+                }
             }
         }
 
         @Override
         public void onCommentRetracted(@NonNull Comment comment) {
-            UploadMediaTask uploadMediaTask = contentItemIds.remove(comment.id);
-            if (uploadMediaTask != null) {
-                uploadMediaTask.cancel(true);
-                Log.i("Requested cancellation of media upload for retracted comment with id " + comment.id);
+            if (comment.id.equals(contentItem.id)) {
+                UploadMediaTask uploadMediaTask = contentItemIds.remove(comment.id);
+                if (uploadMediaTask != null) {
+                    uploadMediaTask.cancel(true);
+                    Log.i("Requested cancellation of media upload for retracted comment with id " + comment.id);
+                }
             }
         }
 
         @Override
         public void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
-            UploadMediaTask uploadMediaTask = contentItemIds.remove(messageId);
-            if (uploadMediaTask != null) {
-                uploadMediaTask.cancel(true);
-                Log.i("Requested cancellation of media upload for retracted message with id " + messageId);
+            if (messageId.equals(contentItem.id)) {
+                UploadMediaTask uploadMediaTask = contentItemIds.remove(messageId);
+                if (uploadMediaTask != null) {
+                    uploadMediaTask.cancel(true);
+                    Log.i("Requested cancellation of media upload for retracted message with id " + messageId);
+                }
             }
         }
     };
-
-    static {
-        ContentDb.getInstance().addObserver(contentDbObserver);
-    }
 
     public UploadMediaTask(@NonNull ContentItem contentItem, @NonNull FileStore fileStore, @NonNull ContentDb contentDb, @NonNull Connection connection) {
         this.contentItem = contentItem;
@@ -113,6 +115,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             return null;
         }
         UploadMediaTask.contentItemIds.put(contentItem.id, this);
+        contentDb.addObserver(contentDbObserver);
 
         MediaUpload.Builder uploadEvent = MediaUpload.newBuilder();
         if (contentItem instanceof Post) {
@@ -395,6 +398,11 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         uploadEvent.setRetryCount(totalRetries);
         Events.getInstance().sendEvent(uploadEvent.build());
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void unused) {
+        contentDb.removeObserver(contentDbObserver);
     }
 
     private void markTransferComplete(ContentItem contentItem) {
