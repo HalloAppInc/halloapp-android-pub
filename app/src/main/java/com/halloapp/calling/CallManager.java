@@ -233,15 +233,13 @@ public class CallManager {
 
     }
 
-    public boolean startCallActivity(Context context, UserId userId) {
+    public void startCallActivity(Context context, UserId userId) {
         if (state == CallManager.State.IDLE) {
             context.startActivity(CallActivity.getStartCallIntent(context, userId));
-            return true;
         } else {
             Log.w("CallManager: user is already in a call " + toString() + ". Can not start new call to " + userId);
             String text = context.getString(R.string.unable_to_start_call);;
             Toast.makeText(AppContext.getInstance().get(), text, Toast.LENGTH_SHORT).show();
-            return false;
         }
     }
 
