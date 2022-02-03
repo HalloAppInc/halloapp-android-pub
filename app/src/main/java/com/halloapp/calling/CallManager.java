@@ -5,11 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Icon;
-import android.net.ConnectivityManager;
-import android.net.LinkProperties;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkRequest;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -196,7 +191,6 @@ public class CallManager {
             executor.execute(this::telecomRegisterAccount);
         }
 
-        // TODO(nikola): move the connectivity manager our of CallManager
         NetworkConnectivityManager.getInstance().getNetworkInfo().observeForever(networkInfo -> {
             if (networkInfo != null) {
                 Log.i("CallManager: network changed: " + networkInfo.getTypeName());
@@ -205,32 +199,7 @@ public class CallManager {
             }
         });
 
-        ConnectivityManager connectivityManager = (ConnectivityManager) appContext.get().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkRequest networkRequest = new NetworkRequest.Builder()
-                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                .build();
-        connectivityManager.registerNetworkCallback(networkRequest, new ConnectivityManager.NetworkCallback() {
-            @Override
-            public void onAvailable(Network network) {
-                Log.i("CallManager: NETWORK: onAvailable(" + network + ")");
-            }
-
-            @Override
-            public void onLost(Network network) {
-                Log.i("CallManager: NETWORK: onLost(" + network + ")");
-            }
-
-            @Override
-            public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
-                Log.i("CallManager: NETWORK: onCapabilitiesChanged() network:" + network + " cap:" + networkCapabilities);
-            }
-
-            @Override
-            public void onLinkPropertiesChanged(Network network, LinkProperties linkProperties) {
-                Log.i("CallManager: NETWORK: onLinkPropertiesChanged() network:" + network + " props:" + linkProperties);
-            }
-        });
-
+        CallNetworkObserver.getInstance().register(appContext.get());
     }
 
     public void startCallActivity(Context context, UserId userId) {
