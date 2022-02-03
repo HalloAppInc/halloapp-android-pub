@@ -210,6 +210,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private int replyPostMediaIndex;
     private int replyMessageMediaIndex = 0;
     private UserId selectedMessageSenderId;
+    private boolean selectedMessageRetracted;
     private long selectedMessageRowId = -1;
     private long highlightedMessageRowId = -1;
     private String copyText;
@@ -1579,7 +1580,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                             }
                         };
                         builder.setPositiveButton(R.string.delete_message_option, listener);
-                        if (selectedMessageSenderId != null && selectedMessageSenderId.isMe()) {
+                        if (!selectedMessageRetracted && selectedMessageSenderId != null && selectedMessageSenderId.isMe()) {
                             builder.setNeutralButton(R.string.retract_message_option, listener);
                         }
                         builder.create().show();
@@ -1606,6 +1607,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         public void onItemLongClicked(String text, @NonNull Message message) {
             selectedMessageRowId = message.rowId;
             selectedMessageSenderId = message.senderUserId;
+            selectedMessageRetracted = message.isRetracted();
             updateActionMode(text);
             adapter.notifyDataSetChanged();
         }
