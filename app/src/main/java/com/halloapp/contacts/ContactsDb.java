@@ -193,7 +193,7 @@ public class ContactsDb {
                     Log.i("ContactsDb.updateContactsServerData: " + updatedContactRows + " rows updated for " + updateContact.getDisplayName() + " " + updateContact.normalizedPhone + " " + updateContact.userId + " " + updateContact.avatarId + " " + updateContact.connectionTime);
                     updatedRows += updatedContactRows;
                     if (updateContact.getRawUserId() != null) {
-                        addChatPlaceholderForContact(db, updateContact.getRawUserId(), updateContact.connectionTime, true);
+                        addChatPlaceholderForContact(db, updateContact.getRawUserId(), updateContact.connectionTime, updateContact.newConnection);
                     }
                 }
                 Log.i("ContactsDb.updateContactsServerData: " + updatedRows + " rows updated for " + updatedContacts.size() + " contacts");
