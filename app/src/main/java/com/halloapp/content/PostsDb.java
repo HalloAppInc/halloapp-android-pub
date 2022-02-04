@@ -31,6 +31,7 @@ import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.CommentContainer;
 import com.halloapp.proto.clients.CommentIdContext;
 import com.halloapp.proto.clients.ContentDetails;
+import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.clients.PostIdContext;
 import com.halloapp.proto.clients.Video;
 import com.halloapp.util.Preconditions;
@@ -2620,6 +2621,7 @@ class PostsDb {
     @WorkerThread
     public void processFutureProofContent(FeedContentParser parser, ContentDbObservers observers) {
         processFutureProofComments(parser, observers);
+        processFutureProofPosts(parser, observers);
     }
 
     private void processFutureProofComments(FeedContentParser parser, ContentDbObservers observers) {
@@ -2706,8 +2708,80 @@ class PostsDb {
                 comments.add(comment);
             }
         }
-        Log.i("ContentDb.getPendingComments: comments.size=" + comments.size());
+        Log.i("ContentDb.getFutureProofComments: comments.size=" + comments.size());
         return comments;
+    }
+
+    private void processFutureProofPosts(FeedContentParser parser, ContentDbObservers observers) {
+        List<FutureProofPost> futureProofPosts = getFutureProofPosts();
+        for (FutureProofPost futureProofPost : futureProofPosts) {
+            try {
+                PostContainer postContainer = PostContainer.parseFrom(futureProofPost.getProtoBytes());
+                Post post = parser.parsePost(futureProofPost.id, futureProofPost.senderUserId, futureProofPost.timestamp, postContainer, false);
+                if (post instanceof FutureProofPost) {
+                    continue;
+                }
+                replaceFutureProofPost(futureProofPost, post);
+                observers.notifyPostAdded(post);
+            } catch (InvalidProtocolBufferException e) {
+                Log.e("PostsDb.processFutureProofPosts failed to parse proto", e);
+            }
+        }
+    }
+
+    private void replaceFutureProofPost(@NonNull FutureProofPost original, @NonNull Post newPost) {
+        final ContentValues values = new ContentValues();
+        values.put(PostsTable.COLUMN_POST_ID, newPost.id);
+        values.put(PostsTable.COLUMN_SENDER_USER_ID, newPost.senderUserId.rawId());
+        values.put(PostsTable.COLUMN_TIMESTAMP, newPost.timestamp);
+        values.put(PostsTable.COLUMN_TRANSFERRED, newPost.transferred);
+        values.put(PostsTable.COLUMN_SEEN, newPost.seen);
+        values.put(PostsTable.COLUMN_TEXT, newPost.text);
+        values.put(PostsTable.COLUMN_TYPE, newPost.type);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+
+        db.updateWithOnConflict(PostsTable.TABLE_NAME, values, PostsTable._ID + "=?", new String[]{Long.toString(original.rowId)}, SQLiteDatabase.CONFLICT_ABORT);
+        newPost.rowId = original.rowId;
+        mediaDb.addMedia(newPost);
+        mentionsDb.addMentions(newPost);
+        urlPreviewsDb.addUrlPreview(newPost);
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
+    @WorkerThread
+    @NonNull List<FutureProofPost> getFutureProofPosts() {
+        final List<FutureProofPost> posts = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(PostsTable.TABLE_NAME,
+                new String [] {
+                        PostsTable._ID,
+                        PostsTable.COLUMN_SENDER_USER_ID,
+                        PostsTable.COLUMN_POST_ID,
+                        PostsTable.COLUMN_TIMESTAMP,
+                        PostsTable.COLUMN_TRANSFERRED,
+                        PostsTable.COLUMN_SEEN,
+                        PostsTable.COLUMN_TEXT,
+                        PostsTable.COLUMN_TYPE},
+                PostsTable.COLUMN_TYPE + "=? AND " + PostsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime(),
+                new String[]{Integer.toString(Post.TYPE_FUTURE_PROOF)}, null, null, null)) {
+            while (cursor.moveToNext()) {
+                final FutureProofPost post = new FutureProofPost(
+                        cursor.getLong(0),
+                        new UserId(cursor.getString(1)),
+                        cursor.getString(2),
+                        cursor.getLong(3),
+                        cursor.getInt(4),
+                        cursor.getInt(5),
+                        cursor.getString(6));
+                mentionsDb.fillMentions(post);
+                futureProofDb.fillFutureProof(post);
+                posts.add(post);
+            }
+        }
+        Log.i("ContentDb.getFutureProofPosts: posts.size=" + posts.size());
+        return posts;
     }
 
     @WorkerThread
