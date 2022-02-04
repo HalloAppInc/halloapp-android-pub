@@ -61,7 +61,6 @@ import org.webrtc.DataChannel;
 import org.webrtc.IceCandidate;
 import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
-import org.webrtc.MediaStreamTrack;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.RTCStatsCollectorCallback;
@@ -207,7 +206,7 @@ public class CallManager {
             context.startActivity(CallActivity.getStartCallIntent(context, userId));
         } else {
             Log.w("CallManager: user is already in a call " + toString() + ". Can not start new call to " + userId);
-            String text = context.getString(R.string.unable_to_start_call);;
+            String text = context.getString(R.string.unable_to_start_call);
             Toast.makeText(AppContext.getInstance().get(), text, Toast.LENGTH_SHORT).show();
         }
     }
@@ -225,6 +224,8 @@ public class CallManager {
             final Icon icon = Icon.createWithResource(appContext.get(), R.drawable.ic_launcher_foreground);
             PhoneAccount phoneAccount = PhoneAccount.builder(phoneAccountHandle, "HalloApp")
                     // TODO(nikola): Add here for video calls: CAPABILITY_VIDEO_CALLING
+                    // TODO(nikola): Telecom framework SELF_MANAGED was added in API level 26.. This is the reason
+                    // why older android device get security exception.
                     .setCapabilities(PhoneAccount.CAPABILITY_SELF_MANAGED)
                     .setIcon(icon)
                     .build();
@@ -585,7 +586,7 @@ public class CallManager {
         }
     }
 
-    public void handleIceRestartOffer(@NonNull String callId, int restartIndex, @NonNull String webrtcRestartOffer,
+    public void handleIceRestartOffer(@NonNull String callId, int restartIndex, @Nullable String webrtcRestartOffer,
                                       @Nullable CryptoException cryptoException) {
         Log.i("CallManager: got iceRestartOffer callId: " + callId);
         if (this.callId == null || !this.callId.equals(callId)) {
@@ -617,7 +618,7 @@ public class CallManager {
         }
     }
 
-    public void handleIceRestartAnswer(@NonNull String callId, int restartIndex, @NonNull String webrtcRestartAnswer,
+    public void handleIceRestartAnswer(@NonNull String callId, int restartIndex, @Nullable String webrtcRestartAnswer,
                                        @Nullable CryptoException cryptoException) {
         Log.i("CallManager: got iceRestartAnswer callId: " + callId);
         if (this.callId == null || !this.callId.equals(callId)) {
@@ -663,9 +664,11 @@ public class CallManager {
 
     private void processQueuedIceCandidates() {
         Log.i("CallManager: processing iceCandidateQueue: " + iceCandidateQueue.size());
+        HaIceCandidate haIceCandidate;
         while (!iceCandidateQueue.isEmpty()) {
-            HaIceCandidate haIceCandidate = iceCandidateQueue.poll();
-            if (haIceCandidate.getCallId().equals(this.callId)) {
+            haIceCandidate = iceCandidateQueue.poll();
+            if (haIceCandidate == null) continue;
+            if (this.callId.equals(haIceCandidate.getCallId())) {
                 IceCandidate ic = haIceCandidate.getIceCandidate();
                 Log.i("CallManager: adding queued IceCandidate " + ic);
                 peerConnection.addIceCandidate(ic);
@@ -832,12 +835,8 @@ public class CallManager {
 
             @Override
             public void onAddTrack(RtpReceiver receiver, MediaStream[] mediaStreams) {
-                receiver.SetObserver(new RtpReceiver.Observer() {
-                    @Override
-                    public void onFirstPacketReceived(MediaStreamTrack.MediaType mediaType) {
-                        Log.i("PeerConnection: OnFirestPacketReceived: RtpReceiver: " + receiver.id() + " mediaType:" + mediaType);
-                    }
-                });
+                receiver.SetObserver(mediaType ->
+                        Log.i("PeerConnection: OnFirestPacketReceived: RtpReceiver: " + receiver.id() + " mediaType:" + mediaType));
                 Log.i("PeerConnection: onAddTrack: RtpReceiver: " + receiver.id() + " mediaStreams:" + mediaStreams.toString());
             }
 
@@ -866,7 +865,7 @@ public class CallManager {
         Observable<GetCallServersResponseIq> observable = callsApi.getCallServers(callId, peerUid, CallType.AUDIO);
         observable.onResponse(response -> {
             Log.i("CallManager: got call servers " + response);
-            if (peerConnection == null) {
+            if (peerConnection == null || response == null) {
                 // call probably was canceled while we were waiting for the server response.
                 return;
             }
@@ -922,23 +921,27 @@ public class CallManager {
         }, sdpMediaConstraints);
     }
 
-    private void setStunTurnServers(@NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers) {
+    private void setStunTurnServers(@Nullable List<StunServer> stunServers, @Nullable List<TurnServer> turnServers) {
         // insert the stun and turn servers and update the peerConnection configuration.
         // stun/turn servers URLS look like this "stun:stun.l.google.com:19302";
         ArrayList<PeerConnection.IceServer> iceServers = new ArrayList<>();
-        for (StunServer stunServer : stunServers) {
-            String stunUrl = "stun:" + stunServer.getHost() + ":" + stunServer.getPort();
-            iceServers.add(PeerConnection.IceServer.builder(stunUrl).createIceServer());
+        if (stunServers != null) {
+            for (StunServer stunServer : stunServers) {
+                String stunUrl = "stun:" + stunServer.getHost() + ":" + stunServer.getPort();
+                iceServers.add(PeerConnection.IceServer.builder(stunUrl).createIceServer());
+            }
         }
 
-        for (TurnServer turnServer : turnServers) {
-            String turnUrl = "turn:" + turnServer.getHost() + ":" + turnServer.getPort();
-            iceServers.add(PeerConnection.IceServer.builder(turnUrl)
-                    .setUsername(turnServer.getUsername())
-                    .setPassword(turnServer.getPassword())
-                    .createIceServer());
+        if (turnServers != null) {
+            for (TurnServer turnServer : turnServers) {
+                String turnUrl = "turn:" + turnServer.getHost() + ":" + turnServer.getPort();
+                iceServers.add(PeerConnection.IceServer.builder(turnUrl)
+                        .setUsername(turnServer.getUsername())
+                        .setPassword(turnServer.getPassword())
+                        .createIceServer());
+            }
         }
-        Log.i("CallManager: iceservers: " + iceServers);
+        Log.i("CallManager: iceServers: " + iceServers);
 
         PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(iceServers);
         peerConnection.setConfiguration(rtcConfig);
@@ -972,6 +975,7 @@ public class CallManager {
         }, new MediaConstraints());
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     private boolean sendRerequest(CryptoException e) {
         byte[] teardownKey = (e != null) ? e.teardownKey : null;
         outboundRerequestCount++;
@@ -1028,7 +1032,7 @@ public class CallManager {
 
     public void setSpeakerPhoneOn(boolean on) {
         Log.i("CallManager.setSpeakerPhoneOn(" + on + ") was: " + isSpeakerPhoneOn);
-        if (Build.VERSION.SDK_INT >= 26) {
+        if (Build.VERSION.SDK_INT >= 26 && telecomConnection != null) {
             // TODO(nikola): what if the call is going to bluetooth right now?
             telecomConnection.setAudioRoute(on ? CallAudioState.ROUTE_SPEAKER : CallAudioState.ROUTE_EARPIECE);
         } else {
@@ -1119,7 +1123,7 @@ public class CallManager {
             // this code runs for both incoming and outgoing call ringing timeout
             Log.i("onCallTimeout");
             if (this.callId != null && this.callId.equals(callId)) {
-                if (!this.isInitiator && this.callId != null && this.state == State.INCOMING_RINGING) {
+                if (!this.isInitiator && this.state == State.INCOMING_RINGING) {
                     // TODO(nikola): fix here when we do video)
                     storeMissedCallMsg(this.peerUid, this.callId, CallType.AUDIO);
                 }
