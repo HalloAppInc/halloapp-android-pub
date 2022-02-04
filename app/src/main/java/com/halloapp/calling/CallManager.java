@@ -394,7 +394,7 @@ public class CallManager {
         if (serverSentTimestamp > 0 && timestamp > 0 && serverSentTimestamp - timestamp > Constants.CALL_RINGING_TIMEOUT_MS) {
             Log.i("CallManager: received stale call " + callId + " from " + peerUid);
             Log.i("CallManager: timestamp: " + timestamp + " serverSentTimestamp: " + serverSentTimestamp + " diff: " + (serverSentTimestamp - timestamp));
-            storeMissedCallMsg(peerUid, callId, callType);
+            storeMissedCallMsg(peerUid, callId, callType, timestamp);
             return;
         }
         if (this.callId != null && this.callId.equals(callId)) {
@@ -406,14 +406,14 @@ public class CallManager {
             Log.i("CallManager: rejecting incoming call " + callId + " from " + peerUid + " because already in call.");
             Log.i(toString());
             callsApi.sendEndCall(callId, peerUid, EndCall.Reason.BUSY);
-            storeMissedCallMsg(peerUid, callId, callType);
+            storeMissedCallMsg(peerUid, callId, callType, timestamp);
             return;
         }
 
         if (!CallType.AUDIO.equals(callType)) {
             Log.i("CallManager: rejecting incoming call " + callId + " from " + peerUid + " because it's not audio");
             callsApi.sendEndCall(callId, peerUid, EndCall.Reason.VIDEO_UNSUPPORTED);
-            storeMissedCallMsg(peerUid, callId, callType);
+            storeMissedCallMsg(peerUid, callId, callType, timestamp);
             return;
         }
         this.isInitiator = false;
@@ -553,7 +553,7 @@ public class CallManager {
         Log.i("got EndCall callId: " + callId + " peerUid: " + peerUid + " reason: " + reason.name() + " " + timestamp);
         if (reason == EndCall.Reason.CANCEL || reason == EndCall.Reason.TIMEOUT) {
             // TODO(nikola): fix here when we do video calls
-            storeMissedCallMsg(peerUid, callId, CallType.AUDIO);
+            storeMissedCallMsg(peerUid, callId, CallType.AUDIO, timestamp);
         }
         if (this.callId == null || !this.callId.equals(callId)) {
             Log.i("got EndCall for wrong call. " + toString());
@@ -1100,7 +1100,6 @@ public class CallManager {
 
     private void startRingingTimeoutTimer() {
         synchronized (timer) {
-            // TODO(nikola): maybe this should be always called on the executor?
             if (ringingTimeoutTimerTask != null) {
                 Log.e("another outgoingRingTimerTask already exists");
                 ringingTimeoutTimerTask.cancel();
@@ -1294,16 +1293,19 @@ public class CallManager {
     }
 
     private void storeMissedCallMsg(@NonNull UserId userId, @NonNull String callId, @NonNull CallType callType) {
+        storeMissedCallMsg(userId, callId, callType, System.currentTimeMillis());
+    }
+
+    private void storeMissedCallMsg(@NonNull UserId userId, @NonNull String callId, @NonNull CallType callType, long timestamp) {
         int msgType = CallMessage.Usage.MISSED_VOICE_CALL;
         if (callType == CallType.VIDEO) {
             msgType = CallMessage.Usage.MISSED_VIDEO_CALL;
         }
-        // TODO(nikola): maybe pass the timestamp from the server
         final Message message = new CallMessage(0,
                 userId,
                 userId,
                 callId,
-                System.currentTimeMillis(),
+                timestamp,
                 msgType,
                 Message.STATE_OUTGOING_DELIVERED);
         message.addToStorage(contentDb);
