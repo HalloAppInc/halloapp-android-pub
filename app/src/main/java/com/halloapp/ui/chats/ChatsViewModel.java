@@ -196,7 +196,7 @@ public class ChatsViewModel extends AndroidViewModel {
                 }
                 final List<Contact> contacts = ContactsDb.getInstance().getPlaceholderChats();
                 final Collator collator = java.text.Collator.getInstance(Locale.getDefault());
-                Collections.sort(contacts, (obj1, obj2) -> collator.compare(obj1.getDisplayName(), obj2.getDisplayName()));
+                Contact.sort(contacts);
                 final List<Chat> contactChats = new ArrayList<>();
                 for (Contact contact : contacts) {
                     if (contact.userId == null) {
