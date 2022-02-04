@@ -113,7 +113,18 @@ public class MediaDb {
                                 id,
                                 type,
                                 null,
-                                fileStore.getMediaFile(cursor.getString(2)), null, null, null, 0, 0, Media.TRANSFERRED_NO, Media.BLOB_VERSION_DEFAULT, 0, 0));
+                                fileStore.getMediaFile(cursor.getString(2)),
+                                null,
+                                null,
+                                null,
+                                0,
+                                0,
+                                Media.TRANSFERRED_NO,
+                                Media.BLOB_VERSION_DEFAULT,
+                                0,
+                                0
+                        )
+                );
             }
         }
         return media;
