@@ -712,6 +712,9 @@ public class ContentComposerActivity extends HalloActivity {
                 urlPreviewLoader.load(postLinkPreviewView, url, new ViewDataLoader.Displayer<View, UrlPreview>() {
                     @Override
                     public void showResult(@NonNull View view, @Nullable UrlPreview result) {
+                        if (isFinishing() || isDestroyed()) {
+                            return;
+                        }
                         postLinkPreviewView.updateUrlPreview(result);
                     }
 

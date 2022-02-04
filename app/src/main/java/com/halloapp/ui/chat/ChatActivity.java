@@ -367,6 +367,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 urlPreviewLoader.load(linkPreviewComposeView, url, new ViewDataLoader.Displayer<View, UrlPreview>() {
                     @Override
                     public void showResult(@NonNull View view, @Nullable UrlPreview result) {
+                        if (isFinishing() || isDestroyed()) {
+                            return;
+                        }
                         linkPreviewComposeView.updateUrlPreview(result);
                     }
 

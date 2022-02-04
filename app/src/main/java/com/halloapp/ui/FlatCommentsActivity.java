@@ -499,6 +499,9 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 urlPreviewLoader.load(linkPreviewComposeView, url, new ViewDataLoader.Displayer<View, UrlPreview>() {
                     @Override
                     public void showResult(@NonNull View view, @Nullable UrlPreview result) {
+                        if (isFinishing() || isDestroyed()) {
+                            return;
+                        }
                         linkPreviewComposeView.updateUrlPreview(result);
                     }
 
