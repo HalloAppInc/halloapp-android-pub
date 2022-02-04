@@ -42,13 +42,7 @@ public class EmojiPagerAdapter extends PagerAdapter {
     }
 
     public int getPageIndex(@NonNull EmojiPage emojiPage) {
-        for (int i = 0; i < emojiPages.size(); i++) {
-            EmojiPage page = emojiPages.get(i);
-            if (page == emojiPage) {
-                return i;
-            }
-        }
-        return -1;
+        return emojiPages.indexOf(emojiPage);
     }
 
     public void refresh(int index) {
@@ -61,15 +55,15 @@ public class EmojiPagerAdapter extends PagerAdapter {
         }
     }
 
-
-
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         EmojiGridView gridView = new EmojiGridView(container.getContext());
         gridView.setOnEmojiSelectionListener(proxyListener);
         container.addView(gridView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        gridView.bindEmojis(emojiPages.get(position));
+        EmojiPage page = emojiPages.get(position);
+        gridView.bindEmojis(page);
+        gridView.setTag(page);
         emojiGrids.put(position, gridView);
         return gridView;
     }
@@ -83,5 +77,15 @@ public class EmojiPagerAdapter extends PagerAdapter {
     @Override
     public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return view == object;
+    }
+
+    @Override
+    public int getItemPosition(@NonNull Object object) {
+        EmojiPage page = (EmojiPage) ((View) object).getTag();
+        int index = emojiPages.indexOf(page);
+        if (index == -1) {
+            return POSITION_NONE;
+        }
+        return index;
     }
 }

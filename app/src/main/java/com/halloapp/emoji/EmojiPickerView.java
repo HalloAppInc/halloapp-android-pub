@@ -19,6 +19,7 @@ import com.halloapp.util.ContextUtils;
 import com.halloapp.util.Preconditions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class EmojiPickerView extends LinearLayoutCompat {
 
@@ -35,6 +36,9 @@ public class EmojiPickerView extends LinearLayoutCompat {
     private View backspaceView;
 
     private RecentEmojiPage recentEmojiPage;
+    private List<EmojiPage> emojiPageList;
+
+    private boolean recentsVisible = false;
 
     public EmojiPickerView(@NonNull Context context) {
         super(context);
@@ -86,20 +90,38 @@ public class EmojiPickerView extends LinearLayoutCompat {
 
         LifecycleOwner owner = (LifecycleOwner) Preconditions.checkNotNull(ContextUtils.getActivity(context));
         emojiManager.getEmojiPickerLiveData().observe(owner, emojiData -> {
-            ArrayList<EmojiPage> pages = new ArrayList<>();
-            pages.add(recentEmojiPage);
+            emojiPageList = new ArrayList<>();
+            if (recentsVisible) {
+                emojiPageList.add(recentEmojiPage);
+            }
             for (EmojiCategory category : emojiData.categories) {
                 EmojiPage page = new EmojiPage(EmojiPage.getDrawable(category.name), category.emojis);
-                pages.add(page);
+                emojiPageList.add(page);
             }
-            emojiPagerAdapter.setEmojiPages(pages);
-            emojiCategoryAdapter.setEmojiPages(pages);
+            emojiPagerAdapter.setEmojiPages(emojiPageList);
+            emojiCategoryAdapter.setEmojiPages(emojiPageList);
         });
 
         recentEmojiManager.getRecentEmojiList().observe(owner, recents -> {
-            int recentIndex = emojiPagerAdapter.getPageIndex(recentEmojiPage);
-            if (recentIndex != emojiViewPager.getCurrentItem()) {
-                emojiPagerAdapter.refresh(recentIndex);
+            if (emojiPageList == null) {
+                return;
+            }
+            boolean visible = recents != null && !recents.isEmpty();
+            if (recentsVisible != visible) {
+                if (visible) {
+                    emojiPageList.add(0, recentEmojiPage);
+                } else {
+                    emojiPageList.remove(recentEmojiPage);
+                }
+                recentsVisible = visible;
+                emojiPagerAdapter.notifyDataSetChanged();
+                emojiCategoryAdapter.notifyDataSetChanged();
+            }
+            if (visible) {
+                int recentIndex = emojiPagerAdapter.getPageIndex(recentEmojiPage);
+                if (recentIndex != emojiViewPager.getCurrentItem()) {
+                    emojiPagerAdapter.refresh(recentIndex);
+                }
             }
         });
 
