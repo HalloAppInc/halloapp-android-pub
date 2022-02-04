@@ -186,7 +186,7 @@ public class CallManager {
         this.observers = new HashSet<>();
         this.callStats = new CallStats();
 
-        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= 26) {
             executor.execute(this::telecomRegisterAccount);
         }
 
@@ -212,7 +212,7 @@ public class CallManager {
     }
 
     @WorkerThread
-    @RequiresApi(api = 23)
+    @RequiresApi(api = 26)
     private void telecomRegisterAccount() {
         Log.i("CallManager: telecomRegisterAccount()");
         TelecomManager tm = (TelecomManager) appContext.get().getSystemService(Context.TELECOM_SERVICE);
@@ -280,7 +280,7 @@ public class CallManager {
         this.isInCall.postValue(true);
         acquireLock();
 
-        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= 26) {
             executor.execute(this::telecomPlaceCall);
         } else {
             finishStartCall();
@@ -298,7 +298,7 @@ public class CallManager {
         executor.execute(this::setupWebrtc);
     }
 
-    @RequiresApi(api = 23)
+    @RequiresApi(api = 26)
     private void telecomPlaceCall() {
         TelecomManager tm = (TelecomManager) appContext.get().getSystemService(Context.TELECOM_SERVICE);
         if (tm != null) {
@@ -439,7 +439,7 @@ public class CallManager {
         this.isInCall.postValue(true);
         notifyOnIncomingCall();
 
-        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= 26) {
             telecomHandleIncomingCall();
         } else {
             showIncomingCallNotification();
