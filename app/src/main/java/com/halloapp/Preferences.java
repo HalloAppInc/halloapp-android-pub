@@ -79,6 +79,7 @@ public class Preferences {
     private static final String PREF_KEY_KEYBOARD_HEIGHT_LANDSCAPE = "keyboard_height_landscape";
 
     private static final String PREF_KEY_LOCAL_EMOJI_VERSION = "local_emoji_version";
+    private static final String PREF_KEY_RECENT_EMOJIS = "recent_emojis";
 
     private final AppContext appContext;
     private SharedPreferences backedUpPreferences;
@@ -164,6 +165,7 @@ public class Preferences {
     private final IntPreference prefKeyboardHeightLandscape = createPref(false, PREF_KEY_KEYBOARD_HEIGHT_LANDSCAPE, 0);
 
     private final IntPreference prefLocalEmojiVersion = createPref(true, PREF_KEY_LOCAL_EMOJI_VERSION, 0);
+    private final StringPreference prefRecentEmojis = createPref(true, PREF_KEY_RECENT_EMOJIS, null);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -317,6 +319,10 @@ public class Preferences {
             if (!getPreferences().edit().putString(this.prefKey, v).commit()) {
                 Log.e("Preferences: failed to set " + this.prefKey);
             }
+        }
+
+        public void apply(String v) {
+            getPreferences().edit().putString(this.prefKey, v).apply();
         }
 
         public void migrate() {
@@ -700,5 +706,14 @@ public class Preferences {
     @WorkerThread
     public void setLocalEmojiVersion(int version) {
         prefLocalEmojiVersion.set(version);
+    }
+
+    @WorkerThread
+    public String getRecentEmojis() {
+        return prefRecentEmojis.get();
+    }
+
+    public void setRecentEmojis(String recentEmojis) {
+        prefRecentEmojis.apply(recentEmojis);
     }
 }

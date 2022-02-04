@@ -12,11 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 
+import java.util.List;
+
 public class EmojiCategoryAdapter extends RecyclerView.Adapter<EmojiCategoryAdapter.EmojiCategoryViewHolder> {
 
-    private EmojiPickerData emojiPickerData;
-
     private int selectedIndex;
+
+    private List<EmojiPage> emojiPages;
 
     public interface OnSelectEmojiCategoryListener {
         void onSelectCategory(int index);
@@ -27,10 +29,11 @@ public class EmojiCategoryAdapter extends RecyclerView.Adapter<EmojiCategoryAdap
     public EmojiCategoryAdapter() {
     }
 
-    public void setEmojiPickerData(@Nullable EmojiPickerData emojiPickerData) {
-        this.emojiPickerData = emojiPickerData;
+    public void setEmojiPages(@NonNull List<EmojiPage> pages) {
+        this.emojiPages = pages;
         notifyDataSetChanged();
     }
+
 
     public void setOnSelectEmojiCategoryListener(@NonNull OnSelectEmojiCategoryListener listener) {
         this.listener = listener;
@@ -45,25 +48,12 @@ public class EmojiCategoryAdapter extends RecyclerView.Adapter<EmojiCategoryAdap
 
     @Override
     public void onBindViewHolder(@NonNull EmojiCategoryViewHolder holder, int position) {
-        holder.bind(emojiPickerData.categories[position].name, position, position == selectedIndex);
+        holder.bind(emojiPages.get(position), position, position == selectedIndex);
     }
 
     @Override
     public int getItemCount() {
-        return emojiPickerData == null ? 0 : emojiPickerData.getCategoryCount();
-    }
-
-    public void selectCategory(String category) {
-        for (int i = 0; i < emojiPickerData.categories.length; i++) {
-            if (category.equals(emojiPickerData.categories[i].name)) {
-                if (i != selectedIndex) {
-                    int oldIndex = selectedIndex;
-                    selectedIndex = i;
-                    notifyItemChanged(oldIndex);
-                    notifyItemChanged(selectedIndex);
-                }
-            }
-        }
+        return emojiPages == null ? 0 : emojiPages.size();
     }
 
     public void selectIndex(int index) {
@@ -79,7 +69,6 @@ public class EmojiCategoryAdapter extends RecyclerView.Adapter<EmojiCategoryAdap
         private final ImageView iconView;
         private final View selectedBar;
 
-        private String category;
         private int index;
 
         public EmojiCategoryViewHolder(@NonNull View itemView) {
@@ -99,39 +88,11 @@ public class EmojiCategoryAdapter extends RecyclerView.Adapter<EmojiCategoryAdap
             });
         }
 
-        public void bind(String category, int index, boolean selected) {
-            this.category = category;
+        public void bind(EmojiPage emojiPage, int index, boolean selected) {
             this.index = index;
             selectedBar.setVisibility(selected ? View.VISIBLE : View.GONE);
             iconView.setSelected(selected);
-            @DrawableRes int iconRes = R.drawable.ic_emoji_smilies;
-            switch (category) {
-                case "people":
-                    iconRes = R.drawable.ic_emoji_smilies;
-                    break;
-                case "nature":
-                    iconRes = R.drawable.ic_emoji_nature;
-                    break;
-                case "foods":
-                    iconRes = R.drawable.ic_emoji_food;
-                    break;
-                case "places":
-                    iconRes = R.drawable.ic_emoji_places;
-                    break;
-                case "activity":
-                    iconRes = R.drawable.ic_emoji_events;
-                    break;
-                case "objects":
-                    iconRes = R.drawable.ic_emoji_objects;
-                    break;
-                case "symbols":
-                    iconRes = R.drawable.ic_emoji_symbols;
-                    break;
-                case "flags":
-                    iconRes = R.drawable.ic_emoji_flag;
-                    break;
-            }
-            iconView.setImageResource(iconRes);
+            iconView.setImageResource(emojiPage.iconRes);
         }
     }
 }

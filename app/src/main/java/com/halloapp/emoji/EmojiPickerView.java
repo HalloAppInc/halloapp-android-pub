@@ -18,9 +18,12 @@ import com.halloapp.R;
 import com.halloapp.util.ContextUtils;
 import com.halloapp.util.Preconditions;
 
+import java.util.ArrayList;
+
 public class EmojiPickerView extends LinearLayoutCompat {
 
     private final EmojiManager emojiManager = EmojiManager.getInstance();
+    private final RecentEmojiManager recentEmojiManager = RecentEmojiManager.getInstance();
 
     private RecyclerView footerRv;
     private ViewPager emojiViewPager;
@@ -30,6 +33,8 @@ public class EmojiPickerView extends LinearLayoutCompat {
 
     private EditText editText;
     private View backspaceView;
+
+    private RecentEmojiPage recentEmojiPage;
 
     public EmojiPickerView(@NonNull Context context) {
         super(context);
@@ -52,6 +57,7 @@ public class EmojiPickerView extends LinearLayoutCompat {
 
     private void insertEmoji(@NonNull Emoji emoji) {
         if (editText != null) {
+            recentEmojiManager.onEmoji(emoji);
             final int start = editText.getSelectionStart();
             final int end = editText.getSelectionEnd();
 
@@ -76,16 +82,27 @@ public class EmojiPickerView extends LinearLayoutCompat {
         emojiCategoryAdapter = new EmojiCategoryAdapter();
         emojiPagerAdapter.setOnEmojiSelectListener(this::insertEmoji);
 
-        EmojiPickerData emojiPickerData = emojiManager.getEmojiPickerData();
-        if (emojiPickerData != null) {
-            emojiPagerAdapter.setEmojiPickerData(emojiPickerData);
-            emojiCategoryAdapter.setEmojiPickerData(emojiPickerData);
-        } else {
-            emojiManager.getEmojiPickerLiveData().observe((LifecycleOwner) Preconditions.checkNotNull(ContextUtils.getActivity(context)), emojiData -> {
-                emojiPagerAdapter.setEmojiPickerData(emojiData);
-                emojiCategoryAdapter.setEmojiPickerData(emojiData);
-            });
-        }
+        recentEmojiPage = new RecentEmojiPage(R.drawable.ic_recent_emoji, recentEmojiManager.getRecentEmojiList());
+
+        LifecycleOwner owner = (LifecycleOwner) Preconditions.checkNotNull(ContextUtils.getActivity(context));
+        emojiManager.getEmojiPickerLiveData().observe(owner, emojiData -> {
+            ArrayList<EmojiPage> pages = new ArrayList<>();
+            pages.add(recentEmojiPage);
+            for (EmojiCategory category : emojiData.categories) {
+                EmojiPage page = new EmojiPage(EmojiPage.getDrawable(category.name), category.emojis);
+                pages.add(page);
+            }
+            emojiPagerAdapter.setEmojiPages(pages);
+            emojiCategoryAdapter.setEmojiPages(pages);
+        });
+
+        recentEmojiManager.getRecentEmojiList().observe(owner, recents -> {
+            int recentIndex = emojiPagerAdapter.getPageIndex(recentEmojiPage);
+            if (recentIndex != emojiViewPager.getCurrentItem()) {
+                emojiPagerAdapter.refresh(recentIndex);
+            }
+        });
+
 
         backspaceView.setOnClickListener(v -> {
             if (editText != null) {

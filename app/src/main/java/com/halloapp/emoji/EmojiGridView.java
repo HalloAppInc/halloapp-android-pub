@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 
+import java.util.List;
+
 public class EmojiGridView extends RecyclerView {
 
     private GridLayoutManager layoutManager;
@@ -23,6 +25,8 @@ public class EmojiGridView extends RecyclerView {
     private OnEmojiSelectListener listener;
 
     private int columnCount = 8;
+
+    private EmojiAdapter adapter;
 
     public EmojiGridView(@NonNull Context context) {
         this(context, null);
@@ -60,8 +64,15 @@ public class EmojiGridView extends RecyclerView {
         setLayoutManager(layoutManager);
     }
 
-    public void bindEmojis(EmojiCategory emojiCategory) {
-        setAdapter(new EmojiAdapter(emojiCategory));
+    public void refresh() {
+        if (adapter != null) {
+            adapter.refresh();
+        }
+    }
+
+    public void bindEmojis(EmojiPage emojiPage) {
+        this.adapter = new EmojiAdapter(emojiPage);
+        setAdapter(adapter);
     }
 
     private class EmojiViewHolder extends RecyclerView.ViewHolder {
@@ -89,10 +100,17 @@ public class EmojiGridView extends RecyclerView {
 
     private class EmojiAdapter extends RecyclerView.Adapter<EmojiViewHolder> {
 
-        private final Emoji[] emojis;
+        private List<Emoji> emojis;
+        private final EmojiPage emojiPage;
 
-        public EmojiAdapter(EmojiCategory emojiCategory) {
-            emojis = emojiCategory.emojis;
+        public EmojiAdapter(@NonNull EmojiPage page) {
+            this.emojis = page.getEmojis();
+            this.emojiPage = page;
+        }
+
+        public void refresh() {
+            this.emojis = emojiPage.getEmojis();
+            notifyDataSetChanged();
         }
 
         @NonNull
@@ -105,12 +123,17 @@ public class EmojiGridView extends RecyclerView {
 
         @Override
         public void onBindViewHolder(@NonNull EmojiViewHolder holder, int position) {
-            holder.bind(emojis[position]);
+            holder.bind(emojis.get(position));
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
         }
 
         @Override
         public int getItemCount() {
-            return emojis == null ? 0 : emojis.length;
+            return emojis == null ? 0 : emojis.size();
         }
     }
 }
