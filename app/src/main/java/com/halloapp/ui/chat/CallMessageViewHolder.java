@@ -1,7 +1,6 @@
 package com.halloapp.ui.chat;
 
 import android.content.res.ColorStateList;
-import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,9 +14,7 @@ import com.halloapp.calling.CallManager;
 import com.halloapp.content.CallMessage;
 import com.halloapp.content.Message;
 import com.halloapp.id.UserId;
-import com.halloapp.ui.calling.CallActivity;
 import com.halloapp.util.TimeFormatter;
-import com.halloapp.util.TimeUtils;
 
 public class CallMessageViewHolder extends MessageViewHolder {
 
@@ -62,6 +59,7 @@ public class CallMessageViewHolder extends MessageViewHolder {
                 case CallMessage.Usage.MISSED_VOICE_CALL:
                     durationView.setVisibility(View.GONE);
                     logTitleView.setText(R.string.log_missed_call);
+                    logTitleView.requestLayout();
                     color = ContextCompat.getColor(callActionIconView.getContext(), R.color.color_primary);
                     callActionIconView.setImageTintList(ColorStateList.valueOf(color));
                     callActionTextView.setTextColor(color);
@@ -69,10 +67,19 @@ public class CallMessageViewHolder extends MessageViewHolder {
                 case CallMessage.Usage.LOGGED_VOICE_CALL:
                     durationView.setVisibility(View.VISIBLE);
                     logTitleView.setText(R.string.log_voice_call);
+                    logTitleView.requestLayout();
                     color = ContextCompat.getColor(callActionIconView.getContext(), R.color.color_secondary);
                     callActionIconView.setImageTintList(ColorStateList.valueOf(color));
                     callActionTextView.setTextColor(color);
                     durationView.setText(TimeFormatter.formatCallDuration(callMessage.callDuration));
+                    break;
+                case CallMessage.Usage.MISSED_VIDEO_CALL:
+                    durationView.setVisibility(View.GONE);
+                    logTitleView.setText(R.string.log_missed_video_call);
+                    logTitleView.requestLayout();
+                    color = ContextCompat.getColor(callActionIconView.getContext(), R.color.color_primary);
+                    callActionIconView.setImageTintList(ColorStateList.valueOf(color));
+                    callActionTextView.setTextColor(color);
                     break;
             }
         }
