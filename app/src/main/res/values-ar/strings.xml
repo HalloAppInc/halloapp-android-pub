@@ -601,7 +601,7 @@ Your video is %d seconds longer
     <string name="group_invite_via_link">"الدعوة إلى المجموعة عبر رابط"</string>
 
     <!-- Shown below on seen by to explain that posts disappear -->
-    <string name="seen_by_post_expiration_notice">"ستختفي منشوراتك بعد مرور ٣٠ يومًا."</string>
+    <string name="seen_by_post_expiration_notice">"ستظهر منشوراتك لمدة ٣٠ يومًا."</string>
 
     <!-- Frequently asked questions option in help menu -->
     <string name="faq">"الأسئلة الشائعة"</string>
@@ -1252,15 +1252,15 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="see_all">"عرض الكل"</string>
 
     <!-- Rationale for when requesting microphone permission for voice posts -->
-    <string name="voice_post_record_audio_permission_rationale">"To record audio posts we need permission to access the microphone"</string>
+    <string name="voice_post_record_audio_permission_rationale">"لتسجيل المنشورات الصوتية نحتاج إلى إذن الوصول إلى الميكروفون"</string>
 
     <!-- Rationale for when requesting microphone permission for voice posts, but it has already been denied. -->
-    <string name="voice_post_record_audio_permission_rationale_denied">"To record audio posts we need permission to access the microphone.
+    <string name="voice_post_record_audio_permission_rationale_denied">"لتسجيل المنشورات الصوتية نحتاج إلى إذن الوصول إلى الميكروفون
 
-Open the app settings screen to modify app permissions."</string>
+افتح شاشة إعدادات التطبيق لتعديل أذونات التطبيق."</string>
 
     <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
-    <string name="unable_to_start_call">"Unable to start call."</string>
+    <string name="unable_to_start_call">"تعذّر بدء المكالمة."</string>
     <string name="composer_sharing_post">"المشاركة مع %s"</string>
     <string name="composer_sharing_group_post">"المشاركة مع المجموعة"</string>
     <string name="invite_via_link">"Invite via link"</string>
