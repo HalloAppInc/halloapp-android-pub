@@ -448,6 +448,7 @@ public class CallManager {
     }
 
     public void showIncomingCallNotification() {
+        Log.i("CallManager: showIncomingCallNotification");
         if (callId == null) {
             Log.w("CallManager: showIncomingCallNotification(): callId is null. call was already canceled");
             return;
@@ -459,6 +460,7 @@ public class CallManager {
 
     @RequiresApi(api = 23)
     public void telecomHandleIncomingCall() {
+        Log.i("CallManager: telecomHandleIncomingCall");
         TelecomManager tm = (TelecomManager) appContext.get().getSystemService(Context.TELECOM_SERVICE);
         if (tm != null && phoneAccountHandle != null) {
             Bundle extras = new Bundle();
@@ -467,6 +469,7 @@ public class CallManager {
             extras.putString(HaTelecomConnectionService.EXTRA_PEER_UID, peerUid.rawId());
             extras.putString(HaTelecomConnectionService.EXTRA_PEER_UID_NAME, c.getDisplayName());
             extras.putString(HaTelecomConnectionService.EXTRA_PEER_UID_PHONE, c.getDisplayPhone());
+            Log.i("CallManager: TelecomManager.addNewIncomingCall");
             tm.addNewIncomingCall(phoneAccountHandle, extras);
         }
     }

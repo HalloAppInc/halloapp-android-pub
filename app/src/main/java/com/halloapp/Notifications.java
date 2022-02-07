@@ -670,6 +670,7 @@ public class Notifications {
             Notification notification = builder.build();
             notification.flags |= Notification.FLAG_INSISTENT;
             notificationManager.notify(CALL_NOTIFICATION_ID, notification);
+            Log.i("Notifications: showIncomingCallNotification " + callId);
         });
     }
 
