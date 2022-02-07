@@ -11,6 +11,7 @@ import com.google.protobuf.GeneratedMessageLite;
 import com.halloapp.BuildConfig;
 import com.halloapp.proto.server.Ack;
 import com.halloapp.proto.server.AuthResult;
+import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.Packet;
@@ -77,6 +78,8 @@ public class ProtoPrinter {
             return 'A';
         } else if (message instanceof AuthResult) {
             return 'R';
+        } else if (message instanceof HistoryResend) {
+            return 'H';
         }
         return '?';
     }

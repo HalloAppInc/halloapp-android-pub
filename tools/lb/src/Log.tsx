@@ -405,6 +405,9 @@ class Log extends React.Component<Props, State>  {
         } else if (messageTypeChar === 'R') {
           messageTypeName = "auth_result"
           messageType = Proto.server.AuthResult
+        } else if (messageTypeChar === 'H') {
+          messageTypeName = "history_resend"
+          messageType = Proto.server.HistoryResend
         } else if (messageTypeChar === '?') {
           return before + "<!Client did not send top-level protobuf type>" + after
         } else {
