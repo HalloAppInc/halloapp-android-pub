@@ -67,6 +67,7 @@ public class ChatInputView extends LinearLayoutCompat {
     private boolean wasPlaying;
 
     private EmojiKeyboardLayout emojiKeyboardLayout;
+    private ImageView emojiBtn;
 
     public interface InputParent {
         void onSendText();
@@ -149,8 +150,9 @@ public class ChatInputView extends LinearLayoutCompat {
         setOrientation(VERTICAL);
         inflate(getContext(), R.layout.input_layout, this);
         editText = findViewById(R.id.entry_card);
+        emojiBtn = findViewById(R.id.kb_toggle);
         emojiKeyboardLayout = findViewById(R.id.emoji_keyboard);
-        emojiKeyboardLayout.bind(findViewById(R.id.kb_toggle), editText);
+        emojiKeyboardLayout.bind(emojiBtn, editText);
 
         recordBtn = findViewById(R.id.record_voice);
         sendButton = findViewById(R.id.send);
@@ -215,7 +217,6 @@ public class ChatInputView extends LinearLayoutCompat {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -348,6 +349,7 @@ public class ChatInputView extends LinearLayoutCompat {
         recordBtn.setVisibility(View.INVISIBLE);
         deleteVoiceNote.setVisibility(View.GONE);
         editText.setVisibility(View.INVISIBLE);
+        emojiBtn.setVisibility(View.GONE);
         media.setVisibility(View.GONE);
         sendButton.setColorFilter(ContextCompat.getColor(sendButton.getContext(), R.color.color_secondary));
     }
@@ -361,6 +363,7 @@ public class ChatInputView extends LinearLayoutCompat {
         media.setVisibility(View.GONE);
         sendButton.setColorFilter(ContextCompat.getColor(sendButton.getContext(), R.color.color_secondary));
         editText.setVisibility(View.INVISIBLE);
+        emojiBtn.setVisibility(View.GONE);
     }
 
     private void showEmptyEntry() {
@@ -368,6 +371,7 @@ public class ChatInputView extends LinearLayoutCompat {
         deleteVoiceDraft.setVisibility(View.GONE);
         deleteVoiceNote.setVisibility(View.GONE);
         editText.setVisibility(View.VISIBLE);
+        emojiBtn.setVisibility(View.VISIBLE);
 
         if (allowVoiceNoteRecording) {
             recordBtn.setVisibility(View.VISIBLE);
@@ -406,6 +410,7 @@ public class ChatInputView extends LinearLayoutCompat {
     private void showTextEntry() {
         media.setVisibility(View.VISIBLE);
         editText.setVisibility(View.VISIBLE);
+        emojiBtn.setVisibility(View.VISIBLE);
         voiceDraftInfo.setVisibility(View.GONE);
         deleteVoiceDraft.setVisibility(View.GONE);
         deleteVoiceNote.setVisibility(View.GONE);
@@ -431,6 +436,7 @@ public class ChatInputView extends LinearLayoutCompat {
         deleteVoiceNote.setVisibility(View.GONE);
         media.setVisibility(View.GONE);
         editText.setVisibility(View.INVISIBLE);
+        emojiBtn.setVisibility(View.GONE);
     }
 
     public void bindVoicePlayer(@NonNull LifecycleOwner owner, @NonNull VoiceNotePlayer voiceNotePlayer) {
@@ -450,8 +456,10 @@ public class ChatInputView extends LinearLayoutCompat {
                 }
                 media.setVisibility(View.VISIBLE);
                 editText.setVisibility(View.VISIBLE);
+                emojiBtn.setVisibility(View.VISIBLE);
             } else {
                 editText.setVisibility(View.INVISIBLE);
+                emojiBtn.setVisibility(View.GONE);
                 recordingTime.setVisibility(View.VISIBLE);
                 recordingIndicator.setVisibility(View.VISIBLE);
                 if (recordingIndicator.getAnimation() == null) {
