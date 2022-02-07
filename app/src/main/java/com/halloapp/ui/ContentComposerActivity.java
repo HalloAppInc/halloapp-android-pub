@@ -453,10 +453,7 @@ public class ContentComposerActivity extends HalloActivity {
         textOnlySend.setVisibility(destinations != null && destinations.size() > 0 ? View.GONE : View.VISIBLE);
 
         textPostEntry.setVisibility(View.VISIBLE);
-        textPostEntry.setMentionPickerView(mentionPickerView);
-
         bottomEditText.setVisibility(View.VISIBLE);
-        bottomEditText.setMentionPickerView(mentionPickerView);
 
         boolean hasChatDestination = false;
         if (destinations != null) {
@@ -826,6 +823,8 @@ public class ContentComposerActivity extends HalloActivity {
         bottomSendButton.setVisibility(destinations != null && destinations.size() > 0 ? View.GONE : View.VISIBLE);
         postEntryView.setVisibility(View.VISIBLE);
         mediaContainer.setVisibility(View.VISIBLE);
+        textPostEntry.setMentionPickerView(null);
+        bottomEditText.setMentionPickerView(mentionPickerView);
     }
 
     private void showTextOnlyCompose() {
@@ -834,6 +833,8 @@ public class ContentComposerActivity extends HalloActivity {
         bottomSendButton.setVisibility(View.INVISIBLE);
         postEntryView.setVisibility(View.INVISIBLE);
         mediaContainer.setVisibility(View.INVISIBLE);
+        bottomEditText.setMentionPickerView(null);
+        textPostEntry.setMentionPickerView(mentionPickerView);
     }
 
     private void showAudioOnlyCompose() {
