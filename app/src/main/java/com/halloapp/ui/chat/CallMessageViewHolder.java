@@ -59,7 +59,6 @@ public class CallMessageViewHolder extends MessageViewHolder {
                 case CallMessage.Usage.MISSED_VOICE_CALL:
                     durationView.setVisibility(View.GONE);
                     logTitleView.setText(R.string.log_missed_call);
-                    logTitleView.requestLayout();
                     color = ContextCompat.getColor(callActionIconView.getContext(), R.color.color_primary);
                     callActionIconView.setImageTintList(ColorStateList.valueOf(color));
                     callActionTextView.setTextColor(color);
@@ -67,7 +66,6 @@ public class CallMessageViewHolder extends MessageViewHolder {
                 case CallMessage.Usage.LOGGED_VOICE_CALL:
                     durationView.setVisibility(View.VISIBLE);
                     logTitleView.setText(R.string.log_voice_call);
-                    logTitleView.requestLayout();
                     color = ContextCompat.getColor(callActionIconView.getContext(), R.color.color_secondary);
                     callActionIconView.setImageTintList(ColorStateList.valueOf(color));
                     callActionTextView.setTextColor(color);
@@ -76,7 +74,6 @@ public class CallMessageViewHolder extends MessageViewHolder {
                 case CallMessage.Usage.MISSED_VIDEO_CALL:
                     durationView.setVisibility(View.GONE);
                     logTitleView.setText(R.string.log_missed_video_call);
-                    logTitleView.requestLayout();
                     color = ContextCompat.getColor(callActionIconView.getContext(), R.color.color_primary);
                     callActionIconView.setImageTintList(ColorStateList.valueOf(color));
                     callActionTextView.setTextColor(color);
