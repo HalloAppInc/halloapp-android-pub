@@ -493,13 +493,10 @@ public class CallManager {
     }
 
     public synchronized void handleCallRinging(@NonNull String callId, @NonNull UserId peerUid,@NonNull Long timestamp) {
-        Log.i("CallManager: CallRinging callId: " + callId + " peerUid: " + peerUid + " ts: " + timestamp);
-        if (this.callId == null || !this.callId.equals(callId) ) {
-            Log.e("CallManager: Error: got call ringing message for call " + callId +
-                    " but my call id is " + this.callId);
+        Log.i("CallManager: call_ringing callId: " + callId + " peerUid: " + peerUid + " ts: " + timestamp);
+        if (checkWrongCall(callId, "call_ringing")) {
             return;
         }
-        // TODO(nikola): check the peerUid
         if (!this.isInitiator) {
             Log.e("CallManager: Error: unexpected call ringing, not initiator");
             return;
@@ -516,12 +513,11 @@ public class CallManager {
 
     public synchronized void handleAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @Nullable String webrtcOffer, @NonNull Long timestamp,
                                               @Nullable CryptoException cryptoException) {
-        Log.i("AnswerCall callId: " + callId + " peerUid: " + peerUid + " " + timestamp);
-
-        if (this.callId == null || !this.callId.equals(callId)) {
-            Log.e("Ignoring incoming answer call msg callId: " + callId + " from peerUid: " + peerUid + " " + toString());
+        Log.i("CallManager: answer_call callId: " + callId + " peerUid: " + peerUid + " " + timestamp);
+        if (checkWrongCall(callId, "answer_call")) {
             return;
         }
+
         if (this.peerConnection == null) {
             Log.e("Ignoring incoming answer call msg. peerConnection is not initialized " + toString());
             return;
@@ -556,8 +552,7 @@ public class CallManager {
             // TODO(nikola): fix here when we do video calls
             storeMissedCallMsg(peerUid, callId, CallType.AUDIO, timestamp);
         }
-        if (this.callId == null || !this.callId.equals(callId)) {
-            Log.i("got EndCall for wrong call. " + toString());
+        if (checkWrongCall(callId, "end_call")) {
             return;
         }
         this.state = State.IDLE;
@@ -570,14 +565,13 @@ public class CallManager {
 
     public void handleIceCandidate(@NonNull String callId, @NonNull UserId peerUid,
                                     @NonNull String sdpMediaId, int sdpMediaLineIndex, @NonNull String sdp) {
-        Log.i("CallManager: got IceCandidate callId: " + callId + " " + sdpMediaId + ":" + sdpMediaLineIndex + ": sdp: " + sdp);
-        IceCandidate candidate = new IceCandidate(sdpMediaId, sdpMediaLineIndex, sdp);
-
+        Log.i("CallManager: got ice_candidate callId: " + callId + " " + peerUid + "  sdp: " + sdp);
         if (this.callId != null && !this.callId.equals(callId)) {
-            // TODO(nikola): This code is similar to many other messages
             Log.i("CallManager: got IceCandidates for the wrong callId: " + callId + " peerUid: " + peerUid + " state: " + toString());
             return;
         }
+
+        IceCandidate candidate = new IceCandidate(sdpMediaId, sdpMediaLineIndex, sdp);
         if (state == State.IN_CALL || state == State.IN_CALL_CONNECTING || state == State.INCOMING_RINGING) {
             peerConnection.addIceCandidate(candidate);
         } else {
@@ -588,10 +582,8 @@ public class CallManager {
 
     public void handleIceRestartOffer(@NonNull String callId, int restartIndex, @Nullable String webrtcRestartOffer,
                                       @Nullable CryptoException cryptoException) {
-        Log.i("CallManager: got iceRestartOffer callId: " + callId);
-        if (this.callId == null || !this.callId.equals(callId)) {
-            // TODO(nikola): This code is similar to many other messages
-            Log.i("CallManager: got IceRestartOffer for the wrong callId: " + callId + " peerUid: " + peerUid + " state: " + toString());
+        Log.i("CallManager: got ice_restart_offer callId: " + callId);
+        if (checkWrongCall(callId, "ice_restart_offer")) {
             return;
         }
         if (webrtcRestartOffer == null) {
@@ -620,10 +612,8 @@ public class CallManager {
 
     public void handleIceRestartAnswer(@NonNull String callId, int restartIndex, @Nullable String webrtcRestartAnswer,
                                        @Nullable CryptoException cryptoException) {
-        Log.i("CallManager: got iceRestartAnswer callId: " + callId);
-        if (this.callId == null || !this.callId.equals(callId)) {
-            // TODO(nikola): This code is similar to many other messages
-            Log.i("CallManager: got IceRestartAnswer for the wrong callId: " + callId + " peerUid: " + peerUid + " state: " + toString());
+        Log.i("CallManager: got ice_restart_answer callId: " + callId);
+        if (checkWrongCall(callId, "ice_restart_answer")) {
             return;
         }
         if (webrtcRestartAnswer == null) {
@@ -656,6 +646,14 @@ public class CallManager {
         notifyOnAnsweredCall();
         telecomSetActive();
         return true;
+    }
+
+    private boolean checkWrongCall(@NonNull String callId, @NonNull String msgType) {
+        if (this.callId == null || !this.callId.equals(callId)) {
+            Log.i("CallManager: got " + msgType + " for the wrong callId: " + callId + " state: " + toString());
+            return true;
+        }
+        return false;
     }
 
     public LiveData<Long> getCallStartTimeLiveData() {
