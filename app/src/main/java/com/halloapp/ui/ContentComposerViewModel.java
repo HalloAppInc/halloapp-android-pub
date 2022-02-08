@@ -387,7 +387,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
                 final Size originalSize = MediaUtils.getDimensions(originalFile, mediaType);
 
                 final File editFile = fileStore.getTmpFileForUri(uri, "edit");
-                final Size editSize = editFile.exists() ? MediaUtils.getDimensions(editFile, mediaType) : null;
+                final Size editSize = editFile.exists() && editFile.length() > 0 ? MediaUtils.getDimensions(editFile, mediaType) : null;
 
                 if (originalSize != null) {
                     final Media originalItem = Media.createFromFile(mediaType, originalFile);

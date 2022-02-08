@@ -70,7 +70,7 @@ public class Media {
         int width = 0;
         int height = 0;
 
-        if (type != MEDIA_TYPE_AUDIO && file.exists()) {
+        if (type != MEDIA_TYPE_AUDIO && file.exists() && file.length() > 0) {
             Size size = MediaUtils.getDimensions(file, type);
             if (size != null) {
                 width = size.getWidth();
