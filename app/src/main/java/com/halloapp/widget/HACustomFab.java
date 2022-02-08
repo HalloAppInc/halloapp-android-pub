@@ -277,7 +277,7 @@ public class HACustomFab extends LinearLayout {
         final int logoContainerWidth = getFabTextWidth();
         float initialPercentage = (float)((float)(primaryFab.getWidth() - fabSize) / (float)logoContainerWidth);
         setAnimator(ValueAnimator.ofFloat(initialPercentage, 1));
-        animator.setDuration((int)(EXTEND_ANIMATION_DURATION * (1f - initialPercentage)));
+        animator.setDuration(Math.max(0, (int)(EXTEND_ANIMATION_DURATION * (1f - initialPercentage))));
 
         ExtendAnimator extendAnimator = new ExtendAnimator();
         animator.addUpdateListener(extendAnimator);
