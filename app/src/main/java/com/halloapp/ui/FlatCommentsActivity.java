@@ -275,33 +275,35 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         setExitSharedElementCallback(new SharedElementCallback() {
             @Override
             public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-                RecyclerView comments = findViewById(R.id.comments);
-                String name = names.get(0);
+                if (!names.isEmpty()) {
+                    RecyclerView comments = findViewById(R.id.comments);
+                    String name = names.get(0);
 
-                if (commentsFsePosition == 0 && postContentContainer != null) {
+                    if (commentsFsePosition == 0 && postContentContainer != null) {
 
-                    Post post = Preconditions.checkNotNull(viewModel.post.getValue());
-                    RecyclerView gallery = postContentContainer.findViewById(R.id.media);
-                    RecyclerView.LayoutManager layoutManager = Preconditions.checkNotNull(gallery.getLayoutManager());
+                        Post post = Preconditions.checkNotNull(viewModel.post.getValue());
+                        RecyclerView gallery = postContentContainer.findViewById(R.id.media);
+                        RecyclerView.LayoutManager layoutManager = Preconditions.checkNotNull(gallery.getLayoutManager());
 
-                    for (int i = 0; i < post.media.size(); ++i) {
-                        View view = layoutManager.findViewByPosition(i);
+                        for (int i = 0; i < post.media.size(); ++i) {
+                            View view = layoutManager.findViewByPosition(i);
 
-                        if (view != null && name.equals(view.getTransitionName())) {
-                            sharedElements.put(name, view);
-                            return;
+                            if (view != null && name.equals(view.getTransitionName())) {
+                                sharedElements.put(name, view);
+                                return;
+                            }
                         }
-                    }
-                } else {
-                    RecyclerView.LayoutManager commentsLayoutManager = Preconditions.checkNotNull(comments.getLayoutManager());
-                    View row = commentsLayoutManager.getChildAt(commentsFsePosition);
+                    } else {
+                        RecyclerView.LayoutManager commentsLayoutManager = Preconditions.checkNotNull(comments.getLayoutManager());
+                        View row = commentsLayoutManager.getChildAt(commentsFsePosition);
 
-                    if (row != null) {
-                        View view = row.findViewById(R.id.comment_media);
+                        if (row != null) {
+                            View view = row.findViewById(R.id.comment_media);
 
-                        if (view != null && name.equals(view.getTransitionName())) {
-                            sharedElements.put(name, view);
-                            return;
+                            if (view != null && name.equals(view.getTransitionName())) {
+                                sharedElements.put(name, view);
+                                return;
+                            }
                         }
                     }
                 }
