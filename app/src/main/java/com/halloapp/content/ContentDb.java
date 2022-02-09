@@ -1047,8 +1047,8 @@ public class ContentDb {
         });
     }
 
-    public int getOutboundCommentRerequestCount(@NonNull UserId rerequestorUserId, @NonNull String postId) {
-        return postsDb.getOutboundRerequestCount(rerequestorUserId, postId, CommentsTable.TABLE_NAME);
+    public int getOutboundCommentRerequestCount(@NonNull UserId rerequestorUserId, @NonNull String commentId) {
+        return postsDb.getOutboundRerequestCount(rerequestorUserId, commentId, CommentsTable.TABLE_NAME);
     }
 
     public void setMessageTransferred(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {

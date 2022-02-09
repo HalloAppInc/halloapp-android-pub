@@ -721,6 +721,7 @@ public class ConnectionImpl extends Connection {
                         .setType(Msg.Type.GROUPCHAT)
                         .setToUid(Long.parseLong(userId.rawId()))
                         .setGroupFeedItem(builder.build())
+                        .setRerequestCount(ContentDb.getInstance().getOutboundPostRerequestCount(userId, post.id))
                         .build();
                 sendMsg(msg, null);
             } catch (CryptoException e) {
@@ -864,6 +865,7 @@ public class ConnectionImpl extends Connection {
                         .setType(Msg.Type.GROUPCHAT)
                         .setToUid(Long.parseLong(userId.rawId()))
                         .setGroupFeedItem(builder.build())
+                        .setRerequestCount(ContentDb.getInstance().getOutboundCommentRerequestCount(userId, comment.id))
                         .build();
                 sendMsg(msg, null);
             } catch (CryptoException e) {
