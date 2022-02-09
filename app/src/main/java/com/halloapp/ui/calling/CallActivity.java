@@ -193,9 +193,10 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             onSpeakerPhone();
         });
         findViewById(R.id.in_call_hangup).setOnClickListener(v -> {
+            Log.i("CallActivity: in_call_hangup click");
             if (callViewModel.isCalling()) {
                 onCancelCall();
-            } else if (callViewModel.inCall()) {
+            } else if (callViewModel.inCall() || callViewModel.isCallConnecting()) {
                 onHangUp();
             }
         });
