@@ -1261,6 +1261,9 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
     <string name="unable_to_start_call">"تعذّر بدء المكالمة."</string>
+
+    <!-- Text shown in chat view telling user they had a missed video call -->
+    <string name="log_missed_video_call">"مكالمة فيديو فائتة"</string>
     <string name="composer_sharing_post">"المشاركة مع %s"</string>
     <string name="composer_sharing_group_post">"المشاركة مع المجموعة"</string>
     <string name="invite_via_link">"Invite via link"</string>

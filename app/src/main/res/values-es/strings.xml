@@ -1166,6 +1166,9 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
 
     <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
     <string name="unable_to_start_call">"Incapaz de empezar la llamada."</string>
+
+    <!-- Text shown in chat view telling user they had a missed video call -->
+    <string name="log_missed_video_call">"Videollamada perdida"</string>
     <string name="composer_sharing_post">"Compartiendo con %s"</string>
     <string name="composer_sharing_group_post">"Compartiendo con el grupo"</string>
     <string name="invite_via_link">"Invitar por un enlace"</string>
