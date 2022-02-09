@@ -693,7 +693,7 @@ public class Notifications {
                 .setContentTitle(name)
                 // TODO(nikola): Update this for video calls
                 .setContentText(context.getResources().getString(R.string.ongoing_voice_call))
-                .setSmallIcon(R.drawable.call)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentIntent(pendingIntent)
                 .setTicker(context.getResources().getString(R.string.ongoing_voice_call))
                 .build();
