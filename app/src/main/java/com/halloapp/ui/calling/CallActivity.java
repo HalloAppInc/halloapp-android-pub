@@ -79,6 +79,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
+    private final CallManager callManager = CallManager.getInstance();
 
     private View ringingView;
     private View inCallView;
@@ -220,9 +221,14 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         if (isInitiator && callViewModel.isIdle()) {
             Log.i("CallActivity: Starting call");
             checkPermissionsThen(REQUEST_START_CALL);
-        } else if (ACTION_ACCEPT.equals(getIntent().getAction()) && callViewModel.isRinging()) {
+        }
+        if (!isInitiator && ACTION_ACCEPT.equals(getIntent().getAction()) && callViewModel.isRinging()) {
             Log.i("CallActivity: User accepted the call");
             checkPermissionsThen(REQUEST_ANSWER_CALL);
+        }
+        if (!isInitiator && !callManager.getIsInCall().getValue()) {
+            Log.i("CallActivity: call probably ended while activity was starting");
+            finish();
         }
     }
 
