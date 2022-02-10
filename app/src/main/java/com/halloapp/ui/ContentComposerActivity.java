@@ -688,6 +688,7 @@ public class ContentComposerActivity extends HalloActivity {
                 }
             });
             viewModel.destinationList.observe(this, destinationListView::submitList);
+            textAddMedia.setVisibility(View.GONE);
         }
 
         replyContainer = findViewById(R.id.reply_container);
