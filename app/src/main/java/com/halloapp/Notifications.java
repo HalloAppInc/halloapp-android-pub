@@ -669,8 +669,14 @@ public class Notifications {
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             Notification notification = builder.build();
             notification.flags |= Notification.FLAG_INSISTENT;
-            notificationManager.notify(CALL_NOTIFICATION_ID, notification);
-            Log.i("Notifications: showIncomingCallNotification " + callId);
+            try {
+                notificationManager.notify(CALL_NOTIFICATION_ID, notification);
+                Log.i("Notifications: showIncomingCallNotification " + callId);
+            } catch (SecurityException e) {
+                String errorMessage = e.getMessage();
+                Log.e("Failed to post IncomingCall Notification: " + errorMessage, e);
+                Log.sendErrorReport("Failed to post IncomingCall Notification: " + errorMessage);
+            }
         });
     }
 
