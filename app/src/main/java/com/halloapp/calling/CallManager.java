@@ -881,11 +881,13 @@ public class CallManager {
                 doStartCall();
             } else {
                 Log.e("CallManager: Did not get any stun or turn servers " + response);
-                stop(EndCall.Reason.SYSTEM_ERROR);
+                Log.sendErrorReport("CallManager: got 0 call servers");
+                endCall(EndCall.Reason.SYSTEM_ERROR, false);
             }
         }).onError(e -> {
             Log.e("CallManager: Failed to start call, did not get ice servers", e);
-            stop(EndCall.Reason.SYSTEM_ERROR);
+            Log.sendErrorReport("CallManager: Failed to getCallServer: " + e.getMessage());
+            endCall(EndCall.Reason.SYSTEM_ERROR, false);
         });
     }
 
@@ -899,13 +901,14 @@ public class CallManager {
         peerConnection.createOffer(new SimpleSdpObserver() {
             @Override
             public void onCreateSuccess(@NonNull SessionDescription sessionDescription) {
-                Log.i("onCreateSuccess: ");
+                Log.i("CallManager: createOffer.onCreateSuccess: ");
                 peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
 
                 try {
                     Observable<StartCallResponseIq> observable = callsApi.startCall(
                             callId, peerUid, CallType.AUDIO, sessionDescription.description);
 
+                    // TODO(nikola): this is blocking the PeerConnection thread.
                     StartCallResponseIq response = observable.await();
                     Log.i("received StartCallResult " + response.result +
                             " turn " + response.turnServers +
@@ -914,14 +917,18 @@ public class CallManager {
                     if (response.result == StartCallResult.Result.OK) {
                         startRingingTimeoutTimer();
                     } else {
-                        Log.w("StartCall failed " + response.result);
-                        // TODO(nikola): handle call not ok
+                        Log.e("CallManager: StartCall failed " + response.result);
+                        Log.sendErrorReport("CallManager: startCall result is: " + response.result);
+                        endCall(EndCall.Reason.SYSTEM_ERROR, false);
                     }
-                    // TODO(nikola): handle the exceptions. Call stop()
                 } catch (CryptoException e) {
                     Log.e("CallManager: CryptoException, Failed to send the start call IQ callId: " + callId + " peerUid: " + peerUid, e);
+                    Log.sendErrorReport("CallManager: failed to startCall CryptoException");
+                    endCall(EndCall.Reason.SYSTEM_ERROR, false);
                 } catch (InterruptedException | ObservableErrorException e) {
                     Log.e("CallManager: Failed to send the start call IQ callId: " + callId + " peerUid: " + peerUid, e);
+                    Log.sendErrorReport("CallManager: failed to startCall");
+                    endCall(EndCall.Reason.SYSTEM_ERROR, false);
                 }
             }
         }, sdpMediaConstraints);
@@ -995,11 +1002,17 @@ public class CallManager {
     }
 
     public void endCall(EndCall.Reason reason) {
+        endCall(reason, true);
+    }
+
+    public void endCall(EndCall.Reason reason, boolean sendEndCall) {
         if (callId == null) {
             return;
         }
         Log.i("CallManager.endCall callId: " + callId + " reason: " + reason);
-        callsApi.sendEndCall(callId, peerUid, reason);
+        if (sendEndCall) {
+            callsApi.sendEndCall(callId, peerUid, reason);
+        }
         notifyOnEndCall();
         stop(reason);
     }
