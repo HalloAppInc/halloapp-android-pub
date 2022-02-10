@@ -28,6 +28,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.halloapp.AppContext;
+import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
 import com.halloapp.NetworkConnectivityManager;
 import com.halloapp.Notifications;
@@ -48,6 +49,7 @@ import com.halloapp.proto.server.WebRtcSessionDescription;
 import com.halloapp.ui.calling.CallActivity;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.calls.CallsApi;
 import com.halloapp.xmpp.calls.GetCallServersResponseIq;
 import com.halloapp.xmpp.calls.StartCallResponseIq;
@@ -158,7 +160,7 @@ public class CallManager {
 
     private static CallManager instance;
     private final Set<CallObserver> observers;
-    private final CallsApi callsApi;
+    private CallsApi callsApi;
     private final ContentDb contentDb;
     private final AppContext appContext;
 
@@ -174,8 +176,6 @@ public class CallManager {
     }
 
     private CallManager() {
-        // TODO(nikola): CallsManager should observe the CallsApi for incoming events instead of passing this in the constructor
-        this.callsApi = CallsApi.getInstance(this);
         this.contentDb = ContentDb.getInstance();
         this.appContext = AppContext.getInstance();
         this.outgoingRingtone = new OutgoingRingtone();
@@ -199,6 +199,11 @@ public class CallManager {
         });
 
         CallNetworkObserver.getInstance().register(appContext.get());
+    }
+
+    public void init() {
+        this.callsApi = new CallsApi(this, Connection.getInstance());
+        this.callsApi.init();
     }
 
     public void startCallActivity(Context context, UserId userId) {

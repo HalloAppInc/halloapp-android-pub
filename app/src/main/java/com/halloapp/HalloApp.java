@@ -77,7 +77,7 @@ public class HalloApp extends Application {
                     .penaltyLog()
                     .build());
         }
-        CallManager.getInstance();
+        CallManager.getInstance().init();
 
         ConnectionObservers.getInstance().addObserver(MainConnectionObserver.getInstance(this));
         ContentDb.getInstance().addObserver(MainContentDbObserver.getInstance(this));

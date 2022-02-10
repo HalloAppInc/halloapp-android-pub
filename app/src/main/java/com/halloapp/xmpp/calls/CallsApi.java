@@ -45,26 +45,16 @@ import java.util.Queue;
  */
 public class CallsApi extends Connection.Observer {
 
-    private static CallsApi instance;
-
     private final Connection connection;
     private final CallManager callManager;
     private final Queue<Msg> outgoingQueue = new LinkedList<Msg>();
 
-    public static CallsApi getInstance(@NonNull CallManager callManager) {
-        if (instance == null) {
-            synchronized (CallsApi.class) {
-                if (instance == null) {
-                    instance = new CallsApi(Connection.getInstance(), callManager);
-                }
-            }
-        }
-        return instance;
+    public CallsApi(@NonNull CallManager callManager, @NonNull Connection connection) {
+        this.callManager = callManager;
+        this.connection = connection;
     }
 
-    private CallsApi(@NonNull Connection connection, @NonNull CallManager callManager) {
-        this.connection = connection;
-        this.callManager = callManager;
+    public void init() {
         ConnectionObservers.getInstance().addObserver(this);
     }
 
