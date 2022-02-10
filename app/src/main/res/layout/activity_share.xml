@@ -37,6 +37,7 @@
                 android:fontFamily="sans-serif-medium"
                 android:text="@string/next"
                 android:textSize="18sp"
+                android:paddingBottom="1dp"
                 android:textColor="@color/color_secondary"
                 android:background="@drawable/bg_share_next" />
 
