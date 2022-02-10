@@ -10,13 +10,17 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
+import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.util.Pair;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
+import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.content.Mention;
 import com.halloapp.ui.markdown.MarkdownUtils;
@@ -50,6 +54,9 @@ public class MentionableEntry extends PostEditText implements MentionPickerView.
     }
 
     private void init() {
+        setAutoLinkMask(Linkify.WEB_URLS);
+        setLinksClickable(false);
+        setLinkTextColor(ContextCompat.getColor(getContext(), R.color.color_link));
         final MarkwonEditor editor = MarkdownUtils.createMarkwonEditor(getContext());
 
         addTextChangedListener(MarkwonEditorTextWatcher.withProcess(editor));
@@ -57,7 +64,14 @@ public class MentionableEntry extends PostEditText implements MentionPickerView.
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                Editable text = getText();
+                if (text != null) {
+                    URLSpan[] spans = text.getSpans(0, text.length(), URLSpan.class);
 
+                    for (URLSpan span : spans) {
+                        text.removeSpan(span);
+                    }
+                }
             }
 
             @Override
@@ -88,6 +102,7 @@ public class MentionableEntry extends PostEditText implements MentionPickerView.
                         }
                     }
                 }
+                Linkify.addLinks(MentionableEntry.this, getAutoLinkMask());
             }
         });
     }
