@@ -203,6 +203,10 @@ public class MainConnectionObserver extends Connection.Observer {
     @Override
     public void onDisconnected() {
         presenceLoader.onDisconnect();
+        if (foregroundObserver.isInForeground()) {
+            Log.i("MainConnectionObserver/onDisconnected still in foreground, reconnecting...");
+            connection.connect();
+        }
     }
 
     @Override
