@@ -122,7 +122,7 @@ public class LinkPreviewComposeView extends FrameLayout {
 
     public void attachPreview(@NonNull ContentItem contentItem) {
         if (urlPreview != null) {
-            contentItem.urlPreview = urlPreview;
+            contentItem.urlPreview = new UrlPreview(urlPreview);
         } else {
             if (!TextUtils.isEmpty(loadingUrl)) {
                 contentItem.loadingUrlPreview = loadingUrl;

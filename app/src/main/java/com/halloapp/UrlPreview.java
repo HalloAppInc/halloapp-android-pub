@@ -83,6 +83,16 @@ public class UrlPreview {
     public UrlPreview() {
     }
 
+    public UrlPreview(UrlPreview copy) {
+        this.rowId = copy.rowId;
+        this.url = copy.url;
+        this.tld = copy.tld;
+        this.title = copy.title;
+        this.description = copy.description;
+        this.previewImage = copy.previewImage;
+        this.imageMedia = new Media(copy.imageMedia);
+    }
+
     public long rowId;
     public String url;
     public String tld;

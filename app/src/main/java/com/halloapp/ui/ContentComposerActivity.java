@@ -577,7 +577,7 @@ public class ContentComposerActivity extends HalloActivity {
             }
 
             for (ContentItem item : contentItems) {
-                if (!item.hasMedia() && item instanceof Post) {
+                if (!item.hasMedia()) {
                     postLinkPreviewView.attachPreview(item);
                     urlPreviewLoader.cancel(postLinkPreviewView, true);
                 }
