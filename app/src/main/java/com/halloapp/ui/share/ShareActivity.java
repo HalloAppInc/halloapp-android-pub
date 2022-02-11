@@ -167,7 +167,7 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == REQUEST_CODE_COMPOSE && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_CODE_COMPOSE) {
             if (resultCode == RESULT_OK) {
                 finish();
             } else if (data != null) {
