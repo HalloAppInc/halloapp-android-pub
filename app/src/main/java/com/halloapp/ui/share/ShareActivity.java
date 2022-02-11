@@ -95,7 +95,6 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
                 adapter.getFilter().filter(s.toString());
             }
         });
-        searchBox.requestFocus();
 
         emptyView = findViewById(android.R.id.empty);
 
