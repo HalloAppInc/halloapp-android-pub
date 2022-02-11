@@ -69,6 +69,7 @@ public class PostEntryView extends FrameLayout {
 
     public interface InputParent {
         void onSendVoiceNote();
+        void onDeleteVoiceDraft();
         void requestVoicePermissions();
         void onUrl(String url);
     }
@@ -184,15 +185,7 @@ public class PostEntryView extends FrameLayout {
         }));
 
         deleteVoiceDraft.setOnClickListener(v -> {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(deleteVoiceDraft.getContext());
-            builder.setMessage(getResources().getString(R.string.post_audio_draft_discard_confirmation));
-            builder.setCancelable(true);
-            builder.setPositiveButton(R.string.action_discard, (dialog, which) -> {
-                audioDraft = null;
-                updateEntry();
-            });
-            builder.setNegativeButton(R.string.cancel, null);
-            builder.show();
+            inputParent.onDeleteVoiceDraft();
             if (playing) {
                 voiceNotePlayer.pause();
             }

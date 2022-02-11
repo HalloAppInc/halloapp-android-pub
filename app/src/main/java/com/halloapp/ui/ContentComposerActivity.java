@@ -294,6 +294,19 @@ public class ContentComposerActivity extends HalloActivity {
             }
 
             @Override
+            public void onDeleteVoiceDraft() {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(ContentComposerActivity.this);
+                builder.setMessage(getResources().getString(R.string.post_audio_draft_discard_confirmation));
+                builder.setCancelable(true);
+                builder.setPositiveButton(R.string.action_discard, (dialog, which) -> {
+                    viewModel.deleteDraft();
+                    postEntryView.bindAudioDraft(audioDurationLoader, null);
+                });
+                builder.setNegativeButton(R.string.cancel, null);
+                builder.show();
+            }
+
+            @Override
             public void requestVoicePermissions() {
                 requestVoicePostPermissions();
             }
