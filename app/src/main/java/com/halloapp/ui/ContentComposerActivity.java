@@ -95,6 +95,7 @@ import com.halloapp.widget.PostEntryView;
 import com.halloapp.widget.PostLinkPreviewView;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.widget.VoicePostRecorderControlView;
+import com.halloapp.widget.VoiceVisualizerView;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.io.File;
@@ -209,7 +210,6 @@ public class ContentComposerActivity extends HalloActivity {
     private GroupId groupId;
     private String replyPostId;
     private int replyPostMediaIndex;
-    private ArrayList<ShareDestination> destinations;
 
     private int expectedMediaCount;
 
@@ -281,8 +281,9 @@ public class ContentComposerActivity extends HalloActivity {
         textContentLoader = new TextContentLoader();
         audioDurationLoader = new AudioDurationLoader(this);
 
+        VoiceVisualizerView visualizer = findViewById(R.id.bottom_visualizer);
         voiceNoteRecorderControlView = findViewById(R.id.recording_ui);
-        voiceNoteRecorderControlView.setVoiceVisualizerView(findViewById(R.id.bottom_visualizer));
+        voiceNoteRecorderControlView.setVoiceVisualizerView(visualizer);
         audioComposer = findViewById(R.id.voice_composer);
         postEntryView = findViewById(R.id.post_entry);
         postEntryView.setInputParent(new PostEntryView.InputParent() {
@@ -360,8 +361,25 @@ public class ContentComposerActivity extends HalloActivity {
             }
             return false;
         });
-        textPostEntry = findViewById(R.id.entry_card);
         final Bundle editStates = getIntent().getParcelableExtra(MediaEditActivity.EXTRA_STATE);
+        textPostEntry = findViewById(R.id.entry_card);
+        ArrayList<ShareDestination> destinations;
+        if (savedInstanceState == null) {
+            chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
+            groupId = getIntent().getParcelableExtra(EXTRA_GROUP_ID);
+            destinations = getIntent().getParcelableArrayListExtra(EXTRA_DESTINATIONS);
+            replyPostId = getIntent().getStringExtra(EXTRA_REPLY_POST_ID);
+            replyPostMediaIndex = getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
+        } else {
+            chatId = savedInstanceState.getParcelable(EXTRA_CHAT_ID);
+            groupId = savedInstanceState.getParcelable(EXTRA_GROUP_ID);
+            destinations = savedInstanceState.getParcelableArrayList(EXTRA_DESTINATIONS);
+            replyPostId = savedInstanceState.getString(EXTRA_REPLY_POST_ID);
+            replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
+        }
+
+        viewModel = new ViewModelProvider(this,
+                new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, destinations, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
         if (uris != null) {
             Log.i("ContentComposerActivity received " + uris.size() + " uris");
             loadingView.setVisibility(View.VISIBLE);
@@ -383,23 +401,6 @@ public class ContentComposerActivity extends HalloActivity {
             }
         }
 
-        if (savedInstanceState == null) {
-            chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
-            groupId = getIntent().getParcelableExtra(EXTRA_GROUP_ID);
-            destinations = getIntent().getParcelableArrayListExtra(EXTRA_DESTINATIONS);
-            replyPostId = getIntent().getStringExtra(EXTRA_REPLY_POST_ID);
-            replyPostMediaIndex = getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
-        } else {
-            chatId = savedInstanceState.getParcelable(EXTRA_CHAT_ID);
-            groupId = savedInstanceState.getParcelable(EXTRA_GROUP_ID);
-            destinations = savedInstanceState.getParcelableArrayList(EXTRA_DESTINATIONS);
-            replyPostId = savedInstanceState.getString(EXTRA_REPLY_POST_ID);
-            replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
-        }
-
-        viewModel = new ViewModelProvider(this,
-                new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, destinations, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
-
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
         urlPreviewLoader = new UrlPreviewLoader();
         postLinkPreviewView = findViewById(R.id.link_preview);
@@ -418,6 +419,8 @@ public class ContentComposerActivity extends HalloActivity {
             shareBtn.setOnClickListener(v -> sharePost());
             shareBtn.setVisibility(View.VISIBLE);
             bottomSendButton.setVisibility(View.GONE);
+            final int horizontalPadding = getResources().getDimensionPixelSize(R.dimen.voice_post_share_end_padding);
+            visualizer.setPadding(horizontalPadding, visualizer.getPaddingTop(), horizontalPadding, visualizer.getPaddingBottom());
         }
 
         mediaPager = findViewById(R.id.media_pager);
@@ -455,17 +458,7 @@ public class ContentComposerActivity extends HalloActivity {
         textPostEntry.setVisibility(View.VISIBLE);
         bottomEditText.setVisibility(View.VISIBLE);
 
-        boolean hasChatDestination = false;
-        if (destinations != null) {
-            for (ShareDestination dest : destinations) {
-                if (dest.type == ShareDestination.TYPE_CONTACT) {
-                    hasChatDestination = true;
-                    break;
-                }
-            }
-        }
-
-        allowVoiceNotes = !hasChatDestination && chatId == null && ServerProps.getInstance().getVoicePostsEnabled();
+        allowVoiceNotes = shouldAllowVoiceNotes();
         postEntryView.setAllowVoiceNoteRecording(allowVoiceNotes && TextUtils.isEmpty(initialText));
 
         textAddMedia.setOnClickListener(v -> {
@@ -671,23 +664,22 @@ public class ContentComposerActivity extends HalloActivity {
 
         if (destinations != null && destinations.size() > 0) {
             destinationListView.setVisibility(View.VISIBLE);
-            destinationListView.submitList(destinations);
-            destinationListView.setOnRemoveListener(destination -> {
-                List<ShareDestination> destinations = viewModel.destinationList.getValue();
-                if (destinations == null) {
-                    return;
-                }
-
-                ArrayList<ShareDestination> updated = new ArrayList<>(destinations);
-                updated.remove(destination);
-
-                viewModel.destinationList.postValue(updated);
-
-                if (updated.size() == 0) {
+            destinationListView.setOnRemoveListener(viewModel::onDestinationRemoved);
+            viewModel.destinationList.observe(this, destinationList -> {
+                destinationListView.submitList(destinationList);
+                if (destinationList.isEmpty()) {
+                    Intent newList = new Intent();
+                    newList.putParcelableArrayListExtra(EXTRA_DESTINATIONS, new ArrayList<>(destinationList));
+                    setResult(RESULT_CANCELED, newList);
                     finish();
+                } else {
+                    boolean shouldAllowVoice = shouldAllowVoiceNotes();
+                    if (allowVoiceNotes != shouldAllowVoice) {
+                        allowVoiceNotes = shouldAllowVoice;
+                        postEntryView.setAllowVoiceNoteRecording(allowVoiceNotes && TextUtils.isEmpty(bottomEditText.getText()));
+                    }
                 }
             });
-            viewModel.destinationList.observe(this, destinationListView::submitList);
             textAddMedia.setVisibility(View.GONE);
         }
 
@@ -818,10 +810,24 @@ public class ContentComposerActivity extends HalloActivity {
         composeMode = newComposeMode;
     }
 
+    private boolean shouldAllowVoiceNotes() {
+        boolean hasChatDestination = false;
+        List<ShareDestination> destList = viewModel.destinationList.getValue();
+        if (destList != null) {
+            for (ShareDestination dest : destList) {
+                if (dest.type == ShareDestination.TYPE_CONTACT) {
+                    hasChatDestination = true;
+                    break;
+                }
+            }
+        }
+        return !hasChatDestination && chatId == null && ServerProps.getInstance().getVoicePostsEnabled();
+    }
+
     private void showMixedMediaCompose() {
         textEntryCard.setVisibility(View.GONE);
         audioComposer.setVisibility(View.GONE);
-        bottomSendButton.setVisibility(destinations != null && destinations.size() > 0 ? View.GONE : View.VISIBLE);
+        bottomSendButton.setVisibility(viewModel.hasDestinations() ? View.GONE : View.VISIBLE);
         postEntryView.setVisibility(View.VISIBLE);
         mediaContainer.setVisibility(View.VISIBLE);
         textPostEntry.setMentionPickerView(null);
@@ -1037,8 +1043,9 @@ public class ContentComposerActivity extends HalloActivity {
         if (groupId != null) {
             outState.putParcelable(EXTRA_GROUP_ID, groupId);
         }
-        if (destinations != null) {
-            outState.putParcelableArrayList(EXTRA_DESTINATIONS, destinations);
+        List<ShareDestination> viewModelDestinations = viewModel.destinationList.getValue();
+        if (viewModelDestinations != null) {
+            outState.putParcelableArrayList(EXTRA_DESTINATIONS, new ArrayList<>(viewModelDestinations));
         }
     }
 

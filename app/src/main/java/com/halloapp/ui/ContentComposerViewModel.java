@@ -188,6 +188,15 @@ public class ContentComposerViewModel extends AndroidViewModel {
         shareTargetName.invalidate();
     }
 
+    public List<ShareDestination> getDestinationsList() {
+        return destinationList.getValue();
+    }
+
+    public boolean hasDestinations() {
+        List<ShareDestination> dests = getDestinationsList();
+        return dests != null && !dests.isEmpty();
+    }
+
     @Override
     protected void onCleared() {
         if (shouldDeleteTempFiles) {
@@ -235,6 +244,18 @@ public class ContentComposerViewModel extends AndroidViewModel {
             mediaPairList.remove(index);
             new CleanupTmpFilesTask(new ArrayList<>(Collections.singleton(mediaPair))).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
+    }
+
+    public void onDestinationRemoved(ShareDestination removedDest) {
+        List<ShareDestination> destinations = destinationList.getValue();
+        if (destinations == null) {
+            return;
+        }
+
+        ArrayList<ShareDestination> updated = new ArrayList<>(destinations);
+        updated.remove(removedDest);
+
+        destinationList.postValue(updated);
     }
 
     public void doNotDeleteTempFiles() {

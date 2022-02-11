@@ -450,9 +450,12 @@
         <com.halloapp.widget.VoiceVisualizerView
             android:id="@+id/bottom_visualizer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/destinationList"
             android:paddingBottom="10dp"
             android:visibility="gone"
+            android:paddingStart="0dp"
             android:paddingEnd="71dp"
             app:vvvMax="100dp"
             app:vvvMin="71dp"/>
@@ -460,8 +463,10 @@
         <com.halloapp.widget.VoicePostRecorderControlView
             android:id="@+id/recording_ui"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/destinationList"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="@id/post_entry"
             android:layout_marginBottom="10dp"

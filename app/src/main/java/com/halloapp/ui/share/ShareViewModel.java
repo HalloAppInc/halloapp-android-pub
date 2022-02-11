@@ -174,6 +174,17 @@ public class ShareViewModel extends AndroidViewModel {
         destinationList.invalidate();
     }
 
+    public void updateSelectionList(List<ShareDestination> selectedDestinations) {
+        List<ShareDestination> selection = selectionList.getValue();
+
+        if (selection == null) {
+            return;
+        }
+        selection = new ArrayList<>(selectedDestinations);
+
+        selectionList.setValue(selection);
+    }
+
     void toggleSelection(ShareDestination destination) {
         List<ShareDestination> selection = selectionList.getValue();
 
