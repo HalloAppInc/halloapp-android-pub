@@ -215,7 +215,9 @@ public class GroupViewModel extends AndroidViewModel {
                     groupHistoryPayload.addAllContentDetails(contentDb.getHistoryResendContent(groupId));
                     byte[] payload = groupHistoryPayload.build().toByteArray();
                     String id = RandomId.create();
-                    // TODO(jack): Store plaintext payload with id in db for rerequests and clean up occasionally
+
+                    contentDb.setHistoryResendPayload(groupId, id, payload);
+                    // TODO(jack): Clean up stale payloads in daily worker after some time period
 
                     GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
                     byte[] encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);

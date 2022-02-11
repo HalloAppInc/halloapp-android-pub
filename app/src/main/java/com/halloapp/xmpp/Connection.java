@@ -173,7 +173,7 @@ public abstract class Connection {
 
     public abstract void sendRerequestedGroupComment(@NonNull Comment comment, @NonNull UserId userId);
 
-    public abstract void sendGroupHistory(@NonNull GroupFeedHistory groupFeedHistory, @NonNull UserId userId);
+    public abstract void sendGroupHistory(@NonNull GroupFeedHistory groupFeedHistory, @NonNull String id, @NonNull UserId userId);
 
     public abstract void retractMessage(final @NonNull UserId chatUserId, final @NonNull String messageId);
 

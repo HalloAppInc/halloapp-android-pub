@@ -31,6 +31,7 @@ import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.IdentityKey;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
@@ -315,7 +316,9 @@ public class GroupsApi {
         }
 
         if (groupFeedItems.getItemsCount() > 0) {
+            String id = RandomId.create();
             byte[] groupFeedItemsPayload = groupFeedItems.build().toByteArray();
+            contentDb.setHistoryResendPayload(groupId, id, groupFeedItemsPayload);
 
             for (MemberDetails memberDetails : groupHistoryPayload.getMemberDetailsList()) {
                 // TODO(jack): Verify that identity key matches one provided
@@ -334,7 +337,7 @@ public class GroupsApi {
                         }
                     }
 
-                    connection.sendGroupHistory(builder.build(), peerUserId);
+                    connection.sendGroupHistory(builder.build(), id, peerUserId);
                 } catch (Exception e) {
                     Log.e("Failed to encrypt history resend to " + peerUserId, e);
                 }

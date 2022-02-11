@@ -874,9 +874,9 @@ public class ConnectionImpl extends Connection {
         });
     }
 
-    public void sendGroupHistory(@NonNull GroupFeedHistory groupFeedHistory, @NonNull UserId userId) {
+    public void sendGroupHistory(@NonNull GroupFeedHistory groupFeedHistory, @NonNull String id, @NonNull UserId userId) {
         Msg msg = Msg.newBuilder()
-                .setGroupFeedHistory(groupFeedHistory).setId(RandomId.create()).setType(Msg.Type.NORMAL).setToUid(Long.parseLong(userId.rawId()))
+                .setGroupFeedHistory(groupFeedHistory).setId(id).setType(Msg.Type.NORMAL).setToUid(Long.parseLong(userId.rawId()))
                 .build();
         sendMsg(msg, () -> Log.i("History resend made it to server for " + userId));
     }

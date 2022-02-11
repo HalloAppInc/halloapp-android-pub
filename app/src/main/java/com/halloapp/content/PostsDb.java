@@ -18,6 +18,7 @@ import com.halloapp.FileStore;
 import com.halloapp.content.tables.ArchiveTable;
 import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.content.tables.CommentsTable;
+import com.halloapp.content.tables.HistoryResendPayloadTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.MessagesTable;
@@ -1684,6 +1685,23 @@ class PostsDb {
             } else {
                 return 0;
             }
+        }
+    }
+
+    @WorkerThread
+    void setHistoryResendPayload(@NonNull GroupId groupId, @NonNull String historyResendId, @NonNull byte[] payload) {
+        Log.i("PostsDb.setHistoryResendPayload: groupId=" + groupId + " historyResendId=" + historyResendId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(HistoryResendPayloadTable.COLUMN_GROUP_ID, groupId.rawId());
+        contentValues.put(HistoryResendPayloadTable.COLUMN_HISTORY_RESEND_ID, historyResendId);
+        contentValues.put(HistoryResendPayloadTable.COLUMN_PAYLOAD, payload);
+        contentValues.put(HistoryResendPayloadTable.COLUMN_TIMESTAMP, System.currentTimeMillis());
+        try {
+            db.insertWithOnConflict(HistoryResendPayloadTable.TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLException ex) {
+            Log.e("PostsDb.setHistoryResendPayload: failed");
+            throw ex;
         }
     }
 

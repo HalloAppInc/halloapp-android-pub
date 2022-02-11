@@ -16,12 +16,12 @@ import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
-import com.halloapp.UrlPreview;
 import com.halloapp.content.tables.ArchiveTable;
 import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.FutureProofTable;
 import com.halloapp.content.tables.GroupMembersTable;
+import com.halloapp.content.tables.HistoryResendPayloadTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.MessagesTable;
@@ -1051,6 +1051,12 @@ public class ContentDb {
         return postsDb.getOutboundRerequestCount(rerequestorUserId, commentId, CommentsTable.TABLE_NAME);
     }
 
+    public void setHistoryResendPayload(@NonNull GroupId groupId, @NonNull String historyResendId, @NonNull byte[] payload) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.setHistoryResendPayload(groupId, historyResendId, payload);
+        });
+    }
+
     public void setMessageTransferred(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         databaseWriteExecutor.execute(() -> {
             messagesDb.setMessageTransferred(chatId, senderUserId, messageId);
@@ -1417,6 +1423,7 @@ public class ContentDb {
                 CommentsTable.INDEX_COMMENT_KEY,
                 FutureProofTable.INDEX_FUTURE_PROOF_KEY,
                 GroupMembersTable.INDEX_GROUP_USER,
+                HistoryResendPayloadTable.INDEX_HISTORY_RESEND_ID,
                 MediaTable.INDEX_DEC_HASH_KEY,
                 MediaTable.INDEX_MEDIA_KEY,
                 MentionsTable.INDEX_MENTION_KEY,

@@ -17,6 +17,7 @@ import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.DeletedGroupNameTable;
 import com.halloapp.content.tables.FutureProofTable;
 import com.halloapp.content.tables.GroupMembersTable;
+import com.halloapp.content.tables.HistoryResendPayloadTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.MessagesTable;
@@ -34,7 +35,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 59;
+    private static final int DATABASE_VERSION = 60;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -280,6 +281,20 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + RerequestsTable.COLUMN_REQUESTOR_USER_ID + ", "
                 + RerequestsTable.COLUMN_PARENT_TABLE
                 + ");");
+
+        db.execSQL("DROP TABLE IF EXISTS " + HistoryResendPayloadTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + HistoryResendPayloadTable.TABLE_NAME + " ("
+                + HistoryResendPayloadTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + HistoryResendPayloadTable.COLUMN_HISTORY_RESEND_ID + " TEXT NOT NULL,"
+                + HistoryResendPayloadTable.COLUMN_GROUP_ID + " TEXT NOT NULL,"
+                + HistoryResendPayloadTable.COLUMN_PAYLOAD + " BLOB,"
+                + HistoryResendPayloadTable.COLUMN_TIMESTAMP + " INTEGER"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + HistoryResendPayloadTable.INDEX_HISTORY_RESEND_ID);
+        db.execSQL("CREATE UNIQUE INDEX " + HistoryResendPayloadTable.INDEX_HISTORY_RESEND_ID + " ON " + HistoryResendPayloadTable.TABLE_NAME + "("
+                + HistoryResendPayloadTable.COLUMN_HISTORY_RESEND_ID
+                + ")");
 
         db.execSQL("DROP TABLE IF EXISTS " + SeenTable.TABLE_NAME);
         db.execSQL("CREATE TABLE " + SeenTable.TABLE_NAME + " ("
@@ -576,6 +591,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 58: {
                 upgradeFromVersion58(db);
+            }
+            case 59: {
+                upgradeFromVersion59(db);
             }
             break;
             default: {
@@ -1241,6 +1259,22 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 +   " DELETE FROM " + CallsTable.TABLE_NAME + " WHERE " + CallsTable.COLUMN_CALL_ID + "=OLD." + MessagesTable.COLUMN_MESSAGE_ID + "; "
                 + "END;");
 
+    }
+
+    private void upgradeFromVersion59(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + HistoryResendPayloadTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + HistoryResendPayloadTable.TABLE_NAME + " ("
+                + HistoryResendPayloadTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + HistoryResendPayloadTable.COLUMN_HISTORY_RESEND_ID + " TEXT NOT NULL,"
+                + HistoryResendPayloadTable.COLUMN_GROUP_ID + " TEXT NOT NULL,"
+                + HistoryResendPayloadTable.COLUMN_PAYLOAD + " BLOB,"
+                + HistoryResendPayloadTable.COLUMN_TIMESTAMP + " INTEGER"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + HistoryResendPayloadTable.INDEX_HISTORY_RESEND_ID);
+        db.execSQL("CREATE UNIQUE INDEX " + HistoryResendPayloadTable.INDEX_HISTORY_RESEND_ID + " ON " + HistoryResendPayloadTable.TABLE_NAME + "("
+                + HistoryResendPayloadTable.COLUMN_HISTORY_RESEND_ID
+                + ")");
     }
 
     /**
