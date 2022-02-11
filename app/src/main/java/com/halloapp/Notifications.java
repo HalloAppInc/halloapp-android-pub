@@ -10,13 +10,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.service.notification.StatusBarNotification;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,7 +30,6 @@ import androidx.core.app.TaskStackBuilder;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.IconCompat;
 
-import com.halloapp.calling.CallManager;
 import com.halloapp.calling.CallNotificationBroadcastReceiver;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
@@ -643,8 +642,40 @@ public class Notifications {
             final Contact contact = ContactsDb.getInstance().getContact(peerUid);
             String name = contact.getDisplayName();
 
+            Bitmap avatar = MediaUtils.getCircledBitmap(avatarLoader.getAvatar(context, peerUid));
+            final IconCompat icon = IconCompat.createWithBitmap(avatar);
+            final Person person = new Person.Builder()
+                    .setBot(false)
+                    .setIcon(icon)
+                    .setName(name)
+                    .setKey(peerUid.rawId())
+                    .build();
+
+            SpannableString declineText = new SpannableString(context.getString(R.string.call_decline_button));
+            declineText.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context, R.color.call_decline)), 0, declineText.length(), 0);
+
+            NotificationCompat.Action declineAction = new NotificationCompat.Action.Builder(
+                        R.drawable.ic_call_end,
+                        declineText,
+                        declinePendingIntent)
+                    .setSemanticAction(NotificationCompat.Action.SEMANTIC_ACTION_DELETE)
+                    .setShowsUserInterface(false)
+                    .build();
+
+            SpannableString acceptText = new SpannableString(context.getString(R.string.call_accept_button));
+            acceptText.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context, R.color.call_accept)), 0, acceptText.length(), 0);
+
+            NotificationCompat.Action acceptAction = new NotificationCompat.Action.Builder(
+                        R.drawable.ic_call,
+                        acceptText,
+                        acceptPendingIntent)
+                    .setSemanticAction(NotificationCompat.Action.SEMANTIC_ACTION_CALL)
+                    .setShowsUserInterface(true)
+                    .build();
+
             final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CALLS_NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_notification)
+                    .setLargeIcon(avatar)
                     // TODO(nikola): improve the notification based on designs
                     .setContentTitle(context.getString(R.string.incoming_call_notification_title))
                     .setContentText(name)
@@ -656,12 +687,9 @@ public class Notifications {
                             NotificationCompat.DEFAULT_SOUND |
                             NotificationCompat.DEFAULT_VIBRATE)
                     .setSound(Settings.System.DEFAULT_RINGTONE_URI, AudioManager.STREAM_RING)
-                    // TODO(nikola): icons are not shown in the notification somehow...
-                    .addAction(R.drawable.ic_call_end, context.getString(R.string.call_decline_button), declinePendingIntent)
-                    .addAction(R.drawable.ic_call, context.getString(R.string.call_accept_button), acceptPendingIntent)
-                    // TODO(nikola): Maybe try this for API 31 and above
-                    // .setStyle(Notifications.CallStyle.forIncomingCall(caller, declineIntent, answerIntent))
-
+                    .addAction(declineAction)
+                    .addAction(acceptAction)
+                    .addPerson(person)
                     .setFullScreenIntent(callPendingIntent, true);
 
             // TODO(nikola): https://developer.android.com/training/notify-user/build-notification#metadata
