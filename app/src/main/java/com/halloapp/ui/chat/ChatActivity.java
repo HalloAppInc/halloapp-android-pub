@@ -29,7 +29,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -70,7 +69,6 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
-import com.halloapp.emoji.EmojiPickerView;
 import com.halloapp.groups.ChatLoader;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
@@ -87,7 +85,6 @@ import com.halloapp.ui.SystemMessageTextResolver;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.calling.CallActivity;
 import com.halloapp.ui.groups.GroupInfoActivity;
 import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
@@ -227,6 +224,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private Timer lastSeenMarqueeTimer;
 
     private MenuItem blockMenuItem;
+    private MenuItem callMenuItem;
     private final Map<Long, Integer> replyMessageMediaIndexMap = new HashMap<>();
 
     private View unknownContactsContainer;
@@ -235,7 +233,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private boolean allowVoiceNoteSending;
     private boolean allowAudioCalls;
 
-    private boolean isContactDeleted = false;
+    private boolean isChatActive = false;
     private boolean isCallOngoing = false;
 
     private ChatInputView chatInputView;
@@ -613,6 +611,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 adapter.setNewMessageCount(chat.newMessageCount);
                 footer.setVisibility(chat.isActive ? View.VISIBLE : View.GONE);
                 unknownContactsContainer.setVisibility((!chat.isGroup && !chat.isActive) ? View.VISIBLE : View.GONE);
+                this.isChatActive = chat.isActive;
+                updateCallButtons();
             }
 
             if (chatId instanceof UserId) {
@@ -983,6 +983,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.chat_menu, menu);
         blockMenuItem = menu.findItem(R.id.block);
+        callMenuItem = menu.findItem(R.id.call);
+
         blockMenuItem.setVisible(chatId instanceof UserId);
         menu.findItem(R.id.verify).setVisible(chatId instanceof UserId);
         viewModel.getBlockList().observe(this, userIds -> {
@@ -994,23 +996,22 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 blockMenuItem.setTitle(getString(R.string.block));
             }
         });
-        MenuItem callButton = menu.findItem(R.id.call);
-        callButton.setVisible(allowAudioCalls);
+
+        callMenuItem.setVisible(allowAudioCalls);
         viewModel.contact.getLiveData().observe(this, contact -> {
             menu.findItem(R.id.add_to_contacts).setVisible(TextUtils.isEmpty(contact.addressBookName));
-            this.isContactDeleted = contact.isDeleted();
-            updateCallButtons(callButton);
-
         });
         callManager.getIsInCall().observe(this, (inCall) -> {
             this.isCallOngoing = inCall;
-            updateCallButtons(callButton);
+            updateCallButtons();
         });
         return true;
     }
 
-    private void updateCallButtons(@NonNull MenuItem callButton) {
-        callButton.setEnabled(!this.isCallOngoing && !this.isContactDeleted);
+    private void updateCallButtons() {
+        if (callMenuItem != null) {
+            callMenuItem.setEnabled(!this.isCallOngoing && this.isChatActive);
+        }
     }
 
     @Override
