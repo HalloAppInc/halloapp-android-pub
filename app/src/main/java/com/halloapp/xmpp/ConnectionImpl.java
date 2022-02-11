@@ -989,7 +989,7 @@ public class ConnectionImpl extends Connection {
     public void sendGroupPostRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String postId, boolean senderStateIssue) {
         executor.execute(() -> {
             int rerequestCount = ContentDb.getInstance().getPostRerequestCount(groupId, senderUserId, postId);
-            GroupRerequestElement groupRerequestElement = new GroupRerequestElement(senderUserId, groupId, postId, senderStateIssue, rerequestCount);
+            GroupRerequestElement groupRerequestElement = new GroupRerequestElement(senderUserId, groupId, postId, senderStateIssue, GroupFeedRerequest.ContentType.POST, rerequestCount);
             Log.i("connection: sending group post rerequest for " + postId + " in " + groupId + " to " + senderUserId);
             sendPacket(Packet.newBuilder().setMsg(groupRerequestElement.toProto()).build());
         });
@@ -999,8 +999,18 @@ public class ConnectionImpl extends Connection {
     public void sendGroupCommentRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String commentId, boolean senderStateIssue) {
         executor.execute(() -> {
             int rerequestCount = ContentDb.getInstance().getCommentRerequestCount(groupId, senderUserId, commentId);
-            GroupRerequestElement groupRerequestElement = new GroupRerequestElement(senderUserId, groupId, commentId, senderStateIssue, rerequestCount);
+            GroupRerequestElement groupRerequestElement = new GroupRerequestElement(senderUserId, groupId, commentId, senderStateIssue, GroupFeedRerequest.ContentType.COMMENT, rerequestCount);
             Log.i("connection: sending group comment rerequest for " + commentId + " in " + groupId + " to " + senderUserId);
+            sendPacket(Packet.newBuilder().setMsg(groupRerequestElement.toProto()).build());
+        });
+    }
+
+    @Override
+    public void sendGroupFeedHistoryRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String historyId, boolean senderStateIssue) {
+        executor.execute(() -> {
+            int rerequestCount = ContentDb.getInstance().getHistoryResendRerequestCount(groupId, senderUserId, historyId);
+            GroupRerequestElement groupRerequestElement = new GroupRerequestElement(senderUserId, groupId, historyId, senderStateIssue, GroupFeedRerequest.ContentType.HISTORY_RESEND, rerequestCount);
+            Log.i("connection: sending group history rerequest for " + historyId + " in " + groupId + " to " + senderUserId);
             sendPacket(Packet.newBuilder().setMsg(groupRerequestElement.toProto()).build());
         });
     }

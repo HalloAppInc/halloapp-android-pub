@@ -17,6 +17,7 @@ import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.DeletedGroupNameTable;
 import com.halloapp.content.tables.FutureProofTable;
 import com.halloapp.content.tables.GroupMembersTable;
+import com.halloapp.content.tables.HistoryRerequestTable;
 import com.halloapp.content.tables.HistoryResendPayloadTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
@@ -35,7 +36,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 60;
+    private static final int DATABASE_VERSION = 61;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -294,6 +295,15 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP INDEX IF EXISTS " + HistoryResendPayloadTable.INDEX_HISTORY_RESEND_ID);
         db.execSQL("CREATE UNIQUE INDEX " + HistoryResendPayloadTable.INDEX_HISTORY_RESEND_ID + " ON " + HistoryResendPayloadTable.TABLE_NAME + "("
                 + HistoryResendPayloadTable.COLUMN_HISTORY_RESEND_ID
+                + ")");
+
+        db.execSQL("DROP TABLE IF EXISTS " + HistoryRerequestTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + HistoryRerequestTable.TABLE_NAME + "("
+                + HistoryRerequestTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + HistoryRerequestTable.COLUMN_HISTORY_RESEND_ID + " TEXT NOT NULL,"
+                + HistoryRerequestTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
+                + HistoryRerequestTable.COLUMN_REREQUEST_COUNT + " INTEGER,"
+                + HistoryRerequestTable.COLUMN_TIMESTAMP + " INTEGER"
                 + ")");
 
         db.execSQL("DROP TABLE IF EXISTS " + SeenTable.TABLE_NAME);
@@ -594,6 +604,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 59: {
                 upgradeFromVersion59(db);
+            }
+            case 60: {
+                upgradeFromVersion60(db);
             }
             break;
             default: {
@@ -1274,6 +1287,17 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP INDEX IF EXISTS " + HistoryResendPayloadTable.INDEX_HISTORY_RESEND_ID);
         db.execSQL("CREATE UNIQUE INDEX " + HistoryResendPayloadTable.INDEX_HISTORY_RESEND_ID + " ON " + HistoryResendPayloadTable.TABLE_NAME + "("
                 + HistoryResendPayloadTable.COLUMN_HISTORY_RESEND_ID
+                + ")");
+    }
+
+    private void upgradeFromVersion60(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + HistoryRerequestTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + HistoryRerequestTable.TABLE_NAME + "("
+                + HistoryRerequestTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + HistoryRerequestTable.COLUMN_HISTORY_RESEND_ID + " TEXT NOT NULL,"
+                + HistoryRerequestTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
+                + HistoryRerequestTable.COLUMN_REREQUEST_COUNT + " INTEGER,"
+                + HistoryRerequestTable.COLUMN_TIMESTAMP + " INTEGER"
                 + ")");
     }
 

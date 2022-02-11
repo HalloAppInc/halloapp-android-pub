@@ -18,6 +18,7 @@ import com.halloapp.FileStore;
 import com.halloapp.content.tables.ArchiveTable;
 import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.content.tables.CommentsTable;
+import com.halloapp.content.tables.HistoryRerequestTable;
 import com.halloapp.content.tables.HistoryResendPayloadTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
@@ -1634,6 +1635,63 @@ class PostsDb {
                     SQLiteDatabase.CONFLICT_ABORT);
         } catch (SQLException ex) {
             Log.e("PostsDb.setCommentRerequestCount: failed");
+            throw ex;
+        }
+    }
+
+    @WorkerThread
+    int getHistoryResendRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String historyId) {
+        Log.i("PostsDb.getHistoryResendRerequestCount: groupId=" + groupId + "senderUserId=" + senderUserId + " historyId=" + historyId);
+
+        String sql = "SELECT " + HistoryRerequestTable.COLUMN_REREQUEST_COUNT + " "
+                + "FROM " + HistoryRerequestTable.TABLE_NAME + " "
+                + "WHERE " + HistoryRerequestTable.COLUMN_HISTORY_RESEND_ID + "=? AND " + HistoryRerequestTable.COLUMN_SENDER_USER_ID + "=?";
+
+        int count = 0;
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (Cursor cursor = db.rawQuery(sql, new String[] {historyId, senderUserId.rawId()})) {
+            if (cursor.moveToNext()) {
+                return cursor.getInt(0);
+            }
+        } catch (SQLException ex) {
+            Log.e("PostsDb.getHistoryResendRerequestCount: failed");
+            throw ex;
+        }
+        return count;
+    }
+
+    @WorkerThread
+    void setHistoryResendRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String historyId, int count) {
+        Log.i("PostsDb.setHistoryResendRerequestCount: groupId=" + groupId + "senderUserId=" + senderUserId + " historyId=" + historyId + " count=" + count);
+
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        Long existingRowId = null;
+        String sql = "SELECT " + HistoryRerequestTable._ID + " FROM " + RerequestsTable.TABLE_NAME
+                + " WHERE " + HistoryRerequestTable.COLUMN_HISTORY_RESEND_ID + "=?"
+                + " AND " + HistoryRerequestTable.COLUMN_SENDER_USER_ID + "=?";
+        try (Cursor cursor = db.rawQuery(sql, new String[]{historyId, senderUserId.rawId()})) {
+            if (cursor.moveToNext()) {
+                existingRowId = cursor.getLong(0);
+            }
+        }
+
+        final ContentValues values = new ContentValues();
+        values.put(HistoryRerequestTable.COLUMN_REREQUEST_COUNT, count);
+        try {
+            if (existingRowId == null) {
+                values.put(HistoryRerequestTable.COLUMN_HISTORY_RESEND_ID, historyId);
+                values.put(HistoryRerequestTable.COLUMN_REREQUEST_COUNT, count);
+                values.put(HistoryRerequestTable.COLUMN_SENDER_USER_ID, senderUserId.rawId());
+                values.put(HistoryRerequestTable.COLUMN_TIMESTAMP, System.currentTimeMillis());
+                db.insertWithOnConflict(HistoryRerequestTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+            } else {
+                db.updateWithOnConflict(HistoryRerequestTable.TABLE_NAME, values,
+                        HistoryRerequestTable.COLUMN_SENDER_USER_ID + "=? AND " + HistoryRerequestTable.COLUMN_HISTORY_RESEND_ID + "=?",
+                        new String[]{senderUserId.rawId(), historyId},
+                        SQLiteDatabase.CONFLICT_ABORT);
+            }
+        } catch (SQLException ex) {
+            Log.e("PostsDb.setHistoryResendRerequestCount: failed");
             throw ex;
         }
     }

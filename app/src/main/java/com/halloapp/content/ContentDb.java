@@ -1031,6 +1031,12 @@ public class ContentDb {
         });
     }
 
+    public void setHistoryResendRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String historyId, int count) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.setHistoryResendRerequestCount(groupId, senderUserId, historyId, count);
+        });
+    }
+
     public void setOutboundPostRerequestCount(@NonNull UserId rerequestorUserId, @NonNull String postId, int count) {
         databaseWriteExecutor.execute(() -> {
             postsDb.setOutboundRerequestCount(rerequestorUserId, postId, PostsTable.TABLE_NAME, count);
@@ -1121,12 +1127,19 @@ public class ContentDb {
         return messagesDb.getMessageRerequestCount(chatId, senderUserId, messageId);
     }
 
+    @WorkerThread
     public int getPostRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String postId) {
         return postsDb.getPostRerequestCount(groupId, senderUserId, postId);
     }
 
-    public int getCommentRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String postId) {
-        return postsDb.getCommentRerequestCount(groupId, senderUserId, postId);
+    @WorkerThread
+    public int getCommentRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String commentId) {
+        return postsDb.getCommentRerequestCount(groupId, senderUserId, commentId);
+    }
+
+    @WorkerThread
+    public int getHistoryResendRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String historyId) {
+        return postsDb.getHistoryResendRerequestCount(groupId, senderUserId, historyId);
     }
 
     @WorkerThread

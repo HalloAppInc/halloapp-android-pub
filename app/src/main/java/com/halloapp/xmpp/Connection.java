@@ -193,6 +193,8 @@ public abstract class Connection {
 
     public abstract void sendGroupCommentRerequest(final @NonNull UserId senderUserId, final @NonNull GroupId groupId, final @NonNull String contentId, boolean senderStateIssue);
 
+    public abstract void sendGroupFeedHistoryRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String historyId, boolean senderStateIssue);
+
     public abstract void sendAck(final @NonNull String id);
 
     public abstract void sendPostSeenReceipt(@NonNull UserId senderUserId, @NonNull String postId);

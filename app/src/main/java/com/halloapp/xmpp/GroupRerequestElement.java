@@ -13,14 +13,16 @@ public class GroupRerequestElement {
     public final UserId originalSender;
     public final GroupId groupId;
     public final boolean senderStateIssue;
+    public final GroupFeedRerequest.ContentType contentType;
     public final int rerequestCount;
 
-    public GroupRerequestElement(UserId originalSender, GroupId groupId, String contentId, boolean senderStateIssue, int rerequestCount) {
+    public GroupRerequestElement(UserId originalSender, GroupId groupId, String contentId, boolean senderStateIssue, GroupFeedRerequest.ContentType contentType, int rerequestCount) {
         this.id = RandomId.create();
         this.contentId = contentId;
         this.originalSender = originalSender;
         this.groupId = groupId;
         this.senderStateIssue = senderStateIssue;
+        this.contentType = contentType;
         this.rerequestCount = rerequestCount;
     }
 
@@ -28,7 +30,8 @@ public class GroupRerequestElement {
         GroupFeedRerequest.Builder builder = GroupFeedRerequest.newBuilder()
                 .setId(contentId)
                 .setGid(groupId.rawId())
-                .setRerequestType(senderStateIssue ? GroupFeedRerequest.RerequestType.SENDER_STATE : GroupFeedRerequest.RerequestType.PAYLOAD);
+                .setRerequestType(senderStateIssue ? GroupFeedRerequest.RerequestType.SENDER_STATE : GroupFeedRerequest.RerequestType.PAYLOAD)
+                .setContentType(contentType);
 
         return Msg.newBuilder()
                 .setId(id)

@@ -796,6 +796,8 @@ public class MainConnectionObserver extends Connection.Observer {
             UserId publisherUserId = new UserId(Long.toString(publisherUid));
             GroupId groupId = new GroupId(historyResend.getGid());
             if (encrypted != null && encrypted.size() > 0) {
+                boolean senderStateIssue = false;
+                String errorMessage;
                 if (historyResend.hasSenderState()) {
                     SenderStateWithKeyInfo senderStateWithKeyInfo = historyResend.getSenderState();
 
@@ -819,6 +821,7 @@ public class MainConnectionObserver extends Connection.Observer {
                         encryptedKeyStore.setPeerGroupSigningKey(groupId, publisherUserId, publicSignatureKey);
                     } catch (CryptoException e) {
                         Log.e("Failed to decrypt sender state for " + ProtoPrinter.toString(historyResend), e);
+                        senderStateIssue = true;
                     } catch (InvalidProtocolBufferException e) {
                         Log.e("Failed to parse sender state for " + ProtoPrinter.toString(historyResend), e);
                     }
@@ -831,6 +834,24 @@ public class MainConnectionObserver extends Connection.Observer {
                     groupsApi.handleGroupHistoryPayload(groupHistoryPayload, groupId);
                 } catch (CryptoException e) {
                     Log.e("Failed to decrypt history resend", e);
+
+                    errorMessage = e.getMessage();
+                    Log.sendErrorReport("Group history decryption failed: " + errorMessage);
+                    // TODO(jack): Stats
+//                    stats.reportGroupDecryptError(errorMessage, true, senderPlatform, senderVersion);
+
+                    Log.i("Rerequesting history resend " + ackId);
+                    ContentDb contentDb = ContentDb.getInstance();
+                    int count;
+                    count = contentDb.getHistoryResendRerequestCount(groupId, publisherUserId, ackId);
+                    count += 1;
+                    contentDb.setHistoryResendRerequestCount(groupId, publisherUserId, ackId, count);
+                    if (senderStateIssue) {
+                        Log.i("Tearing down session because of sender state issue");
+                        SignalSessionManager.getInstance().tearDownSession(publisherUserId);
+                    }
+                    GroupFeedSessionManager.getInstance().sendHistoryRerequest(publisherUserId, groupId, ackId, senderStateIssue);
+
                 } catch (InvalidProtocolBufferException e) {
                     Log.e("Failed to parse history resend", e);
                 }

@@ -93,6 +93,10 @@ public class GroupFeedSessionManager {
         connection.sendGroupCommentRerequest(senderUserId, groupId, commentId, senderStateIssue);
     }
 
+    public void sendHistoryRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String historyId, boolean senderStateIssue) {
+        connection.sendGroupFeedHistoryRerequest(senderUserId, groupId, historyId, senderStateIssue);
+    }
+
     public SenderState getSenderState(GroupId groupId) throws CryptoException {
         try (AutoCloseLock autoCloseLock = acquireLock(groupId, null)) {
             return groupFeedKeyManager.getSenderState(groupId);
