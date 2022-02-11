@@ -486,9 +486,6 @@ public class ContentComposerActivity extends HalloActivity {
         bottomEditText.setOnFocusChangeListener((view, hasFocus) -> {
             updateMediaButtons();
             mediaVerticalScrollView.setShouldScrollToBottom(hasFocus);
-
-            int destinationsCount =  viewModel.destinationList.getValue() != null ?  viewModel.destinationList.getValue().size() : 0;
-            destinationListView.setVisibility(!hasFocus && destinationsCount > 0 ? View.VISIBLE : View.GONE);
         });
 
         if (replyPostId != null || (!isMediaPost && !voiceNotePost)) {
@@ -676,7 +673,7 @@ public class ContentComposerActivity extends HalloActivity {
         }
 
         if (destinations != null && destinations.size() > 0) {
-            destinationListView.setVisibility(View.VISIBLE);
+            findViewById(R.id.destination_list_container).setVisibility(View.VISIBLE);
             destinationListView.setOnRemoveListener(viewModel::onDestinationRemoved);
             viewModel.destinationList.observe(this, destinationList -> {
                 destinationListView.submitList(destinationList);
