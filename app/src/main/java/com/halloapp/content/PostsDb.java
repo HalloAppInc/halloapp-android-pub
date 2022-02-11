@@ -1764,6 +1764,24 @@ class PostsDb {
     }
 
     @WorkerThread
+    byte[] getHistoryResendPayload(@NonNull GroupId groupId, @NonNull String historyResendId) {
+        Log.i("PostsDb.getHistoryResendPayload: groupId=" + groupId + " historyResendId=" + historyResendId);
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (Cursor cursor = db.query(HistoryResendPayloadTable.TABLE_NAME,
+                new String[] {HistoryResendPayloadTable._ID, HistoryResendPayloadTable.COLUMN_GROUP_ID, HistoryResendPayloadTable.COLUMN_HISTORY_RESEND_ID, HistoryResendPayloadTable.COLUMN_PAYLOAD},
+                HistoryResendPayloadTable.COLUMN_GROUP_ID + "=? AND " + HistoryResendPayloadTable.COLUMN_HISTORY_RESEND_ID + "=?",
+                new String[] {groupId.rawId(), historyResendId},
+                null,
+                null,
+                null)) {
+            if (cursor.moveToNext()) {
+                return cursor.getBlob(3);
+            }
+        }
+        return null;
+    }
+
+    @WorkerThread
     long getLastSeenCommentRowId(@NonNull String postId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final String sql =

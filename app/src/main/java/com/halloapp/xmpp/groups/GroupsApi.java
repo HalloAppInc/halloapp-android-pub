@@ -328,25 +328,29 @@ public class GroupsApi {
             for (MemberDetails memberDetails : groupHistoryPayload.getMemberDetailsList()) {
                 // TODO(jack): Verify that identity key matches one provided
                 UserId peerUserId = new UserId(Long.toString(memberDetails.getUid()));
-                GroupFeedHistory.Builder builder = GroupFeedHistory.newBuilder();
-                builder.setGid(groupId.rawId());
+                sendGroupHistoryResend(groupId, peerUserId, id, groupFeedItemsPayload);
+            }
+        }
+    }
 
-                try {
-                    SignalSessionSetupInfo signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(peerUserId);
-                    byte[] encryptedPayload = SignalSessionManager.getInstance().encryptMessage(groupFeedItemsPayload, peerUserId);
-                    builder.setEncPayload(ByteString.copyFrom(encryptedPayload));
-                    if (signalSessionSetupInfo != null) {
-                        builder.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
-                        if (signalSessionSetupInfo.oneTimePreKeyId != null) {
-                            builder.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
-                        }
-                    }
+    public void sendGroupHistoryResend(GroupId groupId, UserId peerUserId, String id, byte[] groupFeedItemsPayload) {
+        GroupFeedHistory.Builder builder = GroupFeedHistory.newBuilder();
+        builder.setGid(groupId.rawId());
 
-                    connection.sendGroupHistory(builder.build(), id, peerUserId);
-                } catch (Exception e) {
-                    Log.e("Failed to encrypt history resend to " + peerUserId, e);
+        try {
+            SignalSessionSetupInfo signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(peerUserId);
+            byte[] encryptedPayload = SignalSessionManager.getInstance().encryptMessage(groupFeedItemsPayload, peerUserId);
+            builder.setEncPayload(ByteString.copyFrom(encryptedPayload));
+            if (signalSessionSetupInfo != null) {
+                builder.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
+                if (signalSessionSetupInfo.oneTimePreKeyId != null) {
+                    builder.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
                 }
             }
+
+            connection.sendGroupHistory(builder.build(), id, peerUserId);
+        } catch (Exception e) {
+            Log.e("Failed to encrypt history resend to " + peerUserId, e);
         }
     }
 }

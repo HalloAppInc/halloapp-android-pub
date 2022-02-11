@@ -1063,6 +1063,10 @@ public class ContentDb {
         });
     }
 
+    public byte[] getHistoryResendPayload(@NonNull GroupId groupId, @NonNull String historyResendId) {
+        return postsDb.getHistoryResendPayload(groupId, historyResendId);
+    }
+
     public void setMessageTransferred(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         databaseWriteExecutor.execute(() -> {
             messagesDb.setMessageTransferred(chatId, senderUserId, messageId);

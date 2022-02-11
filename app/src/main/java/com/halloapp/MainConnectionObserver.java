@@ -37,8 +37,10 @@ import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.clients.GroupHistoryPayload;
 import com.halloapp.proto.clients.SenderKey;
 import com.halloapp.proto.clients.SenderState;
+import com.halloapp.proto.server.GroupFeedItems;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.IdentityKey;
+import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.SenderStateWithKeyInfo;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.DeleteAccountActivity;
@@ -452,6 +454,47 @@ public class MainConnectionObserver extends Connection.Observer {
         });
     }
 
+    @Override
+    public void onGroupFeedHistoryRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String historyId, boolean senderStateIssue, @NonNull String stanzaId) {
+        bgWorkers.execute(() -> {
+            signalSessionManager.tearDownSession(senderUserId);
+            int rerequestCount = contentDb.getHistoryResendRerequestCount(groupId, senderUserId, historyId);
+            if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
+                Log.w("Reached rerequest limit for comment " + historyId);
+                checkIdentityKey();
+            } else {
+                contentDb.setHistoryResendRerequestCount(groupId, senderUserId, historyId, rerequestCount + 1);
+                byte[] payload = contentDb.getHistoryResendPayload(groupId, historyId);
+
+                if (payload == null) {
+                    Log.w("Could not find payload matching " + historyId + " for group " + groupId);
+                } else {
+                    try {
+                        GroupFeedItems groupFeedItems = GroupFeedItems.parseFrom(payload);
+                        groupsApi.sendGroupHistoryResend(groupId, senderUserId, historyId, payload);
+                    } catch (InvalidProtocolBufferException e) {
+                        try {
+                            GroupHistoryPayload groupHistoryPayload = GroupHistoryPayload.parseFrom(payload);
+                            byte[] encPayload = SignalSessionManager.getInstance().encryptMessage(payload, senderUserId);
+                            HistoryResend.Builder builder = HistoryResend.newBuilder()
+                                    .setGid(groupId.rawId())
+                                    .setId(historyId)
+                                    .setPayload(ByteString.copyFrom(payload)) // TODO(jack): Remove once plaintext sending is off
+                                    .setEncPayload(ByteString.copyFrom(encPayload));
+                            connection.sendRerequestedHistoryResend(builder, senderUserId);
+                        } catch (InvalidProtocolBufferException e2) {
+                            Log.e("Unrecognized group history payload for rerequest", e2);
+                        } catch (CryptoException e2) {
+                            Log.e("Failed to encrypt group history payload", e2);
+                        }
+                    }
+                }
+
+                connection.sendAck(stanzaId);
+            }
+        });
+    }
+
     private void checkIdentityKey() {
         Log.i("Verifying identity key matches");
         connection.downloadKeys(new UserId(me.getUser()))
@@ -636,7 +679,8 @@ public class MainConnectionObserver extends Connection.Observer {
             if (historyResend == null) {
                 connection.sendAck(ackId);
             } else if (sender.isMe()) {
-                // TODO(jack): Handle for admin's own content
+                Log.i("User is originator; ignoring history resend");
+                connection.sendAck(ackId);
             } else if (shouldIgnoreHistoryResend) {
                 Log.i("User is in added list; ignoring history resend");
                 connection.sendAck(ackId);

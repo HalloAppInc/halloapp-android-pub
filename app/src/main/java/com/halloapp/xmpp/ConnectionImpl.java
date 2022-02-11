@@ -745,6 +745,39 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public void sendRerequestedHistoryResend(@NonNull HistoryResend.Builder historyResend, @NonNull UserId userId) {
+        GroupId groupId = new GroupId(historyResend.getGid());
+        SignalSessionSetupInfo signalSessionSetupInfo = null;
+        try {
+            signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(userId);
+        } catch (Exception e) {
+            Log.e("connection: sendRerequestedHistoryResend failed to get session setup info for group history resend rerequest", e);
+            return;
+        }
+
+        SenderStateWithKeyInfo.Builder senderStateWithKeyInfoBuilder = SenderStateWithKeyInfo.newBuilder();
+        try {
+            SenderState senderState = GroupFeedSessionManager.getInstance().getSenderState(groupId);
+            byte[] encSenderState = SignalSessionManager.getInstance().encryptMessage(senderState.toByteArray(), userId);
+            senderStateWithKeyInfoBuilder.setEncSenderState(ByteString.copyFrom(encSenderState));
+            if (signalSessionSetupInfo != null) {
+                senderStateWithKeyInfoBuilder.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
+                if (signalSessionSetupInfo.oneTimePreKeyId != null) {
+                    senderStateWithKeyInfoBuilder.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
+                }
+            }
+        } catch (CryptoException e) {
+            Log.e("connection: sendRerequestedHistoryResend failed to encrypt sender state for group history resend rerequest", e);
+        }
+        historyResend.setSenderState(senderStateWithKeyInfoBuilder);
+
+        executor.execute(() -> {
+            Msg msg = Msg.newBuilder().setId(historyResend.getId()).setHistoryResend(historyResend).build();
+            sendMsgInternal(msg, () -> Log.i("group history resend rerequest acked " + historyResend.getId()));
+        });
+    }
+
+    @Override
     public void retractPost(@NonNull String postId) {
         FeedUpdateIq requestIq = new FeedUpdateIq(FeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null, null));
         sendIqRequestAsync(requestIq, true)
@@ -1504,9 +1537,15 @@ public class ConnectionImpl extends Connection {
 
                     String contentId = groupFeedRerequest.getId();
                     String rawGroupId = groupFeedRerequest.getGid();
+                    GroupId groupId = new GroupId(rawGroupId);
                     boolean senderStateIssue = GroupFeedRerequest.RerequestType.SENDER_STATE == groupFeedRerequest.getRerequestType();
+                    boolean historicalContent = GroupFeedRerequest.ContentType.HISTORY_RESEND == groupFeedRerequest.getContentType();
 
-                    connectionObservers.notifyGroupFeedRerequest(userId, new GroupId(rawGroupId), contentId, senderStateIssue, msg.getId());
+                    if (historicalContent) {
+                        connectionObservers.notifyGroupFeedHistoryRerequest(userId, groupId, contentId, senderStateIssue, msg.getId());
+                    } else {
+                        connectionObservers.notifyGroupFeedRerequest(userId, groupId, contentId, senderStateIssue, msg.getId());
+                    }
                     handled = true;
                 } else if (msg.hasRequestLogs()) {
                     Log.i("connection: got log request message " + ProtoPrinter.toString(msg));
@@ -1559,12 +1598,14 @@ public class ConnectionImpl extends Connection {
                             GroupFeedHistory groupFeedHistory = msg.getGroupFeedHistory();
                             ByteString encrypted = groupFeedHistory.getEncPayload(); // TODO(jack): Verify plaintext matches if present
                             if (encrypted != null && encrypted.size() > 0) {
+                                GroupId groupId = new GroupId(groupFeedHistory.getGid());
                                 UserId peerUserId = new UserId(Long.toString(msg.getFromUid()));
 
                                 byte[] identityKeyBytes = groupFeedHistory.getPublicKey().toByteArray();
                                 PublicEdECKey identityKey = identityKeyBytes == null || identityKeyBytes.length == 0 ? null : new PublicEdECKey(identityKeyBytes);
                                 SignalSessionSetupInfo signalSessionSetupInfo = new SignalSessionSetupInfo(identityKey, groupFeedHistory.getOneTimePreKeyId());
 
+                                String errorMessage;
                                 try {
                                     byte[] decrypted = SignalSessionManager.getInstance().decryptMessage(encrypted.toByteArray(), peerUserId, signalSessionSetupInfo);
                                     GroupFeedItems groupFeedItems = GroupFeedItems.parseFrom(decrypted);
@@ -1580,6 +1621,19 @@ public class ConnectionImpl extends Connection {
                                     processGroupFeedItems(outList, msg.getId());
                                 } catch (CryptoException e) {
                                     Log.e("Failed to decrypt group feed history", e);
+                                    SignalSessionManager.getInstance().tearDownSession(peerUserId);
+                                    errorMessage = e.getMessage();
+                                    Log.sendErrorReport("Group history decryption failed: " + errorMessage);
+                                    // TODO(jack): Stats
+//                                    stats.reportGroupDecryptError(errorMessage, true, senderPlatform, senderVersion);
+
+                                    Log.i("Rerequesting group history " + msg.getId());
+                                    ContentDb contentDb = ContentDb.getInstance();
+                                    int count;
+                                    count = contentDb.getHistoryResendRerequestCount(groupId, peerUserId, msg.getId());
+                                    count += 1;
+                                    contentDb.setHistoryResendRerequestCount(groupId, peerUserId, msg.getId(), count);
+                                    GroupFeedSessionManager.getInstance().sendHistoryRerequest(peerUserId, groupId, msg.getId(), false);
                                     sendAck(msg.getId());
                                 } catch (InvalidProtocolBufferException e) {
                                     Log.e("Failed to parse group feed items for group feed history", e);
@@ -1831,6 +1885,11 @@ public class ConnectionImpl extends Connection {
 
             boolean senderStateIssue = false;
             for (GroupFeedItem item : items) {
+                // TODO(jack): Skip items from server based on server prop for rollout progress
+//                if (item.getAction().equals(GroupFeedItem.Action.SHARE)) {
+//                    Log.d("Skipping item from server: " + ProtoPrinter.toString(item));
+//                    continue;
+//                }
                 String senderAgent = item.getSenderClientVersion();
                 String senderPlatform = senderAgent == null ? "" : senderAgent.contains("Android") ? "android" : senderAgent.contains("iOS") ? "ios" : "";
                 String senderVersion = senderPlatform.equals("android") ? senderAgent.split("Android")[1] : senderPlatform.equals("ios") ? senderAgent.split("iOS")[1] : "";

@@ -86,6 +86,7 @@ public abstract class Connection {
         public void onIncomingMessagePlayedReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onMessageRerequest(@NonNull UserId senderUserId, @NonNull String messageId, @NonNull PublicEdECKey peerIdentityKey, @Nullable Integer otpkId, @NonNull byte[] sessionSetupKey, @NonNull byte[] messageEphemeralKey, @NonNull String stanzaId) {}
         public void onGroupFeedRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {}
+        public void onGroupFeedHistoryRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String historyId, boolean senderStateIssue, @NonNull String stanzaId) {}
         public void onContactsChanged(@NonNull List<ContactInfo> contacts, @NonNull List<String> contactHashes, @NonNull String ackId) {}
         public void onInvitesAccepted(@NonNull List<ContactInfo> contacts, @NonNull String ackId) {}
         public void onWhisperKeysMessage(@NonNull WhisperKeysMessage message, @NonNull String ackId) {}
@@ -169,6 +170,8 @@ public abstract class Connection {
     public abstract void sendPost(final @NonNull Post post);
 
     public abstract void sendRerequestedGroupPost(@NonNull Post post, @NonNull UserId userId);
+
+    public abstract void sendRerequestedHistoryResend(@NonNull HistoryResend.Builder historyResend, @NonNull UserId userId);
 
     public abstract void retractPost(final @NonNull String postId);
 

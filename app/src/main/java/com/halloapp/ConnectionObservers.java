@@ -237,6 +237,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyGroupFeedHistoryRerequest(@NonNull UserId peerUserId, @NonNull GroupId groupId, @NonNull String historyId, boolean senderStateIssue, @NonNull String stanzaId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onGroupFeedHistoryRerequest(peerUserId, groupId, historyId, senderStateIssue, stanzaId);
+            }
+        }
+    }
+
     public void notifyContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull List<String> contactHashes, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
