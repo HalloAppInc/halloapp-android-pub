@@ -309,6 +309,10 @@ public class CallManager {
         if (tm != null) {
             Bundle extras = new Bundle();
             Contact contact = ContactsDb.getInstance().getContact(peerUid);
+            if (contact.normalizedPhone == null) {
+                finishStartCall();
+                return;
+            }
             Bundle innerExtras = new Bundle();
             innerExtras.putString(HaTelecomConnectionService.EXTRA_CALL_ID, callId);
             innerExtras.putString(HaTelecomConnectionService.EXTRA_PEER_UID, peerUid.rawId());
