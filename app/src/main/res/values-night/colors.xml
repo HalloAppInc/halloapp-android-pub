@@ -34,7 +34,7 @@
     <color name="old_comments_indicator">#33FFFFFF</color>
     <color name="avatars_footer_divider">#292929</color>
     <color name="thick_progress_spinner">#9B9B9B</color>
-    <color name="message_highlight">#BBFFF81B</color>
+    <color name="message_highlight">#4F4F4F</color>
     <color name="comment_highlight">@color/color_secondary</color>
     <color name="group_bg_picker_background">@android:color/black</color>
     <color name="post_card_color_background">@color/black_40</color>
