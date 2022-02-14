@@ -73,7 +73,7 @@
             android:layout_weight="1"
             android:textSize="17sp"
             android:textColor="@color/color_secondary"
-            android:text="@string/reshare_post"/>
+            android:text="@string/share_externally"/>
 
     </LinearLayout>
 

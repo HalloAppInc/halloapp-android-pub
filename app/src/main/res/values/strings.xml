@@ -780,6 +780,8 @@
     <string name="no_longer_group_member">You\'re no longer a member of this group</string>
     <!-- Button for user to re-share old posts which have expired -->
     <string name="reshare_post">Reshare post</string>
+    <!-- Button for sharing a post outside of HalloApp -->
+    <string name="share_externally">Share externally</string>
     <!-- Button for going to utility for viewing expired posts -->
     <string name="archived_posts">Archive</string>
     <!-- Title of utility for viewing expired posts -->
