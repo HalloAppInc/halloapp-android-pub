@@ -1328,6 +1328,7 @@ public class CallManager {
         if (callType == CallType.VIDEO) {
             msgType = CallMessage.Usage.MISSED_VIDEO_CALL;
         }
+        Log.i("CallManager: storeMissedCallMsg callId: " + callId + " userId: " + userId + " " + callType);
         final Message message = new CallMessage(0,
                 userId,
                 userId,
