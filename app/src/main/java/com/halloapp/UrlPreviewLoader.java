@@ -37,10 +37,7 @@ public class UrlPreviewLoader extends ViewDataLoader<View, UrlPreview, String> {
             if (TextUtils.isEmpty(url)) {
                 return null;
             }
-            String userAgent = Constants.USER_AGENT;
-            if (url.toLowerCase().contains("twitter.com")) {
-                userAgent = Constants.USER_AGENT + " (url bot)";
-            }
+            String userAgent = Constants.URL_PREVIEW_USER_AGENT;
             Document document = Jsoup.connect(url).userAgent(userAgent).get();
             if (document == null) {
                 return null;
