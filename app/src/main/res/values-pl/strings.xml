@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Strona główna"</string>
     <string name="title_messages">"Rozmowy"</string>
@@ -15,7 +16,7 @@
     <string name="message_notifications_channel_name">"Powiadomienia o wiadomościach"</string>
     <string name="critical_notifications_channel_name">"Krytyczne alerty aplikacji"</string>
     <string name="invite_notifications_channel_name">"Powiadomienia o zaproszeniach"</string>
-    <string name="invite_notification_text">"Użytkownik %s właśnie zaakceptował twoje zaproszenie do HalloApp &#127881;"</string>
+    <string name="invite_notification_text">"Użytkownik %s właśnie zaakceptował twoje zaproszenie do HalloApp &#x1f389;"</string>
     <string name="me">"Ja"</string>
     <string name="you">"ty"</string>
     <string name="camera_post">"Aparat"</string>
@@ -45,7 +46,7 @@ Obowiązują opłaty operatora sieci."</string>
     <string name="new_message">"Nowa wiadomość"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s jest na HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s korzysta z HalloApp! &#127881;"</string>
+    <string name="new_chat_name_placeholder">"%s korzysta z HalloApp! &#x1f389;"</string>
     <string name="posts_empty">"Tutaj będą pojawiać się twoje posty"</string>
     <string name="posts_exchange_numbers">"Aby się połączyć, musicie wymienić się numerami telefonów"</string>
     <string name="home_page_empty">"Tutaj będą pojawiać się posty twoich kontaktów"</string>
@@ -1192,6 +1193,9 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Text shown in chat view telling user they had a missed video call -->
     <string name="log_missed_video_call">"Missed video call"</string>
+
+    <!-- Button for sharing a post outside of HalloApp -->
+    <string name="share_externally">"Share externally"</string>
     <string name="composer_sharing_post">"Udostępnianie %s"</string>
     <string name="composer_sharing_group_post">"Udostępnianie grupie"</string>
     <string name="invite_via_link">"Zaproś za pomocą łącza"</string>

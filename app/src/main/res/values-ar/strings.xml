@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"هالوآب"</string>
     <string name="title_home">"الرئيسية"</string>
     <string name="title_messages">"الدردشات"</string>
@@ -15,7 +16,7 @@
     <string name="message_notifications_channel_name">"إشعارات الرسائل"</string>
     <string name="critical_notifications_channel_name">"تنبيهات التطبيق الهامة"</string>
     <string name="invite_notifications_channel_name">"إشعارات الدعوة"</string>
-    <string name="invite_notification_text">"%s قبل دعوتك للانضمام إلى هالوآب &#127881;"</string>
+    <string name="invite_notification_text">"%s قبل دعوتك للانضمام إلى هالوآب &#x1f389;"</string>
     <string name="me">"أنا"</string>
     <string name="you">"أنت"</string>
     <string name="camera_post">"الكاميرا"</string>
@@ -47,7 +48,7 @@
     <string name="new_message">"رسالة جديدة"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s من مستخدمي هالوآب."</string>
-    <string name="new_chat_name_placeholder">"%s يستخدم هالوآب!&#127881;"</string>
+    <string name="new_chat_name_placeholder">"%s يستخدم هالوآب!&#x1f389;"</string>
     <string name="posts_empty">"ستظهر منشوراتك هنا"</string>
     <string name="posts_exchange_numbers">"للتواصل، يجب تبادل أرقام الهاتف"</string>
     <string name="home_page_empty">"ستظهر منشورات جهات اتصالك هنا"</string>
@@ -1090,12 +1091,10 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="ongoing_call_notifications_channel_name">"إشعارات المكالمات الجارية"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <!-- Fuzzy -->
-    <string name="ringing">"رنين"</string>
+    <string name="ringing">"رنين…"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <!-- Fuzzy -->
-    <string name="calling">"جارٍ الاتصال"</string>
+    <string name="calling">"جارٍ الاتصال…"</string>
 
     <!-- The title of the notificaiton for incoming calls -->
     <string name="incoming_call_notification_title">"مكالمة واردة"</string>
@@ -1137,7 +1136,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="refresh_contacts_failed">"تعذر إعادة تحميل جهات الاتصال"</string>
 
     <!-- Label for voice post option -->
-    <!-- Fuzzy -->
     <string name="voice_post">"صوت"</string>
 
     <!-- Audio post composer title -->
@@ -1159,8 +1157,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="not_in_address_book_alert">"هذا الشخص ليس في دفتر عناوينك"</string>
 
     <!-- Text shown in chat view telling user they had a missed call -->
-    <!-- Fuzzy -->
-    <string name="log_missed_call">"مكالمة فائتة"</string>
+    <string name="log_missed_call">"مكالمة صوتية فائتة"</string>
 
     <!-- Text shown in chat view telling user they had a voice call -->
     <string name="log_voice_call">"مكالمة صوتية"</string>
@@ -1264,6 +1261,9 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Text shown in chat view telling user they had a missed video call -->
     <string name="log_missed_video_call">"مكالمة فيديو فائتة"</string>
+
+    <!-- Button for sharing a post outside of HalloApp -->
+    <string name="share_externally">"مشاركة خارج هالوآب"</string>
     <string name="composer_sharing_post">"المشاركة مع %s"</string>
     <string name="composer_sharing_group_post">"المشاركة مع المجموعة"</string>
     <string name="invite_via_link">"Invite via link"</string>

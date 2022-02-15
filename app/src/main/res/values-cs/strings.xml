@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Domů"</string>
     <string name="title_messages">"Konverzace"</string>
@@ -15,7 +16,7 @@
     <string name="message_notifications_channel_name">"Oznámení zpráv"</string>
     <string name="critical_notifications_channel_name">"Kritická upozornění aplikace"</string>
     <string name="invite_notifications_channel_name">"Upozornění na pozvání"</string>
-    <string name="invite_notification_text">"%s právě přijal/a vaše pozvání a přidává se k HalloApp &#127881;"</string>
+    <string name="invite_notification_text">"%s právě přijal/a vaše pozvání a přidává se k HalloApp &#x1f389;"</string>
     <string name="me">"Já"</string>
 
     <!-- Fuzzy -->
@@ -47,7 +48,7 @@ Může zahrnovat cenu doručení."</string>
     <string name="new_message">"Nová zpráva"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s je na HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s používá HalloApp! &#127881;"</string>
+    <string name="new_chat_name_placeholder">"%s používá HalloApp! &#x1f389;"</string>
     <string name="posts_empty">"Zde se objeví vaše příspěvky"</string>
     <string name="posts_exchange_numbers">"Abyste se spojili, musíte si vyměnit telefonní čísla"</string>
     <string name="home_page_empty">"Zde se objeví příspěvky od vašich kontaktů"</string>
@@ -1186,6 +1187,9 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Text shown in chat view telling user they had a missed video call -->
     <string name="log_missed_video_call">"Missed video call"</string>
+
+    <!-- Button for sharing a post outside of HalloApp -->
+    <string name="share_externally">"Share externally"</string>
     <string name="composer_sharing_post">"Sdílení s %s"</string>
     <string name="composer_sharing_group_post">"Sharing with group"</string>
     <string name="invite_via_link">"Invite via link"</string>
