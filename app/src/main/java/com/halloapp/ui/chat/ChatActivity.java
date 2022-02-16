@@ -1324,9 +1324,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         switch (requestCode) {
             case REQUEST_CODE_COMPOSE: {
                 if (resultCode == RESULT_OK) {
-                    replyPostId = null;
-                    replyPostMediaIndex = -1;
-                    updatePostReply(null);
+                    onMessageSent();
                 }
                 break;
             }
