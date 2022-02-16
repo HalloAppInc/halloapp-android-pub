@@ -142,7 +142,7 @@ public class HACustomFab extends LinearLayout {
         fab.setDrawable(iconRes);
         fab.setLabel(getResources().getString(stringRes));
         fab.setVisibility(View.GONE);
-        fab.getFab().setOnClickListener(v -> {
+        fab.setOnClickListener(v -> {
             if (onActionSelectedListener != null) {
                 onActionSelectedListener.onActionSelected(id);
             }

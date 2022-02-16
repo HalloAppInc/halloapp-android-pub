@@ -335,7 +335,6 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 }
                 haFabView.addSubFab(R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
                 haFabView.addSubFab(R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
-                haFabView.addTitle(R.string.new_post);
             } else {
                 haFabView.hide();
             }

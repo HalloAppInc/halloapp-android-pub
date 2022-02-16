@@ -34,6 +34,12 @@ public class FabWithLabelView extends LinearLayout {
         init();
     }
 
+    @Override
+    public void setOnClickListener(@Nullable OnClickListener l) {
+        super.setOnClickListener(l);
+        fabView.setOnClickListener(l);
+    }
+
     private void init() {
         inflate(getContext(), R.layout.view_fab_with_label, this);
 

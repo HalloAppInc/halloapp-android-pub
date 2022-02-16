@@ -194,7 +194,6 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
         }
         fabView.addSubFab(R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
         fabView.addSubFab(R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
-        fabView.addTitle(R.string.new_post);
 
         viewModel.members.getLiveData().observe(this, members -> {
             if (members == null) {
