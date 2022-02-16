@@ -41,4 +41,15 @@ public interface ExternalSharePostOrBuilder extends
    * @return The expiresInSeconds.
    */
   long getExpiresInSeconds();
+
+  /**
+   * <code>.server.OgTagInfo og_tag_info = 5;</code>
+   * @return Whether the ogTagInfo field is set.
+   */
+  boolean hasOgTagInfo();
+  /**
+   * <code>.server.OgTagInfo og_tag_info = 5;</code>
+   * @return The ogTagInfo.
+   */
+  com.halloapp.proto.server.OgTagInfo getOgTagInfo();
 }

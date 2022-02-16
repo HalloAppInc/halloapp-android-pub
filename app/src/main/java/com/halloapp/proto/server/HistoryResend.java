@@ -18,6 +18,8 @@ public  final class HistoryResend extends
     encPayload_ = com.google.protobuf.ByteString.EMPTY;
     senderStateBundles_ = emptyProtobufList();
     audienceHash_ = com.google.protobuf.ByteString.EMPTY;
+    senderLogInfo_ = "";
+    senderClientVersion_ = "";
   }
   public static final int GID_FIELD_NUMBER = 1;
   private java.lang.String gid_;
@@ -408,6 +410,140 @@ public  final class HistoryResend extends
   private void clearAudienceHash() {
     
     audienceHash_ = getDefaultInstance().getAudienceHash();
+  }
+
+  public static final int SENDER_LOG_INFO_FIELD_NUMBER = 16;
+  private java.lang.String senderLogInfo_;
+  /**
+   * <pre>
+   * Use &gt;=16 for temporary elements since 1-15 encode smaller
+   * </pre>
+   *
+   * <code>string sender_log_info = 16;</code>
+   * @return The senderLogInfo.
+   */
+  @java.lang.Override
+  public java.lang.String getSenderLogInfo() {
+    return senderLogInfo_;
+  }
+  /**
+   * <pre>
+   * Use &gt;=16 for temporary elements since 1-15 encode smaller
+   * </pre>
+   *
+   * <code>string sender_log_info = 16;</code>
+   * @return The bytes for senderLogInfo.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getSenderLogInfoBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(senderLogInfo_);
+  }
+  /**
+   * <pre>
+   * Use &gt;=16 for temporary elements since 1-15 encode smaller
+   * </pre>
+   *
+   * <code>string sender_log_info = 16;</code>
+   * @param value The senderLogInfo to set.
+   */
+  private void setSenderLogInfo(
+      java.lang.String value) {
+    value.getClass();
+  
+    senderLogInfo_ = value;
+  }
+  /**
+   * <pre>
+   * Use &gt;=16 for temporary elements since 1-15 encode smaller
+   * </pre>
+   *
+   * <code>string sender_log_info = 16;</code>
+   */
+  private void clearSenderLogInfo() {
+    
+    senderLogInfo_ = getDefaultInstance().getSenderLogInfo();
+  }
+  /**
+   * <pre>
+   * Use &gt;=16 for temporary elements since 1-15 encode smaller
+   * </pre>
+   *
+   * <code>string sender_log_info = 16;</code>
+   * @param value The bytes for senderLogInfo to set.
+   */
+  private void setSenderLogInfoBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    senderLogInfo_ = value.toStringUtf8();
+    
+  }
+
+  public static final int SENDER_CLIENT_VERSION_FIELD_NUMBER = 17;
+  private java.lang.String senderClientVersion_;
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 17;</code>
+   * @return The senderClientVersion.
+   */
+  @java.lang.Override
+  public java.lang.String getSenderClientVersion() {
+    return senderClientVersion_;
+  }
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 17;</code>
+   * @return The bytes for senderClientVersion.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getSenderClientVersionBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(senderClientVersion_);
+  }
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 17;</code>
+   * @param value The senderClientVersion to set.
+   */
+  private void setSenderClientVersion(
+      java.lang.String value) {
+    value.getClass();
+  
+    senderClientVersion_ = value;
+  }
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 17;</code>
+   */
+  private void clearSenderClientVersion() {
+    
+    senderClientVersion_ = getDefaultInstance().getSenderClientVersion();
+  }
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 17;</code>
+   * @param value The bytes for senderClientVersion to set.
+   */
+  private void setSenderClientVersionBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    senderClientVersion_ = value.toStringUtf8();
+    
   }
 
   public static com.halloapp.proto.server.HistoryResend parseFrom(
@@ -920,6 +1056,144 @@ public  final class HistoryResend extends
       return this;
     }
 
+    /**
+     * <pre>
+     * Use &gt;=16 for temporary elements since 1-15 encode smaller
+     * </pre>
+     *
+     * <code>string sender_log_info = 16;</code>
+     * @return The senderLogInfo.
+     */
+    @java.lang.Override
+    public java.lang.String getSenderLogInfo() {
+      return instance.getSenderLogInfo();
+    }
+    /**
+     * <pre>
+     * Use &gt;=16 for temporary elements since 1-15 encode smaller
+     * </pre>
+     *
+     * <code>string sender_log_info = 16;</code>
+     * @return The bytes for senderLogInfo.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSenderLogInfoBytes() {
+      return instance.getSenderLogInfoBytes();
+    }
+    /**
+     * <pre>
+     * Use &gt;=16 for temporary elements since 1-15 encode smaller
+     * </pre>
+     *
+     * <code>string sender_log_info = 16;</code>
+     * @param value The senderLogInfo to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderLogInfo(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setSenderLogInfo(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Use &gt;=16 for temporary elements since 1-15 encode smaller
+     * </pre>
+     *
+     * <code>string sender_log_info = 16;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSenderLogInfo() {
+      copyOnWrite();
+      instance.clearSenderLogInfo();
+      return this;
+    }
+    /**
+     * <pre>
+     * Use &gt;=16 for temporary elements since 1-15 encode smaller
+     * </pre>
+     *
+     * <code>string sender_log_info = 16;</code>
+     * @param value The bytes for senderLogInfo to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderLogInfoBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setSenderLogInfoBytes(value);
+      return this;
+    }
+
+    /**
+     * <pre>
+     * ex: "HalloApp/Android0.127"
+     * </pre>
+     *
+     * <code>string sender_client_version = 17;</code>
+     * @return The senderClientVersion.
+     */
+    @java.lang.Override
+    public java.lang.String getSenderClientVersion() {
+      return instance.getSenderClientVersion();
+    }
+    /**
+     * <pre>
+     * ex: "HalloApp/Android0.127"
+     * </pre>
+     *
+     * <code>string sender_client_version = 17;</code>
+     * @return The bytes for senderClientVersion.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSenderClientVersionBytes() {
+      return instance.getSenderClientVersionBytes();
+    }
+    /**
+     * <pre>
+     * ex: "HalloApp/Android0.127"
+     * </pre>
+     *
+     * <code>string sender_client_version = 17;</code>
+     * @param value The senderClientVersion to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderClientVersion(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setSenderClientVersion(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * ex: "HalloApp/Android0.127"
+     * </pre>
+     *
+     * <code>string sender_client_version = 17;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSenderClientVersion() {
+      copyOnWrite();
+      instance.clearSenderClientVersion();
+      return this;
+    }
+    /**
+     * <pre>
+     * ex: "HalloApp/Android0.127"
+     * </pre>
+     *
+     * <code>string sender_client_version = 17;</code>
+     * @param value The bytes for senderClientVersion to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderClientVersionBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setSenderClientVersionBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.HistoryResend)
   }
   @java.lang.Override
@@ -944,10 +1218,12 @@ public  final class HistoryResend extends
             com.halloapp.proto.server.SenderStateBundle.class,
             "senderState_",
             "audienceHash_",
+            "senderLogInfo_",
+            "senderClientVersion_",
           };
           java.lang.String info =
-              "\u0000\u0007\u0000\u0000\u0001\b\u0007\u0000\u0001\u0000\u0001\u0208\u0002\u0208" +
-              "\u0004\n\u0005\n\u0006\u001b\u0007\t\b\n";
+              "\u0000\t\u0000\u0000\u0001\u0011\t\u0000\u0001\u0000\u0001\u0208\u0002\u0208\u0004" +
+              "\n\u0005\n\u0006\u001b\u0007\t\b\n\u0010\u0208\u0011\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

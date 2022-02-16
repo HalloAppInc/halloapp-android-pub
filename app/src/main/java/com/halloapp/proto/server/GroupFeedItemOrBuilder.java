@@ -128,6 +128,12 @@ public interface GroupFeedItemOrBuilder extends
   com.google.protobuf.ByteString getAudienceHash();
 
   /**
+   * <code>bool is_resent_history = 10;</code>
+   * @return The isResentHistory.
+   */
+  boolean getIsResentHistory();
+
+  /**
    * <pre>
    * Use &gt;=16 for temporary elements since 1-15 encode smaller
    * </pre>

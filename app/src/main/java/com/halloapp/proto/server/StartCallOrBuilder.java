@@ -46,4 +46,10 @@ public interface StartCallOrBuilder extends
    * @return The webrtcOffer.
    */
   com.halloapp.proto.server.WebRtcSessionDescription getWebrtcOffer();
+
+  /**
+   * <code>int32 rerequest_count = 5;</code>
+   * @return The rerequestCount.
+   */
+  int getRerequestCount();
 }

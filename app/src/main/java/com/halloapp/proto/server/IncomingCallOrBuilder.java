@@ -88,4 +88,15 @@ public interface IncomingCallOrBuilder extends
    * @return The serverSentTsMs.
    */
   long getServerSentTsMs();
+
+  /**
+   * <code>.server.CallConfig call_config = 8;</code>
+   * @return Whether the callConfig field is set.
+   */
+  boolean hasCallConfig();
+  /**
+   * <code>.server.CallConfig call_config = 8;</code>
+   * @return The callConfig.
+   */
+  com.halloapp.proto.server.CallConfig getCallConfig();
 }

@@ -466,6 +466,17 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.PreAnswerCall getPreAnswerCall();
 
   /**
+   * <code>.server.HoldCall hold_call = 44;</code>
+   * @return Whether the holdCall field is set.
+   */
+  boolean hasHoldCall();
+  /**
+   * <code>.server.HoldCall hold_call = 44;</code>
+   * @return The holdCall.
+   */
+  com.halloapp.proto.server.HoldCall getHoldCall();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */

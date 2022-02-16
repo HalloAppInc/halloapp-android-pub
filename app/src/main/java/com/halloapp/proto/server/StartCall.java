@@ -175,6 +175,32 @@ public  final class StartCall extends
     
   }
 
+  public static final int REREQUEST_COUNT_FIELD_NUMBER = 5;
+  private int rerequestCount_;
+  /**
+   * <code>int32 rerequest_count = 5;</code>
+   * @return The rerequestCount.
+   */
+  @java.lang.Override
+  public int getRerequestCount() {
+    return rerequestCount_;
+  }
+  /**
+   * <code>int32 rerequest_count = 5;</code>
+   * @param value The rerequestCount to set.
+   */
+  private void setRerequestCount(int value) {
+    
+    rerequestCount_ = value;
+  }
+  /**
+   * <code>int32 rerequest_count = 5;</code>
+   */
+  private void clearRerequestCount() {
+    
+    rerequestCount_ = 0;
+  }
+
   public static com.halloapp.proto.server.StartCall parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -440,6 +466,34 @@ public  final class StartCall extends
       return this;
     }
 
+    /**
+     * <code>int32 rerequest_count = 5;</code>
+     * @return The rerequestCount.
+     */
+    @java.lang.Override
+    public int getRerequestCount() {
+      return instance.getRerequestCount();
+    }
+    /**
+     * <code>int32 rerequest_count = 5;</code>
+     * @param value The rerequestCount to set.
+     * @return This builder for chaining.
+     */
+    public Builder setRerequestCount(int value) {
+      copyOnWrite();
+      instance.setRerequestCount(value);
+      return this;
+    }
+    /**
+     * <code>int32 rerequest_count = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearRerequestCount() {
+      copyOnWrite();
+      instance.clearRerequestCount();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.StartCall)
   }
   @java.lang.Override
@@ -460,10 +514,11 @@ public  final class StartCall extends
             "peerUid_",
             "callType_",
             "webrtcOffer_",
+            "rerequestCount_",
           };
           java.lang.String info =
-              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0208\u0002\u0002" +
-              "\u0003\f\u0004\t";
+              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0000\u0000\u0001\u0208\u0002\u0002" +
+              "\u0003\f\u0004\t\u0005\u0004";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

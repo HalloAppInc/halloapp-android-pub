@@ -246,6 +246,52 @@ public  final class ExternalSharePost extends
     expiresInSeconds_ = 0L;
   }
 
+  public static final int OG_TAG_INFO_FIELD_NUMBER = 5;
+  private com.halloapp.proto.server.OgTagInfo ogTagInfo_;
+  /**
+   * <code>.server.OgTagInfo og_tag_info = 5;</code>
+   */
+  @java.lang.Override
+  public boolean hasOgTagInfo() {
+    return ogTagInfo_ != null;
+  }
+  /**
+   * <code>.server.OgTagInfo og_tag_info = 5;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.OgTagInfo getOgTagInfo() {
+    return ogTagInfo_ == null ? com.halloapp.proto.server.OgTagInfo.getDefaultInstance() : ogTagInfo_;
+  }
+  /**
+   * <code>.server.OgTagInfo og_tag_info = 5;</code>
+   */
+  private void setOgTagInfo(com.halloapp.proto.server.OgTagInfo value) {
+    value.getClass();
+  ogTagInfo_ = value;
+    
+    }
+  /**
+   * <code>.server.OgTagInfo og_tag_info = 5;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeOgTagInfo(com.halloapp.proto.server.OgTagInfo value) {
+    value.getClass();
+  if (ogTagInfo_ != null &&
+        ogTagInfo_ != com.halloapp.proto.server.OgTagInfo.getDefaultInstance()) {
+      ogTagInfo_ =
+        com.halloapp.proto.server.OgTagInfo.newBuilder(ogTagInfo_).mergeFrom(value).buildPartial();
+    } else {
+      ogTagInfo_ = value;
+    }
+    
+  }
+  /**
+   * <code>.server.OgTagInfo og_tag_info = 5;</code>
+   */
+  private void clearOgTagInfo() {  ogTagInfo_ = null;
+    
+  }
+
   public static com.halloapp.proto.server.ExternalSharePost parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -492,6 +538,53 @@ public  final class ExternalSharePost extends
       return this;
     }
 
+    /**
+     * <code>.server.OgTagInfo og_tag_info = 5;</code>
+     */
+    @java.lang.Override
+    public boolean hasOgTagInfo() {
+      return instance.hasOgTagInfo();
+    }
+    /**
+     * <code>.server.OgTagInfo og_tag_info = 5;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.OgTagInfo getOgTagInfo() {
+      return instance.getOgTagInfo();
+    }
+    /**
+     * <code>.server.OgTagInfo og_tag_info = 5;</code>
+     */
+    public Builder setOgTagInfo(com.halloapp.proto.server.OgTagInfo value) {
+      copyOnWrite();
+      instance.setOgTagInfo(value);
+      return this;
+      }
+    /**
+     * <code>.server.OgTagInfo og_tag_info = 5;</code>
+     */
+    public Builder setOgTagInfo(
+        com.halloapp.proto.server.OgTagInfo.Builder builderForValue) {
+      copyOnWrite();
+      instance.setOgTagInfo(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.OgTagInfo og_tag_info = 5;</code>
+     */
+    public Builder mergeOgTagInfo(com.halloapp.proto.server.OgTagInfo value) {
+      copyOnWrite();
+      instance.mergeOgTagInfo(value);
+      return this;
+    }
+    /**
+     * <code>.server.OgTagInfo og_tag_info = 5;</code>
+     */
+    public Builder clearOgTagInfo() {  copyOnWrite();
+      instance.clearOgTagInfo();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.ExternalSharePost)
   }
   @java.lang.Override
@@ -512,10 +605,11 @@ public  final class ExternalSharePost extends
             "blobId_",
             "blob_",
             "expiresInSeconds_",
+            "ogTagInfo_",
           };
           java.lang.String info =
-              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\f\u0002\u0208" +
-              "\u0003\n\u0004\u0002";
+              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0000\u0000\u0001\f\u0002\u0208" +
+              "\u0003\n\u0004\u0002\u0005\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

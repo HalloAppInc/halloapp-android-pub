@@ -26,7 +26,7 @@ public  final class GroupFeedRerequest extends
       implements com.google.protobuf.Internal.EnumLite {
     /**
      * <pre>
-     * Unable to decrypt post/comment's payload
+     * Unable to decrypt post/comment/history-resend payload
      * </pre>
      *
      * <code>PAYLOAD = 0;</code>
@@ -45,7 +45,7 @@ public  final class GroupFeedRerequest extends
 
     /**
      * <pre>
-     * Unable to decrypt post/comment's payload
+     * Unable to decrypt post/comment/history-resend payload
      * </pre>
      *
      * <code>PAYLOAD = 0;</code>
@@ -122,6 +122,113 @@ public  final class GroupFeedRerequest extends
     }
 
     // @@protoc_insertion_point(enum_scope:server.GroupFeedRerequest.RerequestType)
+  }
+
+  /**
+   * Protobuf enum {@code server.GroupFeedRerequest.ContentType}
+   */
+  public enum ContentType
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>UNKNOWN = 0;</code>
+     */
+    UNKNOWN(0),
+    /**
+     * <code>POST = 1;</code>
+     */
+    POST(1),
+    /**
+     * <code>COMMENT = 2;</code>
+     */
+    COMMENT(2),
+    /**
+     * <code>HISTORY_RESEND = 3;</code>
+     */
+    HISTORY_RESEND(3),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>UNKNOWN = 0;</code>
+     */
+    public static final int UNKNOWN_VALUE = 0;
+    /**
+     * <code>POST = 1;</code>
+     */
+    public static final int POST_VALUE = 1;
+    /**
+     * <code>COMMENT = 2;</code>
+     */
+    public static final int COMMENT_VALUE = 2;
+    /**
+     * <code>HISTORY_RESEND = 3;</code>
+     */
+    public static final int HISTORY_RESEND_VALUE = 3;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static ContentType valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static ContentType forNumber(int value) {
+      switch (value) {
+        case 0: return UNKNOWN;
+        case 1: return POST;
+        case 2: return COMMENT;
+        case 3: return HISTORY_RESEND;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<ContentType>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        ContentType> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<ContentType>() {
+            @java.lang.Override
+            public ContentType findValueByNumber(int number) {
+              return ContentType.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return ContentTypeVerifier.INSTANCE;
+    }
+
+    private static final class ContentTypeVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new ContentTypeVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return ContentType.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private ContentType(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.GroupFeedRerequest.ContentType)
   }
 
   public static final int GID_FIELD_NUMBER = 1;
@@ -278,6 +385,48 @@ public  final class GroupFeedRerequest extends
   private void clearRerequestType() {
     
     rerequestType_ = 0;
+  }
+
+  public static final int CONTENT_TYPE_FIELD_NUMBER = 4;
+  private int contentType_;
+  /**
+   * <code>.server.GroupFeedRerequest.ContentType content_type = 4;</code>
+   * @return The enum numeric value on the wire for contentType.
+   */
+  @java.lang.Override
+  public int getContentTypeValue() {
+    return contentType_;
+  }
+  /**
+   * <code>.server.GroupFeedRerequest.ContentType content_type = 4;</code>
+   * @return The contentType.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.GroupFeedRerequest.ContentType getContentType() {
+    com.halloapp.proto.server.GroupFeedRerequest.ContentType result = com.halloapp.proto.server.GroupFeedRerequest.ContentType.forNumber(contentType_);
+    return result == null ? com.halloapp.proto.server.GroupFeedRerequest.ContentType.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.GroupFeedRerequest.ContentType content_type = 4;</code>
+   * @param value The enum numeric value on the wire for contentType to set.
+   */
+  private void setContentTypeValue(int value) {
+      contentType_ = value;
+  }
+  /**
+   * <code>.server.GroupFeedRerequest.ContentType content_type = 4;</code>
+   * @param value The contentType to set.
+   */
+  private void setContentType(com.halloapp.proto.server.GroupFeedRerequest.ContentType value) {
+    contentType_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.GroupFeedRerequest.ContentType content_type = 4;</code>
+   */
+  private void clearContentType() {
+    
+    contentType_ = 0;
   }
 
   public static com.halloapp.proto.server.GroupFeedRerequest parseFrom(
@@ -539,6 +688,52 @@ public  final class GroupFeedRerequest extends
       return this;
     }
 
+    /**
+     * <code>.server.GroupFeedRerequest.ContentType content_type = 4;</code>
+     * @return The enum numeric value on the wire for contentType.
+     */
+    @java.lang.Override
+    public int getContentTypeValue() {
+      return instance.getContentTypeValue();
+    }
+    /**
+     * <code>.server.GroupFeedRerequest.ContentType content_type = 4;</code>
+     * @param value The contentType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setContentTypeValue(int value) {
+      copyOnWrite();
+      instance.setContentTypeValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupFeedRerequest.ContentType content_type = 4;</code>
+     * @return The contentType.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.GroupFeedRerequest.ContentType getContentType() {
+      return instance.getContentType();
+    }
+    /**
+     * <code>.server.GroupFeedRerequest.ContentType content_type = 4;</code>
+     * @param value The enum numeric value on the wire for contentType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setContentType(com.halloapp.proto.server.GroupFeedRerequest.ContentType value) {
+      copyOnWrite();
+      instance.setContentType(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupFeedRerequest.ContentType content_type = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearContentType() {
+      copyOnWrite();
+      instance.clearContentType();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.GroupFeedRerequest)
   }
   @java.lang.Override
@@ -558,10 +753,11 @@ public  final class GroupFeedRerequest extends
             "gid_",
             "id_",
             "rerequestType_",
+            "contentType_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
-              "\u0003\f";
+              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
+              "\u0003\f\u0004\f";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

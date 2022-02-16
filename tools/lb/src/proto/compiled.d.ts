@@ -2565,6 +2565,9 @@ export namespace server {
         /** GroupFeedItem audienceHash */
         audienceHash?: (Uint8Array|null);
 
+        /** GroupFeedItem isResentHistory */
+        isResentHistory?: (boolean|null);
+
         /** GroupFeedItem senderLogInfo */
         senderLogInfo?: (string|null);
 
@@ -2607,6 +2610,9 @@ export namespace server {
 
         /** GroupFeedItem audienceHash. */
         public audienceHash: Uint8Array;
+
+        /** GroupFeedItem isResentHistory. */
+        public isResentHistory: boolean;
 
         /** GroupFeedItem senderLogInfo. */
         public senderLogInfo: string;
@@ -2826,6 +2832,12 @@ export namespace server {
 
         /** GroupFeedHistory oneTimePreKeyId */
         oneTimePreKeyId?: (number|null);
+
+        /** GroupFeedHistory senderLogInfo */
+        senderLogInfo?: (string|null);
+
+        /** GroupFeedHistory senderClientVersion */
+        senderClientVersion?: (string|null);
     }
 
     /** Represents a GroupFeedHistory. */
@@ -2854,6 +2866,12 @@ export namespace server {
 
         /** GroupFeedHistory oneTimePreKeyId. */
         public oneTimePreKeyId: number;
+
+        /** GroupFeedHistory senderLogInfo. */
+        public senderLogInfo: string;
+
+        /** GroupFeedHistory senderClientVersion. */
+        public senderClientVersion: string;
 
         /**
          * Creates a new GroupFeedHistory instance using the specified properties.
@@ -4893,6 +4911,9 @@ export namespace server {
 
     /** Properties of an EndOfQueue. */
     interface IEndOfQueue {
+
+        /** EndOfQueue trimmed */
+        trimmed?: (boolean|null);
     }
 
     /** Represents an EndOfQueue. */
@@ -4903,6 +4924,9 @@ export namespace server {
          * @param [properties] Properties to set
          */
         constructor(properties?: server.IEndOfQueue);
+
+        /** EndOfQueue trimmed. */
+        public trimmed: boolean;
 
         /**
          * Creates a new EndOfQueue instance using the specified properties.
@@ -4998,6 +5022,12 @@ export namespace server {
 
         /** HistoryResend audienceHash */
         audienceHash?: (Uint8Array|null);
+
+        /** HistoryResend senderLogInfo */
+        senderLogInfo?: (string|null);
+
+        /** HistoryResend senderClientVersion */
+        senderClientVersion?: (string|null);
     }
 
     /** Represents a HistoryResend. */
@@ -5029,6 +5059,12 @@ export namespace server {
 
         /** HistoryResend audienceHash. */
         public audienceHash: Uint8Array;
+
+        /** HistoryResend senderLogInfo. */
+        public senderLogInfo: string;
+
+        /** HistoryResend senderClientVersion. */
+        public senderClientVersion: string;
 
         /**
          * Creates a new HistoryResend instance using the specified properties.
@@ -5425,6 +5461,9 @@ export namespace server {
 
         /** GetCallServersResult turnServers */
         turnServers?: (server.ITurnServer[]|null);
+
+        /** GetCallServersResult callConfig */
+        callConfig?: (server.ICallConfig|null);
     }
 
     /** Represents a GetCallServersResult. */
@@ -5444,6 +5483,9 @@ export namespace server {
 
         /** GetCallServersResult turnServers. */
         public turnServers: server.ITurnServer[];
+
+        /** GetCallServersResult callConfig. */
+        public callConfig?: (server.ICallConfig|null);
 
         /**
          * Creates a new GetCallServersResult instance using the specified properties.
@@ -5540,6 +5582,9 @@ export namespace server {
 
         /** StartCall webrtcOffer */
         webrtcOffer?: (server.IWebRtcSessionDescription|null);
+
+        /** StartCall rerequestCount */
+        rerequestCount?: (number|null);
     }
 
     /** Represents a StartCall. */
@@ -5562,6 +5607,9 @@ export namespace server {
 
         /** StartCall webrtcOffer. */
         public webrtcOffer?: (server.IWebRtcSessionDescription|null);
+
+        /** StartCall rerequestCount. */
+        public rerequestCount: number;
 
         /**
          * Creates a new StartCall instance using the specified properties.
@@ -5877,6 +5925,9 @@ export namespace server {
 
         /** IncomingCall serverSentTsMs */
         serverSentTsMs?: (number|Long|null);
+
+        /** IncomingCall callConfig */
+        callConfig?: (server.ICallConfig|null);
     }
 
     /** Represents an IncomingCall. */
@@ -5908,6 +5959,9 @@ export namespace server {
 
         /** IncomingCall serverSentTsMs. */
         public serverSentTsMs: (number|Long);
+
+        /** IncomingCall callConfig. */
+        public callConfig?: (server.ICallConfig|null);
 
         /**
          * Creates a new IncomingCall instance using the specified properties.
@@ -6712,6 +6766,360 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a HoldCall. */
+    interface IHoldCall {
+
+        /** HoldCall callId */
+        callId?: (string|null);
+
+        /** HoldCall hold */
+        hold?: (boolean|null);
+
+        /** HoldCall timestampMs */
+        timestampMs?: (number|Long|null);
+    }
+
+    /** Represents a HoldCall. */
+    class HoldCall implements IHoldCall {
+
+        /**
+         * Constructs a new HoldCall.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IHoldCall);
+
+        /** HoldCall callId. */
+        public callId: string;
+
+        /** HoldCall hold. */
+        public hold: boolean;
+
+        /** HoldCall timestampMs. */
+        public timestampMs: (number|Long);
+
+        /**
+         * Creates a new HoldCall instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HoldCall instance
+         */
+        public static create(properties?: server.IHoldCall): server.HoldCall;
+
+        /**
+         * Encodes the specified HoldCall message. Does not implicitly {@link server.HoldCall.verify|verify} messages.
+         * @param message HoldCall message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IHoldCall, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HoldCall message, length delimited. Does not implicitly {@link server.HoldCall.verify|verify} messages.
+         * @param message HoldCall message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IHoldCall, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HoldCall message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HoldCall
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.HoldCall;
+
+        /**
+         * Decodes a HoldCall message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HoldCall
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.HoldCall;
+
+        /**
+         * Verifies a HoldCall message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HoldCall message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HoldCall
+         */
+        public static fromObject(object: { [k: string]: any }): server.HoldCall;
+
+        /**
+         * Creates a plain object from a HoldCall message. Also converts values to other types if specified.
+         * @param message HoldCall
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.HoldCall, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HoldCall to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a CallConfig. */
+    interface ICallConfig {
+
+        /** CallConfig audioBitrateMax */
+        audioBitrateMax?: (number|null);
+
+        /** CallConfig videoBitrateMax */
+        videoBitrateMax?: (number|null);
+
+        /** CallConfig audioCodec */
+        audioCodec?: (number|null);
+
+        /** CallConfig videoCodec */
+        videoCodec?: (number|null);
+
+        /** CallConfig videoWidth */
+        videoWidth?: (number|null);
+
+        /** CallConfig videoHeight */
+        videoHeight?: (number|null);
+
+        /** CallConfig videoFps */
+        videoFps?: (number|null);
+
+        /** CallConfig audioJitterBufferMaxPackets */
+        audioJitterBufferMaxPackets?: (number|null);
+
+        /** CallConfig audioJitterBufferFastAccelerate */
+        audioJitterBufferFastAccelerate?: (boolean|null);
+    }
+
+    /** Represents a CallConfig. */
+    class CallConfig implements ICallConfig {
+
+        /**
+         * Constructs a new CallConfig.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.ICallConfig);
+
+        /** CallConfig audioBitrateMax. */
+        public audioBitrateMax: number;
+
+        /** CallConfig videoBitrateMax. */
+        public videoBitrateMax: number;
+
+        /** CallConfig audioCodec. */
+        public audioCodec: number;
+
+        /** CallConfig videoCodec. */
+        public videoCodec: number;
+
+        /** CallConfig videoWidth. */
+        public videoWidth: number;
+
+        /** CallConfig videoHeight. */
+        public videoHeight: number;
+
+        /** CallConfig videoFps. */
+        public videoFps: number;
+
+        /** CallConfig audioJitterBufferMaxPackets. */
+        public audioJitterBufferMaxPackets: number;
+
+        /** CallConfig audioJitterBufferFastAccelerate. */
+        public audioJitterBufferFastAccelerate: boolean;
+
+        /**
+         * Creates a new CallConfig instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns CallConfig instance
+         */
+        public static create(properties?: server.ICallConfig): server.CallConfig;
+
+        /**
+         * Encodes the specified CallConfig message. Does not implicitly {@link server.CallConfig.verify|verify} messages.
+         * @param message CallConfig message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.ICallConfig, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified CallConfig message, length delimited. Does not implicitly {@link server.CallConfig.verify|verify} messages.
+         * @param message CallConfig message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.ICallConfig, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a CallConfig message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns CallConfig
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.CallConfig;
+
+        /**
+         * Decodes a CallConfig message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns CallConfig
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.CallConfig;
+
+        /**
+         * Verifies a CallConfig message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a CallConfig message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns CallConfig
+         */
+        public static fromObject(object: { [k: string]: any }): server.CallConfig;
+
+        /**
+         * Creates a plain object from a CallConfig message. Also converts values to other types if specified.
+         * @param message CallConfig
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.CallConfig, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this CallConfig to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an OgTagInfo. */
+    interface IOgTagInfo {
+
+        /** OgTagInfo title */
+        title?: (string|null);
+
+        /** OgTagInfo description */
+        description?: (string|null);
+
+        /** OgTagInfo thumbnailUrl */
+        thumbnailUrl?: (string|null);
+
+        /** OgTagInfo thumbnailWidth */
+        thumbnailWidth?: (number|null);
+
+        /** OgTagInfo thumbnailHeight */
+        thumbnailHeight?: (number|null);
+    }
+
+    /** Represents an OgTagInfo. */
+    class OgTagInfo implements IOgTagInfo {
+
+        /**
+         * Constructs a new OgTagInfo.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IOgTagInfo);
+
+        /** OgTagInfo title. */
+        public title: string;
+
+        /** OgTagInfo description. */
+        public description: string;
+
+        /** OgTagInfo thumbnailUrl. */
+        public thumbnailUrl: string;
+
+        /** OgTagInfo thumbnailWidth. */
+        public thumbnailWidth: number;
+
+        /** OgTagInfo thumbnailHeight. */
+        public thumbnailHeight: number;
+
+        /**
+         * Creates a new OgTagInfo instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns OgTagInfo instance
+         */
+        public static create(properties?: server.IOgTagInfo): server.OgTagInfo;
+
+        /**
+         * Encodes the specified OgTagInfo message. Does not implicitly {@link server.OgTagInfo.verify|verify} messages.
+         * @param message OgTagInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IOgTagInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified OgTagInfo message, length delimited. Does not implicitly {@link server.OgTagInfo.verify|verify} messages.
+         * @param message OgTagInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IOgTagInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an OgTagInfo message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns OgTagInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.OgTagInfo;
+
+        /**
+         * Decodes an OgTagInfo message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns OgTagInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.OgTagInfo;
+
+        /**
+         * Verifies an OgTagInfo message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an OgTagInfo message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns OgTagInfo
+         */
+        public static fromObject(object: { [k: string]: any }): server.OgTagInfo;
+
+        /**
+         * Creates a plain object from an OgTagInfo message. Also converts values to other types if specified.
+         * @param message OgTagInfo
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.OgTagInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this OgTagInfo to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an ExternalSharePost. */
     interface IExternalSharePost {
 
@@ -6726,6 +7134,9 @@ export namespace server {
 
         /** ExternalSharePost expiresInSeconds */
         expiresInSeconds?: (number|Long|null);
+
+        /** ExternalSharePost ogTagInfo */
+        ogTagInfo?: (server.IOgTagInfo|null);
     }
 
     /** Represents an ExternalSharePost. */
@@ -6748,6 +7159,9 @@ export namespace server {
 
         /** ExternalSharePost expiresInSeconds. */
         public expiresInSeconds: (number|Long);
+
+        /** ExternalSharePost ogTagInfo. */
+        public ogTagInfo?: (server.IOgTagInfo|null);
 
         /**
          * Creates a new ExternalSharePost instance using the specified properties.
@@ -6827,6 +7241,108 @@ export namespace server {
             STORE = 0,
             DELETE = 1
         }
+    }
+
+    /** Properties of an ExternalSharePostContainer. */
+    interface IExternalSharePostContainer {
+
+        /** ExternalSharePostContainer uid */
+        uid?: (number|Long|null);
+
+        /** ExternalSharePostContainer blob */
+        blob?: (Uint8Array|null);
+
+        /** ExternalSharePostContainer ogTagInfo */
+        ogTagInfo?: (server.IOgTagInfo|null);
+    }
+
+    /** Represents an ExternalSharePostContainer. */
+    class ExternalSharePostContainer implements IExternalSharePostContainer {
+
+        /**
+         * Constructs a new ExternalSharePostContainer.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IExternalSharePostContainer);
+
+        /** ExternalSharePostContainer uid. */
+        public uid: (number|Long);
+
+        /** ExternalSharePostContainer blob. */
+        public blob: Uint8Array;
+
+        /** ExternalSharePostContainer ogTagInfo. */
+        public ogTagInfo?: (server.IOgTagInfo|null);
+
+        /**
+         * Creates a new ExternalSharePostContainer instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ExternalSharePostContainer instance
+         */
+        public static create(properties?: server.IExternalSharePostContainer): server.ExternalSharePostContainer;
+
+        /**
+         * Encodes the specified ExternalSharePostContainer message. Does not implicitly {@link server.ExternalSharePostContainer.verify|verify} messages.
+         * @param message ExternalSharePostContainer message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IExternalSharePostContainer, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ExternalSharePostContainer message, length delimited. Does not implicitly {@link server.ExternalSharePostContainer.verify|verify} messages.
+         * @param message ExternalSharePostContainer message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IExternalSharePostContainer, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ExternalSharePostContainer message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ExternalSharePostContainer
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.ExternalSharePostContainer;
+
+        /**
+         * Decodes an ExternalSharePostContainer message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ExternalSharePostContainer
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.ExternalSharePostContainer;
+
+        /**
+         * Verifies an ExternalSharePostContainer message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ExternalSharePostContainer message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ExternalSharePostContainer
+         */
+        public static fromObject(object: { [k: string]: any }): server.ExternalSharePostContainer;
+
+        /**
+         * Creates a plain object from an ExternalSharePostContainer message. Also converts values to other types if specified.
+         * @param message ExternalSharePostContainer
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.ExternalSharePostContainer, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ExternalSharePostContainer to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of an Iq. */
@@ -7293,6 +7809,9 @@ export namespace server {
         /** Msg preAnswerCall */
         preAnswerCall?: (server.IPreAnswerCall|null);
 
+        /** Msg holdCall */
+        holdCall?: (server.IHoldCall|null);
+
         /** Msg retryCount */
         retryCount?: (number|null);
 
@@ -7432,6 +7951,9 @@ export namespace server {
         /** Msg preAnswerCall. */
         public preAnswerCall?: (server.IPreAnswerCall|null);
 
+        /** Msg holdCall. */
+        public holdCall?: (server.IHoldCall|null);
+
         /** Msg retryCount. */
         public retryCount: number;
 
@@ -7439,7 +7961,7 @@ export namespace server {
         public rerequestCount: number;
 
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall");
 
         /**
          * Creates a new Msg instance using the specified properties.
@@ -9061,7 +9583,8 @@ export namespace server {
         /** ContentType enum. */
         enum ContentType {
             CHAT = 0,
-            CALL = 1
+            CALL = 1,
+            GROUP_HISTORY = 2
         }
     }
 
@@ -9076,6 +9599,9 @@ export namespace server {
 
         /** GroupFeedRerequest rerequestType */
         rerequestType?: (server.GroupFeedRerequest.RerequestType|null);
+
+        /** GroupFeedRerequest contentType */
+        contentType?: (server.GroupFeedRerequest.ContentType|null);
     }
 
     /** Represents a GroupFeedRerequest. */
@@ -9095,6 +9621,9 @@ export namespace server {
 
         /** GroupFeedRerequest rerequestType. */
         public rerequestType: server.GroupFeedRerequest.RerequestType;
+
+        /** GroupFeedRerequest contentType. */
+        public contentType: server.GroupFeedRerequest.ContentType;
 
         /**
          * Creates a new GroupFeedRerequest instance using the specified properties.
@@ -9173,6 +9702,14 @@ export namespace server {
         enum RerequestType {
             PAYLOAD = 0,
             SENDER_STATE = 1
+        }
+
+        /** ContentType enum. */
+        enum ContentType {
+            UNKNOWN = 0,
+            POST = 1,
+            COMMENT = 2,
+            HISTORY_RESEND = 3
         }
     }
 

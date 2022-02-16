@@ -4,18 +4,14 @@
 package com.halloapp.proto.server;
 
 /**
- * <pre>
- * send before the AnswerCall so we can connect the PeerConnection
- * </pre>
- *
- * Protobuf type {@code server.PreAnswerCall}
+ * Protobuf type {@code server.HoldCall}
  */
-public  final class PreAnswerCall extends
+public  final class HoldCall extends
     com.google.protobuf.GeneratedMessageLite<
-        PreAnswerCall, PreAnswerCall.Builder> implements
-    // @@protoc_insertion_point(message_implements:server.PreAnswerCall)
-    PreAnswerCallOrBuilder {
-  private PreAnswerCall() {
+        HoldCall, HoldCall.Builder> implements
+    // @@protoc_insertion_point(message_implements:server.HoldCall)
+    HoldCallOrBuilder {
+  private HoldCall() {
     callId_ = "";
   }
   public static final int CALL_ID_FIELD_NUMBER = 1;
@@ -65,50 +61,30 @@ public  final class PreAnswerCall extends
     
   }
 
-  public static final int WEBRTC_ANSWER_FIELD_NUMBER = 2;
-  private com.halloapp.proto.server.WebRtcSessionDescription webrtcAnswer_;
+  public static final int HOLD_FIELD_NUMBER = 2;
+  private boolean hold_;
   /**
-   * <code>.server.WebRtcSessionDescription webrtc_answer = 2;</code>
+   * <code>bool hold = 2;</code>
+   * @return The hold.
    */
   @java.lang.Override
-  public boolean hasWebrtcAnswer() {
-    return webrtcAnswer_ != null;
+  public boolean getHold() {
+    return hold_;
   }
   /**
-   * <code>.server.WebRtcSessionDescription webrtc_answer = 2;</code>
+   * <code>bool hold = 2;</code>
+   * @param value The hold to set.
    */
-  @java.lang.Override
-  public com.halloapp.proto.server.WebRtcSessionDescription getWebrtcAnswer() {
-    return webrtcAnswer_ == null ? com.halloapp.proto.server.WebRtcSessionDescription.getDefaultInstance() : webrtcAnswer_;
+  private void setHold(boolean value) {
+    
+    hold_ = value;
   }
   /**
-   * <code>.server.WebRtcSessionDescription webrtc_answer = 2;</code>
+   * <code>bool hold = 2;</code>
    */
-  private void setWebrtcAnswer(com.halloapp.proto.server.WebRtcSessionDescription value) {
-    value.getClass();
-  webrtcAnswer_ = value;
+  private void clearHold() {
     
-    }
-  /**
-   * <code>.server.WebRtcSessionDescription webrtc_answer = 2;</code>
-   */
-  @java.lang.SuppressWarnings({"ReferenceEquality"})
-  private void mergeWebrtcAnswer(com.halloapp.proto.server.WebRtcSessionDescription value) {
-    value.getClass();
-  if (webrtcAnswer_ != null &&
-        webrtcAnswer_ != com.halloapp.proto.server.WebRtcSessionDescription.getDefaultInstance()) {
-      webrtcAnswer_ =
-        com.halloapp.proto.server.WebRtcSessionDescription.newBuilder(webrtcAnswer_).mergeFrom(value).buildPartial();
-    } else {
-      webrtcAnswer_ = value;
-    }
-    
-  }
-  /**
-   * <code>.server.WebRtcSessionDescription webrtc_answer = 2;</code>
-   */
-  private void clearWebrtcAnswer() {  webrtcAnswer_ = null;
-    
+    hold_ = false;
   }
 
   public static final int TIMESTAMP_MS_FIELD_NUMBER = 3;
@@ -137,73 +113,73 @@ public  final class PreAnswerCall extends
     timestampMs_ = 0L;
   }
 
-  public static com.halloapp.proto.server.PreAnswerCall parseFrom(
+  public static com.halloapp.proto.server.HoldCall parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data);
   }
-  public static com.halloapp.proto.server.PreAnswerCall parseFrom(
+  public static com.halloapp.proto.server.HoldCall parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data, extensionRegistry);
   }
-  public static com.halloapp.proto.server.PreAnswerCall parseFrom(
+  public static com.halloapp.proto.server.HoldCall parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data);
   }
-  public static com.halloapp.proto.server.PreAnswerCall parseFrom(
+  public static com.halloapp.proto.server.HoldCall parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data, extensionRegistry);
   }
-  public static com.halloapp.proto.server.PreAnswerCall parseFrom(byte[] data)
+  public static com.halloapp.proto.server.HoldCall parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data);
   }
-  public static com.halloapp.proto.server.PreAnswerCall parseFrom(
+  public static com.halloapp.proto.server.HoldCall parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data, extensionRegistry);
   }
-  public static com.halloapp.proto.server.PreAnswerCall parseFrom(java.io.InputStream input)
+  public static com.halloapp.proto.server.HoldCall parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, input);
   }
-  public static com.halloapp.proto.server.PreAnswerCall parseFrom(
+  public static com.halloapp.proto.server.HoldCall parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, input, extensionRegistry);
   }
-  public static com.halloapp.proto.server.PreAnswerCall parseDelimitedFrom(java.io.InputStream input)
+  public static com.halloapp.proto.server.HoldCall parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return parseDelimitedFrom(DEFAULT_INSTANCE, input);
   }
-  public static com.halloapp.proto.server.PreAnswerCall parseDelimitedFrom(
+  public static com.halloapp.proto.server.HoldCall parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
   }
-  public static com.halloapp.proto.server.PreAnswerCall parseFrom(
+  public static com.halloapp.proto.server.HoldCall parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, input);
   }
-  public static com.halloapp.proto.server.PreAnswerCall parseFrom(
+  public static com.halloapp.proto.server.HoldCall parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -214,23 +190,19 @@ public  final class PreAnswerCall extends
   public static Builder newBuilder() {
     return (Builder) DEFAULT_INSTANCE.createBuilder();
   }
-  public static Builder newBuilder(com.halloapp.proto.server.PreAnswerCall prototype) {
+  public static Builder newBuilder(com.halloapp.proto.server.HoldCall prototype) {
     return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
   }
 
   /**
-   * <pre>
-   * send before the AnswerCall so we can connect the PeerConnection
-   * </pre>
-   *
-   * Protobuf type {@code server.PreAnswerCall}
+   * Protobuf type {@code server.HoldCall}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageLite.Builder<
-        com.halloapp.proto.server.PreAnswerCall, Builder> implements
-      // @@protoc_insertion_point(builder_implements:server.PreAnswerCall)
-      com.halloapp.proto.server.PreAnswerCallOrBuilder {
-    // Construct using com.halloapp.proto.server.PreAnswerCall.newBuilder()
+        com.halloapp.proto.server.HoldCall, Builder> implements
+      // @@protoc_insertion_point(builder_implements:server.HoldCall)
+      com.halloapp.proto.server.HoldCallOrBuilder {
+    // Construct using com.halloapp.proto.server.HoldCall.newBuilder()
     private Builder() {
       super(DEFAULT_INSTANCE);
     }
@@ -286,49 +258,30 @@ public  final class PreAnswerCall extends
     }
 
     /**
-     * <code>.server.WebRtcSessionDescription webrtc_answer = 2;</code>
+     * <code>bool hold = 2;</code>
+     * @return The hold.
      */
     @java.lang.Override
-    public boolean hasWebrtcAnswer() {
-      return instance.hasWebrtcAnswer();
+    public boolean getHold() {
+      return instance.getHold();
     }
     /**
-     * <code>.server.WebRtcSessionDescription webrtc_answer = 2;</code>
+     * <code>bool hold = 2;</code>
+     * @param value The hold to set.
+     * @return This builder for chaining.
      */
-    @java.lang.Override
-    public com.halloapp.proto.server.WebRtcSessionDescription getWebrtcAnswer() {
-      return instance.getWebrtcAnswer();
-    }
-    /**
-     * <code>.server.WebRtcSessionDescription webrtc_answer = 2;</code>
-     */
-    public Builder setWebrtcAnswer(com.halloapp.proto.server.WebRtcSessionDescription value) {
+    public Builder setHold(boolean value) {
       copyOnWrite();
-      instance.setWebrtcAnswer(value);
-      return this;
-      }
-    /**
-     * <code>.server.WebRtcSessionDescription webrtc_answer = 2;</code>
-     */
-    public Builder setWebrtcAnswer(
-        com.halloapp.proto.server.WebRtcSessionDescription.Builder builderForValue) {
-      copyOnWrite();
-      instance.setWebrtcAnswer(builderForValue.build());
+      instance.setHold(value);
       return this;
     }
     /**
-     * <code>.server.WebRtcSessionDescription webrtc_answer = 2;</code>
+     * <code>bool hold = 2;</code>
+     * @return This builder for chaining.
      */
-    public Builder mergeWebrtcAnswer(com.halloapp.proto.server.WebRtcSessionDescription value) {
+    public Builder clearHold() {
       copyOnWrite();
-      instance.mergeWebrtcAnswer(value);
-      return this;
-    }
-    /**
-     * <code>.server.WebRtcSessionDescription webrtc_answer = 2;</code>
-     */
-    public Builder clearWebrtcAnswer() {  copyOnWrite();
-      instance.clearWebrtcAnswer();
+      instance.clearHold();
       return this;
     }
 
@@ -360,7 +313,7 @@ public  final class PreAnswerCall extends
       return this;
     }
 
-    // @@protoc_insertion_point(builder_scope:server.PreAnswerCall)
+    // @@protoc_insertion_point(builder_scope:server.HoldCall)
   }
   @java.lang.Override
   @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
@@ -369,7 +322,7 @@ public  final class PreAnswerCall extends
       java.lang.Object arg0, java.lang.Object arg1) {
     switch (method) {
       case NEW_MUTABLE_INSTANCE: {
-        return new com.halloapp.proto.server.PreAnswerCall();
+        return new com.halloapp.proto.server.HoldCall();
       }
       case NEW_BUILDER: {
         return new Builder();
@@ -377,11 +330,11 @@ public  final class PreAnswerCall extends
       case BUILD_MESSAGE_INFO: {
           java.lang.Object[] objects = new java.lang.Object[] {
             "callId_",
-            "webrtcAnswer_",
+            "hold_",
             "timestampMs_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0208\u0002\t" +
+              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0208\u0002\u0007" +
               "\u0003\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
@@ -390,13 +343,13 @@ public  final class PreAnswerCall extends
         return DEFAULT_INSTANCE;
       }
       case GET_PARSER: {
-        com.google.protobuf.Parser<com.halloapp.proto.server.PreAnswerCall> parser = PARSER;
+        com.google.protobuf.Parser<com.halloapp.proto.server.HoldCall> parser = PARSER;
         if (parser == null) {
-          synchronized (com.halloapp.proto.server.PreAnswerCall.class) {
+          synchronized (com.halloapp.proto.server.HoldCall.class) {
             parser = PARSER;
             if (parser == null) {
               parser =
-                  new DefaultInstanceBasedParser<com.halloapp.proto.server.PreAnswerCall>(
+                  new DefaultInstanceBasedParser<com.halloapp.proto.server.HoldCall>(
                       DEFAULT_INSTANCE);
               PARSER = parser;
             }
@@ -415,24 +368,24 @@ public  final class PreAnswerCall extends
   }
 
 
-  // @@protoc_insertion_point(class_scope:server.PreAnswerCall)
-  private static final com.halloapp.proto.server.PreAnswerCall DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:server.HoldCall)
+  private static final com.halloapp.proto.server.HoldCall DEFAULT_INSTANCE;
   static {
-    PreAnswerCall defaultInstance = new PreAnswerCall();
+    HoldCall defaultInstance = new HoldCall();
     // New instances are implicitly immutable so no need to make
     // immutable.
     DEFAULT_INSTANCE = defaultInstance;
     com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
-      PreAnswerCall.class, defaultInstance);
+      HoldCall.class, defaultInstance);
   }
 
-  public static com.halloapp.proto.server.PreAnswerCall getDefaultInstance() {
+  public static com.halloapp.proto.server.HoldCall getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static volatile com.google.protobuf.Parser<PreAnswerCall> PARSER;
+  private static volatile com.google.protobuf.Parser<HoldCall> PARSER;
 
-  public static com.google.protobuf.Parser<PreAnswerCall> parser() {
+  public static com.google.protobuf.Parser<HoldCall> parser() {
     return DEFAULT_INSTANCE.getParserForType();
   }
 }

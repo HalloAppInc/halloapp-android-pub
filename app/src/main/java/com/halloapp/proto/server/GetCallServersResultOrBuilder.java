@@ -45,4 +45,15 @@ public interface GetCallServersResultOrBuilder extends
    * <code>repeated .server.TurnServer turn_servers = 3;</code>
    */
   int getTurnServersCount();
+
+  /**
+   * <code>.server.CallConfig call_config = 4;</code>
+   * @return Whether the callConfig field is set.
+   */
+  boolean hasCallConfig();
+  /**
+   * <code>.server.CallConfig call_config = 4;</code>
+   * @return The callConfig.
+   */
+  com.halloapp.proto.server.CallConfig getCallConfig();
 }

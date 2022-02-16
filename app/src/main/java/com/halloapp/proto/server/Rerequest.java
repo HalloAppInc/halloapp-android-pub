@@ -30,6 +30,10 @@ public  final class Rerequest extends
      * <code>CALL = 1;</code>
      */
     CALL(1),
+    /**
+     * <code>GROUP_HISTORY = 2;</code>
+     */
+    GROUP_HISTORY(2),
     UNRECOGNIZED(-1),
     ;
 
@@ -41,6 +45,10 @@ public  final class Rerequest extends
      * <code>CALL = 1;</code>
      */
     public static final int CALL_VALUE = 1;
+    /**
+     * <code>GROUP_HISTORY = 2;</code>
+     */
+    public static final int GROUP_HISTORY_VALUE = 2;
 
 
     @java.lang.Override
@@ -66,6 +74,7 @@ public  final class Rerequest extends
       switch (value) {
         case 0: return CHAT;
         case 1: return CALL;
+        case 2: return GROUP_HISTORY;
         default: return null;
       }
     }

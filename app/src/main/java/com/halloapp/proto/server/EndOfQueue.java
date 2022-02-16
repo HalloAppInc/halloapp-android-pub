@@ -13,6 +13,32 @@ public  final class EndOfQueue extends
     EndOfQueueOrBuilder {
   private EndOfQueue() {
   }
+  public static final int TRIMMED_FIELD_NUMBER = 1;
+  private boolean trimmed_;
+  /**
+   * <code>bool trimmed = 1;</code>
+   * @return The trimmed.
+   */
+  @java.lang.Override
+  public boolean getTrimmed() {
+    return trimmed_;
+  }
+  /**
+   * <code>bool trimmed = 1;</code>
+   * @param value The trimmed to set.
+   */
+  private void setTrimmed(boolean value) {
+    
+    trimmed_ = value;
+  }
+  /**
+   * <code>bool trimmed = 1;</code>
+   */
+  private void clearTrimmed() {
+    
+    trimmed_ = false;
+  }
+
   public static com.halloapp.proto.server.EndOfQueue parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -108,6 +134,34 @@ public  final class EndOfQueue extends
     }
 
 
+    /**
+     * <code>bool trimmed = 1;</code>
+     * @return The trimmed.
+     */
+    @java.lang.Override
+    public boolean getTrimmed() {
+      return instance.getTrimmed();
+    }
+    /**
+     * <code>bool trimmed = 1;</code>
+     * @param value The trimmed to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTrimmed(boolean value) {
+      copyOnWrite();
+      instance.setTrimmed(value);
+      return this;
+    }
+    /**
+     * <code>bool trimmed = 1;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearTrimmed() {
+      copyOnWrite();
+      instance.clearTrimmed();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.EndOfQueue)
   }
   @java.lang.Override
@@ -123,8 +177,11 @@ public  final class EndOfQueue extends
         return new Builder();
       }
       case BUILD_MESSAGE_INFO: {
-          java.lang.Object[] objects = null;java.lang.String info =
-              "\u0000\u0000";
+          java.lang.Object[] objects = new java.lang.Object[] {
+            "trimmed_",
+          };
+          java.lang.String info =
+              "\u0000\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0000\u0000\u0001\u0007";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

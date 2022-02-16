@@ -675,6 +675,32 @@ public  final class GroupFeedItem extends
     audienceHash_ = getDefaultInstance().getAudienceHash();
   }
 
+  public static final int IS_RESENT_HISTORY_FIELD_NUMBER = 10;
+  private boolean isResentHistory_;
+  /**
+   * <code>bool is_resent_history = 10;</code>
+   * @return The isResentHistory.
+   */
+  @java.lang.Override
+  public boolean getIsResentHistory() {
+    return isResentHistory_;
+  }
+  /**
+   * <code>bool is_resent_history = 10;</code>
+   * @param value The isResentHistory to set.
+   */
+  private void setIsResentHistory(boolean value) {
+    
+    isResentHistory_ = value;
+  }
+  /**
+   * <code>bool is_resent_history = 10;</code>
+   */
+  private void clearIsResentHistory() {
+    
+    isResentHistory_ = false;
+  }
+
   public static final int SENDER_LOG_INFO_FIELD_NUMBER = 16;
   private java.lang.String senderLogInfo_;
   /**
@@ -1455,6 +1481,34 @@ public  final class GroupFeedItem extends
     }
 
     /**
+     * <code>bool is_resent_history = 10;</code>
+     * @return The isResentHistory.
+     */
+    @java.lang.Override
+    public boolean getIsResentHistory() {
+      return instance.getIsResentHistory();
+    }
+    /**
+     * <code>bool is_resent_history = 10;</code>
+     * @param value The isResentHistory to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIsResentHistory(boolean value) {
+      copyOnWrite();
+      instance.setIsResentHistory(value);
+      return this;
+    }
+    /**
+     * <code>bool is_resent_history = 10;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearIsResentHistory() {
+      copyOnWrite();
+      instance.clearIsResentHistory();
+      return this;
+    }
+
+    /**
      * <pre>
      * Use &gt;=16 for temporary elements since 1-15 encode smaller
      * </pre>
@@ -1620,13 +1674,14 @@ public  final class GroupFeedItem extends
             com.halloapp.proto.server.SenderStateBundle.class,
             "senderState_",
             "audienceHash_",
+            "isResentHistory_",
             "senderLogInfo_",
             "senderClientVersion_",
           };
           java.lang.String info =
-              "\u0000\u000b\u0001\u0000\u0001\u0011\u000b\u0000\u0001\u0000\u0001\f\u0002\u0208" +
-              "\u0003\u0208\u0004\u0208\u0005<\u0000\u0006<\u0000\u0007\u001b\b\t\t\n\u0010\u0208" +
-              "\u0011\u0208";
+              "\u0000\f\u0001\u0000\u0001\u0011\f\u0000\u0001\u0000\u0001\f\u0002\u0208\u0003\u0208" +
+              "\u0004\u0208\u0005<\u0000\u0006<\u0000\u0007\u001b\b\t\t\n\n\u0007\u0010\u0208\u0011" +
+              "\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

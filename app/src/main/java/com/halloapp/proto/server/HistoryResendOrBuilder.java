@@ -97,4 +97,44 @@ public interface HistoryResendOrBuilder extends
    * @return The audienceHash.
    */
   com.google.protobuf.ByteString getAudienceHash();
+
+  /**
+   * <pre>
+   * Use &gt;=16 for temporary elements since 1-15 encode smaller
+   * </pre>
+   *
+   * <code>string sender_log_info = 16;</code>
+   * @return The senderLogInfo.
+   */
+  java.lang.String getSenderLogInfo();
+  /**
+   * <pre>
+   * Use &gt;=16 for temporary elements since 1-15 encode smaller
+   * </pre>
+   *
+   * <code>string sender_log_info = 16;</code>
+   * @return The bytes for senderLogInfo.
+   */
+  com.google.protobuf.ByteString
+      getSenderLogInfoBytes();
+
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 17;</code>
+   * @return The senderClientVersion.
+   */
+  java.lang.String getSenderClientVersion();
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 17;</code>
+   * @return The bytes for senderClientVersion.
+   */
+  com.google.protobuf.ByteString
+      getSenderClientVersionBytes();
 }

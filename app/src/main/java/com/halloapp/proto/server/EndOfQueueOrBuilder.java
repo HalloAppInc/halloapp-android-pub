@@ -6,4 +6,10 @@ package com.halloapp.proto.server;
 public interface EndOfQueueOrBuilder extends
     // @@protoc_insertion_point(interface_extends:server.EndOfQueue)
     com.google.protobuf.MessageLiteOrBuilder {
+
+  /**
+   * <code>bool trimmed = 1;</code>
+   * @return The trimmed.
+   */
+  boolean getTrimmed();
 }

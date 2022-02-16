@@ -187,6 +187,7 @@ public  final class Msg extends
     ICE_RESTART_ANSWER(41),
     GROUP_FEED_HISTORY(42),
     PRE_ANSWER_CALL(43),
+    HOLD_CALL(44),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -239,6 +240,7 @@ public  final class Msg extends
         case 41: return ICE_RESTART_ANSWER;
         case 42: return GROUP_FEED_HISTORY;
         case 43: return PRE_ANSWER_CALL;
+        case 44: return HOLD_CALL;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2286,6 +2288,56 @@ public  final class Msg extends
    */
   private void clearPreAnswerCall() {
     if (payloadCase_ == 43) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int HOLD_CALL_FIELD_NUMBER = 44;
+  /**
+   * <code>.server.HoldCall hold_call = 44;</code>
+   */
+  @java.lang.Override
+  public boolean hasHoldCall() {
+    return payloadCase_ == 44;
+  }
+  /**
+   * <code>.server.HoldCall hold_call = 44;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.HoldCall getHoldCall() {
+    if (payloadCase_ == 44) {
+       return (com.halloapp.proto.server.HoldCall) payload_;
+    }
+    return com.halloapp.proto.server.HoldCall.getDefaultInstance();
+  }
+  /**
+   * <code>.server.HoldCall hold_call = 44;</code>
+   */
+  private void setHoldCall(com.halloapp.proto.server.HoldCall value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 44;
+  }
+  /**
+   * <code>.server.HoldCall hold_call = 44;</code>
+   */
+  private void mergeHoldCall(com.halloapp.proto.server.HoldCall value) {
+    value.getClass();
+  if (payloadCase_ == 44 &&
+        payload_ != com.halloapp.proto.server.HoldCall.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.HoldCall.newBuilder((com.halloapp.proto.server.HoldCall) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 44;
+  }
+  /**
+   * <code>.server.HoldCall hold_call = 44;</code>
+   */
+  private void clearHoldCall() {
+    if (payloadCase_ == 44) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -4426,6 +4478,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.HoldCall hold_call = 44;</code>
+     */
+    @java.lang.Override
+    public boolean hasHoldCall() {
+      return instance.hasHoldCall();
+    }
+    /**
+     * <code>.server.HoldCall hold_call = 44;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.HoldCall getHoldCall() {
+      return instance.getHoldCall();
+    }
+    /**
+     * <code>.server.HoldCall hold_call = 44;</code>
+     */
+    public Builder setHoldCall(com.halloapp.proto.server.HoldCall value) {
+      copyOnWrite();
+      instance.setHoldCall(value);
+      return this;
+    }
+    /**
+     * <code>.server.HoldCall hold_call = 44;</code>
+     */
+    public Builder setHoldCall(
+        com.halloapp.proto.server.HoldCall.Builder builderForValue) {
+      copyOnWrite();
+      instance.setHoldCall(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.HoldCall hold_call = 44;</code>
+     */
+    public Builder mergeHoldCall(com.halloapp.proto.server.HoldCall value) {
+      copyOnWrite();
+      instance.mergeHoldCall(value);
+      return this;
+    }
+    /**
+     * <code>.server.HoldCall hold_call = 44;</code>
+     */
+    public Builder clearHoldCall() {
+      copyOnWrite();
+      instance.clearHoldCall();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -4542,15 +4642,16 @@ public  final class Msg extends
             com.halloapp.proto.server.IceRestartAnswer.class,
             com.halloapp.proto.server.GroupFeedHistory.class,
             com.halloapp.proto.server.PreAnswerCall.class,
+            com.halloapp.proto.server.HoldCall.class,
           };
           java.lang.String info =
-              "\u0000+\u0001\u0000\u0001++\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
+              "\u0000,\u0001\u0000\u0001,,\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
               "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
               "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
               "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
               "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
               " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000" +
-              "*<\u0000+<\u0000";
+              "*<\u0000+<\u0000,<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

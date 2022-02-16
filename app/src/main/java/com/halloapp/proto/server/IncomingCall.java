@@ -415,6 +415,52 @@ public  final class IncomingCall extends
     serverSentTsMs_ = 0L;
   }
 
+  public static final int CALL_CONFIG_FIELD_NUMBER = 8;
+  private com.halloapp.proto.server.CallConfig callConfig_;
+  /**
+   * <code>.server.CallConfig call_config = 8;</code>
+   */
+  @java.lang.Override
+  public boolean hasCallConfig() {
+    return callConfig_ != null;
+  }
+  /**
+   * <code>.server.CallConfig call_config = 8;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.CallConfig getCallConfig() {
+    return callConfig_ == null ? com.halloapp.proto.server.CallConfig.getDefaultInstance() : callConfig_;
+  }
+  /**
+   * <code>.server.CallConfig call_config = 8;</code>
+   */
+  private void setCallConfig(com.halloapp.proto.server.CallConfig value) {
+    value.getClass();
+  callConfig_ = value;
+    
+    }
+  /**
+   * <code>.server.CallConfig call_config = 8;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeCallConfig(com.halloapp.proto.server.CallConfig value) {
+    value.getClass();
+  if (callConfig_ != null &&
+        callConfig_ != com.halloapp.proto.server.CallConfig.getDefaultInstance()) {
+      callConfig_ =
+        com.halloapp.proto.server.CallConfig.newBuilder(callConfig_).mergeFrom(value).buildPartial();
+    } else {
+      callConfig_ = value;
+    }
+    
+  }
+  /**
+   * <code>.server.CallConfig call_config = 8;</code>
+   */
+  private void clearCallConfig() {  callConfig_ = null;
+    
+  }
+
   public static com.halloapp.proto.server.IncomingCall parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -936,6 +982,53 @@ public  final class IncomingCall extends
       return this;
     }
 
+    /**
+     * <code>.server.CallConfig call_config = 8;</code>
+     */
+    @java.lang.Override
+    public boolean hasCallConfig() {
+      return instance.hasCallConfig();
+    }
+    /**
+     * <code>.server.CallConfig call_config = 8;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.CallConfig getCallConfig() {
+      return instance.getCallConfig();
+    }
+    /**
+     * <code>.server.CallConfig call_config = 8;</code>
+     */
+    public Builder setCallConfig(com.halloapp.proto.server.CallConfig value) {
+      copyOnWrite();
+      instance.setCallConfig(value);
+      return this;
+      }
+    /**
+     * <code>.server.CallConfig call_config = 8;</code>
+     */
+    public Builder setCallConfig(
+        com.halloapp.proto.server.CallConfig.Builder builderForValue) {
+      copyOnWrite();
+      instance.setCallConfig(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.CallConfig call_config = 8;</code>
+     */
+    public Builder mergeCallConfig(com.halloapp.proto.server.CallConfig value) {
+      copyOnWrite();
+      instance.mergeCallConfig(value);
+      return this;
+    }
+    /**
+     * <code>.server.CallConfig call_config = 8;</code>
+     */
+    public Builder clearCallConfig() {  copyOnWrite();
+      instance.clearCallConfig();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.IncomingCall)
   }
   @java.lang.Override
@@ -961,10 +1054,11 @@ public  final class IncomingCall extends
             com.halloapp.proto.server.TurnServer.class,
             "timestampMs_",
             "serverSentTsMs_",
+            "callConfig_",
           };
           java.lang.String info =
-              "\u0000\u0007\u0000\u0000\u0001\u0007\u0007\u0000\u0002\u0000\u0001\u0208\u0002\f" +
-              "\u0003\t\u0004\u001b\u0005\u001b\u0006\u0002\u0007\u0002";
+              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0002\u0000\u0001\u0208\u0002\f\u0003\t\u0004" +
+              "\u001b\u0005\u001b\u0006\u0002\u0007\u0002\b\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
