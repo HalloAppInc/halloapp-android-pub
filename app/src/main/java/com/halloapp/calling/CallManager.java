@@ -139,6 +139,8 @@ public class CallManager {
     private TimerTask ringingTimeoutTimerTask;
     @Nullable
     private TimerTask iceRestartTimerTask;
+    @Nullable
+    private TimerTask noConnectionTimerTask;
     @NonNull
     private final CallStats callStats;
 
@@ -377,6 +379,8 @@ public class CallManager {
             storeCallLogMsg(peerUid, callId, callDuration);
         }
         cancelRingingTimeout();
+        cancelIceRestartTimer();
+        cancelNoConnectionTimer();
         releaseLock();
         callStats.stopStatsCollection();
         isInitiator = false;
@@ -772,7 +776,12 @@ public class CallManager {
                 if (iceConnectionState == PeerConnection.IceConnectionState.DISCONNECTED) {
                     // TODO(nikola): Maybe do a IN_CALL_RECONNECTING state if the IceConnectionState is FAILED/DISCONNECTED
                     startIceReconnectTimer();
+                    startNoConnectionEndCallTimer();
+                } else if (iceConnectionState == PeerConnection.IceConnectionState.CONNECTED) {
+                    cancelNoConnectionTimer();
+                    cancelIceRestartTimer();
                 }
+
                 if (iceConnectionState == PeerConnection.IceConnectionState.CONNECTED && state == State.IN_CALL_CONNECTING) {
                     iceConnected();
                 }
@@ -1160,9 +1169,29 @@ public class CallManager {
     private void cancelRingingTimeout() {
         synchronized (timer) {
             if (ringingTimeoutTimerTask != null) {
-                Log.i("canceling ringingTimeoutTimerTask");
+                Log.i("CallManager: canceling ringingTimeoutTimerTask");
                 ringingTimeoutTimerTask.cancel();
                 ringingTimeoutTimerTask = null;
+            }
+        }
+    }
+
+    private void cancelNoConnectionTimer() {
+        synchronized (timer) {
+            if (noConnectionTimerTask != null) {
+                Log.i("CallManager: canceling noConnectionTimerTask");
+                noConnectionTimerTask.cancel();
+                noConnectionTimerTask = null;
+            }
+        }
+    }
+
+    private void cancelIceRestartTimer() {
+        synchronized (timer) {
+            if (iceRestartTimerTask != null) {
+                Log.i("CallManager: canceling iceRestartTimerTask");
+                iceRestartTimerTask.cancel();
+                iceRestartTimerTask = null;
             }
         }
     }
@@ -1207,6 +1236,24 @@ public class CallManager {
             };
             Log.i("CallManager: start IceRestartTimerTask");
             timer.schedule(iceRestartTimerTask, Constants.CALL_ICE_RESTART_TIMEOUT_MS);
+        }
+    }
+
+    private void startNoConnectionEndCallTimer() {
+        synchronized (timer) {
+            if (noConnectionTimerTask != null) {
+                Log.i("CallManager: another noConnectionTimerTask already exists");
+                return;
+            }
+            noConnectionTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    Log.i("CallManager: IceConnection has been down for too long. Ending the call");
+                    endCall(EndCall.Reason.CONNECTION_ERROR, true);
+                }
+            };
+            Log.i("CallManager: start noConnection Timer");
+            timer.schedule(noConnectionTimerTask, Constants.CALL_NO_CONNECTION_TIMEOUT_MS);
         }
     }
 
