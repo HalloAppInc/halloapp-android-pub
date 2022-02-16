@@ -93,8 +93,9 @@ class ReplyContainer {
                     nameView.setTextColor(ContextCompat.getColor(nameView.getContext(), R.color.secondary_text));
                     nameView.setText(result.name);
                     textView.setTypeface(textView.getTypeface(), Typeface.NORMAL);
+                    boolean isPost = message.replyPostId != null;
                     if (result.text == null && result.thumb == null) {
-                        textView.setText(message.replyPostId != null ? R.string.reply_original_post_not_found : R.string.reply_original_not_found);
+                        textView.setText(isPost ? R.string.reply_original_post_not_found : R.string.reply_original_not_found);
                         textView.setTypeface(textView.getTypeface(), Typeface.ITALIC);
                     } else {
                         parent.getTextContentLoader().load(textView, result);
@@ -122,15 +123,19 @@ class ReplyContainer {
                             mediaIconView.setVisibility(View.VISIBLE);
                             mediaIconView.setImageResource(R.drawable.ic_keyboard_voice);
                             Long duration = null;
-                            try {
-                                duration = Long.parseLong(result.text);
-                            } catch (NumberFormatException e) {
-                                Log.e("ReplyContainer invalid duration " + result.text);
+                            if (result.text != null) {
+                                try {
+                                    duration = Long.parseLong(result.text);
+                                } catch (NumberFormatException e) {
+                                    Log.e("ReplyContainer invalid duration " + result.text);
+                                }
                             }
                             if (duration != null) {
-                                textView.setText(textView.getContext().getString(R.string.voice_note_preview, StringUtils.formatVoiceNoteDuration(textView.getContext(), duration)));
+                                textView.setText(textView.getContext().getString(
+                                        isPost ? R.string.audio_post_preview : R.string.voice_note_preview,
+                                        StringUtils.formatVoiceNoteDuration(textView.getContext(), duration)));
                             } else {
-                                textView.setText(R.string.voice_note);
+                                textView.setText(isPost ? R.string.audio_post : R.string.voice_note);
                             }
                             textView.setMaxLines(1);
                             break;

@@ -69,6 +69,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.content.VoiceNotePost;
 import com.halloapp.groups.ChatLoader;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
@@ -1104,9 +1105,11 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             replyContainer.setVisibility(View.VISIBLE);
             final TextView replyTextView = replyContainer.findViewById(R.id.reply_text);
             textContentLoader.load(replyTextView, post);
+            audioDurationLoader.cancel(replyTextView);
             final ImageView replyMediaIconView = replyContainer.findViewById(R.id.reply_media_icon);
             final ImageView replyMediaThumbView = replyContainer.findViewById(R.id.reply_media_thumb);
-            if (replyPostMediaIndex >= 0 && replyPostMediaIndex < post.media.size()) {
+            List<Media> postMedia = post.getMedia();
+            if (replyPostMediaIndex >= 0 && replyPostMediaIndex < postMedia.size()) {
                 replyMediaThumbView.setVisibility(View.VISIBLE);
                 replyMediaThumbView.setOutlineProvider(new ViewOutlineProvider() {
                     @Override
@@ -1115,12 +1118,13 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     }
                 });
                 replyMediaThumbView.setClipToOutline(true);
-                final Media media = post.media.get(replyPostMediaIndex);
+                final Media media = postMedia.get(replyPostMediaIndex);
                 mediaThumbnailLoader.load(replyMediaThumbView, media);
                 replyMediaIconView.setVisibility(View.VISIBLE);
                 switch (media.type) {
                     case Media.MEDIA_TYPE_IMAGE: {
                         replyMediaIconView.setImageResource(R.drawable.ic_camera);
+
                         if (TextUtils.isEmpty(post.text)) {
                             replyTextView.setText(R.string.photo);
                         }
@@ -1139,6 +1143,24 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                         break;
                     }
                 }
+            } else if (post.type == Post.TYPE_VOICE_NOTE) {
+                replyMediaIconView.setVisibility(View.VISIBLE);
+                replyMediaIconView.setImageResource(R.drawable.ic_keyboard_voice);
+                audioDurationLoader.load(replyTextView, post.media.get(0).file, new ViewDataLoader.Displayer<TextView, Long>() {
+                    @Override
+                    public void showResult(@NonNull TextView view, @Nullable Long result) {
+                        if (result != null) {
+                            replyTextView.setText(
+                                    getString(R.string.audio_post_preview,
+                                            StringUtils.formatVoiceNoteDuration(ChatActivity.this, result)));
+                        }
+                    }
+
+                    @Override
+                    public void showLoading(@NonNull TextView view) {
+                        replyTextView.setText(R.string.audio_post);
+                    }
+                });
             } else {
                 replyMediaThumbView.setVisibility(View.GONE);
                 replyMediaIconView.setVisibility(View.GONE);

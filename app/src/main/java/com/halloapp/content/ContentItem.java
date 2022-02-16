@@ -138,6 +138,11 @@ public abstract class ContentItem implements TextContent {
         }
     }
 
+    @NonNull
+    public List<Media> getMedia() {
+        return media;
+    }
+
     @Override
     public List<Mention> getMentions() {
         return mentions;

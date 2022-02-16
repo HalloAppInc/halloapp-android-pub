@@ -39,6 +39,7 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.clients.ChatContainer;
+import com.halloapp.proto.clients.VoiceNote;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
@@ -197,7 +198,8 @@ class MessagesDb {
                         if (!TextUtils.isEmpty(replyItem.text)) {
                             replyValues.put(RepliesTable.COLUMN_TEXT, replyItem.text);
                         }
-                        final Media replyMedia = (mediaIndex >= 0 && mediaIndex < replyItem.media.size()) ? replyItem.media.get(mediaIndex) : null;
+                        List<Media> mediaList = replyItem.getMedia();
+                        Media replyMedia = (mediaIndex >= 0 && mediaIndex < mediaList.size()) ? mediaList.get(mediaIndex) : null;
                         if (replyMedia != null && replyMedia.file != null) {
                             replyValues.put(RepliesTable.COLUMN_MEDIA_TYPE, replyMedia.type);
                             if (replyMedia.type == Media.MEDIA_TYPE_AUDIO) {
@@ -214,6 +216,15 @@ class MessagesDb {
                                     Log.e("ContentDb.addMessage: cannot create reply preview", e);
                                 }
                             }
+                        } else if (replyItem instanceof VoiceNotePost) {
+                            Media audioCaption = replyItem.media.get(0);
+                            if (audioCaption.file != null) {
+                                long duration = MediaUtils.getAudioDuration(audioCaption.file);
+                                if (duration != 0) {
+                                    replyValues.put(RepliesTable.COLUMN_TEXT, duration);
+                                }
+                            }
+                            replyValues.put(RepliesTable.COLUMN_MEDIA_TYPE, Media.MEDIA_TYPE_AUDIO);
                         }
                     }
                     long id = db.insertWithOnConflict(RepliesTable.TABLE_NAME, null, replyValues, SQLiteDatabase.CONFLICT_IGNORE);

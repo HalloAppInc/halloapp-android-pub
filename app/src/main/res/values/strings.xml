@@ -431,6 +431,10 @@
     <string name="voice_note">Voice note</string>
     <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
     <string name="voice_note_preview">Voice note (%s)</string>
+    <!-- Audio post, title/label for an audio post -->
+    <string name="audio_post">Audio post</string>
+    <!-- Preview text for audio post with duration %s is replaced with the length of the audio post, e.g. "Audio post (0:30)" -->
+    <string name="audio_post_preview">Audio post (%s)</string>
     <string name="photo">Photo</string>
     <string name="album">Album</string>
     <!-- Futureproof content we dont understand yet -->

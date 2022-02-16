@@ -273,9 +273,4 @@ public class Post extends ContentItem {
         }
         return false;
     }
-
-    @NonNull
-    public List<Media> getMedia() {
-        return media;
-    }
 }
