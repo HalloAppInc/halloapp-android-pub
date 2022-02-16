@@ -327,6 +327,11 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                                 ViewCompat.setImportantForAccessibility(child, ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_YES);
                             }
                         }
+                        if (visible) {
+                            homeViewModel.onFabMenuOpened();
+                        } else {
+                            homeViewModel.onFabMenuClosed();
+                        }
                     }
                 });
                 haFabView.addSubFab(R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);

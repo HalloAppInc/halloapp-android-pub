@@ -47,7 +47,6 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.BadgedDrawable;
 import com.halloapp.widget.FabExpandOnScrollListener;
-import com.halloapp.widget.HACustomFab;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 
 import java.util.List;
@@ -79,6 +78,9 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     private View inviteView;
 
     private boolean addedHomeZeroZonePost = false;
+    private boolean pausedNewPostHide = false;
+
+    private final Runnable hidePostsCallback = this::hideNewPostsBanner;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -139,6 +141,22 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         if (viewModel.getSavedScrollState() != null) {
             restoreStateOnDataLoaded = true;
         }
+
+        viewModel.getFabMenuOpen().observe(getViewLifecycleOwner(), isOpen -> {
+            if (isOpen == null) {
+                return;
+            }
+            if (isOpen) {
+                if (newPostsView.removeCallbacks(hidePostsCallback)) {
+                    pausedNewPostHide = true;
+                }
+            } else {
+                if (pausedNewPostHide) {
+                    newPostsView.postDelayed(hidePostsCallback, NEW_POSTS_BANNER_DISAPPEAR_TIME_MS);
+                    pausedNewPostHide = false;
+                }
+            }
+        });
 
         viewModel.unseenHomePosts.getLiveData().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
@@ -277,8 +295,8 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                 }
             }).start();
         }
-        newPostsView.removeCallbacks(this::hideNewPostsBanner);
-        newPostsView.postDelayed(this::hideNewPostsBanner, NEW_POSTS_BANNER_DISAPPEAR_TIME_MS);
+        newPostsView.removeCallbacks(hidePostsCallback);
+        newPostsView.postDelayed(hidePostsCallback, NEW_POSTS_BANNER_DISAPPEAR_TIME_MS);
     }
 
     private void hideNewPostsBanner() {

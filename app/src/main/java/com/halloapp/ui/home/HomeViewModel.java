@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
@@ -38,6 +39,8 @@ public class HomeViewModel extends AndroidViewModel {
     final LiveData<PagedList<Post>> postList;
 
     final ComputableLiveData<Boolean> unseenHomePosts;
+
+    private MutableLiveData<Boolean> fabMenuOpen = new MutableLiveData<>(false);
 
     private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
@@ -213,6 +216,19 @@ public class HomeViewModel extends AndroidViewModel {
     @NonNull
     public VoiceNotePlayer getVoiceNotePlayer() {
         return voiceNotePlayer;
+    }
+
+    public void onFabMenuOpened() {
+        fabMenuOpen.setValue(true);
+    }
+
+    public void onFabMenuClosed() {
+        fabMenuOpen.setValue(false);
+    }
+
+    @NonNull
+    public LiveData<Boolean> getFabMenuOpen() {
+        return fabMenuOpen;
     }
 
 }
