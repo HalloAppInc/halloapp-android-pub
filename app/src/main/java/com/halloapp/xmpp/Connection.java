@@ -60,6 +60,11 @@ public abstract class Connection {
         return instance;
     }
 
+    public abstract static class MsgCallback {
+        public void onAck() {}
+        public void onTimeout() {}
+    }
+
     public static abstract class Observer {
         public void onConnected() {}
         public void onDisconnected() {}
@@ -203,7 +208,7 @@ public abstract class Connection {
 
     public abstract void sendMessagePlayedReceipt(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
 
-    public abstract void sendCallMsg(@NonNull Msg msg, @NonNull Runnable ackHandler);
+    public abstract void sendMsg(@NonNull Msg msg, @Nullable MsgCallback callback, long timeout, boolean resendable);
 
     public abstract UserId getUserId(@NonNull String user);
 

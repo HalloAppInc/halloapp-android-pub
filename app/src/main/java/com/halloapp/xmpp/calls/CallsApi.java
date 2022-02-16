@@ -34,9 +34,7 @@ import com.halloapp.xmpp.util.Observable;
 import org.webrtc.IceCandidate;
 
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 
 /**
@@ -45,9 +43,10 @@ import java.util.Queue;
  */
 public class CallsApi extends Connection.Observer {
 
+    private static final long CALL_MSG_TIMEOUT_MS = 60_000;
+    
     private final Connection connection;
     private final CallManager callManager;
-    private final Queue<Msg> outgoingQueue = new LinkedList<Msg>();
 
     public CallsApi(@NonNull CallManager callManager, @NonNull Connection connection) {
         this.callManager = callManager;
@@ -56,25 +55,6 @@ public class CallsApi extends Connection.Observer {
 
     public void init() {
         ConnectionObservers.getInstance().addObserver(this);
-    }
-
-    @Override
-    public void onConnected() {
-        super.onConnected();
-        synchronized (outgoingQueue) {
-            Log.i("CallsApi.onConnected() flushing " + outgoingQueue.size() + " messages");
-            for (Msg msg : outgoingQueue) {
-                Log.i("resending msgId: " + msg.getId());
-                connection.sendCallMsg(msg, () -> msgAcked(msg));
-            }
-        }
-    }
-
-    public void msgAcked(Msg msg) {
-        synchronized (outgoingQueue) {
-            boolean removed = outgoingQueue.remove(msg);
-            Log.i("CallsApi: msgId: " + msg.getId() + " acked. removed=" + removed);
-        }
     }
 
     public static @NonNull WebRtcSessionDescription encryptCallPayload(String sessionDescription, UserId peerUid) throws CryptoException {
@@ -325,10 +305,7 @@ public class CallsApi extends Connection.Observer {
 
 
     private void sendCallMsg(@NonNull Msg msg) {
-        synchronized (outgoingQueue) {
-            Log.i("CallsApi: sending " + ProtoPrinter.toString(msg));
-            outgoingQueue.add(msg);
-            connection.sendCallMsg(msg, () -> msgAcked(msg));
-        }
+        Log.i("CallsApi: sending " + ProtoPrinter.toString(msg));
+        connection.sendMsg(msg, null, CALL_MSG_TIMEOUT_MS, true);
     }
 }

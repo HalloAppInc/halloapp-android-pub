@@ -120,6 +120,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -142,7 +144,6 @@ public class ConnectionImpl extends Connection {
 
     public static final String FEED_THREAD_ID = "feed";
 
-    private static final long PACKET_DROP_TIME_MS = 30_000;
     private static final long READ_TIMEOUT_MS = 150 * DateUtils.SECOND_IN_MILLIS;
 
     private final Me me;
@@ -153,7 +154,7 @@ public class ConnectionImpl extends Connection {
     private final ConnectionExecutor executor = new ConnectionExecutor();
     private final Executor chatStanzaExecutor = Executors.newSingleThreadExecutor();
     private final Executor groupStanzaExecutor = Executors.newSingleThreadExecutor();
-    private final Map<String, Runnable> ackHandlers = new ConcurrentHashMap<>();
+
     public boolean clientExpired = false;
     private HANoiseSocket socket = null;
 
@@ -163,6 +164,7 @@ public class ConnectionImpl extends Connection {
     private final PacketWriter packetWriter = new PacketWriter();
     private final PacketReader packetReader = new PacketReader();
     private final IqRouter iqRouter = new IqRouter();
+    private final MsgRouter msgRouter = new MsgRouter();
 
     private final SocketConnectorAsync socketConnectorAsync;
 
@@ -239,11 +241,6 @@ public class ConnectionImpl extends Connection {
             Log.i("connection: currently connecting");
             return true;
         }
-        if (!ackHandlers.isEmpty()) {
-            Log.i("connection: " + ackHandlers.size() + " ack handlers cleared");
-        }
-        ackHandlers.clear();
-
         Log.i("connection: connecting...");
 
         final String host = preferences.getUseDebugHost() ? DEBUG_HOST : HOST;
@@ -260,7 +257,8 @@ public class ConnectionImpl extends Connection {
             synchronized (startupShutdownLock) {
                 packetWriter.init();
                 packetReader.init();
-                iqRouter.init();
+                iqRouter.onConnected();
+                msgRouter.onConnected();
             }
             randomizeShortId();
             connectionObservers.notifyConnected();
@@ -321,16 +319,11 @@ public class ConnectionImpl extends Connection {
         }
     }
 
-
-    public void sendPacket(Packet packet) {
-        if (!reconnectIfNeeded()) {
-            Log.e("connection: can't connect; dropping: " + ProtoPrinter.toString(packet));
-            return;
-        }
-        packetWriter.sendPacket(packet, null, PACKET_DROP_TIME_MS);
+    private void sendPacket(Packet packet) {
+        sendPacket(packet, null);
     }
 
-    public void sendPacket(Packet packet, @Nullable PacketCallback packetCallback, long timeout) {
+    private void sendPacket(Packet packet, @Nullable PacketCallback packetCallback) {
         if (!reconnectIfNeeded()) {
             Log.e("connection: can't connect; dropping: " + ProtoPrinter.toString(packet));
             if (packetCallback != null) {
@@ -338,24 +331,42 @@ public class ConnectionImpl extends Connection {
             }
             return;
         }
-        packetWriter.sendPacket(packet, packetCallback, timeout);
+        packetWriter.sendPacket(packet, packetCallback);
     }
 
-    public void sendMsg(Msg msg, @Nullable Runnable ackHandler) {
-        Packet packet = Packet.newBuilder().setMsg(msg).build();
-        sendPacket(packet, new PacketCallback() {
-            @Override
-            public void onPreparePacketSend() {
-                if (ackHandler != null) {
-                    ackHandlers.put(msg.getId(), ackHandler);
+    private void sendMsgInternal(Msg msg, @Nullable MsgCallback callback, boolean resendable) {
+        msgRouter.sendMsg(msg, callback, resendable);
+    }
+
+    private void sendMsgInternal(Msg msg, @Nullable Runnable ackHandler, boolean resendable) {
+        MsgCallback callback;
+        if (ackHandler == null) {
+            callback = null;
+        } else {
+            callback = new MsgCallback() {
+                @Override
+                public void onAck() {
+                    ackHandler.run();
                 }
-            }
 
-            @Override
-            public void onPacketDropped() {
+                @Override
+                public void onTimeout() {
 
-            }
-        }, PACKET_DROP_TIME_MS);
+                }
+            };
+        }
+        sendMsgInternal(msg, callback, resendable);
+    }
+
+    private void sendMsgInternal(Msg msg, @Nullable Runnable ackHandler) {
+        sendMsgInternal(msg, ackHandler, false);
+    }
+
+    @Override
+    public void sendMsg(@NonNull Msg msg, @Nullable MsgCallback callback, long timeout, boolean resendable) {
+        executor.execute(() -> {
+            msgRouter.sendMsg(msg, timeout, callback, resendable);
+        });
     }
 
     private boolean isConnected() {
@@ -405,7 +416,8 @@ public class ConnectionImpl extends Connection {
         synchronized (startupShutdownLock) {
             packetWriter.shutdown();
             packetReader.shutdown();
-            iqRouter.shutdown();
+            iqRouter.onDisconnected();
+            msgRouter.onDisconnected();
         }
     }
 
@@ -723,7 +735,7 @@ public class ConnectionImpl extends Connection {
                         .setGroupFeedItem(builder.build())
                         .setRerequestCount(ContentDb.getInstance().getOutboundPostRerequestCount(userId, post.id))
                         .build();
-                sendMsg(msg, null);
+                sendMsgInternal(msg, () -> Log.i("group post rerequest acked " + post.id));
             } catch (CryptoException e) {
                 Log.e("Failed to send rerequested group post", e);
             }
@@ -867,7 +879,7 @@ public class ConnectionImpl extends Connection {
                         .setGroupFeedItem(builder.build())
                         .setRerequestCount(ContentDb.getInstance().getOutboundCommentRerequestCount(userId, comment.id))
                         .build();
-                sendMsg(msg, null);
+                sendMsgInternal(msg, () -> Log.i("rerequested group comment acked " + comment.id));
             } catch (CryptoException e) {
                 Log.e("Failed to send rerequested group comment", e);
             }
@@ -878,7 +890,7 @@ public class ConnectionImpl extends Connection {
         Msg msg = Msg.newBuilder()
                 .setGroupFeedHistory(groupFeedHistory).setId(id).setType(Msg.Type.NORMAL).setToUid(Long.parseLong(userId.rawId()))
                 .build();
-        sendMsg(msg, () -> Log.i("History resend made it to server for " + userId));
+        sendMsgInternal(msg, () -> Log.i("History resend made it to server for " + userId));
     }
 
     @Override
@@ -900,7 +912,7 @@ public class ConnectionImpl extends Connection {
                     .setType(Msg.Type.CHAT)
                     .setChatRetract(ChatRetract.newBuilder().setId(messageId).build())
                     .build();
-            sendMsg(msg, () -> ackHandlers.put(messageId, () -> connectionObservers.notifyOutgoingMessageSent(chatUserId, messageId)));
+            sendMsgInternal(msg, () -> connectionObservers.notifyOutgoingMessageSent(chatUserId, messageId));
         });
     }
 
@@ -928,7 +940,7 @@ public class ConnectionImpl extends Connection {
                     .setToUid(Long.parseLong(message.chatId.rawId()))
                     .setChatStanza(ChatMessageProtocol.getInstance().serializeMessage(message, recipientUserId, signalSessionSetupInfo))
                     .build();
-            sendMsg(msg, () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
+            sendMsgInternal(msg, () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
         });
     }
 
@@ -1037,7 +1049,7 @@ public class ConnectionImpl extends Connection {
                     .build();
 
             Log.i("connection: sending post seen receipt " + postId + " to " + senderUserId);
-            sendMsg(msg, () -> connectionObservers.notifyIncomingPostSeenReceiptSent(senderUserId, postId));
+            sendMsgInternal(msg, () -> connectionObservers.notifyIncomingPostSeenReceiptSent(senderUserId, postId), true);
         });
     }
 
@@ -1052,7 +1064,7 @@ public class ConnectionImpl extends Connection {
                     .setSeenReceipt(seenReceiptElement.toProto())
                     .setToUid(Long.parseLong(senderUserId.rawId()))
                     .build();
-            sendMsg(msg, () -> connectionObservers.notifyIncomingMessageSeenReceiptSent(chatId, senderUserId, messageId));
+            sendMsgInternal(msg, () -> connectionObservers.notifyIncomingMessageSeenReceiptSent(chatId, senderUserId, messageId), true);
             Log.i("connection: sending message seen receipt " + messageId + " to " + senderUserId);
         });
     }
@@ -1071,16 +1083,8 @@ public class ConnectionImpl extends Connection {
                     .setPlayedReceipt(playedReceipt)
                     .setToUid(Long.parseLong(senderUserId.rawId()))
                     .build();
-            sendMsg(msg, () -> connectionObservers.notifyIncomingMessagePlayedReceiptSent(chatId, senderUserId, messageId));
+            sendMsgInternal(msg, () -> connectionObservers.notifyIncomingMessagePlayedReceiptSent(chatId, senderUserId, messageId), true);
             Log.i("connection: sending message seen receipt " + messageId + " to " + senderUserId);
-        });
-    }
-
-    @Override
-    public void sendCallMsg(@NonNull Msg msg, @NonNull Runnable ackHandler) {
-        executor.execute(() -> {
-            Log.i("connection: sending call msg " + msg.getId() + " to " + msg.getToUid());
-            sendMsg(msg, ackHandler);
         });
     }
 
@@ -1923,12 +1927,7 @@ public class ConnectionImpl extends Connection {
         }
 
         private void handleAck(Ack ack) {
-            final Runnable handler = ackHandlers.remove(ack.getId());
-            if (handler != null) {
-                handler.run();
-            } else {
-                Log.w("connection: ack doesn't match any pending message " + ProtoPrinter.toString(ack));
-            }
+            msgRouter.handleAck(ack);
         }
 
         private void handlePresence(Presence presence) {
@@ -1959,19 +1958,15 @@ public class ConnectionImpl extends Connection {
     }
 
     interface PacketCallback {
-        void onPreparePacketSend();
         void onPacketDropped();
     }
 
     private class PacketWriter {
-        private static final int QUEUE_CAPACITY = 100;
-
-        private final LinkedBlockingQueue<Packet> queue = new LinkedBlockingQueue<>(QUEUE_CAPACITY);
+        private final LinkedBlockingQueue<Packet> queue = new LinkedBlockingQueue<>();
 
         private final Object callbackLock = new Object();
 
         private final HashMap<Packet, PacketCallback> packetCallbacks = new HashMap<>();
-        private final HashMap<Packet, TimerTask> packetTimers = new HashMap<>();
 
         private Thread writerThread;
         private WriterRunnable writerRunnable;
@@ -1991,31 +1986,12 @@ public class ConnectionImpl extends Connection {
             cleanQueue();
         }
 
-        void sendPacket(Packet packet, @Nullable PacketCallback callback, long timeout) {
+        void sendPacket(Packet packet, @Nullable PacketCallback callback) {
             try {
                 synchronized (callbackLock) {
                     if (callback != null) {
                         packetCallbacks.put(packet, callback);
                     }
-
-                    TimerTask t = new TimerTask() {
-                        @Override
-                        public void run() {
-                            if (!queue.remove(packet)) {
-                                return;
-                            }
-                            synchronized (callbackLock) {
-                                PacketCallback c = packetCallbacks.remove(packet);
-                                if (c != null) {
-                                    c.onPacketDropped();
-                                }
-                                packetTimers.remove(packet);
-                                Log.i("connection: dropped: " + ProtoPrinter.toString(packet));
-                            }
-                        }
-                    };
-                    packetTimers.put(packet, t);
-                    timer.schedule(t, timeout);
                 }
                 enqueue(packet);
             } catch (InterruptedException e) {
@@ -2047,13 +2023,6 @@ public class ConnectionImpl extends Connection {
                 writerThread = null;
             }
             synchronized (callbackLock) {
-                for (TimerTask t : packetTimers.values()) {
-                    if (t != null) {
-                        t.cancel();
-                    }
-                }
-                packetTimers.clear();
-
                 for (PacketCallback callback : packetCallbacks.values()) {
                     if (callback != null) {
                         callback.onPacketDropped();
@@ -2079,14 +2048,7 @@ public class ConnectionImpl extends Connection {
                             Packet packet = queue.take();
                             Log.i("connection: send: " + ProtoPrinter.toString(packet));
                             synchronized (callbackLock) {
-                                TimerTask timeout = packetTimers.remove(packet);
-                                if (timeout != null && !timeout.cancel()) {
-                                    continue;
-                                }
-                                PacketCallback callback = packetCallbacks.remove(packet);
-                                if (callback != null) {
-                                    callback.onPreparePacketSend();
-                                }
+                                packetCallbacks.remove(packet);
                             }
                             socket.writePacket(packet);
                         } catch (InterruptedException e) {
@@ -2107,6 +2069,124 @@ public class ConnectionImpl extends Connection {
         }
     }
 
+    private class MsgRouter {
+        private static final long DEFAULT_MSG_TIMEOUT_MS = 30_000;
+        private final LinkedHashMap<String, PendingMsg> pendingMessages = new LinkedHashMap<>();
+
+        private class PendingMsg {
+            public final String id;
+            public final Packet packet;
+            public final MsgCallback callback;
+            public final TimerTask timeoutTask;
+            public boolean resendable = false;
+
+            public PendingMsg(@NonNull String id, @NonNull Packet packet, @NonNull TimerTask task, @Nullable MsgCallback callback) {
+                this.id = id;
+                this.packet = packet;
+                this.callback = callback;
+                this.timeoutTask = task;
+            }
+
+            public void setResendable(boolean resendable) {
+                this.resendable = resendable;
+            }
+        }
+
+        public void sendMsg(Msg msg, @Nullable MsgCallback msgCallback, boolean resendable) {
+            sendMsg(msg, DEFAULT_MSG_TIMEOUT_MS, msgCallback, resendable);
+        }
+
+        public void sendMsg(Msg msg, long timeout, @Nullable MsgCallback msgCallback, boolean resendable) {
+            Packet packet = buildPacket(msg);
+            final String id = msg.getId();
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    PendingMsg pendingMsg;
+                    synchronized (MsgRouter.this) {
+                        pendingMsg = pendingMessages.remove(id);
+                    }
+                    if (pendingMsg != null) {
+                        Log.i("connection: msg id " + id + " never acked, timed out");
+                        if (pendingMsg.callback != null) {
+                            pendingMsg.callback.onTimeout();
+                        }
+                    }
+                }
+            };
+            PendingMsg pendingMsg = new PendingMsg(id, packet, task, msgCallback);
+            pendingMsg.setResendable(resendable);
+            synchronized (MsgRouter.this) {
+                if (pendingMessages.containsKey(id)) {
+                    Log.e("connection: duplicate outgoing msg id " + id);
+                    throw new RuntimeException("an outgoing msg with the same id=" + id + " already exists!");
+                }
+                pendingMessages.put(id, pendingMsg);
+                timer.schedule(task, timeout);
+            }
+            sendPacket(packet);
+        }
+
+        public void handleAck(Ack ack) {
+            final String ackId = ack.getId();
+            final PendingMsg ackedMessage;
+            synchronized (this) {
+                ackedMessage = pendingMessages.remove(ackId);
+                if (ackedMessage != null) {
+                    ackedMessage.timeoutTask.cancel();
+                }
+            }
+            if (ackedMessage == null) {
+                Log.w("connection: ack doesn't match any pending message " + ProtoPrinter.toString(ack));
+            } else if (ackedMessage.callback != null) {
+                ackedMessage.callback.onAck();
+            }
+        }
+
+        public void onConnected() {
+            Log.i("connection: re-connected msg router requeing messages");
+            synchronized (this) {
+                Iterator<PendingMsg> pendingMessageIterator = pendingMessages.values().iterator();
+                while (pendingMessageIterator.hasNext()) {
+                    PendingMsg msg = pendingMessageIterator.next();
+                    if (!msg.resendable) {
+                        Log.i("connection: dropping msg id " + msg.id + " as not safe to resend");
+                        pendingMessageIterator.remove();
+                        msg.timeoutTask.cancel();
+                    } else {
+                        sendPacket(msg.packet);
+                    }
+                }
+            }
+        }
+
+        public void onDisconnected() {
+            Log.i("connection: disconnected msg router clearing out non-resendable messages");
+            ArrayList<PendingMsg> droppedMessages = new ArrayList<>();
+            synchronized (this) {
+                Iterator<PendingMsg> pendingMessageIterator = pendingMessages.values().iterator();
+                while (pendingMessageIterator.hasNext()) {
+                    PendingMsg msg = pendingMessageIterator.next();
+                    if (!msg.resendable) {
+                        pendingMessageIterator.remove();
+                        msg.timeoutTask.cancel();
+                        droppedMessages.add(msg);
+                    }
+                }
+            }
+            for (PendingMsg msg : droppedMessages) {
+                Log.i("connection: dropped non-resendable msg id " + msg.id);
+                if (msg.callback != null) {
+                    msg.callback.onTimeout();
+                }
+            }
+        }
+
+        private Packet buildPacket(Msg msg) {
+            return Packet.newBuilder().setMsg(msg).build();
+        }
+    }
+
     private class IqRouter {
         private static final long IQ_TIMEOUT_MS = 20_000;
 
@@ -2114,7 +2194,6 @@ public class ConnectionImpl extends Connection {
         private final Map<String, ResponseHandler<Iq>> successCallbacks = new ConcurrentHashMap<>();
         private final Map<String, ExceptionHandler> failureCallbacks = new ConcurrentHashMap<>();
 
-        private boolean done;
         private final Object callbackRemovalLock = new Object(); // make sure exactly one callback is ever removed per id
 
         private ResponseHandler<Iq> fetchSuccessCallback(String id) {
@@ -2166,27 +2245,16 @@ public class ConnectionImpl extends Connection {
         public Observable<Iq> sendAsync(Iq iq) {
             BackgroundObservable<Iq> observable = new BackgroundObservable<>(bgWorkers);
             Packet packet = Packet.newBuilder().setIq(iq).build();
-            sendPacket(packet, new PacketCallback() {
-                @Override
-                public void onPreparePacketSend() {
-                    setCallbacks(iq.getId(), observable::setResponse, observable::setException);
-                }
-
-                @Override
-                public void onPacketDropped() {
-                    observable.setException(new NotConnectedException());
-                }
-            }, IQ_TIMEOUT_MS);
+            sendPacket(packet, () -> observable.setException(new NotConnectedException()));
+            setCallbacks(iq.getId(), observable::setResponse, observable::setException);
             return observable;
         }
 
-        void init() {
-            done = false;
+        void onConnected() {
             reset();
         }
 
-        void shutdown() {
-            done = true;
+        void onDisconnected() {
             reset();
         }
 
