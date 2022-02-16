@@ -440,7 +440,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         intent.putExtra(ContentComposerActivity.EXTRA_ALLOW_ADD_MEDIA, true);
         intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_ID, getIntent().getStringExtra(EXTRA_REPLY_POST_ID));
         intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_MEDIA_INDEX, getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1));
-
+        intent.putExtra(ContentComposerActivity.EXTRA_NAVIGATE_TO_DESTINATION, false);
         prepareResults(intent, uris);
         startActivityForResult(intent, REQUEST_CODE_COMPOSE_CONTENT);
     }

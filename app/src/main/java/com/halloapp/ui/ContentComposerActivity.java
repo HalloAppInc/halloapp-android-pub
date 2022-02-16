@@ -121,6 +121,7 @@ public class ContentComposerActivity extends HalloActivity {
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
     public static final String EXTRA_VOICE_NOTE_POST = "voice_note_post";
     public static final String EXTRA_DESTINATIONS = "destinations";
+    public static final String EXTRA_NAVIGATE_TO_DESTINATION = "navigate_to_destination";
 
     private static final int REQUEST_CODE_CROP = 1;
     private static final int REQUEST_CODE_MORE_MEDIA = 2;
@@ -213,6 +214,7 @@ public class ContentComposerActivity extends HalloActivity {
 
     private int expectedMediaCount;
 
+    private boolean navigateToDestination;
     private boolean prevEditEmpty;
     private boolean updatedMediaProcessed = false;
     private int currentItemToSet = -1;
@@ -363,6 +365,7 @@ public class ContentComposerActivity extends HalloActivity {
                 uris = getIntent().getParcelableArrayListExtra(Intent.EXTRA_STREAM);
             }
         }
+        navigateToDestination = getIntent().getBooleanExtra(EXTRA_NAVIGATE_TO_DESTINATION, true);
         calledFromCamera = getIntent().getBooleanExtra(EXTRA_CALLED_FROM_CAMERA, false);
         allowAddMedia = getIntent().getBooleanExtra(EXTRA_ALLOW_ADD_MEDIA, false);
         boolean voiceNotePost = getIntent().getBooleanExtra(EXTRA_VOICE_NOTE_POST, false);
@@ -610,37 +613,42 @@ public class ContentComposerActivity extends HalloActivity {
             setResult(RESULT_OK);
             finish();
 
-            boolean isMultiSharedToFeed = false;
-            if (viewModel.destinationList.getValue() != null && viewModel.destinationList.getValue().size() > 0) {
-                for (ShareDestination dest : viewModel.destinationList.getValue()) {
-                    if (dest.type == ShareDestination.TYPE_FEED) {
-                        isMultiSharedToFeed = true;
-                        groupId = null;
-                        chatId = null;
-                        break;
-                    } else if (dest.type == ShareDestination.TYPE_GROUP) {
-                        groupId = (GroupId) dest.id;
-                    } else if (dest.type == ShareDestination.TYPE_CONTACT) {
-                        chatId = dest.id;
+            if (navigateToDestination) {
+                boolean isMultiSharedToFeed = false;
+                if (viewModel.destinationList.getValue() != null && viewModel.destinationList.getValue().size() > 0) {
+                    for (ShareDestination dest : viewModel.destinationList.getValue()) {
+                        if (dest.type == ShareDestination.TYPE_FEED) {
+                            isMultiSharedToFeed = true;
+                            groupId = null;
+                            chatId = null;
+                            break;
+                        } else if (dest.type == ShareDestination.TYPE_GROUP) {
+                            groupId = (GroupId) dest.id;
+                        } else if (dest.type == ShareDestination.TYPE_CONTACT) {
+                            chatId = dest.id;
+                        }
                     }
                 }
-            }
 
-            if (chatId != null) {
-                final Intent intent = ChatActivity.open(this, chatId);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            } else if (groupId != null) {
-                final Intent intent = ViewGroupFeedActivity.viewFeed(this, groupId, true);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-            } else if (isMultiSharedToFeed || calledFromCamera ||
-                    Intent.ACTION_SEND.equals(getIntent().getAction()) ||
-                    Intent.ACTION_SEND_MULTIPLE.equals(getIntent().getAction())) {
-                final Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                intent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                if (chatId != null) {
+                    final Intent intent = ChatActivity.open(this, chatId);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                } else if (groupId != null) {
+                    final Intent intent = ViewGroupFeedActivity.viewFeed(this, groupId, true);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                } else if (isMultiSharedToFeed || calledFromCamera ||
+                        Intent.ACTION_SEND.equals(getIntent().getAction()) ||
+                        Intent.ACTION_SEND_MULTIPLE.equals(getIntent().getAction())) {
+                    final Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                    intent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+            } else {
+                setResult(RESULT_OK);
+                finish();
             }
         });
 

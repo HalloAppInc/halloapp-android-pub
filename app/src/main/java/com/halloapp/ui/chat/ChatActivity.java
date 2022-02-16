@@ -260,6 +260,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         replyMessage = null;
         replyMessageMediaIndex = -1;
         replyContainer.setVisibility(View.GONE);
+        setResult(RESULT_OK);
     }
 
     @Override
@@ -1310,8 +1311,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             }
             message.addToStorage(ContentDb.getInstance());
         }
-
-        setResult(RESULT_OK);
     }
 
     private void pickMedia() {
