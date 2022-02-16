@@ -1043,6 +1043,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         } else if (item.getItemId() == R.id.call) {
             Log.i("ChatActivity: starting a call with Uid: " + chatId);
             callManager.startCallActivity(this, (UserId) chatId);
+            setResult(RESULT_OK);
         }
         return super.onOptionsItemSelected(item);
     }
