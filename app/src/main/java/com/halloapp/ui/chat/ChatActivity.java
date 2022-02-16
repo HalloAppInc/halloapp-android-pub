@@ -241,6 +241,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
     private UrlPreviewLoader urlPreviewLoader;
     private LinkPreviewComposeView linkPreviewComposeView;
+    private ReplyPreviewContainer replyPreviewContainerHolder;
 
     private final SharedElementCallback sharedElementCallback = new SharedElementCallback() {
         @Override
@@ -665,18 +666,37 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
         replyContainer = findViewById(R.id.reply_container);
         replyPreviewContainer = findViewById(R.id.reply_preview_container);
+        replyPreviewContainerHolder = new ReplyPreviewContainer(replyContainer);
+        replyPreviewContainerHolder.init(contactLoader, textContentLoader, audioDurationLoader, mediaThumbnailLoader);
+
+        replyPreviewContainerHolder.setOnDismissListener(() -> {
+            replyPreviewContainerHolder.hide();
+            replyMessage = null;
+            replyMessageRowId = -1;
+            replyMessageMediaIndex = -1;
+            replyPostId = null;
+            replyPostMediaIndex = -1;
+            replyPreviewContainerHolder.hide();
+        });
         viewModel.reply.getLiveData().observe(this, reply -> {
             if (reply == null) {
                 replyContainer.setVisibility(View.GONE);
                 return;
             }
-
+            replyPostId = null;
+            replyMessage = null;
+            replyMessageRowId = -1;
             if (reply.post != null) {
-                this.updatePostReply(reply.post);
-                replyNameView.setText(reply.name);
+                replyPostId = reply.post.id;
+                replyPreviewContainerHolder.bindPost(reply.post, replyPostMediaIndex);
             } else if (reply.message != null) {
-                this.updateMessageReply(reply.message);
-                replyNameView.setText(reply.name);
+                replyMessage = reply.message;
+                replyMessageRowId = reply.message.rowId;
+                replyPostMediaIndex = -1;
+                if (replyMessageMediaIndexMap.containsKey(replyMessageRowId)) {
+                    replyMessageMediaIndex = replyMessageMediaIndexMap.get(replyMessageRowId);
+                }
+                replyPreviewContainerHolder.bindMessage(reply.message, replyMessageMediaIndex);
             }
         });
 
@@ -1098,171 +1118,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             }
         }
         return false;
-    }
-
-    private void updatePostReply(@Nullable Post post) {
-        if (post != null) {
-            updateReplyColors(post.senderUserId);
-            replySenderId = post.senderUserId;
-            replyContainer.setVisibility(View.VISIBLE);
-            final TextView replyTextView = replyContainer.findViewById(R.id.reply_text);
-            textContentLoader.load(replyTextView, post);
-            audioDurationLoader.cancel(replyTextView);
-            final ImageView replyMediaIconView = replyContainer.findViewById(R.id.reply_media_icon);
-            final ImageView replyMediaThumbView = replyContainer.findViewById(R.id.reply_media_thumb);
-            List<Media> postMedia = post.getMedia();
-            if (replyPostMediaIndex >= 0 && replyPostMediaIndex < postMedia.size()) {
-                replyMediaThumbView.setVisibility(View.VISIBLE);
-                replyMediaThumbView.setOutlineProvider(new ViewOutlineProvider() {
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.comment_media_list_corner_radius));
-                    }
-                });
-                replyMediaThumbView.setClipToOutline(true);
-                final Media media = postMedia.get(replyPostMediaIndex);
-                mediaThumbnailLoader.load(replyMediaThumbView, media);
-                replyMediaIconView.setVisibility(View.VISIBLE);
-                switch (media.type) {
-                    case Media.MEDIA_TYPE_IMAGE: {
-                        replyMediaIconView.setImageResource(R.drawable.ic_camera);
-
-                        if (TextUtils.isEmpty(post.text)) {
-                            replyTextView.setText(R.string.photo);
-                        }
-                        break;
-                    }
-                    case Media.MEDIA_TYPE_VIDEO: {
-                        replyMediaIconView.setImageResource(R.drawable.ic_video);
-                        if (TextUtils.isEmpty(post.text)) {
-                            replyTextView.setText(R.string.video);
-                        }
-                        break;
-                    }
-                    case Media.MEDIA_TYPE_UNKNOWN:
-                    default: {
-                        replyMediaIconView.setImageResource(R.drawable.ic_media_collection);
-                        break;
-                    }
-                }
-            } else if (post.type == Post.TYPE_VOICE_NOTE) {
-                replyMediaIconView.setVisibility(View.VISIBLE);
-                replyMediaIconView.setImageResource(R.drawable.ic_keyboard_voice);
-                audioDurationLoader.load(replyTextView, post.media.get(0).file, new ViewDataLoader.Displayer<TextView, Long>() {
-                    @Override
-                    public void showResult(@NonNull TextView view, @Nullable Long result) {
-                        if (result != null) {
-                            replyTextView.setText(
-                                    getString(R.string.audio_post_preview,
-                                            StringUtils.formatVoiceNoteDuration(ChatActivity.this, result)));
-                        }
-                    }
-
-                    @Override
-                    public void showLoading(@NonNull TextView view) {
-                        replyTextView.setText(R.string.audio_post);
-                    }
-                });
-            } else {
-                replyMediaThumbView.setVisibility(View.GONE);
-                replyMediaIconView.setVisibility(View.GONE);
-            }
-            replyContainer.findViewById(R.id.reply_close).setOnClickListener(v -> {
-                replyPostId = null;
-                replyPostMediaIndex = -1;
-                replyContainer.setVisibility(View.GONE);
-            });
-        } else {
-            replyContainer.setVisibility(View.GONE);
-        }
-    }
-
-    private void updateReplyColors(@NonNull UserId userId) {
-        replyPreviewContainer.setBackgroundResource(R.drawable.reply_frame_background);
-        replyPreviewContainer.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.message_background_reply_incoming)));
-        replyNameView.setTextColor(ContextCompat.getColor(this, R.color.secondary_text));
-    }
-
-    private void updateMessageReply(@Nullable Message message) {
-        if (message != null) {
-            updateReplyColors(message.senderUserId);
-            replyMessage = message;
-            replyContainer.setVisibility(View.VISIBLE);
-            contactLoader.load(replyNameView, message.senderUserId);
-            TextView replyTextView = replyContainer.findViewById(R.id.reply_text);
-            textContentLoader.load(replyTextView, message);
-            final ImageView replyMediaIconView = replyContainer.findViewById(R.id.reply_media_icon);
-            final ImageView replyMediaThumbView = replyContainer.findViewById(R.id.reply_media_thumb);
-            if (replyMessageMediaIndexMap.containsKey(replyMessageRowId)) {
-                replyMessageMediaIndex = replyMessageMediaIndexMap.get(replyMessageRowId);
-            } else if (message.type == Message.TYPE_VOICE_NOTE) {
-                replyMessageMediaIndex = 0;
-            }
-            audioDurationLoader.cancel(replyTextView);
-            if (replyMessageMediaIndex >= 0 && replyMessageMediaIndex < message.media.size()) {
-                replyMediaThumbView.setVisibility(View.VISIBLE);
-                replyMediaThumbView.setOutlineProvider(new ViewOutlineProvider() {
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.comment_media_list_corner_radius));
-                    }
-                });
-                replyMediaThumbView.setClipToOutline(true);
-                final Media media = message.media.get(replyMessageMediaIndex);
-                mediaThumbnailLoader.load(replyMediaThumbView, media);
-                replyMediaIconView.setVisibility(View.VISIBLE);
-                switch (media.type) {
-                    case Media.MEDIA_TYPE_IMAGE: {
-                        replyMediaIconView.setImageResource(R.drawable.ic_camera);
-                        if (TextUtils.isEmpty(message.text)) {
-                            replyTextView.setText(R.string.photo);
-                        }
-                        break;
-                    }
-                    case Media.MEDIA_TYPE_VIDEO: {
-                        replyMediaIconView.setImageResource(R.drawable.ic_video);
-                        if (TextUtils.isEmpty(message.text)) {
-                            replyTextView.setText(R.string.video);
-                        }
-                        break;
-                    }
-                    case Media.MEDIA_TYPE_AUDIO: {
-                        replyMediaIconView.setImageResource(R.drawable.ic_keyboard_voice);
-                        replyMediaThumbView.setVisibility(View.GONE);
-                        final String voiceNote = getString(R.string.voice_note);
-                        audioDurationLoader.load(replyTextView, message.media.get(0).file, new ViewDataLoader.Displayer<TextView, Long>() {
-                            @Override
-                            public void showResult(@NonNull TextView view, @Nullable Long result) {
-                                if (result != null) {
-                                    replyTextView.setText(getString(R.string.voice_note_preview, StringUtils.formatVoiceNoteDuration(ChatActivity.this, result)));
-                                }
-                            }
-
-                            @Override
-                            public void showLoading(@NonNull TextView view) {
-                                replyTextView.setText(voiceNote);
-                            }
-                        });
-                        break;
-                    }
-                    case Media.MEDIA_TYPE_UNKNOWN:
-                    default: {
-                        replyMediaIconView.setImageResource(R.drawable.ic_media_collection);
-                        replyTextView.setText(message.text);
-                        break;
-                    }
-                }
-            } else {
-                replyMediaThumbView.setVisibility(View.GONE);
-                replyMediaIconView.setVisibility(View.GONE);
-            }
-            replyContainer.findViewById(R.id.reply_close).setOnClickListener(v -> updateMessageReply(null));
-        } else {
-            replyMessage = null;
-            replyMessageRowId = -1;
-            replyMessageMediaIndex = -1;
-            replyContainer.setVisibility(View.GONE);
-        }
     }
 
     private void sendMessage() {
