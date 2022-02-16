@@ -22,12 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PresenceLoader {
+public class PresenceManager {
 
     private static final int MSG_CLEAR_TYPING = 1;
     private static final int TYPING_CACHE_DELAY = 25_000;
 
-    private static PresenceLoader instance;
+    private static PresenceManager instance;
 
     private final Connection connection;
     private final ContactsDb contactsDb;
@@ -43,11 +43,13 @@ public class PresenceLoader {
 
     private final Handler chatStateUpdateHandler;
 
-    public static PresenceLoader getInstance() {
+    private boolean userAvailable;
+
+    public static PresenceManager getInstance() {
         if (instance == null) {
-            synchronized (PresenceLoader.class) {
+            synchronized (PresenceManager.class) {
                 if (instance == null) {
-                    instance = new PresenceLoader(
+                    instance = new PresenceManager(
                             Connection.getInstance(),
                             ContactsDb.getInstance(),
                             ForegroundChat.getInstance(),
@@ -58,7 +60,7 @@ public class PresenceLoader {
         return instance;
     }
 
-    private PresenceLoader(
+    private PresenceManager(
             Connection connection,
             ContactsDb contactsDb,
             ForegroundChat foregroundChat,
@@ -229,8 +231,20 @@ public class PresenceLoader {
 
     }
 
+    public void onBackground() {
+        this.userAvailable = false;
+        sendServerPresence();
+    }
+
+    public void setAvailable(boolean available) {
+        if (this.userAvailable != available) {
+            this.userAvailable = available;
+            sendServerPresence();
+        }
+    }
+
     public void onDisconnect() {
-        Log.d("PresenceLoader marking all as unknown");
+        Log.d("PresenceManager marking all as unknown");
         for (UserId userId : map.keySet()) {
             MutableLiveData<PresenceState> mld = Preconditions.checkNotNull(map.get(userId));
             mld.postValue(new PresenceState(PresenceState.PRESENCE_STATE_UNKNOWN));
@@ -245,8 +259,14 @@ public class PresenceLoader {
         }
     }
 
+    private void sendServerPresence() {
+        connection.updatePresence(userAvailable);
+    }
+
     public void onReconnect() {
-        Log.d("PresenceLoader resetting subscriptions");
+        sendServerPresence();
+
+        Log.d("PresenceManager resetting subscriptions");
         UserId keepUserId = null;
         MutableLiveData<PresenceState> keepMld = null;
         for (UserId userId : map.keySet()) {
@@ -259,7 +279,7 @@ public class PresenceLoader {
         }
         map.clear();
         if (keepUserId != null) {
-            Log.d("PresenceLoader maintaining subscription to " + keepUserId);
+            Log.d("PresenceManager maintaining subscription to " + keepUserId);
             map.put(keepUserId, keepMld);
             connection.subscribePresence(keepUserId);
         }

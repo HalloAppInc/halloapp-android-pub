@@ -248,6 +248,11 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         contactLoader.destroy();
     }
 
+    @Override
+    protected boolean considerUserAvailable() {
+        return false;
+    }
+
     private void checkPermissionsThen(int request) {
         // TODO(nikola): When we want to do video.
         //String[] perms = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};

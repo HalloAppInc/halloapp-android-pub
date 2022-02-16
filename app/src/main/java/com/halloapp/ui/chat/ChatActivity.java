@@ -111,7 +111,7 @@ import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.widget.SwipeListItemHelper;
-import com.halloapp.xmpp.PresenceLoader;
+import com.halloapp.xmpp.PresenceManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -188,7 +188,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private ChatId chatId;
 
     private AvatarLoader avatarLoader;
-    private PresenceLoader presenceLoader;
+    private PresenceManager presenceManager;
 
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ChatLoader chatLoader;
@@ -305,7 +305,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         chatLoader = new ChatLoader();
         replyLoader = new ReplyLoader(getResources().getDimensionPixelSize(R.dimen.reply_thumb_size));
         avatarLoader = AvatarLoader.getInstance();
-        presenceLoader = PresenceLoader.getInstance();
+        presenceManager = PresenceManager.getInstance();
         textContentLoader = new TextContentLoader();
         audioDurationLoader = new AudioDurationLoader(this);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
@@ -617,14 +617,14 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
             if (chatId instanceof UserId) {
                 viewModel.name.getLiveData().observe(this, this::setTitle);
-                presenceLoader.getLastSeenLiveData((UserId)chatId).observe(this, presenceState -> {
-                    if (presenceState == null || presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_UNKNOWN) {
+                presenceManager.getLastSeenLiveData((UserId)chatId).observe(this, presenceState -> {
+                    if (presenceState == null || presenceState.state == PresenceManager.PresenceState.PRESENCE_STATE_UNKNOWN) {
                         setSubtitle(null);
-                    } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_ONLINE) {
+                    } else if (presenceState.state == PresenceManager.PresenceState.PRESENCE_STATE_ONLINE) {
                         setSubtitle(getString(R.string.online));
-                    } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_OFFLINE) {
+                    } else if (presenceState.state == PresenceManager.PresenceState.PRESENCE_STATE_OFFLINE) {
                         setSubtitle(TimeFormatter.formatLastSeen(this, presenceState.lastSeen));
-                    } else if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_TYPING) {
+                    } else if (presenceState.state == PresenceManager.PresenceState.PRESENCE_STATE_TYPING) {
                         setSubtitle(getString(R.string.user_typing));
                     }
                 });
@@ -632,7 +632,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 if (chat != null) {
                     setTitle(chat.name);
                 }
-                presenceLoader.getChatStateLiveData((GroupId)chatId).observe(this, groupChatState -> {
+                presenceManager.getChatStateLiveData((GroupId)chatId).observe(this, groupChatState -> {
                     if (groupChatState == null || groupChatState.typingUsers == null || groupChatState.typingUsers.isEmpty()) {
                         setSubtitle(null);
                     } else {

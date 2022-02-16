@@ -15,10 +15,13 @@ import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.ThreadUtils;
 import com.halloapp.widget.InCallToolbarView;
+import com.halloapp.xmpp.PresenceManager;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class HalloActivity extends AppCompatActivity {
+
+    private final PresenceManager presenceManager = PresenceManager.getInstance();
 
     private final String activityName;
 
@@ -61,6 +64,7 @@ public class HalloActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
+        presenceManager.setAvailable(considerUserAvailable());
         logTrace("onStart");
         super.onStart();
         if (inCallToolbarView == null) {
@@ -124,6 +128,10 @@ public class HalloActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
         PermissionWatcher.getInstance().onRequestPermissionsResult(permissions, grantResults);
+    }
+
+    protected boolean considerUserAvailable() {
+        return true;
     }
 
     @Override

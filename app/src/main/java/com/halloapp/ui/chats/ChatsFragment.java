@@ -39,7 +39,6 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
-import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.InviteContactsAdapter;
 import com.halloapp.content.CallMessage;
 import com.halloapp.content.Chat;
@@ -61,7 +60,6 @@ import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.profile.ViewProfileActivity;
-import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
@@ -70,7 +68,7 @@ import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.FabExpandOnScrollListener;
-import com.halloapp.xmpp.PresenceLoader;
+import com.halloapp.xmpp.PresenceManager;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -87,7 +85,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     private final ChatsAdapter adapter = new ChatsAdapter();
     private InviteContactsAdapter inviteAdapter;
 
-    private final PresenceLoader presenceLoader = PresenceLoader.getInstance();
+    private final PresenceManager presenceManager = PresenceManager.getInstance();
 
     private ContactLoader contactLoader;
     private TextContentLoader textContentLoader;
@@ -499,11 +497,11 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
             private Chat chat;
 
-            private LiveData<PresenceLoader.PresenceState> presenceLiveData;
-            private LiveData<PresenceLoader.GroupChatState> groupChatStateLiveData;
+            private LiveData<PresenceManager.PresenceState> presenceLiveData;
+            private LiveData<PresenceManager.GroupChatState> groupChatStateLiveData;
 
-            private final Observer<PresenceLoader.PresenceState> presenceObserver;
-            private final Observer<PresenceLoader.GroupChatState> groupChatStateObserver;
+            private final Observer<PresenceManager.PresenceState> presenceObserver;
+            private final Observer<PresenceManager.GroupChatState> groupChatStateObserver;
 
             ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -531,7 +529,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 });
 
                 presenceObserver = presenceState -> {
-                    if (presenceState.state == PresenceLoader.PresenceState.PRESENCE_STATE_TYPING) {
+                    if (presenceState.state == PresenceManager.PresenceState.PRESENCE_STATE_TYPING) {
                         typingView.setVisibility(View.VISIBLE);
                         infoContainer.setVisibility(View.INVISIBLE);
                         typingView.setText(R.string.user_typing);
@@ -597,10 +595,10 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 nameView.setText(name);
                 detatchObservers();
                 if (chat.chatId instanceof GroupId) {
-                    groupChatStateLiveData = presenceLoader.getChatStateLiveData((GroupId) chat.chatId);
+                    groupChatStateLiveData = presenceManager.getChatStateLiveData((GroupId) chat.chatId);
                     groupChatStateLiveData.observe(getViewLifecycleOwner(), groupChatStateObserver);
                 } else {
-                    presenceLiveData = presenceLoader.getLastSeenLiveData((UserId) chat.chatId);
+                    presenceLiveData = presenceManager.getLastSeenLiveData((UserId) chat.chatId);
                     presenceLiveData.observe(getViewLifecycleOwner(), presenceObserver);
                 }
                 // TODO: (clarkc) maybe consolidate loading into a single pass

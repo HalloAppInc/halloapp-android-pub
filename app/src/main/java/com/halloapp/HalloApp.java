@@ -34,6 +34,7 @@ import com.halloapp.util.LanguageUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.PresenceManager;
 
 public class HalloApp extends Application {
 
@@ -211,7 +212,7 @@ public class HalloApp extends Application {
             notifications.setEnabled(true);
             notifications.updateFeedNotifications();
             mainHandler.postDelayed(disconnectOnBackgroundedRunnable, 20000);
-            Connection.getInstance().updatePresence(false);
+            PresenceManager.getInstance().onBackground();
         }
 
         @SuppressWarnings("unused")
@@ -224,7 +225,6 @@ public class HalloApp extends Application {
             registerReceiver(receiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
             registerReceiver(airplaneModeChangeReceiver, new IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED));
             mainHandler.removeCallbacks(disconnectOnBackgroundedRunnable);
-            Connection.getInstance().updatePresence(true);
         }
     }
 

@@ -55,7 +55,7 @@ import com.halloapp.util.stats.GroupPostDecryptReportStats;
 import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
-import com.halloapp.xmpp.PresenceLoader;
+import com.halloapp.xmpp.PresenceManager;
 import com.halloapp.xmpp.ProtoPrinter;
 import com.halloapp.xmpp.WhisperKeysMessage;
 import com.halloapp.xmpp.groups.GroupsApi;
@@ -88,7 +88,7 @@ public class MainConnectionObserver extends Connection.Observer {
     private final PostsManager postsManager;
     private final Notifications notifications;
     private final ForegroundChat foregroundChat;
-    private final PresenceLoader presenceLoader;
+    private final PresenceManager presenceManager;
     private final BlockListManager blockListManager;
     private final EncryptedKeyStore encryptedKeyStore;
     private final FeedPrivacyManager feedPrivacyManager;
@@ -117,7 +117,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             PostsManager.getInstance(),
                             Notifications.getInstance(context),
                             ForegroundChat.getInstance(),
-                            PresenceLoader.getInstance(),
+                            PresenceManager.getInstance(),
                             BlockListManager.getInstance(),
                             EncryptedKeyStore.getInstance(),
                             FeedPrivacyManager.getInstance(),
@@ -148,7 +148,7 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull PostsManager postsManager,
             @NonNull Notifications notifications,
             @NonNull ForegroundChat foregroundChat,
-            @NonNull PresenceLoader presenceLoader,
+            @NonNull PresenceManager presenceManager,
             @NonNull BlockListManager blockListManager,
             @NonNull EncryptedKeyStore encryptedKeyStore,
             @NonNull FeedPrivacyManager feedPrivacyManager,
@@ -172,7 +172,7 @@ public class MainConnectionObserver extends Connection.Observer {
         this.postsManager = postsManager;
         this.notifications = notifications;
         this.foregroundChat = foregroundChat;
-        this.presenceLoader = presenceLoader;
+        this.presenceManager = presenceManager;
         this.blockListManager = blockListManager;
         this.encryptedKeyStore = encryptedKeyStore;
         this.feedPrivacyManager = feedPrivacyManager;
@@ -190,10 +190,9 @@ public class MainConnectionObserver extends Connection.Observer {
         bgWorkers.execute(feedPrivacyManager::fetchInitialFeedPrivacy);
         bgWorkers.execute(postsManager::ensurePostsShared);
 
-        connection.updatePresence(foregroundObserver.isInForeground());
         new TransferPendingItemsTask(context).execute();
         HalloApp.updateFirebasePushTokenIfNeeded();
-        presenceLoader.onReconnect();
+        presenceManager.onReconnect();
         groupsSync.startGroupsSync();
         decryptReportStats.start();
         groupPostDecryptReportStats.start();
@@ -202,7 +201,7 @@ public class MainConnectionObserver extends Connection.Observer {
 
     @Override
     public void onDisconnected() {
-        presenceLoader.onDisconnect();
+        presenceManager.onDisconnect();
         if (foregroundObserver.isInForeground()) {
             Log.i("MainConnectionObserver/onDisconnected still in foreground, reconnecting...");
             connection.connect();
@@ -517,12 +516,12 @@ public class MainConnectionObserver extends Connection.Observer {
 
     @Override
     public void onPresenceReceived(UserId user, Long lastSeen) {
-        presenceLoader.reportPresence(user, lastSeen);
+        presenceManager.reportPresence(user, lastSeen);
     }
 
     @Override
     public void onChatStateReceived(UserId user, ChatState chatState) {
-        presenceLoader.reportChatState(user, chatState);
+        presenceManager.reportChatState(user, chatState);
     }
 
     @Override
