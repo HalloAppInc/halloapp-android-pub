@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<resources>
+<?xml version="1.0" encoding="UTF-8"?><resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Beranda"</string>
     <string name="title_messages">"Obrolan"</string>
@@ -16,11 +15,9 @@
     <string name="message_notifications_channel_name">"Pemberitahuan pesan"</string>
     <string name="critical_notifications_channel_name">"Peringatan kritis aplikasi"</string>
     <string name="invite_notifications_channel_name">"Pemberitahuan undangan"</string>
-    <string name="invite_notification_text">"%s baru saja menerima undanganmu untuk bergabung di HalloApp &#x1f389;"</string>
+    <string name="invite_notification_text">"%s baru saja menerima undanganmu untuk bergabung di HalloApp &#127881;"</string>
     <string name="me">"Saya"</string>
-
-    <!-- Fuzzy -->
-    <string name="you">"Kamu"</string>
+    <string name="you">"you"</string>
     <string name="camera_post">"Kamera"</string>
     <string name="gallery_post">"Galeri"</string>
     <string name="text_post">"Teks"</string>
@@ -48,7 +45,7 @@ Dapat dikenakan tarif oleh operator"</string>
     <string name="new_message">"Pesan baru!"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s sudah bergabung HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s menggunakan HalloApp! &#x1f389;"</string>
+    <string name="new_chat_name_placeholder">"%s menggunakan HalloApp! &#127881;"</string>
     <string name="posts_empty">"Posting kamu akan muncul di sini"</string>
     <string name="posts_exchange_numbers">"Agar tersambung kamu harus bertukar nomor telepon"</string>
     <string name="home_page_empty">"Posting dari kontak kamu akan muncul di sini"</string>
@@ -120,9 +117,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin app."</string>
     <string name="no_photos_or_videos_found">"Foto atau video tak ditemukan"</string>
     <string name="gallery">"Galeri"</string>
     <string name="avatar_picker_title">"Foto profil"</string>
-
-    <!-- Fuzzy -->
-    <string name="group_avatar_picker_title">"Avatar grup"</string>
+    <string name="group_avatar_picker_title">"Group icon"</string>
     <string name="other_media">"Media lain"</string>
     <string name="rotate">"Putar"</string>
     <string name="seen_by">"Dilihat oleh"</string>
@@ -147,15 +142,11 @@ Buka layar pengaturan aplikasi untuk mengubah izin app."</string>
     <plurals name="new_messages_separator">
         <item quantity="other">"%d pesan baru"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="new_comments_notification">
-        <item quantity="other">"%s berkomentar pada posting kamu"</item>
+        <item quantity="other">"%s commented on your post"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="new_comments_on_multiple_posts_notification">
-        <item quantity="other">"%s mengomentari postingan Anda"</item>
+        <item quantity="other">"%s commented on your posts"</item>
     </plurals>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"HalloApp telah kedaluwarsa"</string>
@@ -210,13 +201,9 @@ Buka layar pengaturan aplikasi untuk mengubah izin app."</string>
     <string name="last_seen_less_minute">"Terakhir dilihat kurang dari satu menit yang lalu"</string>
     <string name="online">"online"</string>
     <string name="today">"Hari ini"</string>
-
-    <!-- Fuzzy -->
-    <string name="today_at_time">"hari ini pada %s"</string>
+    <string name="today_at_time">"today at %s"</string>
     <string name="yesterday">"Kemarin"</string>
-
-    <!-- Fuzzy -->
-    <string name="yesterday_at_time">"kemarin pada %s"</string>
+    <string name="yesterday_at_time">"yesterday at %s"</string>
     <string name="day_of_week_at_time">"%1$s pada %2$s"</string>
     <string name="unknown_contact">"Kontak tidak dikenal"</string>
     <string name="select_contact">"Pesan baru"</string>
@@ -226,9 +213,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin app."</string>
     <string name="action_save">"Simpan"</string>
     <string name="invite_friends">"Undang teman &amp; keluarga"</string>
     <string name="invite_friend_chooser_title">"Undang %s"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_text_with_name_and_number">"Hai %1$s, saya memiliki undangan bagi Anda untuk bergabung dengan saya di HalloApp - jaringan hubungan nyata bagi orang-orang terdekat saya. Gunakan %2$s untuk mendaftar. Dapatkan di %3$s"</string>
+    <string name="invite_text_with_name_and_number">"Hey %1$s, I have an invite for you to join me on HalloApp - a real-relationship network for those closest to me. Use %2$s to register. Get it at %3$s"</string>
     <string name="name_hint">"Nama Anda"</string>
     <string name="name_must_be_specified">"Nama harus ditentukan"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -268,12 +253,8 @@ versi: %2$s
     <string name="system_message_member_auto_promoted_you">"Anda dipromosikan otomatis menjadi admin"</string>
     <string name="system_message_group_name_changed">"%1$s mengubah nama grup menjadi %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"Anda mengubah nama grup menjadi %s"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_message_group_avatar_changed">"%s mengubah avatar grup"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_message_group_avatar_changed_by_you">"Anda mengubah avatar grup"</string>
+    <string name="system_message_group_avatar_changed">"%s changed the group icon"</string>
+    <string name="system_message_group_avatar_changed_by_you">"You changed the group icon"</string>
     <string name="system_message_group_deleted">"%s menghapus grup"</string>
     <string name="system_message_group_deleted_by_you">"Anda menghapus grup"</string>
     <string name="system_post_group_created">"Grup ini dibuat oleh %s"</string>
@@ -292,12 +273,8 @@ versi: %2$s
     <string name="system_post_member_auto_promoted_you">"Anda dipromosikan otomatis menjadi admin"</string>
     <string name="system_post_group_name_changed">"%1$s mengubah nama grup menjadi %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"Anda mengubah nama grup menjadi %s"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_post_group_avatar_changed">"%s mengubah avatar grup"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_post_group_avatar_changed_by_you">"Anda mengubah avatar grup"</string>
+    <string name="system_post_group_avatar_changed">"%s changed the group icon"</string>
+    <string name="system_post_group_avatar_changed_by_you">"You changed the group icon"</string>
     <string name="system_post_group_deleted">"%s menghapus grup"</string>
     <string name="system_post_group_deleted_by_you">"Anda menghapus grup"</string>
     <string name="group_info_title">"Info grup"</string>
@@ -323,9 +300,7 @@ versi: %2$s
         <item quantity="other">"Kamu punya %s undangan tersisa minggu ini"</item>
     </plurals>
     <string name="invite_friends_title">"Undang teman &amp; keluarga"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_title">"Undang"</string>
+    <string name="invite_title">"Invite friends"</string>
     <string name="settings_invite_option">"Undang ke HalloApp"</string>
     <string name="invite_already_on_halloapp">"Sudah ada di HaloApp"</string>
     <string name="invite_invalid_phone_number">"Nomor telepon tidak valid"</string>
@@ -343,15 +318,13 @@ versi: %2$s
     <string name="failed_create_group">"Gagal membuat grup, coba lagi nanti"</string>
 
     <!-- Shown in options menu to remove a member of group -->
-    <!-- Fuzzy -->
-    <string name="group_remove_member">"Hapus"</string>
+    <string name="group_remove_member">"Remove from group"</string>
     <string name="group_promote_to_admin">"Promosikan ke admin"</string>
     <string name="promote_admin_in_progress">"Mempromosikan ke admin…"</string>
     <string name="failed_promote_admin">"Gagal mempromosikan ke admin, coba lagi nanti"</string>
 
     <!-- Option for removing a user from the list of admins of a group -->
-    <!-- Fuzzy -->
-    <string name="group_demote_from_admin">"Turunkan admin"</string>
+    <string name="group_demote_from_admin">"Dismiss as admin"</string>
     <string name="demote_admin_in_progress">"Menurunkan admin…"</string>
     <string name="failed_demote_admin">"Gagal menurunkan admin, coba lagi nanti"</string>
     <string name="remove_member_in_progress">"Menghapus anggota…"</string>
@@ -406,16 +379,10 @@ versi: %2$s
     <plurals name="group_feed_members">
         <item quantity="other">"%d anggota"</item>
     </plurals>
-
-    <!-- Fuzzy -->
-    <string name="composer_sharing_all_summary">"Berbagi dengan kontakku"</string>
-
-    <!-- Fuzzy -->
-    <string name="composer_sharing_except_summary">"Berbagi dengan beberapa kontak saya"</string>
-
-    <!-- Fuzzy -->
+    <string name="composer_sharing_all_summary">"Share with my contacts"</string>
+    <string name="composer_sharing_except_summary">"Share with some of my contacts"</string>
     <plurals name="composer_sharing_only_summary">
-        <item quantity="other">"Berbagi dengan %d kontak saya"</item>
+        <item quantity="other">"Share with %d of my contacts"</item>
     </plurals>
     <string name="post_preview_no_caption">"%s membagikan postingan"</string>
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
@@ -460,9 +427,7 @@ versi: %2$s
     <string name="not_now">"Tidak sekarang"</string>
     <string name="continue_button">"Lanjut"</string>
     <string name="invite_link_load_failed">"Gagal membuka tautan undangan grup"</string>
-
-    <!-- Fuzzy -->
-    <string name="message_tombstone_placeholder">"Menunggu pesan ini. Ini mungkin memakan waktu cukup lama. &lt;a href=\"learn-more\"&gt;Pelajari lebih lanjut&lt;/a&gt;."</string>
+    <string name="message_tombstone_placeholder">"Waiting for this message. This may take a while. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
     <string name="failed_no_longer_member">"Kamu bukan lagi anggota grup ini"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -493,8 +458,7 @@ versi: %2$s
     <string name="key_verification_tap_to_scan">"Ketuk untuk memindai"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <!-- Fuzzy -->
-    <string name="key_verification_explanation">"Untuk memverifikasi keamanan koneksimu dengan %s, periksa apakah angka di atas cocok dengan yang ditampilkan di perangkat mereka atau pindai kode QR di ponsel mereka. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
+    <string name="key_verification_explanation">"To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Lebih banyak"</string>
@@ -598,8 +562,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi"</string>
     <string name="data_available_at">"Data akan tersedia pada %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
-    <!-- Fuzzy -->
-    <string name="export_data_explanation">"Unduh salinan semua data pengguna Anda pada server HalloApp. Ini tidak berisi pesan atau konten kiriman."</string>
+    <string name="export_data_explanation">"Download a copy of all your user data stored on HalloApp's servers. This does not contain message or post content."</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"Permintaan gagal"</string>
@@ -608,8 +571,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi"</string>
     <string name="export_account_data">"Ekspor data saya"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
-    <!-- Fuzzy -->
-    <string name="e2e_notice">"Obrolan dienkripsi secara end-to-end dan HalloApp tidak memiliki akses terhadapnya. &lt;b&gt;Ketuk untuk mempelajari lebih lanjut&lt;/b&gt;"</string>
+    <string name="e2e_notice">"All messages on HalloApp are end-to-end encrypted. &lt;b&gt;Tap to learn more&lt;/b&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"Lihat nomor keamanan"</string>
@@ -648,8 +610,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi"</string>
     <string name="settings_share_option">"Bagikan HalloApp"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <!-- Fuzzy -->
-    <string name="share_halloapp_text">"Bergabung dengan saya di HalloApp, unduh gratis di halloapp.com/dl"</string>
+    <string name="share_halloapp_text">"Join my real-relationship network on HalloApp. Download for free at halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
     <string name="contact_permissions_request">"Izinkan HalloApp mengakses kontak Anda agar Anda dapat mengirim dan menerima pembaruan"</string>
@@ -688,8 +649,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi."</string>
     <string name="reshare_post">"Bagikan ulang kiriman"</string>
 
     <!-- Button for going to utility for viewing expired posts -->
-    <!-- Fuzzy -->
-    <string name="archived_posts">"Kiriman yang Diarsipkan"</string>
+    <string name="archived_posts">"Archive"</string>
 
     <!-- Title of utility for viewing expired posts -->
     <string name="archive">"Arsip"</string>
@@ -713,8 +673,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi."</string>
     <string name="return_to_registration">"Kembali ke pendaftaran"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <!-- Fuzzy -->
-    <string name="archive_empty">"Postingan kedaluwarsa Anda akan tampil di sini"</string>
+    <string name="archive_empty">"Your posts will appear here after they expire in 30 days"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"Konten tidak didukung"</string>

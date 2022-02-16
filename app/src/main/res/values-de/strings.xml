@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<resources>
+<?xml version="1.0" encoding="UTF-8"?><resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Home"</string>
     <string name="title_messages">"Chats"</string>
@@ -18,7 +17,7 @@
     <string name="message_notifications_channel_name">"Mitteilungen für Nachrichten"</string>
     <string name="critical_notifications_channel_name">"Wichtige App-Warnmeldungen"</string>
     <string name="invite_notifications_channel_name">"Einladungs-Mitteilungen"</string>
-    <string name="invite_notification_text">"%s hat deine Einladung zu HalloApp &#x1f389; angenommen"</string>
+    <string name="invite_notification_text">"%s hat deine Einladung zu HalloApp &#127881; angenommen"</string>
     <string name="me">"Ich"</string>
     <string name="you">"dich"</string>
     <string name="camera_post">"Kamera"</string>
@@ -53,7 +52,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <!-- Fuzzy translation?  Pls. provide more details -->
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s nutzt HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s nutzt HalloApp! &#x1f389;"</string>
+    <string name="new_chat_name_placeholder">"%s nutzt HalloApp! &#127881;"</string>
     <string name="posts_empty">"Deine Beiträge erscheinen hier"</string>
     <string name="posts_exchange_numbers">"Um den Kontakt herzustellen, müsst ihr eure Handynummern austauschen"</string>
     <string name="home_page_empty">"Beiträge deiner Kontakte siehst du hier"</string>
@@ -284,19 +283,19 @@ Version: %2$s
 
 "</string>
     <string name="share">"Teilen"</string>
-    <string name="unblock">"Freigeben"</string>
-    <string name="unblock_user_confirmation">"Möchtest du %s freigeben?"</string>
+    <string name="unblock">"Entblocken"</string>
+    <string name="unblock_user_confirmation">"Möchtest du %s entblocken?"</string>
 
     <!-- to keep it gender neutral I would prefer to use "person" instead of "user". Would that be ok? -->
-    <string name="menu_item_block_user">"Person blocken"</string>
+    <string name="menu_item_block_user">"Kontakt blocken"</string>
 
     <!-- to keep it gender neutral I would prefer to use "person" instead of "user". Would that be ok? -->
-    <string name="picker_title_block_user">"Person blocken"</string>
+    <string name="picker_title_block_user">"Kontakt blocken"</string>
     <string name="cancel">"Abbrechen"</string>
     <string name="group_subtitle">"Für Gruppen-Info hier tippen"</string>
     <string name="empty_block_list">"Keine geblockten Kontakte"</string>
     <string name="block_notification">"Du hast diesen Kontakt geblockt. Zum Entblocken hier tippen"</string>
-    <string name="unblock_notification">"Du hast diesen Kontakt freigegeben"</string>
+    <string name="unblock_notification">"Du hast diesen Kontakt entblockt"</string>
     <string name="system_message_group_created">"%s hat diese Gruppe gegründet"</string>
     <string name="system_message_group_created_by_you">"Du hast diese Gruppe gegründet"</string>
     <string name="system_message_members_added">"%1$s hat %2$s hinzugefügt"</string>
@@ -433,9 +432,9 @@ Version: %2$s
     <string name="blocking_user_failed_check_internet">"%s kann nicht geblockt werden. Überprüfe deine Internetverbindung und versuche es später noch einmal."</string>
     <string name="blocking_user_successful">"%s wurde geblockt"</string>
     <string name="blocking_user_in_progress">"%s wird geblockt…"</string>
-    <string name="unblocking_user_successful">"%s ist freigegeben"</string>
-    <string name="unblocking_user_failed_check_internet">"%s kann nicht freigegeben werden. Überprüfe deine Internetverbindung und versuche es später noch einmal."</string>
-    <string name="unblocking_user_in_progress">"%s wird freigegeben…"</string>
+    <string name="unblocking_user_successful">"%s ist entblockt"</string>
+    <string name="unblocking_user_failed_check_internet">"%s kann nicht entblockt werden. Überprüfe deine Internetverbindung und versuche es später noch einmal."</string>
+    <string name="unblocking_user_in_progress">"%s wird entblockt…"</string>
     <string name="are_you_sure_dialog_title">"Bist du dir sicher?"</string>
     <string name="hide_future_posts_confirmation">"Bist du dir sicher, dass du alle deine zukünftigen Beiträge vor %s verbergen möchtest? Du kannst dies später jederzeit ändern."</string>
     <string name="feed_privacy_hide_success">"Privatsphäre-Feed wurde aktualisiert. Beiträge werden ausgeblendet für %s"</string>
@@ -469,7 +468,7 @@ Version: %2$s
     </plurals>
 
     <!-- noun or verb? -->
-    <string name="mute">"Stumm schalten"</string>
+    <string name="mute">"Stumm"</string>
     <string name="share_link">"Link teilen"</string>
     <string name="copy_link">"Link kopieren"</string>
     <string name="reset_link">"Link zurücksetzen"</string>
@@ -1050,7 +1049,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="call_action">"Anrufen"</string>
 
     <!-- Button to unmute -->
-    <string name="unmute">"Stummschaltung aufheben"</string>
+    <string name="unmute">"Stumm aus"</string>
 
     <!-- Label for speaker phone button -->
     <string name="call_speaker_button">"Lautsprecher"</string>
@@ -1143,7 +1142,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="new_group_fab_label">"Neue Gruppe"</string>
 
     <!-- Text in fab for chat action -->
-    <string name="compose_fab_label">"Verfassen"</string>
+    <string name="compose_fab_label">"Nachricht"</string>
 
     <!-- Label on selected destinations when sharing from another app -->
     <string name="share_with_label">"Teilen mit"</string>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<resources>
+<?xml version="1.0" encoding="UTF-8"?><resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Strona główna"</string>
     <string name="title_messages">"Rozmowy"</string>
@@ -16,7 +15,7 @@
     <string name="message_notifications_channel_name">"Powiadomienia o wiadomościach"</string>
     <string name="critical_notifications_channel_name">"Krytyczne alerty aplikacji"</string>
     <string name="invite_notifications_channel_name">"Powiadomienia o zaproszeniach"</string>
-    <string name="invite_notification_text">"Użytkownik %s właśnie zaakceptował twoje zaproszenie do HalloApp &#x1f389;"</string>
+    <string name="invite_notification_text">"Użytkownik %s właśnie zaakceptował twoje zaproszenie do HalloApp &#127881;"</string>
     <string name="me">"Ja"</string>
     <string name="you">"ty"</string>
     <string name="camera_post">"Aparat"</string>
@@ -46,7 +45,7 @@ Obowiązują opłaty operatora sieci."</string>
     <string name="new_message">"Nowa wiadomość"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s jest na HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s korzysta z HalloApp! &#x1f389;"</string>
+    <string name="new_chat_name_placeholder">"%s korzysta z HalloApp! &#127881;"</string>
     <string name="posts_empty">"Tutaj będą pojawiać się twoje posty"</string>
     <string name="posts_exchange_numbers">"Aby się połączyć, musicie wymienić się numerami telefonów"</string>
     <string name="home_page_empty">"Tutaj będą pojawiać się posty twoich kontaktów"</string>
@@ -127,9 +126,7 @@ Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
     <string name="no_photos_or_videos_found">"Nie znaleziono żadnych zdjęć ani filmów"</string>
     <string name="gallery">"Galeria"</string>
     <string name="avatar_picker_title">"Zdjęcie profilowe"</string>
-
-    <!-- Fuzzy -->
-    <string name="group_avatar_picker_title">"Awatar grupy"</string>
+    <string name="group_avatar_picker_title">"Group icon"</string>
     <string name="other_media">"Inne multimedia"</string>
     <string name="rotate">"Obróć"</string>
     <string name="seen_by">"Wyświetlony przez"</string>
@@ -292,12 +289,8 @@ wersja: %2$s
     <string name="system_message_member_auto_promoted_you">"Automatycznie nadano ci rolę administratora"</string>
     <string name="system_message_group_name_changed">"Użytkownik %1$s zmienił nazwę grupy na %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"Zmieniono nazwę grupy na %s"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_message_group_avatar_changed">"Użytkownik %s zmienił awatar grupy"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_message_group_avatar_changed_by_you">"Zmieniono awatar grupy"</string>
+    <string name="system_message_group_avatar_changed">"%s changed the group icon"</string>
+    <string name="system_message_group_avatar_changed_by_you">"You changed the group icon"</string>
     <string name="system_message_group_deleted">"Użytkownik %s usunął grupę"</string>
     <string name="system_message_group_deleted_by_you">"Usunięto grupę"</string>
     <string name="system_post_group_created">"Grupa została utworzona przez użytkownika %s"</string>
@@ -316,12 +309,8 @@ wersja: %2$s
     <string name="system_post_member_auto_promoted_you">"Automatycznie nadano ci rolę administratora"</string>
     <string name="system_post_group_name_changed">"Użytkownik %1$s zmienił nazwę grupy na %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"Zmieniono nazwę grupy na %s"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_post_group_avatar_changed">"Użytkownik %s zmienił awatar grupy"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_post_group_avatar_changed_by_you">"Zmieniono awatar grupy"</string>
+    <string name="system_post_group_avatar_changed">"%s changed the group icon"</string>
+    <string name="system_post_group_avatar_changed_by_you">"You changed the group icon"</string>
     <string name="system_post_group_deleted">"Użytkownik %s usunął grupę"</string>
     <string name="system_post_group_deleted_by_you">"Usunięto grupę"</string>
     <string name="group_info_title">"Informacje o grupie"</string>
@@ -453,19 +442,13 @@ wersja: %2$s
         <item quantity="many">"%d członek"</item>
         <item quantity="other">"%d członków"</item>
     </plurals>
-
-    <!-- Fuzzy -->
-    <string name="composer_sharing_all_summary">"Udostępnianie moim kontaktom"</string>
-
-    <!-- Fuzzy -->
-    <string name="composer_sharing_except_summary">"Udostępnianie niektórym z moich kontaktów"</string>
-
-    <!-- Fuzzy -->
+    <string name="composer_sharing_all_summary">"Share with my contacts"</string>
+    <string name="composer_sharing_except_summary">"Share with some of my contacts"</string>
     <plurals name="composer_sharing_only_summary">
-        <item quantity="one">"Udostępnianie %d z moich kontaktów"</item>
-        <item quantity="few">"Udostępnianie %d z moich kontaktów"</item>
-        <item quantity="many">"Udostępnianie %d z moich kontaktów"</item>
-        <item quantity="other">"Udostępnianie %d z moich kontaktów"</item>
+        <item quantity="one">"Share with %d of my contacts"</item>
+        <item quantity="few">"Share with %d of my contacts"</item>
+        <item quantity="many">"Share with %d of my contacts"</item>
+        <item quantity="other">"Share with %d of my contacts"</item>
     </plurals>
     <string name="post_preview_no_caption">"Użytkownik %s udostępnił post"</string>
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<resources>
+<?xml version="1.0" encoding="UTF-8"?><resources>
     <string name="app_name">"HalloApp"</string>
 
     <!-- Fuzzy -->
@@ -22,7 +21,7 @@
     <string name="message_notifications_channel_name">"Известия за съобщения"</string>
     <string name="critical_notifications_channel_name">"Критични известия за приложението"</string>
     <string name="invite_notifications_channel_name">"Известия за покани"</string>
-    <string name="invite_notification_text">"%s току-що прие вашата покана да се присъедини към HalloApp &#x1f389;"</string>
+    <string name="invite_notification_text">"%s току-що прие вашата покана да се присъедини към HalloApp &#127881;"</string>
     <string name="me">"Аз"</string>
 
     <!-- Fuzzy -->
@@ -53,7 +52,7 @@
     <string name="new_message">"Ново съобщение"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s е в HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s използва HalloApp! &#x1f389;"</string>
+    <string name="new_chat_name_placeholder">"%s използва HalloApp! &#127881;"</string>
     <string name="posts_empty">"Вашите публикации ще се появят тук"</string>
     <string name="posts_exchange_numbers">"Трябва да размените телефонните си номера, за да се свържете"</string>
     <string name="home_page_empty">"Публикациите от хората в списъка ви с контакти ще се появят тук"</string>
@@ -1015,22 +1014,22 @@ Open the app settings screen to modify app permissions."</string>
     <string name="incoming_call_notification_title">"Incoming call"</string>
 
     <!-- The call notification accept button label -->
-    <string name="call_accept_button">"Accept"</string>
+    <string name="call_accept_button">"Приеми"</string>
 
     <!-- The call notification decline button label -->
-    <string name="call_decline_button">"Decline"</string>
+    <string name="call_decline_button">"Откажи"</string>
 
     <!-- Displayed as title for the Call Screen -->
-    <string name="call_title">"Call"</string>
+    <string name="call_title">"Обаждане"</string>
 
     <!-- Displayed in an ongoing notification while the user is in a voice call -->
-    <string name="ongoing_voice_call">"Ongoing voice call"</string>
+    <string name="ongoing_voice_call">"Аудио обаждане в прогрес"</string>
 
     <!-- Shown inline in a chat when the user missed an incoming video call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_video_call">"Missed video call at %s"</string>
+    <string name="system_message_missed_video_call">"Пропуснато видео обаждане %s"</string>
 
     <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_voice_call">"Missed voice call at %s"</string>
+    <string name="system_message_missed_voice_call">"Пропуснато аудио обаждане %s"</string>
 
     <!-- Action in menu for calling a user -->
     <string name="call_action">"Call"</string>

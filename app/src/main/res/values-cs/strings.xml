@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<resources>
+<?xml version="1.0" encoding="UTF-8"?><resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Domů"</string>
     <string name="title_messages">"Konverzace"</string>
@@ -16,11 +15,9 @@
     <string name="message_notifications_channel_name">"Oznámení zpráv"</string>
     <string name="critical_notifications_channel_name">"Kritická upozornění aplikace"</string>
     <string name="invite_notifications_channel_name">"Upozornění na pozvání"</string>
-    <string name="invite_notification_text">"%s právě přijal/a vaše pozvání a přidává se k HalloApp &#x1f389;"</string>
+    <string name="invite_notification_text">"%s právě přijal/a vaše pozvání a přidává se k HalloApp &#127881;"</string>
     <string name="me">"Já"</string>
-
-    <!-- Fuzzy -->
-    <string name="you">"Ty"</string>
+    <string name="you">"you"</string>
     <string name="camera_post">"Fotoaparát"</string>
     <string name="gallery_post">"Galerie"</string>
     <string name="text_post">"Text"</string>
@@ -48,7 +45,7 @@ Může zahrnovat cenu doručení."</string>
     <string name="new_message">"Nová zpráva"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s je na HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s používá HalloApp! &#x1f389;"</string>
+    <string name="new_chat_name_placeholder">"%s používá HalloApp! &#127881;"</string>
     <string name="posts_empty">"Zde se objeví vaše příspěvky"</string>
     <string name="posts_exchange_numbers">"Abyste se spojili, musíte si vyměnit telefonní čísla"</string>
     <string name="home_page_empty">"Zde se objeví příspěvky od vašich kontaktů"</string>
@@ -60,12 +57,10 @@ Může zahrnovat cenu doručení."</string>
     <string name="invalid_phone_number">"Neplatné telefonní číslo"</string>
     <string name="share_option_post">"Příspěvek"</string>
     <string name="share_option_message">"Zpráva"</string>
-
-    <!-- Fuzzy -->
     <plurals name="max_post_media_items">
-        <item quantity="one">"Můžete vybrat až %d položku médií na příspěvek"</item>
-        <item quantity="few">"Můžete vybrat až %d položek médií na příspěvek"</item>
-        <item quantity="other">"Můžete vybrat až %d položek médií na příspěvek"</item>
+        <item quantity="one">"You can select up to %d media item per post"</item>
+        <item quantity="few">"You can select up to %d media item per post"</item>
+        <item quantity="other">"You can select up to %d media item per post"</item>
     </plurals>
     <string name="camera_record_audio_permission_rationale">"Pro pořizování fotografií a nahrávání videí potřebujeme povolení přístupu ke kameře a nahrávání zvuku na vašem zařízení"</string>
     <string name="camera_record_audio_permission_rationale_denied">"Pro pořizování fotografií a nahrávání videí potřebujeme povolení přístupu ke kameře a nahrávání zvuku na vašem zařízení.
@@ -128,9 +123,7 @@ Otevřete obrazovku nastavení aplikace a upravte povolení aplikace."</string>
     <string name="no_photos_or_videos_found">"Nenalezeny žádné fotografie nebo videa"</string>
     <string name="gallery">"Galerie"</string>
     <string name="avatar_picker_title">"Profilová fotka"</string>
-
-    <!-- Fuzzy -->
-    <string name="group_avatar_picker_title">"Skupinový avatar"</string>
+    <string name="group_avatar_picker_title">"Group icon"</string>
     <string name="other_media">"Další média"</string>
     <string name="rotate">"Otočit"</string>
     <string name="seen_by">"Viděno"</string>
@@ -161,19 +154,15 @@ Otevřete obrazovku nastavení aplikace a upravte povolení aplikace."</string>
         <item quantity="few">"%d nových zpráv"</item>
         <item quantity="other">"%d nové zprávy"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="new_comments_notification">
-        <item quantity="one">"%s okomentoval/a tvůj příspěvek"</item>
-        <item quantity="few">"%s okomentoval/a tvůj příspěvek"</item>
-        <item quantity="other">"%s okomentoval/a tvůj příspěvek"</item>
+        <item quantity="one">"%s commented on your post"</item>
+        <item quantity="few">"%s commented on your post"</item>
+        <item quantity="other">"%s commented on your post"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="new_comments_on_multiple_posts_notification">
-        <item quantity="one">"%s okomentoval/a tvoje příspěvky"</item>
-        <item quantity="few">"%s okomentoval/a tvoje příspěvky"</item>
-        <item quantity="other">"%s okomentoval/a tvoje příspěvky"</item>
+        <item quantity="one">"%s commented on your posts"</item>
+        <item quantity="few">"%s commented on your posts"</item>
+        <item quantity="other">"%s commented on your posts"</item>
     </plurals>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"Platnost aplikace HalloApp vypršela"</string>
@@ -236,13 +225,9 @@ Otevřete obrazovku nastavení aplikace a upravte povolení aplikace."</string>
     <string name="last_seen_less_minute">"Naposledy zobrazeno před méně než minutou"</string>
     <string name="online">"online"</string>
     <string name="today">"Dnes"</string>
-
-    <!-- Fuzzy -->
-    <string name="today_at_time">"dnes v %s"</string>
+    <string name="today_at_time">"today at %s"</string>
     <string name="yesterday">"Včera"</string>
-
-    <!-- Fuzzy -->
-    <string name="yesterday_at_time">"včera v %s"</string>
+    <string name="yesterday_at_time">"yesterday at %s"</string>
     <string name="day_of_week_at_time">"%1$s v %2$s"</string>
     <string name="unknown_contact">"Neznámý kontakt"</string>
     <string name="select_contact">"Nová zpráva"</string>
@@ -252,9 +237,7 @@ Otevřete obrazovku nastavení aplikace a upravte povolení aplikace."</string>
     <string name="action_save">"Uložit"</string>
     <string name="invite_friends">"Pozvi přátele a rodinu"</string>
     <string name="invite_friend_chooser_title">"Pozvat %s"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_text_with_name_and_number">"Ahoj %1$s, zvu tě, aby ses ke mě připojil/a na HalloApp - síť skutečných vztahů pro mé nejbližší. K registraci použij %2$s. Získáš na %3$s"</string>
+    <string name="invite_text_with_name_and_number">"Hey %1$s, I have an invite for you to join me on HalloApp - a real-relationship network for those closest to me. Use %2$s to register. Get it at %3$s"</string>
     <string name="name_hint">"Tvoje jméno"</string>
     <string name="name_must_be_specified">"Jméno musí být uvedeno"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -297,12 +280,8 @@ verze: %2$s
     <string name="system_message_member_auto_promoted_you">"Byl/a jsi automaticky povýšen/a na administrátora"</string>
     <string name="system_message_group_name_changed">"%1$s změnil/a název skupiny na %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"Změnil/a jsi název skupiny na %s"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_message_group_avatar_changed">"%s změnil/a avatar skupiny"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_message_group_avatar_changed_by_you">"Změnil/a jsi avatar skupiny"</string>
+    <string name="system_message_group_avatar_changed">"%s changed the group icon"</string>
+    <string name="system_message_group_avatar_changed_by_you">"You changed the group icon"</string>
     <string name="system_message_group_deleted">"%s smazal/a skupinu"</string>
     <string name="system_message_group_deleted_by_you">"Smazal/a jsi skupinu"</string>
     <string name="system_post_group_created">"%s vytvořil/a tuto skupinu"</string>
@@ -321,12 +300,8 @@ verze: %2$s
     <string name="system_post_member_auto_promoted_you">"Byl/a jsi automaticky povýšen/a na správce"</string>
     <string name="system_post_group_name_changed">"%1$s změnil/a jméno skupiny na %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"Změnil/a jsi jméno skupiny na %s"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_post_group_avatar_changed">"%s změnil/a avatara skupiny"</string>
-
-    <!-- Fuzzy -->
-    <string name="system_post_group_avatar_changed_by_you">"Změnil/a jsi avatara skupiny"</string>
+    <string name="system_post_group_avatar_changed">"%s changed the group icon"</string>
+    <string name="system_post_group_avatar_changed_by_you">"You changed the group icon"</string>
     <string name="system_post_group_deleted">"%s smazal/a skupinu"</string>
     <string name="system_post_group_deleted_by_you">"Smazal/a jsi skupinu"</string>
     <string name="group_info_title">"Informace o skupině"</string>
@@ -354,9 +329,7 @@ verze: %2$s
         <item quantity="other">"Tento týden vám zbývá %s pozvánek"</item>
     </plurals>
     <string name="invite_friends_title">"Pozvěte přátele a rodinu"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_title">"Pozvat"</string>
+    <string name="invite_title">"Invite friends"</string>
     <string name="settings_invite_option">"Pozvat do HalloApp"</string>
     <string name="invite_already_on_halloapp">"Již jsou v HalloApp"</string>
     <string name="invite_invalid_phone_number">"Neplatné telefonní číslo"</string>
@@ -374,15 +347,13 @@ verze: %2$s
     <string name="failed_create_group">"Nepodařilo se vytvořit skupinu, zkuste to znovu později"</string>
 
     <!-- Shown in options menu to remove a member of group -->
-    <!-- Fuzzy -->
-    <string name="group_remove_member">"Odstranit"</string>
+    <string name="group_remove_member">"Remove from group"</string>
     <string name="group_promote_to_admin">"Povýšit na správce"</string>
     <string name="promote_admin_in_progress">"Povyšování na správce…"</string>
     <string name="failed_promote_admin">"Povýšení na správce se nezdařilo, zkuste to znovu později"</string>
 
     <!-- Option for removing a user from the list of admins of a group -->
-    <!-- Fuzzy -->
-    <string name="group_demote_from_admin">"Odebrat funkci správce"</string>
+    <string name="group_demote_from_admin">"Dismiss as admin"</string>
     <string name="demote_admin_in_progress">"Odebírání správcovství…"</string>
     <string name="failed_demote_admin">"Nepodařilo se odebrat správcovství, zkuste to znovu později"</string>
     <string name="remove_member_in_progress">"Odstraňování člena…"</string>
@@ -453,18 +424,12 @@ verze: %2$s
         <item quantity="few">"%d členů"</item>
         <item quantity="other">"%d členů"</item>
     </plurals>
-
-    <!-- Fuzzy -->
-    <string name="composer_sharing_all_summary">"Sdílím se svými kontakty"</string>
-
-    <!-- Fuzzy -->
-    <string name="composer_sharing_except_summary">"Sdílím s některými ze svých kontaktů"</string>
-
-    <!-- Fuzzy -->
+    <string name="composer_sharing_all_summary">"Share with my contacts"</string>
+    <string name="composer_sharing_except_summary">"Share with some of my contacts"</string>
     <plurals name="composer_sharing_only_summary">
-        <item quantity="one">"Sdílím s %d z mých kontaktů"</item>
-        <item quantity="few">"Sdílím s %d z mých kontaktů"</item>
-        <item quantity="other">"Sdílím s %d z mých kontaktů"</item>
+        <item quantity="one">"Share with %d of my contacts"</item>
+        <item quantity="few">"Share with %d of my contacts"</item>
+        <item quantity="other">"Share with %d of my contacts"</item>
     </plurals>
     <string name="post_preview_no_caption">"%s sdílel/a příspěvek"</string>
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
@@ -511,9 +476,7 @@ verze: %2$s
     <string name="not_now">"Teď ne"</string>
     <string name="continue_button">"Pokračovat"</string>
     <string name="invite_link_load_failed">"Zvací odkaz do skupiny se nepodařilo otevřít"</string>
-
-    <!-- Fuzzy -->
-    <string name="message_tombstone_placeholder">"Čekání na tuto zprávu. Může to chvíli trvat. &lt;a href=\"learn-more\"&gt; Další informace &lt;/a&gt;."</string>
+    <string name="message_tombstone_placeholder">"Waiting for this message. This may take a while. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
     <string name="failed_no_longer_member">"Už nejsi členem této skupiny"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -544,8 +507,7 @@ verze: %2$s
     <string name="key_verification_tap_to_scan">"Kliknutím naskenujete"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <!-- Fuzzy -->
-    <string name="key_verification_explanation">"Chceš-li ověřit zabezpečení svého připojení s %s, zkontroluj, zda se výše uvedená čísla shodují s čísly zobrazenými na jejich zařízení, nebo naskenuj QR kód na jejich telefonu. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
+    <string name="key_verification_explanation">"To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Více"</string>
@@ -651,8 +613,7 @@ Otevři nastavení aplikace a uprav oprávnění aplikace."</string>
     <string name="data_available_at">"Data budou k dispozici na %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
-    <!-- Fuzzy -->
-    <string name="export_data_explanation">"Stáhni si kopii všech svých uživatelských dat uložených na serverech HalloApp. Tato data neobsahují obsah zpráv ani příspěvků."</string>
+    <string name="export_data_explanation">"Download a copy of all your user data stored on HalloApp's servers. This does not contain message or post content."</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"Požadavek selhal"</string>
@@ -661,8 +622,7 @@ Otevři nastavení aplikace a uprav oprávnění aplikace."</string>
     <string name="export_account_data">"Exportovat moje data"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
-    <!-- Fuzzy -->
-    <string name="e2e_notice">"Konverzace jsou chráněny koncovým šifrováním a HalloApp k nim nemá přístup. &lt;b&gt;Klepnutím zobrazíte další informace&lt;/b&gt;"</string>
+    <string name="e2e_notice">"All messages on HalloApp are end-to-end encrypted. &lt;b&gt;Tap to learn more&lt;/b&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"Zobrazit bezpečnostní číslo"</string>
@@ -701,8 +661,7 @@ Otevři nastavení aplikace a uprav oprávnění aplikace."</string>
     <string name="settings_share_option">"Sdílet HalloApp"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <!-- Fuzzy -->
-    <string name="share_halloapp_text">"Připoj se ke mně na HalloApp, stáhni si zdarma na halloapp.com/dl"</string>
+    <string name="share_halloapp_text">"Join my real-relationship network on HalloApp. Download for free at halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
     <string name="contact_permissions_request">"Povol aplikaci HalloApp přístup ke svým kontaktům, abys mohl/a odesílat a přijímat aktualizace"</string>
@@ -769,8 +728,7 @@ Otevři nastavení aplikace a uprav oprávnění aplikace."</string>
     <string name="return_to_registration">"Zpět na registraci"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <!-- Fuzzy -->
-    <string name="archive_empty">"Tvé prošlé příspěvky se zobrazí zde"</string>
+    <string name="archive_empty">"Your posts will appear here after they expire in 30 days"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"Nepodporovaný obsah"</string>
