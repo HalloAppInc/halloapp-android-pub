@@ -6897,6 +6897,9 @@ export namespace server {
 
         /** CallConfig audioJitterBufferFastAccelerate */
         audioJitterBufferFastAccelerate?: (boolean|null);
+
+        /** CallConfig iceTransportPolicy */
+        iceTransportPolicy?: (server.CallConfig.IceTransportPolicy|null);
     }
 
     /** Represents a CallConfig. */
@@ -6934,6 +6937,9 @@ export namespace server {
 
         /** CallConfig audioJitterBufferFastAccelerate. */
         public audioJitterBufferFastAccelerate: boolean;
+
+        /** CallConfig iceTransportPolicy. */
+        public iceTransportPolicy: server.CallConfig.IceTransportPolicy;
 
         /**
          * Creates a new CallConfig instance using the specified properties.
@@ -7004,6 +7010,15 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    namespace CallConfig {
+
+        /** IceTransportPolicy enum. */
+        enum IceTransportPolicy {
+            ALL = 0,
+            RELAY = 1
+        }
     }
 
     /** Properties of an OgTagInfo. */

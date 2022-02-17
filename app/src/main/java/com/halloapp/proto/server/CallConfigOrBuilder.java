@@ -60,4 +60,15 @@ public interface CallConfigOrBuilder extends
    * @return The audioJitterBufferFastAccelerate.
    */
   boolean getAudioJitterBufferFastAccelerate();
+
+  /**
+   * <code>.server.CallConfig.IceTransportPolicy ice_transport_policy = 10;</code>
+   * @return The enum numeric value on the wire for iceTransportPolicy.
+   */
+  int getIceTransportPolicyValue();
+  /**
+   * <code>.server.CallConfig.IceTransportPolicy ice_transport_policy = 10;</code>
+   * @return The iceTransportPolicy.
+   */
+  com.halloapp.proto.server.CallConfig.IceTransportPolicy getIceTransportPolicy();
 }

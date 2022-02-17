@@ -17926,6 +17926,7 @@ $root.server = (function() {
          * @property {number|null} [videoFps] CallConfig videoFps
          * @property {number|null} [audioJitterBufferMaxPackets] CallConfig audioJitterBufferMaxPackets
          * @property {boolean|null} [audioJitterBufferFastAccelerate] CallConfig audioJitterBufferFastAccelerate
+         * @property {server.CallConfig.IceTransportPolicy|null} [iceTransportPolicy] CallConfig iceTransportPolicy
          */
 
         /**
@@ -18016,6 +18017,14 @@ $root.server = (function() {
         CallConfig.prototype.audioJitterBufferFastAccelerate = false;
 
         /**
+         * CallConfig iceTransportPolicy.
+         * @member {server.CallConfig.IceTransportPolicy} iceTransportPolicy
+         * @memberof server.CallConfig
+         * @instance
+         */
+        CallConfig.prototype.iceTransportPolicy = 0;
+
+        /**
          * Creates a new CallConfig instance using the specified properties.
          * @function create
          * @memberof server.CallConfig
@@ -18057,6 +18066,8 @@ $root.server = (function() {
                 writer.uint32(/* id 8, wireType 0 =*/64).int32(message.audioJitterBufferMaxPackets);
             if (message.audioJitterBufferFastAccelerate != null && Object.hasOwnProperty.call(message, "audioJitterBufferFastAccelerate"))
                 writer.uint32(/* id 9, wireType 0 =*/72).bool(message.audioJitterBufferFastAccelerate);
+            if (message.iceTransportPolicy != null && Object.hasOwnProperty.call(message, "iceTransportPolicy"))
+                writer.uint32(/* id 10, wireType 0 =*/80).int32(message.iceTransportPolicy);
             return writer;
         };
 
@@ -18117,6 +18128,9 @@ $root.server = (function() {
                     break;
                 case 9:
                     message.audioJitterBufferFastAccelerate = reader.bool();
+                    break;
+                case 10:
+                    message.iceTransportPolicy = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -18180,6 +18194,14 @@ $root.server = (function() {
             if (message.audioJitterBufferFastAccelerate != null && message.hasOwnProperty("audioJitterBufferFastAccelerate"))
                 if (typeof message.audioJitterBufferFastAccelerate !== "boolean")
                     return "audioJitterBufferFastAccelerate: boolean expected";
+            if (message.iceTransportPolicy != null && message.hasOwnProperty("iceTransportPolicy"))
+                switch (message.iceTransportPolicy) {
+                default:
+                    return "iceTransportPolicy: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
             return null;
         };
 
@@ -18213,6 +18235,16 @@ $root.server = (function() {
                 message.audioJitterBufferMaxPackets = object.audioJitterBufferMaxPackets | 0;
             if (object.audioJitterBufferFastAccelerate != null)
                 message.audioJitterBufferFastAccelerate = Boolean(object.audioJitterBufferFastAccelerate);
+            switch (object.iceTransportPolicy) {
+            case "ALL":
+            case 0:
+                message.iceTransportPolicy = 0;
+                break;
+            case "RELAY":
+            case 1:
+                message.iceTransportPolicy = 1;
+                break;
+            }
             return message;
         };
 
@@ -18239,6 +18271,7 @@ $root.server = (function() {
                 object.videoFps = 0;
                 object.audioJitterBufferMaxPackets = 0;
                 object.audioJitterBufferFastAccelerate = false;
+                object.iceTransportPolicy = options.enums === String ? "ALL" : 0;
             }
             if (message.audioBitrateMax != null && message.hasOwnProperty("audioBitrateMax"))
                 object.audioBitrateMax = message.audioBitrateMax;
@@ -18258,6 +18291,8 @@ $root.server = (function() {
                 object.audioJitterBufferMaxPackets = message.audioJitterBufferMaxPackets;
             if (message.audioJitterBufferFastAccelerate != null && message.hasOwnProperty("audioJitterBufferFastAccelerate"))
                 object.audioJitterBufferFastAccelerate = message.audioJitterBufferFastAccelerate;
+            if (message.iceTransportPolicy != null && message.hasOwnProperty("iceTransportPolicy"))
+                object.iceTransportPolicy = options.enums === String ? $root.server.CallConfig.IceTransportPolicy[message.iceTransportPolicy] : message.iceTransportPolicy;
             return object;
         };
 
@@ -18271,6 +18306,20 @@ $root.server = (function() {
         CallConfig.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
+
+        /**
+         * IceTransportPolicy enum.
+         * @name server.CallConfig.IceTransportPolicy
+         * @enum {number}
+         * @property {number} ALL=0 ALL value
+         * @property {number} RELAY=1 RELAY value
+         */
+        CallConfig.IceTransportPolicy = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "ALL"] = 0;
+            values[valuesById[1] = "RELAY"] = 1;
+            return values;
+        })();
 
         return CallConfig;
     })();

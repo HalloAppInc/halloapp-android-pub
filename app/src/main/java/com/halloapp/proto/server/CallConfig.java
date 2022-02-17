@@ -13,6 +13,95 @@ public  final class CallConfig extends
     CallConfigOrBuilder {
   private CallConfig() {
   }
+  /**
+   * Protobuf enum {@code server.CallConfig.IceTransportPolicy}
+   */
+  public enum IceTransportPolicy
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>ALL = 0;</code>
+     */
+    ALL(0),
+    /**
+     * <code>RELAY = 1;</code>
+     */
+    RELAY(1),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>ALL = 0;</code>
+     */
+    public static final int ALL_VALUE = 0;
+    /**
+     * <code>RELAY = 1;</code>
+     */
+    public static final int RELAY_VALUE = 1;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static IceTransportPolicy valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static IceTransportPolicy forNumber(int value) {
+      switch (value) {
+        case 0: return ALL;
+        case 1: return RELAY;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<IceTransportPolicy>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        IceTransportPolicy> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<IceTransportPolicy>() {
+            @java.lang.Override
+            public IceTransportPolicy findValueByNumber(int number) {
+              return IceTransportPolicy.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return IceTransportPolicyVerifier.INSTANCE;
+    }
+
+    private static final class IceTransportPolicyVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new IceTransportPolicyVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return IceTransportPolicy.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private IceTransportPolicy(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.CallConfig.IceTransportPolicy)
+  }
+
   public static final int AUDIO_BITRATE_MAX_FIELD_NUMBER = 1;
   private int audioBitrateMax_;
   /**
@@ -245,6 +334,48 @@ public  final class CallConfig extends
   private void clearAudioJitterBufferFastAccelerate() {
     
     audioJitterBufferFastAccelerate_ = false;
+  }
+
+  public static final int ICE_TRANSPORT_POLICY_FIELD_NUMBER = 10;
+  private int iceTransportPolicy_;
+  /**
+   * <code>.server.CallConfig.IceTransportPolicy ice_transport_policy = 10;</code>
+   * @return The enum numeric value on the wire for iceTransportPolicy.
+   */
+  @java.lang.Override
+  public int getIceTransportPolicyValue() {
+    return iceTransportPolicy_;
+  }
+  /**
+   * <code>.server.CallConfig.IceTransportPolicy ice_transport_policy = 10;</code>
+   * @return The iceTransportPolicy.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.CallConfig.IceTransportPolicy getIceTransportPolicy() {
+    com.halloapp.proto.server.CallConfig.IceTransportPolicy result = com.halloapp.proto.server.CallConfig.IceTransportPolicy.forNumber(iceTransportPolicy_);
+    return result == null ? com.halloapp.proto.server.CallConfig.IceTransportPolicy.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.CallConfig.IceTransportPolicy ice_transport_policy = 10;</code>
+   * @param value The enum numeric value on the wire for iceTransportPolicy to set.
+   */
+  private void setIceTransportPolicyValue(int value) {
+      iceTransportPolicy_ = value;
+  }
+  /**
+   * <code>.server.CallConfig.IceTransportPolicy ice_transport_policy = 10;</code>
+   * @param value The iceTransportPolicy to set.
+   */
+  private void setIceTransportPolicy(com.halloapp.proto.server.CallConfig.IceTransportPolicy value) {
+    iceTransportPolicy_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.CallConfig.IceTransportPolicy ice_transport_policy = 10;</code>
+   */
+  private void clearIceTransportPolicy() {
+    
+    iceTransportPolicy_ = 0;
   }
 
   public static com.halloapp.proto.server.CallConfig parseFrom(
@@ -594,6 +725,52 @@ public  final class CallConfig extends
       return this;
     }
 
+    /**
+     * <code>.server.CallConfig.IceTransportPolicy ice_transport_policy = 10;</code>
+     * @return The enum numeric value on the wire for iceTransportPolicy.
+     */
+    @java.lang.Override
+    public int getIceTransportPolicyValue() {
+      return instance.getIceTransportPolicyValue();
+    }
+    /**
+     * <code>.server.CallConfig.IceTransportPolicy ice_transport_policy = 10;</code>
+     * @param value The iceTransportPolicy to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIceTransportPolicyValue(int value) {
+      copyOnWrite();
+      instance.setIceTransportPolicyValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.CallConfig.IceTransportPolicy ice_transport_policy = 10;</code>
+     * @return The iceTransportPolicy.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.CallConfig.IceTransportPolicy getIceTransportPolicy() {
+      return instance.getIceTransportPolicy();
+    }
+    /**
+     * <code>.server.CallConfig.IceTransportPolicy ice_transport_policy = 10;</code>
+     * @param value The enum numeric value on the wire for iceTransportPolicy to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIceTransportPolicy(com.halloapp.proto.server.CallConfig.IceTransportPolicy value) {
+      copyOnWrite();
+      instance.setIceTransportPolicy(value);
+      return this;
+    }
+    /**
+     * <code>.server.CallConfig.IceTransportPolicy ice_transport_policy = 10;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearIceTransportPolicy() {
+      copyOnWrite();
+      instance.clearIceTransportPolicy();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.CallConfig)
   }
   @java.lang.Override
@@ -619,10 +796,11 @@ public  final class CallConfig extends
             "videoFps_",
             "audioJitterBufferMaxPackets_",
             "audioJitterBufferFastAccelerate_",
+            "iceTransportPolicy_",
           };
           java.lang.String info =
-              "\u0000\t\u0000\u0000\u0001\t\t\u0000\u0000\u0000\u0001\u0004\u0002\u0004\u0003\u0004" +
-              "\u0004\u0004\u0005\u0004\u0006\u0004\u0007\u0004\b\u0004\t\u0007";
+              "\u0000\n\u0000\u0000\u0001\n\n\u0000\u0000\u0000\u0001\u0004\u0002\u0004\u0003\u0004" +
+              "\u0004\u0004\u0005\u0004\u0006\u0004\u0007\u0004\b\u0004\t\u0007\n\f";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
