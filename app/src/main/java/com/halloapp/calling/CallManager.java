@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Icon;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -50,6 +51,7 @@ import com.halloapp.proto.server.TurnServer;
 import com.halloapp.proto.server.WebRtcSessionDescription;
 import com.halloapp.ui.calling.CallActivity;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.VibrationUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.calls.CallsApi;
@@ -155,6 +157,7 @@ public class CallManager {
     private UserId peerUid;
 
     private int restartIndex = 0;
+    private EndCall.Reason endCallReason;
 
     @Nullable
     private PhoneAccountHandle phoneAccountHandle = null;
@@ -439,7 +442,7 @@ public class CallManager {
     public synchronized void stop(EndCall.Reason reason) {
         final long callDuration = (this.callStartTimestamp > 0)? SystemClock.elapsedRealtime() - this.callStartTimestamp : 0;
         Log.i("CallManager: stop callId: " + callId + " peerUid" + peerUid + " reason: " + reason + " duration: " + callDuration / 1000);
-        stopAudioManager();
+        endCallReason = reason;
         stopOutgoingRingtone();
 
         if (peerConnection != null) {
@@ -510,13 +513,39 @@ public class CallManager {
         callType = CallType.UNKNOWN_TYPE;
         restartIndex = 0;
         outboundRerequestCount = 0;
+        int oldState = this.state;
         state = State.IDLE;
         isInCall.postValue(false);
-        if (telecomConnection != null) {
-            if (Build.VERSION.SDK_INT >= 23) {
-                telecomConnection.stop(reason);
+
+        if (oldState == State.IN_CALL || oldState == State.IN_CALL_CONNECTING) {
+            MediaPlayer mediaPlayer = MediaPlayer.create(appContext.get(), R.raw.end_call);
+            mediaPlayer.start();
+            mediaPlayer.setOnCompletionListener(mp -> {
+                Log.i("CallManager: end_call sound is done");
+                if (this.callId == null) {
+                    releaseAudio();
+                }
+                mp.release();
+            });
+        } else {
+            VibrationUtils.mediumVibration(appContext.get());
+            releaseAudio();
+        }
+    }
+
+    private synchronized void releaseAudio() {
+        if (state != State.IDLE) {
+            // it is possible another call started while we were shutting down.
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= 26) {
+            if (telecomConnection != null) {
+                Log.i("CallManager.telecomConnection.stop(" + endCallReason + ")");
+                telecomConnection.stop(endCallReason);
             }
             telecomConnection = null;
+        } else {
+            stopAudioManager();
         }
     }
 
@@ -1519,9 +1548,7 @@ public class CallManager {
 
     private void stopAudioManager() {
         Log.i("CallManager: stoping CallAudioManager");
-        if (Build.VERSION.SDK_INT < 26) {
-            mainHandler.post(audioManager::stop);
-        }
+        mainHandler.post(audioManager::stop);
     }
 
     private void storeCallLogMsg(@NonNull UserId userId, @NonNull String callId, @NonNull CallType callType, long callDuration) {
