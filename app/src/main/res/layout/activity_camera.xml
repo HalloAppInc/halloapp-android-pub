@@ -39,74 +39,64 @@
             app:cardElevation="2dp"
             android:visibility="gone">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="8dp">
 
                 <FrameLayout
-                    android:id="@+id/cameraFrame"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constrainedHeight="true"
-                    app:layout_constraintBottom_toTopOf="@+id/cameraControls"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    android:layout_height="wrap_content">
 
-                    <com.otaliastudios.cameraview.CameraView
-                        android:id="@+id/cameraView"
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:keepScreenOn="true"
-                        app:cameraVideoCodec="h264"
-                        app:cameraPictureFormat="jpeg"
-                        app:cameraPreview="glSurface">
+                        android:layout_height="wrap_content">
 
-                        <Chronometer
-                            android:id="@+id/video_timer"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="top|center_horizontal"
-                            android:fontFamily="sans-serif-condensed"
-                            android:textColor="@android:color/white"
-                            android:textSize="20sp"
-                            android:shadowColor="@color/black_80"
-                            android:shadowRadius="4"
-                            android:visibility="gone"
-                            app:layout_drawOnPreview="true"
-                            app:layout_drawOnPictureSnapshot="false"
-                            app:layout_drawOnVideoSnapshot="false"/>
+                        <androidx.camera.view.PreviewView
+                            android:id="@+id/cameraPreview"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            app:layout_constraintDimensionRatio="3:4"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:scaleType="fillCenter"/>
 
-                        <Chronometer
-                            android:id="@+id/video_countdown_timer"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom|center_horizontal"
-                            android:fontFamily="sans-serif-condensed"
-                            android:textColor="@android:color/holo_red_dark"
-                            android:textSize="20sp"
-                            android:shadowColor="@color/black_80"
-                            android:shadowRadius="4"
-                            android:visibility="invisible"
-                            app:layout_drawOnPreview="true"
-                            app:layout_drawOnPictureSnapshot="false"
-                            app:layout_drawOnVideoSnapshot="false"
-                            android:countDown="true"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </com.otaliastudios.cameraview.CameraView>
+
+                    <Chronometer
+                        android:id="@+id/video_timer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|center_horizontal"
+                        android:fontFamily="sans-serif-condensed"
+                        android:textColor="@android:color/white"
+                        android:textSize="20sp"
+                        android:shadowColor="@color/black_80"
+                        android:shadowRadius="4"
+                        android:visibility="gone"/>
+
+                    <Chronometer
+                        android:id="@+id/video_countdown_timer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|center_horizontal"
+                        android:fontFamily="sans-serif-condensed"
+                        android:textColor="@android:color/holo_red_dark"
+                        android:textSize="20sp"
+                        android:shadowColor="@color/black_80"
+                        android:shadowRadius="4"
+                        android:visibility="gone"
+                        android:countDown="true"/>
 
                 </FrameLayout>
 
                 <LinearLayout
-                    android:id="@+id/cameraControls"
                     android:layout_width="match_parent"
-                    android:layout_height="125dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/cameraFrame"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:paddingTop="24dp"
                     android:paddingBottom="20dp">
@@ -157,7 +147,7 @@
 
                 </LinearLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
         </androidx.cardview.widget.CardView>
 

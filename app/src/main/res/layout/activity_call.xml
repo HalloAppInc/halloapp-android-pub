@@ -98,10 +98,7 @@
             android:layout_gravity="top|center_horizontal"
             android:layout_marginTop="5dp"
             android:textSize="16sp"
-            android:visibility="gone"
-            app:layout_drawOnPreview="true"
-            app:layout_drawOnPictureSnapshot="false"
-            app:layout_drawOnVideoSnapshot="false"/>
+            android:visibility="gone"/>
 
     </LinearLayout>
 

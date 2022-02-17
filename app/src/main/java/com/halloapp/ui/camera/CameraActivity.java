@@ -4,18 +4,24 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Outline;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewOutlineProvider;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
@@ -24,14 +30,26 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-
+import androidx.camera.core.AspectRatio;
+import androidx.camera.core.Camera;
+import androidx.camera.core.CameraInfoUnavailableException;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.FocusMeteringAction;
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.MeteringPoint;
+import androidx.camera.core.MeteringPointFactory;
+import androidx.camera.core.Preview;
+import androidx.camera.core.SurfaceOrientedMeteringPointFactory;
+import androidx.camera.core.VideoCapture;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.PreviewView;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
-import androidx.exifinterface.media.ExifInterface;
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 
-import com.halloapp.Constants;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.content.Media;
@@ -43,33 +61,22 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.GlobalUI;
-import com.halloapp.util.logs.Log;
+import com.halloapp.util.OrientationListener;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.ThreadUtils;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
-import com.otaliastudios.cameraview.CameraException;
-import com.otaliastudios.cameraview.CameraListener;
-import com.otaliastudios.cameraview.CameraOptions;
-import com.otaliastudios.cameraview.CameraView;
-import com.otaliastudios.cameraview.PictureResult;
-import com.otaliastudios.cameraview.VideoResult;
-import com.otaliastudios.cameraview.controls.Facing;
-import com.otaliastudios.cameraview.controls.Flash;
-import com.otaliastudios.cameraview.controls.Mode;
-import com.otaliastudios.cameraview.gesture.Gesture;
-import com.otaliastudios.cameraview.gesture.GestureAction;
-import com.otaliastudios.cameraview.size.AspectRatio;
-import com.otaliastudios.cameraview.size.Size;
-import com.otaliastudios.cameraview.size.SizeSelector;
-import com.otaliastudios.cameraview.size.SizeSelectors;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -83,40 +90,35 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
 
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
     private static final int REQUEST_CODE_SET_AVATAR = 2;
-    private static final int VIDEO_WARNING_DURATION_SEC = 10;
 
     public static final int PURPOSE_COMPOSE = 1;
     public static final int PURPOSE_USER_AVATAR = 2;
     public static final int PURPOSE_GROUP_AVATAR = 3;
 
-    private static final int PENDING_OPERATION_NONE = 0;
-    private static final int PENDING_OPERATION_PICTURE = 1;
-    private static final int PENDING_OPERATION_VIDEO = 2;
+    private static final int VIDEO_WARNING_DURATION_SEC = 10;
+    private static final int ASPECT_RATIO = AspectRatio.RATIO_4_3;
+    private static final int FOCUS_AUTO_CANCEL_DURATION_SEC = 2;
 
-    private static final int PREFERRED_RATIO_X = 3;
-    private static final int PREFERRED_RATIO_Y = 4;
-
-    private static final int[] EXIF_ORIENTATION_FLIP_MAP = new int[] {
-            ExifInterface.ORIENTATION_UNDEFINED,
-            ExifInterface.ORIENTATION_FLIP_HORIZONTAL,
-            ExifInterface.ORIENTATION_NORMAL,
-            ExifInterface.ORIENTATION_FLIP_VERTICAL,
-            ExifInterface.ORIENTATION_ROTATE_180,
-            ExifInterface.ORIENTATION_ROTATE_90,
-            ExifInterface.ORIENTATION_TRANSPOSE,
-            ExifInterface.ORIENTATION_ROTATE_270,
-            ExifInterface.ORIENTATION_TRANSVERSE,
-    };
+    private final Object messageToken = new Object();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private BgWorkers bgWorkers;
+    private ExecutorService cameraExecutor;
+
+    private ProcessCameraProvider cameraProvider;
+    private Camera camera;
+    private ImageCapture imageCapture;
+    private VideoCapture videoCapture;
+    private OrientationListener orientationListener;
 
     private CardView cameraCardView;
-    private CameraView cameraView;
+    private PreviewView cameraPreviewView;
 
     private File mediaFile;
 
     private Chronometer videoTimer;
     private Chronometer videoTimeLimitTimer;
+
     private ImageButton captureButton;
     private ImageButton flipCameraButton;
     private ImageButton toggleFlashButton;
@@ -127,15 +129,20 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private AnimatedVectorDrawableCompat recordStartDrawable;
     private AnimatedVectorDrawableCompat recordStopDrawable;
 
-    private int purpose = PURPOSE_COMPOSE;
-    private int orientation = 0;
+    private boolean isUsingBackCamera = true;
     private boolean isFlashOn = false;
-    private int pendingOperation = 0;
-    private boolean isTakingPhoto = false;
     private boolean isRecordingVideo = false;
 
+    private int touchSlop;
+    private boolean isCaptureButtonDown = false;
+    private boolean isCaptureButtonClickCanceled = false;
+    private int permissionRequestRetries = 0;
+
+    private int purpose = PURPOSE_COMPOSE;
+    private int orientationAngle = 0;
     private int maxVideoDurationSeconds;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,38 +155,83 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
-        ThreadUtils.runWithoutStrictModeRestrictions(() -> setContentView(R.layout.activity_camera));
+        setContentView(R.layout.activity_camera);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         bgWorkers = BgWorkers.getInstance();
+        cameraExecutor = Executors.newSingleThreadExecutor();
 
-        flashOnDrawable = ContextCompat.getDrawable(this, R.drawable.ic_flash_on);
-        flashOffDrawable = ContextCompat.getDrawable(this, R.drawable.ic_flash_off);
-        captureButtonDrawable = ContextCompat.getDrawable(this, R.drawable.ic_camera_capture);
+        flashOnDrawable = getDrawable(R.drawable.ic_flash_on);
+        flashOffDrawable = getDrawable(R.drawable.ic_flash_off);
+        captureButtonDrawable = getDrawable(R.drawable.ic_camera_capture);
         recordStartDrawable = AnimatedVectorDrawableCompat.create(this, R.drawable.record_video_start_animation);
         recordStopDrawable = AnimatedVectorDrawableCompat.create(this, R.drawable.record_video_stop_animation);
 
         cameraCardView = findViewById(R.id.cameraCard);
-        videoTimer = findViewById(R.id.video_timer);
-        captureButton = findViewById(R.id.capture);
-        videoTimeLimitTimer = findViewById(R.id.video_countdown_timer);
-        captureButton.setOnLongClickListener(v -> {
-            Log.d("CameraActivity: capture button onLongClick");
-            prepareToTakeVideo();
-            return false;
+        final float cameraViewRadius = getResources().getDimension(R.dimen.content_composer_media_border);
+        cameraPreviewView = findViewById(R.id.cameraPreview);
+        cameraPreviewView.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), cameraViewRadius);
+            }
         });
+        cameraPreviewView.setClipToOutline(true);
+        videoTimer = findViewById(R.id.video_timer);
+        videoTimeLimitTimer = findViewById(R.id.video_countdown_timer);
+        captureButton = findViewById(R.id.capture);
+
+        touchSlop = ViewConfiguration.get(this).getScaledTouchSlop();
         captureButton.setOnClickListener(v -> {
             Log.d("CameraActivity: capture button onClick");
-            if (cameraView != null) {
-                if (isRecordingVideo) {
-                    cameraView.stopVideo();
-                } else {
-                    prepareToTakePicture();
-                }
+            if (isRecordingVideo) {
+                stopRecordingVideo();
+            } else {
+                takePhoto();
             }
+        });
+        captureButton.setOnLongClickListener(v -> {
+            Log.d("CameraActivity: capture button onLongClick");
+            if (!isRecordingVideo) {
+                startRecordingVideo();
+            }
+            return false;
+        });
+        captureButton.setOnTouchListener((view, motionEvent) -> {
+            boolean isEventConsumed = false;
+            switch (motionEvent.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    Log.d("CameraActivity: capture button down");
+                    isCaptureButtonDown = true;
+                    isCaptureButtonClickCanceled = false;
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                    Log.d("CameraActivity: capture button up");
+                    if (isCaptureButtonClickCanceled && isRecordingVideo) {
+                        stopRecordingVideo();
+                        isEventConsumed = true;
+                    }
+                    isCaptureButtonDown = false;
+                    isCaptureButtonClickCanceled = false;
+                    break;
+
+                case MotionEvent.ACTION_MOVE:
+                    Log.d("CameraActivity: capture button move");
+                    final int localX = (int) motionEvent.getX();
+                    final int localY = (int) motionEvent.getY();
+                    final boolean isInsideView = localX >= -touchSlop && localY >= -touchSlop &&
+                            localX < (captureButton.getWidth() + touchSlop) && localY < (captureButton.getHeight() + touchSlop);
+                    if (isCaptureButtonDown && !isInsideView) {
+                        Log.d("CameraActivity: capture button outside");
+                        isCaptureButtonClickCanceled = true;
+                    }
+                    break;
+            }
+            return isEventConsumed;
         });
         flipCameraButton = findViewById(R.id.flip_camera);
         flipCameraButton.setOnClickListener(v -> flipCamera());
@@ -187,187 +239,182 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         toggleFlashButton.setOnClickListener(v -> toggleFlash());
         toggleFlashButton.setImageDrawable(isFlashOn ? flashOnDrawable : flashOffDrawable);
 
+        orientationListener = new OrientationListener(this);
+        orientationListener.getRotationMode().observe(this, this::onRotationChanged);
+
         if (getIntent().getParcelableExtra(EXTRA_CHAT_ID) != null) {
             maxVideoDurationSeconds = ServerProps.getInstance().getMaxChatVideoDuration();
         } else {
             maxVideoDurationSeconds = ServerProps.getInstance().getMaxFeedVideoDuration();
         }
 
+        setupCamera();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        orientationListener.enable();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         if (!hasCameraAndAudioPermission()) {
-            requestCameraAndAudioPermission();
+            if (permissionRequestRetries > 0) {
+                finish();
+            } else {
+                permissionRequestRetries++;
+                requestCameraAndAudioPermission();
+            }
         } else {
-            setupCamera();
+            permissionRequestRetries = 0;
+            cameraCardView.setVisibility(View.VISIBLE);
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    private void setupCamera() {
-        if (cameraView != null) {
-            return;
-        }
-
-        final float cameraViewRadius = getResources().getDimension(R.dimen.content_composer_media_border);
-        cameraCardView.setVisibility(View.VISIBLE);
-
-        cameraView = findViewById(R.id.cameraView);
-        cameraView.setOutlineProvider(new ViewOutlineProvider() {
-            @Override
-            public void getOutline(View view, Outline outline) {
-                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), cameraViewRadius);
-            }
-        });
-        cameraView.setClipToOutline(true);
-        cameraView.setFlash(isFlashOn ? Flash.ON : Flash.OFF);
-
-        final float eps = 1e-8f;
-        final float preferredRatio = ((float) PREFERRED_RATIO_X) / PREFERRED_RATIO_Y;
-        cameraView.setPreviewStreamSize(availableSizes -> {
-            float diff = Float.MAX_VALUE / 2;
-            for (Size size : availableSizes) {
-                float ratio = (float) size.getWidth() / size.getHeight();
-                diff = Math.min(diff, Math.abs(ratio - preferredRatio));
-            }
-            List<Size> selectedSizes = new ArrayList<>();
-            for (Size size : availableSizes) {
-                float ratio = (float) size.getWidth() / size.getHeight();
-                if (Math.abs(ratio - preferredRatio) < diff + eps) {
-                    selectedSizes.add(size);
-                }
-            }
-            return selectedSizes;
-        });
-
-        final SizeSelector preferredPictureSize = SizeSelectors.and(
-                SizeSelectors.maxWidth(Constants.MAX_IMAGE_DIMENSION),
-                SizeSelectors.maxHeight(Constants.MAX_IMAGE_DIMENSION),
-                SizeSelectors.aspectRatio(AspectRatio.of(PREFERRED_RATIO_X, PREFERRED_RATIO_Y), eps),
-                SizeSelectors.biggest());
-        final SizeSelector fallbackPictureSize = SizeSelectors.and(
-                SizeSelectors.maxWidth(Constants.MAX_IMAGE_DIMENSION),
-                SizeSelectors.maxHeight(Constants.MAX_IMAGE_DIMENSION),
-                SizeSelectors.biggest());
-        cameraView.setPictureSize(SizeSelectors.or(preferredPictureSize, fallbackPictureSize));
-
-        final SizeSelector preferredVideoSize = SizeSelectors.and(
-                SizeSelectors.minWidth(Constants.VIDEO_RESOLUTION_H264),
-                SizeSelectors.minHeight(Constants.VIDEO_RESOLUTION_H264),
-                SizeSelectors.aspectRatio(AspectRatio.of(PREFERRED_RATIO_X, PREFERRED_RATIO_Y), eps),
-                SizeSelectors.smallest());
-        final SizeSelector fallbackVideoSize = SizeSelectors.and(
-                SizeSelectors.minWidth(Constants.VIDEO_RESOLUTION_H264),
-                SizeSelectors.minHeight(Constants.VIDEO_RESOLUTION_H264),
-                SizeSelectors.smallest());
-        cameraView.setVideoSize(SizeSelectors.or(preferredVideoSize, fallbackVideoSize));
-
-        cameraView.addCameraListener(new CameraListener() {
-            @Override
-            public void onPictureTaken(@NonNull PictureResult result) {
-                super.onPictureTaken(result);
-                clearMediaFile();
-                mediaFile = generateTempCameraFile(Media.MEDIA_TYPE_IMAGE);
-                result.toFile(mediaFile, file -> {
-                    if (result.getFacing() == Facing.FRONT) {
-                        flipImageHorizontally(file, () -> {
-                            handleMediaUri(Uri.fromFile(file));
-                            isTakingPhoto = false;
-                        });
-                    } else {
-                        handleMediaUri(Uri.fromFile(file));
-                        isTakingPhoto = false;
-                    }
-                });
-            }
-
-            @Override
-            public void onVideoTaken(@NonNull VideoResult result) {
-                super.onVideoTaken(result);
-                handleMediaUri(Uri.fromFile(result.getFile()));
-                if (cameraView.getMode() == Mode.VIDEO) {
-                    cameraView.setMode(Mode.PICTURE);
-                }
-                isRecordingVideo = false;
-            }
-
-            @Override
-            public void onVideoRecordingStart() {
-                super.onVideoRecordingStart();
-                startRecordingTimer();
-            }
-
-            @Override
-            public void onVideoRecordingEnd() {
-                super.onVideoRecordingEnd();
-                stopRecordingTimer();
-                playRecordStopAnimation();
-            }
-
-            @Override
-            public void onCameraError(@NonNull CameraException exception) {
-                super.onCameraError(exception);
-                Log.e("CameraActivity: onCameraError", exception);
-
-                int messageId = R.string.camera_error_generic;
-                switch (exception.getReason()) {
-                    case CameraException.REASON_PICTURE_FAILED:
-                        messageId = R.string.camera_error_photo;
-                        isTakingPhoto = false;
-                        break;
-                    case CameraException.REASON_VIDEO_FAILED:
-                        messageId = R.string.camera_error_video;
-                        stopRecordingTimer();
-                        playRecordStopAnimation();
-                        if (cameraView.getMode() == Mode.VIDEO) {
-                            cameraView.setMode(Mode.PICTURE);
-                        }
-                        isRecordingVideo = false;
-                        break;
-                }
-                showErrorMessage(getResources().getString(messageId), exception.isUnrecoverable());
-            }
-
-            @Override
-            public void onCameraOpened(@NonNull CameraOptions options) {
-                super.onCameraOpened(options);
-                Log.d("CameraActivity: onCameraOpened");
-                Flash flashMode = isFlashOn ? Flash.ON : Flash.OFF;
-                if (cameraView.getFlash() != flashMode) {
-                    cameraView.setFlash(flashMode);
-                }
-                if (pendingOperation != PENDING_OPERATION_NONE) {
-                    if (cameraIsAvailable()) {
-                        if (pendingOperation == PENDING_OPERATION_PICTURE && cameraView.getMode() == Mode.PICTURE) {
-                            takePicture();
-                        } else if (pendingOperation == PENDING_OPERATION_VIDEO && cameraView.getMode() == Mode.VIDEO) {
-                            takeVideo();
-                        }
-                    }
-                    pendingOperation = PENDING_OPERATION_NONE;
-                }
-            }
-
-            @Override
-            public void onOrientationChanged(int orientation) {
-                super.onOrientationChanged(orientation);
-                updateOrientation(orientation);
-            }
-        });
-
-        cameraView.mapGesture(Gesture.PINCH, GestureAction.ZOOM);
-        cameraView.mapGesture(Gesture.TAP, GestureAction.AUTO_FOCUS);
-
-        cameraView.setLifecycleOwner(this);
+    @Override
+    protected void onStop() {
+        super.onStop();
+        orientationListener.disable();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        clearMediaFile();
+        mainHandler.removeCallbacksAndMessages(messageToken);
+        cameraExecutor.shutdown();
+
+        clearTempMediaFile();
+    }
+
+    private void setupCamera() {
+        Log.d("CameraActivity: setupCamera");
+        ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(this);
+        cameraProviderFuture.addListener(() -> {
+            try {
+                cameraProvider = cameraProviderFuture.get();
+                bindCameraUseCases();
+            } catch (ExecutionException | InterruptedException e) {
+                // Should never happen
+                Log.e("CameraActivity: cameraProvider init failed", e);
+                showErrorMessage(getResources().getString(R.string.camera_error_generic), true);
+            }
+        }, ContextCompat.getMainExecutor(this));
+    }
+
+    private ImageCapture setupImageCapture() {
+        final Integer rotation = orientationListener.getRotationMode().getValue();
+        return new ImageCapture.Builder()
+                .setTargetRotation(rotation != null ? rotation : Surface.ROTATION_0)
+                .setTargetAspectRatio(ASPECT_RATIO)
+                .build();
+    }
+
+    @SuppressLint("RestrictedApi")
+    private VideoCapture setupVideoCapture() {
+        final Integer rotation = orientationListener.getRotationMode().getValue();
+        return new VideoCapture.Builder()
+                .setTargetRotation(rotation != null ? rotation : Surface.ROTATION_0)
+                .setTargetAspectRatio(ASPECT_RATIO)
+                .build();
+    }
+
+    private void setFocusMode(float x, float y, boolean isAutoFocus) {
+        if (camera == null) {
+            return;
+        }
+
+        final MeteringPointFactory meteringPointFactory =
+                new SurfaceOrientedMeteringPointFactory(cameraPreviewView.getWidth(), cameraPreviewView.getHeight());
+        final MeteringPoint focusPoint = meteringPointFactory.createPoint(x, y);
+        final FocusMeteringAction.Builder focusMeteringActionBuilder = new FocusMeteringAction.Builder(
+                focusPoint,
+                FocusMeteringAction.FLAG_AF | FocusMeteringAction.FLAG_AE
+        );
+        if (isAutoFocus) {
+            focusMeteringActionBuilder.setAutoCancelDuration(FOCUS_AUTO_CANCEL_DURATION_SEC, TimeUnit.SECONDS);
+        } else {
+            focusMeteringActionBuilder.disableAutoCancel();
+        }
+        camera.getCameraControl().startFocusAndMetering(focusMeteringActionBuilder.build());
+    }
+
+    void bindCameraUseCases() {
+        Log.d("CameraActivity: bindPreview");
+        if (cameraProvider == null) {
+            return;
+        }
+
+        cameraProvider.unbindAll();
+
+        final CameraSelector backCameraSelector = new CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build();
+        final CameraSelector frontCameraSelector = new CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT).build();
+        final boolean hasBackCamera = hasCamera(cameraProvider, backCameraSelector);
+        final boolean hasFrontCamera = hasCamera(cameraProvider, frontCameraSelector);
+
+        if (!hasBackCamera && !hasFrontCamera) {
+            Log.e("CameraActivity: bindPreview detected no front or back camera");
+            showErrorMessage(getResources().getString(R.string.camera_error_generic), true);
+            return;
+        } else if (!hasBackCamera) {
+            isUsingBackCamera = false;
+            flipCameraButton.setVisibility(View.INVISIBLE);
+        } else if (!hasFrontCamera) {
+            isUsingBackCamera = true;
+            flipCameraButton.setVisibility(View.INVISIBLE);
+        }
+
+        final Preview preview = new Preview.Builder().setTargetAspectRatio(ASPECT_RATIO).build();
+
+        videoCapture = setupVideoCapture();
+        imageCapture = setupImageCapture();
+        final CameraSelector cameraSelector = isUsingBackCamera ? backCameraSelector : frontCameraSelector;
+
+        preview.setSurfaceProvider(cameraPreviewView.getSurfaceProvider());
+
+        camera = cameraProvider.bindToLifecycle(this, cameraSelector, imageCapture, videoCapture, preview);
+
+        final boolean isFlashSupported = camera.getCameraInfo().hasFlashUnit();
+        final boolean isFlashEnabled = isFlashSupported && isFlashOn;
+        toggleFlashButton.setVisibility(isFlashSupported ? View.VISIBLE : View.INVISIBLE);
+        imageCapture.setFlashMode(isFlashEnabled ? ImageCapture.FLASH_MODE_ON : ImageCapture.FLASH_MODE_OFF);
+
+        cameraPreviewView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public void onGlobalLayout() {
+                if (cameraPreviewView.getMeasuredWidth() > 0 && cameraPreviewView.getMeasuredHeight() > 0) {
+                    cameraPreviewView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    setFocusMode((float) cameraPreviewView.getWidth() / 2,(float) cameraPreviewView.getHeight() / 2,true);
+
+                    cameraPreviewView.setOnTouchListener((view, motionEvent) -> {
+                        switch (motionEvent.getAction()) {
+                            case MotionEvent.ACTION_DOWN:
+                                return true;
+                            case MotionEvent.ACTION_UP:
+                                setFocusMode(motionEvent.getX(), motionEvent.getY(), false);
+                                return true;
+                        }
+                        return false;
+                    });
+                }
+            }
+        });
+    }
+
+    boolean hasCamera(@NonNull ProcessCameraProvider cameraProvider, @NonNull CameraSelector cameraSelector) {
+        try {
+            return cameraProvider.hasCamera(cameraSelector);
+        } catch (CameraInfoUnavailableException e) {
+            return false;
+        }
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-            prepareToTakePicture();
+            takePhoto();
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -391,7 +438,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
 
     public boolean onPrepareOptionsMenu(Menu menu) {
         final MenuItem backMenuItem = menu.findItem(R.id.back);
-        backMenuItem.setVisible(orientation % 180 == 90);
+        backMenuItem.setVisible(orientationAngle % 180 == 90);
         return true;
     }
 
@@ -413,9 +460,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         Log.d("CameraActivity: onPermissionsGranted");
         if (requestCode == REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION) {
             Log.d("CameraActivity: onPermissionsGranted camera and audio");
-            if (hasCameraAndAudioPermission()) {
-                setupCamera();
-            }
+            cameraCardView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -425,6 +470,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             if (requestCode == REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION) {
                 Log.d("CameraActivity: onPermissionsDenied permanent camera and audio");
+                cameraCardView.setVisibility(View.GONE);
                 new AppSettingsDialog.Builder(this)
                         .setRationale(getString(R.string.camera_record_audio_permission_rationale_denied))
                         .build().show();
@@ -437,33 +483,28 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         }
     }
 
-    private void flipImageHorizontally(@NonNull File file, @NonNull Runnable callback) {
-        bgWorkers.execute(() -> {
-            GlobalUI globalUI = GlobalUI.getInstance();
-            try {
-                ExifInterface exifInterface = new ExifInterface(file);
-                int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-                if (orientation != ExifInterface.ORIENTATION_UNDEFINED && orientation < EXIF_ORIENTATION_FLIP_MAP.length) {
-                    exifInterface.setAttribute(ExifInterface.TAG_ORIENTATION, Integer.toString(EXIF_ORIENTATION_FLIP_MAP[orientation]));
-                    exifInterface.saveAttributes();
-                }
-            } catch (IOException e) {
-                Log.e("CameraActivity: flipImageHorizontally", e);
-            } finally {
-                globalUI.postDelayed(callback, 0);
-            }
-        });
+    @SuppressLint("RestrictedApi")
+    private void onRotationChanged(int rotation) {
+        updateOrientation(OrientationListener.getRotationAngle(rotation));
+        if (imageCapture != null) {
+            imageCapture.setTargetRotation(rotation);
+        }
+        if (videoCapture != null) {
+            videoCapture.setTargetRotation(rotation);
+        }
     }
 
-    private void updateOrientation(int orientation) {
-        this.orientation = orientation;
-        toggleFlashButton.setRotation(360 - orientation);
-        flipCameraButton.setRotation(360 - orientation);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(orientation == 0 ? getResources().getString(R.string.camera_post) : "");
-            actionBar.setDisplayHomeAsUpEnabled(orientation % 180 == 0);
-            invalidateOptionsMenu();
+    private void updateOrientation(int orientationAngle) {
+        if (this.orientationAngle != orientationAngle) {
+            this.orientationAngle = orientationAngle;
+            toggleFlashButton.setRotation(360 - orientationAngle);
+            flipCameraButton.setRotation(360 - orientationAngle);
+            ActionBar actionBar = getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setTitle(orientationAngle == 0 ? getResources().getString(R.string.camera_post) : "");
+                actionBar.setDisplayHomeAsUpEnabled(orientationAngle % 180 == 0);
+                invalidateOptionsMenu();
+            }
         }
     }
 
@@ -500,22 +541,19 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         }
     }
 
-    private void flipCamera() {
+    void flipCamera() {
         Log.d("CameraActivity: flipCamera");
-        if (cameraIsAvailable()) {
-            cameraView.toggleFacing();
-        }
+        isUsingBackCamera = !isUsingBackCamera;
+        bindCameraUseCases();
     }
 
-    private void toggleFlash() {
+    void toggleFlash() {
         Log.d("CameraActivity: toggleFlash");
-        if (cameraIsAvailable()) {
-            isFlashOn = !isFlashOn;
-            toggleFlashButton.setImageDrawable(isFlashOn ? flashOnDrawable : flashOffDrawable);
-            Flash flashMode = isFlashOn ? Flash.ON : Flash.OFF;
-            if (cameraView.getFlash() != flashMode) {
-                cameraView.setFlash(flashMode);
-            }
+        isFlashOn = !isFlashOn;
+        toggleFlashButton.setImageDrawable(isFlashOn ? flashOnDrawable : flashOffDrawable);
+        if (imageCapture != null) {
+            final boolean isFlashEnabled = camera.getCameraInfo().hasFlashUnit() && isFlashOn;
+            imageCapture.setFlashMode(isFlashEnabled ? ImageCapture.FLASH_MODE_ON : ImageCapture.FLASH_MODE_OFF);
         }
     }
 
@@ -523,97 +561,124 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         return purpose == PURPOSE_COMPOSE;
     }
 
-    private boolean cameraIsAvailable() {
-        return cameraView != null && !isTakingPhoto && !cameraView.isTakingPicture() && !isRecordingVideo && !cameraView.isTakingVideo();
-    }
-
-    private void prepareToTakePicture() {
-        if (cameraIsAvailable() && pendingOperation == PENDING_OPERATION_NONE) {
-            if (cameraView.getMode() != Mode.PICTURE) {
-                Log.d("CameraActivity: prepareToTakePicture PENDING_OPERATION_PICTURE");
-                pendingOperation = PENDING_OPERATION_PICTURE;
-                cameraView.setMode(Mode.PICTURE);
-            } else {
-                takePicture();
-            }
+    void takePhoto() {
+        if (imageCapture == null || isRecordingVideo) {
+            return;
         }
-    }
+        Log.d("CameraActivity: takePhoto");
+        clearTempMediaFile();
+        mediaFile = generateTempMediaFile(Media.MEDIA_TYPE_IMAGE);
 
-    private void takePicture() {
-        Log.d("CameraActivity: takePicture");
-        isTakingPhoto = true;
-        cameraView.takePicture();
-    }
-
-    private void prepareToTakeVideo() {
-        if (cameraIsAvailable() && isRecordingVideoAllowed() && pendingOperation == PENDING_OPERATION_NONE) {
-            if (cameraView.getMode() != Mode.VIDEO) {
-                Log.d("CameraActivity: prepareToTakeVideo PENDING_OPERATION_VIDEO");
-                pendingOperation = PENDING_OPERATION_VIDEO;
-                cameraView.setMode(Mode.VIDEO);
-            } else {
-                takeVideo();
-            }
-        }
-    }
-
-    private void takeVideo() {
-        Log.d("CameraActivity: takeVideo");
-        isRecordingVideo = true;
-        playRecordStartAnimation();
-        clearMediaFile();
-        mediaFile = generateTempCameraFile(Media.MEDIA_TYPE_VIDEO);
-        cameraView.addCameraListener(new CameraListener() {
-
+        final ImageCapture.Metadata metadata = new ImageCapture.Metadata();
+        metadata.setReversedHorizontal(!isUsingBackCamera);
+        final ImageCapture.OutputFileOptions outputFileOptions =
+                new ImageCapture.OutputFileOptions.Builder(mediaFile).setMetadata(metadata).build();
+        imageCapture.takePicture(outputFileOptions, cameraExecutor, new ImageCapture.OnImageSavedCallback() {
             @Override
-            public void onVideoRecordingStart() {
-                super.onVideoRecordingStart();
-                Handler countdownHandler = new Handler();
-                Runnable countdownRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isRecordingVideo) {
-                            String message = getResources().getString(R.string.video_countdown_message);
-                            videoTimeLimitTimer.setFormat(message);
-                            videoTimeLimitTimer.setBase(SystemClock.elapsedRealtime() + VIDEO_WARNING_DURATION_SEC * 1000);
-                            videoTimeLimitTimer.setVisibility(View.VISIBLE);
-                            videoTimeLimitTimer.start();
-                        }
-                    }
-                };
-                countdownHandler.postDelayed(countdownRunnable, (maxVideoDurationSeconds - VIDEO_WARNING_DURATION_SEC) * 1000);
+            public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
+                final Uri uri = Objects.requireNonNull(outputFileResults.getSavedUri());
+                Log.d("CameraActivity: takePhoto onImageSaved " + uri);
+                handleMediaUri(uri);
             }
 
             @Override
-            public void onVideoRecordingEnd() {
-                super.onVideoRecordingEnd();
-                if (videoTimeLimitTimer.getVisibility() == View.VISIBLE) {
-                    videoTimeLimitTimer.stop();
-                    videoTimeLimitTimer.setVisibility(View.GONE);
-                }
+            public void onError(@NonNull ImageCaptureException exception) {
+                Log.e("CameraActivity: takePhoto error " + exception);
+                showErrorMessage(getResources().getString(R.string.camera_error_photo), false);
             }
         });
-        cameraView.takeVideo(mediaFile, maxVideoDurationSeconds * 1000);
+    }
+
+    @SuppressLint("RestrictedApi")
+    void startRecordingVideo() {
+        Log.d("CameraActivity: startRecordingVideo");
+        if (videoCapture == null || isRecordingVideo || !isRecordingVideoAllowed()) {
+            return;
+        }
+        Log.d("CameraActivity: startRecordingVideo entered");
+        isRecordingVideo = true;
+        playRecordStartAnimation();
+        clearTempMediaFile();
+        mediaFile = generateTempMediaFile(Media.MEDIA_TYPE_VIDEO);
+        startRecordingTimer();
+        mainHandler.postAtTime(this::stopRecordingVideo, messageToken, SystemClock.uptimeMillis() + maxVideoDurationSeconds * 1000);
+        mainHandler.postAtTime(this::startTimeLimitTimer, messageToken, SystemClock.uptimeMillis() + (maxVideoDurationSeconds - VIDEO_WARNING_DURATION_SEC) * 1000);
+
+        final VideoCapture.OutputFileOptions outputFileOptions = new VideoCapture.OutputFileOptions.Builder(mediaFile).build();
+        ThreadUtils.runWithoutStrictModeRestrictions(() -> {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                videoCapture.startRecording(outputFileOptions, cameraExecutor, new VideoCapture.OnVideoSavedCallback() {
+                    @Override
+                    public void onVideoSaved(@NonNull VideoCapture.OutputFileResults outputFileResults) {
+                        final Uri uri = Objects.requireNonNull(outputFileResults.getSavedUri());
+                        Log.d("CameraActivity: startRecordingVideo onVideoSaved " + uri);
+                        stopRecordingVideo();
+                        startComposerForUri(uri);
+                    }
+
+                    @Override
+                    public void onError(int videoCaptureError, @NonNull String message, @Nullable @org.jetbrains.annotations.Nullable Throwable cause) {
+                        Log.e("CameraActivity: startRecordingVideo error " + cause);
+                        stopRecordingVideo();
+                        showErrorMessage(getResources().getString(R.string.camera_error_video), false);
+                    }
+                });
+            } else {
+                Log.d("CameraActivity: startRecordingVideo RECORD_AUDIO permission lost");
+                stopRecordingVideo();
+                requestCameraAndAudioPermission();
+            }
+        });
+    }
+
+    @SuppressLint("RestrictedApi")
+    void stopRecordingVideo() {
+        Log.d("CameraActivity: stopRecordingVideo");
+        if (videoCapture == null || !isRecordingVideo) {
+            return;
+        }
+        Log.d("CameraActivity: stopRecordingVideo entered");
+        mainHandler.removeCallbacksAndMessages(messageToken);
+        stopRecordingTimer();
+        stopTimeLimitTimer();
+        playRecordStopAnimation();
+        videoCapture.stopRecording();
+        isRecordingVideo = false;
     }
 
     private void startRecordingTimer() {
-        videoTimer.setVisibility(View.VISIBLE);
-        videoTimer.setBase(SystemClock.elapsedRealtime());
-        videoTimer.start();
+            videoTimer.setVisibility(View.VISIBLE);
+            videoTimer.setBase(SystemClock.elapsedRealtime());
+            videoTimer.start();
     }
 
     private void stopRecordingTimer() {
-        videoTimer.setVisibility(View.GONE);
-        videoTimer.stop();
+        if (isRecordingVideo) {
+            videoTimer.setVisibility(View.GONE);
+            videoTimer.stop();
+        }
     }
 
-    private File generateTempCameraFile(@Media.MediaType int mediaType) {
+    private void startTimeLimitTimer() {
+        String message = getResources().getString(R.string.video_countdown_message);
+        videoTimeLimitTimer.setFormat(message);
+        videoTimeLimitTimer.setBase(SystemClock.elapsedRealtime() + VIDEO_WARNING_DURATION_SEC * 1000);
+        videoTimeLimitTimer.setVisibility(View.VISIBLE);
+        videoTimeLimitTimer.start();
+    }
+
+    private void stopTimeLimitTimer() {
+        videoTimeLimitTimer.setVisibility(View.GONE);
+        videoTimeLimitTimer.stop();
+    }
+
+    private File generateTempMediaFile(@Media.MediaType int mediaType) {
         File tempFile = FileStore.getInstance().getCameraFile(RandomId.create() + "." + Media.getFileExt(mediaType));
         Log.d("CameraActivity: generateTempFile " + Uri.fromFile(tempFile));
         return  tempFile;
     }
 
-    private void clearMediaFile() {
+    private void clearTempMediaFile() {
         if (mediaFile != null) {
             Log.d("CameraActivity: clearMediaFile " + Uri.fromFile(mediaFile));
             bgWorkers.execute(mediaFile::delete);
@@ -627,8 +692,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
                 startComposerForUri(uri);
                 break;
 
-            case PURPOSE_USER_AVATAR:
             case PURPOSE_GROUP_AVATAR:
+            case PURPOSE_USER_AVATAR:
                 startAvatarPreviewForUri(uri);
                 break;
         }

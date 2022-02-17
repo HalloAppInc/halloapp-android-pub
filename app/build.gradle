@@ -96,7 +96,6 @@ dependencies {
     implementation 'com.google.protobuf:protobuf-javalite:3.11.1'
     implementation 'com.hbb20:ccp:2.5.3'
     implementation 'io.michaelrocks:libphonenumber-android:8.12.19-2'
-    implementation 'com.otaliastudios:cameraview:2.7.1'
     implementation 'com.simplecityapps:recyclerview-fastscroll:2.0.1'
     implementation 'de.hdodenhof:circleimageview:3.0.1'
     implementation 'com.makeramen:roundedimageview:2.3.0'
@@ -122,4 +121,12 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     // WebRTC
     implementation(name: 'libwebrtc', ext:'aar')
+
+    def camerax_version = "1.1.0-beta01"
+    implementation "androidx.camera:camera-core:${camerax_version}"
+    implementation "androidx.camera:camera-camera2:${camerax_version}"
+    implementation "androidx.camera:camera-lifecycle:${camerax_version}"
+    implementation "androidx.camera:camera-video:${camerax_version}"
+    implementation "androidx.camera:camera-view:${camerax_version}"
+    implementation "androidx.camera:camera-extensions:${camerax_version}"
 }

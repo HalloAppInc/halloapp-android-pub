@@ -35,9 +35,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:textSize="17sp"
-        android:textColor="@android:color/white"
-        app:layout_drawOnPreview="true"
-        app:layout_drawOnPictureSnapshot="false"
-        app:layout_drawOnVideoSnapshot="false"/>
+        android:textColor="@android:color/white"/>
 
 </merge>
