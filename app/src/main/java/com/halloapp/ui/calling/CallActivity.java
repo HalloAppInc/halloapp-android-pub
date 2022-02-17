@@ -476,17 +476,8 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void updateMicrophoneMutedUI(boolean mute) {
-        if (mute) {
-            Log.i("CallActivity muteButton selected");
-            muteButtonView.setSelected(true);
-            muteButtonView.setImageResource(R.drawable.ic_keyboard_voice);
-            muteLabelView.setText(R.string.unmute);
-        } else {
-            Log.i("CallActivity muteButton unselected");
-            muteButtonView.setSelected(false);
-            muteButtonView.setImageResource(R.drawable.ic_mic_mute);
-            muteLabelView.setText(R.string.mute);
-        }
+        Log.i("CallActivity muteButton mute: " + mute);
+        muteButtonView.setSelected(mute);
     }
 
     private void onSpeakerPhone() {
@@ -495,17 +486,8 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void updateSpeakerPhoneUI(boolean on) {
-        if (on) {
-            Log.i("CallActivity speakerButton selected");
-            speakerButtonView.setSelected(true);
-            speakerButtonView.setImageResource(R.drawable.ic_speaker_phone_off);
-            speakerLabelView.setText(R.string.call_speaker_off_button);
-        } else {
-            Log.i("CallActivity speakerButton unselected");
-            speakerButtonView.setSelected(false);
-            speakerButtonView.setImageResource(R.drawable.ic_speaker_phone);
-            speakerLabelView.setText(R.string.call_speaker_button);
-        }
+        Log.i("CallActivity speakerButton on: " + on);
+        speakerButtonView.setSelected(on);
     }
 
     @Override
