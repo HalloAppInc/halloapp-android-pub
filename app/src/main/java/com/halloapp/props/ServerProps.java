@@ -45,6 +45,7 @@ public class ServerProps {
     private static final String PROP_VIDEO_CALLS_ENABLED = "video_calls";
     private static final String PROP_VOICE_POSTS_ENABLED = "voice_posts";
     private static final String PROP_EMOJI_VERSION = "emoji_version";
+    private static final String PROP_MAX_MEMBER_FOR_SHEET = "group_max_for_showing_invite_sheet";
 
     private static final int WEEK_IN_SECONDS = (int) (DateUtils.WEEK_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
 
@@ -85,6 +86,7 @@ public class ServerProps {
     private final BooleanProp propVideoCallsEnabled = createProp(PROP_VIDEO_CALLS_ENABLED, false);
     private final BooleanProp propVoicePostsEnabled = createProp(PROP_VOICE_POSTS_ENABLED, false);
     private final IntegerProp propEmojiVersion = createProp(PROP_EMOJI_VERSION, 1);
+    private final IntegerProp propMaxMemberForInviteSheet = createProp(PROP_MAX_MEMBER_FOR_SHEET, 5);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -267,5 +269,9 @@ public class ServerProps {
 
     public synchronized int getEmojiVersion() {
         return propEmojiVersion.getValue();
+    }
+
+    public synchronized int getMaxMemberForInviteSheet() {
+        return propMaxMemberForInviteSheet.getValue();
     }
 }

@@ -105,6 +105,7 @@ public class CreateGroupViewModel extends AndroidViewModel {
         private static final String WORKER_PARAM_LARGE_AVATAR_FILE = "large_avatar_file";
 
         public static final String WORKER_OUTPUT_GROUP_ID = "group_id";
+        public static final String WORKER_OUTPUT_MEMBER_COUNT = "member_count";
 
         private final GroupsApi groupsApi = GroupsApi.getInstance();
 
@@ -167,8 +168,13 @@ public class CreateGroupViewModel extends AndroidViewModel {
                     }
                 }
 
+                // Get group invite link as we will be displaying it on the next screen, don't
+                // fail if we don't succeed though.
+                groupsApi.getGroupInviteLink(groupId).await();
+
                 Data.Builder builder = new Data.Builder();
                 builder.putString(WORKER_OUTPUT_GROUP_ID, groupId.rawId());
+                builder.putInt(WORKER_OUTPUT_MEMBER_COUNT, userIds.size());
                 Data output = builder.build();
 
                 return Result.success(output);

@@ -4,28 +4,24 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.SharedElementCallback;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionManager;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.halloapp.BuildConfig;
 import com.halloapp.Debug;
 import com.halloapp.R;
@@ -33,15 +29,16 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.content.ContentDb;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.nux.InviteGroupBottomSheetDialogFragment;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.camera.CameraActivity;
-import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.FabExpandOnScrollListener;
@@ -62,6 +59,7 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
 
     private static final String EXTRA_GROUP_ID = "group_id";
     private static final String EXTRA_FROM_CONTENT_COMPOSER = "from_content_composer";
+    private static final String EXTRA_SHOW_INVITE_BOTTOM_SHEET = "show_invite_sheet";
 
     public static Intent viewFeed(@NonNull Context context, @NonNull GroupId groupId) {
         Preconditions.checkNotNull(groupId);
@@ -76,6 +74,12 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
         return intent;
     }
 
+    public static Intent openGroupPostCreation(@NonNull Context context, @NonNull GroupId groupId, boolean showInviteSheet) {
+        Intent intent = viewFeed(context, groupId);
+        intent.putExtra(EXTRA_SHOW_INVITE_BOTTOM_SHEET, showInviteSheet);
+        return intent;
+    }
+
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
     private GroupFeedViewModel viewModel;
@@ -86,6 +90,8 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
 
     private TextView titleView;
     private TextView subtitleView;
+
+    private boolean showGroupInviteSheet;
 
     private final Runnable hideSubtitle = () -> {
         if (subtitleView != null) {
@@ -145,11 +151,21 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
             startActivityForResult(GroupInfoActivity.viewGroup(this, groupId), REQUEST_CODE_VIEW_GROUP_INFO);
         });
 
+        showGroupInviteSheet = getIntent().getBooleanExtra(EXTRA_SHOW_INVITE_BOTTOM_SHEET, false);
+
         viewModel.chat.getLiveData().observe(this, chat -> {
             if (chat != null) {
                 titleView.setText(chat.name);
                 avatarLoader.load(avatarView, groupId, false);
                 ContentDb.getInstance().setGroupSeen((GroupId) chat.chatId);
+                if (showGroupInviteSheet) {
+                    if (TextUtils.isEmpty(chat.inviteToken)) {
+                        Log.e("ViewGroupFeedActivity/no invite link token for group, not showing invite sheet!");
+                    } else {
+                        DialogFragmentUtils.showDialogFragmentOnce(InviteGroupBottomSheetDialogFragment.newInstance(chat.inviteToken), getSupportFragmentManager());
+                    }
+                    showGroupInviteSheet = false;
+                }
             } else {
                 titleView.setText(null);
             }

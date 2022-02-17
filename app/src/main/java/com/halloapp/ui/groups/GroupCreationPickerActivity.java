@@ -24,6 +24,7 @@ import java.util.ArrayList;
 public class GroupCreationPickerActivity extends MultipleContactPickerActivity {
 
     public static final String RESULT_GROUP_ID = "group_id";
+    public static final String RESULT_MEMBER_COUNT = "member_count";
 
     private static final String EXTRA_SMALL_AVATAR_PATH = "small_avatar_path";
     private static final String EXTRA_LARGE_AVATAR_PATH = "large_avatar_path";
@@ -83,9 +84,11 @@ public class GroupCreationPickerActivity extends MultipleContactPickerActivity {
                         SnackbarHelper.showWarning(GroupCreationPickerActivity.this, R.string.failed_create_group);
                     } else if (state == WorkInfo.State.SUCCEEDED) {
                         String rawGroupId = workInfo.getOutputData().getString(CreateGroupViewModel.CreateGroupWorker.WORKER_OUTPUT_GROUP_ID);
+                        int memberCount = workInfo.getOutputData().getInt(CreateGroupViewModel.CreateGroupWorker.WORKER_OUTPUT_MEMBER_COUNT, 1);
                         GroupId groupId = new GroupId(Preconditions.checkNotNull(rawGroupId));
                         Intent resultIntent = new Intent();
                         resultIntent.putExtra(RESULT_GROUP_ID, groupId);
+                        resultIntent.putExtra(RESULT_MEMBER_COUNT, memberCount);
                         setResult(RESULT_OK, resultIntent);
                         finish();
                     }

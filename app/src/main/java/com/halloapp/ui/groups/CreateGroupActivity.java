@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.GroupId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
@@ -39,6 +40,8 @@ public class CreateGroupActivity extends HalloActivity {
 
     private static final int CODE_CHANGE_AVATAR = 1;
     private static final int REQUEST_CODE_SELECT_CONTACTS = 2;
+
+    private final ServerProps serverProps = ServerProps.getInstance();
 
     private CreateGroupViewModel viewModel;
 
@@ -123,8 +126,9 @@ public class CreateGroupActivity extends HalloActivity {
                         break;
                     }
                     GroupId groupId = data.getParcelableExtra(GroupCreationPickerActivity.RESULT_GROUP_ID);
+                    int memberCount = data.getIntExtra(GroupCreationPickerActivity.RESULT_MEMBER_COUNT, 1);
                     if (groupId != null) {
-                        startActivity(ViewGroupFeedActivity.viewFeed(getApplicationContext(), groupId));
+                        startActivity(ViewGroupFeedActivity.openGroupPostCreation(getApplicationContext(), groupId, memberCount < serverProps.getMaxMemberForInviteSheet()));
                     }
                     finish();
                 }
