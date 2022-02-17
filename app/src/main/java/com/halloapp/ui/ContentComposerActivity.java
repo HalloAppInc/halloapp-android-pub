@@ -56,6 +56,7 @@ import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.UrlPreview;
 import com.halloapp.UrlPreviewLoader;
+import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
@@ -70,6 +71,7 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.chat.ChatActivity;
+import com.halloapp.ui.chat.ReplyPreviewContainer;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.mediaedit.MediaEditActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
@@ -174,6 +176,8 @@ public class ContentComposerActivity extends HalloActivity {
     private Toolbar toolbar;
     private View replyContainer;
 
+    private ReplyPreviewContainer replyPreviewContainer;
+
     private View audioComposer;
 
     private PostEntryView postEntryView;
@@ -186,9 +190,10 @@ public class ContentComposerActivity extends HalloActivity {
 
     private TextView privacyDestination;
 
-    private PostLinkPreviewView postLinkPreviewView;
+    private ContactLoader contactLoader;
     private UrlPreviewLoader urlPreviewLoader;
     private AudioDurationLoader audioDurationLoader;
+    private PostLinkPreviewView postLinkPreviewView;
     private MediaThumbnailLoader mediaThumbnailLoader;
 
     private boolean allowAddMedia;
@@ -421,6 +426,7 @@ public class ContentComposerActivity extends HalloActivity {
         urlPreviewLoader = new UrlPreviewLoader();
         postLinkPreviewView = findViewById(R.id.link_preview);
         postLinkPreviewView.setMediaThumbnailLoader(mediaThumbnailLoader);
+        contactLoader = new ContactLoader();
 
         final TextView shareBtn = findViewById(R.id.share_btn);
         if (destinations != null && destinations.size() > 0) {
@@ -702,9 +708,19 @@ public class ContentComposerActivity extends HalloActivity {
         }
 
         replyContainer = findViewById(R.id.reply_container);
+        replyPreviewContainer = new ReplyPreviewContainer(replyContainer);
+        replyPreviewContainer.init(contactLoader, textContentLoader, audioDurationLoader, mediaThumbnailLoader);
+        replyPreviewContainer.setOnDismissListener(() -> {
+            replyPostId = null;
+            replyPostMediaIndex = -1;
+            replyContainer.setVisibility(View.GONE);
+        });
         if (viewModel.replyPost != null) {
-            viewModel.replyPost.getLiveData().observe(this, this::updatePostReply);
+            viewModel.replyPost.getLiveData().observe(this, post -> {
+                replyPreviewContainer.bindPost(post, replyPostMediaIndex);
+            });
         } else {
+            replyPreviewContainer.hide();
             replyContainer.setVisibility(View.GONE);
         }
 
@@ -994,60 +1010,6 @@ public class ContentComposerActivity extends HalloActivity {
         }
     }
 
-    private void updatePostReply(@Nullable Post post) {
-        if (post == null) {
-            replyContainer.setVisibility(View.GONE);
-        } else {
-            replyContainer.setVisibility(View.VISIBLE);
-            final TextView replyTextView = findViewById(R.id.reply_text);
-            textContentLoader.load(replyTextView, post);
-            final ImageView replyMediaIconView = findViewById(R.id.reply_media_icon);
-            final ImageView replyMediaThumbView = findViewById(R.id.reply_media_thumb);
-            if (replyPostMediaIndex >= 0 && replyPostMediaIndex < post.media.size()) {
-                replyMediaThumbView.setVisibility(View.VISIBLE);
-                replyMediaThumbView.setOutlineProvider(new ViewOutlineProvider() {
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.comment_media_list_corner_radius));
-                    }
-                });
-                replyMediaThumbView.setClipToOutline(true);
-                final Media media = post.media.get(replyPostMediaIndex);
-                fullThumbnailLoader.load(replyMediaThumbView, media);
-                replyMediaIconView.setVisibility(View.VISIBLE);
-                switch (media.type) {
-                    case Media.MEDIA_TYPE_IMAGE: {
-                        replyMediaIconView.setImageResource(R.drawable.ic_camera);
-                        if (TextUtils.isEmpty(post.text)) {
-                            replyTextView.setText(R.string.photo);
-                        }
-                        break;
-                    }
-                    case Media.MEDIA_TYPE_VIDEO: {
-                        replyMediaIconView.setImageResource(R.drawable.ic_video);
-                        if (TextUtils.isEmpty(post.text)) {
-                            replyTextView.setText(R.string.video);
-                        }
-                        break;
-                    }
-                    case Media.MEDIA_TYPE_UNKNOWN:
-                    default: {
-                        replyMediaIconView.setImageResource(R.drawable.ic_media_collection);
-                        break;
-                    }
-                }
-            } else {
-                replyMediaThumbView.setVisibility(View.GONE);
-                replyMediaIconView.setVisibility(View.GONE);
-            }
-            findViewById(R.id.reply_close).setOnClickListener(v -> {
-                replyPostId = null;
-                replyPostMediaIndex = -1;
-                replyContainer.setVisibility(View.GONE);
-            });
-        }
-    }
-
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -1075,6 +1037,7 @@ public class ContentComposerActivity extends HalloActivity {
         mediaThumbnailLoader.destroy();
         textContentLoader.destroy();
         audioDurationLoader.destroy();
+        contactLoader.destroy();
     }
 
     @Override

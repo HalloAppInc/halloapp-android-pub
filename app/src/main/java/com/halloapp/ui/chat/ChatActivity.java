@@ -170,7 +170,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
     private TextView titleView;
     private TextView subtitleView;
-    private TextView replyNameView;
     private ImageView avatarView;
     private View footer;
 
@@ -434,8 +433,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         });
         drawDelegateView = findViewById(R.id.draw_delegate);
 
-        replyNameView = findViewById(R.id.reply_name);
-
         View toolbarTitleContainer = findViewById(R.id.toolbar_text_container);
         toolbarTitleContainer.setOnClickListener(v -> {
             if (chatId instanceof UserId) {
@@ -654,6 +651,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         replyPreviewContainer = findViewById(R.id.reply_preview_container);
         replyPreviewContainerHolder = new ReplyPreviewContainer(replyContainer);
         replyPreviewContainerHolder.init(contactLoader, textContentLoader, audioDurationLoader, mediaThumbnailLoader);
+
+        final TextView replyNameView = findViewById(R.id.reply_name);
+        replyNameView.setTextColor(ContextCompat.getColor(this, R.color.secondary_text));
 
         replyPreviewContainerHolder.setOnDismissListener(() -> {
             viewModel.clearReply();

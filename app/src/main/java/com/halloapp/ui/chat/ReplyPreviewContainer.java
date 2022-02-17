@@ -222,8 +222,9 @@ public class ReplyPreviewContainer {
     }
 
     private void updateReplyColors(@NonNull UserId userId) {
-        replyPreviewContainer.setBackgroundResource(R.drawable.reply_frame_background);
-        replyPreviewContainer.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(replyPreviewContainer.getContext(), R.color.message_background_reply_incoming)));
-        replyNameView.setTextColor(ContextCompat.getColor(replyNameView.getContext(), R.color.secondary_text));
+        if (replyPreviewContainer != null) {
+            replyPreviewContainer.setBackgroundResource(R.drawable.reply_frame_background);
+            replyPreviewContainer.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(replyPreviewContainer.getContext(), R.color.message_background_reply_incoming)));
+        }
     }
 }
