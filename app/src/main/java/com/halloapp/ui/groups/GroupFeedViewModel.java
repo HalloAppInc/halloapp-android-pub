@@ -132,8 +132,6 @@ public class GroupFeedViewModel extends ViewModel {
     public GroupFeedViewModel(@NonNull GroupId groupId) {
         this.groupId = groupId;
 
-        contentDb.addObserver(contentObserver);
-
         voiceNotePlayer = new VoiceNotePlayer((Application)AppContext.getInstance().get());
 
         dataSourceFactory = new PostsDataSource.Factory(contentDb, null, groupId);
@@ -157,6 +155,8 @@ public class GroupFeedViewModel extends ViewModel {
                 return contacts;
             }
         };
+
+        contentDb.addObserver(contentObserver);
     }
 
     public void saveScrollState(@Nullable Parcelable savedScrollState) {
