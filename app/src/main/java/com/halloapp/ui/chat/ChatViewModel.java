@@ -26,6 +26,7 @@ import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
+import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.MessagesDataSource;
 import com.halloapp.content.Post;
@@ -46,6 +47,7 @@ import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -314,10 +316,14 @@ public class ChatViewModel extends AndroidViewModel {
         return isRecording;
     }
 
-    public void sendVoiceNote(@Nullable String replyPostId, int replyPostMediaIndex, @Nullable Message replyMessage, int replyMessageMediaIndex, @Nullable File recording) {
+    public void sendVoiceNote(int replyPostMediaIndex, int replyMessageMediaIndex, @Nullable File recording) {
         if (recording == null) {
             return;
         }
+        ChatViewModel.Reply replyData = reply.getLiveData().getValue();
+        final Message replyMessage = replyData == null ? null : replyData.message;
+        final Post replyPost = replyData == null ? null : replyData.post;
+        final String replyPostId = replyPost == null ? null : replyPost.id;
         bgWorkers.execute(() -> {
             if (MediaUtils.getAudioDuration(recording) < Constants.MINIMUM_AUDIO_NOTE_DURATION_MS) {
                 Log.i("ChatViewModel/sendVoiceNote duration too short");
@@ -351,12 +357,55 @@ public class ChatViewModel extends AndroidViewModel {
         });
     }
 
-    public void finishRecording(@Nullable String replyPostId, int replyPostMediaIndex, @Nullable Message replyMessage, int replyMessageMediaIndex, boolean canceled) {
+    public void finishRecording(int replyPostMediaIndex, int replyMessageMediaIndex, boolean canceled) {
         File recording = voiceNoteRecorder.finishRecording();
         if (canceled || recording == null) {
             return;
         }
-        sendVoiceNote(replyPostId, replyPostMediaIndex, replyMessage, replyMessageMediaIndex, recording);
+        sendVoiceNote(replyPostMediaIndex,replyMessageMediaIndex, recording);
+    }
+
+    public void sendMessage(Message message) {
+        if (message.urlPreview != null && message.urlPreview.imageMedia != null) {
+            bgWorkers.execute(() -> {
+                if (message.urlPreview.imageMedia != null) {
+                    final File imagePreview = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_IMAGE));
+                    try {
+                        MediaUtils.transcodeImage(message.urlPreview.imageMedia.file, imagePreview, null, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, false);
+                        message.urlPreview.imageMedia.file = imagePreview;
+                    } catch (IOException e) {
+                        Log.e("failed to transcode url preview image", e);
+                        message.urlPreview.imageMedia = null;
+                    }
+                }
+                message.addToStorage(ContentDb.getInstance());
+            });
+        } else {
+            message.addToStorage(ContentDb.getInstance());
+        }
+    }
+
+    public Message buildMessage(String messageText, int replyPostMediaIndex, int replyMessageMediaIndex) {
+        ChatViewModel.Reply replyData = reply.getLiveData().getValue();
+        final Message replyMessage = replyData == null ? null : replyData.message;
+        final Post replyPost = replyData == null ? null : replyData.post;
+        final String replyPostId = replyPost == null ? null : replyPost.id;
+
+        return new Message(0,
+                chatId,
+                UserId.ME,
+                RandomId.create(),
+                System.currentTimeMillis(),
+                Message.TYPE_CHAT,
+                Message.USAGE_CHAT,
+                Message.STATE_INITIAL,
+                messageText,
+                replyPostId,
+                replyPostMediaIndex,
+                replyMessage != null ? replyMessage.id : null,
+                replyMessageMediaIndex ,
+                replyMessage != null ? replyMessage.senderUserId : replySenderId,
+                0);
     }
 
     public void updateMessageRowId(long rowId) {
@@ -365,10 +414,19 @@ public class ChatViewModel extends AndroidViewModel {
         reply.invalidate();
     }
 
+    public void clearReply() {
+        clearReplyInfo();
+        reply.invalidate();
+    }
+
     private void clearReplyInfo() {
         replySenderId = null;
         replyMessageRowId = null;
         replyPostId = null;
+    }
+
+    public String getReplyPostId() {
+        return replyPostId;
     }
 
     @NonNull

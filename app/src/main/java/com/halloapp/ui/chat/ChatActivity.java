@@ -5,8 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Outline;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,7 +20,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
@@ -54,7 +51,6 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.ContentDraftManager;
 import com.halloapp.Debug;
-import com.halloapp.FileStore;
 import com.halloapp.ForegroundChat;
 import com.halloapp.Notifications;
 import com.halloapp.R;
@@ -65,18 +61,14 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
-import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
-import com.halloapp.content.Post;
-import com.halloapp.content.VoiceNotePost;
 import com.halloapp.groups.ChatLoader;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
-import com.halloapp.media.MediaUtils;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ContentComposerActivity;
@@ -94,12 +86,9 @@ import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.ui.profile.ViewProfileActivity;
-import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ClipUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.RandomId;
-import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
@@ -115,7 +104,6 @@ import com.halloapp.widget.SwipeListItemHelper;
 import com.halloapp.xmpp.PresenceManager;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -201,10 +189,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private ActionMode actionMode;
     private SystemMessageTextResolver systemMessageTextResolver;
 
-    private String replyPostId;
     private UserId replySenderId;
-    private long replyMessageRowId = -1;
-    private Message replyMessage;
     private int replyPostMediaIndex;
     private int replyMessageMediaIndex = 0;
     private UserId selectedMessageSenderId;
@@ -256,9 +241,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     };
 
     private void onMessageSent() {
-        replyPostId = null;
+        viewModel.clearReply();
         replyPostMediaIndex = -1;
-        replyMessage = null;
         replyMessageMediaIndex = -1;
         replyContainer.setVisibility(View.GONE);
         setResult(RESULT_OK);
@@ -334,13 +318,13 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
             @Override
             public void onSendVoiceNote() {
-                viewModel.finishRecording(replyPostId, replyPostMediaIndex, replyMessage, replyMessageMediaIndex, false);
+                viewModel.finishRecording(replyPostMediaIndex, replyMessageMediaIndex, false);
                 onMessageSent();
             }
 
             @Override
             public void onSendVoiceDraft(File draft) {
-                viewModel.sendVoiceNote(replyPostId, replyPostMediaIndex, replyMessage, replyMessageMediaIndex, draft);
+                viewModel.sendVoiceNote(replyPostMediaIndex, replyMessageMediaIndex, draft);
                 onMessageSent();
             }
 
@@ -493,6 +477,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         NestedHorizontalScrollHelper.applyDefaultScrollRatio(chatView);
 
         chatView.setAdapter(adapter);
+
+        String replyPostId;
 
         if (savedInstanceState == null) {
             replySenderId = getIntent().getParcelableExtra(EXTRA_REPLY_POST_SENDER_ID);
@@ -670,28 +656,17 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         replyPreviewContainerHolder.init(contactLoader, textContentLoader, audioDurationLoader, mediaThumbnailLoader);
 
         replyPreviewContainerHolder.setOnDismissListener(() -> {
-            replyPreviewContainerHolder.hide();
-            replyMessage = null;
-            replyMessageRowId = -1;
-            replyMessageMediaIndex = -1;
-            replyPostId = null;
-            replyPostMediaIndex = -1;
-            replyPreviewContainerHolder.hide();
+            viewModel.clearReply();
         });
         viewModel.reply.getLiveData().observe(this, reply -> {
             if (reply == null) {
                 replyContainer.setVisibility(View.GONE);
                 return;
             }
-            replyPostId = null;
-            replyMessage = null;
-            replyMessageRowId = -1;
             if (reply.post != null) {
-                replyPostId = reply.post.id;
                 replyPreviewContainerHolder.bindPost(reply.post, replyPostMediaIndex);
             } else if (reply.message != null) {
-                replyMessage = reply.message;
-                replyMessageRowId = reply.message.rowId;
+                long replyMessageRowId = reply.message.rowId;
                 replyPostMediaIndex = -1;
                 if (replyMessageMediaIndexMap.containsKey(replyMessageRowId)) {
                     replyMessageMediaIndex = replyMessageMediaIndexMap.get(replyMessageRowId);
@@ -743,8 +718,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 if (message == null || message.isRetracted() || message.type == Message.TYPE_SYSTEM || message.type == Message.TYPE_CALL) {
                     return;
                 }
-
-                replyMessageRowId = message.rowId;
                 viewModel.updateMessageRowId(message.rowId);
 
                 showKeyboard();
@@ -972,6 +945,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        String replyPostId = viewModel.getReplyPostId();
         if (replyPostId != null) {
             outState.putParcelable(EXTRA_REPLY_POST_SENDER_ID, replySenderId);
             outState.putString(EXTRA_REPLY_POST_ID, replyPostId);
@@ -1128,49 +1102,19 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             return;
         }
         editText.setText(null);
-        final Message message = new Message(0,
-                chatId,
-                UserId.ME,
-                RandomId.create(),
-                System.currentTimeMillis(),
-                Message.TYPE_CHAT,
-                Message.USAGE_CHAT,
-                Message.STATE_INITIAL,
-                messageText,
-                replyPostId,
-                replyPostMediaIndex,
-                replyMessage != null ? replyMessage.id : null,
-                replyMessageMediaIndex ,
-                replyMessage != null ? replyMessage.senderUserId : replySenderId,
-                0);
+        final Message message = viewModel.buildMessage(messageText, replyPostMediaIndex, replyMessageMediaIndex);
         message.mentions.addAll(textAndMentions.second);
         linkPreviewComposeView.attachPreview(message);
         linkPreviewComposeView.updateUrlPreview(null);
         urlPreviewLoader.cancel(linkPreviewComposeView, true);
-        if (message.urlPreview != null && message.urlPreview.imageMedia != null) {
-            BgWorkers.getInstance().execute(() -> {
-                if (message.urlPreview.imageMedia != null) {
-                    final File imagePreview = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_IMAGE));
-                    try {
-                        MediaUtils.transcodeImage(message.urlPreview.imageMedia.file, imagePreview, null, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, false);
-                        message.urlPreview.imageMedia.file = imagePreview;
-                    } catch (IOException e) {
-                        Log.e("failed to transcode url preview image", e);
-                        message.urlPreview.imageMedia = null;
-                    }
-                }
-                message.addToStorage(ContentDb.getInstance());
-            });
-        } else {
-            if (message.loadingUrlPreview != null) {
-                urlPreviewLoader.addWaitingContentItem(message);
-            }
-            message.addToStorage(ContentDb.getInstance());
+        if ((message.urlPreview == null || message.urlPreview.imageMedia == null) && message.loadingUrlPreview != null) {
+            urlPreviewLoader.addWaitingContentItem(message);
         }
+        viewModel.sendMessage(message);
     }
 
     private void pickMedia() {
-        final Intent intent = MediaPickerActivity.pickForMessage(this, chatId, replyPostId, replyPostMediaIndex);
+        final Intent intent = MediaPickerActivity.pickForMessage(this, chatId, viewModel.getReplyPostId(), replyPostMediaIndex);
         startActivityForResult(intent, REQUEST_CODE_COMPOSE);
     }
 
@@ -1430,7 +1374,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                         }
                         return true;
                     } else if (item.getItemId() == R.id.reply) {
-                        replyMessageRowId = selectedMessageRowId;
                         viewModel.updateMessageRowId(selectedMessageRowId);
                         if (actionMode != null) {
                             actionMode.finish();
