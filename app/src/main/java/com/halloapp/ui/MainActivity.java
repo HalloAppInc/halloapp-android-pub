@@ -41,7 +41,7 @@ import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.contacts.ContactsActivity;
-import com.halloapp.ui.groups.GroupCreationPickerActivity;
+import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.home.HomeViewModel;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
@@ -264,7 +264,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void createNewGroup() {
-        startActivity(GroupCreationPickerActivity.newIntent(MainActivity.this, null));
+        startActivity(CreateGroupActivity.newPickerIntent(MainActivity.this));
     }
 
     private void updateFab(@IdRes int id) {

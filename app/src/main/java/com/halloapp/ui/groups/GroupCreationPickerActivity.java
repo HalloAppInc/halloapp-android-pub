@@ -1,5 +1,6 @@
 package com.halloapp.ui.groups;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,42 +8,46 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.work.WorkInfo;
 
 import com.halloapp.R;
 import com.halloapp.id.GroupId;
-import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.SnackbarHelper;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
 
 public class GroupCreationPickerActivity extends MultipleContactPickerActivity {
 
-    private static final String EXTRA_NAVIGATE_TO_GROUP = "nav_to_group";
+    public static final String RESULT_GROUP_ID = "group_id";
 
-    private static final int REQUEST_CODE_SELECT_CONTACTS = 1;
+    private static final String EXTRA_SMALL_AVATAR_PATH = "small_avatar_path";
+    private static final String EXTRA_LARGE_AVATAR_PATH = "large_avatar_path";
+    private static final String EXTRA_GROUP_NAME = "group_name";
 
-    private boolean navigateToGroup;
+    private String groupName;
+    private String smallAvatarPath;
+    private String largeAvatarPath;
 
-    public static Intent newIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds) {
+    private CreateGroupViewModel viewModel;
+
+    private ProgressDialog createGroupDialog;
+
+    private boolean waitingForResult = false;
+
+    public static Intent newIntent(@NonNull Context context, @NonNull String name, @Nullable String smallAvatar, @Nullable String largeAvatarPath) {
         Intent intent = new Intent(context, GroupCreationPickerActivity.class);
-        if (selectedIds != null) {
-            intent.putParcelableArrayListExtra(EXTRA_SELECTED_IDS, new ArrayList<>(selectedIds));
-        }
         intent.putExtra(EXTRA_TITLE_RES, R.string.group_picker_title);
-        intent.putExtra(EXTRA_ACTION_RES, R.string.next);
+        intent.putExtra(EXTRA_ACTION_RES, R.string.button_create_group);
         intent.putExtra(EXTRA_ONLY_FRIENDS, false);
         intent.putExtra(EXTRA_ALLOW_EMPTY_SELECTION, true);
-        return intent;
-    }
-
-    public static Intent newIntent(@NonNull Context context, @Nullable Collection<UserId> selectedIds, boolean navigateToGroup) {
-        Intent intent = newIntent(context, selectedIds);
-        intent.putExtra(EXTRA_NAVIGATE_TO_GROUP, navigateToGroup);
+        intent.putExtra(EXTRA_SMALL_AVATAR_PATH, smallAvatar);
+        intent.putExtra(EXTRA_LARGE_AVATAR_PATH, largeAvatarPath);
+        intent.putExtra(EXTRA_GROUP_NAME, name);
         return intent;
     }
 
@@ -52,7 +57,42 @@ public class GroupCreationPickerActivity extends MultipleContactPickerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        navigateToGroup = getIntent().getBooleanExtra(EXTRA_NAVIGATE_TO_GROUP, true);
+        groupName = getIntent().getStringExtra(EXTRA_GROUP_NAME);
+        smallAvatarPath = getIntent().getStringExtra(EXTRA_SMALL_AVATAR_PATH);
+        largeAvatarPath = getIntent().getStringExtra(EXTRA_LARGE_AVATAR_PATH);
+
+        viewModel = new ViewModelProvider(this, new CreateGroupViewModel.Factory(getApplication())).get(CreateGroupViewModel.class);
+
+        viewModel.setAvatar(smallAvatarPath, largeAvatarPath);
+
+        viewModel.getCreateGroupWorkInfo().observe(this, workInfos -> {
+            for (WorkInfo workInfo : workInfos) {
+                final WorkInfo.State state = workInfo.getState();
+                Log.i("GroupCreationPickerActivity: work " + workInfo.getId() + " " + state);
+                if (state == WorkInfo.State.RUNNING || state == WorkInfo.State.ENQUEUED) {
+                    if (createGroupDialog == null) {
+                        createGroupDialog = ProgressDialog.show(GroupCreationPickerActivity.this, null, getString(R.string.create_group_in_progress, groupName), true);
+                        createGroupDialog.show();
+                    }
+                    waitingForResult = true;
+                } else if (waitingForResult) {
+                    if (createGroupDialog != null) {
+                        createGroupDialog.cancel();
+                    }
+                    if (state == WorkInfo.State.FAILED) {
+                        SnackbarHelper.showWarning(GroupCreationPickerActivity.this, R.string.failed_create_group);
+                    } else if (state == WorkInfo.State.SUCCEEDED) {
+                        String rawGroupId = workInfo.getOutputData().getString(CreateGroupViewModel.CreateGroupWorker.WORKER_OUTPUT_GROUP_ID);
+                        GroupId groupId = new GroupId(Preconditions.checkNotNull(rawGroupId));
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra(RESULT_GROUP_ID, groupId);
+                        setResult(RESULT_OK, resultIntent);
+                        finish();
+                    }
+                    waitingForResult = false;
+                }
+            }
+        });
     }
 
     @Override
@@ -63,39 +103,11 @@ public class GroupCreationPickerActivity extends MultipleContactPickerActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.finish) {
-            startActivityForResult(CreateGroupActivity.newPickerIntent(this, selectedContacts), REQUEST_CODE_SELECT_CONTACTS);
+            waitingForResult = true;
+            Log.i("GroupCreationPickerActivity/onOptionsItemSelected starting group creation");
+            viewModel.createGroup(groupName, new ArrayList<>(selectedContacts));
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        //noinspection SwitchStatementWithTooFewBranches
-        switch (requestCode) {
-            case REQUEST_CODE_SELECT_CONTACTS:
-                if (resultCode == RESULT_OK) {
-                    if (data == null) {
-                        Log.e("ContactsActivity/onActivityResult missing resulting group id");
-                        finish();
-                        break;
-                    }
-                    if (navigateToGroup) {
-                        GroupId groupId = data.getParcelableExtra(CreateGroupActivity.RESULT_GROUP_ID);
-                        if (groupId != null) {
-                            startActivity(ViewGroupFeedActivity.viewFeed(getApplicationContext(), groupId));
-                        }
-                    } else {
-                        setResult(resultCode, data);
-                    }
-                    finish();
-                } else if (data != null) {
-                    List<UserId> userIds = data.getParcelableArrayListExtra(EXTRA_SELECTED_IDS);
-                    selectedContacts = new LinkedHashSet<>(userIds);
-                }
-                break;
-            default:
-                super.onActivityResult(requestCode, resultCode, data);
-        }
     }
 }

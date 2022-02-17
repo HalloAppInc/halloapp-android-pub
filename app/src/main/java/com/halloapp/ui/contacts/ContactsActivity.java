@@ -32,14 +32,10 @@ import androidx.work.WorkInfo;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
-import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
-import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.chat.ChatActivity;
-import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
@@ -48,7 +44,6 @@ import com.halloapp.widget.SnackbarHelper;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -60,8 +55,6 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class ContactsActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
-    private static final int REQUEST_CODE_CREATE_GROUP_SELECT_CONTACTS = 2;
-    private static final int REQUEST_CODE_CREATE_GROUP = 3;
 
     private static final String EXTRA_SHOW_INVITE = "show_invite_option";
     private static final String EXTRA_SHOW_CREATE_GROUP = "show_create_group";
@@ -72,7 +65,6 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
     private final ContactsAdapter adapter = new ContactsAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
-    private final ServerProps serverProps = ServerProps.getInstance();
 
     private ContactsViewModel viewModel;
     private TextView emptyView;
@@ -86,13 +78,6 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         if (disabledUserIds != null) {
             intent.putParcelableArrayListExtra(EXTRA_EXCLUDE_UIDS, new ArrayList<>(disabledUserIds));
         }
-        return intent;
-    }
-
-    public static Intent createSharePicker(@NonNull Context context) {
-        Intent intent = new Intent(context, ContactsActivity.class);
-        intent.putExtra(EXTRA_SHOW_INVITE, false);
-        intent.putExtra(EXTRA_SHOW_CREATE_GROUP, false);
         return intent;
     }
 
@@ -217,10 +202,6 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         startActivity(intent);
     }
 
-    private void onCreateGroup(@Nullable Collection<UserId> initialIds) {
-        startActivityForResult(MultipleContactPickerActivity.newPickerIntent(this, initialIds, R.string.group_picker_title, R.string.next, serverProps.getMaxGroupSize()), REQUEST_CODE_CREATE_GROUP_SELECT_CONTACTS);
-    }
-
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
@@ -233,40 +214,6 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
                     break;
                 }
             }
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        switch (requestCode) {
-            case REQUEST_CODE_CREATE_GROUP_SELECT_CONTACTS:
-                if (resultCode == RESULT_OK && data != null) {
-                    List<UserId> userIds = data.getParcelableArrayListExtra(MultipleContactPickerActivity.EXTRA_RESULT_SELECTED_IDS);
-                    startActivityForResult(CreateGroupActivity.newPickerIntent(this, userIds), REQUEST_CODE_CREATE_GROUP);
-                }
-                break;
-            case REQUEST_CODE_CREATE_GROUP: {
-                if (resultCode == RESULT_OK) {
-                    if (data == null) {
-                        Log.e("ContactsActivity/onActivityResult missing resulting group id");
-                        finish();
-                        break;
-                    }
-                    GroupId groupId = Preconditions.checkNotNull(data.getParcelableExtra(CreateGroupActivity.RESULT_GROUP_ID));
-                    final Intent intent = ChatActivity.open(this, groupId);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    List<UserId> userIds = null;
-                    if (data != null){
-                        userIds = data.getParcelableArrayListExtra(CreateGroupActivity.RESULT_USER_IDS);
-                    }
-                    onCreateGroup(userIds);
-                }
-                break;
-            }
-            default:
-                super.onActivityResult(requestCode, resultCode, data);
         }
     }
 

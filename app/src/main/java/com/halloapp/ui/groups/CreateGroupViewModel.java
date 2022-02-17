@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Base64;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
@@ -22,14 +21,11 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.halloapp.FileStore;
-import com.halloapp.contacts.Contact;
-import com.halloapp.contacts.ContactsDb;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
@@ -47,33 +43,17 @@ import java.util.List;
 public class CreateGroupViewModel extends AndroidViewModel {
 
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
-    private final ContactsDb contactsDb = ContactsDb.getInstance();
     private final WorkManager workManager;
 
     private final MutableLiveData<Bitmap> avatarLiveData = new MutableLiveData<>();
-    private final ComputableLiveData<List<Contact>> contactsLiveData;
 
     private String avatarFile;
     private String largeAvatarFile;
 
-    public CreateGroupViewModel(@NonNull Application application, @NonNull List<UserId> userIds) {
+    public CreateGroupViewModel(@NonNull Application application) {
         super(application);
 
         workManager = WorkManager.getInstance(application);
-
-        contactsLiveData = new ComputableLiveData<List<Contact>>() {
-            @Override
-            protected List<Contact> compute() {
-                List<Contact> ret = new ArrayList<>();
-                for (UserId userId : userIds) {
-                    ret.add(contactsDb.getContact(userId));
-                }
-                Contact.sort(ret);
-                ret.add(0, new Contact(UserId.ME, null, null));
-                return ret;
-            }
-        };
-        contactsLiveData.invalidate();
     }
 
     public LiveData<Bitmap> getAvatar() {
@@ -86,12 +66,16 @@ public class CreateGroupViewModel extends AndroidViewModel {
         bgWorkers.execute(() -> avatarLiveData.postValue(BitmapFactory.decodeFile(filepath)));
     }
 
-    public LiveData<List<Contact>> getContacts() {
-        return contactsLiveData.getLiveData();
-    }
-
     public LiveData<List<WorkInfo>> getCreateGroupWorkInfo() {
         return workManager.getWorkInfosForUniqueWorkLiveData(CreateGroupWorker.WORK_NAME);
+    }
+
+    public String getAvatarFile() {
+        return avatarFile;
+    }
+
+    public String getLargeAvatarFile() {
+        return largeAvatarFile;
     }
 
     @MainThread
@@ -201,18 +185,16 @@ public class CreateGroupViewModel extends AndroidViewModel {
     public static class Factory implements ViewModelProvider.Factory {
 
         private final Application application;
-        private final List<UserId> userIds;
 
-        Factory(@NonNull Application application, @NonNull List<UserId> userIds) {
+        Factory(@NonNull Application application) {
             this.application = application;
-            this.userIds = userIds;
         }
 
         @Override
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(CreateGroupViewModel.class)) {
                 //noinspection unchecked
-                return (T) new CreateGroupViewModel(application, userIds);
+                return (T) new CreateGroupViewModel(application);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }

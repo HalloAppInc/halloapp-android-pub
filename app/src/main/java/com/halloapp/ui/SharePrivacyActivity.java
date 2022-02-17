@@ -36,9 +36,6 @@ import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
-import com.halloapp.ui.groups.CreateGroupActivity;
-import com.halloapp.ui.groups.GroupCreationPickerActivity;
-import com.halloapp.ui.privacy.FeedPrivacyActivity;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.SnackbarHelper;
@@ -56,9 +53,8 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
 
     private static final String EXTRA_CURRENT_SELECTION = "current_selection";
 
-    private static final int REQUEST_CREATE_GROUP = 1;
-    private static final int REQUEST_CODE_SELECT_EXCEPT_LIST = 2;
-    private static final int REQUEST_CODE_SELECT_ONLY_LIST = 3;
+    private static final int REQUEST_CODE_SELECT_EXCEPT_LIST = 1;
+    private static final int REQUEST_CODE_SELECT_ONLY_LIST = 2;
 
     public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY = 1;
     public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_EXCEPT = 2;
@@ -81,17 +77,6 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case REQUEST_CREATE_GROUP:
-                if (resultCode == RESULT_OK) {
-                    if (data == null) {
-                        break;
-                    }
-                    GroupId groupId = data.getParcelableExtra(CreateGroupActivity.RESULT_GROUP_ID);
-                    if (groupId != null) {
-                        onSelectChat(groupId);
-                    }
-                }
-                break;
             case REQUEST_CODE_SELECT_EXCEPT_LIST:
                 if (resultCode == RESULT_OK && data != null) {
                     List<UserId> exceptList = data.getParcelableArrayListExtra(MultipleContactPickerActivity.EXTRA_RESULT_SELECTED_IDS);
