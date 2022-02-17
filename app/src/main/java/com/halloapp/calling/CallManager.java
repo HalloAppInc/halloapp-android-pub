@@ -513,6 +513,7 @@ public class CallManager {
         callType = CallType.UNKNOWN_TYPE;
         restartIndex = 0;
         outboundRerequestCount = 0;
+        isAnswered = false;
         int oldState = this.state;
         state = State.IDLE;
         isInCall.postValue(false);
@@ -721,11 +722,11 @@ public class CallManager {
     public synchronized void handleEndCall(@NonNull String callId, @NonNull UserId peerUid,
                                @NonNull EndCall.Reason reason, @NonNull Long timestamp) {
         Log.i("got EndCall callId: " + callId + " peerUid: " + peerUid + " reason: " + reason.name() + " " + timestamp);
-        if (reason == EndCall.Reason.CANCEL || reason == EndCall.Reason.TIMEOUT) {
-            storeMissedCallMsg(peerUid, callId, callType, timestamp);
-        }
         if (checkWrongCall(callId, "end_call")) {
             return;
+        }
+        if (!isInitiator && !isAnswered) {
+            storeMissedCallMsg(peerUid, callId, callType, timestamp);
         }
         this.state = State.IDLE;
         notifyOnEndCall();
