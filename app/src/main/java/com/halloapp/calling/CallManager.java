@@ -1,6 +1,7 @@
 package com.halloapp.calling;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -40,6 +41,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.clients.Video;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
 import com.halloapp.proto.server.StartCallResult;
@@ -60,6 +62,9 @@ import org.webrtc.AudioSource;
 import org.webrtc.AudioTrack;
 import org.webrtc.CandidatePairChangeEvent;
 import org.webrtc.DataChannel;
+import org.webrtc.DefaultVideoDecoderFactory;
+import org.webrtc.DefaultVideoEncoderFactory;
+import org.webrtc.EglBase;
 import org.webrtc.IceCandidate;
 import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
@@ -69,6 +74,13 @@ import org.webrtc.RTCStatsCollectorCallback;
 import org.webrtc.RtpReceiver;
 import org.webrtc.RtpTransceiver;
 import org.webrtc.SessionDescription;
+import org.webrtc.SurfaceTextureHelper;
+import org.webrtc.VideoCapturer;
+import org.webrtc.VideoDecoderFactory;
+import org.webrtc.VideoEncoderFactory;
+import org.webrtc.VideoSink;
+import org.webrtc.VideoSource;
+import org.webrtc.VideoTrack;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -100,8 +112,15 @@ public class CallManager {
         int IN_CALL = 5;
         int END = 6;
     }
+    private static final String VIDEO_TRACK_ID = "vt0";
+    private static final String AUDIO_TRACK_ID = "at0";
+    private static final int VIDEO_HEIGHT = 1280;
+    private static final int VIDEO_WIDTH = 720;
+    private static final int VIDEO_FPS = 30;
+
 
     private @State int state;
+    private CallType callType = CallType.UNKNOWN_TYPE;
     private boolean isInitiator;
     private boolean isAnswered;
 
@@ -111,6 +130,20 @@ public class CallManager {
     MediaConstraints audioConstraints;
     AudioSource audioSource;
     AudioTrack localAudioTrack;
+    AudioTrack remoteAudioTrack;
+
+    @Nullable
+    private VideoCapturer videoCapturer;
+    @Nullable
+    private SurfaceTextureHelper surfaceTextureHelper;
+    @Nullable
+    private VideoSource videoSource;
+    private VideoTrack localVideoTrack;
+    private VideoTrack remoteVideoTrack;
+    private EglBase rootEglBase;
+    private VideoSink localVideoSink;
+    private VideoSink remoteVideoSink;
+
 
     private PeerConnection peerConnection;
     private PeerConnectionFactory factory;
@@ -188,6 +221,7 @@ public class CallManager {
         this.observers = new HashSet<>();
         this.callStats = new CallStats();
 
+        executor.execute(this::initializePeerConnectionFactory);
         if (Build.VERSION.SDK_INT >= 26) {
             executor.execute(this::telecomRegisterAccount);
         }
@@ -208,9 +242,9 @@ public class CallManager {
         this.callsApi.init();
     }
 
-    public void startCallActivity(Context context, UserId userId) {
+    public void startCallActivity(Context context, UserId userId, CallType callType) {
         if (state == CallManager.State.IDLE) {
-            context.startActivity(CallActivity.getStartCallIntent(context, userId));
+            context.startActivity(CallActivity.getStartCallIntent(context, userId, callType));
         } else {
             Log.w("CallManager: user is already in a call " + toString() + ". Can not start new call to " + userId);
             String text = context.getString(R.string.unable_to_start_call);
@@ -230,12 +264,17 @@ public class CallManager {
 
             final Icon icon = Icon.createWithResource(appContext.get(), R.drawable.ic_launcher_foreground);
             PhoneAccount phoneAccount = PhoneAccount.builder(phoneAccountHandle, "HalloApp")
-                    // TODO(nikola): Add here for video calls: CAPABILITY_VIDEO_CALLING
-                    // TODO(nikola): Telecom framework SELF_MANAGED was added in API level 26.. This is the reason
+                    // Telecom framework SELF_MANAGED was added in API level 26.. This is the reason
                     // why older android device get security exception.
                     .setCapabilities(PhoneAccount.CAPABILITY_SELF_MANAGED)
+                    // TODO(nikola): Look into this further
+                    // I thought we should add this capability but this caused the phone call app to take over our call somehow
+                    // There should be something to tell the Telecom framework our app supports video calls
+                    //.setCapabilities(PhoneAccount.CAPABILITY_VIDEO_CALLING)
                     .setIcon(icon)
                     .build();
+            // TODO(nikola): Explore adding EXTRA_LOG_SELF_MANAGED_CALLS
+            // and EXTRA_ADD_SELF_MANAGED_CALLS_TO_INCALLSERVICE
 
             tm.registerPhoneAccount(phoneAccount);
             Log.i("CallManager: phone account registered with telecom manager: " + phoneAccount);
@@ -270,8 +309,36 @@ public class CallManager {
         return isInCall;
     }
 
+    public EglBase getEglBase() {
+        if (rootEglBase == null) {
+            rootEglBase = EglBase.create();
+        }
+        return rootEglBase;
+    }
+
+    public void setVideoSinks(VideoSink localVideoSink, VideoSink remoteVideoSink) {
+        VideoSink oldLocalVideoSink = this.localVideoSink;
+        VideoSink oldRemoteVideoSink = this.remoteVideoSink;
+        this.localVideoSink = localVideoSink;
+        this.remoteVideoSink = remoteVideoSink;
+        if (localVideoTrack != null) {
+            if (oldLocalVideoSink != null) {
+                localVideoTrack.removeSink(oldLocalVideoSink);
+            }
+            localVideoTrack.addSink(localVideoSink);
+        }
+        if (remoteVideoTrack != null) {
+            if (oldRemoteVideoSink != null) {
+                remoteVideoTrack.removeSink(oldRemoteVideoSink);
+            }
+            remoteVideoTrack.addSink(remoteVideoSink);
+        }
+    }
+
+
     @MainThread
-    public synchronized boolean startCall(@NonNull UserId peerUid) {
+    public synchronized boolean startCall(@NonNull UserId peerUid, @NonNull CallType callType, @Nullable VideoCapturer videoCapturer,
+                                          @Nullable VideoSource videoSource, @Nullable SurfaceTextureHelper surfaceTextureHelper) {
         if (this.state != State.IDLE) {
             Log.w("CallManager.startCall failed: state is not idle. State: " + stateToString(this.state));
             return false;
@@ -279,13 +346,21 @@ public class CallManager {
         this.callId = RandomId.create();
         Log.i("CallManager.startCall callId: " + callId + " peerUid: " + peerUid);
         this.peerUid = peerUid;
+        this.callType = callType;
         this.isInitiator = true;
         this.isAnswered = false;
         this.callService = startCallService();
         this.callStats.startStatsCollection();
         this.state = State.CALLING;
         this.isInCall.postValue(true);
+        this.videoCapturer = videoCapturer;
+        this.videoSource = videoSource;
+        this.surfaceTextureHelper = surfaceTextureHelper;
         acquireLock();
+        if (callType == CallType.VIDEO) {
+            isSpeakerPhoneOn = true;
+            notifyOnSpeakerPhoneToggle();
+        }
 
         if (Build.VERSION.SDK_INT >= 26) {
             executor.execute(this::telecomPlaceCall);
@@ -322,6 +397,10 @@ public class CallManager {
             innerExtras.putString(HaTelecomConnectionService.EXTRA_PEER_UID_PHONE, contact.getDisplayPhone());
             extras.putBundle(TelecomManager.EXTRA_OUTGOING_CALL_EXTRAS, innerExtras);
             extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, this.phoneAccountHandle);
+            if (callType == CallType.VIDEO) {
+                Log.i("CallManager: requesting speakerphone for video call");
+                extras.putBoolean(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, true);
+            }
             Uri uri = Uri.fromParts("tel", contact.normalizedPhone, null);
             try {
                 // If the telecom framework approves the call it will call HaTelecomService.onCreateOutgoingConnection
@@ -349,34 +428,73 @@ public class CallManager {
     private void setupWebrtc() {
         Log.i("Initialize WebRTC");
         initializePeerConnectionFactory();
-        createAVTracks();
         initializePeerConnections();
-        startStreams();
         if (isInitiator) {
+            createAVTracks();
+            startStreams();
             getCallServersAndStartCall();
         }
     }
 
     public synchronized void stop(EndCall.Reason reason) {
         final long callDuration = (this.callStartTimestamp > 0)? SystemClock.elapsedRealtime() - this.callStartTimestamp : 0;
-        Log.i("stop callId: " + callId + " peerUid" + peerUid + " reason: " + reason + " duration: " + callDuration / 1000);
+        Log.i("CallManager: stop callId: " + callId + " peerUid" + peerUid + " reason: " + reason + " duration: " + callDuration / 1000);
         stopAudioManager();
         stopOutgoingRingtone();
-        if (localAudioTrack != null) {
-            localAudioTrack.setEnabled(false);
-            localAudioTrack = null;
-        }
+
         if (peerConnection != null) {
-            peerConnection.getStats(report -> CallStats.sendEndCallEvent(callId, peerUid, isInitiator, isAnswered, callDuration, reason, report));
+            peerConnection.getStats(report -> CallStats.sendEndCallEvent(callId, peerUid, callType, isInitiator, isAnswered, callDuration, reason, report));
             peerConnection.close();
+            peerConnection.dispose();
             peerConnection = null;
         }
+
+        if (videoCapturer != null) {
+            try {
+                videoCapturer.stopCapture();
+            } catch (InterruptedException e) {
+                Log.e("CallManager: videoCapturer.stopCapture exception ", e);
+            }
+            videoCapturer.dispose();
+            videoCapturer = null;
+        }
+
+        if (audioSource != null) {
+            audioSource.dispose();
+            audioSource = null;
+        }
+
+        if (videoSource != null) {
+            videoSource.dispose();
+            videoSource = null;
+        }
+
+        if (surfaceTextureHelper != null) {
+            surfaceTextureHelper.dispose();
+            surfaceTextureHelper = null;
+        }
+
+        // these get disposed by the peerConnection.dispose()
+        localAudioTrack = null;
+        localVideoTrack = null;
+        remoteVideoTrack = null;
+        remoteAudioTrack = null;
+        // those get cleaned up by the CallActivity
+        localVideoSink = null;
+        remoteVideoSink = null;
+
+        if (rootEglBase != null) {
+            //TODO(nikola): this could be a problem if the activity is still open? The same rootEglBase is used there
+            rootEglBase.release();
+            rootEglBase = null;
+        }
+
         if (callService != null) {
             appContext.get().stopService(new Intent(appContext.get(), CallService.class));
             callService = null;
         }
         if (callDuration > 0) {
-            storeCallLogMsg(peerUid, callId, callDuration);
+            storeCallLogMsg(peerUid, callId, callType, callDuration);
         }
         cancelRingingTimeout();
         cancelIceRestartTimer();
@@ -389,6 +507,7 @@ public class CallManager {
         callId = null;
         peerUid = null;
         clearCallTimer();
+        callType = CallType.UNKNOWN_TYPE;
         restartIndex = 0;
         outboundRerequestCount = 0;
         state = State.IDLE;
@@ -424,14 +543,9 @@ public class CallManager {
             return;
         }
 
-        if (!CallType.AUDIO.equals(callType)) {
-            Log.i("CallManager: rejecting incoming call " + callId + " from " + peerUid + " because it's not audio");
-            callsApi.sendEndCall(callId, peerUid, EndCall.Reason.VIDEO_UNSUPPORTED);
-            storeMissedCallMsg(peerUid, callId, callType, timestamp);
-            return;
-        }
         this.isInitiator = false;
         this.peerUid = peerUid;
+        this.callType = callType;
         this.callId = callId;
 
         if (webrtcOffer == null) {
@@ -466,7 +580,7 @@ public class CallManager {
             Log.w("CallManager: showIncomingCallNotification(): callId is null. call was already canceled");
             return;
         }
-        Notifications.getInstance(appContext.get()).showIncomingCallNotification(callId, peerUid);
+        Notifications.getInstance(appContext.get()).showIncomingCallNotification(callId, peerUid, callType);
         callsApi.sendRinging(callId, peerUid);
         startRingingTimeoutTimer();
     }
@@ -482,6 +596,10 @@ public class CallManager {
             extras.putString(HaTelecomConnectionService.EXTRA_PEER_UID, peerUid.rawId());
             extras.putString(HaTelecomConnectionService.EXTRA_PEER_UID_NAME, c.getDisplayName());
             extras.putString(HaTelecomConnectionService.EXTRA_PEER_UID_PHONE, c.getDisplayPhone());
+            if (this.callType == CallType.VIDEO) {
+                Log.i("CallManager: telecomHandleIncomingCall: requesting speakerphone ");
+                extras.putBoolean(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, true);
+            }
             Log.i("CallManager: TelecomManager.addNewIncomingCall");
             tm.addNewIncomingCall(phoneAccountHandle, extras);
         }
@@ -494,8 +612,15 @@ public class CallManager {
     }
 
     public void telecomOnAnswer() {
+        // TODO(nikola): we should check the callId and peerUID
+        Intent acceptIntent = CallActivity.acceptCallIntent(appContext.get(), callId, peerUid, callType);
+        acceptIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        // TODO(nikola): this call should not be needed because there is not supposed to be any notification generated by us
+        // the notification was displayed by the telecom system
         Notifications.getInstance(appContext.get()).clearIncomingCallNotification();
-        mainHandler.post(this::acceptCall);
+
+        appContext.get().startActivity(acceptIntent);
     }
 
     public synchronized void setTelecomConnection(HaTelecomConnection telecomConnection) {
@@ -557,6 +682,9 @@ public class CallManager {
         this.isAnswered = true;
         this.callAnswerTimestamp = SystemClock.elapsedRealtime();
         telecomSetActive();
+        if (isSpeakerPhoneOn) {
+            setSpeakerPhoneOn(true);
+        }
         notifyOnAnsweredCall();
         processQueuedIceCandidates();
     }
@@ -565,8 +693,7 @@ public class CallManager {
                                @NonNull EndCall.Reason reason, @NonNull Long timestamp) {
         Log.i("got EndCall callId: " + callId + " peerUid: " + peerUid + " reason: " + reason.name() + " " + timestamp);
         if (reason == EndCall.Reason.CANCEL || reason == EndCall.Reason.TIMEOUT) {
-            // TODO(nikola): fix here when we do video calls
-            storeMissedCallMsg(peerUid, callId, CallType.AUDIO, timestamp);
+            storeMissedCallMsg(peerUid, callId, callType, timestamp);
         }
         if (checkWrongCall(callId, "end_call")) {
             return;
@@ -644,7 +771,7 @@ public class CallManager {
     }
 
     @MainThread
-    public synchronized boolean acceptCall() {
+    public synchronized boolean acceptCall(@Nullable VideoCapturer videoCapturer, @Nullable VideoSource videoSource, @Nullable SurfaceTextureHelper surfaceTextureHelper) {
         if (this.isInitiator) {
             Log.e("ERROR user clicked accept call but is the call initiator callId: " + callId);
             return false;
@@ -653,6 +780,11 @@ public class CallManager {
             Log.w("CallManager.acceptCall call is not in INCOMING_RINGING state. State: " + stateToString(state));
             return false;
         }
+        this.videoCapturer = videoCapturer;
+        this.videoSource = videoSource;
+        this.surfaceTextureHelper = surfaceTextureHelper;
+        createAVTracks();
+        startStreams();
 
         cancelRingingTimeout();
         doAnswer();
@@ -661,6 +793,10 @@ public class CallManager {
         this.callAnswerTimestamp = SystemClock.elapsedRealtime();
         notifyOnAnsweredCall();
         telecomSetActive();
+        if (this.callType == CallType.VIDEO) {
+            Log.i("CallManager: acceptCall: setting speakerphone on");
+            setSpeakerPhoneOn(true);
+        }
         return true;
     }
 
@@ -693,38 +829,43 @@ public class CallManager {
     }
 
     private void initializePeerConnectionFactory() {
-        // TODO(nikola): when we want to do video
-//        final VideoEncoderFactory encoderFactory;
-//        final VideoDecoderFactory decoderFactory;
-//        encoderFactory = new DefaultVideoEncoderFactory(
-//                rootEglBase.getEglBaseContext(), true /* enableIntelVp8Encoder */, true);
-//        decoderFactory = new DefaultVideoDecoderFactory(
-//                rootEglBase.getEglBaseContext());
+        final VideoEncoderFactory encoderFactory = new DefaultVideoEncoderFactory(getEglBase().getEglBaseContext(), true, true);
+        final VideoDecoderFactory decoderFactory = new DefaultVideoDecoderFactory(getEglBase().getEglBaseContext());
         PeerConnectionFactory.initialize(
                 PeerConnectionFactory.InitializationOptions.builder(appContext.get())
                         .setEnableInternalTracer(true)
                         .createInitializationOptions());
         PeerConnectionFactory.Builder builder = PeerConnectionFactory.builder();
-//                .setVideoEncoderFactory(encoderFactory)
-//                .setVideoDecoderFactory(decoderFactory);
+        builder.setVideoEncoderFactory(encoderFactory);
+        builder.setVideoDecoderFactory(decoderFactory);
         builder.setOptions(null);
         factory = builder.createPeerConnectionFactory();
     }
 
     private void createAVTracks() {
         audioConstraints = new MediaConstraints();
-        // TODO(nikola): enable this for video calls
-//        VideoCapturer videoCapturer = createVideoCapturer();
-//        VideoSource videoSource = factory.createVideoSource(videoCapturer);
-//        videoCapturer.startCapture(VIDEO_RESOLUTION_WIDTH, VIDEO_RESOLUTION_HEIGHT, FPS);
-
-//        videoTrackFromCamera = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
-//        videoTrackFromCamera.setEnabled(true);
-//        videoTrackFromCamera.addRenderer(new VideoRenderer(binding.surfaceView));
-
-        //create an AudioSource instance
         audioSource = factory.createAudioSource(audioConstraints);
-        localAudioTrack = factory.createAudioTrack("101", audioSource);
+        localAudioTrack = factory.createAudioTrack(AUDIO_TRACK_ID, audioSource);
+
+        if (callType == CallType.VIDEO) {
+            localVideoTrack = createVideoTrack();
+        }
+    }
+
+
+    private VideoTrack createVideoTrack() {
+        videoCapturer.startCapture(VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_FPS);
+
+        VideoTrack track = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
+        track.setEnabled(true);
+        if (localVideoSink != null) {
+            track.addSink(localVideoSink);
+        }
+        return track;
+    }
+
+    public VideoSource createVideoSource(@NonNull VideoCapturer videoCapturer) {
+        return factory.createVideoSource(videoCapturer.isScreencast());
     }
 
     private void initializePeerConnections() {
@@ -746,9 +887,10 @@ public class CallManager {
 
     private void startStreams() {
         MediaStream mediaStream = factory.createLocalMediaStream("ARDAMS");
-        // TODO(nikola): do this for video call
-//        mediaStream.addTrack(videoTrackFromCamera);
         mediaStream.addTrack(localAudioTrack);
+        if (callType == CallType.VIDEO) {
+            mediaStream.addTrack(localVideoTrack);
+        }
         peerConnection.addStream(mediaStream);
     }
 
@@ -812,14 +954,29 @@ public class CallManager {
             public void onAddStream(MediaStream mediaStream) {
                 Log.i("PeerConnection: onAddStream: " + mediaStream.audioTracks.size() + " "
                         + mediaStream.videoTracks.size());
-                // TODO: enable for video calls
-                //VideoTrack remoteVideoTrack = mediaStream.videoTracks.get(0);
-                AudioTrack remoteAudioTrack = mediaStream.audioTracks.get(0);
-                remoteAudioTrack.setEnabled(true);
 
-                //remoteVideoTrack.setEnabled(true);
-                //remoteVideoTrack.addRenderer(new VideoRenderer(binding.surfaceView2));
+                if (mediaStream.audioTracks.size() >= 1) {
+                    remoteAudioTrack = mediaStream.audioTracks.get(0);
+                    remoteAudioTrack.setEnabled(true);
+                }
+                if (mediaStream.audioTracks.size() != 1) {
+                    Log.e("CallManager: onAddStream: Unexpected number of audio tracks " + mediaStream.audioTracks);
+                }
 
+                if (callType == CallType.VIDEO) {
+                    if (mediaStream.videoTracks.size() >= 1) {
+                        remoteVideoTrack = mediaStream.videoTracks.get(0);
+                        remoteVideoTrack.setEnabled(true);
+                        if (remoteVideoSink != null) {
+                            remoteVideoTrack.addSink(remoteVideoSink);
+                        }
+                        // TODO(nikola): what is the difference between addSink and addRender?
+                        //remoteVideoTrack.addRenderer(new VideoRenderer(binding.surfaceView2));
+                    }
+                    if (mediaStream.videoTracks.size() != 1) {
+                        Log.e("CallManager: onAddStream: Unexpected number of video tracks " + mediaStream.videoTracks);
+                    }
+                }
             }
 
             @Override
@@ -881,7 +1038,7 @@ public class CallManager {
     }
 
     private void getCallServersAndStartCall() {
-        Observable<GetCallServersResponseIq> observable = callsApi.getCallServers(callId, peerUid, CallType.AUDIO);
+        Observable<GetCallServersResponseIq> observable = callsApi.getCallServers(callId, peerUid, callType);
         observable.onResponse(response -> {
             Log.i("CallManager: got call servers " + response);
             if (peerConnection == null || response == null) {
@@ -901,6 +1058,7 @@ public class CallManager {
             Log.e("CallManager: Failed to start call, did not get ice servers", e);
             Log.sendErrorReport("CallManager: Failed to getCallServer: " + e.getMessage());
             endCall(EndCall.Reason.SYSTEM_ERROR, false);
+            // TODO(nikola): We should retry the IQs for 60 secs. Until we implement this calling stop is better
         });
     }
 
@@ -908,8 +1066,9 @@ public class CallManager {
         MediaConstraints sdpMediaConstraints = new MediaConstraints();
 
         sdpMediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"));
-        // TODO(nikola): add for video calls
-        // sdpMediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"));
+        if (callType == CallType.VIDEO) {
+            sdpMediaConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"));
+        }
 
         peerConnection.createOffer(new SimpleSdpObserver() {
             @Override
@@ -919,9 +1078,9 @@ public class CallManager {
 
                 try {
                     Observable<StartCallResponseIq> observable = callsApi.startCall(
-                            callId, peerUid, CallType.AUDIO, sessionDescription.description);
+                            callId, peerUid, callType, sessionDescription.description);
 
-                    // TODO(nikola): this is blocking the PeerConnection thread.
+                    // TODO(nikola): we are blocking the webrtc thread here... Do this non-blocking
                     StartCallResponseIq response = observable.await();
                     Log.i("received StartCallResult " + response.result +
                             " turn " + response.turnServers +
@@ -1036,6 +1195,14 @@ public class CallManager {
             return true;
         }
         return false;
+    }
+
+    public boolean getIsInitiator() {
+        return isInitiator;
+    }
+
+    public CallType getCallType() {
+        return callType;
     }
 
     public boolean isMicrophoneMuted() {
@@ -1156,8 +1323,7 @@ public class CallManager {
             Log.i("onCallTimeout");
             if (this.callId != null && this.callId.equals(callId)) {
                 if (!this.isInitiator && this.state == State.INCOMING_RINGING) {
-                    // TODO(nikola): fix here when we do video)
-                    storeMissedCallMsg(this.peerUid, this.callId, CallType.AUDIO);
+                    storeMissedCallMsg(this.peerUid, this.callId, callType);
                 }
                 // TODO(nikola): this could clear the wrong notification if we have multiple incoming calls.
                 Notifications.getInstance(appContext.get()).clearIncomingCallNotification();
@@ -1343,6 +1509,11 @@ public class CallManager {
         if (Build.VERSION.SDK_INT < 26) {
             Log.i("Starting the audio manager " + audioManager);
             audioManager.start((audioDevice, availableAudioDevices) -> Log.i("onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + audioDevice));
+            if (callType == CallType.VIDEO) {
+                audioManager.setDefaultAudioDevice(CallAudioManager.AudioDevice.SPEAKER_PHONE);
+            } else {
+                audioManager.setDefaultAudioDevice(CallAudioManager.AudioDevice.EARPIECE);
+            }
         }
     }
 
@@ -1353,8 +1524,11 @@ public class CallManager {
         }
     }
 
-    private void storeCallLogMsg(@NonNull UserId userId, @NonNull String callId, long callDuration) {
+    private void storeCallLogMsg(@NonNull UserId userId, @NonNull String callId, @NonNull CallType callType, long callDuration) {
         int msgType = CallMessage.Usage.LOGGED_VOICE_CALL;
+        if (callType == CallType.VIDEO) {
+            msgType = CallMessage.Usage.LOGGED_VIDEO_CALL;
+        }
         final CallMessage message = new CallMessage(0,
                 userId,
                 isInitiator ? UserId.ME : userId,

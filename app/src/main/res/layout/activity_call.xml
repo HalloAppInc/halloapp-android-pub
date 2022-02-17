@@ -6,7 +6,26 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <org.webrtc.SurfaceViewRenderer
+        android:id="@+id/call_remote_video"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        />
+
+    <org.webrtc.SurfaceViewRenderer
+        android:id="@+id/call_local_video"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="108dp"
+        android:layout_height="192dp"
+        android:layout_margin="10dp"
+        android:visibility="gone"
+        />
+
     <LinearLayout
+        android:id="@+id/call_top_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -14,6 +33,7 @@
         android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
+            android:id="@+id/call_activity_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"/>
 

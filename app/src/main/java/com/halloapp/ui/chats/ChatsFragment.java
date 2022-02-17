@@ -744,15 +744,32 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 } else if (message.type == Message.TYPE_CALL) {
                     if (message instanceof CallMessage) {
                         int callUsage = ((CallMessage) message).callUsage;
-                        if (callUsage == CallMessage.Usage.MISSED_VOICE_CALL) {
-                            text = itemView.getContext().getString(R.string.log_missed_call);
-                        } else {
-                            long callDuration = ((CallMessage) message).callDuration;
-                            if (callDuration > 0) {
-                                text = itemView.getContext().getString(R.string.log_voice_call_with_duration, TimeFormatter.formatCallDuration(callDuration));
-                            } else {
-                                text = itemView.getContext().getString(R.string.log_voice_call);
-                            }
+                        long callDuration;
+                        switch (callUsage) {
+                            case CallMessage.Usage.MISSED_VOICE_CALL:
+                                text = itemView.getContext().getString(R.string.log_missed_voice_call);
+                                break;
+                            case CallMessage.Usage.LOGGED_VOICE_CALL:
+                                callDuration = ((CallMessage) message).callDuration;
+                                if (callDuration > 0) {
+                                    text = itemView.getContext().getString(R.string.log_voice_call_with_duration, TimeFormatter.formatCallDuration(callDuration));
+                                } else {
+                                    text = itemView.getContext().getString(R.string.log_voice_call);
+                                }
+                                break;
+                            case CallMessage.Usage.MISSED_VIDEO_CALL:
+                                text = itemView.getContext().getString(R.string.log_missed_video_call);
+                                break;
+                            case CallMessage.Usage.LOGGED_VIDEO_CALL:
+                                callDuration = ((CallMessage) message).callDuration;
+                                if (callDuration > 0) {
+                                    text = itemView.getContext().getString(R.string.log_video_call_with_duration, TimeFormatter.formatCallDuration(callDuration));
+                                } else {
+                                    text = itemView.getContext().getString(R.string.log_video_call);
+                                }
+                                break;
+                            default:
+                                text = "";
                         }
                     } else {
                         text = "";

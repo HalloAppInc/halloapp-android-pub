@@ -42,6 +42,7 @@ public class ServerProps {
     private static final String PROP_STREAMING_INITIAL_DOWNLOAD_SIZE = "streaming_initial_download_size";
     private static final String PROP_STREAMING_SENDING_ENABLED = "streaming_sending_enabled";
     private static final String PROP_AUDIO_CALLS_ENABLED = "audio_calls";
+    private static final String PROP_VIDEO_CALLS_ENABLED = "video_calls";
     private static final String PROP_VOICE_POSTS_ENABLED = "voice_posts";
     private static final String PROP_EMOJI_VERSION = "emoji_version";
 
@@ -81,6 +82,7 @@ public class ServerProps {
     private final IntegerProp propStreamingInitialDownloadSize = createProp(PROP_STREAMING_INITIAL_DOWNLOAD_SIZE, Constants.DEFAULT_STREAMING_INITIAL_DOWNLOAD_SIZE);
     private final BooleanProp propStreamingSendingEnabled = createProp(PROP_STREAMING_SENDING_ENABLED, false);
     private final BooleanProp propAudioCallsEnabled = createProp(PROP_AUDIO_CALLS_ENABLED, false);
+    private final BooleanProp propVideoCallsEnabled = createProp(PROP_VIDEO_CALLS_ENABLED, false);
     private final BooleanProp propVoicePostsEnabled = createProp(PROP_VOICE_POSTS_ENABLED, false);
     private final IntegerProp propEmojiVersion = createProp(PROP_EMOJI_VERSION, 1);
 
@@ -253,6 +255,10 @@ public class ServerProps {
 
     public synchronized boolean getAudioCallsEnabled() {
         return propAudioCallsEnabled.getValue();
+    }
+
+    public synchronized boolean getVideoCallsEnabled() {
+        return propVideoCallsEnabled.getValue();
     }
 
     public synchronized boolean getVoicePostsEnabled() {

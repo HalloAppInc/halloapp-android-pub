@@ -25,11 +25,20 @@
         android:visible="false"
         />
     <item
-        android:id="@+id/call"
-        android:title="@string/call_action"
+        android:id="@+id/call_voice"
+        android:title="@string/call_action_voice"
         app:showAsAction="ifRoom"
         app:iconTint="?colorControlNormal"
         android:icon="@drawable/ic_call"
+        android:visible="false"
+        />
+
+    <item
+        android:id="@+id/call_video"
+        android:title="@string/call_action_video"
+        app:showAsAction="ifRoom"
+        app:iconTint="?colorControlNormal"
+        android:icon="@drawable/ic_videocam"
         android:visible="false"
         />
 

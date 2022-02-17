@@ -1,17 +1,55 @@
 package com.halloapp.ui.calling;
 
+import android.app.Activity;
+import android.app.Application;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.calling.CallObserver;
 import com.halloapp.calling.CallManager;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
+import com.halloapp.ui.avatar.ViewAvatarActivity;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 
+import org.webrtc.SurfaceTextureHelper;
+import org.webrtc.VideoCapturer;
+import org.webrtc.VideoSource;
+
 public class CallViewModel extends ViewModel implements CallObserver {
+
+    public static class Factory implements ViewModelProvider.Factory {
+        private final UserId peerUid;
+        private final Boolean isInitiator;
+        private final CallType callType;
+
+
+        Factory(@NonNull Application application, @NonNull UserId peerUid, boolean isInitiator, CallType callType) {
+            this.peerUid = peerUid;
+            this.isInitiator = isInitiator;
+            this.callType = callType;
+        }
+
+        @Override
+        public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+            if (modelClass.isAssignableFrom(CallViewModel.class)) {
+                //noinspection unchecked
+                return (T) new CallViewModel(peerUid, isInitiator, callType);
+            }
+            throw new IllegalArgumentException("Unknown ViewModel class");
+        }
+    }
+
 
     private final MutableLiveData<Integer> state = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isMicrophoneMuted = new MutableLiveData<>(false);
@@ -20,9 +58,24 @@ public class CallViewModel extends ViewModel implements CallObserver {
     private final CallManager callManager;
 
     private UserId peerUid;
+    private boolean isInitiator;
+    private CallType callType;
 
-    public CallViewModel() {
+    public CallViewModel(@NonNull UserId peerUid, Boolean isInitiator, CallType callType) {
         callManager = CallManager.getInstance();
+
+        if (callManager.getIsInCall().getValue()) {
+            this.peerUid = callManager.getPeerUid();
+            this.isInitiator = callManager.getIsInitiator();
+            this.callType = callManager.getCallType();
+        } else {
+            this.peerUid = peerUid;
+            Preconditions.checkNotNull(isInitiator);
+            this.isInitiator = isInitiator;
+            Preconditions.checkNotNull(callType);
+            this.callType = callType;
+        }
+
         callManager.addObserver(this);
         Log.i("CallViewModel/ state: " + state.getValue() + " -> " + callManager.getState());
         state.setValue(callManager.getState());
@@ -36,8 +89,17 @@ public class CallViewModel extends ViewModel implements CallObserver {
         callManager.removeObserver(this);
     }
 
-    public void setPeerUid(@NonNull UserId peerUid) {
-        this.peerUid = peerUid;
+    public UserId getPeerUid() {
+        return peerUid;
+    }
+
+    @Nullable
+    public CallType getCallType() {
+        return callType;
+    }
+
+    public Boolean getIsInitiator() {
+        return isInitiator;
     }
 
     @NonNull
@@ -75,8 +137,9 @@ public class CallViewModel extends ViewModel implements CallObserver {
         return state.getValue() != null && state.getValue() == CallManager.State.IDLE;
     }
 
-    public void onStartCall() {
-        if (callManager.startCall(peerUid)) {
+    // TODO(nikola): It is not great that that we have to pass all this video specific arguments for voice calls..
+    public void onStartCall(@NonNull CallType callType, VideoCapturer videoCapturer, VideoSource videoSource, SurfaceTextureHelper surfaceTextureHelper) {
+        if (callManager.startCall(peerUid, callType, videoCapturer, videoSource, surfaceTextureHelper)) {
             state.postValue(CallManager.State.CALLING);
         }
     }
@@ -137,10 +200,11 @@ public class CallViewModel extends ViewModel implements CallObserver {
         endCall();
     }
 
-    public void onAcceptCall() {
+    // TODO(nikola): It is not great that that we have to pass all this video specific arguments for voice calls..
+    public void onAcceptCall(VideoCapturer videoCapturer, VideoSource videoSource, SurfaceTextureHelper surfaceTextureHelper) {
         Log.i("CallViewModel.onAcceptCall");
         // TODO(nikola): we should include the call id here.
-        if (callManager.acceptCall()) {
+        if (callManager.acceptCall(videoCapturer, videoSource, surfaceTextureHelper)) {
             state.postValue(CallManager.State.IN_CALL_CONNECTING);
         }
     }

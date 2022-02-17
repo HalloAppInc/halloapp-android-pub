@@ -44,6 +44,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.proto.server.CallType;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
@@ -628,12 +629,12 @@ public class Notifications {
     }
 
     @WorkerThread
-    public void showIncomingCallNotification(String callId, UserId peerUid) {
+    public void showIncomingCallNotification(String callId, UserId peerUid, CallType callType) {
         executor.execute(() -> {
 
-            Intent callIntent = CallActivity.incomingCallIntent(context, callId, peerUid);
+            Intent callIntent = CallActivity.incomingCallIntent(context, callId, peerUid, callType);
             Intent declineIntent = CallNotificationBroadcastReceiver.declineCallIntent(context, callId, peerUid);
-            Intent acceptIntent = CallActivity.acceptCallIntent(context, callId, peerUid);
+            Intent acceptIntent = CallActivity.acceptCallIntent(context, callId, peerUid, callType);
 
             PendingIntent callPendingIntent = PendingIntent.getActivity(context, 0, callIntent, getPendingIntentFlags(false));
             PendingIntent declinePendingIntent = PendingIntent.getBroadcast(context, 0, declineIntent, getPendingIntentFlags(false));
@@ -677,7 +678,7 @@ public class Notifications {
                     .setSmallIcon(R.drawable.ic_notification)
                     .setLargeIcon(avatar)
                     // TODO(nikola): improve the notification based on designs
-                    .setContentTitle(context.getString(R.string.incoming_call_notification_title))
+                    .setContentTitle(context.getString(callType == CallType.AUDIO? R.string.incoming_voice_call_notification_title : R.string.incoming_video_call_notification_title))
                     .setContentText(name)
                     .setOngoing(true)
                     .setColor(ContextCompat.getColor(context, R.color.color_accent))

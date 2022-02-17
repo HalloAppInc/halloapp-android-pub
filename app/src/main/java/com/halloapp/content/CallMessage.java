@@ -16,11 +16,12 @@ public class CallMessage extends Message {
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({Usage.MISSED_VOICE_CALL, Usage.LOGGED_VOICE_CALL, Usage.MISSED_VIDEO_CALL})
+    @IntDef({Usage.MISSED_VOICE_CALL, Usage.LOGGED_VOICE_CALL, Usage.MISSED_VIDEO_CALL, Usage.LOGGED_VIDEO_CALL})
     public @interface Usage {
         int MISSED_VOICE_CALL = 0;
         int LOGGED_VOICE_CALL = 1;
         int MISSED_VIDEO_CALL = 2;
+        int LOGGED_VIDEO_CALL = 3;
     }
 
     public @Usage int callUsage;

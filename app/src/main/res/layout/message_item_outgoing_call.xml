@@ -115,7 +115,7 @@
                     android:textSize="15sp"
                     android:layout_gravity="center_vertical"
                     android:textColor="@color/color_secondary"
-                    android:text="@string/call_action"/>
+                    android:text="@string/call_action_voice"/>
 
             </LinearLayout>
 

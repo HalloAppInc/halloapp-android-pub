@@ -71,6 +71,7 @@ import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.server.CallType;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.MediaPagerAdapter;
@@ -209,7 +210,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private Timer lastSeenMarqueeTimer;
 
     private MenuItem blockMenuItem;
-    private MenuItem callMenuItem;
+    private MenuItem voiceCallMenuItem;
+    private MenuItem videoCallMenuItem;
     private final Map<Long, Integer> replyMessageMediaIndexMap = new HashMap<>();
 
     private View unknownContactsContainer;
@@ -217,6 +219,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private boolean showKeyboardOnResume;
     private boolean allowVoiceNoteSending;
     private boolean allowAudioCalls;
+    private boolean allowVideoCalls;
 
     private boolean isChatActive = false;
     private boolean isCallOngoing = false;
@@ -302,6 +305,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
         allowVoiceNoteSending = ServerProps.getInstance().getVoiceNoteSendingEnabled();
         allowAudioCalls = ServerProps.getInstance().getAudioCallsEnabled();
+        allowVideoCalls = ServerProps.getInstance().getVideoCallsEnabled();
 
         String rawChatId = getIntent().getStringExtra(EXTRA_CHAT_ID);
         chatId = ChatId.fromNullable(rawChatId);
@@ -979,7 +983,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.chat_menu, menu);
         blockMenuItem = menu.findItem(R.id.block);
-        callMenuItem = menu.findItem(R.id.call);
+        voiceCallMenuItem = menu.findItem(R.id.call_voice);
+        videoCallMenuItem = menu.findItem(R.id.call_video);
 
         blockMenuItem.setVisible(chatId instanceof UserId);
         menu.findItem(R.id.verify).setVisible(chatId instanceof UserId);
@@ -993,7 +998,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             }
         });
 
-        callMenuItem.setVisible(allowAudioCalls);
+        voiceCallMenuItem.setVisible(allowAudioCalls);
+        videoCallMenuItem.setVisible(allowVideoCalls);
         viewModel.contact.getLiveData().observe(this, contact -> {
             menu.findItem(R.id.add_to_contacts).setVisible(TextUtils.isEmpty(contact.addressBookName));
         });
@@ -1005,8 +1011,11 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void updateCallButtons() {
-        if (callMenuItem != null) {
-            callMenuItem.setEnabled(!this.isCallOngoing && this.isChatActive);
+        if (voiceCallMenuItem != null) {
+            voiceCallMenuItem.setEnabled(!this.isCallOngoing && this.isChatActive);
+        }
+        if (videoCallMenuItem != null) {
+            videoCallMenuItem.setEnabled(!this.isCallOngoing && this.isChatActive);
         }
     }
 
@@ -1034,9 +1043,13 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             String phone = viewModel.phone.getValue();
             Intent intent = IntentUtils.createContactIntent(contact, phone);
             startActivity(intent);
-        } else if (item.getItemId() == R.id.call) {
-            Log.i("ChatActivity: starting a call with Uid: " + chatId);
-            callManager.startCallActivity(this, (UserId) chatId);
+        } else if (item.getItemId() == R.id.call_voice) {
+            Log.i("ChatActivity: starting a voice call with Uid: " + chatId.rawId());
+            callManager.startCallActivity(this, (UserId) chatId, CallType.AUDIO);
+            setResult(RESULT_OK);
+        } else if (item.getItemId() == R.id.call_video) {
+            Log.i("ChatActivity: starting a video call with Uid: " + chatId.rawId());
+            callManager.startCallActivity(this, (UserId) chatId, CallType.VIDEO);
             setResult(RESULT_OK);
         }
         return super.onOptionsItemSelected(item);

@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.halloapp.AppContext;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.log_events.Call;
+import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Events;
@@ -164,14 +165,21 @@ public class CallStats {
         }
     }
 
-    public static void sendEndCallEvent(String callId, UserId peerUid, boolean isInitiator, boolean isAnswered, long callDuration, EndCall.Reason reason, RTCStatsReport report) {
+    public static void sendEndCallEvent(String callId, UserId peerUid, CallType callType, boolean isInitiator, boolean isAnswered, long callDuration, EndCall.Reason reason, RTCStatsReport report) {
         Log.i("CallManager sending call event " + callId);
         Call.NetworkType networkType = getNetworkType(AppContext.getInstance().get());
+
+        Call.CallType protoCallType = Call.CallType.UNKNOWN_TYPE;
+        if (callType == CallType.AUDIO) {
+            protoCallType = Call.CallType.AUDIO;
+        } else if (callType == CallType.VIDEO) {
+            protoCallType = Call.CallType.VIDEO;
+        }
 
         Call.Builder callBuilder = Call.newBuilder()
                 .setCallId(callId)
                 .setPeerUid(peerUid.rawIdLong())
-                .setType(Call.CallType.AUDIO)
+                .setType(protoCallType)
                 .setDirection((isInitiator)? Call.CallDirection.OUTGOING : Call.CallDirection.INCOMING)
                 .setAnswered(isAnswered)
                 .setConnected(false)  // TODO(nikola): implement this
