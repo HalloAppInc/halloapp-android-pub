@@ -115,6 +115,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
+import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -123,6 +124,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
@@ -504,25 +506,45 @@ public class ConnectionImpl extends Connection {
     @Override
     public void subscribePresence(UserId userId) {
         executor.execute(() -> {
-            PresenceStanza stanza = new PresenceStanza(userId, "subscribe");
-            sendPacket(Packet.newBuilder().setPresence(stanza.toProto()).build());
+            Presence.Builder builder = Presence.newBuilder();
+            builder.setId(getAndIncrementShortId());
+            builder.setType(Presence.Type.SUBSCRIBE);
+            if (userId != null) {
+                builder.setToUid(Long.parseLong(userId.rawId()));
+            }
+            sendPacket(Packet.newBuilder().setPresence(builder).build());
         });
     }
 
     @Override
     public void updatePresence(boolean available) {
         executor.execute(() -> {
-            PresenceStanza stanza = new PresenceStanza(null, available ? "available" : "away");
-            Packet packet = Packet.newBuilder().setPresence(stanza.toProto()).build();
-            sendPacket(packet);
+            Presence.Builder builder = Presence.newBuilder();
+            builder.setId(getAndIncrementShortId());
+            builder.setType(available ? Presence.Type.AVAILABLE : Presence.Type.AWAY);
+
+            sendPacket(Packet.newBuilder().setPresence(builder).build());
         });
     }
 
     @Override
     public void updateChatState(@NonNull ChatId chat, int state) {
         executor.execute(() -> {
-            ChatStateStanza stanza = new ChatStateStanza(state == com.halloapp.xmpp.ChatState.Type.TYPING ? "typing" : "available", chat);
-            sendPacket(Packet.newBuilder().setChatState(stanza.toProto()).build());
+            ChatState.ThreadType threadType;
+            if (chat instanceof UserId) {
+                threadType = ChatState.ThreadType.CHAT;
+            } else if (chat instanceof GroupId) {
+                threadType = ChatState.ThreadType.GROUP_CHAT;
+            } else {
+                threadType = ChatState.ThreadType.CHAT;
+                Log.e("ChatStateStanza invalid type of chat id for chat state");
+            }
+            ChatState chatState = ChatState.newBuilder()
+                    .setType(state == com.halloapp.xmpp.ChatState.Type.TYPING ? ChatState.Type.TYPING : ChatState.Type.AVAILABLE)
+                    .setThreadId(chat.rawId())
+                    .setThreadType(threadType)
+                    .build();
+            sendPacket(Packet.newBuilder().setChatState(chatState).build());
         });
     }
 
@@ -1029,9 +1051,9 @@ public class ConnectionImpl extends Connection {
     @Override
     public void sendAck(@NonNull String id) {
         executor.execute(() -> {
-            final AckStanza ack = new AckStanza(id);
             Log.i("connection: sending ack for " + id);
-            sendPacket(Packet.newBuilder().setAck(ack.toProto()).build());
+            sendPacket(Packet.newBuilder().setAck(Ack.newBuilder()
+                    .setId(id)).build());
         });
     }
 
