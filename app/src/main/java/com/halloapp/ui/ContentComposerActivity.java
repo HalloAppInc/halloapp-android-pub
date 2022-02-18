@@ -932,7 +932,7 @@ public class ContentComposerActivity extends HalloActivity {
             deleteAudioConfirm();
             return;
         }
-        if (composeMode == ComposeMode.MEDIA) {
+        if (composeMode == ComposeMode.MEDIA && !calledFromCamera) {
             finishToMediaPicker();
         }
         super.onBackPressed();
@@ -962,7 +962,7 @@ public class ContentComposerActivity extends HalloActivity {
         builder.setMessage(getResources().getString(R.string.post_audio_draft_discard_confirmation));
         builder.setCancelable(true);
         builder.setPositiveButton(R.string.action_discard, (dialog, which) -> {
-            if (composeMode == ComposeMode.MEDIA) {
+            if (composeMode == ComposeMode.MEDIA && !calledFromCamera) {
                 finishToMediaPicker();
             } else {
                 finish();
