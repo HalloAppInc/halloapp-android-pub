@@ -529,7 +529,7 @@ public class CallManager {
                 mp.release();
             });
         } else {
-            VibrationUtils.mediumVibration(appContext.get());
+            executor.execute(() -> VibrationUtils.mediumVibration(appContext.get()));
             releaseAudio();
         }
     }
