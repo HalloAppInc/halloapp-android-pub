@@ -20,7 +20,7 @@ public class GroupAvatarIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
                 .setId(getStanzaId())
@@ -29,7 +29,6 @@ public class GroupAvatarIq extends HalloIq {
                                 .setGid(groupId.rawId())
                                 .setData(ByteString.copyFrom(bytes))
                                 .setFullData(ByteString.copyFrom(largeBytes))
-                                .build())
-                .build();
+                                .build());
     }
 }

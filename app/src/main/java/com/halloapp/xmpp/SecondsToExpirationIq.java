@@ -16,15 +16,14 @@ public class SecondsToExpirationIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         return Iq.newBuilder()
                 .setType(Iq.Type.GET)
                 .setId(getStanzaId())
                 .setClientVersion(
                         ClientVersion.newBuilder()
                                 .setVersion(Constants.USER_AGENT)
-                                .build())
-                .build();
+                                .build());
     }
 
     public static SecondsToExpirationIq fromProto(ClientVersion clientVersion) {

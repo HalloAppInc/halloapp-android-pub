@@ -31,7 +31,7 @@ public class StartCallIq extends HalloIq {
 
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         StartCall.Builder builder = StartCall.newBuilder()
                 .setCallType(callType)
                 .setPeerUid(peerUid.rawIdLong())
@@ -40,7 +40,6 @@ public class StartCallIq extends HalloIq {
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
                 .setId(getStanzaId())
-                .setStartCall(builder)
-                .build();
+                .setStartCall(builder);
     }
 }

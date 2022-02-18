@@ -23,7 +23,7 @@ public abstract class HalloIq extends HalloStanza {
         super(id);
     }
 
-    public abstract Iq toProtoIq();
+    public abstract Iq.Builder toProtoIq();
 
     public static HalloIq fromProtoIq(Iq iq) {
         if (iq.hasWhisperKeys()) {
@@ -53,7 +53,7 @@ public abstract class HalloIq extends HalloStanza {
         }
 
         @Override
-        public Iq toProtoIq() {
+        public Iq.Builder toProtoIq() {
             return null;
         }
     }

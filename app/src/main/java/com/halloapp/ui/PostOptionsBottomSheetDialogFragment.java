@@ -162,7 +162,7 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
 
                 final Observable<ExternalShareResponseIq> observable = Connection.getInstance().sendRequestIq(new HalloIq() {
                     @Override
-                    public Iq toProtoIq() {
+                    public Iq.Builder toProtoIq() {
                         ExternalSharePost externalSharePost = ExternalSharePost.newBuilder()
                                 .setAction(ExternalSharePost.Action.STORE)
                                 .setBlob(ByteString.copyFrom(encryptedPayload))
@@ -171,8 +171,7 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
                         return Iq.newBuilder()
                                 .setId(RandomId.create())
                                 .setType(Iq.Type.SET)
-                                .setExternalSharePost(externalSharePost)
-                                .build();
+                                .setExternalSharePost(externalSharePost);
                     }
                 });
                 observable.onError(e -> Log.e("Failed to send for external sharing"))

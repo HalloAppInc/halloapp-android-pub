@@ -23,7 +23,7 @@ public class StatsIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         ClientLog.Builder builder = ClientLog.newBuilder();
 
         for (Counter counter : counters) {
@@ -48,8 +48,7 @@ public class StatsIq extends HalloIq {
         return Iq.newBuilder()
                 .setId(getStanzaId())
                 .setType(Iq.Type.SET)
-                .setClientLog(builder)
-                .build();
+                .setClientLog(builder);
     }
 }
 

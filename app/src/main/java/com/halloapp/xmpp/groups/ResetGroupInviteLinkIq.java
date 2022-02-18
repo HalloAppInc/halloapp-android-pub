@@ -16,7 +16,7 @@ public class ResetGroupInviteLinkIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         GroupInviteLink groupInviteLink =
                 GroupInviteLink.newBuilder()
                         .setAction(GroupInviteLink.Action.RESET)
@@ -24,7 +24,6 @@ public class ResetGroupInviteLinkIq extends HalloIq {
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
                 .setId(getStanzaId())
-                .setGroupInviteLink(groupInviteLink)
-                .build();
+                .setGroupInviteLink(groupInviteLink);
     }
 }

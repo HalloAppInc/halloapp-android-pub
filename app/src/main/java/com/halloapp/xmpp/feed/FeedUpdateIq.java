@@ -67,7 +67,7 @@ public class FeedUpdateIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         com.halloapp.proto.server.FeedItem.Builder builder = com.halloapp.proto.server.FeedItem.newBuilder();
         builder.setAction(getProtoAction());
 
@@ -111,7 +111,6 @@ public class FeedUpdateIq extends HalloIq {
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
                 .setId(getStanzaId())
-                .setFeedItem(builder)
-                .build();
+                .setFeedItem(builder);
     }
 }

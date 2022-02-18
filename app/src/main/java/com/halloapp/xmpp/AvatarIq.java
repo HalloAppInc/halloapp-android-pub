@@ -35,15 +35,14 @@ public class AvatarIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         if (userId != null) {
             Avatar.Builder builder = Avatar.newBuilder();
             builder.setUid(Long.parseLong(userId.rawId()));
             return Iq.newBuilder()
                     .setType(Iq.Type.GET)
                     .setId(getStanzaId())
-                    .setAvatar(builder)
-                    .build();
+                    .setAvatar(builder);
         } else {
             UploadAvatar.Builder builder = UploadAvatar.newBuilder();
             builder.setData(ByteString.copyFrom(bytes));
@@ -51,8 +50,7 @@ public class AvatarIq extends HalloIq {
             return Iq.newBuilder()
                     .setType(Iq.Type.SET)
                     .setId(getStanzaId())
-                    .setUploadAvatar(builder)
-                    .build();
+                    .setUploadAvatar(builder);
         }
     }
 

@@ -7,11 +7,10 @@ import com.halloapp.xmpp.HalloIq;
 public class GetGroupsListIq extends HalloIq {
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         return Iq.newBuilder()
                 .setType(Iq.Type.GET)
                 .setId(getStanzaId())
-                .setGroupsStanza(GroupsStanza.newBuilder().setAction(GroupsStanza.Action.GET))
-                .build();
+                .setGroupsStanza(GroupsStanza.newBuilder().setAction(GroupsStanza.Action.GET));
     }
 }

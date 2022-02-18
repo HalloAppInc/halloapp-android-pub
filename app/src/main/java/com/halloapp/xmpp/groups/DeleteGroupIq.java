@@ -16,7 +16,7 @@ public class DeleteGroupIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         GroupStanza groupStanza =  GroupStanza.newBuilder()
                 .setAction(GroupStanza.Action.DELETE)
                 .setGid(groupId.rawId())
@@ -24,7 +24,6 @@ public class DeleteGroupIq extends HalloIq {
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
                 .setId(getStanzaId())
-                .setGroupStanza(groupStanza)
-                .build();
+                .setGroupStanza(groupStanza);
     }
 }

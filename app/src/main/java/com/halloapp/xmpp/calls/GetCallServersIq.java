@@ -21,7 +21,7 @@ public class GetCallServersIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         GetCallServers.Builder builder = GetCallServers.newBuilder()
                 .setCallType(callType)
                 .setPeerUid(peerUid.rawIdLong())
@@ -29,7 +29,6 @@ public class GetCallServersIq extends HalloIq {
         return Iq.newBuilder()
                 .setType(Iq.Type.GET)
                 .setId(getStanzaId())
-                .setGetCallServers(builder)
-                .build();
+                .setGetCallServers(builder);
     }
 }

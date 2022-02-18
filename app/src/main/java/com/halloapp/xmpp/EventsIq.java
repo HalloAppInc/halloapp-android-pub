@@ -17,7 +17,7 @@ public class EventsIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         ClientLog.Builder builder = ClientLog.newBuilder();
         for (EventData event : events) {
             builder.addEvents(event);
@@ -25,7 +25,6 @@ public class EventsIq extends HalloIq {
         return Iq.newBuilder()
                 .setId(getStanzaId())
                 .setType(Iq.Type.SET)
-                .setClientLog(builder)
-                .build();
+                .setClientLog(builder);
     }
 }

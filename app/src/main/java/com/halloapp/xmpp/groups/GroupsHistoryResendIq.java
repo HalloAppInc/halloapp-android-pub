@@ -23,7 +23,7 @@ public class GroupsHistoryResendIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         HistoryResend historyResend = HistoryResend.newBuilder()
                 .setAudienceHash(ByteString.copyFrom(groupSetupInfo.audienceHash))
                 .addAllSenderStateBundles(groupSetupInfo.senderStateBundles)
@@ -34,7 +34,6 @@ public class GroupsHistoryResendIq extends HalloIq {
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
                 .setId(getStanzaId())
-                .setHistoryResend(historyResend)
-                .build();
+                .setHistoryResend(historyResend);
     }
 }

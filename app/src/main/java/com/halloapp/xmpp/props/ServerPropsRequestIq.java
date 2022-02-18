@@ -7,11 +7,10 @@ import com.halloapp.xmpp.HalloIq;
 public class ServerPropsRequestIq extends HalloIq {
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         return Iq.newBuilder()
                 .setType(Iq.Type.GET)
                 .setId(getStanzaId())
-                .setProps(Props.newBuilder())
-                .build();
+                .setProps(Props.newBuilder());
     }
 }
