@@ -24,7 +24,6 @@ public class WhisperKeysUploadIq extends HalloIq {
             builder.addOneTimeKeys(ByteString.copyFrom(oneTimePreKey));
         }
         return Iq.newBuilder()
-                .setId(getStanzaId())
                 .setType(Iq.Type.SET)
                 .setWhisperKeys(builder);
     }

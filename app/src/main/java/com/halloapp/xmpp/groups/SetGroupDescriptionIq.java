@@ -25,7 +25,6 @@ public class SetGroupDescriptionIq extends HalloIq {
                 .setDescription(description).build();
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setId(getStanzaId())
                 .setGroupStanza(setBgStanza);
     }
 }

@@ -22,7 +22,6 @@ public class PreviewGroupInviteLinkIq extends HalloIq {
                         .setLink(inviteCode).build();
         return Iq.newBuilder()
                 .setType(Iq.Type.GET)
-                .setId(getStanzaId())
                 .setGroupInviteLink(groupInviteLink);
     }
 }

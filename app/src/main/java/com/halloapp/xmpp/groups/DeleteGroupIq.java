@@ -23,7 +23,6 @@ public class DeleteGroupIq extends HalloIq {
                 .build();
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setId(getStanzaId())
                 .setGroupStanza(groupStanza);
     }
 }

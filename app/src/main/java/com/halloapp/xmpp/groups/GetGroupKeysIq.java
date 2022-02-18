@@ -23,7 +23,6 @@ public class GetGroupKeysIq extends HalloIq {
                 .build();
         return Iq.newBuilder()
                 .setType(Iq.Type.GET)
-                .setId(getStanzaId())
                 .setGroupStanza(groupStanza);
     }
 }

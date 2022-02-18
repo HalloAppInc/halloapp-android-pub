@@ -28,7 +28,6 @@ public class SetGroupBackgroundIq extends HalloIq {
                 .setBackgroundBytes(bgStanza.toByteString()).build();
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setId(getStanzaId())
                 .setGroupStanza(setBgStanza);
     }
 }

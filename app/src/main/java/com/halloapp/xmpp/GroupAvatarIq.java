@@ -23,7 +23,6 @@ public class GroupAvatarIq extends HalloIq {
     public Iq.Builder toProtoIq() {
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setId(getStanzaId())
                 .setGroupAvatar(
                         UploadGroupAvatar.newBuilder()
                                 .setGid(groupId.rawId())

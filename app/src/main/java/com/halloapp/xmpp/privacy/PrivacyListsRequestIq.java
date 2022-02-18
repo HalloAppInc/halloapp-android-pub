@@ -25,7 +25,6 @@ public class PrivacyListsRequestIq extends HalloIq {
         }
         return Iq.newBuilder()
                 .setType(Iq.Type.GET)
-                .setId(getStanzaId())
                 .setPrivacyLists(builder.build());
     }
 }

@@ -73,7 +73,6 @@ public class SetPrivacyListIq extends HalloIq {
 
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setId(getStanzaId())
                 .setPrivacyList(builder);
     }
 

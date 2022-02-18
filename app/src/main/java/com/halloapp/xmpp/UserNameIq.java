@@ -16,7 +16,6 @@ public class UserNameIq extends HalloIq {
     @Override
     public Iq.Builder toProtoIq() {
         return Iq.newBuilder()
-                .setId(getStanzaId())
                 .setType(Iq.Type.SET)
                 .setName(Name.newBuilder().setName(name));
     }

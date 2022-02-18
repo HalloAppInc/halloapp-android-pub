@@ -39,7 +39,6 @@ public class StartCallIq extends HalloIq {
                 .setWebrtcOffer(webrtcOffer);
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setId(getStanzaId())
                 .setStartCall(builder);
     }
 }

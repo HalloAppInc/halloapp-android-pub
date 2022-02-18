@@ -46,7 +46,6 @@ public class StatsIq extends HalloIq {
         }
 
         return Iq.newBuilder()
-                .setId(getStanzaId())
                 .setType(Iq.Type.SET)
                 .setClientLog(builder);
     }

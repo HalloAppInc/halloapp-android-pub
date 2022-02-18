@@ -19,7 +19,6 @@ public class SecondsToExpirationIq extends HalloIq {
     public Iq.Builder toProtoIq() {
         return Iq.newBuilder()
                 .setType(Iq.Type.GET)
-                .setId(getStanzaId())
                 .setClientVersion(
                         ClientVersion.newBuilder()
                                 .setVersion(Constants.USER_AGENT)

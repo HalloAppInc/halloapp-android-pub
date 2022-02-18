@@ -41,7 +41,6 @@ public class AvatarIq extends HalloIq {
             builder.setUid(Long.parseLong(userId.rawId()));
             return Iq.newBuilder()
                     .setType(Iq.Type.GET)
-                    .setId(getStanzaId())
                     .setAvatar(builder);
         } else {
             UploadAvatar.Builder builder = UploadAvatar.newBuilder();
@@ -49,7 +48,6 @@ public class AvatarIq extends HalloIq {
             builder.setFullData(ByteString.copyFrom(largeBytes));
             return Iq.newBuilder()
                     .setType(Iq.Type.SET)
-                    .setId(getStanzaId())
                     .setUploadAvatar(builder);
         }
     }

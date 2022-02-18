@@ -19,7 +19,6 @@ public class PushRegisterRequestIq extends HalloIq {
     @Override
     public Iq.Builder toProtoIq() {
         return Iq.newBuilder()
-                .setId(getStanzaId())
                 .setType(Iq.Type.SET)
                 .setPushRegister(
                         PushRegister.newBuilder()

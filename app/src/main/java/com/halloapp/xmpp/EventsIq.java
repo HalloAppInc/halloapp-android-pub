@@ -23,7 +23,6 @@ public class EventsIq extends HalloIq {
             builder.addEvents(event);
         }
         return Iq.newBuilder()
-                .setId(getStanzaId())
                 .setType(Iq.Type.SET)
                 .setClientLog(builder);
     }

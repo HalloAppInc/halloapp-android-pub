@@ -10,7 +10,6 @@ public class ServerPropsRequestIq extends HalloIq {
     public Iq.Builder toProtoIq() {
         return Iq.newBuilder()
                 .setType(Iq.Type.GET)
-                .setId(getStanzaId())
                 .setProps(Props.newBuilder());
     }
 }

@@ -28,7 +28,6 @@ public class GetCallServersIq extends HalloIq {
                 .setCallId(callId);
         return Iq.newBuilder()
                 .setType(Iq.Type.GET)
-                .setId(getStanzaId())
                 .setGetCallServers(builder);
     }
 }

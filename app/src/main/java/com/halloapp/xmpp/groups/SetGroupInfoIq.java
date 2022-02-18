@@ -33,7 +33,6 @@ public class SetGroupInfoIq extends HalloIq {
         }
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setId(getStanzaId())
                 .setGroupStanza(builder);
     }
 }

@@ -2300,8 +2300,8 @@ public class ConnectionImpl extends Connection {
         }
 
         public Observable<Iq> sendAsync(Iq.Builder iq, boolean resendable) {
-            final String id = iq.getId();
-
+            final String id = getAndIncrementShortId();
+            iq.setId(id);
             BackgroundObservable<Iq> observable = new BackgroundObservable<>(bgWorkers);
             PendingIq pendingIq = new PendingIq(id, iq, observable::setResponse, observable::setException);
             TimerTask timerTask = new TimerTask() {

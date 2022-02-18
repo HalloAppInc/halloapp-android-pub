@@ -33,7 +33,6 @@ public class GroupsHistoryResendIq extends HalloIq {
                 .build();
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setId(getStanzaId())
                 .setHistoryResend(historyResend);
     }
 }

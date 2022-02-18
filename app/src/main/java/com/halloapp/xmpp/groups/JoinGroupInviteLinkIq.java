@@ -22,7 +22,6 @@ public class JoinGroupInviteLinkIq extends HalloIq {
                         .setLink(inviteCode).build();
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setId(getStanzaId())
                 .setGroupInviteLink(groupInviteLink);
     }
 }

@@ -55,7 +55,6 @@ public class AddRemoveMembersIq extends HalloIq {
         }
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setId(getStanzaId())
                 .setGroupStanza(builder);
     }
 }

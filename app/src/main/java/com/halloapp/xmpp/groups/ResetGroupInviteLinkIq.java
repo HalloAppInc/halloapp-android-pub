@@ -23,7 +23,6 @@ public class ResetGroupInviteLinkIq extends HalloIq {
                         .setGid(groupId.rawId()).build();
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setId(getStanzaId())
                 .setGroupInviteLink(groupInviteLink);
     }
 }

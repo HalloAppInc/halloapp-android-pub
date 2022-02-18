@@ -24,7 +24,6 @@ public class DeleteAccountRequestIq extends HalloIq {
             builder.setFeedback(reason);
         }
         return Iq.newBuilder()
-                .setId(getStanzaId())
                 .setType(Iq.Type.SET)
                 .setDeleteAccount(builder.build());
     }

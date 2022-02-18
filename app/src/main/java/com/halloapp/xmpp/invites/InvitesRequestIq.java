@@ -37,7 +37,6 @@ public class InvitesRequestIq extends HalloIq {
         }
         return Iq.newBuilder()
                 .setType(invitedNumbers != null && !invitedNumbers.isEmpty() ? Iq.Type.SET : Iq.Type.GET)
-                .setId(getStanzaId())
                 .setInvitesRequest(builder.build());
     }
 }

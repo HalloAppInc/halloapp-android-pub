@@ -64,7 +64,6 @@ public class ContactsSyncRequestIq extends HalloIq {
         }
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setId(getStanzaId())
                 .setContactList(builder);
     }
 }

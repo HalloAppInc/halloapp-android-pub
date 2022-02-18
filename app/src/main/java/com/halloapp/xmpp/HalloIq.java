@@ -14,7 +14,7 @@ import com.halloapp.xmpp.privacy.PrivacyListsResponseIq;
 public abstract class HalloIq {
 
     private String id;
-    
+
     public HalloIq() {
     }
 
@@ -43,17 +43,10 @@ public abstract class HalloIq {
             return ExternalShareResponseIq.fromProto(iq.getExternalSharePost());
         }
         Log.w("Using empty result IQ due to unrecognized result IQ " + ProtoPrinter.toString(iq));
-        return new EmptyResultIq(iq.getId());
-    }
-
-    protected String getStanzaId() {
-        return id;
+        return new EmptyResultIq();
     }
 
     private static class EmptyResultIq extends HalloIq {
-        protected EmptyResultIq(String id) {
-            super(id);
-        }
 
         @Override
         public Iq.Builder toProtoIq() {
