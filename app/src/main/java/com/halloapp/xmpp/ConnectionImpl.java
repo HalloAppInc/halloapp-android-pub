@@ -2296,7 +2296,7 @@ public class ConnectionImpl extends Connection {
         }
 
         public Observable<Iq> sendAsync(Iq.Builder iq) {
-            return sendAsync(iq, true);
+            return sendAsync(iq, false);
         }
 
         public Observable<Iq> sendAsync(Iq.Builder iq, boolean resendable) {
