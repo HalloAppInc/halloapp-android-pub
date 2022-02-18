@@ -1666,7 +1666,7 @@ class PostsDb {
 
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         Long existingRowId = null;
-        String sql = "SELECT " + HistoryRerequestTable._ID + " FROM " + RerequestsTable.TABLE_NAME
+        String sql = "SELECT " + HistoryRerequestTable._ID + " FROM " + HistoryRerequestTable.TABLE_NAME
                 + " WHERE " + HistoryRerequestTable.COLUMN_HISTORY_RESEND_ID + "=?"
                 + " AND " + HistoryRerequestTable.COLUMN_SENDER_USER_ID + "=?";
         try (Cursor cursor = db.rawQuery(sql, new String[]{historyId, senderUserId.rawId()})) {
