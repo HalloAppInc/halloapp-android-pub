@@ -11,16 +11,15 @@ import com.halloapp.xmpp.groups.GroupsListResponseIq;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
 import com.halloapp.xmpp.privacy.PrivacyListsResponseIq;
 
-public abstract class HalloIq extends HalloStanza {
+public abstract class HalloIq {
 
-    private static final Connection connection = Connection.getInstance();
-
+    private String id;
+    
     public HalloIq() {
-        super(connection.getAndIncrementShortId());
     }
 
     public HalloIq(@NonNull String id) {
-        super(id);
+        this.id = id;
     }
 
     public abstract Iq.Builder toProtoIq();
@@ -47,9 +46,13 @@ public abstract class HalloIq extends HalloStanza {
         return new EmptyResultIq(iq.getId());
     }
 
+    protected String getStanzaId() {
+        return id;
+    }
+
     private static class EmptyResultIq extends HalloIq {
         protected EmptyResultIq(String id) {
-            setStanzaId(id);
+            super(id);
         }
 
         @Override
