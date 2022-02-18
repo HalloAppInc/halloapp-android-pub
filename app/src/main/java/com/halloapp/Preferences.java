@@ -80,6 +80,7 @@ public class Preferences {
 
     private static final String PREF_KEY_LOCAL_EMOJI_VERSION = "local_emoji_version";
     private static final String PREF_KEY_RECENT_EMOJIS = "recent_emojis";
+    private static final String PREF_KEY_EMOJI_VARIANTS = "emoji_variants";
 
     private final AppContext appContext;
     private SharedPreferences backedUpPreferences;
@@ -166,6 +167,7 @@ public class Preferences {
 
     private final IntPreference prefLocalEmojiVersion = createPref(true, PREF_KEY_LOCAL_EMOJI_VERSION, 0);
     private final StringPreference prefRecentEmojis = createPref(true, PREF_KEY_RECENT_EMOJIS, null);
+    private final StringPreference prefEmojiVariants = createPref(true, PREF_KEY_EMOJI_VARIANTS, null);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -715,5 +717,14 @@ public class Preferences {
 
     public void setRecentEmojis(String recentEmojis) {
         prefRecentEmojis.apply(recentEmojis);
+    }
+
+    @WorkerThread
+    public String getEmojiVariants() {
+        return prefEmojiVariants.get();
+    }
+
+    public void setEmojiVariants(String variants) {
+        prefEmojiVariants.apply(variants);
     }
 }

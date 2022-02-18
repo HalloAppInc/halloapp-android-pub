@@ -90,10 +90,34 @@ public class EmojiGridView extends RecyclerView {
                     listener.onEmojiSelected(emoji);
                 }
             });
+            itemView.setOnLongClickListener(v -> {
+                if (emoji instanceof EmojiWithVariants) {
+                    EmojiWithVariants variantEmoji = (EmojiWithVariants) emoji;
+                    EmojiVariantPopupWindow p = new EmojiVariantPopupWindow(v.getContext());
+                    p.setEmojiSelectListener(variant -> {
+                        bind(variant);
+                        variantEmoji.switchToVariant(variant);
+                        if (listener != null) {
+                            listener.onEmojiSelected(variant);
+                        }
+                        EmojiVariantManager.getInstance().updateVariant(variantEmoji);
+                        p.dismiss();
+                    });
+                    p.show(v, (EmojiWithVariants) emoji);
+                    return true;
+                }
+                return false;
+
+            });
         }
 
         public void bind(Emoji emoji) {
             this.emoji = emoji;
+            if (emoji instanceof EmojiWithVariants) {
+                emojiView.setBackgroundResource(R.drawable.emoji_bottom_triangle);
+            } else {
+                emojiView.setBackground(null);
+            }
             emojiView.setText(emoji.getUnicode());
         }
     }

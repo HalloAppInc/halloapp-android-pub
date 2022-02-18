@@ -80,6 +80,8 @@
     <color name="url_preview_background_posts">#f3f2ef</color>
     <color name="chat_entry_background">#FFFFFF</color>
     <color name="emoji_picker_background">@color/window_background</color>
+    <color name="emoji_variant_triangle_color">@color/black_20</color>
+    <color name="emoji_variant_bar_background">#FFFFFF</color>
     <color name="message_text_incoming">#de000000</color>
     <color name="message_text_outgoing">@color/color_secondary</color>
     <color name="contacts_list_item_header_text_color">@color/color_secondary</color>

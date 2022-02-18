@@ -41,6 +41,7 @@ public class EmojiManager {
     private final AppContext appContext = AppContext.getInstance();
     private final Preferences preferences = Preferences.getInstance();
     private final ServerProps serverProps = ServerProps.getInstance();
+    private final EmojiVariantManager emojiVariantManager = EmojiVariantManager.getInstance();
 
 
     private EmojiPickerData emojiPickerData;
@@ -82,6 +83,7 @@ public class EmojiManager {
                 Log.i("EmojiManager/init loading emoji compat");
                 emojiCompat.load();
             }
+            emojiVariantManager.init();
             try {
                 synchronized (this) {
                     if (localEmojiVersion == 0) {
@@ -90,6 +92,13 @@ public class EmojiManager {
                     } else {
                         Log.i("EmojiManager/init loading downloaded emoji picker data");
                         emojiPickerData = EmojiPickerData.parse(getEmojiDataFile());
+                    }
+                    for (EmojiCategory category : emojiPickerData.categories) {
+                        for (Emoji e : category.emojis) {
+                            if (e instanceof EmojiWithVariants) {
+                                ((EmojiWithVariants) e).setVariantIndex(emojiVariantManager.getVariantIndex(e.getUnicode()));
+                            }
+                        }
                     }
                 }
                 emojiPickerDataMutableLiveData.postValue(emojiPickerData);
