@@ -40,6 +40,7 @@
         android:textAppearance="?textAppearanceListItemSmall"
         android:textSize="@dimen/post_text_size"
         android:lineSpacingMultiplier="1.1"
+        android:textIsSelectable="true"
         android:autoLink="web"
         app:ltvReadMore="@string/read_more"
         tools:text="This is image caption"/>
