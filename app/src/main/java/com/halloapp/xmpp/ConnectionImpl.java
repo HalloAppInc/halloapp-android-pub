@@ -136,6 +136,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import javax.crypto.AEADBadTagException;
+
 public class ConnectionImpl extends Connection {
 
     private static final String HOST = "s.halloapp.net";
@@ -1179,6 +1181,9 @@ public class ConnectionImpl extends Connection {
                     parsePacket(packet);
                 } catch (Exception e) {
                     Log.e("Packet Reader error; maybe disconnecting", e);
+                    if (e instanceof AEADBadTagException) {
+                        Log.sendErrorReport("Noise bad tag");
+                    }
                     if (!done) {
                         disconnect();
                     }
