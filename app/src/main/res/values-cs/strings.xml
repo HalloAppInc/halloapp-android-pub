@@ -17,7 +17,7 @@
     <string name="invite_notifications_channel_name">"Upozornění na pozvání"</string>
     <string name="invite_notification_text">"%s právě přijal/a vaše pozvání a přidává se k HalloApp &#127881;"</string>
     <string name="me">"Já"</string>
-    <string name="you">"you"</string>
+    <string name="you">"ty"</string>
     <string name="camera_post">"Fotoaparát"</string>
     <string name="gallery_post">"Galerie"</string>
     <string name="text_post">"Text"</string>
@@ -58,9 +58,9 @@ Může zahrnovat cenu doručení."</string>
     <string name="share_option_post">"Příspěvek"</string>
     <string name="share_option_message">"Zpráva"</string>
     <plurals name="max_post_media_items">
-        <item quantity="one">"You can select up to %d media item per post"</item>
-        <item quantity="few">"You can select up to %d media item per post"</item>
-        <item quantity="other">"You can select up to %d media item per post"</item>
+        <item quantity="one">"Můžeš vybrat až %d mediální položku na příspěvek"</item>
+        <item quantity="few">"Můžeš vybrat až %d mediální položky na příspěvek"</item>
+        <item quantity="other">"Můžeš vybrat až %d mediálních položek na příspěvek"</item>
     </plurals>
     <string name="camera_record_audio_permission_rationale">"Pro pořizování fotografií a nahrávání videí potřebujeme povolení přístupu ke kameře a nahrávání zvuku na vašem zařízení"</string>
     <string name="camera_record_audio_permission_rationale_denied">"Pro pořizování fotografií a nahrávání videí potřebujeme povolení přístupu ke kameře a nahrávání zvuku na vašem zařízení.
@@ -123,7 +123,7 @@ Otevřete obrazovku nastavení aplikace a upravte povolení aplikace."</string>
     <string name="no_photos_or_videos_found">"Nenalezeny žádné fotografie nebo videa"</string>
     <string name="gallery">"Galerie"</string>
     <string name="avatar_picker_title">"Profilová fotka"</string>
-    <string name="group_avatar_picker_title">"Group icon"</string>
+    <string name="group_avatar_picker_title">"Ikona skupiny"</string>
     <string name="other_media">"Další média"</string>
     <string name="rotate">"Otočit"</string>
     <string name="seen_by">"Viděno"</string>
@@ -155,14 +155,14 @@ Otevřete obrazovku nastavení aplikace a upravte povolení aplikace."</string>
         <item quantity="other">"%d nové zprávy"</item>
     </plurals>
     <plurals name="new_comments_notification">
-        <item quantity="one">"%s commented on your post"</item>
-        <item quantity="few">"%s commented on your post"</item>
-        <item quantity="other">"%s commented on your post"</item>
+        <item quantity="one">"%s okomentoval/a tvůj příspěvek"</item>
+        <item quantity="few">"%s okomentoval/a tvůj příspěvek"</item>
+        <item quantity="other">"%s okomentoval/a tvůj příspěvek"</item>
     </plurals>
     <plurals name="new_comments_on_multiple_posts_notification">
-        <item quantity="one">"%s commented on your posts"</item>
-        <item quantity="few">"%s commented on your posts"</item>
-        <item quantity="other">"%s commented on your posts"</item>
+        <item quantity="one">"%s okomentoval/a tvoje příspěvky"</item>
+        <item quantity="few">"%s okomentoval/a tvoje příspěvky"</item>
+        <item quantity="other">"%s okomentoval/a tvoje příspěvky"</item>
     </plurals>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"Platnost aplikace HalloApp vypršela"</string>
@@ -225,9 +225,9 @@ Otevřete obrazovku nastavení aplikace a upravte povolení aplikace."</string>
     <string name="last_seen_less_minute">"Naposledy zobrazeno před méně než minutou"</string>
     <string name="online">"online"</string>
     <string name="today">"Dnes"</string>
-    <string name="today_at_time">"today at %s"</string>
+    <string name="today_at_time">"dnes v %s"</string>
     <string name="yesterday">"Včera"</string>
-    <string name="yesterday_at_time">"yesterday at %s"</string>
+    <string name="yesterday_at_time">"včera v %s"</string>
     <string name="day_of_week_at_time">"%1$s v %2$s"</string>
     <string name="unknown_contact">"Neznámý kontakt"</string>
     <string name="select_contact">"Nová zpráva"</string>
@@ -237,7 +237,7 @@ Otevřete obrazovku nastavení aplikace a upravte povolení aplikace."</string>
     <string name="action_save">"Uložit"</string>
     <string name="invite_friends">"Pozvi přátele a rodinu"</string>
     <string name="invite_friend_chooser_title">"Pozvat %s"</string>
-    <string name="invite_text_with_name_and_number">"Hey %1$s, I have an invite for you to join me on HalloApp - a real-relationship network for those closest to me. Use %2$s to register. Get it at %3$s"</string>
+    <string name="invite_text_with_name_and_number">"Ahoj %1$s, mám pro tebe pozvánku. Připoj se ke mně v HalloApp – síti skutečných vztahů pro mé nejbližší.  K registraci použij %2$s.  Získej ji na %3$s"</string>
     <string name="name_hint">"Tvoje jméno"</string>
     <string name="name_must_be_specified">"Jméno musí být uvedeno"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -280,8 +280,8 @@ verze: %2$s
     <string name="system_message_member_auto_promoted_you">"Byl/a jsi automaticky povýšen/a na administrátora"</string>
     <string name="system_message_group_name_changed">"%1$s změnil/a název skupiny na %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"Změnil/a jsi název skupiny na %s"</string>
-    <string name="system_message_group_avatar_changed">"%s changed the group icon"</string>
-    <string name="system_message_group_avatar_changed_by_you">"You changed the group icon"</string>
+    <string name="system_message_group_avatar_changed">"%s změnil/a ikonu skupiny"</string>
+    <string name="system_message_group_avatar_changed_by_you">"Změnil/a jsi ikonu skupiny"</string>
     <string name="system_message_group_deleted">"%s smazal/a skupinu"</string>
     <string name="system_message_group_deleted_by_you">"Smazal/a jsi skupinu"</string>
     <string name="system_post_group_created">"%s vytvořil/a tuto skupinu"</string>
@@ -300,8 +300,8 @@ verze: %2$s
     <string name="system_post_member_auto_promoted_you">"Byl/a jsi automaticky povýšen/a na správce"</string>
     <string name="system_post_group_name_changed">"%1$s změnil/a jméno skupiny na %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"Změnil/a jsi jméno skupiny na %s"</string>
-    <string name="system_post_group_avatar_changed">"%s changed the group icon"</string>
-    <string name="system_post_group_avatar_changed_by_you">"You changed the group icon"</string>
+    <string name="system_post_group_avatar_changed">"%s změnil/a ikonu skupiny"</string>
+    <string name="system_post_group_avatar_changed_by_you">"Změnil/a jsi ikonu skupiny"</string>
     <string name="system_post_group_deleted">"%s smazal/a skupinu"</string>
     <string name="system_post_group_deleted_by_you">"Smazal/a jsi skupinu"</string>
     <string name="group_info_title">"Informace o skupině"</string>
@@ -329,7 +329,7 @@ verze: %2$s
         <item quantity="other">"Tento týden vám zbývá %s pozvánek"</item>
     </plurals>
     <string name="invite_friends_title">"Pozvěte přátele a rodinu"</string>
-    <string name="invite_title">"Invite friends"</string>
+    <string name="invite_title">"Pozvat přátele"</string>
     <string name="settings_invite_option">"Pozvat do HalloApp"</string>
     <string name="invite_already_on_halloapp">"Již jsou v HalloApp"</string>
     <string name="invite_invalid_phone_number">"Neplatné telefonní číslo"</string>
@@ -347,13 +347,13 @@ verze: %2$s
     <string name="failed_create_group">"Nepodařilo se vytvořit skupinu, zkuste to znovu později"</string>
 
     <!-- Shown in options menu to remove a member of group -->
-    <string name="group_remove_member">"Remove from group"</string>
+    <string name="group_remove_member">"Odebrat ze skupiny"</string>
     <string name="group_promote_to_admin">"Povýšit na správce"</string>
     <string name="promote_admin_in_progress">"Povyšování na správce…"</string>
     <string name="failed_promote_admin">"Povýšení na správce se nezdařilo, zkuste to znovu později"</string>
 
     <!-- Option for removing a user from the list of admins of a group -->
-    <string name="group_demote_from_admin">"Dismiss as admin"</string>
+    <string name="group_demote_from_admin">"Odvolat jako admin"</string>
     <string name="demote_admin_in_progress">"Odebírání správcovství…"</string>
     <string name="failed_demote_admin">"Nepodařilo se odebrat správcovství, zkuste to znovu později"</string>
     <string name="remove_member_in_progress">"Odstraňování člena…"</string>
@@ -424,12 +424,12 @@ verze: %2$s
         <item quantity="few">"%d členů"</item>
         <item quantity="other">"%d členů"</item>
     </plurals>
-    <string name="composer_sharing_all_summary">"Share with my contacts"</string>
-    <string name="composer_sharing_except_summary">"Share with some of my contacts"</string>
+    <string name="composer_sharing_all_summary">"Sdílet s mými kontakty"</string>
+    <string name="composer_sharing_except_summary">"Sdílet s některými mými kontakty"</string>
     <plurals name="composer_sharing_only_summary">
-        <item quantity="one">"Share with %d of my contacts"</item>
-        <item quantity="few">"Share with %d of my contacts"</item>
-        <item quantity="other">"Share with %d of my contacts"</item>
+        <item quantity="one">"Sdílet s %d z mých kontaktů"</item>
+        <item quantity="few">"Sdílet s %d z mých kontaktů"</item>
+        <item quantity="other">"Sdílet s %d z mých kontaktů"</item>
     </plurals>
     <string name="post_preview_no_caption">"%s sdílel/a příspěvek"</string>
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
@@ -476,7 +476,7 @@ verze: %2$s
     <string name="not_now">"Teď ne"</string>
     <string name="continue_button">"Pokračovat"</string>
     <string name="invite_link_load_failed">"Zvací odkaz do skupiny se nepodařilo otevřít"</string>
-    <string name="message_tombstone_placeholder">"Waiting for this message. This may take a while. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
+    <string name="message_tombstone_placeholder">"Čekání na tuto zprávu.  Může to chvíli trvat.  "<![CDATA[<a href="learn-more">Další informace</a>]]>"."</string>
     <string name="failed_no_longer_member">"Už nejsi členem této skupiny"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -507,7 +507,7 @@ verze: %2$s
     <string name="key_verification_tap_to_scan">"Kliknutím naskenujete"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
+    <string name="key_verification_explanation">"Pokud chceš ověřit zabezpečení svého připojení s %s, zkontroluj, zda se výše uvedená čísla shodují s čísly zobrazenými na jejich zařízení, nebo naskenuj QR kód na jejich telefonu.  "<![CDATA[<a href="learn-more">Další informace</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Více"</string>
@@ -613,7 +613,7 @@ Otevři nastavení aplikace a uprav oprávnění aplikace."</string>
     <string name="data_available_at">"Data budou k dispozici na %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
-    <string name="export_data_explanation">"Download a copy of all your user data stored on HalloApp's servers. This does not contain message or post content."</string>
+    <string name="export_data_explanation">"Stáhni si kopii všech svých uživatelských dat uložených na serverech HalloApp.  Ty neobsahují obsah zpráv ani příspěvků."</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"Požadavek selhal"</string>
@@ -622,7 +622,7 @@ Otevři nastavení aplikace a uprav oprávnění aplikace."</string>
     <string name="export_account_data">"Exportovat moje data"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
-    <string name="e2e_notice">"All messages on HalloApp are end-to-end encrypted. &lt;b&gt;Tap to learn more&lt;/b&gt;"</string>
+    <string name="e2e_notice">"Všechny zprávy na HalloApp jsou chráněny koncovým šifrováním.  &lt;b&gt;Klepnutím zobrazíš další informace&lt;/b&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"Zobrazit bezpečnostní číslo"</string>
@@ -661,7 +661,7 @@ Otevři nastavení aplikace a uprav oprávnění aplikace."</string>
     <string name="settings_share_option">"Sdílet HalloApp"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <string name="share_halloapp_text">"Join my real-relationship network on HalloApp. Download for free at halloapp.com/dl"</string>
+    <string name="share_halloapp_text">"Připoj se k mé síti skutečných vztahů na HalloApp.  Stáhuj zdarma na halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
     <string name="contact_permissions_request">"Povol aplikaci HalloApp přístup ke svým kontaktům, abys mohl/a odesílat a přijímat aktualizace"</string>
@@ -728,7 +728,7 @@ Otevři nastavení aplikace a uprav oprávnění aplikace."</string>
     <string name="return_to_registration">"Zpět na registraci"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <string name="archive_empty">"Your posts will appear here after they expire in 30 days"</string>
+    <string name="archive_empty">"Tvoje příspěvky se zde objeví poté, co za 30 dní vyprší jejich platnost"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"Nepodporovaný obsah"</string>
@@ -876,278 +876,298 @@ Otevři nastavení aplikace a uprav oprávnění aplikace."</string>
 
     <!-- New comment separator -->
     <plurals name="new_comment_separator">
-        <item quantity="one">"%d new comment"</item>
-        <item quantity="few">"%d new comment"</item>
-        <item quantity="other">"%d new comment"</item>
+        <item quantity="one">"%d nový komentář"</item>
+        <item quantity="few">"%d nových komentářů"</item>
+        <item quantity="other">"%d nové komentáře"</item>
     </plurals>
 
     <!-- Title for activity that lets user select who to share with -->
-    <string name="share_with">"Share with…"</string>
+    <string name="share_with">"Sdílet s…"</string>
 
     <!-- Title for feed privacy when setting it from a single post -->
-    <string name="setting_feed_privacy_single_post_title">"Who will see this post"</string>
+    <string name="setting_feed_privacy_single_post_title">"Kdo uvidí tento příspěvek"</string>
 
     <!-- Title of section for recent groups -->
-    <string name="recent_groups">"Recent groups"</string>
+    <string name="recent_groups">"Nedávné skupiny"</string>
 
     <!-- Item for creating a new group -->
-    <string name="create_new_group">"Create new group"</string>
+    <string name="create_new_group">"Vytvořit novou skupinu"</string>
 
     <!-- Shown as a subtitle on the content composer screen when making a post. Tapping will
          allow user to change destination for the post -->
-    <string name="tap_to_change">"Tap to change"</string>
+    <string name="tap_to_change">"Klepnutím změníš"</string>
 
     <!-- Title for bottom sheet that comes up telling a user to invite friends to a group -->
-    <string name="invite_group_zero_zone_title">"Invite a friend to your group"</string>
+    <string name="invite_group_zero_zone_title">"Pozvi přítele do své skupiny"</string>
 
     <!-- Explanation text for bottom sheet shown telling user to share an invite link to invite friends -->
-    <string name="invite_group_zero_zone_details">"Share this link with friends and they'll automatically join your group."</string>
+    <string name="invite_group_zero_zone_details">"Sdílej tento odkaz s přáteli a oni se automaticky připojí k tvojí skupině."</string>
 
     <!-- initial group created for the user where %s is replaced with their name. should indicate that it is their group -->
-    <string name="zero_zone_group_name">"%s's group"</string>
+    <string name="zero_zone_group_name">"%s's skupina"</string>
 
     <!-- Text shown as subheader for inviting friends section -->
-    <string name="invite_friends_header">"Invite friends"</string>
+    <string name="invite_friends_header">"Pozvat přátele"</string>
 
     <!-- Text shown as preview for invite friends group post -->
-    <string name="invite_friends_post_preview">"Invite a friend to your group"</string>
+    <string name="invite_friends_post_preview">"Pozvi přítele do své skupiny"</string>
 
     <!-- Title for home post explaining what HalloApp is -->
-    <string name="zero_zone_home_nux_header">"Welcome to HalloApp, a space for real relationships ✨"</string>
+    <string name="zero_zone_home_nux_header">"Vítej v HalloApp, prostoru pro skutečné vztahy ✨"</string>
 
     <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
-    <string name="zero_zone_home_nux_text_one">"Use your phone number to connect with friends &amp; family in a space with no ads, no brands, no likes, and no influencers."</string>
+    <string name="zero_zone_home_nux_text_one">"Pomocí svého telefonního čísla se spoj s přáteli a rodinou v prostoru bez reklam, bez značek, bez lajků a bez influencerů."</string>
 
     <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
-    <string name="zero_zone_home_nux_text_two">"HalloApp is for you, and those closest to you, in private. Invite your real friends to get started"</string>
+    <string name="zero_zone_home_nux_text_two">"HalloApp je pro tebe a tvé nejbližší v soukromí.  Pozvi své skutečné přátele, aby mohli začít"</string>
 
     <!-- Action for user to start their delete accoount process under 'account' -->
-    <string name="delete_my_account_action">"Delete my account"</string>
+    <string name="delete_my_account_action">"Smazat můj účet"</string>
 
     <!-- Top line before the other delete account bullets. Will explain what deleting your account entails -->
-    <string name="delete_account_explanation_title">"Deleting your account will:"</string>
+    <string name="delete_account_explanation_title">"Smazáním účtu:"</string>
 
     <!-- First account deletion bullet saying the profile photo will be deleted -->
-    <string name="delete_account_explanation_bullet_one">"• Delete your account information and profile photo"</string>
+    <string name="delete_account_explanation_bullet_one">"• Smažeš informace o svém účtu a profilovou fotku"</string>
 
     <!-- Second account deletion bullet saying the you will be removed from all group -->
-    <string name="delete_account_explanation_bullet_two">"• Remove you from all HalloApp groups"</string>
+    <string name="delete_account_explanation_bullet_two">"• Odebereš se ze všech skupin HalloApp"</string>
 
     <!-- Third account deletion bullet explaining message history will be deleted -->
-    <string name="delete_account_explanation_bullet_three">"• Delete your message history on this phone"</string>
+    <string name="delete_account_explanation_bullet_three">"• Smažeš historii zpráv v tomto telefonu"</string>
 
     <!-- Instructions shown above delete account entry -->
-    <string name="delete_account_instructions">"To delete your account, confirm your phone number. This cannot be undone"</string>
+    <string name="delete_account_instructions">"Chceš-li smazat svůj účet, potvrď své telefonní číslo.  Tohle nelze vrátit zpět"</string>
 
     <!-- Progress message while account is deleting -->
-    <string name="delete_account_in_progress">"Deleting your account…"</string>
+    <string name="delete_account_in_progress">"Mazání účtu…"</string>
 
     <!-- Text box hint for optional field for adding feedback for why you are deleting your account -->
-    <string name="delete_account_feedback_hint">"Feedback for HalloApp (Optional)"</string>
+    <string name="delete_account_feedback_hint">"Zpětná vazba pro HalloApp (volitelné)"</string>
 
     <!-- Message shown in dialog asking if user is sure they want to delete their account -->
-    <string name="delete_account_confirmation_message">"Are you sure that you want to delete your account? This cannot be undone"</string>
+    <string name="delete_account_confirmation_message">"Opravdu chceš smazat svůj účet? Nelze to vrátit zpět"</string>
 
     <!-- Title for the screen where we display where your storage is being used -->
-    <string name="storage_usage_title">"Storage usage"</string>
+    <string name="storage_usage_title">"Využití úložiště"</string>
 
     <!-- Storage usage section header for home feed category -->
-    <string name="storage_usage_home">"Home feed"</string>
+    <string name="storage_usage_home">"Domovský feed"</string>
 
     <!-- Storage usage section header for chats category -->
-    <string name="storage_usage_chats">"Chats"</string>
+    <string name="storage_usage_chats">"Chaty"</string>
 
     <!-- Storage usage section header for groups category -->
-    <string name="storage_usage_groups">"Groups"</string>
+    <string name="storage_usage_groups">"Skupiny"</string>
 
     <!-- Storage usage section header for other category -->
-    <string name="storage_usage_internal">"Other"</string>
+    <string name="storage_usage_internal">"Ostatní"</string>
 
     <!-- Storage usage section header for archive category -->
-    <string name="storage_usage_archive">"Archive"</string>
+    <string name="storage_usage_archive">"Archiv"</string>
 
     <!-- Text shown in button for inviting friends -->
-    <string name="invite_action">"Invite"</string>
+    <string name="invite_action">"Pozvat"</string>
 
     <!-- action where the user shares -->
-    <string name="share_action">"Share"</string>
+    <string name="share_action">"Sdílet"</string>
 
     <!-- Name for notifications that come out as a broadcast from the server -->
-    <string name="broadcast_notifications_channel_name">"Alerts from HalloApp"</string>
+    <string name="broadcast_notifications_channel_name">"Upozornění z HalloApp"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls -->
-    <string name="voice_call_record_audio_permission_rationale">"To use voice calls we need permission to access the microphone"</string>
+    <string name="voice_call_record_audio_permission_rationale">"Abys mohl/a používat hlasové hovory potřebujeme oprávnění k přístupu k mikrofonu"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls, but it has already been denied. -->
-    <string name="voice_call_record_audio_permission_rationale_denied">"To use voice calls we need permission to access the microphone.
+    <string name="voice_call_record_audio_permission_rationale_denied">"Abys mohl/a používat hlasové hovory potřebujeme oprávnění k přístupu k mikrofonu.
 
-Open the app settings screen to modify app permissions."</string>
+Otevři obrazovku nastavení aplikace a uprav oprávnění aplikace."</string>
 
     <!-- Name of channel of notifications for receiving calls which is displayed in settings -->
-    <string name="call_notifications_channel_name">"Call notifications"</string>
+    <string name="call_notifications_channel_name">"Oznámení o hovorech"</string>
 
     <!-- Name of channel of notifications for ongoing audio/video calls -->
-    <string name="ongoing_call_notifications_channel_name">"Ongoing Call notifications"</string>
+    <string name="ongoing_call_notifications_channel_name">"Oznámení o probíhajících hovorech"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="ringing">"Ringing…"</string>
+    <string name="ringing">"Zvonění…"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="calling">"Calling…"</string>
-
-    <!-- The title of the notificaiton for incoming calls -->
-    <string name="incoming_call_notification_title">"Incoming call"</string>
+    <string name="calling">"Volání…"</string>
 
     <!-- The call notification accept button label -->
-    <string name="call_accept_button">"Accept"</string>
+    <string name="call_accept_button">"Přijmout"</string>
 
     <!-- The call notification decline button label -->
-    <string name="call_decline_button">"Decline"</string>
+    <string name="call_decline_button">"Odmítnout"</string>
 
     <!-- Displayed as title for the Call Screen -->
-    <string name="call_title">"Call"</string>
+    <string name="call_title">"Hovor"</string>
 
     <!-- Displayed in an ongoing notification while the user is in a voice call -->
-    <string name="ongoing_voice_call">"Ongoing voice call"</string>
+    <string name="ongoing_voice_call">"Probíhající hlasový hovor"</string>
 
     <!-- Shown inline in a chat when the user missed an incoming video call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_video_call">"Missed video call at %s"</string>
+    <string name="system_message_missed_video_call">"Zmeškaný videohovor v %s"</string>
 
     <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_voice_call">"Missed voice call at %s"</string>
-
-    <!-- Action in menu for calling a user -->
-    <string name="call_action">"Call"</string>
-
-    <!-- Button to unmute -->
-    <string name="unmute">"Unmute"</string>
+    <string name="system_message_missed_voice_call">"Zmeškaný hlasový hovor v %sZ"</string>
 
     <!-- Label for speaker phone button -->
-    <string name="call_speaker_button">"Speaker"</string>
-
-    <!-- Label for button to disable speaker phone -->
-    <string name="call_speaker_off_button">"Speaker off"</string>
+    <string name="call_speaker_button">"Reproduktor"</string>
 
     <!-- Label for button to end the call -->
-    <string name="end_call">"End call"</string>
+    <string name="end_call">"Ukončit hovor"</string>
 
     <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
-    <string name="refresh_contacts_failed">"Failed to refresh contacts"</string>
+    <string name="refresh_contacts_failed">"Obnovení kontaktů se nezdařilo"</string>
 
     <!-- Label for voice post option -->
     <string name="voice_post">"Audio"</string>
 
     <!-- Audio post composer title -->
-    <string name="audio_post_compose_title">"New audio post"</string>
+    <string name="audio_post_compose_title">"Nový audio příspěvek"</string>
 
     <!-- Text post hint -->
-    <string name="text_post_compose_hint">"Write a description"</string>
+    <string name="text_post_compose_hint">"Napiš popis"</string>
 
     <!-- Audio post record instruction -->
-    <string name="audio_post_tap_to_record">"Tap to record"</string>
+    <string name="audio_post_tap_to_record">"Klepnutím nahraj"</string>
 
     <!-- Text shown below the media composer that allows adding more media -->
-    <string name="post_add_more">"Add more"</string>
+    <string name="post_add_more">"Přidej víc"</string>
 
     <!-- Button text allowing user to accept a message not from their contacts. Short if possible -->
-    <string name="accept_message">"Accept message"</string>
+    <string name="accept_message">"Přijmout zprávu"</string>
 
     <!-- Message alerting the user that the person messaging them is not in their address book -->
-    <string name="not_in_address_book_alert">"This person is not in your address book"</string>
-
-    <!-- Text shown in chat view telling user they had a missed call -->
-    <string name="log_missed_call">"Missed voice call"</string>
+    <string name="not_in_address_book_alert">"Tato osoba není ve tvém adresáři"</string>
 
     <!-- Text shown in chat view telling user they had a voice call -->
-    <string name="log_voice_call">"Voice call"</string>
+    <string name="log_voice_call">"Hlasový hovor"</string>
 
     <!-- Text shown in message preview telling user they had a voice call %s is replaced with the call duration -->
-    <string name="log_voice_call_with_duration">"Voice call (%s)"</string>
+    <string name="log_voice_call_with_duration">"Hlasový hovor (%s)"</string>
 
     <!-- Collapsed multiple deleted posts -->
     <plurals name="collapsed_deleted_posts">
-        <item quantity="one">"%d deleted post"</item>
-        <item quantity="few">"%d deleted post"</item>
-        <item quantity="other">"%d deleted post"</item>
+        <item quantity="one">"%d smazaný příspěvek"</item>
+        <item quantity="few">"%d smazaných příspěvků"</item>
+        <item quantity="other">"%d smazané příspěvků"</item>
     </plurals>
 
     <!-- Collapsed multiple add user posts -->
     <plurals name="collapsed_added_user_posts">
-        <item quantity="one">"%d person was added"</item>
-        <item quantity="few">"%d person was added"</item>
-        <item quantity="other">"%d person was added"</item>
+        <item quantity="one">"%d osoba byla přidána"</item>
+        <item quantity="few">"%d lidé byli přidáni"</item>
+        <item quantity="other">"%d lidí bylo přidáno"</item>
     </plurals>
 
     <!-- Collapsed multiple remove user posts -->
     <plurals name="collapsed_removed_user_posts">
-        <item quantity="one">"%d person was removed"</item>
-        <item quantity="few">"%d person was removed"</item>
-        <item quantity="other">"%d person was removed"</item>
+        <item quantity="one">"%d osoba byla odebrána"</item>
+        <item quantity="few">"%d lidé byli odebráni"</item>
+        <item quantity="other">"%d lidí bylo odebráno"</item>
     </plurals>
 
     <!-- Collapsed multiple user left posts -->
     <plurals name="collapsed_user_left_posts">
-        <item quantity="one">"%d person left"</item>
-        <item quantity="few">"%d person left"</item>
-        <item quantity="other">"%d person left"</item>
+        <item quantity="one">"%d osoba odešla"</item>
+        <item quantity="few">"%d lidí odešlo"</item>
+        <item quantity="other">"%d lidé odešli"</item>
     </plurals>
 
     <!-- Collapsed multiple user joined posts -->
     <plurals name="collapsed_user_joined_posts">
-        <item quantity="one">"%d person joined"</item>
-        <item quantity="few">"%d person joined"</item>
-        <item quantity="other">"%d person joined"</item>
+        <item quantity="one">"%d osoba se připojila"</item>
+        <item quantity="few">"%d lidé se připojili"</item>
+        <item quantity="other">"%d lidí se připojilo"</item>
     </plurals>
 
     <!-- Action to stop recording -->
     <string name="stop_recording">"Stop"</string>
 
     <!-- Confirmation dialog asking if user is sure they want to discard their recorded audio -->
-    <string name="post_audio_draft_discard_confirmation">"Are you sure you want to discard your recorded audio?"</string>
+    <string name="post_audio_draft_discard_confirmation">"Opravdu chceš nahraný zvuk zahodit?"</string>
 
     <!-- Keep relatively short (try to fit on one line), shows at top of screen. User can tap to return to current ongoing call -->
-    <string name="tap_to_return_to_call">"Tap to return to call"</string>
+    <string name="tap_to_return_to_call">"Klepnutím se vrátíš k hovoru"</string>
 
     <!-- Displayed on the call screen to show that the call is connecting -->
-    <string name="connecting">"Connecting…"</string>
+    <string name="connecting">"Připojování…"</string>
 
     <!-- Text in fab for post action -->
-    <string name="post_fab_label">"Post"</string>
+    <string name="post_fab_label">"Příspěvek"</string>
 
     <!-- Text in fab for new group action -->
-    <string name="new_group_fab_label">"New group"</string>
+    <string name="new_group_fab_label">"Nová skupina"</string>
 
     <!-- Text in fab for chat action -->
-    <string name="compose_fab_label">"Compose"</string>
+    <string name="compose_fab_label">"Komponovat"</string>
 
     <!-- Label on selected destinations when sharing from another app -->
-    <string name="share_with_label">"Share with"</string>
+    <string name="share_with_label">"Sdílet s"</string>
 
     <!-- Title of section for your groups -->
-    <string name="your_groups">"Your groups"</string>
+    <string name="your_groups">"Tvoje skupiny"</string>
 
     <!-- Title of section for recent contacts -->
-    <string name="recent_contacts">"Recent contacts"</string>
+    <string name="recent_contacts">"Nedávné kontakty"</string>
 
     <!-- Label for button to see all rows -->
-    <string name="see_all">"See all"</string>
+    <string name="see_all">"Zobrazit vše"</string>
 
     <!-- Rationale for when requesting microphone permission for voice posts -->
-    <string name="voice_post_record_audio_permission_rationale">"To record audio posts we need permission to access the microphone"</string>
+    <string name="voice_post_record_audio_permission_rationale">"K nahrávání zvukových příspěvků potřebujeme oprávnění k přístupu k mikrofonu"</string>
 
     <!-- Rationale for when requesting microphone permission for voice posts, but it has already been denied. -->
-    <string name="voice_post_record_audio_permission_rationale_denied">"To record audio posts we need permission to access the microphone.
+    <string name="voice_post_record_audio_permission_rationale_denied">"K nahrávání zvukových příspěvků potřebujeme oprávnění k přístupu k mikrofonu.
 
-Open the app settings screen to modify app permissions."</string>
+Otevři obrazovku nastavení aplikace a uprav oprávnění aplikace."</string>
 
     <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
-    <string name="unable_to_start_call">"Unable to start call."</string>
+    <string name="unable_to_start_call">"Nelze zahájit hovor."</string>
 
     <!-- Text shown in chat view telling user they had a missed video call -->
-    <string name="log_missed_video_call">"Missed video call"</string>
+    <string name="log_missed_video_call">"Zmeškaný videohovor"</string>
 
     <!-- Button for sharing a post outside of HalloApp -->
-    <string name="share_externally">"Share externally"</string>
+    <string name="share_externally">"Sdílet externě"</string>
+
+    <!-- Audio post, title/label for an audio post -->
+    <string name="audio_post">"Audio post"</string>
+
+    <!-- Preview text for audio post with duration %s is replaced with the length of the audio post, e.g. "Audio post (0:30)" -->
+    <string name="audio_post_preview">"Audio post (%s)"</string>
+
+    <!-- Text shown in chat view telling user they had a missed audio call -->
+    <string name="log_missed_voice_call">"Missed voice call"</string>
+
+    <!-- Text shown in chat view telling user they had a video call -->
+    <string name="log_video_call">"Video call"</string>
+
+    <!-- Text shown in message preview telling user they had a video call %s is replaced with the call duration -->
+    <string name="log_video_call_with_duration">"Video call (%s)"</string>
+
+    <!-- Rationale for when requesting microphone and camera permission for video calls -->
+    <string name="voice_call_record_video_permission_rationale">"To use video calls we need permission to access the microphone and camera"</string>
+
+    <!-- The title of the notification for incoming voice calls -->
+    <string name="incoming_voice_call_notification_title">"Incoming voice call"</string>
+
+    <!-- The title of the notification for incoming video calls -->
+    <string name="incoming_video_call_notification_title">"Incoming video call"</string>
+
+    <!-- Action in menu for voice calling a user -->
+    <string name="call_action_voice">"Voice call"</string>
+
+    <!-- Action in menu for video calling a user -->
+    <string name="call_action_video">"Video call"</string>
+    <string name="incoming_call_notification_title">"Incoming call"</string>
+    <string name="call_action">"Call"</string>
+    <string name="unmute">"Unmute"</string>
+    <string name="call_speaker_off_button">"Speaker off"</string>
+    <string name="log_missed_call">"Missed voice call"</string>
     <string name="composer_sharing_post">"Sdílení s %s"</string>
     <string name="composer_sharing_group_post">"Sharing with group"</string>
     <string name="invite_via_link">"Invite via link"</string>

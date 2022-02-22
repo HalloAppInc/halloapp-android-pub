@@ -687,7 +687,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="contact_permissions_request">"Разреши на HalloApp достъп то твойте контакти за да можеш на публикуваш и получаваш ъпдейти"</string>
 
     <!-- Dialog shown to user before requesting contact permissions, but user has previously denied them, so they must go to settings -->
-    <string name="contact_permissions_request_permanently_denied">"Allow HalloApp access to your contacts so you can send and receive updates. Tap Settings &gt; Permissions, and turn Contacts on"</string>
+    <string name="contact_permissions_request_permanently_denied">"Разреши на HalloApp достъп до твойте контакти за да можеш на пращаш и получаваш известия. Натисни на Настройки &gt; Разрешения и включи Контакти"</string>
 
     <!-- Banner explaining why user can't leave a comment in a group they've left -->
     <string name="no_longer_group_member">"Ти вече не си член на тази група"</string>
@@ -737,7 +737,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="invite_link_failed_to_join_invalid">"Линка с поканата е невалиден"</string>
 
     <!-- Error message when user cannot join a group because they were previously removed by an admin -->
-    <string name="invite_link_failed_to_join_removed">"You were removed and cannot rejoin via invite link"</string>
+    <string name="invite_link_failed_to_join_removed">"Вие бяхте премахнати и не можете да се присъедините с връзка за покана"</string>
 
     <!-- Message that's displayed after a user deletes their account -->
     <string name="deletion_confirmation_message">"Вашия акаунт в HalloApp беше испешно изтрит."</string>
@@ -866,7 +866,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="groups_in_common">"Общи групи"</string>
 
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
-    <string name="slide_to_cancel">"Slide to cancel"</string>
+    <string name="slide_to_cancel">"Плъзни за да откажеш"</string>
 
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
     <string name="reply_notification_label">"Отговори"</string>
@@ -882,10 +882,10 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_post_destination">"Търси"</string>
-    <string name="link_preview_loading">"Loading preview…"</string>
+    <string name="link_preview_loading">"Предварителния преглед се зарежда"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
-    <string name="add_to_contacts_notice">"To see posts from %s add their number to your address book. Tap to add."</string>
+    <string name="add_to_contacts_notice">"За да виждате публикаций от %s добавете техния номер във вашата адресна книга. Докосни за да добавиш."</string>
 
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">"Отварянето на линка е неуспешно"</string>
@@ -988,30 +988,25 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="share_action">"Сподели"</string>
 
     <!-- Name for notifications that come out as a broadcast from the server -->
-    <string name="broadcast_notifications_channel_name">"Alerts from HalloApp"</string>
+    <string name="broadcast_notifications_channel_name">"Известия от HalloApp"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls -->
-    <string name="voice_call_record_audio_permission_rationale">"To use voice calls we need permission to access the microphone"</string>
+    <string name="voice_call_record_audio_permission_rationale">"За да направите аудио обаждане ние имаме нужда от достъп до микрофона"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls, but it has already been denied. -->
-    <string name="voice_call_record_audio_permission_rationale_denied">"To use voice calls we need permission to access the microphone.
-
-Open the app settings screen to modify app permissions."</string>
+    <string name="voice_call_record_audio_permission_rationale_denied">"За да направите аудио обаждане ние имаме нужда от достъп до микрофона. Отворете настройките за да дадете достъп."</string>
 
     <!-- Name of channel of notifications for receiving calls which is displayed in settings -->
-    <string name="call_notifications_channel_name">"Call notifications"</string>
+    <string name="call_notifications_channel_name">"Известия за обаждания"</string>
 
     <!-- Name of channel of notifications for ongoing audio/video calls -->
-    <string name="ongoing_call_notifications_channel_name">"Ongoing Call notifications"</string>
+    <string name="ongoing_call_notifications_channel_name">"Известия за обаждания в прогрес"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="ringing">"Ringing…"</string>
+    <string name="ringing">"Звъни…"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="calling">"Calling…"</string>
-
-    <!-- The title of the notificaiton for incoming calls -->
-    <string name="incoming_call_notification_title">"Incoming call"</string>
+    <string name="calling">"Свързване…"</string>
 
     <!-- The call notification accept button label -->
     <string name="call_accept_button">"Приеми"</string>
@@ -1031,133 +1026,156 @@ Open the app settings screen to modify app permissions."</string>
     <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
     <string name="system_message_missed_voice_call">"Пропуснато аудио обаждане %s"</string>
 
-    <!-- Action in menu for calling a user -->
-    <string name="call_action">"Call"</string>
-
-    <!-- Button to unmute -->
-    <string name="unmute">"Unmute"</string>
-
     <!-- Label for speaker phone button -->
-    <string name="call_speaker_button">"Speaker"</string>
-
-    <!-- Label for button to disable speaker phone -->
-    <string name="call_speaker_off_button">"Speaker off"</string>
+    <string name="call_speaker_button">"Високоговорител"</string>
 
     <!-- Label for button to end the call -->
-    <string name="end_call">"End call"</string>
+    <string name="end_call">"Затвори"</string>
 
     <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
-    <string name="refresh_contacts_failed">"Failed to refresh contacts"</string>
+    <string name="refresh_contacts_failed">"Обновяването на контактие беше неуспешно"</string>
 
     <!-- Label for voice post option -->
-    <string name="voice_post">"Audio"</string>
+    <string name="voice_post">"Аудио"</string>
 
     <!-- Audio post composer title -->
-    <string name="audio_post_compose_title">"New audio post"</string>
+    <string name="audio_post_compose_title">"Нова аудио публикация"</string>
 
     <!-- Text post hint -->
-    <string name="text_post_compose_hint">"Write a description"</string>
+    <string name="text_post_compose_hint">"Напиши описание"</string>
 
     <!-- Audio post record instruction -->
-    <string name="audio_post_tap_to_record">"Tap to record"</string>
+    <string name="audio_post_tap_to_record">"Докосни за да запишеш"</string>
 
     <!-- Text shown below the media composer that allows adding more media -->
-    <string name="post_add_more">"Add more"</string>
+    <string name="post_add_more">"Добави още"</string>
 
     <!-- Button text allowing user to accept a message not from their contacts. Short if possible -->
-    <string name="accept_message">"Accept message"</string>
+    <string name="accept_message">"Приеми съобщението"</string>
 
     <!-- Message alerting the user that the person messaging them is not in their address book -->
-    <string name="not_in_address_book_alert">"This person is not in your address book"</string>
-
-    <!-- Text shown in chat view telling user they had a missed call -->
-    <string name="log_missed_call">"Missed voice call"</string>
+    <string name="not_in_address_book_alert">"Този човек не е в твойте контакти"</string>
 
     <!-- Text shown in chat view telling user they had a voice call -->
-    <string name="log_voice_call">"Voice call"</string>
+    <string name="log_voice_call">"Аудио обаждане"</string>
 
     <!-- Text shown in message preview telling user they had a voice call %s is replaced with the call duration -->
-    <string name="log_voice_call_with_duration">"Voice call (%s)"</string>
+    <string name="log_voice_call_with_duration">"Аудио обаждане (%s)"</string>
 
     <!-- Collapsed multiple deleted posts -->
     <plurals name="collapsed_deleted_posts">
-        <item quantity="one">"%d deleted post"</item>
-        <item quantity="other">"%d deleted post"</item>
+        <item quantity="one">"%d изтрита публикация"</item>
+        <item quantity="other">"%d изтрити публикации"</item>
     </plurals>
 
     <!-- Collapsed multiple add user posts -->
     <plurals name="collapsed_added_user_posts">
-        <item quantity="one">"%d person was added"</item>
-        <item quantity="other">"%d person was added"</item>
+        <item quantity="one">"%d човек беше добавен"</item>
+        <item quantity="other">"%d човека бяха добавени"</item>
     </plurals>
 
     <!-- Collapsed multiple remove user posts -->
     <plurals name="collapsed_removed_user_posts">
-        <item quantity="one">"%d person was removed"</item>
-        <item quantity="other">"%d person was removed"</item>
+        <item quantity="one">"%d човек беше премахнат"</item>
+        <item quantity="other">"%d души бяха премахнати"</item>
     </plurals>
 
     <!-- Collapsed multiple user left posts -->
     <plurals name="collapsed_user_left_posts">
-        <item quantity="one">"%d person left"</item>
-        <item quantity="other">"%d person left"</item>
+        <item quantity="one">"%d човек напусна"</item>
+        <item quantity="other">"%d души напуснаха"</item>
     </plurals>
 
     <!-- Collapsed multiple user joined posts -->
     <plurals name="collapsed_user_joined_posts">
-        <item quantity="one">"%d person joined"</item>
-        <item quantity="other">"%d person joined"</item>
+        <item quantity="one">"%d човек се присъедини"</item>
+        <item quantity="other">"%d души се присъединиха"</item>
     </plurals>
 
     <!-- Action to stop recording -->
-    <string name="stop_recording">"Stop"</string>
+    <string name="stop_recording">"Спри"</string>
 
     <!-- Confirmation dialog asking if user is sure they want to discard their recorded audio -->
-    <string name="post_audio_draft_discard_confirmation">"Are you sure you want to discard your recorded audio?"</string>
+    <string name="post_audio_draft_discard_confirmation">"Сигурни ли сте че искате да се откажете от записаното аудио?"</string>
 
     <!-- Keep relatively short (try to fit on one line), shows at top of screen. User can tap to return to current ongoing call -->
-    <string name="tap_to_return_to_call">"Tap to return to call"</string>
+    <string name="tap_to_return_to_call">"Връщане към обаждането"</string>
 
     <!-- Displayed on the call screen to show that the call is connecting -->
-    <string name="connecting">"Connecting…"</string>
+    <string name="connecting">"Свързване…"</string>
 
     <!-- Text in fab for post action -->
-    <string name="post_fab_label">"Post"</string>
+    <string name="post_fab_label">"Публикация"</string>
 
     <!-- Text in fab for new group action -->
-    <string name="new_group_fab_label">"New group"</string>
+    <string name="new_group_fab_label">"Нова Група"</string>
 
     <!-- Text in fab for chat action -->
-    <string name="compose_fab_label">"Compose"</string>
+    <string name="compose_fab_label">"Композирай"</string>
 
     <!-- Label on selected destinations when sharing from another app -->
-    <string name="share_with_label">"Share with"</string>
+    <string name="share_with_label">"Сподели със"</string>
 
     <!-- Title of section for your groups -->
-    <string name="your_groups">"Your groups"</string>
+    <string name="your_groups">"Твойте групи"</string>
 
     <!-- Title of section for recent contacts -->
-    <string name="recent_contacts">"Recent contacts"</string>
+    <string name="recent_contacts">"Скорошни контакти"</string>
 
     <!-- Label for button to see all rows -->
-    <string name="see_all">"See all"</string>
+    <string name="see_all">"Виш всички"</string>
 
     <!-- Rationale for when requesting microphone permission for voice posts -->
-    <string name="voice_post_record_audio_permission_rationale">"To record audio posts we need permission to access the microphone"</string>
+    <string name="voice_post_record_audio_permission_rationale">"За да направите аудио публикация имаме нужда от достъп до микрофона"</string>
 
     <!-- Rationale for when requesting microphone permission for voice posts, but it has already been denied. -->
-    <string name="voice_post_record_audio_permission_rationale_denied">"To record audio posts we need permission to access the microphone.
+    <string name="voice_post_record_audio_permission_rationale_denied">"За да направите аудио публикация имаме нужда от достъп до микрофона.
 
-Open the app settings screen to modify app permissions."</string>
+Отвори настройките на приложението за да дадеш достъп."</string>
 
     <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
-    <string name="unable_to_start_call">"Unable to start call."</string>
+    <string name="unable_to_start_call">"Обаждането се провали"</string>
 
     <!-- Text shown in chat view telling user they had a missed video call -->
-    <string name="log_missed_video_call">"Missed video call"</string>
+    <string name="log_missed_video_call">"Пропуснато видео обаждане"</string>
 
     <!-- Button for sharing a post outside of HalloApp -->
-    <string name="share_externally">"Share externally"</string>
+    <string name="share_externally">"Сподели навън"</string>
+
+    <!-- Audio post, title/label for an audio post -->
+    <string name="audio_post">"Audio post"</string>
+
+    <!-- Preview text for audio post with duration %s is replaced with the length of the audio post, e.g. "Audio post (0:30)" -->
+    <string name="audio_post_preview">"Audio post (%s)"</string>
+
+    <!-- Text shown in chat view telling user they had a missed audio call -->
+    <string name="log_missed_voice_call">"Missed voice call"</string>
+
+    <!-- Text shown in chat view telling user they had a video call -->
+    <string name="log_video_call">"Video call"</string>
+
+    <!-- Text shown in message preview telling user they had a video call %s is replaced with the call duration -->
+    <string name="log_video_call_with_duration">"Video call (%s)"</string>
+
+    <!-- Rationale for when requesting microphone and camera permission for video calls -->
+    <string name="voice_call_record_video_permission_rationale">"To use video calls we need permission to access the microphone and camera"</string>
+
+    <!-- The title of the notification for incoming voice calls -->
+    <string name="incoming_voice_call_notification_title">"Incoming voice call"</string>
+
+    <!-- The title of the notification for incoming video calls -->
+    <string name="incoming_video_call_notification_title">"Incoming video call"</string>
+
+    <!-- Action in menu for voice calling a user -->
+    <string name="call_action_voice">"Voice call"</string>
+
+    <!-- Action in menu for video calling a user -->
+    <string name="call_action_video">"Video call"</string>
+    <string name="incoming_call_notification_title">"Incoming call"</string>
+    <string name="call_action">"Call"</string>
+    <string name="unmute">"Unmute"</string>
+    <string name="call_speaker_off_button">"Speaker off"</string>
+    <string name="log_missed_call">"Missed voice call"</string>
     <string name="composer_sharing_post">"Споделяне с %s"</string>
     <string name="composer_sharing_group_post">"Сподели с групата"</string>
     <string name="invite_via_link">"Покани с линк"</string>

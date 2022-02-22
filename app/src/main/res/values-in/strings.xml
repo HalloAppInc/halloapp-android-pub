@@ -17,7 +17,7 @@
     <string name="invite_notifications_channel_name">"Pemberitahuan undangan"</string>
     <string name="invite_notification_text">"%s baru saja menerima undanganmu untuk bergabung di HalloApp &#127881;"</string>
     <string name="me">"Saya"</string>
-    <string name="you">"you"</string>
+    <string name="you">"Anda"</string>
     <string name="camera_post">"Kamera"</string>
     <string name="gallery_post">"Galeri"</string>
     <string name="text_post">"Teks"</string>
@@ -117,7 +117,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin app."</string>
     <string name="no_photos_or_videos_found">"Foto atau video tak ditemukan"</string>
     <string name="gallery">"Galeri"</string>
     <string name="avatar_picker_title">"Foto profil"</string>
-    <string name="group_avatar_picker_title">"Group icon"</string>
+    <string name="group_avatar_picker_title">"Ikon grup"</string>
     <string name="other_media">"Media lain"</string>
     <string name="rotate">"Putar"</string>
     <string name="seen_by">"Dilihat oleh"</string>
@@ -143,10 +143,10 @@ Buka layar pengaturan aplikasi untuk mengubah izin app."</string>
         <item quantity="other">"%d pesan baru"</item>
     </plurals>
     <plurals name="new_comments_notification">
-        <item quantity="other">"%s commented on your post"</item>
+        <item quantity="other">"%s mengomentari pos Anda"</item>
     </plurals>
     <plurals name="new_comments_on_multiple_posts_notification">
-        <item quantity="other">"%s commented on your posts"</item>
+        <item quantity="other">"%s mengomentari pos-pos Anda"</item>
     </plurals>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"HalloApp telah kedaluwarsa"</string>
@@ -201,9 +201,9 @@ Buka layar pengaturan aplikasi untuk mengubah izin app."</string>
     <string name="last_seen_less_minute">"Terakhir dilihat kurang dari satu menit yang lalu"</string>
     <string name="online">"online"</string>
     <string name="today">"Hari ini"</string>
-    <string name="today_at_time">"today at %s"</string>
+    <string name="today_at_time">"hari ini pada %s"</string>
     <string name="yesterday">"Kemarin"</string>
-    <string name="yesterday_at_time">"yesterday at %s"</string>
+    <string name="yesterday_at_time">"kemarin pada %s"</string>
     <string name="day_of_week_at_time">"%1$s pada %2$s"</string>
     <string name="unknown_contact">"Kontak tidak dikenal"</string>
     <string name="select_contact">"Pesan baru"</string>
@@ -213,7 +213,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin app."</string>
     <string name="action_save">"Simpan"</string>
     <string name="invite_friends">"Undang teman &amp; keluarga"</string>
     <string name="invite_friend_chooser_title">"Undang %s"</string>
-    <string name="invite_text_with_name_and_number">"Hey %1$s, I have an invite for you to join me on HalloApp - a real-relationship network for those closest to me. Use %2$s to register. Get it at %3$s"</string>
+    <string name="invite_text_with_name_and_number">"Hai %1$s, saya punya undangan untuk Anda ikut bergabung bersama saya di HalloApp - jaringan relasi riil untuk mereka yang paling dekat dengan saya. Gunakan %2$s untuk mendaftar. Dapatkan di %3$s"</string>
     <string name="name_hint">"Nama Anda"</string>
     <string name="name_must_be_specified">"Nama harus ditentukan"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -253,8 +253,8 @@ versi: %2$s
     <string name="system_message_member_auto_promoted_you">"Anda dipromosikan otomatis menjadi admin"</string>
     <string name="system_message_group_name_changed">"%1$s mengubah nama grup menjadi %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"Anda mengubah nama grup menjadi %s"</string>
-    <string name="system_message_group_avatar_changed">"%s changed the group icon"</string>
-    <string name="system_message_group_avatar_changed_by_you">"You changed the group icon"</string>
+    <string name="system_message_group_avatar_changed">"%s telah mengganti ikon grup"</string>
+    <string name="system_message_group_avatar_changed_by_you">"Anda telah mengganti ikon grup"</string>
     <string name="system_message_group_deleted">"%s menghapus grup"</string>
     <string name="system_message_group_deleted_by_you">"Anda menghapus grup"</string>
     <string name="system_post_group_created">"Grup ini dibuat oleh %s"</string>
@@ -273,8 +273,8 @@ versi: %2$s
     <string name="system_post_member_auto_promoted_you">"Anda dipromosikan otomatis menjadi admin"</string>
     <string name="system_post_group_name_changed">"%1$s mengubah nama grup menjadi %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"Anda mengubah nama grup menjadi %s"</string>
-    <string name="system_post_group_avatar_changed">"%s changed the group icon"</string>
-    <string name="system_post_group_avatar_changed_by_you">"You changed the group icon"</string>
+    <string name="system_post_group_avatar_changed">"%s telah mengganti ikon grup"</string>
+    <string name="system_post_group_avatar_changed_by_you">"Anda telah mengganti ikon grup"</string>
     <string name="system_post_group_deleted">"%s menghapus grup"</string>
     <string name="system_post_group_deleted_by_you">"Anda menghapus grup"</string>
     <string name="group_info_title">"Info grup"</string>
@@ -300,7 +300,7 @@ versi: %2$s
         <item quantity="other">"Kamu punya %s undangan tersisa minggu ini"</item>
     </plurals>
     <string name="invite_friends_title">"Undang teman &amp; keluarga"</string>
-    <string name="invite_title">"Invite friends"</string>
+    <string name="invite_title">"Undang teman"</string>
     <string name="settings_invite_option">"Undang ke HalloApp"</string>
     <string name="invite_already_on_halloapp">"Sudah ada di HaloApp"</string>
     <string name="invite_invalid_phone_number">"Nomor telepon tidak valid"</string>
@@ -318,13 +318,13 @@ versi: %2$s
     <string name="failed_create_group">"Gagal membuat grup, coba lagi nanti"</string>
 
     <!-- Shown in options menu to remove a member of group -->
-    <string name="group_remove_member">"Remove from group"</string>
+    <string name="group_remove_member">"Hapus dari grup"</string>
     <string name="group_promote_to_admin">"Promosikan ke admin"</string>
     <string name="promote_admin_in_progress">"Mempromosikan ke admin…"</string>
     <string name="failed_promote_admin">"Gagal mempromosikan ke admin, coba lagi nanti"</string>
 
     <!-- Option for removing a user from the list of admins of a group -->
-    <string name="group_demote_from_admin">"Dismiss as admin"</string>
+    <string name="group_demote_from_admin">"Hentikan sebagai admin"</string>
     <string name="demote_admin_in_progress">"Menurunkan admin…"</string>
     <string name="failed_demote_admin">"Gagal menurunkan admin, coba lagi nanti"</string>
     <string name="remove_member_in_progress">"Menghapus anggota…"</string>
@@ -379,10 +379,10 @@ versi: %2$s
     <plurals name="group_feed_members">
         <item quantity="other">"%d anggota"</item>
     </plurals>
-    <string name="composer_sharing_all_summary">"Share with my contacts"</string>
-    <string name="composer_sharing_except_summary">"Share with some of my contacts"</string>
+    <string name="composer_sharing_all_summary">"Bagikan dengan kontak saya"</string>
+    <string name="composer_sharing_except_summary">"Bagikan dengan sebagian kontak saya"</string>
     <plurals name="composer_sharing_only_summary">
-        <item quantity="other">"Share with %d of my contacts"</item>
+        <item quantity="other">"Bagikan dengan %d dari kontak saya"</item>
     </plurals>
     <string name="post_preview_no_caption">"%s membagikan postingan"</string>
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
@@ -427,7 +427,7 @@ versi: %2$s
     <string name="not_now">"Tidak sekarang"</string>
     <string name="continue_button">"Lanjut"</string>
     <string name="invite_link_load_failed">"Gagal membuka tautan undangan grup"</string>
-    <string name="message_tombstone_placeholder">"Waiting for this message. This may take a while. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
+    <string name="message_tombstone_placeholder">"Menunggu pesan ini. Ini mungkin akan memakan beberapa saat. "<![CDATA[<a href="learn-more">Pelajari lebih lanjut</a>]]>"."</string>
     <string name="failed_no_longer_member">"Kamu bukan lagi anggota grup ini"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -458,7 +458,7 @@ versi: %2$s
     <string name="key_verification_tap_to_scan">"Ketuk untuk memindai"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
+    <string name="key_verification_explanation">"Untuk memverifikasi keamanan koneksi Anda dengan %s, periksa apakah angka di atas sesuai dengan yang ditampilkan pada gawai mereka, atau pindai kode QR pada ponsel mereka. "<![CDATA[<a href="learn-more">Pelajari lebih lanjut</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Lebih banyak"</string>
@@ -562,7 +562,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi"</string>
     <string name="data_available_at">"Data akan tersedia pada %s"</string>
 
     <!-- Shown at top of data request page explaining the process -->
-    <string name="export_data_explanation">"Download a copy of all your user data stored on HalloApp's servers. This does not contain message or post content."</string>
+    <string name="export_data_explanation">"Unduh salinan semua data pengguna Anda yang tersimpan di server HalloApp. Ini tidak mengandung pesan atau konten pos."</string>
 
     <!-- Shown when a request to the server for data export fails -->
     <string name="request_export_data_failed">"Permintaan gagal"</string>
@@ -571,7 +571,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi"</string>
     <string name="export_account_data">"Ekspor data saya"</string>
 
     <!-- Notification shown as if it were the first message in a chat -->
-    <string name="e2e_notice">"All messages on HalloApp are end-to-end encrypted. &lt;b&gt;Tap to learn more&lt;/b&gt;"</string>
+    <string name="e2e_notice">"Semua pesan di HalloApp dienkripsi ujung ke ujung. &lt;b&gt;Ketuk untuk mempelajari lebih lanjut&lt;/b&gt;"</string>
 
     <!-- Shown on buttons for opening up the key verification activity -->
     <string name="view_safety_number">"Lihat nomor keamanan"</string>
@@ -610,7 +610,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi"</string>
     <string name="settings_share_option">"Bagikan HalloApp"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <string name="share_halloapp_text">"Join my real-relationship network on HalloApp. Download for free at halloapp.com/dl"</string>
+    <string name="share_halloapp_text">"Bergabunglah dalam jaringan relasi riil saya di HalloApp. Unduh gratis di halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
     <string name="contact_permissions_request">"Izinkan HalloApp mengakses kontak Anda agar Anda dapat mengirim dan menerima pembaruan"</string>
@@ -649,7 +649,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi."</string>
     <string name="reshare_post">"Bagikan ulang kiriman"</string>
 
     <!-- Button for going to utility for viewing expired posts -->
-    <string name="archived_posts">"Archive"</string>
+    <string name="archived_posts">"Arsip"</string>
 
     <!-- Title of utility for viewing expired posts -->
     <string name="archive">"Arsip"</string>
@@ -673,7 +673,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi."</string>
     <string name="return_to_registration">"Kembali ke pendaftaran"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <string name="archive_empty">"Your posts will appear here after they expire in 30 days"</string>
+    <string name="archive_empty">"Pos Anda akan muncul di sini setelah kedaluwarsa dalam 30 hari"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"Konten tidak didukung"</string>
@@ -817,266 +817,286 @@ Buka layar pengaturan aplikasi untuk mengubah izin aplikasi."</string>
 
     <!-- New comment separator -->
     <plurals name="new_comment_separator">
-        <item quantity="other">"%d new comment"</item>
+        <item quantity="other">"%d komen baru"</item>
     </plurals>
 
     <!-- Title for activity that lets user select who to share with -->
-    <string name="share_with">"Share with…"</string>
+    <string name="share_with">"Bagikan dengan…"</string>
 
     <!-- Title for feed privacy when setting it from a single post -->
-    <string name="setting_feed_privacy_single_post_title">"Who will see this post"</string>
+    <string name="setting_feed_privacy_single_post_title">"Siapa yang akan melihat pos ini"</string>
 
     <!-- Title of section for recent groups -->
-    <string name="recent_groups">"Recent groups"</string>
+    <string name="recent_groups">"Grup terkini"</string>
 
     <!-- Item for creating a new group -->
-    <string name="create_new_group">"Create new group"</string>
+    <string name="create_new_group">"Buat grup baru"</string>
 
     <!-- Shown as a subtitle on the content composer screen when making a post. Tapping will
          allow user to change destination for the post -->
-    <string name="tap_to_change">"Tap to change"</string>
+    <string name="tap_to_change">"Ketuk untuk mengganti"</string>
 
     <!-- Title for bottom sheet that comes up telling a user to invite friends to a group -->
-    <string name="invite_group_zero_zone_title">"Invite a friend to your group"</string>
+    <string name="invite_group_zero_zone_title">"Undang teman ke grup Anda"</string>
 
     <!-- Explanation text for bottom sheet shown telling user to share an invite link to invite friends -->
-    <string name="invite_group_zero_zone_details">"Share this link with friends and they'll automatically join your group."</string>
+    <string name="invite_group_zero_zone_details">"Bagikan tautan ini ke teman-teman Anda dan mereka akan secara otomatis bergabung dalam grup Anda."</string>
 
     <!-- initial group created for the user where %s is replaced with their name. should indicate that it is their group -->
-    <string name="zero_zone_group_name">"%s's group"</string>
+    <string name="zero_zone_group_name">"Grup %s"</string>
 
     <!-- Text shown as subheader for inviting friends section -->
-    <string name="invite_friends_header">"Invite friends"</string>
+    <string name="invite_friends_header">"Undang teman"</string>
 
     <!-- Text shown as preview for invite friends group post -->
-    <string name="invite_friends_post_preview">"Invite a friend to your group"</string>
+    <string name="invite_friends_post_preview">"Undang teman ke grup Anda"</string>
 
     <!-- Title for home post explaining what HalloApp is -->
-    <string name="zero_zone_home_nux_header">"Welcome to HalloApp, a space for real relationships ✨"</string>
+    <string name="zero_zone_home_nux_header">"Selamat datang di HalloApp, sebuah ruang untuk relasi yang riil ✨"</string>
 
     <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
-    <string name="zero_zone_home_nux_text_one">"Use your phone number to connect with friends &amp; family in a space with no ads, no brands, no likes, and no influencers."</string>
+    <string name="zero_zone_home_nux_text_one">"Gunakan nomor telepon Anda untuk terhubung dengan teman &amp; keluarga di sebuah ruang tanpa iklan, tanpa merek, tanpa fitur suka, dan tanpa pemengaruh."</string>
 
     <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
-    <string name="zero_zone_home_nux_text_two">"HalloApp is for you, and those closest to you, in private. Invite your real friends to get started"</string>
+    <string name="zero_zone_home_nux_text_two">"HalloApp adalah untuk Anda, dan mereka yang paling dekat dengan Anda, secara pribadi. Undang teman-teman riil Anda untuk memulai"</string>
 
     <!-- Action for user to start their delete accoount process under 'account' -->
-    <string name="delete_my_account_action">"Delete my account"</string>
+    <string name="delete_my_account_action">"Hapus akun saya"</string>
 
     <!-- Top line before the other delete account bullets. Will explain what deleting your account entails -->
-    <string name="delete_account_explanation_title">"Deleting your account will:"</string>
+    <string name="delete_account_explanation_title">"Menghapus akun Anda akan:"</string>
 
     <!-- First account deletion bullet saying the profile photo will be deleted -->
-    <string name="delete_account_explanation_bullet_one">"• Delete your account information and profile photo"</string>
+    <string name="delete_account_explanation_bullet_one">"• Menghapus informasi akun dan foto profil Anda"</string>
 
     <!-- Second account deletion bullet saying the you will be removed from all group -->
-    <string name="delete_account_explanation_bullet_two">"• Remove you from all HalloApp groups"</string>
+    <string name="delete_account_explanation_bullet_two">"• Menghapus Anda dari semua grup HalloApp"</string>
 
     <!-- Third account deletion bullet explaining message history will be deleted -->
-    <string name="delete_account_explanation_bullet_three">"• Delete your message history on this phone"</string>
+    <string name="delete_account_explanation_bullet_three">"• Menghapus riwayat pesan Anda di ponsel ini"</string>
 
     <!-- Instructions shown above delete account entry -->
-    <string name="delete_account_instructions">"To delete your account, confirm your phone number. This cannot be undone"</string>
+    <string name="delete_account_instructions">"Untuk menghapus akun Anda, konfirmasikan nomor ponsel Anda. Ini tak dapat dibalikkan"</string>
 
     <!-- Progress message while account is deleting -->
-    <string name="delete_account_in_progress">"Deleting your account…"</string>
+    <string name="delete_account_in_progress">"Menghapus akun Anda…"</string>
 
     <!-- Text box hint for optional field for adding feedback for why you are deleting your account -->
-    <string name="delete_account_feedback_hint">"Feedback for HalloApp (Optional)"</string>
+    <string name="delete_account_feedback_hint">"Umpan balik untuk HalloApp (Opsional)"</string>
 
     <!-- Message shown in dialog asking if user is sure they want to delete their account -->
-    <string name="delete_account_confirmation_message">"Are you sure that you want to delete your account? This cannot be undone"</string>
+    <string name="delete_account_confirmation_message">"Anda yakin ingin menghapus akun Anda? Ini tak dapat dibalikkan"</string>
 
     <!-- Title for the screen where we display where your storage is being used -->
-    <string name="storage_usage_title">"Storage usage"</string>
+    <string name="storage_usage_title">"Pemakaian penyimpanan"</string>
 
     <!-- Storage usage section header for home feed category -->
-    <string name="storage_usage_home">"Home feed"</string>
+    <string name="storage_usage_home">"Beranda"</string>
 
     <!-- Storage usage section header for chats category -->
-    <string name="storage_usage_chats">"Chats"</string>
+    <string name="storage_usage_chats">"Chat"</string>
 
     <!-- Storage usage section header for groups category -->
-    <string name="storage_usage_groups">"Groups"</string>
+    <string name="storage_usage_groups">"Grup"</string>
 
     <!-- Storage usage section header for other category -->
-    <string name="storage_usage_internal">"Other"</string>
+    <string name="storage_usage_internal">"Lainnya"</string>
 
     <!-- Storage usage section header for archive category -->
-    <string name="storage_usage_archive">"Archive"</string>
+    <string name="storage_usage_archive">"Arsip"</string>
 
     <!-- Text shown in button for inviting friends -->
-    <string name="invite_action">"Invite"</string>
+    <string name="invite_action">"Undang"</string>
 
     <!-- action where the user shares -->
-    <string name="share_action">"Share"</string>
+    <string name="share_action">"Bagikan"</string>
 
     <!-- Name for notifications that come out as a broadcast from the server -->
-    <string name="broadcast_notifications_channel_name">"Alerts from HalloApp"</string>
+    <string name="broadcast_notifications_channel_name">"Pemberitahuan dari HalloApp"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls -->
-    <string name="voice_call_record_audio_permission_rationale">"To use voice calls we need permission to access the microphone"</string>
+    <string name="voice_call_record_audio_permission_rationale">"Untuk menggunakan panggilan suara, kami memerlukan izin untuk mengakses mikrofon"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls, but it has already been denied. -->
-    <string name="voice_call_record_audio_permission_rationale_denied">"To use voice calls we need permission to access the microphone.
+    <string name="voice_call_record_audio_permission_rationale_denied">"Untuk menggunakan panggilan suara, kami memerlukan izin untuk mengakses mikrofon,
 
-Open the app settings screen to modify app permissions."</string>
+Buka layar pengaturan aplikasi untuk mengubah perizinan aplikasi."</string>
 
     <!-- Name of channel of notifications for receiving calls which is displayed in settings -->
-    <string name="call_notifications_channel_name">"Call notifications"</string>
+    <string name="call_notifications_channel_name">"Notifikasi panggilan"</string>
 
     <!-- Name of channel of notifications for ongoing audio/video calls -->
-    <string name="ongoing_call_notifications_channel_name">"Ongoing Call notifications"</string>
+    <string name="ongoing_call_notifications_channel_name">"Notifikasi Panggilan Berlangsung"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="ringing">"Ringing…"</string>
+    <string name="ringing">"Berdering…"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="calling">"Calling…"</string>
-
-    <!-- The title of the notificaiton for incoming calls -->
-    <string name="incoming_call_notification_title">"Incoming call"</string>
+    <string name="calling">"Memanggil…"</string>
 
     <!-- The call notification accept button label -->
-    <string name="call_accept_button">"Accept"</string>
+    <string name="call_accept_button">"Terima"</string>
 
     <!-- The call notification decline button label -->
-    <string name="call_decline_button">"Decline"</string>
+    <string name="call_decline_button">"Tolak"</string>
 
     <!-- Displayed as title for the Call Screen -->
-    <string name="call_title">"Call"</string>
+    <string name="call_title">"Panggil"</string>
 
     <!-- Displayed in an ongoing notification while the user is in a voice call -->
-    <string name="ongoing_voice_call">"Ongoing voice call"</string>
+    <string name="ongoing_voice_call">"Panggilan suara berlangsung"</string>
 
     <!-- Shown inline in a chat when the user missed an incoming video call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_video_call">"Missed video call at %s"</string>
+    <string name="system_message_missed_video_call">"Panggilan video tak terjawab pada %s"</string>
 
     <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_voice_call">"Missed voice call at %s"</string>
-
-    <!-- Action in menu for calling a user -->
-    <string name="call_action">"Call"</string>
-
-    <!-- Button to unmute -->
-    <string name="unmute">"Unmute"</string>
+    <string name="system_message_missed_voice_call">"Panggilan video tak terjawab pada %s"</string>
 
     <!-- Label for speaker phone button -->
-    <string name="call_speaker_button">"Speaker"</string>
-
-    <!-- Label for button to disable speaker phone -->
-    <string name="call_speaker_off_button">"Speaker off"</string>
+    <string name="call_speaker_button">"Pelantang"</string>
 
     <!-- Label for button to end the call -->
-    <string name="end_call">"End call"</string>
+    <string name="end_call">"Akhiri panggilan"</string>
 
     <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
-    <string name="refresh_contacts_failed">"Failed to refresh contacts"</string>
+    <string name="refresh_contacts_failed">"Gagal menyegarkan kontak"</string>
 
     <!-- Label for voice post option -->
     <string name="voice_post">"Audio"</string>
 
     <!-- Audio post composer title -->
-    <string name="audio_post_compose_title">"New audio post"</string>
+    <string name="audio_post_compose_title">"Pos audio baru"</string>
 
     <!-- Text post hint -->
-    <string name="text_post_compose_hint">"Write a description"</string>
+    <string name="text_post_compose_hint">"Tulis deskripsi"</string>
 
     <!-- Audio post record instruction -->
-    <string name="audio_post_tap_to_record">"Tap to record"</string>
+    <string name="audio_post_tap_to_record">"Ketuk untuk merekam"</string>
 
     <!-- Text shown below the media composer that allows adding more media -->
-    <string name="post_add_more">"Add more"</string>
+    <string name="post_add_more">"Tambahkan lebih banyak"</string>
 
     <!-- Button text allowing user to accept a message not from their contacts. Short if possible -->
-    <string name="accept_message">"Accept message"</string>
+    <string name="accept_message">"Terima pesan"</string>
 
     <!-- Message alerting the user that the person messaging them is not in their address book -->
-    <string name="not_in_address_book_alert">"This person is not in your address book"</string>
-
-    <!-- Text shown in chat view telling user they had a missed call -->
-    <string name="log_missed_call">"Missed voice call"</string>
+    <string name="not_in_address_book_alert">"Orang ini tidak ada dalam buku alamat Anda"</string>
 
     <!-- Text shown in chat view telling user they had a voice call -->
-    <string name="log_voice_call">"Voice call"</string>
+    <string name="log_voice_call">"Panggilan suara"</string>
 
     <!-- Text shown in message preview telling user they had a voice call %s is replaced with the call duration -->
-    <string name="log_voice_call_with_duration">"Voice call (%s)"</string>
+    <string name="log_voice_call_with_duration">"Panggilan suara (%s)"</string>
 
     <!-- Collapsed multiple deleted posts -->
     <plurals name="collapsed_deleted_posts">
-        <item quantity="other">"%d deleted post"</item>
+        <item quantity="other">"%d pos terhapus"</item>
     </plurals>
 
     <!-- Collapsed multiple add user posts -->
     <plurals name="collapsed_added_user_posts">
-        <item quantity="other">"%d person was added"</item>
+        <item quantity="other">"%d orang telah ditambahkan"</item>
     </plurals>
 
     <!-- Collapsed multiple remove user posts -->
     <plurals name="collapsed_removed_user_posts">
-        <item quantity="other">"%d person was removed"</item>
+        <item quantity="other">"%d orang telah dihapus"</item>
     </plurals>
 
     <!-- Collapsed multiple user left posts -->
     <plurals name="collapsed_user_left_posts">
-        <item quantity="other">"%d person left"</item>
+        <item quantity="other">"%d orang keluar"</item>
     </plurals>
 
     <!-- Collapsed multiple user joined posts -->
     <plurals name="collapsed_user_joined_posts">
-        <item quantity="other">"%d person joined"</item>
+        <item quantity="other">"%d orang bergabung"</item>
     </plurals>
 
     <!-- Action to stop recording -->
     <string name="stop_recording">"Stop"</string>
 
     <!-- Confirmation dialog asking if user is sure they want to discard their recorded audio -->
-    <string name="post_audio_draft_discard_confirmation">"Are you sure you want to discard your recorded audio?"</string>
+    <string name="post_audio_draft_discard_confirmation">"Anda yakin ingin membuang audio terekam Anda?"</string>
 
     <!-- Keep relatively short (try to fit on one line), shows at top of screen. User can tap to return to current ongoing call -->
-    <string name="tap_to_return_to_call">"Tap to return to call"</string>
+    <string name="tap_to_return_to_call">"Ketuk untuk kembali ke panggilan"</string>
 
     <!-- Displayed on the call screen to show that the call is connecting -->
-    <string name="connecting">"Connecting…"</string>
+    <string name="connecting">"Menghubungkan…"</string>
 
     <!-- Text in fab for post action -->
-    <string name="post_fab_label">"Post"</string>
+    <string name="post_fab_label">"Pos"</string>
 
     <!-- Text in fab for new group action -->
-    <string name="new_group_fab_label">"New group"</string>
+    <string name="new_group_fab_label">"Grup baru"</string>
 
     <!-- Text in fab for chat action -->
-    <string name="compose_fab_label">"Compose"</string>
+    <string name="compose_fab_label">"Tulis"</string>
 
     <!-- Label on selected destinations when sharing from another app -->
-    <string name="share_with_label">"Share with"</string>
+    <string name="share_with_label">"Bagikan dengan"</string>
 
     <!-- Title of section for your groups -->
-    <string name="your_groups">"Your groups"</string>
+    <string name="your_groups">"Grup Anda"</string>
 
     <!-- Title of section for recent contacts -->
-    <string name="recent_contacts">"Recent contacts"</string>
+    <string name="recent_contacts">"Kontak terkini"</string>
 
     <!-- Label for button to see all rows -->
-    <string name="see_all">"See all"</string>
+    <string name="see_all">"Lihat semua"</string>
 
     <!-- Rationale for when requesting microphone permission for voice posts -->
-    <string name="voice_post_record_audio_permission_rationale">"To record audio posts we need permission to access the microphone"</string>
+    <string name="voice_post_record_audio_permission_rationale">"Untuk merekam pos audio, kami memerlukan izin untuk mengakses mikrofon"</string>
 
     <!-- Rationale for when requesting microphone permission for voice posts, but it has already been denied. -->
-    <string name="voice_post_record_audio_permission_rationale_denied">"To record audio posts we need permission to access the microphone.
+    <string name="voice_post_record_audio_permission_rationale_denied">"Untuk merekam pos audio, kami memerlukan izin untuk mengakses mikrofon.
 
-Open the app settings screen to modify app permissions."</string>
+Buka layar pengaturan aplikasi untuk mengubah perizinan aplikasi."</string>
 
     <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
-    <string name="unable_to_start_call">"Unable to start call."</string>
+    <string name="unable_to_start_call">"Tak dapat memulai panggilan."</string>
 
     <!-- Text shown in chat view telling user they had a missed video call -->
-    <string name="log_missed_video_call">"Missed video call"</string>
+    <string name="log_missed_video_call">"Panggilan video tak terjawab"</string>
 
     <!-- Button for sharing a post outside of HalloApp -->
-    <string name="share_externally">"Share externally"</string>
+    <string name="share_externally">"Bagikan secara eksternal"</string>
+
+    <!-- Audio post, title/label for an audio post -->
+    <string name="audio_post">"Audio post"</string>
+
+    <!-- Preview text for audio post with duration %s is replaced with the length of the audio post, e.g. "Audio post (0:30)" -->
+    <string name="audio_post_preview">"Audio post (%s)"</string>
+
+    <!-- Text shown in chat view telling user they had a missed audio call -->
+    <string name="log_missed_voice_call">"Missed voice call"</string>
+
+    <!-- Text shown in chat view telling user they had a video call -->
+    <string name="log_video_call">"Video call"</string>
+
+    <!-- Text shown in message preview telling user they had a video call %s is replaced with the call duration -->
+    <string name="log_video_call_with_duration">"Video call (%s)"</string>
+
+    <!-- Rationale for when requesting microphone and camera permission for video calls -->
+    <string name="voice_call_record_video_permission_rationale">"To use video calls we need permission to access the microphone and camera"</string>
+
+    <!-- The title of the notification for incoming voice calls -->
+    <string name="incoming_voice_call_notification_title">"Incoming voice call"</string>
+
+    <!-- The title of the notification for incoming video calls -->
+    <string name="incoming_video_call_notification_title">"Incoming video call"</string>
+
+    <!-- Action in menu for voice calling a user -->
+    <string name="call_action_voice">"Voice call"</string>
+
+    <!-- Action in menu for video calling a user -->
+    <string name="call_action_video">"Video call"</string>
+    <string name="incoming_call_notification_title">"Incoming call"</string>
+    <string name="call_action">"Call"</string>
+    <string name="unmute">"Unmute"</string>
+    <string name="call_speaker_off_button">"Speaker off"</string>
+    <string name="log_missed_call">"Missed voice call"</string>
     <string name="composer_sharing_post">"Berbagi dengan %s"</string>
     <string name="composer_sharing_group_post">"Sharing with group"</string>
     <string name="invite_via_link">"Invite via link"</string>

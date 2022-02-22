@@ -101,7 +101,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="reply_to_contact">"%s antworten"</string>
     <string name="reply_original_not_found">"Originalnachricht nicht gefunden"</string>
     <string name="reply_original_post_not_found">"Originalbeitrag nicht gefunden"</string>
-    <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; hat dich im Beitrag erwähnt"</string>
+    <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; hat dich in einem Beitrag erwähnt"</string>
     <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; hat dich im Kommentar zu deinem Beitrag erwähnt"</string>
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; hat dich in einem Kommentar zum Beitrag erwähnt"</string>
 
@@ -287,10 +287,10 @@ Version: %2$s
     <string name="unblock_user_confirmation">"Möchtest du %s entblocken?"</string>
 
     <!-- to keep it gender neutral I would prefer to use "person" instead of "user". Would that be ok? -->
-    <string name="menu_item_block_user">"Kontakt blocken"</string>
+    <string name="menu_item_block_user">"Person blocken"</string>
 
     <!-- to keep it gender neutral I would prefer to use "person" instead of "user". Would that be ok? -->
-    <string name="picker_title_block_user">"Kontakt blocken"</string>
+    <string name="picker_title_block_user">"Person blocken"</string>
     <string name="cancel">"Abbrechen"</string>
     <string name="group_subtitle">"Für Gruppen-Info hier tippen"</string>
     <string name="empty_block_list">"Keine geblockten Kontakte"</string>
@@ -1024,9 +1024,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Displayed on the call screen to show what state the call is in -->
     <string name="calling">"Ausgehender Anruf…"</string>
 
-    <!-- The title of the notificaiton for incoming calls -->
-    <string name="incoming_call_notification_title">"Eingehender Anruf"</string>
-
     <!-- The call notification accept button label -->
     <string name="call_accept_button">"Annehmen"</string>
 
@@ -1045,17 +1042,8 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
     <string name="system_message_missed_voice_call">"Verpasster Sprachanruf um %s"</string>
 
-    <!-- Action in menu for calling a user -->
-    <string name="call_action">"Anrufen"</string>
-
-    <!-- Button to unmute -->
-    <string name="unmute">"Stumm aus"</string>
-
     <!-- Label for speaker phone button -->
     <string name="call_speaker_button">"Lautsprecher"</string>
-
-    <!-- Label for button to disable speaker phone -->
-    <string name="call_speaker_off_button">"Lautsprecher aus"</string>
 
     <!-- Label for button to end the call -->
     <string name="end_call">"Anruf beenden"</string>
@@ -1083,9 +1071,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Message alerting the user that the person messaging them is not in their address book -->
     <string name="not_in_address_book_alert">"Diese Person ist nicht in deinen Kontakten"</string>
-
-    <!-- Text shown in chat view telling user they had a missed call -->
-    <string name="log_missed_call">"Verpasster Sprachanruf"</string>
 
     <!-- Text shown in chat view telling user they had a voice call -->
     <string name="log_voice_call">"Sprachanruf"</string>
@@ -1172,6 +1157,41 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Button for sharing a post outside of HalloApp -->
     <string name="share_externally">"Außerhalb von HalloApp teilen"</string>
+
+    <!-- Audio post, title/label for an audio post -->
+    <string name="audio_post">"Audiobeitrag"</string>
+
+    <!-- Preview text for audio post with duration %s is replaced with the length of the audio post, e.g. "Audio post (0:30)" -->
+    <string name="audio_post_preview">"Audiobeitrag (%s)"</string>
+
+    <!-- Text shown in chat view telling user they had a missed audio call -->
+    <string name="log_missed_voice_call">"Verpasster Sprachanruf"</string>
+
+    <!-- Text shown in chat view telling user they had a video call -->
+    <string name="log_video_call">"Videoanruf"</string>
+
+    <!-- Text shown in message preview telling user they had a video call %s is replaced with the call duration -->
+    <string name="log_video_call_with_duration">"Videoanruf (%s)"</string>
+
+    <!-- Rationale for when requesting microphone and camera permission for video calls -->
+    <string name="voice_call_record_video_permission_rationale">"Für Videoanrufe benötigen wir deine Erlaubnis, um auf das Mikrofon und die Kamera zugreifen zu können"</string>
+
+    <!-- The title of the notification for incoming voice calls -->
+    <string name="incoming_voice_call_notification_title">"Eingehender Sprachanruf"</string>
+
+    <!-- The title of the notification for incoming video calls -->
+    <string name="incoming_video_call_notification_title">"Eingehender Videoanruf"</string>
+
+    <!-- Action in menu for voice calling a user -->
+    <string name="call_action_voice">"Sprachanruf"</string>
+
+    <!-- Action in menu for video calling a user -->
+    <string name="call_action_video">"Videoanruf"</string>
+    <string name="incoming_call_notification_title">"Eingehender Anruf"</string>
+    <string name="call_action">"Anrufen"</string>
+    <string name="unmute">"Stumm aus"</string>
+    <string name="call_speaker_off_button">"Lautsprecher aus"</string>
+    <string name="log_missed_call">"Verpasster Sprachanruf"</string>
     <string name="composer_sharing_post">"Wird mit %s geteilt"</string>
     <string name="composer_sharing_group_post">"Mit der Gruppe teilen"</string>
     <string name="invite_via_link">"Per Link einladen"</string>

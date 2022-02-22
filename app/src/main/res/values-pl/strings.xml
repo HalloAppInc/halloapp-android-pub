@@ -58,10 +58,10 @@ Obowiązują opłaty operatora sieci."</string>
     <string name="share_option_post">"Post"</string>
     <string name="share_option_message">"Wiadomość"</string>
     <plurals name="max_post_media_items">
-        <item quantity="one">"Możesz wybrać najwyżej %d liczbę multimediów na post"</item>
-        <item quantity="few">"Możesz wybrać do %d multimediów na post"</item>
-        <item quantity="many">"Możesz wybrać najwyżej %d liczbę multimediów na post"</item>
-        <item quantity="other">"Możesz wybrać do %d multimediów na post"</item>
+        <item quantity="one">"Można wybrać maksymalnie %d element multimedialny dla jednego wpisu"</item>
+        <item quantity="few">"Można wybrać maksymalnie %d elementy multimedialne dla jednego wpisu"</item>
+        <item quantity="many">"Można wybrać maksymalnie %d elementów multimedialnych dla jednego wpisu"</item>
+        <item quantity="other">"Można wybrać maksymalnie %d elementów multimedialnych dla jednego wpisu"</item>
     </plurals>
     <string name="camera_record_audio_permission_rationale">"Aby możliwe było robienie zdjęć i nagrywanie filmów, potrzebujemy zgody na dostęp do aparatu i nagrywania dźwięku na urządzeniu"</string>
     <string name="camera_record_audio_permission_rationale_denied">"Aby możliwe było robienie zdjęć i nagrywanie filmów, potrzebujemy zgody na dostęp do aparatu i nagrywania dźwięku na urządzeniu.
@@ -108,14 +108,14 @@ Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
     <plurals name="contact_selection_subtitle">
         <item quantity="one">"Wybrano %d kontakt"</item>
         <item quantity="few">"Wybrano %d kontakty"</item>
-        <item quantity="many">"Wybrano %d kontakt"</item>
+        <item quantity="many">"Wybrano %d kontaktów"</item>
         <item quantity="other">"Wybrano %d kontaktów"</item>
     </plurals>
     <plurals name="contact_maximum_selection">
-        <item quantity="one">"Możesz wybrać maksymalnie %d kontakt"</item>
-        <item quantity="few">"Możesz wybrać maksymalnie %d kontakty"</item>
-        <item quantity="many">"Możesz wybrać maksymalnie %d kontakt"</item>
-        <item quantity="other">"Możesz wybrać maksymalnie %d kontaktów"</item>
+        <item quantity="one">"Można wybrać maksymalnie %d kontakt"</item>
+        <item quantity="few">"Można wybrać maksymalnie %d kontakty"</item>
+        <item quantity="many">"Można wybrać maksymalnie %d kontaktów"</item>
+        <item quantity="other">"Można wybrać maksymalnie %d kontaktów"</item>
     </plurals>
     <string name="no_contacts_selected_subtitle">"Nie wybrano żadnych kontaktów"</string>
     <string name="help">"Pomoc"</string>
@@ -126,7 +126,7 @@ Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
     <string name="no_photos_or_videos_found">"Nie znaleziono żadnych zdjęć ani filmów"</string>
     <string name="gallery">"Galeria"</string>
     <string name="avatar_picker_title">"Zdjęcie profilowe"</string>
-    <string name="group_avatar_picker_title">"Group icon"</string>
+    <string name="group_avatar_picker_title">"Ikona grupy"</string>
     <string name="other_media">"Inne multimedia"</string>
     <string name="rotate">"Obróć"</string>
     <string name="seen_by">"Wyświetlony przez"</string>
@@ -143,43 +143,43 @@ Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
     <string name="action_discard">"Odrzuć"</string>
     <string name="new_post_notification">"Nowy post użytkownika %s"</string>
     <plurals name="new_posts_notification">
-        <item quantity="one">"%1$d nowy post użytkownika %2$s"</item>
-        <item quantity="few">"%1$d nowe posty użytkownika %2$s"</item>
-        <item quantity="many">"%1$d nowy post użytkownika %2$s"</item>
-        <item quantity="other">"%1$d nowych postów użytkownika %2$s"</item>
+        <item quantity="one">"%1$d nowy wpis od: %2$s"</item>
+        <item quantity="few">"%1$d nowe wpisy od: %2$s"</item>
+        <item quantity="many">"%1$d nowych wpisów od: %2$s"</item>
+        <item quantity="other">"%1$d nowych wpisów od: %2$s"</item>
     </plurals>
     <plurals name="new_messages_notification">
-        <item quantity="one">"%1$d wiadomość od %2$s"</item>
-        <item quantity="few">"%1$d wiadomości od %2$s"</item>
-        <item quantity="many">"%1$d wiadomość od %2$s"</item>
-        <item quantity="other">"%1$d wiadomości od %2$s"</item>
+        <item quantity="one">"%1$d wiadomość od: %2$s"</item>
+        <item quantity="few">"%1$d wiadomości od: %2$s"</item>
+        <item quantity="many">"%1$d wiadomości od: %2$s"</item>
+        <item quantity="other">"%1$d wiadomości od: %2$s"</item>
     </plurals>
     <plurals name="new_messages_separator">
         <item quantity="one">"%d nowa wiadomość"</item>
         <item quantity="few">"%d nowe wiadomości"</item>
-        <item quantity="many">"%d nowa wiadomość"</item>
+        <item quantity="many">"%d nowych wiadomości"</item>
         <item quantity="other">"%d nowych wiadomości"</item>
     </plurals>
     <plurals name="new_comments_notification">
-        <item quantity="one">"Użytkownik %s skomentował twój post"</item>
-        <item quantity="few">"Użytkownicy %s skomentowali twój post"</item>
-        <item quantity="many">"Użytkownik %s skomentował twój post"</item>
-        <item quantity="other">"Użytkownicy %s skomentowali twój post"</item>
+        <item quantity="one">"%s osoba skomentowała Twój wpis"</item>
+        <item quantity="few">"%s osoby skomentowały Twój wpis"</item>
+        <item quantity="many">"%s osób skomentowało Twój wpis"</item>
+        <item quantity="other">"%s osób skomentowało Twój wpis"</item>
     </plurals>
     <plurals name="new_comments_on_multiple_posts_notification">
-        <item quantity="one">"Użytkownik %s skomentował twoje posty"</item>
-        <item quantity="few">"Użytkownicy %s skomentowali twoje posty"</item>
-        <item quantity="many">"Użytkownik %s skomentował twoje posty"</item>
-        <item quantity="other">"Użytkownicy %s skomentowali twoje posty"</item>
+        <item quantity="one">"%s osoba skomentowała Twoje wpisy"</item>
+        <item quantity="few">"%s osoby skomentowały Twoje wpisy"</item>
+        <item quantity="many">"%s osób skomentowało Twoje wpisy"</item>
+        <item quantity="other">"%s osób skomentowało Twoje wpisy"</item>
     </plurals>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"Aplikacja HalloApp utraciła ważność"</string>
     <string name="notification_app_expiration_body">"Prosimy pobrać najnowszą wersję"</string>
     <plurals name="notification_app_expiration_days_left_title">
-        <item quantity="one">"HalloApp utraci ważność za %d dzień"</item>
-        <item quantity="few">"HalloApp utraci ważność za %d dni"</item>
-        <item quantity="many">"HalloApp utraci ważność za %d dzień"</item>
-        <item quantity="other">"HalloApp utraci ważność za %d dni"</item>
+        <item quantity="one">"HalloApp wygaśnie za %d dzień"</item>
+        <item quantity="few">"HalloApp wygaśnie za %d dni"</item>
+        <item quantity="many">"HalloApp wygaśnie za %d dni"</item>
+        <item quantity="other">"HalloApp wygaśnie za %d dni"</item>
     </plurals>
     <string name="app_expiration_download_button">"Pobierz aktualizację"</string>
     <string name="app_expired_explanation">"Ta wersja HalloApp jest zbyt stara, przez co nie można już z niej korzystać. Przejdź do Sklepu Google Play i pobierz najnowszą wersję."</string>
@@ -194,15 +194,15 @@ Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
     <string name="retract_post_confirmation">"Czy chcesz usunąć swój post?"</string>
     <string name="retract_comment_confirmation">"Czy chcesz usunąć swój komentarz?"</string>
     <plurals name="delete_chats_confirmation">
-        <item quantity="one">"Czy chcesz usunąć tę rozmowę?"</item>
-        <item quantity="few">"Czy chcesz usunąć %d wybrane rozmowy?"</item>
-        <item quantity="many">"Czy chcesz usunąć tę rozmowę?"</item>
-        <item quantity="other">"Czy chcesz usunąć %d wybranych rozmów?"</item>
+        <item quantity="one">"Czy chcesz usunąć ten czat?"</item>
+        <item quantity="few">"Czy chcesz usunąć %d wybrane czaty?"</item>
+        <item quantity="many">"Czy chcesz usunąć %d wybranych czatów?"</item>
+        <item quantity="other">"Czy chcesz usunąć %d wybranych czatów?"</item>
     </plurals>
     <plurals name="delete_groups_confirmation">
         <item quantity="one">"Czy chcesz usunąć tę grupę?"</item>
         <item quantity="few">"Czy chcesz usunąć %d wybrane grupy?"</item>
-        <item quantity="many">"Czy chcesz usunąć tę grupę?"</item>
+        <item quantity="many">"Czy chcesz usunąć %d wybranych grup?"</item>
         <item quantity="other">"Czy chcesz usunąć %d wybranych grup?"</item>
     </plurals>
     <string name="delete_chat_confirmation">"Czy chcesz usunąć tę rozmowę?"</string>
@@ -216,10 +216,10 @@ Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
     <string name="login_failed">"Logowanie nie powiodło się"</string>
     <string name="login_failed_explanation">"Zweryfikuj ponownie swój numer telefonu"</string>
     <plurals name="app_expiration_days_left">
-        <item quantity="one">"Ta wersja HalloApp wygaśnie za %d dzień. Przejdź do Sklepu Google Play i pobierz najnowszą wersję."</item>
-        <item quantity="few">"Ta wersja HalloApp wygaśnie za %d dni. Przejdź do Sklepu Google Play i pobierz najnowszą wersję."</item>
-        <item quantity="many">"Ta wersja HalloApp wygaśnie za %d dzień. Przejdź do Sklepu Google Play i pobierz najnowszą wersję."</item>
-        <item quantity="other">"Ta wersja HalloApp wygaśnie za %d dni. Przejdź do Sklepu Google Play i pobierz najnowszą wersję."</item>
+        <item quantity="one">"Ta wersja HalloApp wygaśnie za %d dzień. Prosimy przejść do Sklepu Google Play i pobrać najnowszą wersję."</item>
+        <item quantity="few">"Ta wersja HalloApp wygaśnie za %d dni. Prosimy przejść do Sklepu Google Play i pobrać najnowszą wersję."</item>
+        <item quantity="many">"Ta wersja HalloApp wygaśnie za %d dni. Prosimy przejść do Sklepu Google Play i pobrać najnowszą wersję."</item>
+        <item quantity="other">"Ta wersja HalloApp wygaśnie za %d dni. Prosimy przejść do Sklepu Google Play i pobrać najnowszą wersję."</item>
     </plurals>
     <string name="could_not_set_avatar">"Spróbuj inne zdjęcie"</string>
     <string name="pick_media">"Wybierz multimedia"</string>
@@ -289,8 +289,8 @@ wersja: %2$s
     <string name="system_message_member_auto_promoted_you">"Automatycznie nadano ci rolę administratora"</string>
     <string name="system_message_group_name_changed">"Użytkownik %1$s zmienił nazwę grupy na %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"Zmieniono nazwę grupy na %s"</string>
-    <string name="system_message_group_avatar_changed">"%s changed the group icon"</string>
-    <string name="system_message_group_avatar_changed_by_you">"You changed the group icon"</string>
+    <string name="system_message_group_avatar_changed">"Użytkownik %s zmienił ikonę grupy"</string>
+    <string name="system_message_group_avatar_changed_by_you">"Ikona grupy została przez Ciebie zmieniona"</string>
     <string name="system_message_group_deleted">"Użytkownik %s usunął grupę"</string>
     <string name="system_message_group_deleted_by_you">"Usunięto grupę"</string>
     <string name="system_post_group_created">"Grupa została utworzona przez użytkownika %s"</string>
@@ -309,8 +309,8 @@ wersja: %2$s
     <string name="system_post_member_auto_promoted_you">"Automatycznie nadano ci rolę administratora"</string>
     <string name="system_post_group_name_changed">"Użytkownik %1$s zmienił nazwę grupy na %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"Zmieniono nazwę grupy na %s"</string>
-    <string name="system_post_group_avatar_changed">"%s changed the group icon"</string>
-    <string name="system_post_group_avatar_changed_by_you">"You changed the group icon"</string>
+    <string name="system_post_group_avatar_changed">"Użytkownik %s zmienił ikonę grupy"</string>
+    <string name="system_post_group_avatar_changed_by_you">"Ikona grupy została przez Ciebie zmieniona"</string>
     <string name="system_post_group_deleted">"Użytkownik %s usunął grupę"</string>
     <string name="system_post_group_deleted_by_you">"Usunięto grupę"</string>
     <string name="group_info_title">"Informacje o grupie"</string>
@@ -333,10 +333,10 @@ wersja: %2$s
     <string name="invite_creation_in_progress">"Tworzenie zaproszenia…"</string>
     <string name="invite_info_fetch_internet">"Niepowodzenie przy pobieraniu informacji o zaproszeniu, sprawdź połączenie z Internetem i spróbuj ponownie"</string>
     <plurals name="invites_remaining">
-        <item quantity="one">"Pozostało ci %s zaproszenie w tym tygodniu"</item>
-        <item quantity="few">"Pozostały ci %s zaproszenia w tym tygodniu"</item>
-        <item quantity="many">"Pozostało ci %s zaproszenie w tym tygodniu"</item>
-        <item quantity="other">"Pozostało ci %s zaproszeń w tym tygodniu"</item>
+        <item quantity="one">"W tym tygodniu pozostało Ci %s zaproszenie"</item>
+        <item quantity="few">"W tym tygodniu pozostały Ci %s zaproszenia"</item>
+        <item quantity="many">"W tym tygodniu pozostało Ci %s zaproszeń"</item>
+        <item quantity="other">"W tym tygodniu pozostało Ci %s zaproszeń"</item>
     </plurals>
     <string name="invite_friends_title">"Zaproś znajomych i rodzinę"</string>
     <string name="invite_title">"Zaproś znajomych"</string>
@@ -372,34 +372,34 @@ wersja: %2$s
     <plurals name="leave_group_plural">
         <item quantity="one">"Opuść grupę"</item>
         <item quantity="few">"Opuść grupy"</item>
-        <item quantity="many">"Opuść grupę"</item>
-        <item quantity="other">"Opuść grupy"</item>
+        <item quantity="many">"Opuść grup"</item>
+        <item quantity="other">"Opuść grup"</item>
     </plurals>
     <string name="leave_group_confirmation">"Czy chcesz opuścić tę grupę?"</string>
     <plurals name="leave_multiple_groups_confirmation">
         <item quantity="one">"Czy chcesz opuścić tę grupę?"</item>
         <item quantity="few">"Czy chcesz opuścić %d wybrane grupy?"</item>
-        <item quantity="many">"Czy chcesz opuścić tę grupę?"</item>
+        <item quantity="many">"Czy chcesz opuścić %d wybranych grup?"</item>
         <item quantity="other">"Czy chcesz opuścić %d wybranych grup?"</item>
     </plurals>
     <string name="leave_group_in_progress">"Opuszczanie grupy…"</string>
     <plurals name="leave_groups_progress">
         <item quantity="one">"Opuszczanie grupy…"</item>
         <item quantity="few">"Opuszczanie grup…"</item>
-        <item quantity="many">"Opuszczanie grupy…"</item>
+        <item quantity="many">"Opuszczanie grup…"</item>
         <item quantity="other">"Opuszczanie grup…"</item>
     </plurals>
     <string name="failed_leave_group">"Niepowodzenie przy opuszczaniu grupy, spróbuj ponownie później"</string>
     <plurals name="friends_on_halloapp">
         <item quantity="one">"%d kontakt na HalloApp"</item>
         <item quantity="few">"%d kontakty na HalloApp"</item>
-        <item quantity="many">"%d kontakt na HalloApp"</item>
+        <item quantity="many">"%d kontaktów na HalloApp"</item>
         <item quantity="other">"%d kontaktów na HalloApp"</item>
     </plurals>
     <plurals name="settings_block_list_summary">
         <item quantity="one">"%d kontakt"</item>
         <item quantity="few">"%d kontakty"</item>
-        <item quantity="many">"%d kontakt"</item>
+        <item quantity="many">"%d kontaktów"</item>
         <item quantity="other">"%d kontaktów"</item>
     </plurals>
     <string name="settings_block_list_none_summary">"Brak"</string>
@@ -407,13 +407,13 @@ wersja: %2$s
     <plurals name="settings_feed_excluded_summary">
         <item quantity="one">"Wykluczono %d kontakt"</item>
         <item quantity="few">"Wykluczono %d kontakty"</item>
-        <item quantity="many">"Wykluczono %d kontakt"</item>
+        <item quantity="many">"Wykluczono %d kontaktów"</item>
         <item quantity="other">"Wykluczono %d kontaktów"</item>
     </plurals>
     <plurals name="settings_feed_selected">
         <item quantity="one">"Wybrano %d kontakt"</item>
         <item quantity="few">"Wybrano %d kontakty"</item>
-        <item quantity="many">"Wybrano %d kontakt"</item>
+        <item quantity="many">"Wybrano %d kontaktów"</item>
         <item quantity="other">"Wybrano %d kontaktów"</item>
     </plurals>
     <string name="settings_feed_selected_empty">"Brak wybranych kontaktów"</string>
@@ -439,25 +439,25 @@ wersja: %2$s
     <plurals name="group_feed_members">
         <item quantity="one">"%d członek"</item>
         <item quantity="few">"%d członków"</item>
-        <item quantity="many">"%d członek"</item>
+        <item quantity="many">"%d członków"</item>
         <item quantity="other">"%d członków"</item>
     </plurals>
-    <string name="composer_sharing_all_summary">"Share with my contacts"</string>
-    <string name="composer_sharing_except_summary">"Share with some of my contacts"</string>
+    <string name="composer_sharing_all_summary">"Udostępnij moim kontaktom"</string>
+    <string name="composer_sharing_except_summary">"Udostępnij części moich kontaktów"</string>
     <plurals name="composer_sharing_only_summary">
-        <item quantity="one">"Share with %d of my contacts"</item>
-        <item quantity="few">"Share with %d of my contacts"</item>
-        <item quantity="many">"Share with %d of my contacts"</item>
-        <item quantity="other">"Share with %d of my contacts"</item>
+        <item quantity="one">"Udostępnij %d mojemu kontaktowi"</item>
+        <item quantity="few">"Udostępnij %d moim kontaktom"</item>
+        <item quantity="many">"Udostępnij %d moim kontaktom"</item>
+        <item quantity="other">"Udostępnij %d moim kontaktom"</item>
     </plurals>
     <string name="post_preview_no_caption">"Użytkownik %s udostępnił post"</string>
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
     <string name="composer_sharing_message">"Wysyłanie do %s"</string>
     <plurals name="max_video_length">
-        <item quantity="one">"Twój film ma ponad %d sekundę. Edytuj go lub wybierz inny."</item>
-        <item quantity="few">"Twój film ma ponad %d sekundy. Edytuj go lub wybierz inny."</item>
-        <item quantity="many">"Twój film ma ponad %d sekundę. Edytuj go lub wybierz inny."</item>
-        <item quantity="other">"Twój film ma ponad %d sekund. Edytuj go lub wybierz inny."</item>
+        <item quantity="one">"Twój film ma ponad %d sekundę długości. Prosimy dokonać jego edycji lub wybrać inne nagranie."</item>
+        <item quantity="few">"Twój film ma ponad %d sekundy długości. Prosimy dokonać jego edycji lub wybrać inne nagranie."</item>
+        <item quantity="many">"Twój film ma ponad %d sekund długości. Prosimy dokonać jego edycji lub wybrać inne nagranie."</item>
+        <item quantity="other">"Twój film ma ponad %d sekundy długości. Prosimy dokonać jego edycji lub wybrać inne nagranie."</item>
     </plurals>
     <string name="mute">"Wycisz"</string>
     <string name="share_link">"Udostępnij łącze"</string>
@@ -567,7 +567,7 @@ Aby korzystać z HalloApp, zwolnij miejsce na telefonie."</string>
     <plurals name="seen_by_people">
         <item quantity="one">"Wyświetlone przez %d osobę"</item>
         <item quantity="few">"Wyświetlone przez %d osoby"</item>
-        <item quantity="many">"Wyświetlone przez %d osobę"</item>
+        <item quantity="many">"Wyświetlone przez %d osób"</item>
         <item quantity="other">"Wyświetlone przez %d osób"</item>
     </plurals>
 
@@ -709,18 +709,18 @@ Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
 
     <!-- Activity center item when non-contacts comment on your post -->
     <plurals name="commented_on_your_post_grouped">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; inny użytkownik zostawił komentarz pod twoim postem"</item>
-        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt; innych użytkowników zostawiło komentarz pod twoim postem"</item>
-        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt; inny użytkownik zostawił komentarz pod twoim postem"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; innych użytkowników zostawiło komentarz pod twoim postem"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; osoba spoza kontaktów skomentowała Twój wpis"</item>
+        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt; osoby spoza kontaktów skomentowały Twój wpis"</item>
+        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt; osób spoza kontaktów skomentowało Twój wpis"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; osób spoza kontaktów skomentowało Twój wpis"</item>
     </plurals>
 
     <!-- Activity center item when non-contacts comment on someones post -->
     <plurals name="commented_on_someones_post_grouped">
-        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; inny użytkownik zostawił komentarz pod postem użytkownika &lt;b&gt;%2$s&lt;/b&gt;"</item>
-        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt; innych użytkowników zostawiło komentarz pod postem użytkownika &lt;b&gt;%2$s&lt;/b&gt;"</item>
-        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt; inny użytkownik zostawił komentarz pod postem użytkownika &lt;b&gt;%2$s&lt;/b&gt;"</item>
-        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; innych użytkowników zostawiło komentarz pod postem użytkownika &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="one">"&lt;b&gt;%1$s&lt;/b&gt; osoba spoza kontaktów skomentowała wpis użytkownika &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="few">"&lt;b&gt;%1$s&lt;/b&gt; osoby spoza kontaktów skomentowały wpis użytkownika &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="many">"&lt;b&gt;%1$s&lt;/b&gt; osób spoza kontaktów skomentowało wpis użytkownika &lt;b&gt;%2$s&lt;/b&gt;"</item>
+        <item quantity="other">"&lt;b&gt;%1$s&lt;/b&gt; osób spoza kontaktów skomentowało wpis użytkownika &lt;b&gt;%2$s&lt;/b&gt;"</item>
     </plurals>
 
     <!-- Button for user to re-share old posts which have expired -->
@@ -833,19 +833,19 @@ Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
     <!-- Activity center item when non-contacts comment on your post %1$s is the first person name
          %2$s is the number of other people -->
     <plurals name="commented_on_your_post_grouped_with_others">
-        <item quantity="one">"Użytkownik &lt;b&gt;%1$s&lt;/b&gt; i &lt;b&gt;%2$s&lt;/b&gt; osoba więcej zostawili komentarz pod twoim postem"</item>
-        <item quantity="few">"Użytkownik &lt;b&gt;%1$s&lt;/b&gt; i &lt;b&gt;%2$s&lt;/b&gt; innych zostawiło komentarz pod twoim postem"</item>
-        <item quantity="many">"Użytkownik &lt;b&gt;%1$s&lt;/b&gt; i &lt;b&gt;%2$s&lt;/b&gt; osoba więcej zostawili komentarz pod twoim postem"</item>
-        <item quantity="other">"Użytkownik &lt;b&gt;%1$s&lt;/b&gt; i &lt;b&gt;%2$s&lt;/b&gt; innych zostawiło komentarz pod twoim postem"</item>
+        <item quantity="one">"Twój wpis został skomentowany przez: &lt;b&gt;%1$s&lt;/b&gt; i &lt;b&gt;%2$s&lt;/b&gt; osobę spoza kontaktów"</item>
+        <item quantity="few">"Twój wpis został skomentowany przez: &lt;b&gt;%1$s&lt;/b&gt; i &lt;b&gt;%2$s&lt;/b&gt; osoby spoza kontaktów"</item>
+        <item quantity="many">"Twój wpis został skomentowany przez: &lt;b&gt;%1$s&lt;/b&gt; i &lt;b&gt;%2$s&lt;/b&gt; osób spoza kontaktów"</item>
+        <item quantity="other">"Twój wpis został skomentowany przez: &lt;b&gt;%1$s&lt;/b&gt; i &lt;b&gt;%2$s&lt;/b&gt; osób spoza kontaktów"</item>
     </plurals>
 
     <!-- Activity center item when non-contacts comment on someones post %1$s is the first person name
          %2$s is the number of other people, %3$s is the post author's name -->
     <plurals name="commented_on_someones_post_grouped_with_others">
-        <item quantity="one">"Użytkownik &lt;b&gt;%1$s&lt;/b&gt; i &lt;b&gt;%2$s&lt;/b&gt; osoba więcej zostawili komentarz pod postem użytkownika &lt;b&gt;%3$s&lt;/b&gt;"</item>
-        <item quantity="few">"Użytkownik &lt;b&gt;%1$s&lt;/b&gt; i &lt;b&gt;%2$s&lt;/b&gt; innych zostawiło komentarz pod postem użytkownika &lt;b&gt;%3$s&lt;/b&gt;"</item>
-        <item quantity="many">"Użytkownik &lt;b&gt;%1$s&lt;/b&gt; i &lt;b&gt;%2$s&lt;/b&gt; osoba więcej zostawili komentarz pod postem użytkownika &lt;b&gt;%3$s&lt;/b&gt;"</item>
-        <item quantity="other">"Użytkownik &lt;b&gt;%1$s&lt;/b&gt; i &lt;b&gt;%2$s&lt;/b&gt; innych zostawiło komentarz pod postem użytkownika &lt;b&gt;%3$s&lt;/b&gt;"</item>
+        <item quantity="one">"Wpis użytkownika &lt;b&gt;%3$s&lt;/b&gt; został skomentowany przez: &lt;b&gt;%1$s&lt;/b&gt; i &lt;b&gt;%2$s&lt;/b&gt; osobę spoza kontaktów"</item>
+        <item quantity="few">"Wpis użytkownika &lt;b&gt;%3$s&lt;/b&gt; został skomentowany przez: &lt;b&gt;%1$s&lt;/b&gt; i &lt;b&gt;%2$s&lt;/b&gt; osoby spoza kontaktów"</item>
+        <item quantity="many">"Wpis użytkownika &lt;b&gt;%3$s&lt;/b&gt; został skomentowany przez: &lt;b&gt;%1$s&lt;/b&gt; i &lt;b&gt;%2$s&lt;/b&gt; osób spoza kontaktów"</item>
+        <item quantity="other">"Wpis użytkownika &lt;b&gt;%3$s&lt;/b&gt; został skomentowany przez: &lt;b&gt;%1$s&lt;/b&gt; i &lt;b&gt;%2$s&lt;/b&gt; osób spoza kontaktów"</item>
     </plurals>
 
     <!-- Activity center item when two non-contacts comment on your post %1$s is the first person name
@@ -903,7 +903,7 @@ Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
     <plurals name="new_comment_separator">
         <item quantity="one">"%d nowy komentarz"</item>
         <item quantity="few">"%d nowe komentarze"</item>
-        <item quantity="many">"%d nowy komentarz"</item>
+        <item quantity="many">"%d nowych komentarzy"</item>
         <item quantity="other">"%d nowych komentarzy"</item>
     </plurals>
 
@@ -996,189 +996,209 @@ Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
     <string name="invite_action">"Zaproś"</string>
 
     <!-- action where the user shares -->
-    <string name="share_action">"Share"</string>
+    <string name="share_action">"Udostępnij"</string>
 
     <!-- Name for notifications that come out as a broadcast from the server -->
-    <string name="broadcast_notifications_channel_name">"Alerts from HalloApp"</string>
+    <string name="broadcast_notifications_channel_name">"Alerty od HalloApp"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls -->
-    <string name="voice_call_record_audio_permission_rationale">"To use voice calls we need permission to access the microphone"</string>
+    <string name="voice_call_record_audio_permission_rationale">"Aby korzystać z połączeń głosowych, musimy mieć uprawnienia do dostępu do mikrofonu"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls, but it has already been denied. -->
-    <string name="voice_call_record_audio_permission_rationale_denied">"To use voice calls we need permission to access the microphone.
+    <string name="voice_call_record_audio_permission_rationale_denied">"Aby korzystać z połączeń głosowych, musimy mieć uprawnienia do dostępu do mikrofonu.
 
-Open the app settings screen to modify app permissions."</string>
+Otwórz ekran ustawień aplikacji, aby zmodyfikować jej uprawnienia."</string>
 
     <!-- Name of channel of notifications for receiving calls which is displayed in settings -->
-    <string name="call_notifications_channel_name">"Call notifications"</string>
+    <string name="call_notifications_channel_name">"Powiadomienia o połączeniach"</string>
 
     <!-- Name of channel of notifications for ongoing audio/video calls -->
-    <string name="ongoing_call_notifications_channel_name">"Ongoing Call notifications"</string>
+    <string name="ongoing_call_notifications_channel_name">"Powiadomienia o trwających połączeniach"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="ringing">"Ringing…"</string>
+    <string name="ringing">"Dzwonienie…"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="calling">"Calling…"</string>
-
-    <!-- The title of the notificaiton for incoming calls -->
-    <string name="incoming_call_notification_title">"Incoming call"</string>
+    <string name="calling">"Nawiązywanie połączenia…"</string>
 
     <!-- The call notification accept button label -->
-    <string name="call_accept_button">"Accept"</string>
+    <string name="call_accept_button">"Przyjmij"</string>
 
     <!-- The call notification decline button label -->
-    <string name="call_decline_button">"Decline"</string>
+    <string name="call_decline_button">"Odrzuć"</string>
 
     <!-- Displayed as title for the Call Screen -->
-    <string name="call_title">"Call"</string>
+    <string name="call_title">"Połączenie"</string>
 
     <!-- Displayed in an ongoing notification while the user is in a voice call -->
-    <string name="ongoing_voice_call">"Ongoing voice call"</string>
+    <string name="ongoing_voice_call">"Trwające połączenie głosowe"</string>
 
     <!-- Shown inline in a chat when the user missed an incoming video call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_video_call">"Missed video call at %s"</string>
+    <string name="system_message_missed_video_call">"Nieodebrane połączenie wideo o %s"</string>
 
     <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_voice_call">"Missed voice call at %s"</string>
-
-    <!-- Action in menu for calling a user -->
-    <string name="call_action">"Call"</string>
-
-    <!-- Button to unmute -->
-    <string name="unmute">"Unmute"</string>
+    <string name="system_message_missed_voice_call">"Nieodebrane połączenie głosowe o %s"</string>
 
     <!-- Label for speaker phone button -->
-    <string name="call_speaker_button">"Speaker"</string>
-
-    <!-- Label for button to disable speaker phone -->
-    <string name="call_speaker_off_button">"Speaker off"</string>
+    <string name="call_speaker_button">"Głośnik"</string>
 
     <!-- Label for button to end the call -->
-    <string name="end_call">"End call"</string>
+    <string name="end_call">"Zakończ połączenie"</string>
 
     <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
-    <string name="refresh_contacts_failed">"Failed to refresh contacts"</string>
+    <string name="refresh_contacts_failed">"Nie udało się odświeżyć kontaktów"</string>
 
     <!-- Label for voice post option -->
     <string name="voice_post">"Audio"</string>
 
     <!-- Audio post composer title -->
-    <string name="audio_post_compose_title">"New audio post"</string>
+    <string name="audio_post_compose_title">"Nowy post audio"</string>
 
     <!-- Text post hint -->
-    <string name="text_post_compose_hint">"Write a description"</string>
+    <string name="text_post_compose_hint">"Podaj opis"</string>
 
     <!-- Audio post record instruction -->
-    <string name="audio_post_tap_to_record">"Tap to record"</string>
+    <string name="audio_post_tap_to_record">"Stuknij, aby nagrać"</string>
 
     <!-- Text shown below the media composer that allows adding more media -->
-    <string name="post_add_more">"Add more"</string>
+    <string name="post_add_more">"Dodaj więcej"</string>
 
     <!-- Button text allowing user to accept a message not from their contacts. Short if possible -->
-    <string name="accept_message">"Accept message"</string>
+    <string name="accept_message">"Przyjmij wiadomość"</string>
 
     <!-- Message alerting the user that the person messaging them is not in their address book -->
-    <string name="not_in_address_book_alert">"This person is not in your address book"</string>
-
-    <!-- Text shown in chat view telling user they had a missed call -->
-    <string name="log_missed_call">"Missed voice call"</string>
+    <string name="not_in_address_book_alert">"Tej osoby nie ma w Twojej książce adresowej"</string>
 
     <!-- Text shown in chat view telling user they had a voice call -->
-    <string name="log_voice_call">"Voice call"</string>
+    <string name="log_voice_call">"Połączenie głosowe"</string>
 
     <!-- Text shown in message preview telling user they had a voice call %s is replaced with the call duration -->
-    <string name="log_voice_call_with_duration">"Voice call (%s)"</string>
+    <string name="log_voice_call_with_duration">"Połączenie głosowe (%s)"</string>
 
     <!-- Collapsed multiple deleted posts -->
     <plurals name="collapsed_deleted_posts">
-        <item quantity="one">"%d deleted post"</item>
-        <item quantity="few">"%d deleted post"</item>
-        <item quantity="many">"%d deleted post"</item>
-        <item quantity="other">"%d deleted post"</item>
+        <item quantity="one">"%d usunięty post"</item>
+        <item quantity="few">"%d usunięte posty"</item>
+        <item quantity="many">"%d usuniętych postów"</item>
+        <item quantity="other">"%d usuniętego posta"</item>
     </plurals>
 
     <!-- Collapsed multiple add user posts -->
     <plurals name="collapsed_added_user_posts">
-        <item quantity="one">"%d person was added"</item>
-        <item quantity="few">"%d person was added"</item>
-        <item quantity="many">"%d person was added"</item>
-        <item quantity="other">"%d person was added"</item>
+        <item quantity="one">"Dodano %d osobę"</item>
+        <item quantity="few">"Dodano %d osoby"</item>
+        <item quantity="many">"Dodano %d osób"</item>
+        <item quantity="other">"Dodano %d osoby"</item>
     </plurals>
 
     <!-- Collapsed multiple remove user posts -->
     <plurals name="collapsed_removed_user_posts">
-        <item quantity="one">"%d person was removed"</item>
-        <item quantity="few">"%d person was removed"</item>
-        <item quantity="many">"%d person was removed"</item>
-        <item quantity="other">"%d person was removed"</item>
+        <item quantity="one">"Usunięto %d osobę"</item>
+        <item quantity="few">"Usunięto %d osoby"</item>
+        <item quantity="many">"Usunięto %d osób"</item>
+        <item quantity="other">"Usunięto %d osoby"</item>
     </plurals>
 
     <!-- Collapsed multiple user left posts -->
     <plurals name="collapsed_user_left_posts">
-        <item quantity="one">"%d person left"</item>
-        <item quantity="few">"%d person left"</item>
-        <item quantity="many">"%d person left"</item>
-        <item quantity="other">"%d person left"</item>
+        <item quantity="one">"Pozostała %d osoba"</item>
+        <item quantity="few">"Pozostały %d osoby"</item>
+        <item quantity="many">"Pozostało %d osób"</item>
+        <item quantity="other">"Pozostało %d osoby"</item>
     </plurals>
 
     <!-- Collapsed multiple user joined posts -->
     <plurals name="collapsed_user_joined_posts">
-        <item quantity="one">"%d person joined"</item>
-        <item quantity="few">"%d person joined"</item>
-        <item quantity="many">"%d person joined"</item>
-        <item quantity="other">"%d person joined"</item>
+        <item quantity="one">"Dołączyła %d osoba"</item>
+        <item quantity="few">"Dołączyły %d osoby"</item>
+        <item quantity="many">"Dołączyło %d osób"</item>
+        <item quantity="other">"Dołączyło %d osoby"</item>
     </plurals>
 
     <!-- Action to stop recording -->
-    <string name="stop_recording">"Stop"</string>
+    <string name="stop_recording">"Zatrzymaj"</string>
 
     <!-- Confirmation dialog asking if user is sure they want to discard their recorded audio -->
-    <string name="post_audio_draft_discard_confirmation">"Are you sure you want to discard your recorded audio?"</string>
+    <string name="post_audio_draft_discard_confirmation">"Czy na pewno chcesz odrzucić swoje nagrane audio?"</string>
 
     <!-- Keep relatively short (try to fit on one line), shows at top of screen. User can tap to return to current ongoing call -->
-    <string name="tap_to_return_to_call">"Tap to return to call"</string>
+    <string name="tap_to_return_to_call">"Stuknij, aby wrócić do połączenia"</string>
 
     <!-- Displayed on the call screen to show that the call is connecting -->
-    <string name="connecting">"Connecting…"</string>
+    <string name="connecting">"Łączenie…"</string>
 
     <!-- Text in fab for post action -->
     <string name="post_fab_label">"Post"</string>
 
     <!-- Text in fab for new group action -->
-    <string name="new_group_fab_label">"New group"</string>
+    <string name="new_group_fab_label">"Nowa grupa"</string>
 
     <!-- Text in fab for chat action -->
-    <string name="compose_fab_label">"Compose"</string>
+    <string name="compose_fab_label">"Pisz"</string>
 
     <!-- Label on selected destinations when sharing from another app -->
-    <string name="share_with_label">"Share with"</string>
+    <string name="share_with_label">"Udostępnij"</string>
 
     <!-- Title of section for your groups -->
-    <string name="your_groups">"Your groups"</string>
+    <string name="your_groups">"Twoje grupy"</string>
 
     <!-- Title of section for recent contacts -->
-    <string name="recent_contacts">"Recent contacts"</string>
+    <string name="recent_contacts">"Ostatnie kontakty"</string>
 
     <!-- Label for button to see all rows -->
-    <string name="see_all">"See all"</string>
+    <string name="see_all">"Zobacz wszystko"</string>
 
     <!-- Rationale for when requesting microphone permission for voice posts -->
-    <string name="voice_post_record_audio_permission_rationale">"To record audio posts we need permission to access the microphone"</string>
+    <string name="voice_post_record_audio_permission_rationale">"Aby nagrywać posty audio, potrzebujemy uprawnień dostępu do mikrofonu"</string>
 
     <!-- Rationale for when requesting microphone permission for voice posts, but it has already been denied. -->
-    <string name="voice_post_record_audio_permission_rationale_denied">"To record audio posts we need permission to access the microphone.
+    <string name="voice_post_record_audio_permission_rationale_denied">"Aby nagrywać posty audio, potrzebujemy uprawnień dostępu do mikrofonu.
 
-Open the app settings screen to modify app permissions."</string>
+Otwórz ekran ustawień aplikacji, aby zmienić uprawnienia aplikacji."</string>
 
     <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
-    <string name="unable_to_start_call">"Unable to start call."</string>
+    <string name="unable_to_start_call">"Nie można rozpocząć połączenia."</string>
 
     <!-- Text shown in chat view telling user they had a missed video call -->
-    <string name="log_missed_video_call">"Missed video call"</string>
+    <string name="log_missed_video_call">"Nieodebrane połączenie wideo"</string>
 
     <!-- Button for sharing a post outside of HalloApp -->
-    <string name="share_externally">"Share externally"</string>
+    <string name="share_externally">"Udostępnij poza aplikacją"</string>
+
+    <!-- Audio post, title/label for an audio post -->
+    <string name="audio_post">"Audio post"</string>
+
+    <!-- Preview text for audio post with duration %s is replaced with the length of the audio post, e.g. "Audio post (0:30)" -->
+    <string name="audio_post_preview">"Audio post (%s)"</string>
+
+    <!-- Text shown in chat view telling user they had a missed audio call -->
+    <string name="log_missed_voice_call">"Missed voice call"</string>
+
+    <!-- Text shown in chat view telling user they had a video call -->
+    <string name="log_video_call">"Video call"</string>
+
+    <!-- Text shown in message preview telling user they had a video call %s is replaced with the call duration -->
+    <string name="log_video_call_with_duration">"Video call (%s)"</string>
+
+    <!-- Rationale for when requesting microphone and camera permission for video calls -->
+    <string name="voice_call_record_video_permission_rationale">"To use video calls we need permission to access the microphone and camera"</string>
+
+    <!-- The title of the notification for incoming voice calls -->
+    <string name="incoming_voice_call_notification_title">"Incoming voice call"</string>
+
+    <!-- The title of the notification for incoming video calls -->
+    <string name="incoming_video_call_notification_title">"Incoming video call"</string>
+
+    <!-- Action in menu for voice calling a user -->
+    <string name="call_action_voice">"Voice call"</string>
+
+    <!-- Action in menu for video calling a user -->
+    <string name="call_action_video">"Video call"</string>
+    <string name="incoming_call_notification_title">"Incoming call"</string>
+    <string name="call_action">"Call"</string>
+    <string name="unmute">"Unmute"</string>
+    <string name="call_speaker_off_button">"Speaker off"</string>
+    <string name="log_missed_call">"Missed voice call"</string>
     <string name="composer_sharing_post">"Udostępnianie %s"</string>
     <string name="composer_sharing_group_post">"Udostępnianie grupie"</string>
     <string name="invite_via_link">"Zaproś za pomocą łącza"</string>

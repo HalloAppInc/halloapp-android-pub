@@ -1022,9 +1022,6 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <!-- Fuzzy -->
     <string name="calling">"Llamando"</string>
 
-    <!-- The title of the notificaiton for incoming calls -->
-    <string name="incoming_call_notification_title">"Llamada entrante"</string>
-
     <!-- The call notification accept button label -->
     <string name="call_accept_button">"Aceptar"</string>
 
@@ -1043,17 +1040,8 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
     <string name="system_message_missed_voice_call">"Llamada de voz perdida en %s"</string>
 
-    <!-- Action in menu for calling a user -->
-    <string name="call_action">"Llamar"</string>
-
-    <!-- Button to unmute -->
-    <string name="unmute">"Desactivar silenciar"</string>
-
     <!-- Label for speaker phone button -->
     <string name="call_speaker_button">"Altavoz"</string>
-
-    <!-- Label for button to disable speaker phone -->
-    <string name="call_speaker_off_button">"Altavoz desconectado"</string>
 
     <!-- Label for button to end the call -->
     <string name="end_call">"Finalizar la llamada"</string>
@@ -1082,10 +1070,6 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
 
     <!-- Message alerting the user that the person messaging them is not in their address book -->
     <string name="not_in_address_book_alert">"Esta persona no está en tu agenda de contactos"</string>
-
-    <!-- Text shown in chat view telling user they had a missed call -->
-    <!-- Fuzzy -->
-    <string name="log_missed_call">"Llamada perdida"</string>
 
     <!-- Text shown in chat view telling user they had a voice call -->
     <string name="log_voice_call">"Llamada de voz"</string>
@@ -1171,7 +1155,42 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="log_missed_video_call">"Videollamada perdida"</string>
 
     <!-- Button for sharing a post outside of HalloApp -->
-    <string name="share_externally">"Share externally"</string>
+    <string name="share_externally">"Compartir externamente"</string>
+
+    <!-- Audio post, title/label for an audio post -->
+    <string name="audio_post">"Publicación de audio"</string>
+
+    <!-- Preview text for audio post with duration %s is replaced with the length of the audio post, e.g. "Audio post (0:30)" -->
+    <string name="audio_post_preview">"Publicación de audio (%s)"</string>
+
+    <!-- Text shown in chat view telling user they had a missed audio call -->
+    <string name="log_missed_voice_call">"Llamada de voz perdida"</string>
+
+    <!-- Text shown in chat view telling user they had a video call -->
+    <string name="log_video_call">"Llamada de voz"</string>
+
+    <!-- Text shown in message preview telling user they had a video call %s is replaced with the call duration -->
+    <string name="log_video_call_with_duration">"Llamada de voz (%s)"</string>
+
+    <!-- Rationale for when requesting microphone and camera permission for video calls -->
+    <string name="voice_call_record_video_permission_rationale">"Para usar llamadas de voz necesitamos permiso para acceder el micrófono y la cámara"</string>
+
+    <!-- The title of the notification for incoming voice calls -->
+    <string name="incoming_voice_call_notification_title">"Llamada de voz entrante"</string>
+
+    <!-- The title of the notification for incoming video calls -->
+    <string name="incoming_video_call_notification_title">"Llamada de voz entrante"</string>
+
+    <!-- Action in menu for voice calling a user -->
+    <string name="call_action_voice">"Llamada de voz"</string>
+
+    <!-- Action in menu for video calling a user -->
+    <string name="call_action_video">"Llamada de voz"</string>
+    <string name="incoming_call_notification_title">"Llamada entrante"</string>
+    <string name="call_action">"Llamar"</string>
+    <string name="unmute">"Desactivar silenciar"</string>
+    <string name="call_speaker_off_button">"Altavoz desconectado"</string>
+    <string name="log_missed_call">"Llamada perdida"</string>
     <string name="composer_sharing_post">"Compartiendo con %s"</string>
     <string name="composer_sharing_group_post">"Compartiendo con el grupo"</string>
     <string name="invite_via_link">"Invitar por un enlace"</string>

@@ -120,7 +120,7 @@ Ouvre l'écran des paramètres de l'application pour modifier les autorisations 
     <string name="no_photos_or_videos_found">"Aucune photo ou vidéo trouvée"</string>
     <string name="gallery">"Galerie"</string>
     <string name="avatar_picker_title">"Photo de profil"</string>
-    <string name="group_avatar_picker_title">"Group icon"</string>
+    <string name="group_avatar_picker_title">"Icône du groupe"</string>
     <string name="other_media">"Autre média"</string>
     <string name="rotate">"Faire pivoter"</string>
     <string name="seen_by">"Vu par"</string>
@@ -265,8 +265,8 @@ version : %2$s
     <string name="system_message_member_auto_promoted_you">"Vous avez été promu automatiquement au rang d'administrateur"</string>
     <string name="system_message_group_name_changed">"%1$s a changé le nom du groupe en %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"Vous avez changé le nom du groupe en %s"</string>
-    <string name="system_message_group_avatar_changed">"%s changed the group icon"</string>
-    <string name="system_message_group_avatar_changed_by_you">"You changed the group icon"</string>
+    <string name="system_message_group_avatar_changed">"%s a modifié l'icône du groupe"</string>
+    <string name="system_message_group_avatar_changed_by_you">"Tu as modifié l'icône du groupe"</string>
     <string name="system_message_group_deleted">"%s a supprimé le groupe"</string>
     <string name="system_message_group_deleted_by_you">"Vous avez supprimé le groupe"</string>
     <string name="system_post_group_created">"Ce groupe a été créé par %s"</string>
@@ -285,8 +285,8 @@ version : %2$s
     <string name="system_post_member_auto_promoted_you">"Vous avez été auto-promu au poste d'administrateur"</string>
     <string name="system_post_group_name_changed">"%1$s a changé le nom du groupe en %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"Vous avez changé le nom du groupe en %s"</string>
-    <string name="system_post_group_avatar_changed">"%s changed the group icon"</string>
-    <string name="system_post_group_avatar_changed_by_you">"You changed the group icon"</string>
+    <string name="system_post_group_avatar_changed">"%s a modifié l'icône du groupe"</string>
+    <string name="system_post_group_avatar_changed_by_you">"Tu as modifié l'icône du groupe"</string>
     <string name="system_post_group_deleted">"%s a supprimé le groupe"</string>
     <string name="system_post_group_deleted_by_you">"Vous avez supprimé le groupe"</string>
     <string name="group_info_title">"Infos sur le groupe"</string>
@@ -400,8 +400,8 @@ version : %2$s
         <item quantity="one">"%d membre"</item>
         <item quantity="other">"%d membres"</item>
     </plurals>
-    <string name="composer_sharing_all_summary">"Share with my contacts"</string>
-    <string name="composer_sharing_except_summary">"Share with some of my contacts"</string>
+    <string name="composer_sharing_all_summary">"Partager avec mes contacts"</string>
+    <string name="composer_sharing_except_summary">"Partager avec certains de mes contacts"</string>
     <plurals name="composer_sharing_only_summary">
         <item quantity="one">"Share with %d of my contacts"</item>
         <item quantity="other">"Share with %d of my contacts"</item>
@@ -938,179 +938,199 @@ Ouvrez la page des paramètres de l'application pour modifier les permissions de
     <string name="invite_action">"Inviter"</string>
 
     <!-- action where the user shares -->
-    <string name="share_action">"Share"</string>
+    <string name="share_action">"Partager"</string>
 
     <!-- Name for notifications that come out as a broadcast from the server -->
-    <string name="broadcast_notifications_channel_name">"Alerts from HalloApp"</string>
+    <string name="broadcast_notifications_channel_name">"Alertes d'HalloApp"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls -->
-    <string name="voice_call_record_audio_permission_rationale">"To use voice calls we need permission to access the microphone"</string>
+    <string name="voice_call_record_audio_permission_rationale">"Pour utiliser les appels vocaux, nous avons besoin d'accéder au microphone"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls, but it has already been denied. -->
-    <string name="voice_call_record_audio_permission_rationale_denied">"To use voice calls we need permission to access the microphone.
+    <string name="voice_call_record_audio_permission_rationale_denied">"Pour utiliser les appels vocaux, nous avons besoin d'accéder au microphone.
 
-Open the app settings screen to modify app permissions."</string>
+Ouvre les paramètres de l'application pour modifier ses autorisations."</string>
 
     <!-- Name of channel of notifications for receiving calls which is displayed in settings -->
-    <string name="call_notifications_channel_name">"Call notifications"</string>
+    <string name="call_notifications_channel_name">"Notifications d'appel"</string>
 
     <!-- Name of channel of notifications for ongoing audio/video calls -->
-    <string name="ongoing_call_notifications_channel_name">"Ongoing Call notifications"</string>
+    <string name="ongoing_call_notifications_channel_name">"Notifications d'appel en cours"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="ringing">"Ringing…"</string>
+    <string name="ringing">"Sonnerie en cours…"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <string name="calling">"Calling…"</string>
-
-    <!-- The title of the notificaiton for incoming calls -->
-    <string name="incoming_call_notification_title">"Incoming call"</string>
+    <string name="calling">"Appel en cours…"</string>
 
     <!-- The call notification accept button label -->
-    <string name="call_accept_button">"Accept"</string>
+    <string name="call_accept_button">"Accepter"</string>
 
     <!-- The call notification decline button label -->
-    <string name="call_decline_button">"Decline"</string>
+    <string name="call_decline_button">"Rejeter"</string>
 
     <!-- Displayed as title for the Call Screen -->
-    <string name="call_title">"Call"</string>
+    <string name="call_title">"Appel"</string>
 
     <!-- Displayed in an ongoing notification while the user is in a voice call -->
-    <string name="ongoing_voice_call">"Ongoing voice call"</string>
+    <string name="ongoing_voice_call">"Appel vocal en cours"</string>
 
     <!-- Shown inline in a chat when the user missed an incoming video call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_video_call">"Missed video call at %s"</string>
+    <string name="system_message_missed_video_call">"Appel vidéo manqué à %s"</string>
 
     <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_voice_call">"Missed voice call at %s"</string>
-
-    <!-- Action in menu for calling a user -->
-    <string name="call_action">"Call"</string>
-
-    <!-- Button to unmute -->
-    <string name="unmute">"Unmute"</string>
+    <string name="system_message_missed_voice_call">"Appel vidéo manqué à %s"</string>
 
     <!-- Label for speaker phone button -->
-    <string name="call_speaker_button">"Speaker"</string>
-
-    <!-- Label for button to disable speaker phone -->
-    <string name="call_speaker_off_button">"Speaker off"</string>
+    <string name="call_speaker_button">"Haut-parleur"</string>
 
     <!-- Label for button to end the call -->
-    <string name="end_call">"End call"</string>
+    <string name="end_call">"Terminer l'appel"</string>
 
     <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
-    <string name="refresh_contacts_failed">"Failed to refresh contacts"</string>
+    <string name="refresh_contacts_failed">"Impossible d'actualiser les contacts"</string>
 
     <!-- Label for voice post option -->
     <string name="voice_post">"Audio"</string>
 
     <!-- Audio post composer title -->
-    <string name="audio_post_compose_title">"New audio post"</string>
+    <string name="audio_post_compose_title">"Nouvelle publication audio"</string>
 
     <!-- Text post hint -->
-    <string name="text_post_compose_hint">"Write a description"</string>
+    <string name="text_post_compose_hint">"Rédiger une description"</string>
 
     <!-- Audio post record instruction -->
-    <string name="audio_post_tap_to_record">"Tap to record"</string>
+    <string name="audio_post_tap_to_record">"Appuyer pour enregistrer"</string>
 
     <!-- Text shown below the media composer that allows adding more media -->
-    <string name="post_add_more">"Add more"</string>
+    <string name="post_add_more">"Ajouter"</string>
 
     <!-- Button text allowing user to accept a message not from their contacts. Short if possible -->
-    <string name="accept_message">"Accept message"</string>
+    <string name="accept_message">"Accepter le message"</string>
 
     <!-- Message alerting the user that the person messaging them is not in their address book -->
-    <string name="not_in_address_book_alert">"This person is not in your address book"</string>
-
-    <!-- Text shown in chat view telling user they had a missed call -->
-    <string name="log_missed_call">"Missed voice call"</string>
+    <string name="not_in_address_book_alert">"Cette personne n'est pas dans votre liste de contacts"</string>
 
     <!-- Text shown in chat view telling user they had a voice call -->
-    <string name="log_voice_call">"Voice call"</string>
+    <string name="log_voice_call">"Appel vocal"</string>
 
     <!-- Text shown in message preview telling user they had a voice call %s is replaced with the call duration -->
-    <string name="log_voice_call_with_duration">"Voice call (%s)"</string>
+    <string name="log_voice_call_with_duration">"Appel vocal (%s)"</string>
 
     <!-- Collapsed multiple deleted posts -->
     <plurals name="collapsed_deleted_posts">
-        <item quantity="one">"%d deleted post"</item>
-        <item quantity="other">"%d deleted post"</item>
+        <item quantity="one">"%d publication supprimée"</item>
+        <item quantity="other">"%d publications supprimées"</item>
     </plurals>
 
     <!-- Collapsed multiple add user posts -->
     <plurals name="collapsed_added_user_posts">
-        <item quantity="one">"%d person was added"</item>
-        <item quantity="other">"%d person was added"</item>
+        <item quantity="one">"%d personne a été ajoutée"</item>
+        <item quantity="other">"%d personnes ont été ajoutées"</item>
     </plurals>
 
     <!-- Collapsed multiple remove user posts -->
     <plurals name="collapsed_removed_user_posts">
-        <item quantity="one">"%d person was removed"</item>
-        <item quantity="other">"%d person was removed"</item>
+        <item quantity="one">"%d personne a été supprimée"</item>
+        <item quantity="other">"%d personnes ont été supprimées"</item>
     </plurals>
 
     <!-- Collapsed multiple user left posts -->
     <plurals name="collapsed_user_left_posts">
-        <item quantity="one">"%d person left"</item>
-        <item quantity="other">"%d person left"</item>
+        <item quantity="one">"%d personne restante"</item>
+        <item quantity="other">"%d personnes restantes"</item>
     </plurals>
 
     <!-- Collapsed multiple user joined posts -->
     <plurals name="collapsed_user_joined_posts">
-        <item quantity="one">"%d person joined"</item>
-        <item quantity="other">"%d person joined"</item>
+        <item quantity="one">"%d personne a rejoint"</item>
+        <item quantity="other">"%d personnes ont rejoint"</item>
     </plurals>
 
     <!-- Action to stop recording -->
-    <string name="stop_recording">"Stop"</string>
+    <string name="stop_recording">"Arrêter"</string>
 
     <!-- Confirmation dialog asking if user is sure they want to discard their recorded audio -->
-    <string name="post_audio_draft_discard_confirmation">"Are you sure you want to discard your recorded audio?"</string>
+    <string name="post_audio_draft_discard_confirmation">"Veux-tu vraiment supprimer l'audio que tu as enregistré ?"</string>
 
     <!-- Keep relatively short (try to fit on one line), shows at top of screen. User can tap to return to current ongoing call -->
-    <string name="tap_to_return_to_call">"Tap to return to call"</string>
+    <string name="tap_to_return_to_call">"Appuyer pour rejoindre l'appel"</string>
 
     <!-- Displayed on the call screen to show that the call is connecting -->
-    <string name="connecting">"Connecting…"</string>
+    <string name="connecting">"Connexion en cours…"</string>
 
     <!-- Text in fab for post action -->
-    <string name="post_fab_label">"Post"</string>
+    <string name="post_fab_label">"Publication"</string>
 
     <!-- Text in fab for new group action -->
-    <string name="new_group_fab_label">"New group"</string>
+    <string name="new_group_fab_label">"Nouveau groupe"</string>
 
     <!-- Text in fab for chat action -->
-    <string name="compose_fab_label">"Compose"</string>
+    <string name="compose_fab_label">"Écrire"</string>
 
     <!-- Label on selected destinations when sharing from another app -->
-    <string name="share_with_label">"Share with"</string>
+    <string name="share_with_label">"Partager avec"</string>
 
     <!-- Title of section for your groups -->
-    <string name="your_groups">"Your groups"</string>
+    <string name="your_groups">"Tes groupes"</string>
 
     <!-- Title of section for recent contacts -->
-    <string name="recent_contacts">"Recent contacts"</string>
+    <string name="recent_contacts">"Contacts récents"</string>
 
     <!-- Label for button to see all rows -->
-    <string name="see_all">"See all"</string>
+    <string name="see_all">"Tout voir"</string>
 
     <!-- Rationale for when requesting microphone permission for voice posts -->
-    <string name="voice_post_record_audio_permission_rationale">"To record audio posts we need permission to access the microphone"</string>
+    <string name="voice_post_record_audio_permission_rationale">"Pour enregistrer des publications audio, nous avons besoin d'accéder au microphone"</string>
 
     <!-- Rationale for when requesting microphone permission for voice posts, but it has already been denied. -->
-    <string name="voice_post_record_audio_permission_rationale_denied">"To record audio posts we need permission to access the microphone.
+    <string name="voice_post_record_audio_permission_rationale_denied">"Pour enregistrer des publications audio, nous avons besoin d'accéder au microphone.
 
-Open the app settings screen to modify app permissions."</string>
+Ouvre les paramètres de l'application pour modifier ses autorisations."</string>
 
     <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
-    <string name="unable_to_start_call">"Unable to start call."</string>
+    <string name="unable_to_start_call">"Impossible de lancer l'appel."</string>
 
     <!-- Text shown in chat view telling user they had a missed video call -->
-    <string name="log_missed_video_call">"Missed video call"</string>
+    <string name="log_missed_video_call">"Appel vidéo manqué"</string>
 
     <!-- Button for sharing a post outside of HalloApp -->
-    <string name="share_externally">"Share externally"</string>
+    <string name="share_externally">"Partager en externe"</string>
+
+    <!-- Audio post, title/label for an audio post -->
+    <string name="audio_post">"Audio post"</string>
+
+    <!-- Preview text for audio post with duration %s is replaced with the length of the audio post, e.g. "Audio post (0:30)" -->
+    <string name="audio_post_preview">"Audio post (%s)"</string>
+
+    <!-- Text shown in chat view telling user they had a missed audio call -->
+    <string name="log_missed_voice_call">"Missed voice call"</string>
+
+    <!-- Text shown in chat view telling user they had a video call -->
+    <string name="log_video_call">"Video call"</string>
+
+    <!-- Text shown in message preview telling user they had a video call %s is replaced with the call duration -->
+    <string name="log_video_call_with_duration">"Video call (%s)"</string>
+
+    <!-- Rationale for when requesting microphone and camera permission for video calls -->
+    <string name="voice_call_record_video_permission_rationale">"To use video calls we need permission to access the microphone and camera"</string>
+
+    <!-- The title of the notification for incoming voice calls -->
+    <string name="incoming_voice_call_notification_title">"Incoming voice call"</string>
+
+    <!-- The title of the notification for incoming video calls -->
+    <string name="incoming_video_call_notification_title">"Incoming video call"</string>
+
+    <!-- Action in menu for voice calling a user -->
+    <string name="call_action_voice">"Voice call"</string>
+
+    <!-- Action in menu for video calling a user -->
+    <string name="call_action_video">"Video call"</string>
+    <string name="incoming_call_notification_title">"Incoming call"</string>
+    <string name="call_action">"Call"</string>
+    <string name="unmute">"Unmute"</string>
+    <string name="call_speaker_off_button">"Speaker off"</string>
+    <string name="log_missed_call">"Missed voice call"</string>
     <string name="composer_sharing_post">"Partage avec %s"</string>
     <string name="composer_sharing_group_post">"Partage avec le groupe"</string>
     <string name="invite_via_link">"Inviter via un lien"</string>

@@ -1002,9 +1002,6 @@ Open the app settings screen to modify app permissions."</string>
     <!-- Displayed on the call screen to show what state the call is in -->
     <string name="calling">"Calling…"</string>
 
-    <!-- The title of the notificaiton for incoming calls -->
-    <string name="incoming_call_notification_title">"Incoming call"</string>
-
     <!-- The call notification accept button label -->
     <string name="call_accept_button">"Accept"</string>
 
@@ -1023,17 +1020,8 @@ Open the app settings screen to modify app permissions."</string>
     <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
     <string name="system_message_missed_voice_call">"Missed voice call at %s"</string>
 
-    <!-- Action in menu for calling a user -->
-    <string name="call_action">"Call"</string>
-
-    <!-- Button to unmute -->
-    <string name="unmute">"Unmute"</string>
-
     <!-- Label for speaker phone button -->
     <string name="call_speaker_button">"Speaker"</string>
-
-    <!-- Label for button to disable speaker phone -->
-    <string name="call_speaker_off_button">"Speaker off"</string>
 
     <!-- Label for button to end the call -->
     <string name="end_call">"End call"</string>
@@ -1061,9 +1049,6 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Message alerting the user that the person messaging them is not in their address book -->
     <string name="not_in_address_book_alert">"This person is not in your address book"</string>
-
-    <!-- Text shown in chat view telling user they had a missed call -->
-    <string name="log_missed_call">"Missed voice call"</string>
 
     <!-- Text shown in chat view telling user they had a voice call -->
     <string name="log_voice_call">"Voice call"</string>
@@ -1150,6 +1135,41 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Button for sharing a post outside of HalloApp -->
     <string name="share_externally">"Share externally"</string>
+
+    <!-- Audio post, title/label for an audio post -->
+    <string name="audio_post">"Audio post"</string>
+
+    <!-- Preview text for audio post with duration %s is replaced with the length of the audio post, e.g. "Audio post (0:30)" -->
+    <string name="audio_post_preview">"Audio post (%s)"</string>
+
+    <!-- Text shown in chat view telling user they had a missed audio call -->
+    <string name="log_missed_voice_call">"Missed voice call"</string>
+
+    <!-- Text shown in chat view telling user they had a video call -->
+    <string name="log_video_call">"Video call"</string>
+
+    <!-- Text shown in message preview telling user they had a video call %s is replaced with the call duration -->
+    <string name="log_video_call_with_duration">"Video call (%s)"</string>
+
+    <!-- Rationale for when requesting microphone and camera permission for video calls -->
+    <string name="voice_call_record_video_permission_rationale">"To use video calls we need permission to access the microphone and camera"</string>
+
+    <!-- The title of the notification for incoming voice calls -->
+    <string name="incoming_voice_call_notification_title">"Incoming voice call"</string>
+
+    <!-- The title of the notification for incoming video calls -->
+    <string name="incoming_video_call_notification_title">"Incoming video call"</string>
+
+    <!-- Action in menu for voice calling a user -->
+    <string name="call_action_voice">"Voice call"</string>
+
+    <!-- Action in menu for video calling a user -->
+    <string name="call_action_video">"Video call"</string>
+    <string name="incoming_call_notification_title">"Incoming call"</string>
+    <string name="call_action">"Call"</string>
+    <string name="unmute">"Unmute"</string>
+    <string name="call_speaker_off_button">"Speaker off"</string>
+    <string name="log_missed_call">"Missed voice call"</string>
     <string name="composer_sharing_post">"Κοινοποίηση σε %s"</string>
     <string name="composer_sharing_group_post">"Sharing with group"</string>
     <string name="invite_via_link">"Invite via link"</string>

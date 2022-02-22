@@ -993,9 +993,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Fuzzy -->
     <string name="calling">"در حال تماس"</string>
 
-    <!-- The title of the notificaiton for incoming calls -->
-    <string name="incoming_call_notification_title">"تماس دریافتی"</string>
-
     <!-- The call notification accept button label -->
     <string name="call_accept_button">"پذیرفتن"</string>
 
@@ -1014,17 +1011,8 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
     <string name="system_message_missed_voice_call">"تماس‌های از دست رفته در %s"</string>
 
-    <!-- Action in menu for calling a user -->
-    <string name="call_action">"تماس"</string>
-
-    <!-- Button to unmute -->
-    <string name="unmute">"صدادار کردن"</string>
-
     <!-- Label for speaker phone button -->
     <string name="call_speaker_button">"بلندگو"</string>
-
-    <!-- Label for button to disable speaker phone -->
-    <string name="call_speaker_off_button">"خاموش کردن بلندگو"</string>
 
     <!-- Label for button to end the call -->
     <string name="end_call">"اتمام تماس"</string>
@@ -1053,10 +1041,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Message alerting the user that the person messaging them is not in their address book -->
     <string name="not_in_address_book_alert">"این شخص در لیست مخاطبین شما نیست"</string>
-
-    <!-- Text shown in chat view telling user they had a missed call -->
-    <!-- Fuzzy -->
-    <string name="log_missed_call">"تماس از دست رفته"</string>
 
     <!-- Text shown in chat view telling user they had a voice call -->
     <string name="log_voice_call">"تماس صوتی"</string>
@@ -1143,6 +1127,41 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Button for sharing a post outside of HalloApp -->
     <string name="share_externally">"به اشتراک گذاشتن خارج هالواپ"</string>
+
+    <!-- Audio post, title/label for an audio post -->
+    <string name="audio_post">"پست صوتی"</string>
+
+    <!-- Preview text for audio post with duration %s is replaced with the length of the audio post, e.g. "Audio post (0:30)" -->
+    <string name="audio_post_preview">"پست صوتی (s%)"</string>
+
+    <!-- Text shown in chat view telling user they had a missed audio call -->
+    <string name="log_missed_voice_call">"تماس صوتی از دست رفته"</string>
+
+    <!-- Text shown in chat view telling user they had a video call -->
+    <string name="log_video_call">"تماس ویدیویی"</string>
+
+    <!-- Text shown in message preview telling user they had a video call %s is replaced with the call duration -->
+    <string name="log_video_call_with_duration">"تماس ویدیویی (s%)"</string>
+
+    <!-- Rationale for when requesting microphone and camera permission for video calls -->
+    <string name="voice_call_record_video_permission_rationale">"نیاز به دسترسی به میکروفون و دوربین برای استفاده از قابلیت تماس ویدیویی"</string>
+
+    <!-- The title of the notification for incoming voice calls -->
+    <string name="incoming_voice_call_notification_title">"تماس صوتی"</string>
+
+    <!-- The title of the notification for incoming video calls -->
+    <string name="incoming_video_call_notification_title">"تماس ویدیویی"</string>
+
+    <!-- Action in menu for voice calling a user -->
+    <string name="call_action_voice">"تماس صوتی"</string>
+
+    <!-- Action in menu for video calling a user -->
+    <string name="call_action_video">"تماس ویدیویی"</string>
+    <string name="incoming_call_notification_title">"تماس دریافتی"</string>
+    <string name="call_action">"تماس"</string>
+    <string name="unmute">"صدادار کردن"</string>
+    <string name="call_speaker_off_button">"خاموش کردن بلندگو"</string>
+    <string name="log_missed_call">"تماس از دست رفته"</string>
     <string name="composer_sharing_post">"به اشتراک گذاشتن با %s"</string>
     <string name="composer_sharing_group_post">"اشتراک با گروه"</string>
     <string name="invite_via_link">"دعوت از طریق لینک"</string>

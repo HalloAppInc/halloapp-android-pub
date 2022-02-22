@@ -1011,9 +1011,6 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını açın."</
     <!-- Fuzzy -->
     <string name="calling">"Aranıyor"</string>
 
-    <!-- The title of the notificaiton for incoming calls -->
-    <string name="incoming_call_notification_title">"Gelen çağrı"</string>
-
     <!-- The call notification accept button label -->
     <string name="call_accept_button">"Kabul et"</string>
 
@@ -1032,133 +1029,156 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını açın."</
     <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
     <string name="system_message_missed_voice_call">"%s için cevapsız sesli arama"</string>
 
-    <!-- Action in menu for calling a user -->
-    <string name="call_action">"Arama"</string>
-
-    <!-- Button to unmute -->
-    <string name="unmute">"Unmute"</string>
-
     <!-- Label for speaker phone button -->
-    <string name="call_speaker_button">"Speaker"</string>
-
-    <!-- Label for button to disable speaker phone -->
-    <string name="call_speaker_off_button">"Speaker off"</string>
+    <string name="call_speaker_button">"Hoparlör"</string>
 
     <!-- Label for button to end the call -->
-    <string name="end_call">"End call"</string>
+    <string name="end_call">"Aramayı sonlandır"</string>
 
     <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
-    <string name="refresh_contacts_failed">"Failed to refresh contacts"</string>
+    <string name="refresh_contacts_failed">"Kişiler yenilenemedi"</string>
 
     <!-- Label for voice post option -->
-    <string name="voice_post">"Audio"</string>
+    <string name="voice_post">"Ses"</string>
 
     <!-- Audio post composer title -->
-    <string name="audio_post_compose_title">"New audio post"</string>
+    <string name="audio_post_compose_title">"Yeni sesli gönderi"</string>
 
     <!-- Text post hint -->
-    <string name="text_post_compose_hint">"Write a description"</string>
+    <string name="text_post_compose_hint">"Bir açıklama yaz"</string>
 
     <!-- Audio post record instruction -->
-    <string name="audio_post_tap_to_record">"Tap to record"</string>
+    <string name="audio_post_tap_to_record">"Kaydetmek için dokun"</string>
 
     <!-- Text shown below the media composer that allows adding more media -->
-    <string name="post_add_more">"Add more"</string>
+    <string name="post_add_more">"Daha fazla ekle"</string>
 
     <!-- Button text allowing user to accept a message not from their contacts. Short if possible -->
-    <string name="accept_message">"Accept message"</string>
+    <string name="accept_message">"Mesajı kabul et"</string>
 
     <!-- Message alerting the user that the person messaging them is not in their address book -->
-    <string name="not_in_address_book_alert">"This person is not in your address book"</string>
-
-    <!-- Text shown in chat view telling user they had a missed call -->
-    <string name="log_missed_call">"Missed voice call"</string>
+    <string name="not_in_address_book_alert">"Bu kişi kişi listende değil"</string>
 
     <!-- Text shown in chat view telling user they had a voice call -->
-    <string name="log_voice_call">"Voice call"</string>
+    <string name="log_voice_call">"Sesli arama"</string>
 
     <!-- Text shown in message preview telling user they had a voice call %s is replaced with the call duration -->
-    <string name="log_voice_call_with_duration">"Voice call (%s)"</string>
+    <string name="log_voice_call_with_duration">"Sesli arama (%s)"</string>
 
     <!-- Collapsed multiple deleted posts -->
     <plurals name="collapsed_deleted_posts">
-        <item quantity="one">"%d deleted post"</item>
-        <item quantity="other">"%d deleted post"</item>
+        <item quantity="one">"Silinen %d gönderi"</item>
+        <item quantity="other">"Silinen %d gönderi"</item>
     </plurals>
 
     <!-- Collapsed multiple add user posts -->
     <plurals name="collapsed_added_user_posts">
-        <item quantity="one">"%d person was added"</item>
-        <item quantity="other">"%d person was added"</item>
+        <item quantity="one">"%d kişi eklendi"</item>
+        <item quantity="other">"%d kişi eklendi"</item>
     </plurals>
 
     <!-- Collapsed multiple remove user posts -->
     <plurals name="collapsed_removed_user_posts">
-        <item quantity="one">"%d person was removed"</item>
-        <item quantity="other">"%d person was removed"</item>
+        <item quantity="one">"%d kişi kaldırıldı"</item>
+        <item quantity="other">"%d kişi kaldırıldı"</item>
     </plurals>
 
     <!-- Collapsed multiple user left posts -->
     <plurals name="collapsed_user_left_posts">
-        <item quantity="one">"%d person left"</item>
-        <item quantity="other">"%d person left"</item>
+        <item quantity="one">"%d kişi ayrıldı"</item>
+        <item quantity="other">"%d kişi ayrıldı"</item>
     </plurals>
 
     <!-- Collapsed multiple user joined posts -->
     <plurals name="collapsed_user_joined_posts">
-        <item quantity="one">"%d person joined"</item>
-        <item quantity="other">"%d person joined"</item>
+        <item quantity="one">"%d kişi katıldı"</item>
+        <item quantity="other">"%d kişi katıldı"</item>
     </plurals>
 
     <!-- Action to stop recording -->
-    <string name="stop_recording">"Stop"</string>
+    <string name="stop_recording">"Durdur"</string>
 
     <!-- Confirmation dialog asking if user is sure they want to discard their recorded audio -->
-    <string name="post_audio_draft_discard_confirmation">"Are you sure you want to discard your recorded audio?"</string>
+    <string name="post_audio_draft_discard_confirmation">"Kaydedilmiş sesi silmek istediğinden emin misin?"</string>
 
     <!-- Keep relatively short (try to fit on one line), shows at top of screen. User can tap to return to current ongoing call -->
-    <string name="tap_to_return_to_call">"Tap to return to call"</string>
+    <string name="tap_to_return_to_call">"Aramaya dönmek için dokun"</string>
 
     <!-- Displayed on the call screen to show that the call is connecting -->
-    <string name="connecting">"Connecting…"</string>
+    <string name="connecting">"Bağlanıyor…"</string>
 
     <!-- Text in fab for post action -->
-    <string name="post_fab_label">"Post"</string>
+    <string name="post_fab_label">"Gönderi"</string>
 
     <!-- Text in fab for new group action -->
-    <string name="new_group_fab_label">"New group"</string>
+    <string name="new_group_fab_label">"Yeni grup"</string>
 
     <!-- Text in fab for chat action -->
-    <string name="compose_fab_label">"Compose"</string>
+    <string name="compose_fab_label">"Oluştur"</string>
 
     <!-- Label on selected destinations when sharing from another app -->
-    <string name="share_with_label">"Share with"</string>
+    <string name="share_with_label">"…ile paylaş"</string>
 
     <!-- Title of section for your groups -->
-    <string name="your_groups">"Your groups"</string>
+    <string name="your_groups">"Grupların"</string>
 
     <!-- Title of section for recent contacts -->
-    <string name="recent_contacts">"Recent contacts"</string>
+    <string name="recent_contacts">"Yakın zamandaki bağlantıların"</string>
 
     <!-- Label for button to see all rows -->
-    <string name="see_all">"See all"</string>
+    <string name="see_all">"Hepsini gör"</string>
 
     <!-- Rationale for when requesting microphone permission for voice posts -->
-    <string name="voice_post_record_audio_permission_rationale">"To record audio posts we need permission to access the microphone"</string>
+    <string name="voice_post_record_audio_permission_rationale">"Sesli gönderileri kaydetmek için mikrofona erişim iznine ihtiyacımız var"</string>
 
     <!-- Rationale for when requesting microphone permission for voice posts, but it has already been denied. -->
-    <string name="voice_post_record_audio_permission_rationale_denied">"To record audio posts we need permission to access the microphone.
+    <string name="voice_post_record_audio_permission_rationale_denied">"Sesli gönderileri kaydetmek için mikrofona erişim iznine ihtiyacımız var.
 
-Open the app settings screen to modify app permissions."</string>
+Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</string>
 
     <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
-    <string name="unable_to_start_call">"Unable to start call."</string>
+    <string name="unable_to_start_call">"Arama başlatılamıyor"</string>
 
     <!-- Text shown in chat view telling user they had a missed video call -->
-    <string name="log_missed_video_call">"Missed video call"</string>
+    <string name="log_missed_video_call">"Cevapsız görüntülü arama"</string>
 
     <!-- Button for sharing a post outside of HalloApp -->
-    <string name="share_externally">"Share externally"</string>
+    <string name="share_externally">"Harici olarak paylaş"</string>
+
+    <!-- Audio post, title/label for an audio post -->
+    <string name="audio_post">"Sesli gönderi"</string>
+
+    <!-- Preview text for audio post with duration %s is replaced with the length of the audio post, e.g. "Audio post (0:30)" -->
+    <string name="audio_post_preview">"Sesli gönderi (%s)"</string>
+
+    <!-- Text shown in chat view telling user they had a missed audio call -->
+    <string name="log_missed_voice_call">"Cevapsız çağrı"</string>
+
+    <!-- Text shown in chat view telling user they had a video call -->
+    <string name="log_video_call">"Görüntülü arama"</string>
+
+    <!-- Text shown in message preview telling user they had a video call %s is replaced with the call duration -->
+    <string name="log_video_call_with_duration">"Görüntülü arama (%s)"</string>
+
+    <!-- Rationale for when requesting microphone and camera permission for video calls -->
+    <string name="voice_call_record_video_permission_rationale">"Görüntülü arama için mikrofona ve kameraya erişim iznine ihtiyacımız var"</string>
+
+    <!-- The title of the notification for incoming voice calls -->
+    <string name="incoming_voice_call_notification_title">"Gelen çağrı"</string>
+
+    <!-- The title of the notification for incoming video calls -->
+    <string name="incoming_video_call_notification_title">"Gelen görüntülü arama"</string>
+
+    <!-- Action in menu for voice calling a user -->
+    <string name="call_action_voice">"Sesli arama"</string>
+
+    <!-- Action in menu for video calling a user -->
+    <string name="call_action_video">"Görüntülü arama"</string>
+    <string name="incoming_call_notification_title">"Gelen çağrı"</string>
+    <string name="call_action">"Arama"</string>
+    <string name="unmute">"Unmute"</string>
+    <string name="call_speaker_off_button">"Speaker off"</string>
+    <string name="log_missed_call">"Missed voice call"</string>
     <string name="composer_sharing_post">"%s ile paylaşılıyor"</string>
     <string name="composer_sharing_group_post">"Grupla paylaşılıyor "</string>
     <string name="invite_via_link">"İlişim yoluyla davet et"</string>
