@@ -21,13 +21,15 @@ public class GetCallServersIq extends HalloIq {
     }
 
     @Override
-    public Iq.Builder toProtoIq() {
+    public Iq toProtoIq() {
         GetCallServers.Builder builder = GetCallServers.newBuilder()
                 .setCallType(callType)
                 .setPeerUid(peerUid.rawIdLong())
                 .setCallId(callId);
         return Iq.newBuilder()
                 .setType(Iq.Type.GET)
-                .setGetCallServers(builder);
+                .setId(getStanzaId())
+                .setGetCallServers(builder)
+                .build();
     }
 }

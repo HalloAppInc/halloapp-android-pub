@@ -25,7 +25,7 @@ public class MediaUploadIq extends HalloIq {
     }
 
     @Override
-    public Iq.Builder toProtoIq() {
+    public Iq toProtoIq() {
         final UploadMedia.Builder builder = UploadMedia.newBuilder();
         builder.setSize(fileSize);
         if (downloadUrl != null) {
@@ -33,7 +33,9 @@ public class MediaUploadIq extends HalloIq {
         }
         return Iq.newBuilder()
                 .setType(Iq.Type.GET)
-                .setUploadMedia(builder);
+                .setId(getStanzaId())
+                .setUploadMedia(builder)
+                .build();
     }
 
     public static MediaUploadIq fromProto(UploadMedia uploadMedia) {

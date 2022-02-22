@@ -25,7 +25,7 @@ public class PromoteDemoteAdminsIq extends HalloIq {
     }
 
     @Override
-    public Iq.Builder toProtoIq() {
+    public Iq toProtoIq() {
         GroupStanza.Builder builder = GroupStanza.newBuilder();
         builder.setAction(GroupStanza.Action.MODIFY_ADMINS);
         builder.setGid(groupId.rawId());
@@ -49,6 +49,8 @@ public class PromoteDemoteAdminsIq extends HalloIq {
         }
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setGroupStanza(builder);
+                .setId(getStanzaId())
+                .setGroupStanza(builder)
+                .build();
     }
 }

@@ -21,7 +21,7 @@ public class GetCallServersResponseIq extends HalloIq {
     }
 
     @Override
-    public Iq.Builder toProtoIq() {
+    public Iq toProtoIq() {
         return null;
     }
 

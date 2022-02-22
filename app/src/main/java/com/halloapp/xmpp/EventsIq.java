@@ -17,13 +17,15 @@ public class EventsIq extends HalloIq {
     }
 
     @Override
-    public Iq.Builder toProtoIq() {
+    public Iq toProtoIq() {
         ClientLog.Builder builder = ClientLog.newBuilder();
         for (EventData event : events) {
             builder.addEvents(event);
         }
         return Iq.newBuilder()
+                .setId(getStanzaId())
                 .setType(Iq.Type.SET)
-                .setClientLog(builder);
+                .setClientLog(builder)
+                .build();
     }
 }

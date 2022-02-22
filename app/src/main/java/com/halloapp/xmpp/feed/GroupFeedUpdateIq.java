@@ -46,7 +46,7 @@ public class GroupFeedUpdateIq extends HalloIq {
     }
 
     @Override
-    public Iq.Builder toProtoIq() {
+    public Iq toProtoIq() {
         GroupFeedItem.Builder builder = GroupFeedItem.newBuilder();
         builder.setAction(getProtoAction());
         builder.setGid(groupId.rawId());
@@ -99,6 +99,7 @@ public class GroupFeedUpdateIq extends HalloIq {
         return Iq.newBuilder()
                 .setId(feedItem.id)
                 .setType(Iq.Type.SET)
-                .setGroupFeedItem(builder);
+                .setGroupFeedItem(builder)
+                .build();
     }
 }

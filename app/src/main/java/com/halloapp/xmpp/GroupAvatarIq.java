@@ -20,14 +20,16 @@ public class GroupAvatarIq extends HalloIq {
     }
 
     @Override
-    public Iq.Builder toProtoIq() {
+    public Iq toProtoIq() {
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
+                .setId(getStanzaId())
                 .setGroupAvatar(
                         UploadGroupAvatar.newBuilder()
                                 .setGid(groupId.rawId())
                                 .setData(ByteString.copyFrom(bytes))
                                 .setFullData(ByteString.copyFrom(largeBytes))
-                                .build());
+                                .build())
+                .build();
     }
 }

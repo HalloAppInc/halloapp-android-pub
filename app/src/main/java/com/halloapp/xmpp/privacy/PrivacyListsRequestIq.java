@@ -18,13 +18,15 @@ public class PrivacyListsRequestIq extends HalloIq {
     }
 
     @Override
-    public Iq.Builder toProtoIq() {
+    public Iq toProtoIq() {
         PrivacyLists.Builder builder = PrivacyLists.newBuilder();
         for (String type : requestedTypes) {
             builder.addLists(com.halloapp.proto.server.PrivacyList.newBuilder().setType(com.halloapp.proto.server.PrivacyList.Type.valueOf(type.toUpperCase(Locale.US))));
         }
         return Iq.newBuilder()
                 .setType(Iq.Type.GET)
-                .setPrivacyLists(builder.build());
+                .setId(getStanzaId())
+                .setPrivacyLists(builder.build())
+                .build();
     }
 }

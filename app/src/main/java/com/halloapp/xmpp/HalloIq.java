@@ -11,18 +11,19 @@ import com.halloapp.xmpp.groups.GroupsListResponseIq;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
 import com.halloapp.xmpp.privacy.PrivacyListsResponseIq;
 
-public abstract class HalloIq {
+public abstract class HalloIq extends HalloStanza {
 
-    private String id;
+    private static final Connection connection = Connection.getInstance();
 
     public HalloIq() {
+        super(connection.getAndIncrementShortId());
     }
 
     public HalloIq(@NonNull String id) {
-        this.id = id;
+        super(id);
     }
 
-    public abstract Iq.Builder toProtoIq();
+    public abstract Iq toProtoIq();
 
     public static HalloIq fromProtoIq(Iq iq) {
         if (iq.hasWhisperKeys()) {
@@ -43,13 +44,16 @@ public abstract class HalloIq {
             return ExternalShareResponseIq.fromProto(iq.getExternalSharePost());
         }
         Log.w("Using empty result IQ due to unrecognized result IQ " + ProtoPrinter.toString(iq));
-        return new EmptyResultIq();
+        return new EmptyResultIq(iq.getId());
     }
 
     private static class EmptyResultIq extends HalloIq {
+        protected EmptyResultIq(String id) {
+            setStanzaId(id);
+        }
 
         @Override
-        public Iq.Builder toProtoIq() {
+        public Iq toProtoIq() {
             return null;
         }
     }

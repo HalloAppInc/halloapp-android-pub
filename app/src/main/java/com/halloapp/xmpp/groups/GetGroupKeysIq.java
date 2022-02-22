@@ -16,13 +16,15 @@ public class GetGroupKeysIq extends HalloIq {
     }
 
     @Override
-    public Iq.Builder toProtoIq() {
+    public Iq toProtoIq() {
         GroupStanza groupStanza = GroupStanza.newBuilder()
                 .setAction(GroupStanza.Action.GET_MEMBER_IDENTITY_KEYS)
                 .setGid(groupId.rawId())
                 .build();
         return Iq.newBuilder()
                 .setType(Iq.Type.GET)
-                .setGroupStanza(groupStanza);
+                .setId(getStanzaId())
+                .setGroupStanza(groupStanza)
+                .build();
     }
 }

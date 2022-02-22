@@ -22,7 +22,7 @@ public class WhisperKeysResponseIq extends HalloIq {
     }
 
     @Override
-    public Iq.Builder toProtoIq() {
+    public Iq toProtoIq() {
         return null;
     }
 

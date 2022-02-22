@@ -15,12 +15,14 @@ public class WhisperKeysDownloadIq extends HalloIq {
     }
 
     @Override
-    public Iq.Builder toProtoIq() {
+    public Iq toProtoIq() {
         return Iq.newBuilder()
+                .setId(getStanzaId())
                 .setWhisperKeys(
                         WhisperKeys.newBuilder()
                                 .setAction(WhisperKeys.Action.GET)
-                                .setUid(Long.parseLong(userId.rawId())));
+                                .setUid(Long.parseLong(userId.rawId())))
+                .build();
     }
 }
 

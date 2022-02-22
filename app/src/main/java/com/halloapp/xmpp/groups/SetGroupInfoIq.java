@@ -21,7 +21,7 @@ public class SetGroupInfoIq extends HalloIq {
     }
 
     @Override
-    public Iq.Builder toProtoIq() {
+    public Iq toProtoIq() {
         GroupStanza.Builder builder = GroupStanza.newBuilder();
         builder.setGid(groupId.rawId());
         builder.setAction(GroupStanza.Action.SET_NAME);
@@ -33,6 +33,8 @@ public class SetGroupInfoIq extends HalloIq {
         }
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setGroupStanza(builder);
+                .setId(getStanzaId())
+                .setGroupStanza(builder)
+                .build();
     }
 }

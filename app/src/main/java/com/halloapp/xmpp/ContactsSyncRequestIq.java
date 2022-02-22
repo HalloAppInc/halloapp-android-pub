@@ -30,7 +30,7 @@ public class ContactsSyncRequestIq extends HalloIq {
     }
 
     @Override
-    public Iq.Builder toProtoIq() {
+    public Iq toProtoIq() {
         ContactList.Builder builder = ContactList.newBuilder();
         builder.setType(isFullSync ? ContactList.Type.FULL : ContactList.Type.DELTA);
         if (syncId != null) {
@@ -64,6 +64,8 @@ public class ContactsSyncRequestIq extends HalloIq {
         }
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setContactList(builder);
+                .setId(getStanzaId())
+                .setContactList(builder)
+                .build();
     }
 }

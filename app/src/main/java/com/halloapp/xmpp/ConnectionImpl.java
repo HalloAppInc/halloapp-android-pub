@@ -115,7 +115,6 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
-import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -124,7 +123,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
@@ -255,13 +253,14 @@ public class ConnectionImpl extends Connection {
             noiseSocket.initialize(createAuthRequest().toByteArray());
             this.socket = noiseSocket;
             isAuthenticated = true;
-            randomizeShortId();
+
             synchronized (startupShutdownLock) {
                 packetWriter.init();
                 packetReader.init();
                 iqRouter.onConnected();
                 msgRouter.onConnected();
             }
+            randomizeShortId();
             connectionObservers.notifyConnected();
             isAuthenticated = true;
         } catch (IOException | NoiseException e) {
@@ -506,45 +505,25 @@ public class ConnectionImpl extends Connection {
     @Override
     public void subscribePresence(UserId userId) {
         executor.execute(() -> {
-            Presence.Builder builder = Presence.newBuilder();
-            builder.setId(getAndIncrementShortId());
-            builder.setType(Presence.Type.SUBSCRIBE);
-            if (userId != null) {
-                builder.setToUid(Long.parseLong(userId.rawId()));
-            }
-            sendPacket(Packet.newBuilder().setPresence(builder).build());
+            PresenceStanza stanza = new PresenceStanza(userId, "subscribe");
+            sendPacket(Packet.newBuilder().setPresence(stanza.toProto()).build());
         });
     }
 
     @Override
     public void updatePresence(boolean available) {
         executor.execute(() -> {
-            Presence.Builder builder = Presence.newBuilder();
-            builder.setId(getAndIncrementShortId());
-            builder.setType(available ? Presence.Type.AVAILABLE : Presence.Type.AWAY);
-
-            sendPacket(Packet.newBuilder().setPresence(builder).build());
+            PresenceStanza stanza = new PresenceStanza(null, available ? "available" : "away");
+            Packet packet = Packet.newBuilder().setPresence(stanza.toProto()).build();
+            sendPacket(packet);
         });
     }
 
     @Override
     public void updateChatState(@NonNull ChatId chat, int state) {
         executor.execute(() -> {
-            ChatState.ThreadType threadType;
-            if (chat instanceof UserId) {
-                threadType = ChatState.ThreadType.CHAT;
-            } else if (chat instanceof GroupId) {
-                threadType = ChatState.ThreadType.GROUP_CHAT;
-            } else {
-                threadType = ChatState.ThreadType.CHAT;
-                Log.e("ChatStateStanza invalid type of chat id for chat state");
-            }
-            ChatState chatState = ChatState.newBuilder()
-                    .setType(state == com.halloapp.xmpp.ChatState.Type.TYPING ? ChatState.Type.TYPING : ChatState.Type.AVAILABLE)
-                    .setThreadId(chat.rawId())
-                    .setThreadType(threadType)
-                    .build();
-            sendPacket(Packet.newBuilder().setChatState(chatState).build());
+            ChatStateStanza stanza = new ChatStateStanza(state == com.halloapp.xmpp.ChatState.Type.TYPING ? "typing" : "available", chat);
+            sendPacket(Packet.newBuilder().setChatState(stanza.toProto()).build());
         });
     }
 
@@ -1001,7 +980,7 @@ public class ConnectionImpl extends Connection {
     private Observable<Iq> sendIqRequestAsync(@NonNull HalloIq iq, boolean retryConnection) {
         BackgroundObservable<Iq> iqResponse = new BackgroundObservable<>(bgWorkers);
         executor.executeWithDropHandler(() -> {
-            Iq.Builder protoIq = iq.toProtoIq();
+            Iq protoIq = iq.toProtoIq();
             iqRouter.sendAsync(protoIq)
                     .onResponse(iqResponse::setResponse)
                     .onError(iqResponse::setException);
@@ -1051,9 +1030,9 @@ public class ConnectionImpl extends Connection {
     @Override
     public void sendAck(@NonNull String id) {
         executor.execute(() -> {
+            final AckStanza ack = new AckStanza(id);
             Log.i("connection: sending ack for " + id);
-            sendPacket(Packet.newBuilder().setAck(Ack.newBuilder()
-                    .setId(id)).build());
+            sendPacket(Packet.newBuilder().setAck(ack.toProto()).build());
         });
     }
 
@@ -2211,63 +2190,31 @@ public class ConnectionImpl extends Connection {
     private class IqRouter {
         private static final long IQ_TIMEOUT_MS = 20_000;
 
-        private final LinkedHashMap<String, PendingIq> pendingIqs = new LinkedHashMap<>();
+        private final Map<String, Iq> responses = new ConcurrentHashMap<>();
+        private final Map<String, ResponseHandler<Iq>> successCallbacks = new ConcurrentHashMap<>();
+        private final Map<String, ExceptionHandler> failureCallbacks = new ConcurrentHashMap<>();
 
-        private class PendingIq {
-            public String id;
-            public final Iq.Builder iq;
-            public final ResponseHandler<Iq> successCallback;
-            public final ExceptionHandler failureCallback;
-            public TimerTask timeoutTask;
-            public boolean resendable = false;
-
-            public PendingIq(@NonNull String id, @NonNull Iq.Builder iq, @Nullable ResponseHandler<Iq> successCallback, @Nullable ExceptionHandler failureCallback) {
-                this.id = id;
-                this.iq = iq;
-
-                this.successCallback = successCallback;
-                this.failureCallback = failureCallback;
-            }
-
-            public void setId(@NonNull String id) {
-                this.id = id;
-                this.iq.setId(id);
-            }
-
-            public void setTimeoutTask(@NonNull TimerTask task) {
-                this.timeoutTask = task;
-            }
-
-            public void setResendable(boolean resendable) {
-                this.resendable = resendable;
-            }
-        }
+        private final Object callbackRemovalLock = new Object(); // make sure exactly one callback is ever removed per id
 
         private ResponseHandler<Iq> fetchSuccessCallback(String id) {
-            PendingIq pendingIq;
-            synchronized (pendingIqs) {
-                pendingIq = pendingIqs.remove(id);
+            synchronized (callbackRemovalLock) {
+                ResponseHandler<Iq> callback = successCallbacks.remove(id);
+                failureCallbacks.remove(id);
+                return callback;
             }
-            if (pendingIq != null) {
-                pendingIq.timeoutTask.cancel();
-                return pendingIq.successCallback;
-            }
-            return null;
         }
 
         private ExceptionHandler fetchFailureCallback(String id) {
-            PendingIq pendingIq;
-            synchronized (pendingIqs) {
-                pendingIq = pendingIqs.remove(id);
+            synchronized (callbackRemovalLock) {
+                ExceptionHandler callback = failureCallbacks.remove(id);
+                successCallbacks.remove(id);
+                return callback;
             }
-            if (pendingIq != null) {
-                pendingIq.timeoutTask.cancel();
-                return pendingIq.failureCallback;
-            }
-            return null;
         }
 
         public void onResponse(String id, Iq iq) {
+            responses.put(id, iq);
+
             ResponseHandler<Iq> callback = fetchSuccessCallback(id);
             if (callback != null) {
                 callback.handleResponse(iq);
@@ -2295,110 +2242,90 @@ public class ConnectionImpl extends Connection {
             }
         }
 
-        public Observable<Iq> sendAsync(Iq.Builder iq) {
-            return sendAsync(iq, false);
+        public Observable<Iq> sendAsync(Iq iq) {
+            BackgroundObservable<Iq> observable = new BackgroundObservable<>(bgWorkers);
+            Packet packet = Packet.newBuilder().setIq(iq).build();
+            sendPacket(packet, () -> observable.setException(new NotConnectedException()));
+            setCallbacks(iq.getId(), observable::setResponse, observable::setException);
+            return observable;
         }
 
-        public Observable<Iq> sendAsync(Iq.Builder iq, boolean resendable) {
-            final String id = getAndIncrementShortId();
-            iq.setId(id);
-            BackgroundObservable<Iq> observable = new BackgroundObservable<>(bgWorkers);
-            PendingIq pendingIq = new PendingIq(id, iq, observable::setResponse, observable::setException);
+        void onConnected() {
+            reset();
+        }
+
+        void onDisconnected() {
+            reset();
+        }
+
+        private void reset() {
+            Map<String, ExceptionHandler> failureCallbacksCopy;
+            synchronized (callbackRemovalLock) {
+                responses.clear();
+                successCallbacks.clear();
+
+                failureCallbacksCopy = new HashMap<>(failureCallbacks);
+                failureCallbacks.clear();
+            }
+
+            for (String id : failureCallbacksCopy.keySet()) {
+                Log.i("IqRouter marking " + id + " as failure during reset");
+                ExceptionHandler failure = failureCallbacksCopy.get(id);
+                if (failure != null) {
+                    failure.handleException(new IqRouterResetException(id));
+                }
+            }
+        }
+
+        private void setCallbacks(String id, ResponseHandler<Iq> success, ExceptionHandler failure) {
+            if (TextUtils.isEmpty(id)) {
+                Log.w("connection: trying to set callbacks for empty id!");
+            }
+            successCallbacks.put(id, success);
+            failureCallbacks.put(id, failure);
+            scheduleRemoval(id);
+        }
+
+        private void clear(String id) {
+            synchronized (callbackRemovalLock) {
+                responses.remove(id);
+                successCallbacks.remove(id);
+                failureCallbacks.remove(id);
+            }
+        }
+
+        private void scheduleRemoval(String id) {
+            Timer timer = new Timer();
             TimerTask timerTask = new TimerTask() {
                 @Override
                 public void run() {
                     executor.execute(() -> {
-                        performIqTimeout(pendingIq.id);
+                        performRemoval(id);
                     });
                 }
             };
-            pendingIq.setResendable(resendable);
-            pendingIq.setTimeoutTask(timerTask);
-            synchronized (pendingIqs) {
-                pendingIqs.put(id, pendingIq);
-            }
-            PacketCallback packetCallback;
-            if (resendable) {
-                packetCallback = null;
-            } else {
-                packetCallback = () -> {
-                    PendingIq pending;
-                    synchronized (pendingIqs) {
-                        pending = pendingIqs.remove(pendingIq.id);
-                    }
-                    if (pending != null) {
-                        pending.timeoutTask.cancel();
-                    }
-                    observable.setException(new NotConnectedException());
-                };
-            }
             timer.schedule(timerTask, IQ_TIMEOUT_MS);
-            sendPacket(buildIqPacket(iq), packetCallback);
-            return observable;
         }
 
-        private Packet buildIqPacket(Iq.Builder iqBuilder) {
-            return Packet.newBuilder().setIq(iqBuilder).build();
-        }
+        private void performRemoval(String id) {
+            ExceptionHandler failure = null;
+            ResponseHandler<Iq> success = null;
+            Iq response;
 
-        void onConnected() {
-            Log.i("connection: re-connected iq router requeing iqs");
-            synchronized (pendingIqs) {
-                ArrayList<PendingIq> iqsToRequeue = new ArrayList<>();
-                for (PendingIq msg : pendingIqs.values()) {
-                    if (!msg.resendable) {
-                        Log.i("connection: dropping msg id " + msg.id + " as not safe to resend");
-                        msg.timeoutTask.cancel();
-                        if (msg.failureCallback != null) {
-                            msg.failureCallback.handleException(new IqRouterResetException(msg.id));
-                        }
-                    } else {
-                        String id = getAndIncrementShortId();
-                        msg.setId(id);
-                        iqsToRequeue.add(msg);
-                    }
+            synchronized (callbackRemovalLock) {
+                response = responses.get(id);
+                if (response == null) {
+                    failure = failureCallbacks.get(id);
+                } else {
+                    success = successCallbacks.get(id);
                 }
-                pendingIqs.clear();
-                for (PendingIq iq : iqsToRequeue) {
-                    pendingIqs.put(iq.id, iq);
-                    sendPacket(buildIqPacket(iq.iq));
-                }
+                clear(id);
             }
-        }
 
-        void onDisconnected() {
-            Log.i("connection: disconnected iq router clearing out non-resendable iqs");
-            ArrayList<PendingIq> droppedMessages = new ArrayList<>();
-            synchronized (pendingIqs) {
-                Iterator<PendingIq> pendingMessageIterator = pendingIqs.values().iterator();
-                while (pendingMessageIterator.hasNext()) {
-                    PendingIq msg = pendingMessageIterator.next();
-                    if (!msg.resendable) {
-                        pendingMessageIterator.remove();
-                        msg.timeoutTask.cancel();
-                        droppedMessages.add(msg);
-                    }
-                }
-            }
-            for (PendingIq msg : droppedMessages) {
-                Log.i("IqRouter marking " + msg.id + " as failure during reset");
-                if (msg.failureCallback != null) {
-                    msg.failureCallback.handleException(new IqRouterResetException(msg.id));
-                }
-            }
-        }
-
-        private void performIqTimeout(String id) {
-            PendingIq pendingIq;
-            synchronized (pendingIqs) {
-                pendingIq = pendingIqs.remove(id);
-            }
-            if (pendingIq == null) {
-                Log.i("connection: iq timed out, but already cleared; id=" + id);
-                return;
-            }
-            if (pendingIq.failureCallback != null) {
-                pendingIq.failureCallback.handleException(new IqTimeoutException(id));
+            if (failure != null) {
+                failure.handleException(new IqTimeoutException(id));
+            } else if (success != null) {
+                success.handleResponse(response);
             }
         }
     }

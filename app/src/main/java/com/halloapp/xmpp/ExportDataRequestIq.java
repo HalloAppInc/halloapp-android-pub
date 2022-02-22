@@ -6,10 +6,12 @@ import com.halloapp.proto.server.Iq;
 public class ExportDataRequestIq extends HalloIq {
 
     @Override
-    public Iq.Builder toProtoIq() {
+    public Iq toProtoIq() {
         return Iq.newBuilder()
+                .setId(getStanzaId())
                 .setType(Iq.Type.SET)
-                .setExportData(ExportData.newBuilder().build());
+                .setExportData(ExportData.newBuilder().build())
+                .build();
     }
 }
 

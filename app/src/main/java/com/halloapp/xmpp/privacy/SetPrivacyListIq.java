@@ -38,7 +38,7 @@ public class SetPrivacyListIq extends HalloIq {
     }
 
     @Override
-    public Iq.Builder toProtoIq() {
+    public Iq toProtoIq() {
         com.halloapp.proto.server.PrivacyList.Builder builder = com.halloapp.proto.server.PrivacyList.newBuilder();
         builder.setType(com.halloapp.proto.server.PrivacyList.Type.valueOf(type.toUpperCase(Locale.US)));
 
@@ -73,7 +73,9 @@ public class SetPrivacyListIq extends HalloIq {
 
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setPrivacyList(builder);
+                .setId(getStanzaId())
+                .setPrivacyList(builder)
+                .build();
     }
 
     private void updateUid(com.halloapp.proto.server.PrivacyList.Builder builder, UserId userId, boolean add) {
