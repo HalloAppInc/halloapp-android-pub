@@ -1,8 +1,6 @@
 package com.halloapp.ui.calling;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -54,10 +52,6 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
 
     private static final String ACTION_ACCEPT = "accept";
 
-    private static final int CONTROLS_FADE_INITIAL_DELAY_MS = 2000;
-    private static final int CONTROLS_FADE_ON_CLICK_DELAY_MS = 5000;
-
-
     public static Intent getStartCallIntent(@NonNull Context context, @NonNull UserId userId, @NonNull CallType callType) {
         Intent intent = new Intent(context, CallActivity.class);
         intent.putExtra(EXTRA_PEER_UID, userId.rawId());
@@ -102,10 +96,6 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private final CallManager callManager = CallManager.getInstance();
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    private int shortAnimationDuration;
-
-    private View topContainerView;
-    private View controlsContainerView;
 
     private View ringingView;
     private View inCallView;
@@ -121,6 +111,8 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private TextView speakerLabelView;
 
     private CallParticipantsLayout participantsLayout;
+
+    private VideoCallControlsController videoCallControlsController;
 
     private CallViewModel callViewModel;
     private UserId peerUid;
@@ -175,12 +167,9 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         if (callType == CallType.VIDEO) {
             actionBar.hide();
         }
-        shortAnimationDuration = getResources().getInteger(android.R.integer.config_mediumAnimTime);
 
         contactLoader = new ContactLoader();
 
-        topContainerView = findViewById(R.id.call_top_container);
-        controlsContainerView = findViewById(R.id.controls_container);
         ringingView = findViewById(R.id.ringing_view);
         inCallView = findViewById(R.id.in_call_view);
 
@@ -235,7 +224,9 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                         participantsLayout.setVisibility(View.GONE);
                     } else {
                         participantsLayout.showInCallView();
-                        mainHandler.postDelayed(this::animateOutControls, CONTROLS_FADE_INITIAL_DELAY_MS);
+                        mainHandler.post(() -> {
+                            videoCallControlsController.onCallStart();
+                        });
                     }
                     startCallTimer();
                     break;
@@ -290,13 +281,9 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             }
             onDeclineCall();
         });
-
-        // TODO(nikola): Maybe we should listen on touch.
-        participantsLayout.setOnClickListener(v -> {
-            showControls();
-            mainHandler.removeCallbacks(this::animateOutControls);
-            mainHandler.postDelayed(this::animateOutControls, CONTROLS_FADE_ON_CLICK_DELAY_MS);
-        });
+        videoCallControlsController = new VideoCallControlsController(findViewById(R.id.call_top_container), findViewById(R.id.controls_container));
+        participantsLayout.setOnClickListener(videoCallControlsController);
+        videoCallControlsController.showControlsForever();
 
         if (callType == CallType.VIDEO) {
             participantsLayout.setVisibility(View.VISIBLE);
@@ -484,33 +471,4 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             Log.e("CallActivity.startCallTimer the call start time is not set");
         }
     }
-
-    private void animateOutControls() {
-        topContainerView.animate()
-                .alpha(0f)
-                .setDuration(shortAnimationDuration)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        topContainerView.setVisibility(View.GONE);
-                    }
-                });
-        controlsContainerView.animate()
-                .alpha(0f)
-                .setDuration(shortAnimationDuration)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        controlsContainerView.setVisibility(View.GONE);
-                    }
-                });
-    }
-
-    private void showControls() {
-        topContainerView.setAlpha(1f);
-        topContainerView.setVisibility(View.VISIBLE);
-        controlsContainerView.setAlpha(1f);
-        controlsContainerView.setVisibility(View.VISIBLE);
-    }
-
 }
