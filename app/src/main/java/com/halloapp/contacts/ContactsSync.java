@@ -49,8 +49,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class ContactsSync {
 
-    private static final String FULL_CONTACT_SYNC_WORK_ID = "contact-sync-full";
-    private static final String INCREMENTAL_CONTACT_SYNC_WORK_ID = "contact-sync-incremental";
+    private static final String CONTACT_SYNC_WORK_ID = "contact-sync";
 
     private static final String WORKER_PARAM_FULL_SYNC = "full_sync";
     private static final String WORKER_PARAM_CONTACT_HASHES = "contact_hashes";
@@ -83,7 +82,7 @@ public class ContactsSync {
     }
 
     public LiveData<List<WorkInfo>> getWorkInfoLiveData() {
-        return WorkManager.getInstance(appContext.get()).getWorkInfosForUniqueWorkLiveData(ContactsSync.FULL_CONTACT_SYNC_WORK_ID);
+        return WorkManager.getInstance(appContext.get()).getWorkInfosForUniqueWorkLiveData(CONTACT_SYNC_WORK_ID);
     }
 
     public UUID getLastSyncRequestId() {
@@ -110,15 +109,17 @@ public class ContactsSync {
 
     public void cancelContactsSync() {
         Context context = appContext.get();
-        WorkManager.getInstance(context).cancelUniqueWork(INCREMENTAL_CONTACT_SYNC_WORK_ID);
-        WorkManager.getInstance(context).cancelUniqueWork(FULL_CONTACT_SYNC_WORK_ID);
+        WorkManager.getInstance(context).cancelUniqueWork(CONTACT_SYNC_WORK_ID);
     }
 
     private void startContactsSyncInternal(boolean fullSync, String[] contactHashes) {
-        final Data data = new Data.Builder().putBoolean(WORKER_PARAM_FULL_SYNC, fullSync).putStringArray(WORKER_PARAM_CONTACT_HASHES, contactHashes).build();
+        final Data data = new Data.Builder()
+                .putBoolean(WORKER_PARAM_FULL_SYNC, fullSync)
+                .putStringArray(WORKER_PARAM_CONTACT_HASHES, contactHashes)
+                .build();
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(ContactSyncWorker.class).setInputData(data).build();
         lastSyncRequestId = workRequest.getId();
-        WorkManager.getInstance(appContext.get()).enqueueUniqueWork(fullSync ? FULL_CONTACT_SYNC_WORK_ID : INCREMENTAL_CONTACT_SYNC_WORK_ID, ExistingWorkPolicy.APPEND_OR_REPLACE, workRequest);
+        WorkManager.getInstance(appContext.get()).enqueueUniqueWork(CONTACT_SYNC_WORK_ID, ExistingWorkPolicy.APPEND_OR_REPLACE, workRequest);
     }
 
     public void forceFullContactsSync() {
