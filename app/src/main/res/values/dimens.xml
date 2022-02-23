@@ -140,4 +140,8 @@
     <dimen name="share_destination_item_radius">14dp</dimen>
     <dimen name="share_destination_next_radius">20dp</dimen>
 
+    <dimen name="video_call_small_width">108dp</dimen>
+    <dimen name="video_call_small_height">192dp</dimen>
+    <dimen name="video_call_small_margins">10dp</dimen>
+
 </resources>
