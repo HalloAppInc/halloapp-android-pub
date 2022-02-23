@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Главная"</string>
     <string name="title_messages">"Чаты"</string>
@@ -15,7 +16,7 @@
     <string name="message_notifications_channel_name">"Уведомления о сообщениях"</string>
     <string name="critical_notifications_channel_name">"Критические оповещения приложения"</string>
     <string name="invite_notifications_channel_name">"Уведомления о приглашениях"</string>
-    <string name="invite_notification_text">"%s только что принял(-а) ваше приглашение присоединиться к HalloApp &#127881;"</string>
+    <string name="invite_notification_text">"%s только что принял(-а) ваше приглашение присоединиться к HalloApp &#x1f389;"</string>
     <string name="me">"Я"</string>
     <string name="you">"тебя"</string>
     <string name="camera_post">"Камера"</string>
@@ -45,7 +46,7 @@
     <string name="new_message">"Новое сообщение"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s есть на HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s использует HalloApp! &#127881;"</string>
+    <string name="new_chat_name_placeholder">"%s использует HalloApp! &#x1f389;"</string>
     <string name="posts_empty">"Ваши посты появятся здесь"</string>
     <string name="posts_exchange_numbers">"Для подключения необходимо обменяться номерами телефонов"</string>
     <string name="home_page_empty">"Здесь будут появляться сообщения от ваших контактов"</string>

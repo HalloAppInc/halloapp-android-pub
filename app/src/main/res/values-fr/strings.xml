@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Accueil"</string>
     <string name="title_messages">"Discussions"</string>
@@ -15,7 +16,7 @@
     <string name="message_notifications_channel_name">"Notifications de message"</string>
     <string name="critical_notifications_channel_name">"Alertes essentielles de l'application"</string>
     <string name="invite_notifications_channel_name">"Notifications d'invitation"</string>
-    <string name="invite_notification_text">"%s vient d'accepter ton invitation à rejoindre HalloAppli &#127881;"</string>
+    <string name="invite_notification_text">"%s vient d'accepter ton invitation à rejoindre HalloAppli &#x1f389;"</string>
     <string name="me">"Moi"</string>
     <string name="you">"vous"</string>
     <string name="camera_post">"Caméra"</string>
@@ -45,7 +46,7 @@ Des frais d'opérateur téléphonique peuvent être applicables."</string>
     <string name="new_message">"Nouveau message"</string>
     <string name="chat_message_attribution">"%1$s : %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s est sur HalloAppli"</string>
-    <string name="new_chat_name_placeholder">"%s utilise HalloApp ! &#127881;"</string>
+    <string name="new_chat_name_placeholder">"%s utilise HalloApp ! &#x1f389;"</string>
     <string name="posts_empty">"Tes publications apparaîtront ici."</string>
     <string name="posts_exchange_numbers">"Pour entrer en relation, vous devez échanger vos numéros de téléphone."</string>
     <string name="home_page_empty">"Les publications de tes contacts apparaîtront ici."</string>

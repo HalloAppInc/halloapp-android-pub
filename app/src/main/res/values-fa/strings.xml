@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"هالواپ"</string>
     <string name="title_home">"صفحه اصلی"</string>
     <string name="title_messages">"گفتگوها"</string>
@@ -15,7 +16,7 @@
     <string name="message_notifications_channel_name">"اعلان پیام‌ها"</string>
     <string name="critical_notifications_channel_name">"Critical app alerts"</string>
     <string name="invite_notifications_channel_name">"اعلان دعوت‌ها"</string>
-    <string name="invite_notification_text">"%s دعوت شما را برای پیوستن به هالواپ پذیرفت  &#127881;"</string>
+    <string name="invite_notification_text">"%s دعوت شما را برای پیوستن به هالواپ پذیرفت  &#x1f389;"</string>
     <string name="me">"من"</string>
 
     <!-- Fuzzy -->
@@ -46,7 +47,7 @@
     <string name="new_message">"پیام جدید"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s در هالواپ است."</string>
-    <string name="new_chat_name_placeholder">"%s از هالواپ استفاده میکند! &#127881;"</string>
+    <string name="new_chat_name_placeholder">"%s از هالواپ استفاده میکند! &#x1f389;"</string>
     <string name="posts_empty">"پست‌های شما اینجا خواهند بود"</string>
     <string name="posts_exchange_numbers">"برای ارتباط باید شماره تلفن رد و بدل کنید"</string>
     <string name="home_page_empty">"پست مخاطب‌هایتان اینجا خواهند بود"</string>

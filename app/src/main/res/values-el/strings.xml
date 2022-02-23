@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Αρχική"</string>
     <string name="title_messages">"Συνομιλίες"</string>
@@ -15,7 +16,7 @@
     <string name="message_notifications_channel_name">"Ειδοποιήσεις μηνυμάτων"</string>
     <string name="critical_notifications_channel_name">"Κρίσιμες ειδοποιήσεις εφαρμογής"</string>
     <string name="invite_notifications_channel_name">"Ειδοποιήσεις προσκλήσεων"</string>
-    <string name="invite_notification_text">"%s μόλις αποδέχτηκε την πρόσκλησή σας να συμμετέχει στο HalloApp &#127881;"</string>
+    <string name="invite_notification_text">"%s μόλις αποδέχτηκε την πρόσκλησή σας να συμμετέχει στο HalloApp &#x1f389;"</string>
     <string name="me">"Εγώ"</string>
 
     <!-- Fuzzy -->
@@ -48,7 +49,7 @@
 
     <!-- I added "The user" %s because in Greek there are masculine and feminine pronouns that are normally used. Thus, in order to avoid it, you can add the user ... -->
     <string name="empty_chat_with_name_placeholder">"Ο χρήστης %s είναι στο HalloApp."</string>
-    <string name="new_chat_name_placeholder">"Ο χρήστης %s χρησιμοποιεί το HalloApp! &#127881;"</string>
+    <string name="new_chat_name_placeholder">"Ο χρήστης %s χρησιμοποιεί το HalloApp! &#x1f389;"</string>
     <string name="posts_empty">"Οι δημοσιεύσεις σας θα εμφανιστούν εδώ"</string>
     <string name="posts_exchange_numbers">"Για να συνδεθείτε πρέπει να ανταλλάξετε αριθμούς τηλεφώνου"</string>
     <string name="home_page_empty">"Οι δημοσιεύσεις από τις επαφές σας θα εμφανίζονται εδώ"</string>

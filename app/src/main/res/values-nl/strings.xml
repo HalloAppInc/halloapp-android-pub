@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Home"</string>
     <string name="title_messages">"Chats"</string>
@@ -15,7 +16,7 @@
     <string name="message_notifications_channel_name">"Berichtmeldingen"</string>
     <string name="critical_notifications_channel_name">"Kritieke appmeldingen"</string>
     <string name="invite_notifications_channel_name">"Uitnodigingsmeldingen"</string>
-    <string name="invite_notification_text">"%s heeft je uitnodiging voor HalloApp geaccepteerd &#127881;"</string>
+    <string name="invite_notification_text">"%s heeft je uitnodiging voor HalloApp geaccepteerd &#x1f389;"</string>
     <string name="me">"Ik"</string>
 
     <!-- I think You also need you without capitals. See attached example.
@@ -50,7 +51,7 @@ Je aanbieder kan hiervoor kosten in rekening brengen."</string>
     <string name="new_message">"Nieuw bericht"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s gebruikt HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s gebruikt HalloApp! &#127881;"</string>
+    <string name="new_chat_name_placeholder">"%s gebruikt HalloApp! &#x1f389;"</string>
     <string name="posts_empty">"Je posts verschijnen hier"</string>
     <string name="posts_exchange_numbers">"Om connectie te maken, moeten jullie telefoonnummers uitwisselen"</string>
     <string name="home_page_empty">"Posts van je contacten verschijnen hier"</string>
