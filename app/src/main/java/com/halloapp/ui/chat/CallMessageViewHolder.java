@@ -75,6 +75,7 @@ public class CallMessageViewHolder extends MessageViewHolder {
                     callActionIconView.setImageTintList(ColorStateList.valueOf(color));
                     callActionIconView.setImageDrawable(voiceDrawable);
                     callActionTextView.setTextColor(color);
+                    callActionTextView.setText(R.string.call_action_voice);
                     callType = CallType.AUDIO_VALUE;
                     break;
                 case CallMessage.Usage.LOGGED_VOICE_CALL:
@@ -84,6 +85,7 @@ public class CallMessageViewHolder extends MessageViewHolder {
                     callActionIconView.setImageTintList(ColorStateList.valueOf(color));
                     callActionIconView.setImageDrawable(voiceDrawable);
                     callActionTextView.setTextColor(color);
+                    callActionTextView.setText(R.string.call_action_voice);
                     durationView.setText(TimeFormatter.formatCallDuration(callMessage.callDuration));
                     callType = CallType.AUDIO_VALUE;
                     break;
@@ -94,6 +96,7 @@ public class CallMessageViewHolder extends MessageViewHolder {
                     callActionIconView.setImageTintList(ColorStateList.valueOf(color));
                     callActionIconView.setImageDrawable(videoDrawable);
                     callActionTextView.setTextColor(color);
+                    callActionTextView.setText(R.string.call_action_video);
                     callType = CallType.VIDEO_VALUE;
                     break;
                 case CallMessage.Usage.LOGGED_VIDEO_CALL:
@@ -103,6 +106,7 @@ public class CallMessageViewHolder extends MessageViewHolder {
                     callActionIconView.setImageTintList(ColorStateList.valueOf(color));
                     callActionIconView.setImageDrawable(videoDrawable);
                     callActionTextView.setTextColor(color);
+                    callActionTextView.setText(R.string.call_action_video);
                     durationView.setText(TimeFormatter.formatCallDuration(callMessage.callDuration));
                     callType = CallType.VIDEO_VALUE;
                     break;
