@@ -2249,9 +2249,15 @@ public class ConnectionImpl extends Connection {
 
         public Observable<Iq> sendAsync(Iq iq) {
             BackgroundObservable<Iq> observable = new BackgroundObservable<>(bgWorkers);
+            final String id = iq.getId();
             Packet packet = Packet.newBuilder().setIq(iq).build();
-            sendPacket(packet, () -> observable.setException(new NotConnectedException()));
-            setCallbacks(iq.getId(), observable::setResponse, observable::setException);
+            setCallbacks(id, observable::setResponse, observable::setException);
+            sendPacket(packet, () -> {
+                ExceptionHandler exceptionHandler = fetchFailureCallback(id);
+                if (exceptionHandler != null) {
+                    exceptionHandler.handleException(new NotConnectedException());
+                }
+            });
             return observable;
         }
 
