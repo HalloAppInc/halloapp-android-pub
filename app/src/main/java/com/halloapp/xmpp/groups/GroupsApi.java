@@ -42,6 +42,7 @@ import com.halloapp.xmpp.util.Observable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +92,11 @@ public class GroupsApi {
             List<MemberInfo> addedUsers = new ArrayList<>();
             for (MemberElement memberElement : response.memberElements) {
                 if (!MemberElement.Result.OK.equals(memberElement.result)) {
-                    success = false;
+                    if ("already_not_member".equals(memberElement.reason)) {
+                        contentDb.addRemoveGroupMembers(groupId, null, null, new ArrayList<>(), Collections.singletonList(new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name)), null);
+                    } else {
+                        success = false;
+                    }
                 } else if (MemberElement.Action.ADD.equals(memberElement.action)) {
                     addedUsers.add(new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name));
                 }
