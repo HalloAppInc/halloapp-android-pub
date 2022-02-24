@@ -224,8 +224,10 @@ public class GroupViewModel extends AndroidViewModel {
                     HistoryResend.Builder builder = HistoryResend.newBuilder()
                             .setGid(groupId.rawId())
                             .setId(id)
-                            .setPayload(ByteString.copyFrom(payload)) // TODO(jack): Remove once plaintext sending is off
                             .setEncPayload(ByteString.copyFrom(encPayload));
+                    if (ServerProps.getInstance().getSendPlaintextGroupFeed()) {
+                        builder.setPayload(ByteString.copyFrom(payload)); // TODO(jack): Remove once plaintext sending is off
+                    }
                     if (groupSetupInfo.senderStateBundles != null) {
                         builder.addAllSenderStateBundles(groupSetupInfo.senderStateBundles);
                     }

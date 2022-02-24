@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import com.google.protobuf.ByteString;
 import com.halloapp.Constants;
 import com.halloapp.id.GroupId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.EncryptedPayload;
 import com.halloapp.proto.server.Comment;
 import com.halloapp.proto.server.GroupFeedItem;
@@ -60,7 +61,7 @@ public class GroupFeedUpdateIq extends HalloIq {
 
         if (feedItem.type == FeedItem.Type.POST) {
             Post.Builder pb = Post.newBuilder();
-            if (feedItem.payload != null) {
+            if (feedItem.payload != null && ServerProps.getInstance().getSendPlaintextGroupFeed()) {
                 pb.setPayload(ByteString.copyFrom(feedItem.payload));
             }
             if (feedItem.encPayload != null) {
@@ -76,7 +77,7 @@ public class GroupFeedUpdateIq extends HalloIq {
             builder.setPost(pb);
         } else if (feedItem.type == FeedItem.Type.COMMENT) {
             Comment.Builder cb = Comment.newBuilder();
-            if (feedItem.payload != null) {
+            if (feedItem.payload != null && ServerProps.getInstance().getSendPlaintextGroupFeed()) {
                 cb.setPayload(ByteString.copyFrom(feedItem.payload));
             }
             if (feedItem.encPayload != null) {

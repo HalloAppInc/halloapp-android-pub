@@ -721,7 +721,9 @@ public class ConnectionImpl extends Connection {
                 byte[] payload = containerBuilder.build().toByteArray();
                 byte[] encPayload = SignalSessionManager.getInstance().encryptMessage(payload, userId);
                 com.halloapp.proto.server.Post.Builder pb = com.halloapp.proto.server.Post.newBuilder();
-                pb.setPayload(ByteString.copyFrom(payload));
+                if (ServerProps.getInstance().getSendPlaintextGroupFeed()) {
+                    pb.setPayload(ByteString.copyFrom(payload));
+                }
                 EncryptedPayload encryptedPayload = EncryptedPayload.newBuilder()
                         .setOneToOneEncryptedPayload(ByteString.copyFrom(encPayload))
                         .build();
@@ -894,7 +896,9 @@ public class ConnectionImpl extends Connection {
                 byte[] encPayload = SignalSessionManager.getInstance().encryptMessage(payload, userId);
 
                 com.halloapp.proto.server.Comment.Builder cb = com.halloapp.proto.server.Comment.newBuilder();
-                cb.setPayload(ByteString.copyFrom(payload));
+                if (ServerProps.getInstance().getSendPlaintextGroupFeed()) {
+                    cb.setPayload(ByteString.copyFrom(payload));
+                }
                 EncryptedPayload encryptedPayload = EncryptedPayload.newBuilder()
                         .setOneToOneEncryptedPayload(ByteString.copyFrom(encPayload))
                         .build();

@@ -33,6 +33,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.privacy.BlockListManager;
 import com.halloapp.privacy.FeedPrivacyManager;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.clients.GroupHistoryPayload;
 import com.halloapp.proto.clients.SenderKey;
@@ -479,8 +480,10 @@ public class MainConnectionObserver extends Connection.Observer {
                             HistoryResend.Builder builder = HistoryResend.newBuilder()
                                     .setGid(groupId.rawId())
                                     .setId(historyId)
-                                    .setPayload(ByteString.copyFrom(payload)) // TODO(jack): Remove once plaintext sending is off
                                     .setEncPayload(ByteString.copyFrom(encPayload));
+                            if (ServerProps.getInstance().getSendPlaintextGroupFeed()) {
+                                builder.setPayload(ByteString.copyFrom(payload)); // TODO(jack): Remove once plaintext sending is off
+                            }
                             connection.sendRerequestedHistoryResend(builder, senderUserId);
                         } catch (InvalidProtocolBufferException e2) {
                             Log.e("Unrecognized group history payload for rerequest", e2);
