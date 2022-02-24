@@ -249,6 +249,10 @@ public class CallManager {
         this.callsApi.init();
     }
 
+    public void startVoiceCallActivity(Context context, UserId userId) {
+        startCallActivity(context, userId, CallType.AUDIO);
+    }
+
     public void startCallActivity(Context context, UserId userId, CallType callType) {
         if (state == CallManager.State.IDLE) {
             context.startActivity(CallActivity.getStartCallIntent(context, userId, callType));

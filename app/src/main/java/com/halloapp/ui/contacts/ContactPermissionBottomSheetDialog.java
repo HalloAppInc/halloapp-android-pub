@@ -48,7 +48,7 @@ public class ContactPermissionBottomSheetDialog extends HalloBottomSheetDialogFr
         DialogFragmentUtils.showDialogFragmentOnce(ContactPermissionBottomSheetDialog.newInstance(requestCode), fragmentManager);
     }
 
-    private static final String[] permissions = new String[] { Manifest.permission.READ_CONTACTS };
+    private static final String[] permissions = new String[] { Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS };
 
     private EasyPermissions.PermissionCallbacks permissionCallbacks;
 
@@ -104,7 +104,8 @@ public class ContactPermissionBottomSheetDialog extends HalloBottomSheetDialogFr
         continueButton.setText(R.string.continue_button);
         continueButton.setOnClickListener(v -> {
             requestedPermissions = true;
-            if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)) {
+            if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)
+                    || EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.WRITE_CONTACTS)) {
                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                         .setData(Uri.fromParts("package", BuildConfig.APPLICATION_ID, null));
                 startActivityForResult(intent, REQUEST_CODE_SETTINGS);
@@ -127,7 +128,8 @@ public class ContactPermissionBottomSheetDialog extends HalloBottomSheetDialogFr
     }
 
     private void updateNagContents() {
-        if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)) {
+        if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)
+                || EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.WRITE_CONTACTS)) {
             info.setText(getString(R.string.contact_permissions_request_permanently_denied));
             continueButton.setText(R.string.settings);
         } else {

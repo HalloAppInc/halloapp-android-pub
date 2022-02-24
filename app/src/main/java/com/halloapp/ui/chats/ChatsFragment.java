@@ -141,7 +141,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         final MenuItem closeMenuItem = menu.findItem(R.id.menu_clear);
         final SearchView searchView = (SearchView) searchMenuItem.getActionView();
         
-        final String[] perms = {Manifest.permission.READ_CONTACTS};
+        final String[] perms = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
         searchMenuItem.setVisible(EasyPermissions.hasPermissions(requireContext(), perms));
 
         closeMenuItem.setVisible(false);
@@ -472,7 +472,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 nameView.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_secondary));
 
                 itemView.setOnClickListener(v -> {
-                    if (EasyPermissions.hasPermissions(requireContext(), Manifest.permission.READ_CONTACTS)) {
+                    if (EasyPermissions.hasPermissions(requireContext(), Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)) {
                         startActivity(new Intent(getContext(), InviteContactsActivity.class));
                     } else {
                         ContactPermissionBottomSheetDialog.showRequest(requireActivity().getSupportFragmentManager(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE);

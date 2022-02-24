@@ -225,7 +225,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                 startActivity(intent);
             } else {
                 // You can directly ask for the permission.
-                final String[] perms = {Manifest.permission.READ_CONTACTS};
+                final String[] perms = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
                 requestPermissions(perms, REQUEST_CODE_ASK_CONTACTS_PERMISSION);
             }
         });
@@ -250,7 +250,8 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
             contactsNag.setVisibility(View.GONE);
         } else {
             contactsNag.setVisibility(View.VISIBLE);
-            if (EasyPermissions.permissionPermanentlyDenied(this, Manifest.permission.READ_CONTACTS)) {
+            if (EasyPermissions.permissionPermanentlyDenied(this, Manifest.permission.READ_CONTACTS)
+                    || EasyPermissions.permissionPermanentlyDenied(this, Manifest.permission.WRITE_CONTACTS)) {
                 contactsSettingsButton.setText(R.string.go_to_settings);
                 contactsNagTextView.setText(R.string.contact_permissions_request_permanently_denied);
             } else {
@@ -385,7 +386,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     }
 
     private void openInviteFlow() {
-        if (EasyPermissions.hasPermissions(requireContext(), Manifest.permission.READ_CONTACTS)) {
+        if (EasyPermissions.hasPermissions(requireContext(), Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)) {
             startActivity(new Intent(requireContext(), InviteContactsActivity.class));
         } else {
             ContactPermissionBottomSheetDialog.showRequest(requireActivity().getSupportFragmentManager(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE);

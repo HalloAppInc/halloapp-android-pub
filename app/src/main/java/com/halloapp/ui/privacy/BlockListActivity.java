@@ -115,7 +115,7 @@ public class BlockListActivity extends HalloActivity implements EasyPermissions.
     }
 
     private void pickContactToBlock() {
-        if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS)) {
+        if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)) {
             startActivityForResult(ContactsActivity.createBlocklistContactPicker(this, blockedUsers), REQUEST_CHOOSE_BLOCKED_CONTACT);
         } else {
             ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CHOOSE_BLOCKED_CONTACT);

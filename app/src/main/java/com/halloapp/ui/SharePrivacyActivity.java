@@ -380,14 +380,14 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
                 }
             });
             itemView.findViewById(R.id.contacts_except).setOnClickListener(v -> {
-                if (EasyPermissions.hasPermissions(itemView.getContext(), Manifest.permission.READ_CONTACTS)) {
+                if (EasyPermissions.hasPermissions(itemView.getContext(), Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)) {
                     editExceptList();
                 } else {
                     ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_EXCEPT);
                 }
             });
             itemView.findViewById(R.id.only_share_with).setOnClickListener(v -> {
-                if (EasyPermissions.hasPermissions(itemView.getContext(), Manifest.permission.READ_CONTACTS)) {
+                if (EasyPermissions.hasPermissions(itemView.getContext(), Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)) {
                     editOnlyList();
                 } else {
                     ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY);

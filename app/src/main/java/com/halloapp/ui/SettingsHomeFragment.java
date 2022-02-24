@@ -80,7 +80,7 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
 
         View invite = root.findViewById(R.id.invite);
         invite.setOnClickListener(v -> {
-            final String[] perms = {Manifest.permission.READ_CONTACTS};
+            final String[] perms = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
             if (!EasyPermissions.hasPermissions(requireContext(), perms)) {
                 ContactPermissionBottomSheetDialog.showRequest(requireActivity().getSupportFragmentManager(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE);
             } else {

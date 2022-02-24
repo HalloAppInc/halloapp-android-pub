@@ -333,7 +333,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     }
 
     private void loadContacts() {
-        final String[] perms = {Manifest.permission.READ_CONTACTS};
+        final String[] perms = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
         if (!EasyPermissions.hasPermissions(this, perms)) {
             EasyPermissions.requestPermissions(this, getString(R.string.contacts_permission_rationale),
                     REQUEST_CODE_ASK_CONTACTS_PERMISSION, perms);

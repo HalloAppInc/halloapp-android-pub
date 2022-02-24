@@ -907,5 +907,8 @@
     <string name="see_all">See all</string>
     <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
     <string name="unable_to_start_call">Unable to start call.</string>
-
+    <!-- Action shown in user's address book for option to start a call, %s replaced with the phone number -->
+    <string name="address_book_action_call">Voice call %s</string>
+    <!-- Action shown in user's address book for option to send a message, %s replaced with the phone number -->
+    <string name="address_book_action_message">Message %s</string>
 </resources>

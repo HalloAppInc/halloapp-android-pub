@@ -248,7 +248,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
     }
 
     private void loadContacts() {
-        final String[] perms = {Manifest.permission.READ_CONTACTS};
+        final String[] perms = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
         if (!EasyPermissions.hasPermissions(this, perms)) {
             ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION);
         } else {

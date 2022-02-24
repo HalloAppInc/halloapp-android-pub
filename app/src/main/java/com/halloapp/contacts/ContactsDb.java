@@ -427,6 +427,23 @@ public class ContactsDb {
     }
 
     @WorkerThread
+    public @Nullable UserId getUserForPhoneNumber(@NonNull String normalizedNumber) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,
+                new String[] { ContactsTable._ID,
+                        ContactsTable.COLUMN_NORMALIZED_PHONE,
+                        ContactsTable.COLUMN_USER_ID,
+                },
+                ContactsTable.COLUMN_NORMALIZED_PHONE + "=?",
+                new String [] {normalizedNumber}, null, null, null, "1")) {
+            if (cursor.moveToNext()) {
+                return (UserId) UserId.fromNullable(cursor.getString(2));
+            }
+        }
+        return null;
+    }
+
+    @WorkerThread
     public @Nullable Contact readContact(@NonNull UserId userId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,

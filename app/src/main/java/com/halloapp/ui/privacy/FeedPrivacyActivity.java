@@ -97,14 +97,14 @@ public class FeedPrivacyActivity extends HalloActivity implements EasyPermission
             selectedType = PrivacyList.Type.ALL;
         });
         only.setOnClickListener(v -> {
-            if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS)) {
+            if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)) {
                 editOnlyList();
             } else {
                 ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_SELECT_ONLY_LIST);
             }
         });
         except.setOnClickListener(v -> {
-            if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS)) {
+            if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)) {
                 editExceptList();
             } else {
                 ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_SELECT_EXCEPT_LIST);

@@ -62,6 +62,8 @@ public class ContactsSync {
     private final AppContext appContext;
     private final Preferences preferences;
 
+    private final RawContactDatabase rawContactDatabase;
+
     private boolean initialized;
     private UUID lastSyncRequestId;
 
@@ -79,6 +81,8 @@ public class ContactsSync {
     private ContactsSync(@NonNull AppContext appContext, @NonNull Preferences preferences) {
         this.appContext = appContext;
         this.preferences = preferences;
+
+        this.rawContactDatabase = new RawContactDatabase(appContext.get());
     }
 
     public LiveData<List<WorkInfo>> getWorkInfoLiveData() {
@@ -166,6 +170,8 @@ public class ContactsSync {
             Log.e("ContactsSync.performContactSync: address book diff is null");
             return ListenableWorker.Result.failure();
         }
+
+        rawContactDatabase.removeRawContacts(syncResult.removed);
 
         final ListenableWorker.Result result;
 
@@ -258,7 +264,9 @@ public class ContactsSync {
 
     @WorkerThread
     private ListenableWorker.Result performFullContactSync() {
-        return updateContactsOnServer(ContactsDb.getInstance().getAllContacts(), true);
+        List<Contact> contacts = ContactsDb.getInstance().getAllContacts();
+        rawContactDatabase.updateFullSync(contacts);
+        return updateContactsOnServer(contacts, true);
     }
 
     @WorkerThread
@@ -380,6 +388,7 @@ public class ContactsSync {
         }
 
         if (!updatedContacts.isEmpty()) {
+            rawContactDatabase.updateRawContacts(updatedContacts);
             try {
                 ContactsDb.getInstance().updateContactsServerData(updatedContacts, newContacts).get();
                 Map<UserId, String> nameMap = new HashMap<>();
