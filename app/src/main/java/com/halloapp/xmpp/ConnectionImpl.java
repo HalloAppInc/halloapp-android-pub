@@ -1745,11 +1745,12 @@ public class ConnectionImpl extends Connection {
                         } catch (InvalidProtocolBufferException e) {
                             throw new CryptoException("grp_invalid_proto", e);
                         }
-                        if (!Arrays.equals(payload, decPayload)) {
+                        if (payload.length > 0 && !Arrays.equals(payload, decPayload)) {
                             Log.e("Group Feed Encryption plaintext and decrypted differ");
-                            throw new CryptoException("grp_payload_differs");
+                            throw new CryptoException("grp_post_payload_differs");
                         }
                         stats.reportGroupDecryptSuccess(false, senderPlatform, senderVersion);
+                        payload = decPayload;
                     } catch (CryptoException e) {
                         Log.e("Failed to decrypt group post", e);
                         errorMessage = e.getMessage();
@@ -1830,11 +1831,12 @@ public class ConnectionImpl extends Connection {
                         } catch (InvalidProtocolBufferException e) {
                             throw new CryptoException("grp_invalid_proto", e);
                         }
-                        if (!Arrays.equals(payload, decPayload)) {
+                        if (payload.length > 0 && !Arrays.equals(payload, decPayload)) {
                             Log.e("Group Feed Encryption plaintext and decrypted differ");
-                            throw new CryptoException("grp_payload_differs");
+                            throw new CryptoException("grp_cmnt_payload_differs");
                         }
                         stats.reportGroupDecryptSuccess(true, senderPlatform, senderVersion);
+                        payload = decPayload;
                     } catch (CryptoException e) {
                         Log.e("Failed to decrypt group comment", e);
                         errorMessage = e.getMessage();
