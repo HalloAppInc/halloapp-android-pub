@@ -6,6 +6,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Icon;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -201,6 +203,8 @@ public class CallManager {
     private CallsApi callsApi;
     private final ContentDb contentDb;
     private final AppContext appContext;
+
+    private MediaPlayer mediaPlayer;
 
     public static CallManager getInstance() {
         if (instance == null) {
@@ -519,19 +523,32 @@ public class CallManager {
         isInCall.postValue(false);
 
         if (oldState == State.IN_CALL || oldState == State.IN_CALL_CONNECTING) {
-            MediaPlayer mediaPlayer = MediaPlayer.create(appContext.get(), R.raw.end_call);
+            Log.i("CallManager: end_call sound");
+            if (mediaPlayer != null) {
+                mediaPlayer.stop();
+                mediaPlayer.release();
+            }
+            mediaPlayer = MediaPlayer.create(appContext.get(), R.raw.end_call);
+            mediaPlayer.setAudioAttributes(
+                    new AudioAttributes.Builder()
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                            .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
+                            .build());
             mediaPlayer.start();
             mediaPlayer.setOnCompletionListener(mp -> {
                 Log.i("CallManager: end_call sound is done");
-                if (this.callId == null) {
-                    releaseAudio();
+                synchronized (CallManager.this) {
+                    if (mediaPlayer == mp) {
+                        mediaPlayer = null;
+                    }
                 }
                 mp.release();
             });
         } else {
+            Log.i("CallManager: end_call vibration");
             executor.execute(() -> VibrationUtils.mediumVibration(appContext.get()));
-            releaseAudio();
         }
+        releaseAudio();
     }
 
     private synchronized void releaseAudio() {
