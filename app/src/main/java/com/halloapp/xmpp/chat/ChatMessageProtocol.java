@@ -1,27 +1,20 @@
 package com.halloapp.xmpp.chat;
 
-import android.text.TextUtils;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
-import com.halloapp.Me;
 import com.halloapp.content.ContentDb;
-import com.halloapp.content.Media;
-import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.crypto.CryptoException;
-import com.halloapp.crypto.signal.SignalSessionManager;
-import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
+import com.halloapp.crypto.signal.SignalSessionManager;
+import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.id.UserId;
-import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.ChatContainer;
-import com.halloapp.proto.clients.ChatMessage;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.server.ChatStanza;
 import com.halloapp.util.logs.Log;
@@ -127,7 +120,6 @@ public class ChatMessageProtocol {
         String senderPlatform = senderAgent == null ? "" : senderAgent.contains("Android") ? "android" : senderAgent.contains("iOS") ? "ios" : "";
         String senderVersion = senderPlatform.equals("android") ? senderAgent.split("Android")[1] : senderPlatform.equals("ios") ? senderAgent.split("iOS")[1] : "";
         String failureReason = null;
-        ChatMessage chatMessage = null;
         ChatContainer chatContainer = null;
         if (encryptedBytes != null) {
             try {
@@ -156,40 +148,7 @@ public class ChatMessageProtocol {
         }
 
         final Message message;
-        if (chatMessage != null) {
-            String rawReplyMessageId = chatMessage.getChatReplyMessageId();
-            String rawSenderId = chatMessage.getChatReplyMessageSenderId();
-            message = new Message(0,
-                    fromUserId,
-                    fromUserId,
-                    id,
-                    timestamp,
-                    Message.TYPE_CHAT,
-                    Message.USAGE_CHAT,
-                    chatMessage.getMediaCount() == 0 ? Message.STATE_INCOMING_RECEIVED : Message.STATE_INITIAL,
-                    chatMessage.getText(),
-                    chatMessage.getFeedPostId(),
-                    chatMessage.getFeedPostMediaIndex(),
-                    TextUtils.isEmpty(rawReplyMessageId) ? null : rawReplyMessageId,
-                    chatMessage.getChatReplyMessageMediaIndex(),
-                    rawSenderId.equals(Me.getInstance().getUser()) ? UserId.ME : new UserId(rawSenderId),
-                    0);
-            for (com.halloapp.proto.clients.Media item : chatMessage.getMediaList()) {
-                message.media.add(Media.createFromUrl(
-                        MessageElementHelper.fromProtoMediaType(item.getType()),
-                        item.getDownloadUrl(),
-                        item.getEncryptionKey().toByteArray(),
-                        item.getCiphertextHash().toByteArray(),
-                        item.getWidth(),
-                        item.getHeight(),
-                        MessageElementHelper.fromProtoBlobVersion(item.getBlobVersion()),
-                        item.getChunkSize(),
-                        item.getBlobSize()));
-            }
-            for (com.halloapp.proto.clients.Mention item : chatMessage.getMentionsList()) {
-                message.mentions.add(Mention.parseFromProto(item));
-            }
-        } else if (chatContainer != null) {
+        if (chatContainer != null) {
             message = Message.parseFromProto(fromUserId, id, timestamp, chatContainer);
         } else {
             message = new Message(0,
