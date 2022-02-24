@@ -46,6 +46,8 @@ public class ServerProps {
     private static final String PROP_VOICE_POSTS_ENABLED = "voice_posts";
     private static final String PROP_EMOJI_VERSION = "emoji_version";
     private static final String PROP_MAX_MEMBER_FOR_SHEET = "group_max_for_showing_invite_sheet";
+    private static final String PROP_SEND_PLAINTEXT_GROUP_FEED = "cleartext_group_feed";
+    private static final String PROP_USE_PLAINTEXT_GROUP_FEED = "use_cleartext_group_feed";
 
     private static final int WEEK_IN_SECONDS = (int) (DateUtils.WEEK_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
 
@@ -87,6 +89,8 @@ public class ServerProps {
     private final BooleanProp propVoicePostsEnabled = createProp(PROP_VOICE_POSTS_ENABLED, false);
     private final IntegerProp propEmojiVersion = createProp(PROP_EMOJI_VERSION, 1);
     private final IntegerProp propMaxMemberForInviteSheet = createProp(PROP_MAX_MEMBER_FOR_SHEET, 5);
+    private final BooleanProp propSendPlaintextGroupFeed = createProp(PROP_SEND_PLAINTEXT_GROUP_FEED, true);
+    private final BooleanProp propUsePlaintextGroupFeed = createProp(PROP_USE_PLAINTEXT_GROUP_FEED, true);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -273,5 +277,13 @@ public class ServerProps {
 
     public synchronized int getMaxMemberForInviteSheet() {
         return propMaxMemberForInviteSheet.getValue();
+    }
+
+    public synchronized boolean getSendPlaintextGroupFeed() {
+        return propSendPlaintextGroupFeed.getValue();
+    }
+
+    public synchronized boolean getUsePlaintextGroupFeed() {
+        return propUsePlaintextGroupFeed.getValue();
     }
 }
