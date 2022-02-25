@@ -200,6 +200,28 @@
                 app:layout_constraintBottom_toBottomOf="parent">
 
                 <ImageView
+                    android:id="@+id/in_call_flip_camera"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:padding="15dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/bg_video_call_item_gray"
+                    app:tint="@color/video_call_neutral_icon"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:srcCompat="@drawable/ic_flip_camera"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <ImageView
                     android:id="@+id/in_call_mute"
                     android:layout_width="54dp"
                     android:layout_height="54dp"

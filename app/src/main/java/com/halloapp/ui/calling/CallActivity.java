@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -97,8 +98,12 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private TextView nameTextView;
     private TextView titleTextView;
     private Chronometer callTimerView;
+
     private ImageView muteButtonView;
     private ImageView speakerButtonView;
+
+    @Nullable
+    private ImageView flipCameraButtonView;
 
     private CallParticipantsLayout participantsLayout;
 
@@ -169,11 +174,15 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         callTimerView = findViewById(R.id.call_timer);
         muteButtonView = findViewById(R.id.in_call_mute);
         speakerButtonView = findViewById(R.id.in_call_speaker);
+        flipCameraButtonView = findViewById(R.id.in_call_flip_camera);
 
         participantsLayout = findViewById(R.id.participants_view);
 
         if (callType == CallType.VIDEO) {
             participantsLayout.bind(callManager);
+            flipCameraButtonView.setOnClickListener(v -> {
+                onFlipCameraClick();
+            });
         }
 
         callViewModel.getState().observe(this, state -> {
@@ -369,7 +378,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void createVideoCapturer() {
-        createVideoCapturer(true);
+        createVideoCapturer(callManager.isFrontFacing());
     }
 
     private void createVideoCapturer(boolean frontFacing) {
@@ -412,6 +421,13 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private void updateMicrophoneMutedUI(boolean mute) {
         Log.i("CallActivity muteButton mute: " + mute);
         muteButtonView.setSelected(mute);
+    }
+
+    private void onFlipCameraClick() {
+        boolean frontFacing = callManager.isFrontFacing();
+        createVideoCapturer(!frontFacing);
+        callManager.attachCapturer(videoCapturer);
+        flipCameraButtonView.setSelected(!frontFacing);
     }
 
     private void onSpeakerPhone() {

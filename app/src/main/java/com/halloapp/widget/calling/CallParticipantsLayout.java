@@ -54,6 +54,8 @@ public class CallParticipantsLayout extends FrameLayout {
 
         remoteVideoView = findViewById(R.id.call_remote_video);
         localVideoView = findViewById(R.id.call_local_video);
+        localVideoView.setOnClickListener(v -> {
+        });
     }
 
     public void showInCallView() {
