@@ -29,6 +29,8 @@ public class CallParticipantsLayout extends FrameLayout {
     private int smallViewHeight;
     private int smallViewMargins;
 
+    private boolean inCallView = false;
+
     public CallParticipantsLayout(@NonNull Context context) {
         this(context, null);
     }
@@ -62,6 +64,7 @@ public class CallParticipantsLayout extends FrameLayout {
         localParams.setMargins(smallViewMargins, smallViewMargins, smallViewMargins, smallViewMargins);
         localVideoView.setLayoutParams(localParams);
         remoteVideoView.setVisibility(View.VISIBLE);
+        inCallView = true;
     }
 
     public void bind(@NonNull CallManager callManager) {
@@ -81,6 +84,16 @@ public class CallParticipantsLayout extends FrameLayout {
         localProxyVideoSink.setTarget(localVideoView);
 
         callManager.setVideoSinks(localProxyVideoSink, remoteProxyVideoSink);
+    }
+
+    public void translateLocalView(float y, int duration) {
+        if (inCallView) {
+            if (localVideoView != null) {
+                localVideoView.animate()
+                        .translationY(y)
+                        .setDuration(duration);
+            }
+        }
     }
 
     public void destroy() {

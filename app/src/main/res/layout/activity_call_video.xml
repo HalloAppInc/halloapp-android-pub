@@ -6,6 +6,12 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <com.halloapp.widget.calling.CallParticipantsLayout
+        android:id="@+id/participants_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
     <LinearLayout
         android:id="@+id/call_top_container"
         android:layout_width="match_parent"
@@ -23,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="40dp">
+            android:layout_marginBottom="30dp">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -38,18 +44,19 @@
                 android:paddingEnd="8dp"
                 android:layout_gravity="center_vertical"
                 android:fontFamily="sans-serif-medium"
-                android:textColor="@color/primary_text"
+                android:textColor="@color/white_87"
+                android:shadowColor="@color/black_54"
+                android:shadowRadius="4"
                 android:text="@string/app_name"/>
 
         </LinearLayout>
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/avatar"
-            android:layout_width="133dp"
-            android:layout_height="133dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:src="@drawable/avatar_person"
-            app:civ_border_color="@color/card_background"
-            tools:layout_editor_absoluteY="48dp" />
+            app:civ_border_color="@color/card_background" />
 
         <TextView
             android:id="@+id/name"
@@ -60,7 +67,10 @@
             android:paddingEnd="20dp"
             android:maxLines="3"
             android:ellipsize="end"
-            android:textSize="30sp"
+            android:textSize="28sp"
+            android:textColor="@color/white_87"
+            android:shadowColor="@color/black_54"
+            android:shadowRadius="5"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             tools:text="Ded Pihtov" />
 
@@ -71,7 +81,9 @@
             android:layout_marginTop="5dp"
             android:textSize="16sp"
             tools:text="incoming call"
-            android:textColor="@color/primary_text"/>
+            android:textColor="@color/white_87"
+            android:shadowColor="@color/black_54"
+            android:shadowRadius="5"/>
 
         <Chronometer
             android:id="@+id/call_timer"
@@ -79,6 +91,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_horizontal"
             android:layout_marginTop="5dp"
+            android:textColor="@color/white_87"
+            android:shadowColor="@color/black_54"
+            android:shadowRadius="5"
             android:textSize="16sp"
             android:visibility="gone"/>
 
@@ -88,7 +103,9 @@
         android:id="@+id/controls_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="50dp"
+        android:paddingBottom="20dp"
+        android:background="@drawable/bg_rounded_bottom_sheet"
+        android:backgroundTint="@color/video_call_control_bg"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -172,7 +189,6 @@
             android:layout_marginStart="20dp"
             android:paddingTop="20dp"
             android:visibility="visible"
-            android:paddingBottom="20dp"
             android:layout_gravity="center_vertical">
 
             <LinearLayout
@@ -185,56 +201,15 @@
 
                 <ImageView
                     android:id="@+id/in_call_mute"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:padding="16dp"
-                    app:tint="@color/call_neutral_icon"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:padding="15dp"
+                    app:tint="@color/video_call_neutral_icon"
                     android:layout_gravity="center_horizontal"
-                    android:background="@drawable/bg_call_item_gray"
+                    android:background="@drawable/bg_video_call_item_gray"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:srcCompat="@drawable/ic_mic_mute"/>
-
-                <TextView
-                    android:id="@+id/mute_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:paddingTop="10dp"
-                    android:layout_gravity="center_horizontal"
-                    android:textColor="@color/primary_text"
-                    app:layout_constraintTop_toBottomOf="@id/accept_view"
-                    android:text="@string/mute"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
-
-                <ImageView
-                    android:id="@+id/in_call_hangup"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:padding="16dp"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@drawable/bg_call_decline"
-                    app:tint="@android:color/white"
-                    app:srcCompat="@drawable/ic_call_end"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:paddingTop="10dp"
-                    android:layout_gravity="center_horizontal"
-                    android:textColor="@color/primary_text"
-                    app:layout_constraintTop_toBottomOf="@id/accept_view"
-                    android:text="@string/end_call"/>
 
             </LinearLayout>
 
@@ -248,26 +223,35 @@
 
                 <ImageView
                     android:id="@+id/in_call_speaker"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:padding="16dp"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:padding="15dp"
                     android:layout_gravity="center_horizontal"
-                    android:background="@drawable/bg_call_item_gray"
-                    app:tint="@color/call_neutral_icon"
+                    android:background="@drawable/bg_video_call_item_gray"
+                    app:tint="@color/video_call_neutral_icon"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:srcCompat="@drawable/ic_speaker_phone"/>
 
-                <TextView
-                    android:id="@+id/speaker_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:paddingTop="10dp"
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <ImageView
+                    android:id="@+id/in_call_hangup"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:padding="15dp"
                     android:layout_gravity="center_horizontal"
-                    android:textColor="@color/primary_text"
-                    app:layout_constraintTop_toBottomOf="@id/accept_view"
-                    android:text="@string/call_speaker_button"/>
+                    android:background="@drawable/bg_call_decline"
+                    app:tint="@android:color/white"
+                    app:srcCompat="@drawable/ic_call_end"/>
 
             </LinearLayout>
 

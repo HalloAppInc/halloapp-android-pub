@@ -107,9 +107,6 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private ImageView muteButtonView;
     private ImageView speakerButtonView;
 
-    private TextView muteLabelView;
-    private TextView speakerLabelView;
-
     private CallParticipantsLayout participantsLayout;
 
     private VideoCallControlsController videoCallControlsController;
@@ -154,17 +151,20 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         int flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON;
-        if (callType == CallType.VIDEO) {
-            flags = flags | WindowManager.LayoutParams.FLAG_FULLSCREEN;
+
+        boolean isVideoCall = callType == CallType.VIDEO;
+        if (isVideoCall) {
+            flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
         }
         getWindow().addFlags(flags);
 
-        setContentView(R.layout.activity_call);
+        setContentView(isVideoCall ? R.layout.activity_call_video : R.layout.activity_call);
 
         ActionBar actionBar = Preconditions.checkNotNull(getSupportActionBar());
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("");
-        if (callType == CallType.VIDEO) {
+
+        if (isVideoCall) {
             actionBar.hide();
         }
 
@@ -179,9 +179,6 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         callTimerView = findViewById(R.id.call_timer);
         muteButtonView = findViewById(R.id.in_call_mute);
         speakerButtonView = findViewById(R.id.in_call_speaker);
-
-        speakerLabelView = findViewById(R.id.speaker_label);
-        muteLabelView = findViewById(R.id.mute_label);
 
         participantsLayout = findViewById(R.id.participants_view);
 
@@ -220,13 +217,8 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                     callTimerView.setVisibility(View.VISIBLE);
                     titleTextView.setVisibility(View.GONE);
                     // TODO(clark): Make the state of the UI more explicit in the CallActivity
-                    if (callViewModel.getCallType() == CallType.AUDIO) {
-                        participantsLayout.setVisibility(View.GONE);
-                    } else {
-                        participantsLayout.showInCallView();
-                        mainHandler.post(() -> {
-                            videoCallControlsController.onCallStart();
-                        });
+                    if (callViewModel.getCallType() == CallType.VIDEO) {
+                        videoCallControlsController.onCallStart();
                     }
                     startCallTimer();
                     break;
@@ -281,17 +273,15 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             }
             onDeclineCall();
         });
-        videoCallControlsController = new VideoCallControlsController(findViewById(R.id.call_top_container), findViewById(R.id.controls_container));
-        participantsLayout.setOnClickListener(videoCallControlsController);
-        videoCallControlsController.showControlsForever();
 
         if (callType == CallType.VIDEO) {
+            videoCallControlsController = new VideoCallControlsController(findViewById(R.id.call_top_container), findViewById(R.id.controls_container));
+            videoCallControlsController.bindParticipantsView(participantsLayout);
+            videoCallControlsController.showControlsForever();
             participantsLayout.setVisibility(View.VISIBLE);
             // remoteVideoView is made visible when we are are IN_CALL
             //remoteVideoView.setVisibility(View.VISIBLE);
             hideSystemBars();
-        } else {
-            participantsLayout.setVisibility(View.GONE);
         }
 
         if (isInitiator && callViewModel.isIdle()) {
@@ -322,7 +312,10 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     protected void onDestroy() {
         super.onDestroy();
         contactLoader.destroy();
-        participantsLayout.destroy();
+        if (participantsLayout != null) {
+            participantsLayout.destroy();
+            participantsLayout = null;
+        }
     }
 
     private void hideSystemBars() {

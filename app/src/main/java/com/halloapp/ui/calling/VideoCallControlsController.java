@@ -1,9 +1,12 @@
 package com.halloapp.ui.calling;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.os.SystemClock;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
+
+import androidx.annotation.NonNull;
+
+import com.halloapp.widget.calling.CallParticipantsLayout;
 
 public class VideoCallControlsController implements View.OnClickListener {
 
@@ -13,9 +16,12 @@ public class VideoCallControlsController implements View.OnClickListener {
     private final View topContainerView;
     private final View controlsContainerView;
 
+    private CallParticipantsLayout callParticipantsLayout;
+
     private final int shortAnimationDuration;
 
     private long lastInteraction;
+    private boolean showControlsForever = false;
 
     public VideoCallControlsController(View headerView, View controlsView) {
         this.topContainerView = headerView;
@@ -28,70 +34,61 @@ public class VideoCallControlsController implements View.OnClickListener {
 
     private boolean controlsShowing = true;
 
+    public void bindParticipantsView(@NonNull CallParticipantsLayout callParticipantsLayout) {
+        this.callParticipantsLayout = callParticipantsLayout;
+
+        callParticipantsLayout.setOnClickListener(this);
+    }
+
     public void onCallStart() {
         controlsContainerView.removeCallbacks(hideControlsRunnable);
         controlsContainerView.postDelayed(hideControlsRunnable, CONTROLS_FADE_INITIAL_DELAY_MS);
+        callParticipantsLayout.showInCallView();
+        callParticipantsLayout.translateLocalView(-controlsContainerView.getHeight(), shortAnimationDuration);
+        showControlsForever = false;
     }
 
     public void showControlsForever() {
         controlsContainerView.removeCallbacks(hideControlsRunnable);
         showControls();
+        showControlsForever = true;
     }
 
     private void showControls() {
-        clearAnimations();
-        topContainerView.setAlpha(1f);
-        topContainerView.setVisibility(View.VISIBLE);
-        controlsContainerView.setAlpha(1f);
-        controlsContainerView.setVisibility(View.VISIBLE);
+        animateInControls();
     }
 
     private void animateOutControls() {
-        clearAnimations();
+        int height = controlsContainerView.getHeight();
+        callParticipantsLayout.translateLocalView(0, shortAnimationDuration);
         topContainerView.animate()
                 .alpha(0f)
-                .setDuration(shortAnimationDuration)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        topContainerView.setVisibility(View.GONE);
-                    }
-                });
-        controlsContainerView.animate()
-                .alpha(0f)
-                .setDuration(shortAnimationDuration)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        controlsContainerView.setVisibility(View.GONE);
-                    }
-                });
+                .setDuration(shortAnimationDuration);
+        TranslateAnimation translateAnimation = new TranslateAnimation(0, 0, controlsContainerView.getTranslationY(), height);
+        translateAnimation.setDuration(shortAnimationDuration);
+        translateAnimation.setFillAfter(true);
+        controlsContainerView.startAnimation(translateAnimation);
         controlsShowing = false;
     }
 
-    private void clearAnimations() {
-        topContainerView.clearAnimation();
-        controlsContainerView.clearAnimation();
-    }
-
     private void animateInControls() {
-        clearAnimations();
-        topContainerView.setVisibility(View.VISIBLE);
-        controlsContainerView.setVisibility(View.VISIBLE);
-
+        int height = controlsContainerView.getHeight();
+        callParticipantsLayout.translateLocalView(-height, shortAnimationDuration);
         topContainerView.animate()
                 .alpha(1f)
-                .setDuration(shortAnimationDuration)
-                .setListener(null);
-        controlsContainerView.animate()
-                .alpha(1f)
-                .setDuration(shortAnimationDuration)
-                .setListener(null);
+                .setDuration(shortAnimationDuration);
+        TranslateAnimation translateAnimation = new TranslateAnimation(0, 0, height, 0);
+        translateAnimation.setDuration(shortAnimationDuration);
+        translateAnimation.setFillAfter(true);
+        controlsContainerView.startAnimation(translateAnimation);
         controlsShowing = true;
     }
 
     @Override
     public void onClick(View v) {
+        if (showControlsForever) {
+            return;
+        }
         if (SystemClock.elapsedRealtime() - lastInteraction > 500) {
             lastInteraction = SystemClock.elapsedRealtime();
         } else {
@@ -106,4 +103,5 @@ public class VideoCallControlsController implements View.OnClickListener {
             controlsContainerView.postDelayed(hideControlsRunnable, CONTROLS_FADE_ON_CLICK_DELAY_MS);
         }
     }
+
 }
