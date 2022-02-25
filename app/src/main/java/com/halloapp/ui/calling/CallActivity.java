@@ -4,8 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Chronometer;
@@ -22,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.calling.CallManager;
+import com.halloapp.calling.HAVideoCapturer;
 import com.halloapp.calling.VideoUtils;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.id.UserId;
@@ -31,10 +30,6 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.calling.CallParticipantsLayout;
-
-import org.webrtc.SurfaceTextureHelper;
-import org.webrtc.VideoCapturer;
-import org.webrtc.VideoSource;
 
 import java.util.List;
 
@@ -95,8 +90,6 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
     private final CallManager callManager = CallManager.getInstance();
 
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
-
     private View ringingView;
     private View inCallView;
 
@@ -119,10 +112,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private ContactLoader contactLoader;
 
     // CallManager is responsible for cleaning up those.
-    private VideoCapturer videoCapturer;
-    private VideoSource videoSource;
-    private SurfaceTextureHelper surfaceTextureHelper;
-
+    private HAVideoCapturer videoCapturer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -219,6 +209,10 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                     // TODO(clark): Make the state of the UI more explicit in the CallActivity
                     if (callViewModel.getCallType() == CallType.VIDEO) {
                         videoCallControlsController.onCallStart();
+                        if (videoCapturer == null) {
+                            createVideoCapturer();
+                            callManager.attachCapturer(videoCapturer);
+                        }
                     }
                     startCallTimer();
                     break;
@@ -375,18 +369,18 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void createVideoCapturer() {
-        surfaceTextureHelper = SurfaceTextureHelper.create("HACaptureThread", callManager.getEglBase().getEglBaseContext());
-        videoCapturer = VideoUtils.createVideoCapturer(this);
-        videoSource = callManager.createVideoSource(videoCapturer);
-        videoCapturer.initialize(surfaceTextureHelper, this, videoSource.getCapturerObserver());
+        createVideoCapturer(true);
     }
 
+    private void createVideoCapturer(boolean frontFacing) {
+        videoCapturer = VideoUtils.createVideoCapturer(this, frontFacing);
+    }
 
     private void onStartCall(@NonNull CallType callType) {
         if (callType == CallType.VIDEO) {
             createVideoCapturer();
         }
-        callViewModel.onStartCall(callType, videoCapturer, videoSource, surfaceTextureHelper);
+        callViewModel.onStartCall(callType, videoCapturer);
     }
 
     private void onDeclineCall() {
@@ -399,7 +393,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         if (callViewModel.getCallType() == CallType.VIDEO) {
             createVideoCapturer();
         }
-        callViewModel.onAcceptCall(videoCapturer, videoSource, surfaceTextureHelper);
+        callViewModel.onAcceptCall(videoCapturer);
     }
 
     private void onCancelCall() {

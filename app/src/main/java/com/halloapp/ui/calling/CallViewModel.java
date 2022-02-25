@@ -1,11 +1,9 @@
 package com.halloapp.ui.calling;
 
-import android.app.Activity;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -14,17 +12,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.calling.CallObserver;
 import com.halloapp.calling.CallManager;
-import com.halloapp.id.ChatId;
+import com.halloapp.calling.HAVideoCapturer;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
-import com.halloapp.ui.avatar.ViewAvatarActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
-
-import org.webrtc.SurfaceTextureHelper;
-import org.webrtc.VideoCapturer;
-import org.webrtc.VideoSource;
 
 public class CallViewModel extends ViewModel implements CallObserver {
 
@@ -34,7 +27,7 @@ public class CallViewModel extends ViewModel implements CallObserver {
         private final CallType callType;
 
 
-        Factory(@NonNull Application application, @NonNull UserId peerUid, boolean isInitiator, CallType callType) {
+        Factory(@NonNull Application application, @NonNull UserId peerUid, Boolean isInitiator, CallType callType) {
             this.peerUid = peerUid;
             this.isInitiator = isInitiator;
             this.callType = callType;
@@ -138,8 +131,8 @@ public class CallViewModel extends ViewModel implements CallObserver {
     }
 
     // TODO(nikola): It is not great that that we have to pass all this video specific arguments for voice calls..
-    public void onStartCall(@NonNull CallType callType, VideoCapturer videoCapturer, VideoSource videoSource, SurfaceTextureHelper surfaceTextureHelper) {
-        if (callManager.startCall(peerUid, callType, videoCapturer, videoSource, surfaceTextureHelper)) {
+    public void onStartCall(@NonNull CallType callType, HAVideoCapturer videoCapturer) {
+        if (callManager.startCall(peerUid, callType, videoCapturer)) {
             state.postValue(CallManager.State.CALLING);
         }
     }
@@ -201,10 +194,10 @@ public class CallViewModel extends ViewModel implements CallObserver {
     }
 
     // TODO(nikola): It is not great that that we have to pass all this video specific arguments for voice calls..
-    public void onAcceptCall(VideoCapturer videoCapturer, VideoSource videoSource, SurfaceTextureHelper surfaceTextureHelper) {
+    public void onAcceptCall(HAVideoCapturer videoCapturer) {
         Log.i("CallViewModel.onAcceptCall");
         // TODO(nikola): we should include the call id here.
-        if (callManager.acceptCall(videoCapturer, videoSource, surfaceTextureHelper)) {
+        if (callManager.acceptCall(videoCapturer)) {
             state.postValue(CallManager.State.IN_CALL_CONNECTING);
         }
     }

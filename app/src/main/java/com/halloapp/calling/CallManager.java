@@ -1,13 +1,11 @@
 package com.halloapp.calling;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Icon;
 import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -32,7 +30,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.halloapp.AppContext;
-import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
 import com.halloapp.NetworkConnectivityManager;
 import com.halloapp.Notifications;
@@ -44,7 +41,6 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.id.UserId;
-import com.halloapp.proto.clients.Video;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
 import com.halloapp.proto.server.StartCallResult;
@@ -79,7 +75,6 @@ import org.webrtc.RtpReceiver;
 import org.webrtc.RtpTransceiver;
 import org.webrtc.SessionDescription;
 import org.webrtc.SurfaceTextureHelper;
-import org.webrtc.VideoCapturer;
 import org.webrtc.VideoDecoderFactory;
 import org.webrtc.VideoEncoderFactory;
 import org.webrtc.VideoSink;
@@ -131,13 +126,13 @@ public class CallManager {
     private boolean isMicrophoneMuted = false;
     private boolean isSpeakerPhoneOn = false;  // The default will have to change for video calls
 
-    MediaConstraints audioConstraints;
-    AudioSource audioSource;
-    AudioTrack localAudioTrack;
-    AudioTrack remoteAudioTrack;
+    private MediaConstraints audioConstraints;
+    private AudioSource audioSource;
+    private AudioTrack localAudioTrack;
+    private AudioTrack remoteAudioTrack;
 
     @Nullable
-    private VideoCapturer videoCapturer;
+    private HAVideoCapturer videoCapturer;
     @Nullable
     private SurfaceTextureHelper surfaceTextureHelper;
     @Nullable
@@ -348,8 +343,7 @@ public class CallManager {
 
 
     @MainThread
-    public synchronized boolean startCall(@NonNull UserId peerUid, @NonNull CallType callType, @Nullable VideoCapturer videoCapturer,
-                                          @Nullable VideoSource videoSource, @Nullable SurfaceTextureHelper surfaceTextureHelper) {
+    public synchronized boolean startCall(@NonNull UserId peerUid, @NonNull CallType callType, @Nullable HAVideoCapturer videoCapturer) {
         if (this.state != State.IDLE) {
             Log.w("CallManager.startCall failed: state is not idle. State: " + stateToString(this.state));
             return false;
@@ -365,8 +359,6 @@ public class CallManager {
         this.state = State.CALLING;
         this.isInCall.postValue(true);
         this.videoCapturer = videoCapturer;
-        this.videoSource = videoSource;
-        this.surfaceTextureHelper = surfaceTextureHelper;
         acquireLock();
         if (callType == CallType.VIDEO) {
             isSpeakerPhoneOn = true;
@@ -462,7 +454,7 @@ public class CallManager {
 
         if (videoCapturer != null) {
             try {
-                videoCapturer.stopCapture();
+                videoCapturer.stopCapturer();
             } catch (InterruptedException e) {
                 Log.e("CallManager: videoCapturer.stopCapture exception ", e);
             }
@@ -822,7 +814,7 @@ public class CallManager {
     }
 
     @MainThread
-    public synchronized boolean acceptCall(@Nullable VideoCapturer videoCapturer, @Nullable VideoSource videoSource, @Nullable SurfaceTextureHelper surfaceTextureHelper) {
+    public synchronized boolean acceptCall(@Nullable HAVideoCapturer videoCapturer) {
         if (this.isInitiator) {
             Log.e("ERROR user clicked accept call but is the call initiator callId: " + callId);
             return false;
@@ -832,8 +824,6 @@ public class CallManager {
             return false;
         }
         this.videoCapturer = videoCapturer;
-        this.videoSource = videoSource;
-        this.surfaceTextureHelper = surfaceTextureHelper;
         createAVTracks();
         startStreams();
 
@@ -903,20 +893,40 @@ public class CallManager {
         }
     }
 
-
     private VideoTrack createVideoTrack() {
-        videoCapturer.startCapture(VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_FPS);
-
+        videoSource = factory.createVideoSource(false);
         VideoTrack track = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
         track.setEnabled(true);
         if (localVideoSink != null) {
             track.addSink(localVideoSink);
         }
+        if (videoCapturer != null) {
+            initializeCapturer(videoCapturer);
+        }
         return track;
     }
 
-    public VideoSource createVideoSource(@NonNull VideoCapturer videoCapturer) {
-        return factory.createVideoSource(videoCapturer.isScreencast());
+    public void attachCapturer(@NonNull HAVideoCapturer videoCapturer) {
+        executor.execute(() -> {
+            if (this.videoCapturer != null) {
+                this.videoCapturer.dispose();
+            }
+            this.videoCapturer = videoCapturer;
+            initializeCapturer(videoCapturer);
+        });
+    }
+
+    private void initializeCapturer(HAVideoCapturer videoCapturer) {
+        if (videoSource != null) {
+            if (surfaceTextureHelper == null) {
+                surfaceTextureHelper = SurfaceTextureHelper.create("HACaptureThread", getEglBase().getEglBaseContext());
+            }
+            if (!videoCapturer.initialize(surfaceTextureHelper, videoSource.getCapturerObserver())) {
+                Log.e("CallManager/initializeCapturer failed to initialize capturer!");
+            } else {
+                videoCapturer.startCapturer(VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_FPS);
+            }
+        }
     }
 
     private void initializePeerConnections() {
@@ -1278,6 +1288,13 @@ public class CallManager {
 
     public boolean isSpeakerPhoneOn() {
         return isSpeakerPhoneOn;
+    }
+
+    public boolean isFrontFacing() {
+        if (videoCapturer != null) {
+            return videoCapturer.frontFacing;
+        }
+        return true;
     }
 
     public void setSpeakerPhoneOn(boolean on) {
