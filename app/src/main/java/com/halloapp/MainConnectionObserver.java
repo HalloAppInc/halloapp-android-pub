@@ -307,7 +307,7 @@ public class MainConnectionObserver extends Connection.Observer {
 
                     if (!Arrays.equals(remoteIdentityKey, localIdentityKey)) {
                         Log.i("Remote and local identity key do not match for " + userId + "; remote: " + StringUtils.bytesToHexString(remoteIdentityKey) + "; local: " + StringUtils.bytesToHexString(localIdentityKey) + "; overwriting");
-                        encryptedKeyStore.setPeerPublicIdentityKey(userId, new PublicEdECKey(remoteIdentityKey));
+                        encryptedKeyStore.edit().setPeerPublicIdentityKey(userId, new PublicEdECKey(remoteIdentityKey)).apply();
                         foundMismatch = true;
                     }
                 }
@@ -387,14 +387,14 @@ public class MainConnectionObserver extends Connection.Observer {
         bgWorkers.execute(() -> {
              byte[] lastMessageEphemeralKey = encryptedKeyStore.getInboundTeardownKey(peerUserId);
              if (!Arrays.equals(lastMessageEphemeralKey, messageEphemeralKey)) {
-                 encryptedKeyStore.setInboundTeardownKey(peerUserId, messageEphemeralKey);
+                 encryptedKeyStore.edit().setInboundTeardownKey(peerUserId, messageEphemeralKey).apply();
                  signalSessionManager.tearDownSession(peerUserId);
                  if (sessionSetupKey.length == 0) {
                     Log.i("Got empty session setup key; cannot process rereq session setup from older client");
                  } else {
                      try {
                          signalSessionManager.receiveRerequestSetup(peerUserId, new PublicXECKey(sessionSetupKey), 1, new SignalSessionSetupInfo(peerIdentityKey, otpkId));
-                         encryptedKeyStore.setPeerResponded(peerUserId, true);
+                         encryptedKeyStore.edit().setPeerResponded(peerUserId, true).apply();
                      } catch (CryptoException e) {
                          Log.e("Failed to reset session on message rerequest", e);
                          Log.sendErrorReport("Rerequest reset failed");
@@ -656,7 +656,7 @@ public class MainConnectionObserver extends Connection.Observer {
             if (!added.isEmpty()) {
                 String idList = toUserIdList(added);
                 addSystemPost(groupId, sender, Post.USAGE_ADD_MEMBERS, idList, null);
-                encryptedKeyStore.clearGroupSendAlreadySetUp(groupId);
+                encryptedKeyStore.edit().clearGroupSendAlreadySetUp(groupId).apply();
             }
 
             if (!removed.isEmpty()) {
@@ -705,7 +705,7 @@ public class MainConnectionObserver extends Connection.Observer {
 
         contentDb.addRemoveGroupMembers(groupId, groupName, avatarId, joined, new ArrayList<>(), () -> {
             if (!joined.isEmpty()) {
-                encryptedKeyStore.clearGroupSendAlreadySetUp(groupId);
+                encryptedKeyStore.edit().clearGroupSendAlreadySetUp(groupId).apply();
             }
             for (MemberInfo member : joined) {
                 addSystemPost(groupId, member.userId, Post.USAGE_MEMBER_JOINED, null, () -> {
@@ -862,9 +862,11 @@ public class MainConnectionObserver extends Connection.Observer {
                         Log.i("Received sender state with current chain index of " + currentChainIndex + " from " + publisherUid);
 
                         EncryptedKeyStore encryptedKeyStore = EncryptedKeyStore.getInstance();
-                        encryptedKeyStore.setPeerGroupCurrentChainIndex(groupId, publisherUserId, currentChainIndex);
-                        encryptedKeyStore.setPeerGroupChainKey(groupId, publisherUserId, chainKey);
-                        encryptedKeyStore.setPeerGroupSigningKey(groupId, publisherUserId, publicSignatureKey);
+                        encryptedKeyStore.edit()
+                                .setPeerGroupCurrentChainIndex(groupId, publisherUserId, currentChainIndex)
+                                .setPeerGroupChainKey(groupId, publisherUserId, chainKey)
+                                .setPeerGroupSigningKey(groupId, publisherUserId, publicSignatureKey)
+                                .apply();
                     } catch (CryptoException e) {
                         Log.e("Failed to decrypt sender state for " + ProtoPrinter.toString(historyResend), e);
                         senderStateIssue = true;

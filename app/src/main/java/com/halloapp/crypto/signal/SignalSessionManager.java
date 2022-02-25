@@ -92,7 +92,7 @@ public class SignalSessionManager {
                         throw new CryptoException("no_identity_key");
                     }
                     signalKeyManager.receiveSessionSetup(peerUserId, message, signalSessionSetupInfo);
-                    encryptedKeyStore.setPeerResponded(peerUserId, true);
+                    encryptedKeyStore.edit().setPeerResponded(peerUserId, true).apply();
                 } else if (signalSessionSetupInfo != null && signalSessionSetupInfo.identityKey != null) {
                     PublicEdECKey peerIdentityKey = encryptedKeyStore.getPeerPublicIdentityKey(peerUserId);
                     if (!Arrays.equals(peerIdentityKey.getKeyMaterial(), signalSessionSetupInfo.identityKey.getKeyMaterial())) {
@@ -100,9 +100,9 @@ public class SignalSessionManager {
                                 + " stored: " + Base64.encodeToString(peerIdentityKey.getKeyMaterial(), Base64.NO_WRAP)
                                 + " received: " + Base64.encodeToString(signalSessionSetupInfo.identityKey.getKeyMaterial(), Base64.NO_WRAP));
                     }
-                    encryptedKeyStore.setPeerResponded(peerUserId, true);
+                    encryptedKeyStore.edit().setPeerResponded(peerUserId, true).apply();
                 }
-                encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
+                encryptedKeyStore.edit().setSessionAlreadySetUp(peerUserId, true).apply();
 
                 return signalMessageCipher.convertFromWire(message, peerUserId);
             } catch (CryptoException e) {
@@ -197,7 +197,7 @@ public class SignalSessionManager {
 
             try {
                 WhisperKeysResponseIq keysIq = connection.downloadKeys(peerUserId).await();
-                encryptedKeyStore.setLastDownloadAttempt(peerUserId, now);
+                encryptedKeyStore.edit().setLastDownloadAttempt(peerUserId, now).apply();
                 if (keysIq == null || keysIq.identityKey == null || keysIq.signedPreKey == null) {
                     Log.i("EncryptedSessionManager.setUpSession: no whisper keys returned");
                     throw new CryptoException("no_whisper_keys_returned");

@@ -145,10 +145,12 @@ public class GroupFeedKeyManager {
                 senderStateBundles.add(senderStateBundle);
             }
 
-            encryptedKeyStore.setMyGroupCurrentChainIndex(groupId, currentChainIndex);
-            encryptedKeyStore.setMyGroupChainKey(groupId, chainKey);
-            encryptedKeyStore.setMyGroupSigningKey(groupId, privateSignatureKey);
-            encryptedKeyStore.setGroupSendAlreadySetUp(groupId);
+            encryptedKeyStore.edit()
+                    .setMyGroupCurrentChainIndex(groupId, currentChainIndex)
+                    .setMyGroupChainKey(groupId, chainKey)
+                    .setMyGroupSigningKey(groupId, privateSignatureKey)
+                    .setGroupSendAlreadySetUp(groupId)
+                    .apply();
         }
 
         // Calculate audience hash
@@ -180,7 +182,7 @@ public class GroupFeedKeyManager {
         }
 
         skipInboundKeys(groupId, peerUserId, currentChainIndex - storedCurrentChainIndex - 1, storedCurrentChainIndex);
-        encryptedKeyStore.setPeerGroupCurrentChainIndex(groupId, peerUserId, currentChainIndex);
+        encryptedKeyStore.edit().setPeerGroupCurrentChainIndex(groupId, peerUserId, currentChainIndex).apply();
 
         return getInboundMessageKey(groupId, peerUserId);
     }
@@ -192,7 +194,7 @@ public class GroupFeedKeyManager {
             byte[] chainKey = encryptedKeyStore.getPeerGroupChainKey(groupId, peerUserId);
             byte[] messageKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_MESSAGE_KEY, 80);
             byte[] updatedChainKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_CHAIN_KEY, 32);
-            encryptedKeyStore.setPeerGroupChainKey(groupId, peerUserId, updatedChainKey);
+            encryptedKeyStore.edit().setPeerGroupChainKey(groupId, peerUserId, updatedChainKey).apply();
             Log.i("GroupFeedKeyManager.getInboundMessageKey chain key " + CryptoByteUtils.obfuscate(chainKey) + " -> " + CryptoByteUtils.obfuscate(updatedChainKey));
             CryptoByteUtils.nullify(chainKey, updatedChainKey);
             return messageKey;
@@ -211,8 +213,10 @@ public class GroupFeedKeyManager {
             int nextChainIndex = currentChainIndex + 1;
             byte[] messageKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_MESSAGE_KEY, 80);
             byte[] updatedChainKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_CHAIN_KEY, 32);
-            encryptedKeyStore.setMyGroupChainKey(groupId, updatedChainKey);
-            encryptedKeyStore.setMyGroupCurrentChainIndex(groupId, nextChainIndex);
+            encryptedKeyStore.edit()
+                    .setMyGroupChainKey(groupId, updatedChainKey)
+                    .setMyGroupCurrentChainIndex(groupId, nextChainIndex)
+                    .apply();
             Log.i("GroupFeedKeyManager.getOutboundMessageKey chain key " + CryptoByteUtils.obfuscate(chainKey) + " -> " + CryptoByteUtils.obfuscate(updatedChainKey));
             CryptoByteUtils.nullify(chainKey, updatedChainKey);
             return messageKey;
@@ -249,7 +253,7 @@ public class GroupFeedKeyManager {
             byte[] inboundMessageKey = getInboundMessageKey(groupId, peerUserId);
             try {
                 GroupFeedMessageKey messageKey = new GroupFeedMessageKey(startIndex + i, inboundMessageKey);
-                encryptedKeyStore.storeSkippedGroupFeedKey(groupId, peerUserId, messageKey);
+                encryptedKeyStore.edit().storeSkippedGroupFeedKey(groupId, peerUserId, messageKey).apply();
             } catch (CryptoException e) {
                 Log.e("Cannot store invalid incoming group feed key for later use", e);
                 throw new CryptoException("skip_grp_key_" + e.getMessage());
@@ -259,16 +263,20 @@ public class GroupFeedKeyManager {
 
     void tearDownOutboundSession(GroupId groupId) {
         Log.i("GroupFeedKeyManager tearing down outbound session for " + groupId);
-        encryptedKeyStore.clearMyGroupChainKey(groupId);
-        encryptedKeyStore.clearMyGroupCurrentChainIndex(groupId);
-        encryptedKeyStore.clearMyGroupSigningKey(groupId);
-        encryptedKeyStore.clearGroupSendAlreadySetUp(groupId);
+        encryptedKeyStore.edit()
+                .clearMyGroupChainKey(groupId)
+                .clearMyGroupCurrentChainIndex(groupId)
+                .clearMyGroupSigningKey(groupId)
+                .clearGroupSendAlreadySetUp(groupId)
+                .apply();
     }
 
     void tearDownInboundSession(GroupId groupId, UserId peerUserId) {
         Log.i("GroupFeedKeyManager tearing down inbound session with " + peerUserId + " for " + groupId);
-        encryptedKeyStore.clearPeerGroupChainKey(groupId, peerUserId);
-        encryptedKeyStore.clearPeerGroupCurrentChainIndex(groupId, peerUserId);
-        encryptedKeyStore.clearPeerGroupSigningKey(groupId, peerUserId);
+        encryptedKeyStore.edit()
+                .clearPeerGroupChainKey(groupId, peerUserId)
+                .clearPeerGroupCurrentChainIndex(groupId, peerUserId)
+                .clearPeerGroupSigningKey(groupId, peerUserId)
+                .apply();
     }
 }

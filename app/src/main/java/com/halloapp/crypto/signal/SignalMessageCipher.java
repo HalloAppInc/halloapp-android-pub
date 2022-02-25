@@ -93,12 +93,12 @@ class SignalMessageCipher {
     }
 
     private void onDecryptFailure(String reason, UserId peerUserId, SignalMessageKey signalMessageKey) throws CryptoException {
-        encryptedKeyStore.storeSkippedMessageKey(peerUserId, signalMessageKey);
+        encryptedKeyStore.edit().storeSkippedMessageKey(peerUserId, signalMessageKey).apply();
         byte[] lastTeardownKey = encryptedKeyStore.getOutboundTeardownKey(peerUserId);
         byte[] newTeardownKey = signalMessageKey.getKeyMaterial();
         boolean match = Arrays.equals(lastTeardownKey, newTeardownKey);
         if (!match) {
-            encryptedKeyStore.setOutboundTeardownKey(peerUserId, newTeardownKey);
+            encryptedKeyStore.edit().setOutboundTeardownKey(peerUserId, newTeardownKey).apply();
             signalKeyManager.tearDownSession(peerUserId);
         }
         throw new CryptoException(reason, match, newTeardownKey);

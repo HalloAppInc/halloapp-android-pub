@@ -125,7 +125,7 @@ public class GroupFeedCipher {
     }
 
     private void onDecryptFailure(String reason, GroupId groupId, UserId peerUserId, GroupFeedMessageKey messageKey) throws CryptoException {
-        encryptedKeyStore.storeSkippedGroupFeedKey(groupId, peerUserId, messageKey);
+        encryptedKeyStore.edit().storeSkippedGroupFeedKey(groupId, peerUserId, messageKey).apply();
         throw new CryptoException(reason);
     }
 }

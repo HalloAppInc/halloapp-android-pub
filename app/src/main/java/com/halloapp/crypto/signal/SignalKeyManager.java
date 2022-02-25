@@ -50,36 +50,39 @@ public class SignalKeyManager {
 
     void tearDownSession(UserId peerUserId) {
         Log.i("SignalKeyManager tearing down session with user " + peerUserId);
-        encryptedKeyStore.clearPeerVerified(peerUserId);
-        encryptedKeyStore.clearSessionAlreadySetUp(peerUserId);
-        encryptedKeyStore.clearLastDownloadAttempt(peerUserId);
-        encryptedKeyStore.clearPeerResponded(peerUserId);
-        encryptedKeyStore.clearSkippedMessageKeys(peerUserId);
-        encryptedKeyStore.clearPeerPublicIdentityKey(peerUserId);
-        encryptedKeyStore.clearPeerSignedPreKey(peerUserId);
-        encryptedKeyStore.clearPeerOneTimePreKey(peerUserId);
-        encryptedKeyStore.clearPeerOneTimePreKeyId(peerUserId);
-        encryptedKeyStore.clearRootKey(peerUserId);
-        encryptedKeyStore.clearOutboundChainKey(peerUserId);
-        encryptedKeyStore.clearInboundChainKey(peerUserId);
-        encryptedKeyStore.clearInboundEphemeralKey(peerUserId);
-        encryptedKeyStore.clearOutboundEphemeralKey(peerUserId);
-        encryptedKeyStore.clearInboundEphemeralKeyId(peerUserId);
-        encryptedKeyStore.clearOutboundEphemeralKeyId(peerUserId);
-        encryptedKeyStore.clearInboundPreviousChainLength(peerUserId);
-        encryptedKeyStore.clearOutboundPreviousChainLength(peerUserId);
-        encryptedKeyStore.clearInboundCurrentChainIndex(peerUserId);
-        encryptedKeyStore.clearOutboundCurrentChainIndex(peerUserId);
+        encryptedKeyStore.edit().clearPeerVerified(peerUserId)
+                .clearSessionAlreadySetUp(peerUserId)
+                .clearLastDownloadAttempt(peerUserId)
+                .clearPeerResponded(peerUserId)
+                .clearSkippedMessageKeys(peerUserId)
+                .clearPeerPublicIdentityKey(peerUserId)
+                .clearPeerSignedPreKey(peerUserId)
+                .clearPeerOneTimePreKey(peerUserId)
+                .clearPeerOneTimePreKeyId(peerUserId)
+                .clearRootKey(peerUserId)
+                .clearOutboundChainKey(peerUserId)
+                .clearInboundChainKey(peerUserId)
+                .clearInboundEphemeralKey(peerUserId)
+                .clearOutboundEphemeralKey(peerUserId)
+                .clearInboundEphemeralKeyId(peerUserId)
+                .clearOutboundEphemeralKeyId(peerUserId)
+                .clearInboundPreviousChainLength(peerUserId)
+                .clearOutboundPreviousChainLength(peerUserId)
+                .clearInboundCurrentChainIndex(peerUserId)
+                .clearOutboundCurrentChainIndex(peerUserId)
+                .apply();
         // teardown keys intentionally omitted
     }
 
     void setUpSession(UserId peerUserId, PublicEdECKey recipientPublicIdentityKey, PublicXECKey recipientPublicSignedPreKey, @Nullable OneTimePreKey recipientPublicOneTimePreKey) throws CryptoException {
-        encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, recipientPublicIdentityKey);
-        encryptedKeyStore.setPeerSignedPreKey(peerUserId, recipientPublicSignedPreKey);
+        EncryptedKeyStore.Editor editor = encryptedKeyStore.edit();
+        editor.setPeerPublicIdentityKey(peerUserId, recipientPublicIdentityKey);
+        editor.setPeerSignedPreKey(peerUserId, recipientPublicSignedPreKey);
         if (recipientPublicOneTimePreKey != null) {
-            encryptedKeyStore.setPeerOneTimePreKey(peerUserId, recipientPublicOneTimePreKey.publicXECKey);
-            encryptedKeyStore.setPeerOneTimePreKeyId(peerUserId, recipientPublicOneTimePreKey.id);
+            editor.setPeerOneTimePreKey(peerUserId, recipientPublicOneTimePreKey.publicXECKey);
+            editor.setPeerOneTimePreKeyId(peerUserId, recipientPublicOneTimePreKey.id);
         }
+        editor.apply();
 
         PrivateXECKey privateEphemeralKey = XECKey.generatePrivateKey();
         PrivateXECKey myPrivateIdentityKey = encryptedKeyStore.getMyPrivateX25519IdentityKey();
@@ -105,13 +108,14 @@ public class SignalKeyManager {
 
             int firstId = 1;
 
-            encryptedKeyStore.setRootKey(peerUserId, rootKey);
-            encryptedKeyStore.setOutboundChainKey(peerUserId, outboundChainKey);
-            encryptedKeyStore.setInboundChainKey(peerUserId, inboundChainKey);
-            encryptedKeyStore.setOutboundEphemeralKey(peerUserId, privateEphemeralKey);
-            encryptedKeyStore.setOutboundEphemeralKeyId(peerUserId, firstId);
-
-            encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
+            encryptedKeyStore.edit()
+                    .setRootKey(peerUserId, rootKey)
+                    .setOutboundChainKey(peerUserId, outboundChainKey)
+                    .setInboundChainKey(peerUserId, inboundChainKey)
+                    .setOutboundEphemeralKey(peerUserId, privateEphemeralKey)
+                    .setOutboundEphemeralKeyId(peerUserId, firstId)
+                    .setSessionAlreadySetUp(peerUserId, true)
+                    .apply();
 
             CryptoByteUtils.nullify(a, b, c, masterSecret, output, rootKey, outboundChainKey, inboundChainKey);
         } catch (GeneralSecurityException e) {
@@ -130,7 +134,7 @@ public class SignalKeyManager {
     }
 
     void receiveSessionSetup(UserId peerUserId, PublicXECKey publicEphemeralKey, int ephemeralKeyId, @NonNull SignalSessionSetupInfo signalSessionSetupInfo) throws CryptoException {
-        encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, signalSessionSetupInfo.identityKey);
+        encryptedKeyStore.edit().setPeerPublicIdentityKey(peerUserId, signalSessionSetupInfo.identityKey).apply();
 
         try {
             byte[] a = CryptoUtils.ecdh(encryptedKeyStore.getMyPrivateSignedPreKey(), CryptoUtils.convertPublicEdToX(signalSessionSetupInfo.identityKey));
@@ -159,19 +163,21 @@ public class SignalKeyManager {
             byte[] inboundChainKey = Arrays.copyOfRange(output, 32, 64);
             byte[] outboundChainKey = Arrays.copyOfRange(output, 64, 96);
 
-            encryptedKeyStore.setRootKey(peerUserId, rootKey);
-            encryptedKeyStore.setOutboundChainKey(peerUserId, outboundChainKey);
-            encryptedKeyStore.setInboundChainKey(peerUserId, inboundChainKey);
-            encryptedKeyStore.setInboundEphemeralKey(peerUserId, publicEphemeralKey);
-            encryptedKeyStore.setInboundEphemeralKeyId(peerUserId, ephemeralKeyId);
+            EncryptedKeyStore.Editor editor = encryptedKeyStore.edit()
+                    .setRootKey(peerUserId, rootKey)
+                    .setOutboundChainKey(peerUserId, outboundChainKey)
+                    .setInboundChainKey(peerUserId, inboundChainKey)
+                    .setInboundEphemeralKey(peerUserId, publicEphemeralKey)
+                    .setInboundEphemeralKeyId(peerUserId, ephemeralKeyId);
 
             PrivateXECKey myEphemeralKey = XECKey.generatePrivateKey();
-            encryptedKeyStore.setOutboundEphemeralKey(peerUserId, myEphemeralKey);
-            encryptedKeyStore.setOutboundEphemeralKeyId(peerUserId, 0);
+            editor.setOutboundEphemeralKey(peerUserId, myEphemeralKey);
+            editor.setOutboundEphemeralKeyId(peerUserId, 0);
 
-            updateOutboundChainAndRootKey(peerUserId, myEphemeralKey, publicEphemeralKey);
+            updateOutboundChainAndRootKey(editor, peerUserId, myEphemeralKey, publicEphemeralKey);
 
-            encryptedKeyStore.setSessionAlreadySetUp(peerUserId, true);
+            editor.setSessionAlreadySetUp(peerUserId, true);
+            editor.apply();
 
             CryptoByteUtils.nullify(a, b, c, masterSecret, output, rootKey, inboundChainKey, outboundChainKey);
         } catch (GeneralSecurityException e) {
@@ -186,7 +192,7 @@ public class SignalKeyManager {
 
         byte[] messageKey = getNextMessageKey(peerUserId, true);
         int newIndex = currentChainIndex + 1;
-        encryptedKeyStore.setOutboundCurrentChainIndex(peerUserId, newIndex);
+        encryptedKeyStore.edit().setOutboundCurrentChainIndex(peerUserId, newIndex).apply();
 
         return new SignalMessageKey(ephemeralKeyId, previousChainLength, currentChainIndex, messageKey);
     }
@@ -213,12 +219,14 @@ public class SignalKeyManager {
         if (shouldUpdateChains) {
             skipInboundKeys(peerUserId, previousChainLength - latestStoredChainIndex, latestStoredEphemeralKeyId, latestPreviousChainLength, latestStoredChainIndex);
 
-            updateInboundChainAndRootKey(peerUserId, encryptedKeyStore.getOutboundEphemeralKey(peerUserId), ephemeralKey);
-            encryptedKeyStore.setInboundEphemeralKeyId(peerUserId, ephemeralKeyId);
-            encryptedKeyStore.setInboundEphemeralKey(peerUserId, ephemeralKey);
+            EncryptedKeyStore.Editor editor = encryptedKeyStore.edit();
+            updateInboundChainAndRootKey(editor, peerUserId, encryptedKeyStore.getOutboundEphemeralKey(peerUserId), ephemeralKey);
+            editor.setInboundEphemeralKeyId(peerUserId, ephemeralKeyId);
+            editor.setInboundEphemeralKey(peerUserId, ephemeralKey);
 
-            encryptedKeyStore.setInboundPreviousChainLength(peerUserId, previousChainLength);
-            encryptedKeyStore.setInboundCurrentChainIndex(peerUserId, 0);
+            editor.setInboundPreviousChainLength(peerUserId, previousChainLength);
+            editor.setInboundCurrentChainIndex(peerUserId, 0);
+            editor.apply();
         }
 
         int currentStoredIndex = encryptedKeyStore.getInboundCurrentChainIndex(peerUserId); // NOTE: could have been updated in if statement above
@@ -226,17 +234,20 @@ public class SignalKeyManager {
 
         byte[] messageKey = getNextMessageKey(peerUserId, false);
 
-        encryptedKeyStore.setInboundCurrentChainIndex(peerUserId, currentChainIndex + 1);
+        encryptedKeyStore.edit().setInboundCurrentChainIndex(peerUserId, currentChainIndex + 1).apply();
 
         if (shouldUpdateChains) {
             PrivateXECKey newEphemeralKey = XECKey.generatePrivateKey();
             int lastSentId = encryptedKeyStore.getOutboundEphemeralKeyId(peerUserId);
-            encryptedKeyStore.setOutboundEphemeralKeyId(peerUserId, lastSentId + 1);
-            encryptedKeyStore.setOutboundEphemeralKey(peerUserId, newEphemeralKey);
-            updateOutboundChainAndRootKey(peerUserId, newEphemeralKey, ephemeralKey);
 
-            encryptedKeyStore.setOutboundPreviousChainLength(peerUserId, encryptedKeyStore.getOutboundCurrentChainIndex(peerUserId));
-            encryptedKeyStore.setOutboundCurrentChainIndex(peerUserId, 0);
+            EncryptedKeyStore.Editor editor = encryptedKeyStore.edit();
+            editor.setOutboundEphemeralKeyId(peerUserId, lastSentId + 1);
+            editor.setOutboundEphemeralKey(peerUserId, newEphemeralKey);
+            updateOutboundChainAndRootKey(editor, peerUserId, newEphemeralKey, ephemeralKey);
+
+            editor.setOutboundPreviousChainLength(peerUserId, encryptedKeyStore.getOutboundCurrentChainIndex(peerUserId));
+            editor.setOutboundCurrentChainIndex(peerUserId, 0);
+            editor.apply();
         }
 
         return messageKey;
@@ -252,7 +263,7 @@ public class SignalKeyManager {
             byte[] inboundMessageKey = getNextInboundMessageKey(peerUserId);
             try {
                 SignalMessageKey signalMessageKey = new SignalMessageKey(ephemeralKeyId, previousChainLength, startIndex + i, inboundMessageKey);
-                encryptedKeyStore.storeSkippedMessageKey(peerUserId, signalMessageKey);
+                encryptedKeyStore.edit().storeSkippedMessageKey(peerUserId, signalMessageKey).apply();
             } catch (CryptoException e) {
                 Log.e("Cannot store invalid incoming message key for later use", e);
                 throw new CryptoException("skip_msg_key_" + e.getMessage());
@@ -269,9 +280,9 @@ public class SignalKeyManager {
             byte[] newChainKey = CryptoUtils.hkdf(chainKey, null, HKDF_INPUT_CHAIN_KEY, 32);
 
             if (isOutbound) {
-                encryptedKeyStore.setOutboundChainKey(peerUserId, newChainKey);
+                encryptedKeyStore.edit().setOutboundChainKey(peerUserId, newChainKey).apply();
             } else {
-                encryptedKeyStore.setInboundChainKey(peerUserId, newChainKey);
+                encryptedKeyStore.edit().setInboundChainKey(peerUserId, newChainKey).apply();
             }
 
             CryptoByteUtils.nullify(chainKey, newChainKey);
@@ -282,15 +293,15 @@ public class SignalKeyManager {
         }
     }
 
-    private void updateOutboundChainAndRootKey(UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral) throws CryptoException {
-        updateChainAndRootKey(peerUserId, myEphemeral, peerEphemeral, true);
+    private void updateOutboundChainAndRootKey(EncryptedKeyStore.Editor editor, UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral) throws CryptoException {
+        updateChainAndRootKey(editor, peerUserId, myEphemeral, peerEphemeral, true);
     }
 
-    private void updateInboundChainAndRootKey(UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral) throws CryptoException {
-        updateChainAndRootKey(peerUserId, myEphemeral, peerEphemeral, false);
+    private void updateInboundChainAndRootKey(EncryptedKeyStore.Editor editor, UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral) throws CryptoException {
+        updateChainAndRootKey(editor, peerUserId, myEphemeral, peerEphemeral, false);
     }
 
-    private void updateChainAndRootKey(UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral, boolean isOutbound) throws CryptoException {
+    private void updateChainAndRootKey(EncryptedKeyStore.Editor editor, UserId peerUserId, PrivateXECKey myEphemeral, PublicXECKey peerEphemeral, boolean isOutbound) throws CryptoException {
         try {
             byte[] ephemeralSecret = CryptoUtils.ecdh(myEphemeral, peerEphemeral);
 
@@ -299,11 +310,11 @@ public class SignalKeyManager {
             byte[] chainKey = Arrays.copyOfRange(output, 32, 64);
             Log.d("root key with " + peerUserId + " updated to hash: " + CryptoByteUtils.obfuscate(rootKey));
 
-            encryptedKeyStore.setRootKey(peerUserId, rootKey);
+            editor.setRootKey(peerUserId, rootKey);
             if (isOutbound) {
-                encryptedKeyStore.setOutboundChainKey(peerUserId, chainKey);
+                editor.setOutboundChainKey(peerUserId, chainKey);
             } else {
-                encryptedKeyStore.setInboundChainKey(peerUserId, chainKey);
+                editor.setInboundChainKey(peerUserId, chainKey);
             }
 
             CryptoByteUtils.nullify(ephemeralSecret, output, rootKey, chainKey);

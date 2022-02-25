@@ -473,37 +473,37 @@ public class Debug {
         final int KEY_SIZE = 32;
         final int MAX_NUM = 500;
         Runnable[] corruptionActions = {
-                () -> encryptedKeyStore.setSessionAlreadySetUp(peerUserId, false),
-                () -> encryptedKeyStore.setPeerResponded(peerUserId, false),
-                () -> encryptedKeyStore.clearSkippedMessageKeys(peerUserId),
-                () -> encryptedKeyStore.clearPeerPublicIdentityKey(peerUserId),
-                () -> encryptedKeyStore.setPeerPublicIdentityKey(peerUserId, new PublicEdECKey(Random.randBytes(KEY_SIZE))),
-                () -> encryptedKeyStore.clearPeerSignedPreKey(peerUserId),
-                () -> encryptedKeyStore.clearPeerOneTimePreKey(peerUserId),
-                () -> encryptedKeyStore.clearPeerOneTimePreKeyId(peerUserId),
-                () -> encryptedKeyStore.setRootKey(peerUserId, Random.randBytes(KEY_SIZE)),
-                () -> encryptedKeyStore.setOutboundChainKey(peerUserId, Random.randBytes(KEY_SIZE)),
-                () -> encryptedKeyStore.setInboundChainKey(peerUserId, Random.randBytes(KEY_SIZE)),
+                () -> encryptedKeyStore.edit().setSessionAlreadySetUp(peerUserId, false).apply(),
+                () -> encryptedKeyStore.edit().setPeerResponded(peerUserId, false).apply(),
+                () -> encryptedKeyStore.edit().clearSkippedMessageKeys(peerUserId).apply(),
+                () -> encryptedKeyStore.edit().clearPeerPublicIdentityKey(peerUserId).apply(),
+                () -> encryptedKeyStore.edit().setPeerPublicIdentityKey(peerUserId, new PublicEdECKey(Random.randBytes(KEY_SIZE))).apply(),
+                () -> encryptedKeyStore.edit().clearPeerSignedPreKey(peerUserId).apply(),
+                () -> encryptedKeyStore.edit().clearPeerOneTimePreKey(peerUserId).apply(),
+                () -> encryptedKeyStore.edit().clearPeerOneTimePreKeyId(peerUserId).apply(),
+                () -> encryptedKeyStore.edit().setRootKey(peerUserId, Random.randBytes(KEY_SIZE)).apply(),
+                () -> encryptedKeyStore.edit().setOutboundChainKey(peerUserId, Random.randBytes(KEY_SIZE)).apply(),
+                () -> encryptedKeyStore.edit().setInboundChainKey(peerUserId, Random.randBytes(KEY_SIZE)).apply(),
                 () -> {
                     try {
-                        encryptedKeyStore.setOutboundEphemeralKey(peerUserId, new PrivateXECKey(Random.randBytes(KEY_SIZE)));
+                        encryptedKeyStore.edit().setOutboundEphemeralKey(peerUserId, new PrivateXECKey(Random.randBytes(KEY_SIZE))).apply();
                     } catch (CryptoException e) {
                         e.printStackTrace();
                     }
                 },
                 () -> {
                     try {
-                        encryptedKeyStore.setInboundEphemeralKey(peerUserId, new PublicXECKey(Random.randBytes(KEY_SIZE)));
+                        encryptedKeyStore.edit().setInboundEphemeralKey(peerUserId, new PublicXECKey(Random.randBytes(KEY_SIZE))).apply();
                     } catch (CryptoException e) {
                         e.printStackTrace();
                     }
                 },
-                () -> encryptedKeyStore.setOutboundEphemeralKeyId(peerUserId, Random.randInt(MAX_NUM)),
-                () -> encryptedKeyStore.setInboundEphemeralKeyId(peerUserId, Random.randInt(MAX_NUM)),
-                () -> encryptedKeyStore.setOutboundPreviousChainLength(peerUserId, Random.randInt(MAX_NUM)),
-                () -> encryptedKeyStore.setInboundPreviousChainLength(peerUserId, Random.randInt(MAX_NUM)),
-                () -> encryptedKeyStore.setOutboundCurrentChainIndex(peerUserId, Random.randInt(MAX_NUM)),
-                () -> encryptedKeyStore.setInboundCurrentChainIndex(peerUserId, Random.randInt(MAX_NUM)),
+                () -> encryptedKeyStore.edit().setOutboundEphemeralKeyId(peerUserId, Random.randInt(MAX_NUM)).apply(),
+                () -> encryptedKeyStore.edit().setInboundEphemeralKeyId(peerUserId, Random.randInt(MAX_NUM)).apply(),
+                () -> encryptedKeyStore.edit().setOutboundPreviousChainLength(peerUserId, Random.randInt(MAX_NUM)).apply(),
+                () -> encryptedKeyStore.edit().setInboundPreviousChainLength(peerUserId, Random.randInt(MAX_NUM)).apply(),
+                () -> encryptedKeyStore.edit().setOutboundCurrentChainIndex(peerUserId, Random.randInt(MAX_NUM)).apply(),
+                () -> encryptedKeyStore.edit().setInboundCurrentChainIndex(peerUserId, Random.randInt(MAX_NUM)).apply(),
         };
 
         AlertDialog.Builder corruptionPickerBuilder = new AlertDialog.Builder(activity);
@@ -533,16 +533,16 @@ public class Debug {
         final int KEY_SIZE = 32;
         final int MAX_NUM = 500;
         Runnable[] corruptionActions = {
-                () -> encryptedKeyStore.clearGroupSendAlreadySetUp(groupId),
-                () -> selectUserFromGroup(activity, groupId, userId -> encryptedKeyStore.clearSkippedGroupFeedKeys(groupId, userId)),
-                () -> encryptedKeyStore.clearMyGroupSigningKey(groupId),
-                () -> encryptedKeyStore.setMyGroupSigningKey(groupId, new PrivateEdECKey(Random.randBytes(KEY_SIZE))),
-                () -> selectUserFromGroup(activity, groupId, userId -> encryptedKeyStore.clearPeerGroupSigningKey(groupId, userId)),
-                () -> selectUserFromGroup(activity, groupId, userId -> encryptedKeyStore.setPeerGroupSigningKey(groupId, userId, new PublicEdECKey(Random.randBytes(KEY_SIZE)))),
-                () -> encryptedKeyStore.setMyGroupChainKey(groupId, Random.randBytes(KEY_SIZE)),
-                () -> selectUserFromGroup(activity, groupId, userId -> encryptedKeyStore.setPeerGroupChainKey(groupId, userId, Random.randBytes(KEY_SIZE))),
-                () -> encryptedKeyStore.setMyGroupCurrentChainIndex(groupId, Random.randInt(MAX_NUM)),
-                () -> selectUserFromGroup(activity, groupId, userId -> encryptedKeyStore.setPeerGroupCurrentChainIndex(groupId, userId, Random.randInt(MAX_NUM))),
+                () -> encryptedKeyStore.edit().clearGroupSendAlreadySetUp(groupId).apply(),
+                () -> selectUserFromGroup(activity, groupId, userId -> encryptedKeyStore.edit().clearSkippedGroupFeedKeys(groupId, userId).apply()),
+                () -> encryptedKeyStore.edit().clearMyGroupSigningKey(groupId).apply(),
+                () -> encryptedKeyStore.edit().setMyGroupSigningKey(groupId, new PrivateEdECKey(Random.randBytes(KEY_SIZE))).apply(),
+                () -> selectUserFromGroup(activity, groupId, userId -> encryptedKeyStore.edit().clearPeerGroupSigningKey(groupId, userId).apply()),
+                () -> selectUserFromGroup(activity, groupId, userId -> encryptedKeyStore.edit().setPeerGroupSigningKey(groupId, userId, new PublicEdECKey(Random.randBytes(KEY_SIZE))).apply()),
+                () -> encryptedKeyStore.edit().setMyGroupChainKey(groupId, Random.randBytes(KEY_SIZE)).apply(),
+                () -> selectUserFromGroup(activity, groupId, userId -> encryptedKeyStore.edit().setPeerGroupChainKey(groupId, userId, Random.randBytes(KEY_SIZE)).apply()),
+                () -> encryptedKeyStore.edit().setMyGroupCurrentChainIndex(groupId, Random.randInt(MAX_NUM)).apply(),
+                () -> selectUserFromGroup(activity, groupId, userId -> encryptedKeyStore.edit().setPeerGroupCurrentChainIndex(groupId, userId, Random.randInt(MAX_NUM)).apply()),
         };
 
         AlertDialog.Builder corruptionPickerBuilder = new AlertDialog.Builder(activity);

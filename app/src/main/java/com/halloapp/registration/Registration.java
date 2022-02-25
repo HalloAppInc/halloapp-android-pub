@@ -357,7 +357,7 @@ public class Registration {
     private @NonNull RegistrationVerificationResult verifyRegistrationViaNoise(@NonNull String phone, @NonNull String code, @NonNull String name) {
         ThreadUtils.setSocketTag();
         if (!encryptedKeyStore.clientPrivateKeysSet()) {
-            encryptedKeyStore.generateClientPrivateKeys();
+            encryptedKeyStore.edit().generateClientPrivateKeys().apply();
         }
         IdentityKey identityKeyProto = IdentityKey.newBuilder()
                 .setPublicKey(ByteString.copyFrom(encryptedKeyStore.getMyPublicEd25519IdentityKey().getKeyMaterial()))

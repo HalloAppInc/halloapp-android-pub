@@ -126,16 +126,12 @@ public class EncryptedKeyStore {
         return sharedPreferences;
     }
 
+    public Editor edit() {
+        return new Editor(getPreferences().edit());
+    }
+
     public boolean getPeerVerified(UserId peerUserId) {
         return getPreferences().getBoolean(getPeerVerifiedPrefKey(peerUserId), false);
-    }
-
-    public void setPeerVerified(UserId peerUserId, boolean verified) {
-        getPreferences().edit().putBoolean(getPeerVerifiedPrefKey(peerUserId), verified).apply();
-    }
-
-    public void clearPeerVerified(UserId peerUserId) {
-        getPreferences().edit().remove(getPeerVerifiedPrefKey(peerUserId)).apply();
     }
 
     private String getPeerVerifiedPrefKey(UserId peerUserId) {
@@ -146,28 +142,12 @@ public class EncryptedKeyStore {
         return getPreferences().getBoolean(getSessionAlreadySetUpPrefKey(peerUserId), false);
     }
 
-    public void setSessionAlreadySetUp(UserId peerUserId, boolean downloaded) {
-        getPreferences().edit().putBoolean(getSessionAlreadySetUpPrefKey(peerUserId), downloaded).apply();
-    }
-
-    public void clearSessionAlreadySetUp(UserId peerUserId) {
-        getPreferences().edit().remove(getSessionAlreadySetUpPrefKey(peerUserId)).apply();
-    }
-
     private String getSessionAlreadySetUpPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_SESSION_ALREADY_SET_UP_SUFFIX;
     }
 
     public long getLastDownloadAttempt(UserId peerUserId) {
         return getPreferences().getLong(getLastDownloadAttemptPrefKey(peerUserId), 0);
-    }
-
-    public void setLastDownloadAttempt(UserId peerUserId, long lastDownloadAttempt) {
-        getPreferences().edit().putLong(getLastDownloadAttemptPrefKey(peerUserId), lastDownloadAttempt).apply();
-    }
-
-    public void clearLastDownloadAttempt(UserId peerUserId) {
-        getPreferences().edit().remove(getLastDownloadAttemptPrefKey(peerUserId)).apply();
     }
 
     private String getLastDownloadAttemptPrefKey(UserId peerUserId) {
@@ -178,32 +158,12 @@ public class EncryptedKeyStore {
         return getPreferences().getBoolean(getPeerRespondedPrefKey(peerUserId), false);
     }
 
-    public void setPeerResponded(UserId peerUserId, boolean responded) {
-        getPreferences().edit().putBoolean(getPeerRespondedPrefKey(peerUserId), responded).apply();
-    }
-
-    public void clearPeerResponded(UserId peerUserId) {
-        getPreferences().edit().remove(getPeerRespondedPrefKey(peerUserId)).apply();
-    }
-
     private String getPeerRespondedPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_PEER_RESPONDED_SUFFIX;
     }
 
-    public void generateClientPrivateKeys() {
-        Log.i("EncryptedKeyStore: Generating new keys");
-        clearMyPreviousPublicEd25519IdentityKey();
-        setMyEd25519IdentityKey(CryptoUtils.generateEd25519KeyPair());
-        Log.critical("Updated identity key to " + Base64.encodeToString(getMyPublicEd25519IdentityKey().getKeyMaterial(), Base64.NO_WRAP));
-        setMyPrivateSignedPreKey(CryptoUtils.generateX25519PrivateKey());
-    }
-
     public boolean clientPrivateKeysSet() {
         return getMyEd25519IdentityKey() != null;
-    }
-
-    private void setMyEd25519IdentityKey(byte[] key) {
-        storeBytes(PREF_KEY_MY_ED25519_IDENTITY_KEY, key);
     }
 
     private byte[] getMyEd25519IdentityKey() {
@@ -241,7 +201,7 @@ public class EncryptedKeyStore {
                 Log.sendErrorReport("Local identity key changed");
             }
         }
-        setMyPreviousPublicEd25519IdentityKey(current);
+        edit().setMyPreviousPublicEd25519IdentityKey(current).apply();
 
         Me me = Me.getInstance();
         Connection.getInstance().downloadKeys(new UserId(me.getUser()))
@@ -264,24 +224,12 @@ public class EncryptedKeyStore {
                 });
     }
 
-    private void setMyPreviousPublicEd25519IdentityKey(PublicEdECKey key) {
-        storeBytes(PREF_KEY_MY_PREVIOUS_PUBLIC_ED25519_IK, key.getKeyMaterial());
-    }
-
-    private void clearMyPreviousPublicEd25519IdentityKey() {
-        getPreferences().edit().remove(PREF_KEY_MY_PREVIOUS_PUBLIC_ED25519_IK).apply();
-    }
-
     private PublicEdECKey getMyPreviousPublicEd25519IdentityKey() {
         byte[] bytes = retrieveBytes(PREF_KEY_MY_PREVIOUS_PUBLIC_ED25519_IK);
         if (bytes == null) {
             return null;
         }
         return new PublicEdECKey(bytes);
-    }
-
-    private void setMyPrivateSignedPreKey(byte[] key) {
-        storeCurve25519PrivateKey(PREF_KEY_MY_PRIVATE_SIGNED_PRE_KEY, key);
     }
 
     public PrivateXECKey getMyPrivateSignedPreKey() throws CryptoException {
@@ -310,7 +258,7 @@ public class EncryptedKeyStore {
             PrivateXECKey privateKey = XECKey.generatePrivateKey();
             try {
                 OneTimePreKey otpk = new OneTimePreKey(XECKey.publicFromPrivate(privateKey), id);
-                storeCurve25519PrivateKey(getOneTimePreKeyPrefKey(id), privateKey.getKeyMaterial());
+                edit().storeCurve25519PrivateKey(getOneTimePreKeyPrefKey(id), privateKey.getKeyMaterial()).apply();
                 ret.add(otpk);
             } catch (CryptoException e) {
                 Log.w("Invalid X25519 private key for conversion", e);
@@ -359,30 +307,25 @@ public class EncryptedKeyStore {
         return stringToBytes(messageKeyString);
     }
 
-    // TODO(jack): Clear out old keys after some threshold
-    public void storeSkippedMessageKey(UserId peerUserId, SignalMessageKey signalMessageKey) {
-        Log.i("Storing skipped message key " + signalMessageKey + " for user " + peerUserId);
-        String messageKeySetPrefKey = getMessageKeySetPrefKey(peerUserId);
+    public byte[] removeSkippedGroupFeedKey(GroupId groupId, UserId peerUserId, int chainIndex) {
+        String messageKeySetPrefKey = getGroupFeedKeySetPrefKey(groupId, peerUserId);
         Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
 
-        String keyPrefKey = getMessageKeyPrefKey(peerUserId, signalMessageKey.getEphemeralKeyId(), signalMessageKey.getCurrentChainIndex());
-        messageKeyPrefKeys.add(keyPrefKey);
-
-        getPreferences().edit().putString(keyPrefKey, bytesToString(signalMessageKey.getKeyMaterial())).putStringSet(messageKeySetPrefKey, messageKeyPrefKeys).apply();
-    }
-
-    public void clearSkippedMessageKeys(UserId peerUserId) {
-        String messageKeySetPrefKey = getMessageKeySetPrefKey(peerUserId);
-        Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
-
-        SharedPreferences.Editor editor = getPreferences().edit();
-        editor.remove(messageKeySetPrefKey);
-
-        for (String prefKey : messageKeyPrefKeys) {
-            editor.remove(prefKey);
+        String prefKey = getGroupFeedKeyPrefKey(groupId, peerUserId, chainIndex);
+        if (!messageKeyPrefKeys.remove(prefKey)) {
+            Log.e("Group feed key for " + prefKey + " not found in set");
+            return null;
         }
 
-        editor.apply();
+        String messageKeyString = getPreferences().getString(prefKey, null);
+        if (messageKeyString == null) {
+            Log.e("Failed to retrieve group feed key for " + prefKey);
+            return null;
+        }
+
+        edit().editor.putStringSet(messageKeySetPrefKey, messageKeyPrefKeys).apply();
+
+        return stringToBytes(messageKeyString);
     }
 
     private String getMessageKeySetPrefKey(UserId peerUserId) {
@@ -393,10 +336,6 @@ public class EncryptedKeyStore {
         return PREF_KEY_MESSAGE_KEY_PREFIX + "/" + peerUserId.rawId() + "/" + ephemeralKeyId + "/" + currentChainIndex;
     }
 
-    public void setPeerPublicIdentityKey(UserId peerUserId, PublicEdECKey key) {
-        storeBytes(getPeerPublicIdentityKeyPrefKey(peerUserId), key.getKeyMaterial());
-    }
-
     public PublicEdECKey getPeerPublicIdentityKey(UserId peerUserId) throws CryptoException {
         try {
             return new PublicEdECKey(retrieveBytes(getPeerPublicIdentityKeyPrefKey(peerUserId)));
@@ -405,48 +344,24 @@ public class EncryptedKeyStore {
         }
     }
 
-    public void clearPeerPublicIdentityKey(UserId peerUserId) {
-        getPreferences().edit().remove(getPeerPublicIdentityKeyPrefKey(peerUserId)).apply();
-    }
-
     private String getPeerPublicIdentityKeyPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_PEER_IDENTITY_KEY_SUFFIX;
-    }
-
-    public void setPeerSignedPreKey(UserId peerUserId, PublicXECKey key) {
-        storeBytes(getPeerSignedPreKeyPrefKey(peerUserId), key.getKeyMaterial());
     }
 
     public PublicXECKey getPeerSignedPreKey(UserId peerUserId) throws CryptoException {
         return new PublicXECKey(retrieveBytes(getPeerSignedPreKeyPrefKey(peerUserId)));
     }
 
-    public void clearPeerSignedPreKey(UserId peerUserId) {
-        getPreferences().edit().remove(getPeerSignedPreKeyPrefKey(peerUserId)).apply();
-    }
-
     private String getPeerSignedPreKeyPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_PEER_SIGNED_PRE_KEY_SUFFIX;
-    }
-
-    public void setPeerOneTimePreKey(UserId peerUserId, PublicXECKey key) {
-        storeBytes(getPeerOneTimePreKeyPrefKey(peerUserId), key.getKeyMaterial());
     }
 
     public PublicXECKey getPeerOneTimePreKey(UserId peerUserId) throws CryptoException {
         return new PublicXECKey(retrieveBytes(getPeerOneTimePreKeyPrefKey(peerUserId)));
     }
 
-    public void clearPeerOneTimePreKey(UserId peerUserId) {
-        getPreferences().edit().remove(getPeerOneTimePreKeyPrefKey(peerUserId)).apply();
-    }
-
     private String getPeerOneTimePreKeyPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_PEER_ONE_TIME_PRE_KEY_SUFFIX;
-    }
-
-    public void setPeerOneTimePreKeyId(UserId peerUserId, int id) {
-        getPreferences().edit().putInt(getPeerOneTimePreKeyIdPrefKey(peerUserId), id).apply();
     }
 
     public Integer getPeerOneTimePreKeyId(UserId peerUserId) {
@@ -457,216 +372,108 @@ public class EncryptedKeyStore {
         return ret;
     }
 
-    public void clearPeerOneTimePreKeyId(UserId peerUserId) {
-        getPreferences().edit().remove(getPeerOneTimePreKeyIdPrefKey(peerUserId)).apply();
-    }
-
     private String getPeerOneTimePreKeyIdPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_PEER_ONE_TIME_PRE_KEY_ID_SUFFIX;
-    }
-
-    public void setRootKey(UserId peerUserId, byte[] key) {
-        storeBytes(getRootKeyPrefKey(peerUserId), key);
     }
 
     public byte[] getRootKey(UserId peerUserId) {
         return retrieveBytes(getRootKeyPrefKey(peerUserId));
     }
 
-    public void clearRootKey(UserId peerUserId) {
-        getPreferences().edit().remove(getRootKeyPrefKey(peerUserId)).apply();
-    }
-
     private String getRootKeyPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_ROOT_KEY_SUFFIX;
-    }
-
-    public void setOutboundChainKey(UserId peerUserId, byte[] key) {
-        storeBytes(getOutboundChainKeyPrefKey(peerUserId), key);
     }
 
     public byte[] getOutboundChainKey(UserId peerUserId) {
         return retrieveBytes(getOutboundChainKeyPrefKey(peerUserId));
     }
 
-    public void clearOutboundChainKey(UserId peerUserId) {
-        getPreferences().edit().remove(getOutboundChainKeyPrefKey(peerUserId)).apply();
-    }
-
     private String getOutboundChainKeyPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_OUTBOUND_CHAIN_KEY_SUFFIX;
-    }
-
-    public void setInboundChainKey(UserId peerUserId, byte[] key) {
-        storeBytes(getInboundChainKeyPrefKey(peerUserId), key);
     }
 
     public byte[] getInboundChainKey(UserId peerUserId) {
         return retrieveBytes(getInboundChainKeyPrefKey(peerUserId));
     }
 
-    public void clearInboundChainKey(UserId peerUserId) {
-        getPreferences().edit().remove(getInboundChainKeyPrefKey(peerUserId)).apply();
-    }
-
     private String getInboundChainKeyPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_INBOUND_CHAIN_KEY_SUFFIX;
-    }
-
-    public void setInboundEphemeralKey(UserId peerUserId, PublicXECKey key) {
-        storeCurve25519PrivateKey(getInboundEphemeralKeyPrefKey(peerUserId), key.getKeyMaterial());
     }
 
     public PublicXECKey getInboundEphemeralKey(UserId peerUserId) throws CryptoException {
         return new PublicXECKey(retrieveCurve25519PrivateKey(getInboundEphemeralKeyPrefKey(peerUserId)));
     }
 
-    public void clearInboundEphemeralKey(UserId peerUserId) {
-        getPreferences().edit().remove(getInboundEphemeralKeyPrefKey(peerUserId)).apply();
-    }
-
     private String getInboundEphemeralKeyPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_INBOUND_EPHEMERAL_KEY_SUFFIX;
-    }
-
-    public void setOutboundEphemeralKey(UserId peerUserId, PrivateXECKey key) {
-        storeCurve25519PrivateKey(getOutboundEphemeralKeyPrefKey(peerUserId), key.getKeyMaterial());
     }
 
     public PrivateXECKey getOutboundEphemeralKey(UserId peerUserId) throws CryptoException {
         return new PrivateXECKey(retrieveCurve25519PrivateKey(getOutboundEphemeralKeyPrefKey(peerUserId)));
     }
 
-    public void clearOutboundEphemeralKey(UserId peerUserId) {
-        getPreferences().edit().remove(getOutboundEphemeralKeyPrefKey(peerUserId)).apply();
-    }
-
     private String getOutboundEphemeralKeyPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_OUTBOUND_EPHEMERAL_KEY_SUFFIX;
-    }
-
-    public void setInboundEphemeralKeyId(UserId peerUserId, int id) {
-        getPreferences().edit().putInt(getInboundEphemeralKeyIdPrefKey(peerUserId), id).apply();
     }
 
     public int getInboundEphemeralKeyId(UserId peerUserId) {
         return getPreferences().getInt(getInboundEphemeralKeyIdPrefKey(peerUserId), -1);
     }
 
-    public void clearInboundEphemeralKeyId(UserId peerUserId) {
-        getPreferences().edit().remove(getInboundEphemeralKeyIdPrefKey(peerUserId)).apply();
-    }
-
     private String getInboundEphemeralKeyIdPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_INBOUND_EPHEMERAL_KEY_ID_SUFFIX;
-    }
-
-    public void setOutboundEphemeralKeyId(UserId peerUserId, int id) {
-        getPreferences().edit().putInt(getOutboundEphemeralKeyIdPrefKey(peerUserId), id).apply();
     }
 
     public int getOutboundEphemeralKeyId(UserId peerUserId) {
         return getPreferences().getInt(getOutboundEphemeralKeyIdPrefKey(peerUserId), -1);
     }
 
-    public void clearOutboundEphemeralKeyId(UserId peerUserId) {
-        getPreferences().edit().remove(getOutboundEphemeralKeyIdPrefKey(peerUserId)).apply();
-    }
-
     private String getOutboundEphemeralKeyIdPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_OUTBOUND_EPHEMERAL_KEY_ID_SUFFIX;
-    }
-
-    public void setInboundPreviousChainLength(UserId peerUserId, int len) {
-        getPreferences().edit().putInt(getInboundPreviousChainLengthPrefKey(peerUserId), len).apply();
     }
 
     public int getInboundPreviousChainLength(UserId peerUserId) {
         return getPreferences().getInt(getInboundPreviousChainLengthPrefKey(peerUserId), 0);
     }
 
-    public void clearInboundPreviousChainLength(UserId peerUserId) {
-        getPreferences().edit().remove(getInboundPreviousChainLengthPrefKey(peerUserId)).apply();
-    }
-
     private String getInboundPreviousChainLengthPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_INBOUND_PREVIOUS_CHAIN_LENGTH_SUFFIX;
-    }
-
-    public void setOutboundPreviousChainLength(UserId peerUserId, int len) {
-        getPreferences().edit().putInt(getOutboundPreviousChainLengthPrefKey(peerUserId), len).apply();
     }
 
     public int getOutboundPreviousChainLength(UserId peerUserId) {
         return getPreferences().getInt(getOutboundPreviousChainLengthPrefKey(peerUserId), 0);
     }
 
-    public void clearOutboundPreviousChainLength(UserId peerUserId) {
-        getPreferences().edit().remove(getOutboundPreviousChainLengthPrefKey(peerUserId)).apply();
-    }
-
     private String getOutboundPreviousChainLengthPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_OUTBOUND_PREVIOUS_CHAIN_LENGTH_SUFFIX;
-    }
-
-    public void setInboundCurrentChainIndex(UserId peerUserId, int index) {
-        getPreferences().edit().putInt(getInboundCurrentChainIndexPrefKey(peerUserId), index).apply();
     }
 
     public int getInboundCurrentChainIndex(UserId peerUserId) {
         return getPreferences().getInt(getInboundCurrentChainIndexPrefKey(peerUserId), 0);
     }
 
-    public void clearInboundCurrentChainIndex(UserId peerUserId) {
-        getPreferences().edit().remove(getInboundCurrentChainIndexPrefKey(peerUserId)).apply();
-    }
-
     private String getInboundCurrentChainIndexPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_INBOUND_CURRENT_CHAIN_INDEX_SUFFIX;
-    }
-
-    public void setOutboundCurrentChainIndex(UserId peerUserId, int index) {
-        getPreferences().edit().putInt(getOutboundCurrentChainIndexPrefKey(peerUserId), index).apply();
     }
 
     public int getOutboundCurrentChainIndex(UserId peerUserId) {
         return getPreferences().getInt(getOutboundCurrentChainIndexPrefKey(peerUserId), 0);
     }
 
-    public void clearOutboundCurrentChainIndex(UserId peerUserId) {
-        getPreferences().edit().remove(getOutboundCurrentChainIndexPrefKey(peerUserId)).apply();
-    }
-
     private String getOutboundCurrentChainIndexPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_OUTBOUND_CURRENT_CHAIN_INDEX_SUFFIX;
-    }
-
-    public void setOutboundTeardownKey(UserId peerUserId, byte[] teardownKey) {
-        storeBytes(getOutboundTeardownKeyPrefKey(peerUserId), teardownKey);
     }
 
     public byte[] getOutboundTeardownKey(UserId peerUserId) {
         return retrieveBytes(getOutboundTeardownKeyPrefKey(peerUserId));
     }
 
-    public void clearOutboundTeardownKey(UserId peerUserId) {
-        getPreferences().edit().remove(getOutboundTeardownKeyPrefKey(peerUserId)).apply();
-    }
-
     private String getOutboundTeardownKeyPrefKey(UserId peerUserId) {
         return peerUserId.rawId() + "/" + PREF_KEY_OUTBOUND_TEARDOWN_KEY;
     }
 
-    public void setInboundTeardownKey(UserId peerUserId, byte[] teardownKey) {
-        storeBytes(getInboundTeardownKeyPrefKey(peerUserId), teardownKey);
-    }
-
     public byte[] getInboundTeardownKey(UserId peerUserId) {
         return retrieveBytes(getInboundTeardownKeyPrefKey(peerUserId));
-    }
-
-    public void clearInboundTeardownKey(UserId peerUserId) {
-        getPreferences().edit().remove(getInboundTeardownKeyPrefKey(peerUserId)).apply();
     }
 
     private String getInboundTeardownKeyPrefKey(UserId peerUserId) {
@@ -713,88 +520,44 @@ public class EncryptedKeyStore {
         return groupId.rawId() + "/" + PREF_KEY_GROUP_SEND_ALREADY_SET_UP;
     }
 
-    public void setGroupSendAlreadySetUp(GroupId groupId) {
-        getPreferences().edit().putBoolean(getGroupSendAlreadySetUpPrefKey(groupId), true).apply();
-    }
-
     public boolean getGroupSendAlreadySetUp(GroupId groupId) {
         return getPreferences().getBoolean(getGroupSendAlreadySetUpPrefKey(groupId), false);
-    }
-
-    public void clearGroupSendAlreadySetUp(GroupId groupId) {
-        getPreferences().edit().remove(getGroupSendAlreadySetUpPrefKey(groupId)).apply();
     }
 
     private String getMyGroupCurrentChainIndexPrefKey(GroupId groupId) {
         return groupId.rawId() + "/" + PREF_KEY_MY_GROUP_CURRENT_CHAIN_INDEX;
     }
 
-    public void setMyGroupCurrentChainIndex(GroupId groupId, int index) {
-        getPreferences().edit().putInt(getMyGroupCurrentChainIndexPrefKey(groupId), index).apply();
-    }
-
     public int getMyGroupCurrentChainIndex(GroupId groupId) {
         return getPreferences().getInt(getMyGroupCurrentChainIndexPrefKey(groupId), 0);
-    }
-
-    public void clearMyGroupCurrentChainIndex(GroupId groupId) {
-        getPreferences().edit().remove(getMyGroupCurrentChainIndexPrefKey(groupId)).apply();
     }
 
     private String getPeerGroupCurrentChainIndexPrefKey(GroupId groupId, UserId peerUserId) {
         return groupId.rawId() + "/" + PREF_KEY_PEER_GROUP_CURRENT_CHAIN_INDEX + "/" + peerUserId.rawId();
     }
 
-    public void setPeerGroupCurrentChainIndex(GroupId groupId, UserId peerUserId, int index) {
-        getPreferences().edit().putInt(getPeerGroupCurrentChainIndexPrefKey(groupId, peerUserId), index).apply();
-    }
-
     public int getPeerGroupCurrentChainIndex(GroupId groupId, UserId peerUserId) {
         return getPreferences().getInt(getPeerGroupCurrentChainIndexPrefKey(groupId, peerUserId), 0);
-    }
-
-    public void clearPeerGroupCurrentChainIndex(GroupId groupId, UserId peerUserId) {
-        getPreferences().edit().remove(getPeerGroupCurrentChainIndexPrefKey(groupId, peerUserId)).apply();
     }
 
     private String getMyGroupChainKeyPrefKey(GroupId groupId) {
         return groupId.rawId() + "/" + PREF_KEY_MY_GROUP_CHAIN_KEY;
     }
 
-    public void setMyGroupChainKey(GroupId groupId, byte[] key) {
-        storeBytes(getMyGroupChainKeyPrefKey(groupId), key);
-    }
-
     public byte[] getMyGroupChainKey(GroupId groupId) {
         return retrieveBytes(getMyGroupChainKeyPrefKey(groupId));
-    }
-
-    public void clearMyGroupChainKey(GroupId groupId) {
-        getPreferences().edit().remove(getMyGroupChainKeyPrefKey(groupId)).apply();
     }
 
     private String getPeerGroupChainKeyPrefKey(GroupId groupId, UserId peerUserId) {
         return groupId.rawId() + "/" + PREF_KEY_PEER_GROUP_CHAIN_KEY + "/" + peerUserId.rawId();
     }
 
-    public void setPeerGroupChainKey(GroupId groupId, UserId peerUserId, byte[] key) {
-        storeBytes(getPeerGroupChainKeyPrefKey(groupId, peerUserId), key);
-    }
-
     public byte[] getPeerGroupChainKey(GroupId groupId, UserId peerUserId) {
         return retrieveBytes(getPeerGroupChainKeyPrefKey(groupId, peerUserId));
     }
 
-    public void clearPeerGroupChainKey(GroupId groupId, UserId peerUserId) {
-        getPreferences().edit().remove(getPeerGroupChainKeyPrefKey(groupId, peerUserId)).apply();
-    }
-
     private String getMyGroupSigningKeyPrefKey(GroupId groupId) {
         return groupId.rawId() + "/" + PREF_KEY_MY_GROUP_SIGNING_KEY;
-    }
-
-    public void setMyGroupSigningKey(GroupId groupId, PrivateEdECKey key) {
-        storeBytes(getMyGroupSigningKeyPrefKey(groupId), key.getKeyMaterial());
     }
 
     public PrivateEdECKey getMyPrivateGroupSigningKey(GroupId groupId) throws CryptoException {
@@ -809,18 +572,6 @@ public class EncryptedKeyStore {
         return CryptoUtils.publicEdECKeyFromPrivate(getMyPrivateGroupSigningKey(groupId));
     }
 
-    public void clearMyGroupSigningKey(GroupId groupId) {
-        getPreferences().edit().remove(getMyGroupSigningKeyPrefKey(groupId)).apply();
-    }
-
-    private String getPeerGroupSigningKeyPrefKey(GroupId groupId, UserId peerUserId) {
-        return groupId.rawId() + "/" + PREF_KEY_PEER_GROUP_SIGNING_KEY + "/" + peerUserId.rawId();
-    }
-
-    public void setPeerGroupSigningKey(GroupId groupId, UserId peerUserId, PublicEdECKey key) {
-        storeBytes(getPeerGroupSigningKeyPrefKey(groupId, peerUserId), key.getKeyMaterial());
-    }
-
     public PublicEdECKey getPeerGroupSigningKey(GroupId groupId, UserId peerUserId) throws CryptoException {
         try {
             return new PublicEdECKey(retrieveBytes(getPeerGroupSigningKeyPrefKey(groupId, peerUserId)));
@@ -829,8 +580,8 @@ public class EncryptedKeyStore {
         }
     }
 
-    public void clearPeerGroupSigningKey(GroupId groupId, UserId peerUserId) {
-        getPreferences().edit().remove(getPeerGroupSigningKeyPrefKey(groupId, peerUserId)).apply();
+    private String getPeerGroupSigningKeyPrefKey(GroupId groupId, UserId peerUserId) {
+        return groupId.rawId() + "/" + PREF_KEY_PEER_GROUP_SIGNING_KEY + "/" + peerUserId.rawId();
     }
 
     private String getGroupFeedKeySetPrefKey(GroupId groupId, UserId peerUserId) {
@@ -841,60 +592,7 @@ public class EncryptedKeyStore {
         return groupId.rawId() + "/" + PREF_KEY_SKIPPED_GROUP_FEED_KEY + "/" + peerUserId.rawId() + "/" + currentChainIndex;
     }
 
-    public byte[] removeSkippedGroupFeedKey(GroupId groupId, UserId peerUserId, int chainIndex) {
-        String messageKeySetPrefKey = getGroupFeedKeySetPrefKey(groupId, peerUserId);
-        Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
 
-        String prefKey = getGroupFeedKeyPrefKey(groupId, peerUserId, chainIndex);
-        if (!messageKeyPrefKeys.remove(prefKey)) {
-            Log.e("Group feed key for " + prefKey + " not found in set");
-            return null;
-        }
-
-        String messageKeyString = getPreferences().getString(prefKey, null);
-        if (messageKeyString == null) {
-            Log.e("Failed to retrieve group feed key for " + prefKey);
-            return null;
-        }
-
-        getPreferences().edit().putStringSet(messageKeySetPrefKey, messageKeyPrefKeys).apply();
-
-        return stringToBytes(messageKeyString);
-    }
-
-    // TODO(jack): Clear out old keys after some threshold
-    public void storeSkippedGroupFeedKey(GroupId groupId, UserId peerUserId, GroupFeedMessageKey messageKey) {
-        Log.i("Storing skipped group feed key " + messageKey + " for " + groupId + " member " + peerUserId);
-        String messageKeySetPrefKey = getGroupFeedKeySetPrefKey(groupId, peerUserId);
-        Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
-
-        String keyPrefKey = getGroupFeedKeyPrefKey(groupId, peerUserId, messageKey.getCurrentChainIndex());
-        messageKeyPrefKeys.add(keyPrefKey);
-
-        getPreferences().edit().putString(keyPrefKey, bytesToString(messageKey.getKeyMaterial())).putStringSet(messageKeySetPrefKey, messageKeyPrefKeys).apply();
-    }
-
-    public void clearSkippedGroupFeedKeys(GroupId groupId, UserId peerUserId) {
-        String messageKeySetPrefKey = getGroupFeedKeySetPrefKey(groupId, peerUserId);
-        Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
-
-        SharedPreferences.Editor editor = getPreferences().edit();
-        editor.remove(messageKeySetPrefKey);
-
-        for (String prefKey : messageKeyPrefKeys) {
-            editor.remove(prefKey);
-        }
-
-        editor.apply();
-    }
-
-
-
-    // Only private key is stored; public key can be generated from it
-    private void storeCurve25519PrivateKey(String prefKey, byte[] privateKey) {
-        Preconditions.checkArgument(privateKey.length == CURVE_25519_PRIVATE_KEY_LENGTH);
-        storeBytes(prefKey, privateKey);
-    }
 
     private byte[] retrieveCurve25519PrivateKey(String prefKey) {
         byte[] ret = retrieveBytes(prefKey);
@@ -903,10 +601,6 @@ public class EncryptedKeyStore {
         }
         Preconditions.checkState(ret.length == CURVE_25519_PRIVATE_KEY_LENGTH);
         return ret;
-    }
-
-    private void storeBytes(String prefKey, byte[] bytes) {
-        getPreferences().edit().putString(prefKey, bytesToString(bytes)).apply();
     }
 
     @Nullable
@@ -966,5 +660,391 @@ public class EncryptedKeyStore {
     public void clearAll() {
         appContext.get().getSharedPreferences(EncryptedKeyStore.ENC_PREF_FILE_NAME, Context.MODE_PRIVATE).edit().clear().commit();
         appContext.get().getSharedPreferences(EncryptedKeyStore.PT_PREF_FILE_NAME, Context.MODE_PRIVATE).edit().clear().commit();
+    }
+
+    public class Editor {
+        private final SharedPreferences.Editor editor;
+
+        public Editor(SharedPreferences.Editor editor) {
+            this.editor = editor;
+        }
+
+        public void apply() {
+            editor.apply();
+        }
+
+        public Editor generateClientPrivateKeys() {
+            Log.i("EncryptedKeyStore: Generating new keys");
+            clearMyPreviousPublicEd25519IdentityKey();
+            setMyEd25519IdentityKey(CryptoUtils.generateEd25519KeyPair());
+            Log.critical("Updated identity key to " + Base64.encodeToString(getMyPublicEd25519IdentityKey().getKeyMaterial(), Base64.NO_WRAP));
+            setMyPrivateSignedPreKey(CryptoUtils.generateX25519PrivateKey());
+            return this;
+        }
+
+        private Editor storeBytes(String prefKey, byte[] bytes) {
+            editor.putString(prefKey, bytesToString(bytes));
+            return this;
+        }
+
+        // Only private key is stored; public key can be generated from it
+        private Editor storeCurve25519PrivateKey(String prefKey, byte[] privateKey) {
+            Preconditions.checkArgument(privateKey.length == CURVE_25519_PRIVATE_KEY_LENGTH);
+            storeBytes(prefKey, privateKey);
+            return this;
+        }
+
+        private Editor setMyEd25519IdentityKey(byte[] key) {
+            storeBytes(PREF_KEY_MY_ED25519_IDENTITY_KEY, key);
+            return this;
+        }
+
+        public Editor setPeerVerified(UserId peerUserId, boolean verified) {
+            editor.putBoolean(getPeerVerifiedPrefKey(peerUserId), verified);
+            return this;
+        }
+
+        public Editor clearPeerVerified(UserId peerUserId) {
+            editor.remove(getPeerVerifiedPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setSessionAlreadySetUp(UserId peerUserId, boolean downloaded) {
+            editor.putBoolean(getSessionAlreadySetUpPrefKey(peerUserId), downloaded);
+            return this;
+        }
+
+        public Editor clearSessionAlreadySetUp(UserId peerUserId) {
+            editor.remove(getSessionAlreadySetUpPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setLastDownloadAttempt(UserId peerUserId, long lastDownloadAttempt) {
+            editor.putLong(getLastDownloadAttemptPrefKey(peerUserId), lastDownloadAttempt);
+            return this;
+        }
+
+        public Editor clearLastDownloadAttempt(UserId peerUserId) {
+            editor.remove(getLastDownloadAttemptPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setPeerResponded(UserId peerUserId, boolean responded) {
+            editor.putBoolean(getPeerRespondedPrefKey(peerUserId), responded);
+            return this;
+        }
+
+        public Editor clearPeerResponded(UserId peerUserId) {
+            editor.remove(getPeerRespondedPrefKey(peerUserId));
+            return this;
+        }
+
+        private Editor setMyPreviousPublicEd25519IdentityKey(PublicEdECKey key) {
+            storeBytes(PREF_KEY_MY_PREVIOUS_PUBLIC_ED25519_IK, key.getKeyMaterial());
+            return this;
+        }
+
+        private Editor clearMyPreviousPublicEd25519IdentityKey() {
+            editor.remove(PREF_KEY_MY_PREVIOUS_PUBLIC_ED25519_IK);
+            return this;
+        }
+
+        private Editor setMyPrivateSignedPreKey(byte[] key) {
+            storeCurve25519PrivateKey(PREF_KEY_MY_PRIVATE_SIGNED_PRE_KEY, key);
+            return this;
+        }
+
+        public Editor setPeerGroupSigningKey(GroupId groupId, UserId peerUserId, PublicEdECKey key) {
+            storeBytes(getPeerGroupSigningKeyPrefKey(groupId, peerUserId), key.getKeyMaterial());
+            return this;
+        }
+
+        public Editor clearMyGroupSigningKey(GroupId groupId) {
+            editor.remove(getMyGroupSigningKeyPrefKey(groupId));
+            return this;
+        }
+
+        public Editor setMyGroupSigningKey(GroupId groupId, PrivateEdECKey key) {
+            storeBytes(getMyGroupSigningKeyPrefKey(groupId), key.getKeyMaterial());
+            return this;
+        }
+
+        public Editor clearPeerGroupChainKey(GroupId groupId, UserId peerUserId) {
+            editor.remove(getPeerGroupChainKeyPrefKey(groupId, peerUserId));
+            return this;
+        }
+
+        public Editor setPeerGroupChainKey(GroupId groupId, UserId peerUserId, byte[] key) {
+            storeBytes(getPeerGroupChainKeyPrefKey(groupId, peerUserId), key);
+            return this;
+        }
+
+        public Editor clearMyGroupChainKey(GroupId groupId) {
+            editor.remove(getMyGroupChainKeyPrefKey(groupId));
+            return this;
+        }
+
+        public Editor setMyGroupChainKey(GroupId groupId, byte[] key) {
+            storeBytes(getMyGroupChainKeyPrefKey(groupId), key);
+            return this;
+        }
+
+        public Editor clearPeerGroupCurrentChainIndex(GroupId groupId, UserId peerUserId) {
+            editor.remove(getPeerGroupCurrentChainIndexPrefKey(groupId, peerUserId));
+            return this;
+        }
+
+        public Editor setPeerGroupCurrentChainIndex(GroupId groupId, UserId peerUserId, int index) {
+            editor.putInt(getPeerGroupCurrentChainIndexPrefKey(groupId, peerUserId), index);
+            return this;
+        }
+
+        public Editor clearMyGroupCurrentChainIndex(GroupId groupId) {
+            editor.remove(getMyGroupCurrentChainIndexPrefKey(groupId));
+            return this;
+        }
+
+        public Editor setMyGroupCurrentChainIndex(GroupId groupId, int index) {
+            editor.putInt(getMyGroupCurrentChainIndexPrefKey(groupId), index);
+            return this;
+        }
+
+        public Editor clearGroupSendAlreadySetUp(GroupId groupId) {
+            editor.remove(getGroupSendAlreadySetUpPrefKey(groupId));
+            return this;
+        }
+
+        public Editor setGroupSendAlreadySetUp(GroupId groupId) {
+            editor.putBoolean(getGroupSendAlreadySetUpPrefKey(groupId), true);
+            return this;
+        }
+
+        public Editor clearInboundTeardownKey(UserId peerUserId) {
+            editor.remove(getInboundTeardownKeyPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setInboundTeardownKey(UserId peerUserId, byte[] teardownKey) {
+            storeBytes(getInboundTeardownKeyPrefKey(peerUserId), teardownKey);
+            return this;
+        }
+
+        public Editor clearOutboundTeardownKey(UserId peerUserId) {
+            editor.remove(getOutboundTeardownKeyPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setOutboundTeardownKey(UserId peerUserId, byte[] teardownKey) {
+            storeBytes(getOutboundTeardownKeyPrefKey(peerUserId), teardownKey);
+            return this;
+        }
+
+        public Editor clearOutboundCurrentChainIndex(UserId peerUserId) {
+            editor.remove(getOutboundCurrentChainIndexPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setOutboundCurrentChainIndex(UserId peerUserId, int index) {
+            editor.putInt(getOutboundCurrentChainIndexPrefKey(peerUserId), index);
+            return this;
+        }
+
+        public Editor clearInboundCurrentChainIndex(UserId peerUserId) {
+            editor.remove(getInboundCurrentChainIndexPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setInboundCurrentChainIndex(UserId peerUserId, int index) {
+            editor.putInt(getInboundCurrentChainIndexPrefKey(peerUserId), index);
+            return this;
+        }
+
+        public Editor clearOutboundPreviousChainLength(UserId peerUserId) {
+            editor.remove(getOutboundPreviousChainLengthPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setOutboundPreviousChainLength(UserId peerUserId, int len) {
+            editor.putInt(getOutboundPreviousChainLengthPrefKey(peerUserId), len);
+            return this;
+        }
+
+        public Editor clearInboundPreviousChainLength(UserId peerUserId) {
+            editor.remove(getInboundPreviousChainLengthPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setInboundPreviousChainLength(UserId peerUserId, int len) {
+            editor.putInt(getInboundPreviousChainLengthPrefKey(peerUserId), len);
+            return this;
+        }
+
+        public Editor clearOutboundEphemeralKeyId(UserId peerUserId) {
+            editor.remove(getOutboundEphemeralKeyIdPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setOutboundEphemeralKeyId(UserId peerUserId, int id) {
+            editor.putInt(getOutboundEphemeralKeyIdPrefKey(peerUserId), id);
+            return this;
+        }
+
+        public Editor clearInboundEphemeralKeyId(UserId peerUserId) {
+            editor.remove(getInboundEphemeralKeyIdPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setInboundEphemeralKeyId(UserId peerUserId, int id) {
+            editor.putInt(getInboundEphemeralKeyIdPrefKey(peerUserId), id);
+            return this;
+        }
+
+        public Editor clearOutboundEphemeralKey(UserId peerUserId) {
+            editor.remove(getOutboundEphemeralKeyPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setOutboundEphemeralKey(UserId peerUserId, PrivateXECKey key) {
+            storeCurve25519PrivateKey(getOutboundEphemeralKeyPrefKey(peerUserId), key.getKeyMaterial());
+            return this;
+        }
+
+        public Editor clearInboundEphemeralKey(UserId peerUserId) {
+            editor.remove(getInboundEphemeralKeyPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setInboundEphemeralKey(UserId peerUserId, PublicXECKey key) {
+            storeCurve25519PrivateKey(getInboundEphemeralKeyPrefKey(peerUserId), key.getKeyMaterial());
+            return this;
+        }
+
+        public Editor clearInboundChainKey(UserId peerUserId) {
+            editor.remove(getInboundChainKeyPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setInboundChainKey(UserId peerUserId, byte[] key) {
+            storeBytes(getInboundChainKeyPrefKey(peerUserId), key);
+            return this;
+        }
+
+        public Editor clearOutboundChainKey(UserId peerUserId) {
+            editor.remove(getOutboundChainKeyPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setOutboundChainKey(UserId peerUserId, byte[] key) {
+            storeBytes(getOutboundChainKeyPrefKey(peerUserId), key);
+            return this;
+        }
+
+        public Editor clearRootKey(UserId peerUserId) {
+            editor.remove(getRootKeyPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setRootKey(UserId peerUserId, byte[] key) {
+            storeBytes(getRootKeyPrefKey(peerUserId), key);
+            return this;
+        }
+
+        public Editor clearPeerOneTimePreKeyId(UserId peerUserId) {
+            editor.remove(getPeerOneTimePreKeyIdPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setPeerOneTimePreKeyId(UserId peerUserId, int id) {
+            editor.putInt(getPeerOneTimePreKeyIdPrefKey(peerUserId), id);
+            return this;
+        }
+
+        public Editor clearPeerOneTimePreKey(UserId peerUserId) {
+            editor.remove(getPeerOneTimePreKeyPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setPeerOneTimePreKey(UserId peerUserId, PublicXECKey key) {
+            storeBytes(getPeerOneTimePreKeyPrefKey(peerUserId), key.getKeyMaterial());
+            return this;
+        }
+
+        public Editor clearPeerSignedPreKey(UserId peerUserId) {
+            editor.remove(getPeerSignedPreKeyPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setPeerSignedPreKey(UserId peerUserId, PublicXECKey key) {
+            storeBytes(getPeerSignedPreKeyPrefKey(peerUserId), key.getKeyMaterial());
+            return this;
+        }
+
+        public Editor clearPeerPublicIdentityKey(UserId peerUserId) {
+            editor.remove(getPeerPublicIdentityKeyPrefKey(peerUserId));
+            return this;
+        }
+
+        public Editor setPeerPublicIdentityKey(UserId peerUserId, PublicEdECKey key) {
+            storeBytes(getPeerPublicIdentityKeyPrefKey(peerUserId), key.getKeyMaterial());
+            return this;
+        }
+
+        public Editor clearPeerGroupSigningKey(GroupId groupId, UserId peerUserId) {
+            editor.remove(getPeerGroupSigningKeyPrefKey(groupId, peerUserId)).apply();
+            return this;
+        }
+
+        // TODO(jack): Clear out old keys after some threshold
+        public Editor storeSkippedGroupFeedKey(GroupId groupId, UserId peerUserId, GroupFeedMessageKey messageKey) {
+            Log.i("Storing skipped group feed key " + messageKey + " for " + groupId + " member " + peerUserId);
+            String messageKeySetPrefKey = getGroupFeedKeySetPrefKey(groupId, peerUserId);
+            Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
+
+            String keyPrefKey = getGroupFeedKeyPrefKey(groupId, peerUserId, messageKey.getCurrentChainIndex());
+            messageKeyPrefKeys.add(keyPrefKey);
+
+            editor.putString(keyPrefKey, bytesToString(messageKey.getKeyMaterial())).putStringSet(messageKeySetPrefKey, messageKeyPrefKeys);
+
+            return this;
+        }
+
+        public Editor clearSkippedGroupFeedKeys(GroupId groupId, UserId peerUserId) {
+            String messageKeySetPrefKey = getGroupFeedKeySetPrefKey(groupId, peerUserId);
+            Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
+
+            editor.remove(messageKeySetPrefKey);
+
+            for (String prefKey : messageKeyPrefKeys) {
+                editor.remove(prefKey);
+            }
+
+            return this;
+        }
+
+        // TODO(jack): Clear out old keys after some threshold
+        public Editor storeSkippedMessageKey(UserId peerUserId, SignalMessageKey signalMessageKey) {
+            Log.i("Storing skipped message key " + signalMessageKey + " for user " + peerUserId);
+            String messageKeySetPrefKey = getMessageKeySetPrefKey(peerUserId);
+            Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
+
+            String keyPrefKey = getMessageKeyPrefKey(peerUserId, signalMessageKey.getEphemeralKeyId(), signalMessageKey.getCurrentChainIndex());
+            messageKeyPrefKeys.add(keyPrefKey);
+
+            editor.putString(keyPrefKey, bytesToString(signalMessageKey.getKeyMaterial())).putStringSet(messageKeySetPrefKey, messageKeyPrefKeys);
+            return this;
+        }
+
+        public Editor clearSkippedMessageKeys(UserId peerUserId) {
+            String messageKeySetPrefKey = getMessageKeySetPrefKey(peerUserId);
+            Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
+
+            editor.remove(messageKeySetPrefKey);
+
+            for (String prefKey : messageKeyPrefKeys) {
+                editor.remove(prefKey);
+            }
+
+            return this;
+        }
     }
 }

@@ -86,7 +86,7 @@ public class KeyVerificationViewModel extends AndroidViewModel {
                         byte[] identityKeyBytes = identityKeyProto.getPublicKey().toByteArray();
                         PublicEdECKey peerEdECIdentityKey = new PublicEdECKey(identityKeyBytes);
 
-                        encryptedKeyStore.setPeerPublicIdentityKey(userId, peerEdECIdentityKey);
+                        encryptedKeyStore.edit().setPeerPublicIdentityKey(userId, peerEdECIdentityKey).apply();
 
                         peerIdentityKey = CryptoUtils.convertPublicEdToX(peerEdECIdentityKey);
                     } catch (ObservableErrorException | InterruptedException | InvalidProtocolBufferException | CryptoException e2) {
@@ -125,7 +125,7 @@ public class KeyVerificationViewModel extends AndroidViewModel {
 
     void markVerificationState(boolean verified) {
         bgWorkers.execute(() -> {
-            encryptedKeyStore.setPeerVerified(userId, verified);
+            encryptedKeyStore.edit().setPeerVerified(userId, verified).apply();
             verifiedSwitchState.invalidate();
         });
     }

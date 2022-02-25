@@ -1929,10 +1929,11 @@ public class ConnectionImpl extends Connection {
                         PublicEdECKey publicSignatureKey = new PublicEdECKey(publicSignatureKeyBytes);
                         Log.i("Received sender state with current chain index of " + currentChainIndex + " from " + publisherUid);
 
-                        EncryptedKeyStore encryptedKeyStore = EncryptedKeyStore.getInstance();
-                        encryptedKeyStore.setPeerGroupCurrentChainIndex(groupId, publisherUserId, currentChainIndex);
-                        encryptedKeyStore.setPeerGroupChainKey(groupId, publisherUserId, chainKey);
-                        encryptedKeyStore.setPeerGroupSigningKey(groupId, publisherUserId, publicSignatureKey);
+                        EncryptedKeyStore.getInstance().edit()
+                                .setPeerGroupCurrentChainIndex(groupId, publisherUserId, currentChainIndex)
+                                .setPeerGroupChainKey(groupId, publisherUserId, chainKey)
+                                .setPeerGroupSigningKey(groupId, publisherUserId, publicSignatureKey)
+                                .apply();
                     } catch (CryptoException e) {
                         Log.e("Failed to decrypt sender state for " + ProtoPrinter.toString(item), e);
                         senderStateIssue = true;
