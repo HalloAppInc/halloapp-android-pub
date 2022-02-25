@@ -33,6 +33,7 @@
             android:gravity="center_vertical"
             android:textColor="@android:color/white"
             android:fontFamily="@font/quicksand_bold"
+            android:visibility="gone"
             android:text="@string/post_fab_label"/>
 
         <ImageView
