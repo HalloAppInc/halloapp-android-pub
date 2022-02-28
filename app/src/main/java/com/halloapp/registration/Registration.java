@@ -358,6 +358,7 @@ public class Registration {
         ThreadUtils.setSocketTag();
         if (!encryptedKeyStore.clientPrivateKeysSet()) {
             encryptedKeyStore.edit().generateClientPrivateKeys().apply();
+            Log.critical("Updated identity key to " + Base64.encodeToString(encryptedKeyStore.getMyPublicEd25519IdentityKey().getKeyMaterial(), Base64.NO_WRAP));
         }
         IdentityKey identityKeyProto = IdentityKey.newBuilder()
                 .setPublicKey(ByteString.copyFrom(encryptedKeyStore.getMyPublicEd25519IdentityKey().getKeyMaterial()))

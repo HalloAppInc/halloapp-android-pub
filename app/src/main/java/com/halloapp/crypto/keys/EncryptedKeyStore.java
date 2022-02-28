@@ -677,7 +677,6 @@ public class EncryptedKeyStore {
             Log.i("EncryptedKeyStore: Generating new keys");
             clearMyPreviousPublicEd25519IdentityKey();
             setMyEd25519IdentityKey(CryptoUtils.generateEd25519KeyPair());
-            Log.critical("Updated identity key to " + Base64.encodeToString(getMyPublicEd25519IdentityKey().getKeyMaterial(), Base64.NO_WRAP));
             setMyPrivateSignedPreKey(CryptoUtils.generateX25519PrivateKey());
             return this;
         }
