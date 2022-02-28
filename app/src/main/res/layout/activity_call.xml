@@ -14,11 +14,6 @@
         app:layout_constraintTop_toTopOf="parent"
         android:orientation="vertical">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/call_activity_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"/>
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -163,11 +158,10 @@
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/in_call_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
             android:layout_marginEnd="20dp"
             android:layout_marginStart="20dp"
             android:paddingTop="20dp"
@@ -176,12 +170,13 @@
             android:layout_gravity="center_vertical">
 
             <LinearLayout
+                android:id="@+id/mute_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
                 android:orientation="vertical"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintEnd_toStartOf="@id/hang_up_container"
+                app:layout_constraintBottom_toTopOf="@id/hang_up_container">
 
                 <ImageView
                     android:id="@+id/in_call_mute"
@@ -209,11 +204,13 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/hang_up_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:orientation="vertical"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:paddingTop="20dp"
+                app:layout_constraintStart_toEndOf="@+id/mute_container"
+                app:layout_constraintEnd_toStartOf="@+id/speaker_container"
                 app:layout_constraintBottom_toBottomOf="parent">
 
                 <ImageView
@@ -239,12 +236,14 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/speaker_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
+                app:layout_constraintStart_toEndOf="@id/hang_up_container"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintBottom_toTopOf="@id/hang_up_container">
 
                 <ImageView
                     android:id="@+id/in_call_speaker"
@@ -271,7 +270,7 @@
 
             </LinearLayout>
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>
 
