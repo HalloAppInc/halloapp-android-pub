@@ -18,13 +18,13 @@ public class MyProfileViewModel extends ViewModel {
         phoneNumberLiveData = new ComputableLiveData<String>() {
             @Override
             protected String compute() {
-                return me.getPhone();
+                return StringUtils.formatPhoneNumber(me.getPhone());
             }
         };
     }
 
     public LiveData<String> getPhone() {
-        return Transformations.map(phoneNumberLiveData.getLiveData(), StringUtils::formatPhoneNumber);
+        return phoneNumberLiveData.getLiveData();
     }
 
     public LiveData<String> getName() {
