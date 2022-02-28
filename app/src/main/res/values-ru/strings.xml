@@ -1191,28 +1191,34 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="audio_post_preview">"Аудио пост (%s)"</string>
 
     <!-- Text shown in chat view telling user they had a missed audio call -->
-    <string name="log_missed_voice_call">"Missed voice call"</string>
+    <string name="log_missed_voice_call">"Пропущенный голосовой вызов"</string>
 
     <!-- Text shown in chat view telling user they had a video call -->
-    <string name="log_video_call">"Video call"</string>
+    <string name="log_video_call">"Видеозвонок"</string>
 
     <!-- Text shown in message preview telling user they had a video call %s is replaced with the call duration -->
-    <string name="log_video_call_with_duration">"Video call (%s)"</string>
+    <string name="log_video_call_with_duration">"Видеовызов (%s)"</string>
 
     <!-- Rationale for when requesting microphone and camera permission for video calls -->
-    <string name="voice_call_record_video_permission_rationale">"To use video calls we need permission to access the microphone and camera"</string>
+    <string name="voice_call_record_video_permission_rationale">"Для использования видеозвонков нам необходимо разрешение на доступ к микрофону и камере"</string>
 
     <!-- The title of the notification for incoming voice calls -->
-    <string name="incoming_voice_call_notification_title">"Incoming voice call"</string>
+    <string name="incoming_voice_call_notification_title">"Входящий голосовой вызов"</string>
 
     <!-- The title of the notification for incoming video calls -->
-    <string name="incoming_video_call_notification_title">"Incoming video call"</string>
+    <string name="incoming_video_call_notification_title">"Входящий видеозвонок"</string>
 
     <!-- Action in menu for voice calling a user -->
-    <string name="call_action_voice">"Voice call"</string>
+    <string name="call_action_voice">"Голосовой вызов"</string>
 
     <!-- Action in menu for video calling a user -->
-    <string name="call_action_video">"Video call"</string>
+    <string name="call_action_video">"Видеозвонок"</string>
+
+    <!-- Action shown in user's address book for option to start a call, %s replaced with the phone number -->
+    <string name="address_book_action_call">"Голосовой вызов %s"</string>
+
+    <!-- Action shown in user's address book for option to send a message, %s replaced with the phone number -->
+    <string name="address_book_action_message">"Сообщение %s"</string>
     <string name="incoming_call_notification_title">"Входящий звонок"</string>
     <string name="call_action">"Звонок"</string>
     <string name="unmute">"Включить звук"</string>

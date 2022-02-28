@@ -1188,6 +1188,12 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Action in menu for video calling a user -->
     <string name="call_action_video">"Videoanruf"</string>
+
+    <!-- Action shown in user's address book for option to start a call, %s replaced with the phone number -->
+    <string name="address_book_action_call">"%s anrufen"</string>
+
+    <!-- Action shown in user's address book for option to send a message, %s replaced with the phone number -->
+    <string name="address_book_action_message">"%s Nachricht senden"</string>
     <string name="incoming_call_notification_title">"Eingehender Anruf"</string>
     <string name="call_action">"Anrufen"</string>
     <string name="unmute">"Stumm aus"</string>

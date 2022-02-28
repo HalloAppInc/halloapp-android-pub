@@ -1175,6 +1175,12 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</str
 
     <!-- Action in menu for video calling a user -->
     <string name="call_action_video">"Görüntülü arama"</string>
+
+    <!-- Action shown in user's address book for option to start a call, %s replaced with the phone number -->
+    <string name="address_book_action_call">"Voice call %s"</string>
+
+    <!-- Action shown in user's address book for option to send a message, %s replaced with the phone number -->
+    <string name="address_book_action_message">"Message %s"</string>
     <string name="incoming_call_notification_title">"Gelen çağrı"</string>
     <string name="call_action">"Arama"</string>
     <string name="unmute">"Unmute"</string>

@@ -1137,10 +1137,16 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="incoming_video_call_notification_title">"Inkomende video-oproep"</string>
 
     <!-- Action in menu for voice calling a user -->
-    <string name="call_action_voice">"Spraakoproep"</string>
+    <string name="call_action_voice">"Bellen"</string>
 
     <!-- Action in menu for video calling a user -->
-    <string name="call_action_video">"Video-oproep"</string>
+    <string name="call_action_video">"Videobellen"</string>
+
+    <!-- Action shown in user's address book for option to start a call, %s replaced with the phone number -->
+    <string name="address_book_action_call">"Bellen naar %s"</string>
+
+    <!-- Action shown in user's address book for option to send a message, %s replaced with the phone number -->
+    <string name="address_book_action_message">"Bericht sturen naar %s"</string>
     <string name="incoming_call_notification_title">"Inkomende oproep"</string>
     <string name="call_action">"Bellen"</string>
     <string name="unmute">"Dempen opheffen"</string>

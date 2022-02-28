@@ -1128,6 +1128,12 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 
     <!-- Action in menu for video calling a user -->
     <string name="call_action_video">"Video chamada"</string>
+
+    <!-- Action shown in user's address book for option to start a call, %s replaced with the phone number -->
+    <string name="address_book_action_call">"Chamadas de voz %s"</string>
+
+    <!-- Action shown in user's address book for option to send a message, %s replaced with the phone number -->
+    <string name="address_book_action_message">"Mensagem %s"</string>
     <string name="incoming_call_notification_title">"Recebendo ligação"</string>
     <string name="call_action">"Ligar"</string>
     <string name="unmute">"Ativar som"</string>
