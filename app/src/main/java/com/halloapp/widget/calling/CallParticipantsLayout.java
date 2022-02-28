@@ -2,6 +2,7 @@ package com.halloapp.widget.calling;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Rational;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -56,6 +57,14 @@ public class CallParticipantsLayout extends FrameLayout {
         localVideoView = findViewById(R.id.call_local_video);
         localVideoView.setOnClickListener(v -> {
         });
+    }
+
+    public void enterPiPView() {
+        localVideoView.setVisibility(View.GONE);
+    }
+
+    public void exitPiPView() {
+        localVideoView.setVisibility(View.VISIBLE);
     }
 
     public void showInCallView() {

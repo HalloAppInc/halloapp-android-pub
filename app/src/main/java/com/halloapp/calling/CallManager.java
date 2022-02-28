@@ -18,6 +18,7 @@ import android.telecom.CallAudioState;
 import android.telecom.PhoneAccount;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
+import android.util.Rational;
 import android.widget.Toast;
 
 import androidx.annotation.IntDef;
@@ -371,6 +372,10 @@ public class CallManager {
             finishStartCall();
         }
         return true;
+    }
+
+    public static Rational getPiPAspectRatio() {
+        return new Rational(VIDEO_WIDTH, VIDEO_HEIGHT);
     }
 
     public synchronized void finishStartCall() {

@@ -1,8 +1,11 @@
 package com.halloapp.ui.calling;
 
 import android.Manifest;
+import android.app.PictureInPictureParams;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -12,6 +15,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -49,7 +53,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private static final String ACTION_ACCEPT = "accept";
 
     public static Intent getStartCallIntent(@NonNull Context context, @NonNull UserId userId, @NonNull CallType callType) {
-        Intent intent = new Intent(context, CallActivity.class);
+        Intent intent = createBaseCallIntent(context);
         intent.putExtra(EXTRA_PEER_UID, userId.rawId());
         intent.putExtra(EXTRA_IS_INITIATOR, true);
         intent.putExtra(EXTRA_CALL_TYPE, callType.getNumber());
@@ -57,20 +61,20 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     public static Intent getOngoingCallIntent(@NonNull Context context, @NonNull UserId userId, boolean isInitiator) {
-        Intent intent = new Intent(context, CallActivity.class);
+        Intent intent = createBaseCallIntent(context);
         intent.putExtra(EXTRA_PEER_UID, userId.rawId());
         intent.putExtra(EXTRA_IS_INITIATOR, isInitiator);
         return intent;
     }
 
     public static Intent getReturnToCallIntent(@NonNull Context context, @NonNull UserId peerUid) {
-        Intent intent = new Intent(context, CallActivity.class);
+        Intent intent = createBaseCallIntent(context);
         intent.putExtra(EXTRA_PEER_UID, peerUid.rawId());
         return intent;
     }
 
     public static Intent incomingCallIntent(@NonNull Context context, @NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType) {
-        Intent intent = new Intent(context, CallActivity.class);
+        Intent intent = createBaseCallIntent(context);
         intent.putExtra(EXTRA_CALL_ID, callId);
         intent.putExtra(EXTRA_PEER_UID, peerUid.rawId());
         intent.putExtra(EXTRA_IS_INITIATOR, false);
@@ -79,12 +83,18 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     public static Intent acceptCallIntent(@NonNull Context context, @NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType) {
-        Intent intent = new Intent(context, CallActivity.class);
+        Intent intent = createBaseCallIntent(context);
         intent.setAction(CallActivity.ACTION_ACCEPT);
         intent.putExtra(EXTRA_CALL_ID, callId);
         intent.putExtra(EXTRA_PEER_UID, peerUid.rawId());
         intent.putExtra(EXTRA_IS_INITIATOR, false);
         intent.putExtra(EXTRA_CALL_TYPE, callType.getNumber());
+        return intent;
+    }
+
+    private static Intent createBaseCallIntent(@NonNull Context context) {
+        Intent intent = new Intent(context, CallActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         return intent;
     }
 
@@ -118,6 +128,21 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
 
     // CallManager is responsible for cleaning up those.
     private HAVideoCapturer videoCapturer;
+
+    private boolean systemAllowsPip;
+
+    @Override
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode);
+        if (participantsLayout != null) {
+            if (isInPictureInPictureMode) {
+                participantsLayout.enterPiPView();
+                videoCallControlsController.hideControls();
+            } else {
+                participantsLayout.exitPiPView();
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,6 +186,12 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
 
         if (isVideoCall) {
             actionBar.hide();
+            if (Build.VERSION.SDK_INT >= 24) {
+                systemAllowsPip = getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE);
+                if (systemAllowsPip && Build.VERSION.SDK_INT >= 26) {
+                    setPictureInPictureParams(createPiPParams());
+                }
+            }
         }
 
         contactLoader = new ContactLoader();
@@ -302,6 +333,17 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     @Override
+    public void onBackPressed() {
+        boolean enteredPip = false;
+        if (shouldEnterPiP()) {
+            enteredPip = tryEnterPiP();
+        }
+        if (!enteredPip) {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
     }
@@ -309,6 +351,40 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onUserLeaveHint() {
+        if (Build.VERSION.SDK_INT < 26 && shouldEnterPiP()) {
+            tryEnterPiP();
+        }
+    }
+
+    private boolean shouldEnterPiP() {
+        return systemAllowsPip && callType == CallType.VIDEO;
+    }
+
+    @RequiresApi(api = 26)
+    private PictureInPictureParams createPiPParams() {
+        PictureInPictureParams.Builder builder = new PictureInPictureParams.Builder();
+        builder.setAspectRatio(CallManager.getPiPAspectRatio());
+        if (Build.VERSION.SDK_INT >= 31) {
+            builder.setAutoEnterEnabled(true);
+            builder.setSeamlessResizeEnabled(true);
+        }
+        return builder.build();
+    }
+
+    private boolean tryEnterPiP() {
+        if (Build.VERSION.SDK_INT >= 24) {
+            if (Build.VERSION.SDK_INT >= 26) {
+                return enterPictureInPictureMode(createPiPParams());
+            } else {
+                enterPictureInPictureMode();
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

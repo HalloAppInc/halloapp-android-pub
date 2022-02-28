@@ -54,6 +54,12 @@ public class VideoCallControlsController implements View.OnClickListener {
         showControlsForever = true;
     }
 
+    public void hideControls() {
+        controlsContainerView.removeCallbacks(hideControlsRunnable);
+        animateOutControls();
+        showControlsForever = false;
+    }
+
     private void showControls() {
         animateInControls();
     }
