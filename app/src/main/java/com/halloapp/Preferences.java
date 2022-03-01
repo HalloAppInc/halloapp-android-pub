@@ -61,6 +61,7 @@ public class Preferences {
     private static final String PREF_KEY_LAST_GROUP_COMMENT_DECRYPT_MESSAGE_ROW_ID = "last_group_comment_decrypt_message_row_id";
     private static final String PREF_KEY_LAST_SILENT_DECRYPT_MESSAGE_ROW_ID = "last_silent_decrypt_message_row_id";
     private static final String PREF_KEY_VIDEO_BITRATE = "video_bitrate";
+    private static final String PREF_KEY_VIDEO_BITRATE_OVERRIDE = "video_bitrate_override";
     private static final String PREF_KEY_AUDIO_BITRATE = "audio_bitrate";
     private static final String PREF_KEY_H264_RES = "h264_res";
     private static final String PREF_KEY_H265_RES = "h265_res";
@@ -148,7 +149,7 @@ public class Preferences {
     private final LongPreference prefLastGroupPostDecryptStatRowId = createPref(false, PREF_KEY_LAST_GROUP_POST_DECRYPT_MESSAGE_ROW_ID, -1L);
     private final LongPreference prefLastGroupCommentDecryptStatRowId = createPref(false, PREF_KEY_LAST_GROUP_COMMENT_DECRYPT_MESSAGE_ROW_ID, -1L);
     private final LongPreference prefLastSeenPostTime = createPref(false, PREF_KEY_LAST_SEEN_POST_TIME, 0L);
-    private final IntPreference prefVideoBitrate = createPref(false, PREF_KEY_VIDEO_BITRATE, Constants.VIDEO_BITRATE);
+    private final IntPreference prefVideoBitrateOverride = createPref(false, PREF_KEY_VIDEO_BITRATE_OVERRIDE, Constants.VIDEO_BITRATE_OVERRIDE);
     private final IntPreference prefAudioBitrate = createPref(false, PREF_KEY_AUDIO_BITRATE, Constants.AUDIO_BITRATE);
     private final IntPreference prefH264Res = createPref(false, PREF_KEY_H264_RES, Constants.VIDEO_RESOLUTION_H264);
     private final IntPreference prefH265Res = createPref(false, PREF_KEY_H265_RES, Constants.VIDEO_RESOLUTION_H265);
@@ -202,6 +203,7 @@ public class Preferences {
             PREF_KEY_SHOWED_PROFILE_NUX,
             PREF_KEY_SHOWED_MAKE_POST_NUX,
             PREF_KEY_SHOWED_WELCOME_NUX, // TODO(clark): Remove after October 30
+            PREF_KEY_VIDEO_BITRATE, // TODO(vasil): Remove after July 31
     };
 
     private abstract class Preference<T> {
@@ -589,7 +591,7 @@ public class Preferences {
 
     @WorkerThread
     public void resetVideoOverride() {
-        prefVideoBitrate.remove();
+        prefVideoBitrateOverride.remove();
         prefAudioBitrate.remove();
         prefH264Res.remove();
         prefH265Res.remove();
@@ -597,7 +599,7 @@ public class Preferences {
 
     @WorkerThread
     public void saveVideoOverride() {
-        prefVideoBitrate.set(Constants.VIDEO_BITRATE);
+        prefVideoBitrateOverride.set(Constants.VIDEO_BITRATE_OVERRIDE);
         prefAudioBitrate.set(Constants.AUDIO_BITRATE);
         prefH264Res.set(Constants.VIDEO_RESOLUTION_H264);
         prefH265Res.set(Constants.VIDEO_RESOLUTION_H265);
@@ -605,7 +607,7 @@ public class Preferences {
 
     @WorkerThread
     public void loadVideoOverride() {
-        Constants.VIDEO_BITRATE = prefVideoBitrate.get();
+        Constants.VIDEO_BITRATE_OVERRIDE = prefVideoBitrateOverride.get();
         Constants.AUDIO_BITRATE = prefAudioBitrate.get();
         Constants.VIDEO_RESOLUTION_H264 = prefH264Res.get();
         Constants.VIDEO_RESOLUTION_H265 = prefH265Res.get();

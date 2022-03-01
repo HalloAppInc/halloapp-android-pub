@@ -55,7 +55,7 @@ public class Constants {
     public static final long COMMENTS_SCROLL_DELAY = 400L;
 
     public static final int JPEG_QUALITY = 80;
-    public static int VIDEO_BITRATE = 2000000;
+    public static int VIDEO_BITRATE_OVERRIDE = 0;
     public static int VIDEO_RESOLUTION_H264 = 360;
     public static int VIDEO_RESOLUTION_H265 = 480;
     public static int AUDIO_BITRATE = 96000;

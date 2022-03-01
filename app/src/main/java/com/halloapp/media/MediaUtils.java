@@ -34,6 +34,7 @@ import androidx.annotation.WorkerThread;
 import androidx.core.content.FileProvider;
 import androidx.exifinterface.media.ExifInterface;
 
+import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.content.Media;
@@ -376,9 +377,20 @@ public class MediaUtils {
         }
     }
 
+    public static int getPreferredMaxVideoBitrate() {
+        final ServerProps serverProps = ServerProps.getInstance();
+        final int overrideMaxVideoBitrate = Constants.VIDEO_BITRATE_OVERRIDE;
+        if ((serverProps.getIsInternalUser() || BuildConfig.DEBUG) && overrideMaxVideoBitrate > 0) {
+            return overrideMaxVideoBitrate;
+        } else {
+            return serverProps.getMaxVideoBitrate();
+        }
+    }
+
     @WorkerThread
     public static boolean shouldConvertVideo(@NonNull File file, long maxVideoDurationSeconds) throws IOException {
-        final int maxBitrate = ServerProps.getInstance().getMaxVideoBitrate();
+        final int maxBitrate = getPreferredMaxVideoBitrate();
+        Log.i("MediaUtils.shouldConvertVideo maxBitrate is " + maxBitrate + " maxVideoDurationSeconds is " + maxVideoDurationSeconds);
         final MediaExtractor extractor = new MediaExtractor();
         long fileLength = file.length();
         long bitrate = 0;

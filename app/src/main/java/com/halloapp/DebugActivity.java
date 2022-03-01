@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.util.BgWorkers;
+import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
 
 @SuppressWarnings("SetTextI18n")
@@ -18,6 +20,7 @@ public class DebugActivity extends HalloActivity {
 
     private final Preferences preferences = Preferences.getInstance();
     private final ServerProps serverProps = ServerProps.getInstance();
+    private final BgWorkers bgWorkers = BgWorkers.getInstance();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,7 +38,7 @@ public class DebugActivity extends HalloActivity {
         EditText h265ResView = findViewById(R.id.h265_res);
         TextView supportsWideColor = findViewById(R.id.supports_wide_color);
 
-        videoBitrateView.setText(Integer.toString(Constants.VIDEO_BITRATE));
+        videoBitrateView.setText(Integer.toString(Constants.VIDEO_BITRATE_OVERRIDE));
         audioBitrateView.setText(Integer.toString(Constants.AUDIO_BITRATE));
         h264ResView.setText(Integer.toString(Constants.VIDEO_RESOLUTION_H264));
         h265ResView.setText(Integer.toString(Constants.VIDEO_RESOLUTION_H265));
@@ -59,47 +62,50 @@ public class DebugActivity extends HalloActivity {
 
         View saveBtn = findViewById(R.id.save);
         saveBtn.setOnClickListener(v -> {
-            int videoBitrate = Constants.VIDEO_BITRATE;
-            int audioBitrate = Constants.AUDIO_BITRATE;
-            int h264Res = Constants.VIDEO_RESOLUTION_H264;
-            int h265Res = Constants.VIDEO_RESOLUTION_H265;
-            try {
-                videoBitrate = Integer.parseInt(videoBitrateView.getText().toString());
-            } catch (Exception e) {
-                Log.e("Failed to update video bitrate");
-            }
-            try {
-                audioBitrate = Integer.parseInt(audioBitrateView.getText().toString());
-            } catch (Exception e) {
-                Log.e("Failed to update audio bitrate");
-            }
-            try {
-                h264Res = Integer.parseInt(h264ResView.getText().toString());
-            } catch (Exception e) {
-                Log.e("Failed to update h264 resolution");
-            }
-            try {
-                h265Res = Integer.parseInt(h265ResView.getText().toString());
-            } catch (Exception e) {
-                Log.e("Failed to update h265 resolution");
-            }
-            Constants.VIDEO_BITRATE = videoBitrate;
-            Constants.AUDIO_BITRATE = audioBitrate;
-            Constants.VIDEO_RESOLUTION_H264 = h264Res;
-            Constants.VIDEO_RESOLUTION_H265 = h265Res;
-            preferences.saveVideoOverride();
-            finish();
+            bgWorkers.execute(() -> {
+                int videoBitrate = Constants.VIDEO_BITRATE_OVERRIDE;
+                int audioBitrate = Constants.AUDIO_BITRATE;
+                int h264Res = Constants.VIDEO_RESOLUTION_H264;
+                int h265Res = Constants.VIDEO_RESOLUTION_H265;
+                try {
+                    videoBitrate = Integer.parseInt(videoBitrateView.getText().toString());
+                } catch (Exception e) {
+                    Log.e("Failed to update video bitrate");
+                }
+                try {
+                    audioBitrate = Integer.parseInt(audioBitrateView.getText().toString());
+                } catch (Exception e) {
+                    Log.e("Failed to update audio bitrate");
+                }
+                try {
+                    h264Res = Integer.parseInt(h264ResView.getText().toString());
+                } catch (Exception e) {
+                    Log.e("Failed to update h264 resolution");
+                }
+                try {
+                    h265Res = Integer.parseInt(h265ResView.getText().toString());
+                } catch (Exception e) {
+                    Log.e("Failed to update h265 resolution");
+                }
+                Constants.VIDEO_BITRATE_OVERRIDE = videoBitrate;
+                Constants.AUDIO_BITRATE = audioBitrate;
+                Constants.VIDEO_RESOLUTION_H264 = h264Res;
+                Constants.VIDEO_RESOLUTION_H265 = h265Res;
+                preferences.saveVideoOverride();
+                finish();
+            });
         });
 
         View resetButton = findViewById(R.id.reset);
         resetButton.setOnClickListener(v -> {
-            Constants.VIDEO_BITRATE = 2000000;
-            Constants.AUDIO_BITRATE = 96000;
-            Constants.VIDEO_RESOLUTION_H264 = 360;
-            Constants.VIDEO_RESOLUTION_H265 = 480;
-
-            preferences.resetVideoOverride();
-            finish();
+            bgWorkers.execute(() -> {
+                Constants.VIDEO_BITRATE_OVERRIDE = 0;
+                Constants.AUDIO_BITRATE = 96000;
+                Constants.VIDEO_RESOLUTION_H264 = 360;
+                Constants.VIDEO_RESOLUTION_H265 = 480;
+                preferences.resetVideoOverride();
+                finish();
+            });
         });
     }
 

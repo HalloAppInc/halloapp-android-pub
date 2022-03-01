@@ -539,10 +539,12 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                 mediaConverter.setVideoCodec(MediaConverter.VIDEO_CODEC_H264);
                 mediaConverter.setVideoResolution(Constants.VIDEO_RESOLUTION_H264);
             }
-            mediaConverter.setVideoBitrate(Constants.VIDEO_BITRATE);
+            final int maxVideoBitrate = MediaUtils.getPreferredMaxVideoBitrate();
+            Log.d("UploadMediaTask.prepareMedia maxVideoBitrate is " + maxVideoBitrate);
+            mediaConverter.setVideoBitrate(maxVideoBitrate);
             mediaConverter.setAudioBitrate(Constants.AUDIO_BITRATE);
             mediaConverter.setListener(percent -> {
-                Log.v("Resumable Uploader Task convert: " + percent);
+                Log.v("UploadMediaTask.prepareMedia convert " + percent);
                 return false;
             });
 
@@ -559,10 +561,10 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             }
 
             if (!media.file.delete()) {
-                Log.e("Resumable Uploader Task: failed to delete " + media.file.getAbsolutePath());
+                Log.e("UploadMediaTask.prepareMedia failed to delete " + media.file.getAbsolutePath());
             }
             if (!file.renameTo(media.file)) {
-                Log.e("Resumable Uploader Task convert: failed to rename " + file.getAbsolutePath() + " to " + media.file.getAbsolutePath());
+                Log.e("UploadMediaTask.prepareMedia failed to rename " + file.getAbsolutePath() + " to " + media.file.getAbsolutePath());
             }
         }
         Log.d("UploadMediaTask.prepareMedia converted size " + media.file.length());
