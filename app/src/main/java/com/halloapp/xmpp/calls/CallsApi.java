@@ -13,6 +13,7 @@ import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.AnswerCall;
+import com.halloapp.proto.server.CallConfig;
 import com.halloapp.proto.server.CallRinging;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
@@ -108,10 +109,11 @@ public class CallsApi extends Connection.Observer {
         // String webrtcOffer = incomingCall.getWebrtcOffer().getEncPayload().toStringUtf8();
         List<StunServer> stunServers = incomingCall.getStunServersList();
         List<TurnServer> turnServers = incomingCall.getTurnServersList();
+        CallConfig callConfig = incomingCall.getCallConfig();
         CallType callType = incomingCall.getCallType();
         long timestamp = incomingCall.getTimestampMs();
         long serverSentTimestamp = incomingCall.getServerSentTsMs();
-        callManager.handleIncomingCall(callId, peerUid, callType, webrtcOffer, stunServers, turnServers, timestamp, serverSentTimestamp, cryptoException);
+        callManager.handleIncomingCall(callId, peerUid, callType, webrtcOffer, stunServers, turnServers, callConfig, timestamp, serverSentTimestamp, cryptoException);
         connection.sendAck(ackId);
     }
 

@@ -42,6 +42,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.CallConfig;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
 import com.halloapp.proto.server.StartCallResult;
@@ -72,7 +73,9 @@ import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.RTCStatsCollectorCallback;
+import org.webrtc.RtpParameters;
 import org.webrtc.RtpReceiver;
+import org.webrtc.RtpSender;
 import org.webrtc.RtpTransceiver;
 import org.webrtc.SessionDescription;
 import org.webrtc.SurfaceTextureHelper;
@@ -117,6 +120,10 @@ public class CallManager {
     private static final int VIDEO_HEIGHT = 1280;
     private static final int VIDEO_WIDTH = 720;
     private static final int VIDEO_FPS = 30;
+    private static final int MIN_VIDEO_MAX_BITRATE = 50_000;            // 50Kbps
+    private static final int DEFAULT_VIDEO_MAX_BITRATE = 1_000_000;     // 1Mbps
+    private static final int MIN_AUDIO_MAX_BITRATE = 1_000;             // 1Kbps
+    private static final int DEFAULT_AUDIO_MAX_BITRATE = 40_000;        // 40Kbps
 
 
     private @State int state;
@@ -148,6 +155,8 @@ public class CallManager {
     private PeerConnection peerConnection;
     private PeerConnectionFactory factory;
 
+    @Nullable
+    private CallConfig callConfig;
     private final CallAudioManager audioManager;
     private final OutgoingRingtone outgoingRingtone;
 
@@ -436,13 +445,13 @@ public class CallManager {
 
     @WorkerThread
     private void setupWebrtc() {
+        // TODO(nikola): Split this into 2 different methods for start_call and answer call.
         Log.i("Initialize WebRTC");
         initializePeerConnectionFactory();
-        initializePeerConnections();
         if (isInitiator) {
-            createAVTracks();
-            startStreams();
             getCallServersAndStartCall();
+        } else {
+            initializePeerConnections();
         }
     }
 
@@ -521,6 +530,7 @@ public class CallManager {
         restartIndex = 0;
         outboundRerequestCount = 0;
         isAnswered = false;
+        callConfig = null;
         int oldState = this.state;
         state = State.IDLE;
         isInCall.postValue(false);
@@ -573,7 +583,7 @@ public class CallManager {
     }
 
     public synchronized void handleIncomingCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType, @Nullable String webrtcOffer,
-                                   @NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers,
+                                   @NonNull List<StunServer> stunServers, @NonNull List<TurnServer> turnServers, @Nullable CallConfig callConfig,
                                    long timestamp, long serverSentTimestamp, @Nullable CryptoException cryptoException) {
         Log.i("CallManager.handleIncomingCall " + callId + " peerUid: " + peerUid + " " + callType + " " + timestamp);
         if (serverSentTimestamp > 0 && timestamp > 0 && serverSentTimestamp - timestamp > Constants.CALL_RINGING_TIMEOUT_MS) {
@@ -595,10 +605,13 @@ public class CallManager {
             return;
         }
 
+        Log.i("CallManager: callId: " + callId + " CallConfig: " + callConfig);
+
         this.isInitiator = false;
         this.peerUid = peerUid;
         this.callType = callType;
         this.callId = callId;
+        this.callConfig = callConfig;
 
         if (webrtcOffer == null) {
             Log.e("handleIncomingCall() Failed to decrypt webrtcOffer callId:" + callId);
@@ -932,7 +945,12 @@ public class CallManager {
             if (!videoCapturer.initialize(surfaceTextureHelper, videoSource.getCapturerObserver())) {
                 Log.e("CallManager/initializeCapturer failed to initialize capturer!");
             } else {
-                videoCapturer.startCapturer(VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_FPS);
+                // TODO(nikola): add reasonable minimums and maximums
+                int videoWidth = callConfig.getVideoWidth() == 0 ? VIDEO_WIDTH : callConfig.getVideoWidth();
+                int videoHeight = callConfig.getVideoHeight() == 0 ? VIDEO_HEIGHT : callConfig.getVideoHeight();
+                int videoFps = callConfig.getVideoFps() == 0 ? VIDEO_FPS : callConfig.getVideoFps();
+                Log.i("CallManager: videoCapture W: " + videoWidth + " H: " + videoHeight + " " + videoFps + "fps");
+                videoCapturer.startCapturer(videoWidth, videoHeight, videoFps);
             }
         }
     }
@@ -963,6 +981,38 @@ public class CallManager {
         peerConnection.addStream(mediaStream);
     }
 
+    private void setMaxBitrate() {
+        int maxVideoBitrate = callConfig.getVideoBitrateMax();
+        if (maxVideoBitrate <= MIN_VIDEO_MAX_BITRATE) {
+            maxVideoBitrate = DEFAULT_VIDEO_MAX_BITRATE;
+        }
+        int maxAudioBitrate = callConfig.getAudioBitrateMax();
+        if (maxAudioBitrate <= MIN_AUDIO_MAX_BITRATE) {
+            maxAudioBitrate = DEFAULT_AUDIO_MAX_BITRATE;
+        }
+        Log.i("CallManager: setMaxBitrate: " + peerConnection.getSenders().size());
+        for (RtpSender sender : peerConnection.getSenders()) {
+            RtpParameters parameters = sender.getParameters();
+            if (sender.track() == null || parameters.encodings.size() == 0) {
+                Log.e("CallManager: setMaxBitrate sender not ready. sender: " + sender);
+                continue;
+            }
+            Log.d("CallManager: sender: " + sender);
+            String trackKind = sender.track().kind();
+            Integer maxBitrate = null;
+            for (RtpParameters.Encoding encoding : parameters.encodings) {
+                if ("video".equals(trackKind)) {
+                    maxBitrate = maxVideoBitrate;
+                } else if ("audio".equals(trackKind)) {
+                    maxBitrate = maxAudioBitrate;
+                }
+                Log.i("CallManager: bitrate " + encoding.maxBitrateBps + " -> " + maxBitrate);
+                encoding.maxBitrateBps = maxBitrate;
+            }
+            Log.i("CallManager: track: " + sender.track().id() + " " + trackKind + " maxBitrate: " + maxVideoBitrate / 1024 + "kbps");
+            sender.setParameters(parameters);
+        }
+    }
 
     private PeerConnection createPeerConnection(@NonNull PeerConnectionFactory factory) {
         ArrayList<PeerConnection.IceServer> iceServers = new ArrayList<>();
@@ -973,6 +1023,17 @@ public class CallManager {
 //        Log.i("ice servers: " + iceServers);
 
         PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(iceServers);
+        rtcConfig.audioJitterBufferFastAccelerate = callConfig.getAudioJitterBufferFastAccelerate();
+        if (callConfig.getAudioJitterBufferMaxPackets() > 0) {
+            rtcConfig.audioJitterBufferMaxPackets = callConfig.getAudioJitterBufferMaxPackets();
+            Log.i("CallManager: audioJitterBufferMaxPackets: " + callConfig.getAudioJitterBufferMaxPackets());
+        }
+
+        if (callConfig.getIceTransportPolicy() == CallConfig.IceTransportPolicy.ALL) {
+            rtcConfig.iceTransportsType = PeerConnection.IceTransportsType.ALL;
+        } else if (callConfig.getIceTransportPolicy() == CallConfig.IceTransportPolicy.RELAY) {
+            rtcConfig.iceTransportsType = PeerConnection.IceTransportsType.RELAY;
+        }
 
         // TODO(nikola): log better this events on the peer connection.
         PeerConnection.Observer pcObserver = new PeerConnection.Observer() {
@@ -1110,10 +1171,15 @@ public class CallManager {
         Observable<GetCallServersResponseIq> observable = callsApi.getCallServers(callId, peerUid, callType);
         observable.onResponse(response -> {
             Log.i("CallManager: got call servers " + response);
-            if (peerConnection == null || response == null) {
+            if (this.callId == null || response == null) {
                 // call probably was canceled while we were waiting for the server response.
                 return;
             }
+            Log.i("CallManager: CallConfig: " + response.callConfig);
+            callConfig = response.callConfig;
+            initializePeerConnections();
+            createAVTracks();
+            startStreams();
             if ((response.turnServers != null && response.turnServers.size() > 0) ||
                     (response.stunServers != null && response.stunServers.size() > 0)) {
                 setStunTurnServers(response.stunServers, response.turnServers);
@@ -1144,6 +1210,7 @@ public class CallManager {
             public void onCreateSuccess(@NonNull SessionDescription sessionDescription) {
                 Log.i("CallManager: createOffer.onCreateSuccess: ");
                 peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
+                setMaxBitrate();
 
                 try {
                     Observable<StartCallResponseIq> observable = callsApi.startCall(
@@ -1223,6 +1290,7 @@ public class CallManager {
                     WebRtcSessionDescription answer = CallsApi.encryptCallPayload(sessionDescription.description, peerUid);
                     Log.i("CallManager: encrypted answer: size:" +  answer.getEncPayload().size());
                     callsApi.sendAnswerCall(callId, peerUid, answer);
+                    setMaxBitrate();
                 } catch (CryptoException e) {
                     Log.e("CallManager: failed to encrypt webrtc Answer", e);
                     endCall(EndCall.Reason.ENCRYPTION_FAILED);
