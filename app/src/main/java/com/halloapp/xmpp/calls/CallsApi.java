@@ -100,7 +100,7 @@ public class CallsApi extends Connection.Observer {
         CryptoException cryptoException = null;
         try {
             webrtcOffer = CallsApi.decryptCallPayload(incomingCall.getWebrtcOffer(), peerUid);
-            Log.d("CallsApi: Decrypted offer: " + webrtcOffer);
+            Log.d("CallsApi: Decrypted offer");
         } catch (CryptoException e) {
             Log.e("CallsApi: Decryption error onIncomingCall", e);
             cryptoException = e;
@@ -130,7 +130,7 @@ public class CallsApi extends Connection.Observer {
         CryptoException cryptoException = null;
         try {
             answer = CallsApi.decryptCallPayload(answerCall.getWebrtcAnswer(), peerUid);
-            Log.i("CallsApi: Decrypted answer:" + answer);
+            Log.i("CallsApi: Decrypted answer");
         } catch (CryptoException e) {
             Log.e("CallsApi: Decryption error onAnswerCall", e);
             cryptoException = e;

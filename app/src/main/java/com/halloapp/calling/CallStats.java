@@ -29,7 +29,7 @@ import java.util.TimerTask;
 
 public class CallStats {
 
-    public static final long REPORT_INTERVAL = 10000;
+    public static final long REPORT_INTERVAL = 5_000;
     public static final List<String> STATS_KEYS = Arrays.asList("packetsReceived", "bytesReceived", "packetsLost", "packetsDiscarded", "packetsSent", "bytesSent");
 
     @Nullable
@@ -59,6 +59,7 @@ public class CallStats {
                 }
             }
         };
+        Log.i("CallStats: started");
         timer.scheduleAtFixedRate(statsTask, REPORT_INTERVAL, REPORT_INTERVAL);
     }
 
@@ -72,6 +73,7 @@ public class CallStats {
             timer.cancel();
             timer = null;
         }
+        Log.i("CallStats: stopped");
     }
 
     public void clear() {
@@ -96,20 +98,24 @@ public class CallStats {
                     continue;
                 }
                 Map<String, Object> values = s.getMembers();
-                Map<String, Object> lastValues;
-                if (lastReport == null) {
-                    continue;
+                Map<String, Object> lastValues = null;
+                if (lastReport != null) {
+                    RTCStats lastStats = lastReport.getStatsMap().get(e.getKey());
+                    if (lastStats == null) {
+                        continue;
+                    }
+                    lastValues = lastStats.getMembers();
                 }
-                RTCStats lastStats = lastReport.getStatsMap().get(e.getKey());
-                if (lastStats == null) {
-                    continue;
-                }
-                lastValues = lastStats.getMembers();
 
                 StringBuilder log = new StringBuilder();
                 for (String k : STATS_KEYS) {
-                    if (values.containsKey(k) && lastValues.containsKey(k)) {
+                    if (!values.containsKey(k)) {
+                        continue;
+                    }
+                    if (lastValues != null && lastValues.containsKey(k)) {
                         log.append(k).append(":").append(diff(values.get(k), lastValues.get(k))).append(" ");
+                    } else {
+                        log.append(k).append(":").append(values.get(k)).append(" ");
                     }
                 }
                 Log.i("rtp-stats: " + log);

@@ -790,7 +790,7 @@ public class CallManager {
             peerConnection.createAnswer(new SimpleSdpObserver() {
                 @Override
                 public void onCreateSuccess(@NonNull SessionDescription sessionDescription) {
-                    Log.i("PeerConnection ice restart answer is ready " + sessionDescription);
+                    Log.i("PeerConnection ice restart answer is ready " + sessionDescription.description);
                     peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
 
                     try {
@@ -898,6 +898,7 @@ public class CallManager {
         if (callType == CallType.VIDEO) {
             localVideoTrack = createVideoTrack();
         }
+        Log.i("CallManager: createAVTracks: audio: " + localAudioTrack + " video: " + localVideoTrack);
     }
 
     private VideoTrack createVideoTrack() {

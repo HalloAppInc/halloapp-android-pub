@@ -36,6 +36,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.calling.CallParticipantsLayout;
 
+import java.util.Arrays;
 import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
@@ -413,10 +414,13 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
 
     private void checkPermissionsThen(int request) {
         String[] perms = getPerms();
+        Log.i("CallActivity: checkPermissions: " + Arrays.toString(perms));
         if (EasyPermissions.hasPermissions(this, perms)) {
+            Log.i("CallActivity: has permissions");
             handleRequest(request);
         } else {
             String rationale = getPermissionsRationale();
+            Log.i("CallActivity: request permissions " + Arrays.toString(perms));
             EasyPermissions.requestPermissions(this, rationale, request, perms);
         }
     }
