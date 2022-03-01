@@ -1125,7 +1125,7 @@ public class CallManager {
             }
         }).onError(e -> {
             Log.e("CallManager: Failed to start call, did not get ice servers", e);
-            Log.sendErrorReport("CallManager: Failed to getCallServer: " + e.getMessage());
+            Log.sendErrorReport("CallManager: Failed to getCallServer");
             endCall(EndCall.Reason.SYSTEM_ERROR, false);
             // TODO(nikola): We should retry the IQs for 60 secs. Until we implement this calling stop is better
         });
