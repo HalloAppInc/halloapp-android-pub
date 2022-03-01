@@ -546,15 +546,17 @@ public class CallManager {
                     }
                 }
                 mp.release();
+                releaseAudio();
             });
         } else {
-            Log.i("CallManager: end_call vibration");
+            Log.i("CallManager: end_call vibration " + oldState);
             executor.execute(() -> VibrationUtils.mediumVibration(appContext.get()));
+            releaseAudio();
         }
-        releaseAudio();
     }
 
     private synchronized void releaseAudio() {
+        Log.i("CallManager: releaseAudio");
         if (state != State.IDLE) {
             // it is possible another call started while we were shutting down.
             return;
@@ -748,12 +750,10 @@ public class CallManager {
         if (!isInitiator && !isAnswered) {
             storeMissedCallMsg(peerUid, callId, callType, timestamp);
         }
-        this.state = State.IDLE;
-        notifyOnEndCall();
         // TODO(nikola): Handle multiple calls at the same time. We should only cancel the right
         // notification
         Notifications.getInstance(appContext.get()).clearIncomingCallNotification();
-        stop(reason);
+        endCall(reason, false);
     }
 
     public void handleIceCandidate(@NonNull String callId, @NonNull UserId peerUid,
@@ -1596,7 +1596,7 @@ public class CallManager {
     }
 
     private void stopAudioManager() {
-        Log.i("CallManager: stoping CallAudioManager");
+        Log.i("CallManager: stopping CallAudioManager");
         mainHandler.post(audioManager::stop);
     }
 
