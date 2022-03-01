@@ -360,10 +360,12 @@ public class CallManager {
         this.state = State.CALLING;
         this.isInCall.postValue(true);
         this.videoCapturer = videoCapturer;
-        acquireLock();
+
         if (callType == CallType.VIDEO) {
             isSpeakerPhoneOn = true;
             notifyOnSpeakerPhoneToggle();
+        } else {
+            acquireLock();
         }
 
         if (Build.VERSION.SDK_INT >= 26) {
@@ -1204,7 +1206,9 @@ public class CallManager {
         if (this.callService == null) {
             this.callService = startCallService();
         }
-        acquireLock();
+        if (callType == CallType.AUDIO) {
+            acquireLock();
+        }
         startAudioManager();
         callStats.startStatsCollection();
 
