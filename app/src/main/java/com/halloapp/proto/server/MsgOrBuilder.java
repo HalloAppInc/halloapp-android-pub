@@ -477,6 +477,28 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.HoldCall getHoldCall();
 
   /**
+   * <code>.server.MuteCall mute_call = 45;</code>
+   * @return Whether the muteCall field is set.
+   */
+  boolean hasMuteCall();
+  /**
+   * <code>.server.MuteCall mute_call = 45;</code>
+   * @return The muteCall.
+   */
+  com.halloapp.proto.server.MuteCall getMuteCall();
+
+  /**
+   * <code>.server.IncomingCallPush incoming_call_push = 46;</code>
+   * @return Whether the incomingCallPush field is set.
+   */
+  boolean hasIncomingCallPush();
+  /**
+   * <code>.server.IncomingCallPush incoming_call_push = 46;</code>
+   * @return The incomingCallPush.
+   */
+  com.halloapp.proto.server.IncomingCallPush getIncomingCallPush();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */

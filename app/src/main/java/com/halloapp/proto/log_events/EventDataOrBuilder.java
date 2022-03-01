@@ -181,5 +181,16 @@ public interface EventDataOrBuilder extends
    */
   com.halloapp.proto.log_events.Call getCall();
 
+  /**
+   * <code>.server.FabAction fab_action = 19;</code>
+   * @return Whether the fabAction field is set.
+   */
+  boolean hasFabAction();
+  /**
+   * <code>.server.FabAction fab_action = 19;</code>
+   * @return The fabAction.
+   */
+  com.halloapp.proto.log_events.FabAction getFabAction();
+
   public com.halloapp.proto.log_events.EventData.EdataCase getEdataCase();
 }

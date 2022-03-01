@@ -27,6 +27,7 @@ public  final class EventData extends
     MEDIA_OBJECT_DOWNLOAD(16),
     GROUP_DECRYPTION_REPORT(17),
     CALL(18),
+    FAB_ACTION(19),
     EDATA_NOT_SET(0);
     private final int value;
     private EdataCase(int value) {
@@ -51,6 +52,7 @@ public  final class EventData extends
         case 16: return MEDIA_OBJECT_DOWNLOAD;
         case 17: return GROUP_DECRYPTION_REPORT;
         case 18: return CALL;
+        case 19: return FAB_ACTION;
         case 0: return EDATA_NOT_SET;
         default: return null;
       }
@@ -777,6 +779,56 @@ public  final class EventData extends
    */
   private void clearCall() {
     if (edataCase_ == 18) {
+      edataCase_ = 0;
+      edata_ = null;
+    }
+  }
+
+  public static final int FAB_ACTION_FIELD_NUMBER = 19;
+  /**
+   * <code>.server.FabAction fab_action = 19;</code>
+   */
+  @java.lang.Override
+  public boolean hasFabAction() {
+    return edataCase_ == 19;
+  }
+  /**
+   * <code>.server.FabAction fab_action = 19;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.log_events.FabAction getFabAction() {
+    if (edataCase_ == 19) {
+       return (com.halloapp.proto.log_events.FabAction) edata_;
+    }
+    return com.halloapp.proto.log_events.FabAction.getDefaultInstance();
+  }
+  /**
+   * <code>.server.FabAction fab_action = 19;</code>
+   */
+  private void setFabAction(com.halloapp.proto.log_events.FabAction value) {
+    value.getClass();
+  edata_ = value;
+    edataCase_ = 19;
+  }
+  /**
+   * <code>.server.FabAction fab_action = 19;</code>
+   */
+  private void mergeFabAction(com.halloapp.proto.log_events.FabAction value) {
+    value.getClass();
+  if (edataCase_ == 19 &&
+        edata_ != com.halloapp.proto.log_events.FabAction.getDefaultInstance()) {
+      edata_ = com.halloapp.proto.log_events.FabAction.newBuilder((com.halloapp.proto.log_events.FabAction) edata_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      edata_ = value;
+    }
+    edataCase_ = 19;
+  }
+  /**
+   * <code>.server.FabAction fab_action = 19;</code>
+   */
+  private void clearFabAction() {
+    if (edataCase_ == 19) {
       edataCase_ = 0;
       edata_ = null;
     }
@@ -1593,6 +1645,54 @@ public  final class EventData extends
       return this;
     }
 
+    /**
+     * <code>.server.FabAction fab_action = 19;</code>
+     */
+    @java.lang.Override
+    public boolean hasFabAction() {
+      return instance.hasFabAction();
+    }
+    /**
+     * <code>.server.FabAction fab_action = 19;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.log_events.FabAction getFabAction() {
+      return instance.getFabAction();
+    }
+    /**
+     * <code>.server.FabAction fab_action = 19;</code>
+     */
+    public Builder setFabAction(com.halloapp.proto.log_events.FabAction value) {
+      copyOnWrite();
+      instance.setFabAction(value);
+      return this;
+    }
+    /**
+     * <code>.server.FabAction fab_action = 19;</code>
+     */
+    public Builder setFabAction(
+        com.halloapp.proto.log_events.FabAction.Builder builderForValue) {
+      copyOnWrite();
+      instance.setFabAction(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.FabAction fab_action = 19;</code>
+     */
+    public Builder mergeFabAction(com.halloapp.proto.log_events.FabAction value) {
+      copyOnWrite();
+      instance.mergeFabAction(value);
+      return this;
+    }
+    /**
+     * <code>.server.FabAction fab_action = 19;</code>
+     */
+    public Builder clearFabAction() {
+      copyOnWrite();
+      instance.clearFabAction();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.EventData)
   }
   @java.lang.Override
@@ -1625,11 +1725,12 @@ public  final class EventData extends
             com.halloapp.proto.log_events.MediaObjectDownload.class,
             com.halloapp.proto.log_events.GroupDecryptionReport.class,
             com.halloapp.proto.log_events.Call.class,
+            com.halloapp.proto.log_events.FabAction.class,
           };
           java.lang.String info =
-              "\u0000\u000e\u0001\u0000\u0001\u0012\u000e\u0000\u0000\u0000\u0001\u0003\u0002\f" +
+              "\u0000\u000f\u0001\u0000\u0001\u0013\u000f\u0000\u0000\u0000\u0001\u0003\u0002\f" +
               "\u0003\u0208\u0004\u0003\u0005\u0208\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e" +
-              "<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000";
+              "<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

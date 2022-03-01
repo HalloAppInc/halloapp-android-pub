@@ -188,6 +188,8 @@ public  final class Msg extends
     GROUP_FEED_HISTORY(42),
     PRE_ANSWER_CALL(43),
     HOLD_CALL(44),
+    MUTE_CALL(45),
+    INCOMING_CALL_PUSH(46),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -241,6 +243,8 @@ public  final class Msg extends
         case 42: return GROUP_FEED_HISTORY;
         case 43: return PRE_ANSWER_CALL;
         case 44: return HOLD_CALL;
+        case 45: return MUTE_CALL;
+        case 46: return INCOMING_CALL_PUSH;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2338,6 +2342,106 @@ public  final class Msg extends
    */
   private void clearHoldCall() {
     if (payloadCase_ == 44) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int MUTE_CALL_FIELD_NUMBER = 45;
+  /**
+   * <code>.server.MuteCall mute_call = 45;</code>
+   */
+  @java.lang.Override
+  public boolean hasMuteCall() {
+    return payloadCase_ == 45;
+  }
+  /**
+   * <code>.server.MuteCall mute_call = 45;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.MuteCall getMuteCall() {
+    if (payloadCase_ == 45) {
+       return (com.halloapp.proto.server.MuteCall) payload_;
+    }
+    return com.halloapp.proto.server.MuteCall.getDefaultInstance();
+  }
+  /**
+   * <code>.server.MuteCall mute_call = 45;</code>
+   */
+  private void setMuteCall(com.halloapp.proto.server.MuteCall value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 45;
+  }
+  /**
+   * <code>.server.MuteCall mute_call = 45;</code>
+   */
+  private void mergeMuteCall(com.halloapp.proto.server.MuteCall value) {
+    value.getClass();
+  if (payloadCase_ == 45 &&
+        payload_ != com.halloapp.proto.server.MuteCall.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.MuteCall.newBuilder((com.halloapp.proto.server.MuteCall) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 45;
+  }
+  /**
+   * <code>.server.MuteCall mute_call = 45;</code>
+   */
+  private void clearMuteCall() {
+    if (payloadCase_ == 45) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int INCOMING_CALL_PUSH_FIELD_NUMBER = 46;
+  /**
+   * <code>.server.IncomingCallPush incoming_call_push = 46;</code>
+   */
+  @java.lang.Override
+  public boolean hasIncomingCallPush() {
+    return payloadCase_ == 46;
+  }
+  /**
+   * <code>.server.IncomingCallPush incoming_call_push = 46;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.IncomingCallPush getIncomingCallPush() {
+    if (payloadCase_ == 46) {
+       return (com.halloapp.proto.server.IncomingCallPush) payload_;
+    }
+    return com.halloapp.proto.server.IncomingCallPush.getDefaultInstance();
+  }
+  /**
+   * <code>.server.IncomingCallPush incoming_call_push = 46;</code>
+   */
+  private void setIncomingCallPush(com.halloapp.proto.server.IncomingCallPush value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 46;
+  }
+  /**
+   * <code>.server.IncomingCallPush incoming_call_push = 46;</code>
+   */
+  private void mergeIncomingCallPush(com.halloapp.proto.server.IncomingCallPush value) {
+    value.getClass();
+  if (payloadCase_ == 46 &&
+        payload_ != com.halloapp.proto.server.IncomingCallPush.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.IncomingCallPush.newBuilder((com.halloapp.proto.server.IncomingCallPush) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 46;
+  }
+  /**
+   * <code>.server.IncomingCallPush incoming_call_push = 46;</code>
+   */
+  private void clearIncomingCallPush() {
+    if (payloadCase_ == 46) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -4526,6 +4630,102 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.MuteCall mute_call = 45;</code>
+     */
+    @java.lang.Override
+    public boolean hasMuteCall() {
+      return instance.hasMuteCall();
+    }
+    /**
+     * <code>.server.MuteCall mute_call = 45;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.MuteCall getMuteCall() {
+      return instance.getMuteCall();
+    }
+    /**
+     * <code>.server.MuteCall mute_call = 45;</code>
+     */
+    public Builder setMuteCall(com.halloapp.proto.server.MuteCall value) {
+      copyOnWrite();
+      instance.setMuteCall(value);
+      return this;
+    }
+    /**
+     * <code>.server.MuteCall mute_call = 45;</code>
+     */
+    public Builder setMuteCall(
+        com.halloapp.proto.server.MuteCall.Builder builderForValue) {
+      copyOnWrite();
+      instance.setMuteCall(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.MuteCall mute_call = 45;</code>
+     */
+    public Builder mergeMuteCall(com.halloapp.proto.server.MuteCall value) {
+      copyOnWrite();
+      instance.mergeMuteCall(value);
+      return this;
+    }
+    /**
+     * <code>.server.MuteCall mute_call = 45;</code>
+     */
+    public Builder clearMuteCall() {
+      copyOnWrite();
+      instance.clearMuteCall();
+      return this;
+    }
+
+    /**
+     * <code>.server.IncomingCallPush incoming_call_push = 46;</code>
+     */
+    @java.lang.Override
+    public boolean hasIncomingCallPush() {
+      return instance.hasIncomingCallPush();
+    }
+    /**
+     * <code>.server.IncomingCallPush incoming_call_push = 46;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.IncomingCallPush getIncomingCallPush() {
+      return instance.getIncomingCallPush();
+    }
+    /**
+     * <code>.server.IncomingCallPush incoming_call_push = 46;</code>
+     */
+    public Builder setIncomingCallPush(com.halloapp.proto.server.IncomingCallPush value) {
+      copyOnWrite();
+      instance.setIncomingCallPush(value);
+      return this;
+    }
+    /**
+     * <code>.server.IncomingCallPush incoming_call_push = 46;</code>
+     */
+    public Builder setIncomingCallPush(
+        com.halloapp.proto.server.IncomingCallPush.Builder builderForValue) {
+      copyOnWrite();
+      instance.setIncomingCallPush(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.IncomingCallPush incoming_call_push = 46;</code>
+     */
+    public Builder mergeIncomingCallPush(com.halloapp.proto.server.IncomingCallPush value) {
+      copyOnWrite();
+      instance.mergeIncomingCallPush(value);
+      return this;
+    }
+    /**
+     * <code>.server.IncomingCallPush incoming_call_push = 46;</code>
+     */
+    public Builder clearIncomingCallPush() {
+      copyOnWrite();
+      instance.clearIncomingCallPush();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -4643,15 +4843,17 @@ public  final class Msg extends
             com.halloapp.proto.server.GroupFeedHistory.class,
             com.halloapp.proto.server.PreAnswerCall.class,
             com.halloapp.proto.server.HoldCall.class,
+            com.halloapp.proto.server.MuteCall.class,
+            com.halloapp.proto.server.IncomingCallPush.class,
           };
           java.lang.String info =
-              "\u0000,\u0001\u0000\u0001,,\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
+              "\u0000.\u0001\u0000\u0001..\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
               "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
               "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
               "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
               "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
               " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000" +
-              "*<\u0000+<\u0000,<\u0000";
+              "*<\u0000+<\u0000,<\u0000-<\u0000.<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
