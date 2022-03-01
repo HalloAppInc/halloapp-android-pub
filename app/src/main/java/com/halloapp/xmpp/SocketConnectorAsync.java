@@ -156,11 +156,14 @@ public class SocketConnectorAsync {
     }
 
     private Deque<InetAddress> getInterleavedAddresses(@NonNull String host) throws UnknownHostException {
+        Log.i("DNS request for host: " + host);
         InetAddress[] addresses = InetAddress.getAllByName(host);
+        Log.i("DNS got " + addresses.length + " results for host: " + host);
 
         List<InetAddress> v6addresses = new ArrayList<>();
         List<InetAddress> v4addresses = new ArrayList<>();
         for (InetAddress address : addresses) {
+            Log.i("DNS result: " + host + " -> " + address.getHostAddress());
             if (address instanceof Inet4Address) {
                 v4addresses.add(address);
             } else {

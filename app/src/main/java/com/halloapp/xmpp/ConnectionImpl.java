@@ -243,9 +243,9 @@ public class ConnectionImpl extends Connection {
             Log.i("connection: currently connecting");
             return true;
         }
-        Log.i("connection: connecting...");
 
         final String host = preferences.getUseDebugHost() ? DEBUG_HOST : HOST;
+        Log.i("connection: connecting... " + host + ":" + NOISE_PORT);
         socketConnectorAsync.connect(host, NOISE_PORT);
         return true;
     }
