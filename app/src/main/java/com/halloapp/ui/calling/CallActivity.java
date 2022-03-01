@@ -176,6 +176,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         boolean isVideoCall = callType == CallType.VIDEO;
         if (isVideoCall) {
             flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+            setTheme(R.style.AppTheme_Black);
         }
         getWindow().addFlags(flags);
 
@@ -316,7 +317,6 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             participantsLayout.setVisibility(View.VISIBLE);
             // remoteVideoView is made visible when we are are IN_CALL
             //remoteVideoView.setVisibility(View.VISIBLE);
-            hideSystemBars();
         }
 
         if (isInitiator && callViewModel.isIdle()) {
@@ -396,15 +396,6 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             participantsLayout.destroy();
             participantsLayout = null;
         }
-    }
-
-    private void hideSystemBars() {
-        WindowInsetsControllerCompat windowInsetsController = ViewCompat.getWindowInsetsController(this.getWindow().getDecorView());
-        if (windowInsetsController == null) {
-            return;
-        }
-        windowInsetsController.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
-        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars());
     }
 
     @Override
