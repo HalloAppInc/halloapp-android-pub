@@ -666,13 +666,21 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 if (message.media.size() == 0) {
                     if (message instanceof CallMessage) {
                         mediaIcon.setVisibility(View.VISIBLE);
-                        @ColorRes int tintColor = R.color.primary_text;
+                        @ColorRes int tintColor = R.color.message_state_read;
                         switch (((CallMessage) message).callUsage) {
                             case CallMessage.Usage.MISSED_VOICE_CALL: {
                                 mediaIcon.setImageResource(R.drawable.ic_missed_call);
                                 tintColor = R.color.color_primary;
                                 break;
                             }
+                            case CallMessage.Usage.MISSED_VIDEO_CALL: {
+                                mediaIcon.setImageResource(R.drawable.ic_missed_video_call);
+                                tintColor = R.color.color_primary;
+                                break;
+                            }
+                            case CallMessage.Usage.LOGGED_VIDEO_CALL:
+                                mediaIcon.setImageResource(R.drawable.ic_video);
+                                break;
                             case CallMessage.Usage.LOGGED_VOICE_CALL:
                             default: {
                                 mediaIcon.setImageResource(R.drawable.ic_call);
