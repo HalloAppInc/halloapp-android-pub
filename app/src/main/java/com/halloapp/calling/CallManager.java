@@ -132,7 +132,8 @@ public class CallManager {
     private boolean isAnswered;
 
     private boolean isMicrophoneMuted = false;
-    private boolean isSpeakerPhoneOn = false;  // The default will have to change for video calls
+    private boolean isSpeakerPhoneOn = false;
+    private boolean isCameraMuted = false;
 
     private MediaConstraints audioConstraints;
     private AudioSource audioSource;
@@ -468,15 +469,7 @@ public class CallManager {
             peerConnection = null;
         }
 
-        if (videoCapturer != null) {
-            try {
-                videoCapturer.stopCapturer();
-            } catch (InterruptedException e) {
-                Log.e("CallManager: videoCapturer.stopCapture exception ", e);
-            }
-            videoCapturer.dispose();
-            videoCapturer = null;
-        }
+        stopCapturer();
 
         if (audioSource != null) {
             audioSource.dispose();
@@ -929,12 +922,30 @@ public class CallManager {
 
     public void attachCapturer(@NonNull HAVideoCapturer videoCapturer) {
         executor.execute(() -> {
-            if (this.videoCapturer != null) {
-                this.videoCapturer.dispose();
-            }
+            stopCapturer();
             this.videoCapturer = videoCapturer;
             initializeCapturer(videoCapturer);
+            isCameraMuted = false;
         });
+    }
+
+    public void detachCapturer() {
+        executor.execute(() -> {
+            stopCapturer();
+            isCameraMuted = true;
+        });
+    }
+
+    private void stopCapturer() {
+        if (videoCapturer != null) {
+            try {
+                videoCapturer.stopCapturer();
+            } catch (InterruptedException e) {
+                Log.e("CallManager: videoCapturer.stopCapture exception ", e);
+            }
+            videoCapturer.dispose();
+            videoCapturer = null;
+        }
     }
 
     private void initializeCapturer(HAVideoCapturer videoCapturer) {
@@ -1366,6 +1377,10 @@ public class CallManager {
 
     public boolean isSpeakerPhoneOn() {
         return isSpeakerPhoneOn;
+    }
+
+    public boolean isCameraMuted() {
+        return isCameraMuted;
     }
 
     public boolean isFrontFacing() {

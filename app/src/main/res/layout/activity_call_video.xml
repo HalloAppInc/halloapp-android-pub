@@ -241,7 +241,7 @@
                 app:layout_constraintBottom_toBottomOf="parent">
 
                 <ImageView
-                    android:id="@+id/in_call_speaker"
+                    android:id="@+id/in_call_mute_camera"
                     android:layout_width="54dp"
                     android:layout_height="54dp"
                     android:padding="15dp"
@@ -250,7 +250,7 @@
                     app:tint="@color/video_call_neutral_icon"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:srcCompat="@drawable/ic_speaker_phone"/>
+                    app:srcCompat="@drawable/ic_call_video_off"/>
 
             </LinearLayout>
 

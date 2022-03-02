@@ -111,8 +111,10 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private Chronometer callTimerView;
 
     private ImageView muteButtonView;
+    @Nullable
     private ImageView speakerButtonView;
-
+    @Nullable
+    private ImageView muteCameraButtonView;
     @Nullable
     private ImageView flipCameraButtonView;
 
@@ -207,12 +209,16 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         callTimerView = findViewById(R.id.call_timer);
         muteButtonView = findViewById(R.id.in_call_mute);
         speakerButtonView = findViewById(R.id.in_call_speaker);
+        muteCameraButtonView = findViewById(R.id.in_call_mute_camera);
         flipCameraButtonView = findViewById(R.id.in_call_flip_camera);
 
         participantsLayout = findViewById(R.id.participants_view);
 
         if (callType == CallType.VIDEO) {
             participantsLayout.bind(callManager);
+            muteCameraButtonView.setOnClickListener(v -> {
+                onMuteCameraClick();
+            });
             flipCameraButtonView.setOnClickListener(v -> {
                 onFlipCameraClick();
             });
@@ -281,13 +287,15 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         avatarLoader.load(avatarView, peerUid, false);
         contactLoader.load(nameTextView, peerUid, false);
 
-        findViewById(R.id.in_call_mute).setOnClickListener(v -> {
+        muteButtonView.setOnClickListener(v -> {
             onMute();
         });
-        findViewById(R.id.in_call_speaker).setOnClickListener(v -> {
-            Log.i("CallActivity: in_call_speaker click");
-            onSpeakerPhone();
-        });
+        if (speakerButtonView != null) {
+            speakerButtonView.setOnClickListener(v -> {
+                Log.i("CallActivity: in_call_speaker click");
+                onSpeakerPhone();
+            });
+        }
         findViewById(R.id.in_call_hangup).setOnClickListener(v -> {
             Log.i("CallActivity: in_call_hangup click");
             if (callViewModel.isCalling()) {
@@ -494,6 +502,18 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         muteButtonView.setSelected(mute);
     }
 
+    private void onMuteCameraClick() {
+        boolean cameraMute = !callManager.isCameraMuted();
+        if (cameraMute) {
+            callManager.detachCapturer();
+            muteCameraButtonView.setSelected(true);
+        } else {
+            createVideoCapturer();
+            callManager.attachCapturer(videoCapturer);
+            muteCameraButtonView.setSelected(false);
+        }
+    }
+
     private void onFlipCameraClick() {
         boolean frontFacing = callManager.isFrontFacing();
         createVideoCapturer(!frontFacing);
@@ -508,7 +528,9 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
 
     private void updateSpeakerPhoneUI(boolean on) {
         Log.i("CallActivity speakerButton on: " + on);
-        speakerButtonView.setSelected(on);
+        if (speakerButtonView != null) {
+            speakerButtonView.setSelected(on);
+        }
     }
 
     @Override
