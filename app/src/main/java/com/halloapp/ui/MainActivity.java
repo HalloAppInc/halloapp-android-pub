@@ -36,6 +36,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.ChatId;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.chat.ChatActivity;
@@ -276,10 +277,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             haFabView.setUseText(true);
             haFabView.setMainFabIcon(R.drawable.ic_compose, R.string.new_chat, R.string.compose_fab_label);
             haFabView.setOnFabClickListener(v -> {
-                final String[] perms = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
-                if (!EasyPermissions.hasPermissions(MainActivity.this, perms)) {
-                    ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_CHAT);
-                } else {
+                if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_CHAT)) {
                     startNewChat();
                 }
             });
@@ -291,10 +289,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             haFabView.setIconTint(R.color.color_primary);
             haFabView.setMainFabIcon(R.drawable.ic_fab_group_add, R.string.new_group, R.string.new_group_fab_label);
             haFabView.setOnFabClickListener(v -> {
-                final String[] perms = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
-                if (!EasyPermissions.hasPermissions(MainActivity.this, perms)) {
-                    ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_CREATE_GROUP);
-                } else {
+                if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_CREATE_GROUP)) {
                     createNewGroup();
                 }
             });
@@ -349,30 +344,20 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void onFabActionSelected(@IdRes int id) {
-        final String[] perms = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
-        boolean hasPermissions = EasyPermissions.hasPermissions(MainActivity.this, perms);
         if (id == R.id.add_post_text) {
-            if (!hasPermissions) {
-                ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_TEXT);
-            } else {
+            if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_TEXT)) {
                 startTextPost();
             }
         } else if (id == R.id.add_post_voice) {
-            if (!hasPermissions) {
-                ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_TEXT);
-            } else {
+            if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_TEXT)) {
                 startVoicePost();
             }
         } else if (id == R.id.add_post_gallery) {
-            if (!hasPermissions) {
-                ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MEDIA);
-            } else {
+            if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MEDIA)) {
                 startMediaPost();
             }
         } else if (id == R.id.add_post_camera) {
-            if (!hasPermissions) {
-                ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_CAMERA);
-            } else {
+            if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_CAMERA)) {
                 startCameraPost();
             }
         }

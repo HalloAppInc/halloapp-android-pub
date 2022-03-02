@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.id.UserId;
+import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
@@ -115,10 +116,8 @@ public class BlockListActivity extends HalloActivity implements EasyPermissions.
     }
 
     private void pickContactToBlock() {
-        if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)) {
+        if (PermissionUtils.checkContactPermissions(this, REQUEST_CHOOSE_BLOCKED_CONTACT)) {
             startActivityForResult(ContactsActivity.createBlocklistContactPicker(this, blockedUsers), REQUEST_CHOOSE_BLOCKED_CONTACT);
-        } else {
-            ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CHOOSE_BLOCKED_CONTACT);
         }
     }
 

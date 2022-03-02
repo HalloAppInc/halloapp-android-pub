@@ -33,6 +33,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.id.UserId;
+import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -218,11 +219,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
     }
 
     private void loadContacts() {
-        final String[] perms = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
-        if (!EasyPermissions.hasPermissions(this, perms)) {
-            EasyPermissions.requestPermissions(this, getString(R.string.contacts_permission_rationale),
-                    REQUEST_CODE_ASK_CONTACTS_PERMISSION, perms);
-        } else {
+        if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION)) {
             viewModel.contactList.invalidate();
         }
     }

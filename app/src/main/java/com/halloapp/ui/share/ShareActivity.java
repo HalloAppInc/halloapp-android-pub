@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
+import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
@@ -130,10 +131,7 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
     }
 
     private void load() {
-        final String[] perms = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
-        if (!EasyPermissions.hasPermissions(this, perms)) {
-            EasyPermissions.requestPermissions(this, getString(R.string.contacts_permission_rationale), REQUEST_CODE_ASK_CONTACTS_PERMISSION, perms);
-        } else {
+        if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION)) {
             viewModel.destinationList.invalidate();
         }
     }

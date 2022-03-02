@@ -104,8 +104,7 @@ public class ContactPermissionBottomSheetDialog extends HalloBottomSheetDialogFr
         continueButton.setText(R.string.continue_button);
         continueButton.setOnClickListener(v -> {
             requestedPermissions = true;
-            if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)
-                    || EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.WRITE_CONTACTS)) {
+            if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)) {
                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                         .setData(Uri.fromParts("package", BuildConfig.APPLICATION_ID, null));
                 startActivityForResult(intent, REQUEST_CODE_SETTINGS);

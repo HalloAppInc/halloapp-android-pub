@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.R;
 import com.halloapp.id.UserId;
+import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
@@ -97,17 +98,13 @@ public class FeedPrivacyActivity extends HalloActivity implements EasyPermission
             selectedType = PrivacyList.Type.ALL;
         });
         only.setOnClickListener(v -> {
-            if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)) {
+            if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_SELECT_ONLY_LIST)) {
                 editOnlyList();
-            } else {
-                ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_SELECT_ONLY_LIST);
             }
         });
         except.setOnClickListener(v -> {
-            if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)) {
+            if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_SELECT_EXCEPT_LIST)) {
                 editExceptList();
-            } else {
-                ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_SELECT_EXCEPT_LIST);
             }
         });
 

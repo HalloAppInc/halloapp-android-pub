@@ -47,6 +47,7 @@ import com.halloapp.content.Message;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloFragment;
@@ -141,8 +142,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         final MenuItem closeMenuItem = menu.findItem(R.id.menu_clear);
         final SearchView searchView = (SearchView) searchMenuItem.getActionView();
         
-        final String[] perms = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
-        searchMenuItem.setVisible(EasyPermissions.hasPermissions(requireContext(), perms));
+        searchMenuItem.setVisible(EasyPermissions.hasPermissions(requireContext(), Manifest.permission.READ_CONTACTS));
 
         closeMenuItem.setVisible(false);
         ImageView closeBtn = searchView.findViewById(R.id.search_close_btn);
@@ -472,10 +472,8 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 nameView.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_secondary));
 
                 itemView.setOnClickListener(v -> {
-                    if (EasyPermissions.hasPermissions(requireContext(), Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)) {
+                    if (PermissionUtils.checkContactPermissions(requireActivity(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE)) {
                         startActivity(new Intent(getContext(), InviteContactsActivity.class));
-                    } else {
-                        ContactPermissionBottomSheetDialog.showRequest(requireActivity().getSupportFragmentManager(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE);
                     }
                 });
             }

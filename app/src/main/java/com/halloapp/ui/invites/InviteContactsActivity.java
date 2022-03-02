@@ -34,6 +34,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.InviteContactsAdapter;
+import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
@@ -248,10 +249,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
     }
 
     private void loadContacts() {
-        final String[] perms = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
-        if (!EasyPermissions.hasPermissions(this, perms)) {
-            ContactPermissionBottomSheetDialog.showRequest(getSupportFragmentManager(), REQUEST_CODE_ASK_CONTACTS_PERMISSION);
-        } else {
+        if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION)) {
             viewModel.refreshContacts();
         }
     }

@@ -19,6 +19,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.StorageUsageActivity;
 import com.halloapp.id.UserId;
+import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.ui.archive.ArchiveActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
@@ -80,10 +81,7 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
 
         View invite = root.findViewById(R.id.invite);
         invite.setOnClickListener(v -> {
-            final String[] perms = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
-            if (!EasyPermissions.hasPermissions(requireContext(), perms)) {
-                ContactPermissionBottomSheetDialog.showRequest(requireActivity().getSupportFragmentManager(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE);
-            } else {
+            if (PermissionUtils.checkContactPermissions(requireActivity(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE)) {
                 startActivity(new Intent(requireContext(), InviteContactsActivity.class));
             }
         });

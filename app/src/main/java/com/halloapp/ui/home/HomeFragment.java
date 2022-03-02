@@ -33,6 +33,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.nux.ZeroZoneManager;
+import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.ui.ActivityCenterActivity;
 import com.halloapp.ui.ActivityCenterViewModel;
 import com.halloapp.ui.MainActivity;
@@ -386,10 +387,8 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     }
 
     private void openInviteFlow() {
-        if (EasyPermissions.hasPermissions(requireContext(), Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)) {
+        if (PermissionUtils.checkContactPermissions(requireActivity(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE)) {
             startActivity(new Intent(requireContext(), InviteContactsActivity.class));
-        } else {
-            ContactPermissionBottomSheetDialog.showRequest(requireActivity().getSupportFragmentManager(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE);
         }
     }
 
