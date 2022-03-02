@@ -107,6 +107,7 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
                     finish();
                     startActivity(ViewGroupFeedActivity.viewFeed(this, new GroupId(result.getResult().getGid())));
                 } else {
+                    Log.w("Failed to join group by invite link: " + result.getError());
                     progressContainer.setVisibility(View.INVISIBLE);
                     errorMessage.setVisibility(View.VISIBLE);
                     cancel.setText(getString(R.string.ok));
