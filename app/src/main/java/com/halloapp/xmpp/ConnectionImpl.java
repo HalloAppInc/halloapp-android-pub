@@ -1183,71 +1183,88 @@ public class ConnectionImpl extends Connection {
     }
 
     private class PacketReader {
-        private volatile boolean done;
         private Thread readerThread;
+        private ReaderRunnable readerRunnable;
 
-        private TimerTask readTimeoutTimer;
-
-        void init() {
-            done = false;
-            readerThread = ThreadUtils.go(this::parsePackets, "Packet Reader"); // TODO(jack): Connection counter
+        synchronized void init() {
+            shutdown();
+            readerRunnable = new ReaderRunnable();
+            readerThread = ThreadUtils.go(readerRunnable, "Packet Reader"); // TODO(jack): Connection counter
         }
 
-        void shutdown() {
-            done = true;
+        synchronized void shutdown() {
+            if (readerRunnable != null) {
+                readerRunnable.shutdown();
+                readerRunnable = null;
+            }
             if (readerThread != null) {
                 readerThread.interrupt();
                 readerThread = null;
             }
         }
 
-        private void parsePackets() {
-            ThreadUtils.setSocketTag();
-            scheduleReadTimeout();
-            while (!done) {
-                try {
-                    if (socket == null) {
-                        throw new IOException("Socket is null");
-                    }
-                    Log.d("connection: waiting for next packet");
-                    byte[] packet = socket.readPacket();
-                    if (packet == null) {
-                        throw new IOException("No more packets");
-                    }
-                    scheduleReadTimeout();
-                    parsePacket(packet);
-                } catch (Exception e) {
-                    Log.e("Packet Reader error; maybe disconnecting", e);
-                    if (e instanceof AEADBadTagException) {
-                        Log.sendErrorReport("Noise bad tag");
-                    }
-                    if (!done) {
-                        disconnect();
-                    }
-                }
-            }
-            if (readTimeoutTimer != null) {
-                readTimeoutTimer.cancel();
-                readTimeoutTimer = null;
-            }
-        }
+        private class ReaderRunnable implements Runnable {
 
-        private void scheduleReadTimeout() {
-            if (readTimeoutTimer != null) {
-                readTimeoutTimer.cancel();
-            }
-            readTimeoutTimer = new ReadTimeoutTask();
-            timer.schedule(readTimeoutTimer, READ_TIMEOUT_MS);
-        }
-
-        private class ReadTimeoutTask extends TimerTask {
+            private TimerTask readTimeoutTimer;
+            private volatile boolean done = false;
 
             @Override
             public void run() {
-                Log.e("connection: havent received packet from server, disconnecting");
-                if (!done) {
-                    disconnect();
+                ThreadUtils.setSocketTag();
+                while (!done) {
+                    try {
+                        if (socket == null) {
+                            throw new IOException("Socket is null");
+                        }
+                        Log.d("connection: waiting for next packet");
+                        scheduleReadTimeout();
+                        byte[] packet = socket.readPacket();
+                        if (packet == null) {
+                            throw new IOException("No more packets");
+                        }
+                        cancelReadTimeout();
+                        parsePacket(packet);
+                    } catch (Exception e) {
+                        Log.e("Packet Reader error; maybe disconnecting", e);
+                        if (e instanceof AEADBadTagException) {
+                            Log.sendErrorReport("Noise bad tag");
+                        }
+                        if (!done) {
+                            disconnect();
+                        }
+                    }
                 }
+                if (readTimeoutTimer != null) {
+                    Log.i("connection: done reading, stopping read timeout timer");
+                    readTimeoutTimer.cancel();
+                    readTimeoutTimer = null;
+                }
+                Log.i("connection: reader finished");
+            }
+
+            private void cancelReadTimeout() {
+                if (readTimeoutTimer != null) {
+                    readTimeoutTimer.cancel();
+                    readTimeoutTimer = null;
+                }
+            }
+
+            private void scheduleReadTimeout() {
+                cancelReadTimeout();
+                readTimeoutTimer = new TimerTask() {
+                    @Override
+                    public void run() {
+                        Log.e("connection: havent received packet from server, disconnecting");
+                        if (!done) {
+                            disconnect();
+                        }
+                    }
+                };
+                timer.schedule(readTimeoutTimer, READ_TIMEOUT_MS);
+            }
+
+            public void shutdown() {
+                done = true;
             }
         }
 
