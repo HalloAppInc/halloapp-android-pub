@@ -44,7 +44,7 @@ public class VideoCallControlsController implements View.OnClickListener {
         controlsContainerView.removeCallbacks(hideControlsRunnable);
         controlsContainerView.postDelayed(hideControlsRunnable, CONTROLS_FADE_INITIAL_DELAY_MS);
         callParticipantsLayout.showInCallView();
-        callParticipantsLayout.translateLocalView(-controlsContainerView.getHeight(), shortAnimationDuration);
+        callParticipantsLayout.updateLocalViewBottomMargin(controlsContainerView.getHeight(), shortAnimationDuration);
         showControlsForever = false;
     }
 
@@ -66,7 +66,7 @@ public class VideoCallControlsController implements View.OnClickListener {
 
     private void animateOutControls() {
         int height = controlsContainerView.getHeight();
-        callParticipantsLayout.translateLocalView(0, shortAnimationDuration);
+        callParticipantsLayout.updateLocalViewBottomMargin(0, shortAnimationDuration);
         topContainerView.animate()
                 .alpha(0f)
                 .setDuration(shortAnimationDuration);
@@ -79,7 +79,7 @@ public class VideoCallControlsController implements View.OnClickListener {
 
     private void animateInControls() {
         int height = controlsContainerView.getHeight();
-        callParticipantsLayout.translateLocalView(-height, shortAnimationDuration);
+        callParticipantsLayout.updateLocalViewBottomMargin(height, shortAnimationDuration);
         topContainerView.animate()
                 .alpha(1f)
                 .setDuration(shortAnimationDuration);

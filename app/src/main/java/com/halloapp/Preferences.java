@@ -14,6 +14,7 @@ import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.ui.ExportDataActivity;
 import com.halloapp.ui.mediapicker.MediaPickerViewModel;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.calling.CallParticipantsLayout;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.util.ArrayList;
@@ -83,6 +84,8 @@ public class Preferences {
     private static final String PREF_KEY_RECENT_EMOJIS = "recent_emojis";
     private static final String PREF_KEY_EMOJI_VARIANTS = "emoji_variants";
 
+    private static final String PREF_KEY_VIDEO_CALL_LOCAL_QUADRANT = "video_call_local_quadrant";
+
     private final AppContext appContext;
     private SharedPreferences backedUpPreferences;
     private SharedPreferences deviceLocalPreferences;
@@ -105,6 +108,7 @@ public class Preferences {
     public synchronized void init() {
         getKeyboardHeightLandscape(0);
         getKeyboardHeightPortrait(0);
+        getLocalVideoViewQuadrant();
         ensureMigrated();
     }
 
@@ -169,6 +173,7 @@ public class Preferences {
     private final IntPreference prefLocalEmojiVersion = createPref(true, PREF_KEY_LOCAL_EMOJI_VERSION, 0);
     private final StringPreference prefRecentEmojis = createPref(true, PREF_KEY_RECENT_EMOJIS, null);
     private final StringPreference prefEmojiVariants = createPref(true, PREF_KEY_EMOJI_VARIANTS, null);
+    private final IntPreference prefVideoCallLocalViewQuadrant = createPref(true, PREF_KEY_VIDEO_CALL_LOCAL_QUADRANT, CallParticipantsLayout.Quadrant.TOP_RIGHT);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -728,5 +733,14 @@ public class Preferences {
 
     public void setEmojiVariants(String variants) {
         prefEmojiVariants.apply(variants);
+    }
+
+    @AnyThread
+    public void applyLocalVideoViewQuadrant(int quadrant) {
+        prefVideoCallLocalViewQuadrant.apply(quadrant);
+    }
+
+    public int getLocalVideoViewQuadrant() {
+        return prefVideoCallLocalViewQuadrant.get();
     }
 }
