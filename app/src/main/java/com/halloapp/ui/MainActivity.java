@@ -40,7 +40,6 @@ import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.chat.ChatActivity;
-import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.contacts.ContactsActivity;
 import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.home.HomeViewModel;
@@ -277,7 +276,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             haFabView.setUseText(true);
             haFabView.setMainFabIcon(R.drawable.ic_compose, R.string.new_chat, R.string.compose_fab_label);
             haFabView.setOnFabClickListener(v -> {
-                if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_CHAT)) {
+                if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_CHAT)) {
                     startNewChat();
                 }
             });
@@ -289,7 +288,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             haFabView.setIconTint(R.color.color_primary);
             haFabView.setMainFabIcon(R.drawable.ic_fab_group_add, R.string.new_group, R.string.new_group_fab_label);
             haFabView.setOnFabClickListener(v -> {
-                if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_CREATE_GROUP)) {
+                if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_CREATE_GROUP)) {
                     createNewGroup();
                 }
             });
@@ -345,19 +344,19 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
     private void onFabActionSelected(@IdRes int id) {
         if (id == R.id.add_post_text) {
-            if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_TEXT)) {
+            if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_TEXT)) {
                 startTextPost();
             }
         } else if (id == R.id.add_post_voice) {
-            if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_TEXT)) {
+            if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_TEXT)) {
                 startVoicePost();
             }
         } else if (id == R.id.add_post_gallery) {
-            if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MEDIA)) {
+            if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MEDIA)) {
                 startMediaPost();
             }
         } else if (id == R.id.add_post_camera) {
-            if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_CAMERA)) {
+            if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_CAMERA)) {
                 startCameraPost();
             }
         }

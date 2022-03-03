@@ -1,6 +1,5 @@
 package com.halloapp.ui.contacts;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -334,7 +333,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     }
 
     private void loadContacts() {
-        if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION)) {
+        if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION)) {
             viewModel.contactList.invalidate();
         }
     }

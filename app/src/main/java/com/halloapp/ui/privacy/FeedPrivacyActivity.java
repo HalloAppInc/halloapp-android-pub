@@ -1,6 +1,5 @@
 package com.halloapp.ui.privacy;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,7 +21,6 @@ import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.ui.HalloActivity;
-import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
@@ -98,12 +96,12 @@ public class FeedPrivacyActivity extends HalloActivity implements EasyPermission
             selectedType = PrivacyList.Type.ALL;
         });
         only.setOnClickListener(v -> {
-            if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_SELECT_ONLY_LIST)) {
+            if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_SELECT_ONLY_LIST)) {
                 editOnlyList();
             }
         });
         except.setOnClickListener(v -> {
-            if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_SELECT_EXCEPT_LIST)) {
+            if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_SELECT_EXCEPT_LIST)) {
                 editExceptList();
             }
         });

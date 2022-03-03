@@ -1,6 +1,5 @@
 package com.halloapp.ui;
 
-import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -22,7 +21,6 @@ import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.ui.archive.ArchiveActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.ui.settings.SettingsNotifications;
@@ -32,8 +30,6 @@ import com.halloapp.util.IntentUtils;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 
 import java.util.Locale;
-
-import pub.devrel.easypermissions.EasyPermissions;
 
 public class SettingsHomeFragment extends HalloFragment implements MainNavFragment {
 
@@ -81,7 +77,7 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
 
         View invite = root.findViewById(R.id.invite);
         invite.setOnClickListener(v -> {
-            if (PermissionUtils.checkContactPermissions(requireActivity(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE)) {
+            if (PermissionUtils.hasOrRequestContactPermissions(requireActivity(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE)) {
                 startActivity(new Intent(requireContext(), InviteContactsActivity.class));
             }
         });

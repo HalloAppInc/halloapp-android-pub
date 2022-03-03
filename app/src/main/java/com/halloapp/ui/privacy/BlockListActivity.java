@@ -1,6 +1,5 @@
 package com.halloapp.ui.privacy;
 
-import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +28,6 @@ import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.contacts.ContactsActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
@@ -116,7 +114,7 @@ public class BlockListActivity extends HalloActivity implements EasyPermissions.
     }
 
     private void pickContactToBlock() {
-        if (PermissionUtils.checkContactPermissions(this, REQUEST_CHOOSE_BLOCKED_CONTACT)) {
+        if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CHOOSE_BLOCKED_CONTACT)) {
             startActivityForResult(ContactsActivity.createBlocklistContactPicker(this, blockedUsers), REQUEST_CHOOSE_BLOCKED_CONTACT);
         }
     }

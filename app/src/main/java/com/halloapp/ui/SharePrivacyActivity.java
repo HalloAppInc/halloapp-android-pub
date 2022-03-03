@@ -1,6 +1,5 @@
 package com.halloapp.ui;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
@@ -35,7 +34,6 @@ import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
@@ -381,12 +379,12 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
                 }
             });
             itemView.findViewById(R.id.contacts_except).setOnClickListener(v -> {
-                if (PermissionUtils.checkContactPermissions(SharePrivacyActivity.this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_EXCEPT)) {
+                if (PermissionUtils.hasOrRequestContactPermissions(SharePrivacyActivity.this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_EXCEPT)) {
                     editExceptList();
                 }
             });
             itemView.findViewById(R.id.only_share_with).setOnClickListener(v -> {
-                if (PermissionUtils.checkContactPermissions(SharePrivacyActivity.this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY)) {
+                if (PermissionUtils.hasOrRequestContactPermissions(SharePrivacyActivity.this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY)) {
                     editOnlyList();
                 }
             });

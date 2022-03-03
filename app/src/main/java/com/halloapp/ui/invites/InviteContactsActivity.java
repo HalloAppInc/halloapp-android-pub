@@ -1,6 +1,5 @@
 package com.halloapp.ui.invites;
 
-import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -37,7 +36,6 @@ import com.halloapp.contacts.InviteContactsAdapter;
 import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
-import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.Preconditions;
@@ -249,7 +247,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
     }
 
     private void loadContacts() {
-        if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION)) {
+        if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION)) {
             viewModel.refreshContacts();
         }
     }

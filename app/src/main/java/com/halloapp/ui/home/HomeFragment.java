@@ -39,7 +39,6 @@ import com.halloapp.ui.ActivityCenterViewModel;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.PostsFragment;
-import com.halloapp.ui.contacts.ContactPermissionBottomSheetDialog;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.IntentUtils;
@@ -387,7 +386,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     }
 
     private void openInviteFlow() {
-        if (PermissionUtils.checkContactPermissions(requireActivity(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE)) {
+        if (PermissionUtils.hasOrRequestContactPermissions(requireActivity(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE)) {
             startActivity(new Intent(requireContext(), InviteContactsActivity.class));
         }
     }

@@ -1,6 +1,5 @@
 package com.halloapp.ui.share;
 
-import android.Manifest;
 import android.content.Intent;
 import android.graphics.Outline;
 import android.net.Uri;
@@ -131,7 +130,7 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
     }
 
     private void load() {
-        if (PermissionUtils.checkContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION)) {
+        if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION)) {
             viewModel.destinationList.invalidate();
         }
     }

@@ -12,7 +12,7 @@ import com.halloapp.util.logs.Log;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class PermissionUtils {
-    public static boolean checkContactPermissions(@NonNull FragmentActivity activity, int requestCode) {
+    public static boolean hasOrRequestContactPermissions(@NonNull FragmentActivity activity, int requestCode) {
         if (Build.VERSION.SDK_INT >= 23) {
             final String[] perms = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
             if (!EasyPermissions.hasPermissions(activity, perms)) {
