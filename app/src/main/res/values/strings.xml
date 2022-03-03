@@ -790,6 +790,14 @@
     <string name="reshare_post">Reshare post</string>
     <!-- Button for sharing a post outside of HalloApp -->
     <string name="share_externally">Share externally</string>
+    <!-- Text provided as title when a post is shared outside of HalloApp -->
+    <string name="external_share_title">HalloApp post from %s</string>
+    <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
+    <string name="external_share_description_text">Text post</string>
+    <!-- Text provided as description for an audio post being shared outside of HalloApp -->
+    <string name="external_share_description_audio">Audio post</string>
+    <!-- Text provided as description for media post being shared outside of HalloApp -->
+    <string name="external_share_description_media">Media post</string>
     <!-- Button for going to utility for viewing expired posts -->
     <string name="archived_posts">Archive</string>
     <!-- Title of utility for viewing expired posts -->

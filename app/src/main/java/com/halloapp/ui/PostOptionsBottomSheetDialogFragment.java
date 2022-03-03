@@ -17,6 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.protobuf.ByteString;
+import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
@@ -29,6 +30,7 @@ import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.server.ExternalSharePost;
 import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.OgTagInfo;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
@@ -137,10 +139,21 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
             saveToGalleryAndDismiss();
         });
         resharePost.setOnClickListener(v -> {
+            Post post = viewModel.post.getLiveData().getValue();
             Container.Builder containerBuilder = Container.newBuilder();
-            FeedContentEncoder.encodePost(containerBuilder, viewModel.post.getLiveData().getValue());
+            FeedContentEncoder.encodePost(containerBuilder, post);
             PostContainer postContainer = containerBuilder.getPostContainer();
             byte[] payload = postContainer.toByteArray();
+
+            String title = getString(R.string.external_share_title, Me.getInstance().getName());
+            final String description;
+            if (post.media.isEmpty()) {
+                description = getString(R.string.external_share_description_text);
+            } else if (post.type == Post.TYPE_VOICE_NOTE) {
+                description = getString(R.string.external_share_description_audio);
+            } else {
+                description = getString(R.string.external_share_description_media);
+            }
 
             byte[] attachmentKey = new byte[15];
             new SecureRandom().nextBytes(attachmentKey);
@@ -167,6 +180,9 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
                                 .setAction(ExternalSharePost.Action.STORE)
                                 .setBlob(ByteString.copyFrom(encryptedPayload))
                                 .setExpiresInSeconds(3 * 60 * 60 * 24)
+                                .setOgTagInfo(OgTagInfo.newBuilder()
+                                    .setTitle(title)
+                                    .setDescription(description))
                                 .build();
                         return Iq.newBuilder()
                                 .setId(RandomId.create())
@@ -178,7 +194,7 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
                 observable.onError(e -> Log.e("Failed to send for external sharing"))
                         .onResponse(response -> {
                             Log.i("Got external sharing response " + response);
-                            String url = "https://share.halloapp.com/" + response.blobId + "?k=" + Base64.encodeToString(attachmentKey, Base64.NO_WRAP | Base64.URL_SAFE);
+                            String url = "https://share.halloapp.com/" + response.blobId + "#k" + Base64.encodeToString(attachmentKey, Base64.NO_WRAP | Base64.URL_SAFE);
                             IntentUtils.openUrlInBrowser(v, url);
                         });
             } catch (GeneralSecurityException e) {
