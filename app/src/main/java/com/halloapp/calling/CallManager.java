@@ -900,6 +900,7 @@ public class CallManager {
         audioConstraints = new MediaConstraints();
         audioSource = factory.createAudioSource(audioConstraints);
         localAudioTrack = factory.createAudioTrack(AUDIO_TRACK_ID, audioSource);
+        localAudioTrack.setEnabled(!isMicrophoneMuted);
 
         if (callType == CallType.VIDEO) {
             localVideoTrack = createVideoTrack();
@@ -1364,7 +1365,9 @@ public class CallManager {
         isMicrophoneMuted = mute;
 
         if (Build.VERSION.SDK_INT >= 26) {
-            localAudioTrack.setEnabled(!mute);
+            if (localAudioTrack != null) {
+                localAudioTrack.setEnabled(!mute);
+            }
         } else {
             audioManager.setMicrophoneMute(mute);
         }
