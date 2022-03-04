@@ -460,7 +460,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
 
             itemView.setOnClickListener(v -> {
                 if (inviteLink != null) {
-                    itemView.getContext().startActivity(IntentUtils.createShareUrlIntent(inviteLink));
+                    itemView.getContext().startActivity(IntentUtils.createShareTextIntent(inviteLink));
                 }
             });
         }

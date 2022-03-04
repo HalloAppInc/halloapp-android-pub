@@ -2,18 +2,15 @@ package com.halloapp.ui.posts;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.contacts.Contact;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
@@ -61,7 +58,7 @@ public class ZeroZonePostViewHolder extends ViewHolderWithLifecycle {
         if (shareLinkButton != null) {
             shareLinkButton.setOnClickListener(v -> {
                 String inviteText = shareLinkButton.getContext().getString(R.string.group_invite_link_context, inviteLink);
-                shareLinkButton.getContext().startActivity(IntentUtils.createShareUrlIntent(inviteText));
+                shareLinkButton.getContext().startActivity(IntentUtils.createShareTextIntent(inviteText));
             });
         }
         if (this.inviteFriendsButton != null) {

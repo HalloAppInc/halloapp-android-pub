@@ -15,11 +15,9 @@ import android.provider.Telephony;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.URLUtil;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
@@ -41,10 +39,10 @@ public class IntentUtils {
     private static final String WHATSAPP_BUSINESS_PACKAGE = "com.whatsapp.w4b";
 
     public static Intent createShareDlIntent() {
-        return createShareUrlIntent(Constants.DOWNLOAD_LINK_URL);
+        return createShareTextIntent(Constants.DOWNLOAD_LINK_URL);
     }
 
-    public static Intent createShareUrlIntent(@NonNull String url) {
+    public static Intent createShareTextIntent(@NonNull String url) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT, url);

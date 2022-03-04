@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,7 +44,8 @@ public class InviteGroupBottomSheetDialogFragment extends HalloBottomSheetDialog
 
         inviteLinkText.setText(inviteLink);
         shareButton.setOnClickListener(v -> {
-            startActivity(IntentUtils.createShareUrlIntent(inviteLink));
+            String inviteText = v.getContext().getString(R.string.group_invite_link_context, inviteLink);
+            startActivity(IntentUtils.createShareTextIntent(inviteText));
             dismiss();
         });
         inviteLinkContainer.setOnClickListener(v -> {
