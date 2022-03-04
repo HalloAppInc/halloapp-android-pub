@@ -174,6 +174,8 @@ public class SignalKeyManager {
             editor.setOutboundEphemeralKey(peerUserId, myEphemeralKey);
             editor.setOutboundEphemeralKeyId(peerUserId, 0);
 
+            editor.apply();
+            editor = encryptedKeyStore.edit();
             updateOutboundChainAndRootKey(editor, peerUserId, myEphemeralKey, publicEphemeralKey);
 
             editor.setSessionAlreadySetUp(peerUserId, true);
