@@ -788,8 +788,8 @@
     <string name="no_longer_group_member">You\'re no longer a member of this group</string>
     <!-- Button for user to re-share old posts which have expired -->
     <string name="reshare_post">Reshare post</string>
-    <!-- Button for sharing a post outside of HalloApp -->
-    <string name="share_externally">Share externally</string>
+    <!-- Text shared or copied to clipboard when sharing a post outside HalloApp -->
+    <string name="external_share_copy">Check out my post on HalloApp: %s</string>
     <!-- Text on an indeterminate progress dialog when you tap to share a post outside of HalloApp-->
     <string name="external_share_in_progress">Creating sharing link</string>
     <!-- Text in a temporary dialog when sharing externally fails -->

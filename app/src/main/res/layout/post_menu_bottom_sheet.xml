@@ -49,7 +49,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/reshare_post"
+        android:id="@+id/share_externally"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -65,7 +65,7 @@
             android:layout_marginStart="30dp"
             android:layout_marginEnd="10dp"
             app:tint="@color/color_secondary"
-            android:src="@drawable/ic_send"/>
+            android:src="@drawable/ic_share"/>
 
         <TextView
             android:layout_width="0dp"
@@ -73,7 +73,36 @@
             android:layout_weight="1"
             android:textSize="17sp"
             android:textColor="@color/color_secondary"
-            android:text="@string/share_externally"/>
+            android:text="@string/share_action"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/copy_link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="15dp"
+        android:background="?selectableItemBackground"
+        android:paddingBottom="15dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="10dp"
+            app:tint="@color/color_secondary"
+            android:src="@drawable/ic_link"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="17sp"
+            android:textColor="@color/color_secondary"
+            android:text="@string/copy_link"/>
 
     </LinearLayout>
 

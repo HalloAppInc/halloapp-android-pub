@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.props.ServerProps;
+import com.halloapp.util.ClipUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.widget.SnackbarHelper;
 
@@ -64,7 +66,8 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
         final TextView contactName = view.findViewById(R.id.contact_name);
 
         final View saveToGallery = view.findViewById(R.id.save_to_gallery);
-        final View resharePost = view.findViewById(R.id.reshare_post);
+        final View shareExternally = view.findViewById(R.id.share_externally);
+        final View copyLink = view.findViewById(R.id.copy_link);
         final View deletePost = view.findViewById(R.id.delete_post);
         viewModel.post.getLiveData().observe(this, post -> {
             if (post == null) {
@@ -76,11 +79,13 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
             if (post.senderUserId.isMe()) {
                 contactName.setText(R.string.my_post);
                 deletePost.setVisibility(View.VISIBLE);
-                resharePost.setVisibility(ServerProps.getInstance().getIsInternalUser() ? View.VISIBLE : View.GONE);
+                shareExternally.setVisibility(ServerProps.getInstance().getIsInternalUser() ? View.VISIBLE : View.GONE);
+                copyLink.setVisibility(ServerProps.getInstance().getIsInternalUser() ? View.VISIBLE : View.GONE);
             } else {
                 contactLoader.load(contactName, post.senderUserId, false);
                 deletePost.setVisibility(View.GONE);
-                resharePost.setVisibility(View.GONE);
+                shareExternally.setVisibility(View.GONE);
+                copyLink.setVisibility(View.GONE);
             }
             if (post.media.isEmpty() || !Media.canBeSavedToGallery(post.media)) {
                 saveToGallery.setVisibility(View.GONE);
@@ -113,12 +118,28 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
             }
             saveToGalleryAndDismiss();
         });
-        resharePost.setOnClickListener(v -> {
+        shareExternally.setOnClickListener(v -> {
             ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, getString(R.string.external_share_in_progress));
             viewModel.shareExternally().observe(this, url -> {
                 progressDialog.dismiss();
                 if (url != null) {
-                    IntentUtils.openUrlInBrowser(v, url);
+                    String text = getString(R.string.external_share_copy, url);
+                    Intent intent = IntentUtils.createShareTextIntent(text);
+                    startActivity(intent);
+                    dismiss();
+                } else {
+                    SnackbarHelper.showWarning(v, R.string.external_share_failed);
+                }
+            });
+        });
+        copyLink.setOnClickListener(v -> {
+            ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, getString(R.string.external_share_in_progress));
+            viewModel.shareExternally().observe(this, url -> {
+                progressDialog.dismiss();
+                if (url != null) {
+                    String text = getString(R.string.external_share_copy, url);
+                    ClipUtils.copyToClipboard(text);
+                    SnackbarHelper.showInfo(getActivity(), R.string.invite_link_copied);
                     dismiss();
                 } else {
                     SnackbarHelper.showWarning(v, R.string.external_share_failed);
