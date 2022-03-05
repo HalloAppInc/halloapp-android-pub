@@ -21,6 +21,7 @@ import com.halloapp.proto.server.IceRestartAnswer;
 import com.halloapp.proto.server.IceRestartOffer;
 import com.halloapp.proto.server.IncomingCall;
 import com.halloapp.proto.server.Msg;
+import com.halloapp.proto.server.MuteCall;
 import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.StunServer;
 import com.halloapp.proto.server.TurnServer;
@@ -305,6 +306,21 @@ public class CallsApi extends Connection.Observer {
         sendCallMsg(rerequestElement.toProto());
     }
 
+    public void sendMuteCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull MuteCall.MediaType mediaType, boolean mute) {
+        MuteCall.Builder builder = MuteCall.newBuilder()
+                .setCallId(callId)
+                .setMediaType(mediaType)
+                .setMuted(mute);
+
+        String id = RandomId.create();
+        Msg msg = Msg.newBuilder()
+                .setId(id)
+                .setType(Msg.Type.CALL)
+                .setMuteCall(builder)
+                .setToUid(peerUid.rawIdLong())
+                .build();
+        sendCallMsg(msg);
+    }
 
     private void sendCallMsg(@NonNull Msg msg) {
         Log.i("CallsApi: sending " + ProtoPrinter.toString(msg));

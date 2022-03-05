@@ -259,7 +259,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                         videoCallControlsController.onCallStart();
                         if (videoCapturer == null) {
                             createVideoCapturer();
-                            callManager.attachCapturer(videoCapturer);
+                            callManager.attachCapturer(videoCapturer, false);
                         }
                     }
                     startCallTimer();
@@ -509,7 +509,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             muteCameraButtonView.setSelected(true);
         } else {
             createVideoCapturer();
-            callManager.attachCapturer(videoCapturer);
+            callManager.attachCapturer(videoCapturer, true);
             muteCameraButtonView.setSelected(false);
         }
     }
@@ -517,7 +517,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private void onFlipCameraClick() {
         boolean frontFacing = callManager.isFrontFacing();
         createVideoCapturer(!frontFacing);
-        callManager.attachCapturer(videoCapturer);
+        callManager.attachCapturer(videoCapturer, false);
         flipCameraButtonView.setSelected(!frontFacing);
     }
 

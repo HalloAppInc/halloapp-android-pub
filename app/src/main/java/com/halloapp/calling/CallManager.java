@@ -45,6 +45,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.proto.server.CallConfig;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
+import com.halloapp.proto.server.MuteCall;
 import com.halloapp.proto.server.StartCallResult;
 import com.halloapp.proto.server.StunServer;
 import com.halloapp.proto.server.TurnServer;
@@ -918,12 +919,15 @@ public class CallManager {
         return track;
     }
 
-    public void attachCapturer(@NonNull HAVideoCapturer videoCapturer) {
+    public void attachCapturer(@NonNull HAVideoCapturer videoCapturer, boolean isUnmuting) {
         executor.execute(() -> {
             stopCapturer();
             this.videoCapturer = videoCapturer;
             initializeCapturer(videoCapturer);
             isCameraMuted = false;
+            if (isUnmuting) {
+                this.callsApi.sendMuteCall(callId, peerUid, MuteCall.MediaType.VIDEO, false);
+            }
         });
     }
 
@@ -931,6 +935,7 @@ public class CallManager {
         executor.execute(() -> {
             stopCapturer();
             isCameraMuted = true;
+            this.callsApi.sendMuteCall(callId, peerUid, MuteCall.MediaType.VIDEO, true);
         });
     }
 
@@ -1369,6 +1374,7 @@ public class CallManager {
             audioManager.setMicrophoneMute(mute);
         }
         notifyOnMicrophoneMuteToggle();
+        this.callsApi.sendMuteCall(callId, peerUid, MuteCall.MediaType.AUDIO, mute);
     }
 
     public void toggleMicrophoneMute() {
