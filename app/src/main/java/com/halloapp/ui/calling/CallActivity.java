@@ -376,7 +376,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     @RequiresApi(api = 26)
     private PictureInPictureParams createPiPParams() {
         PictureInPictureParams.Builder builder = new PictureInPictureParams.Builder();
-        builder.setAspectRatio(CallManager.getPiPAspectRatio());
+        builder.setAspectRatio(CallManager.PIP_ASPECT_RATIO);
         if (Build.VERSION.SDK_INT >= 31) {
             builder.setAutoEnterEnabled(true);
             builder.setSeamlessResizeEnabled(true);

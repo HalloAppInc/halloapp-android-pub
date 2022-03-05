@@ -117,14 +117,15 @@ public class CallManager {
     }
     private static final String VIDEO_TRACK_ID = "vt0";
     private static final String AUDIO_TRACK_ID = "at0";
-    private static final int VIDEO_HEIGHT = 1280;
-    private static final int VIDEO_WIDTH = 720;
+    private static final int VIDEO_HEIGHT = 720;
+    private static final int VIDEO_WIDTH = 1280;
     private static final int VIDEO_FPS = 30;
+    // TODO(nikola): The PIP_ASPECT_RATIO should be based on the resolution from the actual camera. Right now it is based on what we request from the camera.
+    public static final Rational PIP_ASPECT_RATIO = new Rational(VIDEO_HEIGHT, VIDEO_WIDTH);
     private static final int MIN_VIDEO_MAX_BITRATE = 50_000;            // 50Kbps
     private static final int DEFAULT_VIDEO_MAX_BITRATE = 1_000_000;     // 1Mbps
     private static final int MIN_AUDIO_MAX_BITRATE = 1_000;             // 1Kbps
     private static final int DEFAULT_AUDIO_MAX_BITRATE = 40_000;        // 40Kbps
-
 
     private @State int state;
     private CallType callType = CallType.UNKNOWN_TYPE;
@@ -384,10 +385,6 @@ public class CallManager {
             finishStartCall();
         }
         return true;
-    }
-
-    public static Rational getPiPAspectRatio() {
-        return new Rational(VIDEO_WIDTH, VIDEO_HEIGHT);
     }
 
     public synchronized void finishStartCall() {
