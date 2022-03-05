@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 
 import com.halloapp.R;
+import com.halloapp.proto.log_events.FabAction;
 import com.halloapp.util.ContextUtils;
 
 import java.util.ArrayList;
@@ -617,5 +618,19 @@ public class HACustomFab extends LinearLayout {
             }
         });
         view.startAnimation(anim);
+    }
+
+    public static FabAction.FabActionType viewIdToAction(@IdRes int id) {
+        FabAction.FabActionType type = FabAction.FabActionType.UNKNOWN_TYPE;
+        if (id == R.id.add_post_camera) {
+            type = FabAction.FabActionType.CAMERA;
+        } else if (id == R.id.add_post_gallery) {
+            type = FabAction.FabActionType.GALLERY;
+        } else if (id == R.id.add_post_voice) {
+            type = FabAction.FabActionType.AUDIO;
+        } else if (id == R.id.add_post_text) {
+            type = FabAction.FabActionType.TEXT;
+        }
+        return type;
     }
 }

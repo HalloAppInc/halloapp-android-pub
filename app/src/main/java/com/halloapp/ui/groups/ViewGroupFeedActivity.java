@@ -41,6 +41,7 @@ import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+import com.halloapp.util.stats.Events;
 import com.halloapp.widget.FabExpandOnScrollListener;
 import com.halloapp.widget.HACustomFab;
 
@@ -278,6 +279,7 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
             i.putExtra(ContentComposerActivity.EXTRA_VOICE_NOTE_POST, true);
             startActivity(i);
         }
+        Events.getInstance().sendFabActionEvent(HACustomFab.viewIdToAction(id));
         fabView.close(false);
     }
 

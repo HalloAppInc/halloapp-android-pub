@@ -38,6 +38,8 @@ import com.halloapp.id.ChatId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.log_events.EventData;
+import com.halloapp.proto.log_events.FabAction;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.ContactsActivity;
@@ -48,6 +50,7 @@ import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
+import com.halloapp.util.stats.Events;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.FabExpandOnScrollListener;
 import com.halloapp.widget.HACustomFab;
@@ -360,6 +363,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 startCameraPost();
             }
         }
+        Events.getInstance().sendFabActionEvent(HACustomFab.viewIdToAction(id));
         haFabView.close(false);
     }
 

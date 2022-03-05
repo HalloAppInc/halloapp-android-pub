@@ -7,6 +7,7 @@ import com.halloapp.Me;
 import com.halloapp.proto.log_events.Call;
 import com.halloapp.proto.log_events.DecryptionReport;
 import com.halloapp.proto.log_events.EventData;
+import com.halloapp.proto.log_events.FabAction;
 import com.halloapp.proto.log_events.GroupDecryptionReport;
 import com.halloapp.proto.log_events.MediaComposeLoad;
 import com.halloapp.proto.log_events.MediaDownload;
@@ -82,6 +83,11 @@ public class Events {
 
     private void sendEvent(@NonNull EventData.Builder builder) {
         sendEvents(Collections.singleton(builder));
+    }
+
+    public void sendFabActionEvent(FabAction.FabActionType type) {
+        FabAction fabActionEvent = FabAction.newBuilder().setType(type).build();
+        sendEvent(EventData.newBuilder().setFabAction(fabActionEvent));
     }
 
     public Observable<Void> sendDecryptionReports(@NonNull Collection<DecryptionReport> decryptionReports) {
