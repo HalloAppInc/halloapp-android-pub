@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 
 import com.halloapp.AppContext;
+import com.halloapp.proto.server.CallType;
 import com.halloapp.util.logs.Log;
 
 @RequiresApi(api = 23)
@@ -23,6 +24,7 @@ public class HaTelecomConnectionService extends ConnectionService {
     public static final String EXTRA_PEER_UID = "peer_uid";
     public static final String EXTRA_PEER_UID_PHONE = "peer_uid_phone";
     public static final String EXTRA_PEER_UID_NAME = "peer_uid_name";
+    public static final String EXTRA_CALL_TYPE = "call_type";
 
 
     @Override
@@ -32,8 +34,9 @@ public class HaTelecomConnectionService extends ConnectionService {
         String peerUid = request.getExtras().getString(EXTRA_PEER_UID, null);
         String callerPhone = request.getExtras().getString(EXTRA_PEER_UID_PHONE, "unknown number");
         String callerDisplayName = request.getExtras().getString(EXTRA_PEER_UID_NAME, "unknown caller");
+        CallType callType = CallType.forNumber(request.getExtras().getInt(EXTRA_CALL_TYPE, CallType.AUDIO_VALUE));
 
-        HaTelecomConnection telecomConnection = new HaTelecomConnection(callId, peerUid, callerDisplayName, callerPhone, false);
+        HaTelecomConnection telecomConnection = new HaTelecomConnection(callId, peerUid, callerDisplayName, callerPhone, false, callType);
         if (Build.VERSION.SDK_INT >= 25) {
             telecomConnection.setConnectionProperties(Connection.PROPERTY_SELF_MANAGED | Connection.PROPERTY_HIGH_DEF_AUDIO);
         }
@@ -43,7 +46,11 @@ public class HaTelecomConnectionService extends ConnectionService {
         Uri address = Uri.fromParts("tel", callerPhone, null);
 
         telecomConnection.setAddress(address, TelecomManager.PRESENTATION_ALLOWED);
-        telecomConnection.setVideoState(VideoProfile.STATE_AUDIO_ONLY);
+        if (callType == CallType.AUDIO) {
+            telecomConnection.setVideoState(VideoProfile.STATE_AUDIO_ONLY);
+        } else {
+            telecomConnection.setVideoState(VideoProfile.STATE_BIDIRECTIONAL);
+        }
         CallManager.getInstance().setTelecomConnection(telecomConnection);
         return telecomConnection;
     }
@@ -76,8 +83,9 @@ public class HaTelecomConnectionService extends ConnectionService {
         String peerUid = request.getExtras().getString(EXTRA_PEER_UID, null);
         String callerPhone = request.getExtras().getString(EXTRA_PEER_UID_PHONE, "unknown number");
         String callerDisplayName = request.getExtras().getString(EXTRA_PEER_UID_NAME, "unknown caller");
+        CallType callType = CallType.forNumber(request.getExtras().getInt(EXTRA_CALL_TYPE, CallType.AUDIO_VALUE));
 
-        HaTelecomConnection telecomConnection = new HaTelecomConnection(callId, peerUid, callerDisplayName, callerPhone, true);
+        HaTelecomConnection telecomConnection = new HaTelecomConnection(callId, peerUid, callerDisplayName, callerPhone, true, callType);
         if (Build.VERSION.SDK_INT >= 25) {
             telecomConnection.setConnectionProperties(Connection.PROPERTY_SELF_MANAGED | Connection.PROPERTY_HIGH_DEF_AUDIO);
         }
@@ -87,7 +95,11 @@ public class HaTelecomConnectionService extends ConnectionService {
         Uri address = Uri.fromParts("tel", callerPhone, null);
 
         telecomConnection.setAddress(address, TelecomManager.PRESENTATION_ALLOWED);
-        telecomConnection.setVideoState(VideoProfile.STATE_AUDIO_ONLY);
+        if (callType == CallType.AUDIO) {
+            telecomConnection.setVideoState(VideoProfile.STATE_AUDIO_ONLY);
+        } else {
+            telecomConnection.setVideoState(VideoProfile.STATE_BIDIRECTIONAL);
+        }
         CallManager.getInstance().setTelecomConnection(telecomConnection);
         CallManager.getInstance().finishStartCall();
         return telecomConnection;

@@ -373,10 +373,7 @@ public class CallManager {
         this.isInCall.postValue(true);
         this.videoCapturer = videoCapturer;
 
-        if (callType == CallType.VIDEO) {
-            isSpeakerPhoneOn = true;
-            notifyOnSpeakerPhoneToggle();
-        } else {
+        if (callType == CallType.AUDIO) {
             acquireLock();
         }
 
@@ -413,6 +410,7 @@ public class CallManager {
             innerExtras.putString(HaTelecomConnectionService.EXTRA_PEER_UID, peerUid.rawId());
             innerExtras.putString(HaTelecomConnectionService.EXTRA_PEER_UID_NAME, contact.getDisplayName());
             innerExtras.putString(HaTelecomConnectionService.EXTRA_PEER_UID_PHONE, contact.getDisplayPhone());
+            innerExtras.putInt(HaTelecomConnectionService.EXTRA_CALL_TYPE, callType.getNumber());
             extras.putBundle(TelecomManager.EXTRA_OUTGOING_CALL_EXTRAS, innerExtras);
             extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, this.phoneAccountHandle);
             if (callType == CallType.VIDEO) {
@@ -652,6 +650,7 @@ public class CallManager {
             extras.putString(HaTelecomConnectionService.EXTRA_PEER_UID, peerUid.rawId());
             extras.putString(HaTelecomConnectionService.EXTRA_PEER_UID_NAME, c.getDisplayName());
             extras.putString(HaTelecomConnectionService.EXTRA_PEER_UID_PHONE, c.getDisplayPhone());
+            extras.putInt(HaTelecomConnectionService.EXTRA_CALL_TYPE, callType.getNumber());
             if (this.callType == CallType.VIDEO) {
                 Log.i("CallManager: telecomHandleIncomingCall: requesting speakerphone ");
                 extras.putBoolean(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, true);
@@ -738,8 +737,8 @@ public class CallManager {
         this.isAnswered = true;
         this.callAnswerTimestamp = SystemClock.elapsedRealtime();
         telecomSetActive();
-        if (isSpeakerPhoneOn) {
-            setSpeakerPhoneOn(true);
+        if (callType == CallType.VIDEO) {
+            setVideoCallAudioPath();
         }
         notifyOnAnsweredCall();
         processQueuedIceCandidates();
@@ -846,8 +845,8 @@ public class CallManager {
         notifyOnAnsweredCall();
         telecomSetActive();
         if (this.callType == CallType.VIDEO) {
-            Log.i("CallManager: acceptCall: setting speakerphone on");
-            setSpeakerPhoneOn(true);
+            Log.i("CallManager: acceptCall: setVideoCallAudioPath");
+            setVideoCallAudioPath();
         }
         return true;
     }
@@ -1396,10 +1395,25 @@ public class CallManager {
         return true;
     }
 
+    private void setVideoCallAudioPath() {
+        Log.i("CallManager.setVideoCallAudioPath");
+        if (Build.VERSION.SDK_INT >= 26 && telecomConnection != null) {
+            CallAudioState audioState = telecomConnection.getCallAudioState();
+            Log.i("CallManager.setVideoCallAudioPath audioState: " + audioState);
+            if (audioState.getRoute() == CallAudioState.ROUTE_EARPIECE) {
+                Log.i("CallManager.setVideoCallAudioPath requesting SPEAKER");
+                telecomConnection.setAudioRoute(CallAudioState.ROUTE_SPEAKER);
+            }
+        } else {
+            audioManager.setDefaultAudioDevice(CallAudioManager.AudioDevice.SPEAKER_PHONE);
+        }
+    }
+
     public void setSpeakerPhoneOn(boolean on) {
         Log.i("CallManager.setSpeakerPhoneOn(" + on + ") was: " + isSpeakerPhoneOn);
         if (Build.VERSION.SDK_INT >= 26 && telecomConnection != null) {
-            // TODO(nikola): what if the call is going to bluetooth right now?
+            CallAudioState audioState = telecomConnection.getCallAudioState();
+            Log.i("CallManager.setSpeakerPhoneOn audioState: " + audioState);
             telecomConnection.setAudioRoute(on ? CallAudioState.ROUTE_SPEAKER : CallAudioState.ROUTE_WIRED_OR_EARPIECE);
         } else {
             audioManager.setDefaultAudioDevice(on ? CallAudioManager.AudioDevice.SPEAKER_PHONE : CallAudioManager.AudioDevice.EARPIECE);

@@ -1,5 +1,6 @@
 package com.halloapp.calling;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.telecom.CallAudioState;
 import android.telecom.Connection;
@@ -9,6 +10,7 @@ import androidx.annotation.RequiresApi;
 
 import com.halloapp.AppContext;
 import com.halloapp.Notifications;
+import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
 import com.halloapp.util.logs.Log;
 
@@ -20,23 +22,31 @@ public class HaTelecomConnection extends Connection {
     private final String peerDisplayName;
     private final String peerPhone;
     private final boolean isInitiator;
+    private final CallType callType;
 
     private final CallManager callManager;
 
 
-    public HaTelecomConnection(String callId, String peerUid, String peerDisplayName, String peerPhone, boolean isInitiator) {
+    public HaTelecomConnection(String callId, String peerUid, String peerDisplayName, String peerPhone, boolean isInitiator, CallType callType) {
         this.callManager = CallManager.getInstance();
         this.callId = callId;
         this.peerUid = peerUid;
         this.peerDisplayName = peerDisplayName;
         this.peerPhone = peerPhone;
         this.isInitiator = isInitiator;
+        this.callType = callType;
     }
 
     @Override
     public void onCallAudioStateChanged(CallAudioState state) {
-        Log.i("HaTelecomConnection.onCallAudioStateChanged: " + state);
         super.onCallAudioStateChanged(state);
+        Log.i("HaTelecomConnection.onCallAudioStateChanged: " + state);
+        if (callType == CallType.VIDEO && state.getRoute() == CallAudioState.ROUTE_EARPIECE && (state.getSupportedRouteMask() & CallAudioState.ROUTE_SPEAKER) != 0) {
+            if (Build.VERSION.SDK_INT >= 26) {
+                Log.i("HaTelecomConnection.onCallAudioStateChanged: requesting SPEAKER");
+                setAudioRoute(CallAudioState.ROUTE_SPEAKER);
+            }
+        }
     }
 
     @Override
