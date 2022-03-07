@@ -263,6 +263,7 @@ public class ContentComposerActivity extends HalloActivity {
 
         setContentView(R.layout.activity_content_composer);
 
+        View toolbarContainer = findViewById(R.id.toolbar_container);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
@@ -272,8 +273,8 @@ public class ContentComposerActivity extends HalloActivity {
         mediaVerticalScrollView = findViewById(R.id.media_vertical_scroll);
         mediaVerticalScrollView.setOnScrollChangeListener((ContentComposerScrollView.OnScrollChangeListener) (view, scrollX, scrollY, oldScrollX, oldScrollY) -> {
             final float elevation = scrollY > 0 ? scrolledElevation : 0;
-            if (toolbar.getElevation() != elevation) {
-                toolbar.setElevation(elevation);
+            if (toolbarContainer.getElevation() != elevation) {
+                toolbarContainer.setElevation(elevation);
             }
         });
         mediaVerticalScrollView.setOnOverScrollChangeListener((view, scrollX, scrollY, clampedX, clampedY) -> {
