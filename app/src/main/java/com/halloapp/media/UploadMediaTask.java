@@ -26,6 +26,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.log_events.MediaUpload;
+import com.halloapp.proto.server.UploadMedia;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
@@ -243,7 +244,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             if (media.transferred == Media.TRANSFERRED_NO) {
                 try {
                     final String downloadUrl = existingHashedMedia != null ? existingHashedMedia.url : null;
-                    urls = connection.requestMediaUpload(fileSize, downloadUrl).await();
+                    urls = connection.requestMediaUpload(fileSize, downloadUrl, UploadMedia.Type.RESUMABLE).await();
                     if (urls == null) {
                         Log.e("Resumable Uploader: failed to get urls for " + mediaLogId);
                         break;

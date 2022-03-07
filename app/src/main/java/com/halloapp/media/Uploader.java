@@ -37,6 +37,12 @@ public class Uploader {
 
     @WorkerThread
     public static byte [] run(@NonNull File file, @Nullable byte [] mediaKey, @Media.MediaType int type, @NonNull String url, @Nullable UploadListener listener, @NonNull String mediaLogId) throws IOException {
+        final InputStream in = new FileInputStream(file);
+        return run(in, mediaKey, type, url, listener, mediaLogId);
+    }
+
+        @WorkerThread
+    public static byte [] run(@NonNull InputStream in, @Nullable byte [] mediaKey, @Media.MediaType int type, @NonNull String url, @Nullable UploadListener listener, @NonNull String mediaLogId) throws IOException {
         ThreadUtils.setSocketTag();
 
         Log.i("Uploader.run using media key hash " + CryptoByteUtils.obfuscate(mediaKey));
@@ -65,7 +71,6 @@ public class Uploader {
         }
         int outStreamSize = 0;
 
-        final InputStream in = new FileInputStream(file);
         int inStreamSize = in.available();
         final int bufferSize = 1024;
         final byte[] bytes = new byte[bufferSize];

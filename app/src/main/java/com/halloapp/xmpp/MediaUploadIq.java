@@ -11,10 +11,12 @@ public class MediaUploadIq extends HalloIq {
     final Urls urls = new Urls();
     long fileSize = 0;
     String downloadUrl;
+    UploadMedia.Type type;
 
-    MediaUploadIq(long fileSize, @Nullable String downloadUrl) {
+    MediaUploadIq(long fileSize, @Nullable String downloadUrl, @Nullable UploadMedia.Type type) {
         this.fileSize = fileSize;
         this.downloadUrl = downloadUrl;
+        this.type = type;
     }
 
     private MediaUploadIq(String patch, String put, String get, String downloadUrl) {
@@ -30,6 +32,9 @@ public class MediaUploadIq extends HalloIq {
         builder.setSize(fileSize);
         if (downloadUrl != null) {
             builder.setDownloadUrl(downloadUrl);
+        }
+        if (type != null) {
+            builder.setType(type);
         }
         return Iq.newBuilder()
                 .setType(Iq.Type.GET)

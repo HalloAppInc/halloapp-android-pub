@@ -1,6 +1,7 @@
 package com.halloapp.ui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.protobuf.ByteString;
 import com.halloapp.AppContext;
+import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
@@ -19,22 +21,28 @@ import com.halloapp.content.Post;
 import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.media.Uploader;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.server.ExternalSharePost;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.OgTagInfo;
+import com.halloapp.proto.server.UploadMedia;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
-import com.halloapp.util.IntentUtils;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ExternalShareResponseIq;
 import com.halloapp.xmpp.HalloIq;
+import com.halloapp.xmpp.MediaUploadIq;
 import com.halloapp.xmpp.feed.FeedContentEncoder;
 import com.halloapp.xmpp.util.Observable;
+import com.halloapp.xmpp.util.ObservableErrorException;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
@@ -118,13 +126,41 @@ public class PostOptionsViewModel extends ViewModel {
 
             Context context = appContext.get();
             String title = context.getString(R.string.external_share_title, Me.getInstance().getName());
+            String thumbnailUrl = null;
             final String description;
+            Media media = null;
             if (post.media.isEmpty()) {
                 description = context.getString(R.string.external_share_description_text);
-            } else if (post.type == Post.TYPE_VOICE_NOTE) {
-                description = context.getString(R.string.external_share_description_audio);
             } else {
-                description = context.getString(R.string.external_share_description_media);
+                if (post.type == Post.TYPE_VOICE_NOTE) {
+                    description = context.getString(R.string.external_share_description_audio);
+                    if (post.media.size() > 1) {
+                        media = post.media.get(1);
+                    }
+                } else {
+                    media = post.media.get(0);
+                    description = context.getString(R.string.external_share_description_media);
+                }
+            }
+
+            if (media != null) {
+                try {
+                    Bitmap bitmap = MediaUtils.decode(media.file, media.type, Constants.MAX_EXTERNAL_SHARE_THUMB_DIMENSION);
+                    if (bitmap != null) {
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, baos);
+                        byte[] thumbnail = baos.toByteArray();
+                        MediaUploadIq.Urls urls = Connection.getInstance().requestMediaUpload(thumbnail.length, null, UploadMedia.Type.DIRECT).await();
+                        Uploader.run(new ByteArrayInputStream(thumbnail), null, Media.MEDIA_TYPE_IMAGE, urls.putUrl, percent -> true, "external-" + post.id);
+                        thumbnailUrl = urls.getUrl;
+                    }
+                } catch (IOException e) {
+                    Log.e("Failed to decode media for sharing", e);
+                } catch (ObservableErrorException e) {
+                    Log.e("Observable failure getting urls", e);
+                } catch (InterruptedException e) {
+                    Log.e("Interrupted while getting urls", e);
+                }
             }
 
             byte[] attachmentKey = new byte[15];
@@ -145,16 +181,22 @@ public class PostOptionsViewModel extends ViewModel {
 
                 byte[] encryptedPayload = CryptoByteUtils.concat(encrypted, hmac);
 
+                final String thumbnailUrlCopy = thumbnailUrl;
                 final Observable<ExternalShareResponseIq> observable = Connection.getInstance().sendRequestIq(new HalloIq() {
                     @Override
                     public Iq toProtoIq() {
+                        OgTagInfo.Builder ogTagInfo = OgTagInfo.newBuilder()
+                                .setTitle(title)
+                                .setDescription(description);
+                        if (thumbnailUrlCopy != null) {
+                            ogTagInfo.setThumbnailUrl(thumbnailUrlCopy);
+                        }
+
                         ExternalSharePost externalSharePost = ExternalSharePost.newBuilder()
                                 .setAction(ExternalSharePost.Action.STORE)
                                 .setBlob(ByteString.copyFrom(encryptedPayload))
                                 .setExpiresInSeconds(3 * 60 * 60 * 24)
-                                .setOgTagInfo(OgTagInfo.newBuilder()
-                                        .setTitle(title)
-                                        .setDescription(description))
+                                .setOgTagInfo(ogTagInfo)
                                 .build();
                         return Iq.newBuilder()
                                 .setId(RandomId.create())

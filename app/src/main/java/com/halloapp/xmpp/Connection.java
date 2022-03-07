@@ -30,6 +30,7 @@ import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.StunServer;
 import com.halloapp.proto.server.TurnServer;
+import com.halloapp.proto.server.UploadMedia;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.stats.Counter;
 import com.halloapp.xmpp.groups.MemberElement;
@@ -131,7 +132,7 @@ public abstract class Connection {
 
     public abstract Observable<Integer> requestSecondsToExpiration();
 
-    public abstract Observable<MediaUploadIq.Urls> requestMediaUpload(long fileSize, @Nullable String downloadUrl);
+    public abstract Observable<MediaUploadIq.Urls> requestMediaUpload(long fileSize, @Nullable String downloadUrl, @Nullable UploadMedia.Type type);
 
     public abstract Observable<ContactSyncResult> syncContacts(@Nullable Collection<String> addPhones, @Nullable Collection<String> deletePhones, boolean fullSync, @Nullable String syncId, int index, boolean lastBatch);
 

@@ -84,6 +84,7 @@ import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.SeenReceipt;
 import com.halloapp.proto.server.SenderStateBundle;
 import com.halloapp.proto.server.SenderStateWithKeyInfo;
+import com.halloapp.proto.server.UploadMedia;
 import com.halloapp.proto.server.WhisperKeys;
 import com.halloapp.ui.ExportDataActivity;
 import com.halloapp.util.BgWorkers;
@@ -440,8 +441,8 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public Observable<MediaUploadIq.Urls> requestMediaUpload(long fileSize, @Nullable String downloadUrl) {
-        final MediaUploadIq mediaUploadIq = new MediaUploadIq(fileSize, downloadUrl);
+    public Observable<MediaUploadIq.Urls> requestMediaUpload(long fileSize, @Nullable String downloadUrl, @Nullable UploadMedia.Type type) {
+        final MediaUploadIq mediaUploadIq = new MediaUploadIq(fileSize, downloadUrl, type);
         return sendIqRequestAsync(mediaUploadIq).map(response -> MediaUploadIq.fromProto(response.getUploadMedia()).urls);
     }
 
