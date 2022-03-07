@@ -1300,6 +1300,7 @@ public class CallManager {
                 peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
 
                 try {
+                    // TODO(nikola): move the encryption into the CallsApi.
                     WebRtcSessionDescription answer = CallsApi.encryptCallPayload(sessionDescription.description, peerUid);
                     Log.i("CallManager: encrypted answer: size:" +  answer.getEncPayload().size());
                     callsApi.sendAnswerCall(callId, peerUid, answer);
