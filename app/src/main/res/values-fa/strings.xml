@@ -1163,7 +1163,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="address_book_action_message">"پیام %s"</string>
 
     <!-- Text provided as title when a post is shared outside of HalloApp -->
-    <string name="external_share_title">"پست هالواپ s%"</string>
+    <string name="external_share_title">"پست هالواپ %s"</string>
 
     <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
     <string name="external_share_description_text">"پست کتبی"</string>
@@ -1181,7 +1181,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="external_share_failed">"خطا در تولید لینک اشتراکی، لطفاً مجدداً امتحان کنید"</string>
 
     <!-- Text shared or copied to clipboard when sharing a post outside HalloApp -->
-    <string name="external_share_copy">"پست من را در هالواپ مشاهده کنید: s%"</string>
+    <string name="external_share_copy">"پست من را در هالواپ مشاهده کنید: %s"</string>
     <string name="share_externally">"به اشتراک گذاشتن خارج هالواپ"</string>
     <string name="incoming_call_notification_title">"تماس دریافتی"</string>
     <string name="call_action">"تماس"</string>
