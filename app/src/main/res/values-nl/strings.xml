@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Home"</string>
     <string name="title_messages">"Chats"</string>
@@ -6,7 +7,7 @@
     <string name="title_groups">"Groepen"</string>
     <string name="comment">"Reageren"</string>
     <string name="next">"Volgende"</string>
-    <string name="message">"Stuur bericht"</string>
+    <string name="message">"Bericht sturen"</string>
     <string name="add_post">"Post toevoegen"</string>
     <string name="new_chat">"Nieuwe chat"</string>
     <string name="new_group">"Nieuwe groep"</string>
@@ -15,7 +16,7 @@
     <string name="message_notifications_channel_name">"Berichtmeldingen"</string>
     <string name="critical_notifications_channel_name">"Kritieke appmeldingen"</string>
     <string name="invite_notifications_channel_name">"Uitnodigingsmeldingen"</string>
-    <string name="invite_notification_text">"%s heeft je uitnodiging voor HalloApp geaccepteerd &#127881;"</string>
+    <string name="invite_notification_text">"%s heeft je uitnodiging voor HalloApp geaccepteerd &#x1f389;"</string>
     <string name="me">"Ik"</string>
 
     <!-- I think You also need you without capitals. See attached example.
@@ -50,7 +51,7 @@ Je aanbieder kan hiervoor kosten in rekening brengen."</string>
     <string name="new_message">"Nieuw bericht"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s gebruikt HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s gebruikt HalloApp! &#127881;"</string>
+    <string name="new_chat_name_placeholder">"%s gebruikt HalloApp! &#x1f389;"</string>
     <string name="posts_empty">"Je posts verschijnen hier"</string>
     <string name="posts_exchange_numbers">"Om connectie te maken, moeten jullie telefoonnummers uitwisselen"</string>
     <string name="home_page_empty">"Posts van je contacten verschijnen hier"</string>
@@ -1107,9 +1108,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <!-- Text shown in chat view telling user they had a missed video call -->
     <string name="log_missed_video_call">"Gemiste video-oproep"</string>
 
-    <!-- Button for sharing a post outside of HalloApp -->
-    <string name="share_externally">"Extern delen"</string>
-
     <!-- Audio post, title/label for an audio post -->
     <string name="audio_post">"Audiopost"</string>
 
@@ -1146,6 +1144,28 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Action shown in user's address book for option to send a message, %s replaced with the phone number -->
     <string name="address_book_action_message">"Bericht sturen naar %s"</string>
+
+    <!-- Text provided as title when a post is shared outside of HalloApp -->
+    <string name="external_share_title">"HalloApp post from %s"</string>
+
+    <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
+    <string name="external_share_description_text">"Tekstpost"</string>
+
+    <!-- Text provided as description for an audio post being shared outside of HalloApp -->
+    <string name="external_share_description_audio">"Audiopost"</string>
+
+    <!-- Text provided as description for media post being shared outside of HalloApp -->
+    <string name="external_share_description_media">"Mediapost"</string>
+
+    <!-- Text on an indeterminate progress dialog when you tap to share a post outside of HalloApp -->
+    <string name="external_share_in_progress">"Deellink wordt aangemaakt"</string>
+
+    <!-- Text in a temporary dialog when sharing externally fails -->
+    <string name="external_share_failed">"Aanmaken van deellink mislukt, probeer opnieuw"</string>
+
+    <!-- Text shared or copied to clipboard when sharing a post outside HalloApp -->
+    <string name="external_share_copy">"Bekijk mijn post op HalloApp: %s"</string>
+    <string name="share_externally">"Extern delen"</string>
     <string name="incoming_call_notification_title">"Inkomende oproep"</string>
     <string name="call_action">"Bellen"</string>
     <string name="unmute">"Dempen opheffen"</string>

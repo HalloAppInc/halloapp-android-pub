@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Inicio"</string>
     <string name="title_messages">"Conversaciones"</string>
@@ -15,7 +16,7 @@
     <string name="message_notifications_channel_name">"Notificaciones de mensajes"</string>
     <string name="critical_notifications_channel_name">"Alertas importantes de la aplicación"</string>
     <string name="invite_notifications_channel_name">"Notificaciones de invitaciones"</string>
-    <string name="invite_notification_text">"%s acaba de aceptar tu invitación a HalloApp &#127881;"</string>
+    <string name="invite_notification_text">"%s acaba de aceptar tu invitación a HalloApp &#x1f389;"</string>
     <string name="me">"Yo"</string>
     <string name="you">"tú"</string>
     <string name="camera_post">"Cámara"</string>
@@ -1154,9 +1155,6 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <!-- Text shown in chat view telling user they had a missed video call -->
     <string name="log_missed_video_call">"Videollamada perdida"</string>
 
-    <!-- Button for sharing a post outside of HalloApp -->
-    <string name="share_externally">"Compartir externamente"</string>
-
     <!-- Audio post, title/label for an audio post -->
     <string name="audio_post">"Publicación de audio"</string>
 
@@ -1192,6 +1190,28 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
 
     <!-- Action shown in user's address book for option to send a message, %s replaced with the phone number -->
     <string name="address_book_action_message">"Message %s"</string>
+
+    <!-- Text provided as title when a post is shared outside of HalloApp -->
+    <string name="external_share_title">"HalloApp post from %s"</string>
+
+    <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
+    <string name="external_share_description_text">"Text post"</string>
+
+    <!-- Text provided as description for an audio post being shared outside of HalloApp -->
+    <string name="external_share_description_audio">"Audio post"</string>
+
+    <!-- Text provided as description for media post being shared outside of HalloApp -->
+    <string name="external_share_description_media">"Media post"</string>
+
+    <!-- Text on an indeterminate progress dialog when you tap to share a post outside of HalloApp -->
+    <string name="external_share_in_progress">"Creating sharing link"</string>
+
+    <!-- Text in a temporary dialog when sharing externally fails -->
+    <string name="external_share_failed">"Failed to create sharing link, please try again"</string>
+
+    <!-- Text shared or copied to clipboard when sharing a post outside HalloApp -->
+    <string name="external_share_copy">"Check out my post on HalloApp: %s"</string>
+    <string name="share_externally">"Compartir externamente"</string>
     <string name="incoming_call_notification_title">"Llamada entrante"</string>
     <string name="call_action">"Llamar"</string>
     <string name="unmute">"Desactivar silenciar"</string>

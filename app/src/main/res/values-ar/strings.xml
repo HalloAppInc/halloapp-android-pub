@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"هالوآب"</string>
     <string name="title_home">"الرئيسية"</string>
     <string name="title_messages">"الدردشات"</string>
@@ -15,7 +16,7 @@
     <string name="message_notifications_channel_name">"إشعارات الرسائل"</string>
     <string name="critical_notifications_channel_name">"تنبيهات التطبيق الهامة"</string>
     <string name="invite_notifications_channel_name">"إشعارات الدعوة"</string>
-    <string name="invite_notification_text">"%s قبل دعوتك للانضمام إلى هالوآب &#127881;"</string>
+    <string name="invite_notification_text">"%s قبل دعوتك للانضمام إلى هالوآب &#x1f389;"</string>
     <string name="me">"أنا"</string>
     <string name="you">"أنت"</string>
     <string name="camera_post">"الكاميرا"</string>
@@ -47,7 +48,7 @@
     <string name="new_message">"رسالة جديدة"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s من مستخدمي هالوآب."</string>
-    <string name="new_chat_name_placeholder">"%s يستخدم هالوآب!&#127881;"</string>
+    <string name="new_chat_name_placeholder">"%s يستخدم هالوآب!&#x1f389;"</string>
     <string name="posts_empty">"ستظهر منشوراتك هنا"</string>
     <string name="posts_exchange_numbers">"للتواصل، يجب تبادل أرقام الهاتف"</string>
     <string name="home_page_empty">"ستظهر منشورات جهات اتصالك هنا"</string>
@@ -1246,9 +1247,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Text shown in chat view telling user they had a missed video call -->
     <string name="log_missed_video_call">"مكالمة فيديو فائتة"</string>
 
-    <!-- Button for sharing a post outside of HalloApp -->
-    <string name="share_externally">"مشاركة خارج هالوآب"</string>
-
     <!-- Audio post, title/label for an audio post -->
     <string name="audio_post">"منشور صوتي"</string>
 
@@ -1284,6 +1282,28 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Action shown in user's address book for option to send a message, %s replaced with the phone number -->
     <string name="address_book_action_message">"مراسلة %s"</string>
+
+    <!-- Text provided as title when a post is shared outside of HalloApp -->
+    <string name="external_share_title">"منشور هالوآب من %s"</string>
+
+    <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
+    <string name="external_share_description_text">"منشور نصّي"</string>
+
+    <!-- Text provided as description for an audio post being shared outside of HalloApp -->
+    <string name="external_share_description_audio">"منشور صوتي"</string>
+
+    <!-- Text provided as description for media post being shared outside of HalloApp -->
+    <string name="external_share_description_media">"منشور وسائط"</string>
+
+    <!-- Text on an indeterminate progress dialog when you tap to share a post outside of HalloApp -->
+    <string name="external_share_in_progress">"جارٍ مشاركة الرابط"</string>
+
+    <!-- Text in a temporary dialog when sharing externally fails -->
+    <string name="external_share_failed">"تعذّر إنشاء رابط المشاركة، يُرجى إعادة المحاولة"</string>
+
+    <!-- Text shared or copied to clipboard when sharing a post outside HalloApp -->
+    <string name="external_share_copy">"الاطلاع على منشوري في هالوآب: %s"</string>
+    <string name="share_externally">"مشاركة خارج هالوآب"</string>
     <string name="incoming_call_notification_title">"مكالمة واردة"</string>
     <string name="call_action">"اتصال"</string>
     <string name="unmute">"إلغاء كتم الإشعارات"</string>

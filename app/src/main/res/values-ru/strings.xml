@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Главная"</string>
     <string name="title_messages">"Чаты"</string>
@@ -15,7 +16,7 @@
     <string name="message_notifications_channel_name">"Уведомления о сообщениях"</string>
     <string name="critical_notifications_channel_name">"Критические оповещения приложения"</string>
     <string name="invite_notifications_channel_name">"Уведомления о приглашениях"</string>
-    <string name="invite_notification_text">"%s только что принял(-а) ваше приглашение присоединиться к HalloApp &#127881;"</string>
+    <string name="invite_notification_text">"%s только что принял(-а) ваше приглашение присоединиться к HalloApp &#x1f389;"</string>
     <string name="me">"Я"</string>
     <string name="you">"тебя"</string>
     <string name="camera_post">"Камера"</string>
@@ -45,7 +46,7 @@
     <string name="new_message">"Новое сообщение"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s есть на HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s использует HalloApp! &#127881;"</string>
+    <string name="new_chat_name_placeholder">"%s использует HalloApp! &#x1f389;"</string>
     <string name="posts_empty">"Ваши посты появятся здесь"</string>
     <string name="posts_exchange_numbers">"Для подключения необходимо обменяться номерами телефонов"</string>
     <string name="home_page_empty">"Здесь будут появляться сообщения от ваших контактов"</string>
@@ -1180,9 +1181,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Text shown in chat view telling user they had a missed video call -->
     <string name="log_missed_video_call">"Пропущенный видеозвонок"</string>
 
-    <!-- Button for sharing a post outside of HalloApp -->
-    <string name="share_externally">"Поделиться"</string>
-
     <!-- Audio post, title/label for an audio post -->
     <string name="audio_post">"Аудио пост"</string>
 
@@ -1218,6 +1216,28 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Action shown in user's address book for option to send a message, %s replaced with the phone number -->
     <string name="address_book_action_message">"Сообщение %s"</string>
+
+    <!-- Text provided as title when a post is shared outside of HalloApp -->
+    <string name="external_share_title">"HalloApp post from %s"</string>
+
+    <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
+    <string name="external_share_description_text">"Text post"</string>
+
+    <!-- Text provided as description for an audio post being shared outside of HalloApp -->
+    <string name="external_share_description_audio">"Audio post"</string>
+
+    <!-- Text provided as description for media post being shared outside of HalloApp -->
+    <string name="external_share_description_media">"Media post"</string>
+
+    <!-- Text on an indeterminate progress dialog when you tap to share a post outside of HalloApp -->
+    <string name="external_share_in_progress">"Creating sharing link"</string>
+
+    <!-- Text in a temporary dialog when sharing externally fails -->
+    <string name="external_share_failed">"Failed to create sharing link, please try again"</string>
+
+    <!-- Text shared or copied to clipboard when sharing a post outside HalloApp -->
+    <string name="external_share_copy">"Check out my post on HalloApp: %s"</string>
+    <string name="share_externally">"Поделиться"</string>
     <string name="incoming_call_notification_title">"Входящий звонок"</string>
     <string name="call_action">"Звонок"</string>
     <string name="unmute">"Включить звук"</string>

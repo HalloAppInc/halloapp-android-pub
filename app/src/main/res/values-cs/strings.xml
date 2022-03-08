@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Domů"</string>
     <string name="title_messages">"Konverzace"</string>
@@ -15,7 +16,7 @@
     <string name="message_notifications_channel_name">"Oznámení zpráv"</string>
     <string name="critical_notifications_channel_name">"Kritická upozornění aplikace"</string>
     <string name="invite_notifications_channel_name">"Upozornění na pozvání"</string>
-    <string name="invite_notification_text">"%s právě přijal/a vaše pozvání a přidává se k HalloApp &#127881;"</string>
+    <string name="invite_notification_text">"%s právě přijal/a vaše pozvání a přidává se k HalloApp &#x1f389;"</string>
     <string name="me">"Já"</string>
     <string name="you">"ty"</string>
     <string name="camera_post">"Fotoaparát"</string>
@@ -45,7 +46,7 @@ Může zahrnovat cenu doručení."</string>
     <string name="new_message">"Nová zpráva"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s je na HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s používá HalloApp! &#127881;"</string>
+    <string name="new_chat_name_placeholder">"%s používá HalloApp! &#x1f389;"</string>
     <string name="posts_empty">"Zde se objeví vaše příspěvky"</string>
     <string name="posts_exchange_numbers">"Abyste se spojili, musíte si vyměnit telefonní čísla"</string>
     <string name="home_page_empty">"Zde se objeví příspěvky od vašich kontaktů"</string>
@@ -1131,9 +1132,6 @@ Otevři obrazovku nastavení aplikace a uprav oprávnění aplikace."</string>
     <!-- Text shown in chat view telling user they had a missed video call -->
     <string name="log_missed_video_call">"Zmeškaný videohovor"</string>
 
-    <!-- Button for sharing a post outside of HalloApp -->
-    <string name="share_externally">"Sdílet externě"</string>
-
     <!-- Audio post, title/label for an audio post -->
     <string name="audio_post">"Audio post"</string>
 
@@ -1169,6 +1167,28 @@ Otevři obrazovku nastavení aplikace a uprav oprávnění aplikace."</string>
 
     <!-- Action shown in user's address book for option to send a message, %s replaced with the phone number -->
     <string name="address_book_action_message">"Message %s"</string>
+
+    <!-- Text provided as title when a post is shared outside of HalloApp -->
+    <string name="external_share_title">"HalloApp post from %s"</string>
+
+    <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
+    <string name="external_share_description_text">"Text post"</string>
+
+    <!-- Text provided as description for an audio post being shared outside of HalloApp -->
+    <string name="external_share_description_audio">"Audio post"</string>
+
+    <!-- Text provided as description for media post being shared outside of HalloApp -->
+    <string name="external_share_description_media">"Media post"</string>
+
+    <!-- Text on an indeterminate progress dialog when you tap to share a post outside of HalloApp -->
+    <string name="external_share_in_progress">"Creating sharing link"</string>
+
+    <!-- Text in a temporary dialog when sharing externally fails -->
+    <string name="external_share_failed">"Failed to create sharing link, please try again"</string>
+
+    <!-- Text shared or copied to clipboard when sharing a post outside HalloApp -->
+    <string name="external_share_copy">"Check out my post on HalloApp: %s"</string>
+    <string name="share_externally">"Sdílet externě"</string>
     <string name="incoming_call_notification_title">"Incoming call"</string>
     <string name="call_action">"Call"</string>
     <string name="unmute">"Unmute"</string>

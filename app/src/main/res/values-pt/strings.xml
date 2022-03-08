@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Início"</string>
     <string name="title_messages">"Conversas"</string>
@@ -15,7 +16,7 @@
     <string name="message_notifications_channel_name">"Notificações de mensagens"</string>
     <string name="critical_notifications_channel_name">"Alertas críticos da aplicação"</string>
     <string name="invite_notifications_channel_name">"Notificações de convites"</string>
-    <string name="invite_notification_text">"%s acabou de aceitar seu convite para se juntar ao HalloApp &#127881;"</string>
+    <string name="invite_notification_text">"%s acabou de aceitar seu convite para se juntar ao HalloApp &#x1f389;"</string>
     <string name="me">"Eu"</string>
     <string name="you">"você"</string>
     <string name="camera_post">"Câmara"</string>
@@ -45,7 +46,7 @@ Sujeito a cobrança da operadora."</string>
     <string name="new_message">"Nova mensagem"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s está no HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s está a usar o HalloApp! &#127881;"</string>
+    <string name="new_chat_name_placeholder">"%s está a usar o HalloApp! &#x1f389;"</string>
     <string name="posts_empty">"As suas publicações aparecerão aqui"</string>
     <string name="posts_exchange_numbers">"Para se ligar, devem trocar números de telefone"</string>
     <string name="home_page_empty">"Publicações dos seus contatos aparecerão aqui"</string>
@@ -1092,9 +1093,6 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <!-- Text shown in chat view telling user they had a missed video call -->
     <string name="log_missed_video_call">"Chamada de vídeo perdida"</string>
 
-    <!-- Button for sharing a post outside of HalloApp -->
-    <string name="share_externally">"Partilhar externamente"</string>
-
     <!-- Audio post, title/label for an audio post -->
     <string name="audio_post">"Postagem de áudio "</string>
 
@@ -1130,6 +1128,28 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 
     <!-- Action shown in user's address book for option to send a message, %s replaced with the phone number -->
     <string name="address_book_action_message">"Mensagem %s"</string>
+
+    <!-- Text provided as title when a post is shared outside of HalloApp -->
+    <string name="external_share_title">"Postagem do HalloApp de %s"</string>
+
+    <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
+    <string name="external_share_description_text">"Postagem de texto"</string>
+
+    <!-- Text provided as description for an audio post being shared outside of HalloApp -->
+    <string name="external_share_description_audio">"Postagem de áudio"</string>
+
+    <!-- Text provided as description for media post being shared outside of HalloApp -->
+    <string name="external_share_description_media">"Postagem de mídia"</string>
+
+    <!-- Text on an indeterminate progress dialog when you tap to share a post outside of HalloApp -->
+    <string name="external_share_in_progress">"Criando link de compartilhamento"</string>
+
+    <!-- Text in a temporary dialog when sharing externally fails -->
+    <string name="external_share_failed">"Falha ao criar link de compartilhamento, por favor tente novamente"</string>
+
+    <!-- Text shared or copied to clipboard when sharing a post outside HalloApp -->
+    <string name="external_share_copy">"Confira minha postagem no HalloApp: %s"</string>
+    <string name="share_externally">"Partilhar externamente"</string>
     <string name="incoming_call_notification_title">"Chamada recebida"</string>
     <string name="call_action">"Ligar"</string>
     <string name="unmute">"Desativar Mudo"</string>

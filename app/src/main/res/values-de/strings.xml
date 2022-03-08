@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Home"</string>
     <string name="title_messages">"Chats"</string>
@@ -17,7 +18,7 @@
     <string name="message_notifications_channel_name">"Mitteilungen für Nachrichten"</string>
     <string name="critical_notifications_channel_name">"Wichtige App-Warnmeldungen"</string>
     <string name="invite_notifications_channel_name">"Einladungs-Mitteilungen"</string>
-    <string name="invite_notification_text">"%s hat deine Einladung zu HalloApp &#127881; angenommen"</string>
+    <string name="invite_notification_text">"%s hat deine Einladung zu HalloApp &#x1f389; angenommen"</string>
     <string name="me">"Ich"</string>
     <string name="you">"dich"</string>
     <string name="camera_post">"Kamera"</string>
@@ -52,7 +53,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <!-- Fuzzy translation?  Pls. provide more details -->
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s nutzt HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s nutzt HalloApp! &#127881;"</string>
+    <string name="new_chat_name_placeholder">"%s nutzt HalloApp! &#x1f389;"</string>
     <string name="posts_empty">"Deine Beiträge erscheinen hier"</string>
     <string name="posts_exchange_numbers">"Um den Kontakt herzustellen, müsst ihr eure Handynummern austauschen"</string>
     <string name="home_page_empty">"Beiträge deiner Kontakte siehst du hier"</string>
@@ -1155,9 +1156,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Text shown in chat view telling user they had a missed video call -->
     <string name="log_missed_video_call">"Verpasster Videoanruf"</string>
 
-    <!-- Button for sharing a post outside of HalloApp -->
-    <string name="share_externally">"Außerhalb von HalloApp teilen"</string>
-
     <!-- Audio post, title/label for an audio post -->
     <string name="audio_post">"Audiobeitrag"</string>
 
@@ -1193,6 +1191,28 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Action shown in user's address book for option to send a message, %s replaced with the phone number -->
     <string name="address_book_action_message">"%s Nachricht senden"</string>
+
+    <!-- Text provided as title when a post is shared outside of HalloApp -->
+    <string name="external_share_title">"HalloApp-Beitrag von %s"</string>
+
+    <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
+    <string name="external_share_description_text">"Textbeitrag"</string>
+
+    <!-- Text provided as description for an audio post being shared outside of HalloApp -->
+    <string name="external_share_description_audio">"Audiobeitrag"</string>
+
+    <!-- Text provided as description for media post being shared outside of HalloApp -->
+    <string name="external_share_description_media">"Medienbeitrag"</string>
+
+    <!-- Text on an indeterminate progress dialog when you tap to share a post outside of HalloApp -->
+    <string name="external_share_in_progress">"Freigabelink erstellen"</string>
+
+    <!-- Text in a temporary dialog when sharing externally fails -->
+    <string name="external_share_failed">"Freigabelink konnte nicht erstellt werden, bitte noch einmal versuchen"</string>
+
+    <!-- Text shared or copied to clipboard when sharing a post outside HalloApp -->
+    <string name="external_share_copy">"Schau dir meinen Beitrag auf HalloApp an: %s"</string>
+    <string name="share_externally">"Außerhalb von HalloApp teilen"</string>
     <string name="incoming_call_notification_title">"Eingehender Anruf"</string>
     <string name="call_action">"Anrufen"</string>
     <string name="unmute">"Stumm aus"</string>
