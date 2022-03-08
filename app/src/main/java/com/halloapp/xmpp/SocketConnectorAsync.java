@@ -178,11 +178,11 @@ public class SocketConnectorAsync {
         Iterator<InetAddress> v6iterator = v6addresses.iterator();
 
         while (v4iterator.hasNext() || v6iterator.hasNext()) {
-            if (v4iterator.hasNext()) {
-                allAddresses.add(v4iterator.next());
-            }
             if (v6iterator.hasNext()) {
                 allAddresses.add(v6iterator.next());
+            }
+            if (v4iterator.hasNext()) {
+                allAddresses.add(v4iterator.next());
             }
         }
 
