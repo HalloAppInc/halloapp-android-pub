@@ -90,7 +90,7 @@ public class UrlPreview {
         this.title = copy.title;
         this.description = copy.description;
         this.previewImage = copy.previewImage;
-        this.imageMedia = new Media(copy.imageMedia);
+        this.imageMedia = copy.imageMedia == null ? null : new Media(copy.imageMedia);
     }
 
     public long rowId;
