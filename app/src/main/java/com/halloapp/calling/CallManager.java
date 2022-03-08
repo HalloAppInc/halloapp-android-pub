@@ -732,15 +732,18 @@ public class CallManager {
             return;
         }
 
-        peerConnection.setRemoteDescription(new SimpleSdpObserver(), new SessionDescription(SessionDescription.Type.ANSWER, webrtcOffer));
+
         this.state = State.IN_CALL_CONNECTING;
         this.isAnswered = true;
         this.callAnswerTimestamp = SystemClock.elapsedRealtime();
         telecomSetActive();
+        notifyOnAnsweredCall();
+
+        peerConnection.setRemoteDescription(new SimpleSdpObserver(), new SessionDescription(SessionDescription.Type.ANSWER, webrtcOffer));
+
         if (callType == CallType.VIDEO) {
             setVideoCallAudioPath();
         }
-        notifyOnAnsweredCall();
         processQueuedIceCandidates();
     }
 
