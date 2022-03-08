@@ -1039,17 +1039,6 @@ public class CallManager {
 //        Log.i("ice servers: " + iceServers);
 
         PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(iceServers);
-        rtcConfig.audioJitterBufferFastAccelerate = callConfig.getAudioJitterBufferFastAccelerate();
-        if (callConfig.getAudioJitterBufferMaxPackets() > 0) {
-            rtcConfig.audioJitterBufferMaxPackets = callConfig.getAudioJitterBufferMaxPackets();
-            Log.i("CallManager: audioJitterBufferMaxPackets: " + callConfig.getAudioJitterBufferMaxPackets());
-        }
-
-        if (callConfig.getIceTransportPolicy() == CallConfig.IceTransportPolicy.ALL) {
-            rtcConfig.iceTransportsType = PeerConnection.IceTransportsType.ALL;
-        } else if (callConfig.getIceTransportPolicy() == CallConfig.IceTransportPolicy.RELAY) {
-            rtcConfig.iceTransportsType = PeerConnection.IceTransportsType.RELAY;
-        }
 
         // TODO(nikola): log better this events on the peer connection.
         PeerConnection.Observer pcObserver = new PeerConnection.Observer() {
@@ -1281,6 +1270,19 @@ public class CallManager {
         Log.i("CallManager: iceServers: " + iceServers);
 
         PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(iceServers);
+
+        rtcConfig.audioJitterBufferFastAccelerate = callConfig.getAudioJitterBufferFastAccelerate();
+        if (callConfig.getAudioJitterBufferMaxPackets() > 0) {
+            rtcConfig.audioJitterBufferMaxPackets = callConfig.getAudioJitterBufferMaxPackets();
+            Log.i("CallManager: audioJitterBufferMaxPackets: " + callConfig.getAudioJitterBufferMaxPackets());
+        }
+
+        if (callConfig.getIceTransportPolicy() == CallConfig.IceTransportPolicy.ALL) {
+            rtcConfig.iceTransportsType = PeerConnection.IceTransportsType.ALL;
+        } else if (callConfig.getIceTransportPolicy() == CallConfig.IceTransportPolicy.RELAY) {
+            rtcConfig.iceTransportsType = PeerConnection.IceTransportsType.RELAY;
+        }
+
         peerConnection.setConfiguration(rtcConfig);
     }
 
