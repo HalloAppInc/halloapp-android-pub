@@ -30,7 +30,14 @@ import java.util.TimerTask;
 public class CallStats {
 
     public static final long REPORT_INTERVAL = 5_000;
-    public static final List<String> STATS_KEYS = Arrays.asList("packetsReceived", "bytesReceived", "packetsLost", "packetsDiscarded", "packetsSent", "bytesSent");
+    public static final List<String> STATS_KEYS = Arrays.asList(
+            "packetsReceived", "bytesReceived", "packetsLost", "packetsDiscarded",
+            "packetsSent", "bytesSent", "retransmittedBytesSent", "retransmittedPacketsSent",
+            "insertedSamplesForDeceleration", "jitter", "jitterBufferDelay", "jitterBufferEmittedCount",
+            "framesReceived", "framesPerSecond", "framesDecoded", "keyFramesDecoded",
+            "framesDropped", "partialFramesLost", "fullFramesLost");
+
+    public static final List<String> STATS_KEYS_NO_DIFF = Arrays.asList("framesPerSecond");
 
     @Nullable
     private RTCStatsReport lastReport;
@@ -90,9 +97,13 @@ public class CallStats {
             return;
         }
         for (Map.Entry<String, RTCStats> e : report.getStatsMap().entrySet()) {
-            String type = e.getValue().getType();
+            RTCStats s = e.getValue();
+            String type = s.getType();
+
             if ("inbound-rtp".equals(type) || "outbound-rtp".equals(type)) {
-                RTCStats s = e.getValue();
+                String statId = s.getId();
+                String mediaType = statId.toLowerCase().contains("video") ? "V" : "A";
+                String direction = type.contains("inbound")? "in" : "out";
                 if (s == null) {
                     Log.e("CallStats: s is null");
                     continue;
@@ -112,13 +123,13 @@ public class CallStats {
                     if (!values.containsKey(k)) {
                         continue;
                     }
-                    if (lastValues != null && lastValues.containsKey(k)) {
+                    if (lastValues != null && lastValues.containsKey(k) && !STATS_KEYS_NO_DIFF.contains(k)) {
                         log.append(k).append(":").append(diff(values.get(k), lastValues.get(k))).append(" ");
                     } else {
                         log.append(k).append(":").append(values.get(k)).append(" ");
                     }
                 }
-                Log.i("rtp-stats: " + log);
+                Log.i("rtp-stats: " + mediaType + "-" + direction + " " + log);
             }
         }
         lastReport = report;
@@ -165,7 +176,7 @@ public class CallStats {
         } else if (a instanceof BigInteger) {
             return ((BigInteger) a).subtract((BigInteger) b).toString();
         } else if (a instanceof  Double) {
-            return String.valueOf(((Double) a) - ((Double) b));
+            return String.format("%.3f", ((Double) a) - ((Double) b));
         } else {
             return "unable to handle " + a.getClass().toString();
         }
