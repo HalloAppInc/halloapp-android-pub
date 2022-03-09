@@ -221,7 +221,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private boolean allowAudioCalls;
     private boolean allowVideoCalls;
 
-    private boolean isChatActive = false;
     private boolean isCallOngoing = false;
 
     private ChatInputView chatInputView;
@@ -601,8 +600,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 adapter.setNewMessageCount(chat.newMessageCount);
                 footer.setVisibility(chat.isActive ? View.VISIBLE : View.GONE);
                 unknownContactsContainer.setVisibility((!chat.isGroup && !chat.isActive) ? View.VISIBLE : View.GONE);
-                this.isChatActive = chat.isActive;
-                updateCallButtons();
             }
 
             if (chatId instanceof UserId) {
@@ -1012,10 +1009,10 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
     private void updateCallButtons() {
         if (voiceCallMenuItem != null) {
-            voiceCallMenuItem.setEnabled(!this.isCallOngoing && this.isChatActive);
+            voiceCallMenuItem.setEnabled(!this.isCallOngoing);
         }
         if (videoCallMenuItem != null) {
-            videoCallMenuItem.setEnabled(!this.isCallOngoing && this.isChatActive);
+            videoCallMenuItem.setEnabled(!this.isCallOngoing);
         }
     }
 
