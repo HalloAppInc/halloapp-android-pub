@@ -79,8 +79,8 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
             if (post.senderUserId.isMe()) {
                 contactName.setText(R.string.my_post);
                 deletePost.setVisibility(View.VISIBLE);
-                shareExternally.setVisibility(ServerProps.getInstance().getIsInternalUser() ? View.VISIBLE : View.GONE);
-                copyLink.setVisibility(ServerProps.getInstance().getIsInternalUser() ? View.VISIBLE : View.GONE);
+                shareExternally.setVisibility(ServerProps.getInstance().getExternalSharing() ? View.VISIBLE : View.GONE);
+                copyLink.setVisibility(ServerProps.getInstance().getExternalSharing() ? View.VISIBLE : View.GONE);
             } else {
                 contactLoader.load(contactName, post.senderUserId, false);
                 deletePost.setVisibility(View.GONE);
