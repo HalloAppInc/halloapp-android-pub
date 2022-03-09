@@ -231,6 +231,11 @@ public class CallParticipantsLayout extends FrameLayout {
         }
     }
 
+    // TODO (nikola): instead of clearing we should blur it.
+    public void onLocalCameraMute() {
+        localVideoView.clearImage();
+    }
+
     public void destroy() {
         localProxyVideoSink.setTarget(null);
         remoteProxyVideoSink.setTarget(null);

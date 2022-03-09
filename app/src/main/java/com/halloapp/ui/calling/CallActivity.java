@@ -17,9 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Notifications;
@@ -519,6 +516,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         if (cameraMute) {
             callManager.detachCapturer();
             muteCameraButtonView.setSelected(true);
+            participantsLayout.onLocalCameraMute();
         } else {
             createVideoCapturer();
             callManager.attachCapturer(videoCapturer, true);
