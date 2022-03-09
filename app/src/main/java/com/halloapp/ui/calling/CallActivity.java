@@ -30,15 +30,18 @@ import com.halloapp.calling.VideoUtils;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.CallType;
+import com.halloapp.proto.server.EndCall;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.calling.CallParticipantsLayout;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class CallActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks, EasyPermissions.RationaleCallbacks  {
@@ -418,9 +421,18 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             Log.i("CallActivity: has permissions");
             handleRequest(request);
         } else {
-            String rationale = getPermissionsRationale();
-            Log.i("CallActivity: request permissions " + Arrays.toString(perms));
-            EasyPermissions.requestPermissions(this, rationale, request, perms);
+            if (EasyPermissions.somePermissionPermanentlyDenied(this, Arrays.asList(perms))) {
+                Log.i("CallActivity: some permissions permanently denied: " + Arrays.toString(perms));
+                new AppSettingsDialog.Builder(this)
+                        .setRationale(getString(R.string.call_record_audio_or_camera_permission_rationale_denied))
+                        .build().show();
+                endCall();
+            } else {
+                String rationale = getPermissionsRationale();
+                Log.i("CallActivity: request permissions " + Arrays.toString(perms));
+                EasyPermissions.requestPermissions(this, rationale, request, perms);
+            }
+
         }
     }
 
@@ -535,17 +547,22 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-        Log.i("Call permissions Granted " + requestCode + " " + perms);
-        // TODO(nikola): update here for video calls. If user does not give video permission maybe it is ok?
-        if (perms.contains(Manifest.permission.RECORD_AUDIO)) {
+        Log.i("CallActivity: permissions Granted " + requestCode + " " + perms);
+        if (callType == CallType.AUDIO && perms.contains(Manifest.permission.RECORD_AUDIO)) {
             handleRequest(requestCode);
             return;
         }
+        if (callType == CallType.VIDEO && perms.contains(Manifest.permission.RECORD_AUDIO) && perms.contains(Manifest.permission.CAMERA)) {
+            handleRequest(requestCode);
+            return;
+        }
+        Log.w("CallActivity: onPermissionsGranted unexpected state CallType: " + callType + " " + perms);
     }
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        Log.i("Call permissions Denied " + requestCode + " " + perms);
+        Log.i("CallActivity: permissions Denied " + requestCode + " " + perms);
+        endCall();
     }
 
     @Override
@@ -556,6 +573,16 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     @Override
     public void onRationaleDenied(int requestCode) {
         Log.i("onRationaleDeclined(int requestCode:" + requestCode + ")");
+    }
+
+    private void endCall() {
+        if (isInitiator) {
+            // TODO(nikola): we should stats send to the server for this case of not granting permissions
+            finish();
+        } else {
+            // TODO(nikola): we might want to send new special reason for no permissions
+            callManager.endCall(EndCall.Reason.REJECT, true);
+        }
     }
 
     private void startCallTimer() {
