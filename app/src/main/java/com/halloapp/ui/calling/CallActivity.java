@@ -528,7 +528,6 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         boolean frontFacing = callManager.isFrontFacing();
         createVideoCapturer(!frontFacing);
         callManager.attachCapturer(videoCapturer, false);
-        flipCameraButtonView.setSelected(!frontFacing);
     }
 
     private void onSpeakerPhone() {
