@@ -284,7 +284,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        findViewById(R.id.back).setOnClickListener(v -> onBackPressed());
 
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
