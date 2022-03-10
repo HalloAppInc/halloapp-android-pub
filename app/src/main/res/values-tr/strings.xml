@@ -1199,6 +1199,11 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</str
 
     <!-- Text shared or copied to clipboard when sharing a post outside HalloApp -->
     <string name="external_share_copy">"Check out my post on HalloApp: %s"</string>
+
+    <!-- Rationale for when requesting microphone or camera permission for voice calls, but it has already been denied. -->
+    <string name="call_record_audio_or_camera_permission_rationale_denied">"To make a voice or video calls we need permission to access the microphone and camera.
+
+Open the app settings screen to modify app permissions."</string>
     <string name="share_externally">"Harici olarak paylaş"</string>
     <string name="incoming_call_notification_title">"Gelen çağrı"</string>
     <string name="call_action">"Arama"</string>

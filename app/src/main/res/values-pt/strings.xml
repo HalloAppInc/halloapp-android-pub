@@ -1149,6 +1149,11 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 
     <!-- Text shared or copied to clipboard when sharing a post outside HalloApp -->
     <string name="external_share_copy">"Confira minha postagem no HalloApp: %s"</string>
+
+    <!-- Rationale for when requesting microphone or camera permission for voice calls, but it has already been denied. -->
+    <string name="call_record_audio_or_camera_permission_rationale_denied">"To make a voice or video calls we need permission to access the microphone and camera.
+
+Open the app settings screen to modify app permissions."</string>
     <string name="share_externally">"Partilhar externamente"</string>
     <string name="incoming_call_notification_title">"Chamada recebida"</string>
     <string name="call_action">"Ligar"</string>

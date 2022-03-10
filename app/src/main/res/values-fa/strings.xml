@@ -1182,6 +1182,11 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Text shared or copied to clipboard when sharing a post outside HalloApp -->
     <string name="external_share_copy">"پست من را در هالواپ مشاهده کنید: %s"</string>
+
+    <!-- Rationale for when requesting microphone or camera permission for voice calls, but it has already been denied. -->
+    <string name="call_record_audio_or_camera_permission_rationale_denied">"To make a voice or video calls we need permission to access the microphone and camera.
+
+Open the app settings screen to modify app permissions."</string>
     <string name="share_externally">"به اشتراک گذاشتن خارج هالواپ"</string>
     <string name="incoming_call_notification_title">"تماس دریافتی"</string>
     <string name="call_action">"تماس"</string>
