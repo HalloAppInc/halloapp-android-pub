@@ -34,6 +34,7 @@ public class Contact implements Parcelable {
     public long numPotentialFriends;
     public boolean hideChat;
     public boolean invited;
+    public boolean dontSuggest;
 
     private int colorIndex = -1;
 

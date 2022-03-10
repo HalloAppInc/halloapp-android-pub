@@ -551,6 +551,60 @@ public class ContactsDb {
                 SQLiteDatabase.CONFLICT_ABORT);
     }
 
+    public void markContactIgnoreForInviteSuggestion(Contact contact) {
+        ContentValues values = new ContentValues();
+        values.put(ContactsTable.COLUMN_DONT_SUGGEST, true);
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
+                ContactsTable._ID + "=? ",
+                new String [] {Long.toString(contact.rowId)},
+                SQLiteDatabase.CONFLICT_ABORT);
+    }
+
+    @WorkerThread
+    public List<Contact> getSuggestedContactsForInvite() {
+        final List<Contact> contacts = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,
+                new String[] { ContactsTable._ID,
+                        ContactsTable.COLUMN_ADDRESS_BOOK_ID,
+                        ContactsTable.COLUMN_ADDRESS_BOOK_NAME,
+                        ContactsTable.COLUMN_ADDRESS_BOOK_PHONE,
+                        ContactsTable.COLUMN_NORMALIZED_PHONE,
+                        ContactsTable.COLUMN_AVATAR_ID,
+                        ContactsTable.COLUMN_USER_ID,
+                        ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS,
+                        ContactsTable.COLUMN_INVITED,
+                        ContactsTable.COLUMN_DONT_SUGGEST
+                },
+                ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL AND " + ContactsTable.COLUMN_DONT_SUGGEST + "=0",
+                null, null, null, ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS + " DESC", "50")) {
+            final Set<String> addressIdSet = new HashSet<>();
+            final Set<String> phoneNumberSet = new HashSet<>();
+            while (cursor.moveToNext()) {
+                final String addressBookIdStr = cursor.getString(1);
+                final String phoneNumberStr = cursor.getString(4);
+                if (addressBookIdStr != null && !TextUtils.isEmpty(phoneNumberStr) && addressIdSet.add(addressBookIdStr) && phoneNumberSet.add(phoneNumberStr)) {
+                    final String userIdStr = cursor.getString(6);
+                    final Contact contact = new Contact(
+                            cursor.getLong(0),
+                            cursor.getLong(1),
+                            cursor.getString(2),
+                            cursor.getString(3),
+                            cursor.getString(4),
+                            cursor.getString(5),
+                            userIdStr == null ? null : new UserId(userIdStr));
+                    contact.numPotentialFriends = cursor.getLong(7);
+                    contact.invited = cursor.getInt(8) == 1;
+                    contact.dontSuggest = cursor.getInt(9) == 1;
+                    contacts.add(contact);
+                }
+            }
+        }
+        Log.i("ContactsDb.getSuggestedContactsForInvite: " + contacts.size());
+        return contacts;
+    }
+
     @WorkerThread
     public List<Contact> getUniqueContactsWithPhones() {
         final List<Contact> contacts = new ArrayList<>();
@@ -564,7 +618,8 @@ public class ContactsDb {
                         ContactsTable.COLUMN_AVATAR_ID,
                         ContactsTable.COLUMN_USER_ID,
                         ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS,
-                        ContactsTable.COLUMN_INVITED
+                        ContactsTable.COLUMN_INVITED,
+                        ContactsTable.COLUMN_DONT_SUGGEST
                 },
                 ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL",
                 null, null, null, null)) {
@@ -585,6 +640,7 @@ public class ContactsDb {
                             userIdStr == null ? null : new UserId(userIdStr));
                     contact.numPotentialFriends = cursor.getLong(7);
                     contact.invited = cursor.getInt(8) == 1;
+                    contact.dontSuggest = cursor.getInt(9) == 1;
                     contacts.add(contact);
                 }
             }
