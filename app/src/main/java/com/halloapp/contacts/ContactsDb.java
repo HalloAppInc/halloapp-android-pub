@@ -932,6 +932,7 @@ public class ContactsDb {
         static final String COLUMN_FRIEND = "friend";
         static final String COLUMN_NUM_POTENTIAL_FRIENDS = "num_potential_friends";
         static final String COLUMN_INVITED = "invited";
+        static final String COLUMN_DONT_SUGGEST = "dont_suggest";
     }
 
     private static final class AvatarsTable implements BaseColumns {
@@ -1020,7 +1021,7 @@ public class ContactsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "contacts.db";
-        private static final int DATABASE_VERSION = 16;
+        private static final int DATABASE_VERSION = 17;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -1039,7 +1040,8 @@ public class ContactsDb {
                     + ContactsTable.COLUMN_AVATAR_ID + " TEXT,"
                     + ContactsTable.COLUMN_USER_ID + " TEXT,"
                     + ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS + " INTEGER,"
-                    + ContactsTable.COLUMN_INVITED + " INTEGER"
+                    + ContactsTable.COLUMN_INVITED + " INTEGER,"
+                    + ContactsTable.COLUMN_DONT_SUGGEST + " INTEGER"
                     + ");");
 
             db.execSQL("DROP INDEX IF EXISTS " + ContactsTable.INDEX_USER_ID);
@@ -1154,6 +1156,9 @@ public class ContactsDb {
                 }
                 case 15: {
                     upgradeFromVersion15(db);
+                }
+                case 16: {
+                    upgradeFromVersion16(db);
                 }
                 break;
                 default: {
@@ -1379,6 +1384,10 @@ public class ContactsDb {
         private void upgradeFromVersion15(SQLiteDatabase db) {
             db.execSQL("ALTER TABLE " + AvatarsTable.TABLE_NAME + " ADD COLUMN " + AvatarsTable.COLUMN_REGULAR_CURRENT_ID + " TEXT");
             db.execSQL("ALTER TABLE " + AvatarsTable.TABLE_NAME + " ADD COLUMN " + AvatarsTable.COLUMN_LARGE_CURRENT_ID + " TEXT");
+        }
+
+        private void upgradeFromVersion16(SQLiteDatabase db) {
+            db.execSQL("ALTER TABLE " + ContactsTable.TABLE_NAME + " ADD COLUMN " + ContactsTable.COLUMN_DONT_SUGGEST + " INTEGER");
         }
 
         /**
