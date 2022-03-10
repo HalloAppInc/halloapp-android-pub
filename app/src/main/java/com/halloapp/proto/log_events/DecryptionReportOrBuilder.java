@@ -102,4 +102,15 @@ public interface DecryptionReportOrBuilder extends
    * @return The isSilent.
    */
   boolean getIsSilent();
+
+  /**
+   * <code>.server.DecryptionReport.ContentType content_type = 10;</code>
+   * @return The enum numeric value on the wire for contentType.
+   */
+  int getContentTypeValue();
+  /**
+   * <code>.server.DecryptionReport.ContentType content_type = 10;</code>
+   * @return The contentType.
+   */
+  com.halloapp.proto.log_events.DecryptionReport.ContentType getContentType();
 }

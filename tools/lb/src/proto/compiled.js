@@ -15433,6 +15433,385 @@ $root.server = (function() {
         return WebRtcSessionDescription;
     })();
 
+    server.IncomingCallPush = (function() {
+
+        /**
+         * Properties of an IncomingCallPush.
+         * @memberof server
+         * @interface IIncomingCallPush
+         * @property {string|null} [callId] IncomingCallPush callId
+         * @property {server.CallType|null} [callType] IncomingCallPush callType
+         * @property {Array.<server.IStunServer>|null} [stunServers] IncomingCallPush stunServers
+         * @property {Array.<server.ITurnServer>|null} [turnServers] IncomingCallPush turnServers
+         * @property {number|Long|null} [timestampMs] IncomingCallPush timestampMs
+         * @property {server.ICallConfig|null} [callConfig] IncomingCallPush callConfig
+         */
+
+        /**
+         * Constructs a new IncomingCallPush.
+         * @memberof server
+         * @classdesc Represents an IncomingCallPush.
+         * @implements IIncomingCallPush
+         * @constructor
+         * @param {server.IIncomingCallPush=} [properties] Properties to set
+         */
+        function IncomingCallPush(properties) {
+            this.stunServers = [];
+            this.turnServers = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * IncomingCallPush callId.
+         * @member {string} callId
+         * @memberof server.IncomingCallPush
+         * @instance
+         */
+        IncomingCallPush.prototype.callId = "";
+
+        /**
+         * IncomingCallPush callType.
+         * @member {server.CallType} callType
+         * @memberof server.IncomingCallPush
+         * @instance
+         */
+        IncomingCallPush.prototype.callType = 0;
+
+        /**
+         * IncomingCallPush stunServers.
+         * @member {Array.<server.IStunServer>} stunServers
+         * @memberof server.IncomingCallPush
+         * @instance
+         */
+        IncomingCallPush.prototype.stunServers = $util.emptyArray;
+
+        /**
+         * IncomingCallPush turnServers.
+         * @member {Array.<server.ITurnServer>} turnServers
+         * @memberof server.IncomingCallPush
+         * @instance
+         */
+        IncomingCallPush.prototype.turnServers = $util.emptyArray;
+
+        /**
+         * IncomingCallPush timestampMs.
+         * @member {number|Long} timestampMs
+         * @memberof server.IncomingCallPush
+         * @instance
+         */
+        IncomingCallPush.prototype.timestampMs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * IncomingCallPush callConfig.
+         * @member {server.ICallConfig|null|undefined} callConfig
+         * @memberof server.IncomingCallPush
+         * @instance
+         */
+        IncomingCallPush.prototype.callConfig = null;
+
+        /**
+         * Creates a new IncomingCallPush instance using the specified properties.
+         * @function create
+         * @memberof server.IncomingCallPush
+         * @static
+         * @param {server.IIncomingCallPush=} [properties] Properties to set
+         * @returns {server.IncomingCallPush} IncomingCallPush instance
+         */
+        IncomingCallPush.create = function create(properties) {
+            return new IncomingCallPush(properties);
+        };
+
+        /**
+         * Encodes the specified IncomingCallPush message. Does not implicitly {@link server.IncomingCallPush.verify|verify} messages.
+         * @function encode
+         * @memberof server.IncomingCallPush
+         * @static
+         * @param {server.IIncomingCallPush} message IncomingCallPush message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IncomingCallPush.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.callId != null && Object.hasOwnProperty.call(message, "callId"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.callId);
+            if (message.callType != null && Object.hasOwnProperty.call(message, "callType"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.callType);
+            if (message.stunServers != null && message.stunServers.length)
+                for (var i = 0; i < message.stunServers.length; ++i)
+                    $root.server.StunServer.encode(message.stunServers[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            if (message.turnServers != null && message.turnServers.length)
+                for (var i = 0; i < message.turnServers.length; ++i)
+                    $root.server.TurnServer.encode(message.turnServers[i], writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+            if (message.timestampMs != null && Object.hasOwnProperty.call(message, "timestampMs"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int64(message.timestampMs);
+            if (message.callConfig != null && Object.hasOwnProperty.call(message, "callConfig"))
+                $root.server.CallConfig.encode(message.callConfig, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified IncomingCallPush message, length delimited. Does not implicitly {@link server.IncomingCallPush.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.IncomingCallPush
+         * @static
+         * @param {server.IIncomingCallPush} message IncomingCallPush message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        IncomingCallPush.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an IncomingCallPush message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.IncomingCallPush
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.IncomingCallPush} IncomingCallPush
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IncomingCallPush.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.IncomingCallPush();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.callId = reader.string();
+                    break;
+                case 2:
+                    message.callType = reader.int32();
+                    break;
+                case 3:
+                    if (!(message.stunServers && message.stunServers.length))
+                        message.stunServers = [];
+                    message.stunServers.push($root.server.StunServer.decode(reader, reader.uint32()));
+                    break;
+                case 4:
+                    if (!(message.turnServers && message.turnServers.length))
+                        message.turnServers = [];
+                    message.turnServers.push($root.server.TurnServer.decode(reader, reader.uint32()));
+                    break;
+                case 5:
+                    message.timestampMs = reader.int64();
+                    break;
+                case 6:
+                    message.callConfig = $root.server.CallConfig.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an IncomingCallPush message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.IncomingCallPush
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.IncomingCallPush} IncomingCallPush
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        IncomingCallPush.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an IncomingCallPush message.
+         * @function verify
+         * @memberof server.IncomingCallPush
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        IncomingCallPush.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.callId != null && message.hasOwnProperty("callId"))
+                if (!$util.isString(message.callId))
+                    return "callId: string expected";
+            if (message.callType != null && message.hasOwnProperty("callType"))
+                switch (message.callType) {
+                default:
+                    return "callType: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.stunServers != null && message.hasOwnProperty("stunServers")) {
+                if (!Array.isArray(message.stunServers))
+                    return "stunServers: array expected";
+                for (var i = 0; i < message.stunServers.length; ++i) {
+                    var error = $root.server.StunServer.verify(message.stunServers[i]);
+                    if (error)
+                        return "stunServers." + error;
+                }
+            }
+            if (message.turnServers != null && message.hasOwnProperty("turnServers")) {
+                if (!Array.isArray(message.turnServers))
+                    return "turnServers: array expected";
+                for (var i = 0; i < message.turnServers.length; ++i) {
+                    var error = $root.server.TurnServer.verify(message.turnServers[i]);
+                    if (error)
+                        return "turnServers." + error;
+                }
+            }
+            if (message.timestampMs != null && message.hasOwnProperty("timestampMs"))
+                if (!$util.isInteger(message.timestampMs) && !(message.timestampMs && $util.isInteger(message.timestampMs.low) && $util.isInteger(message.timestampMs.high)))
+                    return "timestampMs: integer|Long expected";
+            if (message.callConfig != null && message.hasOwnProperty("callConfig")) {
+                var error = $root.server.CallConfig.verify(message.callConfig);
+                if (error)
+                    return "callConfig." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates an IncomingCallPush message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.IncomingCallPush
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.IncomingCallPush} IncomingCallPush
+         */
+        IncomingCallPush.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.IncomingCallPush)
+                return object;
+            var message = new $root.server.IncomingCallPush();
+            if (object.callId != null)
+                message.callId = String(object.callId);
+            switch (object.callType) {
+            case "UNKNOWN_TYPE":
+            case 0:
+                message.callType = 0;
+                break;
+            case "AUDIO":
+            case 1:
+                message.callType = 1;
+                break;
+            case "VIDEO":
+            case 2:
+                message.callType = 2;
+                break;
+            }
+            if (object.stunServers) {
+                if (!Array.isArray(object.stunServers))
+                    throw TypeError(".server.IncomingCallPush.stunServers: array expected");
+                message.stunServers = [];
+                for (var i = 0; i < object.stunServers.length; ++i) {
+                    if (typeof object.stunServers[i] !== "object")
+                        throw TypeError(".server.IncomingCallPush.stunServers: object expected");
+                    message.stunServers[i] = $root.server.StunServer.fromObject(object.stunServers[i]);
+                }
+            }
+            if (object.turnServers) {
+                if (!Array.isArray(object.turnServers))
+                    throw TypeError(".server.IncomingCallPush.turnServers: array expected");
+                message.turnServers = [];
+                for (var i = 0; i < object.turnServers.length; ++i) {
+                    if (typeof object.turnServers[i] !== "object")
+                        throw TypeError(".server.IncomingCallPush.turnServers: object expected");
+                    message.turnServers[i] = $root.server.TurnServer.fromObject(object.turnServers[i]);
+                }
+            }
+            if (object.timestampMs != null)
+                if ($util.Long)
+                    (message.timestampMs = $util.Long.fromValue(object.timestampMs)).unsigned = false;
+                else if (typeof object.timestampMs === "string")
+                    message.timestampMs = parseInt(object.timestampMs, 10);
+                else if (typeof object.timestampMs === "number")
+                    message.timestampMs = object.timestampMs;
+                else if (typeof object.timestampMs === "object")
+                    message.timestampMs = new $util.LongBits(object.timestampMs.low >>> 0, object.timestampMs.high >>> 0).toNumber();
+            if (object.callConfig != null) {
+                if (typeof object.callConfig !== "object")
+                    throw TypeError(".server.IncomingCallPush.callConfig: object expected");
+                message.callConfig = $root.server.CallConfig.fromObject(object.callConfig);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an IncomingCallPush message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.IncomingCallPush
+         * @static
+         * @param {server.IncomingCallPush} message IncomingCallPush
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        IncomingCallPush.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults) {
+                object.stunServers = [];
+                object.turnServers = [];
+            }
+            if (options.defaults) {
+                object.callId = "";
+                object.callType = options.enums === String ? "UNKNOWN_TYPE" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.timestampMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.timestampMs = options.longs === String ? "0" : 0;
+                object.callConfig = null;
+            }
+            if (message.callId != null && message.hasOwnProperty("callId"))
+                object.callId = message.callId;
+            if (message.callType != null && message.hasOwnProperty("callType"))
+                object.callType = options.enums === String ? $root.server.CallType[message.callType] : message.callType;
+            if (message.stunServers && message.stunServers.length) {
+                object.stunServers = [];
+                for (var j = 0; j < message.stunServers.length; ++j)
+                    object.stunServers[j] = $root.server.StunServer.toObject(message.stunServers[j], options);
+            }
+            if (message.turnServers && message.turnServers.length) {
+                object.turnServers = [];
+                for (var j = 0; j < message.turnServers.length; ++j)
+                    object.turnServers[j] = $root.server.TurnServer.toObject(message.turnServers[j], options);
+            }
+            if (message.timestampMs != null && message.hasOwnProperty("timestampMs"))
+                if (typeof message.timestampMs === "number")
+                    object.timestampMs = options.longs === String ? String(message.timestampMs) : message.timestampMs;
+                else
+                    object.timestampMs = options.longs === String ? $util.Long.prototype.toString.call(message.timestampMs) : options.longs === Number ? new $util.LongBits(message.timestampMs.low >>> 0, message.timestampMs.high >>> 0).toNumber() : message.timestampMs;
+            if (message.callConfig != null && message.hasOwnProperty("callConfig"))
+                object.callConfig = $root.server.CallConfig.toObject(message.callConfig, options);
+            return object;
+        };
+
+        /**
+         * Converts this IncomingCallPush to JSON.
+         * @function toJSON
+         * @memberof server.IncomingCallPush
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        IncomingCallPush.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return IncomingCallPush;
+    })();
+
     server.IncomingCall = (function() {
 
         /**
@@ -17911,6 +18290,301 @@ $root.server = (function() {
         return HoldCall;
     })();
 
+    server.MuteCall = (function() {
+
+        /**
+         * Properties of a MuteCall.
+         * @memberof server
+         * @interface IMuteCall
+         * @property {string|null} [callId] MuteCall callId
+         * @property {server.MuteCall.MediaType|null} [mediaType] MuteCall mediaType
+         * @property {boolean|null} [muted] MuteCall muted
+         * @property {number|Long|null} [timestampMs] MuteCall timestampMs
+         */
+
+        /**
+         * Constructs a new MuteCall.
+         * @memberof server
+         * @classdesc Represents a MuteCall.
+         * @implements IMuteCall
+         * @constructor
+         * @param {server.IMuteCall=} [properties] Properties to set
+         */
+        function MuteCall(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * MuteCall callId.
+         * @member {string} callId
+         * @memberof server.MuteCall
+         * @instance
+         */
+        MuteCall.prototype.callId = "";
+
+        /**
+         * MuteCall mediaType.
+         * @member {server.MuteCall.MediaType} mediaType
+         * @memberof server.MuteCall
+         * @instance
+         */
+        MuteCall.prototype.mediaType = 0;
+
+        /**
+         * MuteCall muted.
+         * @member {boolean} muted
+         * @memberof server.MuteCall
+         * @instance
+         */
+        MuteCall.prototype.muted = false;
+
+        /**
+         * MuteCall timestampMs.
+         * @member {number|Long} timestampMs
+         * @memberof server.MuteCall
+         * @instance
+         */
+        MuteCall.prototype.timestampMs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new MuteCall instance using the specified properties.
+         * @function create
+         * @memberof server.MuteCall
+         * @static
+         * @param {server.IMuteCall=} [properties] Properties to set
+         * @returns {server.MuteCall} MuteCall instance
+         */
+        MuteCall.create = function create(properties) {
+            return new MuteCall(properties);
+        };
+
+        /**
+         * Encodes the specified MuteCall message. Does not implicitly {@link server.MuteCall.verify|verify} messages.
+         * @function encode
+         * @memberof server.MuteCall
+         * @static
+         * @param {server.IMuteCall} message MuteCall message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MuteCall.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.callId != null && Object.hasOwnProperty.call(message, "callId"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.callId);
+            if (message.mediaType != null && Object.hasOwnProperty.call(message, "mediaType"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.mediaType);
+            if (message.muted != null && Object.hasOwnProperty.call(message, "muted"))
+                writer.uint32(/* id 3, wireType 0 =*/24).bool(message.muted);
+            if (message.timestampMs != null && Object.hasOwnProperty.call(message, "timestampMs"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.timestampMs);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified MuteCall message, length delimited. Does not implicitly {@link server.MuteCall.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.MuteCall
+         * @static
+         * @param {server.IMuteCall} message MuteCall message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        MuteCall.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a MuteCall message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.MuteCall
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.MuteCall} MuteCall
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MuteCall.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.MuteCall();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.callId = reader.string();
+                    break;
+                case 2:
+                    message.mediaType = reader.int32();
+                    break;
+                case 3:
+                    message.muted = reader.bool();
+                    break;
+                case 4:
+                    message.timestampMs = reader.int64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a MuteCall message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.MuteCall
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.MuteCall} MuteCall
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        MuteCall.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a MuteCall message.
+         * @function verify
+         * @memberof server.MuteCall
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        MuteCall.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.callId != null && message.hasOwnProperty("callId"))
+                if (!$util.isString(message.callId))
+                    return "callId: string expected";
+            if (message.mediaType != null && message.hasOwnProperty("mediaType"))
+                switch (message.mediaType) {
+                default:
+                    return "mediaType: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.muted != null && message.hasOwnProperty("muted"))
+                if (typeof message.muted !== "boolean")
+                    return "muted: boolean expected";
+            if (message.timestampMs != null && message.hasOwnProperty("timestampMs"))
+                if (!$util.isInteger(message.timestampMs) && !(message.timestampMs && $util.isInteger(message.timestampMs.low) && $util.isInteger(message.timestampMs.high)))
+                    return "timestampMs: integer|Long expected";
+            return null;
+        };
+
+        /**
+         * Creates a MuteCall message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.MuteCall
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.MuteCall} MuteCall
+         */
+        MuteCall.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.MuteCall)
+                return object;
+            var message = new $root.server.MuteCall();
+            if (object.callId != null)
+                message.callId = String(object.callId);
+            switch (object.mediaType) {
+            case "AUDIO":
+            case 0:
+                message.mediaType = 0;
+                break;
+            case "VIDEO":
+            case 1:
+                message.mediaType = 1;
+                break;
+            }
+            if (object.muted != null)
+                message.muted = Boolean(object.muted);
+            if (object.timestampMs != null)
+                if ($util.Long)
+                    (message.timestampMs = $util.Long.fromValue(object.timestampMs)).unsigned = false;
+                else if (typeof object.timestampMs === "string")
+                    message.timestampMs = parseInt(object.timestampMs, 10);
+                else if (typeof object.timestampMs === "number")
+                    message.timestampMs = object.timestampMs;
+                else if (typeof object.timestampMs === "object")
+                    message.timestampMs = new $util.LongBits(object.timestampMs.low >>> 0, object.timestampMs.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a MuteCall message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.MuteCall
+         * @static
+         * @param {server.MuteCall} message MuteCall
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        MuteCall.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.callId = "";
+                object.mediaType = options.enums === String ? "AUDIO" : 0;
+                object.muted = false;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.timestampMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.timestampMs = options.longs === String ? "0" : 0;
+            }
+            if (message.callId != null && message.hasOwnProperty("callId"))
+                object.callId = message.callId;
+            if (message.mediaType != null && message.hasOwnProperty("mediaType"))
+                object.mediaType = options.enums === String ? $root.server.MuteCall.MediaType[message.mediaType] : message.mediaType;
+            if (message.muted != null && message.hasOwnProperty("muted"))
+                object.muted = message.muted;
+            if (message.timestampMs != null && message.hasOwnProperty("timestampMs"))
+                if (typeof message.timestampMs === "number")
+                    object.timestampMs = options.longs === String ? String(message.timestampMs) : message.timestampMs;
+                else
+                    object.timestampMs = options.longs === String ? $util.Long.prototype.toString.call(message.timestampMs) : options.longs === Number ? new $util.LongBits(message.timestampMs.low >>> 0, message.timestampMs.high >>> 0).toNumber() : message.timestampMs;
+            return object;
+        };
+
+        /**
+         * Converts this MuteCall to JSON.
+         * @function toJSON
+         * @memberof server.MuteCall
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        MuteCall.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * MediaType enum.
+         * @name server.MuteCall.MediaType
+         * @enum {number}
+         * @property {number} AUDIO=0 AUDIO value
+         * @property {number} VIDEO=1 VIDEO value
+         */
+        MuteCall.MediaType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "AUDIO"] = 0;
+            values[valuesById[1] = "VIDEO"] = 1;
+            return values;
+        })();
+
+        return MuteCall;
+    })();
+
     server.CallConfig = (function() {
 
         /**
@@ -17927,6 +18601,7 @@ $root.server = (function() {
          * @property {number|null} [audioJitterBufferMaxPackets] CallConfig audioJitterBufferMaxPackets
          * @property {boolean|null} [audioJitterBufferFastAccelerate] CallConfig audioJitterBufferFastAccelerate
          * @property {server.CallConfig.IceTransportPolicy|null} [iceTransportPolicy] CallConfig iceTransportPolicy
+         * @property {number|null} [iceRestartDelayMs] CallConfig iceRestartDelayMs
          */
 
         /**
@@ -18025,6 +18700,14 @@ $root.server = (function() {
         CallConfig.prototype.iceTransportPolicy = 0;
 
         /**
+         * CallConfig iceRestartDelayMs.
+         * @member {number} iceRestartDelayMs
+         * @memberof server.CallConfig
+         * @instance
+         */
+        CallConfig.prototype.iceRestartDelayMs = 0;
+
+        /**
          * Creates a new CallConfig instance using the specified properties.
          * @function create
          * @memberof server.CallConfig
@@ -18068,6 +18751,8 @@ $root.server = (function() {
                 writer.uint32(/* id 9, wireType 0 =*/72).bool(message.audioJitterBufferFastAccelerate);
             if (message.iceTransportPolicy != null && Object.hasOwnProperty.call(message, "iceTransportPolicy"))
                 writer.uint32(/* id 10, wireType 0 =*/80).int32(message.iceTransportPolicy);
+            if (message.iceRestartDelayMs != null && Object.hasOwnProperty.call(message, "iceRestartDelayMs"))
+                writer.uint32(/* id 11, wireType 0 =*/88).int32(message.iceRestartDelayMs);
             return writer;
         };
 
@@ -18131,6 +18816,9 @@ $root.server = (function() {
                     break;
                 case 10:
                     message.iceTransportPolicy = reader.int32();
+                    break;
+                case 11:
+                    message.iceRestartDelayMs = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -18202,6 +18890,9 @@ $root.server = (function() {
                 case 1:
                     break;
                 }
+            if (message.iceRestartDelayMs != null && message.hasOwnProperty("iceRestartDelayMs"))
+                if (!$util.isInteger(message.iceRestartDelayMs))
+                    return "iceRestartDelayMs: integer expected";
             return null;
         };
 
@@ -18245,6 +18936,8 @@ $root.server = (function() {
                 message.iceTransportPolicy = 1;
                 break;
             }
+            if (object.iceRestartDelayMs != null)
+                message.iceRestartDelayMs = object.iceRestartDelayMs | 0;
             return message;
         };
 
@@ -18272,6 +18965,7 @@ $root.server = (function() {
                 object.audioJitterBufferMaxPackets = 0;
                 object.audioJitterBufferFastAccelerate = false;
                 object.iceTransportPolicy = options.enums === String ? "ALL" : 0;
+                object.iceRestartDelayMs = 0;
             }
             if (message.audioBitrateMax != null && message.hasOwnProperty("audioBitrateMax"))
                 object.audioBitrateMax = message.audioBitrateMax;
@@ -18293,6 +18987,8 @@ $root.server = (function() {
                 object.audioJitterBufferFastAccelerate = message.audioJitterBufferFastAccelerate;
             if (message.iceTransportPolicy != null && message.hasOwnProperty("iceTransportPolicy"))
                 object.iceTransportPolicy = options.enums === String ? $root.server.CallConfig.IceTransportPolicy[message.iceTransportPolicy] : message.iceTransportPolicy;
+            if (message.iceRestartDelayMs != null && message.hasOwnProperty("iceRestartDelayMs"))
+                object.iceRestartDelayMs = message.iceRestartDelayMs;
             return object;
         };
 
@@ -20795,6 +21491,8 @@ $root.server = (function() {
          * @property {server.IGroupFeedHistory|null} [groupFeedHistory] Msg groupFeedHistory
          * @property {server.IPreAnswerCall|null} [preAnswerCall] Msg preAnswerCall
          * @property {server.IHoldCall|null} [holdCall] Msg holdCall
+         * @property {server.IMuteCall|null} [muteCall] Msg muteCall
+         * @property {server.IIncomingCallPush|null} [incomingCallPush] Msg incomingCallPush
          * @property {number|null} [retryCount] Msg retryCount
          * @property {number|null} [rerequestCount] Msg rerequestCount
          */
@@ -21151,6 +21849,22 @@ $root.server = (function() {
         Msg.prototype.holdCall = null;
 
         /**
+         * Msg muteCall.
+         * @member {server.IMuteCall|null|undefined} muteCall
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.muteCall = null;
+
+        /**
+         * Msg incomingCallPush.
+         * @member {server.IIncomingCallPush|null|undefined} incomingCallPush
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.incomingCallPush = null;
+
+        /**
          * Msg retryCount.
          * @member {number} retryCount
          * @memberof server.Msg
@@ -21171,12 +21885,12 @@ $root.server = (function() {
 
         /**
          * Msg payload.
-         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|undefined} payload
+         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|undefined} payload
          * @memberof server.Msg
          * @instance
          */
         Object.defineProperty(Msg.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall"]),
+            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -21292,6 +22006,10 @@ $root.server = (function() {
                 $root.server.PreAnswerCall.encode(message.preAnswerCall, writer.uint32(/* id 43, wireType 2 =*/346).fork()).ldelim();
             if (message.holdCall != null && Object.hasOwnProperty.call(message, "holdCall"))
                 $root.server.HoldCall.encode(message.holdCall, writer.uint32(/* id 44, wireType 2 =*/354).fork()).ldelim();
+            if (message.muteCall != null && Object.hasOwnProperty.call(message, "muteCall"))
+                $root.server.MuteCall.encode(message.muteCall, writer.uint32(/* id 45, wireType 2 =*/362).fork()).ldelim();
+            if (message.incomingCallPush != null && Object.hasOwnProperty.call(message, "incomingCallPush"))
+                $root.server.IncomingCallPush.encode(message.incomingCallPush, writer.uint32(/* id 46, wireType 2 =*/370).fork()).ldelim();
             return writer;
         };
 
@@ -21451,6 +22169,12 @@ $root.server = (function() {
                     break;
                 case 44:
                     message.holdCall = $root.server.HoldCall.decode(reader, reader.uint32());
+                    break;
+                case 45:
+                    message.muteCall = $root.server.MuteCall.decode(reader, reader.uint32());
+                    break;
+                case 46:
+                    message.incomingCallPush = $root.server.IncomingCallPush.decode(reader, reader.uint32());
                     break;
                 case 21:
                     message.retryCount = reader.int32();
@@ -21893,6 +22617,26 @@ $root.server = (function() {
                         return "holdCall." + error;
                 }
             }
+            if (message.muteCall != null && message.hasOwnProperty("muteCall")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.MuteCall.verify(message.muteCall);
+                    if (error)
+                        return "muteCall." + error;
+                }
+            }
+            if (message.incomingCallPush != null && message.hasOwnProperty("incomingCallPush")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.IncomingCallPush.verify(message.incomingCallPush);
+                    if (error)
+                        return "incomingCallPush." + error;
+                }
+            }
             if (message.retryCount != null && message.hasOwnProperty("retryCount"))
                 if (!$util.isInteger(message.retryCount))
                     return "retryCount: integer expected";
@@ -22150,6 +22894,16 @@ $root.server = (function() {
                     throw TypeError(".server.Msg.holdCall: object expected");
                 message.holdCall = $root.server.HoldCall.fromObject(object.holdCall);
             }
+            if (object.muteCall != null) {
+                if (typeof object.muteCall !== "object")
+                    throw TypeError(".server.Msg.muteCall: object expected");
+                message.muteCall = $root.server.MuteCall.fromObject(object.muteCall);
+            }
+            if (object.incomingCallPush != null) {
+                if (typeof object.incomingCallPush !== "object")
+                    throw TypeError(".server.Msg.incomingCallPush: object expected");
+                message.incomingCallPush = $root.server.IncomingCallPush.fromObject(object.incomingCallPush);
+            }
             if (object.retryCount != null)
                 message.retryCount = object.retryCount | 0;
             if (object.rerequestCount != null)
@@ -22393,6 +23147,16 @@ $root.server = (function() {
                 object.holdCall = $root.server.HoldCall.toObject(message.holdCall, options);
                 if (options.oneofs)
                     object.payload = "holdCall";
+            }
+            if (message.muteCall != null && message.hasOwnProperty("muteCall")) {
+                object.muteCall = $root.server.MuteCall.toObject(message.muteCall, options);
+                if (options.oneofs)
+                    object.payload = "muteCall";
+            }
+            if (message.incomingCallPush != null && message.hasOwnProperty("incomingCallPush")) {
+                object.incomingCallPush = $root.server.IncomingCallPush.toObject(message.incomingCallPush, options);
+                if (options.oneofs)
+                    object.payload = "incomingCallPush";
             }
             return object;
         };
@@ -35215,6 +35979,8 @@ $root.server = (function() {
          * @property {server.IMediaObjectDownload|null} [mediaObjectDownload] EventData mediaObjectDownload
          * @property {server.IGroupDecryptionReport|null} [groupDecryptionReport] EventData groupDecryptionReport
          * @property {server.ICall|null} [call] EventData call
+         * @property {server.IFabAction|null} [fabAction] EventData fabAction
+         * @property {server.IGroupHistoryReport|null} [groupHistoryReport] EventData groupHistoryReport
          */
 
         /**
@@ -35344,17 +36110,33 @@ $root.server = (function() {
          */
         EventData.prototype.call = null;
 
+        /**
+         * EventData fabAction.
+         * @member {server.IFabAction|null|undefined} fabAction
+         * @memberof server.EventData
+         * @instance
+         */
+        EventData.prototype.fabAction = null;
+
+        /**
+         * EventData groupHistoryReport.
+         * @member {server.IGroupHistoryReport|null|undefined} groupHistoryReport
+         * @memberof server.EventData
+         * @instance
+         */
+        EventData.prototype.groupHistoryReport = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * EventData edata.
-         * @member {"mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport"|"permissions"|"mediaObjectDownload"|"groupDecryptionReport"|"call"|undefined} edata
+         * @member {"mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport"|"permissions"|"mediaObjectDownload"|"groupDecryptionReport"|"call"|"fabAction"|"groupHistoryReport"|undefined} edata
          * @memberof server.EventData
          * @instance
          */
         Object.defineProperty(EventData.prototype, "edata", {
-            get: $util.oneOfGetter($oneOfFields = ["mediaUpload", "mediaDownload", "mediaComposeLoad", "pushReceived", "decryptionReport", "permissions", "mediaObjectDownload", "groupDecryptionReport", "call"]),
+            get: $util.oneOfGetter($oneOfFields = ["mediaUpload", "mediaDownload", "mediaComposeLoad", "pushReceived", "decryptionReport", "permissions", "mediaObjectDownload", "groupDecryptionReport", "call", "fabAction", "groupHistoryReport"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -35410,6 +36192,10 @@ $root.server = (function() {
                 $root.server.GroupDecryptionReport.encode(message.groupDecryptionReport, writer.uint32(/* id 17, wireType 2 =*/138).fork()).ldelim();
             if (message.call != null && Object.hasOwnProperty.call(message, "call"))
                 $root.server.Call.encode(message.call, writer.uint32(/* id 18, wireType 2 =*/146).fork()).ldelim();
+            if (message.fabAction != null && Object.hasOwnProperty.call(message, "fabAction"))
+                $root.server.FabAction.encode(message.fabAction, writer.uint32(/* id 19, wireType 2 =*/154).fork()).ldelim();
+            if (message.groupHistoryReport != null && Object.hasOwnProperty.call(message, "groupHistoryReport"))
+                $root.server.GroupHistoryReport.encode(message.groupHistoryReport, writer.uint32(/* id 20, wireType 2 =*/162).fork()).ldelim();
             return writer;
         };
 
@@ -35485,6 +36271,12 @@ $root.server = (function() {
                     break;
                 case 18:
                     message.call = $root.server.Call.decode(reader, reader.uint32());
+                    break;
+                case 19:
+                    message.fabAction = $root.server.FabAction.decode(reader, reader.uint32());
+                    break;
+                case 20:
+                    message.groupHistoryReport = $root.server.GroupHistoryReport.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -35631,6 +36423,26 @@ $root.server = (function() {
                         return "call." + error;
                 }
             }
+            if (message.fabAction != null && message.hasOwnProperty("fabAction")) {
+                if (properties.edata === 1)
+                    return "edata: multiple values";
+                properties.edata = 1;
+                {
+                    var error = $root.server.FabAction.verify(message.fabAction);
+                    if (error)
+                        return "fabAction." + error;
+                }
+            }
+            if (message.groupHistoryReport != null && message.hasOwnProperty("groupHistoryReport")) {
+                if (properties.edata === 1)
+                    return "edata: multiple values";
+                properties.edata = 1;
+                {
+                    var error = $root.server.GroupHistoryReport.verify(message.groupHistoryReport);
+                    if (error)
+                        return "groupHistoryReport." + error;
+                }
+            }
             return null;
         };
 
@@ -35727,6 +36539,16 @@ $root.server = (function() {
                     throw TypeError(".server.EventData.call: object expected");
                 message.call = $root.server.Call.fromObject(object.call);
             }
+            if (object.fabAction != null) {
+                if (typeof object.fabAction !== "object")
+                    throw TypeError(".server.EventData.fabAction: object expected");
+                message.fabAction = $root.server.FabAction.fromObject(object.fabAction);
+            }
+            if (object.groupHistoryReport != null) {
+                if (typeof object.groupHistoryReport !== "object")
+                    throw TypeError(".server.EventData.groupHistoryReport: object expected");
+                message.groupHistoryReport = $root.server.GroupHistoryReport.fromObject(object.groupHistoryReport);
+            }
             return message;
         };
 
@@ -35818,6 +36640,16 @@ $root.server = (function() {
                 object.call = $root.server.Call.toObject(message.call, options);
                 if (options.oneofs)
                     object.edata = "call";
+            }
+            if (message.fabAction != null && message.hasOwnProperty("fabAction")) {
+                object.fabAction = $root.server.FabAction.toObject(message.fabAction, options);
+                if (options.oneofs)
+                    object.edata = "fabAction";
+            }
+            if (message.groupHistoryReport != null && message.hasOwnProperty("groupHistoryReport")) {
+                object.groupHistoryReport = $root.server.GroupHistoryReport.toObject(message.groupHistoryReport, options);
+                if (options.oneofs)
+                    object.edata = "groupHistoryReport";
             }
             return object;
         };
@@ -37843,6 +38675,7 @@ $root.server = (function() {
          * @property {number|null} [rerequestCount] DecryptionReport rerequestCount
          * @property {number|null} [timeTakenS] DecryptionReport timeTakenS
          * @property {boolean|null} [isSilent] DecryptionReport isSilent
+         * @property {server.DecryptionReport.ContentType|null} [contentType] DecryptionReport contentType
          */
 
         /**
@@ -37933,6 +38766,14 @@ $root.server = (function() {
         DecryptionReport.prototype.isSilent = false;
 
         /**
+         * DecryptionReport contentType.
+         * @member {server.DecryptionReport.ContentType} contentType
+         * @memberof server.DecryptionReport
+         * @instance
+         */
+        DecryptionReport.prototype.contentType = 0;
+
+        /**
          * Creates a new DecryptionReport instance using the specified properties.
          * @function create
          * @memberof server.DecryptionReport
@@ -37974,6 +38815,8 @@ $root.server = (function() {
                 writer.uint32(/* id 8, wireType 0 =*/64).uint32(message.timeTakenS);
             if (message.isSilent != null && Object.hasOwnProperty.call(message, "isSilent"))
                 writer.uint32(/* id 9, wireType 0 =*/72).bool(message.isSilent);
+            if (message.contentType != null && Object.hasOwnProperty.call(message, "contentType"))
+                writer.uint32(/* id 10, wireType 0 =*/80).int32(message.contentType);
             return writer;
         };
 
@@ -38034,6 +38877,9 @@ $root.server = (function() {
                     break;
                 case 9:
                     message.isSilent = reader.bool();
+                    break;
+                case 10:
+                    message.contentType = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -38108,6 +38954,14 @@ $root.server = (function() {
             if (message.isSilent != null && message.hasOwnProperty("isSilent"))
                 if (typeof message.isSilent !== "boolean")
                     return "isSilent: boolean expected";
+            if (message.contentType != null && message.hasOwnProperty("contentType"))
+                switch (message.contentType) {
+                default:
+                    return "contentType: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
             return null;
         };
 
@@ -38161,6 +39015,16 @@ $root.server = (function() {
                 message.timeTakenS = object.timeTakenS >>> 0;
             if (object.isSilent != null)
                 message.isSilent = Boolean(object.isSilent);
+            switch (object.contentType) {
+            case "CHAT":
+            case 0:
+                message.contentType = 0;
+                break;
+            case "GROUP_HISTORY":
+            case 1:
+                message.contentType = 1;
+                break;
+            }
             return message;
         };
 
@@ -38187,6 +39051,7 @@ $root.server = (function() {
                 object.rerequestCount = 0;
                 object.timeTakenS = 0;
                 object.isSilent = false;
+                object.contentType = options.enums === String ? "CHAT" : 0;
             }
             if (message.result != null && message.hasOwnProperty("result"))
                 object.result = options.enums === String ? $root.server.DecryptionReport.Status[message.result] : message.result;
@@ -38206,6 +39071,8 @@ $root.server = (function() {
                 object.timeTakenS = message.timeTakenS;
             if (message.isSilent != null && message.hasOwnProperty("isSilent"))
                 object.isSilent = message.isSilent;
+            if (message.contentType != null && message.hasOwnProperty("contentType"))
+                object.contentType = options.enums === String ? $root.server.DecryptionReport.ContentType[message.contentType] : message.contentType;
             return object;
         };
 
@@ -38231,6 +39098,20 @@ $root.server = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "OK"] = 0;
             values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        /**
+         * ContentType enum.
+         * @name server.DecryptionReport.ContentType
+         * @enum {number}
+         * @property {number} CHAT=0 CHAT value
+         * @property {number} GROUP_HISTORY=1 GROUP_HISTORY value
+         */
+        DecryptionReport.ContentType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "CHAT"] = 0;
+            values[valuesById[1] = "GROUP_HISTORY"] = 1;
             return values;
         })();
 
@@ -38763,6 +39644,353 @@ $root.server = (function() {
         })();
 
         return GroupDecryptionReport;
+    })();
+
+    server.GroupHistoryReport = (function() {
+
+        /**
+         * Properties of a GroupHistoryReport.
+         * @memberof server
+         * @interface IGroupHistoryReport
+         * @property {string|null} [gid] GroupHistoryReport gid
+         * @property {number|null} [numExpected] GroupHistoryReport numExpected
+         * @property {number|null} [numDecrypted] GroupHistoryReport numDecrypted
+         * @property {string|null} [originalVersion] GroupHistoryReport originalVersion
+         * @property {number|null} [rerequestCount] GroupHistoryReport rerequestCount
+         * @property {number|null} [timeTakenS] GroupHistoryReport timeTakenS
+         * @property {server.GroupHistoryReport.Schedule|null} [schedule] GroupHistoryReport schedule
+         */
+
+        /**
+         * Constructs a new GroupHistoryReport.
+         * @memberof server
+         * @classdesc Represents a GroupHistoryReport.
+         * @implements IGroupHistoryReport
+         * @constructor
+         * @param {server.IGroupHistoryReport=} [properties] Properties to set
+         */
+        function GroupHistoryReport(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * GroupHistoryReport gid.
+         * @member {string} gid
+         * @memberof server.GroupHistoryReport
+         * @instance
+         */
+        GroupHistoryReport.prototype.gid = "";
+
+        /**
+         * GroupHistoryReport numExpected.
+         * @member {number} numExpected
+         * @memberof server.GroupHistoryReport
+         * @instance
+         */
+        GroupHistoryReport.prototype.numExpected = 0;
+
+        /**
+         * GroupHistoryReport numDecrypted.
+         * @member {number} numDecrypted
+         * @memberof server.GroupHistoryReport
+         * @instance
+         */
+        GroupHistoryReport.prototype.numDecrypted = 0;
+
+        /**
+         * GroupHistoryReport originalVersion.
+         * @member {string} originalVersion
+         * @memberof server.GroupHistoryReport
+         * @instance
+         */
+        GroupHistoryReport.prototype.originalVersion = "";
+
+        /**
+         * GroupHistoryReport rerequestCount.
+         * @member {number} rerequestCount
+         * @memberof server.GroupHistoryReport
+         * @instance
+         */
+        GroupHistoryReport.prototype.rerequestCount = 0;
+
+        /**
+         * GroupHistoryReport timeTakenS.
+         * @member {number} timeTakenS
+         * @memberof server.GroupHistoryReport
+         * @instance
+         */
+        GroupHistoryReport.prototype.timeTakenS = 0;
+
+        /**
+         * GroupHistoryReport schedule.
+         * @member {server.GroupHistoryReport.Schedule} schedule
+         * @memberof server.GroupHistoryReport
+         * @instance
+         */
+        GroupHistoryReport.prototype.schedule = 0;
+
+        /**
+         * Creates a new GroupHistoryReport instance using the specified properties.
+         * @function create
+         * @memberof server.GroupHistoryReport
+         * @static
+         * @param {server.IGroupHistoryReport=} [properties] Properties to set
+         * @returns {server.GroupHistoryReport} GroupHistoryReport instance
+         */
+        GroupHistoryReport.create = function create(properties) {
+            return new GroupHistoryReport(properties);
+        };
+
+        /**
+         * Encodes the specified GroupHistoryReport message. Does not implicitly {@link server.GroupHistoryReport.verify|verify} messages.
+         * @function encode
+         * @memberof server.GroupHistoryReport
+         * @static
+         * @param {server.IGroupHistoryReport} message GroupHistoryReport message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GroupHistoryReport.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.gid != null && Object.hasOwnProperty.call(message, "gid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.gid);
+            if (message.numExpected != null && Object.hasOwnProperty.call(message, "numExpected"))
+                writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.numExpected);
+            if (message.numDecrypted != null && Object.hasOwnProperty.call(message, "numDecrypted"))
+                writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.numDecrypted);
+            if (message.originalVersion != null && Object.hasOwnProperty.call(message, "originalVersion"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.originalVersion);
+            if (message.rerequestCount != null && Object.hasOwnProperty.call(message, "rerequestCount"))
+                writer.uint32(/* id 5, wireType 0 =*/40).uint32(message.rerequestCount);
+            if (message.timeTakenS != null && Object.hasOwnProperty.call(message, "timeTakenS"))
+                writer.uint32(/* id 6, wireType 0 =*/48).uint32(message.timeTakenS);
+            if (message.schedule != null && Object.hasOwnProperty.call(message, "schedule"))
+                writer.uint32(/* id 7, wireType 0 =*/56).int32(message.schedule);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified GroupHistoryReport message, length delimited. Does not implicitly {@link server.GroupHistoryReport.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.GroupHistoryReport
+         * @static
+         * @param {server.IGroupHistoryReport} message GroupHistoryReport message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GroupHistoryReport.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a GroupHistoryReport message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.GroupHistoryReport
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.GroupHistoryReport} GroupHistoryReport
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GroupHistoryReport.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.GroupHistoryReport();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.gid = reader.string();
+                    break;
+                case 2:
+                    message.numExpected = reader.uint32();
+                    break;
+                case 3:
+                    message.numDecrypted = reader.uint32();
+                    break;
+                case 4:
+                    message.originalVersion = reader.string();
+                    break;
+                case 5:
+                    message.rerequestCount = reader.uint32();
+                    break;
+                case 6:
+                    message.timeTakenS = reader.uint32();
+                    break;
+                case 7:
+                    message.schedule = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a GroupHistoryReport message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.GroupHistoryReport
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.GroupHistoryReport} GroupHistoryReport
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GroupHistoryReport.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a GroupHistoryReport message.
+         * @function verify
+         * @memberof server.GroupHistoryReport
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        GroupHistoryReport.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.gid != null && message.hasOwnProperty("gid"))
+                if (!$util.isString(message.gid))
+                    return "gid: string expected";
+            if (message.numExpected != null && message.hasOwnProperty("numExpected"))
+                if (!$util.isInteger(message.numExpected))
+                    return "numExpected: integer expected";
+            if (message.numDecrypted != null && message.hasOwnProperty("numDecrypted"))
+                if (!$util.isInteger(message.numDecrypted))
+                    return "numDecrypted: integer expected";
+            if (message.originalVersion != null && message.hasOwnProperty("originalVersion"))
+                if (!$util.isString(message.originalVersion))
+                    return "originalVersion: string expected";
+            if (message.rerequestCount != null && message.hasOwnProperty("rerequestCount"))
+                if (!$util.isInteger(message.rerequestCount))
+                    return "rerequestCount: integer expected";
+            if (message.timeTakenS != null && message.hasOwnProperty("timeTakenS"))
+                if (!$util.isInteger(message.timeTakenS))
+                    return "timeTakenS: integer expected";
+            if (message.schedule != null && message.hasOwnProperty("schedule"))
+                switch (message.schedule) {
+                default:
+                    return "schedule: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            return null;
+        };
+
+        /**
+         * Creates a GroupHistoryReport message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.GroupHistoryReport
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.GroupHistoryReport} GroupHistoryReport
+         */
+        GroupHistoryReport.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.GroupHistoryReport)
+                return object;
+            var message = new $root.server.GroupHistoryReport();
+            if (object.gid != null)
+                message.gid = String(object.gid);
+            if (object.numExpected != null)
+                message.numExpected = object.numExpected >>> 0;
+            if (object.numDecrypted != null)
+                message.numDecrypted = object.numDecrypted >>> 0;
+            if (object.originalVersion != null)
+                message.originalVersion = String(object.originalVersion);
+            if (object.rerequestCount != null)
+                message.rerequestCount = object.rerequestCount >>> 0;
+            if (object.timeTakenS != null)
+                message.timeTakenS = object.timeTakenS >>> 0;
+            switch (object.schedule) {
+            case "DAILY":
+            case 0:
+                message.schedule = 0;
+                break;
+            case "RESULT_BASED":
+            case 1:
+                message.schedule = 1;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a GroupHistoryReport message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.GroupHistoryReport
+         * @static
+         * @param {server.GroupHistoryReport} message GroupHistoryReport
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        GroupHistoryReport.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.gid = "";
+                object.numExpected = 0;
+                object.numDecrypted = 0;
+                object.originalVersion = "";
+                object.rerequestCount = 0;
+                object.timeTakenS = 0;
+                object.schedule = options.enums === String ? "DAILY" : 0;
+            }
+            if (message.gid != null && message.hasOwnProperty("gid"))
+                object.gid = message.gid;
+            if (message.numExpected != null && message.hasOwnProperty("numExpected"))
+                object.numExpected = message.numExpected;
+            if (message.numDecrypted != null && message.hasOwnProperty("numDecrypted"))
+                object.numDecrypted = message.numDecrypted;
+            if (message.originalVersion != null && message.hasOwnProperty("originalVersion"))
+                object.originalVersion = message.originalVersion;
+            if (message.rerequestCount != null && message.hasOwnProperty("rerequestCount"))
+                object.rerequestCount = message.rerequestCount;
+            if (message.timeTakenS != null && message.hasOwnProperty("timeTakenS"))
+                object.timeTakenS = message.timeTakenS;
+            if (message.schedule != null && message.hasOwnProperty("schedule"))
+                object.schedule = options.enums === String ? $root.server.GroupHistoryReport.Schedule[message.schedule] : message.schedule;
+            return object;
+        };
+
+        /**
+         * Converts this GroupHistoryReport to JSON.
+         * @function toJSON
+         * @memberof server.GroupHistoryReport
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        GroupHistoryReport.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Schedule enum.
+         * @name server.GroupHistoryReport.Schedule
+         * @enum {number}
+         * @property {number} DAILY=0 DAILY value
+         * @property {number} RESULT_BASED=1 RESULT_BASED value
+         */
+        GroupHistoryReport.Schedule = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "DAILY"] = 0;
+            values[valuesById[1] = "RESULT_BASED"] = 1;
+            return values;
+        })();
+
+        return GroupHistoryReport;
     })();
 
     server.Permissions = (function() {
@@ -39565,6 +40793,241 @@ $root.server = (function() {
         })();
 
         return Call;
+    })();
+
+    server.FabAction = (function() {
+
+        /**
+         * Properties of a FabAction.
+         * @memberof server
+         * @interface IFabAction
+         * @property {server.FabAction.FabActionType|null} [type] FabAction type
+         */
+
+        /**
+         * Constructs a new FabAction.
+         * @memberof server
+         * @classdesc Represents a FabAction.
+         * @implements IFabAction
+         * @constructor
+         * @param {server.IFabAction=} [properties] Properties to set
+         */
+        function FabAction(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FabAction type.
+         * @member {server.FabAction.FabActionType} type
+         * @memberof server.FabAction
+         * @instance
+         */
+        FabAction.prototype.type = 0;
+
+        /**
+         * Creates a new FabAction instance using the specified properties.
+         * @function create
+         * @memberof server.FabAction
+         * @static
+         * @param {server.IFabAction=} [properties] Properties to set
+         * @returns {server.FabAction} FabAction instance
+         */
+        FabAction.create = function create(properties) {
+            return new FabAction(properties);
+        };
+
+        /**
+         * Encodes the specified FabAction message. Does not implicitly {@link server.FabAction.verify|verify} messages.
+         * @function encode
+         * @memberof server.FabAction
+         * @static
+         * @param {server.IFabAction} message FabAction message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FabAction.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.type);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified FabAction message, length delimited. Does not implicitly {@link server.FabAction.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.FabAction
+         * @static
+         * @param {server.IFabAction} message FabAction message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FabAction.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a FabAction message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.FabAction
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.FabAction} FabAction
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FabAction.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.FabAction();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.type = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a FabAction message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.FabAction
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.FabAction} FabAction
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FabAction.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a FabAction message.
+         * @function verify
+         * @memberof server.FabAction
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        FabAction.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.type != null && message.hasOwnProperty("type"))
+                switch (message.type) {
+                default:
+                    return "type: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                    break;
+                }
+            return null;
+        };
+
+        /**
+         * Creates a FabAction message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.FabAction
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.FabAction} FabAction
+         */
+        FabAction.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.FabAction)
+                return object;
+            var message = new $root.server.FabAction();
+            switch (object.type) {
+            case "UNKNOWN_TYPE":
+            case 0:
+                message.type = 0;
+                break;
+            case "GALLERY":
+            case 1:
+                message.type = 1;
+                break;
+            case "AUDIO":
+            case 2:
+                message.type = 2;
+                break;
+            case "TEXT":
+            case 3:
+                message.type = 3;
+                break;
+            case "CAMERA":
+            case 4:
+                message.type = 4;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FabAction message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.FabAction
+         * @static
+         * @param {server.FabAction} message FabAction
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FabAction.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.type = options.enums === String ? "UNKNOWN_TYPE" : 0;
+            if (message.type != null && message.hasOwnProperty("type"))
+                object.type = options.enums === String ? $root.server.FabAction.FabActionType[message.type] : message.type;
+            return object;
+        };
+
+        /**
+         * Converts this FabAction to JSON.
+         * @function toJSON
+         * @memberof server.FabAction
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FabAction.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * FabActionType enum.
+         * @name server.FabAction.FabActionType
+         * @enum {number}
+         * @property {number} UNKNOWN_TYPE=0 UNKNOWN_TYPE value
+         * @property {number} GALLERY=1 GALLERY value
+         * @property {number} AUDIO=2 AUDIO value
+         * @property {number} TEXT=3 TEXT value
+         * @property {number} CAMERA=4 CAMERA value
+         */
+        FabAction.FabActionType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_TYPE"] = 0;
+            values[valuesById[1] = "GALLERY"] = 1;
+            values[valuesById[2] = "AUDIO"] = 2;
+            values[valuesById[3] = "TEXT"] = 3;
+            values[valuesById[4] = "CAMERA"] = 4;
+            return values;
+        })();
+
+        return FabAction;
     })();
 
     return server;

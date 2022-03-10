@@ -192,5 +192,16 @@ public interface EventDataOrBuilder extends
    */
   com.halloapp.proto.log_events.FabAction getFabAction();
 
+  /**
+   * <code>.server.GroupHistoryReport group_history_report = 20;</code>
+   * @return Whether the groupHistoryReport field is set.
+   */
+  boolean hasGroupHistoryReport();
+  /**
+   * <code>.server.GroupHistoryReport group_history_report = 20;</code>
+   * @return The groupHistoryReport.
+   */
+  com.halloapp.proto.log_events.GroupHistoryReport getGroupHistoryReport();
+
   public com.halloapp.proto.log_events.EventData.EdataCase getEdataCase();
 }

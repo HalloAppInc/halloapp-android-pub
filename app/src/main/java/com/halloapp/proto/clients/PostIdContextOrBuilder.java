@@ -18,4 +18,16 @@ public interface PostIdContextOrBuilder extends
    */
   com.google.protobuf.ByteString
       getFeedPostIdBytes();
+
+  /**
+   * <code>int64 sender_uid = 2;</code>
+   * @return The senderUid.
+   */
+  long getSenderUid();
+
+  /**
+   * <code>int64 timestamp = 3;</code>
+   * @return The timestamp.
+   */
+  long getTimestamp();
 }

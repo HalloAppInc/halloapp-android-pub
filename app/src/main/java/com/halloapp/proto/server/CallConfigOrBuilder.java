@@ -71,4 +71,10 @@ public interface CallConfigOrBuilder extends
    * @return The iceTransportPolicy.
    */
   com.halloapp.proto.server.CallConfig.IceTransportPolicy getIceTransportPolicy();
+
+  /**
+   * <code>int32 ice_restart_delay_ms = 11;</code>
+   * @return The iceRestartDelayMs.
+   */
+  int getIceRestartDelayMs();
 }

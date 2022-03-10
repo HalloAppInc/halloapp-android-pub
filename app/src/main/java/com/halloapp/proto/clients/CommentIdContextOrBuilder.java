@@ -42,4 +42,16 @@ public interface CommentIdContextOrBuilder extends
    */
   com.google.protobuf.ByteString
       getParentCommentIdBytes();
+
+  /**
+   * <code>int64 sender_uid = 4;</code>
+   * @return The senderUid.
+   */
+  long getSenderUid();
+
+  /**
+   * <code>int64 timestamp = 5;</code>
+   * @return The timestamp.
+   */
+  long getTimestamp();
 }

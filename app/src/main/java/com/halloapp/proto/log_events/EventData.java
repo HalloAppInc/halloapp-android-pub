@@ -28,6 +28,7 @@ public  final class EventData extends
     GROUP_DECRYPTION_REPORT(17),
     CALL(18),
     FAB_ACTION(19),
+    GROUP_HISTORY_REPORT(20),
     EDATA_NOT_SET(0);
     private final int value;
     private EdataCase(int value) {
@@ -53,6 +54,7 @@ public  final class EventData extends
         case 17: return GROUP_DECRYPTION_REPORT;
         case 18: return CALL;
         case 19: return FAB_ACTION;
+        case 20: return GROUP_HISTORY_REPORT;
         case 0: return EDATA_NOT_SET;
         default: return null;
       }
@@ -829,6 +831,56 @@ public  final class EventData extends
    */
   private void clearFabAction() {
     if (edataCase_ == 19) {
+      edataCase_ = 0;
+      edata_ = null;
+    }
+  }
+
+  public static final int GROUP_HISTORY_REPORT_FIELD_NUMBER = 20;
+  /**
+   * <code>.server.GroupHistoryReport group_history_report = 20;</code>
+   */
+  @java.lang.Override
+  public boolean hasGroupHistoryReport() {
+    return edataCase_ == 20;
+  }
+  /**
+   * <code>.server.GroupHistoryReport group_history_report = 20;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.log_events.GroupHistoryReport getGroupHistoryReport() {
+    if (edataCase_ == 20) {
+       return (com.halloapp.proto.log_events.GroupHistoryReport) edata_;
+    }
+    return com.halloapp.proto.log_events.GroupHistoryReport.getDefaultInstance();
+  }
+  /**
+   * <code>.server.GroupHistoryReport group_history_report = 20;</code>
+   */
+  private void setGroupHistoryReport(com.halloapp.proto.log_events.GroupHistoryReport value) {
+    value.getClass();
+  edata_ = value;
+    edataCase_ = 20;
+  }
+  /**
+   * <code>.server.GroupHistoryReport group_history_report = 20;</code>
+   */
+  private void mergeGroupHistoryReport(com.halloapp.proto.log_events.GroupHistoryReport value) {
+    value.getClass();
+  if (edataCase_ == 20 &&
+        edata_ != com.halloapp.proto.log_events.GroupHistoryReport.getDefaultInstance()) {
+      edata_ = com.halloapp.proto.log_events.GroupHistoryReport.newBuilder((com.halloapp.proto.log_events.GroupHistoryReport) edata_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      edata_ = value;
+    }
+    edataCase_ = 20;
+  }
+  /**
+   * <code>.server.GroupHistoryReport group_history_report = 20;</code>
+   */
+  private void clearGroupHistoryReport() {
+    if (edataCase_ == 20) {
       edataCase_ = 0;
       edata_ = null;
     }
@@ -1693,6 +1745,54 @@ public  final class EventData extends
       return this;
     }
 
+    /**
+     * <code>.server.GroupHistoryReport group_history_report = 20;</code>
+     */
+    @java.lang.Override
+    public boolean hasGroupHistoryReport() {
+      return instance.hasGroupHistoryReport();
+    }
+    /**
+     * <code>.server.GroupHistoryReport group_history_report = 20;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.log_events.GroupHistoryReport getGroupHistoryReport() {
+      return instance.getGroupHistoryReport();
+    }
+    /**
+     * <code>.server.GroupHistoryReport group_history_report = 20;</code>
+     */
+    public Builder setGroupHistoryReport(com.halloapp.proto.log_events.GroupHistoryReport value) {
+      copyOnWrite();
+      instance.setGroupHistoryReport(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupHistoryReport group_history_report = 20;</code>
+     */
+    public Builder setGroupHistoryReport(
+        com.halloapp.proto.log_events.GroupHistoryReport.Builder builderForValue) {
+      copyOnWrite();
+      instance.setGroupHistoryReport(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.GroupHistoryReport group_history_report = 20;</code>
+     */
+    public Builder mergeGroupHistoryReport(com.halloapp.proto.log_events.GroupHistoryReport value) {
+      copyOnWrite();
+      instance.mergeGroupHistoryReport(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupHistoryReport group_history_report = 20;</code>
+     */
+    public Builder clearGroupHistoryReport() {
+      copyOnWrite();
+      instance.clearGroupHistoryReport();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.EventData)
   }
   @java.lang.Override
@@ -1726,11 +1826,13 @@ public  final class EventData extends
             com.halloapp.proto.log_events.GroupDecryptionReport.class,
             com.halloapp.proto.log_events.Call.class,
             com.halloapp.proto.log_events.FabAction.class,
+            com.halloapp.proto.log_events.GroupHistoryReport.class,
           };
           java.lang.String info =
-              "\u0000\u000f\u0001\u0000\u0001\u0013\u000f\u0000\u0000\u0000\u0001\u0003\u0002\f" +
+              "\u0000\u0010\u0001\u0000\u0001\u0014\u0010\u0000\u0000\u0000\u0001\u0003\u0002\f" +
               "\u0003\u0208\u0004\u0003\u0005\u0208\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e" +
-              "<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013<\u0000";
+              "<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013<\u0000\u0014<\u0000" +
+              "";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -157,6 +157,58 @@ public  final class CommentIdContext extends
     
   }
 
+  public static final int SENDER_UID_FIELD_NUMBER = 4;
+  private long senderUid_;
+  /**
+   * <code>int64 sender_uid = 4;</code>
+   * @return The senderUid.
+   */
+  @java.lang.Override
+  public long getSenderUid() {
+    return senderUid_;
+  }
+  /**
+   * <code>int64 sender_uid = 4;</code>
+   * @param value The senderUid to set.
+   */
+  private void setSenderUid(long value) {
+    
+    senderUid_ = value;
+  }
+  /**
+   * <code>int64 sender_uid = 4;</code>
+   */
+  private void clearSenderUid() {
+    
+    senderUid_ = 0L;
+  }
+
+  public static final int TIMESTAMP_FIELD_NUMBER = 5;
+  private long timestamp_;
+  /**
+   * <code>int64 timestamp = 5;</code>
+   * @return The timestamp.
+   */
+  @java.lang.Override
+  public long getTimestamp() {
+    return timestamp_;
+  }
+  /**
+   * <code>int64 timestamp = 5;</code>
+   * @param value The timestamp to set.
+   */
+  private void setTimestamp(long value) {
+    
+    timestamp_ = value;
+  }
+  /**
+   * <code>int64 timestamp = 5;</code>
+   */
+  private void clearTimestamp() {
+    
+    timestamp_ = 0L;
+  }
+
   public static com.halloapp.proto.clients.CommentIdContext parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -399,6 +451,62 @@ public  final class CommentIdContext extends
       return this;
     }
 
+    /**
+     * <code>int64 sender_uid = 4;</code>
+     * @return The senderUid.
+     */
+    @java.lang.Override
+    public long getSenderUid() {
+      return instance.getSenderUid();
+    }
+    /**
+     * <code>int64 sender_uid = 4;</code>
+     * @param value The senderUid to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderUid(long value) {
+      copyOnWrite();
+      instance.setSenderUid(value);
+      return this;
+    }
+    /**
+     * <code>int64 sender_uid = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSenderUid() {
+      copyOnWrite();
+      instance.clearSenderUid();
+      return this;
+    }
+
+    /**
+     * <code>int64 timestamp = 5;</code>
+     * @return The timestamp.
+     */
+    @java.lang.Override
+    public long getTimestamp() {
+      return instance.getTimestamp();
+    }
+    /**
+     * <code>int64 timestamp = 5;</code>
+     * @param value The timestamp to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTimestamp(long value) {
+      copyOnWrite();
+      instance.setTimestamp(value);
+      return this;
+    }
+    /**
+     * <code>int64 timestamp = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearTimestamp() {
+      copyOnWrite();
+      instance.clearTimestamp();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.CommentIdContext)
   }
   @java.lang.Override
@@ -418,10 +526,12 @@ public  final class CommentIdContext extends
             "commentId_",
             "feedPostId_",
             "parentCommentId_",
+            "senderUid_",
+            "timestamp_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
-              "\u0003\u0208";
+              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
+              "\u0003\u0208\u0004\u0002\u0005\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

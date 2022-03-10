@@ -61,6 +61,58 @@ public  final class PostIdContext extends
     
   }
 
+  public static final int SENDER_UID_FIELD_NUMBER = 2;
+  private long senderUid_;
+  /**
+   * <code>int64 sender_uid = 2;</code>
+   * @return The senderUid.
+   */
+  @java.lang.Override
+  public long getSenderUid() {
+    return senderUid_;
+  }
+  /**
+   * <code>int64 sender_uid = 2;</code>
+   * @param value The senderUid to set.
+   */
+  private void setSenderUid(long value) {
+    
+    senderUid_ = value;
+  }
+  /**
+   * <code>int64 sender_uid = 2;</code>
+   */
+  private void clearSenderUid() {
+    
+    senderUid_ = 0L;
+  }
+
+  public static final int TIMESTAMP_FIELD_NUMBER = 3;
+  private long timestamp_;
+  /**
+   * <code>int64 timestamp = 3;</code>
+   * @return The timestamp.
+   */
+  @java.lang.Override
+  public long getTimestamp() {
+    return timestamp_;
+  }
+  /**
+   * <code>int64 timestamp = 3;</code>
+   * @param value The timestamp to set.
+   */
+  private void setTimestamp(long value) {
+    
+    timestamp_ = value;
+  }
+  /**
+   * <code>int64 timestamp = 3;</code>
+   */
+  private void clearTimestamp() {
+    
+    timestamp_ = 0L;
+  }
+
   public static com.halloapp.proto.clients.PostIdContext parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -205,6 +257,62 @@ public  final class PostIdContext extends
       return this;
     }
 
+    /**
+     * <code>int64 sender_uid = 2;</code>
+     * @return The senderUid.
+     */
+    @java.lang.Override
+    public long getSenderUid() {
+      return instance.getSenderUid();
+    }
+    /**
+     * <code>int64 sender_uid = 2;</code>
+     * @param value The senderUid to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderUid(long value) {
+      copyOnWrite();
+      instance.setSenderUid(value);
+      return this;
+    }
+    /**
+     * <code>int64 sender_uid = 2;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSenderUid() {
+      copyOnWrite();
+      instance.clearSenderUid();
+      return this;
+    }
+
+    /**
+     * <code>int64 timestamp = 3;</code>
+     * @return The timestamp.
+     */
+    @java.lang.Override
+    public long getTimestamp() {
+      return instance.getTimestamp();
+    }
+    /**
+     * <code>int64 timestamp = 3;</code>
+     * @param value The timestamp to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTimestamp(long value) {
+      copyOnWrite();
+      instance.setTimestamp(value);
+      return this;
+    }
+    /**
+     * <code>int64 timestamp = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearTimestamp() {
+      copyOnWrite();
+      instance.clearTimestamp();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.PostIdContext)
   }
   @java.lang.Override
@@ -222,9 +330,12 @@ public  final class PostIdContext extends
       case BUILD_MESSAGE_INFO: {
           java.lang.Object[] objects = new java.lang.Object[] {
             "feedPostId_",
+            "senderUid_",
+            "timestamp_",
           };
           java.lang.String info =
-              "\u0000\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0000\u0000\u0001\u0208";
+              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0208\u0002\u0002" +
+              "\u0003\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

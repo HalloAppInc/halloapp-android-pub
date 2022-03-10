@@ -5902,6 +5902,126 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of an IncomingCallPush. */
+    interface IIncomingCallPush {
+
+        /** IncomingCallPush callId */
+        callId?: (string|null);
+
+        /** IncomingCallPush callType */
+        callType?: (server.CallType|null);
+
+        /** IncomingCallPush stunServers */
+        stunServers?: (server.IStunServer[]|null);
+
+        /** IncomingCallPush turnServers */
+        turnServers?: (server.ITurnServer[]|null);
+
+        /** IncomingCallPush timestampMs */
+        timestampMs?: (number|Long|null);
+
+        /** IncomingCallPush callConfig */
+        callConfig?: (server.ICallConfig|null);
+    }
+
+    /** Represents an IncomingCallPush. */
+    class IncomingCallPush implements IIncomingCallPush {
+
+        /**
+         * Constructs a new IncomingCallPush.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IIncomingCallPush);
+
+        /** IncomingCallPush callId. */
+        public callId: string;
+
+        /** IncomingCallPush callType. */
+        public callType: server.CallType;
+
+        /** IncomingCallPush stunServers. */
+        public stunServers: server.IStunServer[];
+
+        /** IncomingCallPush turnServers. */
+        public turnServers: server.ITurnServer[];
+
+        /** IncomingCallPush timestampMs. */
+        public timestampMs: (number|Long);
+
+        /** IncomingCallPush callConfig. */
+        public callConfig?: (server.ICallConfig|null);
+
+        /**
+         * Creates a new IncomingCallPush instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns IncomingCallPush instance
+         */
+        public static create(properties?: server.IIncomingCallPush): server.IncomingCallPush;
+
+        /**
+         * Encodes the specified IncomingCallPush message. Does not implicitly {@link server.IncomingCallPush.verify|verify} messages.
+         * @param message IncomingCallPush message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IIncomingCallPush, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified IncomingCallPush message, length delimited. Does not implicitly {@link server.IncomingCallPush.verify|verify} messages.
+         * @param message IncomingCallPush message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IIncomingCallPush, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an IncomingCallPush message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns IncomingCallPush
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.IncomingCallPush;
+
+        /**
+         * Decodes an IncomingCallPush message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns IncomingCallPush
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.IncomingCallPush;
+
+        /**
+         * Verifies an IncomingCallPush message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an IncomingCallPush message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns IncomingCallPush
+         */
+        public static fromObject(object: { [k: string]: any }): server.IncomingCallPush;
+
+        /**
+         * Creates a plain object from an IncomingCallPush message. Also converts values to other types if specified.
+         * @param message IncomingCallPush
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.IncomingCallPush, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this IncomingCallPush to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an IncomingCall. */
     interface IIncomingCall {
 
@@ -6868,6 +6988,123 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a MuteCall. */
+    interface IMuteCall {
+
+        /** MuteCall callId */
+        callId?: (string|null);
+
+        /** MuteCall mediaType */
+        mediaType?: (server.MuteCall.MediaType|null);
+
+        /** MuteCall muted */
+        muted?: (boolean|null);
+
+        /** MuteCall timestampMs */
+        timestampMs?: (number|Long|null);
+    }
+
+    /** Represents a MuteCall. */
+    class MuteCall implements IMuteCall {
+
+        /**
+         * Constructs a new MuteCall.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IMuteCall);
+
+        /** MuteCall callId. */
+        public callId: string;
+
+        /** MuteCall mediaType. */
+        public mediaType: server.MuteCall.MediaType;
+
+        /** MuteCall muted. */
+        public muted: boolean;
+
+        /** MuteCall timestampMs. */
+        public timestampMs: (number|Long);
+
+        /**
+         * Creates a new MuteCall instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns MuteCall instance
+         */
+        public static create(properties?: server.IMuteCall): server.MuteCall;
+
+        /**
+         * Encodes the specified MuteCall message. Does not implicitly {@link server.MuteCall.verify|verify} messages.
+         * @param message MuteCall message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IMuteCall, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified MuteCall message, length delimited. Does not implicitly {@link server.MuteCall.verify|verify} messages.
+         * @param message MuteCall message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IMuteCall, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a MuteCall message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns MuteCall
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.MuteCall;
+
+        /**
+         * Decodes a MuteCall message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns MuteCall
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.MuteCall;
+
+        /**
+         * Verifies a MuteCall message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a MuteCall message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns MuteCall
+         */
+        public static fromObject(object: { [k: string]: any }): server.MuteCall;
+
+        /**
+         * Creates a plain object from a MuteCall message. Also converts values to other types if specified.
+         * @param message MuteCall
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.MuteCall, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this MuteCall to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace MuteCall {
+
+        /** MediaType enum. */
+        enum MediaType {
+            AUDIO = 0,
+            VIDEO = 1
+        }
+    }
+
     /** Properties of a CallConfig. */
     interface ICallConfig {
 
@@ -6900,6 +7137,9 @@ export namespace server {
 
         /** CallConfig iceTransportPolicy */
         iceTransportPolicy?: (server.CallConfig.IceTransportPolicy|null);
+
+        /** CallConfig iceRestartDelayMs */
+        iceRestartDelayMs?: (number|null);
     }
 
     /** Represents a CallConfig. */
@@ -6940,6 +7180,9 @@ export namespace server {
 
         /** CallConfig iceTransportPolicy. */
         public iceTransportPolicy: server.CallConfig.IceTransportPolicy;
+
+        /** CallConfig iceRestartDelayMs. */
+        public iceRestartDelayMs: number;
 
         /**
          * Creates a new CallConfig instance using the specified properties.
@@ -7827,6 +8070,12 @@ export namespace server {
         /** Msg holdCall */
         holdCall?: (server.IHoldCall|null);
 
+        /** Msg muteCall */
+        muteCall?: (server.IMuteCall|null);
+
+        /** Msg incomingCallPush */
+        incomingCallPush?: (server.IIncomingCallPush|null);
+
         /** Msg retryCount */
         retryCount?: (number|null);
 
@@ -7969,6 +8218,12 @@ export namespace server {
         /** Msg holdCall. */
         public holdCall?: (server.IHoldCall|null);
 
+        /** Msg muteCall. */
+        public muteCall?: (server.IMuteCall|null);
+
+        /** Msg incomingCallPush. */
+        public incomingCallPush?: (server.IIncomingCallPush|null);
+
         /** Msg retryCount. */
         public retryCount: number;
 
@@ -7976,7 +8231,7 @@ export namespace server {
         public rerequestCount: number;
 
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush");
 
         /**
          * Creates a new Msg instance using the specified properties.
@@ -13160,6 +13415,12 @@ export namespace server {
 
         /** EventData call */
         call?: (server.ICall|null);
+
+        /** EventData fabAction */
+        fabAction?: (server.IFabAction|null);
+
+        /** EventData groupHistoryReport */
+        groupHistoryReport?: (server.IGroupHistoryReport|null);
     }
 
     /** Represents an EventData. */
@@ -13213,8 +13474,14 @@ export namespace server {
         /** EventData call. */
         public call?: (server.ICall|null);
 
+        /** EventData fabAction. */
+        public fabAction?: (server.IFabAction|null);
+
+        /** EventData groupHistoryReport. */
+        public groupHistoryReport?: (server.IGroupHistoryReport|null);
+
         /** EventData edata. */
-        public edata?: ("mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport"|"permissions"|"mediaObjectDownload"|"groupDecryptionReport"|"call");
+        public edata?: ("mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport"|"permissions"|"mediaObjectDownload"|"groupDecryptionReport"|"call"|"fabAction"|"groupHistoryReport");
 
         /**
          * Creates a new EventData instance using the specified properties.
@@ -14023,6 +14290,9 @@ export namespace server {
 
         /** DecryptionReport isSilent */
         isSilent?: (boolean|null);
+
+        /** DecryptionReport contentType */
+        contentType?: (server.DecryptionReport.ContentType|null);
     }
 
     /** Represents a DecryptionReport. */
@@ -14060,6 +14330,9 @@ export namespace server {
 
         /** DecryptionReport isSilent. */
         public isSilent: boolean;
+
+        /** DecryptionReport contentType. */
+        public contentType: server.DecryptionReport.ContentType;
 
         /**
          * Creates a new DecryptionReport instance using the specified properties.
@@ -14138,6 +14411,12 @@ export namespace server {
         enum Status {
             OK = 0,
             FAIL = 1
+        }
+
+        /** ContentType enum. */
+        enum ContentType {
+            CHAT = 0,
+            GROUP_HISTORY = 1
         }
     }
 
@@ -14307,6 +14586,141 @@ export namespace server {
             COMMENT = 2,
             HISTORY_RESEND = 3
         }
+
+        /** Schedule enum. */
+        enum Schedule {
+            DAILY = 0,
+            RESULT_BASED = 1
+        }
+    }
+
+    /** Properties of a GroupHistoryReport. */
+    interface IGroupHistoryReport {
+
+        /** GroupHistoryReport gid */
+        gid?: (string|null);
+
+        /** GroupHistoryReport numExpected */
+        numExpected?: (number|null);
+
+        /** GroupHistoryReport numDecrypted */
+        numDecrypted?: (number|null);
+
+        /** GroupHistoryReport originalVersion */
+        originalVersion?: (string|null);
+
+        /** GroupHistoryReport rerequestCount */
+        rerequestCount?: (number|null);
+
+        /** GroupHistoryReport timeTakenS */
+        timeTakenS?: (number|null);
+
+        /** GroupHistoryReport schedule */
+        schedule?: (server.GroupHistoryReport.Schedule|null);
+    }
+
+    /** Represents a GroupHistoryReport. */
+    class GroupHistoryReport implements IGroupHistoryReport {
+
+        /**
+         * Constructs a new GroupHistoryReport.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IGroupHistoryReport);
+
+        /** GroupHistoryReport gid. */
+        public gid: string;
+
+        /** GroupHistoryReport numExpected. */
+        public numExpected: number;
+
+        /** GroupHistoryReport numDecrypted. */
+        public numDecrypted: number;
+
+        /** GroupHistoryReport originalVersion. */
+        public originalVersion: string;
+
+        /** GroupHistoryReport rerequestCount. */
+        public rerequestCount: number;
+
+        /** GroupHistoryReport timeTakenS. */
+        public timeTakenS: number;
+
+        /** GroupHistoryReport schedule. */
+        public schedule: server.GroupHistoryReport.Schedule;
+
+        /**
+         * Creates a new GroupHistoryReport instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GroupHistoryReport instance
+         */
+        public static create(properties?: server.IGroupHistoryReport): server.GroupHistoryReport;
+
+        /**
+         * Encodes the specified GroupHistoryReport message. Does not implicitly {@link server.GroupHistoryReport.verify|verify} messages.
+         * @param message GroupHistoryReport message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IGroupHistoryReport, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GroupHistoryReport message, length delimited. Does not implicitly {@link server.GroupHistoryReport.verify|verify} messages.
+         * @param message GroupHistoryReport message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IGroupHistoryReport, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GroupHistoryReport message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GroupHistoryReport
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.GroupHistoryReport;
+
+        /**
+         * Decodes a GroupHistoryReport message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GroupHistoryReport
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.GroupHistoryReport;
+
+        /**
+         * Verifies a GroupHistoryReport message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GroupHistoryReport message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GroupHistoryReport
+         */
+        public static fromObject(object: { [k: string]: any }): server.GroupHistoryReport;
+
+        /**
+         * Creates a plain object from a GroupHistoryReport message. Also converts values to other types if specified.
+         * @param message GroupHistoryReport
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.GroupHistoryReport, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GroupHistoryReport to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace GroupHistoryReport {
 
         /** Schedule enum. */
         enum Schedule {
@@ -14597,6 +15011,108 @@ export namespace server {
             UNKNOWN_NETWORK = 0,
             WIFI = 1,
             CELLULAR = 2
+        }
+    }
+
+    /** Properties of a FabAction. */
+    interface IFabAction {
+
+        /** FabAction type */
+        type?: (server.FabAction.FabActionType|null);
+    }
+
+    /** Represents a FabAction. */
+    class FabAction implements IFabAction {
+
+        /**
+         * Constructs a new FabAction.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IFabAction);
+
+        /** FabAction type. */
+        public type: server.FabAction.FabActionType;
+
+        /**
+         * Creates a new FabAction instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FabAction instance
+         */
+        public static create(properties?: server.IFabAction): server.FabAction;
+
+        /**
+         * Encodes the specified FabAction message. Does not implicitly {@link server.FabAction.verify|verify} messages.
+         * @param message FabAction message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IFabAction, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FabAction message, length delimited. Does not implicitly {@link server.FabAction.verify|verify} messages.
+         * @param message FabAction message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IFabAction, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FabAction message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FabAction
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.FabAction;
+
+        /**
+         * Decodes a FabAction message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FabAction
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.FabAction;
+
+        /**
+         * Verifies a FabAction message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FabAction message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FabAction
+         */
+        public static fromObject(object: { [k: string]: any }): server.FabAction;
+
+        /**
+         * Creates a plain object from a FabAction message. Also converts values to other types if specified.
+         * @param message FabAction
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.FabAction, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FabAction to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace FabAction {
+
+        /** FabActionType enum. */
+        enum FabActionType {
+            UNKNOWN_TYPE = 0,
+            GALLERY = 1,
+            AUDIO = 2,
+            TEXT = 3,
+            CAMERA = 4
         }
     }
 }

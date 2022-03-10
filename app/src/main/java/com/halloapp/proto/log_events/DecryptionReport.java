@@ -106,6 +106,95 @@ public  final class DecryptionReport extends
     // @@protoc_insertion_point(enum_scope:server.DecryptionReport.Status)
   }
 
+  /**
+   * Protobuf enum {@code server.DecryptionReport.ContentType}
+   */
+  public enum ContentType
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>CHAT = 0;</code>
+     */
+    CHAT(0),
+    /**
+     * <code>GROUP_HISTORY = 1;</code>
+     */
+    GROUP_HISTORY(1),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>CHAT = 0;</code>
+     */
+    public static final int CHAT_VALUE = 0;
+    /**
+     * <code>GROUP_HISTORY = 1;</code>
+     */
+    public static final int GROUP_HISTORY_VALUE = 1;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static ContentType valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static ContentType forNumber(int value) {
+      switch (value) {
+        case 0: return CHAT;
+        case 1: return GROUP_HISTORY;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<ContentType>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        ContentType> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<ContentType>() {
+            @java.lang.Override
+            public ContentType findValueByNumber(int number) {
+              return ContentType.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return ContentTypeVerifier.INSTANCE;
+    }
+
+    private static final class ContentTypeVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new ContentTypeVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return ContentType.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private ContentType(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.DecryptionReport.ContentType)
+  }
+
   public static final int RESULT_FIELD_NUMBER = 1;
   private int result_;
   /**
@@ -474,6 +563,48 @@ public  final class DecryptionReport extends
   private void clearIsSilent() {
     
     isSilent_ = false;
+  }
+
+  public static final int CONTENT_TYPE_FIELD_NUMBER = 10;
+  private int contentType_;
+  /**
+   * <code>.server.DecryptionReport.ContentType content_type = 10;</code>
+   * @return The enum numeric value on the wire for contentType.
+   */
+  @java.lang.Override
+  public int getContentTypeValue() {
+    return contentType_;
+  }
+  /**
+   * <code>.server.DecryptionReport.ContentType content_type = 10;</code>
+   * @return The contentType.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.log_events.DecryptionReport.ContentType getContentType() {
+    com.halloapp.proto.log_events.DecryptionReport.ContentType result = com.halloapp.proto.log_events.DecryptionReport.ContentType.forNumber(contentType_);
+    return result == null ? com.halloapp.proto.log_events.DecryptionReport.ContentType.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.DecryptionReport.ContentType content_type = 10;</code>
+   * @param value The enum numeric value on the wire for contentType to set.
+   */
+  private void setContentTypeValue(int value) {
+      contentType_ = value;
+  }
+  /**
+   * <code>.server.DecryptionReport.ContentType content_type = 10;</code>
+   * @param value The contentType to set.
+   */
+  private void setContentType(com.halloapp.proto.log_events.DecryptionReport.ContentType value) {
+    contentType_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.DecryptionReport.ContentType content_type = 10;</code>
+   */
+  private void clearContentType() {
+    
+    contentType_ = 0;
   }
 
   public static com.halloapp.proto.log_events.DecryptionReport parseFrom(
@@ -963,6 +1094,52 @@ public  final class DecryptionReport extends
       return this;
     }
 
+    /**
+     * <code>.server.DecryptionReport.ContentType content_type = 10;</code>
+     * @return The enum numeric value on the wire for contentType.
+     */
+    @java.lang.Override
+    public int getContentTypeValue() {
+      return instance.getContentTypeValue();
+    }
+    /**
+     * <code>.server.DecryptionReport.ContentType content_type = 10;</code>
+     * @param value The contentType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setContentTypeValue(int value) {
+      copyOnWrite();
+      instance.setContentTypeValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.DecryptionReport.ContentType content_type = 10;</code>
+     * @return The contentType.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.log_events.DecryptionReport.ContentType getContentType() {
+      return instance.getContentType();
+    }
+    /**
+     * <code>.server.DecryptionReport.ContentType content_type = 10;</code>
+     * @param value The enum numeric value on the wire for contentType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setContentType(com.halloapp.proto.log_events.DecryptionReport.ContentType value) {
+      copyOnWrite();
+      instance.setContentType(value);
+      return this;
+    }
+    /**
+     * <code>.server.DecryptionReport.ContentType content_type = 10;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearContentType() {
+      copyOnWrite();
+      instance.clearContentType();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.DecryptionReport)
   }
   @java.lang.Override
@@ -988,10 +1165,11 @@ public  final class DecryptionReport extends
             "rerequestCount_",
             "timeTakenS_",
             "isSilent_",
+            "contentType_",
           };
           java.lang.String info =
-              "\u0000\t\u0000\u0000\u0001\t\t\u0000\u0000\u0000\u0001\f\u0002\u0208\u0003\u0208" +
-              "\u0004\u0208\u0005\f\u0006\u0208\u0007\u000b\b\u000b\t\u0007";
+              "\u0000\n\u0000\u0000\u0001\n\n\u0000\u0000\u0000\u0001\f\u0002\u0208\u0003\u0208" +
+              "\u0004\u0208\u0005\f\u0006\u0208\u0007\u000b\b\u000b\t\u0007\n\f";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -378,6 +378,32 @@ public  final class CallConfig extends
     iceTransportPolicy_ = 0;
   }
 
+  public static final int ICE_RESTART_DELAY_MS_FIELD_NUMBER = 11;
+  private int iceRestartDelayMs_;
+  /**
+   * <code>int32 ice_restart_delay_ms = 11;</code>
+   * @return The iceRestartDelayMs.
+   */
+  @java.lang.Override
+  public int getIceRestartDelayMs() {
+    return iceRestartDelayMs_;
+  }
+  /**
+   * <code>int32 ice_restart_delay_ms = 11;</code>
+   * @param value The iceRestartDelayMs to set.
+   */
+  private void setIceRestartDelayMs(int value) {
+    
+    iceRestartDelayMs_ = value;
+  }
+  /**
+   * <code>int32 ice_restart_delay_ms = 11;</code>
+   */
+  private void clearIceRestartDelayMs() {
+    
+    iceRestartDelayMs_ = 0;
+  }
+
   public static com.halloapp.proto.server.CallConfig parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -771,6 +797,34 @@ public  final class CallConfig extends
       return this;
     }
 
+    /**
+     * <code>int32 ice_restart_delay_ms = 11;</code>
+     * @return The iceRestartDelayMs.
+     */
+    @java.lang.Override
+    public int getIceRestartDelayMs() {
+      return instance.getIceRestartDelayMs();
+    }
+    /**
+     * <code>int32 ice_restart_delay_ms = 11;</code>
+     * @param value The iceRestartDelayMs to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIceRestartDelayMs(int value) {
+      copyOnWrite();
+      instance.setIceRestartDelayMs(value);
+      return this;
+    }
+    /**
+     * <code>int32 ice_restart_delay_ms = 11;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearIceRestartDelayMs() {
+      copyOnWrite();
+      instance.clearIceRestartDelayMs();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.CallConfig)
   }
   @java.lang.Override
@@ -797,10 +851,12 @@ public  final class CallConfig extends
             "audioJitterBufferMaxPackets_",
             "audioJitterBufferFastAccelerate_",
             "iceTransportPolicy_",
+            "iceRestartDelayMs_",
           };
           java.lang.String info =
-              "\u0000\n\u0000\u0000\u0001\n\n\u0000\u0000\u0000\u0001\u0004\u0002\u0004\u0003\u0004" +
-              "\u0004\u0004\u0005\u0004\u0006\u0004\u0007\u0004\b\u0004\t\u0007\n\f";
+              "\u0000\u000b\u0000\u0000\u0001\u000b\u000b\u0000\u0000\u0000\u0001\u0004\u0002\u0004" +
+              "\u0003\u0004\u0004\u0004\u0005\u0004\u0006\u0004\u0007\u0004\b\u0004\t\u0007\n\f" +
+              "\u000b\u0004";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
