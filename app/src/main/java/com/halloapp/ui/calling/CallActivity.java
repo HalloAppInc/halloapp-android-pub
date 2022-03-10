@@ -34,7 +34,6 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.calling.CallParticipantsLayout;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -514,13 +513,13 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private void onMuteCameraClick() {
         boolean cameraMute = !callManager.isCameraMuted();
         if (cameraMute) {
-            callManager.detachCapturer();
+            participantsLayout.onLocalCameraMute(callManager::detachCapturer);
             muteCameraButtonView.setSelected(true);
-            participantsLayout.onLocalCameraMute();
         } else {
             createVideoCapturer();
             callManager.attachCapturer(videoCapturer, true);
             muteCameraButtonView.setSelected(false);
+            participantsLayout.onLocalCameraUnmute();
         }
     }
 

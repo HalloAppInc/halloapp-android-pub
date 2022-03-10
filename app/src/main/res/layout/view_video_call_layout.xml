@@ -15,14 +15,27 @@
         android:visibility="gone"
         />
 
-    <org.webrtc.SurfaceViewRenderer
-        android:id="@+id/call_local_video"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+    <FrameLayout
+        android:id="@+id/local_video_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="bottom|right"
-        android:visibility="visible"
-        />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_gravity="bottom|right">
+
+        <org.webrtc.SurfaceViewRenderer
+            android:id="@+id/call_local_video"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+        <ImageView
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/muted_local_overlay"/>
+
+    </FrameLayout>
+
 
 </merge>

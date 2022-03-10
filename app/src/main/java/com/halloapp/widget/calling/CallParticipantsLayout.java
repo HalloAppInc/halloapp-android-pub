@@ -2,13 +2,19 @@ package com.halloapp.widget.calling;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.PixelCopy;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -19,6 +25,7 @@ import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.calling.CallManager;
 import com.halloapp.calling.ProxyVideoSink;
+import com.halloapp.util.BitmapUtils;
 
 import org.webrtc.EglBase;
 import org.webrtc.RendererCommon;
@@ -28,6 +35,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public class CallParticipantsLayout extends FrameLayout {
+
+    private static final float BLUR_SCALE = 0.5f;
+    private static final int BLUR_RADIUS = 10;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({Quadrant.TOP_LEFT, Quadrant.TOP_RIGHT, Quadrant.BOTTOM_LEFT, Quadrant.BOTTOM_RIGHT, })
@@ -41,6 +51,9 @@ public class CallParticipantsLayout extends FrameLayout {
     private SurfaceViewRenderer remoteVideoView;
     private SurfaceViewRenderer localVideoView;
 
+    private View localVideoViewContainer;
+    private ImageView mutedLocalOverlayView;
+
     private final ProxyVideoSink remoteProxyVideoSink = new ProxyVideoSink();
     private final ProxyVideoSink localProxyVideoSink = new ProxyVideoSink();
 
@@ -49,6 +62,10 @@ public class CallParticipantsLayout extends FrameLayout {
     private int smallViewMargins;
 
     private boolean inCallView = false;
+
+    public interface MutedVideoListener {
+        void onReadyToDetach();
+    }
 
     public CallParticipantsLayout(@NonNull Context context) {
         this(context, null);
@@ -79,16 +96,19 @@ public class CallParticipantsLayout extends FrameLayout {
         smallViewHeight = getResources().getDimensionPixelSize(R.dimen.video_call_small_height);
         smallViewMargins = getResources().getDimensionPixelSize(R.dimen.video_call_small_margins);
 
+        localVideoViewContainer = findViewById(R.id.local_video_container);
+        mutedLocalOverlayView = findViewById(R.id.muted_local_overlay);
+
         remoteVideoView = findViewById(R.id.call_remote_video);
         localVideoView = findViewById(R.id.call_local_video);
-        localVideoView.setOnTouchListener((v, event) -> {
+        localVideoViewContainer.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 startX = event.getRawX();
                 startY = event.getRawY();
                 return true;
             } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                localVideoView.setTranslationX(event.getRawX() - startX);
-                localVideoView.setTranslationY(event.getRawY() - startY);
+                localVideoViewContainer.setTranslationX(event.getRawX() - startX);
+                localVideoViewContainer.setTranslationY(event.getRawY() - startY);
                 return true;
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 lockLocalToNearestCorner();
@@ -99,13 +119,12 @@ public class CallParticipantsLayout extends FrameLayout {
         localQuadrant = Preferences.getInstance().getLocalVideoViewQuadrant();
     }
 
-
     private void lockLocalToNearestCorner() {
         int viewWidth = getWidth();
         int viewHeight = getHeight();
 
-        float localCenterX = localVideoView.getX() + (localVideoView.getWidth() / 2f);
-        float localCenterY = localVideoView.getY() + (localVideoView.getHeight() / 2f);
+        float localCenterX = localVideoViewContainer.getX() + (localVideoViewContainer.getWidth() / 2f);
+        float localCenterY = localVideoViewContainer.getY() + (localVideoViewContainer.getHeight() / 2f);
 
         float centerX = viewWidth / 2f;
         float centerY = viewHeight / 2f;
@@ -129,7 +148,7 @@ public class CallParticipantsLayout extends FrameLayout {
     }
 
     private void lockToQuadrant(int corner, boolean animate) {
-        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) localVideoView.getLayoutParams();
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) localVideoViewContainer.getLayoutParams();
         float destX = 0;
         float destY = 0;
         switch (corner) {
@@ -141,53 +160,87 @@ public class CallParticipantsLayout extends FrameLayout {
             }
             case Quadrant.TOP_RIGHT: {
                 layoutParams.gravity = Gravity.TOP | Gravity.RIGHT;
-                destX = getWidth() - localVideoView.getWidth() - layoutParams.rightMargin;
+                destX = getWidth() - localVideoViewContainer.getWidth() - layoutParams.rightMargin;
                 destY = layoutParams.topMargin;
                 break;
             }
             case Quadrant.BOTTOM_RIGHT: {
                 layoutParams.gravity = Gravity.BOTTOM | Gravity.RIGHT;
-                destX = getWidth() - localVideoView.getWidth() - layoutParams.rightMargin;
-                destY = getHeight() - layoutParams.bottomMargin - localVideoView.getHeight();
+                destX = getWidth() - localVideoViewContainer.getWidth() - layoutParams.rightMargin;
+                destY = getHeight() - layoutParams.bottomMargin - localVideoViewContainer.getHeight();
                 break;
             }
             case Quadrant.BOTTOM_LEFT: {
                 layoutParams.gravity = Gravity.BOTTOM | Gravity.LEFT;
                 destX = layoutParams.leftMargin;
-                destY = getHeight() - layoutParams.bottomMargin - localVideoView.getHeight();
+                destY = getHeight() - layoutParams.bottomMargin - localVideoViewContainer.getHeight();
                 break;
             }
         }
         if (animate) {
-            localVideoView.setTranslationY(localVideoView.getY() - destY);
-            localVideoView.setTranslationX(localVideoView.getX() - destX);
-            localVideoView.animate().translationY(0).translationX(0).setDuration(200);
+            localVideoViewContainer.setTranslationY(localVideoViewContainer.getY() - destY);
+            localVideoViewContainer.setTranslationX(localVideoViewContainer.getX() - destX);
+            localVideoViewContainer.animate().translationY(0).translationX(0).setDuration(200);
         } else {
-            localVideoView.setTranslationX(0);
-            localVideoView.setTranslationY(0);
+            localVideoViewContainer.setTranslationX(0);
+            localVideoViewContainer.setTranslationY(0);
         }
-        localVideoView.setLayoutParams(layoutParams);
+        localVideoViewContainer.setLayoutParams(layoutParams);
     }
 
     public void enterPiPView() {
-        localVideoView.setVisibility(View.GONE);
+        localVideoViewContainer.setVisibility(View.GONE);
     }
 
     public void exitPiPView() {
-        localVideoView.setVisibility(View.VISIBLE);
+        localVideoViewContainer.setVisibility(View.VISIBLE);
     }
 
     public void showInCallView() {
         TransitionManager.beginDelayedTransition(this);
-        FrameLayout.LayoutParams localParams = (FrameLayout.LayoutParams) localVideoView.getLayoutParams();
+        FrameLayout.LayoutParams localParams = (FrameLayout.LayoutParams) localVideoViewContainer.getLayoutParams();
         localParams.height = smallViewHeight;
         localParams.width = smallViewWidth;
         localParams.setMargins(smallViewMargins, smallViewMargins, smallViewMargins, smallViewMargins + bottomMargin);
-        localVideoView.setLayoutParams(localParams);
+        localVideoViewContainer.setLayoutParams(localParams);
         remoteVideoView.setVisibility(View.VISIBLE);
 
         lockToQuadrant(localQuadrant, false);
         inCallView = true;
+    }
+
+    public void onLocalCameraMute(@Nullable MutedVideoListener listener) {
+        if (Build.VERSION.SDK_INT >= 24) {
+            Bitmap bmp = Bitmap.createBitmap(localVideoView.getWidth(), localVideoView.getHeight(), Bitmap.Config.ARGB_8888);
+            PixelCopy.request(localVideoView, bmp, i -> {
+                setMutedLastFrame(bmp);
+                localVideoView.clearImage();
+            }, new Handler(Looper.getMainLooper()));
+            if (listener != null) {
+                listener.onReadyToDetach();
+            }
+        } else {
+            // Wait for next frame to blur and then detach
+            localVideoView.addFrameListener(bitmap -> {
+                if (listener != null) {
+                    listener.onReadyToDetach();
+                }
+                setMutedLastFrame(bitmap);
+            }, 1f);
+            localVideoView.clearImage();
+        }
+    }
+
+    private void setMutedLastFrame(@Nullable Bitmap lastFrame) {
+        if (lastFrame != null) {
+            mutedLocalOverlayView.setImageBitmap(BitmapUtils.fastblur(lastFrame, BLUR_SCALE, BLUR_RADIUS));
+            mutedLocalOverlayView.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+    public void onLocalCameraUnmute() {
+        mutedLocalOverlayView.setVisibility(View.GONE);
     }
 
     public void bind(@NonNull CallManager callManager) {
@@ -211,29 +264,24 @@ public class CallParticipantsLayout extends FrameLayout {
 
     public void updateLocalViewBottomMargin(float y, int duration) {
         if (inCallView) {
-            if (localVideoView != null) {
-                localVideoView.clearAnimation();
-                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) localVideoView.getLayoutParams();
+            if (localVideoViewContainer != null) {
+                localVideoViewContainer.clearAnimation();
+                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) localVideoViewContainer.getLayoutParams();
                 int bottomMarginStart = lp.bottomMargin;
                 int bottomMarginEnd = (int) (smallViewMargins + y);
                 Animation animation = new Animation() {
                     @Override
                     protected void applyTransformation(float interpolatedTime, Transformation t) {
-                        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) localVideoView.getLayoutParams();
+                        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) localVideoViewContainer.getLayoutParams();
                         layoutParams.bottomMargin = bottomMarginStart + (int) ((bottomMarginEnd - bottomMarginStart) * interpolatedTime);
-                        localVideoView.setLayoutParams(layoutParams);
+                        localVideoViewContainer.setLayoutParams(layoutParams);
                     }
                 };
                 bottomMargin = (int) y;
                 animation.setDuration(duration);
-                localVideoView.startAnimation(animation);
+                localVideoViewContainer.startAnimation(animation);
             }
         }
-    }
-
-    // TODO (nikola): instead of clearing we should blur it.
-    public void onLocalCameraMute() {
-        localVideoView.clearImage();
     }
 
     public void destroy() {
