@@ -916,7 +916,7 @@
     <!-- Label for button to end the call -->
     <string name="end_call">End call</string>
     <!-- Rationale for when requesting microphone or camera permission for voice calls, but it has already been denied. -->
-    <string name="call_record_audio_or_camera_permission_rationale_denied">To make a voice or video calls we need permission to access the microphone and camera.\n\nOpen the app settings screen to modify app permissions.</string>
+    <string name="call_record_audio_or_camera_permission_rationale_denied">To make a voice or video call we need permission to access the microphone and camera.\n\nOpen the app settings screen to modify app permissions.</string>
     <!-- Label for button to see all rows -->
     <string name="see_all">See all</string>
     <!-- Toast shown when user tries to press the start button but the another call is already in progress. -->
