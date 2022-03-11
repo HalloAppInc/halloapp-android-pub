@@ -3,6 +3,7 @@ package com.halloapp.ui.home;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -19,6 +20,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -29,6 +32,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.contacts.Contact;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.media.VoiceNotePlayer;
@@ -39,7 +43,10 @@ import com.halloapp.ui.ActivityCenterViewModel;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.PostsFragment;
+import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.ui.avatar.DeviceAvatarLoader;
 import com.halloapp.ui.invites.InviteContactsActivity;
+import com.halloapp.ui.posts.InviteFriendsPostViewHolder;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
@@ -48,6 +55,7 @@ import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.BadgedDrawable;
 import com.halloapp.widget.FabExpandOnScrollListener;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
+import com.halloapp.xmpp.invites.InvitesResponseIq;
 
 import java.util.List;
 
@@ -63,6 +71,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     private ActivityCenterViewModel activityCenterViewModel;
     private BadgedDrawable notificationDrawable;
     private PostThumbnailLoader postThumbnailLoader;
+    private DeviceAvatarLoader deviceAvatarLoader;
 
     private boolean scrollUpOnDataLoaded;
     private boolean restoreStateOnDataLoaded;
@@ -87,6 +96,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         super.onCreate(savedInstanceState);
         final Context context = requireContext();
         postThumbnailLoader = new PostThumbnailLoader(context, context.getResources().getDimensionPixelSize(R.dimen.comment_history_thumbnail_size));
+        deviceAvatarLoader = new DeviceAvatarLoader(context);
         Log.d("HomeFragment: onCreate");
     }
 
@@ -95,6 +105,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         super.onDestroy();
         Log.d("HomeFragment: onDestroy");
         postThumbnailLoader.destroy();
+        deviceAvatarLoader.destroy();
     }
 
     private LinearLayoutManager layoutManager;
@@ -156,6 +167,10 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                     pausedNewPostHide = false;
                 }
             }
+        });
+
+        viewModel.getSuggestedContacts().observe(getViewLifecycleOwner(), list -> {
+            adapter.notifyDataSetChanged();
         });
 
         viewModel.unseenHomePosts.getLiveData().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
@@ -238,6 +253,11 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         postsView.setAdapter(adapter);
 
         return root;
+    }
+
+    @Override
+    protected PostsAdapter createAdapter() {
+        return new HomePostAdapter();
     }
 
     private void onScrollToTop() {
@@ -412,5 +432,139 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
         updateContactsNag(false);
+    }
+
+    private void sendInvite(@NonNull Contact contact) {
+        if (contact.normalizedPhone == null) {
+            Log.e("InvitecontactsActivity/sendInvite null contact phone");
+            return;
+        }
+        ProgressDialog dialog = ProgressDialog.show(requireContext(), null, getString(R.string.invite_creation_in_progress));
+        viewModel.sendInvite(contact).observe(this, nullableResult -> {
+            dialog.cancel();
+            if (nullableResult != InvitesResponseIq.Result.SUCCESS) {
+                showErrorDialog(nullableResult);
+            } else {
+                onSuccessfulInvite(contact);
+            }
+        });
+    }
+
+    private void onSuccessfulInvite(@NonNull Contact contact) {
+        Intent chooser = IntentUtils.createSmsChooserIntent(requireContext(), getString(R.string.invite_friend_chooser_title, contact.getShortName()), Preconditions.checkNotNull(contact.normalizedPhone), getInviteText(contact));
+        startActivity(chooser);
+    }
+
+    private void showErrorDialog(@Nullable @InvitesResponseIq.Result Integer result) {
+        @StringRes int errorMessageRes;
+        if (result == null) {
+            errorMessageRes = R.string.invite_failed_internet;
+        } else {
+            switch (result) {
+                case InvitesResponseIq.Result.EXISTING_USER:
+                    errorMessageRes = R.string.invite_failed_existing_user;
+                    break;
+                case InvitesResponseIq.Result.INVALID_NUMBER:
+                    errorMessageRes = R.string.invite_failed_invalid_number;
+                    break;
+                case InvitesResponseIq.Result.NO_INVITES_LEFT:
+                    errorMessageRes = R.string.invite_failed_no_invites;
+                    break;
+                case InvitesResponseIq.Result.NO_ACCOUNT:
+                case InvitesResponseIq.Result.UNKNOWN:
+                default:
+                    errorMessageRes = R.string.invite_failed_unknown;
+                    break;
+            }
+        }
+        AlertDialog dialog = new AlertDialog.Builder(requireContext()).setMessage(errorMessageRes).setPositiveButton(R.string.ok, null).create();
+        dialog.show();
+    }
+
+    private String getInviteText(Contact contact) {
+        return getString(R.string.invite_text_with_name_and_number, contact.getShortName(), contact.getDisplayPhone(), Constants.DOWNLOAD_LINK_URL);
+    }
+
+    protected class HomePostAdapter extends PostsAdapter {
+
+        private int inviteCardIndex = -1;
+
+        private InviteFriendsPostViewHolder.Host host = new InviteFriendsPostViewHolder.Host() {
+            @Override
+            public void sendInvite(Contact contact) {
+                HomeFragment.this.sendInvite(contact);
+            }
+
+            @Override
+            public DeviceAvatarLoader getAvatarLoader() {
+                return deviceAvatarLoader;
+            }
+        };
+
+        @Override
+        public long getItemId(int position) {
+            if (position == inviteCardIndex) {
+                return -position;
+            }
+            if (position < inviteCardIndex) {
+                return super.getItemId(position);
+            } else if (inviteCardIndex != -1) {
+                super.getItemId(position - 1);
+            }
+            return super.getItemId(position);
+        }
+
+        @Override
+        public int getItemCount() {
+            int count = super.getItemCount();
+            if (count <= 0) {
+                inviteCardIndex = -1;
+                return count;
+            } else {
+                List<Contact> suggestedList = viewModel.getSuggestedContacts().getValue();
+                if (suggestedList == null || suggestedList.isEmpty()) {
+                    inviteCardIndex = -1;
+                    return count;
+                } else {
+                    inviteCardIndex = Math.min(5, count);
+                    return count + 1;
+                }
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (position == inviteCardIndex) {
+                return POST_TYPE_INVITE_CARD;
+            }
+            if (position < inviteCardIndex) {
+                return super.getItemViewType(position);
+            } else if (inviteCardIndex != -1) {
+                return super.getItemViewType(position - 1);
+            }
+            return super.getItemViewType(position);
+        }
+
+        @NonNull
+        @Override
+        public ViewHolderWithLifecycle onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            if (viewType != POST_TYPE_INVITE_CARD) {
+                return super.onCreateViewHolder(parent, viewType);
+            }
+            InviteFriendsPostViewHolder viewHolder = new InviteFriendsPostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_invite_card, parent, false), host);
+            return viewHolder;
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolderWithLifecycle holder, int position) {
+            if (holder instanceof InviteFriendsPostViewHolder) {
+                ((InviteFriendsPostViewHolder) holder).bindTo(viewModel.getSuggestedContacts());
+            } else {
+                if (inviteCardIndex != -1 && position > inviteCardIndex) {
+                    position -= 1;
+                }
+                super.onBindViewHolder(holder, position);
+            }
+        }
     }
 }

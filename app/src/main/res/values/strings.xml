@@ -89,6 +89,10 @@
     <string name="send">Send</string>
     <string name="set_avatar_done">Done</string>
     <string name="set_avatar_reset">Reset</string>
+    <!-- text shown in a card prompting user to search for friends/family to invite -->
+    <string name="invite_card_search_text">Search for more friends and family</string>
+    <!-- Text shown as title for invite suggested friends card -->
+    <string name="invite_card_header">HalloApp is fun with friends and family</string>
     <string name="new_post">New post</string>
     <!-- Keep relatively short (try to fit on one line), shows at top of screen. User can tap to return to current ongoing call -->
     <string name="tap_to_return_to_call">Tap to return to call</string>

@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 
+import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
@@ -45,6 +46,7 @@ public class ContactsDb {
         void onContactsChanged();
         void onContactsReset();
         void onNewContacts(@NonNull Collection<UserId> newContacts);
+        void onSuggestedContactDismissed(long addressBookId);
     }
 
     public static class BaseObserver implements Observer {
@@ -57,6 +59,11 @@ public class ContactsDb {
 
         @Override
         public void onNewContacts(@NonNull Collection<UserId> newContacts) { }
+
+        @Override
+        public void onSuggestedContactDismissed(long addressBookId) {
+
+        }
     }
 
     public static ContactsDb getInstance() {
@@ -551,14 +558,20 @@ public class ContactsDb {
                 SQLiteDatabase.CONFLICT_ABORT);
     }
 
-    public void markContactIgnoreForInviteSuggestion(Contact contact) {
-        ContentValues values = new ContentValues();
-        values.put(ContactsTable.COLUMN_DONT_SUGGEST, true);
-        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
-                ContactsTable._ID + "=? ",
-                new String [] {Long.toString(contact.rowId)},
-                SQLiteDatabase.CONFLICT_ABORT);
+    @AnyThread
+    public void dismissSuggestedContact(Contact contact) {
+        databaseWriteExecutor.execute(() -> {
+            ContentValues values = new ContentValues();
+            values.put(ContactsTable.COLUMN_DONT_SUGGEST, true);
+            final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+            int rows = db.updateWithOnConflict(ContactsTable.TABLE_NAME, values,
+                    ContactsTable._ID + "=? ",
+                    new String [] {Long.toString(contact.rowId)},
+                    SQLiteDatabase.CONFLICT_ABORT);
+            if (rows > 0) {
+                notifySuggestedContactDismissed(contact);
+            }
+        });
     }
 
     @WorkerThread
@@ -577,7 +590,7 @@ public class ContactsDb {
                         ContactsTable.COLUMN_INVITED,
                         ContactsTable.COLUMN_DONT_SUGGEST
                 },
-                ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL AND " + ContactsTable.COLUMN_DONT_SUGGEST + "=0",
+                ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL AND (" + ContactsTable.COLUMN_DONT_SUGGEST + " IS NULL OR " + ContactsTable.COLUMN_DONT_SUGGEST + "!=1)",
                 null, null, null, ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS + " DESC", "50")) {
             final Set<String> addressIdSet = new HashSet<>();
             final Set<String> phoneNumberSet = new HashSet<>();
@@ -931,6 +944,14 @@ public class ContactsDb {
         synchronized (observers) {
             for (Observer observer : observers) {
                 observer.onContactsReset();
+            }
+        }
+    }
+
+    private void notifySuggestedContactDismissed(Contact contact) {
+        synchronized (observers) {
+            for (Observer observer : observers) {
+                observer.onSuggestedContactDismissed(contact.addressBookId);
             }
         }
     }

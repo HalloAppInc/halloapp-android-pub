@@ -76,6 +76,10 @@
     <color name="message_state_sent">#66C3DDFF</color>
     <color name="message_state_read">#69A1FF</color>
 
+    <color name="default_avatar_bg">#46423B</color>
+    <color name="default_avatar_color">#95918A</color>
+
+    <color name="invite_card_border">@color/white_20</color>
     <color name="group_bg_ring_stroke">@color/white_20</color>
 
     <color name="settings_header_background">#353535</color>

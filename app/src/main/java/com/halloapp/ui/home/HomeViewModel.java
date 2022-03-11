@@ -15,6 +15,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.halloapp.contacts.Contact;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.VoiceNotePlayer;
@@ -28,17 +29,27 @@ import com.halloapp.content.PostsDataSource;
 import com.halloapp.id.UserId;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.invites.InvitesApi;
+import com.halloapp.xmpp.invites.InvitesResponseIq;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HomeViewModel extends AndroidViewModel {
 
     private static final String STATE_SAVED_SCROLL_STATE = "homeviewmodel_saved_scroll_state";
+    private static final int MAX_SUGGESTED_CONTACTS = 21;
 
     final LiveData<PagedList<Post>> postList;
 
     final ComputableLiveData<Boolean> unseenHomePosts;
+    final MutableLiveData<List<Contact>> suggestedContacts = new MutableLiveData<>(null);
 
     private MutableLiveData<Boolean> fabMenuOpen = new MutableLiveData<>(false);
 
@@ -50,6 +61,8 @@ public class HomeViewModel extends AndroidViewModel {
     private final AtomicBoolean pendingIncoming = new AtomicBoolean(false);
     private final PostsDataSource.Factory dataSourceFactory;
     private final PermissionWatcher permissionWatcher = PermissionWatcher.getInstance();
+
+    private InvitesApi invitesApi;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
@@ -127,6 +140,26 @@ public class HomeViewModel extends AndroidViewModel {
         }
     };
 
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
+
+        @Override
+        public void onSuggestedContactDismissed(long addressBookId) {
+            List<Contact> currentList = suggestedContacts.getValue();
+            if (currentList == null) {
+                return;
+            }
+            currentList = new ArrayList<>(currentList);
+            ListIterator<Contact> iterator = currentList.listIterator();
+            while (iterator.hasNext()) {
+                Contact contact = iterator.next();
+                if (contact.getAddressBookId() == addressBookId) {
+                    iterator.remove();
+                }
+            }
+            suggestedContacts.postValue(currentList);
+        }
+    };
+
     public HomeViewModel(@NonNull Application application) {
         super(application);
 
@@ -134,7 +167,10 @@ public class HomeViewModel extends AndroidViewModel {
         contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
         contactsDb = ContactsDb.getInstance();
+        contactsDb.addObserver(contactsObserver);
         preferences = Preferences.getInstance();
+
+        invitesApi = new InvitesApi(Connection.getInstance());
 
         dataSourceFactory = new PostsDataSource.Factory(contentDb, null, null);
         postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
@@ -152,6 +188,35 @@ public class HomeViewModel extends AndroidViewModel {
                 return !unseenPosts.isEmpty();
             }
         };
+
+        loadSuggestedContacts();
+    }
+
+    private void loadSuggestedContacts() {
+        bgWorkers.execute(() -> {
+            List<Contact> contacts = contactsDb.getSuggestedContactsForInvite();
+            Collections.shuffle(contacts);
+            if (contacts.size() > MAX_SUGGESTED_CONTACTS) {
+                contacts = contacts.subList(0, MAX_SUGGESTED_CONTACTS);
+            }
+            suggestedContacts.postValue(contacts);
+        });
+    }
+
+    public LiveData<Integer> sendInvite(@NonNull Contact contact) {
+        MutableLiveData<Integer> inviteResult = new MutableLiveData<>();
+        bgWorkers.execute(() -> {
+            invitesApi.sendInvite(Preconditions.checkNotNull(contact.normalizedPhone)).onResponse(result -> {
+                inviteResult.postValue(result);
+                if (result != null && InvitesResponseIq.Result.SUCCESS == result) {
+                    contactsDb.markInvited(contact);
+                }
+            }).onError(e -> {
+                inviteResult.postValue(InvitesResponseIq.Result.UNKNOWN);
+                Log.e("inviteFriendsViewModel/sendInvite failed to send invite", e);
+            });
+        });
+        return inviteResult;
     }
 
     public void loadSavedState(@Nullable Bundle savedInstanceState) {
@@ -170,9 +235,14 @@ public class HomeViewModel extends AndroidViewModel {
         return unseenHomePosts.getLiveData();
     }
 
+    public LiveData<List<Contact>> getSuggestedContacts() {
+        return suggestedContacts;
+    }
+
     @Override
     protected void onCleared() {
         contentDb.removeObserver(contentObserver);
+        contactsDb.removeObserver(contactsObserver);
         voiceNotePlayer.onCleared();
     }
 

@@ -52,7 +52,7 @@ import com.halloapp.widget.DrawDelegateView;
 
 public abstract class PostsFragment extends HalloFragment {
 
-    protected final PostsAdapter adapter = new PostsAdapter();
+    protected final PostsAdapter adapter = createAdapter();
     protected ViewGroup parentViewGroup;
 
     private MediaThumbnailLoader mediaThumbnailLoader;
@@ -118,6 +118,10 @@ public abstract class PostsFragment extends HalloFragment {
         drawDelegateView = requireActivity().findViewById(R.id.draw_delegate);
     }
 
+    protected PostsAdapter createAdapter() {
+        return new PostsAdapter();
+    }
+
     private static final DiffUtil.ItemCallback<Post> DIFF_CALLBACK = new DiffUtil.ItemCallback<Post>() {
 
         @Override
@@ -147,6 +151,7 @@ public abstract class PostsFragment extends HalloFragment {
         static final int POST_TYPE_ZERO_ZONE_GROUP = 0x06;
         static final int POST_TYPE_VOICE_NOTE = 0x07;
         static final int POST_TYPE_COLLAPSED = 0x08;
+        protected static final int POST_TYPE_INVITE_CARD = 0x09;
         static final int POST_TYPE_MASK = 0xFF;
 
         static final int POST_DIRECTION_OUTGOING = 0x0000;
@@ -257,7 +262,7 @@ public abstract class PostsFragment extends HalloFragment {
             }
         };
 
-        PostsAdapter() {
+        protected PostsAdapter() {
             super(new HeaderFooterAdapter.HeaderFooterAdapterParent() {
                 @NonNull
                 @Override

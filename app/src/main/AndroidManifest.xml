@@ -241,7 +241,7 @@
         <activity android:name=".ui.invites.InviteContactsActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/invite_title"
-            android:windowSoftInputMode="stateUnchanged|adjustResize"/>
+            android:windowSoftInputMode="adjustResize"/>
 
         <activity android:name=".ui.groups.GroupInviteLinkActivity"
             android:theme="@style/AppTheme"

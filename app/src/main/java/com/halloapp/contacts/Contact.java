@@ -116,6 +116,10 @@ public class Contact implements Parcelable {
         return contacts;
     }
 
+    public long getAddressBookId() {
+        return addressBookId;
+    }
+
     public boolean inAddressBook() {
         return !TextUtils.isEmpty(addressBookName);
     }

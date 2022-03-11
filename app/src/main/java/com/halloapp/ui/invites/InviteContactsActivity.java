@@ -50,6 +50,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class InviteContactsActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
     public static final String EXTRA_SEARCH_TEXT = "search_text";
+    public static final String EXTRA_SHOW_KEYBOARD = "show_keyboard";
 
     private static final int OPEN_INVITE_COUNT = 10_000;
 
@@ -103,6 +104,9 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
         if (searchText != null) {
             searchBox.setText(searchText);
             searchBox.setSelection(searchText.length());
+        }
+        if (getIntent().getBooleanExtra(EXTRA_SHOW_KEYBOARD, false)) {
+            KeyboardUtils.showSoftKeyboard(searchBox);
         }
         adapter.setParent(new InviteContactsAdapter.InviteContactsAdapterParent() {
             @Override

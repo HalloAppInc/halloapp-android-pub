@@ -5,16 +5,16 @@
     android:viewportHeight="52">
   <path
       android:pathData="M26,26m-26,0a26,26 0,1 1,52 0a26,26 0,1 1,-52 0"
-      android:fillColor="#C3BEAE"/>
+      android:fillColor="@color/default_avatar_bg"/>
   <path
       android:pathData="M13,35.3601a13,6.24 0,1 0,26 0a13,6.24 0,1 0,-26 0z"
-      android:fillColor="#ffffff"/>
+      android:fillColor="@color/default_avatar_color"/>
   <path
       android:pathData="M14,35.0134C14,34.3145 14.3422,33.6283 15.0804,32.947C15.8254,32.2594 16.9051,31.6464 18.1799,31.1357C20.731,30.1138 23.8112,29.6001 25.8267,29.6001C27.8421,29.6001 30.9224,30.1138 33.4735,31.1357C34.7482,31.6464 35.828,32.2594 36.5729,32.947C37.3112,33.6283 37.6533,34.3145 37.6533,35.0134V35.3697C37.6533,36.3917 36.8249,37.2201 35.803,37.2201H25.8267H15.8504C14.8284,37.2201 14,36.3917 14,35.3697V35.0134Z"
       android:strokeWidth="2"
-      android:fillColor="#ffffff"
-      android:strokeColor="#ffffff"/>
+      android:fillColor="@color/default_avatar_color"
+      android:strokeColor="@color/default_avatar_color"/>
   <path
       android:pathData="M33.8434,17.3765C33.8434,21.804 30.2542,25.3932 25.8267,25.3932C21.3992,25.3932 17.8101,21.804 17.8101,17.3765C17.8101,12.949 21.3992,9.3599 25.8267,9.3599C30.2542,9.3599 33.8434,12.949 33.8434,17.3765Z"
-      android:fillColor="#ffffff"/>
+      android:fillColor="@color/default_avatar_color"/>
 </vector>
