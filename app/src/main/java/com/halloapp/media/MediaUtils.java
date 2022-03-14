@@ -448,6 +448,7 @@ public class MediaUtils {
     }
 
     public static @NonNull Map<Uri, Integer> getMediaTypes(@NonNull Context context, @NonNull Collection<Uri> uris) {
+        uris = new ArrayList<>(uris);
         List<Long> list = new ArrayList<>();
         HashMap<Uri, Integer> types = new HashMap<>();
 
