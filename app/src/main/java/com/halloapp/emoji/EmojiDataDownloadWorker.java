@@ -77,8 +77,12 @@ public class EmojiDataDownloadWorker extends Worker {
         int serverEmojiVersion = serverProps.getEmojiVersion();
         int localEmojiVersion = preferences.getLocalEmojiVersion();
         if (serverEmojiVersion <= localEmojiVersion) {
-            Log.i("EmojiDataDownloadWorker/doWork current emoji version up to date local=" + localEmojiVersion + "; server=" + serverEmojiVersion);
-            return Result.success();
+            if (emojiManager.validateFiles()) {
+                Log.i("EmojiDataDownloadWorker/doWork current emoji version up to date local=" + localEmojiVersion + "; server=" + serverEmojiVersion);
+                return Result.success();
+            } else {
+                Log.e("EmojiDataDownloadWorker/doWork current emoji files are corrupted or invalid, redownloading");
+            }
         }
         Log.i("EmojiDataDownloadWorker/doWork new downloading new emoji version local=" + localEmojiVersion + "; server=" + serverEmojiVersion);
         File emojiJson = fileStore.getTmpFile(getTempEmojiDataFile(serverEmojiVersion));
@@ -96,15 +100,22 @@ public class EmojiDataDownloadWorker extends Worker {
             Log.e("EmojiDataDownloadWorker/doWork failed to parse emoji picker data, aborting");
             return Result.failure();
         }
-        File tempFontFile = fileStore.getTmpFile(getTempFontFile(serverEmojiVersion));
-        try {
-            downloadFont(serverEmojiVersion, emojiPickerData.fontHash, tempFontFile);
-        } catch (IOException e) {
-            Log.e("EmojiDataDownloadWorker/doWork failed to download emoji font", e);
-            return Result.retry();
-        }
-        if (!emojiManager.updateEmojis(serverEmojiVersion, emojiJson, tempFontFile)) {
-            return Result.retry();
+        if (Objects.equals(emojiPickerData.fontHash, emojiManager.getCurrentFontHash())) {
+            Log.i("EmojiDataDownloadWorker/downloadFont font already downloaded");
+            if (!emojiManager.updateEmojis(serverEmojiVersion, emojiJson, null)) {
+                return Result.retry();
+            }
+        } else {
+            File tempFontFile = fileStore.getTmpFile(getTempFontFile(serverEmojiVersion));
+            try {
+                downloadFont(serverEmojiVersion, emojiPickerData.fontHash, tempFontFile);
+            } catch (IOException e) {
+                Log.e("EmojiDataDownloadWorker/doWork failed to download emoji font", e);
+                return Result.retry();
+            }
+            if (!emojiManager.updateEmojis(serverEmojiVersion, emojiJson, tempFontFile)) {
+                return Result.retry();
+            }
         }
         return Result.success();
     }

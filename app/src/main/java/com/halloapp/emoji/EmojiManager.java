@@ -3,6 +3,8 @@ package com.halloapp.emoji;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import androidx.emoji2.text.DefaultEmojiCompatConfig;
 import androidx.emoji2.text.EmojiCompat;
 import androidx.lifecycle.LiveData;
@@ -13,10 +15,14 @@ import com.halloapp.FileStore;
 import com.halloapp.Preferences;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.FileUtils;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
 
 public class EmojiManager {
 
@@ -104,6 +110,7 @@ public class EmojiManager {
                 emojiPickerDataMutableLiveData.postValue(emojiPickerData);
             } catch (IOException e) {
                 Log.e("EmojiManager/init failed to load emoji picker data", e);
+                EmojiDataDownloadWorker.schedule(context);
             }
         });
     }
@@ -118,14 +125,48 @@ public class EmojiManager {
         return new File(emojiDir, EMOJI_DATA_FILE);
     }
 
-    public boolean updateEmojis(int newVersion, File emojiData, File emojiFont) {
+    @WorkerThread
+    public boolean validateFiles() {
+        EmojiPickerData pickerData;
+        try {
+            pickerData = EmojiPickerData.parse(getEmojiDataFile());
+        } catch (IOException e) {
+            Log.e("EmojiManager/validateFiles failed to parse picker data", e);
+            return false;
+        }
+        File font = getEmojiFontFile();
+        String md5 = getFileHash(font);
+        if (!Objects.equals(pickerData.fontHash, md5)) {
+            Log.e("EmojiManager/validateFiles md5 mismatch expected=" + pickerData.fontHash + " actual=" + md5);
+            return false;
+        }
+        return true;
+    }
+
+    @Nullable
+    private String getFileHash(File file) {
+        try {
+            byte[] md5 = FileUtils.getFileMd5(file);
+            return StringUtils.bytesToHexString(md5);
+        } catch (IOException | NoSuchAlgorithmException e) {
+            Log.e("EmojiManager/getFileHash failed to get hash", e);
+        }
+        return null;
+    }
+
+    @Nullable
+    public String getCurrentFontHash() {
+        return getFileHash(getEmojiDataFile());
+    }
+
+    public boolean updateEmojis(int newVersion, @Nullable File emojiData, @Nullable File emojiFont) {
         Log.i("EmojiManager/updating emojis to version=" + newVersion);
         File emojiDir = fileStore.getEmojiDir();
-        if (!emojiFont.renameTo(new File(emojiDir, EMOJI_FONT_FILE))) {
+        if (emojiFont != null && !emojiFont.renameTo(new File(emojiDir, EMOJI_FONT_FILE))) {
             Log.e("EmojiManager/updateEmojis failed to move font file");
             return false;
         }
-        if (!emojiData.renameTo(getEmojiDataFile())) {
+        if (emojiData != null && !emojiData.renameTo(getEmojiDataFile())) {
             Log.e("EmojiManager/updateEmojis failed to move emoji data");
             return false;
         }
