@@ -36,7 +36,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <!-- Version 0.158 : current string was not transmitted -->
     <string name="contact_permission_title">"Noch ein Hinweis"</string>
     <string name="registration_code_invalid">"Ungültiger Registrierungscode, versuch es noch einmal"</string>
-    <string name="registration_failed">"Fehler bei der Registrierung der Handynummer, versuch es noch einmal"</string>
+    <string name="registration_failed">"Handynummer kann nicht registriert werden, versuch es noch einmal"</string>
     <string name="registration_failed_no_friends">"Die Nutzung ist derzeit nur mit Einladung möglich. Falls du Freunde oder Familienmitglieder hast, die HalloApp bereits nutzen, bitte sie, dich mit deiner Handynummer einzuladen."</string>
     <string name="registration_failed_no_friends_title">"Ups!"</string>
     <string name="type_a_message_hint">"Nachricht eingeben"</string>
@@ -93,7 +93,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
 
     <!-- the href probably shouldn't be part of the translated string -->
     <string name="contact_rationale_upload">"Um den Kontakt zu deinen Freunden und deiner Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;"</string>
-    <string name="failed_to_initialize">"Fehler bei der Initialisierung"</string>
+    <string name="failed_to_initialize">"Initialisierung fehlgeschlagen"</string>
     <string name="type_a_comment_hint">"Kommentar hinzufügen"</string>
     <string name="comments">"Kommentare"</string>
     <string name="reply">"Antworten"</string>
@@ -115,7 +115,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="list_of_many_middle">", %s"</string>
     <string name="list_of_many_end">"und %s"</string>
     <string name="no_activity">"Keine Aktivität"</string>
-    <string name="failed_to_load_media">"Fehler beim Hochladen des Mediums"</string>
+    <string name="failed_to_load_media">"Media kann nicht geladen werden"</string>
     <string name="settings">"Einstellungen"</string>
     <string name="send_logs">"Feedback und Logs teilen"</string>
     <string name="terms_of_service">"Nutzungsbedingungen"</string>
@@ -269,7 +269,7 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <!-- Can I get a screenshot pls -->
     <string name="counter">"%1$d/%2$d"</string>
     <string name="invite_pending">"In Bearbeitung"</string>
-    <string name="failed_update_profile">"Fehler bei der Aktualisierung des Profils, probiere es später noch einmal"</string>
+    <string name="failed_update_profile">"Profil kann nicht aktualisiert werden, versuche es später noch einmal"</string>
     <string name="profile_updated">"Profil wurde aktualisiert"</string>
     <string name="flip">"Drehen"</string>
     <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
@@ -348,16 +348,16 @@ Version: %2$s
     <string name="setting_feed_all">"Meine Kontakte"</string>
     <string name="setting_feed_only">"Nur teilen mit…"</string>
     <string name="setting_feed_except">"Meine Kontakte außer …"</string>
-    <string name="feed_privacy_fail_to_load">"Fehler beim Hochladen der Privatsphäre-Einstellungen"</string>
+    <string name="feed_privacy_fail_to_load">"Privatsphäre-Einstellungen konnten nicht geladen werden"</string>
     <string name="feed_privacy_update_success">"Einstellung erfolgreich aktualisiert"</string>
-    <string name="feed_privacy_update_failure">"Fehler bei der Aktualisierung der Einstellung"</string>
-    <string name="invite_failed_internet">"Fehler beim Versenden der Einladung. Überprüfe dein Internetverbindung und versuche es noch einmal"</string>
+    <string name="feed_privacy_update_failure">"Einstellung kann nicht aktualisiert werden"</string>
+    <string name="invite_failed_internet">"Einladung kann nicht gesendet werden. Überprüfe dein Internet und versuche es noch einmal"</string>
     <string name="invite_failed_no_invites">"Sorry, du hast keine weiteren Einladungen mehr. Versuche es später noch einmal"</string>
     <string name="invite_failed_invalid_number">"Diese Handynummer ist ungültig"</string>
     <string name="invite_failed_existing_user">"Dein Kontakt nutzt bereits HalloApp!"</string>
-    <string name="invite_failed_unknown">"Fehler beim Versenden der Einladung"</string>
+    <string name="invite_failed_unknown">"Einladung kann nicht gesendet werden"</string>
     <string name="invite_creation_in_progress">"Einladung wird erstellt…"</string>
-    <string name="invite_info_fetch_internet">"Fehler beim Abrufen der Einladungs-Info, überprüfe deine Internetverbindung und versuche es noch einmal"</string>
+    <string name="invite_info_fetch_internet">"Einladungs-Info kann nicht abgerufen werden. Überprüfe dein Internet und versuche es noch einmal"</string>
     <plurals name="invites_remaining">
         <item quantity="one">"Du hast diese Woche noch %s Einladung"</item>
         <item quantity="other">"Du hast diese Woche noch %s Einladungen"</item>
@@ -372,13 +372,13 @@ Version: %2$s
     <string name="members_header">"Mitglieder (%s)"</string>
     <string name="add_members">"Mitglieder hinzufügen"</string>
     <string name="add_members_in_progress">"Mitglieder werden hinzugefügt…"</string>
-    <string name="failed_add_members">"Fehler beim Hinzufügen von Mitgliedern, probiere es später noch einmal"</string>
+    <string name="failed_add_members">"Mitglieder können nicht hinzugefügt werden, versuche es später noch einmal"</string>
     <string name="create_group_in_progress">"Erstellung der Gruppe %s…"</string>
     <string name="new_group_title">"Gruppennamen erstellen"</string>
     <string name="group_picker_title">"Neue Gruppe"</string>
     <string name="button_create_group">"Erstellen"</string>
     <string name="group_name_hint">"Gruppenname"</string>
-    <string name="failed_create_group">"Fehler bei der Gruppenerstellung, probiere es später noch einmal"</string>
+    <string name="failed_create_group">"Gruppe kann nicht erstellt werden, versuche es später noch einmal"</string>
 
     <!-- Shown in options menu to remove a member of group -->
     <string name="group_remove_member">"Aus der Gruppe entfernen"</string>
@@ -407,7 +407,7 @@ Version: %2$s
         <item quantity="one">"Gruppe wird verlassen…"</item>
         <item quantity="other">"Gruppen werden verlassen…"</item>
     </plurals>
-    <string name="failed_leave_group">"Fehler beim Verlassen der Gruppe, probiere es später noch einmal"</string>
+    <string name="failed_leave_group">"Gruppe kann nicht verlassen werden, versuche es später noch einmal"</string>
     <plurals name="friends_on_halloapp">
         <item quantity="one">"%d Kontakt auf HalloApp"</item>
         <item quantity="other">"%d Kontakte auf HalloApp"</item>
@@ -430,16 +430,16 @@ Version: %2$s
     <string name="settings_version_footer">"HalloApp Version %s"</string>
     <string name="connectivity_info_airplane_mode">"Flugmodus ein"</string>
     <string name="connectivity_info_not_connected">"Kein Netz"</string>
-    <string name="blocking_user_failed_check_internet">"%s kann nicht geblockt werden. Überprüfe deine Internetverbindung und versuche es später noch einmal."</string>
+    <string name="blocking_user_failed_check_internet">"%s kann nicht geblockt werden. Überprüfe dein Internet und versuche es später noch einmal."</string>
     <string name="blocking_user_successful">"%s wurde geblockt"</string>
     <string name="blocking_user_in_progress">"%s wird geblockt…"</string>
     <string name="unblocking_user_successful">"%s ist entblockt"</string>
-    <string name="unblocking_user_failed_check_internet">"%s kann nicht entblockt werden. Überprüfe deine Internetverbindung und versuche es später noch einmal."</string>
+    <string name="unblocking_user_failed_check_internet">"%s kann nicht entblockt werden. Überprüfe dein Internet und versuche es später noch einmal."</string>
     <string name="unblocking_user_in_progress">"%s wird entblockt…"</string>
     <string name="are_you_sure_dialog_title">"Bist du dir sicher?"</string>
     <string name="hide_future_posts_confirmation">"Bist du dir sicher, dass du alle deine zukünftigen Beiträge vor %s verbergen möchtest? Du kannst dies später jederzeit ändern."</string>
     <string name="feed_privacy_hide_success">"Privatsphäre-Feed wurde aktualisiert. Beiträge werden ausgeblendet für %s"</string>
-    <string name="feed_privacy_hide_failure">"Fehler bei der Aktualisierung des Privatsphäre-Feeds. Überprüfe deine Internetverbindung und versuche es noch einmal"</string>
+    <string name="feed_privacy_hide_failure">"Aktualisierung der Privatsphäre im Feed fehlgeschlagen. Überprüfe dein Internet und versuche es noch einmal"</string>
     <string name="user_typing">"schreibt…"</string>
     <string name="group_user_typing">"%s schreibt…"</string>
 
@@ -496,7 +496,7 @@ Version: %2$s
     <string name="system_message_group_bg_changed_by_you">"Du hast die Hintergrundfarbe geändert"</string>
     <string name="group_background_hint">"Hintergrund"</string>
     <string name="group_background_saving_dialog">"Hintergrund wird gespeichert…"</string>
-    <string name="group_background_save_failed">"Fehler beim Festlegen des Gruppenhintergrunds"</string>
+    <string name="group_background_save_failed">"Gruppenhintergrund kann nicht festgelegt werden"</string>
     <string name="group_background_save_success">"Gruppenhintergrund aktualisiert"</string>
     <string name="group_background_color">"Farbe"</string>
     <string name="group_background_default">"Standardeinstellung"</string>
@@ -507,7 +507,7 @@ Version: %2$s
     <string name="contact_permissions_dialog_title">"Kontakte"</string>
     <string name="not_now">"Jetzt nicht"</string>
     <string name="continue_button">"Weiter"</string>
-    <string name="invite_link_load_failed">"Fehler beim Öffnen des Links zur Gruppeneinladung"</string>
+    <string name="invite_link_load_failed">"Link zur Gruppeneinladung kann nicht geöffnet werden"</string>
     <string name="message_tombstone_placeholder">"Warten auf Eingang dieser Nachricht. Dies kann eine Weile dauern. "<![CDATA[<a href="learn-more">Mehr erfahren</a>]]>"."</string>
     <string name="failed_no_longer_member">"Du bist nicht mehr ein Mitglied dieser Gruppe"</string>
 
@@ -626,7 +626,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="media_saved_to_gallery">"In der Galerie gespeichert"</string>
 
     <!-- Message when we failed to save post media to gallery -->
-    <string name="media_save_to_gallery_failed">"Fehler beim Speichern in der Galerie"</string>
+    <string name="media_save_to_gallery_failed">"Speichern in der Galerie fehlgeschlagen"</string>
 
     <!-- Menu option to delete a post -->
     <string name="delete_post">"Beitrag löschen"</string>
@@ -869,7 +869,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="view_group_info">"Gruppen-Info ansehen"</string>
 
     <!-- Shown when changing the group avatar or name fails -->
-    <string name="failed_update_group">"Fehler beim Aktualisieren der Gruppe, versuche es später noch einmal"</string>
+    <string name="failed_update_group">"Gruppe kann nicht akualisiert werden, versuche es später noch einmal"</string>
 
     <!-- Shown when the group avatar or name has been successfully updated -->
     <string name="group_updated">"Gruppe aktualisiert"</string>
@@ -1050,7 +1050,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="end_call">"Anruf beenden"</string>
 
     <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
-    <string name="refresh_contacts_failed">"Fehler beim Aktualisieren der Kontakte"</string>
+    <string name="refresh_contacts_failed">"Aktualisierung der Kontakte fehlgeschlagen"</string>
 
     <!-- Label for voice post option -->
     <string name="voice_post">"Audio"</string>
@@ -1214,9 +1214,15 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="external_share_copy">"Schau dir meinen Beitrag auf HalloApp an: %s"</string>
 
     <!-- Rationale for when requesting microphone or camera permission for voice calls, but it has already been denied. -->
-    <string name="call_record_audio_or_camera_permission_rationale_denied">"To make a voice or video calls we need permission to access the microphone and camera.
+    <string name="call_record_audio_or_camera_permission_rationale_denied">"Um einen Sprach- oder Videoanruf zu tätigen, benötigen wir deine Erlaubnis, um auf das Mikrofon und die Kamera zugreifen zu können.
 
-Open the app settings screen to modify app permissions."</string>
+Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
+
+    <!-- text shown in a card prompting user to search for friends/family to invite -->
+    <string name="invite_card_search_text">"Search for more friends and family"</string>
+
+    <!-- Text shown as title for invite suggested friends card -->
+    <string name="invite_card_header">"HalloApp is fun with friends and family"</string>
     <string name="share_externally">"Außerhalb von HalloApp teilen"</string>
     <string name="incoming_call_notification_title">"Eingehender Anruf"</string>
     <string name="call_action">"Anrufen"</string>

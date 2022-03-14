@@ -1153,9 +1153,15 @@ Ouvre les paramètres de l'application pour modifier ses autorisations."</string
     <string name="external_share_copy">"Check out my post on HalloApp: %s"</string>
 
     <!-- Rationale for when requesting microphone or camera permission for voice calls, but it has already been denied. -->
-    <string name="call_record_audio_or_camera_permission_rationale_denied">"To make a voice or video calls we need permission to access the microphone and camera.
+    <string name="call_record_audio_or_camera_permission_rationale_denied">"To make a voice or video call we need permission to access the microphone and camera.
 
 Open the app settings screen to modify app permissions."</string>
+
+    <!-- text shown in a card prompting user to search for friends/family to invite -->
+    <string name="invite_card_search_text">"Search for more friends and family"</string>
+
+    <!-- Text shown as title for invite suggested friends card -->
+    <string name="invite_card_header">"HalloApp is fun with friends and family"</string>
     <string name="share_externally">"Partager en externe"</string>
     <string name="incoming_call_notification_title">"Incoming call"</string>
     <string name="call_action">"Call"</string>

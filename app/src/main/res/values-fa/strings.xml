@@ -1184,9 +1184,15 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="external_share_copy">"پست من را در هالواپ مشاهده کنید: %s"</string>
 
     <!-- Rationale for when requesting microphone or camera permission for voice calls, but it has already been denied. -->
-    <string name="call_record_audio_or_camera_permission_rationale_denied">"To make a voice or video calls we need permission to access the microphone and camera.
+    <string name="call_record_audio_or_camera_permission_rationale_denied">"برای تماس صوتی یا ویدیویی نیاز به دسترسی به میکروفون و دوربین داریم.
 
-Open the app settings screen to modify app permissions."</string>
+برای تغییر اجازه‌های برنامه، تنظیمات آن را باز کنید."</string>
+
+    <!-- text shown in a card prompting user to search for friends/family to invite -->
+    <string name="invite_card_search_text">"برای دوستان و آشنایان بیشتر جستجو کنید"</string>
+
+    <!-- Text shown as title for invite suggested friends card -->
+    <string name="invite_card_header">"هالواپ با دوستان و آشنایان سرگرم‌کننده است"</string>
     <string name="share_externally">"به اشتراک گذاشتن خارج هالواپ"</string>
     <string name="incoming_call_notification_title">"تماس دریافتی"</string>
     <string name="call_action">"تماس"</string>

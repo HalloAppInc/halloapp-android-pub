@@ -34,7 +34,7 @@ https://s3.eu-west-1.amazonaws.com/po-pub/i/Q5dePwegWIHB6wAEgLPduTNg.jpg -->
     <string name="request_registration_title">"Welkom!"</string>
     <string name="reverify_registration_title">"Verifieer je telefoonnummer opnieuw alsjeblieft"</string>
     <string name="request_registration_subtitle">"Je ontvangt een verificatiecode.
-Je aanbieder kan hiervoor kosten in rekening brengen."</string>
+Je provider kan hiervoor kosten in rekening brengen."</string>
     <string name="verify_registration_title">"Voer de code in die we naar %s hebben verzonden"</string>
     <string name="contact_permission_title">"Nog één ding"</string>
     <string name="registration_code_invalid">"Ongeldige registratiecode, probeer opnieuw"</string>
@@ -698,7 +698,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="archived_on">"Gearchiveerd op %s"</string>
 
     <!-- Error message when the group is full -->
-    <string name="invite_link_failed_to_join_full">"Je kunt niet deelnemen aan deze groep omdat het maximumaantal deelnemers is bereikt"</string>
+    <string name="invite_link_failed_to_join_full">"Je kunt niet deelnemen aan deze groep omdat het maximum aantal deelnemers is bereikt"</string>
 
     <!-- Error message when the invite link is invalid -->
     <string name="invite_link_failed_to_join_invalid">"De uitnodigingslink is ongeldig"</string>
@@ -852,7 +852,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="link_preview_loading">"Voorbeeld wordt geladen…"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
-    <string name="add_to_contacts_notice">"Om posts te zien van %s, moet je het telefoonnummer toevoegen aan je adresboek. Tik om toe te voegen"</string>
+    <string name="add_to_contacts_notice">"Om posts te zien van %s, moet je het telefoonnummer toevoegen aan je adresboek. Tik om toe te voegen."</string>
 
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">"Openen link mislukt"</string>
@@ -1124,8 +1124,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="log_video_call_with_duration">"Video-oproep (%s)"</string>
 
     <!-- Rationale for when requesting microphone and camera permission for video calls -->
-    <string name="voice_call_record_video_permission_rationale">"Om video-oproepen te gebruiken, hebben we toegang nodig tot de microfoon en camera
-"</string>
+    <string name="voice_call_record_video_permission_rationale">"Om video-oproepen te gebruiken, hebben we toegang nodig tot de microfoon en camera"</string>
 
     <!-- The title of the notification for incoming voice calls -->
     <string name="incoming_voice_call_notification_title">"Inkomende spraakoproep"</string>
@@ -1167,9 +1166,15 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="external_share_copy">"Bekijk mijn post op HalloApp: %s"</string>
 
     <!-- Rationale for when requesting microphone or camera permission for voice calls, but it has already been denied. -->
-    <string name="call_record_audio_or_camera_permission_rationale_denied">"To make a voice or video calls we need permission to access the microphone and camera.
+    <string name="call_record_audio_or_camera_permission_rationale_denied">"Om een spraak- of video-oproep te starten, hebben we toegang nodig tot de microfoon en camera.
 
-Open the app settings screen to modify app permissions."</string>
+Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
+
+    <!-- text shown in a card prompting user to search for friends/family to invite -->
+    <string name="invite_card_search_text">"Zoek naar meer vrienden en familie"</string>
+
+    <!-- Text shown as title for invite suggested friends card -->
+    <string name="invite_card_header">"HalloApp is leuk met vrienden en familie"</string>
     <string name="share_externally">"Extern delen"</string>
     <string name="incoming_call_notification_title">"Inkomende oproep"</string>
     <string name="call_action">"Bellen"</string>
