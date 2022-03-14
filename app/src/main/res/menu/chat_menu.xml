@@ -38,7 +38,7 @@
         android:title="@string/call_action_video"
         app:showAsAction="ifRoom"
         app:iconTint="?colorControlNormal"
-        android:icon="@drawable/ic_videocam"
+        android:icon="@drawable/ic_video_call_button"
         android:visible="false"
         />
 
