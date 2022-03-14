@@ -207,7 +207,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         if (tombstoneMessage != null) {
             CharSequence text = Html.fromHtml(tombstoneMessage.getContext().getString(R.string.message_tombstone_placeholder));
             text = StringUtils.replaceLink(tombstoneMessage.getContext(), text, "learn-more", () -> {
-                IntentUtils.openUrlInBrowser(tombstoneMessage, Constants.FAQ_URL);
+                IntentUtils.openUrlInBrowser(tombstoneMessage, Constants.WAITING_ON_MESSAGE_FAQ_URL);
             });
             tombstoneMessage.setText(text);
             tombstoneMessage.setMovementMethod(LinkMovementMethod.getInstance());

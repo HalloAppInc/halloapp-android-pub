@@ -17,6 +17,7 @@ public class Constants {
     public static final String TERMS_OF_SERVICE_URL = "https://www.halloapp.com/terms";
     public static final String GROUP_INVITE_BASE_URL = "https://halloapp.com/invite/?g=";
     public static final String ENCRYPTED_CHAT_BLOG_URL = "https://halloapp.com/blog/encrypted-chat";
+    public static final String WAITING_ON_MESSAGE_FAQ_URL = "https://halloapp.com/help/#waiting-for-this-message";
     public static final String CONTACT_PERMISSIONS_LEARN_MORE_URL = "https://halloapp.com/blog/why-address-book";
     public static final String DOWNLOAD_LINK_URL = "https://halloapp.com/dl";
 

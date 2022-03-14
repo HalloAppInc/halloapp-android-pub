@@ -98,7 +98,7 @@ public class IntentUtils {
 
     public static void openUrlInBrowser(@NonNull View view, @NonNull String url) {
         try {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(URLUtil.guessUrl(url)));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             view.getContext().startActivity(browserIntent);
         } catch (ActivityNotFoundException e) {
             SnackbarHelper.showWarning(view, R.string.failed_to_open_link);
