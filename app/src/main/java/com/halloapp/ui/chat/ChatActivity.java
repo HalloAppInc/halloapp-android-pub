@@ -302,8 +302,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
         systemMessageTextResolver = new SystemMessageTextResolver(contactLoader);
 
-        allowVoiceNoteSending = ServerProps.getInstance().getVoiceNoteSendingEnabled();
-        allowAudioCalls = ServerProps.getInstance().getAudioCallsEnabled();
+        allowVoiceNoteSending = true;
+        allowAudioCalls = true;
         allowVideoCalls = ServerProps.getInstance().getVideoCallsEnabled();
 
         String rawChatId = getIntent().getStringExtra(EXTRA_CHAT_ID);

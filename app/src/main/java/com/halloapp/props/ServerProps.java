@@ -35,15 +35,12 @@ public class ServerProps {
     private static final String PROP_MAX_CHAT_VIDEO_DURATION = "max_chat_video_duration";
     private static final String PROP_MIN_GROUP_SYNC_INTERVAL = "group_sync_time";
     private static final String PROP_MAX_VIDEO_BITRATE = "max_video_bit_rate";
-    private static final String PROP_VOICE_NOTE_SENDING_ENABLED = "voice_notes";
     private static final String PROP_CONTACT_SYNC_INTERVAL = "contact_sync_frequency";
     private static final String PROP_MEDIA_COMMENTS_ENABLED = "media_comments";
     private static final String PROP_STREAMING_UPLOAD_CHUNK_SIZE = "streaming_upload_chunk_size";
     private static final String PROP_STREAMING_INITIAL_DOWNLOAD_SIZE = "streaming_initial_download_size";
     private static final String PROP_STREAMING_SENDING_ENABLED = "streaming_sending_enabled";
-    private static final String PROP_AUDIO_CALLS_ENABLED = "audio_calls";
     private static final String PROP_VIDEO_CALLS_ENABLED = "video_calls";
-    private static final String PROP_VOICE_POSTS_ENABLED = "voice_posts";
     private static final String PROP_EMOJI_VERSION = "emoji_version";
     private static final String PROP_MAX_MEMBER_FOR_SHEET = "group_max_for_showing_invite_sheet";
     private static final String PROP_SEND_PLAINTEXT_GROUP_FEED = "cleartext_group_feed";
@@ -79,15 +76,12 @@ public class ServerProps {
     private final IntegerProp propMaxChatVideoDuration = createProp(PROP_MAX_CHAT_VIDEO_DURATION, 120);
     private final IntegerProp propMinGroupSyncInterval = createProp(PROP_MIN_GROUP_SYNC_INTERVAL, WEEK_IN_SECONDS);
     private final IntegerProp propMaxVideoBitrate = createProp(PROP_MAX_VIDEO_BITRATE, 8000000);
-    private final BooleanProp propVoiceNoteSendingEnabled = createProp(PROP_VOICE_NOTE_SENDING_ENABLED, false);
     private final IntegerProp propContactSyncIntervalSeconds = createProp(PROP_CONTACT_SYNC_INTERVAL, Constants.SECONDS_PER_DAY);
     private final BooleanProp propMediaCommentsEnabled = createProp(PROP_MEDIA_COMMENTS_ENABLED, false);
     private final IntegerProp propStreamingUploadChunkSize = createProp(PROP_STREAMING_UPLOAD_CHUNK_SIZE, Constants.DEFAULT_STREAMING_UPLOAD_CHUNK_SIZE);
     private final IntegerProp propStreamingInitialDownloadSize = createProp(PROP_STREAMING_INITIAL_DOWNLOAD_SIZE, Constants.DEFAULT_STREAMING_INITIAL_DOWNLOAD_SIZE);
     private final BooleanProp propStreamingSendingEnabled = createProp(PROP_STREAMING_SENDING_ENABLED, false);
-    private final BooleanProp propAudioCallsEnabled = createProp(PROP_AUDIO_CALLS_ENABLED, false);
     private final BooleanProp propVideoCallsEnabled = createProp(PROP_VIDEO_CALLS_ENABLED, false);
-    private final BooleanProp propVoicePostsEnabled = createProp(PROP_VOICE_POSTS_ENABLED, false);
     private final IntegerProp propEmojiVersion = createProp(PROP_EMOJI_VERSION, 1);
     private final IntegerProp propMaxMemberForInviteSheet = createProp(PROP_MAX_MEMBER_FOR_SHEET, 5);
     private final BooleanProp propSendPlaintextGroupFeed = createProp(PROP_SEND_PLAINTEXT_GROUP_FEED, true);
@@ -237,10 +231,6 @@ public class ServerProps {
         return propMaxVideoBitrate.getValue();
     }
 
-    public synchronized boolean getVoiceNoteSendingEnabled() {
-        return propVoiceNoteSendingEnabled.getValue();
-    }
-
     public synchronized int getContactSyncIntervalSeconds() {
         return propContactSyncIntervalSeconds.getValue();
     }
@@ -261,16 +251,8 @@ public class ServerProps {
         return propStreamingSendingEnabled.getValue();
     }
 
-    public synchronized boolean getAudioCallsEnabled() {
-        return propAudioCallsEnabled.getValue();
-    }
-
     public synchronized boolean getVideoCallsEnabled() {
         return propVideoCallsEnabled.getValue();
-    }
-
-    public synchronized boolean getVoicePostsEnabled() {
-        return BuildConfig.DEBUG || propVoicePostsEnabled.getValue();
     }
 
     public synchronized int getEmojiVersion() {

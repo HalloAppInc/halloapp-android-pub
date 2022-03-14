@@ -856,7 +856,7 @@ public class ContentComposerActivity extends HalloActivity {
                 }
             }
         }
-        return !hasChatDestination && chatId == null && ServerProps.getInstance().getVoicePostsEnabled();
+        return !hasChatDestination && chatId == null;
     }
 
     private void showMixedMediaCompose() {
