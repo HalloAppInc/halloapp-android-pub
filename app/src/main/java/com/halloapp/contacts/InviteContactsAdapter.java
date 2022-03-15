@@ -36,11 +36,6 @@ public class InviteContactsAdapter extends RecyclerView.Adapter<InviteContactsAd
 
     private static final int TYPE_CONTACT = 1;
 
-    private static final String[] BANNED_NAME_TOKENS = new String[] {
-            "spam",
-            "taxi"
-    };
-
     public interface InviteContactsAdapterParent {
         void onInvite(@NonNull Contact contact);
         void onFiltered(@NonNull CharSequence constraint, @NonNull List<Contact> contacts);
@@ -205,7 +200,7 @@ public class InviteContactsAdapter extends RecyclerView.Adapter<InviteContactsAd
                 boolean allowed = true;
                 List<String> tokens = FilterUtils.getFilterTokens(itemToString(contact));
                 if (TextUtils.isEmpty(constraint) && tokens != null) {
-                    for (String token : BANNED_NAME_TOKENS) {
+                    for (String token : Constants.BANNED_INVITE_SUGGEST_TOKENS) {
                         if (tokens.contains(token)) {
                             allowed = false;
                             break;

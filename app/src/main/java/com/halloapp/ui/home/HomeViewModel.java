@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +16,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.halloapp.Constants;
 import com.halloapp.contacts.Contact;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
@@ -29,6 +31,7 @@ import com.halloapp.content.PostsDataSource;
 import com.halloapp.id.UserId;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
@@ -198,6 +201,18 @@ public class HomeViewModel extends AndroidViewModel {
             Collections.shuffle(contacts);
             if (contacts.size() > MAX_SUGGESTED_CONTACTS) {
                 contacts = contacts.subList(0, MAX_SUGGESTED_CONTACTS);
+            }
+            ListIterator<Contact> iterator = contacts.listIterator();
+            while (iterator.hasNext()) {
+                Contact contact = iterator.next();
+                List<String> tokens = FilterUtils.getFilterTokens(contact.getDisplayName());
+                if (tokens != null) {
+                    for (String token : Constants.BANNED_INVITE_SUGGEST_TOKENS) {
+                        if (tokens.contains(token)) {
+                            iterator.remove();
+                        }
+                    }
+                }
             }
             suggestedContacts.postValue(contacts);
         });

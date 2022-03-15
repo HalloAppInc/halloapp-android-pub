@@ -67,4 +67,9 @@ public class Constants {
     public static final int DEFAULT_STREAMING_UPLOAD_CHUNK_SIZE = 64 * 1024;
     public static final int DEFAULT_STREAMING_INITIAL_DOWNLOAD_SIZE = 5 * 1024 * 1024;
 
+    public static final String[] BANNED_INVITE_SUGGEST_TOKENS = new String[] {
+            "spam",
+            "taxi"
+    };
+
 }
