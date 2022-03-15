@@ -205,6 +205,7 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
             }
         });
         fabView.setMainFabIcon(R.drawable.ic_plus_expanded, R.string.new_post, R.string.post_fab_label);
+        fabView.setUseText(true);
         fabView.addSubFab(R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);
         fabView.addSubFab(R.id.add_post_voice, R.drawable.ic_voice_post, R.string.voice_post);
         fabView.addSubFab(R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
