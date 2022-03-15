@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="30dp">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -48,17 +48,6 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/e2e_call_notice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:layout_marginBottom="30dp"
-            android:textColor="@color/white_87"
-            android:shadowColor="@color/black_54"
-            android:shadowRadius="5"
-            android:text="@string/call_e2e_notice" />
-
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/avatar"
             android:layout_width="80dp"
@@ -75,7 +64,7 @@
             android:paddingEnd="20dp"
             android:maxLines="3"
             android:ellipsize="end"
-            android:textSize="30sp"
+            android:textSize="28sp"
             android:textColor="@color/white_87"
             android:shadowColor="@color/black_54"
             android:shadowRadius="5"
@@ -86,8 +75,8 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:textSize="20sp"
+            android:layout_marginTop="5dp"
+            android:textSize="16sp"
             tools:text="incoming call"
             android:textColor="@color/white_87"
             android:shadowColor="@color/black_54"
@@ -98,11 +87,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="5dp"
             android:textColor="@color/white_87"
             android:shadowColor="@color/black_54"
             android:shadowRadius="5"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:visibility="gone"/>
 
     </LinearLayout>
@@ -144,7 +133,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:background="@drawable/bg_call_accept"
-                    app:srcCompat="@drawable/ic_video_answer"/>
+                    app:srcCompat="@drawable/call"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -152,9 +141,7 @@
                     android:fontFamily="sans-serif-medium"
                     android:paddingTop="10dp"
                     android:layout_gravity="center_horizontal"
-                    android:textColor="@color/white_87"
-                    android:shadowColor="@color/black_54"
-                    android:shadowRadius="5"
+                    android:textColor="@color/primary_text"
                     app:layout_constraintTop_toBottomOf="@id/accept_view"
                     android:text="@string/call_accept_button"/>
 
@@ -175,7 +162,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:background="@drawable/bg_call_decline"
-                    app:srcCompat="@drawable/ic_video_decline"/>
+                    app:srcCompat="@drawable/disconnect"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -183,9 +170,7 @@
                     android:fontFamily="sans-serif-medium"
                     android:paddingTop="10dp"
                     android:layout_gravity="center_horizontal"
-                    android:textColor="@color/white_87"
-                    android:shadowColor="@color/black_54"
-                    android:shadowRadius="5"
+                    android:textColor="@color/primary_text"
                     app:layout_constraintTop_toBottomOf="@id/accept_view"
                     android:text="@string/call_decline_button"/>
 
