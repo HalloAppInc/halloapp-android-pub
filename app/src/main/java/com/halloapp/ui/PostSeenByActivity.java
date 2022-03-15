@@ -87,7 +87,6 @@ public class PostSeenByActivity extends HalloActivity {
 
     public void updatePost(Post post) {
         this.post = post;
-        adapter.setPrivacyFooterVisible(post != null && post.getParentGroup() == null);
     }
 
     @Override
@@ -191,7 +190,6 @@ public class PostSeenByActivity extends HalloActivity {
         private final List<ListItem> listItems = new ArrayList<>();
 
         private boolean expanded = false;
-        private boolean hasPrivacyFooter = false;
 
         void setSeenBy(List<PostSeenByViewModel.SeenByContact> seenByContacts) {
             this.seenByContacts = seenByContacts;
@@ -220,18 +218,6 @@ public class PostSeenByActivity extends HalloActivity {
                 listItems.add(new EmptyListItem(false));
             }
             listItems.add(new DividerListItem());
-            if (hasPrivacyFooter) {
-                listItems.add(new ManagePrivacyListItem());
-                listItems.add(new InviteFriendsListItem());
-            }
-        }
-
-        void setPrivacyFooterVisible(boolean footerVisible) {
-            if (this.hasPrivacyFooter != footerVisible) {
-                this.hasPrivacyFooter = footerVisible;
-                createListItems();
-                notifyDataSetChanged();
-            }
         }
 
         @Override
