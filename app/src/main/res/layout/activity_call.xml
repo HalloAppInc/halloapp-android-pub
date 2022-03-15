@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="40dp">
+            android:layout_marginBottom="10dp">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -38,6 +38,15 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/e2e_call_notice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:layout_marginBottom="30dp"
+            android:text="@string/call_e2e_notice"
+            android:textColor="@color/primary_text"/>
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/avatar"
             android:layout_width="133dp"
@@ -46,6 +55,7 @@
             app:civ_border_color="@color/card_background"
             tools:layout_editor_absoluteY="48dp" />
 
+        <!-- are we sure about the maxLines=3 -->
         <TextView
             android:id="@+id/name"
             android:layout_width="wrap_content"
@@ -63,8 +73,8 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textSize="16sp"
+            android:layout_marginTop="20dp"
+            android:textSize="20sp"
             tools:text="incoming call"
             android:textColor="@color/primary_text"/>
 
@@ -73,8 +83,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="5dp"
-            android:textSize="16sp"
+            android:layout_marginTop="20dp"
+            android:textSize="20sp"
             android:visibility="gone"/>
 
     </LinearLayout>
@@ -267,6 +277,42 @@
                     android:textColor="@color/primary_text"
                     app:layout_constraintTop_toBottomOf="@id/accept_view"
                     android:text="@string/call_speaker_button"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/bluetooth_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="@id/mute_container"
+                app:layout_constraintStart_toEndOf="@id/mute_container"
+                app:layout_constraintEnd_toStartOf="@id/speaker_container"
+                app:layout_constraintBottom_toBottomOf="@id/mute_container">
+
+                <ImageView
+                    android:id="@+id/in_call_bluetooth"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:padding="16dp"
+                    app:tint="@color/call_neutral_icon"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/bg_call_item_gray"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:srcCompat="@drawable/ic_bluetooth"/>
+
+                <TextView
+                    android:id="@+id/bluetooth_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:paddingTop="10dp"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/primary_text"
+                    app:layout_constraintTop_toBottomOf="@id/accept_view"
+                    android:text="@string/bluetooth"/>
 
             </LinearLayout>
 
