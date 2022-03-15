@@ -112,7 +112,8 @@
     <color name="default_avatar_color">#FFFFFF</color>
 
 
-    <color name="bg_call_button_neutral">#B3F0EFEC</color>
+    <color name="bg_call_button_neutral">#EDECE9</color>
+    <color name="bg_call_button_outgoing">#DAE7F7</color>
     <color name="call_accept">#34A140</color>
     <color name="call_decline">#FF3C1A</color>
     <color name="call_neutral">#4DDBD8C5</color>
