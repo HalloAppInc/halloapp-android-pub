@@ -63,6 +63,8 @@ public class LimitingTextView extends AppCompatTextView {
         a.recycle();
 
         setMovementMethod(LinkMovementMethod.getInstance());
+        // Fix double-opening of mentions https://stackoverflow.com/a/54150210/11817085
+        setFocusable(false);
     }
 
     @Override
