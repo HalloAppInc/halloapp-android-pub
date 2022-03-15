@@ -186,6 +186,8 @@
     <string name="reply_privately">Reply privately</string>
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
     <string name="reply_notification_label">Reply</string>
+    <!-- Action on missed call notifications allowing the user to callback without opening the app first -->
+    <string name="call_back_notification_label">Call back</string>
     <!-- Action on messaging notifications allowing the user to mark the conversation as read -->
     <string name="mark_read_notification_label">Mark read</string>
     <string name="reply">Reply</string>
@@ -336,6 +338,11 @@
     <plurals name="new_messages_notification">
         <item quantity="one">%1$d message from %2$s</item>
         <item quantity="other">%1$d messages from %2$s</item>
+    </plurals>
+    <!-- Text in notifications for missed calls %1$d is replaced with the number of missed calls -->
+    <plurals name="missed_calls_notification">
+        <item quantity="one">%1$d missed call</item>
+        <item quantity="other">%1$d missed calls</item>
     </plurals>
     <plurals name="new_messages_separator">
         <item quantity="one">%d new message</item>

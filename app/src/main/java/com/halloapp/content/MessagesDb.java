@@ -1141,6 +1141,76 @@ class MessagesDb {
     }
 
     @WorkerThread
+    @NonNull List<CallMessage> getUnseenCallMessages(int count) {
+        final List<CallMessage> messages = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String where =
+                MessagesTable.TABLE_NAME + "." + MessagesTable._ID + ">=" + ChatsTable.TABLE_NAME + "." + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " AND " +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "=" + ChatsTable.TABLE_NAME + "." + ChatsTable.COLUMN_CHAT_ID + " AND " +
+                        ChatsTable.TABLE_NAME + "." + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + ">0 AND " +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TYPE + "=" + Message.TYPE_CALL + " AND " +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "!=''";
+
+        final String sql =
+                "SELECT " +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + ", " +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TYPE + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_USAGE + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_REREQUEST_COUNT + " " +
+                        "FROM " + MessagesTable.TABLE_NAME + "," + ChatsTable.TABLE_NAME + " " +
+                        "WHERE " + where + " " +
+                        "ORDER BY " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + " ASC " +
+                        "LIMIT " + count;
+
+        try (final Cursor cursor = db.rawQuery(sql, null)) {
+            long lastRowId = -1;
+            Message message = null;
+            while (cursor.moveToNext()) {
+                long rowId = cursor.getLong(0);
+                if (lastRowId != rowId) {
+                    lastRowId = rowId;
+                    if (message instanceof CallMessage) {
+                        messages.add((CallMessage) message);
+                    }
+                    message = Message.readFromDb(
+                            rowId,
+                            ChatId.fromNullable(cursor.getString(1)),
+                            new UserId(cursor.getString(2)),
+                            cursor.getString(3),
+                            cursor.getLong(4),
+                            cursor.getInt(5),
+                            cursor.getInt(6),
+                            cursor.getInt(7),
+                            cursor.getString(8),
+                            null,
+                            -1,
+                            null,
+                            -1,
+                            null,
+                            cursor.getInt(9));
+                    mentionsDb.fillMentions(message);
+                    urlPreviewsDb.fillUrlPreview(message);
+                    if (message instanceof CallMessage) {
+                        callsDb.fillCallMessage((CallMessage) message);
+                    }
+                }
+            }
+            if (message instanceof CallMessage && cursor.getCount() < count) {
+                messages.add((CallMessage) message);
+            }
+        }
+        Log.i("ContentDb.getMissedCallMessages: count=" + count + " messages.size=" + messages.size() + (messages.isEmpty() ? "" : (" got messages from " + messages.get(0).timestamp + " to " + messages.get(messages.size()-1).timestamp)));
+
+        return messages;
+    }
+
+    @WorkerThread
     @NonNull List<Message> getUnseenMessages(int count) {
         final List<Message> messages = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();

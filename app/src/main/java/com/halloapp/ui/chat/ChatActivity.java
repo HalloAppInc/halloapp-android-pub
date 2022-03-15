@@ -910,6 +910,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         Log.i("ChatActivity.onStart " + chatId);
         ForegroundChat.getInstance().setForegroundChatId(chatId);
         Notifications.getInstance(this).clearMessageNotifications(chatId);
+        Notifications.getInstance(this).updateMissedCallNotifications();
         Chat chat = viewModel.chat.getLiveData().getValue();
         if (chat == null || chat.isGroup || chat.isActive) {
             if (adapter.firstUnseenMessageRowId >= 0) {

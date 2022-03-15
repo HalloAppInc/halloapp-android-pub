@@ -32,4 +32,8 @@ public class CallMessage extends Message {
 
         this.callUsage = usage;
     }
+
+    public boolean isMissedCall() {
+        return callUsage == Usage.MISSED_VIDEO_CALL || callUsage == Usage.MISSED_VOICE_CALL;
+    }
 }

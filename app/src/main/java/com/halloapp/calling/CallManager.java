@@ -1742,6 +1742,8 @@ public class CallManager {
                 timestamp,
                 msgType,
                 Message.STATE_OUTGOING_DELIVERED);
-        message.addToStorage(contentDb);
+        contentDb.addMessage(message, true, () -> {
+            Notifications.getInstance(appContext.get()).updateMissedCallNotifications();
+        });
     }
 }

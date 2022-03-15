@@ -1112,6 +1112,11 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public @NonNull List<CallMessage> getUnseenCallMessages(int count) {
+        return messagesDb.getUnseenCallMessages(count);
+    }
+
+    @WorkerThread
     public boolean hasMessage(UserId senderUserId, String id) {
         return messagesDb.hasMessage(senderUserId, id);
     }

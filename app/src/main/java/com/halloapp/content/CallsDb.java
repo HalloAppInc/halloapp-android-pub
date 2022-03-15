@@ -6,11 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import androidx.annotation.NonNull;
 
-import com.halloapp.UrlPreview;
 import com.halloapp.content.tables.CallsTable;
-import com.halloapp.content.tables.FutureProofTable;
-import com.halloapp.content.tables.MessagesTable;
-import com.halloapp.content.tables.UrlPreviewsTable;
 
 public class CallsDb {
 

@@ -33,6 +33,7 @@ import androidx.core.graphics.drawable.IconCompat;
 import com.halloapp.calling.CallNotificationBroadcastReceiver;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.CallMessage;
 import com.halloapp.content.Chat;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
@@ -63,6 +64,7 @@ import com.halloapp.util.logs.Log;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -88,6 +90,7 @@ public class Notifications {
 
     private static final String MESSAGE_NOTIFICATION_GROUP_KEY = "message_notification";
     private static final String REPLY_TEXT_KEY = "reply_text";
+    private static final String CALL_MESSAGE_TEXT_KEY = "call_message_text";
 
     private static final int FEED_NOTIFICATION_ID = 0;
     private static final int MESSAGE_NOTIFICATION_ID = 1;
@@ -96,12 +99,14 @@ public class Notifications {
     private static final int GROUP_NOTIFICATION_ID = 4;
     private static final int CALL_NOTIFICATION_ID = 5;
     public static final int ONGOING_CALL_NOTIFICATION_ID = 6;
+    private static final int MISSED_CALL_NOTIFICATION_ID = 7;
 
     public static final int FIRST_DYNAMIC_NOTIFICATION_ID = 2000;
 
     private static final int UNSEEN_POSTS_LIMIT = 256;
     private static final int UNSEEN_COMMENTS_LIMIT = 64;
     private static final int UNSEEN_MESSAGES_LIMIT = 256;
+    private static final int UNSEEN_CALLS_LIMIT = 256;
 
     private static final String EXTRA_FEED_NOTIFICATION_TIME_CUTOFF = "last_feed_notification_time";
     private static final String EXTRA_CHAT_ID = "chat_id";
@@ -261,6 +266,80 @@ public class Notifications {
         return count;
     }
 
+    public void updateMissedCallNotifications() {
+        executor.execute(() -> {
+            final List<CallMessage> unseenCalls = ContentDb.getInstance().getUnseenCallMessages(UNSEEN_CALLS_LIMIT);
+            final HashMap<ChatId, List<CallMessage>> callMessageMap = new LinkedHashMap<>();
+
+            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            if (unseenCalls.isEmpty()) {
+                notificationManager.cancel(MISSED_CALL_NOTIFICATION_ID);
+                return;
+            }
+            for (CallMessage message : unseenCalls) {
+                if (message.isOutgoing() || message.isRetracted() || foregroundChat.isForegroundChatId(message.chatId) || !message.isMissedCall()) {
+                    continue;
+                }
+                List<CallMessage> callMsgs = callMessageMap.get(message.chatId);
+                if (callMsgs == null) {
+                    callMsgs = new ArrayList<>();
+                    callMessageMap.put(message.chatId, callMsgs);
+                }
+                callMsgs.add(message);
+            }
+
+            for (ChatId chatId : callMessageMap.keySet()) {
+                if (chatId instanceof UserId) {
+                    CallType callbackType = CallType.AUDIO;
+                    final Contact sender = contactsDb.getContact((UserId) chatId);
+                    final String senderName = sender.getDisplayName();
+                    final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CALLS_NOTIFICATION_CHANNEL_ID)
+                            .setSmallIcon(R.drawable.ic_notification)
+                            .setColor(ContextCompat.getColor(context, R.color.color_accent))
+                            .setGroupSummary(false)
+                            .setContentTitle(senderName);
+
+                    final Intent contentIntent = ChatActivity.open(context, chatId, true);
+
+                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+                    final Intent parentIntent = new Intent(context, MainActivity.class);
+                    parentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    parentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_MESSAGES);
+                    stackBuilder.addNextIntent(parentIntent);
+                    stackBuilder.addNextIntent(contentIntent);
+
+                    List<CallMessage> messages = callMessageMap.get(chatId);
+                    if (messages == null) {
+                        Log.e("Notifications/updatedMissedCallNotification missing list of missed call messages");
+                        continue;
+                    }
+                    builder.setContentIntent(stackBuilder.getPendingIntent(0, getPendingIntentFlags(true)));
+                    if (messages.size() > 1) {
+                        builder.setContentText(context.getResources().getQuantityString(R.plurals.missed_calls_notification, messages.size(), messages.size()));
+                    } else {
+                        CallMessage missedCall = messages.get(0);
+                        if (missedCall.callUsage == CallMessage.USAGE_MISSED_VIDEO_CALL) {
+                            builder.setContentText(context.getResources().getText(R.string.log_missed_video_call));
+                            callbackType = CallType.VIDEO;
+                        } else {
+                            builder.setContentText(context.getResources().getText(R.string.log_missed_voice_call));
+                        }
+                    }
+
+                    Intent callBackIntent = CallActivity.getStartCallIntent(context, (UserId) chatId, callbackType);
+                    PendingIntent acceptPendingIntent = PendingIntent.getActivity(context, 0, callBackIntent, getPendingIntentFlags(false));
+
+                    NotificationCompat.Action callbackAction = new NotificationCompat.Action.Builder(R.drawable.ic_call, context.getString(R.string.call_back_notification_label), acceptPendingIntent)
+                            .setSemanticAction(NotificationCompat.Action.SEMANTIC_ACTION_CALL)
+                            .build();
+                    builder.addAction(callbackAction);
+
+                    notificationManager.notify(chatId.rawId(), MISSED_CALL_NOTIFICATION_ID, builder.build());
+                }
+            }
+        });
+    }
+
     public void updateMessageNotifications() {
         executor.execute(() -> {
 
@@ -271,7 +350,7 @@ public class Notifications {
             final HashMap<ChatId, List<Message>> chatsMessages = new HashMap<>();
             final List<ChatId> chatsIds = new ArrayList<>();
             for (Message message : messages) {
-                if (message.isOutgoing() || message.isRetracted() || foregroundChat.isForegroundChatId(message.chatId)) {
+                if (message.isOutgoing() || message.isRetracted() || foregroundChat.isForegroundChatId(message.chatId) || (message instanceof CallMessage)) {
                     Log.i("Notifications.updateMessageNotifications skipping " + message.id + " outgoing? " + message.isOutgoing() + " retracted? " + message.isRetracted());
                     continue;
                 }
