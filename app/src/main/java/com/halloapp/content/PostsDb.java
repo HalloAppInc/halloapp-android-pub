@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.format.DateUtils;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
@@ -2949,7 +2950,12 @@ class PostsDb {
                 null);
         Log.i("ContentDb.cleanup: " + deletedSeenCount + " seen receipts deleted");
 
-        return (deletedPostsCount > 0 || deletedCommentsCount > 0 || deletedSeenCount > 0 || archivedPostsCount > 0);
+        final int deletedHistoryPayloads = db.delete(HistoryResendPayloadTable.TABLE_NAME,
+                HistoryResendPayloadTable.COLUMN_TIMESTAMP + "<" + (System.currentTimeMillis() - DateUtils.WEEK_IN_MILLIS),
+                null);
+        Log.i("ContentDb.cleanup: " + deletedHistoryPayloads + " history payloads deleted");
+
+        return (deletedPostsCount > 0 || deletedCommentsCount > 0 || deletedSeenCount > 0 || archivedPostsCount > 0 || deletedHistoryPayloads > 0);
     }
 
     //Note that this class archives ALL current posts (even those which aren't expired), for testing purposes only from debug menu
