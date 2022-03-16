@@ -58,15 +58,20 @@ public class LogProvider extends ContentProvider {
 
     @MainThread
     public static void openLogIntent(final Context context) {
+        openLogIntent(context, null);
+    }
+
+    @MainThread
+    public static void openLogIntent(final Context context, @Nullable String contentId) {
         if (BuildConfig.DEBUG) {
-            LogProvider.openDebugLogcatIntent(context, null);
+            LogProvider.openDebugLogcatIntent(context, contentId);
         } else {
-            LogProvider.openEmailLogIntent(context, null);
+            LogProvider.openEmailLogIntent(context, contentId);
         }
     }
 
     @MainThread
-    public static void openEmailLogIntent(final Context context, @Nullable String contentId) {
+    private static void openEmailLogIntent(final Context context, @Nullable String contentId) {
         LogUploaderWorker.uploadLogs(context);
         new AsyncTask<Void, Void, String>() {
             @Override
@@ -90,7 +95,7 @@ public class LogProvider extends ContentProvider {
     }
 
     @MainThread
-    public static void openDebugLogcatIntent(final Context context, @Nullable String contentId) {
+    private static void openDebugLogcatIntent(final Context context, @Nullable String contentId) {
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... voids) {

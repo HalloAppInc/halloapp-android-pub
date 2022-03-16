@@ -70,11 +70,7 @@ public class DecryptStatLoader extends ViewDataLoader<TextView, DecryptStats, St
                     });
                     builder.setPositiveButton("Yes", (dialog, which) -> {
                         Log.e("Sending logs related to message " + messageId);
-                        if (BuildConfig.DEBUG) {
-                            LogProvider.openDebugLogcatIntent(v.getContext(), messageId);
-                        } else {
-                            LogProvider.openEmailLogIntent(v.getContext(), messageId);
-                        }
+                        LogProvider.openLogIntent(v.getContext(), messageId);
                     });
                     builder.show();
                 });

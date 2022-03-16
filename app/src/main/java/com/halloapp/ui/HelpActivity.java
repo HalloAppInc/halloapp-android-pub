@@ -56,11 +56,7 @@ public class HelpActivity extends HalloActivity {
         sendLogs.setOnClickListener(v -> {
             Log.sendErrorReport("User sent logs");
 
-            if (BuildConfig.DEBUG) {
-                LogProvider.openDebugLogcatIntent(this, null);
-            } else {
-                LogProvider.openEmailLogIntent(this, null);
-            }
+            LogProvider.openLogIntent(this);
         });
 
         useDebugHostSwitch = findViewById(R.id.use_debug_host_switch);

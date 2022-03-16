@@ -85,11 +85,7 @@ public class GroupContentDecryptStatLoader extends ViewDataLoader<TextView, Grou
                     });
                     builder.setPositiveButton("Yes", (dialog, which) -> {
                         Log.e("Sending logs related to message " + contentId);
-                        if (BuildConfig.DEBUG) {
-                            LogProvider.openDebugLogcatIntent(v.getContext(), contentId);
-                        } else {
-                            LogProvider.openEmailLogIntent(v.getContext(), contentId);
-                        }
+                        LogProvider.openLogIntent(v.getContext(), contentId);
                     });
                     builder.show();
                 });

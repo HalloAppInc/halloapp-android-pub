@@ -582,7 +582,7 @@ public class Debug {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage("Send logs about ID '" + contentId + "'?");
         builder.setCancelable(true);
-        builder.setPositiveButton(R.string.yes, (dialog, which) -> LogProvider.openDebugLogcatIntent(context, contentId));
+        builder.setPositiveButton(R.string.yes, (dialog, which) -> LogProvider.openLogIntent(context, contentId));
         builder.setNegativeButton(R.string.no, null);
         builder.show();
     }
