@@ -323,8 +323,8 @@ public class Registration {
         }
     }
 
-    public @NonNull RegistrationRequestResult requestRegistrationViaVoiceCall(@NonNull String phone, @Nullable String groupInviteToken) {
-        return requestRegistrationTypeViaNoise(phone, groupInviteToken, true, null);
+    public @NonNull RegistrationRequestResult requestRegistrationViaVoiceCall(@NonNull String phone, @Nullable String groupInviteToken, @Nullable String hashcashSolution) {
+        return requestRegistrationTypeViaNoise(phone, groupInviteToken, true, hashcashSolution);
     }
 
     public @NonNull RegistrationRequestResult registerPhoneNumber(@Nullable String name, @NonNull String phone, @Nullable String groupInviteToken, @Nullable String hashcashSolution) {

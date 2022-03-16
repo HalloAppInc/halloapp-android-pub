@@ -354,7 +354,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                         if (registerCalled.compareAndSet(false, true)) {
                             Log.i("RegistrationRequestViewModel InstallReferrer took too long");
                             Registration.RegistrationRequestResult result = registration.registerPhoneNumber(name, phone, null, hashcashResult == null ? null : hashcashResult.fullSolution);
-                            if (result.result == Registration.RegistrationRequestResult.RESULT_FAILED_HASHCASH) {
+                            if (result.result != Registration.RegistrationRequestResult.RESULT_OK) {
                                 hashcashLatch = new CountDownLatch(1);
                                 hashcashResult = null;
                                 runHashcash();
@@ -401,7 +401,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                         bgWorkers.execute(() -> {
                             if (registerCalled.compareAndSet(false, true)) {
                                 Registration.RegistrationRequestResult result = registration.registerPhoneNumber(name, phone, null, hashcashResult == null ? null : hashcashResult.fullSolution);
-                                if (result.result == Registration.RegistrationRequestResult.RESULT_FAILED_HASHCASH) {
+                                if (result.result != Registration.RegistrationRequestResult.RESULT_OK) {
                                     hashcashLatch = new CountDownLatch(1);
                                     hashcashResult = null;
                                     runHashcash();

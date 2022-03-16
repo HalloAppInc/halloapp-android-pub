@@ -37,6 +37,8 @@ import com.halloapp.widget.SnackbarHelper;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class RegistrationVerificationActivity extends HalloActivity {
 
@@ -45,6 +47,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
     public static final String EXTRA_GROUP_INVITE_TOKEN = "group_invite_token";
 
     private static final int CODE_LENGTH = 6;
+    private static final long HASHCASH_MAX_WAIT_MS = 60_000;
 
     private final SmsVerificationManager smsVerificationManager = SmsVerificationManager.getInstance();
 
@@ -217,6 +220,9 @@ public class RegistrationVerificationActivity extends HalloActivity {
         private final MutableLiveData<Integer> callRetryWaitSeconds = new MutableLiveData<>();
         private final MutableLiveData<Integer> smsRetryWaitSeconds = new MutableLiveData<>();
 
+        private CountDownLatch hashcashLatch = new CountDownLatch(1);
+        private Registration.HashcashResult hashcashResult;
+
         private CountDownTimer smsCountDownTimer;
         private CountDownTimer callCountDownTimer;
 
@@ -231,6 +237,19 @@ public class RegistrationVerificationActivity extends HalloActivity {
                 }
             };
             timer.schedule(timerTask, Constants.SEND_LOGS_BUTTON_DELAY_MS);
+
+            runHashcash();
+        }
+
+        private void runHashcash() {
+            bgWorkers.execute(() -> {
+                hashcashResult = registration.getHashcashSolution();
+                if (hashcashResult.result != Registration.HashcashResult.RESULT_OK) {
+                    Log.e("Got hashcash failure " + hashcashResult.result);
+                    Log.sendErrorReport("Hashcash failed");
+                }
+                hashcashLatch.countDown();
+            });
         }
 
         LiveData<Registration.RegistrationVerificationResult> getRegistrationVerificationResult() {
@@ -305,7 +324,16 @@ public class RegistrationVerificationActivity extends HalloActivity {
         public LiveData<Registration.RegistrationRequestResult> requestSms(String phone, @Nullable String token) {
             MutableLiveData<Registration.RegistrationRequestResult> result = new MutableLiveData<>();
             bgWorkers.execute(() -> {
-                Registration.RegistrationRequestResult requestResult = registration.requestRegistration(phone, token, null);
+                try {
+                    hashcashLatch.await(HASHCASH_MAX_WAIT_MS, TimeUnit.MILLISECONDS);
+                    Log.i("RegistrationVerificationActivity/requestSms done waiting for hashcashLatch");
+                } catch (InterruptedException e) {
+                    Log.e("Interrupted while waiting for hashcash", e);
+                }
+                Registration.RegistrationRequestResult requestResult = registration.requestRegistration(phone, token, hashcashResult == null ? null : hashcashResult.fullSolution);
+                hashcashLatch = new CountDownLatch(1);
+                hashcashResult = null;
+                runHashcash();
                 result.postValue(requestResult);
             });
             return result;
@@ -314,7 +342,16 @@ public class RegistrationVerificationActivity extends HalloActivity {
         public LiveData<Registration.RegistrationRequestResult> requestCall(String phone, @Nullable String token) {
             MutableLiveData<Registration.RegistrationRequestResult> result = new MutableLiveData<>();
             bgWorkers.execute(() -> {
-                Registration.RegistrationRequestResult requestResult = registration.requestRegistrationViaVoiceCall(phone, token);
+                try {
+                    hashcashLatch.await(HASHCASH_MAX_WAIT_MS, TimeUnit.MILLISECONDS);
+                    Log.i("RegistrationVerificationActivity/requestCall done waiting for hashcashLatch");
+                } catch (InterruptedException e) {
+                    Log.e("Interrupted while waiting for hashcash", e);
+                }
+                Registration.RegistrationRequestResult requestResult = registration.requestRegistrationViaVoiceCall(phone, token, hashcashResult == null ? null : hashcashResult.fullSolution);
+                hashcashLatch = new CountDownLatch(1);
+                hashcashResult = null;
+                runHashcash();
                 result.postValue(requestResult);
             });
             return result;
