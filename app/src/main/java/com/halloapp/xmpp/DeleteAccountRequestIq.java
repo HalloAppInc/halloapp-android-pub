@@ -18,16 +18,14 @@ public class DeleteAccountRequestIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         DeleteAccount.Builder builder = DeleteAccount.newBuilder().setPhone(phone);
         if (!TextUtils.isEmpty(reason)) {
             builder.setFeedback(reason);
         }
         return Iq.newBuilder()
-                .setId(getStanzaId())
                 .setType(Iq.Type.SET)
-                .setDeleteAccount(builder.build())
-                .build();
+                .setDeleteAccount(builder.build());
     }
 }
 

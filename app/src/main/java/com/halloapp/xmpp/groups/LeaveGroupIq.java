@@ -16,15 +16,13 @@ public class LeaveGroupIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         GroupStanza groupStanza = GroupStanza.newBuilder()
                 .setGid(groupId.rawId())
                 .setAction(GroupStanza.Action.LEAVE)
                 .build();
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setId(getStanzaId())
-                .setGroupStanza(groupStanza)
-                .build();
+                .setGroupStanza(groupStanza);
     }
 }

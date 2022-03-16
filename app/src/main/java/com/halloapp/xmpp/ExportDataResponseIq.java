@@ -16,7 +16,7 @@ public class ExportDataResponseIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         return null;
     }
 

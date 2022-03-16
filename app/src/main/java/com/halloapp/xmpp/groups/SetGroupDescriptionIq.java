@@ -18,15 +18,13 @@ public class SetGroupDescriptionIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         GroupStanza setBgStanza = GroupStanza.newBuilder()
                 .setGid(groupId.rawId())
                 .setAction(GroupStanza.Action.CHANGE_DESCRIPTION)
                 .setDescription(description).build();
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setId(getStanzaId())
-                .setGroupStanza(setBgStanza)
-                .build();
+                .setGroupStanza(setBgStanza);
     }
 }

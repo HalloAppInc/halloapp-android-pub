@@ -15,15 +15,13 @@ public class JoinGroupInviteLinkIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         GroupInviteLink groupInviteLink =
                 GroupInviteLink.newBuilder()
                         .setAction(GroupInviteLink.Action.JOIN)
                         .setLink(inviteCode).build();
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setId(getStanzaId())
-                .setGroupInviteLink(groupInviteLink)
-                .build();
+                .setGroupInviteLink(groupInviteLink);
     }
 }

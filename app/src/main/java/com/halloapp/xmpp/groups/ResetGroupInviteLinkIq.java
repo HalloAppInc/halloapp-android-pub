@@ -16,15 +16,13 @@ public class ResetGroupInviteLinkIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         GroupInviteLink groupInviteLink =
                 GroupInviteLink.newBuilder()
                         .setAction(GroupInviteLink.Action.RESET)
                         .setGid(groupId.rawId()).build();
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setId(getStanzaId())
-                .setGroupInviteLink(groupInviteLink)
-                .build();
+                .setGroupInviteLink(groupInviteLink);
     }
 }

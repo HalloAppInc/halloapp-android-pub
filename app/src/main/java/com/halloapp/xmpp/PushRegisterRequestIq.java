@@ -17,9 +17,8 @@ public class PushRegisterRequestIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         return Iq.newBuilder()
-                .setId(getStanzaId())
                 .setType(Iq.Type.SET)
                 .setPushRegister(
                         PushRegister.newBuilder()
@@ -29,8 +28,7 @@ public class PushRegisterRequestIq extends HalloIq {
                                                 .setToken(token)
                                 )
                         .setLangId(languageCode)
-                )
-                .build();
+                );
     }
 }
 

@@ -184,7 +184,7 @@ public class PostOptionsViewModel extends ViewModel {
                 final String thumbnailUrlCopy = thumbnailUrl;
                 final Observable<ExternalShareResponseIq> observable = Connection.getInstance().sendRequestIq(new HalloIq() {
                     @Override
-                    public Iq toProtoIq() {
+                    public Iq.Builder toProtoIq() {
                         OgTagInfo.Builder ogTagInfo = OgTagInfo.newBuilder()
                                 .setTitle(title)
                                 .setDescription(description);
@@ -201,8 +201,7 @@ public class PostOptionsViewModel extends ViewModel {
                         return Iq.newBuilder()
                                 .setId(RandomId.create())
                                 .setType(Iq.Type.SET)
-                                .setExternalSharePost(externalSharePost)
-                                .build();
+                                .setExternalSharePost(externalSharePost);
                     }
                 });
                 observable.onError(e -> Log.e("Failed to send for external sharing"))

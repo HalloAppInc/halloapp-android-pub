@@ -17,17 +17,15 @@ public class WhisperKeysUploadIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         WhisperKeys.Builder builder = WhisperKeys.newBuilder();
         builder.setAction(WhisperKeys.Action.ADD);
         for (byte[] oneTimePreKey : oneTimePreKeys) {
             builder.addOneTimeKeys(ByteString.copyFrom(oneTimePreKey));
         }
         return Iq.newBuilder()
-                .setId(getStanzaId())
                 .setType(Iq.Type.SET)
-                .setWhisperKeys(builder)
-                .build();
+                .setWhisperKeys(builder);
     }
 }
 

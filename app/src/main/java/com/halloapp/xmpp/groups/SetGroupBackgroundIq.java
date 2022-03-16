@@ -19,7 +19,7 @@ public class SetGroupBackgroundIq extends HalloIq {
     }
 
     @Override
-    public Iq toProtoIq() {
+    public Iq.Builder toProtoIq() {
         Background bgStanza = Background.newBuilder()
                 .setTheme(background).build();
         GroupStanza setBgStanza = GroupStanza.newBuilder()
@@ -28,8 +28,6 @@ public class SetGroupBackgroundIq extends HalloIq {
                 .setBackgroundBytes(bgStanza.toByteString()).build();
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
-                .setId(getStanzaId())
-                .setGroupStanza(setBgStanza)
-                .build();
+                .setGroupStanza(setBgStanza);
     }
 }
