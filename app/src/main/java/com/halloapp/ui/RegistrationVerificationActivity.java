@@ -193,7 +193,13 @@ public class RegistrationVerificationActivity extends HalloActivity {
         registrationVerificationViewModel.showSendLogs.observe(this, show -> {
             sendLogsButton.setVisibility(Boolean.TRUE.equals(show) ? View.VISIBLE : View.GONE);
         });
-        sendLogsButton.setOnClickListener(v -> LogProvider.openLogIntent(this));
+        sendLogsButton.setOnClickListener(v -> {
+            ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.preparing_logs));
+            LogProvider.openLogIntent(this).observe(this, intent -> {
+                startActivity(intent);
+                progressDialog.dismiss();
+            });
+        });
     }
 
     @Override

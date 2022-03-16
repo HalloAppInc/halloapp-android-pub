@@ -2,6 +2,7 @@ package com.halloapp.ui;
 
 import android.Manifest;
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -120,7 +121,13 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
         viewModel.showSendLogs.observe(this, show -> {
             sendLogsButton.setVisibility(Boolean.TRUE.equals(show) ? View.VISIBLE : View.GONE);
         });
-        sendLogsButton.setOnClickListener(v -> LogProvider.openLogIntent(this));
+        sendLogsButton.setOnClickListener(v -> {
+            ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.preparing_logs));
+            LogProvider.openLogIntent(this).observe(this, intent -> {
+                startActivity(intent);
+                progressDialog.dismiss();
+            });
+        });
     }
 
     private void showRunningState() {

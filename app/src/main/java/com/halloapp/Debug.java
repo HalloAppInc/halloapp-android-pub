@@ -3,6 +3,7 @@ package com.halloapp;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -12,6 +13,7 @@ import android.widget.PopupMenu;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.util.Consumer;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.google.crypto.tink.subtle.Random;
 import com.halloapp.contacts.Contact;
@@ -578,11 +580,17 @@ public class Debug {
         });
     }
 
-    public static void askSendLogsWithId(@NonNull Context context, @NonNull String contentId) {
+    public static void askSendLogsWithId(@NonNull LifecycleOwner lifecycleOwner, @NonNull Context context, @NonNull String contentId) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage("Send logs about ID '" + contentId + "'?");
         builder.setCancelable(true);
-        builder.setPositiveButton(R.string.yes, (dialog, which) -> LogProvider.openLogIntent(context, contentId));
+        builder.setPositiveButton(R.string.yes, (dialog, which) -> {
+            ProgressDialog progressDialog = ProgressDialog.show(context, null, context.getString(R.string.preparing_logs));
+            LogProvider.openLogIntent(context, contentId).observe(lifecycleOwner, intent -> {
+                context.startActivity(intent);
+                progressDialog.dismiss();
+            });
+        });
         builder.setNegativeButton(R.string.no, null);
         builder.show();
     }

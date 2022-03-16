@@ -470,7 +470,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         }
 
         if (decryptStatusView != null) {
-            decryptStatLoader.load(decryptStatusView, message.id);
+            decryptStatLoader.load(this, decryptStatusView, message.id);
         }
 
         if (dateView != null) {

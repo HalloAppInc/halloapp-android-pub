@@ -2,13 +2,17 @@ package com.halloapp.ui.groups;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.widget.TextView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.collection.LruCache;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.halloapp.BuildConfig;
+import com.halloapp.R;
 import com.halloapp.content.ContentDb;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.ViewDataLoader;
@@ -39,19 +43,19 @@ public class GroupContentDecryptStatLoader extends ViewDataLoader<TextView, Grou
     }
 
     @MainThread
-    public void loadPost(@NonNull TextView view, @NonNull String postId) {
+    public void loadPost(@NonNull LifecycleOwner lifecycleOwner, @NonNull TextView view, @NonNull String postId) {
         final Callable<GroupDecryptStats> loader = () -> contentDb.getGroupPostDecryptStats(postId);
-        load(view, postId, loader);
+        load(lifecycleOwner, view, postId, loader);
     }
 
     @MainThread
-    public void loadComment(@NonNull TextView view, @NonNull String commentId) {
+    public void loadComment(@NonNull LifecycleOwner lifecycleOwner, @NonNull TextView view, @NonNull String commentId) {
         final Callable<GroupDecryptStats> loader = () -> contentDb.getGroupCommentDecryptStats(commentId);
-        load(view, commentId, loader);
+        load(lifecycleOwner, view, commentId, loader);
     }
 
     @MainThread
-    public void load(@NonNull TextView view, @NonNull String contentId, @NonNull Callable<GroupDecryptStats> loader) {
+    private void load(@NonNull LifecycleOwner lifecycleOwner, @NonNull TextView view, @NonNull String contentId, @NonNull Callable<GroupDecryptStats> loader) {
         final Displayer<TextView, GroupDecryptStats> displayer = new Displayer<TextView, GroupDecryptStats>() {
 
             @SuppressLint("SetTextI18n")
@@ -85,7 +89,12 @@ public class GroupContentDecryptStatLoader extends ViewDataLoader<TextView, Grou
                     });
                     builder.setPositiveButton("Yes", (dialog, which) -> {
                         Log.e("Sending logs related to message " + contentId);
-                        LogProvider.openLogIntent(v.getContext(), contentId);
+                        Context context = view.getContext();
+                        ProgressDialog progressDialog = ProgressDialog.show(context, null, context.getString(R.string.preparing_logs));
+                        LogProvider.openLogIntent(context, contentId).observe(lifecycleOwner, intent -> {
+                            context.startActivity(intent);
+                            progressDialog.dismiss();
+                        });
                     });
                     builder.show();
                 });

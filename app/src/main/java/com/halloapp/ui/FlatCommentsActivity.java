@@ -1592,7 +1592,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             }
             timestampView.setText(TimeFormatter.formatMessageTime(timestampView.getContext(), comment.timestamp));
             if (decryptStatusView != null) {
-                groupContentDecryptStatLoader.loadComment(decryptStatusView, comment.id);
+                groupContentDecryptStatLoader.loadComment(this, decryptStatusView, comment.id);
             }
             timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
             if (nameView != null) {

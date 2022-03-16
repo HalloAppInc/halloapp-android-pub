@@ -277,13 +277,13 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         parent.getTimestampRefresher().scheduleTimestampRefresh(post.timestamp);
         if (BuildConfig.DEBUG) {
             timeView.setOnLongClickListener(v -> {
-                Debug.askSendLogsWithId(timeView.getContext(), post.id);
+                Debug.askSendLogsWithId(this, timeView.getContext(), post.id);
                 return false;
             });
         }
 
         if (decryptStatusView != null && !post.senderUserId.isMe()) {
-            groupContentDecryptStatLoader.loadPost(decryptStatusView, post.id);
+            groupContentDecryptStatLoader.loadPost(this, decryptStatusView, post.id);
         }
 
         final boolean noCaption = TextUtils.isEmpty(post.text);

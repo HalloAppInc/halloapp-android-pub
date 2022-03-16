@@ -2,13 +2,17 @@ package com.halloapp.ui.chat;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.widget.TextView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.collection.LruCache;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.halloapp.BuildConfig;
+import com.halloapp.R;
 import com.halloapp.content.ContentDb;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.ViewDataLoader;
@@ -38,7 +42,7 @@ public class DecryptStatLoader extends ViewDataLoader<TextView, DecryptStats, St
     }
 
     @MainThread
-    public void load(@NonNull TextView view, @NonNull String messageId) {
+    public void load(@NonNull LifecycleOwner lifecycleOwner, @NonNull TextView view, @NonNull String messageId) {
         final Callable<DecryptStats> loader = () -> contentDb.getMessageDecryptStats(messageId);
         final ViewDataLoader.Displayer<TextView, DecryptStats> displayer = new ViewDataLoader.Displayer<TextView, DecryptStats>() {
 
@@ -70,7 +74,12 @@ public class DecryptStatLoader extends ViewDataLoader<TextView, DecryptStats, St
                     });
                     builder.setPositiveButton("Yes", (dialog, which) -> {
                         Log.e("Sending logs related to message " + messageId);
-                        LogProvider.openLogIntent(v.getContext(), messageId);
+                        Context context = view.getContext();
+                        ProgressDialog progressDialog = ProgressDialog.show(context, null, context.getString(R.string.preparing_logs));
+                        LogProvider.openLogIntent(context, messageId).observe(lifecycleOwner, intent -> {
+                            context.startActivity(intent);
+                            progressDialog.dismiss();
+                        });
                     });
                     builder.show();
                 });

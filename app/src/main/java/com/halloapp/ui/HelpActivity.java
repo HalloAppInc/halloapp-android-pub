@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.lifecycle.Observer;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
@@ -56,7 +58,11 @@ public class HelpActivity extends HalloActivity {
         sendLogs.setOnClickListener(v -> {
             Log.sendErrorReport("User sent logs");
 
-            LogProvider.openLogIntent(this);
+            ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.preparing_logs));
+            LogProvider.openLogIntent(this).observe(this, intent -> {
+                startActivity(intent);
+                progressDialog.dismiss();
+            });
         });
 
         useDebugHostSwitch = findViewById(R.id.use_debug_host_switch);

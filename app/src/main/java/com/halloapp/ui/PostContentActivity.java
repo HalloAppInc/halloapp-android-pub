@@ -319,7 +319,7 @@ public class PostContentActivity extends HalloActivity {
             final View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
             if (BuildConfig.DEBUG) {
                 layout.findViewById(R.id.time).setOnLongClickListener(v -> {
-                    Debug.askSendLogsWithId(PostContentActivity.this, post.id);
+                    Debug.askSendLogsWithId(PostContentActivity.this, PostContentActivity.this, post.id);
                     return false;
                 });
             }
