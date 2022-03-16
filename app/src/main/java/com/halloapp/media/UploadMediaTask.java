@@ -190,7 +190,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                     break;
             }
             try {
-                prepareMedia(media, maxVideoDurationSeconds);
+                prepareMedia(media, maxVideoDurationSeconds, mediaLogId);
             } catch (IllegalArgumentException e) {
                 Log.e("UploadMediaTask media preparation failed for " + mediaLogId + "; maybe bad mime", e);
                 media.transferred = Media.TRANSFERRED_FAILURE;
@@ -524,9 +524,9 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         return newEncryptedFile;
     }
 
-    private void prepareMedia(@NonNull Media media, long maxVideoDurationSeconds) throws IOException, MediaConversionException, Mp4Utils.Mp4OperationException {
-        Log.d("UploadMediaTask.prepareMedia start size " + media.file.length());
-        if (media.type == Media.MEDIA_TYPE_VIDEO && MediaUtils.shouldConvertVideo(media.file, maxVideoDurationSeconds)) {
+    private void prepareMedia(@NonNull Media media, long maxVideoDurationSeconds, @NonNull String mediaLogId) throws IOException, MediaConversionException, Mp4Utils.Mp4OperationException {
+        Log.d("UploadMediaTask.prepareMedia start size " + media.file.length() + " for " + mediaLogId);
+        if (media.type == Media.MEDIA_TYPE_VIDEO && MediaUtils.shouldConvertVideo(media.file, maxVideoDurationSeconds, mediaLogId)) {
             final File file = fileStore.getTmpFile(RandomId.create());
             final MediaConverter mediaConverter = new MediaConverter();
             mediaConverter.setInput(media.file);
@@ -541,11 +541,11 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                 mediaConverter.setVideoResolution(Constants.VIDEO_RESOLUTION_H264);
             }
             final int maxVideoBitrate = MediaUtils.getPreferredMaxVideoBitrate();
-            Log.d("UploadMediaTask.prepareMedia maxVideoBitrate is " + maxVideoBitrate);
+            Log.d("UploadMediaTask.prepareMedia maxVideoBitrate is " + maxVideoBitrate + " for " + mediaLogId);
             mediaConverter.setVideoBitrate(maxVideoBitrate);
             mediaConverter.setAudioBitrate(Constants.AUDIO_BITRATE);
             mediaConverter.setListener(percent -> {
-                Log.v("UploadMediaTask.prepareMedia convert " + percent);
+                Log.v("UploadMediaTask.prepareMedia convert " + percent + " for " + mediaLogId);
                 return false;
             });
 
@@ -562,13 +562,13 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             }
 
             if (!media.file.delete()) {
-                Log.e("UploadMediaTask.prepareMedia failed to delete " + media.file.getAbsolutePath());
+                Log.e("UploadMediaTask.prepareMedia failed to delete " + media.file.getAbsolutePath() + " for " + mediaLogId);
             }
             if (!file.renameTo(media.file)) {
-                Log.e("UploadMediaTask.prepareMedia failed to rename " + file.getAbsolutePath() + " to " + media.file.getAbsolutePath());
+                Log.e("UploadMediaTask.prepareMedia failed to rename " + file.getAbsolutePath() + " to " + media.file.getAbsolutePath() + " for " + mediaLogId);
             }
         }
-        Log.d("UploadMediaTask.prepareMedia converted size " + media.file.length());
+        Log.d("UploadMediaTask.prepareMedia converted size " + media.file.length() + " for " + mediaLogId);
 
         if (media.type == Media.MEDIA_TYPE_VIDEO) {
             Mp4Utils.zeroMp4Timestamps(media.file);

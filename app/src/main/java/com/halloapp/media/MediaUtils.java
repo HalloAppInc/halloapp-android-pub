@@ -388,9 +388,9 @@ public class MediaUtils {
     }
 
     @WorkerThread
-    public static boolean shouldConvertVideo(@NonNull File file, long maxVideoDurationSeconds) throws IOException {
+    public static boolean shouldConvertVideo(@NonNull File file, long maxVideoDurationSeconds, @NonNull String mediaLogId) throws IOException {
         final int maxBitrate = getPreferredMaxVideoBitrate();
-        Log.i("MediaUtils.shouldConvertVideo maxBitrate is " + maxBitrate + " maxVideoDurationSeconds is " + maxVideoDurationSeconds);
+        Log.i("MediaUtils.shouldConvertVideo maxBitrate is " + maxBitrate + " maxVideoDurationSeconds is " + maxVideoDurationSeconds + " for " + mediaLogId);
         final MediaExtractor extractor = new MediaExtractor();
         long fileLength = file.length();
         long bitrate = 0;
@@ -403,7 +403,7 @@ public class MediaUtils {
                 if (!MediaFormat.MIMETYPE_VIDEO_AVC.equals(trackMime) &&
                         !MediaFormat.MIMETYPE_VIDEO_HEVC.equals(trackMime) &&
                         !MediaFormat.MIMETYPE_AUDIO_AAC.equals(trackMime)) {
-                    Log.i("MediaUtils.shouldConvertVideo track " + index + " is " + trackMime + ", will convert");
+                    Log.i("MediaUtils.shouldConvertVideo track " + index + " is " + trackMime + ", will convert " + mediaLogId);
                     return true;
                 }
                 if (mediaFormat.containsKey(MediaFormat.KEY_DURATION)) {
@@ -419,14 +419,14 @@ public class MediaUtils {
             extractor.release();
         }
         if (bitrate > maxBitrate) {
-            Log.i("MediaUtils.shouldConvertVideo bitrate is " + bitrate + ", will convert");
+            Log.i("MediaUtils.shouldConvertVideo bitrate is " + bitrate + ", will convert " + mediaLogId);
             return true;
         }
         if (duration > maxVideoDurationSeconds * 1000) {
-            Log.i("MediaUtils.shouldConvertVideo duration is " + duration + ", will convert");
+            Log.i("MediaUtils.shouldConvertVideo duration is " + duration + ", will convert " + mediaLogId);
             return true;
         }
-        Log.i("MediaUtils.shouldConvertVideo: OK to send as is " + file.getAbsolutePath());
+        Log.i("MediaUtils.shouldConvertVideo: OK to send as is " + file.getAbsolutePath() + " for " + mediaLogId);
         return false;
     }
 
