@@ -3,4 +3,5 @@
     <solid android:color="@color/url_preview_background_posts"/>
     <corners
         android:radius="@dimen/message_bubble_corner_radius"/>
+    <stroke android:width="0.3dp" android:color="@color/url_preview_post_border"/>
 </shape>

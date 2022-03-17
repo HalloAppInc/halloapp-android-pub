@@ -77,7 +77,9 @@
     <color name="message_background_reply_outgoing">#DBE6F1</color>
     <color name="message_url_preview_background_outgoing">@color/white_54</color>
     <color name="message_url_preview_background_incoming">#FBFBF8</color>
-    <color name="url_preview_background_posts">#f3f2ef</color>
+    <color name="url_preview_background_posts">#FBFBF8</color>
+    <color name="url_preview_domain_background_square">@color/white</color>
+    <color name="url_preview_post_border">@color/black_20</color>
     <color name="chat_entry_background">#FFFFFF</color>
     <color name="emoji_picker_background">@color/window_background</color>
     <color name="emoji_variant_triangle_color">@color/black_20</color>
