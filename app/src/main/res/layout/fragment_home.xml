@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <View
         android:id="@+id/popup_anchor"
@@ -23,24 +23,46 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <TextView
+    <LinearLayout
         android:id="@+id/new_posts"
         android:layout_width="wrap_content"
-        android:layout_height="44dp"
-        android:layout_margin="8dp"
-        android:textColor="@android:color/white"
+        android:layout_height="37dp"
+        android:orientation="horizontal"
         android:background="@drawable/new_posts_indicator_background"
-        android:gravity="center"
-        android:singleLine="true"
-        android:textSize="16sp"
-        android:fontFamily="sans-serif-medium"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="@string/new_posts"
-        android:visibility="gone"/>
+        android:layout_margin="8dp"
+        android:paddingEnd="9dp"
+        android:visibility="gone"
+        android:paddingStart="9dp">
+
+        <com.halloapp.widget.AvatarsLayout
+            android:id="@+id/new_post_avatars"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:alPaddingColor="@color/new_post_pill_bg"
+            app:alPaddingSize="1dp"
+            app:alElevation="0dp"
+            app:alAvatarSize="21dp"
+            android:visibility="visible"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/new_posts"
+            android:textSize="16sp"
+            android:paddingHorizontal="8dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="1dp"
+            android:textColor="@color/secondary_text"
+            android:fontFamily="sans-serif-medium"/>
+
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@android:id/empty"

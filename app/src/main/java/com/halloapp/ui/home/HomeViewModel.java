@@ -51,7 +51,7 @@ public class HomeViewModel extends AndroidViewModel {
 
     final LiveData<PagedList<Post>> postList;
 
-    final ComputableLiveData<Boolean> unseenHomePosts;
+    final ComputableLiveData<List<Post>> unseenHomePosts;
     final MutableLiveData<List<Contact>> suggestedContacts = new MutableLiveData<>(null);
 
     private MutableLiveData<Boolean> fabMenuOpen = new MutableLiveData<>(false);
@@ -180,15 +180,15 @@ public class HomeViewModel extends AndroidViewModel {
 
         voiceNotePlayer = new VoiceNotePlayer(application);
 
-        unseenHomePosts = new ComputableLiveData<Boolean>() {
+        unseenHomePosts = new ComputableLiveData<List<Post>>() {
             @Override
-            protected Boolean compute() {
+            protected List<Post> compute() {
                 long lastTime = preferences.getLastSeenPostTime();
                 List<Post> unseenPosts = contentDb.getUnseenPosts(lastTime, 5);
                 if (!unseenPosts.isEmpty()) {
                     lastSeenTimestamp = Math.max(lastSeenTimestamp, unseenPosts.get(0).timestamp);
                 }
-                return !unseenPosts.isEmpty();
+                return unseenPosts;
             }
         };
 
@@ -246,7 +246,7 @@ public class HomeViewModel extends AndroidViewModel {
         }
     }
 
-    public LiveData<Boolean> getUnseenHomePosts() {
+    public LiveData<List<Post>> getUnseenHomePosts() {
         return unseenHomePosts.getLiveData();
     }
 

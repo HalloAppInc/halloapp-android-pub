@@ -233,7 +233,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         });
 
         homeViewModel.getUnseenHomePosts().observe(this, unseenPosts -> {
-            if (unseenPosts == null || !unseenPosts) {
+            if (unseenPosts == null || unseenPosts.isEmpty()) {
                 navView.removeBadge(R.id.navigation_home);
             } else {
                 BadgeDrawable badge = navView.getOrCreateBadge(R.id.navigation_home);

@@ -112,6 +112,7 @@
     <color name="post_group_left">#C1C0B8</color>
     <color name="default_avatar_bg">#C3BEAE</color>
     <color name="default_avatar_color">#FFFFFF</color>
+    <color name="new_post_pill_bg">#CCC8BD</color>
 
 
     <color name="bg_call_button_neutral">#EDECE9</color>

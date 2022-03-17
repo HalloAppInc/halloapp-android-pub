@@ -34,7 +34,9 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Post;
 import com.halloapp.content.PostThumbnailLoader;
+import com.halloapp.id.UserId;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.permissions.PermissionUtils;
@@ -44,6 +46,7 @@ import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.DeviceAvatarLoader;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.posts.InviteFriendsPostViewHolder;
@@ -52,11 +55,14 @@ import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.widget.AvatarsLayout;
 import com.halloapp.widget.BadgedDrawable;
 import com.halloapp.widget.FabExpandOnScrollListener;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
@@ -78,6 +84,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
 
     private RecyclerView postsView;
     private View newPostsView;
+    private AvatarsLayout newPostsAvatars;
 
     private View contactsNag;
     private Button contactsSettingsButton;
@@ -126,6 +133,8 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         postsView = root.findViewById(R.id.posts);
         final View emptyView = root.findViewById(android.R.id.empty);
         newPostsView = root.findViewById(R.id.new_posts);
+        newPostsAvatars = newPostsView.findViewById(R.id.new_post_avatars);
+        newPostsAvatars.setAvatarLoader(AvatarLoader.getInstance());
 
         newPostsView.setOnClickListener(v -> {
             scrollUpOnDataLoaded = true;
@@ -173,11 +182,11 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
             adapter.notifyDataSetChanged();
         });
 
-        viewModel.unseenHomePosts.getLiveData().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        viewModel.unseenHomePosts.getLiveData().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
             @Override
-            public void onChanged(Boolean hasUnseen) {
-                if (hasUnseen) {
-                    showNewPostsBanner();
+            public void onChanged(List<Post> unseenPosts) {
+                if (unseenPosts != null && !unseenPosts.isEmpty()) {
+                    showNewPostsBanner(unseenPosts);
                 }
                 viewModel.unseenHomePosts.getLiveData().removeObserver(this);
             }
@@ -205,7 +214,15 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                     final View childView = layoutManager.getChildAt(0);
                     final boolean scrolled = childView == null || layoutManager.getPosition(childView) != 0;
                     if (scrolled) {
-                        showNewPostsBanner();
+                        List<Post> unseen = new ArrayList<>();
+                        for (int i = 0; i < posts.size(); i++) {
+                            Post post = posts.get(i);
+                            if (post == null || post.seen != Post.SEEN_NO) {
+                                break;
+                            }
+                            unseen.add(post);
+                        }
+                        showNewPostsBanner(unseen);
                     } else {
                         scrollUpOnDataLoaded = false;
                         postsView.scrollToPosition(0);
@@ -304,7 +321,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         return viewModel.getVoiceNotePlayer();
     }
 
-    private void showNewPostsBanner() {
+    private void showNewPostsBanner(List<Post> unseenPosts) {
         if (newPostsView.getVisibility() != View.VISIBLE) {
             newPostsView.setVisibility(View.VISIBLE);
             final float initialTranslation = -getResources().getDimension(R.dimen.details_media_list_height);
@@ -315,6 +332,14 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                     newPostsView.setTranslationY(0);
                 }
             }).start();
+        }
+        if (unseenPosts != null) {
+            HashSet<UserId> users = new HashSet<>();
+            for (Post post : unseenPosts) {
+                users.add(post.senderUserId);
+            }
+            newPostsAvatars.setAvatarCount(Math.min(users.size(), 3));
+            newPostsAvatars.setUsers(new ArrayList<>(users));
         }
         newPostsView.removeCallbacks(hidePostsCallback);
         newPostsView.postDelayed(hidePostsCallback, NEW_POSTS_BANNER_DISAPPEAR_TIME_MS);

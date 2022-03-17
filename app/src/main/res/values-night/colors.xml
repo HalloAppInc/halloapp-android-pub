@@ -42,6 +42,7 @@
     <color name="post_card_color_background">@color/black_40</color>
     <color name="post_card_background">@color/cardview_dark_background</color>
     <color name="text_post_compose_footer_overlay">#CC424242</color>
+    <color name="new_post_pill_bg">#424242</color>
 
     <color name="emoji_variant_triangle_color">@color/white_30</color>
     <color name="emoji_variant_bar_background">#FF525252</color>
