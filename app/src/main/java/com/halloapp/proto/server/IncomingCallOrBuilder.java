@@ -99,4 +99,15 @@ public interface IncomingCallOrBuilder extends
    * @return The callConfig.
    */
   com.halloapp.proto.server.CallConfig getCallConfig();
+
+  /**
+   * <code>.server.CallCapabilities call_capabilities = 9;</code>
+   * @return Whether the callCapabilities field is set.
+   */
+  boolean hasCallCapabilities();
+  /**
+   * <code>.server.CallCapabilities call_capabilities = 9;</code>
+   * @return The callCapabilities.
+   */
+  com.halloapp.proto.server.CallCapabilities getCallCapabilities();
 }

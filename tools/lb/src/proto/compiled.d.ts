@@ -5568,6 +5568,102 @@ export namespace server {
         }
     }
 
+    /** Properties of a CallCapabilities. */
+    interface ICallCapabilities {
+
+        /** CallCapabilities preAnswer */
+        preAnswer?: (boolean|null);
+
+        /** CallCapabilities sdpRestart */
+        sdpRestart?: (boolean|null);
+    }
+
+    /** Represents a CallCapabilities. */
+    class CallCapabilities implements ICallCapabilities {
+
+        /**
+         * Constructs a new CallCapabilities.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.ICallCapabilities);
+
+        /** CallCapabilities preAnswer. */
+        public preAnswer: boolean;
+
+        /** CallCapabilities sdpRestart. */
+        public sdpRestart: boolean;
+
+        /**
+         * Creates a new CallCapabilities instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns CallCapabilities instance
+         */
+        public static create(properties?: server.ICallCapabilities): server.CallCapabilities;
+
+        /**
+         * Encodes the specified CallCapabilities message. Does not implicitly {@link server.CallCapabilities.verify|verify} messages.
+         * @param message CallCapabilities message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.ICallCapabilities, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified CallCapabilities message, length delimited. Does not implicitly {@link server.CallCapabilities.verify|verify} messages.
+         * @param message CallCapabilities message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.ICallCapabilities, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a CallCapabilities message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns CallCapabilities
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.CallCapabilities;
+
+        /**
+         * Decodes a CallCapabilities message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns CallCapabilities
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.CallCapabilities;
+
+        /**
+         * Verifies a CallCapabilities message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a CallCapabilities message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns CallCapabilities
+         */
+        public static fromObject(object: { [k: string]: any }): server.CallCapabilities;
+
+        /**
+         * Creates a plain object from a CallCapabilities message. Also converts values to other types if specified.
+         * @param message CallCapabilities
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.CallCapabilities, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this CallCapabilities to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a StartCall. */
     interface IStartCall {
 
@@ -5585,6 +5681,9 @@ export namespace server {
 
         /** StartCall rerequestCount */
         rerequestCount?: (number|null);
+
+        /** StartCall callCapabilities */
+        callCapabilities?: (server.ICallCapabilities|null);
     }
 
     /** Represents a StartCall. */
@@ -5610,6 +5709,9 @@ export namespace server {
 
         /** StartCall rerequestCount. */
         public rerequestCount: number;
+
+        /** StartCall callCapabilities. */
+        public callCapabilities?: (server.ICallCapabilities|null);
 
         /**
          * Creates a new StartCall instance using the specified properties.
@@ -5922,6 +6024,9 @@ export namespace server {
 
         /** IncomingCallPush callConfig */
         callConfig?: (server.ICallConfig|null);
+
+        /** IncomingCallPush callCapabilities */
+        callCapabilities?: (server.ICallCapabilities|null);
     }
 
     /** Represents an IncomingCallPush. */
@@ -5950,6 +6055,9 @@ export namespace server {
 
         /** IncomingCallPush callConfig. */
         public callConfig?: (server.ICallConfig|null);
+
+        /** IncomingCallPush callCapabilities. */
+        public callCapabilities?: (server.ICallCapabilities|null);
 
         /**
          * Creates a new IncomingCallPush instance using the specified properties.
@@ -6048,6 +6156,9 @@ export namespace server {
 
         /** IncomingCall callConfig */
         callConfig?: (server.ICallConfig|null);
+
+        /** IncomingCall callCapabilities */
+        callCapabilities?: (server.ICallCapabilities|null);
     }
 
     /** Represents an IncomingCall. */
@@ -6082,6 +6193,9 @@ export namespace server {
 
         /** IncomingCall callConfig. */
         public callConfig?: (server.ICallConfig|null);
+
+        /** IncomingCall callCapabilities. */
+        public callCapabilities?: (server.ICallCapabilities|null);
 
         /**
          * Creates a new IncomingCall instance using the specified properties.
@@ -6270,6 +6384,9 @@ export namespace server {
 
         /** CallRinging timestampMs */
         timestampMs?: (number|Long|null);
+
+        /** CallRinging webrtcAnswer */
+        webrtcAnswer?: (server.IWebRtcSessionDescription|null);
     }
 
     /** Represents a CallRinging. */
@@ -6286,6 +6403,9 @@ export namespace server {
 
         /** CallRinging timestampMs. */
         public timestampMs: (number|Long);
+
+        /** CallRinging webrtcAnswer. */
+        public webrtcAnswer?: (server.IWebRtcSessionDescription|null);
 
         /**
          * Creates a new CallRinging instance using the specified properties.
@@ -6471,6 +6591,9 @@ export namespace server {
 
         /** AnswerCall timestampMs */
         timestampMs?: (number|Long|null);
+
+        /** AnswerCall webrtcOffer */
+        webrtcOffer?: (server.IWebRtcSessionDescription|null);
     }
 
     /** Represents an AnswerCall. */
@@ -6490,6 +6613,9 @@ export namespace server {
 
         /** AnswerCall timestampMs. */
         public timestampMs: (number|Long);
+
+        /** AnswerCall webrtcOffer. */
+        public webrtcOffer?: (server.IWebRtcSessionDescription|null);
 
         /**
          * Creates a new AnswerCall instance using the specified properties.
@@ -6557,6 +6683,111 @@ export namespace server {
 
         /**
          * Converts this AnswerCall to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a CallSdp. */
+    interface ICallSdp {
+
+        /** CallSdp callId */
+        callId?: (string|null);
+
+        /** CallSdp webrtcOffer */
+        webrtcOffer?: (server.IWebRtcSessionDescription|null);
+
+        /** CallSdp webrtcAnswer */
+        webrtcAnswer?: (server.IWebRtcSessionDescription|null);
+    }
+
+    /** Represents a CallSdp. */
+    class CallSdp implements ICallSdp {
+
+        /**
+         * Constructs a new CallSdp.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.ICallSdp);
+
+        /** CallSdp callId. */
+        public callId: string;
+
+        /** CallSdp webrtcOffer. */
+        public webrtcOffer?: (server.IWebRtcSessionDescription|null);
+
+        /** CallSdp webrtcAnswer. */
+        public webrtcAnswer?: (server.IWebRtcSessionDescription|null);
+
+        /** CallSdp sdp. */
+        public sdp?: ("webrtcOffer"|"webrtcAnswer");
+
+        /**
+         * Creates a new CallSdp instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns CallSdp instance
+         */
+        public static create(properties?: server.ICallSdp): server.CallSdp;
+
+        /**
+         * Encodes the specified CallSdp message. Does not implicitly {@link server.CallSdp.verify|verify} messages.
+         * @param message CallSdp message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.ICallSdp, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified CallSdp message, length delimited. Does not implicitly {@link server.CallSdp.verify|verify} messages.
+         * @param message CallSdp message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.ICallSdp, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a CallSdp message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns CallSdp
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.CallSdp;
+
+        /**
+         * Decodes a CallSdp message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns CallSdp
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.CallSdp;
+
+        /**
+         * Verifies a CallSdp message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a CallSdp message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns CallSdp
+         */
+        public static fromObject(object: { [k: string]: any }): server.CallSdp;
+
+        /**
+         * Creates a plain object from a CallSdp message. Also converts values to other types if specified.
+         * @param message CallSdp
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.CallSdp, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this CallSdp to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -8076,6 +8307,9 @@ export namespace server {
         /** Msg incomingCallPush */
         incomingCallPush?: (server.IIncomingCallPush|null);
 
+        /** Msg callSdp */
+        callSdp?: (server.ICallSdp|null);
+
         /** Msg retryCount */
         retryCount?: (number|null);
 
@@ -8224,6 +8458,9 @@ export namespace server {
         /** Msg incomingCallPush. */
         public incomingCallPush?: (server.IIncomingCallPush|null);
 
+        /** Msg callSdp. */
+        public callSdp?: (server.ICallSdp|null);
+
         /** Msg retryCount. */
         public retryCount: number;
 
@@ -8231,7 +8468,7 @@ export namespace server {
         public rerequestCount: number;
 
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp");
 
         /**
          * Creates a new Msg instance using the specified properties.

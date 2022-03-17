@@ -4,6 +4,10 @@
 package com.halloapp.proto.server;
 
 /**
+ * <pre>
+ * DEPRECATED
+ * </pre>
+ *
  * Protobuf type {@code server.IceRestartOffer}
  */
 public  final class IceRestartOffer extends
@@ -215,6 +219,10 @@ public  final class IceRestartOffer extends
   }
 
   /**
+   * <pre>
+   * DEPRECATED
+   * </pre>
+   *
    * Protobuf type {@code server.IceRestartOffer}
    */
   public static final class Builder extends

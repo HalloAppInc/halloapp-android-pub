@@ -91,6 +91,52 @@ public  final class CallRinging extends
     timestampMs_ = 0L;
   }
 
+  public static final int WEBRTC_ANSWER_FIELD_NUMBER = 3;
+  private com.halloapp.proto.server.WebRtcSessionDescription webrtcAnswer_;
+  /**
+   * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+   */
+  @java.lang.Override
+  public boolean hasWebrtcAnswer() {
+    return webrtcAnswer_ != null;
+  }
+  /**
+   * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.WebRtcSessionDescription getWebrtcAnswer() {
+    return webrtcAnswer_ == null ? com.halloapp.proto.server.WebRtcSessionDescription.getDefaultInstance() : webrtcAnswer_;
+  }
+  /**
+   * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+   */
+  private void setWebrtcAnswer(com.halloapp.proto.server.WebRtcSessionDescription value) {
+    value.getClass();
+  webrtcAnswer_ = value;
+    
+    }
+  /**
+   * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeWebrtcAnswer(com.halloapp.proto.server.WebRtcSessionDescription value) {
+    value.getClass();
+  if (webrtcAnswer_ != null &&
+        webrtcAnswer_ != com.halloapp.proto.server.WebRtcSessionDescription.getDefaultInstance()) {
+      webrtcAnswer_ =
+        com.halloapp.proto.server.WebRtcSessionDescription.newBuilder(webrtcAnswer_).mergeFrom(value).buildPartial();
+    } else {
+      webrtcAnswer_ = value;
+    }
+    
+  }
+  /**
+   * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+   */
+  private void clearWebrtcAnswer() {  webrtcAnswer_ = null;
+    
+  }
+
   public static com.halloapp.proto.server.CallRinging parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -267,6 +313,53 @@ public  final class CallRinging extends
       return this;
     }
 
+    /**
+     * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+     */
+    @java.lang.Override
+    public boolean hasWebrtcAnswer() {
+      return instance.hasWebrtcAnswer();
+    }
+    /**
+     * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.WebRtcSessionDescription getWebrtcAnswer() {
+      return instance.getWebrtcAnswer();
+    }
+    /**
+     * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+     */
+    public Builder setWebrtcAnswer(com.halloapp.proto.server.WebRtcSessionDescription value) {
+      copyOnWrite();
+      instance.setWebrtcAnswer(value);
+      return this;
+      }
+    /**
+     * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+     */
+    public Builder setWebrtcAnswer(
+        com.halloapp.proto.server.WebRtcSessionDescription.Builder builderForValue) {
+      copyOnWrite();
+      instance.setWebrtcAnswer(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+     */
+    public Builder mergeWebrtcAnswer(com.halloapp.proto.server.WebRtcSessionDescription value) {
+      copyOnWrite();
+      instance.mergeWebrtcAnswer(value);
+      return this;
+    }
+    /**
+     * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+     */
+    public Builder clearWebrtcAnswer() {  copyOnWrite();
+      instance.clearWebrtcAnswer();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.CallRinging)
   }
   @java.lang.Override
@@ -285,10 +378,11 @@ public  final class CallRinging extends
           java.lang.Object[] objects = new java.lang.Object[] {
             "callId_",
             "timestampMs_",
+            "webrtcAnswer_",
           };
           java.lang.String info =
-              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0208\u0002\u0002" +
-              "";
+              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0208\u0002\u0002" +
+              "\u0003\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

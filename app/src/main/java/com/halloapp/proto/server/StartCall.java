@@ -201,6 +201,52 @@ public  final class StartCall extends
     rerequestCount_ = 0;
   }
 
+  public static final int CALL_CAPABILITIES_FIELD_NUMBER = 6;
+  private com.halloapp.proto.server.CallCapabilities callCapabilities_;
+  /**
+   * <code>.server.CallCapabilities call_capabilities = 6;</code>
+   */
+  @java.lang.Override
+  public boolean hasCallCapabilities() {
+    return callCapabilities_ != null;
+  }
+  /**
+   * <code>.server.CallCapabilities call_capabilities = 6;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.CallCapabilities getCallCapabilities() {
+    return callCapabilities_ == null ? com.halloapp.proto.server.CallCapabilities.getDefaultInstance() : callCapabilities_;
+  }
+  /**
+   * <code>.server.CallCapabilities call_capabilities = 6;</code>
+   */
+  private void setCallCapabilities(com.halloapp.proto.server.CallCapabilities value) {
+    value.getClass();
+  callCapabilities_ = value;
+    
+    }
+  /**
+   * <code>.server.CallCapabilities call_capabilities = 6;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeCallCapabilities(com.halloapp.proto.server.CallCapabilities value) {
+    value.getClass();
+  if (callCapabilities_ != null &&
+        callCapabilities_ != com.halloapp.proto.server.CallCapabilities.getDefaultInstance()) {
+      callCapabilities_ =
+        com.halloapp.proto.server.CallCapabilities.newBuilder(callCapabilities_).mergeFrom(value).buildPartial();
+    } else {
+      callCapabilities_ = value;
+    }
+    
+  }
+  /**
+   * <code>.server.CallCapabilities call_capabilities = 6;</code>
+   */
+  private void clearCallCapabilities() {  callCapabilities_ = null;
+    
+  }
+
   public static com.halloapp.proto.server.StartCall parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -494,6 +540,53 @@ public  final class StartCall extends
       return this;
     }
 
+    /**
+     * <code>.server.CallCapabilities call_capabilities = 6;</code>
+     */
+    @java.lang.Override
+    public boolean hasCallCapabilities() {
+      return instance.hasCallCapabilities();
+    }
+    /**
+     * <code>.server.CallCapabilities call_capabilities = 6;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.CallCapabilities getCallCapabilities() {
+      return instance.getCallCapabilities();
+    }
+    /**
+     * <code>.server.CallCapabilities call_capabilities = 6;</code>
+     */
+    public Builder setCallCapabilities(com.halloapp.proto.server.CallCapabilities value) {
+      copyOnWrite();
+      instance.setCallCapabilities(value);
+      return this;
+      }
+    /**
+     * <code>.server.CallCapabilities call_capabilities = 6;</code>
+     */
+    public Builder setCallCapabilities(
+        com.halloapp.proto.server.CallCapabilities.Builder builderForValue) {
+      copyOnWrite();
+      instance.setCallCapabilities(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.CallCapabilities call_capabilities = 6;</code>
+     */
+    public Builder mergeCallCapabilities(com.halloapp.proto.server.CallCapabilities value) {
+      copyOnWrite();
+      instance.mergeCallCapabilities(value);
+      return this;
+    }
+    /**
+     * <code>.server.CallCapabilities call_capabilities = 6;</code>
+     */
+    public Builder clearCallCapabilities() {  copyOnWrite();
+      instance.clearCallCapabilities();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.StartCall)
   }
   @java.lang.Override
@@ -515,10 +608,11 @@ public  final class StartCall extends
             "callType_",
             "webrtcOffer_",
             "rerequestCount_",
+            "callCapabilities_",
           };
           java.lang.String info =
-              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0000\u0000\u0001\u0208\u0002\u0002" +
-              "\u0003\f\u0004\t\u0005\u0004";
+              "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\u0208\u0002\u0002" +
+              "\u0003\f\u0004\t\u0005\u0004\u0006\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

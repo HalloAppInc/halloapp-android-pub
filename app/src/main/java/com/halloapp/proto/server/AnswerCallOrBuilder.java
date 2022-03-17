@@ -35,4 +35,23 @@ public interface AnswerCallOrBuilder extends
    * @return The timestampMs.
    */
   long getTimestampMs();
+
+  /**
+   * <pre>
+   * used when both sides have pre-answer capabilites
+   * </pre>
+   *
+   * <code>.server.WebRtcSessionDescription webrtc_offer = 4;</code>
+   * @return Whether the webrtcOffer field is set.
+   */
+  boolean hasWebrtcOffer();
+  /**
+   * <pre>
+   * used when both sides have pre-answer capabilites
+   * </pre>
+   *
+   * <code>.server.WebRtcSessionDescription webrtc_offer = 4;</code>
+   * @return The webrtcOffer.
+   */
+  com.halloapp.proto.server.WebRtcSessionDescription getWebrtcOffer();
 }

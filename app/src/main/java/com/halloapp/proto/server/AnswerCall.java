@@ -133,6 +133,72 @@ public  final class AnswerCall extends
     timestampMs_ = 0L;
   }
 
+  public static final int WEBRTC_OFFER_FIELD_NUMBER = 4;
+  private com.halloapp.proto.server.WebRtcSessionDescription webrtcOffer_;
+  /**
+   * <pre>
+   * used when both sides have pre-answer capabilites
+   * </pre>
+   *
+   * <code>.server.WebRtcSessionDescription webrtc_offer = 4;</code>
+   */
+  @java.lang.Override
+  public boolean hasWebrtcOffer() {
+    return webrtcOffer_ != null;
+  }
+  /**
+   * <pre>
+   * used when both sides have pre-answer capabilites
+   * </pre>
+   *
+   * <code>.server.WebRtcSessionDescription webrtc_offer = 4;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.WebRtcSessionDescription getWebrtcOffer() {
+    return webrtcOffer_ == null ? com.halloapp.proto.server.WebRtcSessionDescription.getDefaultInstance() : webrtcOffer_;
+  }
+  /**
+   * <pre>
+   * used when both sides have pre-answer capabilites
+   * </pre>
+   *
+   * <code>.server.WebRtcSessionDescription webrtc_offer = 4;</code>
+   */
+  private void setWebrtcOffer(com.halloapp.proto.server.WebRtcSessionDescription value) {
+    value.getClass();
+  webrtcOffer_ = value;
+    
+    }
+  /**
+   * <pre>
+   * used when both sides have pre-answer capabilites
+   * </pre>
+   *
+   * <code>.server.WebRtcSessionDescription webrtc_offer = 4;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeWebrtcOffer(com.halloapp.proto.server.WebRtcSessionDescription value) {
+    value.getClass();
+  if (webrtcOffer_ != null &&
+        webrtcOffer_ != com.halloapp.proto.server.WebRtcSessionDescription.getDefaultInstance()) {
+      webrtcOffer_ =
+        com.halloapp.proto.server.WebRtcSessionDescription.newBuilder(webrtcOffer_).mergeFrom(value).buildPartial();
+    } else {
+      webrtcOffer_ = value;
+    }
+    
+  }
+  /**
+   * <pre>
+   * used when both sides have pre-answer capabilites
+   * </pre>
+   *
+   * <code>.server.WebRtcSessionDescription webrtc_offer = 4;</code>
+   */
+  private void clearWebrtcOffer() {  webrtcOffer_ = null;
+    
+  }
+
   public static com.halloapp.proto.server.AnswerCall parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -352,6 +418,77 @@ public  final class AnswerCall extends
       return this;
     }
 
+    /**
+     * <pre>
+     * used when both sides have pre-answer capabilites
+     * </pre>
+     *
+     * <code>.server.WebRtcSessionDescription webrtc_offer = 4;</code>
+     */
+    @java.lang.Override
+    public boolean hasWebrtcOffer() {
+      return instance.hasWebrtcOffer();
+    }
+    /**
+     * <pre>
+     * used when both sides have pre-answer capabilites
+     * </pre>
+     *
+     * <code>.server.WebRtcSessionDescription webrtc_offer = 4;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.WebRtcSessionDescription getWebrtcOffer() {
+      return instance.getWebrtcOffer();
+    }
+    /**
+     * <pre>
+     * used when both sides have pre-answer capabilites
+     * </pre>
+     *
+     * <code>.server.WebRtcSessionDescription webrtc_offer = 4;</code>
+     */
+    public Builder setWebrtcOffer(com.halloapp.proto.server.WebRtcSessionDescription value) {
+      copyOnWrite();
+      instance.setWebrtcOffer(value);
+      return this;
+      }
+    /**
+     * <pre>
+     * used when both sides have pre-answer capabilites
+     * </pre>
+     *
+     * <code>.server.WebRtcSessionDescription webrtc_offer = 4;</code>
+     */
+    public Builder setWebrtcOffer(
+        com.halloapp.proto.server.WebRtcSessionDescription.Builder builderForValue) {
+      copyOnWrite();
+      instance.setWebrtcOffer(builderForValue.build());
+      return this;
+    }
+    /**
+     * <pre>
+     * used when both sides have pre-answer capabilites
+     * </pre>
+     *
+     * <code>.server.WebRtcSessionDescription webrtc_offer = 4;</code>
+     */
+    public Builder mergeWebrtcOffer(com.halloapp.proto.server.WebRtcSessionDescription value) {
+      copyOnWrite();
+      instance.mergeWebrtcOffer(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * used when both sides have pre-answer capabilites
+     * </pre>
+     *
+     * <code>.server.WebRtcSessionDescription webrtc_offer = 4;</code>
+     */
+    public Builder clearWebrtcOffer() {  copyOnWrite();
+      instance.clearWebrtcOffer();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.AnswerCall)
   }
   @java.lang.Override
@@ -371,10 +508,11 @@ public  final class AnswerCall extends
             "callId_",
             "webrtcAnswer_",
             "timestampMs_",
+            "webrtcOffer_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0208\u0002\t" +
-              "\u0003\u0002";
+              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0208\u0002\t" +
+              "\u0003\u0002\u0004\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

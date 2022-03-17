@@ -422,22 +422,38 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.MarketingAlert getMarketingAlert();
 
   /**
+   * <pre>
+   * deprecated, use call_sdp
+   * </pre>
+   *
    * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
    * @return Whether the iceRestartOffer field is set.
    */
   boolean hasIceRestartOffer();
   /**
+   * <pre>
+   * deprecated, use call_sdp
+   * </pre>
+   *
    * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
    * @return The iceRestartOffer.
    */
   com.halloapp.proto.server.IceRestartOffer getIceRestartOffer();
 
   /**
+   * <pre>
+   * deprecated, use call_sdp
+   * </pre>
+   *
    * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
    * @return Whether the iceRestartAnswer field is set.
    */
   boolean hasIceRestartAnswer();
   /**
+   * <pre>
+   * deprecated, use call_sdp
+   * </pre>
+   *
    * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
    * @return The iceRestartAnswer.
    */
@@ -455,11 +471,19 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.GroupFeedHistory getGroupFeedHistory();
 
   /**
+   * <pre>
+   * deprecated, set answer in ringing
+   * </pre>
+   *
    * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
    * @return Whether the preAnswerCall field is set.
    */
   boolean hasPreAnswerCall();
   /**
+   * <pre>
+   * deprecated, set answer in ringing
+   * </pre>
+   *
    * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
    * @return The preAnswerCall.
    */
@@ -497,6 +521,17 @@ public interface MsgOrBuilder extends
    * @return The incomingCallPush.
    */
   com.halloapp.proto.server.IncomingCallPush getIncomingCallPush();
+
+  /**
+   * <code>.server.CallSdp call_sdp = 47;</code>
+   * @return Whether the callSdp field is set.
+   */
+  boolean hasCallSdp();
+  /**
+   * <code>.server.CallSdp call_sdp = 47;</code>
+   * @return The callSdp.
+   */
+  com.halloapp.proto.server.CallSdp getCallSdp();
 
   /**
    * <code>int32 retry_count = 21;</code>

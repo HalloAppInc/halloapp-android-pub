@@ -6,6 +6,7 @@ package com.halloapp.proto.server;
 /**
  * <pre>
  * send before the AnswerCall so we can connect the PeerConnection
+ * DEPRECATED send the answer with the pre-answer with the ringing message.
  * </pre>
  *
  * Protobuf type {@code server.PreAnswerCall}
@@ -221,6 +222,7 @@ public  final class PreAnswerCall extends
   /**
    * <pre>
    * send before the AnswerCall so we can connect the PeerConnection
+   * DEPRECATED send the answer with the pre-answer with the ringing message.
    * </pre>
    *
    * Protobuf type {@code server.PreAnswerCall}

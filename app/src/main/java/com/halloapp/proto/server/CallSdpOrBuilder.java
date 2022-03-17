@@ -3,8 +3,8 @@
 
 package com.halloapp.proto.server;
 
-public interface CallRingingOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:server.CallRinging)
+public interface CallSdpOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:server.CallSdp)
     com.google.protobuf.MessageLiteOrBuilder {
 
   /**
@@ -20,10 +20,15 @@ public interface CallRingingOrBuilder extends
       getCallIdBytes();
 
   /**
-   * <code>int64 timestamp_ms = 2;</code>
-   * @return The timestampMs.
+   * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
+   * @return Whether the webrtcOffer field is set.
    */
-  long getTimestampMs();
+  boolean hasWebrtcOffer();
+  /**
+   * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
+   * @return The webrtcOffer.
+   */
+  com.halloapp.proto.server.WebRtcSessionDescription getWebrtcOffer();
 
   /**
    * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
@@ -35,4 +40,6 @@ public interface CallRingingOrBuilder extends
    * @return The webrtcAnswer.
    */
   com.halloapp.proto.server.WebRtcSessionDescription getWebrtcAnswer();
+
+  public com.halloapp.proto.server.CallSdp.SdpCase getSdpCase();
 }

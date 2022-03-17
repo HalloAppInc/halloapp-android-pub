@@ -52,4 +52,15 @@ public interface StartCallOrBuilder extends
    * @return The rerequestCount.
    */
   int getRerequestCount();
+
+  /**
+   * <code>.server.CallCapabilities call_capabilities = 6;</code>
+   * @return Whether the callCapabilities field is set.
+   */
+  boolean hasCallCapabilities();
+  /**
+   * <code>.server.CallCapabilities call_capabilities = 6;</code>
+   * @return The callCapabilities.
+   */
+  com.halloapp.proto.server.CallCapabilities getCallCapabilities();
 }

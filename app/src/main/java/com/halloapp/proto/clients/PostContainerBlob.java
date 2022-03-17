@@ -133,6 +133,32 @@ public  final class PostContainerBlob extends
     
   }
 
+  public static final int TIMESTAMP_FIELD_NUMBER = 4;
+  private long timestamp_;
+  /**
+   * <code>int64 timestamp = 4;</code>
+   * @return The timestamp.
+   */
+  @java.lang.Override
+  public long getTimestamp() {
+    return timestamp_;
+  }
+  /**
+   * <code>int64 timestamp = 4;</code>
+   * @param value The timestamp to set.
+   */
+  private void setTimestamp(long value) {
+    
+    timestamp_ = value;
+  }
+  /**
+   * <code>int64 timestamp = 4;</code>
+   */
+  private void clearTimestamp() {
+    
+    timestamp_ = 0L;
+  }
+
   public static com.halloapp.proto.clients.PostContainerBlob parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -352,6 +378,34 @@ public  final class PostContainerBlob extends
       return this;
     }
 
+    /**
+     * <code>int64 timestamp = 4;</code>
+     * @return The timestamp.
+     */
+    @java.lang.Override
+    public long getTimestamp() {
+      return instance.getTimestamp();
+    }
+    /**
+     * <code>int64 timestamp = 4;</code>
+     * @param value The timestamp to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTimestamp(long value) {
+      copyOnWrite();
+      instance.setTimestamp(value);
+      return this;
+    }
+    /**
+     * <code>int64 timestamp = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearTimestamp() {
+      copyOnWrite();
+      instance.clearTimestamp();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.PostContainerBlob)
   }
   @java.lang.Override
@@ -371,10 +425,11 @@ public  final class PostContainerBlob extends
             "postContainer_",
             "uid_",
             "postId_",
+            "timestamp_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\t\u0002\u0002" +
-              "\u0003\u0208";
+              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\t\u0002\u0002" +
+              "\u0003\u0208\u0004\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -4,20 +4,59 @@
 package com.halloapp.proto.server;
 
 /**
- * <pre>
- * DEPRECATED
- * </pre>
- *
- * Protobuf type {@code server.IceRestartAnswer}
+ * Protobuf type {@code server.CallSdp}
  */
-public  final class IceRestartAnswer extends
+public  final class CallSdp extends
     com.google.protobuf.GeneratedMessageLite<
-        IceRestartAnswer, IceRestartAnswer.Builder> implements
-    // @@protoc_insertion_point(message_implements:server.IceRestartAnswer)
-    IceRestartAnswerOrBuilder {
-  private IceRestartAnswer() {
+        CallSdp, CallSdp.Builder> implements
+    // @@protoc_insertion_point(message_implements:server.CallSdp)
+    CallSdpOrBuilder {
+  private CallSdp() {
     callId_ = "";
   }
+  private int sdpCase_ = 0;
+  private java.lang.Object sdp_;
+  public enum SdpCase {
+    WEBRTC_OFFER(2),
+    WEBRTC_ANSWER(3),
+    SDP_NOT_SET(0);
+    private final int value;
+    private SdpCase(int value) {
+      this.value = value;
+    }
+    /**
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static SdpCase valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static SdpCase forNumber(int value) {
+      switch (value) {
+        case 2: return WEBRTC_OFFER;
+        case 3: return WEBRTC_ANSWER;
+        case 0: return SDP_NOT_SET;
+        default: return null;
+      }
+    }
+    public int getNumber() {
+      return this.value;
+    }
+  };
+
+  @java.lang.Override
+  public SdpCase
+  getSdpCase() {
+    return SdpCase.forNumber(
+        sdpCase_);
+  }
+
+  private void clearSdp() {
+    sdpCase_ = 0;
+    sdp_ = null;
+  }
+
   public static final int CALL_ID_FIELD_NUMBER = 1;
   private java.lang.String callId_;
   /**
@@ -65,145 +104,173 @@ public  final class IceRestartAnswer extends
     
   }
 
-  public static final int IDX_FIELD_NUMBER = 2;
-  private int idx_;
+  public static final int WEBRTC_OFFER_FIELD_NUMBER = 2;
   /**
-   * <code>int32 idx = 2;</code>
-   * @return The idx.
+   * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
    */
   @java.lang.Override
-  public int getIdx() {
-    return idx_;
+  public boolean hasWebrtcOffer() {
+    return sdpCase_ == 2;
   }
   /**
-   * <code>int32 idx = 2;</code>
-   * @param value The idx to set.
+   * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
    */
-  private void setIdx(int value) {
-    
-    idx_ = value;
+  @java.lang.Override
+  public com.halloapp.proto.server.WebRtcSessionDescription getWebrtcOffer() {
+    if (sdpCase_ == 2) {
+       return (com.halloapp.proto.server.WebRtcSessionDescription) sdp_;
+    }
+    return com.halloapp.proto.server.WebRtcSessionDescription.getDefaultInstance();
   }
   /**
-   * <code>int32 idx = 2;</code>
+   * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
    */
-  private void clearIdx() {
-    
-    idx_ = 0;
+  private void setWebrtcOffer(com.halloapp.proto.server.WebRtcSessionDescription value) {
+    value.getClass();
+  sdp_ = value;
+    sdpCase_ = 2;
+  }
+  /**
+   * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
+   */
+  private void mergeWebrtcOffer(com.halloapp.proto.server.WebRtcSessionDescription value) {
+    value.getClass();
+  if (sdpCase_ == 2 &&
+        sdp_ != com.halloapp.proto.server.WebRtcSessionDescription.getDefaultInstance()) {
+      sdp_ = com.halloapp.proto.server.WebRtcSessionDescription.newBuilder((com.halloapp.proto.server.WebRtcSessionDescription) sdp_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      sdp_ = value;
+    }
+    sdpCase_ = 2;
+  }
+  /**
+   * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
+   */
+  private void clearWebrtcOffer() {
+    if (sdpCase_ == 2) {
+      sdpCase_ = 0;
+      sdp_ = null;
+    }
   }
 
   public static final int WEBRTC_ANSWER_FIELD_NUMBER = 3;
-  private com.halloapp.proto.server.WebRtcSessionDescription webrtcAnswer_;
   /**
    * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
    */
   @java.lang.Override
   public boolean hasWebrtcAnswer() {
-    return webrtcAnswer_ != null;
+    return sdpCase_ == 3;
   }
   /**
    * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
    */
   @java.lang.Override
   public com.halloapp.proto.server.WebRtcSessionDescription getWebrtcAnswer() {
-    return webrtcAnswer_ == null ? com.halloapp.proto.server.WebRtcSessionDescription.getDefaultInstance() : webrtcAnswer_;
+    if (sdpCase_ == 3) {
+       return (com.halloapp.proto.server.WebRtcSessionDescription) sdp_;
+    }
+    return com.halloapp.proto.server.WebRtcSessionDescription.getDefaultInstance();
   }
   /**
    * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
    */
   private void setWebrtcAnswer(com.halloapp.proto.server.WebRtcSessionDescription value) {
     value.getClass();
-  webrtcAnswer_ = value;
-    
-    }
+  sdp_ = value;
+    sdpCase_ = 3;
+  }
   /**
    * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
    */
-  @java.lang.SuppressWarnings({"ReferenceEquality"})
   private void mergeWebrtcAnswer(com.halloapp.proto.server.WebRtcSessionDescription value) {
     value.getClass();
-  if (webrtcAnswer_ != null &&
-        webrtcAnswer_ != com.halloapp.proto.server.WebRtcSessionDescription.getDefaultInstance()) {
-      webrtcAnswer_ =
-        com.halloapp.proto.server.WebRtcSessionDescription.newBuilder(webrtcAnswer_).mergeFrom(value).buildPartial();
+  if (sdpCase_ == 3 &&
+        sdp_ != com.halloapp.proto.server.WebRtcSessionDescription.getDefaultInstance()) {
+      sdp_ = com.halloapp.proto.server.WebRtcSessionDescription.newBuilder((com.halloapp.proto.server.WebRtcSessionDescription) sdp_)
+          .mergeFrom(value).buildPartial();
     } else {
-      webrtcAnswer_ = value;
+      sdp_ = value;
     }
-    
+    sdpCase_ = 3;
   }
   /**
    * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
    */
-  private void clearWebrtcAnswer() {  webrtcAnswer_ = null;
-    
+  private void clearWebrtcAnswer() {
+    if (sdpCase_ == 3) {
+      sdpCase_ = 0;
+      sdp_ = null;
+    }
   }
 
-  public static com.halloapp.proto.server.IceRestartAnswer parseFrom(
+  public static com.halloapp.proto.server.CallSdp parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data);
   }
-  public static com.halloapp.proto.server.IceRestartAnswer parseFrom(
+  public static com.halloapp.proto.server.CallSdp parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data, extensionRegistry);
   }
-  public static com.halloapp.proto.server.IceRestartAnswer parseFrom(
+  public static com.halloapp.proto.server.CallSdp parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data);
   }
-  public static com.halloapp.proto.server.IceRestartAnswer parseFrom(
+  public static com.halloapp.proto.server.CallSdp parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data, extensionRegistry);
   }
-  public static com.halloapp.proto.server.IceRestartAnswer parseFrom(byte[] data)
+  public static com.halloapp.proto.server.CallSdp parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data);
   }
-  public static com.halloapp.proto.server.IceRestartAnswer parseFrom(
+  public static com.halloapp.proto.server.CallSdp parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data, extensionRegistry);
   }
-  public static com.halloapp.proto.server.IceRestartAnswer parseFrom(java.io.InputStream input)
+  public static com.halloapp.proto.server.CallSdp parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, input);
   }
-  public static com.halloapp.proto.server.IceRestartAnswer parseFrom(
+  public static com.halloapp.proto.server.CallSdp parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, input, extensionRegistry);
   }
-  public static com.halloapp.proto.server.IceRestartAnswer parseDelimitedFrom(java.io.InputStream input)
+  public static com.halloapp.proto.server.CallSdp parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return parseDelimitedFrom(DEFAULT_INSTANCE, input);
   }
-  public static com.halloapp.proto.server.IceRestartAnswer parseDelimitedFrom(
+  public static com.halloapp.proto.server.CallSdp parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
   }
-  public static com.halloapp.proto.server.IceRestartAnswer parseFrom(
+  public static com.halloapp.proto.server.CallSdp parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, input);
   }
-  public static com.halloapp.proto.server.IceRestartAnswer parseFrom(
+  public static com.halloapp.proto.server.CallSdp parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -214,25 +281,33 @@ public  final class IceRestartAnswer extends
   public static Builder newBuilder() {
     return (Builder) DEFAULT_INSTANCE.createBuilder();
   }
-  public static Builder newBuilder(com.halloapp.proto.server.IceRestartAnswer prototype) {
+  public static Builder newBuilder(com.halloapp.proto.server.CallSdp prototype) {
     return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
   }
 
   /**
-   * <pre>
-   * DEPRECATED
-   * </pre>
-   *
-   * Protobuf type {@code server.IceRestartAnswer}
+   * Protobuf type {@code server.CallSdp}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageLite.Builder<
-        com.halloapp.proto.server.IceRestartAnswer, Builder> implements
-      // @@protoc_insertion_point(builder_implements:server.IceRestartAnswer)
-      com.halloapp.proto.server.IceRestartAnswerOrBuilder {
-    // Construct using com.halloapp.proto.server.IceRestartAnswer.newBuilder()
+        com.halloapp.proto.server.CallSdp, Builder> implements
+      // @@protoc_insertion_point(builder_implements:server.CallSdp)
+      com.halloapp.proto.server.CallSdpOrBuilder {
+    // Construct using com.halloapp.proto.server.CallSdp.newBuilder()
     private Builder() {
       super(DEFAULT_INSTANCE);
+    }
+
+    @java.lang.Override
+    public SdpCase
+        getSdpCase() {
+      return instance.getSdpCase();
+    }
+
+    public Builder clearSdp() {
+      copyOnWrite();
+      instance.clearSdp();
+      return this;
     }
 
 
@@ -286,30 +361,50 @@ public  final class IceRestartAnswer extends
     }
 
     /**
-     * <code>int32 idx = 2;</code>
-     * @return The idx.
+     * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
      */
     @java.lang.Override
-    public int getIdx() {
-      return instance.getIdx();
+    public boolean hasWebrtcOffer() {
+      return instance.hasWebrtcOffer();
     }
     /**
-     * <code>int32 idx = 2;</code>
-     * @param value The idx to set.
-     * @return This builder for chaining.
+     * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
      */
-    public Builder setIdx(int value) {
+    @java.lang.Override
+    public com.halloapp.proto.server.WebRtcSessionDescription getWebrtcOffer() {
+      return instance.getWebrtcOffer();
+    }
+    /**
+     * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
+     */
+    public Builder setWebrtcOffer(com.halloapp.proto.server.WebRtcSessionDescription value) {
       copyOnWrite();
-      instance.setIdx(value);
+      instance.setWebrtcOffer(value);
       return this;
     }
     /**
-     * <code>int32 idx = 2;</code>
-     * @return This builder for chaining.
+     * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
      */
-    public Builder clearIdx() {
+    public Builder setWebrtcOffer(
+        com.halloapp.proto.server.WebRtcSessionDescription.Builder builderForValue) {
       copyOnWrite();
-      instance.clearIdx();
+      instance.setWebrtcOffer(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
+     */
+    public Builder mergeWebrtcOffer(com.halloapp.proto.server.WebRtcSessionDescription value) {
+      copyOnWrite();
+      instance.mergeWebrtcOffer(value);
+      return this;
+    }
+    /**
+     * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
+     */
+    public Builder clearWebrtcOffer() {
+      copyOnWrite();
+      instance.clearWebrtcOffer();
       return this;
     }
 
@@ -334,7 +429,7 @@ public  final class IceRestartAnswer extends
       copyOnWrite();
       instance.setWebrtcAnswer(value);
       return this;
-      }
+    }
     /**
      * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
      */
@@ -355,12 +450,13 @@ public  final class IceRestartAnswer extends
     /**
      * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
      */
-    public Builder clearWebrtcAnswer() {  copyOnWrite();
+    public Builder clearWebrtcAnswer() {
+      copyOnWrite();
       instance.clearWebrtcAnswer();
       return this;
     }
 
-    // @@protoc_insertion_point(builder_scope:server.IceRestartAnswer)
+    // @@protoc_insertion_point(builder_scope:server.CallSdp)
   }
   @java.lang.Override
   @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
@@ -369,20 +465,22 @@ public  final class IceRestartAnswer extends
       java.lang.Object arg0, java.lang.Object arg1) {
     switch (method) {
       case NEW_MUTABLE_INSTANCE: {
-        return new com.halloapp.proto.server.IceRestartAnswer();
+        return new com.halloapp.proto.server.CallSdp();
       }
       case NEW_BUILDER: {
         return new Builder();
       }
       case BUILD_MESSAGE_INFO: {
           java.lang.Object[] objects = new java.lang.Object[] {
+            "sdp_",
+            "sdpCase_",
             "callId_",
-            "idx_",
-            "webrtcAnswer_",
+            com.halloapp.proto.server.WebRtcSessionDescription.class,
+            com.halloapp.proto.server.WebRtcSessionDescription.class,
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0208\u0002\u0004" +
-              "\u0003\t";
+              "\u0000\u0003\u0001\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0208\u0002<\u0000" +
+              "\u0003<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
@@ -390,13 +488,13 @@ public  final class IceRestartAnswer extends
         return DEFAULT_INSTANCE;
       }
       case GET_PARSER: {
-        com.google.protobuf.Parser<com.halloapp.proto.server.IceRestartAnswer> parser = PARSER;
+        com.google.protobuf.Parser<com.halloapp.proto.server.CallSdp> parser = PARSER;
         if (parser == null) {
-          synchronized (com.halloapp.proto.server.IceRestartAnswer.class) {
+          synchronized (com.halloapp.proto.server.CallSdp.class) {
             parser = PARSER;
             if (parser == null) {
               parser =
-                  new DefaultInstanceBasedParser<com.halloapp.proto.server.IceRestartAnswer>(
+                  new DefaultInstanceBasedParser<com.halloapp.proto.server.CallSdp>(
                       DEFAULT_INSTANCE);
               PARSER = parser;
             }
@@ -415,24 +513,24 @@ public  final class IceRestartAnswer extends
   }
 
 
-  // @@protoc_insertion_point(class_scope:server.IceRestartAnswer)
-  private static final com.halloapp.proto.server.IceRestartAnswer DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:server.CallSdp)
+  private static final com.halloapp.proto.server.CallSdp DEFAULT_INSTANCE;
   static {
-    IceRestartAnswer defaultInstance = new IceRestartAnswer();
+    CallSdp defaultInstance = new CallSdp();
     // New instances are implicitly immutable so no need to make
     // immutable.
     DEFAULT_INSTANCE = defaultInstance;
     com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
-      IceRestartAnswer.class, defaultInstance);
+      CallSdp.class, defaultInstance);
   }
 
-  public static com.halloapp.proto.server.IceRestartAnswer getDefaultInstance() {
+  public static com.halloapp.proto.server.CallSdp getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static volatile com.google.protobuf.Parser<IceRestartAnswer> PARSER;
+  private static volatile com.google.protobuf.Parser<CallSdp> PARSER;
 
-  public static com.google.protobuf.Parser<IceRestartAnswer> parser() {
+  public static com.google.protobuf.Parser<CallSdp> parser() {
     return DEFAULT_INSTANCE.getParserForType();
   }
 }

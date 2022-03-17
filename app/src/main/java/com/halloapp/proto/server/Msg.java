@@ -190,6 +190,7 @@ public  final class Msg extends
     HOLD_CALL(44),
     MUTE_CALL(45),
     INCOMING_CALL_PUSH(46),
+    CALL_SDP(47),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -245,6 +246,7 @@ public  final class Msg extends
         case 44: return HOLD_CALL;
         case 45: return MUTE_CALL;
         case 46: return INCOMING_CALL_PUSH;
+        case 47: return CALL_SDP;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2099,6 +2101,10 @@ public  final class Msg extends
 
   public static final int ICE_RESTART_OFFER_FIELD_NUMBER = 40;
   /**
+   * <pre>
+   * deprecated, use call_sdp
+   * </pre>
+   *
    * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
    */
   @java.lang.Override
@@ -2106,6 +2112,10 @@ public  final class Msg extends
     return payloadCase_ == 40;
   }
   /**
+   * <pre>
+   * deprecated, use call_sdp
+   * </pre>
+   *
    * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
    */
   @java.lang.Override
@@ -2116,6 +2126,10 @@ public  final class Msg extends
     return com.halloapp.proto.server.IceRestartOffer.getDefaultInstance();
   }
   /**
+   * <pre>
+   * deprecated, use call_sdp
+   * </pre>
+   *
    * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
    */
   private void setIceRestartOffer(com.halloapp.proto.server.IceRestartOffer value) {
@@ -2124,6 +2138,10 @@ public  final class Msg extends
     payloadCase_ = 40;
   }
   /**
+   * <pre>
+   * deprecated, use call_sdp
+   * </pre>
+   *
    * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
    */
   private void mergeIceRestartOffer(com.halloapp.proto.server.IceRestartOffer value) {
@@ -2138,6 +2156,10 @@ public  final class Msg extends
     payloadCase_ = 40;
   }
   /**
+   * <pre>
+   * deprecated, use call_sdp
+   * </pre>
+   *
    * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
    */
   private void clearIceRestartOffer() {
@@ -2149,6 +2171,10 @@ public  final class Msg extends
 
   public static final int ICE_RESTART_ANSWER_FIELD_NUMBER = 41;
   /**
+   * <pre>
+   * deprecated, use call_sdp
+   * </pre>
+   *
    * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
    */
   @java.lang.Override
@@ -2156,6 +2182,10 @@ public  final class Msg extends
     return payloadCase_ == 41;
   }
   /**
+   * <pre>
+   * deprecated, use call_sdp
+   * </pre>
+   *
    * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
    */
   @java.lang.Override
@@ -2166,6 +2196,10 @@ public  final class Msg extends
     return com.halloapp.proto.server.IceRestartAnswer.getDefaultInstance();
   }
   /**
+   * <pre>
+   * deprecated, use call_sdp
+   * </pre>
+   *
    * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
    */
   private void setIceRestartAnswer(com.halloapp.proto.server.IceRestartAnswer value) {
@@ -2174,6 +2208,10 @@ public  final class Msg extends
     payloadCase_ = 41;
   }
   /**
+   * <pre>
+   * deprecated, use call_sdp
+   * </pre>
+   *
    * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
    */
   private void mergeIceRestartAnswer(com.halloapp.proto.server.IceRestartAnswer value) {
@@ -2188,6 +2226,10 @@ public  final class Msg extends
     payloadCase_ = 41;
   }
   /**
+   * <pre>
+   * deprecated, use call_sdp
+   * </pre>
+   *
    * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
    */
   private void clearIceRestartAnswer() {
@@ -2249,6 +2291,10 @@ public  final class Msg extends
 
   public static final int PRE_ANSWER_CALL_FIELD_NUMBER = 43;
   /**
+   * <pre>
+   * deprecated, set answer in ringing
+   * </pre>
+   *
    * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
    */
   @java.lang.Override
@@ -2256,6 +2302,10 @@ public  final class Msg extends
     return payloadCase_ == 43;
   }
   /**
+   * <pre>
+   * deprecated, set answer in ringing
+   * </pre>
+   *
    * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
    */
   @java.lang.Override
@@ -2266,6 +2316,10 @@ public  final class Msg extends
     return com.halloapp.proto.server.PreAnswerCall.getDefaultInstance();
   }
   /**
+   * <pre>
+   * deprecated, set answer in ringing
+   * </pre>
+   *
    * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
    */
   private void setPreAnswerCall(com.halloapp.proto.server.PreAnswerCall value) {
@@ -2274,6 +2328,10 @@ public  final class Msg extends
     payloadCase_ = 43;
   }
   /**
+   * <pre>
+   * deprecated, set answer in ringing
+   * </pre>
+   *
    * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
    */
   private void mergePreAnswerCall(com.halloapp.proto.server.PreAnswerCall value) {
@@ -2288,6 +2346,10 @@ public  final class Msg extends
     payloadCase_ = 43;
   }
   /**
+   * <pre>
+   * deprecated, set answer in ringing
+   * </pre>
+   *
    * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
    */
   private void clearPreAnswerCall() {
@@ -2442,6 +2504,56 @@ public  final class Msg extends
    */
   private void clearIncomingCallPush() {
     if (payloadCase_ == 46) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int CALL_SDP_FIELD_NUMBER = 47;
+  /**
+   * <code>.server.CallSdp call_sdp = 47;</code>
+   */
+  @java.lang.Override
+  public boolean hasCallSdp() {
+    return payloadCase_ == 47;
+  }
+  /**
+   * <code>.server.CallSdp call_sdp = 47;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.CallSdp getCallSdp() {
+    if (payloadCase_ == 47) {
+       return (com.halloapp.proto.server.CallSdp) payload_;
+    }
+    return com.halloapp.proto.server.CallSdp.getDefaultInstance();
+  }
+  /**
+   * <code>.server.CallSdp call_sdp = 47;</code>
+   */
+  private void setCallSdp(com.halloapp.proto.server.CallSdp value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 47;
+  }
+  /**
+   * <code>.server.CallSdp call_sdp = 47;</code>
+   */
+  private void mergeCallSdp(com.halloapp.proto.server.CallSdp value) {
+    value.getClass();
+  if (payloadCase_ == 47 &&
+        payload_ != com.halloapp.proto.server.CallSdp.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.CallSdp.newBuilder((com.halloapp.proto.server.CallSdp) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 47;
+  }
+  /**
+   * <code>.server.CallSdp call_sdp = 47;</code>
+   */
+  private void clearCallSdp() {
+    if (payloadCase_ == 47) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -4390,6 +4502,10 @@ public  final class Msg extends
     }
 
     /**
+     * <pre>
+     * deprecated, use call_sdp
+     * </pre>
+     *
      * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
      */
     @java.lang.Override
@@ -4397,6 +4513,10 @@ public  final class Msg extends
       return instance.hasIceRestartOffer();
     }
     /**
+     * <pre>
+     * deprecated, use call_sdp
+     * </pre>
+     *
      * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
      */
     @java.lang.Override
@@ -4404,6 +4524,10 @@ public  final class Msg extends
       return instance.getIceRestartOffer();
     }
     /**
+     * <pre>
+     * deprecated, use call_sdp
+     * </pre>
+     *
      * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
      */
     public Builder setIceRestartOffer(com.halloapp.proto.server.IceRestartOffer value) {
@@ -4412,6 +4536,10 @@ public  final class Msg extends
       return this;
     }
     /**
+     * <pre>
+     * deprecated, use call_sdp
+     * </pre>
+     *
      * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
      */
     public Builder setIceRestartOffer(
@@ -4421,6 +4549,10 @@ public  final class Msg extends
       return this;
     }
     /**
+     * <pre>
+     * deprecated, use call_sdp
+     * </pre>
+     *
      * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
      */
     public Builder mergeIceRestartOffer(com.halloapp.proto.server.IceRestartOffer value) {
@@ -4429,6 +4561,10 @@ public  final class Msg extends
       return this;
     }
     /**
+     * <pre>
+     * deprecated, use call_sdp
+     * </pre>
+     *
      * <code>.server.IceRestartOffer ice_restart_offer = 40;</code>
      */
     public Builder clearIceRestartOffer() {
@@ -4438,6 +4574,10 @@ public  final class Msg extends
     }
 
     /**
+     * <pre>
+     * deprecated, use call_sdp
+     * </pre>
+     *
      * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
      */
     @java.lang.Override
@@ -4445,6 +4585,10 @@ public  final class Msg extends
       return instance.hasIceRestartAnswer();
     }
     /**
+     * <pre>
+     * deprecated, use call_sdp
+     * </pre>
+     *
      * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
      */
     @java.lang.Override
@@ -4452,6 +4596,10 @@ public  final class Msg extends
       return instance.getIceRestartAnswer();
     }
     /**
+     * <pre>
+     * deprecated, use call_sdp
+     * </pre>
+     *
      * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
      */
     public Builder setIceRestartAnswer(com.halloapp.proto.server.IceRestartAnswer value) {
@@ -4460,6 +4608,10 @@ public  final class Msg extends
       return this;
     }
     /**
+     * <pre>
+     * deprecated, use call_sdp
+     * </pre>
+     *
      * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
      */
     public Builder setIceRestartAnswer(
@@ -4469,6 +4621,10 @@ public  final class Msg extends
       return this;
     }
     /**
+     * <pre>
+     * deprecated, use call_sdp
+     * </pre>
+     *
      * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
      */
     public Builder mergeIceRestartAnswer(com.halloapp.proto.server.IceRestartAnswer value) {
@@ -4477,6 +4633,10 @@ public  final class Msg extends
       return this;
     }
     /**
+     * <pre>
+     * deprecated, use call_sdp
+     * </pre>
+     *
      * <code>.server.IceRestartAnswer ice_restart_answer = 41;</code>
      */
     public Builder clearIceRestartAnswer() {
@@ -4534,6 +4694,10 @@ public  final class Msg extends
     }
 
     /**
+     * <pre>
+     * deprecated, set answer in ringing
+     * </pre>
+     *
      * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
      */
     @java.lang.Override
@@ -4541,6 +4705,10 @@ public  final class Msg extends
       return instance.hasPreAnswerCall();
     }
     /**
+     * <pre>
+     * deprecated, set answer in ringing
+     * </pre>
+     *
      * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
      */
     @java.lang.Override
@@ -4548,6 +4716,10 @@ public  final class Msg extends
       return instance.getPreAnswerCall();
     }
     /**
+     * <pre>
+     * deprecated, set answer in ringing
+     * </pre>
+     *
      * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
      */
     public Builder setPreAnswerCall(com.halloapp.proto.server.PreAnswerCall value) {
@@ -4556,6 +4728,10 @@ public  final class Msg extends
       return this;
     }
     /**
+     * <pre>
+     * deprecated, set answer in ringing
+     * </pre>
+     *
      * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
      */
     public Builder setPreAnswerCall(
@@ -4565,6 +4741,10 @@ public  final class Msg extends
       return this;
     }
     /**
+     * <pre>
+     * deprecated, set answer in ringing
+     * </pre>
+     *
      * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
      */
     public Builder mergePreAnswerCall(com.halloapp.proto.server.PreAnswerCall value) {
@@ -4573,6 +4753,10 @@ public  final class Msg extends
       return this;
     }
     /**
+     * <pre>
+     * deprecated, set answer in ringing
+     * </pre>
+     *
      * <code>.server.PreAnswerCall pre_answer_call = 43;</code>
      */
     public Builder clearPreAnswerCall() {
@@ -4726,6 +4910,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.CallSdp call_sdp = 47;</code>
+     */
+    @java.lang.Override
+    public boolean hasCallSdp() {
+      return instance.hasCallSdp();
+    }
+    /**
+     * <code>.server.CallSdp call_sdp = 47;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.CallSdp getCallSdp() {
+      return instance.getCallSdp();
+    }
+    /**
+     * <code>.server.CallSdp call_sdp = 47;</code>
+     */
+    public Builder setCallSdp(com.halloapp.proto.server.CallSdp value) {
+      copyOnWrite();
+      instance.setCallSdp(value);
+      return this;
+    }
+    /**
+     * <code>.server.CallSdp call_sdp = 47;</code>
+     */
+    public Builder setCallSdp(
+        com.halloapp.proto.server.CallSdp.Builder builderForValue) {
+      copyOnWrite();
+      instance.setCallSdp(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.CallSdp call_sdp = 47;</code>
+     */
+    public Builder mergeCallSdp(com.halloapp.proto.server.CallSdp value) {
+      copyOnWrite();
+      instance.mergeCallSdp(value);
+      return this;
+    }
+    /**
+     * <code>.server.CallSdp call_sdp = 47;</code>
+     */
+    public Builder clearCallSdp() {
+      copyOnWrite();
+      instance.clearCallSdp();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -4845,15 +5077,16 @@ public  final class Msg extends
             com.halloapp.proto.server.HoldCall.class,
             com.halloapp.proto.server.MuteCall.class,
             com.halloapp.proto.server.IncomingCallPush.class,
+            com.halloapp.proto.server.CallSdp.class,
           };
           java.lang.String info =
-              "\u0000.\u0001\u0000\u0001..\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
+              "\u0000/\u0001\u0000\u0001//\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
               "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
               "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
               "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
               "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
               " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000" +
-              "*<\u0000+<\u0000,<\u0000-<\u0000.<\u0000";
+              "*<\u0000+<\u0000,<\u0000-<\u0000.<\u0000/<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

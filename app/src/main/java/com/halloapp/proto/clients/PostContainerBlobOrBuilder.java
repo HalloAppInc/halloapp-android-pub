@@ -35,4 +35,10 @@ public interface PostContainerBlobOrBuilder extends
    */
   com.google.protobuf.ByteString
       getPostIdBytes();
+
+  /**
+   * <code>int64 timestamp = 4;</code>
+   * @return The timestamp.
+   */
+  long getTimestamp();
 }
