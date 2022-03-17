@@ -36,7 +36,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 61;
+    private static final int DATABASE_VERSION = 62;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -326,7 +326,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + UrlPreviewsTable.COLUMN_PARENT_TABLE + " TEXT NOT NULL,"
                 + UrlPreviewsTable.COLUMN_PARENT_ROW_ID + " INTEGER,"
                 + UrlPreviewsTable.COLUMN_TITLE + " TEXT,"
-                + UrlPreviewsTable.COLUMN_URL + " TEXT"
+                + UrlPreviewsTable.COLUMN_URL + " TEXT,"
+                + UrlPreviewsTable.COLUMN_DESCRIPTION + " TEXT"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + UrlPreviewsTable.INDEX_URL_PREVIEW_KEY);
@@ -607,6 +608,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 60: {
                 upgradeFromVersion60(db);
+            }
+            case 61: {
+                upgradeFromVersion61(db);
             }
             break;
             default: {
@@ -1299,6 +1303,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + HistoryRerequestTable.COLUMN_REREQUEST_COUNT + " INTEGER,"
                 + HistoryRerequestTable.COLUMN_TIMESTAMP + " INTEGER"
                 + ")");
+    }
+
+    private void upgradeFromVersion61(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + UrlPreviewsTable.TABLE_NAME + " ADD COLUMN " + UrlPreviewsTable.COLUMN_DESCRIPTION + " TEXT");
     }
 
     /**

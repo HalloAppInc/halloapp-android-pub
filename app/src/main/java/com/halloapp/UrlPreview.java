@@ -55,7 +55,7 @@ public class UrlPreview {
         return preview;
     }
 
-    @Nullable
+    @NonNull
     public static UrlPreview create(long rowId, @Nullable String title, @Nullable String url) {
         UrlPreview preview = new UrlPreview();
         Uri uri = Uri.parse(url);
@@ -121,6 +121,9 @@ public class UrlPreview {
         if (url != null) {
             builder.setUrl(url);
         }
+        if (description != null) {
+            builder.setDescription(description);
+        }
         if (imageMedia != null) {
             EncryptedResource encryptedResource = EncryptedResource.newBuilder()
                     .setEncryptionKey(ByteString.copyFrom(imageMedia.encKey))
@@ -139,6 +142,7 @@ public class UrlPreview {
         UrlPreview preview = new UrlPreview();
         preview.url = link.getUrl();
         preview.title = link.getTitle();
+        preview.description = link.getDescription();
         List<Image> previews = link.getPreviewList();
         if (!previews.isEmpty()) {
             preview.imageMedia = Media.parseFromProto(previews.get(0));

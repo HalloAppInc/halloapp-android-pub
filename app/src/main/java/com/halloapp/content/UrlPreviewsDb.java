@@ -36,6 +36,7 @@ public class UrlPreviewsDb {
 
             urlValues.put(UrlPreviewsTable.COLUMN_TITLE, urlPreview.title);
             urlValues.put(UrlPreviewsTable.COLUMN_URL, urlPreview.url);
+            urlValues.put(UrlPreviewsTable.COLUMN_DESCRIPTION, urlPreview.description);
             urlPreview.rowId = db.insertWithOnConflict(UrlPreviewsTable.TABLE_NAME, null, urlValues, SQLiteDatabase.CONFLICT_IGNORE);
             if (urlPreview.imageMedia != null) {
                 mediaDb.addMedia(urlPreview);
@@ -53,6 +54,7 @@ public class UrlPreviewsDb {
 
             urlValues.put(UrlPreviewsTable.COLUMN_TITLE, urlPreview.title);
             urlValues.put(UrlPreviewsTable.COLUMN_URL, urlPreview.url);
+            urlValues.put(UrlPreviewsTable.COLUMN_DESCRIPTION, urlPreview.description);
             urlPreview.rowId = db.insertWithOnConflict(UrlPreviewsTable.TABLE_NAME, null, urlValues, SQLiteDatabase.CONFLICT_IGNORE);
             if (urlPreview.imageMedia != null) {
                 mediaDb.addMedia(urlPreview);
@@ -70,6 +72,7 @@ public class UrlPreviewsDb {
 
             urlValues.put(UrlPreviewsTable.COLUMN_TITLE, urlPreview.title);
             urlValues.put(UrlPreviewsTable.COLUMN_URL, urlPreview.url);
+            urlValues.put(UrlPreviewsTable.COLUMN_DESCRIPTION, urlPreview.description);
             urlPreview.rowId = db.insertWithOnConflict(UrlPreviewsTable.TABLE_NAME, null, urlValues, SQLiteDatabase.CONFLICT_IGNORE);
             if (urlPreview.imageMedia != null) {
                 mediaDb.addMedia(urlPreview);
@@ -102,6 +105,7 @@ public class UrlPreviewsDb {
                         UrlPreviewsTable.TABLE_NAME + "." + UrlPreviewsTable.COLUMN_PARENT_ROW_ID + "," +
                         UrlPreviewsTable.TABLE_NAME + "." +  UrlPreviewsTable.COLUMN_TITLE + "," +
                         UrlPreviewsTable.TABLE_NAME + "." + UrlPreviewsTable.COLUMN_URL + "," +
+                        UrlPreviewsTable.TABLE_NAME + "." + UrlPreviewsTable.COLUMN_DESCRIPTION + "," +
                         "m." + MediaTable._ID + "," +
                         "m." + MediaTable.COLUMN_TYPE + "," +
                         "m." + MediaTable.COLUMN_URL + "," +
@@ -133,23 +137,24 @@ public class UrlPreviewsDb {
                     String title = cursor.getString(3);
                     String url = cursor.getString(4);
                     preview = UrlPreview.create(rowId, title, url);
+                    preview.description = cursor.getString(5);
                 }
-                if (!cursor.isNull(5)) {
+                if (!cursor.isNull(6)) {
                     Media media = new Media(
-                            cursor.getLong(5),
-                            cursor.getInt(6),
-                            cursor.getString(7),
-                            FileStore.getInstance().getMediaFile(cursor.getString(8)),
+                            cursor.getLong(6),
+                            cursor.getInt(7),
+                            cursor.getString(8),
+                            FileStore.getInstance().getMediaFile(cursor.getString(9)),
                             null,
                             null,
                             null,
-                            cursor.getInt(10),
                             cursor.getInt(11),
                             cursor.getInt(12),
+                            cursor.getInt(13),
                             Media.BLOB_VERSION_UNKNOWN,
                             0,
                             0);
-                    media.encFile = FileStore.getInstance().getTmpFile(cursor.getString(9));
+                    media.encFile = FileStore.getInstance().getTmpFile(cursor.getString(10));
                     Preconditions.checkNotNull(preview).imageMedia = media;
                 }
             }

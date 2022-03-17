@@ -15,4 +15,5 @@ public final class UrlPreviewsTable implements BaseColumns {
     public static final String COLUMN_PARENT_ROW_ID = "url_previews_parent_row_id";
     public static final String COLUMN_TITLE = "url_previews_title";
     public static final String COLUMN_URL = "url_previews_url";
+    public static final String COLUMN_DESCRIPTION = "url_preview_description";
 }
