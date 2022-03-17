@@ -698,7 +698,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="archived_on">"Gearchiveerd op %s"</string>
 
     <!-- Error message when the group is full -->
-    <string name="invite_link_failed_to_join_full">"Je kunt niet deelnemen aan deze groep omdat het maximum aantal deelnemers is bereikt"</string>
+    <string name="invite_link_failed_to_join_full">"Je kunt niet deelnemen aan deze groep omdat het maximumaantal deelnemers is bereikt"</string>
 
     <!-- Error message when the invite link is invalid -->
     <string name="invite_link_failed_to_join_invalid">"De uitnodigingslink is ongeldig"</string>
@@ -901,7 +901,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="zero_zone_home_nux_text_one">"Gebruik je telefoonnummer om je te verbinden met vrienden &amp; familie in een ruimte zonder advertenties, zonder merken, zonder likes en zonder influencers."</string>
 
     <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
-    <string name="zero_zone_home_nux_text_two">"HalloApp is voor jou en degenen die het dichtst bij je staan, volledig in privé. Nodig je echte vrienden uit om te beginnen"</string>
+    <string name="zero_zone_home_nux_text_two">"HalloApp is voor jou en degenen die het dichtst bij je staan, volledig privé. Nodig je echte vrienden uit om te beginnen"</string>
 
     <!-- Action for user to start their delete accoount process under 'account' -->
     <string name="delete_my_account_action">"Mijn account verwijderen"</string>
@@ -1175,6 +1175,24 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Text shown as title for invite suggested friends card -->
     <string name="invite_card_header">"HalloApp is leuk met vrienden en familie"</string>
+
+    <!-- Action on missed call notifications allowing the user to callback without opening the app first -->
+    <string name="call_back_notification_label">"Terugbellen"</string>
+
+    <!-- Text in notifications for missed calls %1$d is replaced with the number of missed calls -->
+    <plurals name="missed_calls_notification">
+        <item quantity="one">"%1$d gemiste oproep"</item>
+        <item quantity="other">"%1$d gemiste oproepen"</item>
+    </plurals>
+
+    <!-- Label under the bluetooth button in calls -->
+    <string name="bluetooth">"Bluetooth"</string>
+
+    <!-- Notice displayed in the call screen -->
+    <string name="call_e2e_notice">"End-to-end versleuteld"</string>
+
+    <!-- String shown while preparing to share logs from the app -->
+    <string name="preparing_logs">"Preparing logs…"</string>
     <string name="share_externally">"Extern delen"</string>
     <string name="incoming_call_notification_title">"Inkomende oproep"</string>
     <string name="call_action">"Bellen"</string>
