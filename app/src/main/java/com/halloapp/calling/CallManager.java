@@ -796,7 +796,7 @@ public class CallManager {
             peerConnection.createAnswer(new SimpleSdpObserver() {
                 @Override
                 public void onCreateSuccess(@NonNull SessionDescription sessionDescription) {
-                    Log.i("PeerConnection ice restart answer is ready " + sessionDescription.description);
+                    Log.i("CallManager: ice restart answer: " + sessionDescription.description);
                     peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
 
                     try {
@@ -1213,7 +1213,7 @@ public class CallManager {
         peerConnection.createOffer(new SimpleSdpObserver() {
             @Override
             public void onCreateSuccess(@NonNull SessionDescription sessionDescription) {
-                Log.i("CallManager: createOffer.onCreateSuccess: ");
+                Log.i("CallManager: offer: " + sessionDescription.description);
                 peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
                 setMaxBitrate();
 
@@ -1301,7 +1301,7 @@ public class CallManager {
         peerConnection.createAnswer(new SimpleSdpObserver() {
             @Override
             public void onCreateSuccess(@NonNull SessionDescription sessionDescription) {
-                Log.i("PeerConnection answer is ready " + sessionDescription);
+                Log.i("CallManager:  answer: " + sessionDescription.description);
                 peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
 
                 try {
@@ -1627,7 +1627,7 @@ public class CallManager {
                 peerConnection.createOffer(new SimpleSdpObserver() {
                     @Override
                     public void onCreateSuccess(@NonNull SessionDescription sessionDescription) {
-                        Log.i("CallManager: offerCreated: ");
+                        Log.i("CallManager: maybeRestartIce offer: " + sessionDescription.description);
                         peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
                         try {
                             Log.i("CallManager: sending iceRestartOffer");
