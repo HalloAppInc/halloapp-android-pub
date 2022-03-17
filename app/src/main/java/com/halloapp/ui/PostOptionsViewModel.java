@@ -24,6 +24,7 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.media.Uploader;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.PostContainer;
+import com.halloapp.proto.clients.PostContainerBlob;
 import com.halloapp.proto.server.ExternalSharePost;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.OgTagInfo;
@@ -122,7 +123,13 @@ public class PostOptionsViewModel extends ViewModel {
             Container.Builder containerBuilder = Container.newBuilder();
             FeedContentEncoder.encodePost(containerBuilder, post);
             PostContainer postContainer = containerBuilder.getPostContainer();
-            byte[] payload = postContainer.toByteArray();
+            PostContainerBlob postContainerBlob = PostContainerBlob.newBuilder()
+                    .setPostContainer(postContainer)
+                    .setPostId(post.id)
+                    .setUid(Long.parseLong(Me.getInstance().getUser()))
+                    .setTimestamp(post.timestamp)
+                    .build();
+            byte[] payload = postContainerBlob.toByteArray();
 
             Context context = appContext.get();
             String title = context.getString(R.string.external_share_title, Me.getInstance().getName());
