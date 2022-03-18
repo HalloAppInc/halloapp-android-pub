@@ -111,6 +111,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         }
 
         private void invalidateSocialHistory() {
+            Log.i("ActivityCenterViewModel invalidating social history");
             mainHandler.post(socialHistory::invalidate);
         }
     };
@@ -375,6 +376,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             return -Long.compare(o1.timestamp, o2.timestamp);
         }));
 
+        Log.i("ActivityCenterViewModel/loadSocialHistory got " + socialActionEvents.size() + " events, " + unseenCount + " of which unseen");
         return new SocialHistory(socialActionEvents, unseenCount, contacts);
     }
 
