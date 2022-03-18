@@ -162,7 +162,7 @@
             android:minHeight="340dp"
             app:layout_constraintHeight_default="wrap"
             app:cardCornerRadius="@dimen/content_composer_frame_border"
-            app:cardElevation="2dp"
+            app:cardElevation="1dp"
             android:layout_margin="8dp"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/destination_list_container"
