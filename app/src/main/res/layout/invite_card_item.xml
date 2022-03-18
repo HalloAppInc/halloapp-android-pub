@@ -53,7 +53,8 @@
         android:lines="2"
         android:layout_marginTop="6dp"
         app:layout_constraintTop_toBottomOf="@id/invite_name"
-        tools:text="35 contacts on HalloApp"/>
+        android:paddingHorizontal="6dp"
+        tools:text="0 contacts on HalloApp"/>
 
     <com.google.android.material.button.MaterialButton
         style="@style/Widget.Button.Secondary"
@@ -61,9 +62,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
+        android:paddingTop="1dp"
         app:layout_constraintTop_toBottomOf="@id/invite_caption"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:letterSpacing="0"
         app:cornerRadius="50dp"
         android:text="@string/invite_action"
         />
