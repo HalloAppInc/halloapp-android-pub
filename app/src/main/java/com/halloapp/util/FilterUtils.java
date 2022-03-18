@@ -39,12 +39,15 @@ public class FilterUtils {
         }
         final List<String> filterTokens = new ArrayList<>();
         final BreakIterator boundary = BreakIterator.getWordInstance();
-        final String filterTextString = Preconditions.checkNotNull(filterText).toString();
+        final String filterTextString = Preconditions.checkNotNull(filterText).toString().trim();
         boundary.setText(filterTextString);
         int start = boundary.first();
         for (int end = boundary.next(); end != BreakIterator.DONE; start = end, end = boundary.next()) {
             if (end > start) {
-                filterTokens.add(filterTextString.substring(start, end).toLowerCase(Locale.getDefault()));
+                String s = filterTextString.substring(start, end).toLowerCase(Locale.getDefault());
+                if (!StringUtils.isAllWhitespace(s)) {
+                    filterTokens.add(s);
+                }
             }
         }
         return filterTokens;

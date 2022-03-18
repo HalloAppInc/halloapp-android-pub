@@ -52,18 +52,27 @@ public class StringUtils {
         int len = s.length();
         int start = 0;
 
-        while (start < len && shouldTrim(s.charAt(start))) {
+        while (start < len && isWhitespace(s.charAt(start))) {
             start++;
         }
-        while (start < len && shouldTrim(s.charAt(len - 1))) {
+        while (start < len && isWhitespace(s.charAt(len - 1))) {
             len--;
         }
 
         return ((start > 0) || (len < s.length())) ? s.substring(start, len) : s;
     }
 
-    private static boolean shouldTrim(char c) {
+    private static boolean isWhitespace(char c) {
         return c <= ' ' || UNICODE_SPACE_LIST.contains(c);
+    }
+
+    public static boolean isAllWhitespace(String s) {
+        for (int i=0; i<s.length(); i++) {
+            if (!isWhitespace(s.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static String preparePostText(final String text) {
