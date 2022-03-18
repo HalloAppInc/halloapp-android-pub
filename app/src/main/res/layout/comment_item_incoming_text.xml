@@ -44,7 +44,7 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="5dp"/>
 
-            <FrameLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/comment_media_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -70,11 +70,12 @@
                     android:id="@+id/comment_video_indicator"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
+                    app:layout_constraintEnd_toEndOf="@+id/comment_media"
+                    app:layout_constraintBottom_toBottomOf="@+id/comment_media"
                     android:padding="5dp"
                     android:src="@drawable/ic_video"/>
 
-            </FrameLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.halloapp.widget.MessageTextLayout
                 android:id="@+id/message_text_container"
