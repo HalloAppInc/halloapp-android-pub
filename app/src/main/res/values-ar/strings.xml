@@ -1097,8 +1097,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="calling">"جارٍ الاتصال…"</string>
 
     <!-- The call notification accept button label -->
-    <!-- Fuzzy -->
-    <string name="call_accept_button">"قبول"</string>
+    <string name="call_accept_button">"ردّ"</string>
 
     <!-- The call notification decline button label -->
     <string name="call_decline_button">"رفض"</string>
@@ -1306,37 +1305,37 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="external_share_copy">"الاطلاع على منشوري في هالوآب: %s"</string>
 
     <!-- Rationale for when requesting microphone or camera permission for voice calls, but it has already been denied. -->
-    <string name="call_record_audio_or_camera_permission_rationale_denied">"To make a voice or video call we need permission to access the microphone and camera.
+    <string name="call_record_audio_or_camera_permission_rationale_denied">"لإجراء مكالمة صوتية أو مكالمة فيديو نحتاج إلى إذن الوصول إلى الميكروفون والكاميرا.
 
-Open the app settings screen to modify app permissions."</string>
+افتح شاشة إعدادات التطبيق لتعديل أذونات التطبيق."</string>
 
     <!-- text shown in a card prompting user to search for friends/family to invite -->
-    <string name="invite_card_search_text">"Search for more friends and family"</string>
+    <string name="invite_card_search_text">"ابحث عن المزيد من الأصدقاء وأفراد العائلة"</string>
 
     <!-- Text shown as title for invite suggested friends card -->
-    <string name="invite_card_header">"HalloApp is fun with friends and family"</string>
+    <string name="invite_card_header">"استمتع بتطبيق هالوآب مع الأصدقاء والعائلة"</string>
 
     <!-- Action on missed call notifications allowing the user to callback without opening the app first -->
-    <string name="call_back_notification_label">"Call back"</string>
+    <string name="call_back_notification_label">"معاودة الاتصال"</string>
 
     <!-- Text in notifications for missed calls %1$d is replaced with the number of missed calls -->
     <plurals name="missed_calls_notification">
-        <item quantity="zero">"%1$d missed call"</item>
-        <item quantity="one">"%1$d missed call"</item>
-        <item quantity="two">"%1$d missed call"</item>
-        <item quantity="few">"%1$d missed call"</item>
-        <item quantity="many">"%1$d missed call"</item>
-        <item quantity="other">"%1$d missed call"</item>
+        <item quantity="zero">"%1$d من المكالمات الفائتة"</item>
+        <item quantity="one">"مكالمة فائتة %1$d"</item>
+        <item quantity="two">"مكالمتان فائتتان %1$d"</item>
+        <item quantity="few">"%1$d مكالمات فائتة"</item>
+        <item quantity="many">"%1$d مكالمة فائتة"</item>
+        <item quantity="other">"%1$d مكالمة فائتة"</item>
     </plurals>
 
     <!-- Label under the bluetooth button in calls -->
-    <string name="bluetooth">"Bluetooth"</string>
+    <string name="bluetooth">"البلوتوث"</string>
 
     <!-- Notice displayed in the call screen -->
-    <string name="call_e2e_notice">"End-to-end encrypted"</string>
+    <string name="call_e2e_notice">"مشفرة تشفيرًا تامًا"</string>
 
     <!-- String shown while preparing to share logs from the app -->
-    <string name="preparing_logs">"Preparing logs…"</string>
+    <string name="preparing_logs">"جارٍ إعداد السجلات…"</string>
     <string name="share_externally">"مشاركة خارج هالوآب"</string>
     <string name="incoming_call_notification_title">"مكالمة واردة"</string>
     <string name="call_action">"اتصال"</string>

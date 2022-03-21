@@ -949,7 +949,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="zero_zone_home_nux_text_one">"Verwende deine Handynummer, um dich mit deinen Freunden und deiner Familie in einem digitalen Raum ohne Werbung, Marken, Likes und Influencer zu verbinden."</string>
 
     <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
-    <string name="zero_zone_home_nux_text_two">"HalloApp ist für dich und die, die dir nahe stehen - ganz privat. Leg los und lade deine echten Freunde ein"</string>
+    <string name="zero_zone_home_nux_text_two">"HalloApp ist für dich und die Menschen, die dir nahe stehen - ganz privat. Leg los und lade deine echten Freunde ein"</string>
 
     <!-- Action for user to start their delete accoount process under 'account' -->
     <string name="delete_my_account_action">"Meinen Account löschen"</string>
@@ -1026,7 +1026,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="calling">"Ausgehender Anruf…"</string>
 
     <!-- The call notification accept button label -->
-    <!-- Fuzzy -->
     <string name="call_accept_button">"Annehmen"</string>
 
     <!-- The call notification decline button label -->
@@ -1220,28 +1219,28 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
 
     <!-- text shown in a card prompting user to search for friends/family to invite -->
-    <string name="invite_card_search_text">"Search for more friends and family"</string>
+    <string name="invite_card_search_text">"Suche nach mehr Freunden und Familie"</string>
 
     <!-- Text shown as title for invite suggested friends card -->
-    <string name="invite_card_header">"HalloApp is fun with friends and family"</string>
+    <string name="invite_card_header">"HalloApp macht Spaß mit Freunden und Familie"</string>
 
     <!-- Action on missed call notifications allowing the user to callback without opening the app first -->
-    <string name="call_back_notification_label">"Call back"</string>
+    <string name="call_back_notification_label">"Rückruf"</string>
 
     <!-- Text in notifications for missed calls %1$d is replaced with the number of missed calls -->
     <plurals name="missed_calls_notification">
-        <item quantity="one">"%1$d missed call"</item>
-        <item quantity="other">"%1$d missed call"</item>
+        <item quantity="one">"%1$d verpasster Anruf"</item>
+        <item quantity="other">"%1$d verpasste Anrufe"</item>
     </plurals>
 
     <!-- Label under the bluetooth button in calls -->
     <string name="bluetooth">"Bluetooth"</string>
 
     <!-- Notice displayed in the call screen -->
-    <string name="call_e2e_notice">"End-to-end encrypted"</string>
+    <string name="call_e2e_notice">"Ende-zu-Ende-verschlüsselt"</string>
 
     <!-- String shown while preparing to share logs from the app -->
-    <string name="preparing_logs">"Preparing logs…"</string>
+    <string name="preparing_logs">"Vorbereiten der Log-Datei…"</string>
     <string name="share_externally">"Außerhalb von HalloApp teilen"</string>
     <string name="incoming_call_notification_title">"Eingehender Anruf"</string>
     <string name="call_action">"Anrufen"</string>
