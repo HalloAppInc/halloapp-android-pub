@@ -7,7 +7,10 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.content.Mention;
 import com.halloapp.ui.mentions.MentionsFormatter;
+import com.halloapp.util.logs.Log;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import io.noties.markwon.Markwon;
