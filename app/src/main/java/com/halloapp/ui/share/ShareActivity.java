@@ -200,7 +200,7 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
             super(itemView);
         }
 
-        void bindTo(@NonNull ShareDestination destination, List<String> filterTokens) {
+        void bindTo(@NonNull DestinationItem item) {
         }
     }
 
@@ -209,34 +209,34 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
         final private TextView nameView;
         final private ImageView selectedView;
 
-        private ShareDestination destination;
+        private DestinationItem item;
 
         ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             avatarView = itemView.findViewById(R.id.avatar);
             nameView = itemView.findViewById(R.id.name);
             selectedView = itemView.findViewById(R.id.selected);
-            itemView.setOnClickListener(v -> viewModel.toggleSelection(destination));
+            itemView.setOnClickListener(v -> viewModel.toggleSelection(item.destination));
         }
 
         @Override
-        void bindTo(@NonNull ShareDestination destination, List<String> filterTokens) {
-            this.destination = destination;
-            avatarLoader.load(avatarView, Preconditions.checkNotNull(destination.id), false);
+        void bindTo(@NonNull DestinationItem item) {
+            this.item = item;
+            avatarLoader.load(avatarView, Preconditions.checkNotNull(item.destination.id), false);
 
-            if (filterTokens != null && !filterTokens.isEmpty()) {
-                String name = destination.name;
-                CharSequence formattedName = FilterUtils.formatMatchingText(ShareActivity.this, name, filterTokens);
+            if (item.filterTokens != null && !item.filterTokens.isEmpty()) {
+                String name = item.destination.name;
+                CharSequence formattedName = FilterUtils.formatMatchingText(ShareActivity.this, name, item.filterTokens);
                 if (formattedName != null) {
                     nameView.setText(formattedName);
                 } else {
                     nameView.setText(name);
                 }
             } else {
-                nameView.setText(destination.name);
+                nameView.setText(item.destination.name);
             }
 
-            selectedView.setVisibility(viewModel.isSelected(destination) ? View.VISIBLE : View.INVISIBLE);
+            selectedView.setVisibility(item.selected ? View.VISIBLE : View.INVISIBLE);
         }
     }
 
@@ -245,7 +245,7 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
         final private ImageView selectedView;
         final private TextView subtitleView;
         final private ImageView openPrivacyView;
-        private ShareDestination destination;
+        private DestinationItem item;
 
         HomeViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -264,13 +264,13 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
             });
             avatarView.setClipToOutline(true);
 
-            itemView.setOnClickListener(v -> viewModel.toggleSelection(destination));
+            itemView.setOnClickListener(v -> viewModel.toggleSelection(item.destination));
             openPrivacyView.setOnClickListener(v -> startActivity(FeedPrivacyActivity.editFeedPrivacy(openPrivacyView.getContext())));
         }
 
-        void bindTo(@NonNull ShareDestination destination, @NonNull FeedPrivacy privacy) {
-            this.destination = destination;
-            selectedView.setVisibility(viewModel.isSelected(destination) ? View.VISIBLE : View.INVISIBLE);
+        void bindTo(@NonNull DestinationItem item, FeedPrivacy privacy) {
+            this.item = item;
+            selectedView.setVisibility(item.selected ? View.VISIBLE : View.INVISIBLE);
 
             if (privacy == null || PrivacyList.Type.ALL.equals(privacy.activeList)) {
                 subtitleView.setText(R.string.composer_sharing_all_summary);
@@ -298,7 +298,7 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
     class ShowAllGroupsViewHolder extends ViewHolder {
         ShowAllGroupsViewHolder(@NonNull View itemView) {
             super(itemView);
-            itemView.setOnClickListener(v -> viewModel.showAllGroups());
+            itemView.setOnClickListener(v -> adapter.showAllGroups());
         }
     }
 
@@ -313,11 +313,13 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
         public final int type;
         public final ShareDestination destination;
         public final boolean selected;
+        public List<String> filterTokens;
 
-        private DestinationItem(ShareDestination destination, boolean selected) {
+        private DestinationItem(ShareDestination destination, boolean selected, List<String> filterTokens) {
             this.type = itemType(destination.type);
             this.destination = destination;
             this.selected = selected;
+            this.filterTokens = filterTokens;
         }
 
         private DestinationItem(int type) {
@@ -338,14 +340,31 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
 
             throw new IllegalArgumentException();
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            DestinationItem that = (DestinationItem) o;
+            return type == that.type && selected == that.selected && Objects.equals(destination, that.destination) && Objects.equals(filterTokens, that.filterTokens);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(type, destination, selected, filterTokens);
+        }
     }
 
     private class DestinationsAdapter extends ListAdapter<DestinationItem, ViewHolder> implements Filterable {
+        private static final int MIN_SHOWN_GROUPS = 6;
+
         private List<ShareDestination> destinations = new ArrayList<>();
+        final private List<ShareDestination> limitedDestinations = new ArrayList<>();
         private List<ShareDestination> selection = new ArrayList<>();
         private CharSequence filterText;
         private List<String> filterTokens;
         private FeedPrivacy privacy;
+        private boolean hideAdditionalGroups = true;
 
         DestinationsAdapter() {
             super(DIFF_CALLBACK);
@@ -358,6 +377,8 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
 
         void setDestinations(@NonNull List<ShareDestination> destinations) {
             this.destinations = destinations;
+
+            computeLimitedDestinations();
             getFilter().filter(filterText);
         }
 
@@ -370,7 +391,37 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
             this.filterText = filterText;
             this.filterTokens = FilterUtils.getFilterTokens(filterText);
 
-            submitList(build(destinations));
+            if (!isSearching() && hideAdditionalGroups) {
+                submitList(build(limitedDestinations));
+            } else {
+                submitList(build(destinations));
+            }
+        }
+
+        void showAllGroups() {
+            hideAdditionalGroups = false;
+            getFilter().filter(filterText);
+        }
+
+        private void computeLimitedDestinations() {
+            limitedDestinations.clear();
+
+            int groupCount = 0;
+            for (ShareDestination destination : destinations) {
+                if (destination.type == ShareDestination.TYPE_GROUP) {
+                    if (groupCount < MIN_SHOWN_GROUPS) {
+                        limitedDestinations.add(destination);
+                    }
+
+                    groupCount++;
+                } else {
+                    limitedDestinations.add(destination);
+                }
+            }
+
+            if (groupCount <= MIN_SHOWN_GROUPS) {
+                hideAdditionalGroups = false;
+            }
         }
 
         @NonNull
@@ -392,10 +443,10 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
                     items.add(new DestinationItem(DestinationItem.ITEM_CONTACTS_HEADER));
                 }
 
-                items.add(new DestinationItem(dest, selection.contains(dest)));
+                items.add(new DestinationItem(dest, selection.contains(dest), filterTokens));
 
                 if (dest.type == DestinationItem.ITEM_GROUP && (i == destinations.size() - 1 || destinations.get(i + 1).type != DestinationItem.ITEM_GROUP)) {
-                    if (viewModel.isHidingAdditionalGroups() && !isSearching()) {
+                    if (hideAdditionalGroups && !isSearching()) {
                         items.add(new DestinationItem(DestinationItem.ITEM_ALL_GROUPS));
                     }
                 }
@@ -444,11 +495,11 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
 
             if (holder instanceof HomeViewHolder) {
                 HomeViewHolder homeHolder = (HomeViewHolder) holder;
-                homeHolder.bindTo(getItem(position).destination, privacy);
+                homeHolder.bindTo(getItem(position), privacy);
                 return;
             }
 
-            holder.bindTo(getItem(position).destination, filterTokens);
+            holder.bindTo(getItem(position));
         }
 
         @Override
@@ -474,7 +525,7 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
 
         @Override
         public boolean areContentsTheSame(@NonNull DestinationItem oldItem, @NonNull DestinationItem newItem) {
-            return oldItem.selected == newItem.selected;
+            return oldItem.equals(newItem);
         }
     };
 

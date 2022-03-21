@@ -27,15 +27,12 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ShareViewModel extends AndroidViewModel {
-    private static final int MIN_SHOWN_GROUPS = 6;
-
     final ComputableLiveData<List<ShareDestination>> destinationList;
     final MutableLiveData<List<ShareDestination>> selectionList =  new MutableLiveData<>(new ArrayList<>());
     final ComputableLiveData<FeedPrivacy> feedPrivacyLiveData;
 
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
-    private boolean hideAdditionalGroups = true;
 
     private final FeedPrivacyManager feedPrivacyManager = FeedPrivacyManager.getInstance();
 
@@ -101,14 +98,6 @@ public class ShareViewModel extends AndroidViewModel {
 
                 destinations.add(ShareDestination.feed());
 
-                if (groups.size() <= MIN_SHOWN_GROUPS) {
-                    hideAdditionalGroups = false;
-                }
-
-                if (hideAdditionalGroups) {
-                    groups = groups.subList(0, MIN_SHOWN_GROUPS);
-                }
-
                 for (Chat group : groups) {
                     destinations.add(ShareDestination.fromGroup(group));
                 }
@@ -163,15 +152,6 @@ public class ShareViewModel extends AndroidViewModel {
         });
 
         return contacts;
-    }
-
-    boolean isHidingAdditionalGroups() {
-        return hideAdditionalGroups;
-    }
-
-    void showAllGroups() {
-        hideAdditionalGroups = false;
-        destinationList.invalidate();
     }
 
     public void updateSelectionList(List<ShareDestination> selectedDestinations) {
