@@ -275,7 +275,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                 case CallManager.State.END:
                     Log.i("CallActivity/State -> END");
                     Log.i("finishing the activity");
-                    finish();
+                    finishAndRemoveTask();
                     break;
             }
         });
@@ -336,7 +336,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         }
         if (!isInitiator && !callManager.getIsInCall().getValue()) {
             Log.i("CallActivity: call probably ended while activity was starting");
-            finish();
+            finishAndRemoveTask();
         }
     }
 
@@ -574,7 +574,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private void endCall() {
         if (isInitiator) {
             // TODO(nikola): we should stats send to the server for this case of not granting permissions
-            finish();
+            finishAndRemoveTask();
         } else {
             // TODO(nikola): we might want to send new special reason for no permissions
             callManager.endCall(EndCall.Reason.REJECT, true);
