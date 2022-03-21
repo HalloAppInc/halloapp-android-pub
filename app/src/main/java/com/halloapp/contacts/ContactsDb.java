@@ -590,7 +590,8 @@ public class ContactsDb {
                         ContactsTable.COLUMN_INVITED,
                         ContactsTable.COLUMN_DONT_SUGGEST
                 },
-                ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL AND (" + ContactsTable.COLUMN_DONT_SUGGEST + " IS NULL OR " + ContactsTable.COLUMN_DONT_SUGGEST + "!=1)",
+                ContactsTable.COLUMN_USER_ID + " IS NULL AND " + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL AND " +
+                        ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS + ">0 AND (" + ContactsTable.COLUMN_DONT_SUGGEST + " IS NULL OR " + ContactsTable.COLUMN_DONT_SUGGEST + "!=1)",
                 null, null, null, ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS + " DESC", "50")) {
             final Set<String> addressIdSet = new HashSet<>();
             final Set<String> phoneNumberSet = new HashSet<>();
