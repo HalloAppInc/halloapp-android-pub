@@ -295,12 +295,19 @@ public abstract class PostsFragment extends HalloFragment {
                 }
 
                 public void onChanged(int position, int count, @Nullable Object payload) {
+                    if (position > getInviteCardIndex()) {
+                        position += 1;
+                    }
                     adapterCallback.onChanged(position + getHeaderCount(), count, payload);
                 }
             };
 
             postListDiffer = new PostListDiffer(listUpdateCallback);
             setDiffer(postListDiffer);
+        }
+
+        protected int getInviteCardIndex() {
+            return -1;
         }
 
         public void applyTheme(int theme) {

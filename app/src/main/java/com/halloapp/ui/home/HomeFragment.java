@@ -527,6 +527,11 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         };
 
         @Override
+        public int getInviteCardIndex() {
+            return inviteCardIndex;
+        }
+
+        @Override
         public long getItemId(int position) {
             if (position == inviteCardIndex) {
                 return -position;
