@@ -1810,7 +1810,7 @@ public class ConnectionImpl extends Connection {
 
                         // TODO(jack): Need tombstones when receiving history resend as well!
                         if (!ServerProps.getInstance().getUsePlaintextGroupFeed()) {
-                            return new Post(
+                            Post post = new Post(
                                     0,
                                     publisherUserId,
                                     protoPost.getId(),
@@ -1819,6 +1819,11 @@ public class ConnectionImpl extends Connection {
                                     Post.SEEN_NO,
                                     ""
                             );
+                            post.clientVersion = Constants.FULL_VERSION;
+                            post.senderPlatform = senderPlatform;
+                            post.senderVersion = senderVersion;
+                            post.failureReason = errorMessage;
+                            return post;
                         }
                     }
                 }
@@ -1908,7 +1913,7 @@ public class ConnectionImpl extends Connection {
                         GroupFeedSessionManager.getInstance().sendCommentRerequest(publisherUserId, groupId, protoComment.getId(), senderStateIssue);
 
                         if (!ServerProps.getInstance().getUsePlaintextGroupFeed()) {
-                            return new Comment(0,
+                            Comment comment = new Comment(0,
                                     protoComment.getPostId(),
                                     publisherUserId,
                                     protoComment.getId(),
@@ -1917,6 +1922,11 @@ public class ConnectionImpl extends Connection {
                                     Comment.TRANSFERRED_DECRYPT_FAILED,
                                     false,
                                     "");
+                            comment.clientVersion = Constants.FULL_VERSION;
+                            comment.senderPlatform = senderPlatform;
+                            comment.senderVersion = senderVersion;
+                            comment.failureReason = errorMessage;
+                            return comment;
                         }
                     }
                 }
