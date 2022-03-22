@@ -29,6 +29,8 @@
     <!-- Name for notifications that come out as a broadcast from the server -->
     <string name="broadcast_notifications_channel_name">Alerts from HalloApp</string>
     <string name="invite_notifications_channel_name">Invite notifications</string>
+    <!-- Name for notifications channel for missed calls -->
+    <string name="missed_call_notifications_channel_name">Missed call notifications</string>
     <string name="invite_notification_text">%s just accepted your invite to join HalloApp 🎉</string>
     <string name="me">Me</string>
     <string name="you">you</string>

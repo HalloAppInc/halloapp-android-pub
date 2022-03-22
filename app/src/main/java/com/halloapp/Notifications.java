@@ -87,6 +87,7 @@ public class Notifications {
     private static final String CALLS_NOTIFICATION_CHANNEL_ID = "call_notifications";
     private static final String ONGOING_CALL_NOTIFICATION_CHANNEL_ID = "ongoing_call_notifications";
     private static final String BROADCASTS_NOTIFICATION_CHANNEL_ID = "broadcast_notifications";
+    private static final String MISSED_CALL_NOTIFICATION_CHANNEL_ID = "missed_call_notifications";
 
     private static final String MESSAGE_NOTIFICATION_GROUP_KEY = "message_notification";
     private static final String REPLY_TEXT_KEY = "reply_text";
@@ -161,11 +162,14 @@ public class Notifications {
             final NotificationChannel inviteNotificationsChannel = new NotificationChannel(INVITE_NOTIFICATION_CHANNEL_ID, context.getString(R.string.invite_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
             final NotificationChannel groupNotificationsChannel = new NotificationChannel(GROUPS_NOTIFICATION_CHANNEL_ID, context.getString(R.string.group_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
             final NotificationChannel callNotificationsChannel = new NotificationChannel(CALLS_NOTIFICATION_CHANNEL_ID, context.getString(R.string.call_notifications_channel_name), NotificationManager.IMPORTANCE_HIGH);
-            final NotificationChannel ongoingCallNotificationsChannel = new NotificationChannel(ONGOING_CALL_NOTIFICATION_CHANNEL_ID, context.getString(R.string.ongoing_call_notifications_channel_name), NotificationManager.IMPORTANCE_LOW);
-
             callNotificationsChannel.enableLights(true);
             callNotificationsChannel.enableVibration(true);
             callNotificationsChannel.setSound(Settings.System.DEFAULT_RINGTONE_URI, getCallNotificationAudioAttributes());
+
+            final NotificationChannel ongoingCallNotificationsChannel = new NotificationChannel(ONGOING_CALL_NOTIFICATION_CHANNEL_ID, context.getString(R.string.ongoing_call_notifications_channel_name), NotificationManager.IMPORTANCE_LOW);
+            final NotificationChannel missedCallNotificationsChannel = new NotificationChannel(MISSED_CALL_NOTIFICATION_CHANNEL_ID, context.getString(R.string.missed_call_notifications_channel_name), NotificationManager.IMPORTANCE_HIGH);
+            missedCallNotificationsChannel.enableLights(true);
+            missedCallNotificationsChannel.enableVibration(true);
 
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             notificationManager.createNotificationChannel(feedNotificationsChannel);
@@ -176,6 +180,7 @@ public class Notifications {
             notificationManager.createNotificationChannel(callNotificationsChannel);
             notificationManager.createNotificationChannel(ongoingCallNotificationsChannel);
             notificationManager.createNotificationChannel(broadcastNotificationsChannel);
+            notificationManager.createNotificationChannel(missedCallNotificationsChannel);
         }
     }
 
@@ -293,10 +298,14 @@ public class Notifications {
                     CallType callbackType = CallType.AUDIO;
                     final Contact sender = contactsDb.getContact((UserId) chatId);
                     final String senderName = sender.getDisplayName();
-                    final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CALLS_NOTIFICATION_CHANNEL_ID)
+
+                    Bitmap avatar = MediaUtils.getCircledBitmap(avatarLoader.getAvatar(context, chatId));
+
+                    final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MISSED_CALL_NOTIFICATION_CHANNEL_ID)
                             .setSmallIcon(R.drawable.ic_notification)
                             .setColor(ContextCompat.getColor(context, R.color.color_accent))
                             .setGroupSummary(false)
+                            .setLargeIcon(avatar)
                             .setContentTitle(senderName);
 
                     final Intent contentIntent = ChatActivity.open(context, chatId, true);
@@ -335,6 +344,7 @@ public class Notifications {
                     builder.addAction(callbackAction);
 
                     notificationManager.notify(chatId.rawId(), MISSED_CALL_NOTIFICATION_ID, builder.build());
+                    Log.i("Notifications: missed call notification for " + chatId.rawId());
                 }
             }
         });
