@@ -1389,6 +1389,56 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         }
     }
 
+    private class TombstoneViewHolder extends BaseCommentViewHolder {
+
+        public TombstoneViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            TextView tombstoneText = itemView.findViewById(R.id.tombstone_text);
+
+            SpannableStringBuilder current = new SpannableStringBuilder(tombstoneText.getText());
+            URLSpan[] spans = current.getSpans(0, current.length(), URLSpan.class);
+
+            int linkColor = ContextCompat.getColor(tombstoneText.getContext(), R.color.color_link);
+
+            for (URLSpan span : spans) {
+                int start = current.getSpanStart(span);
+                int end = current.getSpanEnd(span);
+                current.removeSpan(span);
+
+                ClickableSpan learnMoreSpan = new ClickableSpan() {
+                    @Override
+                    public void updateDrawState(@NonNull TextPaint ds) {
+                        ds.setUnderlineText(false);
+                        ds.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+                        ds.setColor(linkColor);
+                    }
+
+                    @Override
+                    public void onClick(@NonNull View widget) {
+                        IntentUtils.openUrlInBrowser(widget, Constants.FAQ_URL);
+                    }
+                };
+                current.setSpan(learnMoreSpan, start, end, 0);
+            }
+            tombstoneText.setText(current);
+            tombstoneText.setMovementMethod(LinkMovementMethod.getInstance());
+
+            itemView.setOnLongClickListener(v -> {
+                if (comment == null) {
+                    return false;
+                }
+                selectedComment = comment;
+                updateActionMode();
+                return true;
+            });
+        }
+
+        @Override
+        public void fillView(boolean changed) {
+        }
+    }
+
     private void linkifyFutureProof(@NonNull TextView futureProofMessage) {
         SpannableStringBuilder current= new SpannableStringBuilder(futureProofMessage.getText());
         URLSpan[] spans= current.getSpans(0, current.length(), URLSpan.class);
@@ -1909,6 +1959,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private static final int ITEM_TYPE_VOICE_NOTE_OUTGOING = 8;
     private static final int ITEM_TYPE_RETRACTED_OUTGOING = 9;
     private static final int ITEM_TYPE_RETRACTED_INCOMING= 10;
+    private static final int ITEM_TYPE_TOMBSTONE = 11;
 
     private class CommentsAdapter extends AdapterWithLifecycle<ViewHolderWithLifecycle> {
 
@@ -1987,6 +2038,9 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         @Override
         public int getItemViewType(int position) {
             final Comment comment = Preconditions.checkNotNull(getItem(position));
+            if (!serverProps.getUsePlaintextGroupFeed() && comment.transferred == Comment.TRANSFERRED_DECRYPT_FAILED) {
+                return ITEM_TYPE_TOMBSTONE;
+            }
             switch (comment.type) {
                 case Comment.TYPE_FUTURE_PROOF:
                     return ITEM_TYPE_COMMENT_FUTURE_PROOF;
@@ -2025,6 +2079,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     return R.layout.comment_item_incoming_retracted;
                 case ITEM_TYPE_RETRACTED_OUTGOING:
                     return R.layout.comment_item_outgoing_retracted;
+                case ITEM_TYPE_TOMBSTONE:
+                    return R.layout.comment_item_tombstone;
             }
             throw new IllegalArgumentException("unknown view type " + viewType);
         }
@@ -2037,6 +2093,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             switch (viewType) {
                 case ITEM_TYPE_COMMENT_FUTURE_PROOF:
                     return new FutureProofViewHolder(root);
+                case ITEM_TYPE_TOMBSTONE:
+                    return new TombstoneViewHolder(root);
                 case ITEM_TYPE_VOICE_NOTE_INCOMING:
                 case ITEM_TYPE_VOICE_NOTE_OUTGOING:
                     return new VoiceNoteViewHolder(root);

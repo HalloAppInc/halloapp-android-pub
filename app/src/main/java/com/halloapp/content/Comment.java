@@ -149,7 +149,7 @@ public class Comment extends ContentItem {
     }
 
     public boolean isRetracted() {
-        return (type == TYPE_USER && super.isRetracted()) || type == TYPE_RETRACTED;
+        return (type == TYPE_USER && transferred != TRANSFERRED_DECRYPT_FAILED && super.isRetracted()) || type == TYPE_RETRACTED;
     }
 
     public boolean canBeRetracted() {

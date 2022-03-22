@@ -412,6 +412,10 @@
     <string name="message_retracted_placeholder">This message has been deleted</string>
     <string name="comment_retracted_placeholder">This comment has been deleted</string>
     <string name="message_tombstone_placeholder">Waiting for this message. This may take a while. <![CDATA[<a href="learn-more">Learn more</a>]]>.</string>
+    <!-- Placeholder for posts that failed to decrypt -->
+    <string name="post_tombstone_placeholder">Waiting for this post. This may take a while. <a href="learn-more">Learn more</a>.</string>
+    <!-- Placeholder for comments that failed to decrypt -->
+    <string name="comment_tombstone_placeholder">Waiting for this comment. This may take a while. <a href="learn-more">Learn more</a>.</string>
     <!-- Placeholder when we do not understand the received message -->
     <string name="message_upgrade_placeholder">Your version of HalloApp does not support this type of message. <a href="update-app">Update your app</a></string>
     <!-- Placeholder when we do not understand the received post -->

@@ -222,7 +222,7 @@ public class Post extends ContentItem {
 
     @Override
     public boolean isRetracted() {
-        return (type == TYPE_USER && super.isRetracted()) || type == TYPE_RETRACTED;
+        return (type == TYPE_USER && transferred != TRANSFERRED_DECRYPT_FAILED && super.isRetracted()) || type == TYPE_RETRACTED;
     }
 
     @Override

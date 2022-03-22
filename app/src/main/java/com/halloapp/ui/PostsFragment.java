@@ -33,6 +33,7 @@ import com.halloapp.groups.ChatLoader;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.VoiceNotePlayer;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.CollapsedPostViewHolder;
@@ -44,6 +45,7 @@ import com.halloapp.ui.posts.PostListDiffer;
 import com.halloapp.ui.posts.PostViewHolder;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.ui.posts.SubtlePostViewHolder;
+import com.halloapp.ui.posts.TombstonePostViewHolder;
 import com.halloapp.ui.posts.VoiceNotePostViewHolder;
 import com.halloapp.ui.posts.ZeroZonePostViewHolder;
 import com.halloapp.util.DialogFragmentUtils;
@@ -59,6 +61,7 @@ public abstract class PostsFragment extends HalloFragment {
     private ChatLoader chatLoader;
     private ContactLoader contactLoader;
     private AvatarLoader avatarLoader;
+    private ServerProps serverProps;
     private SeenByLoader seenByLoader;
     private TextContentLoader textContentLoader;
     private TimestampRefresher timestampRefresher;
@@ -92,6 +95,7 @@ public abstract class PostsFragment extends HalloFragment {
         contactLoader = new ContactLoader();
         seenByLoader = new SeenByLoader();
         avatarLoader = AvatarLoader.getInstance();
+        serverProps = ServerProps.getInstance();
         audioDurationLoader = new AudioDurationLoader(requireContext());
         textContentLoader = new TextContentLoader();
         ContactsDb.getInstance().addObserver(contactsObserver);
@@ -152,6 +156,7 @@ public abstract class PostsFragment extends HalloFragment {
         static final int POST_TYPE_VOICE_NOTE = 0x07;
         static final int POST_TYPE_COLLAPSED = 0x08;
         protected static final int POST_TYPE_INVITE_CARD = 0x09;
+        static final int POST_TYPE_TOMBSTONE = 0x0a;
         static final int POST_TYPE_MASK = 0xFF;
 
         static final int POST_DIRECTION_OUTGOING = 0x0000;
@@ -328,6 +333,9 @@ public abstract class PostsFragment extends HalloFragment {
             } else if (post instanceof PostListDiffer.ExpandedPost) {
                 post = ((PostListDiffer.ExpandedPost) post).wrappedPost;
             }
+            if (!serverProps.getUsePlaintextGroupFeed() && post.transferred == Post.TRANSFERRED_DECRYPT_FAILED) {
+                return POST_TYPE_TOMBSTONE;
+            }
             int type = Post.TYPE_USER;
             switch (post.type) {
                 case Post.TYPE_SYSTEM:
@@ -392,6 +400,10 @@ public abstract class PostsFragment extends HalloFragment {
                     contentLayoutRes = R.layout.post_item_future_proof;
                     break;
                 }
+                case POST_TYPE_TOMBSTONE: {
+                    contentLayoutRes = R.layout.post_item_tombstone;
+                    break;
+                }
                 case POST_TYPE_VOICE_NOTE: {
                     contentLayoutRes = R.layout.post_item_voice_note;
                     break;
@@ -423,6 +435,9 @@ public abstract class PostsFragment extends HalloFragment {
             switch (viewType & POST_TYPE_MASK) {
                 case POST_TYPE_FUTURE_PROOF:
                     postViewHolder = new FutureProofPostViewHolder(layout, postViewHolderParent);
+                    break;
+                case POST_TYPE_TOMBSTONE:
+                    postViewHolder = new TombstonePostViewHolder(layout, postViewHolderParent);
                     break;
                 case POST_TYPE_VOICE_NOTE:
                     postViewHolder = new VoiceNotePostViewHolder(layout, postViewHolderParent);

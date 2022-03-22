@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="64dp">
+
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:background="@drawable/message_background_incoming"
+            android:orientation="vertical">
+
+            <include layout="@layout/message_sender_info" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_messaging_clock"
+                    app:tint="@color/secondary_text"/>
+
+                <TextView
+                    android:id="@+id/tombstone_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:textColorLink="@color/color_link"
+                    android:text="@string/comment_tombstone_placeholder"
+                    android:textStyle="italic" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </FrameLayout>
+
+    <include
+        layout="@layout/message_timestamp_footer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"/>
+</LinearLayout>

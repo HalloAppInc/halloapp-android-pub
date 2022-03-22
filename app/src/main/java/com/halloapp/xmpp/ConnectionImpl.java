@@ -1807,6 +1807,19 @@ public class ConnectionImpl extends Connection {
                             SignalSessionManager.getInstance().tearDownSession(publisherUserId);
                         }
                         GroupFeedSessionManager.getInstance().sendPostRerequest(publisherUserId, groupId, protoPost.getId(), senderStateIssue);
+
+                        // TODO(jack): Need tombstones when receiving history resend as well!
+                        if (!ServerProps.getInstance().getUsePlaintextGroupFeed()) {
+                            return new Post(
+                                    0,
+                                    publisherUserId,
+                                    protoPost.getId(),
+                                    1000L * protoPost.getTimestamp(),
+                                    Post.TRANSFERRED_DECRYPT_FAILED,
+                                    Post.SEEN_NO,
+                                    ""
+                            );
+                        }
                     }
                 }
             }
@@ -1893,6 +1906,18 @@ public class ConnectionImpl extends Connection {
                             SignalSessionManager.getInstance().tearDownSession(publisherUserId);
                         }
                         GroupFeedSessionManager.getInstance().sendCommentRerequest(publisherUserId, groupId, protoComment.getId(), senderStateIssue);
+
+                        if (!ServerProps.getInstance().getUsePlaintextGroupFeed()) {
+                            return new Comment(0,
+                                    protoComment.getPostId(),
+                                    publisherUserId,
+                                    protoComment.getId(),
+                                    protoComment.getParentCommentId(),
+                                    1000L * protoComment.getTimestamp(),
+                                    Comment.TRANSFERRED_DECRYPT_FAILED,
+                                    false,
+                                    "");
+                        }
                     }
                 }
             }
