@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.content.Mention;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.DebouncedSpan;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -96,7 +97,7 @@ public class MentionsFormatter {
         return adjustedMentions;
     }
 
-    static class MentionSpan extends ClickableSpan {
+    static class MentionSpan extends DebouncedSpan {
 
         private final Mention mention;
         private @Nullable final MentionClickListener listener;
@@ -107,7 +108,7 @@ public class MentionsFormatter {
         }
 
         @Override
-        public void onClick(@NonNull View widget) {
+        public void onOneClick(@NonNull View widget) {
             if (listener != null) {
                 listener.onMentionClick(widget, mention);
             }
