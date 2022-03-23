@@ -36,7 +36,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 62;
+    private static final int DATABASE_VERSION = 63;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -70,7 +70,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + PostsTable.COLUMN_SENDER_PLATFORM + " TEXT,"
                 + PostsTable.COLUMN_SENDER_VERSION + " TEXT,"
                 + PostsTable.COLUMN_RECEIVE_TIME + " INTEGER,"
-                + PostsTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER"
+                + PostsTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER,"
+                + PostsTable.COLUMN_SUBSCRIBED + " INTEGER"
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + ArchiveTable.TABLE_NAME);
@@ -258,7 +259,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + CommentsTable.COLUMN_SENDER_PLATFORM + " TEXT,"
                 + CommentsTable.COLUMN_SENDER_VERSION + " TEXT,"
                 + CommentsTable.COLUMN_RECEIVE_TIME + " INTEGER,"
-                + CommentsTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER"
+                + CommentsTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER,"
+                + CommentsTable.COLUMN_SHOULD_NOTIFY + " INTEGER"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + CommentsTable.INDEX_COMMENT_KEY);
@@ -611,6 +613,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 61: {
                 upgradeFromVersion61(db);
+            }
+            case 62: {
+                upgradeFromVersion62(db);
             }
             break;
             default: {
@@ -1307,6 +1312,11 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion61(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + UrlPreviewsTable.TABLE_NAME + " ADD COLUMN " + UrlPreviewsTable.COLUMN_DESCRIPTION + " TEXT");
+    }
+
+    private void upgradeFromVersion62(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + CommentsTable.TABLE_NAME + " ADD COLUMN " + CommentsTable.COLUMN_SHOULD_NOTIFY + " INTEGER");
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_SUBSCRIBED + " INTEGER");
     }
 
     /**

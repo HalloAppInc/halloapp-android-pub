@@ -88,6 +88,7 @@ public class Post extends ContentItem {
     public int rerequestCount;
     public Comment firstComment;
     public byte[] protoHash;
+    public boolean subscribed;
 
     // stats not read from DB
     public String failureReason;

@@ -45,6 +45,7 @@ public class Comment extends ContentItem {
     public boolean played;
     public int rerequestCount;
     public byte[] protoHash;
+    public boolean shouldNotify;
 
     // stats not read from DB
     public String failureReason;

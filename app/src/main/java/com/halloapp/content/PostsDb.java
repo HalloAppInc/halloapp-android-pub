@@ -131,6 +131,23 @@ class PostsDb {
     }
 
     @WorkerThread
+    void subscribeToPost(@NonNull Post post) {
+        Log.i("ContentDb.subscribeToPost: postId=" + post.id);
+        final ContentValues values = new ContentValues();
+        values.put(PostsTable.COLUMN_SUBSCRIBED, true);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
+                    PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
+                    new String [] {post.senderUserId.rawId(), post.id},
+                    SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLException ex) {
+            Log.e("ContentDb.subscribeToPost: failed");
+            throw ex;
+        }
+    }
+
+    @WorkerThread
     void addPost(@NonNull Post post) {
         Log.i("ContentDb.addPost " + post);
         if (post.timestamp < getPostExpirationTime()) {
@@ -179,6 +196,7 @@ class PostsDb {
                 values.put(PostsTable.COLUMN_USAGE, post.usage);
                 values.put(PostsTable.COLUMN_RECEIVE_TIME, now);
                 values.put(PostsTable.COLUMN_PROTO_HASH, post.protoHash);
+                values.put(PostsTable.COLUMN_SUBSCRIBED, post.subscribed);
                 post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
                 mediaDb.addMedia(post);
 
@@ -744,6 +762,7 @@ class PostsDb {
                 values.put(CommentsTable.COLUMN_TYPE, comment.type);
                 values.put(CommentsTable.COLUMN_RECEIVE_TIME, now);
                 values.put(CommentsTable.COLUMN_PROTO_HASH, comment.protoHash);
+                values.put(CommentsTable.COLUMN_SHOULD_NOTIFY, comment.shouldNotify);
                 comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
 
                 mediaDb.addMedia(comment);
@@ -1381,6 +1400,7 @@ class PostsDb {
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_REREQUEST_COUNT + "," +
+                    PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SUBSCRIBED + "," +
                     "m." + MediaTable._ID + "," +
                     "m." + MediaTable.COLUMN_TYPE + "," +
                     "m." + MediaTable.COLUMN_URL + "," +
@@ -1448,25 +1468,26 @@ class PostsDb {
                         post.setParentGroup(parentGroupId);
                     }
                     mentionsDb.fillMentions(post);
-                    post.seenByCount = cursor.getInt(25);
+                    post.seenByCount = cursor.getInt(26);
                     post.rerequestCount = cursor.getInt(10);
+                    post.subscribed = cursor.getInt(11) == 1;
                 }
-                if (!cursor.isNull(11)) {
+                if (!cursor.isNull(12)) {
                     Media media = new Media(
-                            cursor.getLong(11),
-                            cursor.getInt(12),
-                            cursor.getString(13),
-                            fileStore.getMediaFile(cursor.getString(14)),
-                            cursor.getBlob(16),
-                            cursor.getBlob(20),
+                            cursor.getLong(12),
+                            cursor.getInt(13),
+                            cursor.getString(14),
+                            fileStore.getMediaFile(cursor.getString(15)),
+                            cursor.getBlob(17),
                             cursor.getBlob(21),
-                            cursor.getInt(17),
+                            cursor.getBlob(22),
                             cursor.getInt(18),
                             cursor.getInt(19),
-                            cursor.getInt(22),
+                            cursor.getInt(20),
                             cursor.getInt(23),
-                            cursor.getLong(24));
-                    media.encFile = fileStore.getTmpFile(cursor.getString(15));
+                            cursor.getInt(24),
+                            cursor.getLong(25));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(16));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
             }
@@ -2250,6 +2271,59 @@ class PostsDb {
             }
         }
         Log.i("ContentDb.getIncomingCommentsHistory: comments.size=" + comments.size());
+        return comments;
+    }
+
+    @WorkerThread
+    @NonNull List<Comment> getNotificationComments(long timestamp, int count) {
+        final List<Comment> comments = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final HashMap<String, Post> postCache = new HashMap<>();
+        final HashSet<String> checkedIds = new HashSet<>();
+        final String subscribedPostSubquery =
+                "SELECT " + PostsTable.COLUMN_POST_ID + " FROM " + PostsTable.TABLE_NAME
+                        + " WHERE " + PostsTable.COLUMN_SENDER_USER_ID + "=''"
+                        + " OR " + PostsTable.COLUMN_SUBSCRIBED + "=1)"
+                        + " OR " + CommentsTable.COLUMN_SHOULD_NOTIFY + "=1";
+        try (final Cursor cursor = db.query(CommentsTable.TABLE_NAME,
+                new String [] {
+                        CommentsTable._ID,
+                        CommentsTable.COLUMN_POST_ID,
+                        CommentsTable.COLUMN_COMMENT_SENDER_USER_ID,
+                        CommentsTable.COLUMN_COMMENT_ID,
+                        CommentsTable.COLUMN_PARENT_ID,
+                        CommentsTable.COLUMN_TIMESTAMP,
+                        CommentsTable.COLUMN_TRANSFERRED,
+                        CommentsTable.COLUMN_SEEN,
+                        CommentsTable.COLUMN_TEXT},
+                CommentsTable.COLUMN_SEEN + "=0 AND " + CommentsTable.COLUMN_TIMESTAMP + ">" + Math.max(timestamp, getPostExpirationTime()) + " AND (" +
+                        CommentsTable.COLUMN_POST_ID + " IN (" + subscribedPostSubquery +")",
+                null, null, null, CommentsTable.COLUMN_TIMESTAMP + " ASC LIMIT " + count)) {
+            while (cursor.moveToNext()) {
+                final Comment comment = new Comment(
+                        cursor.getLong(0),
+                        cursor.getString(1),
+                        new UserId(cursor.getString(2)),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getLong(5),
+                        cursor.getInt(6),
+                        cursor.getInt(7) == 1,
+                        cursor.getString(8));
+                if (!checkedIds.contains(comment.postId)) {
+                    Post parentPost = getPost(comment.postId);
+                    if (parentPost != null) {
+                        postCache.put(comment.postId, parentPost);
+                        comment.setParentPost(parentPost);
+                    }
+                    checkedIds.add(comment.postId);
+                } else {
+                    comment.setParentPost(postCache.get(comment.postId));
+                }
+                comments.add(comment);
+            }
+        }
+        Log.i("ContentDb.getNotificationComments: comments.size=" + comments.size());
         return comments;
     }
 

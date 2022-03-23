@@ -16,6 +16,8 @@ import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
+import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.tables.ArchiveTable;
 import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.content.tables.CommentsTable;
@@ -233,7 +235,9 @@ public class ContentDb {
         }
 
         final HashMap<String, Post> postCache = new HashMap<>();
+        final HashMap<String, Comment> commentCache = new HashMap<>();
         final HashSet<String> checkedIds = new HashSet<>();
+        final HashMap<UserId, Contact> contactMap = new HashMap<>();
         for (Comment comment : comments) {
             if (checkedIds.contains(comment.postId)) {
                 comment.setParentPost(postCache.get(comment.postId));
@@ -249,6 +253,47 @@ public class ContentDb {
                 postsDb.retractComment(comment);
                 observers.notifyCommentRetracted(comment);
             } else {
+                // If comment mentions you
+                for (Mention mention : comment.mentions) {
+                    if (mention.userId.isMe()) {
+                        comment.shouldNotify = true;
+                        break;
+                    }
+                }
+                // If we're subscribed to the parent post
+                Post parentPost = comment.getParentPost();
+                if (!comment.shouldNotify && parentPost != null) {
+                    if (parentPost.senderUserId.isMe() || parentPost.subscribed) {
+                        comment.shouldNotify = true;
+                    }
+                }
+                // If the comment is a reply to our comment
+                if (!comment.shouldNotify && comment.parentCommentId != null) {
+                    Comment replyComment = commentCache.get(comment.parentCommentId);
+                    if (replyComment == null) {
+                        replyComment = getComment(comment.parentCommentId);
+                        commentCache.put(comment.parentCommentId, replyComment);
+                    }
+                    if (replyComment != null && replyComment.senderUserId.isMe()) {
+                        comment.shouldNotify = true;
+                    }
+                }
+                // If comment is made to a group by one of our contacts
+                if (!comment.shouldNotify && parentPost != null && parentPost.getParentGroup() != null && ServerProps.getInstance().getGroupCommentsNotification()) {
+                    Contact sender = contactMap.get(comment.senderUserId);
+                    if (sender == null) {
+                        sender = ContactsDb.getInstance().getContact(comment.senderUserId);
+                        contactMap.put(comment.senderUserId, sender);
+                    }
+                    if (sender.inAddressBook()) {
+                        comment.shouldNotify = true;
+                    }
+                }
+                // Subscribe to parent post in groups if we comment
+                if (parentPost != null && parentPost.getParentGroup() != null && !parentPost.subscribed && comment.senderUserId.isMe()) {
+                    postsDb.subscribeToPost(parentPost);
+                    parentPost.subscribed = true;
+                }
                 try {
                     postsDb.addComment(comment);
                     observers.notifyCommentAdded(comment);
@@ -795,6 +840,11 @@ public class ContentDb {
     @WorkerThread
     public @NonNull List<Comment> getIncomingCommentsHistory(int limit) {
         return postsDb.getIncomingCommentsHistory(limit);
+    }
+
+    @WorkerThread
+    public @NonNull List<Comment> getNotificationComments(long timestamp, int count) {
+        return postsDb.getNotificationComments(timestamp, count);
     }
 
     @WorkerThread

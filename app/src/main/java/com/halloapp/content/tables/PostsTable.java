@@ -25,6 +25,7 @@ public final class PostsTable implements BaseColumns {
     public static final String COLUMN_USAGE = "usage";
     public static final String COLUMN_REREQUEST_COUNT = "rerequest_count";
     public static final String COLUMN_PROTO_HASH = "proto_hash";
+    public static final String COLUMN_SUBSCRIBED = "subscribed"; // subscribed to future comments on post
 
     // for stats
     public static final String COLUMN_FAILURE_REASON = "failure_reason";

@@ -110,10 +110,14 @@ public class MainContentDbObserver implements ContentDb.Observer {
                 if (comment.hasMedia()) {
                     DownloadMediaTask.download(comment, fileStore, contentDb);
                 }
-                Post parentPost = comment.getParentPost();
-                if (parentPost != null) {
-                    if (parentPost.senderUserId.isMe()) {
-                        notifications.updateFeedNotifications();
+                if (comment.shouldNotify) {
+                    notifications.updateFeedNotifications();
+                } else {
+                    Post parentPost = comment.getParentPost();
+                    if (parentPost != null) {
+                        if (parentPost.senderUserId.isMe()) {
+                            notifications.updateFeedNotifications();
+                        }
                     }
                 }
             }
