@@ -148,9 +148,7 @@ public class ArchiveActivity extends HalloActivity  {
             textContentLoader = new TextContentLoader();
 
             View.OnClickListener clickListener = view -> {
-                Intent intent = new Intent(view.getContext(), PostContentActivity.class);
-                intent.putExtra(PostContentActivity.EXTRA_POST_ID, post.id);
-                intent.putExtra(PostContentActivity.EXTRA_IS_ARCHIVED, true);
+                Intent intent = PostContentActivity.openArchived(ArchiveActivity.this, post.id);
 
                 ActivityOptions options;
                 if (post.media.size() > 0) {

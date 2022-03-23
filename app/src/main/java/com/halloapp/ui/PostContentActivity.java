@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -54,10 +55,23 @@ import com.halloapp.widget.NestedHorizontalScrollHelper;
 
 public class PostContentActivity extends HalloActivity {
 
-    public static final String EXTRA_POST_SENDER_USER_ID = "post_sender_user_id";
     public static final String EXTRA_POST_ID = "post_id";
     public static final String EXTRA_POST_MEDIA_INDEX = "post_media_index";
     public static final String EXTRA_IS_ARCHIVED = "is_archived";
+
+    public static Intent open(@NonNull Context context, @NonNull String id, int replyMediaIndex) {
+        final Intent intent = new Intent(context, PostContentActivity.class);
+        intent.putExtra(PostContentActivity.EXTRA_POST_ID, id);
+        intent.putExtra(PostContentActivity.EXTRA_POST_MEDIA_INDEX, replyMediaIndex);
+        return intent;
+    }
+
+    public static Intent openArchived(@NonNull Context context, @NonNull String id) {
+        Intent intent = new Intent(context, PostContentActivity.class);
+        intent.putExtra(PostContentActivity.EXTRA_POST_ID, id);
+        intent.putExtra(PostContentActivity.EXTRA_IS_ARCHIVED, true);
+        return intent;
+    }
 
     private static final int SWIPE_DOWN_VELOCITY_THRESHOLD = -1000;
 

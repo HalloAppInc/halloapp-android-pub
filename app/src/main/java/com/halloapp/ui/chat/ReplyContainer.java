@@ -64,10 +64,7 @@ class ReplyContainer {
             if (message.replyMessageId != null) {
                  parent.scrollToOriginal(message);
             } else if (message.replyPostId != null) {
-                final Intent intent = new Intent(containerView.getContext(), PostContentActivity.class);
-                intent.putExtra(PostContentActivity.EXTRA_POST_SENDER_USER_ID, message.isIncoming() ? UserId.ME : message.chatId);
-                intent.putExtra(PostContentActivity.EXTRA_POST_ID, message.replyPostId);
-                intent.putExtra(PostContentActivity.EXTRA_POST_MEDIA_INDEX, message.replyPostMediaIndex);
+                final Intent intent = PostContentActivity.open(v.getContext(), message.replyPostId, message.replyPostMediaIndex);
                 if (containerView.getContext() instanceof Activity) {
                     final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) (containerView.getContext()), mediaThumbView, mediaThumbView.getTransitionName());
                     parent.startActivity(intent, options);
