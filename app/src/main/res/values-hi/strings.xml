@@ -1196,6 +1196,24 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- String shown while preparing to share logs from the app -->
     <string name="preparing_logs">"Preparing logs…"</string>
+
+    <!-- Placeholder for posts that failed to decrypt -->
+    <string name="post_tombstone_placeholder">"Waiting for this post. This may take a while. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
+
+    <!-- Placeholder for comments that failed to decrypt -->
+    <string name="comment_tombstone_placeholder">"Waiting for this comment. This may take a while. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
+
+    <!-- Name for notifications channel for missed calls -->
+    <string name="missed_call_notifications_channel_name">"Missed call notifications"</string>
+
+    <!-- Single new comment notification text. %s replaced with name of comment sender -->
+    <string name="new_comment_notification">"New comment from %s"</string>
+
+    <!-- Text in notifications for comments from potentially multiple people. %1$d replaced with number of comments, %2$s replaced with list of names -->
+    <plurals name="new_comments_list_notification">
+        <item quantity="one">"%1$d new comment from %2$s"</item>
+        <item quantity="other">"%1$d new comment from %2$s"</item>
+    </plurals>
     <string name="share_externally">"Share externally"</string>
     <string name="incoming_call_notification_title">"Incoming call"</string>
     <string name="call_action">"Call"</string>

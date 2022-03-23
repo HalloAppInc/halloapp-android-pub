@@ -1193,6 +1193,24 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- String shown while preparing to share logs from the app -->
     <string name="preparing_logs">"Logs voorbereiden…"</string>
+
+    <!-- Placeholder for posts that failed to decrypt -->
+    <string name="post_tombstone_placeholder">"Wachten op deze post. Dit kan even duren. &lt;a href=\"learn-more\"&gt;Meer informatie&lt;/a&gt;."</string>
+
+    <!-- Placeholder for comments that failed to decrypt -->
+    <string name="comment_tombstone_placeholder">"Wachten op deze reactie. Dit kan even duren. &lt;a href=\"learn-more\"&gt;Meer informatie&lt;/a&gt;."</string>
+
+    <!-- Name for notifications channel for missed calls -->
+    <string name="missed_call_notifications_channel_name">"Gemiste oproep meldingen"</string>
+
+    <!-- Single new comment notification text. %s replaced with name of comment sender -->
+    <string name="new_comment_notification">"Nieuwe reactie van %s"</string>
+
+    <!-- Text in notifications for comments from potentially multiple people. %1$d replaced with number of comments, %2$s replaced with list of names -->
+    <plurals name="new_comments_list_notification">
+        <item quantity="one">"%1$d nieuwe reactie van %2$s"</item>
+        <item quantity="other">"%1$d nieuwe reactie van %2$s"</item>
+    </plurals>
     <string name="share_externally">"Extern delen"</string>
     <string name="incoming_call_notification_title">"Inkomende oproep"</string>
     <string name="call_action">"Bellen"</string>
