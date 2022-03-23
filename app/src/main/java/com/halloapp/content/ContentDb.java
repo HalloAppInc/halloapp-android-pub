@@ -847,11 +847,6 @@ public class ContentDb {
         return postsDb.getNotificationComments(timestamp, count);
     }
 
-    @WorkerThread
-    public @NonNull List<Comment> getUnseenCommentsOnMyPosts(long timestamp, int count) {
-        return postsDb.getUnseenCommentsOnMyPosts(timestamp, count);
-    }
-
     public void addMessage(@NonNull Message message) {
         addMessage(message, false, null);
     }

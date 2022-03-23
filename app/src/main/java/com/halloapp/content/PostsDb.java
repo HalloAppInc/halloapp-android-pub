@@ -2229,7 +2229,10 @@ class PostsDb {
     @NonNull List<Comment> getIncomingCommentsHistory(int limit) {
         final List<Comment> comments = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-
+        final String subscribedPostSubquery =
+                "(SELECT " + PostsTable.COLUMN_POST_ID + " FROM " + PostsTable.TABLE_NAME
+                        + " WHERE " + PostsTable.COLUMN_SENDER_USER_ID + "=''"
+                        + " OR " + PostsTable.COLUMN_SUBSCRIBED + "=1)";
         final String sql =
                 "SELECT " +
                     CommentsTable._ID + ", " +
@@ -2245,12 +2248,12 @@ class PostsDb {
                 "WHERE comments.comment_sender_user_id<>'' " +
                     "AND comments.timestamp>" + getPostExpirationTime() + " " +
                     "AND comments.text IS NOT NULL " +
-                    "AND EXISTS(SELECT post_id FROM posts WHERE posts.post_id=comments.post_id)" +
-                    "AND (" +
-                        "EXISTS(SELECT post_id FROM " + PostsTable.TABLE_NAME + " WHERE posts.post_id=comments.post_id AND posts.sender_user_id='')" +
+                    "AND EXISTS(SELECT post_id FROM posts WHERE posts.post_id=comments.post_id)" + // post exists
+                    "AND ((" +
+                        "EXISTS(SELECT post_id FROM " + PostsTable.TABLE_NAME + " WHERE posts.post_id=comments.post_id AND posts.sender_user_id='')" + // my post
                         "OR " +
-                        "EXISTS(SELECT post_id FROM comments AS c WHERE comments.post_id==c.post_id AND c.comment_sender_user_id='') " +
-                    ")" +
+                        "EXISTS(SELECT post_id FROM comments AS c WHERE comments.post_id==c.post_id AND c.comment_sender_user_id='') " + // i commented on the post
+                    ") OR (" + CommentsTable.COLUMN_SHOULD_NOTIFY + "=1)) " +
                 "ORDER BY " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_TIMESTAMP + " DESC " +
                 (limit < 0 ? "" : "LIMIT " + limit);
         try (final Cursor cursor = db.rawQuery(sql, null)) {
@@ -2280,11 +2283,6 @@ class PostsDb {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final HashMap<String, Post> postCache = new HashMap<>();
         final HashSet<String> checkedIds = new HashSet<>();
-        final String subscribedPostSubquery =
-                "SELECT " + PostsTable.COLUMN_POST_ID + " FROM " + PostsTable.TABLE_NAME
-                        + " WHERE " + PostsTable.COLUMN_SENDER_USER_ID + "=''"
-                        + " OR " + PostsTable.COLUMN_SUBSCRIBED + "=1)"
-                        + " OR " + CommentsTable.COLUMN_SHOULD_NOTIFY + "=1";
         try (final Cursor cursor = db.query(CommentsTable.TABLE_NAME,
                 new String [] {
                         CommentsTable._ID,
@@ -2296,8 +2294,8 @@ class PostsDb {
                         CommentsTable.COLUMN_TRANSFERRED,
                         CommentsTable.COLUMN_SEEN,
                         CommentsTable.COLUMN_TEXT},
-                CommentsTable.COLUMN_SEEN + "=0 AND " + CommentsTable.COLUMN_TIMESTAMP + ">" + Math.max(timestamp, getPostExpirationTime()) + " AND (" +
-                        CommentsTable.COLUMN_POST_ID + " IN (" + subscribedPostSubquery +")",
+                CommentsTable.COLUMN_SEEN + "=0 AND " + CommentsTable.COLUMN_TIMESTAMP + ">" + Math.max(timestamp, getPostExpirationTime())
+                        + " AND " + CommentsTable.COLUMN_SHOULD_NOTIFY + "=1",
                 null, null, null, CommentsTable.COLUMN_TIMESTAMP + " ASC LIMIT " + count)) {
             while (cursor.moveToNext()) {
                 final Comment comment = new Comment(
@@ -2324,54 +2322,6 @@ class PostsDb {
             }
         }
         Log.i("ContentDb.getNotificationComments: comments.size=" + comments.size());
-        return comments;
-    }
-
-    @WorkerThread
-    @NonNull List<Comment> getUnseenCommentsOnMyPosts(long timestamp, int count) {
-        final List<Comment> comments = new ArrayList<>();
-        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        final HashMap<String, Post> postCache = new HashMap<>();
-        final HashSet<String> checkedIds = new HashSet<>();
-        try (final Cursor cursor = db.query(CommentsTable.TABLE_NAME,
-                new String [] {
-                        CommentsTable._ID,
-                        CommentsTable.COLUMN_POST_ID,
-                        CommentsTable.COLUMN_COMMENT_SENDER_USER_ID,
-                        CommentsTable.COLUMN_COMMENT_ID,
-                        CommentsTable.COLUMN_PARENT_ID,
-                        CommentsTable.COLUMN_TIMESTAMP,
-                        CommentsTable.COLUMN_TRANSFERRED,
-                        CommentsTable.COLUMN_SEEN,
-                        CommentsTable.COLUMN_TEXT},
-                CommentsTable.COLUMN_SEEN + "=0 AND " + CommentsTable.COLUMN_TIMESTAMP + ">" + Math.max(timestamp, getPostExpirationTime()) + " AND " +
-                        CommentsTable.COLUMN_POST_ID + " IN (SELECT " + PostsTable.COLUMN_POST_ID + " FROM " + PostsTable.TABLE_NAME + " WHERE " + PostsTable.COLUMN_SENDER_USER_ID + "='')",
-                null, null, null, CommentsTable.COLUMN_TIMESTAMP + " ASC LIMIT " + count)) {
-            while (cursor.moveToNext()) {
-                final Comment comment = new Comment(
-                        cursor.getLong(0),
-                        cursor.getString(1),
-                        new UserId(cursor.getString(2)),
-                        cursor.getString(3),
-                        cursor.getString(4),
-                        cursor.getLong(5),
-                        cursor.getInt(6),
-                        cursor.getInt(7) == 1,
-                        cursor.getString(8));
-                if (!checkedIds.contains(comment.postId)) {
-                    Post parentPost = getPost(comment.postId);
-                    if (parentPost != null) {
-                        postCache.put(comment.postId, parentPost);
-                        comment.setParentPost(parentPost);
-                    }
-                    checkedIds.add(comment.postId);
-                } else {
-                    comment.setParentPost(postCache.get(comment.postId));
-                }
-                comments.add(comment);
-            }
-        }
-        Log.i("ContentDb.getUnseenCommentsOnMyPosts: comments.size=" + comments.size());
         return comments;
     }
 

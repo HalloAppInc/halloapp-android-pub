@@ -357,6 +357,13 @@
         <item quantity="one">%d new comment</item>
         <item quantity="other">%d new comments</item>
     </plurals>
+    <!-- Single new comment notification text. %s replaced with name of comment sender -->
+    <string name="new_comment_notification">New comment from %s</string>
+    <!-- Text in notifications for comments from potentially multiple people. %1$d replaced with number of comments, %2$s replaced with list of names -->
+    <plurals name="new_comments_list_notification">
+        <item quantity="one">%1$d new comment from %2$s</item>
+        <item quantity="other">%1$d new comments from %2$s</item>
+    </plurals>
     <plurals name="new_comments_notification">
         <item quantity="other">%s commented on your post</item>
     </plurals>

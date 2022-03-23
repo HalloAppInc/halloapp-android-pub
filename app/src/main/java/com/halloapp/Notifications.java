@@ -93,6 +93,8 @@ public class Notifications {
     private static final String REPLY_TEXT_KEY = "reply_text";
     private static final String CALL_MESSAGE_TEXT_KEY = "call_message_text";
 
+    private static final String HOME_FEED_NOTIFICATION_TAG = "home_feed_notification_tag";
+
     private static final int FEED_NOTIFICATION_ID = 0;
     private static final int MESSAGE_NOTIFICATION_ID = 1;
     private static final int EXPIRATION_NOTIFICATION_ID = 2;
@@ -205,35 +207,91 @@ public class Notifications {
             return;
         }
         executor.execute(() -> {
-            String newPostsNotificationText = null;
-            String newCommentsNotificationText = null;
             List<Post> unseenPosts = getNewPosts();
             List<Comment> unseenComments = getNewComments();
+            HashSet<GroupId> groupIds = new HashSet<>();
+            HashMap<GroupId, List<Comment>> groupCommentListMap = new HashMap<>();
+            HashMap<GroupId, List<Post>> groupPostListMap = new HashMap<>();
             if (unseenComments == null && unseenPosts == null) {
                 final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
                 notificationManager.cancel(FEED_NOTIFICATION_ID);
+                return;
             }
             if (unseenPosts != null) {
-                newPostsNotificationText = getNewPostsNotificationText(unseenPosts);
+                ListIterator<Post> unseenPostIterator = unseenPosts.listIterator();
+                while (unseenPostIterator.hasNext()) {
+                    Post post = unseenPostIterator.next();
+                    GroupId parentGroupId = post.getParentGroup();
+                    if (parentGroupId != null) {
+                        groupIds.add(parentGroupId);
+                        unseenPostIterator.remove();
+                        List<Post> groupPostList = groupPostListMap.get(parentGroupId);
+                        if (groupPostList == null) {
+                            groupPostList = new ArrayList<>();
+                            groupPostListMap.put(parentGroupId, groupPostList);
+                        }
+                        groupPostList.add(post);
+                    }
+                }
             }
             if (unseenComments != null) {
-                newCommentsNotificationText = getNewCommentsNotificationText(unseenComments);
-            }
-            if (TextUtils.isEmpty(newPostsNotificationText) && TextUtils.isEmpty(newCommentsNotificationText)) {
-                final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                notificationManager.cancel(FEED_NOTIFICATION_ID);
-            } else {
-                final String text;
-                if (TextUtils.isEmpty(newCommentsNotificationText) && !TextUtils.isEmpty(newPostsNotificationText)) {
-                    text = newPostsNotificationText;
-                } else if (TextUtils.isEmpty(newPostsNotificationText) && !TextUtils.isEmpty(newCommentsNotificationText)) {
-                    text = newCommentsNotificationText;
-                } else {
-                    text = context.getString(R.string.new_posts_and_comments_notification, newPostsNotificationText, newCommentsNotificationText);
+                ListIterator<Comment> unseenCommentIterator = unseenComments.listIterator();
+                while (unseenCommentIterator.hasNext()) {
+                    Comment comment = unseenCommentIterator.next();
+                    Post parentPost = comment.getParentPost();
+                    GroupId parentGroupId = parentPost == null ? null : parentPost.getParentGroup();
+                    if (parentGroupId != null) {
+                        groupIds.add(parentGroupId);
+                        unseenCommentIterator.remove();
+                        List<Comment> groupCommentList = groupCommentListMap.get(parentGroupId);
+                        if (groupCommentList == null) {
+                            groupCommentList = new ArrayList<>();
+                            groupCommentListMap.put(parentGroupId, groupCommentList);
+                        }
+                        groupCommentList.add(comment);
+                    }
                 }
-                showFeedNotification(context.getString(R.string.app_name), Preconditions.checkNotNull(text), unseenPosts, unseenComments);
+            }
+            showCombinedFeedNotification(HOME_FEED_NOTIFICATION_TAG, context.getString(R.string.app_name), unseenPosts, unseenComments);
+
+            for (GroupId groupId : groupIds) {
+                List<Comment> comments = groupCommentListMap.get(groupId);
+                List<Post> posts = groupPostListMap.get(groupId);
+
+                Chat group = ContentDb.getInstance().getChat(groupId);
+                if (group != null) {
+                    showCombinedFeedNotification(groupId.rawId(), group.name, posts, comments);
+                } else {
+                    Log.e("Notifications/updateFeedNotifications no group found for groupId=" + groupId);
+                }
             }
         });
+    }
+
+    private void showCombinedFeedNotification(@NonNull String tag, @NonNull String title, @Nullable List<Post> unseenPosts, @Nullable List<Comment> unseenComments) {
+        String newPostsNotificationText = null;
+        String newCommentsNotificationText = null;
+
+        if (unseenPosts != null && !unseenPosts.isEmpty()) {
+            newPostsNotificationText = getNewPostsNotificationText(unseenPosts);
+        }
+        if (unseenComments != null && !unseenComments.isEmpty()) {
+            newCommentsNotificationText = getNewCommentsNotificationText(unseenComments);
+        }
+        if (TextUtils.isEmpty(newPostsNotificationText) && TextUtils.isEmpty(newCommentsNotificationText)) {
+            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            notificationManager.cancel(tag, FEED_NOTIFICATION_ID);
+        } else {
+            final String text;
+            if (TextUtils.isEmpty(newCommentsNotificationText) && !TextUtils.isEmpty(newPostsNotificationText)) {
+                text = newPostsNotificationText;
+            } else if (TextUtils.isEmpty(newPostsNotificationText) && !TextUtils.isEmpty(newCommentsNotificationText)) {
+                text = newCommentsNotificationText;
+            } else {
+                text = context.getString(R.string.new_posts_and_comments_notification, newPostsNotificationText, newCommentsNotificationText);
+            }
+            showFeedNotification(tag, title, Preconditions.checkNotNull(text), unseenPosts, unseenComments);
+        }
     }
 
     public void updateFeedNotifications(Post post) {
@@ -589,7 +647,7 @@ public class Notifications {
         if (!preferences.getNotifyComments()) {
             return null;
         }
-        final List<Comment> unseenComments = ContentDb.getInstance().getUnseenCommentsOnMyPosts(preferences.getFeedNotificationTimeCutoff(), UNSEEN_COMMENTS_LIMIT);
+        final List<Comment> unseenComments = ContentDb.getInstance().getNotificationComments(preferences.getFeedNotificationTimeCutoff(), UNSEEN_COMMENTS_LIMIT);
 
         ListIterator<Comment> iterator = unseenComments.listIterator();
         while(iterator.hasNext()){
@@ -632,12 +690,10 @@ public class Notifications {
 
     private String getNewCommentsNotificationText(@NonNull List<Comment> unseenComments) {
         final Set<UserId> userIds = new HashSet<>();
-        final Set<String> postIds = new HashSet<>();
         localCommentIds.clear();
         for (Comment comment : unseenComments) {
             Log.d("Notifications.update: " + comment);
             userIds.add(comment.senderUserId);
-            postIds.add(comment.postId);
             localCommentIds.add(comment.id);
             if (comment.timestamp > feedNotificationTimeCutoff) {
                 feedNotificationTimeCutoff = comment.timestamp;
@@ -648,11 +704,16 @@ public class Notifications {
             final Contact contact = ContactsDb.getInstance().getContact(userId);
             names.add(contact.getDisplayName());
         }
-        return postIds.size() == 1 ? context.getResources().getQuantityString(R.plurals.new_comments_notification, names.size(), ListFormatter.format(context, names)) :
-                context.getResources().getQuantityString(R.plurals.new_comments_on_multiple_posts_notification, names.size(), ListFormatter.format(context, names));
+        final String text;
+        if (unseenComments.size() == 1) {
+            text = context.getString(R.string.new_comment_notification, names.get(0));
+        } else {
+            text = context.getResources().getQuantityString(R.plurals.new_comments_list_notification, unseenComments.size(), unseenComments.size(), ListFormatter.format(context, names));
+        }
+        return text;
     }
 
-    private void showFeedNotification(@NonNull String title, @NonNull String body, @Nullable List<Post> unseenPosts, @Nullable List<Comment> unseenComments) {
+    private void showFeedNotification(@NonNull String tag, @NonNull String title, @NonNull String body, @Nullable List<Post> unseenPosts, @Nullable List<Comment> unseenComments) {
         HashSet<String> postIds = new HashSet<>();
         if (unseenPosts != null) {
             for (Post post : unseenPosts) {
@@ -690,7 +751,7 @@ public class Notifications {
         deleteIntent.putExtra(EXTRA_FEED_NOTIFICATION_TIME_CUTOFF, feedNotificationTimeCutoff) ;
         builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0 , deleteIntent, PendingIntent. FLAG_CANCEL_CURRENT | getPendingIntentFlags(false)));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify(FEED_NOTIFICATION_ID, builder.build());
+        notificationManager.notify(tag, FEED_NOTIFICATION_ID, builder.build());
     }
 
     public void showNewGroupNotification(GroupId groupId, String inviterName, String groupName) {
@@ -707,7 +768,7 @@ public class Notifications {
         final Intent groupIntent = ViewGroupFeedActivity.viewFeed(context, groupId);
         builder.setContentIntent(PendingIntent.getActivity(context, 0, groupIntent, getPendingIntentFlags(true)));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify(GROUP_NOTIFICATION_ID, builder.build());
+        notificationManager.notify(groupId.rawId(), GROUP_NOTIFICATION_ID, builder.build());
     }
 
     public void clearNewGroupNotification() {
