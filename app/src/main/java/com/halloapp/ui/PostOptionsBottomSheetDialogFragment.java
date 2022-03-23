@@ -22,6 +22,7 @@ import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
+import com.halloapp.id.GroupId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.ClipUtils;
 import com.halloapp.util.IntentUtils;
@@ -37,11 +38,13 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
     private static final int REQUEST_EXTERNAL_STORAGE_PERMISSIONS = 1;
 
     private static final String ARG_POST_ID = "post_id";
+    private static final String ARG_IS_GROUP = "is_group";
     private static final String ARG_IS_ARCHIVE = "is_archived";
 
-    public static PostOptionsBottomSheetDialogFragment newInstance(@NonNull String postId, boolean isArchived) {
+    public static PostOptionsBottomSheetDialogFragment newInstance(@NonNull String postId, @Nullable GroupId groupId, boolean isArchived) {
         Bundle args = new Bundle();
         args.putString(ARG_POST_ID, postId);
+        args.putBoolean(ARG_IS_GROUP, groupId != null);
         args.putBoolean(ARG_IS_ARCHIVE, isArchived);
         PostOptionsBottomSheetDialogFragment dialogFragment = new PostOptionsBottomSheetDialogFragment();
         dialogFragment.setArguments(args);
@@ -58,6 +61,8 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
         Bundle args = requireArguments();
         String postId = args.getString(ARG_POST_ID);
         boolean isArchived = args.getBoolean(ARG_IS_ARCHIVE, false);
+        boolean isGroup = args.getBoolean(ARG_IS_GROUP, false);
+        boolean showExternalShare = ServerProps.getInstance().getExternalSharing() && isGroup;
 
         viewModel = new ViewModelProvider(this, new PostOptionsViewModel.Factory(postId, isArchived)).get(PostOptionsViewModel.class);
         contactLoader = new ContactLoader();
@@ -79,8 +84,8 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
             if (post.senderUserId.isMe()) {
                 contactName.setText(R.string.my_post);
                 deletePost.setVisibility(View.VISIBLE);
-                shareExternally.setVisibility(ServerProps.getInstance().getExternalSharing() ? View.VISIBLE : View.GONE);
-                copyLink.setVisibility(ServerProps.getInstance().getExternalSharing() ? View.VISIBLE : View.GONE);
+                shareExternally.setVisibility(showExternalShare ? View.VISIBLE : View.GONE);
+                copyLink.setVisibility(showExternalShare ? View.VISIBLE : View.GONE);
             } else {
                 contactLoader.load(contactName, post.senderUserId, false);
                 deletePost.setVisibility(View.GONE);
