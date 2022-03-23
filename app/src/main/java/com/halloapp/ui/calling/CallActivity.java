@@ -417,18 +417,9 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             Log.i("CallActivity: has permissions");
             handleRequest(request);
         } else {
-            if (EasyPermissions.somePermissionPermanentlyDenied(this, Arrays.asList(perms))) {
-                Log.i("CallActivity: some permissions permanently denied: " + Arrays.toString(perms));
-                new AppSettingsDialog.Builder(this)
-                        .setRationale(getString(R.string.call_record_audio_or_camera_permission_rationale_denied))
-                        .build().show();
-                endCall();
-            } else {
-                String rationale = getPermissionsRationale();
-                Log.i("CallActivity: request permissions " + Arrays.toString(perms));
-                EasyPermissions.requestPermissions(this, rationale, request, perms);
-            }
-
+            String rationale = getPermissionsRationale();
+            Log.i("CallActivity: request permissions " + Arrays.toString(perms));
+            EasyPermissions.requestPermissions(this, rationale, request, perms);
         }
     }
 
@@ -558,7 +549,14 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
         Log.i("CallActivity: permissions Denied " + requestCode + " " + perms);
-        endCall();
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            Log.i("CallActivity: some permissions permanently denied: " + perms);
+            new AppSettingsDialog.Builder(this)
+                    .setRationale(getString(R.string.call_record_audio_or_camera_permission_rationale_denied))
+                    .build().show();
+        } else {
+            endCall();
+        }
     }
 
     @Override
