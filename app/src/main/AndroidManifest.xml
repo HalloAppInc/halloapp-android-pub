@@ -289,6 +289,20 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.ViewExternalPostActivity"
+            android:theme="@style/AppTheme.Transparent"
+            android:exported="true">
+            <intent-filter android:autoVerify="true" tools:ignore="UnusedAttribute">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http" android:host="share.halloapp.com"/>
+                <data android:scheme="https" android:host="share.halloapp.com"/>
+                <data android:scheme="http" android:host="share-test.halloapp.com"/>
+                <data android:scheme="https" android:host="share-test.halloapp.com"/>
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".ui.FlatCommentsActivity"
             android:label=""

@@ -2,17 +2,49 @@ package com.halloapp.ui;
 
 
 import android.app.Application;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.halloapp.Me;
+import com.halloapp.crypto.CryptoByteUtils;
+import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.id.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.media.VoiceNotePlayer;
+import com.halloapp.proto.clients.PostContainerBlob;
+import com.halloapp.proto.server.ExternalSharePost;
+import com.halloapp.proto.server.Iq;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.ExternalShareResponseIq;
+import com.halloapp.xmpp.HalloIq;
+import com.halloapp.xmpp.ProtoPrinter;
+import com.halloapp.xmpp.feed.FeedContentParser;
+import com.halloapp.xmpp.util.Observable;
+import com.halloapp.xmpp.util.ObservableErrorException;
+
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.Mac;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 public class PostContentViewModel extends AndroidViewModel {
 
@@ -38,8 +70,12 @@ public class PostContentViewModel extends AndroidViewModel {
         }
     };
 
-    private PostContentViewModel(@NonNull Application application, @NonNull String postId, boolean isArchived) {
+    private PostContentViewModel(@NonNull Application application, @Nullable String postId, @Nullable String shareId, @Nullable String shareKey, boolean isArchived) {
         super(application);
+
+        if (postId == null && (shareId == null || shareKey == null)) {
+            throw new IllegalArgumentException("PostContentViewModel requires either a postId or both a shareId and a shareKey");
+        }
 
         this.postId = postId;
 
@@ -51,7 +87,71 @@ public class PostContentViewModel extends AndroidViewModel {
         post = new ComputableLiveData<Post>() {
             @Override
             protected Post compute() {
-                return isArchived? ContentDb.getInstance().getArchivePost(postId) : ContentDb.getInstance().getPost(postId);
+                if (postId != null) {
+                    return isArchived ? ContentDb.getInstance().getArchivePost(postId) : ContentDb.getInstance().getPost(postId);
+                } else {
+                    Observable<ExternalShareResponseIq> observable = Connection.getInstance().sendRequestIq(new HalloIq() {
+                        @Override
+                        public Iq.Builder toProtoIq() {
+                            Iq.Builder builder = Iq.newBuilder();
+                            builder.setExternalSharePost(ExternalSharePost.newBuilder()
+                                    .setAction(ExternalSharePost.Action.GET)
+                                    .setBlobId(shareId)
+                                    .build()
+                            );
+                            return builder;
+                        }
+                    });
+
+                    try {
+                        ExternalShareResponseIq response = observable.await();
+                        byte[] blob = response.blob;
+                        byte[] attachmentKey = Base64.decode(shareKey, Base64.NO_WRAP | Base64.URL_SAFE);
+                        byte[] encryptedMessage = Arrays.copyOfRange(blob, 0, blob.length - 32);
+                        byte[] receivedHmac = Arrays.copyOfRange(blob, blob.length - 32, blob.length);
+
+                        byte[] fullKey = CryptoUtils.hkdf(attachmentKey, null, "HalloApp Share Post".getBytes(StandardCharsets.UTF_8), 80);
+                        byte[] iv = Arrays.copyOfRange(fullKey, 0, 16);
+                        byte[] aesKey = Arrays.copyOfRange(fullKey, 16, 48);
+                        byte[] hmacKey = Arrays.copyOfRange(fullKey, 48, 80);
+
+                        Mac mac = Mac.getInstance("HmacSHA256");
+                        mac.init(new SecretKeySpec(hmacKey, "HmacSHA256"));
+                        byte[] computedHmac = mac.doFinal(encryptedMessage);
+
+                        if (!Arrays.equals(computedHmac, receivedHmac)) {
+                            Log.e("Hmac mismatch decrypting shared post");
+                            return null;
+                        }
+
+                        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+                        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(aesKey, "AES"), new IvParameterSpec(iv));
+                        byte[] decrypted = cipher.doFinal(encryptedMessage);
+
+                        PostContainerBlob postContainerBlob = PostContainerBlob.parseFrom(decrypted);
+                        String id = postContainerBlob.getPostId();
+                        Post post = ContentDb.getInstance().getPost(id); // TODO(jack): specify poster id to prevent interception
+                        if (post != null) {
+                            Log.d("PostContentViewModel found post in db with id " + id);
+                            return post;
+                        }
+
+                        UserId posterUserId = new UserId(Long.toString(postContainerBlob.getUid()));
+                        FeedContentParser parser = new FeedContentParser(Me.getInstance());
+                        post = parser.parsePost(id, posterUserId, postContainerBlob.getTimestamp(), postContainerBlob.getPostContainer(), false);
+
+                        return post;
+                    } catch (GeneralSecurityException e) {
+                        Log.e("Failed to decrypt shared post", e);
+                    } catch (InvalidProtocolBufferException e) {
+                        Log.e("Failed to parse shared post blob", e);
+                    } catch (ObservableErrorException e) {
+                        Log.e("Failed observing shared post fetch", e);
+                    } catch (InterruptedException e) {
+                        Log.e("Interrupted while waiting for shared post fetch", e);
+                    }
+                    return null;
+                }
             }
         };
     }
@@ -75,11 +175,15 @@ public class PostContentViewModel extends AndroidViewModel {
 
         private final Application application;
         private final String postId;
+        private final String shareId;
+        private final String shareKey;
         private final boolean isArchived;
 
-        Factory(@NonNull Application application, @NonNull String postId, boolean isArchived) {
+        Factory(@NonNull Application application, @Nullable String postId, @Nullable String shareId, @Nullable String shareKey, boolean isArchived) {
             this.application = application;
             this.postId = postId;
+            this.shareId = shareId;
+            this.shareKey = shareKey;
             this.isArchived = isArchived;
         }
 
@@ -87,7 +191,7 @@ public class PostContentViewModel extends AndroidViewModel {
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(PostContentViewModel.class)) {
                 //noinspection unchecked
-                return (T) new PostContentViewModel(application, postId, isArchived);
+                return (T) new PostContentViewModel(application, postId, shareId, shareKey, isArchived);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }

@@ -211,10 +211,11 @@ public class PostOptionsViewModel extends ViewModel {
                                 .setExternalSharePost(externalSharePost);
                     }
                 });
+                String shareKey = Base64.encodeToString(attachmentKey, Base64.NO_WRAP | Base64.URL_SAFE);
                 observable.onError(e -> Log.e("Failed to send for external sharing"))
                         .onResponse(response -> {
                             Log.i("Got external sharing response " + response);
-                            String url = "https://share.halloapp.com/" + response.blobId + "#k" + Base64.encodeToString(attachmentKey, Base64.NO_WRAP | Base64.URL_SAFE);
+                            String url = "https://share.halloapp.com/" + response.blobId + "#k" + shareKey;
                             result.postValue(url);
                         });
             } catch (GeneralSecurityException e) {

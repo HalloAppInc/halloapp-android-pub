@@ -1,0 +1,59 @@
+package com.halloapp.ui;
+
+import android.net.Uri;
+import android.os.Bundle;
+
+import androidx.annotation.Nullable;
+
+import com.halloapp.util.logs.Log;
+
+import java.util.Locale;
+
+public class ViewExternalPostActivity extends HalloActivity {
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
+
+        SharedUrlParts parsedUrl = tryParseUri(getIntent().getData());
+        if (parsedUrl == null) {
+            Log.e("ViewExternalPostActivity/onCreate missing url parts");
+            finish();
+            return;
+        }
+
+        startActivity(PostContentActivity.openExternal(this, parsedUrl.id, parsedUrl.key));
+        finish();
+    }
+
+    @Nullable
+    private SharedUrlParts tryParseUri(@Nullable Uri uri) {
+        if (uri == null || uri.getHost() == null) {
+            return null;
+        }
+        String hostLowerCase = uri.getHost().toLowerCase(Locale.ROOT);
+        if (hostLowerCase.startsWith("share.") || hostLowerCase.startsWith("share-test.")) {
+            String id = uri.getLastPathSegment();
+            String fragment = uri.getFragment();
+            if (id == null || fragment == null || !fragment.startsWith("k")) {
+                Log.w("Tried to parse invalid external post uri");
+                return null;
+            }
+            String key = fragment.substring(1);
+            return new SharedUrlParts(id, key);
+        }
+        return null;
+    }
+
+    private static class SharedUrlParts {
+        String id;
+        String key;
+
+        public SharedUrlParts(String id, String key) {
+            this.id = id;
+            this.key = key;
+        }
+    }
+}

@@ -55,21 +55,30 @@ import com.halloapp.widget.NestedHorizontalScrollHelper;
 
 public class PostContentActivity extends HalloActivity {
 
-    public static final String EXTRA_POST_ID = "post_id";
-    public static final String EXTRA_POST_MEDIA_INDEX = "post_media_index";
-    public static final String EXTRA_IS_ARCHIVED = "is_archived";
+    private static final String EXTRA_POST_ID = "post_id";
+    private static final String EXTRA_POST_MEDIA_INDEX = "post_media_index";
+    private static final String EXTRA_IS_ARCHIVED = "is_archived";
+    private static final String EXTRA_SHARE_ID = "share_id";
+    private static final String EXTRA_SHARE_KEY = "share_key";
 
     public static Intent open(@NonNull Context context, @NonNull String id, int replyMediaIndex) {
         final Intent intent = new Intent(context, PostContentActivity.class);
-        intent.putExtra(PostContentActivity.EXTRA_POST_ID, id);
-        intent.putExtra(PostContentActivity.EXTRA_POST_MEDIA_INDEX, replyMediaIndex);
+        intent.putExtra(EXTRA_POST_ID, id);
+        intent.putExtra(EXTRA_POST_MEDIA_INDEX, replyMediaIndex);
         return intent;
     }
 
     public static Intent openArchived(@NonNull Context context, @NonNull String id) {
         Intent intent = new Intent(context, PostContentActivity.class);
-        intent.putExtra(PostContentActivity.EXTRA_POST_ID, id);
-        intent.putExtra(PostContentActivity.EXTRA_IS_ARCHIVED, true);
+        intent.putExtra(EXTRA_POST_ID, id);
+        intent.putExtra(EXTRA_IS_ARCHIVED, true);
+        return intent;
+    }
+
+    public static Intent openExternal(@NonNull Context context, @NonNull String shareId, @NonNull String key) {
+        Intent intent = new Intent(context, PostContentActivity.class);
+        intent.putExtra(EXTRA_SHARE_ID, shareId);
+        intent.putExtra(EXTRA_SHARE_KEY, key);
         return intent;
     }
 
@@ -258,10 +267,12 @@ public class PostContentActivity extends HalloActivity {
             return ViewCompat.onApplyWindowInsets(v, insets);
         });
 
-        final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
+        final String postId = getIntent().getStringExtra(EXTRA_POST_ID);
+        final String shareId = getIntent().getStringExtra(EXTRA_SHARE_ID);
+        final String shareKey = getIntent().getStringExtra(EXTRA_SHARE_KEY);
         final boolean isArchivedPost = getIntent().getBooleanExtra(EXTRA_IS_ARCHIVED, false);
 
-        viewModel = new ViewModelProvider(this, new PostContentViewModel.Factory(getApplication(), postId, isArchivedPost)).get(PostContentViewModel.class);
+        viewModel = new ViewModelProvider(this, new PostContentViewModel.Factory(getApplication(), postId, shareId, shareKey, isArchivedPost)).get(PostContentViewModel.class);
 
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
@@ -279,8 +290,9 @@ public class PostContentActivity extends HalloActivity {
 
         drawDelegateView = Preconditions.checkNotNull(this).findViewById(R.id.draw_delegate);
 
-        viewModel.post.getLiveData().observe(this, this::showPost);
         viewModel.post.getLiveData().observe(this, post -> {
+            // TODO(jack): show error for null post
+            // TODO(jack): show progress dialog while loading
             showPost(post);
 
             if (post.media.size() > 0) {
@@ -303,9 +315,13 @@ public class PostContentActivity extends HalloActivity {
 
     @Override
     public void onBackPressed() {
-        String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
-        int mediaIndex = getIntent().getIntExtra(EXTRA_POST_MEDIA_INDEX, 0);
-        MediaPagerAdapter.preparePagerForTransition(postRecyclerView, postId, mediaIndex, this::finishAfterTransition);
+        String postId = getIntent().getStringExtra(EXTRA_POST_ID);
+        if (postId != null) {
+            int mediaIndex = getIntent().getIntExtra(EXTRA_POST_MEDIA_INDEX, 0);
+            MediaPagerAdapter.preparePagerForTransition(postRecyclerView, postId, mediaIndex, this::finishAfterTransition);
+        } else {
+            finish();
+        }
     }
 
     private void showPost(@Nullable Post post) {

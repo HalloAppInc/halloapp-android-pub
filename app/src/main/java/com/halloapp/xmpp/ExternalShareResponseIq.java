@@ -6,9 +6,11 @@ import com.halloapp.proto.server.Iq;
 public class ExternalShareResponseIq extends HalloIq {
 
     public final String blobId;
+    public final byte[] blob;
 
     private ExternalShareResponseIq(ExternalSharePost externalSharePost) {
         this.blobId = externalSharePost.getBlobId();
+        this.blob = externalSharePost.getBlob().toByteArray();
     }
 
     @Override
