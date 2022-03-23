@@ -62,7 +62,7 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
         String postId = args.getString(ARG_POST_ID);
         boolean isArchived = args.getBoolean(ARG_IS_ARCHIVE, false);
         boolean isGroup = args.getBoolean(ARG_IS_GROUP, false);
-        boolean showExternalShare = ServerProps.getInstance().getExternalSharing() && isGroup;
+        boolean showExternalShare = ServerProps.getInstance().getExternalSharing() && !isGroup;
 
         viewModel = new ViewModelProvider(this, new PostOptionsViewModel.Factory(postId, isArchived)).get(PostOptionsViewModel.class);
         contactLoader = new ContactLoader();
