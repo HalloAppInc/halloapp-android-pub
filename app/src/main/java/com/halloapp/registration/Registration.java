@@ -95,7 +95,6 @@ public class Registration {
 
     @WorkerThread
     public HashcashResult getHashcashSolution(long backoffMs, int retryCount) {
-        long startMs = System.currentTimeMillis();
         String hashcashChallenge = requestHashcashChallenge();
         if (hashcashChallenge == null) {
             if (retryCount > HASHCASH_REQUEST_MAX_RETRIES) {
@@ -112,6 +111,7 @@ public class Registration {
             }
         }
         Log.d("Hashcash: got challenge " + hashcashChallenge);
+        long startMs = System.currentTimeMillis();
         String[] parts = hashcashChallenge.split(":");
         if (parts.length <= 0) {
             Log.e("Hashcash: could not parse challenge string");
