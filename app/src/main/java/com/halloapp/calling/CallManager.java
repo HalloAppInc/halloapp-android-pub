@@ -1411,10 +1411,13 @@ public class CallManager {
                 telecomConnection.setAudioRoute(CallAudioState.ROUTE_SPEAKER);
             }
         } else {
-            audioManager.setDefaultAudioDevice(CallAudioManager.AudioDevice.SPEAKER_PHONE);
+            mainHandler.post(() -> {
+                audioManager.setDefaultAudioDevice(CallAudioManager.AudioDevice.SPEAKER_PHONE);
+            });
         }
     }
 
+    @MainThread
     public void setSpeakerPhoneOn(boolean on) {
         Log.i("CallManager.setSpeakerPhoneOn(" + on + ") was: " + isSpeakerPhoneOn);
         if (Build.VERSION.SDK_INT >= 26 && telecomConnection != null) {
@@ -1428,6 +1431,7 @@ public class CallManager {
         notifyOnSpeakerPhoneToggle();
     }
 
+    @MainThread
     public void toggleSpeakerPhone() {
         setSpeakerPhoneOn(!isSpeakerPhoneOn());
     }
