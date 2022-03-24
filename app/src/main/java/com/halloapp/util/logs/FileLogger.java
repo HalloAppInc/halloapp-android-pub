@@ -96,8 +96,8 @@ public class FileLogger {
         private final SimpleDateFormat logTimeFormatter;
 
         private LoggingThread() {
-            logDateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            logTimeFormatter = new SimpleDateFormat("HH:mm:ss.SSS Z", Locale.getDefault());
+            logDateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            logTimeFormatter = new SimpleDateFormat("HH:mm:ss.SSS Z", Locale.US);
         }
 
         @Override

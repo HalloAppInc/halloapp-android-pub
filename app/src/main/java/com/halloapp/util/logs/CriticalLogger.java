@@ -23,7 +23,7 @@ public class CriticalLogger {
     private FileWriter outputStream;
 
     public CriticalLogger(@NonNull FileStore fileStore) {
-        logDateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z", Locale.getDefault());
+        logDateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z", Locale.US);
         logFile = fileStore.getCriticalLogFile();
     }
 
