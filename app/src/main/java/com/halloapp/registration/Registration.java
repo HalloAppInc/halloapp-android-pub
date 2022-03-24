@@ -58,6 +58,8 @@ public class Registration {
     private static final String DEBUG_NOISE_HOST = "s-test.halloapp.net";
     private static final int NOISE_PORT = 5208;
     private static final int RETRY_DEFAULT_WAIT_TIME_SECONDS = 15;
+    private static final int HASHCASH_BACKOFF_START_MS = 100;
+    private static final int HASHCASH_REQUEST_MAX_RETRIES = 5;
 
     private static Registration instance;
 
@@ -88,10 +90,26 @@ public class Registration {
 
     @WorkerThread
     public HashcashResult getHashcashSolution() {
+        return getHashcashSolution(HASHCASH_BACKOFF_START_MS, 0);
+    }
+
+    @WorkerThread
+    public HashcashResult getHashcashSolution(long backoffMs, int retryCount) {
         long startMs = System.currentTimeMillis();
         String hashcashChallenge = requestHashcashChallenge();
         if (hashcashChallenge == null) {
-            return new HashcashResult(HashcashResult.RESULT_FAILED_GET_CHALLENGE);
+            if (retryCount > HASHCASH_REQUEST_MAX_RETRIES) {
+                Log.w("Registration/getHashcashSolution reached max retries");
+                return new HashcashResult(HashcashResult.RESULT_FAILED_GET_CHALLENGE);
+            } else {
+                try {
+                    Log.i("Registration/getHashcashSolution sleeping for " + backoffMs + " before rerequesting challenge");
+                    Thread.sleep(backoffMs);
+                } catch (InterruptedException e) {
+                    Log.w("Registration/getHashcashSolution interrupted while sleeping");
+                }
+                return getHashcashSolution(backoffMs * 2, retryCount + 1);
+            }
         }
         Log.d("Hashcash: got challenge " + hashcashChallenge);
         String[] parts = hashcashChallenge.split(":");
@@ -240,7 +258,7 @@ public class Registration {
 
             return response.getHashcashChallenge();
         } catch (IOException | NoiseException | BadPaddingException | ShortBufferException e) {
-            Log.e("Registration.requestHashcashChallenge", e);
+            Log.e("Registration.requestHashcashChallenge error", e);
             return null;
         } finally {
             if (noiseSocket != null && !noiseSocket.isClosed()) {

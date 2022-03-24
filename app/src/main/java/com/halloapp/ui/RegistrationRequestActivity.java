@@ -390,7 +390,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                                         int end = referrerUrl.indexOf("&", start);
                                         inviteCode = referrerUrl.substring(start, Math.max(referrerUrl.length(), end));
                                     } else {
-                                        Log.w("RegistrationRequestActivity/requestRegistration no referrer invite");
+                                        Log.i("RegistrationRequestActivity/requestRegistration no referrer invite");
                                     }
                                 } catch (RemoteException e) {
                                     Log.e("RegistrationRequestActivity/requestRegistration failed to get install referrer", e);
