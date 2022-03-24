@@ -861,6 +861,7 @@ public class Notifications {
 
     public void clearIncomingCallNotification() {
         executor.execute(() -> {
+            Log.i("Notifications: clearIncomingCallNotification");
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             notificationManager.cancel(CALL_NOTIFICATION_ID);
         });

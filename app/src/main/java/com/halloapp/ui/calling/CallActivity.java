@@ -332,6 +332,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         }
         if (!isInitiator && ACTION_ACCEPT.equals(getIntent().getAction()) && callViewModel.isRinging()) {
             Log.i("CallActivity: User accepted the call");
+            Notifications.getInstance(this).clearIncomingCallNotification();
             checkPermissionsThen(REQUEST_ANSWER_CALL);
         }
         if (!isInitiator && !callManager.getIsInCall().getValue()) {
