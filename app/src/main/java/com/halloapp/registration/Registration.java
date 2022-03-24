@@ -26,7 +26,6 @@ import com.halloapp.proto.server.IdentityKey;
 import com.halloapp.proto.clients.SignedPreKey;
 import com.halloapp.proto.server.OtpRequest;
 import com.halloapp.proto.server.OtpResponse;
-import com.halloapp.proto.server.Packet;
 import com.halloapp.proto.server.RegisterRequest;
 import com.halloapp.proto.server.RegisterResponse;
 import com.halloapp.proto.server.VerifyOtpRequest;
@@ -34,7 +33,6 @@ import com.halloapp.proto.server.VerifyOtpResponse;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.LanguageUtils;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.StringUtils;
 import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
@@ -43,7 +41,6 @@ import com.halloapp.xmpp.SocketConnector;
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -257,20 +254,23 @@ public class Registration {
     }
 
     @WorkerThread
-    public @NonNull RegistrationRequestResult requestRegistration(@NonNull String phone, @Nullable String groupInviteToken, @Nullable String hashcashSolution) {
+    public @NonNull RegistrationRequestResult requestRegistration(@NonNull String phone, @Nullable String groupInviteToken, @Nullable HashcashResult hashcashSolution) {
         return requestRegistrationTypeViaNoise(phone, groupInviteToken,  false, hashcashSolution);
     }
 
     @WorkerThread
-    private @NonNull RegistrationRequestResult requestRegistrationTypeViaNoise(@NonNull String phone, @Nullable String groupInviteToken, boolean phoneCall, @Nullable String hashcashSolution) {
+    private @NonNull RegistrationRequestResult requestRegistrationTypeViaNoise(@NonNull String phone, @Nullable String groupInviteToken, boolean phoneCall, @Nullable HashcashResult hashcashResult) {
         final String host = preferences.getUseDebugHost() ? DEBUG_NOISE_HOST : NOISE_HOST;
         OtpRequest.Builder otpRequestBuilder = OtpRequest.newBuilder();
         otpRequestBuilder.setPhone(phone);
         otpRequestBuilder.setLangId(LanguageUtils.getLocaleIdentifier());
         otpRequestBuilder.setMethod(phoneCall ? OtpRequest.Method.VOICE_CALL : OtpRequest.Method.SMS);
         otpRequestBuilder.setUserAgent(Constants.USER_AGENT);
-        if (hashcashSolution != null) {
-            otpRequestBuilder.setHashcashSolution(hashcashSolution);
+        if (hashcashResult != null) {
+            if (hashcashResult.fullSolution != null) {
+                otpRequestBuilder.setHashcashSolution(hashcashResult.fullSolution);
+            }
+            otpRequestBuilder.setHashcashSolutionTimeTakenMs(hashcashResult.timeTakenMs);
         }
         if (groupInviteToken != null) {
             otpRequestBuilder.setGroupInviteToken(groupInviteToken);
@@ -323,11 +323,11 @@ public class Registration {
         }
     }
 
-    public @NonNull RegistrationRequestResult requestRegistrationViaVoiceCall(@NonNull String phone, @Nullable String groupInviteToken, @Nullable String hashcashSolution) {
+    public @NonNull RegistrationRequestResult requestRegistrationViaVoiceCall(@NonNull String phone, @Nullable String groupInviteToken, @Nullable HashcashResult hashcashSolution) {
         return requestRegistrationTypeViaNoise(phone, groupInviteToken, true, hashcashSolution);
     }
 
-    public @NonNull RegistrationRequestResult registerPhoneNumber(@Nullable String name, @NonNull String phone, @Nullable String groupInviteToken, @Nullable String hashcashSolution) {
+    public @NonNull RegistrationRequestResult registerPhoneNumber(@Nullable String name, @NonNull String phone, @Nullable String groupInviteToken, @Nullable HashcashResult hashcashSolution) {
         if (name != null) {
             me.saveName(name);
         }
@@ -454,16 +454,19 @@ public class Registration {
 
         public final String fullSolution;
         public final @Result int result;
+        public final long timeTakenMs;
 
         HashcashResult(@NonNull String fullSolution, long timeTakenMs) {
             this.fullSolution = fullSolution;
             this.result = RESULT_OK;
+            this.timeTakenMs = timeTakenMs;
         }
 
         HashcashResult(@Result int result) {
             Preconditions.checkState(result != RESULT_OK);
             this.fullSolution = null;
             this.result = result;
+            this.timeTakenMs = -1;
         }
     }
 

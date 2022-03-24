@@ -360,7 +360,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                     public void run() {
                         if (registerCalled.compareAndSet(false, true)) {
                             Log.i("RegistrationRequestViewModel InstallReferrer took too long");
-                            Registration.RegistrationRequestResult result = registration.registerPhoneNumber(name, phone, null, hashcashResult == null ? null : hashcashResult.fullSolution);
+                            Registration.RegistrationRequestResult result = registration.registerPhoneNumber(name, phone, null, hashcashResult == null ? null : hashcashResult);
                             if (result.result != Registration.RegistrationRequestResult.RESULT_OK) {
                                 hashcashLatch = new CountDownLatch(1);
                                 hashcashResult = null;
@@ -407,7 +407,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                         groupInviteToken = code;
                         bgWorkers.execute(() -> {
                             if (registerCalled.compareAndSet(false, true)) {
-                                Registration.RegistrationRequestResult result = registration.registerPhoneNumber(name, phone, null, hashcashResult == null ? null : hashcashResult.fullSolution);
+                                Registration.RegistrationRequestResult result = registration.registerPhoneNumber(name, phone, null, hashcashResult == null ? null : hashcashResult);
                                 if (result.result != Registration.RegistrationRequestResult.RESULT_OK) {
                                     hashcashLatch = new CountDownLatch(1);
                                     hashcashResult = null;

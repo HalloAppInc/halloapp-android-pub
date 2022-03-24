@@ -336,7 +336,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
                 } catch (InterruptedException e) {
                     Log.e("Interrupted while waiting for hashcash", e);
                 }
-                Registration.RegistrationRequestResult requestResult = registration.requestRegistration(phone, token, hashcashResult == null ? null : hashcashResult.fullSolution);
+                Registration.RegistrationRequestResult requestResult = registration.requestRegistration(phone, token, hashcashResult == null ? null : hashcashResult);
                 hashcashLatch = new CountDownLatch(1);
                 hashcashResult = null;
                 runHashcash();
@@ -354,7 +354,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
                 } catch (InterruptedException e) {
                     Log.e("Interrupted while waiting for hashcash", e);
                 }
-                Registration.RegistrationRequestResult requestResult = registration.requestRegistrationViaVoiceCall(phone, token, hashcashResult == null ? null : hashcashResult.fullSolution);
+                Registration.RegistrationRequestResult requestResult = registration.requestRegistrationViaVoiceCall(phone, token, hashcashResult == null ? null : hashcashResult);
                 hashcashLatch = new CountDownLatch(1);
                 hashcashResult = null;
                 runHashcash();
