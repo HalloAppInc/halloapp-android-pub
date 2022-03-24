@@ -20101,6 +20101,7 @@ $root.server = (function() {
                     return "action: enum value expected";
                 case 0:
                 case 1:
+                case 2:
                     break;
                 }
             if (message.blobId != null && message.hasOwnProperty("blobId"))
@@ -20140,6 +20141,10 @@ $root.server = (function() {
             case "DELETE":
             case 1:
                 message.action = 1;
+                break;
+            case "GET":
+            case 2:
+                message.action = 2;
                 break;
             }
             if (object.blobId != null)
@@ -20229,11 +20234,13 @@ $root.server = (function() {
          * @enum {number}
          * @property {number} STORE=0 STORE value
          * @property {number} DELETE=1 DELETE value
+         * @property {number} GET=2 GET value
          */
         ExternalSharePost.Action = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "STORE"] = 0;
             values[valuesById[1] = "DELETE"] = 1;
+            values[valuesById[2] = "GET"] = 2;
             return values;
         })();
 

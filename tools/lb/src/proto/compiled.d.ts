@@ -7728,7 +7728,8 @@ export namespace server {
         /** Action enum. */
         enum Action {
             STORE = 0,
-            DELETE = 1
+            DELETE = 1,
+            GET = 2
         }
     }
 

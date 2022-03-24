@@ -28,6 +28,10 @@ public  final class ExternalSharePost extends
      * <code>DELETE = 1;</code>
      */
     DELETE(1),
+    /**
+     * <code>GET = 2;</code>
+     */
+    GET(2),
     UNRECOGNIZED(-1),
     ;
 
@@ -39,6 +43,10 @@ public  final class ExternalSharePost extends
      * <code>DELETE = 1;</code>
      */
     public static final int DELETE_VALUE = 1;
+    /**
+     * <code>GET = 2;</code>
+     */
+    public static final int GET_VALUE = 2;
 
 
     @java.lang.Override
@@ -64,6 +72,7 @@ public  final class ExternalSharePost extends
       switch (value) {
         case 0: return STORE;
         case 1: return DELETE;
+        case 2: return GET;
         default: return null;
       }
     }
