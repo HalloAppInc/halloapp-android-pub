@@ -6,7 +6,9 @@ import android.net.ConnectivityManager;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.halloapp.AppContext;
+import com.halloapp.BuildConfig;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.log_events.Call;
 import com.halloapp.proto.server.CallType;
@@ -18,7 +20,9 @@ import org.webrtc.RTCStats;
 import org.webrtc.RTCStatsReport;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -149,23 +153,52 @@ public class CallStats {
         }
     }
 
-    public static String serializeWebrtcStats(RTCStatsReport report) {
+    public static Map<String, RTCStats> collectStats(RTCStatsReport report) {
+        Map<String, RTCStats> result = new HashMap<>();
+        // TODO(nikola): try to only send the codec that was used and the candidate-pair that was selected.
+        // Otherwise there are too many codecs and candidate-pairs.
+        Set<String> unwantedTypes = new HashSet<>(Arrays.asList("codec", "certificate", "media-source", "candidate-pair", "local-candidate", "remote-candidate"));
+        for (Map.Entry<String, RTCStats> e : report.getStatsMap().entrySet()) {
+            String type = e.getValue().getType();
+            if (unwantedTypes.contains(type)) {
+                continue;
+            }
+            result.put(e.getKey(), e.getValue());
+        }
+        return result;
+    }
+
+    public static String serializeWebrtcStats(Map<String, RTCStats> data) {
         try {
             Gson gson = new Gson();
-            Map<String, RTCStats> statsToSend = new HashMap<>();
-            Set<String> unwantedTypes = new HashSet<>(Arrays.asList("codec", "certificate", "media-source", "candidate-pair", "local-candidate", "remote-candidate"));
-            for (Map.Entry<String, RTCStats> e : report.getStatsMap().entrySet()) {
-                String type = e.getValue().getType();
-                if (unwantedTypes.contains(type)) {
-                    continue;
-                }
-                statsToSend.put(e.getKey(), e.getValue());
-            }
-            return gson.toJson(statsToSend);
+            return gson.toJson(data);
         } catch (Exception e) {
             Log.e("Crash in stats processing", e);
             return "";
         }
+    }
+
+    private static void cleanupReportData(Map<String, RTCStats> data) {
+        for (Map.Entry<String, RTCStats> e : data.entrySet()) {
+            Map<String, Object> members = e.getValue().getMembers();
+            members.remove("localCertificateId");
+            members.remove("remoteCertificateId");
+        }
+    }
+
+    private static void debugLogReportData(Map<String, RTCStats> data) {
+        Gson gson = new GsonBuilder().create();
+        List<String> keys = new ArrayList<>(data.keySet());
+        Collections.sort(keys);
+        for (String k : keys) {
+            RTCStats stats = data.get(k);
+            Log.d("CallStats: " + stats.getType() + " " + k + "\n" + gson.toJson(stats.getMembers()));
+        }
+    }
+
+    public static String toPrettyJson(Map<String, RTCStats> data) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(data);
     }
 
     private static String diff(Object a, Object b) {
@@ -193,6 +226,15 @@ public class CallStats {
             protoCallType = Call.CallType.VIDEO;
         }
 
+        Map<String, RTCStats> reportData = collectStats(report);
+        String webrtcStats = serializeWebrtcStats(reportData);
+        cleanupReportData(reportData);
+        if (BuildConfig.DEBUG) {
+            Log.d("CallStats: " + toPrettyJson(reportData));
+        } else {
+            debugLogReportData(reportData);
+        }
+
         Call.Builder callBuilder = Call.newBuilder()
                 .setCallId(callId)
                 .setPeerUid(peerUid.rawIdLong())
@@ -204,7 +246,7 @@ public class CallStats {
                 .setEndCallReason(reason.name())
                 .setLocalEndCall(true)  // TODO(nikola): implement this
                 .setNetworkType(networkType)
-                .setWebrtcStats(serializeWebrtcStats(report));
+                .setWebrtcStats(webrtcStats);
         Events.getInstance().sendEvent(callBuilder.build());
     }
 
