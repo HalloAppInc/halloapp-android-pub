@@ -24,12 +24,11 @@
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:singleLine="true"
             android:ellipsize="end"
             android:textAppearance="?textAppearanceListItem"
             android:fontFamily="sans-serif-medium"
-            android:textDirection="locale"
+            android:textDirection="firstStrong"
             android:textAlignment="gravity"
             android:textSize="17sp"
             tools:text="Ded Pihtov"/>
@@ -63,7 +62,7 @@
             android:textDirection="locale"
             android:textAlignment="gravity"
             android:textColor="@color/secondary_text"
-            tools:text="+1 (650) 555-3000"/>
+            tools:text="3 potential friends"/>
 
     </LinearLayout>
     
