@@ -269,6 +269,9 @@ public class Registration {
         if (hashcashResult != null) {
             if (hashcashResult.fullSolution != null) {
                 otpRequestBuilder.setHashcashSolution(hashcashResult.fullSolution);
+                Log.i("Registration/requestRegistrationTypeViaNoise using solution " + hashcashResult.fullSolution);
+            } else {
+                Log.w("Registration/requestRegistrationTypeViaNoise no hashcash solution provided");
             }
             otpRequestBuilder.setHashcashSolutionTimeTakenMs(hashcashResult.timeTakenMs);
         }
