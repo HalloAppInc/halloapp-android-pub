@@ -1,7 +1,6 @@
 package com.halloapp.ui.calling;
 
 import android.Manifest;
-import android.app.PictureInPictureParams;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -30,6 +28,7 @@ import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.util.PictureInPictureUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.calling.CallParticipantsLayout;
@@ -192,7 +191,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             if (Build.VERSION.SDK_INT >= 24) {
                 systemAllowsPip = getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE);
                 if (systemAllowsPip && Build.VERSION.SDK_INT >= 26) {
-                    setPictureInPictureParams(createPiPParams());
+                    setPictureInPictureParams(PictureInPictureUtils.buildVideoCallParams());
                 }
             }
         }
@@ -373,21 +372,11 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         return systemAllowsPip && callType == CallType.VIDEO;
     }
 
-    @RequiresApi(api = 26)
-    private PictureInPictureParams createPiPParams() {
-        PictureInPictureParams.Builder builder = new PictureInPictureParams.Builder();
-        builder.setAspectRatio(CallManager.PIP_ASPECT_RATIO);
-        if (Build.VERSION.SDK_INT >= 31) {
-            builder.setAutoEnterEnabled(true);
-            builder.setSeamlessResizeEnabled(true);
-        }
-        return builder.build();
-    }
 
     private boolean tryEnterPiP() {
         if (Build.VERSION.SDK_INT >= 24) {
             if (Build.VERSION.SDK_INT >= 26) {
-                return enterPictureInPictureMode(createPiPParams());
+                return enterPictureInPictureMode(PictureInPictureUtils.buildVideoCallParams());
             } else {
                 enterPictureInPictureMode();
                 return true;
