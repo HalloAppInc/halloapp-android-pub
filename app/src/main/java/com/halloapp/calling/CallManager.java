@@ -34,6 +34,7 @@ import com.halloapp.AppContext;
 import com.halloapp.Constants;
 import com.halloapp.NetworkConnectivityManager;
 import com.halloapp.Notifications;
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
@@ -42,6 +43,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.id.UserId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.server.CallConfig;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
@@ -71,6 +73,7 @@ import org.webrtc.DefaultVideoDecoderFactory;
 import org.webrtc.DefaultVideoEncoderFactory;
 import org.webrtc.EglBase;
 import org.webrtc.IceCandidate;
+import org.webrtc.Logging;
 import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
@@ -952,11 +955,13 @@ public class CallManager {
     }
 
     private void initializePeerConnectionFactory() {
+        KrispUtil.initializeResources();
         final VideoEncoderFactory encoderFactory = new DefaultVideoEncoderFactory(getEglBase().getEglBaseContext(), true, true);
         final VideoDecoderFactory decoderFactory = new DefaultVideoDecoderFactory(getEglBase().getEglBaseContext());
         PeerConnectionFactory.initialize(
                 PeerConnectionFactory.InitializationOptions.builder(appContext.get())
                         .setEnableInternalTracer(true)
+                        .setInjectableLogger(new CallLogger(), Logging.Severity.LS_INFO)
                         .createInitializationOptions());
         PeerConnectionFactory.Builder builder = PeerConnectionFactory.builder();
         builder.setVideoEncoderFactory(encoderFactory);
@@ -1109,6 +1114,15 @@ public class CallManager {
 
         PeerConnection.RTCConfiguration rtcConfig = createRtcConfig(stunServers, turnServers);
 
+        if (KrispUtil.isResourcePresent() &&
+                ServerProps.getInstance().getKrispNoiseSuppression() &&
+                Preferences.getInstance().getKrispNoiseSuppression()) {
+            rtcConfig.krispWtsFilePath = KrispUtil.filePath();
+            // TODO(vipin): Set audio sample rate to 32Khz.
+            Log.i("CallManager: using Krisp wts file path: " + rtcConfig.krispWtsFilePath);
+        } else {
+            Log.i("CallManager: not using Krisp");
+        }
         // TODO(nikola): log better this events on the peer connection.
         PeerConnection.Observer pcObserver = new PeerConnection.Observer() {
             @Override

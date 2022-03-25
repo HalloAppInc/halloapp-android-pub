@@ -33,6 +33,7 @@ public class HelpActivity extends HalloActivity {
     private final ServerProps serverProps = ServerProps.getInstance();
 
     private SwitchCompat useDebugHostSwitch;
+    private SwitchCompat useKrispNoiseSuppressionSwitch;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,6 +67,7 @@ public class HelpActivity extends HalloActivity {
         });
 
         useDebugHostSwitch = findViewById(R.id.use_debug_host_switch);
+        useKrispNoiseSuppressionSwitch = findViewById(R.id.use_krisp_noise_suppression_switch);
         if (serverProps.getIsInternalUser()) {
             View debugOptions = findViewById(R.id.debug_options);
             debugOptions.setVisibility(View.VISIBLE);
@@ -102,6 +104,22 @@ public class HelpActivity extends HalloActivity {
                 boolean use = preferences.getUseDebugHost();
                 useDebugHostSwitch.post(() -> {
                     useDebugHostSwitch.setChecked(use);
+                });
+
+                boolean useNoiseSuppression = preferences.getKrispNoiseSuppression();
+                useKrispNoiseSuppressionSwitch.post(() -> {
+                    useKrispNoiseSuppressionSwitch.setChecked(useNoiseSuppression);
+                });
+            });
+
+            View useKrispNoiseSuppression = findViewById(R.id.use_krisp_noise_suppression);
+            useKrispNoiseSuppression.setOnClickListener(v -> {
+                boolean use = !useKrispNoiseSuppressionSwitch.isChecked();
+                useKrispNoiseSuppressionSwitch.setChecked(use);
+            });
+            useKrispNoiseSuppressionSwitch.setOnCheckedChangeListener((v, checked) -> {
+                bgWorkers.execute(() -> {
+                    preferences.setKrispNoiseSuppression(checked);
                 });
             });
         }

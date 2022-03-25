@@ -48,6 +48,7 @@ public class ServerProps {
     private static final String PROP_EXTERNAL_SHARING = "external_sharing";
     private static final String PROP_GROUP_COMMENTS_NOTIFICATIOn = "group_comments_notification";
     private static final String PROP_CALL_HOLD_ENABLED = "call_hold";
+    private static final String PROP_KRISP_NOISE_SUPPRESSION = "krisp_noise_suppression";
 
     private static final int WEEK_IN_SECONDS = (int) (DateUtils.WEEK_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
 
@@ -91,6 +92,7 @@ public class ServerProps {
     private final BooleanProp propExternalSharing = createProp(PROP_EXTERNAL_SHARING, false);
     private final BooleanProp propGroupCommentsNotification = createProp(PROP_GROUP_COMMENTS_NOTIFICATIOn, false);
     private final BooleanProp propCallHoldEnabled = createProp(PROP_CALL_HOLD_ENABLED, false);
+    private final BooleanProp propKrispNoiseSuppression = createProp(PROP_KRISP_NOISE_SUPPRESSION, false);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -256,7 +258,7 @@ public class ServerProps {
     }
 
     public synchronized boolean getVideoCallsEnabled() {
-        return propVideoCallsEnabled.getValue();
+        return BuildConfig.DEBUG || propVideoCallsEnabled.getValue();
     }
 
     public synchronized int getEmojiVersion() {
@@ -285,5 +287,9 @@ public class ServerProps {
 
     public synchronized boolean getCallHoldEnabled() {
         return propCallHoldEnabled.getValue();
+    }
+
+    public synchronized boolean getKrispNoiseSuppression() {
+        return BuildConfig.DEBUG || propKrispNoiseSuppression.getValue();
     }
 }

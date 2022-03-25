@@ -85,6 +85,7 @@ public class Preferences {
     private static final String PREF_KEY_EMOJI_VARIANTS = "emoji_variants";
 
     private static final String PREF_KEY_VIDEO_CALL_LOCAL_QUADRANT = "video_call_local_quadrant";
+    private static final String PREF_KEY_KRISP_NOISE_SUPPRESSION = "krisp_noise_suppression";
 
     private final AppContext appContext;
     private SharedPreferences backedUpPreferences;
@@ -174,6 +175,8 @@ public class Preferences {
     private final StringPreference prefRecentEmojis = createPref(true, PREF_KEY_RECENT_EMOJIS, null);
     private final StringPreference prefEmojiVariants = createPref(true, PREF_KEY_EMOJI_VARIANTS, null);
     private final IntPreference prefVideoCallLocalViewQuadrant = createPref(true, PREF_KEY_VIDEO_CALL_LOCAL_QUADRANT, CallParticipantsLayout.Quadrant.TOP_RIGHT);
+
+    private final BooleanPreference prefKrispNoiseSuppression = createPref(false, PREF_KEY_KRISP_NOISE_SUPPRESSION, false);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -535,6 +538,16 @@ public class Preferences {
     @WorkerThread
     public void setUseDebugHost(boolean useDebugHost) {
         prefUseDebugHost.set(useDebugHost);
+    }
+
+    @WorkerThread
+    public boolean getKrispNoiseSuppression() {
+        return prefKrispNoiseSuppression.get();
+    }
+
+    @WorkerThread
+    public void setKrispNoiseSuppression(boolean useKrispNoiseSuppression) {
+        prefKrispNoiseSuppression.set(useKrispNoiseSuppression);
     }
 
     @WorkerThread
