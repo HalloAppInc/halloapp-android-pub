@@ -243,8 +243,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
     private void onMessageSent() {
         viewModel.clearReply();
-        replyPostMediaIndex = -1;
-        replyMessageMediaIndex = -1;
+        replyPostMediaIndex = 0;
+        replyMessageMediaIndex = 0;
         replyContainer.setVisibility(View.GONE);
         setResult(RESULT_OK);
     }
@@ -483,11 +483,11 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         if (savedInstanceState == null) {
             replySenderId = getIntent().getParcelableExtra(EXTRA_REPLY_POST_SENDER_ID);
             replyPostId = getIntent().getStringExtra(EXTRA_REPLY_POST_ID);
-            replyPostMediaIndex = getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
+            replyPostMediaIndex = getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, 0);
         } else {
             replySenderId = savedInstanceState.getParcelable(EXTRA_REPLY_POST_SENDER_ID);
             replyPostId = savedInstanceState.getString(EXTRA_REPLY_POST_ID);
-            replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
+            replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, 0);
             selectedMessageRowId = savedInstanceState.getLong(EXTRA_SELECTED_MESSAGE_ROW_ID, selectedMessageRowId);
             selectedMessageSenderId = savedInstanceState.getParcelable(EXTRA_SELECTED_MESSAGE_SENDER_ID);
             copyText = savedInstanceState.getString(EXTRA_COPY_TEXT);
@@ -668,7 +668,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 replyPreviewContainerHolder.bindPost(reply.post, replyPostMediaIndex);
             } else if (reply.message != null) {
                 long replyMessageRowId = reply.message.rowId;
-                replyPostMediaIndex = -1;
+                replyPostMediaIndex = 0;
                 if (replyMessageMediaIndexMap.containsKey(replyMessageRowId)) {
                     replyMessageMediaIndex = replyMessageMediaIndexMap.get(replyMessageRowId);
                 }
