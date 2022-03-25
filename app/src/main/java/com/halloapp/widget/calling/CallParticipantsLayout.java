@@ -233,8 +233,11 @@ public class CallParticipantsLayout extends FrameLayout {
 
     private void setMutedLastFrame(@Nullable Bitmap lastFrame) {
         if (lastFrame != null) {
-            mutedLocalOverlayView.setImageBitmap(BitmapUtils.fastblur(lastFrame, BLUR_SCALE, BLUR_RADIUS));
-            mutedLocalOverlayView.setVisibility(View.VISIBLE);
+            Bitmap bitmap = BitmapUtils.fastblur(lastFrame, BLUR_SCALE, BLUR_RADIUS);
+            post(() -> {
+                mutedLocalOverlayView.setImageBitmap(bitmap);
+                mutedLocalOverlayView.setVisibility(View.VISIBLE);
+            });
         }
     }
 
