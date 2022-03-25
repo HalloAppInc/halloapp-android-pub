@@ -51,6 +51,7 @@ import com.halloapp.proto.server.StunServer;
 import com.halloapp.proto.server.TurnServer;
 import com.halloapp.proto.server.WebRtcSessionDescription;
 import com.halloapp.ui.calling.CallActivity;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.VibrationUtils;
 import com.halloapp.util.logs.Log;
@@ -392,7 +393,7 @@ public class CallManager {
         }
         Log.i("CallManager: finishStartCall()");
         mainHandler.post(this::startAudioManager);
-        executor.execute(this::setupWebrtc);
+        executor.execute(this::startCall);
     }
 
     @RequiresApi(api = 26)
@@ -441,15 +442,19 @@ public class CallManager {
     }
 
     @WorkerThread
-    private void setupWebrtc() {
-        // TODO(nikola): Split this into 2 different methods for start_call and answer call.
-        Log.i("Initialize WebRTC");
+    private void setupWebrtcForIncomingCall(@Nullable List<StunServer> stunServers, @Nullable List<TurnServer> turnServers) {
+        Log.i("CallManager: incoming call: Initialize WebRTC");
+        Preconditions.checkState(!isInitiator);
         initializePeerConnectionFactory();
-        if (isInitiator) {
-            getCallServersAndStartCall();
-        } else {
-            initializePeerConnections();
-        }
+        initializePeerConnections(stunServers, turnServers);
+    }
+
+    @WorkerThread
+    private void startCall() {
+        Log.i("CallManager: start call: Initialize WebRTC");
+        Preconditions.checkState(isInitiator);
+        initializePeerConnectionFactory();
+        getCallServersAndStartCall();
     }
 
     public synchronized void stop(EndCall.Reason reason) {
@@ -609,12 +614,11 @@ public class CallManager {
             return;
         }
 
-        setupWebrtc();
+        setupWebrtcForIncomingCall(stunServers, turnServers);
         Log.i("Setting webrtc offer " + webrtcOffer);
         peerConnection.setRemoteDescription(
                 new SimpleSdpObserver(),
                 new SessionDescription(SessionDescription.Type.OFFER, webrtcOffer));
-        setStunTurnServers(stunServers, turnServers);
 
         this.state = State.INCOMING_RINGING;
         this.isInCall.postValue(true);
@@ -971,8 +975,8 @@ public class CallManager {
         }
     }
 
-    private void initializePeerConnections() {
-        peerConnection = createPeerConnection(factory);
+    private void initializePeerConnections(@Nullable List<StunServer> stunServers, @Nullable List<TurnServer> turnServers) {
+        peerConnection = createPeerConnection(factory, stunServers, turnServers);
         Log.i("PeerConnection " + peerConnection + " created");
     }
 
@@ -1030,15 +1034,14 @@ public class CallManager {
         }
     }
 
-    private PeerConnection createPeerConnection(@NonNull PeerConnectionFactory factory) {
-        ArrayList<PeerConnection.IceServer> iceServers = new ArrayList<>();
+    private PeerConnection createPeerConnection(@NonNull PeerConnectionFactory factory, List<StunServer> stunServers, @Nullable List<TurnServer> turnServers) {
         // TODO(nikola): maybe we should have some default stun server?
 //        String URL = "stun:stun.l.google.com:19302";
 //        String STUN_URL = "stun:stun.halloapp.dev:3478";
 //        iceServers.add(PeerConnection.IceServer.builder(STUN_URL).createIceServer());
 //        Log.i("ice servers: " + iceServers);
 
-        PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(iceServers);
+        PeerConnection.RTCConfiguration rtcConfig = createRtcConfig(stunServers, turnServers);
 
         // TODO(nikola): log better this events on the peer connection.
         PeerConnection.Observer pcObserver = new PeerConnection.Observer() {
@@ -1182,12 +1185,11 @@ public class CallManager {
             }
             Log.i("CallManager: CallConfig: " + response.callConfig);
             callConfig = response.callConfig;
-            initializePeerConnections();
-            createAVTracks();
-            startStreams();
             if ((response.turnServers != null && response.turnServers.size() > 0) ||
                     (response.stunServers != null && response.stunServers.size() > 0)) {
-                setStunTurnServers(response.stunServers, response.turnServers);
+                initializePeerConnections(response.stunServers, response.turnServers);
+                createAVTracks();
+                startStreams();
                 doStartCall();
             } else {
                 Log.e("CallManager: Did not get any stun or turn servers " + response);
@@ -1247,7 +1249,7 @@ public class CallManager {
         }, sdpMediaConstraints);
     }
 
-    private void setStunTurnServers(@Nullable List<StunServer> stunServers, @Nullable List<TurnServer> turnServers) {
+    private PeerConnection.RTCConfiguration createRtcConfig(@Nullable List<StunServer> stunServers, @Nullable List<TurnServer> turnServers) {
         // insert the stun and turn servers and update the peerConnection configuration.
         // stun/turn servers URLS look like this "stun:stun.l.google.com:19302";
         ArrayList<PeerConnection.IceServer> iceServers = new ArrayList<>();
@@ -1283,7 +1285,9 @@ public class CallManager {
             rtcConfig.iceTransportsType = PeerConnection.IceTransportsType.RELAY;
         }
 
-        peerConnection.setConfiguration(rtcConfig);
+        // TODO(vipin): Change to UNIFIED_PLAN after upgrading the webrtc API usage.
+        rtcConfig.sdpSemantics = PeerConnection.SdpSemantics.PLAN_B;
+        return rtcConfig;
     }
 
     @MainThread
