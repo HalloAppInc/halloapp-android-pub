@@ -90,6 +90,7 @@ public class Notifications {
     private static final String MISSED_CALL_NOTIFICATION_CHANNEL_ID = "missed_call_notifications";
 
     private static final String MESSAGE_NOTIFICATION_GROUP_KEY = "message_notification";
+    private static final String FEED_NOTIFICATION_GROUP_KEY = "feed_notification";
     private static final String REPLY_TEXT_KEY = "reply_text";
     private static final String CALL_MESSAGE_TEXT_KEY = "call_message_text";
 
@@ -209,6 +210,9 @@ public class Notifications {
         executor.execute(() -> {
             List<Post> unseenPosts = getNewPosts();
             List<Comment> unseenComments = getNewComments();
+
+            List<Post> homePosts = null;
+            List<Comment> homeComments = null;
             HashSet<GroupId> groupIds = new HashSet<>();
             HashMap<GroupId, List<Comment>> groupCommentListMap = new HashMap<>();
             HashMap<GroupId, List<Post>> groupPostListMap = new HashMap<>();
@@ -218,7 +222,8 @@ public class Notifications {
                 return;
             }
             if (unseenPosts != null) {
-                ListIterator<Post> unseenPostIterator = unseenPosts.listIterator();
+                homePosts = new ArrayList<>(unseenPosts);
+                ListIterator<Post> unseenPostIterator = homePosts.listIterator();
                 while (unseenPostIterator.hasNext()) {
                     Post post = unseenPostIterator.next();
                     GroupId parentGroupId = post.getParentGroup();
@@ -235,7 +240,8 @@ public class Notifications {
                 }
             }
             if (unseenComments != null) {
-                ListIterator<Comment> unseenCommentIterator = unseenComments.listIterator();
+                homeComments = new ArrayList<>(unseenComments);
+                ListIterator<Comment> unseenCommentIterator = homeComments.listIterator();
                 while (unseenCommentIterator.hasNext()) {
                     Comment comment = unseenCommentIterator.next();
                     Post parentPost = comment.getParentPost();
@@ -252,7 +258,8 @@ public class Notifications {
                     }
                 }
             }
-            showCombinedFeedNotification(HOME_FEED_NOTIFICATION_TAG, context.getString(R.string.app_name), unseenPosts, unseenComments);
+            String appName = context.getString(R.string.app_name);
+            showCombinedFeedNotification(HOME_FEED_NOTIFICATION_TAG, appName, homePosts, homeComments);
 
             for (GroupId groupId : groupIds) {
                 List<Comment> comments = groupCommentListMap.get(groupId);
@@ -264,6 +271,46 @@ public class Notifications {
                 } else {
                     Log.e("Notifications/updateFeedNotifications no group found for groupId=" + groupId);
                 }
+            }
+            String postsSummary = null;
+            String commentsSummary = null;
+            if (unseenPosts != null && !unseenPosts.isEmpty()) {
+                postsSummary = getNewPostsNotificationText(unseenPosts);
+            }
+            if (unseenComments != null && !unseenComments.isEmpty()) {
+                commentsSummary = getNewCommentsNotificationText(unseenComments);
+            }
+            if (TextUtils.isEmpty(postsSummary) && TextUtils.isEmpty(commentsSummary)) {
+                final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                notificationManager.cancel(FEED_NOTIFICATION_ID);
+            } else {
+                final String summaryText;
+                if (TextUtils.isEmpty(commentsSummary) && !TextUtils.isEmpty(postsSummary)) {
+                    summaryText = postsSummary;
+                } else if (TextUtils.isEmpty(postsSummary) && !TextUtils.isEmpty(commentsSummary)) {
+                    summaryText = commentsSummary;
+                } else {
+                    summaryText = context.getString(R.string.new_posts_and_comments_notification, postsSummary, commentsSummary);
+                }
+                final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, FEED_NOTIFICATION_CHANNEL_ID)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setColor(ContextCompat.getColor(context, R.color.color_accent))
+                        .setContentTitle(appName)
+                        .setContentText(summaryText)
+                        .setAutoCancel(true)
+                        .setGroup(FEED_NOTIFICATION_GROUP_KEY)
+                        .setGroupSummary(true)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                final Intent contentIntent = new Intent(context, MainActivity.class);
+                contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
+                contentIntent.putExtra(MainActivity.EXTRA_SCROLL_TO_TOP, true);
+                builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE_FEED, contentIntent, getPendingIntentFlags(true)));
+                final Intent deleteIntent = new Intent(context, DeleteNotificationReceiver.class);
+                deleteIntent.putExtra(EXTRA_FEED_NOTIFICATION_TIME_CUTOFF, feedNotificationTimeCutoff);
+                builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0, deleteIntent, PendingIntent.FLAG_CANCEL_CURRENT | getPendingIntentFlags(false)));
+                final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                notificationManager.notify(FEED_NOTIFICATION_ID, builder.build());
             }
         });
     }
@@ -730,6 +777,8 @@ public class Notifications {
                 .setColor(ContextCompat.getColor(context, R.color.color_accent))
                 .setContentTitle(title)
                 .setContentText(body)
+                .setGroup(FEED_NOTIFICATION_GROUP_KEY)
+                .setGroupSummary(false)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         final Intent contentIntent = new Intent(context, MainActivity.class);
