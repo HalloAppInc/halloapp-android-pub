@@ -292,6 +292,8 @@ public class Registration {
                 Log.w("Registration/requestRegistrationTypeViaNoise no hashcash solution provided");
             }
             otpRequestBuilder.setHashcashSolutionTimeTakenMs(hashcashResult.timeTakenMs);
+        } else {
+            Log.w("Registration/requestRegistrationTypeViaNoise no hashcash solution provided");
         }
         if (groupInviteToken != null) {
             otpRequestBuilder.setGroupInviteToken(groupInviteToken);

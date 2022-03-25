@@ -359,9 +359,10 @@ public class RegistrationRequestActivity extends HalloActivity {
                     @Override
                     public void run() {
                         if (registerCalled.compareAndSet(false, true)) {
-                            Log.i("RegistrationRequestViewModel InstallReferrer took too long");
+                            Log.i("RegistrationRequestViewModel InstallReferrer took too long; registering");
                             Registration.RegistrationRequestResult result = registration.registerPhoneNumber(name, phone, null, hashcashResult == null ? null : hashcashResult);
                             if (result.result != Registration.RegistrationRequestResult.RESULT_OK) {
+                                Log.i("RegistrationRequestViewModel request failed; restarting hashcash");
                                 hashcashLatch = new CountDownLatch(1);
                                 hashcashResult = null;
                                 runHashcash();
@@ -403,12 +404,13 @@ public class RegistrationRequestActivity extends HalloActivity {
                                 Log.w("RegistrationRequestActivity/requestRegistration no connection");
                                 break;
                         }
-                        final String code = inviteCode;
-                        groupInviteToken = code;
+                        groupInviteToken = inviteCode;
                         bgWorkers.execute(() -> {
                             if (registerCalled.compareAndSet(false, true)) {
+                                Log.i("RegistrationRequestViewModel registering from install referrer callback");
                                 Registration.RegistrationRequestResult result = registration.registerPhoneNumber(name, phone, null, hashcashResult == null ? null : hashcashResult);
                                 if (result.result != Registration.RegistrationRequestResult.RESULT_OK) {
+                                    Log.i("RegistrationRequestViewModel request failed; restarting hashcash");
                                     hashcashLatch = new CountDownLatch(1);
                                     hashcashResult = null;
                                     runHashcash();
