@@ -49,6 +49,7 @@ import com.halloapp.proto.clients.SenderKey;
 import com.halloapp.proto.clients.SenderState;
 import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.server.Ack;
+import com.halloapp.proto.server.Audience;
 import com.halloapp.proto.server.AuthRequest;
 import com.halloapp.proto.server.AuthResult;
 import com.halloapp.proto.server.Avatar;
@@ -104,6 +105,7 @@ import com.halloapp.xmpp.feed.GroupFeedUpdateIq;
 import com.halloapp.xmpp.feed.SharePosts;
 import com.halloapp.xmpp.groups.GroupResponseIq;
 import com.halloapp.xmpp.groups.MemberElement;
+import com.halloapp.xmpp.privacy.PrivacyList;
 import com.halloapp.xmpp.props.ServerPropsRequestIq;
 import com.halloapp.xmpp.props.ServerPropsResponseIq;
 import com.halloapp.xmpp.util.BackgroundObservable;
@@ -1722,6 +1724,9 @@ public class ConnectionImpl extends Connection {
                         Post post = processPost(protoPost, names, null, false, null, null);
                         if (post != null) {
                             post.seen = item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.PUBLISH) ? Post.SEEN_NO : Post.SEEN_NO_HIDDEN;
+                            if (protoPost.hasAudience() && Audience.Type.ONLY.equals(protoPost.getAudience().getType())) {
+                                post.setAudience(PrivacyList.Type.ONLY, new ArrayList<>());
+                            }
                             posts.add(post);
                         } else {
                             Log.e("connection: invalid post");
