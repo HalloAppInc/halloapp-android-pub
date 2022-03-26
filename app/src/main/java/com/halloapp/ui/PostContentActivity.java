@@ -2,6 +2,7 @@ package com.halloapp.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.InsetDrawable;
@@ -14,8 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import androidx.annotation.LayoutRes;
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
@@ -30,14 +33,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.Debug;
+import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.groups.ChatLoader;
 import com.halloapp.media.AudioDurationLoader;
+import com.halloapp.media.Downloader;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.media.MediaUtils;
 import com.halloapp.media.VoiceNotePlayer;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.ArchivedPostViewHolder;
@@ -50,8 +58,15 @@ import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.ui.posts.VoiceNotePostViewHolder;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.RandomId;
+import com.halloapp.util.ViewDataLoader;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
+import com.halloapp.widget.PlaceholderDrawable;
+
+import java.io.File;
+import java.util.concurrent.Callable;
 
 public class PostContentActivity extends HalloActivity {
 
@@ -276,7 +291,52 @@ public class PostContentActivity extends HalloActivity {
 
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
-        mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
+        int dimensionLimit = Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y));
+        mediaThumbnailLoader = postId != null ? new MediaThumbnailLoader(this, dimensionLimit) : new MediaThumbnailLoader(this, dimensionLimit) {
+            @MainThread
+            public void load(@NonNull ImageView view, @NonNull Media media, @NonNull ViewDataLoader.Displayer<ImageView, Bitmap> displayer) {
+                String id = RandomId.create();
+                String mediaLogId = "external-" + id;
+                media.file = FileStore.getInstance().getTmpFile(id);
+                Downloader.DownloadListener downloadListener = new Downloader.DownloadListener() {
+                    @Override
+                    public boolean onProgress(long bytes) {
+                        return true;
+                    }
+                };
+                if (media.file.equals(view.getTag()) && view.getDrawable() != null) {
+                    return; // bitmap can be out of cache, but still attached to image view; since media images are stable we can assume the whatever is loaded for current tag would'n change
+                }
+                final Callable<Bitmap> loader = () -> {
+                    Bitmap bitmap = null;
+                    if (media.url != null) {
+                        boolean isStreamingVideo = media.blobVersion == Media.BLOB_VERSION_CHUNKED && media.type == Media.MEDIA_TYPE_VIDEO && media.blobSize > ServerProps.getInstance().getStreamingInitialDownloadSize();
+                        if (isStreamingVideo) {
+                            Downloader.runForInitialChunks(media.rowId, media.url, media.encKey, media.chunkSize, media.blobSize, media.file, downloadListener);
+                        } else {
+                            final File encFile = media.encFile != null ? media.encFile : FileStore.getInstance().getTmpFile(RandomId.create() + ".enc");
+                            media.encFile = encFile;
+                            Downloader.run(media.url, media.encKey, media.encSha256hash, media.type, media.blobVersion, media.chunkSize, media.blobSize, encFile, media.file, downloadListener, mediaLogId);
+                            if (!encFile.delete()) {
+                                Log.w("MediaThumbnailLoader: failed to delete temp enc file for " + mediaLogId);
+                            }
+                        }
+                        if (media.file.exists()) {
+                            bitmap = MediaUtils.decode(media.file, media.type, dimensionLimit);
+                        } else {
+                            Log.i("MediaThumbnailLoader:load file " + media.file.getAbsolutePath() + " doesn't exist");
+                        }
+                    }
+                    if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
+                        Log.i("MediaThumbnailLoader:load cannot decode " + media.file);
+                        return INVALID_BITMAP;
+                    } else {
+                        return bitmap;
+                    }
+                };
+                load(view, loader, displayer, media.file, cache);
+            }
+        };
         chatLoader = new ChatLoader();
         contactLoader = new ContactLoader();
         seenByLoader = new SeenByLoader();

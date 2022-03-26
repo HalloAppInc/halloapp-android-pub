@@ -77,7 +77,7 @@ public class Post extends ContentItem {
         return new Post(rowId, senderUserId, postId, timestamp, transferred, seen, type, text);
     }
 
-    public final @TransferredState int transferred;
+    public @TransferredState int transferred;
     public @SeenState int seen;
     public @Type int type;
     public @Usage int usage;

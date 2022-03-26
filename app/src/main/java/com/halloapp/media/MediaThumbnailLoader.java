@@ -22,11 +22,11 @@ import java.util.concurrent.Callable;
 
 public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, File> {
 
-    private final LruCache<File, Bitmap> cache;
-    private final int placeholderColor;
+    protected final LruCache<File, Bitmap> cache;
+    protected final int placeholderColor;
     private final int dimensionLimit;
 
-    private static final Bitmap INVALID_BITMAP = Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565);
+    protected static final Bitmap INVALID_BITMAP = Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565);
 
     @MainThread
     public MediaThumbnailLoader(@NonNull Context context, int dimensionLimit) {
