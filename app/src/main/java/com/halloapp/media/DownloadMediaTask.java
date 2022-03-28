@@ -121,6 +121,7 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                     continue;
                 }
                 int attempts = 0;
+                int hashMismatches = 0;
                 boolean retry;
                 boolean success;
                 do {
@@ -233,6 +234,14 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                                     Log.d("DownloadMediaTask: hashes match but decrypt failed; marking transfer as failed for " + mediaLogId);
                                     media.transferred = Media.TRANSFERRED_FAILURE;
                                     contentItem.setMediaTransferred(media, contentDb);
+                                } else {
+                                    Log.d("DownloadMediaTask: hashes did not match; increasing hash mismatch count for " + mediaLogId);
+                                    hashMismatches++;
+                                    if (hashMismatches == MAX_RETRY_ATTEMPTS) {
+                                        Log.w("DownloadMediaTask: every attempt resulted in hash mismatch; marking transfer as failed for " + mediaLogId);
+                                        media.transferred = Media.TRANSFERRED_FAILURE;
+                                        contentItem.setMediaTransferred(media, contentDb);
+                                    }
                                 }
                             } catch (IOException | NoSuchAlgorithmException e2) {
                                 Log.w("Failed to compute ciphertext hash on decrypt failure", e2);
