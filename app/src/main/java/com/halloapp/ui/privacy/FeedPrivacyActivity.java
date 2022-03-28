@@ -41,10 +41,14 @@ public class FeedPrivacyActivity extends HalloActivity implements EasyPermission
 
     public static final String EXTRA_FOR_SINGLE_POST = "single_post";
 
-    public static Intent editFeedPrivacy(@NonNull Context context) {
+    public static Intent editFeedPrivacy(@NonNull Context context, boolean forOnePost) {
         Intent i = new Intent(context, FeedPrivacyActivity.class);
-        i.putExtra(EXTRA_FOR_SINGLE_POST, true);
+        i.putExtra(EXTRA_FOR_SINGLE_POST, forOnePost);
         return i;
+    }
+
+    public static Intent editFeedPrivacy(@NonNull Context context) {
+        return editFeedPrivacy(context, true);
     }
 
     private FeedPrivacyViewModel viewModel;

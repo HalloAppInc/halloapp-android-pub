@@ -30,7 +30,9 @@ import com.halloapp.id.GroupId;
 import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.media.VoiceNotePlayer;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ContentViewHolderParent;
+import com.halloapp.ui.FavoritesInfoDialogFragment;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.PostOptionsBottomSheetDialogFragment;
 import com.halloapp.ui.ViewHolderWithLifecycle;
@@ -45,6 +47,7 @@ import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.PostLinkPreviewView;
 import com.halloapp.widget.SeenDetectorLayout;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.util.List;
 
@@ -60,6 +63,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final ImageView statusView;
     private final View progressView;
     private final View moreOptionsView;
+    private final ImageView privacyIndicator;
     protected final ViewPager2 mediaPagerView;
     protected final CircleIndicator3 mediaPagerIndicator;
     private final LimitingTextView textView;
@@ -121,6 +125,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         nameView = itemView.findViewById(R.id.name);
         groupView = itemView.findViewById(R.id.group_name);
         timeView = itemView.findViewById(R.id.time);
+        privacyIndicator = itemView.findViewById(R.id.privacy_indicator);
         decryptStatusView = itemView.findViewById(R.id.decrypt_status);
         statusView = itemView.findViewById(R.id.status);
         progressView = itemView.findViewById(R.id.progress);
@@ -149,6 +154,12 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                 } else {
                     DownloadMediaTask.download(post, fileStore, contentDb);
                 }
+            });
+        }
+
+        if (privacyIndicator != null) {
+            privacyIndicator.setOnClickListener(v -> {
+                parent.showDialogFragment(new FavoritesInfoDialogFragment());
             });
         }
 
@@ -220,6 +231,11 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             nameView.setText(nameView.getContext().getString(R.string.me));
         } else {
             parent.getContactLoader().load(nameView, post.senderUserId, parent.shouldOpenProfileOnNamePress());
+        }
+        if (PrivacyList.Type.ONLY.equals(post.getAudienceType()) && ServerProps.getInstance().getIsInternalUser()) {
+            privacyIndicator.setVisibility(View.VISIBLE);
+        } else {
+            privacyIndicator.setVisibility(View.GONE);
         }
         if (showGroupName) {
             if (post.getParentGroup() != null) {
