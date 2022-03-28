@@ -1183,21 +1183,21 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="preparing_logs">"Preparando registros…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
-    <string name="post_tombstone_placeholder">"Waiting for this post. This may take a while. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="post_tombstone_placeholder">"Aguardando esta postagem. Isso pode demorar um pouco. &lt;a href=\"saiba-mais\"&gt;Saiba mais&lt;/a&gt;."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
-    <string name="comment_tombstone_placeholder">"Waiting for this comment. This may take a while. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="comment_tombstone_placeholder">"Aguardando este comentário. Isso pode demorar um pouco. &lt;a href=\"saiba-mais\"&gt;Saiba mais&lt;/a&gt;."</string>
 
     <!-- Name for notifications channel for missed calls -->
-    <string name="missed_call_notifications_channel_name">"Missed call notifications"</string>
+    <string name="missed_call_notifications_channel_name">"Notificações de chamadas perdidas"</string>
 
     <!-- Single new comment notification text. %s replaced with name of comment sender -->
-    <string name="new_comment_notification">"New comment from %s"</string>
+    <string name="new_comment_notification">"Novo comentário de %s"</string>
 
     <!-- Text in notifications for comments from potentially multiple people. %1$d replaced with number of comments, %2$s replaced with list of names -->
     <plurals name="new_comments_list_notification">
-        <item quantity="one">"%1$d new comment from %2$s"</item>
-        <item quantity="other">"%1$d new comment from %2$s"</item>
+        <item quantity="one">"%1$d novo comentário de %2$s"</item>
+        <item quantity="other">"%1$d novos comentários de %2$s"</item>
     </plurals>
     <string name="share_externally">"Compartilhar externamente"</string>
     <string name="incoming_call_notification_title">"Recebendo ligação"</string>

@@ -508,7 +508,7 @@ Version: %2$s
     <string name="not_now">"Jetzt nicht"</string>
     <string name="continue_button">"Weiter"</string>
     <string name="invite_link_load_failed">"Link zur Gruppeneinladung kann nicht geöffnet werden"</string>
-    <string name="message_tombstone_placeholder">"Warten auf Eingang dieser Nachricht. Dies kann eine Weile dauern. "<![CDATA[<a href="learn-more">Mehr erfahren</a>]]>"."</string>
+    <string name="message_tombstone_placeholder">"Warte auf diese Nachricht. Das kann einen Moment dauern. "<![CDATA[<a href="learn-more">Mehr erfahren</a>]]>"."</string>
     <string name="failed_no_longer_member">"Du bist nicht mehr ein Mitglied dieser Gruppe"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -1243,21 +1243,21 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="preparing_logs">"Vorbereiten der Log-Datei…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
-    <string name="post_tombstone_placeholder">"Waiting for this post. This may take a while. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="post_tombstone_placeholder">"Warte auf diesen Beitrag. Das kann einen Moment dauern. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
-    <string name="comment_tombstone_placeholder">"Waiting for this comment. This may take a while. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="comment_tombstone_placeholder">"Warte auf diesen Kommentar. Das kann einen Moment dauern. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;."</string>
 
     <!-- Name for notifications channel for missed calls -->
-    <string name="missed_call_notifications_channel_name">"Missed call notifications"</string>
+    <string name="missed_call_notifications_channel_name">"Benachrichtigungen über verpasste Anrufe"</string>
 
     <!-- Single new comment notification text. %s replaced with name of comment sender -->
-    <string name="new_comment_notification">"New comment from %s"</string>
+    <string name="new_comment_notification">"Neuer Kommentar von %s"</string>
 
     <!-- Text in notifications for comments from potentially multiple people. %1$d replaced with number of comments, %2$s replaced with list of names -->
     <plurals name="new_comments_list_notification">
-        <item quantity="one">"%1$d new comment from %2$s"</item>
-        <item quantity="other">"%1$d new comment from %2$s"</item>
+        <item quantity="one">"%1$d neuer Kommentar von %2$s"</item>
+        <item quantity="other">"%1$d neue Kommentare von %2$s"</item>
     </plurals>
     <string name="share_externally">"Außerhalb von HalloApp teilen"</string>
     <string name="incoming_call_notification_title">"Eingehender Anruf"</string>
