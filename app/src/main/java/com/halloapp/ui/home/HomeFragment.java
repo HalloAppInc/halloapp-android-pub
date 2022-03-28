@@ -119,8 +119,9 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
 
     @Override
     public void resetScrollPosition() {
-        layoutManager.scrollToPosition(0);
+        scrollUpOnDataLoaded = true;
         restoreStateOnDataLoaded = false;
+        viewModel.reloadPostsAt(Long.MAX_VALUE);
     }
 
     @Override
