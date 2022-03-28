@@ -12,6 +12,7 @@ import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -510,6 +511,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         callManager.attachCapturer(videoCapturer, false);
     }
 
+    @MainThread
     private void onSpeakerPhone() {
         Log.i("CallActivity onSpeakerPhone called");
         callViewModel.toggleSpeakerPhone();

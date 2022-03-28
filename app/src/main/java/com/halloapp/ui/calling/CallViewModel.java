@@ -2,6 +2,7 @@ package com.halloapp.ui.calling;
 
 import android.app.Application;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -217,6 +218,7 @@ public class CallViewModel extends ViewModel implements CallObserver {
         callManager.toggleMicrophoneMute();
     }
 
+    @MainThread
     public void toggleSpeakerPhone() {
         callManager.toggleSpeakerPhone();
     }
