@@ -53,6 +53,7 @@ import com.halloapp.proto.server.WebRtcSessionDescription;
 import com.halloapp.ui.calling.CallActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.ToneUtils;
 import com.halloapp.util.VibrationUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
@@ -106,6 +107,9 @@ import io.michaelrocks.libphonenumber.android.Phonenumber;
 
 public class CallManager {
 
+    public static final double HOLD_TONE_FREQ_HZ = 440.0;
+    public static final double[] HOLD_TONE_PATTERN = {0.4, 0.1};
+
     @IntDef({State.IDLE, State.CALLING, State.CALLING_RINGING, State.IN_CALL_CONNECTING, State.IN_CALL, State.INCOMING_RINGING, State.END})
     @Retention(RetentionPolicy.SOURCE)
     public @interface State {
@@ -137,6 +141,8 @@ public class CallManager {
     private boolean isMicrophoneMuted = false;
     private boolean isSpeakerPhoneOn = false;
     private boolean isCameraMuted = false;
+    private boolean isOnLocalHold = false;
+    private boolean isOnRemoteHold = false;
 
     private MediaConstraints audioConstraints;
     private AudioSource audioSource;
@@ -163,6 +169,8 @@ public class CallManager {
     private CallConfig callConfig;
     private final CallAudioManager audioManager;
     private final OutgoingRingtone outgoingRingtone;
+    @Nullable
+    private android.media.AudioTrack holdTone;
 
     private String callId;
     private UserId peerUid;
@@ -528,6 +536,7 @@ public class CallManager {
         int oldState = this.state;
         state = State.IDLE;
         isInCall.postValue(false);
+        releaseHoldTone();
 
         if (oldState == State.IN_CALL || oldState == State.IN_CALL_CONNECTING) {
             Log.i("CallManager: end_call sound");
@@ -692,6 +701,49 @@ public class CallManager {
         this.telecomConnection = telecomConnection;
     }
 
+    public void onHold(@NonNull String callId) {
+        Log.i("CallManager: " + callId + " onHold");
+        checkWrongCall(callId, "telecom.onHold");
+        if (remoteVideoTrack != null) {
+            remoteVideoTrack.setEnabled(false);
+        }
+        if (remoteAudioTrack != null) {
+            remoteAudioTrack.setEnabled(false);
+        }
+        if (Build.VERSION.SDK_INT >= 26) {
+            if (localAudioTrack != null) {
+                localAudioTrack.setEnabled(false);
+            }
+            telecomConnection.setOnHold();
+        } else {
+            audioManager.setMicrophoneMute(true);
+        }
+        this.callsApi.sendHoldCall(callId, peerUid, true);
+        this.isOnLocalHold = true;
+    }
+
+    public void onUnhold(@NonNull String callId) {
+        Log.i("CallManager: " + callId + " onUnhold");
+        checkWrongCall(callId, "telecom.onUnhold");
+        if (remoteVideoTrack != null) {
+            remoteVideoTrack.setEnabled(true);
+        }
+        // TODO(nikola): support stopping and starting the capturer
+        if (remoteAudioTrack != null) {
+            remoteAudioTrack.setEnabled(true);
+        }
+        if (Build.VERSION.SDK_INT >= 26) {
+            if (localAudioTrack != null) {
+                localAudioTrack.setEnabled(!isMicrophoneMuted);
+            }
+            telecomConnection.setActive();
+        } else {
+            audioManager.setMicrophoneMute(isMicrophoneMuted);
+        }
+        this.callsApi.sendHoldCall(callId, peerUid, false);
+        this.isOnLocalHold = false;
+    }
+
     public synchronized void handleCallRinging(@NonNull String callId, @NonNull UserId peerUid,@NonNull Long timestamp) {
         Log.i("CallManager: call_ringing callId: " + callId + " peerUid: " + peerUid + " ts: " + timestamp);
         if (checkWrongCall(callId, "call_ringing")) {
@@ -830,6 +882,19 @@ public class CallManager {
         }
     }
 
+    public void handleHoldCall(@NonNull String callId, @NonNull UserId peerUid, boolean hold) {
+        checkWrongCall(callId, "hold_call");
+        Log.i("CallManager.handleHoldCall " + callId);
+        isOnRemoteHold = hold;
+        notifyOnHold(hold);
+        mainHandler.post(() -> {
+            Context context = appContext.get();
+            String text = context.getString(hold ? R.string.call_other_side_on_hold : R.string.call_other_side_on_unhold);
+            Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+            playHoldTone();
+        });
+    }
+
     @MainThread
     public synchronized boolean acceptCall(@Nullable HAVideoCapturer videoCapturer) {
         if (this.isInitiator) {
@@ -898,6 +963,7 @@ public class CallManager {
         builder.setVideoDecoderFactory(decoderFactory);
         builder.setOptions(null);
         factory = builder.createPeerConnectionFactory();
+        Log.i("CallManager: PeerConnectionFactory created");
     }
 
     private void createAVTracks() {
@@ -1496,6 +1562,14 @@ public class CallManager {
         }
     }
 
+    private void notifyOnHold(boolean hold) {
+        synchronized (observers) {
+            for (CallObserver o : observers) {
+                o.onHold(hold);
+            }
+        }
+    }
+
     private void startRingingTimeoutTimer() {
         synchronized (timer) {
             if (ringingTimeoutTimerTask != null) {
@@ -1753,5 +1827,20 @@ public class CallManager {
         contentDb.addMessage(message, true, () -> {
             Notifications.getInstance(appContext.get()).updateMissedCallNotifications();
         });
+    }
+
+    private void playHoldTone() {
+        releaseHoldTone();
+        holdTone = ToneUtils.generateTone(HOLD_TONE_FREQ_HZ, HOLD_TONE_PATTERN);
+        holdTone.play();
+    }
+
+    private void releaseHoldTone() {
+        if (holdTone != null) {
+            holdTone.pause();
+            holdTone.release();
+            holdTone.flush();
+            holdTone = null;
+        }
     }
 }

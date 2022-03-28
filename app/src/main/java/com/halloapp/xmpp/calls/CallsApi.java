@@ -17,6 +17,7 @@ import com.halloapp.proto.server.CallConfig;
 import com.halloapp.proto.server.CallRinging;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
+import com.halloapp.proto.server.HoldCall;
 import com.halloapp.proto.server.IceRestartAnswer;
 import com.halloapp.proto.server.IceRestartOffer;
 import com.halloapp.proto.server.IncomingCall;
@@ -219,6 +220,16 @@ public class CallsApi extends Connection.Observer {
         });
     }
 
+    @Override
+    public void onHoldCall(@NonNull UserId peerUid, @NonNull HoldCall holdCall, @NonNull String ackId) {
+        callsApiExecutor.execute(() -> {
+            String callId = holdCall.getCallId();
+            boolean hold = holdCall.getHold();
+            callManager.handleHoldCall(callId, peerUid, hold);
+            connection.sendAck(ackId);
+        });
+    }
+
     public Observable<StartCallResponseIq> startCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType, @NonNull String webrtcOfferString) throws CryptoException {
         WebRtcSessionDescription webrtcOffer = encryptCallPayload(webrtcOfferString, peerUid);
         Log.i("CallsApi: encrypted offer: " + webrtcOffer.getEncPayload().size());
@@ -335,6 +346,21 @@ public class CallsApi extends Connection.Observer {
                 .setId(id)
                 .setType(Msg.Type.CALL)
                 .setMuteCall(builder)
+                .setToUid(peerUid.rawIdLong())
+                .build();
+        sendCallMsg(msg);
+    }
+
+    public void sendHoldCall(@NonNull String callId, @NonNull UserId peerUid, boolean hold) {
+        HoldCall.Builder builder = HoldCall.newBuilder()
+                .setCallId(callId)
+                .setHold(hold);
+
+        String id = RandomId.create();
+        Msg msg = Msg.newBuilder()
+                .setId(id)
+                .setType(Msg.Type.CALL)
+                .setHoldCall(builder)
                 .setToUid(peerUid.rawIdLong())
                 .build();
         sendCallMsg(msg);

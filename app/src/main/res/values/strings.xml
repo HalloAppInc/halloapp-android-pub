@@ -925,6 +925,8 @@
     <string name="connecting">Connecting…</string>
     <!-- Displayed on the call screen to show what the call is being initiated -->
     <string name="calling">Calling…</string>
+    <!-- Displayed on the call screen when the call is on hold -->
+    <string name="call_on_hold">On hold</string>
     <!-- The title of the notification for incoming voice calls -->
     <string name="incoming_voice_call_notification_title">Incoming voice call</string>
     <!-- The title of the notification for incoming video calls -->
@@ -955,4 +957,8 @@
     <string name="address_book_action_call">Voice call %s</string>
     <!-- Action shown in user's address book for option to send a message, %s replaced with the phone number -->
     <string name="address_book_action_message">Message %s</string>
+    <!-- Toast displayed when the other side puts the call on hold -->
+    <string name="call_other_side_on_hold">Call is on hold</string>
+    <!-- Toast displayed when the other side removes the call hold -->
+    <string name="call_other_side_on_unhold">Call has resumed</string>
 </resources>

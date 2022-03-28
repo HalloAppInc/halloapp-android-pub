@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 
 import com.halloapp.AppContext;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.util.logs.Log;
 
@@ -40,7 +41,7 @@ public class HaTelecomConnectionService extends ConnectionService {
         if (Build.VERSION.SDK_INT >= 25) {
             telecomConnection.setConnectionProperties(Connection.PROPERTY_SELF_MANAGED | Connection.PROPERTY_HIGH_DEF_AUDIO);
         }
-        telecomConnection.setConnectionCapabilities(Connection.CAPABILITY_MUTE);
+        telecomConnection.setConnectionCapabilities(connectionCapabilities());
 
         telecomConnection.setCallerDisplayName(callerDisplayName, TelecomManager.PRESENTATION_ALLOWED);
         Uri address = Uri.fromParts("tel", callerPhone, null);
@@ -89,7 +90,7 @@ public class HaTelecomConnectionService extends ConnectionService {
         if (Build.VERSION.SDK_INT >= 25) {
             telecomConnection.setConnectionProperties(Connection.PROPERTY_SELF_MANAGED | Connection.PROPERTY_HIGH_DEF_AUDIO);
         }
-        telecomConnection.setConnectionCapabilities(Connection.CAPABILITY_MUTE);
+        telecomConnection.setConnectionCapabilities(connectionCapabilities());
 
         telecomConnection.setCallerDisplayName(callerDisplayName, TelecomManager.PRESENTATION_ALLOWED);
         Uri address = Uri.fromParts("tel", callerPhone, null);
@@ -103,6 +104,15 @@ public class HaTelecomConnectionService extends ConnectionService {
         CallManager.getInstance().setTelecomConnection(telecomConnection);
         CallManager.getInstance().finishStartCall();
         return telecomConnection;
+    }
+
+    private static int connectionCapabilities() {
+        int cap = Connection.CAPABILITY_MUTE;
+        if (ServerProps.getInstance().getVideoCallsEnabled()) {
+            Log.i("HaTelecomConnectionService: call will have hold support");
+            cap |= Connection.CAPABILITY_HOLD | Connection.CAPABILITY_SUPPORT_HOLD;
+        }
+        return cap;
     }
 
 }

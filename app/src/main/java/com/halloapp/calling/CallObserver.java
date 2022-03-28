@@ -17,4 +17,6 @@ public interface CallObserver {
     void onSpeakerPhoneOn(boolean on);
 
     void onCallConnected(String callId);
+
+    void onHold(boolean hold);
 }

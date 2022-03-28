@@ -16,9 +16,13 @@ public class ToneUtils {
     }
 
     public static AudioTrack generateTone(double[] freqHz, double[] pattern) {
+        return generateTone(freqHz, pattern, 0);
+    }
+
+    public static AudioTrack generateTone(double[] freqHz, double[] pattern, int durationMs) {
         double totalDuration = 0;
-        for (double duration : pattern) {
-            totalDuration += duration;
+        for (double p : pattern) {
+            totalDuration += p;
         }
 
         int count = (int)(SAMPLE_RATE * totalDuration);
@@ -45,7 +49,14 @@ public class ToneUtils {
                 AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT,
                 count * (Short.SIZE / 8), AudioTrack.MODE_STATIC);
         track.write(samples, 0, count);
-        int loops = 1 + Constants.CALL_RINGING_TIMEOUT_MS / (int)(totalDuration * 1000);
+        int loops;
+        if (durationMs < 0) {
+            loops = -1;
+        } else if (durationMs == 0) {
+            loops = 0;
+        } else {
+            loops = (1 + durationMs) / (int)(totalDuration * 1000);
+        }
         track.setLoopPoints(0, count, loops);
         return track;
     }

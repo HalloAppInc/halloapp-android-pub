@@ -22,6 +22,7 @@ import com.halloapp.proto.server.CallRinging;
 import com.halloapp.proto.server.EndCall;
 import com.halloapp.proto.server.GroupFeedHistory;
 import com.halloapp.proto.server.HistoryResend;
+import com.halloapp.proto.server.HoldCall;
 import com.halloapp.proto.server.IceCandidate;
 import com.halloapp.proto.server.IceRestartAnswer;
 import com.halloapp.proto.server.IceRestartOffer;
@@ -118,6 +119,7 @@ public abstract class Connection {
         public void onIceCandidate(@NonNull UserId peerUid, @NonNull IceCandidate iceCandidate, @NonNull String ackId) {}
         public void onIceRestartOffer(@NonNull UserId peerUid, @NonNull IceRestartOffer iceRestartOffer, @NonNull String ackId) {}
         public void onIceRestartAnswer(@NonNull UserId peerUid, @NonNull IceRestartAnswer iceRestartAnswer, @NonNull String ackId) {}
+        public void onHoldCall(@NonNull UserId peerUid, @NonNull HoldCall holdCall, @NonNull String ackId) {}
     }
 
     public abstract Future<Boolean> connect();

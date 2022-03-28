@@ -108,6 +108,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private TextView nameTextView;
     private TextView titleTextView;
     private Chronometer callTimerView;
+    private TextView onHoldView;
 
     private ImageView muteButtonView;
     @Nullable
@@ -205,6 +206,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         avatarView = findViewById(R.id.avatar);
         nameTextView = findViewById(R.id.name);
         titleTextView = findViewById(R.id.title);
+        onHoldView = findViewById(R.id.call_hold);
         callTimerView = findViewById(R.id.call_timer);
         muteButtonView = findViewById(R.id.in_call_mute);
         speakerButtonView = findViewById(R.id.in_call_speaker);
@@ -222,6 +224,8 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                 onFlipCameraClick();
             });
         }
+
+        onHoldView.setText(" / " + getString(R.string.call_on_hold));
 
         callViewModel.getState().observe(this, state -> {
             ringingView.setVisibility(View.GONE);
@@ -282,6 +286,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
 
         callViewModel.getIsMicrophoneMuted().observe(this, this::updateMicrophoneMutedUI);
         callViewModel.getIsSpeakerPhoneOn().observe(this, this::updateSpeakerPhoneUI);
+        callViewModel.getIsOnHold().observe(this, this::updateOnHoldUi);
 
         avatarLoader.load(avatarView, peerUid, false);
         contactLoader.load(nameTextView, peerUid, false);
@@ -522,6 +527,11 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         if (speakerButtonView != null) {
             speakerButtonView.setSelected(on);
         }
+    }
+
+    private void updateOnHoldUi(boolean hold) {
+        Log.i("CallActivity updateOnHoldUi hold: " + hold);
+        onHoldView.setVisibility(hold ? View.VISIBLE : View.GONE);
     }
 
     @Override

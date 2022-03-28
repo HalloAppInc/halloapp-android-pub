@@ -10,6 +10,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.halloapp.AppContext;
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.util.ToneUtils;
 import com.halloapp.util.logs.Log;
@@ -116,7 +117,7 @@ public class OutgoingRingtone {
         }
 
         Log.i("OutgoingRingtone: will play " + ringtoneSpec.toString());
-        audioTrack = ToneUtils.generateTone(ringtoneSpec.freqHz, ringtoneSpec.pattern);
+        audioTrack = ToneUtils.generateTone(ringtoneSpec.freqHz, ringtoneSpec.pattern, Constants.CALL_RINGING_TIMEOUT_MS);
         audioTrack.play();
     }
 

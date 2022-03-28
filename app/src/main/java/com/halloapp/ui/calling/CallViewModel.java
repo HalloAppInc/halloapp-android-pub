@@ -48,6 +48,7 @@ public class CallViewModel extends ViewModel implements CallObserver {
     private final MutableLiveData<Integer> state = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isMicrophoneMuted = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isSpeakerPhoneOn = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isOnHold = new MutableLiveData<>(false);
 
     private final CallManager callManager;
 
@@ -109,6 +110,11 @@ public class CallViewModel extends ViewModel implements CallObserver {
     @NonNull
     public LiveData<Boolean> getIsSpeakerPhoneOn() {
         return isSpeakerPhoneOn;
+    }
+
+    @NonNull
+    public LiveData<Boolean> getIsOnHold() {
+        return isOnHold;
     }
 
     public boolean inCall() {
@@ -181,6 +187,11 @@ public class CallViewModel extends ViewModel implements CallObserver {
     public void onCallConnected(String callId) {
         Log.i("onCallConnected");
         state.postValue(CallManager.State.IN_CALL);
+    }
+
+    @Override
+    public void onHold(boolean hold) {
+        isOnHold.postValue(hold);
     }
 
     public void onIncomingCall() {

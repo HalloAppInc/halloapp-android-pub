@@ -70,14 +70,13 @@ public class HaTelecomConnection extends Connection {
     @Override
     public void onHold() {
         Log.i("HaTelecomConnection.onHold()");
-        // for now we don't allow calls to be put on hold
-        super.onHold();
+        callManager.onHold(callId);
     }
 
     @Override
     public void onUnhold() {
         Log.i("HaTelecomConnection.onUnhold()");
-        super.onUnhold();
+        callManager.onUnhold(callId);
     }
 
     @Override

@@ -15,6 +15,7 @@ import com.halloapp.proto.server.AnswerCall;
 import com.halloapp.proto.server.CallRinging;
 import com.halloapp.proto.server.EndCall;
 import com.halloapp.proto.server.HistoryResend;
+import com.halloapp.proto.server.HoldCall;
 import com.halloapp.proto.server.IceCandidate;
 import com.halloapp.proto.server.IceRestartAnswer;
 import com.halloapp.proto.server.IceRestartOffer;
@@ -469,6 +470,14 @@ public class ConnectionObservers {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onIceRestartAnswer(peerUid, iceRestartAnswer, ackId);
+            }
+        }
+    }
+
+    public void notifyHoldCall(@NonNull UserId peerUid, @NonNull HoldCall holdCall, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onHoldCall(peerUid, holdCall, ackId);
             }
         }
     }
