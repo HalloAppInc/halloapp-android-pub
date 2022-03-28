@@ -118,7 +118,6 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
-import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -127,13 +126,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -362,6 +359,37 @@ public class ConnectionImpl extends Connection {
             };
         }
         sendMsgInternal(msg, callback, resendable);
+    }
+
+    /**
+     * Version of sendMsgInternal that allows for duplicated content ids. This is
+     * because currently we use the content id as the id for the msg.
+     *
+     * Eventually we will migrate these away and this method can be removed
+     *
+     * TODO (clarkc)
+     * @param msg
+     * @param ackHandler
+     */
+    @Deprecated
+    private void sendMsgInternalIgnoreDuplicateId(Msg msg, @Nullable Runnable ackHandler) {
+        MsgCallback callback;
+        if (ackHandler == null) {
+            callback = null;
+        } else {
+            callback = new MsgCallback() {
+                @Override
+                public void onAck() {
+                    ackHandler.run();
+                }
+
+                @Override
+                public void onTimeout() {
+
+                }
+            };
+        }
+        msgRouter.sendMsg(msg, MsgRouter.DEFAULT_MSG_TIMEOUT_MS, callback, false, true);
     }
 
     private void sendMsgInternal(Msg msg, @Nullable Runnable ackHandler) {
@@ -763,7 +791,7 @@ public class ConnectionImpl extends Connection {
                         .setGroupFeedItem(builder.build())
                         .setRerequestCount(ContentDb.getInstance().getOutboundPostRerequestCount(userId, post.id))
                         .build();
-                sendMsgInternal(msg, () -> Log.i("group post rerequest acked " + post.id));
+                sendMsgInternalIgnoreDuplicateId(msg, () -> Log.i("group post rerequest acked " + post.id));
             } catch (CryptoException e) {
                 Log.e("Failed to send rerequested group post", e);
             }
@@ -799,7 +827,7 @@ public class ConnectionImpl extends Connection {
 
         executor.execute(() -> {
             Msg msg = Msg.newBuilder().setId(historyResend.getId()).setHistoryResend(historyResend).build();
-            sendMsgInternal(msg, () -> Log.i("group history resend rerequest acked " + historyResend.getId()));
+            sendMsgInternalIgnoreDuplicateId(msg, () -> Log.i("group history resend rerequest acked " + historyResend.getId()));
         });
     }
 
@@ -942,7 +970,7 @@ public class ConnectionImpl extends Connection {
                         .setGroupFeedItem(builder.build())
                         .setRerequestCount(ContentDb.getInstance().getOutboundCommentRerequestCount(userId, comment.id))
                         .build();
-                sendMsgInternal(msg, () -> Log.i("rerequested group comment acked " + comment.id));
+                sendMsgInternalIgnoreDuplicateId(msg, () -> Log.i("rerequested group comment acked " + comment.id));
             } catch (CryptoException e) {
                 Log.e("Failed to send rerequested group comment", e);
             }
@@ -953,7 +981,7 @@ public class ConnectionImpl extends Connection {
         Msg msg = Msg.newBuilder()
                 .setGroupFeedHistory(groupFeedHistory).setId(id).setType(Msg.Type.NORMAL).setToUid(Long.parseLong(userId.rawId()))
                 .build();
-        sendMsgInternal(msg, () -> Log.i("History resend made it to server for " + userId));
+        sendMsgInternalIgnoreDuplicateId(msg, () -> Log.i("History resend made it to server for " + userId));
     }
 
     @Override
@@ -1003,7 +1031,7 @@ public class ConnectionImpl extends Connection {
                     .setToUid(Long.parseLong(message.chatId.rawId()))
                     .setChatStanza(ChatMessageProtocol.getInstance().serializeMessage(message, recipientUserId, signalSessionSetupInfo))
                     .build();
-            sendMsgInternal(msg, () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
+            sendMsgInternalIgnoreDuplicateId(msg, () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
         });
     }
 
@@ -2247,6 +2275,10 @@ public class ConnectionImpl extends Connection {
         }
 
         public void sendMsg(Msg msg, long timeout, @Nullable MsgCallback msgCallback, boolean resendable) {
+            sendMsg(msg, timeout, msgCallback, resendable, false);
+        }
+
+        public void sendMsg(Msg msg, long timeout, @Nullable MsgCallback msgCallback, boolean resendable, boolean permitDuplicate) {
             Packet packet = buildPacket(msg);
             final String id = msg.getId();
             TimerTask task = new TimerTask() {
@@ -2269,7 +2301,16 @@ public class ConnectionImpl extends Connection {
             synchronized (MsgRouter.this) {
                 if (pendingMessages.containsKey(id)) {
                     Log.e("connection: duplicate outgoing msg id " + id);
-                    throw new RuntimeException("an outgoing msg with the same id=" + id + " already exists!");
+                    if (permitDuplicate) {
+                        // TODO (clarkc): disallow duplicates when we no longer leverage content id as msg id in some cases
+                        PendingMsg existing = pendingMessages.remove(id);
+                        if (existing != null) {
+                            existing.timeoutTask.cancel();
+                        }
+                        Log.e("connection: allowing duplicate id");
+                    } else {
+                        throw new RuntimeException("an outgoing msg with the same id=" + id + " already exists!");
+                    }
                 }
                 pendingMessages.put(id, pendingMsg);
                 timer.schedule(task, timeout);
