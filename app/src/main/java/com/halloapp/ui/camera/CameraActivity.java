@@ -5,8 +5,10 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Outline;
 import android.graphics.drawable.Drawable;
+import android.hardware.camera2.CameraCharacteristics;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,10 +30,15 @@ import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
+import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+import androidx.camera.camera2.interop.Camera2CameraInfo;
+import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 import androidx.camera.core.AspectRatio;
 import androidx.camera.core.Camera;
+import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraInfoUnavailableException;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.FocusMeteringAction;
@@ -41,15 +48,20 @@ import androidx.camera.core.MeteringPoint;
 import androidx.camera.core.MeteringPointFactory;
 import androidx.camera.core.Preview;
 import androidx.camera.core.SurfaceOrientedMeteringPointFactory;
+import androidx.camera.core.UseCase;
 import androidx.camera.core.VideoCapture;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.exifinterface.media.ExifInterface;
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.content.Media;
@@ -69,6 +81,8 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -129,9 +143,12 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private AnimatedVectorDrawableCompat recordStartDrawable;
     private AnimatedVectorDrawableCompat recordStopDrawable;
 
+    private boolean isLimitedLevelSupported = true;
     private boolean isUsingBackCamera = true;
     private boolean isFlashOn = false;
     private boolean isRecordingVideo = false;
+    private boolean isTakingPreviewSnapshot = false;
+    private boolean isPreviewFlashEnabled = false;
 
     private int touchSlop;
     private boolean isCaptureButtonDown = false;
@@ -195,7 +212,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         });
         captureButton.setOnLongClickListener(v -> {
             Log.d("CameraActivity: capture button onLongClick");
-            if (!isRecordingVideo) {
+            if (!isRecordingVideo && !isTakingPreviewSnapshot) {
                 startRecordingVideo();
             }
             return false;
@@ -365,20 +382,35 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             flipCameraButton.setVisibility(View.INVISIBLE);
         }
 
-        final Preview preview = new Preview.Builder().setTargetAspectRatio(ASPECT_RATIO).build();
+        isLimitedLevelSupported = true;
+        if (hasFrontCamera) {
+            isLimitedLevelSupported = isLimitedLevelSupported && isCameraHardwareLevelLimitedOrBetter(cameraProvider, frontCameraSelector);
+        }
+        if (hasBackCamera) {
+            isLimitedLevelSupported = isLimitedLevelSupported && isCameraHardwareLevelLimitedOrBetter(cameraProvider, backCameraSelector);
+        }
+        Log.d("CameraActivity: bindPreview isLegacyLevelSupported = " + isLimitedLevelSupported);
 
+        final ArrayList<UseCase> useCases = new ArrayList<>();
+        if (isLimitedLevelSupported) {
+            imageCapture = setupImageCapture();
+            useCases.add(imageCapture);
+        }
         videoCapture = setupVideoCapture();
-        imageCapture = setupImageCapture();
-        final CameraSelector cameraSelector = isUsingBackCamera ? backCameraSelector : frontCameraSelector;
-
+        useCases.add(videoCapture);
+        final Preview preview = new Preview.Builder().setTargetAspectRatio(ASPECT_RATIO).build();
         preview.setSurfaceProvider(cameraPreviewView.getSurfaceProvider());
+        useCases.add(preview);
 
-        camera = cameraProvider.bindToLifecycle(this, cameraSelector, imageCapture, videoCapture, preview);
+        final CameraSelector cameraSelector = isUsingBackCamera ? backCameraSelector : frontCameraSelector;
+        camera = cameraProvider.bindToLifecycle(this, cameraSelector, useCases.toArray(new UseCase[0]));
 
         final boolean isFlashSupported = camera.getCameraInfo().hasFlashUnit();
         final boolean isFlashEnabled = isFlashSupported && isFlashOn;
         toggleFlashButton.setVisibility(isFlashSupported ? View.VISIBLE : View.INVISIBLE);
-        imageCapture.setFlashMode(isFlashEnabled ? ImageCapture.FLASH_MODE_ON : ImageCapture.FLASH_MODE_OFF);
+        if (imageCapture != null) {
+            imageCapture.setFlashMode(isFlashEnabled ? ImageCapture.FLASH_MODE_ON : ImageCapture.FLASH_MODE_OFF);
+        }
 
         cameraPreviewView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @SuppressLint("ClickableViewAccessibility")
@@ -561,11 +593,140 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         return purpose == PURPOSE_COMPOSE;
     }
 
-    void takePhoto() {
+    @OptIn(markerClass = ExperimentalCamera2Interop.class)
+    boolean isCameraHardwareLevelLimitedOrBetter(@NonNull ProcessCameraProvider cameraProvider, @NonNull CameraSelector cameraSelector) {
+        List<CameraInfo> filteredCameraInfos = cameraSelector.filter(cameraProvider.getAvailableCameraInfos());
+        if (!filteredCameraInfos.isEmpty()) {
+            final Integer deviceLevel = Camera2CameraInfo.from(filteredCameraInfos.get(0)).getCameraCharacteristic(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
+            if (deviceLevel != null) {
+                if (deviceLevel == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED||
+                        deviceLevel == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL) {
+                    return true;
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    if (deviceLevel == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_EXTERNAL) {
+                        return false;
+                    }
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    return deviceLevel >= CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_3;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void applyExifOrientation(@NonNull File imageFile, int angle) {
+        if (angle == 0 || angle % 90 != 0) {
+            return;
+        }
+        int sector = (angle % 360) / 90;
+        if (sector < 0) {
+            sector += 4;
+        }
+        final int[] exif_sector_table = new int[] {
+                ExifInterface.ORIENTATION_NORMAL,
+                ExifInterface.ORIENTATION_ROTATE_90,
+                ExifInterface.ORIENTATION_ROTATE_180,
+                ExifInterface.ORIENTATION_ROTATE_270,
+        };
+        try {
+            ExifInterface exifInterface = new ExifInterface(imageFile);
+            exifInterface.setAttribute(ExifInterface.TAG_ORIENTATION, Integer.toString(exif_sector_table[sector]));
+            exifInterface.saveAttributes();
+        } catch (IOException e) {
+            Log.e("CameraActivity: applyExifOrientation", e);
+        }
+    }
+
+    private void takePreviewSnapshot() {
+        if (cameraPreviewView == null || isRecordingVideo || isTakingPreviewSnapshot) {
+            return;
+        }
+        isTakingPreviewSnapshot = true;
+        Log.d("CameraActivity: takePreviewSnapshot");
+        clearTempMediaFile();
+        mediaFile = generateTempMediaFile(Media.MEDIA_TYPE_IMAGE);
+
+        isPreviewFlashEnabled = camera.getCameraInfo().hasFlashUnit() && isFlashOn;
+        if (isPreviewFlashEnabled) {
+            final ListenableFuture<Void> torchEnabledFuture = camera.getCameraControl().enableTorch(true);
+            Futures.addCallback(
+                    torchEnabledFuture,
+                    new FutureCallback<Void>() {
+                        @Override
+                        public void onSuccess(Void result) {
+                            saveAndHandlePreviewSnapshot();
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Throwable throwable) {
+                            Log.e("CameraActivity: takePreviewSnapshot error " + throwable);
+                            showErrorMessage(getResources().getString(R.string.camera_error_photo), false);
+                            cleanAfterPreviewSnapshot();
+                        }
+                    },
+                    ContextCompat.getMainExecutor(this)
+            );
+        } else {
+            saveAndHandlePreviewSnapshot();
+        }
+    }
+
+    private void saveAndHandlePreviewSnapshot() {
+        final Bitmap bitmap = cameraPreviewView.getBitmap();
+        if (bitmap == null) {
+            Log.e("CameraActivity: saveAndHandlePreviewSnapshot could not create bitmap from preview");
+            showErrorMessage(getResources().getString(R.string.camera_error_photo), false);
+            cleanAfterPreviewSnapshot();
+        } else {
+            bgWorkers.execute(() -> {
+                try (final FileOutputStream fileOutputStream = new FileOutputStream(mediaFile)) {
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, fileOutputStream);
+                    fileOutputStream.close();
+                    applyExifOrientation(mediaFile, orientationAngle);
+                    final Uri uri = Uri.fromFile(mediaFile);
+                    Log.d("CameraActivity: saveAndHandlePreviewSnapshot image created " + uri);
+                    handleMediaUri(uri);
+                } catch (IOException exception) {
+                    Log.e("CameraActivity: saveAndHandlePreviewSnapshot error " + exception);
+                    showErrorMessage(getResources().getString(R.string.camera_error_photo), false);
+                } finally {
+                    cleanAfterPreviewSnapshot();
+                }
+            });
+        }
+    }
+
+    private void cleanAfterPreviewSnapshot() {
+        if (isPreviewFlashEnabled) {
+            final ListenableFuture<Void> torchDisabledFuture = camera.getCameraControl().enableTorch(false);
+            Futures.addCallback(
+                    torchDisabledFuture,
+                    new FutureCallback<Void>() {
+                        @Override
+                        public void onSuccess(Void result) {
+                            isTakingPreviewSnapshot = false;
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Throwable throwable) {
+                            Log.e("CameraActivity: cleanAfterPreviewSnapshot error " + throwable);
+                            isTakingPreviewSnapshot = false;
+                        }
+                    },
+                    ContextCompat.getMainExecutor(this)
+            );
+        } else {
+            isTakingPreviewSnapshot = false;
+        }
+    }
+
+    private void takeImageCapturePhoto() {
         if (imageCapture == null || isRecordingVideo) {
             return;
         }
-        Log.d("CameraActivity: takePhoto");
+        Log.d("CameraActivity: takeImageCapturePhoto");
         clearTempMediaFile();
         mediaFile = generateTempMediaFile(Media.MEDIA_TYPE_IMAGE);
 
@@ -587,6 +748,14 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
                 showErrorMessage(getResources().getString(R.string.camera_error_photo), false);
             }
         });
+    }
+
+    void takePhoto() {
+        if (isLimitedLevelSupported) {
+            takeImageCapturePhoto();
+        } else {
+            takePreviewSnapshot();
+        }
     }
 
     @SuppressLint("RestrictedApi")
