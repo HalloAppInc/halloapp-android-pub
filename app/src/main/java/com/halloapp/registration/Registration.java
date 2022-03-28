@@ -437,6 +437,7 @@ public class Registration {
 
             final String uid = Long.toString(response.getUid());
             if (!VerifyOtpResponse.Result.SUCCESS.equals(result) || TextUtils.isEmpty(phone) || TextUtils.isEmpty(uid)) {
+                Log.w("Registration.verifyRegistration server rejected verification");
                 return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
             }
             me.saveNoiseKey(keypair);
