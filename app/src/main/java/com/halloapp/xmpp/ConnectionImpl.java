@@ -259,11 +259,13 @@ public class ConnectionImpl extends Connection {
             isAuthenticated = true;
             randomizeShortId();
             synchronized (startupShutdownLock) {
+                Log.i("connection: onSocketConnected acquired startup lock");
                 packetWriter.init();
                 packetReader.init();
                 iqRouter.onConnected();
                 msgRouter.onConnected();
             }
+            Log.i("connection: onSocketConnected finished initialization");
             connectionObservers.notifyConnected();
             isAuthenticated = true;
         } catch (IOException | NoiseException e) {
@@ -2205,13 +2207,18 @@ public class ConnectionImpl extends Connection {
                 writerThread.interrupt();
                 writerThread = null;
             }
+
+            List<PacketCallback> callbacks;
             synchronized (callbackLock) {
-                for (PacketCallback callback : packetCallbacks.values()) {
-                    if (callback != null) {
-                        callback.onPacketDropped();
-                    }
-                }
+                Log.i("PacketWriter/stopWriter callback lock acquired");
+                callbacks = new ArrayList<>(packetCallbacks.values());
                 packetCallbacks.clear();
+            }
+            Log.i("PacketWriter/stopWriter notifying packet dropped");
+            for (PacketCallback callback : callbacks) {
+                if (callback != null) {
+                    callback.onPacketDropped();
+                }
             }
         }
 
@@ -2326,7 +2333,7 @@ public class ConnectionImpl extends Connection {
         public void handleAck(Ack ack) {
             final String ackId = ack.getId();
             final PendingMsg ackedMessage;
-            synchronized (this) {
+            synchronized (MsgRouter.this) {
                 ackedMessage = pendingMessages.remove(ackId);
                 if (ackedMessage != null) {
                     ackedMessage.timeoutTask.cancel();
@@ -2341,7 +2348,7 @@ public class ConnectionImpl extends Connection {
 
         public void onConnected() {
             Log.i("connection: re-connected msg router requeing messages");
-            synchronized (this) {
+            synchronized (MsgRouter.this) {
                 Iterator<PendingMsg> pendingMessageIterator = pendingMessages.values().iterator();
                 while (pendingMessageIterator.hasNext()) {
                     PendingMsg msg = pendingMessageIterator.next();
@@ -2359,7 +2366,7 @@ public class ConnectionImpl extends Connection {
         public void onDisconnected() {
             Log.i("connection: disconnected msg router clearing out non-resendable messages");
             ArrayList<PendingMsg> droppedMessages = new ArrayList<>();
-            synchronized (this) {
+            synchronized (MsgRouter.this) {
                 Iterator<PendingMsg> pendingMessageIterator = pendingMessages.values().iterator();
                 while (pendingMessageIterator.hasNext()) {
                     PendingMsg msg = pendingMessageIterator.next();
