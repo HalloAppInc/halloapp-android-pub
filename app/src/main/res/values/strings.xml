@@ -381,8 +381,10 @@
         <item quantity="one">HalloApp expires in %d day</item>
         <item quantity="other">HalloApp expires in %d days</item>
     </plurals>
-    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for posts -->
+    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for their posts -->
     <string name="contact_favorites_explanation">This post is only shared with contacts you added to Favorites. You can adjust your audience in privacy settings at any time.</string>
+    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts -->
+    <string name="contact_favorites_explanation_others">This post is only shared with a limited audience. You can adjust your audience in privacy settings at any time.</string>
     <!-- Favorites means the users favorite contacts -->
     <string name="contact_favorites">Favorites</string>
     <string name="share_link">Share link</string>
