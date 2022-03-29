@@ -34,6 +34,11 @@ android {
             resValue "bool", "isDebug", "true"
         }
     }
+    splits {
+        abi {
+            enable true
+        }
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -45,6 +50,19 @@ android {
             keyAlias "androiddebugkey"
             keyPassword "android"
         }
+    }
+}
+
+// Make sure each abi has its own version code https://developer.android.com/studio/build/configure-apk-splits#configure-APK-versions
+ext.abiCodes = ['arm64-v8a':1, 'armeabi-v7a':2, x86:3, x86_64:4]
+import com.android.build.OutputFile
+android.applicationVariants.all { variant ->
+    variant.outputs.each { output ->
+        def abiVersionCodeSuffix = project.ext.abiCodes.get(output.getFilter(OutputFile.ABI))
+        if (abiVersionCodeSuffix == null) { // If we ever decide to build a universal apk again
+            abiVersionCodeSuffix = 0
+        }
+        output.versionCodeOverride = abiVersionCodeSuffix + variant.versionCode * 10
     }
 }
 
