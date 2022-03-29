@@ -76,8 +76,8 @@ public class Notifications {
 
     private static Notifications instance;
 
-    private static final int NOTIFICATION_REQUEST_CODE_FEED_MASK = 1 << 31;
-    private static final int NOTIFICATION_REQUEST_CODE_MESSAGES_MASK = 1 << 30;
+    private static final int NOTIFICATION_REQUEST_CODE_FEED_FLAG = 1 << 31;
+    private static final int NOTIFICATION_REQUEST_CODE_MESSAGES_FLAG = 1 << 30;
 
     private static final String FEED_NOTIFICATION_CHANNEL_ID = "feed_notifications";
     private static final String MESSAGE_NOTIFICATION_CHANNEL_ID = "message_notifications";
@@ -260,7 +260,7 @@ public class Notifications {
             }
             int index = 0;
             String appName = context.getString(R.string.app_name);
-            showCombinedFeedNotification(HOME_FEED_NOTIFICATION_TAG, appName, index++ | NOTIFICATION_REQUEST_CODE_FEED_MASK, homePosts, homeComments);
+            showCombinedFeedNotification(HOME_FEED_NOTIFICATION_TAG, appName, index++ | NOTIFICATION_REQUEST_CODE_FEED_FLAG, homePosts, homeComments);
 
             for (GroupId groupId : groupIds) {
                 List<Comment> comments = groupCommentListMap.get(groupId);
@@ -268,7 +268,7 @@ public class Notifications {
 
                 Chat group = ContentDb.getInstance().getChat(groupId);
                 if (group != null) {
-                    showCombinedFeedNotification(groupId.rawId(), group.name, index++ | NOTIFICATION_REQUEST_CODE_FEED_MASK, posts, comments);
+                    showCombinedFeedNotification(groupId.rawId(), group.name, index++ | NOTIFICATION_REQUEST_CODE_FEED_FLAG, posts, comments);
                     index++;
                 } else {
                     Log.e("Notifications/updateFeedNotifications no group found for groupId=" + groupId);
@@ -307,7 +307,7 @@ public class Notifications {
                 contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
                 contentIntent.putExtra(MainActivity.EXTRA_SCROLL_TO_TOP, true);
-                builder.setContentIntent(PendingIntent.getActivity(context, index | NOTIFICATION_REQUEST_CODE_FEED_MASK, contentIntent, getPendingIntentFlags(true)));
+                builder.setContentIntent(PendingIntent.getActivity(context, index | NOTIFICATION_REQUEST_CODE_FEED_FLAG, contentIntent, getPendingIntentFlags(true)));
                 final Intent deleteIntent = new Intent(context, DeleteNotificationReceiver.class);
                 deleteIntent.putExtra(EXTRA_FEED_NOTIFICATION_TIME_CUTOFF, feedNotificationTimeCutoff);
                 builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0, deleteIntent, PendingIntent.FLAG_CANCEL_CURRENT | getPendingIntentFlags(false)));
@@ -585,7 +585,7 @@ public class Notifications {
                 final Intent contentIntent = new Intent(context, MainActivity.class);
                 contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_MESSAGES);
-                builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE_MESSAGES_MASK, contentIntent, getPendingIntentFlags(true)));
+                builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE_MESSAGES_FLAG, contentIntent, getPendingIntentFlags(true)));
             } else {
                 final ChatId chatId = chatsIds.get(0);
                 final Intent contentIntent = ChatActivity.open(context, chatId, true);
