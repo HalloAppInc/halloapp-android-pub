@@ -910,7 +910,6 @@ public class CallManager {
         }
         this.videoCapturer = videoCapturer;
         createAVTracks();
-        startStreams();
 
         cancelRingingTimeout();
         doAnswer();
@@ -977,8 +976,10 @@ public class CallManager {
         localAudioTrack = factory.createAudioTrack(AUDIO_TRACK_ID, audioSource);
         localAudioTrack.setEnabled(!isMicrophoneMuted);
 
+        peerConnection.addTrack(localAudioTrack);
         if (callType == CallType.VIDEO) {
             localVideoTrack = createVideoTrack();
+            peerConnection.addTrack(localVideoTrack);
         }
         Log.i("CallManager: createAVTracks: audio: " + localAudioTrack + " video: " + localVideoTrack);
     }
@@ -1061,15 +1062,6 @@ public class CallManager {
             callStartTimestamp = SystemClock.elapsedRealtime();
             callStartLiveData.postValue(callStartTimestamp);
         }
-    }
-
-    private void startStreams() {
-        MediaStream mediaStream = factory.createLocalMediaStream("ARDAMS");
-        mediaStream.addTrack(localAudioTrack);
-        if (callType == CallType.VIDEO) {
-            mediaStream.addTrack(localVideoTrack);
-        }
-        peerConnection.addStream(mediaStream);
     }
 
     private void setMaxBitrate() {
@@ -1269,7 +1261,6 @@ public class CallManager {
                     (response.stunServers != null && response.stunServers.size() > 0)) {
                 initializePeerConnections(response.stunServers, response.turnServers);
                 createAVTracks();
-                startStreams();
                 doStartCall();
             } else {
                 Log.e("CallManager: Did not get any stun or turn servers " + response);
@@ -1365,8 +1356,7 @@ public class CallManager {
             rtcConfig.iceTransportsType = PeerConnection.IceTransportsType.RELAY;
         }
 
-        // TODO(vipin): Change to UNIFIED_PLAN after upgrading the webrtc API usage.
-        rtcConfig.sdpSemantics = PeerConnection.SdpSemantics.PLAN_B;
+        rtcConfig.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
         return rtcConfig;
     }
 
