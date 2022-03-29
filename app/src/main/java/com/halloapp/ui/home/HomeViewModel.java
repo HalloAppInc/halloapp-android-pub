@@ -47,7 +47,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class HomeViewModel extends AndroidViewModel {
 
     private static final String STATE_SAVED_SCROLL_STATE = "homeviewmodel_saved_scroll_state";
-    private static final int MAX_SUGGESTED_CONTACTS = 21;
+    private static final int MAX_SUGGESTED_CONTACTS = 10;
 
     final LiveData<PagedList<Post>> postList;
 
