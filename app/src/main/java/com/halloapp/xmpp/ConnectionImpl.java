@@ -253,9 +253,9 @@ public class ConnectionImpl extends Connection {
     }
 
     private void onSocketConnected(@NonNull HANoiseSocket noiseSocket) {
+        this.socket = noiseSocket;
         try {
             noiseSocket.initialize(createAuthRequest().toByteArray());
-            this.socket = noiseSocket;
             isAuthenticated = true;
             randomizeShortId();
             synchronized (startupShutdownLock) {
@@ -268,8 +268,9 @@ public class ConnectionImpl extends Connection {
             Log.i("connection: onSocketConnected finished initialization");
             connectionObservers.notifyConnected();
             isAuthenticated = true;
-        } catch (IOException | NoiseException e) {
+        } catch (Exception e) {
             Log.e("connection: cannot create connection", e);
+            disconnect();
         }
     }
 
