@@ -76,8 +76,8 @@ public class Notifications {
 
     private static Notifications instance;
 
-    private static final int NOTIFICATION_REQUEST_CODE_FEED = 1;
-    private static final int NOTIFICATION_REQUEST_CODE_MESSAGES = 2;
+    private static final int NOTIFICATION_REQUEST_CODE_FEED_MASK = 1 << 31;
+    private static final int NOTIFICATION_REQUEST_CODE_MESSAGES_MASK = 1 << 30;
 
     private static final String FEED_NOTIFICATION_CHANNEL_ID = "feed_notifications";
     private static final String MESSAGE_NOTIFICATION_CHANNEL_ID = "message_notifications";
@@ -258,8 +258,9 @@ public class Notifications {
                     }
                 }
             }
+            int index = 0;
             String appName = context.getString(R.string.app_name);
-            showCombinedFeedNotification(HOME_FEED_NOTIFICATION_TAG, appName, homePosts, homeComments);
+            showCombinedFeedNotification(HOME_FEED_NOTIFICATION_TAG, appName, index++ | NOTIFICATION_REQUEST_CODE_FEED_MASK, homePosts, homeComments);
 
             for (GroupId groupId : groupIds) {
                 List<Comment> comments = groupCommentListMap.get(groupId);
@@ -267,7 +268,8 @@ public class Notifications {
 
                 Chat group = ContentDb.getInstance().getChat(groupId);
                 if (group != null) {
-                    showCombinedFeedNotification(groupId.rawId(), group.name, posts, comments);
+                    showCombinedFeedNotification(groupId.rawId(), group.name, index++ | NOTIFICATION_REQUEST_CODE_FEED_MASK, posts, comments);
+                    index++;
                 } else {
                     Log.e("Notifications/updateFeedNotifications no group found for groupId=" + groupId);
                 }
@@ -305,7 +307,7 @@ public class Notifications {
                 contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
                 contentIntent.putExtra(MainActivity.EXTRA_SCROLL_TO_TOP, true);
-                builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE_FEED, contentIntent, getPendingIntentFlags(true)));
+                builder.setContentIntent(PendingIntent.getActivity(context, index | NOTIFICATION_REQUEST_CODE_FEED_MASK, contentIntent, getPendingIntentFlags(true)));
                 final Intent deleteIntent = new Intent(context, DeleteNotificationReceiver.class);
                 deleteIntent.putExtra(EXTRA_FEED_NOTIFICATION_TIME_CUTOFF, feedNotificationTimeCutoff);
                 builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0, deleteIntent, PendingIntent.FLAG_CANCEL_CURRENT | getPendingIntentFlags(false)));
@@ -315,7 +317,7 @@ public class Notifications {
         });
     }
 
-    private void showCombinedFeedNotification(@NonNull String tag, @NonNull String title, @Nullable List<Post> unseenPosts, @Nullable List<Comment> unseenComments) {
+    private void showCombinedFeedNotification(@NonNull String tag, @NonNull String title, int requestCode, @Nullable List<Post> unseenPosts, @Nullable List<Comment> unseenComments) {
         String newPostsNotificationText = null;
         String newCommentsNotificationText = null;
 
@@ -337,7 +339,7 @@ public class Notifications {
             } else {
                 text = context.getString(R.string.new_posts_and_comments_notification, newPostsNotificationText, newCommentsNotificationText);
             }
-            showFeedNotification(tag, title, Preconditions.checkNotNull(text), unseenPosts, unseenComments);
+            showFeedNotification(tag, title, Preconditions.checkNotNull(text), requestCode, unseenPosts, unseenComments);
         }
     }
 
@@ -564,8 +566,7 @@ public class Notifications {
                 stackBuilder.addNextIntent(parentIntent);
                 stackBuilder.addNextIntent(contentIntent);
 
-                builder.setContentIntent(stackBuilder.getPendingIntent(chatIndex, getPendingIntentFlags(true)));
-                chatIndex++;
+                builder.setContentIntent(stackBuilder.getPendingIntent(chatIndex++, getPendingIntentFlags(true)));
 
                 notificationManager.notify(chatId.rawId(), MESSAGE_NOTIFICATION_ID, builder.build());
             }
@@ -584,7 +585,7 @@ public class Notifications {
                 final Intent contentIntent = new Intent(context, MainActivity.class);
                 contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_MESSAGES);
-                builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE_MESSAGES, contentIntent, getPendingIntentFlags(true)));
+                builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE_MESSAGES_MASK, contentIntent, getPendingIntentFlags(true)));
             } else {
                 final ChatId chatId = chatsIds.get(0);
                 final Intent contentIntent = ChatActivity.open(context, chatId, true);
@@ -760,7 +761,7 @@ public class Notifications {
         return text;
     }
 
-    private void showFeedNotification(@NonNull String tag, @NonNull String title, @NonNull String body, @Nullable List<Post> unseenPosts, @Nullable List<Comment> unseenComments) {
+    private void showFeedNotification(@NonNull String tag, @NonNull String title, @NonNull String body, int requestCode, @Nullable List<Post> unseenPosts, @Nullable List<Comment> unseenComments) {
         HashSet<String> postIds = new HashSet<>();
         if (unseenPosts != null) {
             for (Post post : unseenPosts) {
@@ -795,7 +796,7 @@ public class Notifications {
         } else {
             contentIntent.putExtra(MainActivity.EXTRA_SCROLL_TO_TOP, true);
         }
-        builder.setContentIntent(PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE_FEED, contentIntent, getPendingIntentFlags(true)));
+        builder.setContentIntent(PendingIntent.getActivity(context, requestCode, contentIntent, getPendingIntentFlags(true)));
         final Intent deleteIntent = new Intent(context, DeleteNotificationReceiver.class);
         deleteIntent.putExtra(EXTRA_FEED_NOTIFICATION_TIME_CUTOFF, feedNotificationTimeCutoff) ;
         builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0 , deleteIntent, PendingIntent. FLAG_CANCEL_CURRENT | getPendingIntentFlags(false)));
