@@ -129,6 +129,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             @Override
             public void run() {
                 long numberBytesAvail = Environment.getDataDirectory().getFreeSpace();
+                Log.d("Storage available bytes: " + numberBytesAvail);
                 if (numberBytesAvail < LowStorageActivity.MINIMUM_STORAGE_BYTES) {
                     startActivity(new Intent(getBaseContext(), LowStorageActivity.class));
                     finish();
