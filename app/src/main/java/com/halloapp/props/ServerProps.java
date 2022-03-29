@@ -46,7 +46,7 @@ public class ServerProps {
     private static final String PROP_SEND_PLAINTEXT_GROUP_FEED = "cleartext_group_feed";
     private static final String PROP_USE_PLAINTEXT_GROUP_FEED = "use_cleartext_group_feed";
     private static final String PROP_EXTERNAL_SHARING = "external_sharing";
-    private static final String PROP_GROUP_COMMENTS_NOTIFICATIOn = "group_comments_notification";
+    private static final String PROP_GROUP_COMMENTS_NOTIFICATION = "group_comments_notification";
     private static final String PROP_CALL_HOLD_ENABLED = "call_hold";
     private static final String PROP_KRISP_NOISE_SUPPRESSION = "krisp_noise_suppression";
 
@@ -90,7 +90,7 @@ public class ServerProps {
     private final BooleanProp propSendPlaintextGroupFeed = createProp(PROP_SEND_PLAINTEXT_GROUP_FEED, true);
     private final BooleanProp propUsePlaintextGroupFeed = createProp(PROP_USE_PLAINTEXT_GROUP_FEED, true);
     private final BooleanProp propExternalSharing = createProp(PROP_EXTERNAL_SHARING, false);
-    private final BooleanProp propGroupCommentsNotification = createProp(PROP_GROUP_COMMENTS_NOTIFICATIOn, false);
+    private final BooleanProp propGroupCommentsNotification = createProp(PROP_GROUP_COMMENTS_NOTIFICATION, false);
     private final BooleanProp propCallHoldEnabled = createProp(PROP_CALL_HOLD_ENABLED, false);
     private final BooleanProp propKrispNoiseSuppression = createProp(PROP_KRISP_NOISE_SUPPRESSION, false);
 
