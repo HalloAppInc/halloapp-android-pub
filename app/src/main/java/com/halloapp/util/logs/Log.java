@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import io.sentry.Sentry;
+
 
 public class Log {
 
@@ -113,6 +115,7 @@ public class Log {
 
         Throwable e = new ConstructedException(msg, stackTrace);
         FirebaseCrashlytics.getInstance().recordException(e);
+        Sentry.captureException(e);
 
         uploadUnsentReports();
     }

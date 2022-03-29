@@ -36,6 +36,8 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.PresenceManager;
 
+import io.sentry.android.core.SentryAndroid;
+
 public class HalloApp extends Application {
 
     private final AppContext appContext = AppContext.getInstance();
@@ -57,6 +59,8 @@ public class HalloApp extends Application {
             AppCompatDelegate.setDefaultNightMode(Preferences.getInstance().getNightMode());
         });
 
+        // TODO(jack): Move so that only set up if not debug
+        SentryAndroid.init(this);
         if (!BuildConfig.DEBUG) {
             Log.uploadUnsentReports();
         } else {
