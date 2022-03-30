@@ -43,7 +43,7 @@
                         android:layout_height="36dp"
                         android:src="@drawable/ic_arrow_back"
                         style="@android:style/Widget.Material.Toolbar.Button.Navigation"
-                        android:tint="?android:attr/textColorSecondary"
+                        app:tint="?android:attr/textColorSecondary"
                         android:layout_gravity="center_vertical"
                         />
 

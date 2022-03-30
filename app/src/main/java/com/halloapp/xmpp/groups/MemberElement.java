@@ -50,6 +50,7 @@ public class MemberElement {
         type = groupMember.getType().name().toLowerCase(Locale.US);
         name = groupMember.getName();
         action = groupMember.getAction().name().toLowerCase(Locale.US);
+        //noinspection WrongConstant
         result = groupMember.getResult();
         reason = groupMember.getReason();
         identityKey = groupMember.getIdentityKey().toByteArray();

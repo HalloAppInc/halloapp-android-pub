@@ -761,6 +761,7 @@ public class MediaUtils {
                 info.offset = offset;
                 info.size = extractor.readSampleData(buffer, offset);
                 info.presentationTimeUs = extractor.getSampleTime();
+                //noinspection WrongConstant
                 info.flags = extractor.getSampleFlags();
             } catch (IllegalArgumentException e) {
                 Log.e("VideoEditActivity: unable to extract video, probably buffer too small", e);
