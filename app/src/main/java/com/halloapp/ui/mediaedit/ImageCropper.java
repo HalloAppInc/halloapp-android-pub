@@ -4,6 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PointF;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
@@ -15,6 +18,7 @@ import com.halloapp.util.logs.Log;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ImageCropper {
 
@@ -33,19 +37,54 @@ public class ImageCropper {
             return;
         }
 
-        final float centerX = (float)state.cropWidth / 2;
-        final float centerY = (float)state.cropHeight / 2;
+        float scaledCropWidth = (float) state.cropWidth / state.scale;
+        float scaledCropHeight = (float) state.cropHeight / state.scale;
+        float cropCenterX = scaledCropWidth / 2;
+        float cropCenterY = scaledCropHeight / 2;
 
         Matrix m = new Matrix();
-        m.postTranslate(centerX - ((float)bitmap.getWidth() / 2), centerY - ((float)bitmap.getHeight() / 2));
+        m.postTranslate(cropCenterX - ((float)bitmap.getWidth() / 2), cropCenterY - ((float)bitmap.getHeight() / 2));
+        m.postRotate(-90 * state.rotationCount, cropCenterX, cropCenterY);
+        m.postScale(state.vFlipped ? -1 : 1, state.hFlipped ? -1 : 1, cropCenterX, cropCenterY);
+        m.postTranslate(-state.cropOffsetX / state.scale, -state.cropOffsetY / state.scale);
 
-        m.postRotate(-90 * state.rotationCount, centerX, centerY);
-        m.postScale(state.vFlipped ? -state.scale : state.scale, state.hFlipped ? -state.scale : state.scale, centerX, centerY);
-        m.postTranslate(-state.cropOffsetX, -state.cropOffsetY);
-
-        Bitmap cropped = Bitmap.createBitmap(state.cropWidth, state.cropHeight, MediaUtils.getBitmapConfig(bitmap.getConfig()));
+        Bitmap cropped = Bitmap.createBitmap((int)scaledCropWidth, (int)scaledCropHeight, MediaUtils.getBitmapConfig(bitmap.getConfig()));
         Canvas canvas = new Canvas(cropped);
         canvas.drawBitmap(bitmap, m, null);
+
+        canvas.save();
+
+        if (state.rotationCount % 2 == 0) {
+            canvas.translate(cropCenterX - ((float)bitmap.getWidth() / 2), cropCenterY - ((float)bitmap.getHeight() / 2));
+        } else {
+            canvas.translate(cropCenterX - ((float)bitmap.getHeight() / 2), cropCenterY - ((float)bitmap.getWidth() / 2));
+        }
+
+        canvas.translate(-state.cropOffsetX / state.scale, -state.cropOffsetY / state.scale);
+
+        Paint drawingPaint = new Paint();
+        drawingPaint.setStyle(Paint.Style.STROKE);
+        drawingPaint.setStrokeCap(Paint.Cap.ROUND);
+        drawingPaint.setStrokeJoin(Paint.Join.ROUND);
+
+        Path path = new Path();
+        for (EditImageView.DrawingPath drawingPath : state.drawingPaths) {
+            drawingPaint.setStrokeWidth(drawingPath.width);
+            drawingPaint.setColor(drawingPath.color);
+            PointF start = drawingPath.points.get(0);
+            ArrayList<EditImageView.BezierCurve> curves = EditImageView.curves(EditImageView.sampleDrawingPoints(drawingPath.points));
+
+            path.reset();
+            path.moveTo(start.x, start.y);
+
+            for (EditImageView.BezierCurve curve : curves) {
+                path.cubicTo(curve.control1.x, curve.control1.y, curve.control2.x, curve.control2.y, curve.end.x, curve.end.y);
+            }
+
+            canvas.drawPath(path, drawingPaint);
+        }
+
+        canvas.restore();
 
         try (final FileOutputStream stream = new FileOutputStream(target)) {
             cropped.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, stream);

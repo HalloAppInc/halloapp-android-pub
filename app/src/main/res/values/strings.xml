@@ -967,4 +967,8 @@
     <string name="call_other_side_on_hold">Call is on hold</string>
     <!-- Toast displayed when the other side removes the call hold -->
     <string name="call_other_side_on_unhold">Call has resumed</string>
+    <!-- Drawing on images -->
+    <string name="draw">Draw</string>
+    <!-- Undo an action -->
+    <string name="undo">Undo</string>
 </resources>

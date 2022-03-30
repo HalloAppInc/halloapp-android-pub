@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
@@ -28,11 +29,18 @@ import com.halloapp.util.logs.Log;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class EditImageView extends androidx.appcompat.widget.AppCompatImageView {
     @FunctionalInterface
     public interface StateUpdateListener {
         void onUpdate(@NonNull State state);
+    }
+
+    private enum ReverseAction {
+        ROTATE, FLIP, REMOVE_DRAWING
     }
 
     private enum CropRegionSection {
@@ -46,6 +54,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     private final float outThreshold = getResources().getDimension(R.dimen.media_crop_region_out_threshold);
     private final float borderThickness = getResources().getDimension(R.dimen.media_crop_region_border);
     private final float borderRadius = getResources().getDimension(R.dimen.media_crop_region_radius);
+    private final float drawingWidth = getResources().getDimension(R.dimen.media_edit_drawing_width);
 
     private final RectF imageRect = new RectF();
     private final RectF cropRect = new RectF();
@@ -60,6 +69,12 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     private int rotationCount = 0;
     private boolean hFlipped = false;
     private boolean vFlipped = false;
+    private boolean isDrawing = false;
+    private int drawingColor = Color.RED;
+    private final Paint drawingPaint = new Paint();
+    private final ArrayList<PointF> currentDrawingPath = new ArrayList<>();
+    private final ArrayDeque<DrawingPath> drawingPaths = new ArrayDeque<>();
+    private final ArrayDeque<ReverseAction> reverseActionStack = new ArrayDeque<>();
 
     private StateUpdateListener stateUpdateListener;
 
@@ -81,6 +96,11 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     private void init() {
         setScaleType(ScaleType.MATRIX);
 
+        drawingPaint.setColor(drawingColor);
+        drawingPaint.setStyle(Paint.Style.STROKE);
+        drawingPaint.setStrokeWidth(drawingWidth);
+        drawingPaint.setStrokeCap(Paint.Cap.ROUND);
+        drawingPaint.setStrokeJoin(Paint.Join.ROUND);
         shadowPaint.setColor(getResources().getColor(R.color.black_70));
         shadowPaint.setStyle(Paint.Style.FILL);
         borderPaint.setColor(Color.WHITE);
@@ -138,16 +158,16 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         }
 
         final State state = new State();
-        state.cropRect = new RectF(cropRect);
         state.scale = scale;
         state.hFlipped = hFlipped;
         state.vFlipped = vFlipped;
         state.rotationCount = rotationCount;
-        state.offsetX = offsetX;
-        state.offsetY = offsetY;
 
         final float imageWidth = rotationCount % 2 == 0 ? getDrawable().getIntrinsicWidth() : getDrawable().getIntrinsicHeight();
         final float baseScale =  imageRect.width() / imageWidth;
+
+        state.offsetX = offsetX / baseScale / scale;
+        state.offsetY = offsetY / baseScale / scale;
 
         final float cropCenterX = (cropRect.left + cropRect.right) / 2;
         final float cropCenterY = (cropRect.top + cropRect.bottom) / 2;
@@ -158,6 +178,19 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         state.cropHeight = Math.round(cropRect.height() / baseScale);
         state.cropOffsetX = Math.round((cropCenterX - imageCenterX) / baseScale);
         state.cropOffsetY = Math.round((cropCenterY - imageCenterY) / baseScale);
+
+        for (DrawingPath path : drawingPaths) {
+            ArrayList<PointF> points = new ArrayList<>(path.points.size());
+            for (PointF point : path.points) {
+                float x = (point.x - imageRect.left) / baseScale;
+                float y = (point.y - imageRect.top) / baseScale;
+                points.add(new PointF(x, y));
+            }
+
+            state.drawingPaths.add(new DrawingPath(points, path.color, path.width / baseScale));
+        }
+
+        state.reverseActionStack = new ArrayList<>(reverseActionStack);
 
         return state;
     }
@@ -174,23 +207,73 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             rotationCount = 0;
             hFlipped = false;
             vFlipped = false;
+            drawingPaths.clear();
         } else {
-            cropRect.set(state.cropRect);
             scale = state.scale;
             hFlipped = state.hFlipped;
             vFlipped = state.vFlipped;
             rotationCount = state.rotationCount;
             offsetX = state.offsetX;
             offsetY = state.offsetY;
+            reverseActionStack.clear();
+            reverseActionStack.addAll(state.reverseActionStack);
         }
 
         computeImageRect();
+
         if (state == null) {
             computeInitialCropRegion();
+        } else {
+            float imageWidth = rotationCount % 2 == 0 ? getDrawable().getIntrinsicWidth() : getDrawable().getIntrinsicHeight();
+            float baseScale =  imageRect.width() / imageWidth;
+
+            offsetX = state.offsetX * baseScale * scale;
+            offsetY = state.offsetY * baseScale * scale;
+
+            float cropWidth = state.cropWidth * baseScale;
+            float cropHeight = state.cropHeight * baseScale;
+            float cropX = state.cropOffsetX * baseScale + imageRect.centerX() + offsetX - cropWidth / 2;
+            float cropY = state.cropOffsetY * baseScale + imageRect.centerY() + offsetY - cropHeight / 2;
+
+            cropRect.set(
+                Math.max(cropX, imageRect.left),
+                Math.max(cropY, imageRect.top),
+                Math.min(cropX + cropWidth, imageRect.right),
+                Math.min(cropY + cropHeight, imageRect.bottom));
+
+            drawingPaths.clear();
+            for (DrawingPath path : state.drawingPaths) {
+                ArrayList<PointF> points = new ArrayList<>(path.points.size());
+
+                for (PointF point : path.points) {
+                    float x = point.x * baseScale + imageRect.left;
+                    float y = point.y * baseScale + imageRect.top;
+                    points.add(new PointF(x, y));
+                }
+
+                drawingPaths.add(new DrawingPath(points, path.color, path.width * baseScale));
+            }
         }
 
         updateImage();
         requestLayout();
+    }
+
+    public void setDrawing(boolean drawing) {
+        isDrawing = drawing;
+        invalidate();
+    }
+
+    public boolean isDrawing() {
+        return isDrawing;
+    }
+
+    public void setDrawingColor(int color) {
+        drawingColor = color;
+    }
+
+    public boolean canUndo() {
+        return reverseActionStack.size() > 0;
     }
 
     private void computeImageRect() {
@@ -322,6 +405,10 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     }
 
     public void flip() {
+        flip(true);
+    }
+
+    private void flip(boolean shouldAddToReverseStack) {
         vFlipped = !vFlipped;
 
         final float cw = cropRect.width();
@@ -330,10 +417,22 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
         offsetX = -offsetX;
 
+        for (DrawingPath path : drawingPaths) {
+            path.flip(getWidth());
+        }
+
+        if (shouldAddToReverseStack) {
+            reverseActionStack.add(ReverseAction.FLIP);
+        }
+
         updateImage();
     }
 
     public void rotate() {
+        rotate(true);
+    }
+
+    private void rotate(boolean shouldAddToReverseStack) {
         rotationCount = (rotationCount + 1) % 4;
 
         boolean tmp = vFlipped;
@@ -357,7 +456,36 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         cropRect.set(l, b - cropRect.width() * scale, l + cropRect.height() * scale, b);
         keepCropWithinMaxRatio();
 
+        for (DrawingPath path : drawingPaths) {
+            path.rotate(before, imageRect);
+        }
+
+        if (shouldAddToReverseStack) {
+            reverseActionStack.add(ReverseAction.ROTATE);
+        }
+
         updateImage();
+    }
+
+    public void undo() {
+        if (reverseActionStack.size() > 0) {
+            switch (reverseActionStack.removeLast()) {
+                case FLIP:
+                    flip(false);
+                    break;
+                case ROTATE:
+                    rotate(false);
+                    rotate(false);
+                    rotate(false);
+                    break;
+                case REMOVE_DRAWING:
+                    drawingPaths.removeLast();
+                    break;
+            }
+
+            invalidate();
+            notifyStateUpdated();
+        }
     }
 
     private CropRegionSection getCropSectionAt(float x, float y) {
@@ -496,10 +624,40 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         canvas.save();
         canvas.clipRect(imageRect);
         super.onDraw(canvas);
+
+        for (DrawingPath path : drawingPaths) {
+            DrawingPath scaled = path.scale(scale, offsetX, offsetY, getWidth(), getHeight());
+            drawPath(canvas, scaled.points, scaled.color, scaled.width);
+        }
+
+        if (isDrawing && currentDrawingPath.size() > 1) {
+            drawPath(canvas, currentDrawingPath, drawingColor, drawingWidth);
+        }
+
         canvas.restore();
 
         drawShadow(canvas);
-        drawBorder(canvas);
+
+        if (!isDrawing) {
+            drawBorder(canvas);
+        }
+    }
+
+    private void drawPath(Canvas canvas, @NonNull ArrayList<PointF> points, int color, float width) {
+        ArrayList<BezierCurve> curves = curves(sampleDrawingPoints(points));
+        PointF start = points.get(0);
+
+        drawingPaint.setColor(color);
+        drawingPaint.setStrokeWidth(width);
+
+        path.reset();
+        path.moveTo(start.x, start.y);
+
+        for (BezierCurve curve : curves) {
+            path.cubicTo(curve.control1.x, curve.control1.y, curve.control2.x, curve.control2.y, curve.end.x, curve.end.y);
+        }
+
+        canvas.drawPath(path, drawingPaint);
     }
 
     private void drawShadow(Canvas canvas) {
@@ -518,6 +676,88 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         path.addRoundRect(borderRect, borderRadius, borderRadius, Path.Direction.CW);
         path.setFillType(Path.FillType.EVEN_ODD);
         canvas.drawPath(path, borderPaint);
+    }
+
+    // Hermite splines
+    // https://spin.atomicobject.com/2014/05/28/ios-interpolating-points/
+    public static ArrayList<BezierCurve> curves(ArrayList<PointF> points) {
+        ArrayList<BezierCurve> curves = new ArrayList<>();
+        if (points.size() < 2) {
+            return curves;
+        }
+
+        PointF previous = new PointF();
+        PointF current = points.get(0);
+        PointF next = points.get(1);
+        PointF end;
+        float mx, my;
+        int nextIdx;
+
+        for (int i = 0; i < points.size() - 1; i++) {
+            end = next;
+
+            if (i > 0) {
+                mx = (next.x - current.x) * 0.5f + (current.x - previous.x) * 0.5f;
+                my = (next.y - current.y) * 0.5f + (current.y - previous.y) * 0.5f;
+            } else {
+                mx = (next.x - current.x) * 0.5f;
+                my = (next.y - current.y) * 0.5f;
+            }
+
+            PointF ctrlPt1 = new PointF(current.x + mx / 3.0f, current.y + my / 3.0f);
+
+            previous = current;
+            current = next;
+
+            nextIdx = i + 2;
+            if (nextIdx < points.size()) {
+                next = points.get(nextIdx);
+
+                mx = (next.x - current.x) * 0.5f + (current.x - previous.x) * 0.5f;
+                my = (next.y - current.y) * 0.5f + (current.y - previous.y) * 0.5f;
+            } else {
+                mx = (current.x - previous.x) * 0.5f;
+                my = (current.y - previous.y) * 0.5f;
+            }
+
+            PointF ctrlPt2 = new PointF(current.x - mx / 3.0f, current.y - my / 3.0f);
+
+            curves.add(new BezierCurve(ctrlPt1, ctrlPt2, end));
+
+            if (nextIdx >= points.size()) {
+                break;
+            }
+        }
+
+        return curves;
+    }
+
+    public static ArrayList<PointF> sampleDrawingPoints(@NonNull ArrayList<PointF> points) {
+        ArrayList<PointF> sampled = new ArrayList<>();
+
+        if (points.size() < 2) {
+            return sampled;
+        }
+
+        final float MIN_SQ_DISTANCE = 24 * 24;
+        sampled.add(points.get(0));
+
+        PointF current;
+        for (PointF p : points) {
+            current = sampled.get(sampled.size() - 1);
+
+            float distance = (current.x - p.x) * (current.x - p.x) + (current.y - p.y) * (current.y - p.y);
+            if (distance > MIN_SQ_DISTANCE) {
+                sampled.add(p);
+            }
+        }
+
+        PointF last = points.get(points.size() - 1);
+        if (!last.equals(sampled.get(sampled.size() - 1))) {
+            sampled.add(last);
+        }
+
+        return sampled;
     }
 
     class GestureListener extends GestureDetector.SimpleOnGestureListener implements OnTouchListener, ScaleGestureDetector.OnScaleGestureListener {
@@ -557,6 +797,20 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
                 isStarted = false;
                 isMultiTouch = false;
                 section = CropRegionSection.NONE;
+
+                if (isDrawing) {
+                    if (currentDrawingPath.size() > 1) {
+                        DrawingPath scaled = new DrawingPath(currentDrawingPath, drawingColor, drawingWidth);
+                        DrawingPath path = scaled.scale(1 / scale, offsetX, offsetY, getWidth(), getHeight());
+                        drawingPaths.add(path);
+
+                        reverseActionStack.add(ReverseAction.REMOVE_DRAWING);
+                    }
+
+                    currentDrawingPath.clear();
+                    invalidate();
+                    notifyStateUpdated();
+                }
             }
 
             return true;
@@ -594,6 +848,9 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
             if (isMultiTouch) {
                 moveBy(-distanceX, -distanceY);
+            } else if (isDrawing) {
+                currentDrawingPath.add(new PointF(e2.getX(), e2.getY()));
+                invalidate();
             } else {
                 RectF valid = new RectF(borderRect);
                 valid.inset(-2 * outThreshold, -2 * outThreshold);
@@ -607,8 +864,106 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         }
     }
 
+    public static class BezierCurve {
+        public PointF control1, control2, end;
+
+        public BezierCurve(PointF control1, PointF control2, PointF end) {
+            this.control1 = new PointF(control1.x, control1.y);
+            this.control2 = new PointF(control2.x, control2.y);
+            this.end = new PointF(end.x, end.y);
+        }
+    }
+
+    public static class DrawingPath implements Parcelable {
+        public ArrayList<PointF> points = new ArrayList<>();
+        public int color;
+        public float width;
+
+        public DrawingPath(@NonNull ArrayList<PointF> points, int color, float width) {
+            this.points = new ArrayList<>(points);
+            this.color = color;
+            this.width = width;
+        }
+
+        public DrawingPath scale(float scale, float offsetX, float offsetY, float sizeWidth, float sizeHeight) {
+            ArrayList<PointF> scaledPoints = new ArrayList<>(points.size());
+
+            for (PointF point : points) {
+                float x, y;
+                if (scale >= 1) {
+                    x = point.x * scale - (scale - 1) * sizeWidth / 2 + offsetX;
+                    y = point.y * scale - (scale - 1) * sizeHeight / 2 + offsetY;
+                } else {
+                    x = (point.x + (1 / scale - 1) * sizeWidth / 2 - offsetX) * scale;
+                    y = (point.y + (1 / scale - 1) * sizeHeight / 2 - offsetY) * scale;
+                }
+
+                scaledPoints.add(new PointF(x, y));
+            }
+
+            return new DrawingPath(scaledPoints, color, width * scale);
+        }
+
+        public void flip(int sizeWidth) {
+            for (PointF point : points) {
+                point.x = sizeWidth - point.x;
+            }
+        }
+
+        public void rotate(RectF imageRectBefore, RectF imageRectAfter) {
+            float scale = imageRectAfter.width() / imageRectBefore.height();
+
+            for (PointF point : points) {
+                float x = point.x - imageRectBefore.left;
+                float y = point.y - imageRectBefore.top;
+                point.x = imageRectAfter.left + scale * y;
+                point.y = imageRectAfter.bottom - scale * x;
+            }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            DrawingPath path = (DrawingPath) o;
+            return color == path.color && Float.compare(path.width, width) == 0 && Objects.equals(points, path.points);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(points, color, width);
+        }
+
+        private DrawingPath(Parcel in) {
+            color = in.readInt();
+            width = in.readFloat();
+            in.readTypedList(points, PointF.CREATOR);
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int flags) {
+            parcel.writeInt(color);
+            parcel.writeFloat(width);
+            parcel.writeTypedList(points);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Parcelable.Creator<DrawingPath> CREATOR = new Parcelable.Creator<DrawingPath>() {
+            public DrawingPath createFromParcel(Parcel in) {
+                return new DrawingPath(in);
+            }
+
+            public DrawingPath[] newArray(int size) {
+                return new DrawingPath[size];
+            }
+        };
+    }
+
     public static class State implements Parcelable {
-        public RectF cropRect;
         public float offsetX;
         public float offsetY;
         public float scale;
@@ -619,6 +974,8 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         public int cropHeight;
         public int cropOffsetX;
         public int cropOffsetY;
+        public ArrayList<DrawingPath> drawingPaths = new ArrayList<>();
+        public ArrayList<ReverseAction> reverseActionStack = new ArrayList<>();
 
         @Override
         public int describeContents() {
@@ -634,11 +991,17 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             scale = in.readFloat();
             offsetX = in.readFloat();
             offsetY = in.readFloat();
-            cropRect = in.readParcelable(RectF.class.getClassLoader());
             cropWidth = in.readInt();
             cropHeight = in.readInt();
             cropOffsetX = in.readInt();
             cropOffsetY = in.readInt();
+            in.readTypedList(drawingPaths, DrawingPath.CREATOR);
+
+            ArrayList<String> undoStackStrings = new ArrayList<>();
+            in.readStringList(undoStackStrings);
+            for (String name : undoStackStrings) {
+                reverseActionStack.add(ReverseAction.valueOf(name));
+            }
         }
 
         @Override
@@ -649,11 +1012,17 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             parcel.writeFloat(scale);
             parcel.writeFloat(offsetX);
             parcel.writeFloat(offsetY);
-            parcel.writeParcelable(cropRect, flags);
             parcel.writeInt(cropWidth);
             parcel.writeInt(cropHeight);
             parcel.writeInt(cropOffsetX);
             parcel.writeInt(cropOffsetY);
+            parcel.writeTypedList(drawingPaths);
+
+            ArrayList<String> undoStackStrings = new ArrayList<>(reverseActionStack.size());
+            for (ReverseAction reverseAction : reverseActionStack) {
+                undoStackStrings.add(reverseAction.name());
+            }
+            parcel.writeStringList(undoStackStrings);
         }
 
         @Override
@@ -668,10 +1037,10 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
             State state = (State) obj;
 
-            return state.cropRect.equals(cropRect) && state.offsetX == offsetX && state.offsetY == offsetY
+            return state.offsetX == offsetX && state.offsetY == offsetY && Objects.equals(state.reverseActionStack, reverseActionStack)
                     && state.scale == scale && state.rotationCount == rotationCount && state.hFlipped == hFlipped
                     && state.vFlipped == vFlipped && state.cropWidth == cropWidth && state.cropHeight == cropHeight
-                    && state.cropOffsetX == cropOffsetX && state.cropOffsetY == cropOffsetY;
+                    && state.cropOffsetX == cropOffsetX && state.cropOffsetY == cropOffsetY && Objects.equals(state.drawingPaths, drawingPaths);
         }
 
         public static final Parcelable.Creator<State> CREATOR = new Parcelable.Creator<State>() {

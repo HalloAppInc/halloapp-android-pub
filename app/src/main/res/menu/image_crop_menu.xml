@@ -14,4 +14,12 @@
         android:title="@string/flip"
         app:showAsAction="ifRoom"/>
 
+    <item
+        android:id="@+id/draw"
+        android:title="@string/draw"
+        app:actionLayout="@layout/media_edit_menu_draw_item"
+        app:showAsAction="ifRoom"
+        android:visible="false"
+        />
+
 </menu>

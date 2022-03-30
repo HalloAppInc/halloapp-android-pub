@@ -11,8 +11,8 @@
     <dimen name="comment_media_preview_corner_radius">10dp</dimen>
     <dimen name="comment_media_corner_radius">10dp</dimen>
     <dimen name="details_media_list_height">70dp</dimen>
-    <dimen name="details_media_list_corner_radius">5dp</dimen>
-    <dimen name="details_media_list_thumb_radius">3dp</dimen>
+    <dimen name="details_media_list_corner_radius">10dp</dimen>
+    <dimen name="details_media_list_thumb_radius">8dp</dimen>
     <dimen name="text_post_thumbnail_max_text_size">14dp</dimen>
     <dimen name="text_post_thumbnail_min_text_size">4dp</dimen>
     <dimen name="text_post_thumbnail_padding">2dp</dimen>
@@ -23,11 +23,13 @@
     <dimen name="media_gallery_preview_radius">16dp</dimen>
     <dimen name="media_gallery_preview_padding">20dp</dimen>
     <dimen name="media_gallery_actions_height">85dp</dimen>
-    <dimen name="media_crop_preview_list_spacing">4dp</dimen>
+    <dimen name="media_crop_preview_list_spacing">18dp</dimen>
     <dimen name="media_crop_region_border">4dp</dimen>
     <dimen name="media_crop_region_radius">15dp</dimen>
     <dimen name="media_crop_region_threshold">44dp</dimen>
     <dimen name="media_crop_region_out_threshold">22dp</dimen>
+    <dimen name="media_edit_drawing_width">8dp</dimen>
+    <dimen name="media_edit_menu_draw_background">42dp</dimen>
     <dimen name="video_edit_range_threshold">44dp</dimen>
     <dimen name="video_edit_range_border">2dp</dimen>
     <dimen name="video_edit_range_handle_radius">6dp</dimen>

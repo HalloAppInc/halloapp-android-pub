@@ -3,6 +3,7 @@ package com.halloapp.ui.mediaedit;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Outline;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -24,10 +25,12 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.halloapp.BuildConfig;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
@@ -96,8 +99,38 @@ public class MediaEditActivity extends HalloActivity {
         prepareTransitionView(false, this::finishAfterTransition);
     }
 
+    private boolean canUndo() {
+        if (!BuildConfig.DEBUG && !ServerProps.getInstance().getIsInternalUser() && !ServerProps.getInstance().getMediaDrawingEnabled()) {
+            return false;
+        }
+
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (fragment instanceof ImageEditFragment) {
+            ImageEditFragment imageEditFragment = (ImageEditFragment) fragment;
+            return imageEditFragment.canUndo();
+        }
+
+        return false;
+    }
+
+    private void undo() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (fragment instanceof ImageEditFragment) {
+            ImageEditFragment imageEditFragment = (ImageEditFragment) fragment;
+            imageEditFragment.undo();
+        }
+    }
+
     private void setupButtons() {
-        findViewById(R.id.reset).setOnClickListener(v -> viewModel.reset());
+        View undoButton = findViewById(R.id.undo);
+        undoButton.setVisibility(canUndo() ? View.VISIBLE : View.GONE);
+        undoButton.setOnClickListener(v -> {
+            if (isExitInProgress) {
+                return;
+            }
+
+            undo();
+        });
 
         findViewById(R.id.done).setOnClickListener(v -> {
             if (isExitInProgress) {
@@ -134,6 +167,11 @@ public class MediaEditActivity extends HalloActivity {
                 isTransitionInProgress = false;
                 prepareTransitionView(true, this::startPostponedEnterTransition);
             }
+        });
+
+        viewModel.getMedia().observe(this, models -> {
+            // on button state change, update buttons
+            setupButtons();
         });
     }
 
@@ -243,8 +281,10 @@ public class MediaEditActivity extends HalloActivity {
 
         bgWorkers.execute(() -> {
             final Bitmap snapshot;
+            final Bitmap original;
             try {
                 snapshot = MediaUtils.decode(this, model.getMedia().file, model.getType());
+                original = MediaUtils.decode(this, model.original.file, model.getType());
             } catch (IOException e) {
                 Log.e("MediaEditActivity: unable to get snapshot", e);
                 runOnUiThread(action);
@@ -285,14 +325,15 @@ public class MediaEditActivity extends HalloActivity {
                 ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) transitionView.getLayoutParams();
 
                 Parcelable state = model.getState();
-                if (model.getType() == Media.MEDIA_TYPE_IMAGE && (state instanceof EditImageView.State)) {
+                if (original != null && model.getType() == Media.MEDIA_TYPE_IMAGE && (state instanceof EditImageView.State)) {
                     View mediaView = findViewById(R.id.image);
                     EditImageView.State imageState = (EditImageView.State) state;
+                    RectF cropRect = cropRectInView(imageState, original.getWidth(), original.getHeight(), mediaView.getWidth(), mediaView.getHeight());
 
-                    params.leftMargin = (int) imageState.cropRect.left;
-                    params.topMargin = (int) imageState.cropRect.top;
-                    params.rightMargin = mediaView.getWidth() - (int) imageState.cropRect.right;
-                    params.bottomMargin = mediaView.getHeight() - (int) imageState.cropRect.bottom;
+                    params.leftMargin = (int) cropRect.left;
+                    params.topMargin = (int) cropRect.top;
+                    params.rightMargin = mediaView.getWidth() - (int) cropRect.right;
+                    params.bottomMargin = mediaView.getHeight() - (int) cropRect.bottom;
                 }
 
                 transitionView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -308,6 +349,22 @@ public class MediaEditActivity extends HalloActivity {
                 transitionView.setLayoutParams(params);
             });
         });
+    }
+
+    private RectF cropRectInView(EditImageView.State state, float imageWidth, float imageHeight, float viewWidth, float viewHeight) {
+        float baseScale = Math.min(viewWidth / imageWidth,  viewHeight / imageHeight);
+        float viewCenterX = viewWidth / 2;
+        float viewCenterY = viewHeight / 2;
+
+        float offsetX = state.offsetX * baseScale * state.scale;
+        float offsetY = state.offsetY * baseScale * state.scale;
+
+        float cropWidth = state.cropWidth * baseScale;
+        float cropHeight = state.cropHeight * baseScale;
+        float cropX = state.cropOffsetX * baseScale + viewCenterX + offsetX - cropWidth / 2;
+        float cropY = state.cropOffsetY * baseScale + viewCenterY + offsetY - cropHeight / 2;
+
+        return new RectF(cropX, cropY, cropX + cropWidth, cropY + cropHeight);
     }
 
     private void onMediaSelect(int position) {
@@ -342,7 +399,6 @@ public class MediaEditActivity extends HalloActivity {
             thumbnailLoader.load(holder.thumbnailView, model.original);
 
             if (model.getType() == Media.MEDIA_TYPE_VIDEO) {
-                holder.typeIndicator.setImageResource(R.drawable.ic_video);
                 holder.typeIndicator.setVisibility(View.VISIBLE);
                 holder.thumbnailView.setContentDescription(getString(R.string.video));
             } else {

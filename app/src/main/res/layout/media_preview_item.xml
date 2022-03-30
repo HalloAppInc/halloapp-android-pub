@@ -2,9 +2,10 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="50dp"
-    android:layout_height="50dp"
-    android:padding="2dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="80dp"
+    android:layout_height="80dp"
+    android:padding="4dp"
     >
 
     <ImageView
@@ -17,11 +18,12 @@
 
     <ImageView
         android:id="@+id/type_indicator"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_margin="2dp"
-        android:layout_gravity="start|bottom"
-        tools:src="@drawable/ic_video"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:scaleType="fitCenter"
+        app:tint="@android:color/white"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_play_arrow"
         tools:ignore="ContentDescription"/> <!-- content description is dynamic and set from the code -->
 
 </FrameLayout>
