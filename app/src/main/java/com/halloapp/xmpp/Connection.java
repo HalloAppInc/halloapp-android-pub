@@ -194,9 +194,13 @@ public abstract class Connection {
 
     public abstract void sendMessage(final @NonNull Message message, final @Nullable SignalSessionSetupInfo signalSessionSetupInfo);
 
+    public abstract Observable<ExternalShareResponseIq> getSharedPost(@NonNull String shareId);
+
     public abstract Observable<Iq> sendIqRequest(@NonNull HalloIq iq);
 
     public abstract <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq);
+
+    public abstract <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq, boolean resendable);
 
     public abstract void sendRerequest(final @NonNull UserId senderUserId, final @NonNull String messageId, int rerequestCount, @Nullable byte[] teardownKey);
 

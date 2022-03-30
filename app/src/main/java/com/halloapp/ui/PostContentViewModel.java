@@ -90,18 +90,7 @@ public class PostContentViewModel extends AndroidViewModel {
                 if (postId != null) {
                     return isArchived ? ContentDb.getInstance().getArchivePost(postId) : ContentDb.getInstance().getPost(postId);
                 } else {
-                    Observable<ExternalShareResponseIq> observable = Connection.getInstance().sendRequestIq(new HalloIq() {
-                        @Override
-                        public Iq.Builder toProtoIq() {
-                            Iq.Builder builder = Iq.newBuilder();
-                            builder.setExternalSharePost(ExternalSharePost.newBuilder()
-                                    .setAction(ExternalSharePost.Action.GET)
-                                    .setBlobId(shareId)
-                                    .build()
-                            );
-                            return builder;
-                        }
-                    });
+                    Observable<ExternalShareResponseIq> observable = Connection.getInstance().getSharedPost(shareId);
 
                     try {
                         ExternalShareResponseIq response = observable.await();

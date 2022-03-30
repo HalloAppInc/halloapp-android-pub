@@ -66,6 +66,7 @@ import com.halloapp.proto.server.DeliveryReceipt;
 import com.halloapp.proto.server.DeviceInfo;
 import com.halloapp.proto.server.ErrorStanza;
 import com.halloapp.proto.server.ExportData;
+import com.halloapp.proto.server.ExternalSharePost;
 import com.halloapp.proto.server.FeedItems;
 import com.halloapp.proto.server.GroupFeedHistory;
 import com.halloapp.proto.server.GroupFeedItem;
@@ -1038,6 +1039,23 @@ public class ConnectionImpl extends Connection {
         });
     }
 
+    @Override
+    public Observable<ExternalShareResponseIq> getSharedPost(@NonNull String shareId) {
+        HalloIq getSharedPostIq = new HalloIq() {
+            @Override
+            public Iq.Builder toProtoIq() {
+                Iq.Builder builder = Iq.newBuilder();
+                builder.setExternalSharePost(ExternalSharePost.newBuilder()
+                        .setAction(ExternalSharePost.Action.GET)
+                        .setBlobId(shareId)
+                        .build()
+                );
+                return builder;
+            };
+        };
+        return sendRequestIq(getSharedPostIq, true);
+    }
+
     // NOTE: Should NOT be called from executor.
     @Override
     public Observable<Iq> sendIqRequest(@NonNull HalloIq iq) {
@@ -1051,7 +1069,6 @@ public class ConnectionImpl extends Connection {
         }).onError(iqResponse::setException);
         return iqResponse;
     }
-
 
     // NOTE: Should NOT be called from executor.
     @Override
@@ -1067,15 +1084,29 @@ public class ConnectionImpl extends Connection {
         return iqResponse;
     }
 
+    // NOTE: Should NOT be called from executor.
+    @Override
+    public <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq, boolean resendable) {
+        MutableObservable<T> iqResponse = new MutableObservable<>();
+        sendIqRequestAsync(iq, resendable).onResponse(resultIq -> {
+            try {
+                iqResponse.setResponse((T) HalloIq.fromProtoIq(resultIq));
+            } catch (ClassCastException e) {
+                iqResponse.setException(e);
+            }
+        }).onError(iqResponse::setException);
+        return iqResponse;
+    }
+
     private Observable<Iq> sendIqRequestAsync(@NonNull HalloIq iq) {
         return sendIqRequestAsync(iq, false);
     }
 
-    private Observable<Iq> sendIqRequestAsync(@NonNull HalloIq iq, boolean retryConnection) {
+    private Observable<Iq> sendIqRequestAsync(@NonNull HalloIq iq, boolean resendable) {
         BackgroundObservable<Iq> iqResponse = new BackgroundObservable<>(bgWorkers);
         executor.executeWithDropHandler(() -> {
             Iq.Builder protoIq = iq.toProtoIq();
-            iqRouter.sendAsync(protoIq)
+            iqRouter.sendAsync(protoIq, resendable)
                     .onResponse(iqResponse::setResponse)
                     .onError(iqResponse::setException);
         }, () -> iqResponse.setException(new ExecutorResetException()));
