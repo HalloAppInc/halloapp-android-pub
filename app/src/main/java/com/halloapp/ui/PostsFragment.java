@@ -300,7 +300,7 @@ public abstract class PostsFragment extends HalloFragment {
                 }
 
                 public void onChanged(int position, int count, @Nullable Object payload) {
-                    if (position > getInviteCardIndex()) {
+                    if (getInviteCardIndex() >= 0 && position > getInviteCardIndex()) {
                         position += 1;
                     }
                     adapterCallback.onChanged(position + getHeaderCount(), count, payload);
