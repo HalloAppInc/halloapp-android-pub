@@ -1,21 +1,31 @@
 package com.halloapp.ui;
 
+import android.app.TaskStackBuilder;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.MutableLiveData;
 
+import com.halloapp.Me;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 
 import java.util.Locale;
 
 public class ViewExternalPostActivity extends HalloActivity {
 
+    private BgWorkers bgWorkers = BgWorkers.getInstance();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
+
+        MutableLiveData<Boolean> isRegistered = new MutableLiveData<>();
+        bgWorkers.execute(() -> isRegistered.postValue(Me.getInstance().isRegistered()));
 
         SharedUrlParts parsedUrl = tryParseUri(getIntent().getData());
         if (parsedUrl == null) {
@@ -24,8 +34,15 @@ public class ViewExternalPostActivity extends HalloActivity {
             return;
         }
 
-        startActivity(PostContentActivity.openExternal(this, parsedUrl.id, parsedUrl.key));
-        finish();
+        isRegistered.observe(this, registered -> {
+            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
+            if (!registered) {
+                taskStackBuilder.addNextIntent(new Intent(this, RegistrationRequestActivity.class));
+            }
+            taskStackBuilder.addNextIntent(PostContentActivity.openExternal(this, parsedUrl.id, parsedUrl.key));
+            taskStackBuilder.startActivities();
+            finish();
+        });
     }
 
     @Nullable
