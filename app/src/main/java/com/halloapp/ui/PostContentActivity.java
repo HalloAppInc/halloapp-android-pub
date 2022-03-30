@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.MainThread;
@@ -350,11 +352,16 @@ public class PostContentActivity extends HalloActivity {
 
         drawDelegateView = Preconditions.checkNotNull(this).findViewById(R.id.draw_delegate);
 
+        ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.loading_post));
         viewModel.post.getLiveData().observe(this, post -> {
-            // TODO(jack): show error for null post
-            // TODO(jack): show progress dialog while loading
-            showPost(post);
+            progressDialog.dismiss();
+            if (post == null) {
+                Toast.makeText(this, R.string.failed_load_post, Toast.LENGTH_LONG).show();
+                finish();
+                return;
+            }
 
+            showPost(post);
             if (post.media.size() > 0) {
                 MediaPagerAdapter.preparePagerForTransition(postRecyclerView, post.id, getIntent().getIntExtra(EXTRA_POST_MEDIA_INDEX, 0), this::startPostponedEnterTransition);
             } else {
