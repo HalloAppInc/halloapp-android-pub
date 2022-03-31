@@ -16,7 +16,7 @@ import java.util.Locale;
 
 public class ViewExternalPostActivity extends HalloActivity {
 
-    private BgWorkers bgWorkers = BgWorkers.getInstance();
+    private final BgWorkers bgWorkers = BgWorkers.getInstance();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
