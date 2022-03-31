@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<resources>
+<?xml version="1.0" encoding="UTF-8"?><resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Inicio"</string>
     <string name="title_messages">"Conversaciones"</string>
@@ -16,7 +15,7 @@
     <string name="message_notifications_channel_name">"Notificaciones de mensajes"</string>
     <string name="critical_notifications_channel_name">"Alertas importantes de la aplicación"</string>
     <string name="invite_notifications_channel_name">"Notificaciones de invitaciones"</string>
-    <string name="invite_notification_text">"%s acaba de aceptar tu invitación a HalloApp &#x1f389;"</string>
+    <string name="invite_notification_text">"%s acaba de aceptar tu invitación a HalloApp &#127881;"</string>
     <string name="me">"Yo"</string>
     <string name="you">"tú"</string>
     <string name="camera_post">"Cámara"</string>
@@ -44,8 +43,6 @@ El servidor de telefonía móvil podría aplicar cargos."</string>
     <string name="set_avatar_reset">"Restablecer"</string>
     <string name="new_post">"Nueva publicación"</string>
     <string name="new_message">"Nuevo mensaje"</string>
-
-    <!-- Fuzzy -->
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s está en HalloApp."</string>
     <string name="new_chat_name_placeholder">"¡%s está usando HalloApp!"</string>
@@ -125,13 +122,11 @@ Para modificar los permisos de la aplicación, abre la pantalla de configuració
     <string name="no_photos_or_videos_found">"No se encontraron fotos o videos"</string>
     <string name="gallery">"Galería de fotos"</string>
     <string name="avatar_picker_title">"Foto de perfil"</string>
-
-    <!-- Fuzzy -->
     <string name="group_avatar_picker_title">"Avatar del grupo"</string>
     <string name="other_media">"Otros medios"</string>
     <string name="rotate">"Girar"</string>
     <string name="seen_by">"Visto por"</string>
-    <string name="empty_viewed_by">"Nadie ha visto aún tu publicación "</string>
+    <string name="empty_viewed_by">"Nadie ha visto aún tu publicación"</string>
     <string name="options">"Opciones"</string>
     <string name="block">"Bloquear"</string>
     <string name="play">"Jugar"</string>
@@ -1187,78 +1182,108 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="call_action_video">"Llamada de voz"</string>
 
     <!-- Action shown in user's address book for option to start a call, %s replaced with the phone number -->
-    <string name="address_book_action_call">"Voice call %s"</string>
+    <string name="address_book_action_call">"Llamada %s"</string>
 
     <!-- Action shown in user's address book for option to send a message, %s replaced with the phone number -->
-    <string name="address_book_action_message">"Message %s"</string>
+    <string name="address_book_action_message">"Mensaje %s"</string>
 
     <!-- Text provided as title when a post is shared outside of HalloApp -->
-    <string name="external_share_title">"HalloApp post from %s"</string>
+    <string name="external_share_title">"Publicación en HalloApp de %s"</string>
 
     <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
-    <string name="external_share_description_text">"Text post"</string>
+    <string name="external_share_description_text">"Publicación de texto"</string>
 
     <!-- Text provided as description for an audio post being shared outside of HalloApp -->
-    <string name="external_share_description_audio">"Audio post"</string>
+    <string name="external_share_description_audio">"Publicación de audio"</string>
 
     <!-- Text provided as description for media post being shared outside of HalloApp -->
-    <string name="external_share_description_media">"Media post"</string>
+    <string name="external_share_description_media">"Publicación de medios"</string>
 
     <!-- Text on an indeterminate progress dialog when you tap to share a post outside of HalloApp -->
-    <string name="external_share_in_progress">"Creating sharing link"</string>
+    <string name="external_share_in_progress">"Crea enlace para compartir"</string>
 
     <!-- Text in a temporary dialog when sharing externally fails -->
-    <string name="external_share_failed">"Failed to create sharing link, please try again"</string>
+    <string name="external_share_failed">"No se pudo crear el enlace para compartir, por favor inténtalo de nuevo"</string>
 
     <!-- Text shared or copied to clipboard when sharing a post outside HalloApp -->
-    <string name="external_share_copy">"Check out my post on HalloApp: %s"</string>
+    <string name="external_share_copy">"Mira mi publicación en HalloApp:  %s"</string>
 
     <!-- Rationale for when requesting microphone or camera permission for voice calls, but it has already been denied. -->
-    <string name="call_record_audio_or_camera_permission_rationale_denied">"To make a voice or video call we need permission to access the microphone and camera.
+    <string name="call_record_audio_or_camera_permission_rationale_denied">"Para hacer una llamada de voz o video necesitamos permiso para acceder al micrófono y la cámara.
 
-Open the app settings screen to modify app permissions."</string>
+Abre la pantalla de configuración de la app para modificar los permisos."</string>
 
     <!-- text shown in a card prompting user to search for friends/family to invite -->
-    <string name="invite_card_search_text">"Search for more friends and family"</string>
+    <string name="invite_card_search_text">"Busca más amigos y familiares"</string>
 
     <!-- Text shown as title for invite suggested friends card -->
-    <string name="invite_card_header">"HalloApp is fun with friends and family"</string>
+    <string name="invite_card_header">"HalloApp es divertido con amigos y familiares"</string>
 
     <!-- Action on missed call notifications allowing the user to callback without opening the app first -->
-    <string name="call_back_notification_label">"Call back"</string>
+    <string name="call_back_notification_label">"Devolver llamada"</string>
 
     <!-- Text in notifications for missed calls %1$d is replaced with the number of missed calls -->
     <plurals name="missed_calls_notification">
-        <item quantity="one">"%1$d missed call"</item>
-        <item quantity="other">"%1$d missed call"</item>
+        <item quantity="one">"%1$d llamada perdida"</item>
+        <item quantity="other">"%1$d llamadas perdidas"</item>
     </plurals>
 
     <!-- Label under the bluetooth button in calls -->
     <string name="bluetooth">"Bluetooth"</string>
 
     <!-- Notice displayed in the call screen -->
-    <string name="call_e2e_notice">"End-to-end encrypted"</string>
+    <string name="call_e2e_notice">"Cifrado de extremo a extremo"</string>
 
     <!-- String shown while preparing to share logs from the app -->
-    <string name="preparing_logs">"Preparing logs…"</string>
+    <string name="preparing_logs">"Preparando registros…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
-    <string name="post_tombstone_placeholder">"Waiting for this post. This may take a while. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="post_tombstone_placeholder">"Esperando por esta publicación. Esto puede que demore un poco.&lt;a href=\"learn-more\"&gt;Conoce más&lt;/a&gt;."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
-    <string name="comment_tombstone_placeholder">"Waiting for this comment. This may take a while. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="comment_tombstone_placeholder">"Esperando por este comentario"</string>
 
     <!-- Name for notifications channel for missed calls -->
-    <string name="missed_call_notifications_channel_name">"Missed call notifications"</string>
+    <string name="missed_call_notifications_channel_name">"Notificaciones de llamadas perdidas"</string>
 
     <!-- Single new comment notification text. %s replaced with name of comment sender -->
-    <string name="new_comment_notification">"New comment from %s"</string>
+    <string name="new_comment_notification">"Nuevo comentario de %s"</string>
 
     <!-- Text in notifications for comments from potentially multiple people. %1$d replaced with number of comments, %2$s replaced with list of names -->
     <plurals name="new_comments_list_notification">
-        <item quantity="one">"%1$d new comment from %2$s"</item>
-        <item quantity="other">"%1$d new comment from %2$s"</item>
+        <item quantity="one">"%1$d nuevo comentario de %2$s"</item>
+        <item quantity="other">"%1$d nuevos comentarios de %2$s"</item>
     </plurals>
+
+    <!-- Displayed on the call screen when the call is on hold -->
+    <string name="call_on_hold">"En espera"</string>
+
+    <!-- Toast displayed when the other side puts the call on hold -->
+    <string name="call_other_side_on_hold">"Llamada en espera"</string>
+
+    <!-- Toast displayed when the other side removes the call hold -->
+    <string name="call_other_side_on_unhold">"Llamada reanudada"</string>
+
+    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for posts -->
+    <string name="contact_favorites_explanation">"Esta publicación solo se comparte con los contactos que agregaste a Favoritos. Puedes cambiar tu audiencia en la configuración de privacidad en cualquier momento."</string>
+
+    <!-- Favorites means the users favorite contacts -->
+    <string name="contact_favorites">"Favoritos"</string>
+
+    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts -->
+    <string name="contact_favorites_explanation_others">"Esta publicación solo se comparte con una audiencia limitada. Puedes cambiar tu audiencia en la configuración de privacidad en cualquier momento."</string>
+
+    <!-- Drawing on images -->
+    <string name="draw">"Dibuja"</string>
+
+    <!-- Undo an action -->
+    <string name="undo">"Deshace"</string>
+
+    <!-- Text shown in progress dialog while loading a post for individual viewing, usually from a private reply or an external sharing link -->
+    <string name="loading_post">"Cargando publicación"</string>
+
+    <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
+    <string name="failed_load_post">"Error al cargar la publicación"</string>
     <string name="share_externally">"Compartir externamente"</string>
     <string name="incoming_call_notification_title">"Llamada entrante"</string>
     <string name="call_action">"Llamar"</string>

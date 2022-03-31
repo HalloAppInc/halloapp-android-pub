@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<resources>
+<?xml version="1.0" encoding="UTF-8"?><resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Home"</string>
     <string name="title_messages">"Chats"</string>
@@ -18,7 +17,7 @@
     <string name="message_notifications_channel_name">"Mitteilungen für Nachrichten"</string>
     <string name="critical_notifications_channel_name">"Wichtige App-Warnmeldungen"</string>
     <string name="invite_notifications_channel_name">"Einladungs-Mitteilungen"</string>
-    <string name="invite_notification_text">"%s hat deine Einladung zu HalloApp &#x1f389; angenommen"</string>
+    <string name="invite_notification_text">"%s hat deine Einladung zu HalloApp &#127881; angenommen"</string>
     <string name="me">"Ich"</string>
     <string name="you">"dich"</string>
     <string name="camera_post">"Kamera"</string>
@@ -53,7 +52,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <!-- Fuzzy translation?  Pls. provide more details -->
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s nutzt HalloApp."</string>
-    <string name="new_chat_name_placeholder">"%s nutzt HalloApp! &#x1f389;"</string>
+    <string name="new_chat_name_placeholder">"%s nutzt HalloApp! &#127881;"</string>
     <string name="posts_empty">"Deine Beiträge erscheinen hier"</string>
     <string name="posts_exchange_numbers">"Um den Kontakt herzustellen, müsst ihr eure Handynummern austauschen"</string>
     <string name="home_page_empty">"Beiträge deiner Kontakte siehst du hier"</string>
@@ -1259,6 +1258,36 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
         <item quantity="one">"%1$d neuer Kommentar von %2$s"</item>
         <item quantity="other">"%1$d neue Kommentare von %2$s"</item>
     </plurals>
+
+    <!-- Displayed on the call screen when the call is on hold -->
+    <string name="call_on_hold">"In der Warteschleife"</string>
+
+    <!-- Toast displayed when the other side puts the call on hold -->
+    <string name="call_other_side_on_hold">"Anruf ist auf Warteschleife"</string>
+
+    <!-- Toast displayed when the other side removes the call hold -->
+    <string name="call_other_side_on_unhold">"Anruf wurde fortgesetzt"</string>
+
+    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for posts -->
+    <string name="contact_favorites_explanation">"Dieser Beitrag wird nur mit Kontakten geteilt, die du zu den Favoriten hinzugefügt hast. Du kannst deine Zielgruppe in den Privatsphäre-Einstellungen jederzeit anpassen."</string>
+
+    <!-- Favorites means the users favorite contacts -->
+    <string name="contact_favorites">"Favoriten"</string>
+
+    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts -->
+    <string name="contact_favorites_explanation_others">"Dieser Beitrag wird nur mit einem begrenzten Benutzerkreis geteilt. Du kannst deine Zielgruppe in den Privatsphäre-Einstellungen jederzeit anpassen."</string>
+
+    <!-- Drawing on images -->
+    <string name="draw">"Zeichnen"</string>
+
+    <!-- Undo an action -->
+    <string name="undo">"Rückgängig machen"</string>
+
+    <!-- Text shown in progress dialog while loading a post for individual viewing, usually from a private reply or an external sharing link -->
+    <string name="loading_post">"Loading post…"</string>
+
+    <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
+    <string name="failed_load_post">"Failed to load post"</string>
     <string name="share_externally">"Außerhalb von HalloApp teilen"</string>
     <string name="incoming_call_notification_title">"Eingehender Anruf"</string>
     <string name="call_action">"Anrufen"</string>

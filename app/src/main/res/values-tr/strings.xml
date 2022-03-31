@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<resources>
+<?xml version="1.0" encoding="UTF-8"?><resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Ana sayfa"</string>
     <string name="title_messages">"Sohbetler"</string>
@@ -18,7 +17,7 @@
     <string name="message_notifications_channel_name">"Mesaj bildirimleri"</string>
     <string name="critical_notifications_channel_name">"Önemli uygulama uyarıları"</string>
     <string name="invite_notifications_channel_name">"Davet bildirimleri"</string>
-    <string name="invite_notification_text">"%s, HalloApp'e katılma davetini kabul etti &#x1f389;"</string>
+    <string name="invite_notification_text">"%s, HalloApp'e katılma davetini kabul etti &#127881;"</string>
     <string name="me">"Ben"</string>
     <string name="you">"sen"</string>
     <string name="camera_post">"Kamera"</string>
@@ -46,7 +45,7 @@
     <string name="new_message">"Yeni mesaj"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s, HalloApp'te"</string>
-    <string name="new_chat_name_placeholder">"%s, HalloApp kullanıyor! &#x1f389;"</string>
+    <string name="new_chat_name_placeholder">"%s, HalloApp kullanıyor! &#127881;"</string>
     <string name="posts_empty">"Gönderilerin burada görünecek"</string>
     <string name="posts_exchange_numbers">"İletişim kurmak için birbirinize telefon numaralarınızı vermelisiniz"</string>
     <string name="home_page_empty">"Kişilerinin paylaştıkları gönderiler, burada görünecek"</string>
@@ -1247,6 +1246,36 @@ Open the app settings screen to modify app permissions."</string>
         <item quantity="one">"%1$d new comment from %2$s"</item>
         <item quantity="other">"%1$d new comment from %2$s"</item>
     </plurals>
+
+    <!-- Displayed on the call screen when the call is on hold -->
+    <string name="call_on_hold">"On hold"</string>
+
+    <!-- Toast displayed when the other side puts the call on hold -->
+    <string name="call_other_side_on_hold">"Call is on hold"</string>
+
+    <!-- Toast displayed when the other side removes the call hold -->
+    <string name="call_other_side_on_unhold">"Call has resumed"</string>
+
+    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for posts -->
+    <string name="contact_favorites_explanation">"This post is only shared with contacts you added to Favorites. You can adjust your audience in privacy settings at any time."</string>
+
+    <!-- Favorites means the users favorite contacts -->
+    <string name="contact_favorites">"Favorites"</string>
+
+    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts -->
+    <string name="contact_favorites_explanation_others">"This post is only shared with a limited audience. You can adjust your audience in privacy settings at any time."</string>
+
+    <!-- Drawing on images -->
+    <string name="draw">"Draw"</string>
+
+    <!-- Undo an action -->
+    <string name="undo">"Undo"</string>
+
+    <!-- Text shown in progress dialog while loading a post for individual viewing, usually from a private reply or an external sharing link -->
+    <string name="loading_post">"Loading post…"</string>
+
+    <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
+    <string name="failed_load_post">"Failed to load post"</string>
     <string name="share_externally">"Harici olarak paylaş"</string>
     <string name="incoming_call_notification_title">"Gelen çağrı"</string>
     <string name="call_action">"Arama"</string>
