@@ -761,8 +761,9 @@ public class MediaUtils {
                 info.offset = offset;
                 info.size = extractor.readSampleData(buffer, offset);
                 info.presentationTimeUs = extractor.getSampleTime();
-                //noinspection WrongConstant
-                info.flags = extractor.getSampleFlags();
+
+                boolean isKeyFrame = (extractor.getSampleFlags() & MediaExtractor.SAMPLE_FLAG_SYNC) != 0;
+                info.flags = isKeyFrame ? MediaCodec.BUFFER_FLAG_KEY_FRAME : 0;
             } catch (IllegalArgumentException e) {
                 Log.e("VideoEditActivity: unable to extract video, probably buffer too small", e);
                 throw new IOException(e);
