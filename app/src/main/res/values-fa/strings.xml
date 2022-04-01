@@ -1222,7 +1222,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="missed_call_notifications_channel_name">"لیست تماس‌های از دست رفته"</string>
 
     <!-- Single new comment notification text. %s replaced with name of comment sender -->
-    <string name="new_comment_notification">"نظر جدید از s%"</string>
+    <string name="new_comment_notification">"نظر جدید از %s"</string>
 
     <!-- Text in notifications for comments from potentially multiple people. %1$d replaced with number of comments, %2$s replaced with list of names -->
     <plurals name="new_comments_list_notification">
