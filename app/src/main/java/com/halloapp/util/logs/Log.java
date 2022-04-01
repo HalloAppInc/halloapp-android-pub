@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 
 import io.sentry.Sentry;
+import io.sentry.protocol.User;
 
 
 public class Log {
@@ -152,6 +153,11 @@ public class Log {
             FirebaseCrashlytics.getInstance().setCustomKey("internal", ServerProps.getInstance().getIsInternalUser());
             FirebaseCrashlytics.getInstance().setCustomKey("locale", Locale.getDefault().toLanguageTag());
             FirebaseCrashlytics.getInstance().setUserId(user);
+
+            User sentryUser = new User();
+            sentryUser.setId(user);
+            Sentry.setUser(sentryUser);
+            Sentry.setExtra("internal", Boolean.toString(ServerProps.getInstance().getIsInternalUser()));
             return null;
         }
     }
