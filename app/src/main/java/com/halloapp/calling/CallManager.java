@@ -248,7 +248,8 @@ public class CallManager {
         this.observers = new HashSet<>();
         this.callStats = new CallStats();
 
-        executor.execute(this::initializePeerConnectionFactory);
+        // TODO(vipin): Remove the following line.
+        // executor.execute(this::initializePeerConnectionFactory);
         if (Build.VERSION.SDK_INT >= 26) {
             executor.execute(this::telecomRegisterAccount);
         }
