@@ -961,7 +961,7 @@ public class CallManager {
         PeerConnectionFactory.initialize(
                 PeerConnectionFactory.InitializationOptions.builder(appContext.get())
                         .setEnableInternalTracer(true)
-                        .setInjectableLogger(new CallLogger(), Logging.Severity.LS_INFO)
+                        .setInjectableLogger(new CallLogger(), Logging.Severity.LS_WARNING)
                         .createInitializationOptions());
         PeerConnectionFactory.Builder builder = PeerConnectionFactory.builder();
         builder.setVideoEncoderFactory(encoderFactory);
