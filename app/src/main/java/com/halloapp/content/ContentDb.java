@@ -616,7 +616,12 @@ public class ContentDb {
 
     @WorkerThread
     private @NonNull List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId, boolean unseenOnly) {
-        return postsDb.getPosts(timestamp, count, after, senderUserId, groupId, unseenOnly);
+        return postsDb.getPosts(timestamp, count, after, senderUserId, groupId, unseenOnly, false);
+    }
+
+    @WorkerThread
+    @NonNull List<Post> getPostsOrderLastUpdate(@Nullable Long timestamp, int count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId) {
+        return postsDb.getPosts(timestamp, count, after, senderUserId, groupId, false, true);
     }
 
     @WorkerThread

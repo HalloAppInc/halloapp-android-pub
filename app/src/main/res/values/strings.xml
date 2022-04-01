@@ -356,6 +356,11 @@
         <item quantity="one">%d new message</item>
         <item quantity="other">%d new messages</item>
     </plurals>
+    <!-- Text in groups pill telling the user theres new posts -->
+    <plurals name="new_posts_quantity">
+        <item quantity="one">%d new post</item>
+        <item quantity="other">%d new posts</item>
+    </plurals>
     <!-- New comment separator -->
     <plurals name="new_comment_separator">
         <item quantity="one">%d new comment</item>

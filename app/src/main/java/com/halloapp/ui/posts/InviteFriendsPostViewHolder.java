@@ -21,6 +21,7 @@ import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.DeviceAvatarLoader;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.util.Rtl;
+import com.halloapp.widget.HorizontalSpaceDecoration;
 
 import java.util.List;
 
@@ -48,25 +49,6 @@ public class InviteFriendsPostViewHolder extends ViewHolderWithLifecycle {
         cardRv.setAdapter(adapter);
         cardRv.addItemDecoration(new HorizontalSpaceDecoration(cardRv.getContext().getResources().getDimensionPixelSize(R.dimen.invite_card_spacing)));
 
-    }
-
-    public static class HorizontalSpaceDecoration extends RecyclerView.ItemDecoration {
-
-        private final int horizontalSpace;
-
-        public HorizontalSpaceDecoration(int space) {
-            this.horizontalSpace = space;
-        }
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
-                                   RecyclerView.State state) {
-            if (Rtl.isRtl(parent.getContext())) {
-                outRect.left = horizontalSpace;
-            } else {
-                outRect.right = horizontalSpace;
-            }
-        }
     }
 
     public void bindTo(LiveData<List<Contact>> inviteList) {

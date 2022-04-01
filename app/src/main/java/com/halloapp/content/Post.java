@@ -89,6 +89,7 @@ public class Post extends ContentItem {
     public Comment firstComment;
     public byte[] protoHash;
     public boolean subscribed;
+    public long updateTime;
 
     // stats not read from DB
     public String failureReason;

@@ -47,6 +47,8 @@
     <color name="neutral_button_background">#FFFFFF</color>
     <color name="post_card_color_background">@color/cardview_light_background</color>
     <color name="post_card_background">#ffffff</color>
+    <color name="group_post_preview_comment_bar_overlay">#E1E5E2D6</color>
+    <color name="group_post_preview_border">#1F000000</color>
     <color name="badge_text">#ffffff</color>
     <color name="badge_background">#ff4500</color>
     <color name="selected_badge_background">@color/color_secondary</color>
@@ -114,6 +116,9 @@
     <color name="default_avatar_bg">#C3BEAE</color>
     <color name="default_avatar_color">#FFFFFF</color>
     <color name="new_post_pill_bg">#CCC8BD</color>
+    <color name="groups_spinner_bar">#FFFFFF</color>
+    <color name="groups_spinner_bg">#ff4500</color>
+    <color name="groups_refresh_bg">#CDff4500</color>
 
 
     <color name="bg_call_button_neutral">#EDECE9</color>

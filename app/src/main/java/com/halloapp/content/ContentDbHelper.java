@@ -37,7 +37,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 64;
+    private static final int DATABASE_VERSION = 65;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -72,7 +72,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + PostsTable.COLUMN_SENDER_VERSION + " TEXT,"
                 + PostsTable.COLUMN_RECEIVE_TIME + " INTEGER,"
                 + PostsTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER,"
-                + PostsTable.COLUMN_SUBSCRIBED + " INTEGER"
+                + PostsTable.COLUMN_SUBSCRIBED + " INTEGER,"
+                + PostsTable.COLUMN_LAST_UPDATE + " INTEGER"
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + ArchiveTable.TABLE_NAME);
@@ -620,6 +621,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 63: {
                 upgradeFromVersion63(db);
+            }
+            case 64: {
+                upgradeFromVersion64(db);
             }
             break;
             default: {
@@ -1331,6 +1335,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("UPDATE " + PostsTable.TABLE_NAME
                 + " SET " + PostsTable.COLUMN_TIMESTAMP + " = " + PostsTable.COLUMN_TIMESTAMP + "/1000"
                 + " WHERE " + PostsTable.COLUMN_TIMESTAMP + ">" + (now * 100));
+    }
+
+    private void upgradeFromVersion64(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_LAST_UPDATE + " INTEGER");
     }
 
     /**

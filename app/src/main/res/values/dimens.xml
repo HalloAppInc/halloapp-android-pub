@@ -56,6 +56,8 @@
     <dimen name="composer_text_size">15sp</dimen>
     <dimen name="composer_text_size_large">20sp</dimen>
     <dimen name="message_text_size">16sp</dimen>
+    <dimen name="group_post_preview_card_radius">11dp</dimen>
+    <dimen name="group_post_preview_card_separation">10dp</dimen>
     <dimen name="message_text_size_few_emoji">32sp</dimen>
     <dimen name="design_bottom_navigation_height" tools:override="true" tools:ignore="UnusedResources">54dp</dimen>
     <dimen name="mtrl_badge_radius" tools:override="true" tools:ignore="UnusedResources">3dp</dimen>

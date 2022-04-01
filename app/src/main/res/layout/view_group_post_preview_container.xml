@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/card"
+        android:layout_width="150dp"
+        android:layout_height="166dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:layout_margin="0.5dp"
+        android:foreground="?selectableItemBackground"
+        android:background="@color/card_background"
+        >
+
+        <TextView
+            android:id="@+id/preview_text"
+            android:layout_width="0dp"
+            android:paddingTop="2dp"
+            android:paddingHorizontal="3dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/avatar"
+            app:layout_constraintTop_toBottomOf="@id/avatar"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textColor="@color/primary_text"
+            android:layout_marginEnd="8dp"
+            android:autoLink="web"
+            android:linksClickable="false"
+            tools:text="omg do you guys remember these epic music videos from Rammstein? httpsd asf;lkja;sldkjf;lkjasdf;lk jasd;lfk jas;ldkj as;ldkfj a;lsdk://youtu.be/StZcUAPRRac"/>
+
+        <ImageView
+            android:id="@+id/preview_image"
+            android:layout_width="match_parent"
+            android:scaleType="centerCrop"
+            android:layout_height="match_parent"/>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatar"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginHorizontal="9dp"
+            app:civ_border_color="@color/post_card_background"
+            app:civ_border_width="1dp"
+            android:elevation="2dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:src="@drawable/avatar_person"/>
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            tools:text="Clark Chen"
+            android:textSize="15sp"
+            android:layout_marginStart="6dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/avatar"
+            app:layout_constraintBottom_toBottomOf="@id/avatar"
+            android:textColor="@color/primary_text"
+            android:fontFamily="sans-serif-medium"
+            app:layout_constraintStart_toEndOf="@id/avatar"/>
+
+        <ImageView
+            android:id="@+id/media_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginHorizontal="6dp"
+            android:layout_marginBottom="6dp"
+            android:scaleType="center"
+            android:elevation="1dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/comment_bar"
+            />
+
+        <LinearLayout
+            android:id="@+id/voice_note_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:layout_marginHorizontal="10dp"
+            android:visibility="gone"
+            android:clickable="false"
+            android:focusable="false"
+            app:layout_constraintTop_toBottomOf="@id/avatar"
+            app:layout_constraintBottom_toTopOf="@id/comment_bar"
+            android:background="@drawable/bg_voice_note_post_controls">
+
+            <ImageView
+                android:id="@+id/control_btn"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:tint="@color/color_secondary"
+                android:src="@drawable/ic_play_arrow"/>
+
+
+            <androidx.appcompat.widget.AppCompatSeekBar
+                android:id="@+id/voice_note_seekbar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingStart="8dp"
+                android:paddingEnd="3dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:progressDrawable="@drawable/voice_note_seekbar" />
+
+            <TextView
+                android:id="@+id/seek_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                android:paddingHorizontal="2dp"
+                android:fontFamily="sans-serif-medium"
+                tools:text="0:06"/>
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/post_preview_border_overlay"/>
+
+        <LinearLayout
+            android:id="@+id/comment_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="13dp"
+            android:paddingVertical="5dp"
+            android:background="@color/group_post_preview_comment_bar_overlay"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary_text"
+                android:textSize="15sp"
+                android:paddingBottom="1dp"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/comment"/>
+
+            <View
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginHorizontal="6dp"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/new_comments_indicator"
+                android:id="@+id/comments_indicator" />
+
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/new_border"
+        android:visibility="gone"
+        android:layout_width="151dp"
+        android:layout_height="167dp"
+        android:background="@drawable/post_preview_new_border_overlay"/>
+
+</FrameLayout>

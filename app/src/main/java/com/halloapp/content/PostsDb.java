@@ -339,6 +339,22 @@ class PostsDb {
     }
 
     @WorkerThread
+    void setPostUpdated(@NonNull String postId, long updateTime) {
+        Log.i("ContentDb.setPostUpdated: " + " postId=" + postId + " time=" + updateTime);
+        final ContentValues values = new ContentValues();
+        values.put(PostsTable.COLUMN_LAST_UPDATE, updateTime);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(PostsTable.TABLE_NAME, values, PostsTable.COLUMN_POST_ID + "=?",
+                    new String [] {postId},
+                    SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLException ex) {
+            Log.e("ContentDb.setPostUpdated: failed");
+            throw ex;
+        }
+    }
+
+    @WorkerThread
     void setGroupSeen(@NonNull GroupId groupId) {
         Log.i("ContentDb.setGroupSeen: groupId=" + groupId);
         final ContentValues values = new ContentValues();
@@ -771,6 +787,7 @@ class PostsDb {
                 mediaDb.addMedia(comment);
                 mentionsDb.addMentions(comment);
                 urlPreviewsDb.addUrlPreview(comment);
+                setPostUpdated(comment.postId, comment.timestamp);
                 if (comment instanceof FutureProofComment) {
                     futureProofDb.saveFutureProof((FutureProofComment) comment);
                 }
@@ -1131,11 +1148,12 @@ class PostsDb {
     }
 
     @WorkerThread
-    @NonNull List<Post> getPosts(@Nullable Long timestamp, @Nullable Integer count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId, boolean unseenOnly) {
+    @NonNull List<Post> getPosts(@Nullable Long timestamp, @Nullable Integer count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId, boolean unseenOnly, boolean orderByLastUpdated) {
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         String where;
         String[] selectionArgs = null;
+        String orderBy;
         if (timestamp == null) {
             where = PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime();
         } else {
@@ -1161,12 +1179,18 @@ class PostsDb {
         if (groupId != null) {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "=?";
             args.add(groupId.rawId());
-        } else {
+        }
+        if (groupId == null || orderByLastUpdated) {
             where += " AND ("
                     + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_USER + " OR "
                     + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_FUTURE_PROOF + " OR "
                     + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_VOICE_NOTE + " OR "
                     + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + " IS NULL)";
+        }
+        if (orderByLastUpdated) {
+            orderBy = "COALESCE(" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_LAST_UPDATE + "," + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ")" + (after ? " DESC " : " ASC ");
+        } else {
+            orderBy = PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + (after ? " DESC " : " ASC ");
         }
         if (!args.isEmpty()) {
             selectionArgs = args.toArray(new String[0]);
@@ -1184,6 +1208,7 @@ class PostsDb {
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_USAGE + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_LAST_UPDATE + "," +
                 "m." + MediaTable._ID + "," +
                 "m." + MediaTable.COLUMN_TYPE + "," +
                 "m." + MediaTable.COLUMN_URL + "," +
@@ -1248,8 +1273,7 @@ class PostsDb {
                     "FROM " + SeenTable.TABLE_NAME + " GROUP BY " + SeenTable.COLUMN_POST_ID + ") " +
                 "AS s ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=''" + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=s." + SeenTable.COLUMN_POST_ID + " " +
             "WHERE " + where + " " +
-            "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + (after ? " DESC " : " ASC ") +
-                    (count == null ? "" : ("LIMIT " + count));
+            "ORDER BY " + orderBy + (count == null ? "" : ("LIMIT " + count));;
 
         try (final Cursor cursor = db.rawQuery(sql, selectionArgs)) {
 
@@ -1279,44 +1303,45 @@ class PostsDb {
                     post.setAudience(cursor.getString(7), audienceList);
                     post.setExcludeList(excludeList);
                     post.usage = cursor.getInt(10);
-                    post.commentCount = cursor.getInt(22);
-                    post.unseenCommentCount = post.commentCount - cursor.getInt(23);
+                    post.commentCount = cursor.getInt(23);
+                    post.unseenCommentCount = post.commentCount - cursor.getInt(24);
+                    post.updateTime = Math.max(post.timestamp, cursor.getLong(11));
                     GroupId parentGroupId = GroupId.fromNullable(cursor.getString(8));
                     if (parentGroupId != null) {
                         post.setParentGroup(parentGroupId);
                     }
-                    final String firstCommentId = cursor.getString(25);
+                    final String firstCommentId = cursor.getString(26);
                     if (firstCommentId != null) {
-                        post.firstComment = new Comment(cursor.getLong(24),
+                        post.firstComment = new Comment(cursor.getLong(25),
                                 post.id,
-                                new UserId(cursor.getString(26)),
+                                new UserId(cursor.getString(27)),
                                 firstCommentId,
                                 null,
-                                cursor.getLong(28),
+                                cursor.getLong(29),
                                 Comment.TRANSFERRED_YES,
                                 true,
-                                cursor.getString(27));
+                                cursor.getString(28));
                         post.firstComment.setParentPost(post);
                         mentionsDb.fillMentions(post.firstComment);
                     }
-                    post.seenByCount = cursor.getInt(29);
+                    post.seenByCount = cursor.getInt(30);
                 }
-                if (!cursor.isNull(11)) {
+                if (!cursor.isNull(12)) {
                     Media media = new Media(
-                            cursor.getLong(11),
-                            cursor.getInt(12),
-                            cursor.getString(13),
-                            fileStore.getMediaFile(cursor.getString(14)),
+                            cursor.getLong(12),
+                            cursor.getInt(13),
+                            cursor.getString(14),
+                            fileStore.getMediaFile(cursor.getString(15)),
                             null,
                             null,
                             null,
-                            cursor.getInt(16),
                             cursor.getInt(17),
                             cursor.getInt(18),
                             cursor.getInt(19),
                             cursor.getInt(20),
-                            cursor.getLong(21));
-                    media.encFile = fileStore.getTmpFile(cursor.getString(15));
+                            cursor.getInt(21),
+                            cursor.getLong(22));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(16));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
             }
@@ -2614,7 +2639,7 @@ class PostsDb {
     @NonNull
     List<Post> getShareablePosts() {
         List<Post> ret = new ArrayList<>();
-        List<Post> posts = getPosts(System.currentTimeMillis() - Constants.SHARE_OLD_POST_LIMIT, null, false, UserId.ME, null, false);
+        List<Post> posts = getPosts(System.currentTimeMillis() - Constants.SHARE_OLD_POST_LIMIT, null, false, UserId.ME, null, false, false);
         for (Post post : posts) {
             if (!post.isRetracted()) {
                 ret.add(post);
@@ -2625,7 +2650,7 @@ class PostsDb {
 
     @NonNull
     List<Post> getAllPosts(@Nullable GroupId groupId) {
-        List<Post> posts = getPosts(null, null, false, null, groupId, false);
+        List<Post> posts = getPosts(null, null, false, null, groupId, false, false);
         return posts;
     }
 

@@ -298,4 +298,8 @@ public class ServerProps {
     public synchronized boolean getMediaDrawingEnabled() {
         return propMediaDrawingEnabled.getValue();
     }
+
+    public synchronized boolean getGroupsRefreshEnabled() {
+        return BuildConfig.DEBUG || getIsInternalUser();
+    }
 }

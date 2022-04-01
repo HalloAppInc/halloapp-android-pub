@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.halloapp.ui.home.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_groups"
+        android:name="com.halloapp.ui.groups.GroupsV2Fragment"
+        android:label="@string/title_groups"
+        tools:layout="@layout/fragment_chats" />
+
+    <fragment
+        android:id="@+id/navigation_messages"
+        android:name="com.halloapp.ui.chats.ChatsFragment"
+        android:label="@string/title_messages"
+        tools:layout="@layout/fragment_chats" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.halloapp.ui.SettingsHomeFragment"
+        android:label="@string/settings"
+        tools:layout="@layout/fragment_profile" />
+</navigation>

@@ -30,6 +30,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.halloapp.BuildConfig;
+import com.halloapp.Constants;
 import com.halloapp.Debug;
 import com.halloapp.Notifications;
 import com.halloapp.R;
@@ -37,6 +38,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.ChatId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.permissions.PermissionUtils;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.ContactsActivity;
@@ -156,6 +158,11 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 R.id.navigation_messages,
                 R.id.navigation_profile).build();
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        if (ServerProps.getInstance().getGroupsRefreshEnabled()) {
+            navController.setGraph(R.navigation.mobile_navigation_groups_v2);
+        } else {
+            navController.setGraph(R.navigation.mobile_navigation);
+        }
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 

@@ -127,6 +127,9 @@ public abstract class HeaderFooterAdapter<Item> extends AdapterWithLifecycle<Vie
         if (viewType < 0) {
             int metaPosition = -viewType - 1;
             View view = isHeader(metaPosition) ? headers.get(metaPosition) : footers.get(metaPosition - getHeaderCount() - getInternalItemCount());
+            if (view.getParent() != null) {
+                ((ViewGroup)view.getParent()).removeView(view);
+            }
             return new MetaViewHolder(view);
         }
         return createViewHolderForViewType(parent, viewType);

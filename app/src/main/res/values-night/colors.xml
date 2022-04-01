@@ -49,6 +49,9 @@
     <color name="white_button_background">@color/white_20</color>
     <color name="neutral_button_background">#686868</color>
 
+    <color name="group_post_preview_comment_bar_overlay">#E11a1918</color>
+    <color name="group_post_preview_border">#1FFFFFFF</color>
+
     <color name="overflow_menu_bg">#393939</color>
 
     <color name="color_danger">#c2103f</color>
