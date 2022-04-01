@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
@@ -628,7 +629,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.i("ContentDb: downgrade from " + oldVersion + " to " + newVersion);
-        onCreate(db);
+        throw new DowngradeAttemptedException("From " + oldVersion + " to " + newVersion);
     }
 
     private void upgradeFromVersion10(@NonNull SQLiteDatabase db) {
@@ -1361,6 +1362,12 @@ class ContentDbHelper extends SQLiteOpenHelper {
         final File shmFile = new File(dbFile.getAbsolutePath() + "-shm");
         if (shmFile.exists() && !shmFile.delete()) {
             Log.e("ContentDb: cannot delete " + shmFile.getAbsolutePath());
+        }
+    }
+
+    private class DowngradeAttemptedException extends SQLiteException {
+        public DowngradeAttemptedException(String message) {
+            super(message);
         }
     }
 }
