@@ -134,7 +134,7 @@ public class HalloApp extends Application {
     private void initSync() {
         appContext.setApplicationContext(this);
         Log.init(FileStore.getInstance());
-        Log.i("HalloApp init " + BuildConfig.VERSION_NAME);
+        Log.i("HalloApp init " + BuildConfig.VERSION_NAME + " " + BuildConfig.GIT_HASH);
 
         Log.wrapCrashlytics();
 
