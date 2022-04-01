@@ -1051,8 +1051,8 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Collapsed multiple deleted posts -->
     <plurals name="collapsed_deleted_posts">
-        <item quantity="one">"d% پست حذف شده"</item>
-        <item quantity="other">"d% پست حذف شده"</item>
+        <item quantity="one">"%d پست حذف شده"</item>
+        <item quantity="other">"%d پست حذف شده"</item>
     </plurals>
 
     <!-- Collapsed multiple add user posts -->
@@ -1213,52 +1213,52 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="preparing_logs">"آماده‌سازی گزارش…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
-    <string name="post_tombstone_placeholder">"Waiting for this post. This may take a while. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="post_tombstone_placeholder">"در حال بارگذاری این پست. ممکن است طول بکشد. &lt;\"a href=learn-more\"&gt; بیشتر بدانید &lt;a/&gt;."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
-    <string name="comment_tombstone_placeholder">"Waiting for this comment. This may take a while. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="comment_tombstone_placeholder">"در حال بارگذاری این پست. ممکن است طول بکشد. &lt;\"a href=learn-more\"&gt; بیشتر بدانید &lt;a/&gt;."</string>
 
     <!-- Name for notifications channel for missed calls -->
-    <string name="missed_call_notifications_channel_name">"Missed call notifications"</string>
+    <string name="missed_call_notifications_channel_name">"لیست تماس‌های از دست رفته"</string>
 
     <!-- Single new comment notification text. %s replaced with name of comment sender -->
-    <string name="new_comment_notification">"New comment from %s"</string>
+    <string name="new_comment_notification">"نظر جدید از s%"</string>
 
     <!-- Text in notifications for comments from potentially multiple people. %1$d replaced with number of comments, %2$s replaced with list of names -->
     <plurals name="new_comments_list_notification">
-        <item quantity="one">"%1$d new comment from %2$s"</item>
-        <item quantity="other">"%1$d new comment from %2$s"</item>
+        <item quantity="one">"%1$d نظر جدید از %2$s"</item>
+        <item quantity="other">"%1$d نظر جدید از %2$s"</item>
     </plurals>
 
     <!-- Displayed on the call screen when the call is on hold -->
-    <string name="call_on_hold">"On hold"</string>
+    <string name="call_on_hold">"انتظار"</string>
 
     <!-- Toast displayed when the other side puts the call on hold -->
-    <string name="call_other_side_on_hold">"Call is on hold"</string>
+    <string name="call_other_side_on_hold">"تماس در انتظار"</string>
 
     <!-- Toast displayed when the other side removes the call hold -->
-    <string name="call_other_side_on_unhold">"Call has resumed"</string>
+    <string name="call_other_side_on_unhold">"ادامه تماس"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for posts -->
-    <string name="contact_favorites_explanation">"This post is only shared with contacts you added to Favorites. You can adjust your audience in privacy settings at any time."</string>
+    <string name="contact_favorites_explanation">"این پست فقط با کسانی که در لیست محبوب‌های شما هستند به اشتراک گذاشته میشود. میتوانید آن را در حریم خصوصی تغییر دهید."</string>
 
     <!-- Favorites means the users favorite contacts -->
-    <string name="contact_favorites">"Favorites"</string>
+    <string name="contact_favorites">"محبوب‌ها"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts -->
-    <string name="contact_favorites_explanation_others">"This post is only shared with a limited audience. You can adjust your audience in privacy settings at any time."</string>
+    <string name="contact_favorites_explanation_others">"این پست فقط با اشخاص محدود به اشتراک گذاشته میشود. میتوانید آن را در حریم خصوصی تغییر دهید."</string>
 
     <!-- Drawing on images -->
-    <string name="draw">"Draw"</string>
+    <string name="draw">"نقاشی کشیدن"</string>
 
     <!-- Undo an action -->
-    <string name="undo">"Undo"</string>
+    <string name="undo">"بازگشت"</string>
 
     <!-- Text shown in progress dialog while loading a post for individual viewing, usually from a private reply or an external sharing link -->
-    <string name="loading_post">"Loading post…"</string>
+    <string name="loading_post">"بارگذاری پست…"</string>
 
     <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <string name="failed_load_post">"Failed to load post"</string>
+    <string name="failed_load_post">"خطا در بارگذاری"</string>
     <string name="share_externally">"به اشتراک گذاشتن خارج هالواپ"</string>
     <string name="incoming_call_notification_title">"تماس دریافتی"</string>
     <string name="call_action">"تماس"</string>

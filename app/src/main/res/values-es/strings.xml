@@ -90,8 +90,6 @@ Para modificar los permisos de la aplicación, abre la pantalla de configuració
     <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; te mencionó en un comentario de su publicación &lt;b&gt;%2$s&lt;/b&gt;"</string>
     <string name="contact_hashing_faq_dialog_title">"Tu privacidad es nuestra prioridad"</string>
     <string name="contact_hashing_faq_dialog_info">"HalloApp solo usa el número de teléfono para conectarte con tus amigos en HalloApp, y no captura ninguna otra información adicional de tu agenda de contactos. "</string>
-
-    <!-- Fuzzy -->
     <string name="list_of_two">"%1$s y %2$s"</string>
     <string name="list_of_many_start">"%s"</string>
     <string name="list_of_many_middle">", %s"</string>
@@ -180,7 +178,7 @@ Para modificar los permisos de la aplicación, abre la pantalla de configuració
     <string name="retract_post_confirmation">"¿Te gustaría eliminar tu publicación?"</string>
     <string name="retract_comment_confirmation">"¿Te gustaría eliminar tu comentario?"</string>
     <plurals name="delete_chats_confirmation">
-        <item quantity="one">"¿Te gustaría eliminar este conversación?"</item>
+        <item quantity="one">"¿Te gustaría eliminar esta conversación?"</item>
         <item quantity="other">"¿Te gustaría eliminar las %d conversaciones seleccionadas?"</item>
     </plurals>
     <plurals name="delete_groups_confirmation">
@@ -257,7 +255,7 @@ Para modificar los permisos de la aplicación, abre la pantalla de configuració
     <!-- Fuzzy -->
     <string name="email_logs_text">"
 ----------------------------------------
-Por favor describe tu asunto arriba.
+Por favor describe tu problema arriba.
 uid: %1$s
 versión: %2$s
 ----------------------------------------
@@ -1051,7 +1049,7 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="voice_post">"Voz"</string>
 
     <!-- Audio post composer title -->
-    <string name="audio_post_compose_title">"Nueva nota de voz"</string>
+    <string name="audio_post_compose_title">"Nueva publicación de audio"</string>
 
     <!-- Text post hint -->
     <string name="text_post_compose_hint">"Escribe una descripción"</string>
@@ -1138,10 +1136,10 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="see_all">"Ver todo"</string>
 
     <!-- Rationale for when requesting microphone permission for voice posts -->
-    <string name="voice_post_record_audio_permission_rationale">"Para grabar publicaciones de sonido necesitamos permiso para acceder al micrófono"</string>
+    <string name="voice_post_record_audio_permission_rationale">"Para grabar audio necesitamos permiso para acceder al micrófono"</string>
 
     <!-- Rationale for when requesting microphone permission for voice posts, but it has already been denied. -->
-    <string name="voice_post_record_audio_permission_rationale_denied">"Para grabar publicaciones de sonido necesitamos permiso para acceder al micrófono.
+    <string name="voice_post_record_audio_permission_rationale_denied">"Para grabar audio necesitamos permiso para acceder al micrófono.
 
 Abre la pantalla de configuración para modificar los permisos de la aplicación."</string>
 

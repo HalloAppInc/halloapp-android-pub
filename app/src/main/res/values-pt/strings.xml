@@ -1197,34 +1197,34 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     </plurals>
 
     <!-- Displayed on the call screen when the call is on hold -->
-    <string name="call_on_hold">"On hold"</string>
+    <string name="call_on_hold">"Em espera"</string>
 
     <!-- Toast displayed when the other side puts the call on hold -->
-    <string name="call_other_side_on_hold">"Call is on hold"</string>
+    <string name="call_other_side_on_hold">"A chamada está em espera"</string>
 
     <!-- Toast displayed when the other side removes the call hold -->
-    <string name="call_other_side_on_unhold">"Call has resumed"</string>
+    <string name="call_other_side_on_unhold">"A chamada foi retomada"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for posts -->
-    <string name="contact_favorites_explanation">"This post is only shared with contacts you added to Favorites. You can adjust your audience in privacy settings at any time."</string>
+    <string name="contact_favorites_explanation">"Esta postagem é partilhada apenas com os contatos que você adicionou aos Favoritos. Você pode ajustar seu público nas configurações de privacidade a qualquer momento."</string>
 
     <!-- Favorites means the users favorite contacts -->
-    <string name="contact_favorites">"Favorites"</string>
+    <string name="contact_favorites">"Favoritos"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts -->
-    <string name="contact_favorites_explanation_others">"This post is only shared with a limited audience. You can adjust your audience in privacy settings at any time."</string>
+    <string name="contact_favorites_explanation_others">"Esta postagem é partilhada apenas com um público limitado. Você pode ajustar seu público nas configurações de privacidade a qualquer momento."</string>
 
     <!-- Drawing on images -->
-    <string name="draw">"Draw"</string>
+    <string name="draw">"Desenhar"</string>
 
     <!-- Undo an action -->
-    <string name="undo">"Undo"</string>
+    <string name="undo">"Desfazer"</string>
 
     <!-- Text shown in progress dialog while loading a post for individual viewing, usually from a private reply or an external sharing link -->
-    <string name="loading_post">"Loading post…"</string>
+    <string name="loading_post">"Carregando postagem…"</string>
 
     <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <string name="failed_load_post">"Failed to load post"</string>
+    <string name="failed_load_post">"Falha ao carregar a postagem"</string>
     <string name="share_externally">"Partilhar externamente"</string>
     <string name="incoming_call_notification_title">"Chamada recebida"</string>
     <string name="call_action">"Ligar"</string>

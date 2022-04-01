@@ -36,8 +36,8 @@ https://s3.eu-west-1.amazonaws.com/po-pub/i/Q5dePwegWIHB6wAEgLPduTNg.jpg -->
 Je provider kan hiervoor kosten in rekening brengen."</string>
     <string name="verify_registration_title">"Voer de code in die we naar %s hebben verzonden"</string>
     <string name="contact_permission_title">"Nog één ding"</string>
-    <string name="registration_code_invalid">"Ongeldige registratiecode, probeer opnieuw"</string>
-    <string name="registration_failed">"Registratie telefoonnummer mislukt, probeer opnieuw"</string>
+    <string name="registration_code_invalid">"Ongeldige registratiecode, probeer het opnieuw"</string>
+    <string name="registration_failed">"Registratie telefoonnummer mislukt, probeer het opnieuw"</string>
     <string name="registration_failed_no_friends">"Op dit moment is onze app alleen op uitnodiging beschikbaar. Als je een vriend of familielid hebt die HalloApp gebruikt, vraag hun dan om je uit te nodigen met je telefoonnummer."</string>
     <string name="registration_failed_no_friends_title">"Oeps!"</string>
     <string name="type_a_message_hint">"Typ een bericht"</string>
@@ -100,7 +100,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="list_of_many_middle">", %s"</string>
     <string name="list_of_many_end">", en %s"</string>
     <string name="no_activity">"Geen activiteit"</string>
-    <string name="failed_to_load_media">"Laden media mislukt"</string>
+    <string name="failed_to_load_media">"Laden van media mislukt"</string>
     <string name="settings">"Instellingen"</string>
     <string name="send_logs">"Feedback &amp; logs delen"</string>
     <string name="terms_of_service">"Gebruiksvoorwaarden"</string>
@@ -206,7 +206,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
         <item quantity="one">"Deze versie van HalloApp verloopt in %d dag. Ga naar de Google Play Store en download de nieuwste versie alsjeblieft."</item>
         <item quantity="other">"Deze versie van HalloApp verloopt in %d dagen. Ga naar de Google Play Store en download de nieuwste versie alsjeblieft."</item>
     </plurals>
-    <string name="could_not_set_avatar">"Probeer een andere afbeelding alsjeblieft"</string>
+    <string name="could_not_set_avatar">"Probeer een andere afbeelding"</string>
     <string name="pick_media">"Kies media"</string>
     <string name="video">"Video"</string>
     <string name="photo">"Foto"</string>
@@ -239,7 +239,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="name_must_be_specified">"Naam moet opgegeven worden"</string>
     <string name="counter">"%1$d/%2$d"</string>
     <string name="invite_pending">"In afwachting"</string>
-    <string name="failed_update_profile">"Bijwerken van profiel mislukt, probeer later opnieuw"</string>
+    <string name="failed_update_profile">"Bijwerken van profiel mislukt, probeer het later opnieuw"</string>
     <string name="profile_updated">"Profiel bijgewerkt"</string>
     <string name="flip">"Omdraaien"</string>
     <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
@@ -309,16 +309,16 @@ versie: %2$s
     <string name="setting_feed_all">"Mijn contacten"</string>
     <string name="setting_feed_only">"Alleen delen met…"</string>
     <string name="setting_feed_except">"Mijn contacten, behalve…"</string>
-    <string name="feed_privacy_fail_to_load">"Laden privacyinstellingen mislukt"</string>
+    <string name="feed_privacy_fail_to_load">"Laden van privacyinstellingen mislukt"</string>
     <string name="feed_privacy_update_success">"Instelling succesvol bijgewerkt"</string>
-    <string name="feed_privacy_update_failure">"Bijwerken instelling mislukt"</string>
-    <string name="invite_failed_internet">"Uitnodiging verzenden mislukt, controleer je internetverbinding en probeer opnieuw"</string>
-    <string name="invite_failed_no_invites">"Sorry, je uitnodigingen zijn op, probeer later opnieuw"</string>
+    <string name="feed_privacy_update_failure">"Bijwerken van instelling mislukt"</string>
+    <string name="invite_failed_internet">"Uitnodiging verzenden mislukt, controleer je internetverbinding en probeer het opnieuw"</string>
+    <string name="invite_failed_no_invites">"Sorry, je uitnodigingen zijn op, probeer het later opnieuw"</string>
     <string name="invite_failed_invalid_number">"Dit telefoonnummer is ongeldig"</string>
     <string name="invite_failed_existing_user">"Dit contact gebruikt HalloApp al!"</string>
     <string name="invite_failed_unknown">"Verzenden van uitnodiging mislukt"</string>
     <string name="invite_creation_in_progress">"Uitnodiging wordt aangemaakt…"</string>
-    <string name="invite_info_fetch_internet">"Ophalen van uitnodigingsinformatie mislukt, controleer je internetverbinding en probeer opnieuw"</string>
+    <string name="invite_info_fetch_internet">"Ophalen van uitnodigingsinformatie mislukt, controleer je internetverbinding en probeer het opnieuw"</string>
     <plurals name="invites_remaining">
         <item quantity="one">"Je hebt deze week nog %s uitnodiging over"</item>
         <item quantity="other">"Je hebt deze week nog %s uitnodigingen over"</item>
@@ -333,26 +333,26 @@ versie: %2$s
     <string name="members_header">"Deelnemers (%s)"</string>
     <string name="add_members">"Deelnemers toevoegen"</string>
     <string name="add_members_in_progress">"Deelnemers worden toegevoegd…"</string>
-    <string name="failed_add_members">"Toevoegen van deelnemers mislukt, probeer later opnieuw"</string>
+    <string name="failed_add_members">"Toevoegen van deelnemers mislukt, probeer het later opnieuw"</string>
     <string name="create_group_in_progress">"Groep %s wordt aangemaakt…"</string>
     <string name="new_group_title">"Groepsnaam invoeren"</string>
     <string name="group_picker_title">"Nieuwe groep"</string>
     <string name="button_create_group">"Aanmaken"</string>
     <string name="group_name_hint">"Groepsnaam"</string>
-    <string name="failed_create_group">"Aanmaken van groep mislukt, probeer later opnieuw"</string>
+    <string name="failed_create_group">"Aanmaken van groep mislukt, probeer het later opnieuw"</string>
 
     <!-- Shown in options menu to remove a member of group -->
     <string name="group_remove_member">"Verwijderen uit groep"</string>
     <string name="group_promote_to_admin">"Groepsbeheerder maken"</string>
     <string name="promote_admin_in_progress">"Beheerder wordt gemaakt…"</string>
-    <string name="failed_promote_admin">"Maken van beheerder mislukt, probeer later opnieuw"</string>
+    <string name="failed_promote_admin">"Maken van beheerder mislukt, probeer het later opnieuw"</string>
 
     <!-- Option for removing a user from the list of admins of a group -->
     <string name="group_demote_from_admin">"Verwijderen als beheerder"</string>
     <string name="demote_admin_in_progress">"Beheerder wordt verwijderd…"</string>
-    <string name="failed_demote_admin">"Verwijderen van beheerder mislukt, probeer later opnieuw"</string>
+    <string name="failed_demote_admin">"Verwijderen van beheerder mislukt, probeer het later opnieuw"</string>
     <string name="remove_member_in_progress">"Deelnemer wordt verwijderd…"</string>
-    <string name="failed_remove_member">"Verwijderen van deelnemer mislukt, probeer later opnieuw"</string>
+    <string name="failed_remove_member">"Verwijderen van deelnemer mislukt, probeer het later opnieuw"</string>
     <string name="leave_group">"Groep verlaten"</string>
     <plurals name="leave_group_plural">
         <item quantity="one">"Groep verlaten"</item>
@@ -368,7 +368,7 @@ versie: %2$s
         <item quantity="one">"Groep wordt verlaten…"</item>
         <item quantity="other">"Groepen worden verlaten…"</item>
     </plurals>
-    <string name="failed_leave_group">"Verlaten van groep mislukt, probeer later opnieuw"</string>
+    <string name="failed_leave_group">"Verlaten van groep mislukt, probeer het later opnieuw"</string>
     <plurals name="friends_on_halloapp">
         <item quantity="one">"%d contact op HalloApp"</item>
         <item quantity="other">"%d contacten op HalloApp"</item>
@@ -391,16 +391,16 @@ versie: %2$s
     <string name="settings_version_footer">"HalloApp Versie %s"</string>
     <string name="connectivity_info_airplane_mode">"Vliegtuigstand aan"</string>
     <string name="connectivity_info_not_connected">"Geen netwerk"</string>
-    <string name="blocking_user_failed_check_internet">"Kon %s niet blokkeren. Controleer je internetverbinding en probeer opnieuw."</string>
+    <string name="blocking_user_failed_check_internet">"Kon %s niet blokkeren. Controleer je internetverbinding en probeer het opnieuw."</string>
     <string name="blocking_user_successful">"%s is geblokkeerd"</string>
     <string name="blocking_user_in_progress">"%s wordt geblokkeerd…"</string>
     <string name="unblocking_user_successful">"%s is gedeblokkeerd"</string>
-    <string name="unblocking_user_failed_check_internet">"Kon %s niet deblokkeren. Controleer je internetverbinding en probeer opnieuw."</string>
+    <string name="unblocking_user_failed_check_internet">"Kon %s niet deblokkeren. Controleer je internetverbinding en probeer het opnieuw."</string>
     <string name="unblocking_user_in_progress">"%s wordt gedeblokkeerd…"</string>
     <string name="are_you_sure_dialog_title">"Weet je het zeker?"</string>
     <string name="hide_future_posts_confirmation">"Weet je zeker dat je al je toekomstige posts wilt verbergen voor %s? Je kunt dit later altijd weer aanpassen."</string>
     <string name="feed_privacy_hide_success">"Privacy feed bijgewerkt. Posts worden verborgen voor %s"</string>
-    <string name="feed_privacy_hide_failure">"Bijwerken privacy feed mislukt, controleer je internetverbinding en probeer opnieuw"</string>
+    <string name="feed_privacy_hide_failure">"Bijwerken van privacy feed mislukt, controleer je internetverbinding en probeer het opnieuw"</string>
     <string name="user_typing">"aan het typen…"</string>
     <string name="group_user_typing">"%s is aan het typen…"</string>
     <string name="group_many_users_typing">"meerdere gebruikers zijn aan het typen…"</string>
@@ -421,8 +421,8 @@ versie: %2$s
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
     <string name="composer_sharing_message">"Verzenden naar %s"</string>
     <plurals name="max_video_length">
-        <item quantity="one">"Je video is langer dan %d seconde. Selecteer alsjeblieft een andere video of bewerk deze."</item>
-        <item quantity="other">"Je video is langer dan %d seconden. Selecteer alsjeblieft een andere video of bewerk deze."</item>
+        <item quantity="one">"Je video is langer dan %d seconde. Selecteer een andere video of bewerk deze."</item>
+        <item quantity="other">"Je video is langer dan %d seconden. Selecteer een andere video of bewerk deze."</item>
     </plurals>
     <string name="mute">"Dempen"</string>
     <string name="share_link">"Link delen"</string>
@@ -764,7 +764,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="dark_mode_setting_title">"Thema"</string>
 
     <!-- General error message shown when fail to update group description -->
-    <string name="failed_update_group_description">"Bijwerken groepsomschrijving mislukt"</string>
+    <string name="failed_update_group_description">"Bijwerken van groepsomschrijving mislukt"</string>
 
     <!-- Success message shown when user updates group description -->
     <string name="group_description_updated">"Groepsomschrijving bijgewerkt"</string>
@@ -820,7 +820,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="view_group_info">"Groepsinformatie bekijken"</string>
 
     <!-- Shown when changing the group avatar or name fails -->
-    <string name="failed_update_group">"Bijwerken van groep mislukt, probeer later opnieuw"</string>
+    <string name="failed_update_group">"Bijwerken van groep mislukt, probeer het later opnieuw"</string>
 
     <!-- Shown when the group avatar or name has been successfully updated -->
     <string name="group_updated">"Groep bijgewerkt"</string>
@@ -854,7 +854,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="add_to_contacts_notice">"Om posts te zien van %s, moet je het telefoonnummer toevoegen aan je adresboek. Tik om toe te voegen."</string>
 
     <!-- Message showed when a link fails to open -->
-    <string name="failed_to_open_link">"Openen link mislukt"</string>
+    <string name="failed_to_open_link">"Openen van link mislukt"</string>
 
     <!-- New comment separator -->
     <plurals name="new_comment_separator">
@@ -1001,7 +1001,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="end_call">"Oproep beëindigen"</string>
 
     <!-- Shown when the user requests contacts be refreshed but it does not succeed -->
-    <string name="refresh_contacts_failed">"Verversen contacten mislukt"</string>
+    <string name="refresh_contacts_failed">"Verversen van contacten mislukt"</string>
 
     <!-- Label for voice post option -->
     <string name="voice_post">"Audio"</string>
@@ -1159,7 +1159,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="external_share_in_progress">"Deellink wordt aangemaakt"</string>
 
     <!-- Text in a temporary dialog when sharing externally fails -->
-    <string name="external_share_failed">"Aanmaken van deellink mislukt, probeer opnieuw"</string>
+    <string name="external_share_failed">"Aanmaken van deellink mislukt, probeer het opnieuw"</string>
 
     <!-- Text shared or copied to clipboard when sharing a post outside HalloApp -->
     <string name="external_share_copy">"Bekijk mijn post op HalloApp: %s"</string>
@@ -1230,16 +1230,16 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="contact_favorites_explanation_others">"Deze post wordt alleen gedeeld met een beperkt publiek. Je kunt je publiek op ieder moment aanpassen in de privacy-instellingen."</string>
 
     <!-- Drawing on images -->
-    <string name="draw">"Draw"</string>
+    <string name="draw">"Tekenen"</string>
 
     <!-- Undo an action -->
-    <string name="undo">"Undo"</string>
+    <string name="undo">"Ongedaan maken"</string>
 
     <!-- Text shown in progress dialog while loading a post for individual viewing, usually from a private reply or an external sharing link -->
-    <string name="loading_post">"Loading post…"</string>
+    <string name="loading_post">"Post wordt geladen…"</string>
 
     <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <string name="failed_load_post">"Failed to load post"</string>
+    <string name="failed_load_post">"Laden van post mislukt"</string>
     <string name="share_externally">"Extern delen"</string>
     <string name="incoming_call_notification_title">"Inkomende oproep"</string>
     <string name="call_action">"Bellen"</string>
