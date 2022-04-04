@@ -37,7 +37,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 63;
+    private static final int DATABASE_VERSION = 64;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -617,6 +617,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 62: {
                 upgradeFromVersion62(db);
+            }
+            case 63: {
+                upgradeFromVersion63(db);
             }
             break;
             default: {
@@ -1318,6 +1321,16 @@ class ContentDbHelper extends SQLiteOpenHelper {
     private void upgradeFromVersion62(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + CommentsTable.TABLE_NAME + " ADD COLUMN " + CommentsTable.COLUMN_SHOULD_NOTIFY + " INTEGER");
         db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_SUBSCRIBED + " INTEGER");
+    }
+
+    private void upgradeFromVersion63(@NonNull SQLiteDatabase db) {
+        long now = System.currentTimeMillis();
+        db.execSQL("UPDATE " + CommentsTable.TABLE_NAME
+                + " SET " + CommentsTable.COLUMN_TIMESTAMP + " = " + CommentsTable.COLUMN_TIMESTAMP + "/1000"
+                + " WHERE " + CommentsTable.COLUMN_TIMESTAMP + ">" + (now * 100));
+        db.execSQL("UPDATE " + PostsTable.TABLE_NAME
+                + " SET " + PostsTable.COLUMN_TIMESTAMP + " = " + PostsTable.COLUMN_TIMESTAMP + "/1000"
+                + " WHERE " + PostsTable.COLUMN_TIMESTAMP + ">" + (now * 100));
     }
 
     /**
