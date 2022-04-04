@@ -287,7 +287,7 @@ public class GroupsApi {
                         postBuilder.setId(id);
                         postBuilder.setPublisherUid(myUid);
                         postBuilder.setPayload(ByteString.copyFrom(payload));
-                        postBuilder.setTimestamp(post.timestamp);
+                        postBuilder.setTimestamp(post.timestamp / 1000);
 
                         groupFeedItems.addItems(GroupFeedItem.newBuilder().setPost(postBuilder));
                     }
@@ -310,7 +310,7 @@ public class GroupsApi {
                         commentBuilder.setPostId(comment.postId);
                         commentBuilder.setPublisherUid(myUid);
                         commentBuilder.setPayload(ByteString.copyFrom(payload));
-                        commentBuilder.setTimestamp(comment.timestamp);
+                        commentBuilder.setTimestamp(comment.timestamp / 1000);
 
                         groupFeedItems.addItems(GroupFeedItem.newBuilder().setComment(commentBuilder));
                     }
