@@ -781,6 +781,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
                     public void onVideoSaved(@NonNull VideoCapture.OutputFileResults outputFileResults) {
                         final Uri uri = Objects.requireNonNull(outputFileResults.getSavedUri());
                         Log.d("CameraActivity: startRecordingVideo onVideoSaved " + uri);
+                        mainHandler.post(() -> stopRecordingVideo());
                         stopRecordingVideo();
                         startComposerForUri(uri);
                     }
@@ -788,7 +789,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
                     @Override
                     public void onError(int videoCaptureError, @NonNull String message, @Nullable @org.jetbrains.annotations.Nullable Throwable cause) {
                         Log.e("CameraActivity: startRecordingVideo error " + cause);
-                        stopRecordingVideo();
+                        mainHandler.post(() -> stopRecordingVideo());
                         showErrorMessage(getResources().getString(R.string.camera_error_video), false);
                     }
                 });
