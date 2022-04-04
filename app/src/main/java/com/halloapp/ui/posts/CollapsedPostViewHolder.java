@@ -60,6 +60,10 @@ public class CollapsedPostViewHolder extends ViewHolderWithLifecycle {
                 textView.setText(textView.getResources().getQuantityString(R.plurals.collapsed_added_user_posts, post.size, post.size));
             } else if (post.usage == Post.USAGE_REMOVE_MEMBER) {
                 textView.setText(textView.getResources().getQuantityString(R.plurals.collapsed_removed_user_posts, post.size, post.size));
+            } else if (post.usage == Post.USAGE_MEMBER_LEFT) {
+                textView.setText(textView.getResources().getQuantityString(R.plurals.collapsed_user_left_posts, post.size, post.size));
+            } else if (post.usage == Post.USAGE_MEMBER_JOINED) {
+                textView.setText(textView.getResources().getQuantityString(R.plurals.collapsed_user_joined_posts, post.size, post.size));
             }
         }
     }
