@@ -491,6 +491,10 @@ public class Notifications {
             final Map<ChatId, Bitmap> avatars = new HashMap<>();
             int chatIndex = 0;
             for (ChatId chatId : chatsIds) {
+                if (chatId instanceof GroupId) {
+                    Log.w("Skipping notifying for group message for " + chatId);
+                    continue;
+                }
                 final List<Message> chatMessages = Preconditions.checkNotNull(chatsMessages.get(chatId));
 
                 String replyLabel = context.getString(R.string.reply_notification_label);
