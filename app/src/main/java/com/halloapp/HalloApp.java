@@ -59,10 +59,9 @@ public class HalloApp extends Application {
             AppCompatDelegate.setDefaultNightMode(Preferences.getInstance().getNightMode());
         });
 
-        // TODO(jack): Move so that only set up if not debug
-        SentryAndroid.init(this);
         if (!BuildConfig.DEBUG) {
             Log.uploadUnsentReports();
+            SentryAndroid.init(this);
         } else {
             StrictMode.ThreadPolicy.Builder threadPolicyBuilder = new StrictMode.ThreadPolicy.Builder()
                     .detectAll()
