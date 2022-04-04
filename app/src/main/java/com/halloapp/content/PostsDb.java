@@ -270,6 +270,9 @@ class PostsDb {
                 values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
                 values.put(PostsTable.COLUMN_SEEN, false);
                 values.put(PostsTable.COLUMN_TYPE, Post.TYPE_RETRACTED);
+                if (post.getParentGroup() != null) {
+                    values.put(PostsTable.COLUMN_GROUP_ID, post.getParentGroup().rawId());
+                }
                 post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
             } else {
                 List<String> fileNames = new ArrayList<>();

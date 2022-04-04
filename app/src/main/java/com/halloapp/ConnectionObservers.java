@@ -406,14 +406,14 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyPostRetracted(@NonNull UserId postUid, @NonNull String postId) {
-        notifyPostRetracted(postUid, null, postId);
+    public void notifyPostRetracted(@NonNull UserId postUid, @NonNull String postId, long timestamp) {
+        notifyPostRetracted(postUid, null, postId, timestamp);
     }
 
-    public void notifyPostRetracted(@NonNull UserId postUid, @Nullable GroupId groupId, @NonNull String postId) {
+    public void notifyPostRetracted(@NonNull UserId postUid, @Nullable GroupId groupId, @NonNull String postId, long timestamp) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onPostRevoked(postUid, postId, groupId);
+                observer.onPostRevoked(postUid, postId, groupId, timestamp);
             }
         }
     }

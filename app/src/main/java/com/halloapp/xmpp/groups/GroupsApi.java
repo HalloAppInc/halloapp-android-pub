@@ -279,9 +279,17 @@ public class GroupsApi {
                     if (!Arrays.equals(remoteHash, localHash)) {
                         Log.w("Skipping sharing post " + id + " because hashes do not match");
                     } else {
-                        Container.Builder container = Container.newBuilder();
-                        FeedContentEncoder.encodePost(container, post);
-                        byte[] payload = container.build().toByteArray();
+                        final byte[] payload;
+                        final GroupFeedItem.Action action;
+                        if (post.isRetracted()) {
+                            payload = Container.newBuilder().build().toByteArray();
+                            action = GroupFeedItem.Action.RETRACT;
+                        } else {
+                            Container.Builder container = Container.newBuilder();
+                            FeedContentEncoder.encodePost(container, post);
+                            payload = container.build().toByteArray();
+                            action = GroupFeedItem.Action.SHARE;
+                        }
 
                         com.halloapp.proto.server.Post.Builder postBuilder = com.halloapp.proto.server.Post.newBuilder();
                         postBuilder.setId(id);
@@ -289,7 +297,7 @@ public class GroupsApi {
                         postBuilder.setPayload(ByteString.copyFrom(payload));
                         postBuilder.setTimestamp(post.timestamp / 1000);
 
-                        groupFeedItems.addItems(GroupFeedItem.newBuilder().setPost(postBuilder));
+                        groupFeedItems.addItems(GroupFeedItem.newBuilder().setAction(action).setPost(postBuilder));
                     }
                 }
             } else if (contentDetails.hasCommentIdContext()) {
@@ -301,9 +309,17 @@ public class GroupsApi {
                     if (!Arrays.equals(remoteHash, localHash)) {
                         Log.w("Skipping sharing comment " + id + " because hashes do not match (" + StringUtils.bytesToHexString(remoteHash) + " and " + StringUtils.bytesToHexString(localHash) + ")");
                     } else {
-                        Container.Builder container = Container.newBuilder();
-                        FeedContentEncoder.encodeComment(container, comment);
-                        byte[] payload = container.build().toByteArray();
+                        final byte[] payload;
+                        final GroupFeedItem.Action action;
+                        if (comment.isRetracted()) {
+                            payload = Container.newBuilder().build().toByteArray();
+                            action = GroupFeedItem.Action.RETRACT;
+                        } else {
+                            Container.Builder container = Container.newBuilder();
+                            FeedContentEncoder.encodeComment(container, comment);
+                            payload = container.build().toByteArray();
+                            action = GroupFeedItem.Action.SHARE;
+                        }
 
                         com.halloapp.proto.server.Comment.Builder commentBuilder = com.halloapp.proto.server.Comment.newBuilder();
                         commentBuilder.setId(id);
@@ -312,7 +328,7 @@ public class GroupsApi {
                         commentBuilder.setPayload(ByteString.copyFrom(payload));
                         commentBuilder.setTimestamp(comment.timestamp / 1000);
 
-                        groupFeedItems.addItems(GroupFeedItem.newBuilder().setComment(commentBuilder));
+                        groupFeedItems.addItems(GroupFeedItem.newBuilder().setAction(action).setComment(commentBuilder));
                     }
                 }
             } else {

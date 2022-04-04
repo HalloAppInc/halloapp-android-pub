@@ -109,7 +109,7 @@ public abstract class Connection {
         public void onPresenceReceived(UserId user, Long lastSeen) {}
         public void onChatStateReceived(UserId user, ChatState chatState) {}
         public void onServerPropsReceived(@NonNull Map<String, String> props, @NonNull String hash) {}
-        public void onPostRevoked(@NonNull UserId senderUserId, @NonNull String postId, GroupId groupId) {}
+        public void onPostRevoked(@NonNull UserId senderUserId, @NonNull String postId, GroupId groupId, long timestamp) {}
         public void onCommentRevoked(@NonNull String id, @NonNull UserId commentSenderId, @NonNull String postId, long timestamp) {}
         public void onMessageRevoked(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId, @NonNull String ackId) {}
         public void onIncomingCall(@NonNull UserId peerUid, @NonNull IncomingCall incomingCall, @NonNull String ackId) {}

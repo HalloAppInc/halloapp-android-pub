@@ -571,8 +571,8 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onPostRevoked(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId groupId) {
-        Post post = new Post(0, senderUserId, postId, 0, Post.TRANSFERRED_NO, Post.SEEN_NO, null);
+    public void onPostRevoked(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId groupId, long timestamp) {
+        Post post = new Post(0, senderUserId, postId, timestamp, Post.TRANSFERRED_NO, Post.SEEN_NO, null);
         if (groupId != null) {
             post.setParentGroup(groupId);
         }

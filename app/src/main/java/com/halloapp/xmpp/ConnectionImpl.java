@@ -1783,7 +1783,7 @@ public class ConnectionImpl extends Connection {
                         if (post.getPublisherUid() != 0 && post.getPublisherName() != null) {
                             names.put(publisherUserId, post.getPublisherName());
                         }
-                        connectionObservers.notifyPostRetracted(publisherUserId, post.getId());
+                        connectionObservers.notifyPostRetracted(publisherUserId, post.getId(), post.getTimestamp() * 1000L);
                     }
                 } else if (item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE) || item.getAction() == com.halloapp.proto.server.FeedItem.Action.PUBLISH) {
                     if (item.hasPost()) {
@@ -2112,7 +2112,7 @@ public class ConnectionImpl extends Connection {
                         connectionObservers.notifyCommentRetracted(comment.getId(), getUserId(Long.toString(comment.getPublisherUid())), comment.getPostId(), comment.getTimestamp() * 1000L);
                     } else if (item.hasPost()) {
                         com.halloapp.proto.server.Post post = item.getPost();
-                        connectionObservers.notifyPostRetracted(getUserId(Long.toString(post.getPublisherUid())), new GroupId(item.getGid()), post.getId());
+                        connectionObservers.notifyPostRetracted(getUserId(Long.toString(post.getPublisherUid())), new GroupId(item.getGid()), post.getId(), post.getTimestamp() * 1000L);
                     }
                 }
             }
