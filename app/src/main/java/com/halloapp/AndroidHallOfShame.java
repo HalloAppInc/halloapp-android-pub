@@ -16,4 +16,9 @@ public class AndroidHallOfShame {
         }
         return false;
     }
+
+    public static boolean isTelecomBrokenDevice() {
+        String device = Build.MODEL + " " + Build.PRODUCT + " " + Build.MANUFACTURER;
+        return device.toLowerCase().contains("oneplus");
+    }
 }

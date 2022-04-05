@@ -30,6 +30,7 @@ import androidx.annotation.WorkerThread;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.halloapp.AndroidHallOfShame;
 import com.halloapp.AppContext;
 import com.halloapp.Constants;
 import com.halloapp.NetworkConnectivityManager;
@@ -309,6 +310,7 @@ public class CallManager {
             // TODO(nikola): Explore adding EXTRA_LOG_SELF_MANAGED_CALLS
             // and EXTRA_ADD_SELF_MANAGED_CALLS_TO_INCALLSERVICE
 
+            // TODO(nikola): Signal looks for exceptions here and disables the telecom framework after
             tm.registerPhoneAccount(phoneAccount);
             Log.i("CallManager: phone account registered with telecom manager: " + phoneAccount);
         }
@@ -391,7 +393,7 @@ public class CallManager {
             acquireLock();
         }
 
-        if (Build.VERSION.SDK_INT >= 26) {
+        if (Build.VERSION.SDK_INT >= 26 && !AndroidHallOfShame.isTelecomBrokenDevice()) {
             executor.execute(this::telecomPlaceCall);
         } else {
             finishStartCall();
@@ -431,6 +433,7 @@ public class CallManager {
                 Log.i("CallManager: requesting speakerphone for video call");
                 extras.putBoolean(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, true);
             }
+            // TODO: Consider not using the actual phone here for privacy
             Uri uri = Uri.fromParts("tel", contact.normalizedPhone, null);
             try {
                 // If the telecom framework approves the call it will call HaTelecomService.onCreateOutgoingConnection
@@ -579,7 +582,7 @@ public class CallManager {
             // it is possible another call started while we were shutting down.
             return;
         }
-        if (Build.VERSION.SDK_INT >= 26) {
+        if (Build.VERSION.SDK_INT >= 26 && !AndroidHallOfShame.isTelecomBrokenDevice()) {
             if (telecomConnection != null) {
                 Log.i("CallManager.telecomConnection.stop(" + endCallReason + ")");
                 telecomConnection.stop(endCallReason);
@@ -638,7 +641,7 @@ public class CallManager {
         this.isInCall.postValue(true);
         notifyOnIncomingCall();
 
-        if (Build.VERSION.SDK_INT >= 26) {
+        if (Build.VERSION.SDK_INT >= 26 && !AndroidHallOfShame.isTelecomBrokenDevice()) {
             telecomHandleIncomingCall();
         } else {
             showIncomingCallNotification();
@@ -799,6 +802,7 @@ public class CallManager {
         this.callAnswerTimestamp = SystemClock.elapsedRealtime();
         telecomSetActive();
         notifyOnAnsweredCall();
+        Log.i("CallManager: webrtc answer: " + webrtcOffer);
 
         peerConnection.setRemoteDescription(new SimpleSdpObserver(), new SessionDescription(SessionDescription.Type.ANSWER, webrtcOffer));
 

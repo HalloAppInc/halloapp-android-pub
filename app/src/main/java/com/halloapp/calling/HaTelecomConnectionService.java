@@ -27,7 +27,6 @@ public class HaTelecomConnectionService extends ConnectionService {
     public static final String EXTRA_PEER_UID_NAME = "peer_uid_name";
     public static final String EXTRA_CALL_TYPE = "call_type";
 
-
     @Override
     public Connection onCreateIncomingConnection(PhoneAccountHandle connectionManagerPhoneAccount, ConnectionRequest request) {
         Log.i("HaTelecomConnectionService onCreateIncomingConnection request:" + request);
