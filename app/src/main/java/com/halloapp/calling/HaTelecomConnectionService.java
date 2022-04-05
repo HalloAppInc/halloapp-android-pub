@@ -108,7 +108,7 @@ public class HaTelecomConnectionService extends ConnectionService {
 
     private static int connectionCapabilities() {
         int cap = Connection.CAPABILITY_MUTE;
-        if (ServerProps.getInstance().getVideoCallsEnabled()) {
+        if (ServerProps.getInstance().getCallHoldEnabled()) {
             Log.i("HaTelecomConnectionService: call will have hold support");
             cap |= Connection.CAPABILITY_HOLD | Connection.CAPABILITY_SUPPORT_HOLD;
         }
