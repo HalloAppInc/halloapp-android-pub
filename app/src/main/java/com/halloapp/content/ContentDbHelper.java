@@ -73,7 +73,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + PostsTable.COLUMN_RECEIVE_TIME + " INTEGER,"
                 + PostsTable.COLUMN_RESULT_UPDATE_TIME + " INTEGER,"
                 + PostsTable.COLUMN_SUBSCRIBED + " INTEGER,"
-                + PostsTable.COLUMN_LAST_UPDATE + " INTEGER"
+                + PostsTable.COLUMN_LAST_UPDATE + " INTEGER,"
+                + PostsTable.COLUMN_EXTERNAL_SHARE_ID + " TEXT,"
+                + PostsTable.COLUMN_EXTERNAL_SHARE_KEY + " TEXT"
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + ArchiveTable.TABLE_NAME);
@@ -624,6 +626,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 64: {
                 upgradeFromVersion64(db);
+            }
+            case 65: {
+                upgradeFromVersion65(db);
             }
             break;
             default: {
@@ -1339,6 +1344,11 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion64(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_LAST_UPDATE + " INTEGER");
+    }
+
+    private void upgradeFromVersion65(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_EXTERNAL_SHARE_ID + " TEXT");
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_EXTERNAL_SHARE_KEY + " TEXT");
     }
 
     /**

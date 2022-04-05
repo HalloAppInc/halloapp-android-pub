@@ -6,6 +6,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.format.DateUtils;
+import android.util.Pair;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
@@ -1145,6 +1146,37 @@ class PostsDb {
             }
         }
         return null;
+    }
+
+    @WorkerThread
+    Pair<String, String> getExternalShareInfo(@NonNull String postId) {
+        final String sql = "SELECT " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_EXTERNAL_SHARE_ID + "," + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_EXTERNAL_SHARE_KEY
+                + " FROM " + PostsTable.TABLE_NAME + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=? AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=?";
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{postId, UserId.ME.rawId()})) {
+            if (cursor.moveToNext()) {
+                return new Pair<>(cursor.getString(0), cursor.getString(1));
+            }
+        }
+        return null;
+    }
+
+    @WorkerThread
+    void setExternalShareInfo(@NonNull String postId, @NonNull String shareId, @NonNull String shareKey) {
+        final ContentValues values = new ContentValues();
+        values.put(PostsTable.COLUMN_EXTERNAL_SHARE_ID, shareId);
+        values.put(PostsTable.COLUMN_EXTERNAL_SHARE_KEY, shareKey);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
+                    PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
+                    new String [] {UserId.ME.rawId(), postId},
+                    SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLException ex) {
+            Log.e("PostsDb.setExternalShareInfo: failed");
+            throw ex;
+        }
     }
 
     @WorkerThread

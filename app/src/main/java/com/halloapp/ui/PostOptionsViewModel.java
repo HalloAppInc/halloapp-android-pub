@@ -3,6 +3,7 @@ package com.halloapp.ui;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Base64;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -120,6 +121,13 @@ public class PostOptionsViewModel extends ViewModel {
         }
 
         bgWorkers.execute(() -> {
+            Pair<String, String> externalShareInfo = contentDb.getExternalShareInfo(post.id);
+            if (externalShareInfo != null) {
+                String url = "https://share.halloapp.com/" + externalShareInfo.first + "#k" + externalShareInfo.second;
+                result.postValue(url);
+                return;
+            }
+
             Container.Builder containerBuilder = Container.newBuilder();
             FeedContentEncoder.encodePost(containerBuilder, post);
             PostContainer postContainer = containerBuilder.getPostContainer();
@@ -214,9 +222,9 @@ public class PostOptionsViewModel extends ViewModel {
                 String shareKey = Base64.encodeToString(attachmentKey, Base64.NO_WRAP | Base64.URL_SAFE);
                 observable.onError(e -> Log.e("Failed to send for external sharing"))
                         .onResponse(response -> {
-                            Log.i("Got external sharing response " + response);
                             String url = "https://share.halloapp.com/" + response.blobId + "#k" + shareKey;
                             result.postValue(url);
+                            contentDb.setExternalShareInfo(post.id, response.blobId, shareKey);
                         });
             } catch (GeneralSecurityException e) {
                 Log.e("Failed to encrypt for external sharing", e);
