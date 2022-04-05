@@ -149,6 +149,11 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/window_background"/>
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/use_krisp_noise_suppression"
                 android:layout_width="match_parent"
