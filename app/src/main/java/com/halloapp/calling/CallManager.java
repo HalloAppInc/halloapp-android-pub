@@ -76,6 +76,7 @@ import org.webrtc.IceCandidate;
 import org.webrtc.Logging;
 import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
+import org.webrtc.MediaStreamTrack;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.RTCStatsCollectorCallback;
@@ -1222,9 +1223,16 @@ public class CallManager {
 
             @Override
             public void onAddTrack(RtpReceiver receiver, MediaStream[] mediaStreams) {
-                receiver.SetObserver(mediaType ->
-                        Log.i("PeerConnection: OnFirestPacketReceived: RtpReceiver: " + receiver.id() + " mediaType:" + mediaType));
-                Log.i("PeerConnection: onAddTrack: RtpReceiver: " + receiver.id() + " mediaStreams:" + mediaStreams.toString());
+                receiver.SetObserver(mediaType -> Log.i("PeerConnection: OnFirstPacketReceived: RtpReceiver: " + receiver.id() + " mediaType:" + mediaType));
+                Log.i("PeerConnection: onAddTrack: RtpReceiver: " + receiver.id() + " mediaStreams:" + mediaStreams.length);
+                MediaStreamTrack track = receiver.track();
+                if (callType == CallType.VIDEO && track instanceof VideoTrack) {
+                    remoteVideoTrack = (VideoTrack) track;
+                    remoteVideoTrack.setEnabled(true);
+                    if (remoteVideoSink != null) {
+                        remoteVideoTrack.addSink(remoteVideoSink);
+                    }
+                }
             }
 
             @Override
