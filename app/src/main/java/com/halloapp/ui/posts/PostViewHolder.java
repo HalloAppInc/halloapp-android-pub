@@ -165,7 +165,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
         if (moreOptionsView != null) {
             moreOptionsView.setOnClickListener(v -> {
-                parent.showDialogFragment(PostOptionsBottomSheetDialogFragment.newInstance(post.id, post.parentGroup, post.isArchived));
+                parent.showDialogFragment(PostOptionsBottomSheetDialogFragment.newInstance(post.id, post.isArchived));
             });
         }
 

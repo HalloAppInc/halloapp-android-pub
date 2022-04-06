@@ -398,6 +398,8 @@
     <string name="contact_favorites">Favorites</string>
     <string name="share_link">Share link</string>
     <string name="copy_link">Copy link</string>
+    <!-- Button for revoking a link used for external sharing -->
+    <string name="revoke_link">Revoke link</string>
     <string name="reset_link">Reset link</string>
     <!-- Button to invite a contact to a group with an invite link -->
     <string name="group_invite_via_link">Invite to group via link</string>
@@ -569,6 +571,8 @@
     <string name="share">Share</string>
     <!-- action where the user shares -->
     <string name="share_action">Share</string>
+    <!-- Text for button for sharing a post -->
+    <string name="share_via">Share via…</string>
     <!-- Title for activity that lets user select who to share with -->
     <string name="share_with">Share with…</string>
     <!-- Label on selected destinations when sharing from another app -->
@@ -845,6 +849,12 @@
     <string name="external_share_description_audio">Audio post</string>
     <!-- Text provided as description for media post being shared outside of HalloApp -->
     <string name="external_share_description_media">Media post</string>
+    <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
+    <string name="revoke_link_in_progress">Revoking link</string>
+    <!-- Text shown in snackbar when external sharing link is revoked -->
+    <string name="link_revoked">Link revoked</string>
+    <!-- Text shown in a snackbar when link revocation failed -->
+    <string name="link_revoke_failed">Failed to revoke link</string>
     <!-- Button for going to utility for viewing expired posts -->
     <string name="archived_posts">Archive</string>
     <!-- Title of utility for viewing expired posts -->

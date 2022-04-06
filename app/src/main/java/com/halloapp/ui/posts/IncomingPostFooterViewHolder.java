@@ -22,7 +22,7 @@ public class IncomingPostFooterViewHolder extends PostFooterViewHolder {
     private final View commentsIndicator;
     private final View message;
 
-    public IncomingPostFooterViewHolder(@NonNull View itemView, @NonNull ContentViewHolderParent parent) {
+    public IncomingPostFooterViewHolder(@NonNull View itemView, @NonNull PostViewHolder.PostViewHolderParent parent) {
         super(itemView, parent);
         postActionsSeparator = itemView.findViewById(R.id.post_actions_separator);
         commentsIndicator = itemView.findViewById(R.id.comments_indicator);

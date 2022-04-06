@@ -12,13 +12,13 @@ import com.halloapp.ui.ContentViewHolderParent;
 public abstract class PostFooterViewHolder {
     protected Post post;
 
-    protected ContentViewHolderParent parent;
+    protected PostViewHolder.PostViewHolderParent parent;
 
     protected final View footerSpacing;
 
     protected View itemView;
 
-    public PostFooterViewHolder(@NonNull View itemView, @NonNull ContentViewHolderParent parent) {
+    public PostFooterViewHolder(@NonNull View itemView, @NonNull PostViewHolder.PostViewHolderParent parent) {
         this.parent = parent;
         this.itemView = itemView;
         footerSpacing = itemView.findViewById(R.id.footer_spacing);

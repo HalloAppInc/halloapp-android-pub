@@ -3,12 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="20dp"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/contact_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"
@@ -18,10 +16,10 @@
         android:layout_marginBottom="10dp"
         android:fontFamily="sans-serif-medium"
         android:textColor="@color/primary_text"
-        tools:text="Amanda Anderson Christoff"/>
+        android:text="@string/my_post"/>
 
     <LinearLayout
-        android:id="@+id/save_to_gallery"
+        android:id="@+id/share_externally"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -36,7 +34,7 @@
             android:layout_marginStart="30dp"
             android:layout_marginEnd="10dp"
             app:tint="@color/color_secondary"
-            android:src="@drawable/ic_save"/>
+            android:src="@drawable/ic_share"/>
 
         <TextView
             android:layout_width="0dp"
@@ -44,18 +42,46 @@
             android:layout_weight="1"
             android:textSize="17sp"
             android:textColor="@color/color_secondary"
-            android:text="@string/save_to_gallery"/>
+            android:text="@string/share_via"/>
 
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/delete_post"
-        android:background="?selectableItemBackground"
+        android:id="@+id/copy_link"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingTop="15dp"
+        android:background="?selectableItemBackground"
+        android:paddingBottom="15dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="10dp"
+            app:tint="@color/color_secondary"
+            android:src="@drawable/ic_link"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="17sp"
+            android:textColor="@color/color_secondary"
+            android:text="@string/copy_link"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/revoke_link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="15dp"
+        android:background="?selectableItemBackground"
         android:paddingBottom="15dp">
 
         <ImageView
@@ -64,7 +90,7 @@
             android:layout_marginStart="30dp"
             android:layout_marginEnd="10dp"
             app:tint="@color/color_primary"
-            android:src="@drawable/ic_remove_circle_outline"/>
+            android:src="@drawable/ic_link_broken"/>
 
         <TextView
             android:layout_width="0dp"
@@ -72,7 +98,7 @@
             android:layout_weight="1"
             android:textSize="17sp"
             android:textColor="@color/color_primary"
-            android:text="@string/delete_post"/>
+            android:text="@string/revoke_link"/>
 
     </LinearLayout>
 
