@@ -234,12 +234,12 @@ public class CallsApi extends Connection.Observer {
         WebRtcSessionDescription webrtcOffer = encryptCallPayload(webrtcOfferString, peerUid);
         Log.i("CallsApi: encrypted offer: " + webrtcOffer.getEncPayload().size());
         final StartCallIq requestIq = new StartCallIq(callId, peerUid, callType, webrtcOffer);
-        return connection.sendRequestIq(requestIq);
+        return connection.sendRequestIq(requestIq, true);
     }
 
     public Observable<GetCallServersResponseIq> getCallServers(@NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType) {
         final GetCallServersIq requestIq = new GetCallServersIq(callId, peerUid, callType);
-        return connection.sendRequestIq(requestIq);
+        return connection.sendRequestIq(requestIq, true);
     }
 
 
