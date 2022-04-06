@@ -855,6 +855,8 @@
     <string name="link_revoked">Link revoked</string>
     <!-- Text shown in a snackbar when link revocation failed -->
     <string name="link_revoke_failed">Failed to revoke link</string>
+    <!-- Text shown explaining how external sharing works on the sharing bottom sheet -->
+    <string name="external_share_info">Anyone with the link can see your post. Link expires with your post. Link preview is unencrypted.</string>
     <!-- Button for going to utility for viewing expired posts -->
     <string name="archived_posts">Archive</string>
     <!-- Title of utility for viewing expired posts -->

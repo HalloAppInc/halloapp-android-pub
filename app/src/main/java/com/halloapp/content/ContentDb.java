@@ -1395,7 +1395,9 @@ public class ContentDb {
 
     @WorkerThread
     public void setExternalShareInfo(@NonNull String postId, @Nullable String shareId, @Nullable String shareKey) {
-        postsDb.setExternalShareInfo(postId, shareId, shareKey);
+        databaseWriteExecutor.execute(() -> {
+            postsDb.setExternalShareInfo(postId, shareId, shareKey);
+        });
     }
 
     @WorkerThread

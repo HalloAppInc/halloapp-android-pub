@@ -1163,7 +1163,7 @@ class PostsDb {
     }
 
     @WorkerThread
-    void setExternalShareInfo(@NonNull String postId, @NonNull String shareId, @NonNull String shareKey) {
+    void setExternalShareInfo(@NonNull String postId, @Nullable String shareId, @Nullable String shareKey) {
         final ContentValues values = new ContentValues();
         values.put(PostsTable.COLUMN_EXTERNAL_SHARE_ID, shareId);
         values.put(PostsTable.COLUMN_EXTERNAL_SHARE_KEY, shareKey);

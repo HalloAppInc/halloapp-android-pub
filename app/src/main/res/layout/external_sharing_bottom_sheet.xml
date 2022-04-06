@@ -82,7 +82,8 @@
         android:gravity="center_vertical"
         android:paddingTop="15dp"
         android:background="?selectableItemBackground"
-        android:paddingBottom="15dp">
+        android:paddingBottom="15dp"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="20dp"
@@ -99,6 +100,33 @@
             android:textSize="17sp"
             android:textColor="@color/color_primary"
             android:text="@string/revoke_link"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/share_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:visibility="visible">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_info"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="20dp"
+            android:textSize="14sp"
+            android:text="@string/external_share_info"/>
 
     </LinearLayout>
 

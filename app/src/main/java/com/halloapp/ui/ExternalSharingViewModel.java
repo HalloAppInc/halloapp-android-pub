@@ -61,31 +61,22 @@ public class ExternalSharingViewModel extends ViewModel {
     private final ContentDb contentDb = ContentDb.getInstance();
     private final AppContext appContext = AppContext.getInstance();
 
+    private final ComputableLiveData<Boolean> revocable;
     private final String postId;
-    final ComputableLiveData<Post> post;
-    final MutableLiveData<Boolean> postDeleted = new MutableLiveData<>();
-
-    private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
-        @Override
-        public void onPostRetracted(@NonNull Post retractedPost) {
-            final Post post = ExternalSharingViewModel.this.post.getLiveData().getValue();
-            if (post != null && post.senderUserId.equals(retractedPost.senderUserId) && post.id.equals(retractedPost.id)) {
-                postDeleted.postValue(true);
-            }
-        }
-    };
 
     private ExternalSharingViewModel(@NonNull String postId) {
         this.postId = postId;
-        post = new ComputableLiveData<Post>() {
+        revocable = new ComputableLiveData<Boolean>() {
             @Override
-            protected Post compute() {
-                return contentDb.getPost(postId);
+            protected Boolean compute() {
+                Pair<String, String> externalShareInfo = contentDb.getExternalShareInfo(postId);
+                return externalShareInfo != null && externalShareInfo.first != null;
             }
         };
-        post.invalidate();
+    }
 
-        contentDb.addObserver(contentObserver);
+    public LiveData<Boolean> getIsRevokable() {
+        return revocable.getLiveData();
     }
 
     public LiveData<Boolean> revokeLink() {
@@ -244,11 +235,6 @@ public class ExternalSharingViewModel extends ViewModel {
         });
 
         return result;
-    }
-
-    @Override
-    protected void onCleared() {
-        contentDb.removeObserver(contentObserver);
     }
 
     public static class Factory implements ViewModelProvider.Factory {

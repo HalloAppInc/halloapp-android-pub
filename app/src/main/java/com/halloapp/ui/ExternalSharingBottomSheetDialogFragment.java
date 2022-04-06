@@ -43,13 +43,14 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
 
         final View shareExternally = view.findViewById(R.id.share_externally);
         final View copyLink = view.findViewById(R.id.copy_link);
-        final View revokeLink = view.findViewById(R.id.revoke_link); // TODO(jack): Only show if have shareId
+        final View revokeLink = view.findViewById(R.id.revoke_link);
+        final View shareInfo = view.findViewById(R.id.share_info);
 
-        viewModel.postDeleted.observe(this, deleted -> {
-            if (Boolean.TRUE.equals(deleted)) {
-                dismiss();
-            }
+        viewModel.getIsRevokable().observe(this, revocable -> {
+            revokeLink.setVisibility(Boolean.TRUE.equals(revocable) ? View.VISIBLE : View.GONE);
+            shareInfo.setVisibility(Boolean.TRUE.equals(revocable) ? View.GONE : View.VISIBLE);
         });
+
         shareExternally.setOnClickListener(v -> {
             ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, getString(R.string.external_share_in_progress));
             viewModel.shareExternally().observe(this, url -> {
