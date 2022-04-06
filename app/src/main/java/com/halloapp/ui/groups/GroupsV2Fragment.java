@@ -453,7 +453,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                 }
             });
             cardView.setClipToOutline(true);
-            cardView.setOnClickListener(v -> {
+            itemView.setOnClickListener(v -> {
 
                 final Intent intent = PostContentActivity.open(v.getContext(), post.id, 0);
                 String transitionName = previewImageView.getTransitionName();
