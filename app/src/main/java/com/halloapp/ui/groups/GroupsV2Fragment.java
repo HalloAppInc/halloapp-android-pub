@@ -240,6 +240,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
 
     private void delayedRefresh() {
         viewModel.refreshAll();
+        groupsView.scrollToPosition(0);
     }
 
     @Override
