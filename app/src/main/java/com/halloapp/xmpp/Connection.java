@@ -196,6 +196,8 @@ public abstract class Connection {
 
     public abstract Observable<ExternalShareResponseIq> getSharedPost(@NonNull String shareId);
 
+    public abstract Observable<HalloIq> revokeSharedPost(@NonNull String shareId);
+
     public abstract Observable<Iq> sendIqRequest(@NonNull HalloIq iq);
 
     public abstract <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq);

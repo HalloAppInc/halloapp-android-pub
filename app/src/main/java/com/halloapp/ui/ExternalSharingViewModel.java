@@ -89,20 +89,7 @@ public class ExternalSharingViewModel extends ViewModel {
                 result.postValue(false);
                 return;
             }
-            final Observable<?> observable = Connection.getInstance().sendRequestIq(new HalloIq() {
-                @Override
-                public Iq.Builder toProtoIq() {
-                    ExternalSharePost externalSharePost = ExternalSharePost.newBuilder()
-                            .setAction(ExternalSharePost.Action.DELETE)
-                            .setBlobId(externalShareInfo.first)
-                            .build();
-                    return Iq.newBuilder()
-                            .setId(RandomId.create())
-                            .setType(Iq.Type.SET)
-                            .setExternalSharePost(externalSharePost);
-                }
-            });
-            observable.onError(e -> {
+            Connection.getInstance().revokeSharedPost(externalShareInfo.first).onError(e -> {
                 Log.w("External share revoke failed", e);
                 result.postValue(false);
             }).onResponse(res -> {

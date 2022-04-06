@@ -1,6 +1,7 @@
 package com.halloapp;
 
 import android.content.Context;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
@@ -17,6 +18,7 @@ import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.MediaUploadDownloadThreadPool;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
 import java.util.Collection;
@@ -80,6 +82,14 @@ public class MainContentDbObserver implements ContentDb.Observer {
             }
         }
         notifications.updateFeedNotifications(post);
+        Pair<String, String> externalShareInfo = contentDb.getExternalShareInfo(post.id);
+        if (externalShareInfo != null && externalShareInfo.first != null) {
+            connection.revokeSharedPost(externalShareInfo.first).onError(e -> {
+                Log.w("External share revoke failed", e);
+            }).onResponse(res -> {
+                contentDb.setExternalShareInfo(post.id, null, null);
+            });
+        }
     }
 
     @Override

@@ -1056,6 +1056,24 @@ public class ConnectionImpl extends Connection {
         return sendRequestIq(getSharedPostIq, true);
     }
 
+    @Override
+    public Observable<HalloIq> revokeSharedPost(@NonNull String shareId) {
+        HalloIq revokeSharedPostIq = new HalloIq() {
+            @Override
+            public Iq.Builder toProtoIq() {
+                ExternalSharePost externalSharePost = ExternalSharePost.newBuilder()
+                        .setAction(ExternalSharePost.Action.DELETE)
+                        .setBlobId(shareId)
+                        .build();
+                return Iq.newBuilder()
+                        .setId(RandomId.create())
+                        .setType(Iq.Type.SET)
+                        .setExternalSharePost(externalSharePost);
+            }
+        };
+         return sendRequestIq(revokeSharedPostIq, true);
+    }
+
     // NOTE: Should NOT be called from executor.
     @Override
     public Observable<Iq> sendIqRequest(@NonNull HalloIq iq) {
