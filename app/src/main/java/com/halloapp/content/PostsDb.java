@@ -2298,10 +2298,6 @@ class PostsDb {
     @NonNull List<Comment> getIncomingCommentsHistory(int limit) {
         final List<Comment> comments = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        final String subscribedPostSubquery =
-                "(SELECT " + PostsTable.COLUMN_POST_ID + " FROM " + PostsTable.TABLE_NAME
-                        + " WHERE " + PostsTable.COLUMN_SENDER_USER_ID + "=''"
-                        + " OR " + PostsTable.COLUMN_SUBSCRIBED + "=1)";
         final String sql =
                 "SELECT " +
                     CommentsTable._ID + ", " +
@@ -2318,11 +2314,11 @@ class PostsDb {
                     "AND comments.timestamp>" + getPostExpirationTime() + " " +
                     "AND comments.text IS NOT NULL " +
                     "AND EXISTS(SELECT post_id FROM posts WHERE posts.post_id=comments.post_id)" + // post exists
-                    "AND ((" +
+                    "AND (" +
                         "EXISTS(SELECT post_id FROM " + PostsTable.TABLE_NAME + " WHERE posts.post_id=comments.post_id AND posts.sender_user_id='')" + // my post
                         "OR " +
                         "EXISTS(SELECT post_id FROM comments AS c WHERE comments.post_id==c.post_id AND c.comment_sender_user_id='') " + // i commented on the post
-                    ") OR (" + CommentsTable.COLUMN_SHOULD_NOTIFY + "=1)) " +
+                    ")" +
                 "ORDER BY " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_TIMESTAMP + " DESC " +
                 (limit < 0 ? "" : "LIMIT " + limit);
         try (final Cursor cursor = db.rawQuery(sql, null)) {
