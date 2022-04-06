@@ -257,6 +257,7 @@ public class CallParticipantsLayout extends FrameLayout {
 
         localVideoView.setZOrderMediaOverlay(true);
         localVideoView.setEnableHardwareScaler(true);
+        localVideoView.setMirror(true);
         remoteVideoView.setEnableHardwareScaler(true);
 
         remoteProxyVideoSink.setTarget(remoteVideoView);
