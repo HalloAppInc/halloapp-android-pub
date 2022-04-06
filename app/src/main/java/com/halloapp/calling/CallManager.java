@@ -768,7 +768,6 @@ public class CallManager {
         }
         this.state = State.CALLING_RINGING;
         notifyOnPeerIsRinging();
-        startOutgoingRingtone();
     }
 
     public synchronized void handleAnswerCall(@NonNull String callId, @NonNull UserId peerUid, @Nullable String webrtcOffer, @NonNull Long timestamp,
@@ -1306,6 +1305,8 @@ public class CallManager {
                 try {
                     Observable<StartCallResponseIq> observable = callsApi.startCall(
                             callId, peerUid, callType, sessionDescription.description);
+
+                    startOutgoingRingtone();
 
                     // TODO(nikola): we are blocking the webrtc thread here... Do this non-blocking
                     StartCallResponseIq response = observable.await();
