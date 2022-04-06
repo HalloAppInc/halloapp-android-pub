@@ -1225,6 +1225,12 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 
     <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
     <string name="failed_load_post">"Falha ao carregar a postagem"</string>
+
+    <!-- Text in groups pill telling the user theres new posts -->
+    <plurals name="new_posts_quantity">
+        <item quantity="one">"%d new post"</item>
+        <item quantity="other">"%d new post"</item>
+    </plurals>
     <string name="share_externally">"Partilhar externamente"</string>
     <string name="incoming_call_notification_title">"Chamada recebida"</string>
     <string name="call_action">"Ligar"</string>

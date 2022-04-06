@@ -1243,6 +1243,12 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
     <string name="failed_load_post">"Failed to load post"</string>
+
+    <!-- Text in groups pill telling the user theres new posts -->
+    <plurals name="new_posts_quantity">
+        <item quantity="one">"%d new post"</item>
+        <item quantity="other">"%d new post"</item>
+    </plurals>
     <string name="share_externally">"Share externally"</string>
     <string name="incoming_call_notification_title">"Incoming call"</string>
     <string name="call_action">"Call"</string>

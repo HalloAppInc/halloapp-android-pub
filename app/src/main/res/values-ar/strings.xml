@@ -1387,6 +1387,16 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
     <string name="failed_load_post">"تعذّر تحميل المنشور"</string>
+
+    <!-- Text in groups pill telling the user theres new posts -->
+    <plurals name="new_posts_quantity">
+        <item quantity="zero">"%d من المنشورات الجديدة"</item>
+        <item quantity="one">"منشور %d جديد"</item>
+        <item quantity="two">"منشوران %d جديدان"</item>
+        <item quantity="few">"%d منشورات جديدة"</item>
+        <item quantity="many">"%d منشورًا جديدًا"</item>
+        <item quantity="other">"%d منشور جديد"</item>
+    </plurals>
     <string name="share_externally">"مشاركة خارج هالوآب"</string>
     <string name="incoming_call_notification_title">"مكالمة واردة"</string>
     <string name="call_action">"اتصال"</string>
