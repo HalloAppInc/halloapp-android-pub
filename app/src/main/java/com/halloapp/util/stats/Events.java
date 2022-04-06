@@ -53,8 +53,8 @@ public class Events {
         this.connection = connection;
     }
 
-    public void sendEvent(@NonNull PushReceived pushReceived) {
-        sendEvent(EventData.newBuilder().setPushReceived(pushReceived));
+    public Observable<Void> sendEvent(@NonNull PushReceived pushReceived) {
+        return sendEvent(EventData.newBuilder().setPushReceived(pushReceived));
     }
 
     public void sendEvent(@NonNull MediaUpload mediaUpload) {
@@ -81,8 +81,8 @@ public class Events {
         sendEvent(EventData.newBuilder().setCall(call));
     }
 
-    private void sendEvent(@NonNull EventData.Builder builder) {
-        sendEvents(Collections.singleton(builder));
+    private Observable<Void> sendEvent(@NonNull EventData.Builder builder) {
+        return sendEvents(Collections.singleton(builder));
     }
 
     public void sendFabActionEvent(FabAction.FabActionType type) {

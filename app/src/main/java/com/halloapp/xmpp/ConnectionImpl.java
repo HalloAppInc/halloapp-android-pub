@@ -606,7 +606,7 @@ public class ConnectionImpl extends Connection {
     @Override
     public Observable<Void> sendEvents(Collection<EventData> events) {
         final EventsIq eventsIq = new EventsIq(events);
-        return sendIqRequestAsync(eventsIq).map(r -> null);
+        return sendIqRequestAsync(eventsIq, true).map(r -> null);
     }
 
     @Override

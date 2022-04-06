@@ -14,11 +14,11 @@ public class PushMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        Log.d("PushMessagingService: From: " + remoteMessage.getFrom());
+        Log.d("PushMessagingService: PushId: " + remoteMessage.getMessageId() + " From: " + remoteMessage.getFrom());
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            Log.d("PushMessagingService: Message data payload: " + remoteMessage.getData());
+            Log.d("PushMessagingService: PushId: " + remoteMessage.getMessageId() + " Message data payload: " + remoteMessage.getData());
         }
 
         // Check if message contains a notification payload.
@@ -30,7 +30,9 @@ public class PushMessagingService extends FirebaseMessagingService {
         PushSyncWorker.schedule(getApplicationContext());
 
         PushReceived pushReceived = PushReceived.newBuilder().setClientTimestamp(System.currentTimeMillis()).setId(remoteMessage.getMessageId()).build();
-        Events.getInstance().sendEvent(pushReceived);
+        Events.getInstance().sendEvent(pushReceived)
+                .onResponse((handler) -> Log.d("PushMessagingService: push_received event sent " + remoteMessage.getMessageId()))
+                .onError((handler) -> Log.w("PushMessagingService: push_received event failed to send " + remoteMessage.getMessageId()));
     }
 
     @Override
