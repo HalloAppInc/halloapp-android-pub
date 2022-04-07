@@ -35,12 +35,15 @@ public class ViewExternalPostActivity extends HalloActivity {
         }
 
         isRegistered.observe(this, registered -> {
-            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
-            if (!registered) {
+            Intent intent = PostContentActivity.openExternal(this, parsedUrl.id, parsedUrl.key);
+            if (registered) {
+                startActivity(intent);
+            } else {
+                TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
                 taskStackBuilder.addNextIntent(new Intent(this, RegistrationRequestActivity.class));
+                taskStackBuilder.addNextIntent(intent);
+                taskStackBuilder.startActivities();
             }
-            taskStackBuilder.addNextIntent(PostContentActivity.openExternal(this, parsedUrl.id, parsedUrl.key));
-            taskStackBuilder.startActivities();
             finish();
         });
     }
