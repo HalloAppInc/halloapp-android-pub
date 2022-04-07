@@ -43,6 +43,9 @@ public class UrlPreviewLoader extends ViewDataLoader<View, UrlPreview, String> {
                 return null;
             }
             UrlPreview preview = UrlPreview.parseFromDocument(url, document);
+            if (TextUtils.isEmpty(preview.description) && TextUtils.isEmpty(preview.title)) {
+                return null;
+            }
             String imgUrl = preview.getPreviewImageUrl();
             if (imgUrl != null) {
                 final File file = FileStore.getInstance().getTmpFile(RandomId.create());
