@@ -120,10 +120,6 @@ public class RecentEmojiManager {
         recentEmojiSet.onEmojiUsed(emoji);
         recentEmojiLiveData.update();
         persistRecents();
-        if (emoji instanceof EmojiWithVariants) {
-            EmojiWithVariants v = (EmojiWithVariants) emoji;
-            v.setVariantIndex(v.getIndex() + 1);
-        }
     }
 
     private synchronized void persistRecents() {
