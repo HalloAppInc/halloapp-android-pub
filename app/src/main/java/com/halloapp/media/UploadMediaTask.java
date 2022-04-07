@@ -535,14 +535,14 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             mediaConverter.setTimeRange(0, maxVideoDurationSeconds * 1000);
             try {
                 mediaConverter.setVideoCodec(MediaConverter.VIDEO_CODEC_H265);
-                mediaConverter.setVideoResolution(Constants.VIDEO_RESOLUTION_H265);
+                mediaConverter.setVideoResolution(ServerProps.getInstance().getTargetVideoResolution());
             } catch (FileNotFoundException e) {
                 mediaConverter.setVideoCodec(MediaConverter.VIDEO_CODEC_H264);
-                mediaConverter.setVideoResolution(Constants.VIDEO_RESOLUTION_H264);
+                mediaConverter.setVideoResolution(ServerProps.getInstance().getTargetVideoResolution());
             }
-            final int maxVideoBitrate = MediaUtils.getPreferredMaxVideoBitrate();
-            Log.d("UploadMediaTask.prepareMedia maxVideoBitrate is " + maxVideoBitrate + " for " + mediaLogId);
-            mediaConverter.setVideoBitrate(maxVideoBitrate);
+            final int targetVideoBitrate = ServerProps.getInstance().getTargetVideoBitrate();
+            Log.d("UploadMediaTask.prepareMedia targetVideoBitrate is " + targetVideoBitrate + " for " + mediaLogId);
+            mediaConverter.setVideoBitrate(targetVideoBitrate);
             mediaConverter.setAudioBitrate(Constants.AUDIO_BITRATE);
             mediaConverter.setListener(percent -> {
                 Log.v("UploadMediaTask.prepareMedia convert " + percent + " for " + mediaLogId);

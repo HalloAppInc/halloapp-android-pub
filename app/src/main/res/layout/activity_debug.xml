@@ -40,6 +40,7 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- TODO(Stefan): turn off temporarily and potentially remove -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -49,7 +50,8 @@
                 app:boxStrokeColor="@color/color_secondary"
                 app:hintTextColor="@color/color_secondary"
                 tools:ignore="HardcodedText"
-                android:hint="Video Bitrate">
+                android:hint="Video Bitrate"
+                android:visibility="gone">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/video_bitrate"
@@ -70,7 +72,8 @@
                 app:boxStrokeColor="@color/color_secondary"
                 app:hintTextColor="@color/color_secondary"
                 tools:ignore="HardcodedText"
-                android:hint="H265 Resolution">
+                android:hint="H265 Resolution"
+                android:visibility="gone">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/h265_res"
@@ -91,7 +94,8 @@
                 app:boxStrokeColor="@color/color_secondary"
                 app:hintTextColor="@color/color_secondary"
                 tools:ignore="HardcodedText"
-                android:hint="H264 Resolution">
+                android:hint="H264 Resolution"
+                android:visibility="gone">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/h264_res"

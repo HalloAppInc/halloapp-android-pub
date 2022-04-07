@@ -35,6 +35,8 @@ public class ServerProps {
     private static final String PROP_MAX_CHAT_VIDEO_DURATION = "max_chat_video_duration";
     private static final String PROP_MIN_GROUP_SYNC_INTERVAL = "group_sync_time";
     private static final String PROP_MAX_VIDEO_BITRATE = "max_video_bit_rate";
+    private static final String PROP_TARGET_VIDEO_BITRATE = "target_video_bit_rate";
+    private static final String PROP_TARGET_VIDEO_RESOLUTION = "target_video_resolution";
     private static final String PROP_CONTACT_SYNC_INTERVAL = "contact_sync_frequency";
     private static final String PROP_MEDIA_COMMENTS_ENABLED = "media_comments";
     private static final String PROP_STREAMING_UPLOAD_CHUNK_SIZE = "streaming_upload_chunk_size";
@@ -79,7 +81,9 @@ public class ServerProps {
     private final IntegerProp propMaxFeedVideoDuration = createProp(PROP_MAX_FEED_VIDEO_DURATION, 60);
     private final IntegerProp propMaxChatVideoDuration = createProp(PROP_MAX_CHAT_VIDEO_DURATION, 120);
     private final IntegerProp propMinGroupSyncInterval = createProp(PROP_MIN_GROUP_SYNC_INTERVAL, WEEK_IN_SECONDS);
-    private final IntegerProp propMaxVideoBitrate = createProp(PROP_MAX_VIDEO_BITRATE, 8000000);
+    private final IntegerProp propMaxVideoBitrate = createProp(PROP_MAX_VIDEO_BITRATE, 6000000);
+    private final IntegerProp propTargetVideoBitrate = createProp(PROP_TARGET_VIDEO_BITRATE, 4000000);
+    private final IntegerProp propTargetVideoResolution = createProp(PROP_TARGET_VIDEO_RESOLUTION, 720);
     private final IntegerProp propContactSyncIntervalSeconds = createProp(PROP_CONTACT_SYNC_INTERVAL, Constants.SECONDS_PER_DAY);
     private final BooleanProp propMediaCommentsEnabled = createProp(PROP_MEDIA_COMMENTS_ENABLED, false);
     private final IntegerProp propStreamingUploadChunkSize = createProp(PROP_STREAMING_UPLOAD_CHUNK_SIZE, Constants.DEFAULT_STREAMING_UPLOAD_CHUNK_SIZE);
@@ -237,6 +241,14 @@ public class ServerProps {
 
     public synchronized int getMaxVideoBitrate() {
         return propMaxVideoBitrate.getValue();
+    }
+
+    public synchronized int getTargetVideoBitrate() {
+        return propTargetVideoBitrate.getValue();
+    }
+
+    public synchronized int getTargetVideoResolution() {
+        return propTargetVideoResolution.getValue();
     }
 
     public synchronized int getContactSyncIntervalSeconds() {
