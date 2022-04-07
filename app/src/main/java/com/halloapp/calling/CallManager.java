@@ -18,6 +18,7 @@ import android.telecom.CallAudioState;
 import android.telecom.PhoneAccount;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
+import android.telecom.VideoProfile;
 import android.util.Rational;
 import android.widget.Toast;
 
@@ -431,7 +432,11 @@ public class CallManager {
             extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, this.phoneAccountHandle);
             if (callType == CallType.VIDEO) {
                 Log.i("CallManager: requesting speakerphone for video call");
+                // TODO(nikola): Both of those options don't seem to work.
+                // instead we have workaround in HaTelecomConnection.onCallAudioStateChanged
+                // maybe we can file a bug with android about this
                 extras.putBoolean(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, true);
+                extras.putInt(TelecomManager.EXTRA_START_CALL_WITH_VIDEO_STATE, VideoProfile.STATE_BIDIRECTIONAL);
             }
             // TODO: Consider not using the actual phone here for privacy
             Uri uri = Uri.fromParts("tel", contact.normalizedPhone, null);
@@ -674,7 +679,11 @@ public class CallManager {
             extras.putInt(HaTelecomConnectionService.EXTRA_CALL_TYPE, callType.getNumber());
             if (this.callType == CallType.VIDEO) {
                 Log.i("CallManager: telecomHandleIncomingCall: requesting speakerphone ");
+                // TODO(nikola): Both of those options don't seem to work.
+                // instead we have workaround in HaTelecomConnection.onCallAudioStateChanged
+                // maybe we can file a bug with android about this
                 extras.putBoolean(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, true);
+                extras.putInt(TelecomManager.EXTRA_START_CALL_WITH_VIDEO_STATE, VideoProfile.STATE_BIDIRECTIONAL);
             }
             Log.i("CallManager: TelecomManager.addNewIncomingCall");
             tm.addNewIncomingCall(phoneAccountHandle, extras);
