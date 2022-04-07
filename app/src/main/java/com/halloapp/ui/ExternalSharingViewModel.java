@@ -57,11 +57,13 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class ExternalSharingViewModel extends ViewModel {
 
+    private final Me me = Me.getInstance();
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final ContentDb contentDb = ContentDb.getInstance();
     private final AppContext appContext = AppContext.getInstance();
 
     private final ComputableLiveData<Boolean> revocable;
+    private final ComputableLiveData<String> title;
     private final String postId;
 
     private ExternalSharingViewModel(@NonNull String postId) {
@@ -73,10 +75,20 @@ public class ExternalSharingViewModel extends ViewModel {
                 return externalShareInfo != null && externalShareInfo.shareId != null;
             }
         };
+        title = new ComputableLiveData<String>() {
+            @Override
+            protected String compute() {
+                return appContext.get().getString(R.string.external_share_title, me.getName());
+            }
+        };
     }
 
     public LiveData<Boolean> getIsRevokable() {
         return revocable.getLiveData();
+    }
+
+    public LiveData<String> getTitle() {
+        return title.getLiveData();
     }
 
     public LiveData<Boolean> revokeLink() {
@@ -97,6 +109,45 @@ public class ExternalSharingViewModel extends ViewModel {
                 result.postValue(true);
             });
         });
+        return result;
+    }
+
+    public LiveData<Bitmap> getThumbnail() {
+        MutableLiveData<Bitmap> result = new MutableLiveData<>();
+
+        bgWorkers.execute(() -> {
+            Post post = contentDb.getPost(postId);
+            if (post == null) {
+                Log.w("Coult not load post for media preview " + postId);
+                result.postValue(null);
+                return;
+            }
+
+            Media media = null;
+            if (!post.media.isEmpty()) {
+                if (post.type == Post.TYPE_VOICE_NOTE) {
+                    if (post.media.size() > 1) {
+                        media = post.media.get(1);
+                    }
+                } else {
+                    media = post.media.get(0);
+                }
+            }
+
+            if (media == null) {
+                result.postValue(null);
+                return;
+            }
+
+            try {
+                Bitmap bitmap = MediaUtils.decode(media.file, media.type, Constants.MAX_EXTERNAL_SHARE_THUMB_DIMENSION);
+                result.postValue(bitmap);
+            } catch (IOException e) {
+                Log.e("Failed to decode media item for external share preview", e);
+                result.postValue(null);
+            }
+        });
+
         return result;
     }
 
@@ -130,7 +181,7 @@ public class ExternalSharingViewModel extends ViewModel {
             byte[] payload = postContainerBlob.toByteArray();
 
             Context context = appContext.get();
-            String title = context.getString(R.string.external_share_title, Me.getInstance().getName());
+            String title = context.getString(R.string.external_share_title, me.getName());
             String thumbnailUrl = null;
             final String description;
             Media media = null;

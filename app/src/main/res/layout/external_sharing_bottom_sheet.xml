@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:paddingBottom="20dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
@@ -17,6 +18,54 @@
         android:fontFamily="sans-serif-medium"
         android:textColor="@color/primary_text"
         android:text="@string/my_post"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="27dp"
+        android:layout_marginVertical="8dp"
+        android:background="@drawable/external_share_preview_frame">
+
+        <ImageView
+            android:id="@+id/media_thumb"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_margin="8dp"
+            android:layout_marginEnd="12dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/media_thumb"
+            android:paddingTop="7dp"
+            android:paddingHorizontal="8dp"
+            android:textSize="15sp"
+            android:textColor="@color/black_80"
+            android:textStyle="bold"
+            tools:text="Dev Pihtov's post"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            app:layout_constraintStart_toEndOf="@+id/media_thumb"
+            android:paddingHorizontal="8dp"
+            android:paddingBottom="7dp"
+            android:textSize="15sp"
+            tools:ignore="HardcodedText"
+            android:text="share.halloapp.com"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/share_externally"
@@ -34,7 +83,7 @@
             android:layout_marginStart="30dp"
             android:layout_marginEnd="10dp"
             app:tint="@color/color_secondary"
-            android:src="@drawable/ic_share"/>
+            android:src="@drawable/ic_share_outline"/>
 
         <TextView
             android:layout_width="0dp"

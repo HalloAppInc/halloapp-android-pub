@@ -842,7 +842,7 @@
     <!-- Text in a temporary dialog when sharing externally fails -->
     <string name="external_share_failed">Failed to create sharing link, please try again</string>
     <!-- Text provided as title when a post is shared outside of HalloApp -->
-    <string name="external_share_title">HalloApp post from %s</string>
+    <string name="external_share_title">%s\'s HalloApp Post</string>
     <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
     <string name="external_share_description_text">Text post</string>
     <!-- Text provided as description for an audio post being shared outside of HalloApp -->

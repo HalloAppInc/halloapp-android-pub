@@ -2,10 +2,14 @@ package com.halloapp.ui;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Outline;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,10 +49,29 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
         final View copyLink = view.findViewById(R.id.copy_link);
         final View revokeLink = view.findViewById(R.id.revoke_link);
         final View shareInfo = view.findViewById(R.id.share_info);
+        final TextView shareTitle = view.findViewById(R.id.title);
+        final ImageView thumbnail = view.findViewById(R.id.media_thumb);
+
+        viewModel.getTitle().observe(this, shareTitle::setText);
 
         viewModel.getIsRevokable().observe(this, revocable -> {
             revokeLink.setVisibility(Boolean.TRUE.equals(revocable) ? View.VISIBLE : View.GONE);
             shareInfo.setVisibility(Boolean.TRUE.equals(revocable) ? View.GONE : View.VISIBLE);
+        });
+        viewModel.getThumbnail().observe(this, bitmap -> {
+            if (bitmap == null) {
+                thumbnail.setVisibility(View.GONE);
+            } else {
+                thumbnail.setVisibility(View.VISIBLE);
+                thumbnail.setImageBitmap(bitmap);
+                thumbnail.setOutlineProvider(new ViewOutlineProvider() {
+                    @Override
+                    public void getOutline(View view, Outline outline) {
+                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), getResources().getDimension(R.dimen.external_share_preview_radius));
+                    }
+                });
+                thumbnail.setClipToOutline(true);
+            }
         });
 
         shareExternally.setOnClickListener(v -> {
