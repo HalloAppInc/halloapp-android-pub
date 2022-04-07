@@ -43,7 +43,7 @@ public class UrlPreviewLoader extends ViewDataLoader<View, UrlPreview, String> {
                 return null;
             }
             UrlPreview preview = UrlPreview.parseFromDocument(url, document);
-            if (TextUtils.isEmpty(preview.description) && TextUtils.isEmpty(preview.title)) {
+            if (preview.isEmpty()) {
                 return null;
             }
             String imgUrl = preview.getPreviewImageUrl();

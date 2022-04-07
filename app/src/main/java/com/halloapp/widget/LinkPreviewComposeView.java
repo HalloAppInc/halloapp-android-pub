@@ -136,7 +136,7 @@ public class LinkPreviewComposeView extends FrameLayout {
         if (mediaThumbnailLoader != null) {
             mediaThumbnailLoader.cancel(linkImagePreview);
         }
-        if (urlPreview == null) {
+        if (urlPreview == null || urlPreview.isEmpty()) {
             setVisibility(View.GONE);
         } else {
             setLoading(false);

@@ -1,6 +1,7 @@
 package com.halloapp;
 
 import android.net.Uri;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -136,6 +137,10 @@ public class UrlPreview {
                     .setImg(encryptedResource).build());
         }
         return builder.build();
+    }
+
+    public boolean isEmpty() {
+        return TextUtils.isEmpty(title) && TextUtils.isEmpty(description);
     }
 
     public static UrlPreview fromProto(@NonNull Link link) {
