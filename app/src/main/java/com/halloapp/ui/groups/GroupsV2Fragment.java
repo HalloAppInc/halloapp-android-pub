@@ -26,7 +26,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
@@ -53,12 +52,12 @@ import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.ContentComposerActivity;
+import com.halloapp.ui.FlatCommentsActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.HeaderFooterAdapter;
 import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.MediaPagerAdapter;
-import com.halloapp.ui.PostContentActivity;
 import com.halloapp.ui.SystemMessageTextResolver;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -455,16 +454,9 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
             });
             cardView.setClipToOutline(true);
             itemView.setOnClickListener(v -> {
-
-                final Intent intent = PostContentActivity.open(v.getContext(), post.id, 0);
-                String transitionName = previewImageView.getTransitionName();
-                if (transitionName != null) {
-                    Activity activity = requireActivity();
-                    final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, previewImageView, previewImageView.getTransitionName());
-                    startActivity(intent, options.toBundle());
-                } else {
-                    startActivity(intent);
-                }
+                final Intent intent = FlatCommentsActivity.viewComments(itemView.getContext(), post.id, post.senderUserId);
+                intent.putExtra(FlatCommentsActivity.EXTRA_SHOW_KEYBOARD, post.commentCount == 0);
+                startActivity(intent);
             });
         }
 
