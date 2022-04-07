@@ -291,6 +291,10 @@ public class PostContentActivity extends HalloActivity {
 
         viewModel = new ViewModelProvider(this, new PostContentViewModel.Factory(getApplication(), postId, shareId, shareKey, isArchivedPost)).get(PostContentViewModel.class);
 
+        viewModel.isRegistered.getLiveData().observe(this, registered -> {
+            findViewById(R.id.join_button).setVisibility(Boolean.TRUE.equals(registered) ? View.GONE : View.VISIBLE);
+        });
+
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
         int dimensionLimit = Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y));

@@ -49,6 +49,7 @@ import javax.crypto.spec.SecretKeySpec;
 public class PostContentViewModel extends AndroidViewModel {
 
     final ComputableLiveData<Post> post;
+    final ComputableLiveData<Boolean> isRegistered;
 
     private final String postId;
     private final ContentDb contentDb;
@@ -83,6 +84,13 @@ public class PostContentViewModel extends AndroidViewModel {
         contentDb.addObserver(contentObserver);
 
         voiceNotePlayer = new VoiceNotePlayer(application);
+
+        isRegistered = new ComputableLiveData<Boolean>() {
+            @Override
+            protected Boolean compute() {
+                return Me.getInstance().isRegistered();
+            }
+        };
 
         post = new ComputableLiveData<Post>() {
             @Override
