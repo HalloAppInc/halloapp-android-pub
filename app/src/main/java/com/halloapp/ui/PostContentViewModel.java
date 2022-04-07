@@ -11,17 +11,23 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.id.UserId;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
+import com.halloapp.media.ChunkedMediaParametersException;
+import com.halloapp.media.Downloader;
+import com.halloapp.media.ForeignRemoteAuthorityException;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.proto.clients.PostContainerBlob;
 import com.halloapp.proto.server.ExternalSharePost;
+import com.halloapp.proto.server.ExternalSharePostContainer;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.FileUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ExternalShareResponseIq;
@@ -31,6 +37,10 @@ import com.halloapp.xmpp.feed.FeedContentParser;
 import com.halloapp.xmpp.util.Observable;
 import com.halloapp.xmpp.util.ObservableErrorException;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
@@ -98,11 +108,38 @@ public class PostContentViewModel extends AndroidViewModel {
                 if (postId != null) {
                     return isArchived ? ContentDb.getInstance().getArchivePost(postId) : ContentDb.getInstance().getPost(postId);
                 } else {
-                    Observable<ExternalShareResponseIq> observable = Connection.getInstance().getSharedPost(shareId);
+                    final byte[] blob;
+                    if (!Me.getInstance().isRegistered()) {
+                        String remotePath = "https://share.halloapp.com/" + shareId + "?format=pb";
+                        File localFile = FileStore.getInstance().getTmpFile(shareId);
+                        try {
+                            Downloader.runExternal(remotePath, localFile, null, "external-" + shareId);
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            FileUtils.copyFile(new FileInputStream(localFile), baos);
+                            byte[] payload = baos.toByteArray();
+                            ExternalSharePostContainer externalSharePostContainer = ExternalSharePostContainer.parseFrom(payload);
+                            blob = externalSharePostContainer.getBlob().toByteArray();
+                        } catch (IOException e) {
+                            Log.e("External post download failed", e);
+                            return null;
+                        } catch (GeneralSecurityException | ChunkedMediaParametersException | ForeignRemoteAuthorityException e) {
+                            Log.e("Impossible exception while downloading external share post", e);
+                            return null;
+                        }
+                    } else {
+                        Observable<ExternalShareResponseIq> observable = Connection.getInstance().getSharedPost(shareId);
+                        try {
+                            blob = observable.await().blob;
+                        } catch (ObservableErrorException e) {
+                            Log.e("Failed observing shared post fetch", e);
+                            return null;
+                        } catch (InterruptedException e) {
+                            Log.e("Interrupted while waiting for shared post fetch", e);
+                            return null;
+                        }
+                    }
 
                     try {
-                        ExternalShareResponseIq response = observable.await();
-                        byte[] blob = response.blob;
                         byte[] attachmentKey = Base64.decode(shareKey, Base64.NO_WRAP | Base64.URL_SAFE);
                         byte[] encryptedMessage = Arrays.copyOfRange(blob, 0, blob.length - 32);
                         byte[] receivedHmac = Arrays.copyOfRange(blob, blob.length - 32, blob.length);
@@ -143,10 +180,6 @@ public class PostContentViewModel extends AndroidViewModel {
                         Log.e("Failed to decrypt shared post", e);
                     } catch (InvalidProtocolBufferException e) {
                         Log.e("Failed to parse shared post blob", e);
-                    } catch (ObservableErrorException e) {
-                        Log.e("Failed observing shared post fetch", e);
-                    } catch (InterruptedException e) {
-                        Log.e("Interrupted while waiting for shared post fetch", e);
                     }
                     return null;
                 }
