@@ -33,6 +33,7 @@ import androidx.core.view.ViewCompat;
 import com.halloapp.R;
 import com.halloapp.proto.log_events.FabAction;
 import com.halloapp.util.ContextUtils;
+import com.halloapp.util.ThreadUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -105,7 +106,7 @@ public class HACustomFab extends LinearLayout {
         setClipToPadding(false);
         setClipChildren(false);
 
-        inflate(context, R.layout.view_halloapp_fab, this);
+        ThreadUtils.runWithoutStrictModeRestrictions(() -> inflate(context, R.layout.view_halloapp_fab, this));
 
         fabPadding = context.getResources().getDimensionPixelSize(R.dimen.fab_padding);
         fabSize = context.getResources().getDimensionPixelSize(R.dimen.fab_size);
