@@ -23,6 +23,7 @@ public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
     private static final int MAX_SEEN_BY_AVATARS = 3;
 
     private final View postActionsSeparator;
+    private final View commentButton;
     private final View commentsIndicator;
     private final AvatarsLayout seenIndicator;
     private final View seenButton;
@@ -32,6 +33,7 @@ public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
         super(itemView, parent);
 
         postActionsSeparator = itemView.findViewById(R.id.post_actions_separator);
+        commentButton = itemView.findViewById(R.id.comment);
         commentsIndicator = itemView.findViewById(R.id.comments_indicator);
         seenIndicator = itemView.findViewById(R.id.seen_indicator);
         seenButton = itemView.findViewById(R.id.seen_button);
@@ -39,7 +41,7 @@ public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
 
         seenIndicator.setAvatarLoader(parent.getAvatarLoader());
 
-        itemView.findViewById(R.id.comment).setOnClickListener(view -> {
+        commentButton.setOnClickListener(view -> {
             final Intent intent = FlatCommentsActivity.viewComments(itemView.getContext(), post.id, post.senderUserId);
             intent.putExtra(FlatCommentsActivity.EXTRA_SHOW_KEYBOARD, post.commentCount == 0);
             parent.startActivity(intent);
@@ -53,6 +55,18 @@ public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
         seenIndicator.setOnClickListener(seenClickListener);
         seenButton.setOnClickListener(seenClickListener);
         shareButton.setOnClickListener(v -> parent.showDialogFragment(ExternalSharingBottomSheetDialogFragment.newInstance(post.id)));
+    }
+
+    @Override
+    public void setRegistered(boolean registered) {
+        commentButton.setAlpha(registered ? 1f : DISABLED_OPACITY);
+        commentButton.setEnabled(registered);
+        seenButton.setAlpha(registered ? 1f : DISABLED_OPACITY);
+        seenButton.setEnabled(registered);
+        seenIndicator.setAlpha(registered ? 1f : DISABLED_OPACITY);
+        seenIndicator.setEnabled(registered);
+        shareButton.setAlpha(registered ? 1f : DISABLED_OPACITY);
+        shareButton.setEnabled(registered);
     }
 
     public void bindTo(@NonNull Post post) {

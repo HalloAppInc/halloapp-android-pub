@@ -20,15 +20,17 @@ public class IncomingPostFooterViewHolder extends PostFooterViewHolder {
 
     private final View postActionsSeparator;
     private final View commentsIndicator;
+    private final View comment;
     private final View message;
 
     public IncomingPostFooterViewHolder(@NonNull View itemView, @NonNull PostViewHolder.PostViewHolderParent parent) {
         super(itemView, parent);
         postActionsSeparator = itemView.findViewById(R.id.post_actions_separator);
         commentsIndicator = itemView.findViewById(R.id.comments_indicator);
+        comment = itemView.findViewById(R.id.comment);
         message = itemView.findViewById(R.id.message);
 
-        itemView.findViewById(R.id.comment).setOnClickListener(view -> {
+        comment.setOnClickListener(view -> {
             final Intent intent = FlatCommentsActivity.viewComments(itemView.getContext(), post.id, post.senderUserId);
             intent.putExtra(FlatCommentsActivity.EXTRA_SHOW_KEYBOARD, post.commentCount == 0);
             parent.startActivity(intent);
@@ -42,6 +44,14 @@ public class IncomingPostFooterViewHolder extends PostFooterViewHolder {
             intent.putExtra(ChatActivity.EXTRA_REPLY_POST_MEDIA_INDEX, selPos == null ? 0 : selPos);
             parent.startActivity(intent);
         });
+    }
+
+    @Override
+    public void setRegistered(boolean registered) {
+        comment.setAlpha(registered ? 1f : DISABLED_OPACITY);
+        comment.setEnabled(registered);
+        message.setAlpha(registered ? 1f : DISABLED_OPACITY);
+        message.setEnabled(registered);
     }
 
     @Override

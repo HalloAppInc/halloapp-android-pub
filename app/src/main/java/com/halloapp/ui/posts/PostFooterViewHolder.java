@@ -10,6 +10,8 @@ import com.halloapp.content.Post;
 import com.halloapp.ui.ContentViewHolderParent;
 
 public abstract class PostFooterViewHolder {
+    protected static final float DISABLED_OPACITY = 0.35f;
+
     protected Post post;
 
     protected PostViewHolder.PostViewHolderParent parent;
@@ -23,6 +25,8 @@ public abstract class PostFooterViewHolder {
         this.itemView = itemView;
         footerSpacing = itemView.findViewById(R.id.footer_spacing);
     }
+
+    public abstract void setRegistered(boolean registered);
 
     @CallSuper
     public void bindTo(@NonNull Post post) {

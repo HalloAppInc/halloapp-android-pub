@@ -220,6 +220,10 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         this.postFooterViewHolder = postFooterViewHolder;
     }
 
+    public void setRegistered(boolean registered) {
+        this.postFooterViewHolder.setRegistered(registered);
+    }
+
     @CallSuper
     public void bindTo(@NonNull Post post) {
         this.post = post;

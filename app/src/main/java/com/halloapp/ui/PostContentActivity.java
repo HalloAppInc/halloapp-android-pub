@@ -293,6 +293,7 @@ public class PostContentActivity extends HalloActivity {
 
         viewModel.isRegistered.getLiveData().observe(this, registered -> {
             findViewById(R.id.join_button).setVisibility(Boolean.TRUE.equals(registered) ? View.GONE : View.VISIBLE);
+            postAdapter.setRegistered(Boolean.TRUE.equals(registered));
         });
 
         final Point point = new Point();
@@ -406,11 +407,17 @@ public class PostContentActivity extends HalloActivity {
     private class SinglePostAdapter extends AdapterWithLifecycle<PostViewHolder> {
 
         private Post post;
+        private boolean registered;
 
         private boolean initialSelectionSet = false;
 
         public void setPost(@NonNull Post post) {
             this.post = post;
+            notifyDataSetChanged();
+        }
+
+        public void setRegistered(boolean registered) {
+            this.registered = registered;
             notifyDataSetChanged();
         }
 
@@ -492,6 +499,7 @@ public class PostContentActivity extends HalloActivity {
                 postViewHolder.setShowGroupName(true);
             }
             postViewHolder.bindTo(post);
+            postViewHolder.setRegistered(registered);
             if (!initialSelectionSet) {
                 postViewHolder.selectMedia(getIntent().getIntExtra(EXTRA_POST_MEDIA_INDEX, 0));
                 initialSelectionSet = true;
