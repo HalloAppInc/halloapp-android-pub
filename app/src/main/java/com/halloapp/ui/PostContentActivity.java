@@ -251,6 +251,7 @@ public class PostContentActivity extends HalloActivity {
         postponeEnterTransition();
 
         setContentView(R.layout.activity_post_content);
+        ProgressDialog postLoadProgressDialog = ProgressDialog.show(this, null, getString(R.string.loading_post));
 
         postRecyclerView = findViewById(R.id.post);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -356,9 +357,8 @@ public class PostContentActivity extends HalloActivity {
 
         drawDelegateView = Preconditions.checkNotNull(this).findViewById(R.id.draw_delegate);
 
-        ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.loading_post));
         viewModel.post.getLiveData().observe(this, post -> {
-            progressDialog.dismiss();
+            postLoadProgressDialog.dismiss();
             if (post == null) {
                 Toast.makeText(this, R.string.failed_load_post, Toast.LENGTH_LONG).show();
                 finish();
