@@ -29,4 +29,28 @@ public interface ExternalSharePostContainerOrBuilder extends
    * @return The ogTagInfo.
    */
   com.halloapp.proto.server.OgTagInfo getOgTagInfo();
+
+  /**
+   * <code>string name = 4;</code>
+   * @return The name.
+   */
+  java.lang.String getName();
+  /**
+   * <code>string name = 4;</code>
+   * @return The bytes for name.
+   */
+  com.google.protobuf.ByteString
+      getNameBytes();
+
+  /**
+   * <code>string avatar_id = 5;</code>
+   * @return The avatarId.
+   */
+  java.lang.String getAvatarId();
+  /**
+   * <code>string avatar_id = 5;</code>
+   * @return The bytes for avatarId.
+   */
+  com.google.protobuf.ByteString
+      getAvatarIdBytes();
 }

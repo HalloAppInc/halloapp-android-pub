@@ -7744,6 +7744,12 @@ export namespace server {
 
         /** ExternalSharePostContainer ogTagInfo */
         ogTagInfo?: (server.IOgTagInfo|null);
+
+        /** ExternalSharePostContainer name */
+        name?: (string|null);
+
+        /** ExternalSharePostContainer avatarId */
+        avatarId?: (string|null);
     }
 
     /** Represents an ExternalSharePostContainer. */
@@ -7763,6 +7769,12 @@ export namespace server {
 
         /** ExternalSharePostContainer ogTagInfo. */
         public ogTagInfo?: (server.IOgTagInfo|null);
+
+        /** ExternalSharePostContainer name. */
+        public name: string;
+
+        /** ExternalSharePostContainer avatarId. */
+        public avatarId: string;
 
         /**
          * Creates a new ExternalSharePostContainer instance using the specified properties.
@@ -7957,6 +7969,9 @@ export namespace server {
 
         /** Iq externalSharePost */
         externalSharePost?: (server.IExternalSharePost|null);
+
+        /** Iq externalSharePostContainer */
+        externalSharePostContainer?: (server.IExternalSharePostContainer|null);
     }
 
     /** Represents an Iq. */
@@ -8088,8 +8103,11 @@ export namespace server {
         /** Iq externalSharePost. */
         public externalSharePost?: (server.IExternalSharePost|null);
 
+        /** Iq externalSharePostContainer. */
+        public externalSharePostContainer?: (server.IExternalSharePostContainer|null);
+
         /** Iq payload. */
-        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost");
+        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer");
 
         /**
          * Creates a new Iq instance using the specified properties.

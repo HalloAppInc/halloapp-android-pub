@@ -162,6 +162,7 @@ public  final class Iq extends
     START_CALL_RESULT(41),
     TRUNC_WHISPER_KEYS_COLLECTION(42),
     EXTERNAL_SHARE_POST(43),
+    EXTERNAL_SHARE_POST_CONTAINER(44),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -215,6 +216,7 @@ public  final class Iq extends
         case 41: return START_CALL_RESULT;
         case 42: return TRUNC_WHISPER_KEYS_COLLECTION;
         case 43: return EXTERNAL_SHARE_POST;
+        case 44: return EXTERNAL_SHARE_POST_CONTAINER;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2260,6 +2262,56 @@ public  final class Iq extends
    */
   private void clearExternalSharePost() {
     if (payloadCase_ == 43) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int EXTERNAL_SHARE_POST_CONTAINER_FIELD_NUMBER = 44;
+  /**
+   * <code>.server.ExternalSharePostContainer external_share_post_container = 44;</code>
+   */
+  @java.lang.Override
+  public boolean hasExternalSharePostContainer() {
+    return payloadCase_ == 44;
+  }
+  /**
+   * <code>.server.ExternalSharePostContainer external_share_post_container = 44;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.ExternalSharePostContainer getExternalSharePostContainer() {
+    if (payloadCase_ == 44) {
+       return (com.halloapp.proto.server.ExternalSharePostContainer) payload_;
+    }
+    return com.halloapp.proto.server.ExternalSharePostContainer.getDefaultInstance();
+  }
+  /**
+   * <code>.server.ExternalSharePostContainer external_share_post_container = 44;</code>
+   */
+  private void setExternalSharePostContainer(com.halloapp.proto.server.ExternalSharePostContainer value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 44;
+  }
+  /**
+   * <code>.server.ExternalSharePostContainer external_share_post_container = 44;</code>
+   */
+  private void mergeExternalSharePostContainer(com.halloapp.proto.server.ExternalSharePostContainer value) {
+    value.getClass();
+  if (payloadCase_ == 44 &&
+        payload_ != com.halloapp.proto.server.ExternalSharePostContainer.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.ExternalSharePostContainer.newBuilder((com.halloapp.proto.server.ExternalSharePostContainer) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 44;
+  }
+  /**
+   * <code>.server.ExternalSharePostContainer external_share_post_container = 44;</code>
+   */
+  private void clearExternalSharePostContainer() {
+    if (payloadCase_ == 44) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -4339,6 +4391,54 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.ExternalSharePostContainer external_share_post_container = 44;</code>
+     */
+    @java.lang.Override
+    public boolean hasExternalSharePostContainer() {
+      return instance.hasExternalSharePostContainer();
+    }
+    /**
+     * <code>.server.ExternalSharePostContainer external_share_post_container = 44;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.ExternalSharePostContainer getExternalSharePostContainer() {
+      return instance.getExternalSharePostContainer();
+    }
+    /**
+     * <code>.server.ExternalSharePostContainer external_share_post_container = 44;</code>
+     */
+    public Builder setExternalSharePostContainer(com.halloapp.proto.server.ExternalSharePostContainer value) {
+      copyOnWrite();
+      instance.setExternalSharePostContainer(value);
+      return this;
+    }
+    /**
+     * <code>.server.ExternalSharePostContainer external_share_post_container = 44;</code>
+     */
+    public Builder setExternalSharePostContainer(
+        com.halloapp.proto.server.ExternalSharePostContainer.Builder builderForValue) {
+      copyOnWrite();
+      instance.setExternalSharePostContainer(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.ExternalSharePostContainer external_share_post_container = 44;</code>
+     */
+    public Builder mergeExternalSharePostContainer(com.halloapp.proto.server.ExternalSharePostContainer value) {
+      copyOnWrite();
+      instance.mergeExternalSharePostContainer(value);
+      return this;
+    }
+    /**
+     * <code>.server.ExternalSharePostContainer external_share_post_container = 44;</code>
+     */
+    public Builder clearExternalSharePostContainer() {
+      copyOnWrite();
+      instance.clearExternalSharePostContainer();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -4397,14 +4497,15 @@ public  final class Iq extends
             com.halloapp.proto.server.StartCallResult.class,
             com.halloapp.proto.server.TruncWhisperKeysCollection.class,
             com.halloapp.proto.server.ExternalSharePost.class,
+            com.halloapp.proto.server.ExternalSharePostContainer.class,
           };
           java.lang.String info =
-              "\u0000(\u0001\u0000\u0001+(\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
+              "\u0000)\u0001\u0000\u0001,)\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
               "<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<" +
               "\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013" +
               "<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019<\u0000" +
               "\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001f<\u0000 <\u0000!<\u0000\"<\u0000#<\u0000" +
-              "$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000*<\u0000+<\u0000";
+              "$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000*<\u0000+<\u0000,<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -20256,6 +20256,8 @@ $root.server = (function() {
          * @property {number|Long|null} [uid] ExternalSharePostContainer uid
          * @property {Uint8Array|null} [blob] ExternalSharePostContainer blob
          * @property {server.IOgTagInfo|null} [ogTagInfo] ExternalSharePostContainer ogTagInfo
+         * @property {string|null} [name] ExternalSharePostContainer name
+         * @property {string|null} [avatarId] ExternalSharePostContainer avatarId
          */
 
         /**
@@ -20298,6 +20300,22 @@ $root.server = (function() {
         ExternalSharePostContainer.prototype.ogTagInfo = null;
 
         /**
+         * ExternalSharePostContainer name.
+         * @member {string} name
+         * @memberof server.ExternalSharePostContainer
+         * @instance
+         */
+        ExternalSharePostContainer.prototype.name = "";
+
+        /**
+         * ExternalSharePostContainer avatarId.
+         * @member {string} avatarId
+         * @memberof server.ExternalSharePostContainer
+         * @instance
+         */
+        ExternalSharePostContainer.prototype.avatarId = "";
+
+        /**
          * Creates a new ExternalSharePostContainer instance using the specified properties.
          * @function create
          * @memberof server.ExternalSharePostContainer
@@ -20327,6 +20345,10 @@ $root.server = (function() {
                 writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.blob);
             if (message.ogTagInfo != null && Object.hasOwnProperty.call(message, "ogTagInfo"))
                 $root.server.OgTagInfo.encode(message.ogTagInfo, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.name);
+            if (message.avatarId != null && Object.hasOwnProperty.call(message, "avatarId"))
+                writer.uint32(/* id 5, wireType 2 =*/42).string(message.avatarId);
             return writer;
         };
 
@@ -20369,6 +20391,12 @@ $root.server = (function() {
                     break;
                 case 3:
                     message.ogTagInfo = $root.server.OgTagInfo.decode(reader, reader.uint32());
+                    break;
+                case 4:
+                    message.name = reader.string();
+                    break;
+                case 5:
+                    message.avatarId = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -20416,6 +20444,12 @@ $root.server = (function() {
                 if (error)
                     return "ogTagInfo." + error;
             }
+            if (message.name != null && message.hasOwnProperty("name"))
+                if (!$util.isString(message.name))
+                    return "name: string expected";
+            if (message.avatarId != null && message.hasOwnProperty("avatarId"))
+                if (!$util.isString(message.avatarId))
+                    return "avatarId: string expected";
             return null;
         };
 
@@ -20450,6 +20484,10 @@ $root.server = (function() {
                     throw TypeError(".server.ExternalSharePostContainer.ogTagInfo: object expected");
                 message.ogTagInfo = $root.server.OgTagInfo.fromObject(object.ogTagInfo);
             }
+            if (object.name != null)
+                message.name = String(object.name);
+            if (object.avatarId != null)
+                message.avatarId = String(object.avatarId);
             return message;
         };
 
@@ -20480,6 +20518,8 @@ $root.server = (function() {
                         object.blob = $util.newBuffer(object.blob);
                 }
                 object.ogTagInfo = null;
+                object.name = "";
+                object.avatarId = "";
             }
             if (message.uid != null && message.hasOwnProperty("uid"))
                 if (typeof message.uid === "number")
@@ -20490,6 +20530,10 @@ $root.server = (function() {
                 object.blob = options.bytes === String ? $util.base64.encode(message.blob, 0, message.blob.length) : options.bytes === Array ? Array.prototype.slice.call(message.blob) : message.blob;
             if (message.ogTagInfo != null && message.hasOwnProperty("ogTagInfo"))
                 object.ogTagInfo = $root.server.OgTagInfo.toObject(message.ogTagInfo, options);
+            if (message.name != null && message.hasOwnProperty("name"))
+                object.name = message.name;
+            if (message.avatarId != null && message.hasOwnProperty("avatarId"))
+                object.avatarId = message.avatarId;
             return object;
         };
 
@@ -20553,6 +20597,7 @@ $root.server = (function() {
          * @property {server.IStartCallResult|null} [startCallResult] Iq startCallResult
          * @property {server.ITruncWhisperKeysCollection|null} [truncWhisperKeysCollection] Iq truncWhisperKeysCollection
          * @property {server.IExternalSharePost|null} [externalSharePost] Iq externalSharePost
+         * @property {server.IExternalSharePostContainer|null} [externalSharePostContainer] Iq externalSharePostContainer
          */
 
         /**
@@ -20890,17 +20935,25 @@ $root.server = (function() {
          */
         Iq.prototype.externalSharePost = null;
 
+        /**
+         * Iq externalSharePostContainer.
+         * @member {server.IExternalSharePostContainer|null|undefined} externalSharePostContainer
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.externalSharePostContainer = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * Iq payload.
-         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|undefined} payload
+         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|undefined} payload
          * @memberof server.Iq
          * @instance
          */
         Object.defineProperty(Iq.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost"]),
+            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -21008,6 +21061,8 @@ $root.server = (function() {
                 $root.server.TruncWhisperKeysCollection.encode(message.truncWhisperKeysCollection, writer.uint32(/* id 42, wireType 2 =*/338).fork()).ldelim();
             if (message.externalSharePost != null && Object.hasOwnProperty.call(message, "externalSharePost"))
                 $root.server.ExternalSharePost.encode(message.externalSharePost, writer.uint32(/* id 43, wireType 2 =*/346).fork()).ldelim();
+            if (message.externalSharePostContainer != null && Object.hasOwnProperty.call(message, "externalSharePostContainer"))
+                $root.server.ExternalSharePostContainer.encode(message.externalSharePostContainer, writer.uint32(/* id 44, wireType 2 =*/354).fork()).ldelim();
             return writer;
         };
 
@@ -21161,6 +21216,9 @@ $root.server = (function() {
                     break;
                 case 43:
                     message.externalSharePost = $root.server.ExternalSharePost.decode(reader, reader.uint32());
+                    break;
+                case 44:
+                    message.externalSharePostContainer = $root.server.ExternalSharePostContainer.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -21589,6 +21647,16 @@ $root.server = (function() {
                         return "externalSharePost." + error;
                 }
             }
+            if (message.externalSharePostContainer != null && message.hasOwnProperty("externalSharePostContainer")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.ExternalSharePostContainer.verify(message.externalSharePostContainer);
+                    if (error)
+                        return "externalSharePostContainer." + error;
+                }
+            }
             return null;
         };
 
@@ -21814,6 +21882,11 @@ $root.server = (function() {
                     throw TypeError(".server.Iq.externalSharePost: object expected");
                 message.externalSharePost = $root.server.ExternalSharePost.fromObject(object.externalSharePost);
             }
+            if (object.externalSharePostContainer != null) {
+                if (typeof object.externalSharePostContainer !== "object")
+                    throw TypeError(".server.Iq.externalSharePostContainer: object expected");
+                message.externalSharePostContainer = $root.server.ExternalSharePostContainer.fromObject(object.externalSharePostContainer);
+            }
             return message;
         };
 
@@ -22027,6 +22100,11 @@ $root.server = (function() {
                 object.externalSharePost = $root.server.ExternalSharePost.toObject(message.externalSharePost, options);
                 if (options.oneofs)
                     object.payload = "externalSharePost";
+            }
+            if (message.externalSharePostContainer != null && message.hasOwnProperty("externalSharePostContainer")) {
+                object.externalSharePostContainer = $root.server.ExternalSharePostContainer.toObject(message.externalSharePostContainer, options);
+                if (options.oneofs)
+                    object.payload = "externalSharePostContainer";
             }
             return object;
         };

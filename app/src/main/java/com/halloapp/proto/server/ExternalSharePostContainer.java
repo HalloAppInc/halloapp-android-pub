@@ -13,6 +13,8 @@ public  final class ExternalSharePostContainer extends
     ExternalSharePostContainerOrBuilder {
   private ExternalSharePostContainer() {
     blob_ = com.google.protobuf.ByteString.EMPTY;
+    name_ = "";
+    avatarId_ = "";
   }
   public static final int UID_FIELD_NUMBER = 1;
   private long uid_;
@@ -110,6 +112,100 @@ public  final class ExternalSharePostContainer extends
    * <code>.server.OgTagInfo og_tag_info = 3;</code>
    */
   private void clearOgTagInfo() {  ogTagInfo_ = null;
+    
+  }
+
+  public static final int NAME_FIELD_NUMBER = 4;
+  private java.lang.String name_;
+  /**
+   * <code>string name = 4;</code>
+   * @return The name.
+   */
+  @java.lang.Override
+  public java.lang.String getName() {
+    return name_;
+  }
+  /**
+   * <code>string name = 4;</code>
+   * @return The bytes for name.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getNameBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(name_);
+  }
+  /**
+   * <code>string name = 4;</code>
+   * @param value The name to set.
+   */
+  private void setName(
+      java.lang.String value) {
+    value.getClass();
+  
+    name_ = value;
+  }
+  /**
+   * <code>string name = 4;</code>
+   */
+  private void clearName() {
+    
+    name_ = getDefaultInstance().getName();
+  }
+  /**
+   * <code>string name = 4;</code>
+   * @param value The bytes for name to set.
+   */
+  private void setNameBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    name_ = value.toStringUtf8();
+    
+  }
+
+  public static final int AVATAR_ID_FIELD_NUMBER = 5;
+  private java.lang.String avatarId_;
+  /**
+   * <code>string avatar_id = 5;</code>
+   * @return The avatarId.
+   */
+  @java.lang.Override
+  public java.lang.String getAvatarId() {
+    return avatarId_;
+  }
+  /**
+   * <code>string avatar_id = 5;</code>
+   * @return The bytes for avatarId.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getAvatarIdBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(avatarId_);
+  }
+  /**
+   * <code>string avatar_id = 5;</code>
+   * @param value The avatarId to set.
+   */
+  private void setAvatarId(
+      java.lang.String value) {
+    value.getClass();
+  
+    avatarId_ = value;
+  }
+  /**
+   * <code>string avatar_id = 5;</code>
+   */
+  private void clearAvatarId() {
+    
+    avatarId_ = getDefaultInstance().getAvatarId();
+  }
+  /**
+   * <code>string avatar_id = 5;</code>
+   * @param value The bytes for avatarId to set.
+   */
+  private void setAvatarIdBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    avatarId_ = value.toStringUtf8();
     
   }
 
@@ -311,6 +407,104 @@ public  final class ExternalSharePostContainer extends
       return this;
     }
 
+    /**
+     * <code>string name = 4;</code>
+     * @return The name.
+     */
+    @java.lang.Override
+    public java.lang.String getName() {
+      return instance.getName();
+    }
+    /**
+     * <code>string name = 4;</code>
+     * @return The bytes for name.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getNameBytes() {
+      return instance.getNameBytes();
+    }
+    /**
+     * <code>string name = 4;</code>
+     * @param value The name to set.
+     * @return This builder for chaining.
+     */
+    public Builder setName(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setName(value);
+      return this;
+    }
+    /**
+     * <code>string name = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearName() {
+      copyOnWrite();
+      instance.clearName();
+      return this;
+    }
+    /**
+     * <code>string name = 4;</code>
+     * @param value The bytes for name to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNameBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setNameBytes(value);
+      return this;
+    }
+
+    /**
+     * <code>string avatar_id = 5;</code>
+     * @return The avatarId.
+     */
+    @java.lang.Override
+    public java.lang.String getAvatarId() {
+      return instance.getAvatarId();
+    }
+    /**
+     * <code>string avatar_id = 5;</code>
+     * @return The bytes for avatarId.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getAvatarIdBytes() {
+      return instance.getAvatarIdBytes();
+    }
+    /**
+     * <code>string avatar_id = 5;</code>
+     * @param value The avatarId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setAvatarId(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setAvatarId(value);
+      return this;
+    }
+    /**
+     * <code>string avatar_id = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearAvatarId() {
+      copyOnWrite();
+      instance.clearAvatarId();
+      return this;
+    }
+    /**
+     * <code>string avatar_id = 5;</code>
+     * @param value The bytes for avatarId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setAvatarIdBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setAvatarIdBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.ExternalSharePostContainer)
   }
   @java.lang.Override
@@ -330,10 +524,12 @@ public  final class ExternalSharePostContainer extends
             "uid_",
             "blob_",
             "ogTagInfo_",
+            "name_",
+            "avatarId_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0002\u0002\n" +
-              "\u0003\t";
+              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0000\u0000\u0001\u0002\u0002\n" +
+              "\u0003\t\u0004\u0208\u0005\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

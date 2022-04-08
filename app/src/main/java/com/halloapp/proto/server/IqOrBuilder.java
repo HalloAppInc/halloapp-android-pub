@@ -464,5 +464,16 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.ExternalSharePost getExternalSharePost();
 
+  /**
+   * <code>.server.ExternalSharePostContainer external_share_post_container = 44;</code>
+   * @return Whether the externalSharePostContainer field is set.
+   */
+  boolean hasExternalSharePostContainer();
+  /**
+   * <code>.server.ExternalSharePostContainer external_share_post_container = 44;</code>
+   * @return The externalSharePostContainer.
+   */
+  com.halloapp.proto.server.ExternalSharePostContainer getExternalSharePostContainer();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }
