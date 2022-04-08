@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.format.DateUtils;
-import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -1389,7 +1388,7 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public Pair<String, String> getExternalShareInfo(@NonNull String postId) {
+    public ExternalShareInfo getExternalShareInfo(@NonNull String postId) {
         return postsDb.getExternalShareInfo(postId);
     }
 

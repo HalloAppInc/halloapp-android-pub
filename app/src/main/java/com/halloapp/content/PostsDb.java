@@ -6,7 +6,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.format.DateUtils;
-import android.util.Pair;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
@@ -24,7 +23,6 @@ import com.halloapp.content.tables.HistoryRerequestTable;
 import com.halloapp.content.tables.HistoryResendPayloadTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
-import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.RerequestsTable;
 import com.halloapp.content.tables.SeenTable;
@@ -37,11 +35,9 @@ import com.halloapp.proto.clients.CommentIdContext;
 import com.halloapp.proto.clients.ContentDetails;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.clients.PostIdContext;
-import com.halloapp.proto.clients.Video;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
-import com.halloapp.util.stats.DecryptStats;
 import com.halloapp.util.stats.GroupDecryptStats;
 import com.halloapp.xmpp.feed.FeedContentParser;
 
@@ -1149,14 +1145,14 @@ class PostsDb {
     }
 
     @WorkerThread
-    Pair<String, String> getExternalShareInfo(@NonNull String postId) {
+    ExternalShareInfo getExternalShareInfo(@NonNull String postId) {
         final String sql = "SELECT " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_EXTERNAL_SHARE_ID + "," + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_EXTERNAL_SHARE_KEY
                 + " FROM " + PostsTable.TABLE_NAME + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=? AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=?";
 
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sql, new String[]{postId, UserId.ME.rawId()})) {
             if (cursor.moveToNext()) {
-                return new Pair<>(cursor.getString(0), cursor.getString(1));
+                return new ExternalShareInfo(cursor.getString(0), cursor.getString(1));
             }
         }
         return null;

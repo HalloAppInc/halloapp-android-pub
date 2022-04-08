@@ -3,7 +3,6 @@ package com.halloapp.ui;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Base64;
-import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -17,6 +16,7 @@ import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.ExternalShareInfo;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.CryptoByteUtils;
@@ -69,8 +69,8 @@ public class ExternalSharingViewModel extends ViewModel {
         revocable = new ComputableLiveData<Boolean>() {
             @Override
             protected Boolean compute() {
-                Pair<String, String> externalShareInfo = contentDb.getExternalShareInfo(postId);
-                return externalShareInfo != null && externalShareInfo.first != null;
+                ExternalShareInfo externalShareInfo = contentDb.getExternalShareInfo(postId);
+                return externalShareInfo != null && externalShareInfo.shareId != null;
             }
         };
     }
@@ -83,13 +83,13 @@ public class ExternalSharingViewModel extends ViewModel {
         MutableLiveData<Boolean> result = new MutableLiveData<>();
 
         bgWorkers.execute(() -> {
-            Pair<String, String> externalShareInfo = contentDb.getExternalShareInfo(postId);
-            if (externalShareInfo == null || externalShareInfo.first == null) {
+            ExternalShareInfo externalShareInfo = contentDb.getExternalShareInfo(postId);
+            if (externalShareInfo == null || externalShareInfo.shareId == null) {
                 Log.w("Failed to get external share info from db for link revoke " + postId);
                 result.postValue(false);
                 return;
             }
-            Connection.getInstance().revokeSharedPost(externalShareInfo.first).onError(e -> {
+            Connection.getInstance().revokeSharedPost(externalShareInfo.shareId).onError(e -> {
                 Log.w("External share revoke failed", e);
                 result.postValue(false);
             }).onResponse(res -> {
@@ -111,9 +111,9 @@ public class ExternalSharingViewModel extends ViewModel {
                 return;
             }
 
-            Pair<String, String> externalShareInfo = contentDb.getExternalShareInfo(post.id);
-            if (externalShareInfo != null && externalShareInfo.first != null && externalShareInfo.second != null) {
-                String url = "https://share.halloapp.com/" + externalShareInfo.first + "#k" + externalShareInfo.second;
+            ExternalShareInfo externalShareInfo = contentDb.getExternalShareInfo(post.id);
+            if (externalShareInfo != null && externalShareInfo.shareId != null && externalShareInfo.shareKey != null) {
+                String url = "https://share.halloapp.com/" + externalShareInfo.shareId + "#k" + externalShareInfo.shareKey;
                 result.postValue(url);
                 return;
             }

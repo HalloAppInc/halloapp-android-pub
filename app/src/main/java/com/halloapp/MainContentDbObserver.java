@@ -1,12 +1,12 @@
 package com.halloapp;
 
 import android.content.Context;
-import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.ExternalShareInfo;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.SeenReceipt;
@@ -82,9 +82,9 @@ public class MainContentDbObserver implements ContentDb.Observer {
             }
         }
         notifications.updateFeedNotifications(post);
-        Pair<String, String> externalShareInfo = contentDb.getExternalShareInfo(post.id);
-        if (externalShareInfo != null && externalShareInfo.first != null) {
-            connection.revokeSharedPost(externalShareInfo.first).onError(e -> {
+        ExternalShareInfo externalShareInfo = contentDb.getExternalShareInfo(post.id);
+        if (externalShareInfo != null && externalShareInfo.shareId != null) {
+            connection.revokeSharedPost(externalShareInfo.shareId).onError(e -> {
                 Log.w("External share revoke failed", e);
             }).onResponse(res -> {
                 contentDb.setExternalShareInfo(post.id, null, null);

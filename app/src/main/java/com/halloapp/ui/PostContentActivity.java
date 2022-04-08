@@ -65,7 +65,6 @@ import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
-import com.halloapp.widget.PlaceholderDrawable;
 
 import java.io.File;
 import java.util.concurrent.Callable;
