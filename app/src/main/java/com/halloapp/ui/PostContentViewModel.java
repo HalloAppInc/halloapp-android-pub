@@ -27,7 +27,7 @@ import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.ExternalShareResponseIq;
+import com.halloapp.xmpp.ExternalShareRetrieveResponseIq;
 import com.halloapp.xmpp.feed.FeedContentParser;
 import com.halloapp.xmpp.util.Observable;
 import com.halloapp.xmpp.util.ObservableErrorException;
@@ -116,7 +116,7 @@ public class PostContentViewModel extends AndroidViewModel {
                             return null;
                         }
                     } else {
-                        Observable<ExternalShareResponseIq> observable = Connection.getInstance().getSharedPost(shareId);
+                        Observable<ExternalShareRetrieveResponseIq> observable = Connection.getInstance().getSharedPost(shareId);
                         try {
                             blob = observable.await().blob;
                         } catch (ObservableErrorException e) {

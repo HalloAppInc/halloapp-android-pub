@@ -29,8 +29,6 @@ import com.halloapp.proto.server.IceRestartOffer;
 import com.halloapp.proto.server.IncomingCall;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.Msg;
-import com.halloapp.proto.server.StunServer;
-import com.halloapp.proto.server.TurnServer;
 import com.halloapp.proto.server.UploadMedia;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.stats.Counter;
@@ -194,7 +192,7 @@ public abstract class Connection {
 
     public abstract void sendMessage(final @NonNull Message message, final @Nullable SignalSessionSetupInfo signalSessionSetupInfo);
 
-    public abstract Observable<ExternalShareResponseIq> getSharedPost(@NonNull String shareId);
+    public abstract Observable<ExternalShareRetrieveResponseIq> getSharedPost(@NonNull String shareId);
 
     public abstract Observable<HalloIq> revokeSharedPost(@NonNull String shareId);
 

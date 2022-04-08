@@ -38,7 +38,6 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.noise.HANoiseSocket;
-import com.halloapp.noise.NoiseException;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.clients.CommentContainer;
@@ -1040,7 +1039,7 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public Observable<ExternalShareResponseIq> getSharedPost(@NonNull String shareId) {
+    public Observable<ExternalShareRetrieveResponseIq> getSharedPost(@NonNull String shareId) {
         HalloIq getSharedPostIq = new HalloIq() {
             @Override
             public Iq.Builder toProtoIq() {

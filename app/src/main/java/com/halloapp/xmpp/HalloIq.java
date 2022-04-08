@@ -41,6 +41,8 @@ public abstract class HalloIq {
             return GetCallServersResponseIq.fromProto(iq.getGetCallServersResult());
         } else if (iq.hasExternalSharePost()) {
             return ExternalShareResponseIq.fromProto(iq.getExternalSharePost());
+        } else if (iq.hasExternalSharePostContainer()) {
+            return ExternalShareRetrieveResponseIq.fromProto(iq.getExternalSharePostContainer());
         }
         Log.w("Using empty result IQ due to unrecognized result IQ " + ProtoPrinter.toString(iq));
         return new EmptyResultIq();
