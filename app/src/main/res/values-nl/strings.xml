@@ -1144,7 +1144,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="address_book_action_message">"Bericht sturen naar %s"</string>
 
     <!-- Text provided as title when a post is shared outside of HalloApp -->
-    <string name="external_share_title">"HalloApp post from %s"</string>
+    <string name="external_share_title">"HalloApp Post from %s"</string>
 
     <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
     <string name="external_share_description_text">"Tekstpost"</string>
@@ -1246,6 +1246,24 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
         <item quantity="one">"%d nieuwe post"</item>
         <item quantity="other">"%d nieuwe posts"</item>
     </plurals>
+
+    <!-- Button for revoking a link used for external sharing -->
+    <string name="revoke_link">"Link intrekken"</string>
+
+    <!-- Text for button for sharing a post -->
+    <string name="share_via">"Delen via…"</string>
+
+    <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
+    <string name="revoke_link_in_progress">"Link wordt ingetrokken"</string>
+
+    <!-- Text shown in snackbar when external sharing link is revoked -->
+    <string name="link_revoked">"Link ingetrokken"</string>
+
+    <!-- Text shown in a snackbar when link revocation failed -->
+    <string name="link_revoke_failed">"Intrekken van link mislukt"</string>
+
+    <!-- Text shown explaining how external sharing works on the sharing bottom sheet -->
+    <string name="external_share_info">"Iedereen met deze link kan je post zien. Links verlopen zodra je post op HalloApp verloopt. Linkvoorbeeld is onversleuteld."</string>
     <string name="share_externally">"Extern delen"</string>
     <string name="incoming_call_notification_title">"Inkomende oproep"</string>
     <string name="call_action">"Bellen"</string>

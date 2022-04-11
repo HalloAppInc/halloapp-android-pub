@@ -1283,6 +1283,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="address_book_action_message">"مراسلة %s"</string>
 
     <!-- Text provided as title when a post is shared outside of HalloApp -->
+    <!-- Fuzzy -->
     <string name="external_share_title">"منشور هالوآب من %s"</string>
 
     <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
@@ -1397,6 +1398,24 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
         <item quantity="many">"%d منشورًا جديدًا"</item>
         <item quantity="other">"%d منشور جديد"</item>
     </plurals>
+
+    <!-- Button for revoking a link used for external sharing -->
+    <string name="revoke_link">"إلغاء الرابط"</string>
+
+    <!-- Text for button for sharing a post -->
+    <string name="share_via">"المشاركة عبر…"</string>
+
+    <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
+    <string name="revoke_link_in_progress">"جارٍ إلغاء الرابط"</string>
+
+    <!-- Text shown in snackbar when external sharing link is revoked -->
+    <string name="link_revoked">"تم إلغاء الرابط"</string>
+
+    <!-- Text shown in a snackbar when link revocation failed -->
+    <string name="link_revoke_failed">"تعذّر إلغاء الرابط"</string>
+
+    <!-- Text shown explaining how external sharing works on the sharing bottom sheet -->
+    <string name="external_share_info">"أي شخص لديه الرابط يمكنه رؤية منشورك. وتنتهي صلاحية الرابط بانتهاء صلاحية المنشور. علمًا بأن معاينة الرابط غير مشفّرة."</string>
     <string name="share_externally">"مشاركة خارج هالوآب"</string>
     <string name="incoming_call_notification_title">"مكالمة واردة"</string>
     <string name="call_action">"اتصال"</string>

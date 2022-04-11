@@ -1129,6 +1129,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="address_book_action_message">"Mensagem %s"</string>
 
     <!-- Text provided as title when a post is shared outside of HalloApp -->
+    <!-- Fuzzy -->
     <string name="external_share_title">"Postagem do HalloApp de %s"</string>
 
     <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
@@ -1228,9 +1229,27 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 
     <!-- Text in groups pill telling the user theres new posts -->
     <plurals name="new_posts_quantity">
-        <item quantity="one">"%d new post"</item>
-        <item quantity="other">"%d new post"</item>
+        <item quantity="one">"%d nova postagem"</item>
+        <item quantity="other">"%d novas postagens "</item>
     </plurals>
+
+    <!-- Button for revoking a link used for external sharing -->
+    <string name="revoke_link">"Revogar link "</string>
+
+    <!-- Text for button for sharing a post -->
+    <string name="share_via">"Compartilhar via…"</string>
+
+    <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
+    <string name="revoke_link_in_progress">"Revogando link"</string>
+
+    <!-- Text shown in snackbar when external sharing link is revoked -->
+    <string name="link_revoked">"Link revogado"</string>
+
+    <!-- Text shown in a snackbar when link revocation failed -->
+    <string name="link_revoke_failed">"Falha ao revogar o link"</string>
+
+    <!-- Text shown explaining how external sharing works on the sharing bottom sheet -->
+    <string name="external_share_info">"Qualquer pessoa com o link pode ver sua postagem. O link expira com sua postagem. A visualização do link não é criptografada."</string>
     <string name="share_externally">"Partilhar externamente"</string>
     <string name="incoming_call_notification_title">"Chamada recebida"</string>
     <string name="call_action">"Ligar"</string>

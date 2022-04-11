@@ -1132,7 +1132,7 @@ Ouvre les paramètres de l'application pour modifier ses autorisations."</string
     <string name="address_book_action_message">"Message %s"</string>
 
     <!-- Text provided as title when a post is shared outside of HalloApp -->
-    <string name="external_share_title">"HalloApp post from %s"</string>
+    <string name="external_share_title">"%s's HalloApp Post"</string>
 
     <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
     <string name="external_share_description_text">"Text post"</string>
@@ -1234,6 +1234,24 @@ Open the app settings screen to modify app permissions."</string>
         <item quantity="one">"%d new post"</item>
         <item quantity="other">"%d new post"</item>
     </plurals>
+
+    <!-- Button for revoking a link used for external sharing -->
+    <string name="revoke_link">"Revoke link"</string>
+
+    <!-- Text for button for sharing a post -->
+    <string name="share_via">"Share via…"</string>
+
+    <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
+    <string name="revoke_link_in_progress">"Revoking link"</string>
+
+    <!-- Text shown in snackbar when external sharing link is revoked -->
+    <string name="link_revoked">"Link revoked"</string>
+
+    <!-- Text shown in a snackbar when link revocation failed -->
+    <string name="link_revoke_failed">"Failed to revoke link"</string>
+
+    <!-- Text shown explaining how external sharing works on the sharing bottom sheet -->
+    <string name="external_share_info">"Anyone with the link can see your post. Link expires with your post. Link preview is unencrypted."</string>
     <string name="share_externally">"Partager en externe"</string>
     <string name="incoming_call_notification_title">"Incoming call"</string>
     <string name="call_action">"Call"</string>

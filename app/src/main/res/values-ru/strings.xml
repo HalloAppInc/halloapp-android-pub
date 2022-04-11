@@ -1218,6 +1218,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="address_book_action_message">"Сообщение %s"</string>
 
     <!-- Text provided as title when a post is shared outside of HalloApp -->
+    <!-- Fuzzy -->
     <string name="external_share_title">"Сообщение в HalloApp от %s"</string>
 
     <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
@@ -1326,6 +1327,24 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
         <item quantity="many">"%d new post"</item>
         <item quantity="other">"%d new post"</item>
     </plurals>
+
+    <!-- Button for revoking a link used for external sharing -->
+    <string name="revoke_link">"Revoke link"</string>
+
+    <!-- Text for button for sharing a post -->
+    <string name="share_via">"Share via…"</string>
+
+    <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
+    <string name="revoke_link_in_progress">"Revoking link"</string>
+
+    <!-- Text shown in snackbar when external sharing link is revoked -->
+    <string name="link_revoked">"Link revoked"</string>
+
+    <!-- Text shown in a snackbar when link revocation failed -->
+    <string name="link_revoke_failed">"Failed to revoke link"</string>
+
+    <!-- Text shown explaining how external sharing works on the sharing bottom sheet -->
+    <string name="external_share_info">"Anyone with the link can see your post. Link expires with your post. Link preview is unencrypted."</string>
     <string name="share_externally">"Поделиться"</string>
     <string name="incoming_call_notification_title">"Входящий звонок"</string>
     <string name="call_action">"Звонок"</string>
