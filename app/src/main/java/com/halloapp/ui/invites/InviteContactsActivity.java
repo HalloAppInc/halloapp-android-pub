@@ -48,6 +48,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.IllegalFormatException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -283,14 +284,19 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
         if (remoteInviteStrings != null) {
             try {
                 JSONObject jsonObject = new JSONObject(remoteInviteStrings);
-                Locale locale = Locale.getDefault();
-                if (jsonObject.has(locale.getLanguage())) {
-                    String selected = jsonObject.getString(locale.getLanguage());
-                    try {
-                        return String.format(selected.replace('@', 's'), contact.getShortName(), contact.getDisplayPhone());
-                    } catch (IllegalFormatException e) {
-                        Log.e("Failed to format invite string", e);
-                        Log.sendErrorReport("Bad invite format string");
+
+                // See https://developer.android.com/reference/java/util/Locale#getLanguage() for why cannot directly look up string
+                String language = Locale.getDefault().getLanguage();
+                for (Iterator<String> it = jsonObject.keys(); it.hasNext(); ) {
+                    String key = it.next();
+                    if (language.equals(new Locale(key).getLanguage())) {
+                        String selected = jsonObject.getString(key);
+                        try {
+                            return String.format(selected.replace('@', 's'), contact.getShortName(), contact.getDisplayPhone());
+                        } catch (IllegalFormatException e) {
+                            Log.e("Failed to format invite string", e);
+                            Log.sendErrorReport("Bad invite format string");
+                        }
                     }
                 }
             } catch (JSONException e) {
