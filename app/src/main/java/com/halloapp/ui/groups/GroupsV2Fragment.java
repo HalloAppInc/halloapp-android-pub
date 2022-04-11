@@ -430,6 +430,9 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
         private final View voiceNoteContainer;
         private final TextView voiceNoteDuration;
 
+        private final View imageProtectionTop;
+        private final View imageProtectionBottom;
+
         private Post post;
 
         public PostPreviewViewHolder(@NonNull View itemView) {
@@ -444,6 +447,8 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
             commentsIndicator = itemView.findViewById(R.id.comments_indicator);
             voiceNoteContainer = itemView.findViewById(R.id.voice_note_container);
             voiceNoteDuration = itemView.findViewById(R.id.seek_time);
+            imageProtectionBottom = itemView.findViewById(R.id.image_protection_bottom);
+            imageProtectionTop = itemView.findViewById(R.id.image_protection_top);
 
             cardView.setOutlineProvider(new ViewOutlineProvider() {
                 @Override
@@ -469,28 +474,27 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
             List<Media> media = post.getMedia();
             if (media.isEmpty()) {
                 previewImageView.setTransitionName(null);
+                previewImageView.setVisibility(View.GONE);
+                imageProtectionTop.setVisibility(View.GONE);
+                imageProtectionBottom.setVisibility(View.GONE);
+                nameView.setShadowLayer(0, 0, 0, 0);
+                nameView.setTextColor(ContextCompat.getColor(nameView.getContext(), R.color.primary_text));
+                mediaIconView.setVisibility(View.GONE);
                 if (post instanceof VoiceNotePost) {
-                    previewTextView.setText(post.text);
                     previewTextView.setVisibility(View.GONE);
-                    previewImageView.setVisibility(View.GONE);
-                    mediaIconView.setVisibility(View.GONE);
                     voiceNoteContainer.setVisibility(View.VISIBLE);
-                    nameView.setShadowLayer(0, 0, 0, 0);
-                    nameView.setTextColor(ContextCompat.getColor(nameView.getContext(), R.color.primary_text));
                     audioDurationLoader.load(voiceNoteDuration, post.media.get(0));
                 } else {
                     previewTextView.setText(post.text);
                     previewTextView.setVisibility(View.VISIBLE);
-                    previewImageView.setVisibility(View.GONE);
-                    mediaIconView.setVisibility(View.GONE);
                     voiceNoteContainer.setVisibility(View.GONE);
-                    nameView.setShadowLayer(0, 0, 0, 0);
-                    nameView.setTextColor(ContextCompat.getColor(nameView.getContext(), R.color.primary_text));
                 }
             } else {
                 voiceNoteContainer.setVisibility(View.GONE);
                 previewImageView.setVisibility(View.VISIBLE);
                 previewTextView.setVisibility(View.GONE);
+                imageProtectionTop.setVisibility(View.VISIBLE);
+                imageProtectionBottom.setVisibility(View.VISIBLE);
                 nameView.setTextColor(Color.WHITE);
                 nameView.setShadowLayer(3, 0, 0, Color.BLACK);
                 if (!TextUtils.isEmpty(post.text)) {
