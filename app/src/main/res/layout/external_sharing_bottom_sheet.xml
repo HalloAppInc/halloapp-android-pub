@@ -48,7 +48,7 @@
             android:paddingTop="7dp"
             android:paddingHorizontal="8dp"
             android:textSize="15sp"
-            android:textColor="@color/black_80"
+            android:textColor="?android:attr/textColorPrimary"
             android:textStyle="bold"
             tools:text="Dev Pihtov's post"
             />
@@ -63,6 +63,7 @@
             android:textSize="15sp"
             tools:ignore="HardcodedText"
             android:text="share.halloapp.com"
+            android:textColor="?android:attr/textColorSecondary"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -167,7 +168,8 @@
             android:layout_height="20dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="10dp"
-            android:src="@drawable/ic_info"/>
+            android:src="@drawable/ic_info"
+            app:tint="?android:attr/textColorSecondary"/>
 
         <TextView
             android:layout_width="0dp"
@@ -175,7 +177,8 @@
             android:layout_weight="1"
             android:layout_marginEnd="20dp"
             android:textSize="14sp"
-            android:text="@string/external_share_info"/>
+            android:text="@string/external_share_info"
+            android:textColor="?android:attr/textColorSecondary"/>
 
     </LinearLayout>
 
