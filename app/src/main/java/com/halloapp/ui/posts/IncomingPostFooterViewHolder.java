@@ -47,11 +47,11 @@ public class IncomingPostFooterViewHolder extends PostFooterViewHolder {
     }
 
     @Override
-    public void setRegistered(boolean registered) {
-        comment.setAlpha(registered ? 1f : DISABLED_OPACITY);
-        comment.setEnabled(registered);
-        message.setAlpha(registered ? 1f : DISABLED_OPACITY);
-        message.setEnabled(registered);
+    public void setCanInteract(boolean canInteract) {
+        comment.setAlpha(canInteract ? 1f : DISABLED_OPACITY);
+        comment.setEnabled(canInteract);
+        message.setAlpha(canInteract ? 1f : DISABLED_OPACITY);
+        message.setEnabled(canInteract);
     }
 
     @Override

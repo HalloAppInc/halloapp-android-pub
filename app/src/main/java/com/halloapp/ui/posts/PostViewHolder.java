@@ -220,8 +220,8 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         this.postFooterViewHolder = postFooterViewHolder;
     }
 
-    public void setRegistered(boolean registered) {
-        this.postFooterViewHolder.setRegistered(registered);
+    public void setCanInteract(boolean canInteract) {
+        this.postFooterViewHolder.setCanInteract(canInteract);
     }
 
     @CallSuper

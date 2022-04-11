@@ -26,7 +26,7 @@ public abstract class PostFooterViewHolder {
         footerSpacing = itemView.findViewById(R.id.footer_spacing);
     }
 
-    public abstract void setRegistered(boolean registered);
+    public abstract void setCanInteract(boolean canInteract);
 
     @CallSuper
     public void bindTo(@NonNull Post post) {

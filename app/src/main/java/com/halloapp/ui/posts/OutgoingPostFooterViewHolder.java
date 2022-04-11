@@ -58,15 +58,15 @@ public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
     }
 
     @Override
-    public void setRegistered(boolean registered) {
-        commentButton.setAlpha(registered ? 1f : DISABLED_OPACITY);
-        commentButton.setEnabled(registered);
-        seenButton.setAlpha(registered ? 1f : DISABLED_OPACITY);
-        seenButton.setEnabled(registered);
-        seenIndicator.setAlpha(registered ? 1f : DISABLED_OPACITY);
-        seenIndicator.setEnabled(registered);
-        shareButton.setAlpha(registered ? 1f : DISABLED_OPACITY);
-        shareButton.setEnabled(registered);
+    public void setCanInteract(boolean canInteract) {
+        commentButton.setAlpha(canInteract ? 1f : DISABLED_OPACITY);
+        commentButton.setEnabled(canInteract);
+        seenButton.setAlpha(canInteract ? 1f : DISABLED_OPACITY);
+        seenButton.setEnabled(canInteract);
+        seenIndicator.setAlpha(canInteract ? 1f : DISABLED_OPACITY);
+        seenIndicator.setEnabled(canInteract);
+        shareButton.setAlpha(canInteract ? 1f : DISABLED_OPACITY);
+        shareButton.setEnabled(canInteract);
     }
 
     public void bindTo(@NonNull Post post) {

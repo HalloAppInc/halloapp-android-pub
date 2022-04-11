@@ -7,6 +7,7 @@ import android.util.Base64;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -49,6 +50,7 @@ public class PostContentViewModel extends AndroidViewModel {
 
     final ComputableLiveData<Post> post;
     final ComputableLiveData<Boolean> isRegistered;
+    final MutableLiveData<Boolean> canInteract = new MutableLiveData<>();
 
     private final String postId;
     private final ContentDb contentDb;
@@ -95,6 +97,7 @@ public class PostContentViewModel extends AndroidViewModel {
             @Override
             protected Post compute() {
                 if (postId != null) {
+                    canInteract.postValue(!isArchived && Me.getInstance().isRegistered());
                     return isArchived ? ContentDb.getInstance().getArchivePost(postId) : ContentDb.getInstance().getPost(postId);
                 } else {
                     final byte[] blob;
@@ -156,9 +159,11 @@ public class PostContentViewModel extends AndroidViewModel {
                         Post post = ContentDb.getInstance().getPost(id); // TODO(jack): specify poster id to prevent interception
                         if (post != null) {
                             Log.d("PostContentViewModel found post in db with id " + id);
+                            canInteract.postValue(Me.getInstance().isRegistered());
                             return post;
                         }
 
+                        canInteract.postValue(false);
                         UserId posterUserId = new UserId(Long.toString(postContainerBlob.getUid()));
                         FeedContentParser parser = new FeedContentParser(Me.getInstance());
                         post = parser.parsePost(id, posterUserId, postContainerBlob.getTimestamp(), postContainerBlob.getPostContainer(), false);
