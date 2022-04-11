@@ -83,6 +83,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
     protected PostFooterViewHolder postFooterViewHolder;
 
+    private boolean canInteract;
     private boolean showGroupName;
     private @ColorRes int cardBgColor;
 
@@ -202,7 +203,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
         final SeenDetectorLayout postContentLayout = itemView.findViewById(R.id.post_content);
         postContentLayout.setOnSeenListener(() -> {
-            if (post.shouldSendSeenReceipt()) {
+            if (post.shouldSendSeenReceipt() && canInteract) {
                 post.seen = Post.SEEN_YES_PENDING;
                 ContentDb.getInstance().setIncomingPostSeen(post.senderUserId, post.id);
             }
@@ -221,6 +222,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     }
 
     public void setCanInteract(boolean canInteract) {
+        this.canInteract = canInteract;
         this.postFooterViewHolder.setCanInteract(canInteract);
     }
 
