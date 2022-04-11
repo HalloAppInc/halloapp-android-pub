@@ -52,6 +52,7 @@ public class ServerProps {
     private static final String PROP_CALL_HOLD_ENABLED = "call_hold";
     private static final String PROP_KRISP_NOISE_SUPPRESSION = "krisp_noise_suppression";
     private static final String PROP_MEDIA_DRAWING_ENABLED = "draw_media";
+    private static final String PROP_INVITE_STRINGS = "invite_strings";
 
     private static final int WEEK_IN_SECONDS = (int) (DateUtils.WEEK_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
 
@@ -99,6 +100,7 @@ public class ServerProps {
     private final BooleanProp propCallHoldEnabled = createProp(PROP_CALL_HOLD_ENABLED, false);
     private final BooleanProp propKrispNoiseSuppression = createProp(PROP_KRISP_NOISE_SUPPRESSION, false);
     private final BooleanProp propMediaDrawingEnabled = createProp(PROP_MEDIA_DRAWING_ENABLED, false);
+    private final StringProp propInviteStrings = createProp(PROP_INVITE_STRINGS, "");
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -126,8 +128,6 @@ public class ServerProps {
         }
 
         preferences.edit()
-                .remove("cleartext_chat_messages") // TODO(jack): Remove after Oct 1
-                .remove("group_invite_links") // TODO(clark): Remove after Oct 1
                 .remove("new_client_container") // TODO(clark): Remove after January 1
                 .apply();
 
@@ -207,6 +207,12 @@ public class ServerProps {
 
     private IntegerProp createProp(@NonNull String key, int defaultValue) {
         IntegerProp prop = new IntegerProp(key, defaultValue);
+        serverProps.add(prop);
+        return prop;
+    }
+
+    private StringProp createProp(@NonNull String key, String defaultValue) {
+        StringProp prop = new StringProp(key, defaultValue);
         serverProps.add(prop);
         return prop;
     }
@@ -309,6 +315,10 @@ public class ServerProps {
 
     public synchronized boolean getMediaDrawingEnabled() {
         return propMediaDrawingEnabled.getValue();
+    }
+
+    public synchronized String getInviteStrings() {
+        return propInviteStrings.getValue();
     }
 
     public synchronized boolean getGroupsRefreshEnabled() {

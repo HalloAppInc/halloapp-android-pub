@@ -34,6 +34,7 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.InviteContactsAdapter;
 import com.halloapp.permissions.PermissionUtils;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.util.IntentUtils;
@@ -43,7 +44,12 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.IllegalFormatException;
 import java.util.List;
+import java.util.Locale;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -273,6 +279,25 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
     }
 
     private String getInviteText(@NonNull Contact contact) {
+        String remoteInviteStrings = ServerProps.getInstance().getInviteStrings();
+        if (remoteInviteStrings != null) {
+            try {
+                JSONObject jsonObject = new JSONObject(remoteInviteStrings);
+                Locale locale = Locale.getDefault();
+                if (jsonObject.has(locale.getLanguage())) {
+                    String selected = jsonObject.getString(locale.getLanguage());
+                    try {
+                        return String.format(selected.replace('@', 's'), contact.getShortName(), contact.getDisplayPhone());
+                    } catch (IllegalFormatException e) {
+                        Log.e("Failed to format invite string", e);
+                        Log.sendErrorReport("Bad invite format string");
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e("Failed to parse invite strings json", e);
+                Log.sendErrorReport("Bad invite json");
+            }
+        }
         return getString(R.string.invite_text_with_name_and_number, contact.getShortName(), contact.getDisplayPhone(), Constants.DOWNLOAD_LINK_URL);
     }
 
