@@ -23,6 +23,7 @@ import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.media.Uploader;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.clients.PostContainerBlob;
@@ -61,6 +62,7 @@ public class ExternalSharingViewModel extends ViewModel {
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final ContentDb contentDb = ContentDb.getInstance();
     private final AppContext appContext = AppContext.getInstance();
+    private final ServerProps serverProps = ServerProps.getInstance();
 
     private final ComputableLiveData<Boolean> revocable;
     private final ComputableLiveData<String> title;
@@ -155,6 +157,7 @@ public class ExternalSharingViewModel extends ViewModel {
         MutableLiveData<String> result = new MutableLiveData<>();
 
         bgWorkers.execute(() -> {
+            String domain = serverProps.getIsInternalUser() ? "share-test.halloapp.com" : "share.halloapp.com";
             Post post = contentDb.getPost(postId);
             if (post == null) {
                 Log.w("Coult not load post for external share encoding " + postId);
@@ -164,7 +167,7 @@ public class ExternalSharingViewModel extends ViewModel {
 
             ExternalShareInfo externalShareInfo = contentDb.getExternalShareInfo(post.id);
             if (externalShareInfo != null && externalShareInfo.shareId != null && externalShareInfo.shareKey != null) {
-                String url = "https://share.halloapp.com/" + externalShareInfo.shareId + "#k" + externalShareInfo.shareKey;
+                String url = "https://" + domain + "/" + externalShareInfo.shareId + "#k" + externalShareInfo.shareKey;
                 result.postValue(url);
                 return;
             }
@@ -263,7 +266,7 @@ public class ExternalSharingViewModel extends ViewModel {
                 String shareKey = Base64.encodeToString(attachmentKey, Base64.NO_WRAP | Base64.URL_SAFE);
                 observable.onError(e -> Log.e("Failed to send for external sharing"))
                         .onResponse(response -> {
-                            String url = "https://share.halloapp.com/" + response.blobId + "#k" + shareKey;
+                            String url = "https://" + domain + "/" + response.blobId + "#k" + shareKey;
                             result.postValue(url);
                             contentDb.setExternalShareInfo(post.id, response.blobId, shareKey);
                         });
