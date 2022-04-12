@@ -105,7 +105,7 @@
     <color name="home_navigation_divider">#FFFFFF</color>
     <color name="divider_color">@color/black_5</color>
     <color name="feed_notification_icon">@color/color_secondary</color>
-    <color name="crop_done">#69a1ff</color>
+    <color name="crop_done">#5997FF</color>
     <color name="settings_text_entry_background">@android:color/white</color>
     <color name="avatars_footer_divider">@android:color/white</color>
     <color name="thick_progress_spinner">#696969</color>
@@ -139,7 +139,7 @@
 
     <color name="comment_reply_bg">@color/color_secondary_15_alpha</color>
     <color name="comment_reply_text">@color/black_54</color>
-    
+
     <color name="share_link_post_bg">#F3F2EF</color>
 
     <color name="voice_note_circle">#E6CAE3FF</color>
@@ -248,5 +248,7 @@
     <color name="group_theme_8_text">#DF8E8E</color>
     <color name="group_theme_9_text">#EA974C</color>
     <color name="group_theme_10_text">#C2A84E</color>
+
+    <color name="image_edit_border">#E0E0E0</color>
 
 </resources>

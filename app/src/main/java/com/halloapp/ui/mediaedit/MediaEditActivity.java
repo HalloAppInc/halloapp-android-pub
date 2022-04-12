@@ -55,9 +55,6 @@ public class MediaEditActivity extends HalloActivity {
     private boolean isTransitionInProgress = true;
     private boolean isExitInProgress = false;
 
-    private static final float PREVIEW_SELECTED_ALPHA = 1.0f;
-    private static final float PREVIEW_DEFAULT_ALPHA = .6f;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -242,7 +239,6 @@ public class MediaEditActivity extends HalloActivity {
                 if (actionState != ItemTouchHelper.ACTION_STATE_IDLE && viewHolder != null) {
                     ImageView draggedThumbnail = ((ViewHolder) viewHolder).thumbnailView;
                     alpha = draggedThumbnail.getAlpha();
-                    draggedThumbnail.setAlpha(PREVIEW_SELECTED_ALPHA);
                 }
             }
         }).attachToRecyclerView(previewListView);
@@ -407,11 +403,9 @@ public class MediaEditActivity extends HalloActivity {
             }
 
             if (viewModel.getSelectedPosition() == position) {
-                holder.thumbnailView.setAlpha(PREVIEW_SELECTED_ALPHA);
                 holder.itemView.setBackgroundResource(R.drawable.media_preview_item_selected);
             } else {
-                holder.thumbnailView.setAlpha(PREVIEW_DEFAULT_ALPHA);
-                holder.itemView.setBackgroundResource(R.drawable.media_preview_item_default);
+                holder.itemView.setBackgroundResource(0);
             }
 
             holder.thumbnailView.setOnClickListener(v -> onMediaSelect(position));

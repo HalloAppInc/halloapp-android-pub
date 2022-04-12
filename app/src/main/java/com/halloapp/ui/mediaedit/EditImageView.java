@@ -53,7 +53,9 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     private final float threshold = getResources().getDimension(R.dimen.media_crop_region_threshold);
     private final float outThreshold = getResources().getDimension(R.dimen.media_crop_region_out_threshold);
     private final float borderThickness = getResources().getDimension(R.dimen.media_crop_region_border);
+    private final float borderGridThickness = getResources().getDimension(R.dimen.media_crop_region_grid);
     private final float borderRadius = getResources().getDimension(R.dimen.media_crop_region_radius);
+    private final float borderHandleSize = getResources().getDimension(R.dimen.media_crop_region_handle);
     private final float drawingWidth = getResources().getDimension(R.dimen.media_edit_drawing_width);
 
     private final RectF imageRect = new RectF();
@@ -75,6 +77,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     private final ArrayList<PointF> currentDrawingPath = new ArrayList<>();
     private final ArrayDeque<DrawingPath> drawingPaths = new ArrayDeque<>();
     private final ArrayDeque<ReverseAction> reverseActionStack = new ArrayDeque<>();
+    private final GestureListener gestureListener = new GestureListener();
 
     private StateUpdateListener stateUpdateListener;
 
@@ -103,11 +106,11 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         drawingPaint.setStrokeJoin(Paint.Join.ROUND);
         shadowPaint.setColor(getResources().getColor(R.color.black_70));
         shadowPaint.setStyle(Paint.Style.FILL);
-        borderPaint.setColor(Color.WHITE);
+        borderPaint.setColor(getResources().getColor(R.color.image_edit_border));
         borderPaint.setStyle(Paint.Style.STROKE);
         borderPaint.setStrokeWidth(borderThickness);
 
-        setOnTouchListener(new GestureListener());
+        setOnTouchListener(gestureListener);
     }
 
     public void setMaxAspectRatio(float maxAspectRatio) {
@@ -639,7 +642,15 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         drawShadow(canvas);
 
         if (!isDrawing) {
+            borderRect.set(cropRect);
+            borderRect.inset(-borderThickness / 2 + 1, -borderThickness / 2 + 1);
+
             drawBorder(canvas);
+            drawHandles(canvas);
+
+            if (gestureListener.isDraggingCropRegion()) {
+                drawGrid(canvas);
+            }
         }
     }
 
@@ -669,12 +680,44 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     }
 
     private void drawBorder(Canvas canvas) {
-        borderRect.set(cropRect);
-        borderRect.inset(-borderThickness / 2 + 1, -borderThickness / 2 + 1);
-
         path.reset();
         path.addRoundRect(borderRect, borderRadius, borderRadius, Path.Direction.CW);
         path.setFillType(Path.FillType.EVEN_ODD);
+
+        borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setStrokeWidth(borderThickness);
+        canvas.drawPath(path, borderPaint);
+    }
+
+    private void drawGrid(Canvas canvas) {
+        path.reset();
+
+        path.moveTo(borderRect.left, borderRect.top + borderRect.height() / 3);
+        path.lineTo(borderRect.right, borderRect.top + borderRect.height() / 3);
+
+        path.moveTo(borderRect.left, borderRect.top + borderRect.height() * 2 / 3);
+        path.lineTo(borderRect.right, borderRect.top + borderRect.height() * 2 / 3);
+
+        path.moveTo(borderRect.left + borderRect.width() / 3, borderRect.top);
+        path.lineTo(borderRect.left + borderRect.width() / 3, borderRect.bottom);
+
+        path.moveTo(borderRect.left + borderRect.width() * 2 / 3, borderRect.top);
+        path.lineTo(borderRect.left + borderRect.width() * 2 / 3, borderRect.bottom);
+
+        borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setStrokeWidth(borderGridThickness);
+        canvas.drawPath(path, borderPaint);
+    }
+
+    private void drawHandles(Canvas canvas) {
+        path.reset();
+
+        path.addCircle(borderRect.left, borderRect.top, borderHandleSize, Path.Direction.CW);
+        path.addCircle(borderRect.right, borderRect.top, borderHandleSize, Path.Direction.CW);
+        path.addCircle(borderRect.left, borderRect.bottom, borderHandleSize, Path.Direction.CW);
+        path.addCircle(borderRect.right, borderRect.bottom, borderHandleSize, Path.Direction.CW);
+
+        borderPaint.setStyle(Paint.Style.FILL);
         canvas.drawPath(path, borderPaint);
     }
 
@@ -766,6 +809,10 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         private boolean isStarted = false;
         private boolean isMultiTouch = false;
         private CropRegionSection section = CropRegionSection.NONE;
+
+        public boolean isDraggingCropRegion() {
+            return isStarted && section != CropRegionSection.NONE;
+        }
 
         @SuppressLint("ClickableViewAccessibility")
         @Override

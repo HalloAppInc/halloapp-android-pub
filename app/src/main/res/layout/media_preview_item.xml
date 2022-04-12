@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="80dp"
     android:layout_height="80dp"
-    android:padding="4dp"
+    android:padding="5dp"
     >
 
     <ImageView
@@ -18,8 +18,8 @@
 
     <ImageView
         android:id="@+id/type_indicator"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:scaleType="fitCenter"
         app:tint="@android:color/white"
         android:layout_gravity="center"
