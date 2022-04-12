@@ -80,7 +80,7 @@ public class GroupInviteLinkQrActivity extends HalloActivity {
         public final ComputableLiveData<String> groupName = new ComputableLiveData<String>() {
             @Override
             protected String compute() {
-                return Preconditions.checkNotNull(contentDb.getChat(groupId)).name;
+                return Preconditions.checkNotNull(contentDb.getGroup(groupId)).name;
             }
         };
 

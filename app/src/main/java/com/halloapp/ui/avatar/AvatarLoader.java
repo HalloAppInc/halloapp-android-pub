@@ -25,6 +25,7 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.content.Media;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
@@ -262,10 +263,10 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             } else {
                 avatarId = contact.avatarId;
             }
-        } else {
-            Chat chat = ContentDb.getInstance().getChat(chatId);
-            if (chat != null) {
-                avatarId = chat.groupAvatarId;
+        } else if (chatId instanceof GroupId){
+            Group group = ContentDb.getInstance().getGroup((GroupId) chatId);
+            if (group != null) {
+                avatarId = group.groupAvatarId;
             } else {
                 Log.i("AvatarLoader: group no chat");
             }

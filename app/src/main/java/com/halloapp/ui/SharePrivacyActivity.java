@@ -27,8 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
-import com.halloapp.content.Chat;
-import com.halloapp.id.ChatId;
+import com.halloapp.content.Group;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionUtils;
@@ -177,7 +176,7 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
             if (done != null) {
                 if (done) {
                     Toast.makeText(this, R.string.feed_privacy_update_success, Toast.LENGTH_LONG).show();
-                    onSelectChat(null);
+                    onSelectGroup(null);
                 } else {
                     SnackbarHelper.showWarning(this, R.string.feed_privacy_update_failure);
                 }
@@ -204,22 +203,22 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
 
     }
 
-    private class GroupsFilter extends FilterUtils.ItemFilter<Chat> {
+    private class GroupsFilter extends FilterUtils.ItemFilter<Group> {
 
-        GroupsFilter(@NonNull List<Chat> chats) {
-            super(chats);
+        GroupsFilter(@NonNull List<Group> groups) {
+            super(groups);
         }
 
         @Override
-        protected String itemToString(Chat chat) {
-            return chat.name;
+        protected String itemToString(Group group) {
+            return group.name;
         }
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             //noinspection unchecked
-            final List<Chat> filteredContacts = (List<Chat>) results.values;
-            adapter.setFilteredGroups(filteredContacts, constraint);
+            final List<Group> filteredGroups = (List<Group>) results.values;
+            adapter.setFilteredGroups(filteredGroups, constraint);
         }
     }
 
@@ -228,13 +227,13 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
 
     private class ShareItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
-        private List<Chat> filteredGroupsList;
+        private List<Group> filteredGroupsList;
         private CharSequence filterText;
-        private List<Chat> groupsList;
+        private List<Group> groupsList;
         private FeedPrivacy feedPrivacy;
         private GroupId selectedId;
 
-        public void setGroupsList(@Nullable List<Chat> groups) {
+        public void setGroupsList(@Nullable List<Group> groups) {
             this.groupsList = groups;
             if (groups == null) {
                 filteredGroupsList = null;
@@ -250,7 +249,7 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
             notifyDataSetChanged();
         }
 
-        void setFilteredGroups(@NonNull List<Chat> contacts, CharSequence filterText) {
+        void setFilteredGroups(@NonNull List<Group> contacts, CharSequence filterText) {
             this.filteredGroupsList = contacts;
             this.filterText = filterText;
             notifyDataSetChanged();
@@ -281,8 +280,8 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
                 ((HomeViewHolder)holder).bind(feedPrivacy, selectedId == null);
             } else if (holder instanceof ItemViewHolder) {
                 ItemViewHolder viewHolder = (ItemViewHolder) holder;
-                Chat chat = filteredGroupsList.get(position - 1);
-                viewHolder.bindChat(chat, chat.chatId.equals(selectedId));
+                Group group = filteredGroupsList.get(position - 1);
+                viewHolder.bindGroup(group, group.groupId.equals(selectedId));
             }
         }
 
@@ -304,9 +303,9 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
         }
     }
 
-    private void onSelectChat(@Nullable ChatId chatId) {
+    private void onSelectGroup(@Nullable GroupId groupId) {
         Intent data = new Intent();
-        data.putExtra(RESULT_GROUP_ID, chatId);
+        data.putExtra(RESULT_GROUP_ID, groupId);
 
         setResult(RESULT_OK, data);
         finish();
@@ -318,7 +317,7 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
         private TextView nameView;
         private View selectionView;
 
-        private Chat chat;
+        private Group group;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -338,16 +337,16 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
             avatarIconView.setClipToOutline(true);
 
             itemView.setOnClickListener(v -> {
-                if (chat != null) {
-                    onSelectChat(chat.chatId);
+                if (group != null) {
+                    onSelectGroup(group.groupId);
                 }
             });
         }
 
-        public void bindChat(@NonNull Chat chat, boolean selected) {
-            nameView.setText(chat.name);
-            avatarLoader.load(avatarIconView, chat.chatId);
-            this.chat = chat;
+        public void bindGroup(@NonNull Group group, boolean selected) {
+            this.group = group;
+            nameView.setText(group.name);
+            avatarLoader.load(avatarIconView, group.groupId);
             selectionView.setVisibility(selected ? View.VISIBLE : View.GONE);
         }
     }
@@ -373,7 +372,7 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
 
             itemView.findViewById(R.id.my_contacts).setOnClickListener(v -> {
                 if (selMyContacts.isChecked()) {
-                    onSelectChat(null);
+                    onSelectGroup(null);
                 } else {
                     saveList(PrivacyList.Type.ALL, Collections.emptyList());
                 }

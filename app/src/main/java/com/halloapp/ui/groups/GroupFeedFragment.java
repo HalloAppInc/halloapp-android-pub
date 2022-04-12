@@ -108,7 +108,7 @@ public class GroupFeedFragment extends PostsFragment {
 
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
-        viewModel.chat.getLiveData().observe(getViewLifecycleOwner(), chat -> {
+        viewModel.group.getLiveData().observe(getViewLifecycleOwner(), chat -> {
             if (chat == null) {
                 return;
             }

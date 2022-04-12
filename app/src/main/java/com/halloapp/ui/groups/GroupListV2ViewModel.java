@@ -15,6 +15,7 @@ import androidx.paging.PagedList;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.content.GroupPostsPreviewDataSource;
 import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
@@ -36,7 +37,7 @@ import java.util.Objects;
 
 public class GroupListV2ViewModel extends AndroidViewModel {
 
-    final ComputableLiveData<List<Chat>> groupsList;
+    final ComputableLiveData<List<Group>> groupsList;
     final MutableLiveData<Boolean> groupPostUpdated;
     private final MutableLiveData<Integer> newPostLiveData = new MutableLiveData<>(0);
 
@@ -84,7 +85,7 @@ public class GroupListV2ViewModel extends AndroidViewModel {
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
         }
 
-        public void onGroupChatAdded(@NonNull GroupId groupId) {
+        public void onGroupFeedAdded(@NonNull GroupId groupId) {
             invalidateGroups();
         }
 
@@ -118,12 +119,12 @@ public class GroupListV2ViewModel extends AndroidViewModel {
         contentDb.addObserver(contentObserver);
 
         groupPostLoader = new GroupPostLoader();
-        groupsList = new ComputableLiveData<List<Chat>>() {
+        groupsList = new ComputableLiveData<List<Group>>() {
             @Override
-            protected List<Chat> compute() {
-                final List<Chat> chats = contentDb.getGroups();
+            protected List<Group> compute() {
+                final List<Group> groups = contentDb.getGroups();
                 final Collator collator = Collator.getInstance(Locale.getDefault());
-                Collections.sort(chats, (obj1, obj2) -> {
+                Collections.sort(groups, (obj1, obj2) -> {
                     if (obj2.timestamp == obj1.timestamp) {
                         if (Objects.equals(obj1.name, obj2.name)) {
                             return 0;
@@ -138,7 +139,7 @@ public class GroupListV2ViewModel extends AndroidViewModel {
                     }
                     return obj1.timestamp < obj2.timestamp ? 1 : -1;
                 });
-                return chats;
+                return groups;
             }
         };
 

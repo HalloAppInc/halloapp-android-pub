@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -25,7 +26,7 @@ import java.util.Objects;
 
 public class SharePrivacyViewModel extends ViewModel {
 
-    private final ComputableLiveData<List<Chat>> groupsList;
+    private final ComputableLiveData<List<Group>> groupsList;
     private ComputableLiveData<FeedPrivacy> feedPrivacyLiveData;
 
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
@@ -38,7 +39,7 @@ public class SharePrivacyViewModel extends ViewModel {
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
-        public void onGroupChatAdded(@NonNull GroupId groupId) {
+        public void onGroupFeedAdded(@NonNull GroupId groupId) {
             invalidateGroups();
         }
 
@@ -58,12 +59,12 @@ public class SharePrivacyViewModel extends ViewModel {
 
     public SharePrivacyViewModel() {
         contentDb.addObserver(contentObserver);
-        groupsList = new ComputableLiveData<List<Chat>>() {
+        groupsList = new ComputableLiveData<List<Group>>() {
             @Override
-            protected List<Chat> compute() {
-                final List<Chat> chats = contentDb.getGroups();
+            protected List<Group> compute() {
+                final List<Group> groups = contentDb.getGroups();
                 final Collator collator = Collator.getInstance(Locale.getDefault());
-                Collections.sort(chats, (obj1, obj2) -> {
+                Collections.sort(groups, (obj1, obj2) -> {
                     if (obj2.timestamp == obj1.timestamp) {
                         if (Objects.equals(obj1.name, obj2.name)) {
                             return 0;
@@ -78,7 +79,7 @@ public class SharePrivacyViewModel extends ViewModel {
                     }
                     return obj1.timestamp < obj2.timestamp ? 1 : -1;
                 });
-                return chats;
+                return groups;
             }
         };
         feedPrivacyLiveData = new ComputableLiveData<FeedPrivacy>() {
@@ -101,7 +102,7 @@ public class SharePrivacyViewModel extends ViewModel {
     }
 
     @NonNull
-    public LiveData<List<Chat>> getGroupList() {
+    public LiveData<List<Group>> getGroupList() {
         return groupsList.getLiveData();
     }
 

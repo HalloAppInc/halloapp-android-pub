@@ -98,7 +98,7 @@ public class ChatsViewModel extends AndroidViewModel {
             invalidateMessage(chatId, senderUserId, messageId);
         }
 
-        public void onGroupChatAdded(@NonNull GroupId groupId) {
+        public void onGroupFeedAdded(@NonNull GroupId groupId) {
             invalidateChats();
         }
 

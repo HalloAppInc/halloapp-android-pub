@@ -1939,6 +1939,13 @@ public class ConnectionImpl extends Connection {
             post.senderVersion = senderVersion;
             post.failureReason = errorMessage;
 
+            if (protoPost.hasAudience()) {
+                Audience audience = protoPost.getAudience();
+                if (Audience.Type.ONLY.equals(audience.getType())) {
+                    post.setAudience(PrivacyList.Type.ONLY, new ArrayList<>());
+                }
+            }
+
             return post;
         }
 

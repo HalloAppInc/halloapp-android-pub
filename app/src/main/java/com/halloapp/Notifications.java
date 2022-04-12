@@ -37,6 +37,7 @@ import com.halloapp.content.CallMessage;
 import com.halloapp.content.Chat;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
@@ -266,7 +267,7 @@ public class Notifications {
                 List<Comment> comments = groupCommentListMap.get(groupId);
                 List<Post> posts = groupPostListMap.get(groupId);
 
-                Chat group = ContentDb.getInstance().getChat(groupId);
+                Group group = ContentDb.getInstance().getGroup(groupId);
                 if (group != null) {
                     showCombinedFeedNotification(groupId.rawId(), group.name, index++ | NOTIFICATION_REQUEST_CODE_FEED_FLAG, posts, comments);
                     index++;

@@ -20,6 +20,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.content.Post;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.GroupsSync;
@@ -102,7 +103,7 @@ public class ZeroZoneManager {
                     return Result.failure();
                 }
             }
-            List<Chat> groups = contentDb.getGroups();
+            List<Group> groups = contentDb.getGroups();
             if (!groups.isEmpty()) {
                 preferences.setZeroZoneState(ZeroZoneManager.ZeroZoneState.INITIALIZED);
                 return Result.success();

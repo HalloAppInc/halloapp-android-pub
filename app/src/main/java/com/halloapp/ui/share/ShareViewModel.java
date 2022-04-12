@@ -10,6 +10,7 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
@@ -67,7 +68,7 @@ public class ShareViewModel extends AndroidViewModel {
             destinationList.invalidate();
         }
 
-        public void onGroupChatAdded(@NonNull GroupId groupId) {
+        public void onGroupFeedAdded(@NonNull GroupId groupId) {
             destinationList.invalidate();
         }
 
@@ -92,13 +93,13 @@ public class ShareViewModel extends AndroidViewModel {
         destinationList = new ComputableLiveData<List<ShareDestination>>() {
             @Override
             protected List<ShareDestination> compute() {
-                List<Chat> groups = contentDb.getActiveGroups();
+                List<Group> groups = contentDb.getActiveGroups();
                 List<Contact> contacts = contactsDb.getUsers();
                 ArrayList<ShareDestination> destinations = new ArrayList<>(groups.size() + contacts.size() + 1);
 
                 destinations.add(ShareDestination.feed());
 
-                for (Chat group : groups) {
+                for (Group group : groups) {
                     destinations.add(ShareDestination.fromGroup(group));
                 }
 

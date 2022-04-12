@@ -8,7 +8,7 @@ public class ChatsTable implements BaseColumns {
 
     public static final String TABLE_NAME = "chats";
 
-    public static final String TRIGGER_DELETE = "on_chat_delete";
+    public static final String TRIGGER_DELETE = "on_chat_delete"; // TODO(clarkc) remove this trigger fully
 
     public static final String COLUMN_CHAT_ID = "chat_id";
     public static final String COLUMN_TIMESTAMP = "timestamp";

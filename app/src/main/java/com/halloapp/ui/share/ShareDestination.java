@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.halloapp.contacts.Contact;
 import com.halloapp.content.Chat;
+import com.halloapp.content.Group;
 import com.halloapp.id.ChatId;
 
 import java.util.Objects;
@@ -26,11 +27,11 @@ public class ShareDestination implements Parcelable {
         return destination;
     }
 
-    public static ShareDestination fromGroup(Chat group) {
+    public static ShareDestination fromGroup(Group group) {
         ShareDestination destination = new ShareDestination();
         destination.type = TYPE_GROUP;
         destination.name = group.name;
-        destination.id = group.chatId;
+        destination.id = group.groupId;
 
         return destination;
     }

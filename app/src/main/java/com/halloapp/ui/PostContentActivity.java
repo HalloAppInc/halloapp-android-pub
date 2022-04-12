@@ -41,7 +41,7 @@ import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
-import com.halloapp.groups.ChatLoader;
+import com.halloapp.groups.GroupLoader;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.Downloader;
 import com.halloapp.media.MediaThumbnailLoader;
@@ -101,7 +101,7 @@ public class PostContentActivity extends HalloActivity {
     private static final int SWIPE_DOWN_VELOCITY_THRESHOLD = -1000;
 
     private MediaThumbnailLoader mediaThumbnailLoader;
-    private ChatLoader chatLoader;
+    private GroupLoader groupLoader;
     private ContactLoader contactLoader;
     private AvatarLoader avatarLoader;
     private SeenByLoader seenByLoader;
@@ -170,8 +170,8 @@ public class PostContentActivity extends HalloActivity {
         }
 
         @Override
-        public ChatLoader getChatLoader() {
-            return chatLoader;
+        public GroupLoader getGroupLoader() {
+            return groupLoader;
         }
 
         @Override
@@ -346,7 +346,7 @@ public class PostContentActivity extends HalloActivity {
                 load(view, loader, displayer, media.file, cache);
             }
         };
-        chatLoader = new ChatLoader();
+        groupLoader = new GroupLoader();
         contactLoader = new ContactLoader();
         seenByLoader = new SeenByLoader();
         avatarLoader = AvatarLoader.getInstance();
@@ -379,7 +379,7 @@ public class PostContentActivity extends HalloActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        chatLoader.destroy();
+        groupLoader.destroy();
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
         seenByLoader.destroy();

@@ -16,8 +16,8 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.group.GroupFeedSessionManager;
 import com.halloapp.crypto.group.GroupSetupInfo;
@@ -56,7 +56,7 @@ public class GroupViewModel extends AndroidViewModel {
 
     private final GroupId groupId;
 
-    private final ComputableLiveData<Chat> chatLiveData;
+    private final ComputableLiveData<Group> groupLiveData;
     private final ComputableLiveData<List<GroupMember>> membersLiveData;
 
     private final MutableLiveData<String> groupInviteLink = new MutableLiveData<>();
@@ -99,7 +99,7 @@ public class GroupViewModel extends AndroidViewModel {
         }
 
         private void invalidateChat() {
-            chatLiveData.invalidate();
+            groupLiveData.invalidate();
         }
 
         private void invalidateMembers() {
@@ -119,21 +119,21 @@ public class GroupViewModel extends AndroidViewModel {
         contactsDb = ContactsDb.getInstance();
         preferences = Preferences.getInstance();
 
-        chatLiveData = new ComputableLiveData<Chat>() {
+        groupLiveData = new ComputableLiveData<Group>() {
             @Override
-            protected Chat compute() {
-                Chat chat = contentDb.getChat(groupId);
-                chatIsActive.postValue(chat != null && chat.isActive);
+            protected Group compute() {
+                Group group = contentDb.getGroup(groupId);
+                chatIsActive.postValue(group != null && group.isActive);
 
-                if (chat != null
+                if (group != null
                         && preferences.getZeroZoneState() >= ZeroZoneManager.ZeroZoneState.NEEDS_INITIALIZATION
                         && groupId.equals(preferences.getZeroZoneGroupId())) {
-                    groupInviteLink.postValue(Constants.GROUP_INVITE_BASE_URL + chat.inviteToken);
+                    groupInviteLink.postValue(Constants.GROUP_INVITE_BASE_URL + group.inviteToken);
                 }
-                return chat;
+                return group;
             }
         };
-        chatLiveData.invalidate();
+        groupLiveData.invalidate();
 
         membersLiveData = new ComputableLiveData<List<GroupMember>>() {
             @Override
@@ -176,8 +176,8 @@ public class GroupViewModel extends AndroidViewModel {
         return groupInviteLink.getValue();
     }
 
-    public LiveData<Chat> getChat() {
-        return chatLiveData.getLiveData();
+    public LiveData<Group> getGroup() {
+        return groupLiveData.getLiveData();
     }
 
     public LiveData<List<GroupMember>> getMembers() {

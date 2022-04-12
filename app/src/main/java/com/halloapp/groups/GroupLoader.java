@@ -7,28 +7,30 @@ import androidx.collection.LruCache;
 
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.util.ViewDataLoader;
 
 import java.util.concurrent.Callable;
 
-public class ChatLoader extends ViewDataLoader<View, Chat, ChatId> {
+public class GroupLoader extends ViewDataLoader<View, Group, GroupId> {
 
-    private final LruCache<ChatId, Chat> cache = new LruCache<>(512);
+    private final LruCache<GroupId, Group> cache = new LruCache<>(512);
     private final ContentDb contentDb;
 
-    public ChatLoader() {
+    public GroupLoader() {
         contentDb = ContentDb.getInstance();
     }
 
-    public void load(@NonNull View view, @NonNull Displayer<View, Chat> displayer, @NonNull ChatId key) {
-        @NonNull Callable<Chat> loader = () -> {
-            Chat chat = contentDb.getChat(key);
+    public void load(@NonNull View view, @NonNull Displayer<View, Group> displayer, @NonNull GroupId key) {
+        @NonNull Callable<Group> loader = () -> {
+            Group chat = contentDb.getGroup(key);
             if (chat != null) {
                 return chat;
             } else {
                 String name = contentDb.getDeletedChatName(key);
-                return new Chat(-1,null,-1, -1, -1, -1, name, true, null, null, true, -1);
+                return new Group(-1,null,-1, name, null, null, true, -1);
             }
         };
         load(view, loader, displayer, key, cache);

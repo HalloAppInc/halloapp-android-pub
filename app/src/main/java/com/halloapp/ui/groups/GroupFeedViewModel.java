@@ -19,6 +19,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostsDataSource;
 import com.halloapp.groups.MemberInfo;
@@ -48,7 +49,7 @@ public class GroupFeedViewModel extends ViewModel {
 
     private Parcelable savedScrollState;
 
-    public final ComputableLiveData<Chat> chat;
+    public final ComputableLiveData<Group> group;
 
     public final ComputableLiveData<List<Contact>> members;
 
@@ -100,14 +101,14 @@ public class GroupFeedViewModel extends ViewModel {
         @Override
         public void onGroupBackgroundChanged(@NonNull GroupId gid) {
             if (groupId.equals(gid)) {
-                chat.invalidate();
+                group.invalidate();
             }
         }
 
         @Override
         public void onGroupMetadataChanged(@NonNull GroupId gid) {
             if (groupId.equals(gid)) {
-                chat.invalidate();
+                group.invalidate();
             }
         }
 
@@ -137,10 +138,10 @@ public class GroupFeedViewModel extends ViewModel {
         dataSourceFactory = new PostsDataSource.Factory(contentDb, null, groupId);
         postList = new LivePagedListBuilder<>(dataSourceFactory, ADAPTER_PAGE_SIZE).build();
 
-        chat = new ComputableLiveData<Chat>() {
+        group = new ComputableLiveData<Group>() {
             @Override
-            protected Chat compute() {
-                return contentDb.getChat(groupId);
+            protected Group compute() {
+                return contentDb.getGroup(groupId);
             }
         };
 

@@ -120,7 +120,6 @@ public class HalloApp extends Application {
 
         BgWorkers.getInstance().execute(() -> {
             ContentDb.getInstance().processFutureProofContent();
-            ContentDb.getInstance().migrateGroupTimestamps(); // TODO(clark): Remove after Oct 1
             ContentDb.getInstance().checkIndexes();
             ContactsDb.getInstance().checkIndexes();
             ApkHasher.getInstance().run(this);

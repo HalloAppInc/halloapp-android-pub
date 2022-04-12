@@ -43,6 +43,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.content.VoiceNotePost;
@@ -110,7 +111,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
 
     private MenuItem searchMenuItem;
 
-    private final HashMap<ChatId, Chat> selectedChats = new HashMap<>();
+    private final HashMap<GroupId, Group> selectedGroups = new HashMap<>();
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -264,15 +265,15 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
         }
     }
 
-    private void updateChatSelection(Chat chat) {
-        ChatId chatId = chat.chatId;
-        if (selectedChats.containsKey(chatId)) {
-            selectedChats.remove(chatId);
+    private void updateGroupSelection(Group group) {
+        GroupId groupId = group.groupId;
+        if (selectedGroups.containsKey(groupId)) {
+            selectedGroups.remove(groupId);
         } else {
-            selectedChats.put(chatId, chat);
+            selectedGroups.put(groupId, group);
         }
         adapter.notifyDataSetChanged();
-        if (selectedChats.isEmpty()) {
+        if (selectedGroups.isEmpty()) {
             endActionMode();
             return;
         }
@@ -297,7 +298,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                 @Override
                 public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
                     MenuItem leaveItem = menu.findItem(R.id.leave_group);
-                    leaveItem.setTitle(getResources().getQuantityString(R.plurals.leave_group_plural, selectedChats.size()));
+                    leaveItem.setTitle(getResources().getQuantityString(R.plurals.leave_group_plural, selectedGroups.size()));
                     return true;
                 }
 
@@ -305,11 +306,11 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                 public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                     if (item.getItemId() == R.id.delete) {
                         final AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-                        builder.setMessage(requireContext().getResources().getQuantityString(R.plurals.delete_groups_confirmation, selectedChats.size(), selectedChats.size()));
+                        builder.setMessage(requireContext().getResources().getQuantityString(R.plurals.delete_groups_confirmation, selectedGroups.size(), selectedGroups.size()));
                         builder.setCancelable(true);
                         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
-                            for (Chat chat : selectedChats.values()) {
-                                ContentDb.getInstance().deleteChat(chat.chatId);
+                            for (Group group : selectedGroups.values()) {
+                                ContentDb.getInstance().deleteChat(group.groupId);
                             }
                             endActionMode();
                         });
@@ -317,7 +318,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                         builder.show();
                         return true;
                     } else if (item.getItemId() == R.id.view_group_info) {
-                        for (ChatId chat : selectedChats.keySet()) {
+                        for (ChatId chat : selectedGroups.keySet()) {
                             if (chat instanceof GroupId) {
                                 startActivity(GroupInfoActivity.viewGroup(requireContext(), (GroupId) chat));
                                 break;
@@ -326,7 +327,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                         endActionMode();
                     } else if (item.getItemId() == R.id.leave_group) {
                         List<GroupId> selectedGroups = new ArrayList<>();
-                        for (ChatId chatId : selectedChats.keySet()) {
+                        for (ChatId chatId : GroupsV2Fragment.this.selectedGroups.keySet()) {
                             if (chatId instanceof GroupId) {
                                 selectedGroups.add((GroupId) chatId);
                             }
@@ -347,7 +348,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                 @Override
                 public void onDestroyActionMode(ActionMode mode) {
                     adapter.notifyDataSetChanged();
-                    selectedChats.clear();
+                    selectedGroups.clear();
                     actionMode = null;
                     requireActivity().getWindow().setStatusBarColor(statusBarColor);
                     requireActivity().getWindow().getDecorView().setSystemUiVisibility(previousVisibility);
@@ -359,8 +360,8 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
             return;
         }
         boolean hasActiveGroup = false;
-        for (Chat selectedChat : selectedChats.values()) {
-            if (selectedChat.isActive) {
+        for (Group selectedGroup : selectedGroups.values()) {
+            if (selectedGroup.isActive) {
                 hasActiveGroup = true;
                 break;
             }
@@ -368,8 +369,8 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
         actionMode.getMenu().findItem(R.id.delete).setVisible(!hasActiveGroup);
         actionMode.getMenu().findItem(R.id.leave_group).setVisible(hasActiveGroup);
 
-        actionMode.getMenu().findItem(R.id.view_group_info).setVisible(selectedChats.size() == 1);
-        actionMode.setTitle(Integer.toString(selectedChats.size()));
+        actionMode.getMenu().findItem(R.id.view_group_info).setVisible(selectedGroups.size() == 1);
+        actionMode.setTitle(Integer.toString(selectedGroups.size()));
     }
 
     private void leaveGroups(@NonNull Collection<GroupId> groupIds) {
@@ -388,21 +389,21 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                 });
     }
 
-    private class GroupsFilter extends FilterUtils.ItemFilter<Chat> {
+    private class GroupsFilter extends FilterUtils.ItemFilter<Group> {
 
-        GroupsFilter(@NonNull List<Chat> chats) {
-            super(chats);
+        GroupsFilter(@NonNull List<Group> groups) {
+            super(groups);
         }
 
         @Override
-        protected String itemToString(Chat chat) {
+        protected String itemToString(Group chat) {
             return chat.name;
         }
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             //noinspection unchecked
-            final List<Chat> filteredContacts = (List<Chat>) results.values;
+            final List<Group> filteredContacts = (List<Group>) results.values;
             adapter.setFilteredGroups(filteredContacts, constraint);
             if (filteredContacts.isEmpty()) {
                 emptyView.setVisibility(View.VISIBLE);
@@ -584,14 +585,14 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
 
     private class GroupsAdapter extends AdapterWithLifecycle<ViewHolderWithLifecycle> implements Filterable {
 
-        private List<Chat> groups;
-        private List<Chat> filteredGroups;
+        private List<Group> groups;
+        private List<Group> filteredGroups;
         private CharSequence filterText;
         private List<String> filterTokens;
 
-        void setGroups(@NonNull List<Chat> chats) {
-            this.groups = chats;
-            this.filteredGroups = new ArrayList<>(chats);
+        void setGroups(@NonNull List<Group> groups) {
+            this.groups = groups;
+            this.filteredGroups = new ArrayList<>(groups);
             getFilter().filter(filterText);
             notifyDataSetChanged();
         }
@@ -616,7 +617,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
             return getFilteredContactsCount();
         }
 
-        void setFilteredGroups(@NonNull List<Chat> contacts, CharSequence filterText) {
+        void setFilteredGroups(@NonNull List<Group> contacts, CharSequence filterText) {
             this.filteredGroups = contacts;
             this.filterText = filterText;
             this.filterTokens = FilterUtils.getFilterTokens(filterText);
@@ -642,7 +643,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
             final View selectionCheck;
             final RecyclerView previewRv;
 
-            private Chat chat;
+            private Group group;
 
             ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -656,32 +657,32 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                 previewRv.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
                 previewRv.addItemDecoration(new HorizontalSpaceDecoration(itemView.getContext().getResources().getDimensionPixelSize(R.dimen.group_post_preview_card_separation)));
                 itemView.setOnLongClickListener(v -> {
-                    updateChatSelection(chat);
+                    updateGroupSelection(group);
                     return true;
                 });
                 itemView.setOnClickListener(v -> {
                     if (actionMode == null) {
-                        startActivityForResult(ViewGroupFeedActivity.viewFeed(requireContext(), (GroupId) chat.chatId), REQUEST_CODE_OPEN_GROUP);
+                        startActivityForResult(ViewGroupFeedActivity.viewFeed(requireContext(), (GroupId) group.groupId), REQUEST_CODE_OPEN_GROUP);
                     } else {
-                        updateChatSelection(chat);
+                        updateGroupSelection(group);
                     }
                 });
             }
 
-            void bindTo(@NonNull Chat chat, @Nullable List<String> filterTokens) {
-                boolean differentChat = this.chat == null || !Objects.equals(chat.chatId, this.chat.chatId);
-                this.chat = chat;
-                if (selectedChats.containsKey(chat.chatId)) {
+            void bindTo(@NonNull Group group, @Nullable List<String> filterTokens) {
+                boolean differentChat = this.group == null || !Objects.equals(group.groupId, this.group.groupId);
+                this.group = group;
+                if (selectedGroups.containsKey(group.groupId)) {
                     selectionView.setVisibility(View.VISIBLE);
                     selectionCheck.setVisibility(View.VISIBLE);
                 } else {
                     selectionView.setVisibility(View.GONE);
                     selectionCheck.setVisibility(View.GONE);
                 }
-                avatarLoader.load(avatarView, chat.chatId);
-                CharSequence name = chat.name;
+                avatarLoader.load(avatarView, group.groupId);
+                CharSequence name = group.name;
                 if (filterTokens != null && !filterTokens.isEmpty()) {
-                    CharSequence formattedName = FilterUtils.formatMatchingText(itemView.getContext(), chat.name, filterTokens);
+                    CharSequence formattedName = FilterUtils.formatMatchingText(itemView.getContext(), group.name, filterTokens);
                     if (formattedName != null) {
                         name = formattedName;
                     }
@@ -705,10 +706,9 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                             newMessagesView.setVisibility(View.GONE);
                         }
                     }
-                }, (GroupId) chat.chatId);
-                GroupId groupId = (GroupId) chat.chatId;
+                }, group.groupId);
                 PostsPreviewAdapter adapter;
-                if (!adapterHashMap.containsKey(groupId)) {
+                if (!adapterHashMap.containsKey(group.groupId)) {
                     adapter = new PostsPreviewAdapter(new HeaderFooterAdapter.HeaderFooterAdapterParent() {
                         @NonNull
                         @Override
@@ -725,7 +725,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                     View footer = adapter.addFooter(R.layout.view_group_post_preview_new_post);
                     footer.setOnClickListener(v -> {
                         Intent intent = new Intent(requireContext(), ContentComposerActivity.class);
-                        intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, groupId);
+                        intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, group.groupId);
                         startActivityForResult(intent, REQUEST_CODE_NEW_POST);
                     });
                     footer.setOutlineProvider(new ViewOutlineProvider() {
@@ -736,14 +736,14 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                         }
                     });
                     footer.setClipToOutline(true);
-                    viewModel.getGroupPagedList(groupId).observe(getViewLifecycleOwner(), list -> {
+                    viewModel.getGroupPagedList(group.groupId).observe(getViewLifecycleOwner(), list -> {
                         adapter.submitList(list, () -> {
                             previewRv.scrollToPosition(0);
                         });
                     });
-                    adapterHashMap.put(groupId, adapter);
+                    adapterHashMap.put(group.groupId, adapter);
                 } else {
-                    adapter = adapterHashMap.get(groupId);
+                    adapter = adapterHashMap.get(group.groupId);
                 }
                 previewRv.setAdapter(adapter);
             }

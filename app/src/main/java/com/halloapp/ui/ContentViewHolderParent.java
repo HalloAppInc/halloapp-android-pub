@@ -5,7 +5,7 @@ import android.content.Intent;
 import androidx.collection.LongSparseArray;
 
 import com.halloapp.contacts.ContactLoader;
-import com.halloapp.groups.ChatLoader;
+import com.halloapp.groups.GroupLoader;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
@@ -16,7 +16,7 @@ public interface ContentViewHolderParent {
     AvatarLoader getAvatarLoader();
     ContactLoader getContactLoader();
     SystemMessageTextResolver getSystemMessageTextResolver();
-    ChatLoader getChatLoader();
+    GroupLoader getGroupLoader();
     SeenByLoader getSeenByLoader();
     TextContentLoader getTextContentLoader();
     AudioDurationLoader getAudioDurationLoader();

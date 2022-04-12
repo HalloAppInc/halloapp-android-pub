@@ -26,9 +26,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
-import com.halloapp.content.Chat;
+import com.halloapp.content.Group;
 import com.halloapp.content.Post;
-import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.groups.GroupPostLoader;
@@ -125,23 +124,23 @@ public class GroupsInCommonActivity extends HalloActivity {
         });
     }
 
-    private class GroupsFilter extends FilterUtils.ItemFilter<Chat> {
+    private class GroupsFilter extends FilterUtils.ItemFilter<Group> {
 
-        GroupsFilter(@NonNull List<Chat> chats) {
-            super(chats);
+        GroupsFilter(@NonNull List<Group> groups) {
+            super(groups);
         }
 
         @Override
-        protected String itemToString(Chat chat) {
-            return chat.name;
+        protected String itemToString(Group group) {
+            return group.name;
         }
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             //noinspection unchecked
-            final List<Chat> filteredContacts = (List<Chat>) results.values;
-            adapter.setFilteredGroups(filteredContacts, constraint);
-            if (filteredContacts.isEmpty()) {
+            final List<Group> filteredGroups = (List<Group>) results.values;
+            adapter.setFilteredGroups(filteredGroups, constraint);
+            if (filteredGroups.isEmpty()) {
                 emptyView.setVisibility(View.VISIBLE);
                 if (TextUtils.isEmpty(constraint)) {
                     emptyView.setText(R.string.groups_in_common_empty);
@@ -156,14 +155,14 @@ public class GroupsInCommonActivity extends HalloActivity {
 
     private class GroupsAdapter extends AdapterWithLifecycle<ViewHolderWithLifecycle> implements Filterable {
 
-        private List<Chat> groups;
-        private List<Chat> filteredGroups;
+        private List<Group> groups;
+        private List<Group> filteredGroups;
         private CharSequence filterText;
         private List<String> filterTokens;
 
-        void setGroups(@NonNull List<Chat> chats) {
-            this.groups = chats;
-            this.filteredGroups = new ArrayList<>(chats);
+        void setGroups(@NonNull List<Group> groups) {
+            this.groups = groups;
+            this.filteredGroups = new ArrayList<>(groups);
             getFilter().filter(filterText);
             notifyDataSetChanged();
         }
@@ -189,8 +188,8 @@ public class GroupsInCommonActivity extends HalloActivity {
             return getFilteredContactsCount();
         }
 
-        void setFilteredGroups(@NonNull List<Chat> contacts, CharSequence filterText) {
-            this.filteredGroups = contacts;
+        void setFilteredGroups(@NonNull List<Group> groups, CharSequence filterText) {
+            this.filteredGroups = groups;
             this.filterText = filterText;
             this.filterTokens = FilterUtils.getFilterTokens(filterText);
             notifyDataSetChanged();
@@ -216,7 +215,7 @@ public class GroupsInCommonActivity extends HalloActivity {
             final View selectionView;
             final View selectionCheck;
 
-            private Chat chat;
+            private Group group;
 
             ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -229,27 +228,27 @@ public class GroupsInCommonActivity extends HalloActivity {
                 selectionView = itemView.findViewById(R.id.selection_background);
                 selectionCheck = itemView.findViewById(R.id.selection_check);
                 itemView.setOnClickListener(v -> {
-                    startActivity(ViewGroupFeedActivity.viewFeed(GroupsInCommonActivity.this, (GroupId) chat.chatId));
+                    startActivity(ViewGroupFeedActivity.viewFeed(GroupsInCommonActivity.this, group.groupId));
                 });
             }
 
-            void bindTo(@NonNull Chat chat, @Nullable List<String> filterTokens) {
-                boolean differentChat = this.chat == null || !Objects.equals(chat.chatId, this.chat.chatId);
-                this.chat = chat;
+            void bindTo(@NonNull Group group, @Nullable List<String> filterTokens) {
+                boolean differentGroup = this.group == null || !Objects.equals(group.groupId, this.group.groupId);
+                this.group = group;
                 selectionView.setVisibility(View.GONE);
                 selectionCheck.setVisibility(View.GONE);
 
-                avatarLoader.load(avatarView, chat.chatId);
-                CharSequence name = chat.name;
+                avatarLoader.load(avatarView, group.groupId);
+                CharSequence name = group.name;
                 if (filterTokens != null && !filterTokens.isEmpty()) {
-                    CharSequence formattedName = FilterUtils.formatMatchingText(itemView.getContext(), chat.name, filterTokens);
+                    CharSequence formattedName = FilterUtils.formatMatchingText(itemView.getContext(), group.name, filterTokens);
                     if (formattedName != null) {
                         name = formattedName;
                     }
                 }
                 nameView.setText(name);
 
-                groupPostLoader.load(infoView, chat.chatId, new ViewDataLoader.Displayer<View, Post>() {
+                groupPostLoader.load(infoView, group.groupId, new ViewDataLoader.Displayer<View, Post>() {
                     @Override
                     public void showResult(@NonNull View view, @Nullable Post result) {
                         if (result != null) {
@@ -268,7 +267,7 @@ public class GroupsInCommonActivity extends HalloActivity {
 
                     @Override
                     public void showLoading(@NonNull View view) {
-                        if (differentChat) {
+                        if (differentGroup) {
                             infoView.setVisibility(View.VISIBLE);
                             infoView.setText("");
                         }
@@ -289,11 +288,11 @@ public class GroupsInCommonActivity extends HalloActivity {
 
                     @Override
                     public void showLoading(@NonNull View view) {
-                        if (differentChat) {
+                        if (differentGroup) {
                             newMessagesView.setVisibility(View.GONE);
                         }
                     }
-                }, (GroupId) chat.chatId);
+                }, group.groupId);
             }
 
             private void bindGroupSystemPostPreview(@NonNull Post post) {

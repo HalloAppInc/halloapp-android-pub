@@ -16,9 +16,8 @@ import androidx.work.WorkerParameters;
 
 import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
-import com.halloapp.id.ChatId;
+import com.halloapp.content.Group;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.nux.ZeroZoneManager;
@@ -102,41 +101,41 @@ public class GroupsSync {
         }
 
         try {
-            List<GroupInfo> groups = groupsApi.getGroupsList().await();
-            List<Chat> chats = contentDb.getGroups();
+            List<GroupInfo> groupInfos = groupsApi.getGroupsList().await();
+            List<Group> groups = contentDb.getGroups();
             
-            Map<ChatId, Chat> chatMap = new HashMap<>();
-            for (Chat chat : chats) {
-                chatMap.put(chat.chatId, chat);
+            Map<GroupId, Group> groupMap = new HashMap<>();
+            for (Group group : groups) {
+                groupMap.put(group.groupId, group);
             }
 
             List<GroupInfo> addedGroups = new ArrayList<>();
             List<GroupInfo> updatedGroups = new ArrayList<>();
-            for (GroupInfo groupInfo : groups) {
-                Chat chat = chatMap.remove(groupInfo.groupId);
-                if (chat == null) {
+            for (GroupInfo groupInfo : groupInfos) {
+                Group group = groupMap.remove(groupInfo.groupId);
+                if (group == null) {
                     addedGroups.add(groupInfo);
-                } else if (!haveSameMetadata(groupInfo, chat)) {
+                } else if (!haveSameMetadata(groupInfo, group)) {
                     updatedGroups.add(groupInfo);
                 }
             }
-            List<Chat> deletedGroups = new ArrayList<>(chatMap.values());
+            List<Group> deletedGroups = new ArrayList<>(groupMap.values());
 
             Log.d("GroupsSync.perfromGroupSync adding " + addedGroups.size() + " groups");
             for (GroupInfo groupInfo : addedGroups) {
-                contentDb.addGroupChat(groupInfo, null);
+                contentDb.addFeedGroup(groupInfo, null);
             }
 
             Log.d("GroupsSync.perfromGroupSync updating " + updatedGroups.size() + " groups");
             for (GroupInfo groupInfo : updatedGroups) {
-                contentDb.updateGroupChat(groupInfo, null);
+                contentDb.updateFeedGroup(groupInfo, null);
             }
 
             Log.d("GroupsSync.perfromGroupSync ignoring " + deletedGroups.size() + " deleted groups");
             // TODO(jack): mark deleted chats so users cannot send messages to them
 
             Map<UserId, String> nameMap = new HashMap<>();
-            for (GroupInfo groupInfo : groups) {
+            for (GroupInfo groupInfo : groupInfos) {
                 syncGroup(groupInfo.groupId, nameMap);
             }
 
@@ -189,8 +188,8 @@ public class GroupsSync {
         return !addedMembers.isEmpty() || !deletedMembers.isEmpty();
     }
 
-    private boolean haveSameMetadata(@NonNull GroupInfo groupInfo, @NonNull Chat chat) {
-        Preconditions.checkArgument(groupInfo.groupId.equals(chat.chatId));
+    private boolean haveSameMetadata(@NonNull GroupInfo groupInfo, @NonNull Group chat) {
+        Preconditions.checkArgument(groupInfo.groupId.equals(chat.groupId));
         if (groupInfo.background != null && groupInfo.background.getTheme() != chat.theme) {
             return false;
         }

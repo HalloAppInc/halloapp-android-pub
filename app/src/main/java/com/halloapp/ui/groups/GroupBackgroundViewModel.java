@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.id.GroupId;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.xmpp.groups.GroupsApi;
@@ -26,11 +27,11 @@ public class GroupBackgroundViewModel extends ViewModel {
         this.groupId = groupId;
 
         bgWorkers.execute(() -> {
-            Chat chat = contentDb.getChat(groupId);
-            if (chat == null) {
+            Group group = contentDb.getGroup(groupId);
+            if (group == null) {
                 return;
             }
-            selectedBackground.postValue(chat.theme);
+            selectedBackground.postValue(group.theme);
         });
     }
 

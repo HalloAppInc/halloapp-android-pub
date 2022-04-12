@@ -29,7 +29,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Post;
-import com.halloapp.groups.ChatLoader;
+import com.halloapp.groups.GroupLoader;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.VoiceNotePlayer;
@@ -58,7 +58,7 @@ public abstract class PostsFragment extends HalloFragment {
     protected ViewGroup parentViewGroup;
 
     private MediaThumbnailLoader mediaThumbnailLoader;
-    private ChatLoader chatLoader;
+    private GroupLoader groupLoader;
     private ContactLoader contactLoader;
     private AvatarLoader avatarLoader;
     private ServerProps serverProps;
@@ -91,7 +91,7 @@ public abstract class PostsFragment extends HalloFragment {
         final Point point = new Point();
         requireActivity().getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(requireContext(), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
-        chatLoader = new ChatLoader();
+        groupLoader = new GroupLoader();
         contactLoader = new ContactLoader();
         seenByLoader = new SeenByLoader();
         avatarLoader = AvatarLoader.getInstance();
@@ -110,7 +110,7 @@ public abstract class PostsFragment extends HalloFragment {
         super.onDestroy();
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
-        chatLoader.destroy();
+        groupLoader.destroy();
         seenByLoader.destroy();
         ContactsDb.getInstance().removeObserver(contactsObserver);
     }
@@ -187,8 +187,8 @@ public abstract class PostsFragment extends HalloFragment {
             }
 
             @Override
-            public ChatLoader getChatLoader() {
-                return chatLoader;
+            public GroupLoader getGroupLoader() {
+                return groupLoader;
             }
 
             @Override

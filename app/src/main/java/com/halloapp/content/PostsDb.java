@@ -2552,53 +2552,6 @@ class PostsDb {
     }
 
     @WorkerThread
-    void deleteGroup(@NonNull GroupId groupId) {
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        db.beginTransaction();
-        final String sql =
-                "SELECT " +
-                        "m." + MediaTable.COLUMN_FILE + "," +
-                        "m." + MediaTable.COLUMN_ENC_FILE + " " +
-                        "FROM " + PostsTable.TABLE_NAME + " " +
-                        "INNER JOIN (" +
-                        "SELECT " +
-                        MediaTable.COLUMN_PARENT_TABLE + "," +
-                        MediaTable.COLUMN_PARENT_ROW_ID + "," +
-                        MediaTable.COLUMN_FILE + "," +
-                        MediaTable.COLUMN_ENC_FILE + "," +
-                        MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + ")" +
-                        "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
-                        "WHERE " + PostsTable.COLUMN_GROUP_ID + "=?";
-        int deletedFiles = 0;
-        try (final Cursor cursor = db.rawQuery(sql, new String[]{ groupId.rawId() })) {
-            while (cursor.moveToNext()) {
-                final File mediaFile = fileStore.getMediaFile(cursor.getString(0));
-                if (mediaFile != null) {
-                    if (mediaFile.delete()) {
-                        deletedFiles++;
-                    } else {
-                        Log.i("PostsDb/deleteGroup: failed to delete " + mediaFile.getAbsolutePath());
-                    }
-                }
-                final File encFile = fileStore.getTmpFile(cursor.getString(1));
-                if (encFile != null) {
-                    if (encFile.delete()) {
-                        deletedFiles++;
-                    } else {
-                        Log.i("PostsDb/deleteGroup: failed to delete " + encFile.getAbsolutePath());
-                    }
-                }
-            }
-        }
-        Log.i("PostsDb/deleteGroup: " + deletedFiles + " media files deleted");
-
-        final int deletedPosts = db.delete(PostsTable.TABLE_NAME, PostsTable.COLUMN_GROUP_ID + "=?", new String[] {groupId.rawId()});
-        Log.i("PostsDb/deleteGroup: " + deletedPosts + " posts deleted for group id " + groupId.rawId());
-        db.setTransactionSuccessful();
-        db.endTransaction();
-    }
-
-    @WorkerThread
     @NonNull List<Comment> getPendingComments() {
         final List<Comment> comments = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();

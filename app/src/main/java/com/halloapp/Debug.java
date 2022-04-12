@@ -22,6 +22,7 @@ import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.Chat;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.group.GroupFeedKeyManager;
@@ -270,14 +271,12 @@ public class Debug {
                 }
                 case DEBUG_MENU_CORRUPT_GROUP_KEY_STORE: {
                     bgWorkers.execute(() -> {
-                        List<Chat> chats = ContentDb.getInstance().getActiveGroups();
-                        List<GroupId> groups = new ArrayList<>();
+                        List<Group> groups = ContentDb.getInstance().getActiveGroups();
+                        List<GroupId> groupIds = new ArrayList<>();
                         List<String> names = new ArrayList<>();
-                        for (Chat chat : chats) {
-                            if (chat.chatId instanceof GroupId) {
-                                groups.add((GroupId) chat.chatId);
-                                names.add(chat.name + " - " + chat.chatId.rawId());
-                            }
+                        for (Group group : groups) {
+                            groupIds.add(group.groupId);
+                            names.add(group.name + " - " + group.groupId.rawId());
                         }
 
                         CharSequence[] arr = new CharSequence[0];
@@ -285,7 +284,7 @@ public class Debug {
                             AlertDialog.Builder selectGroupBuilder = new AlertDialog.Builder(activity);
                             selectGroupBuilder.setTitle("Pick group (from active)")
                                     .setItems(names.toArray(arr), (dialog, which) -> {
-                                        GroupId groupId = groups.get(which);
+                                        GroupId groupId = groupIds.get(which);
                                         Log.d("Debug selected: " + which + " -> " + groupId);
                                         showCorruptGroupKeyStoreDialog(activity, groupId);
                                     });

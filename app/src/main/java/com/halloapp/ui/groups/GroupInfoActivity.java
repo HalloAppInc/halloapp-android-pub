@@ -194,22 +194,22 @@ public class GroupInfoActivity extends HalloActivity {
 
         leaveGroup.setOnClickListener(v -> askLeaveGroup());
 
-        viewModel.getChat().observe(this, chat -> {
-            if (chat == null) {
+        viewModel.getGroup().observe(this, group -> {
+            if (group == null) {
                 Log.w("GroupInfoActivity got null chat for " + groupId);
                 return;
             }
-            groupNameView.setText(chat.name);
-            groupBgDesc.setText(chat.theme == 0 ? R.string.group_background_default : R.string.group_background_color);
-            GroupTheme theme = GroupTheme.getTheme(chat.theme);
+            groupNameView.setText(group.name);
+            groupBgDesc.setText(group.theme == 0 ? R.string.group_background_default : R.string.group_background_color);
+            GroupTheme theme = GroupTheme.getTheme(group.theme);
             bgColorPreview.setImageDrawable(new ColorDrawable(ContextCompat.getColor(this, theme.bgColor)));
-            if (TextUtils.isEmpty(chat.groupDescription)) {
+            if (TextUtils.isEmpty(group.groupDescription)) {
                 descriptionTv.setVisibility(View.GONE);
                 descriptionPlaceholder.setVisibility(View.VISIBLE);
             } else {
                 descriptionTv.setVisibility(View.VISIBLE);
                 descriptionPlaceholder.setVisibility(View.GONE);
-                descriptionTv.setText(MarkdownUtils.formatMarkdown(descriptionTv.getContext(), chat.groupDescription));
+                descriptionTv.setText(MarkdownUtils.formatMarkdown(descriptionTv.getContext(), group.groupDescription));
             }
         });
 

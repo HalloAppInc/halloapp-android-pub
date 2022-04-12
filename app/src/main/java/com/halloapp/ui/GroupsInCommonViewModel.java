@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.util.ComputableLiveData;
 
@@ -21,26 +23,26 @@ public class GroupsInCommonViewModel extends ViewModel {
 
     private final UserId userId;
 
-    final ComputableLiveData<List<Chat>> groupsList;
+    final ComputableLiveData<List<Group>> groupsList;
 
     private GroupsInCommonViewModel(@NonNull UserId userId) {
         this.userId = userId;
 
-        groupsList = new ComputableLiveData<List<Chat>>() {
+        groupsList = new ComputableLiveData<List<Group>>() {
             @Override
-            protected List<Chat> compute() {
-                final HashSet<ChatId> groups = new HashSet<>(ContentDb.getInstance().getGroupsInCommon(userId));
-                final List<Chat> chats = ContentDb.getInstance().getGroups();
-                ListIterator<Chat> chatListIterator = chats.listIterator();
-                while (chatListIterator.hasNext()) {
-                    Chat chat = chatListIterator.next();
-                    if (chat == null || !groups.contains(chat.chatId)) {
-                        chatListIterator.remove();
+            protected List<Group> compute() {
+                final HashSet<GroupId> groupIds = new HashSet<>(ContentDb.getInstance().getGroupsInCommon(userId));
+                final List<Group> groups = ContentDb.getInstance().getGroups();
+                ListIterator<Group> groupsIterator = groups.listIterator();
+                while (groupsIterator.hasNext()) {
+                    Group group = groupsIterator.next();
+                    if (group == null || !groupIds.contains(group.groupId)) {
+                        groupsIterator.remove();
                     }
                 }
                 final Collator collator = Collator.getInstance(Locale.getDefault());
-                Collections.sort(chats, (obj1, obj2) -> collator.compare(obj1.name, obj2.name));
-                return chats;
+                Collections.sort(groups, (obj1, obj2) -> collator.compare(obj1.name, obj2.name));
+                return groups;
             }
         };
     }

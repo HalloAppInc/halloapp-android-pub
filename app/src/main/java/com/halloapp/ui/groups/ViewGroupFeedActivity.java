@@ -30,7 +30,6 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.nux.InviteGroupBottomSheetDialogFragment;
-import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.MediaPagerAdapter;
@@ -154,16 +153,16 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
 
         showGroupInviteSheet = getIntent().getBooleanExtra(EXTRA_SHOW_INVITE_BOTTOM_SHEET, false);
 
-        viewModel.chat.getLiveData().observe(this, chat -> {
-            if (chat != null) {
-                titleView.setText(chat.name);
+        viewModel.group.getLiveData().observe(this, group -> {
+            if (group != null) {
+                titleView.setText(group.name);
                 avatarLoader.load(avatarView, groupId, false);
-                ContentDb.getInstance().setGroupSeen((GroupId) chat.chatId);
+                ContentDb.getInstance().setGroupSeen(group.groupId);
                 if (showGroupInviteSheet) {
-                    if (TextUtils.isEmpty(chat.inviteToken)) {
+                    if (TextUtils.isEmpty(group.inviteToken)) {
                         Log.e("ViewGroupFeedActivity/no invite link token for group, not showing invite sheet!");
                     } else {
-                        DialogFragmentUtils.showDialogFragmentOnce(InviteGroupBottomSheetDialogFragment.newInstance(chat.inviteToken), getSupportFragmentManager());
+                        DialogFragmentUtils.showDialogFragmentOnce(InviteGroupBottomSheetDialogFragment.newInstance(group.inviteToken), getSupportFragmentManager());
                     }
                     showGroupInviteSheet = false;
                 }

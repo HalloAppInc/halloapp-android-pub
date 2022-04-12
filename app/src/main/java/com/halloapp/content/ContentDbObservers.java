@@ -113,10 +113,10 @@ class ContentDbObservers {
         }
     }
 
-    void notifyGroupChatAdded(@NonNull GroupId groupId) {
+    void notifyGroupFeedAdded(@NonNull GroupId groupId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
-                observer.onGroupChatAdded(groupId);
+                observer.onGroupFeedAdded(groupId);
             }
         }
     }

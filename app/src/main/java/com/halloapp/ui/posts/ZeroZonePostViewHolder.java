@@ -13,6 +13,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.content.Post;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.invites.InviteContactsActivity;
@@ -103,9 +104,9 @@ public class ZeroZonePostViewHolder extends ViewHolderWithLifecycle {
             }
         }
         if (linkTextView != null && post.getParentGroup() != null) {
-            parent.getChatLoader().load(linkTextView, new ViewDataLoader.Displayer<View, Chat>() {
+            parent.getGroupLoader().load(linkTextView, new ViewDataLoader.Displayer<View, Group>() {
                 @Override
-                public void showResult(@NonNull View view, @Nullable Chat result) {
+                public void showResult(@NonNull View view, @Nullable Group result) {
                     String link;
                     if (result == null || result.inviteToken == null) {
                         link = Constants.GROUP_INVITE_BASE_URL;

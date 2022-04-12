@@ -72,6 +72,7 @@ public class ContentDb {
     private final CallsDb callsDb;
     private final MediaDb mediaDb;
     private final PostsDb postsDb;
+    private final GroupsDb groupsDb;
     private final MentionsDb mentionsDb;
     private final MessagesDb messagesDb;
     private final Preferences preferences;
@@ -93,7 +94,7 @@ public class ContentDb {
         void onMessageDeleted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onMessageUpdated(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onIncomingMessagePlayed(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
-        void onGroupChatAdded(@NonNull GroupId groupId);
+        void onGroupFeedAdded(@NonNull GroupId groupId);
         void onGroupMetadataChanged(@NonNull GroupId groupId);
         void onGroupMembersChanged(@NonNull GroupId groupId);
         void onGroupAdminsChanged(@NonNull GroupId groupId);
@@ -126,7 +127,7 @@ public class ContentDb {
         public void onMessageDeleted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onMessageUpdated(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onIncomingMessagePlayed(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
-        public void onGroupChatAdded(@NonNull GroupId groupId) {}
+        public void onGroupFeedAdded(@NonNull GroupId groupId) {}
         public void onGroupMetadataChanged(@NonNull GroupId groupId) {}
         public void onGroupMembersChanged(@NonNull GroupId groupId) {}
         public void onGroupAdminsChanged(@NonNull GroupId groupId) {}
@@ -164,6 +165,7 @@ public class ContentDb {
         this.me = me;
         this.preferences = preferences;
 
+        groupsDb = new GroupsDb(fileStore, databaseHelper);
         callsDb = new CallsDb(databaseHelper);
         mentionsDb = new MentionsDb(databaseHelper);
         mediaDb = new MediaDb(databaseHelper, fileStore);
@@ -213,7 +215,7 @@ public class ContentDb {
                     try {
                         postsDb.addPost(post);
                         if (post.getParentGroup() != null) {
-                            messagesDb.updateGroupTimestamp(post.getParentGroup(), post.timestamp);
+                            groupsDb.updateGroupTimestamp(post.getParentGroup(), post.timestamp);
                         }
                     } catch (SQLiteConstraintException ex) {
                         Log.w("ContentDb.addPost: duplicate " + ex.getMessage() + " " + post);
@@ -627,9 +629,9 @@ public class ContentDb {
     @WorkerThread
     public List<Post> getAllPosts() {
         List<Post> ret = postsDb.getAllPosts(null);
-        List<Chat> groups = getGroups();
-        for (Chat group : groups) {
-            ret.addAll(postsDb.getAllPosts((GroupId) group.chatId));
+        List<Group> groups = getGroups();
+        for (Group group : groups) {
+            ret.addAll(postsDb.getAllPosts(group.groupId));
         }
         return ret;
     }
@@ -880,10 +882,10 @@ public class ContentDb {
         });
     }
 
-    public void addGroupChat(@NonNull GroupInfo groupInfo, @Nullable Runnable completionRunnable) {
+    public void addFeedGroup(@NonNull GroupInfo groupInfo, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            if (messagesDb.addGroupChat(groupInfo)) {
-                observers.notifyGroupChatAdded(groupInfo.groupId);
+            if (groupsDb.addGroup(groupInfo)) {
+                observers.notifyGroupFeedAdded(groupInfo.groupId);
             }
             if (completionRunnable != null) {
                 completionRunnable.run();
@@ -891,9 +893,9 @@ public class ContentDb {
         });
     }
 
-    public void updateGroupChat(@NonNull GroupInfo groupInfo, @Nullable Runnable completionRunnable) {
+    public void updateFeedGroup(@NonNull GroupInfo groupInfo, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            if (messagesDb.updateGroupChat(groupInfo)) {
+            if (groupsDb.updateGroupChat(groupInfo)) {
                 observers.notifyGroupMetadataChanged(groupInfo.groupId);
             }
             if (completionRunnable != null) {
@@ -904,7 +906,7 @@ public class ContentDb {
 
     public void setGroupName(@NonNull GroupId groupId, @NonNull String name, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            if (messagesDb.setGroupName(groupId, name)) {
+            if (groupsDb.setGroupName(groupId, name)) {
                 observers.notifyGroupMetadataChanged(groupId);
             }
             if (completionRunnable != null) {
@@ -915,7 +917,7 @@ public class ContentDb {
 
     public void setGroupDescription(@NonNull GroupId groupId, @NonNull String name, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            if (messagesDb.setGroupDescription(groupId, name)) {
+            if (groupsDb.setGroupDescription(groupId, name)) {
                 observers.notifyGroupMetadataChanged(groupId);
             }
             if (completionRunnable != null) {
@@ -926,7 +928,7 @@ public class ContentDb {
 
     public void setGroupTheme(@NonNull GroupId groupId, int theme, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            if (messagesDb.setGroupTheme(groupId, theme)) {
+            if (groupsDb.setGroupTheme(groupId, theme)) {
                 observers.notifyGroupBackgroundChanged(groupId);
             }
             if (completionRunnable != null) {
@@ -937,13 +939,13 @@ public class ContentDb {
 
     public void setGroupLink(@NonNull GroupId groupId, @Nullable String inviteLink) {
         databaseWriteExecutor.execute(() -> {
-            messagesDb.setGroupInviteLinkToken(groupId, inviteLink);
+            groupsDb.setGroupInviteLinkToken(groupId, inviteLink);
         });
     }
 
     public void setGroupAvatar(@NonNull GroupId groupId, @NonNull String avatarId, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            if (messagesDb.setGroupAvatar(groupId, avatarId)) {
+            if (groupsDb.setGroupAvatar(groupId, avatarId)) {
                 observers.notifyGroupMetadataChanged(groupId);
             }
             if (completionRunnable != null) {
@@ -963,7 +965,7 @@ public class ContentDb {
 
     public void setGroupInactive(@NonNull GroupId groupId, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            if (messagesDb.setGroupInactive(groupId)) {
+            if (groupsDb.setGroupInactive(groupId)) {
                 observers.notifyGroupMetadataChanged(groupId);
             }
             if (completionRunnable != null) {
@@ -974,7 +976,7 @@ public class ContentDb {
 
     public void setGroupActive(@NonNull GroupId groupId, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            if (messagesDb.setGroupActive(groupId)) {
+            if (groupsDb.setGroupActive(groupId)) {
                 observers.notifyGroupMetadataChanged(groupId);
             }
             if (completionRunnable != null) {
@@ -985,7 +987,7 @@ public class ContentDb {
 
     public void addRemoveGroupMembers(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberInfo> added, @NonNull List<MemberInfo> removed, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            if (messagesDb.addRemoveGroupMembers(groupId, groupName, avatarId, added, removed)) {
+            if (groupsDb.addRemoveGroupMembers(groupId, groupName, avatarId, added, removed)) {
                 observers.notifyGroupMembersChanged(groupId);
             }
             if (completionRunnable != null) {
@@ -996,7 +998,7 @@ public class ContentDb {
 
     public void promoteDemoteGroupAdmins(@NonNull GroupId groupId, @NonNull List<MemberInfo> promoted, @NonNull List<MemberInfo> demoted, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            if (messagesDb.promoteDemoteGroupAdmins(groupId, promoted, demoted)) {
+            if (groupsDb.promoteDemoteGroupAdmins(groupId, promoted, demoted)) {
                 observers.notifyGroupAdminsChanged(groupId);
             }
             if (completionRunnable != null) {
@@ -1247,23 +1249,28 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public @NonNull List<ChatId> getGroupsInCommon(UserId userId) {
-        return messagesDb.getGroupsInCommon(userId);
+    public @NonNull List<GroupId> getGroupsInCommon(UserId userId) {
+        return groupsDb.getGroupsInCommon(userId);
     }
 
     @WorkerThread
-    public @NonNull List<Chat> getGroups() {
-        return messagesDb.getGroups();
+    public @NonNull List<Group> getGroups() {
+        return groupsDb.getGroups();
     }
 
     @WorkerThread
-    public @NonNull List<Chat> getActiveGroups() {
-        return messagesDb.getActiveGroups();
+    public @NonNull List<Group> getActiveGroups() {
+        return groupsDb.getActiveGroups();
     }
 
     @WorkerThread
     public @Nullable Chat getChat(@NonNull ChatId chatId) {
         return messagesDb.getChat(chatId);
+    }
+
+    @WorkerThread
+    public @Nullable Group getGroup(@NonNull GroupId groupId) {
+        return groupsDb.getGroup(groupId);
     }
 
     @WorkerThread
@@ -1273,7 +1280,7 @@ public class ContentDb {
 
     @WorkerThread
     public @NonNull List<MemberInfo> getGroupMembers(@NonNull GroupId groupId) {
-        return messagesDb.getGroupMembers(groupId);
+        return groupsDb.getGroupMembers(groupId);
     }
 
     @WorkerThread
@@ -1281,10 +1288,16 @@ public class ContentDb {
         return messagesDb.getUnseenChatsCount();
     }
 
+    public void deleteGroup(@NonNull GroupId groupId) {
+        databaseWriteExecutor.execute(() -> {
+            groupsDb.deleteGroup(groupId);
+        });
+    }
+
     public void deleteChat(@NonNull ChatId chatId) {
         databaseWriteExecutor.execute(() -> {
             if (chatId instanceof GroupId) {
-                postsDb.deleteGroup((GroupId) chatId);
+                groupsDb.deleteGroup((GroupId) chatId);
             }
             messagesDb.deleteChat(chatId);
             observers.notifyChatDeleted(chatId);
@@ -1452,27 +1465,6 @@ public class ContentDb {
     @NonNull
     public Collection<Post> getShareablePosts() {
         return postsDb.getShareablePosts();
-    }
-
-    @WorkerThread
-    public void migrateGroupTimestamps() {
-        if (preferences.getMigratedGroupTimestamps()) {
-            return;
-        }
-        Log.i("ContentDb.migrateGroupTimestamps");
-        final List<Chat> chats = getGroups();
-        for (Chat chat : chats) {
-            if (!chat.isGroup) {
-                continue;
-            }
-            GroupId groupId = (GroupId) chat.chatId;
-            Post lastPost = getLastGroupPost(groupId);
-            if (lastPost != null) {
-                messagesDb.updateGroupTimestamp(groupId, lastPost.timestamp);
-            }
-        }
-        preferences.setMigratedGroupTimestamps(true);
-        Log.i("ContentDb.migrateGroupTimestamps complete");
     }
 
     @NonNull

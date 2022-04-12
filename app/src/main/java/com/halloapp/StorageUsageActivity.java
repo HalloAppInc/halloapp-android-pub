@@ -17,13 +17,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.contacts.ContactLoader;
-import com.halloapp.content.Chat;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
-import com.halloapp.groups.ChatLoader;
+import com.halloapp.groups.GroupLoader;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -32,14 +32,12 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
-import com.halloapp.util.logs.Log;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -63,7 +61,7 @@ public class StorageUsageActivity extends HalloActivity {
     private List<Item> chatsBreakdown;
 
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
-    private ChatLoader chatLoader;
+    private GroupLoader groupLoader;
     private ContactLoader contactLoader;
 
     private Item homeFeedItem;
@@ -82,7 +80,7 @@ public class StorageUsageActivity extends HalloActivity {
 
         viewModel = new ViewModelProvider(this).get(StorageViewModel.class);
 
-        chatLoader = new ChatLoader();
+        groupLoader = new GroupLoader();
         contactLoader = new ContactLoader();
 
         RecyclerView storageRv = findViewById(R.id.storage_rv);
@@ -128,7 +126,7 @@ public class StorageUsageActivity extends HalloActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        chatLoader.destroy();
+        groupLoader.destroy();
         contactLoader.destroy();
     }
 
@@ -279,12 +277,12 @@ public class StorageUsageActivity extends HalloActivity {
             if (item instanceof StorageItem) {
                 holder.itemName.setVisibility(View.VISIBLE);
                 ChatId chatId = ((StorageItem) item).chatId;
-                chatLoader.cancel(holder.itemName);
+                groupLoader.cancel(holder.itemName);
                 contactLoader.cancel(holder.itemName);
                 if (chatId instanceof GroupId) {
-                    chatLoader.load(holder.itemName, new ViewDataLoader.Displayer<View, Chat>() {
+                    groupLoader.load(holder.itemName, new ViewDataLoader.Displayer<View, Group>() {
                         @Override
-                        public void showResult(@NonNull View view, @Nullable Chat result) {
+                        public void showResult(@NonNull View view, @Nullable Group result) {
                             if (result != null) {
                                 holder.itemName.setText(result.name);
                             }
@@ -294,7 +292,7 @@ public class StorageUsageActivity extends HalloActivity {
                         public void showLoading(@NonNull View view) {
                             holder.itemName.setText("");
                         }
-                    }, chatId);
+                    }, (GroupId) chatId);
                 } else {
                     contactLoader.load(holder.itemName, (UserId) chatId, false);
                 }

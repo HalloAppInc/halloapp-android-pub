@@ -24,6 +24,7 @@ import com.halloapp.R;
 import com.halloapp.UrlPreview;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.id.GroupId;
@@ -246,9 +247,9 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         if (showGroupName) {
             if (post.getParentGroup() != null) {
                 postHeader.setGroupAttributionVisible(true);
-                parent.getChatLoader().load(groupView, new ViewDataLoader.Displayer<View, Chat>() {
+                parent.getGroupLoader().load(groupView, new ViewDataLoader.Displayer<View, Group>() {
                     @Override
-                    public void showResult(@NonNull View view, @Nullable Chat result) {
+                    public void showResult(@NonNull View view, @Nullable Group result) {
                         if (result != null) {
                             groupView.setText(result.name);
                             groupView.setTextColor(result.rowId != -1 ? itemView.getResources().getColor(R.color.primary_text) : itemView.getResources().getColor(R.color.post_group_left));
@@ -268,7 +269,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                 }, post.getParentGroup());
             } else {
                 groupView.setClickable(false);
-                parent.getChatLoader().cancel(groupView);
+                parent.getGroupLoader().cancel(groupView);
                 postHeader.setGroupAttributionVisible(false);
             }
         } else {

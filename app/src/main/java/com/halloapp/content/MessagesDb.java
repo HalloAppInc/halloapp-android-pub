@@ -17,34 +17,25 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.halloapp.AppContext;
 import com.halloapp.FileStore;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.DeletedGroupNameTable;
-import com.halloapp.content.tables.GroupMembersTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.OutgoingPlayedReceiptsTable;
 import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.RepliesTable;
-import com.halloapp.groups.GroupInfo;
-import com.halloapp.groups.GroupsSync;
-import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
-import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.props.ServerProps;
-import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.clients.ChatContainer;
-import com.halloapp.proto.clients.VoiceNote;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptStats;
-import com.halloapp.xmpp.groups.MemberElement;
 
 import java.io.File;
 import java.io.IOException;
@@ -309,194 +300,6 @@ class MessagesDb {
     }
 
     @WorkerThread
-    boolean addGroupChat(@NonNull GroupInfo groupInfo) {
-        Log.i("MessagesDb.addGroupChat " + groupInfo.groupId);
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            final ContentValues chatValues = new ContentValues();
-            chatValues.put(ChatsTable.COLUMN_CHAT_ID, groupInfo.groupId.rawId());
-            chatValues.put(ChatsTable.COLUMN_CHAT_NAME, groupInfo.name);
-            chatValues.put(ChatsTable.COLUMN_IS_GROUP, 1);
-            chatValues.put(ChatsTable.COLUMN_GROUP_DESCRIPTION, groupInfo.description);
-            chatValues.put(ChatsTable.COLUMN_GROUP_AVATAR_ID, groupInfo.avatar);
-            chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 0);
-
-            boolean exists;
-            try (Cursor cursor = db.rawQuery("SELECT * FROM " + ChatsTable.TABLE_NAME + " WHERE " + ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupInfo.groupId.rawId()})) {
-                exists = cursor.getCount() > 0;
-            }
-
-            if (exists) {
-                db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupInfo.groupId.rawId()});
-            } else {
-                db.insertWithOnConflict(ChatsTable.TABLE_NAME, null, chatValues, SQLiteDatabase.CONFLICT_REPLACE);
-            }
-
-            if (groupInfo.members != null) {
-                for (MemberInfo member : groupInfo.members) {
-                    final ContentValues memberValues = new ContentValues();
-                    memberValues.put(GroupMembersTable.COLUMN_GROUP_ID, groupInfo.groupId.rawId());
-                    memberValues.put(GroupMembersTable.COLUMN_USER_ID, member.userId.rawId());
-                    memberValues.put(GroupMembersTable.COLUMN_IS_ADMIN, MemberElement.Type.ADMIN.equals(member.type) ? 1 : 0);
-                    db.insertWithOnConflict(GroupMembersTable.TABLE_NAME, null, memberValues, SQLiteDatabase.CONFLICT_ABORT);
-                }
-            }
-            db.delete(DeletedGroupNameTable.TABLE_NAME, DeletedGroupNameTable.COLUMN_CHAT_ID + "=?", new String[]{groupInfo.groupId.rawId()});
-            db.setTransactionSuccessful();
-            Log.i("ContentDb.addGroupChat: added " + groupInfo.groupId);
-        } catch (SQLiteConstraintException ex) {
-            Log.w("ContentDb.addGroupChat: duplicate " + ex.getMessage() + " " + groupInfo.groupId);
-            return false;
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
-
-    @WorkerThread
-    boolean updateGroupChat(@NonNull GroupInfo groupInfo) {
-        Log.i("MessagesDb.updateGroupChat " + groupInfo.groupId);
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            final ContentValues chatValues = new ContentValues();
-            chatValues.put(ChatsTable.COLUMN_CHAT_NAME, groupInfo.name);
-            chatValues.put(ChatsTable.COLUMN_GROUP_DESCRIPTION, groupInfo.description);
-            chatValues.put(ChatsTable.COLUMN_GROUP_AVATAR_ID, groupInfo.avatar);
-            if (groupInfo.background != null) {
-                chatValues.put(ChatsTable.COLUMN_THEME, groupInfo.background.getTheme());
-            }
-            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupInfo.groupId.rawId()});
-
-            db.setTransactionSuccessful();
-            Log.i("ContentDb.updateGroupChat: updated " + groupInfo.groupId);
-        } catch (SQLiteConstraintException ex) {
-            Log.w("ContentDb.updateGroupChat: " + ex.getMessage() + " " + groupInfo.groupId);
-            return false;
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
-
-    @WorkerThread
-    void updateGroupTimestamp(@NonNull GroupId groupId, long timestamp) {
-        Log.i("MessagesDb.updateGroupTimestamp " + groupId);
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        int updatedRowsCount;
-        try (SQLiteStatement statement = db.compileStatement("UPDATE " + ChatsTable.TABLE_NAME + " SET " +
-                ChatsTable.COLUMN_TIMESTAMP + "=" + timestamp + " WHERE " + ChatsTable.COLUMN_CHAT_ID + "='" + groupId.rawId() + "'")) {
-            statement.executeUpdateDelete();
-        }
-    }
-
-    @WorkerThread
-    boolean setGroupTheme(@NonNull GroupId groupId, int theme) {
-        Log.i("MessagesDb.setGroupBackground " + groupId);
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            final ContentValues chatValues = new ContentValues();
-            chatValues.put(ChatsTable.COLUMN_THEME, theme);
-            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()});
-
-            db.setTransactionSuccessful();
-            Log.i("ContentDb.setGroupBackground: success " + groupId);
-        } catch (SQLiteConstraintException ex) {
-            Log.w("ContentDb.setGroupBackground: " + ex.getMessage() + " " + groupId);
-            return false;
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
-
-    @WorkerThread
-    boolean setGroupInviteLinkToken(@NonNull GroupId groupId, @Nullable String inviteToken) {
-        Log.i("MessagesDb.setGroupInviteLinkToken " + groupId);
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            final ContentValues chatValues = new ContentValues();
-            chatValues.put(ChatsTable.COLUMN_INVITE_LINK, inviteToken);
-            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()});
-
-            db.setTransactionSuccessful();
-            Log.i("ContentDb.setGroupInviteLinkToken: success " + groupId);
-        } catch (SQLiteConstraintException ex) {
-            Log.w("ContentDb.setGroupInviteLinkToken: " + ex.getMessage() + " " + groupId);
-            return false;
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
-
-    @WorkerThread
-    boolean setGroupName(@NonNull GroupId groupId, @NonNull String name) {
-        Log.i("MessagesDb.setGroupName " + groupId);
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            final ContentValues chatValues = new ContentValues();
-            chatValues.put(ChatsTable.COLUMN_CHAT_NAME, name);
-            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()});
-
-            db.setTransactionSuccessful();
-            Log.i("ContentDb.setGroupName: success " + groupId);
-        } catch (SQLiteConstraintException ex) {
-            Log.w("ContentDb.setGroupName: " + ex.getMessage() + " " + groupId);
-            return false;
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
-
-    @WorkerThread
-    boolean setGroupDescription(@NonNull GroupId groupId, @Nullable String description) {
-        Log.i("MessagesDb.setGroupDescription " + groupId);
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            final ContentValues chatValues = new ContentValues();
-            chatValues.put(ChatsTable.COLUMN_GROUP_DESCRIPTION, description);
-            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()});
-
-            db.setTransactionSuccessful();
-            Log.i("ContentDb.setGroupDescription: success " + groupId);
-        } catch (SQLiteConstraintException ex) {
-            Log.w("ContentDb.setGroupDescription: " + ex.getMessage() + " " + groupId);
-            return false;
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
-
-    @WorkerThread
-    boolean setGroupInactive(@NonNull GroupId groupId) {
-        Log.i("MessagesDb.setGroupInactive " + groupId);
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            final ContentValues chatValues = new ContentValues();
-            chatValues.put(ChatsTable.COLUMN_IS_ACTIVE, 0);
-            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()});
-
-            db.setTransactionSuccessful();
-            Log.i("ContentDb.setGroupInactive: success " + groupId);
-        } catch (SQLiteConstraintException ex) {
-            Log.w("ContentDb.setGroupInactive: " + ex.getMessage() + " " + groupId);
-            return false;
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
-
-    @WorkerThread
     boolean setUnknownContactAllowed(@NonNull UserId userId) {
         Log.i("MessagesDb.setUnknownContactAllowed " + userId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -510,127 +313,6 @@ class MessagesDb {
             Log.i("ContentDb.setUnknownContactAllowed: success " + userId);
         } catch (SQLiteConstraintException ex) {
             Log.w("ContentDb.setUnknownContactAllowed: " + ex.getMessage() + " " + userId);
-            return false;
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
-
-    @WorkerThread
-    boolean setGroupActive(@NonNull GroupId groupId) {
-        Log.i("MessagesDb.setGroupActive " + groupId);
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            final ContentValues chatValues = new ContentValues();
-            chatValues.put(ChatsTable.COLUMN_IS_ACTIVE, 1);
-            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()});
-
-            db.setTransactionSuccessful();
-            Log.i("ContentDb.setGroupActive: success " + groupId);
-        } catch (SQLiteConstraintException ex) {
-            Log.w("ContentDb.setGroupActive: " + ex.getMessage() + " " + groupId);
-            return false;
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
-
-    @WorkerThread
-    boolean setGroupAvatar(@NonNull GroupId groupId, @NonNull String avatarId) {
-        Log.i("MessagesDb.setGroupAvatar " + groupId);
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            final ContentValues chatValues = new ContentValues();
-            chatValues.put(ChatsTable.COLUMN_GROUP_AVATAR_ID, avatarId);
-            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()});
-
-            db.setTransactionSuccessful();
-            Log.i("ContentDb.setGroupAvatar: success " + groupId);
-        } catch (SQLiteConstraintException ex) {
-            Log.w("ContentDb.setGroupAvatar: " + ex.getMessage() + " " + groupId);
-            return false;
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
-
-    @WorkerThread
-    boolean addRemoveGroupMembers(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberInfo> added, @NonNull List<MemberInfo> removed) {
-        Log.i("MessagesDb.addRemoveGroupMembers " + groupId);
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            boolean groupExists;
-            try (Cursor cursor = db.rawQuery("SELECT * FROM " + ChatsTable.TABLE_NAME + " WHERE " + ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()})) {
-                groupExists = cursor.getCount() > 0;
-            }
-            if (!groupExists) {
-                addGroupChat(new GroupInfo(groupId, groupName, null, avatarId, Background.getDefaultInstance(), new ArrayList<>()));
-                GroupsSync.getInstance(AppContext.getInstance().get()).forceGroupSync();
-            }
-
-            for (MemberInfo member : added) {
-                final ContentValues memberValues = new ContentValues();
-                memberValues.put(GroupMembersTable.COLUMN_GROUP_ID, groupId.rawId());
-                memberValues.put(GroupMembersTable.COLUMN_USER_ID, member.userId.rawId());
-                memberValues.put(GroupMembersTable.COLUMN_IS_ADMIN, MemberElement.Type.ADMIN.equals(member.type) ? 1 : 0);
-                db.insertWithOnConflict(GroupMembersTable.TABLE_NAME, null, memberValues, SQLiteDatabase.CONFLICT_IGNORE);
-            }
-
-            for (MemberInfo member : removed) {
-                db.delete(
-                        GroupMembersTable.TABLE_NAME,
-                        GroupMembersTable.COLUMN_GROUP_ID + "=? AND " + GroupMembersTable.COLUMN_USER_ID + "=?",
-                        new String[]{groupId.rawId(), member.userId.rawId()}
-                        );
-            }
-
-            db.setTransactionSuccessful();
-            Log.i("ContentDb.addGroupMembers: added " + groupId);
-        } catch (SQLiteConstraintException ex) {
-            Log.w("ContentDb.addGroupMembers: duplicate " + ex.getMessage() + " " + groupId);
-            return false;
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
-
-    @WorkerThread
-    boolean promoteDemoteGroupAdmins(@NonNull GroupId groupId, @NonNull List<MemberInfo> promoted, @NonNull List<MemberInfo> demoted) {
-        Log.i("MessagesDb.promoteDemoteGroupAdmins " + groupId);
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            for (MemberInfo member : promoted) {
-                final ContentValues memberValues = new ContentValues();
-                memberValues.put(GroupMembersTable.COLUMN_IS_ADMIN, 1);
-
-                db.update(GroupMembersTable.TABLE_NAME,
-                        memberValues,
-                        GroupMembersTable.COLUMN_GROUP_ID + "=? AND " + GroupMembersTable.COLUMN_USER_ID + "=?",
-                        new String[]{groupId.rawId(), member.userId.rawId()});
-            }
-
-            for (MemberInfo member : demoted) {
-                final ContentValues memberValues = new ContentValues();
-                memberValues.put(GroupMembersTable.COLUMN_IS_ADMIN, 0);
-
-                db.update(GroupMembersTable.TABLE_NAME,
-                        memberValues,
-                        GroupMembersTable.COLUMN_GROUP_ID + "=? AND " + GroupMembersTable.COLUMN_USER_ID + "=?",
-                        new String[]{groupId.rawId(), member.userId.rawId()});
-            }
-
-            db.setTransactionSuccessful();
-            Log.i("ContentDb.promoteDemoteGroupAdmins: done " + groupId);
-        } catch (SQLiteConstraintException ex) {
-            Log.w("ContentDb.promoteDemoteGroupAdmins: error " + ex.getMessage() + " " + groupId);
             return false;
         } finally {
             db.endTransaction();
@@ -2199,106 +1881,6 @@ class MessagesDb {
     }
 
     @WorkerThread
-    @NonNull List<ChatId> getGroupsInCommon(@NonNull UserId userId) {
-        final List<ChatId> chats = new ArrayList<>();
-        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        try (final Cursor cursor = db.query(GroupMembersTable.TABLE_NAME,
-                new String [] {
-                        GroupMembersTable.COLUMN_GROUP_ID},
-                GroupMembersTable.COLUMN_USER_ID + "=? OR " + GroupMembersTable.COLUMN_USER_ID + "=?",
-                new String[]{"", userId.rawId()}, GroupMembersTable.COLUMN_GROUP_ID, "COUNT(DISTINCT " + GroupMembersTable.COLUMN_USER_ID + ") > 1", null)) {
-            while (cursor.moveToNext()) {
-                chats.add(ChatId.fromNullable(cursor.getString(0)));
-            }
-        }
-        return chats;
-    }
-
-    @WorkerThread
-    @NonNull List<Chat> getGroups() {
-        final List<Chat> chats = new ArrayList<>();
-        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        try (final Cursor cursor = db.query(ChatsTable.TABLE_NAME,
-                new String [] {
-                        ChatsTable._ID,
-                        ChatsTable.COLUMN_CHAT_ID,
-                        ChatsTable.COLUMN_TIMESTAMP,
-                        ChatsTable.COLUMN_NEW_MESSAGE_COUNT,
-                        ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID,
-                        ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID,
-                        ChatsTable.COLUMN_CHAT_NAME,
-                        ChatsTable.COLUMN_IS_GROUP,
-                        ChatsTable.COLUMN_GROUP_DESCRIPTION,
-                        ChatsTable.COLUMN_GROUP_AVATAR_ID,
-                        ChatsTable.COLUMN_IS_ACTIVE,
-                        ChatsTable.COLUMN_THEME,
-                        ChatsTable.COLUMN_INVITE_LINK},
-                ChatsTable.COLUMN_IS_GROUP + "=?",
-                new String[]{"1"}, null, null, ChatsTable.COLUMN_TIMESTAMP + " DESC")) {
-            while (cursor.moveToNext()) {
-                final Chat chat = new Chat(
-                        cursor.getLong(0),
-                        ChatId.fromNullable(cursor.getString(1)),
-                        cursor.getLong(2),
-                        cursor.getInt(3),
-                        cursor.getLong(4),
-                        cursor.getLong(5),
-                        cursor.getString(6),
-                        cursor.getInt(7) == 1,
-                        cursor.getString(8),
-                        cursor.getString(9),
-                        cursor.getInt(10) == 1,
-                        cursor.getInt(11));
-                chat.inviteToken = cursor.getString(12);
-                chats.add(chat);
-            }
-        }
-        return chats;
-    }
-
-    @WorkerThread
-    @NonNull List<Chat> getActiveGroups() {
-        final List<Chat> chats = new ArrayList<>();
-        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        try (final Cursor cursor = db.query(ChatsTable.TABLE_NAME,
-                new String [] {
-                        ChatsTable._ID,
-                        ChatsTable.COLUMN_CHAT_ID,
-                        ChatsTable.COLUMN_TIMESTAMP,
-                        ChatsTable.COLUMN_NEW_MESSAGE_COUNT,
-                        ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID,
-                        ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID,
-                        ChatsTable.COLUMN_CHAT_NAME,
-                        ChatsTable.COLUMN_IS_GROUP,
-                        ChatsTable.COLUMN_GROUP_DESCRIPTION,
-                        ChatsTable.COLUMN_GROUP_AVATAR_ID,
-                        ChatsTable.COLUMN_IS_ACTIVE,
-                        ChatsTable.COLUMN_THEME,
-                        ChatsTable.COLUMN_INVITE_LINK},
-                ChatsTable.COLUMN_IS_GROUP + "=? AND " + ChatsTable.COLUMN_IS_ACTIVE + "=?",
-                new String[]{"1", "1"}, null, null, ChatsTable.COLUMN_TIMESTAMP + " DESC")) {
-            while (cursor.moveToNext()) {
-                final Chat chat = new Chat(
-                        cursor.getLong(0),
-                        ChatId.fromNullable(cursor.getString(1)),
-                        cursor.getLong(2),
-                        cursor.getInt(3),
-                        cursor.getLong(4),
-                        cursor.getLong(5),
-                        cursor.getString(6),
-                        cursor.getInt(7) == 1,
-                        cursor.getString(8),
-                        cursor.getString(9),
-                        cursor.getInt(10) == 1,
-                        cursor.getInt(11));
-                chat.inviteToken = cursor.getString(12);
-                chats.add(chat);
-            }
-        }
-        return chats;
-    }
-
-    @WorkerThread
     @Nullable Chat getChat(@NonNull ChatId chatId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(ChatsTable.TABLE_NAME,
@@ -2352,29 +1934,6 @@ class MessagesDb {
             }
         }
         return null;
-    }
-
-    @WorkerThread
-    @NonNull List<MemberInfo> getGroupMembers(GroupId groupId) {
-        final List<MemberInfo> members = new ArrayList<>();
-        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        try (final Cursor cursor = db.query(GroupMembersTable.TABLE_NAME,
-                new String [] {
-                        GroupMembersTable._ID,
-                        GroupMembersTable.COLUMN_USER_ID,
-                        GroupMembersTable.COLUMN_IS_ADMIN},
-                GroupMembersTable.COLUMN_GROUP_ID + "=?",
-                new String[]{groupId.rawId()}, null, null, null)) {
-            while (cursor.moveToNext()) {
-                final MemberInfo member = new MemberInfo(
-                        cursor.getLong(0),
-                        new UserId(cursor.getString(1)),
-                        cursor.getInt(2) == 1 ? MemberElement.Type.ADMIN : MemberElement.Type.MEMBER,
-                        null);
-                members.add(member);
-            }
-        }
-        return members;
     }
 
     @WorkerThread

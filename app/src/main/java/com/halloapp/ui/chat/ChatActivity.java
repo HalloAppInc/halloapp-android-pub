@@ -63,7 +63,7 @@ import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
-import com.halloapp.groups.ChatLoader;
+import com.halloapp.groups.GroupLoader;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -180,7 +180,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private PresenceManager presenceManager;
 
     private MediaThumbnailLoader mediaThumbnailLoader;
-    private ChatLoader chatLoader;
+    private GroupLoader groupLoader;
     private ReplyLoader replyLoader;
     private ContactLoader contactLoader;
     private TextContentLoader textContentLoader;
@@ -290,7 +290,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         contactLoader = new ContactLoader();
-        chatLoader = new ChatLoader();
+        groupLoader = new GroupLoader();
         replyLoader = new ReplyLoader(getResources().getDimensionPixelSize(R.dimen.reply_thumb_size));
         avatarLoader = AvatarLoader.getInstance();
         presenceManager = PresenceManager.getInstance();
@@ -898,7 +898,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     public void onDestroy() {
         super.onDestroy();
         mediaThumbnailLoader.destroy();
-        chatLoader.destroy();
+        groupLoader.destroy();
         contactLoader.destroy();
         replyLoader.destroy();
         urlPreviewLoader.destroy();
@@ -1509,8 +1509,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         }
 
         @Override
-        public ChatLoader getChatLoader() {
-            return chatLoader;
+        public GroupLoader getGroupLoader() {
+            return groupLoader;
         }
 
         @Override

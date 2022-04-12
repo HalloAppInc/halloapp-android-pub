@@ -158,7 +158,7 @@ public class ViewAvatarActivity extends HalloActivity {
                     if (chatId instanceof UserId) {
                         return ContactsDb.getInstance().getContact((UserId) chatId).getDisplayName();
                     } else if (chatId instanceof GroupId) {
-                        return Preconditions.checkNotNull(ContentDb.getInstance().getChat(chatId)).name;
+                        return Preconditions.checkNotNull(ContentDb.getInstance().getGroup((GroupId) chatId)).name;
                     }
                     return null;
                 }

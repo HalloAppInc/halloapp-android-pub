@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.text.TextUtils;
-import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -25,6 +24,7 @@ import androidx.work.WorkerParameters;
 import com.halloapp.FileStore;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.id.GroupId;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
@@ -72,8 +72,8 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
         groupNameLiveData = new ComputableLiveData<String>() {
             @Override
             protected String compute() {
-                Chat chat = Preconditions.checkNotNull(ContentDb.getInstance().getChat(groupId));
-                return chat.name;
+                Group group = Preconditions.checkNotNull(ContentDb.getInstance().getGroup(groupId));
+                return group.name;
             }
         };
 

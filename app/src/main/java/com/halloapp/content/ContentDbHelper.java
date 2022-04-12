@@ -18,6 +18,7 @@ import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.DeletedGroupNameTable;
 import com.halloapp.content.tables.FutureProofTable;
 import com.halloapp.content.tables.GroupMembersTable;
+import com.halloapp.content.tables.GroupsTable;
 import com.halloapp.content.tables.HistoryRerequestTable;
 import com.halloapp.content.tables.HistoryResendPayloadTable;
 import com.halloapp.content.tables.MediaTable;
@@ -37,7 +38,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 65;
+    private static final int DATABASE_VERSION = 67;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -151,6 +152,19 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + ChatsTable.COLUMN_GROUP_AVATAR_ID + " TEXT,"
                 + ChatsTable.COLUMN_THEME + " INTEGER DEFAULT 0,"
                 + ChatsTable.COLUMN_INVITE_LINK + " TEXT"
+                + ");");
+
+        db.execSQL("DROP TABLE IF EXISTS " + GroupsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + GroupsTable.TABLE_NAME + " ("
+                + GroupsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + GroupsTable.COLUMN_GROUP_ID + " TEXT NOT NULL UNIQUE,"
+                + GroupsTable.COLUMN_TIMESTAMP + " INTEGER,"
+                + GroupsTable.COLUMN_GROUP_NAME + " TEXT,"
+                + GroupsTable.COLUMN_IS_ACTIVE + " INTEGER DEFAULT 1,"
+                + GroupsTable.COLUMN_GROUP_DESCRIPTION + " TEXT,"
+                + GroupsTable.COLUMN_GROUP_AVATAR_ID + " TEXT,"
+                + GroupsTable.COLUMN_THEME + " INTEGER DEFAULT 0,"
+                + GroupsTable.COLUMN_INVITE_LINK + " TEXT"
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + DeletedGroupNameTable.TABLE_NAME);
@@ -446,10 +460,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 +   "DELETE FROM " + RerequestsTable.TABLE_NAME + " WHERE " + RerequestsTable.COLUMN_CONTENT_ID + "=OLD." + CommentsTable.COLUMN_COMMENT_ID + " AND " + RerequestsTable.COLUMN_PARENT_TABLE + "='" + CommentsTable.TABLE_NAME + "'; "
                 + "END;");
 
-        db.execSQL("DROP TRIGGER IF EXISTS " + ChatsTable.TRIGGER_DELETE);
-        db.execSQL("CREATE TRIGGER " + ChatsTable.TRIGGER_DELETE + " AFTER DELETE ON " + ChatsTable.TABLE_NAME + " "
+        db.execSQL("DROP TRIGGER IF EXISTS " + GroupsTable.TRIGGER_DELETE);
+        db.execSQL("CREATE TRIGGER " + GroupsTable.TRIGGER_DELETE + " AFTER DELETE ON " + GroupsTable.TABLE_NAME + " "
                 + "BEGIN "
-                +   "DELETE FROM " + GroupMembersTable.TABLE_NAME + " WHERE " + GroupMembersTable.COLUMN_GROUP_ID + "=OLD." + ChatsTable.COLUMN_CHAT_ID + "; "
+                +   "DELETE FROM " + GroupMembersTable.TABLE_NAME + " WHERE " + GroupMembersTable.COLUMN_GROUP_ID + "=OLD." + GroupsTable.COLUMN_GROUP_ID + "; "
                 + "END;");
 
         observers.notifyDbCreated();
@@ -629,6 +643,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 65: {
                 upgradeFromVersion65(db);
+            }
+            case 66: {
+                upgradeFromVersion66(db);
             }
             break;
             default: {
@@ -1349,6 +1366,52 @@ class ContentDbHelper extends SQLiteOpenHelper {
     private void upgradeFromVersion65(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_EXTERNAL_SHARE_ID + " TEXT");
         db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_EXTERNAL_SHARE_KEY + " TEXT");
+    }
+
+    private void upgradeFromVersion66(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + GroupsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + GroupsTable.TABLE_NAME + " ("
+                + GroupsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + GroupsTable.COLUMN_GROUP_ID + " TEXT NOT NULL UNIQUE,"
+                + GroupsTable.COLUMN_TIMESTAMP + " INTEGER,"
+                + GroupsTable.COLUMN_GROUP_NAME + " TEXT,"
+                + GroupsTable.COLUMN_IS_ACTIVE + " INTEGER DEFAULT 1,"
+                + GroupsTable.COLUMN_GROUP_DESCRIPTION + " TEXT,"
+                + GroupsTable.COLUMN_GROUP_AVATAR_ID + " TEXT,"
+                + GroupsTable.COLUMN_THEME + " INTEGER DEFAULT 0,"
+                + GroupsTable.COLUMN_INVITE_LINK + " TEXT"
+                + ");");
+
+        // Delete chats trigger as it was only used for group chats
+        db.execSQL("DROP TRIGGER IF EXISTS " + ChatsTable.TRIGGER_DELETE);
+
+        db.execSQL("DROP TRIGGER IF EXISTS " + GroupsTable.TRIGGER_DELETE);
+        db.execSQL("CREATE TRIGGER " + GroupsTable.TRIGGER_DELETE + " AFTER DELETE ON " + GroupsTable.TABLE_NAME + " "
+                + "BEGIN "
+                +   "DELETE FROM " + GroupMembersTable.TABLE_NAME + " WHERE " + GroupMembersTable.COLUMN_GROUP_ID + "=OLD." + GroupsTable.COLUMN_GROUP_ID + "; "
+                + "END;");
+
+        db.execSQL("INSERT INTO " + GroupsTable.TABLE_NAME + "("
+                + GroupsTable.COLUMN_GROUP_ID + ","
+                + GroupsTable.COLUMN_TIMESTAMP + ","
+                + GroupsTable.COLUMN_GROUP_NAME + ","
+                + GroupsTable.COLUMN_IS_ACTIVE + ","
+                + GroupsTable.COLUMN_GROUP_DESCRIPTION + ","
+                + GroupsTable.COLUMN_GROUP_AVATAR_ID + ","
+                + GroupsTable.COLUMN_THEME + ","
+                + GroupsTable.COLUMN_INVITE_LINK + ")"
+                + " SELECT "
+                + ChatsTable.COLUMN_CHAT_ID + ","
+                + ChatsTable.COLUMN_TIMESTAMP + ","
+                + ChatsTable.COLUMN_CHAT_NAME + ","
+                + ChatsTable.COLUMN_IS_ACTIVE + ","
+                + ChatsTable.COLUMN_GROUP_DESCRIPTION + ","
+                + ChatsTable.COLUMN_GROUP_AVATAR_ID + ","
+                + ChatsTable.COLUMN_THEME + ","
+                + ChatsTable.COLUMN_INVITE_LINK
+                + " FROM " + ChatsTable.TABLE_NAME
+                + " WHERE " + ChatsTable.COLUMN_IS_GROUP + "=1");
+        db.execSQL("DELETE FROM " + ChatsTable.TABLE_NAME + " WHERE " + ChatsTable.COLUMN_IS_GROUP + "=1");
     }
 
     /**

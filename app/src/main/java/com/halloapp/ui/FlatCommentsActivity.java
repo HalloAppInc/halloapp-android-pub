@@ -80,15 +80,14 @@ import com.halloapp.UrlPreviewLoader;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.content.Chat;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
-import com.halloapp.groups.ChatLoader;
+import com.halloapp.groups.GroupLoader;
 import com.halloapp.id.ChatId;
-import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
@@ -174,7 +173,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
     private final CommentsAdapter adapter = new CommentsAdapter();
     private MediaThumbnailLoader mediaThumbnailLoader;
-    private ChatLoader chatLoader;
+    private GroupLoader groupLoader;
     private AvatarLoader avatarLoader;
     private ContactLoader contactLoader;
     private UrlPreviewLoader urlPreviewLoader;
@@ -635,7 +634,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
         contactLoader = new ContactLoader();
         avatarLoader = AvatarLoader.getInstance();
-        chatLoader = new ChatLoader();
+        groupLoader = new GroupLoader();
         textContentLoader = new TextContentLoader();
         urlPreviewLoader = new UrlPreviewLoader();
 
@@ -823,24 +822,20 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private void bindPost(@NonNull Post post) {
         avatarLoader.load(postAvatarView, post.senderUserId);
         contactLoader.load(postNameView, post.senderUserId);
-        chatLoader.cancel(postGroupView);
+        groupLoader.cancel(postGroupView);
         if (postAttributionLayout != null) {
             postAttributionLayout.setGroupAttributionVisible(post.getParentGroup() != null);
         }
         if (post.getParentGroup() != null) {
-            chatLoader.load(postGroupView, new ViewDataLoader.Displayer<View, Chat>() {
+            groupLoader.load(postGroupView, new ViewDataLoader.Displayer<View, Group>() {
                 @Override
-                public void showResult(@NonNull View view, @Nullable Chat result) {
+                public void showResult(@NonNull View view, @Nullable Group result) {
                     if (result != null) {
                         postGroupView.setText(result.name);
                         if (result.rowId != -1) {
                             postGroupView.setOnClickListener(v -> {
-                                ChatId chatId = result.chatId;
-                                if (!(chatId instanceof GroupId)) {
-                                    Log.w("Cannot open group feed for non-group " + chatId);
-                                    return;
-                                }
-                                startActivity(ViewGroupFeedActivity.viewFeed(postGroupView.getContext(), (GroupId) chatId));
+                                ChatId chatId = result.groupId;
+                                startActivity(ViewGroupFeedActivity.viewFeed(postGroupView.getContext(), result.groupId));
                             });
                         }
                     } else {

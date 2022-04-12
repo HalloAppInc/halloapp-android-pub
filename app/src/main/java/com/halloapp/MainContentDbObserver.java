@@ -198,7 +198,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
     }
 
     @Override
-    public void onGroupChatAdded(@NonNull GroupId groupId) {
+    public void onGroupFeedAdded(@NonNull GroupId groupId) {
 
     }
 
