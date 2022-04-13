@@ -1192,8 +1192,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="address_book_action_message">"%s Nachricht senden"</string>
 
     <!-- Text provided as title when a post is shared outside of HalloApp -->
-    <!-- Fuzzy -->
-    <string name="external_share_title">"HalloApp-Beitrag von %s"</string>
+    <string name="external_share_title">"%s's HalloApp-Beitrag"</string>
 
     <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
     <string name="external_share_description_text">"Textbeitrag"</string>
@@ -1297,22 +1296,22 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     </plurals>
 
     <!-- Button for revoking a link used for external sharing -->
-    <string name="revoke_link">"Revoke link"</string>
+    <string name="revoke_link">"Link widerrufen"</string>
 
     <!-- Text for button for sharing a post -->
-    <string name="share_via">"Share via…"</string>
+    <string name="share_via">"Teilen über…"</string>
 
     <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
-    <string name="revoke_link_in_progress">"Revoking link"</string>
+    <string name="revoke_link_in_progress">"Link wird widerrufen"</string>
 
     <!-- Text shown in snackbar when external sharing link is revoked -->
-    <string name="link_revoked">"Link revoked"</string>
+    <string name="link_revoked">"Link widerrufen"</string>
 
     <!-- Text shown in a snackbar when link revocation failed -->
-    <string name="link_revoke_failed">"Failed to revoke link"</string>
+    <string name="link_revoke_failed">"Link konnte nicht widerrufen werden"</string>
 
     <!-- Text shown explaining how external sharing works on the sharing bottom sheet -->
-    <string name="external_share_info">"Anyone with the link can see your post. Link expires with your post. Link preview is unencrypted."</string>
+    <string name="external_share_info">"Jeder, der den Link hat, kann deinen Beitrag sehen. Der Link läuft mit deinem Beitrag ab. Die Linkvorschau ist unverschlüsselt."</string>
     <string name="share_externally">"Außerhalb von HalloApp teilen"</string>
     <string name="incoming_call_notification_title">"Eingehender Anruf"</string>
     <string name="call_action">"Anrufen"</string>
