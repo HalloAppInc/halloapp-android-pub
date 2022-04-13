@@ -32,6 +32,7 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.util.logs.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -425,6 +426,9 @@ public class StorageUsageActivity extends HalloActivity {
                             if (!filesDir.equals(file)) {
                                 long size = treeUsage(file);
                                 internalUsage += size;
+                            } else {
+                                // Already counted in other categories, but still print to logs
+                                treeUsage(file);
                             }
                         }
                     }
@@ -445,6 +449,11 @@ public class StorageUsageActivity extends HalloActivity {
                         sum += treeUsage(subfile);
                     }
                 }
+                String splitAt = "com.halloapp/";
+                String path = file.getAbsolutePath();
+                int index = path.indexOf(splitAt);
+                String localPath = index < 0 ? path : path.substring(index + splitAt.length());
+                Log.d("StorageUsageActivity directory " + localPath + " has size " + sum);
                 return sum;
             }
             if (file.isFile()) {
