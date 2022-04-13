@@ -180,6 +180,24 @@ public class MediaDb {
         return null;
     }
 
+    public int getPercentTransferred(long rowId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql = "SELECT " + MediaTable.COLUMN_PERCENT_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable._ID + "=?";
+        try (Cursor cursor = db.rawQuery(sql, new String[] {Long.toString(rowId)})) {
+            if (cursor.moveToNext()) {
+                return cursor.getInt(0);
+            }
+        }
+        return 0;
+    }
+
+    public void setPercentTransferred(long rowId, long bytesTransferred) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(MediaTable.COLUMN_PERCENT_TRANSFERRED, bytesTransferred);
+        db.update(MediaTable.TABLE_NAME, values, MediaTable._ID + "=?", new String[] {Long.toString(rowId)});
+    }
+
     private Cursor selectChunkSet(long rowId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final String selectQuerySql =

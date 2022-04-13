@@ -30,6 +30,7 @@ import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Post;
 import com.halloapp.groups.GroupLoader;
+import com.halloapp.groups.MediaProgressLoader;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.VoiceNotePlayer;
@@ -58,6 +59,7 @@ public abstract class PostsFragment extends HalloFragment {
     protected ViewGroup parentViewGroup;
 
     private MediaThumbnailLoader mediaThumbnailLoader;
+    private MediaProgressLoader mediaProgressLoader;
     private GroupLoader groupLoader;
     private ContactLoader contactLoader;
     private AvatarLoader avatarLoader;
@@ -91,6 +93,7 @@ public abstract class PostsFragment extends HalloFragment {
         final Point point = new Point();
         requireActivity().getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(requireContext(), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
+        mediaProgressLoader = new MediaProgressLoader();
         groupLoader = new GroupLoader();
         contactLoader = new ContactLoader();
         seenByLoader = new SeenByLoader();
@@ -109,6 +112,7 @@ public abstract class PostsFragment extends HalloFragment {
     public void onDestroy() {
         super.onDestroy();
         mediaThumbnailLoader.destroy();
+        mediaProgressLoader.destroy();
         contactLoader.destroy();
         groupLoader.destroy();
         seenByLoader.destroy();
@@ -264,6 +268,11 @@ public abstract class PostsFragment extends HalloFragment {
             @Override
             public VoiceNotePlayer getVoiceNotePlayer() {
                 return PostsFragment.this.getVoiceNotePlayer();
+            }
+
+            @Override
+            public MediaProgressLoader getMediaProgressLoader() {
+                return mediaProgressLoader;
             }
         };
 

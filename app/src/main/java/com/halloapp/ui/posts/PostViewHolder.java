@@ -27,6 +27,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Group;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
+import com.halloapp.groups.MediaProgressLoader;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.UploadMediaTask;
@@ -94,6 +95,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         }
         public abstract void showDialogFragment(@NonNull DialogFragment dialogFragment);
         public abstract VoiceNotePlayer getVoiceNotePlayer();
+        public abstract MediaProgressLoader getMediaProgressLoader();
     }
 
     public void setShowGroupName(boolean visible) {

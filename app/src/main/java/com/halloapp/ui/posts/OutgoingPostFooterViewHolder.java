@@ -6,16 +6,21 @@ import android.graphics.PorterDuff;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.halloapp.R;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ExternalSharingBottomSheetDialogFragment;
 import com.halloapp.ui.FlatCommentsActivity;
 import com.halloapp.ui.PostSeenByActivity;
+import com.halloapp.util.BgWorkers;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AvatarsLayout;
 
 public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
@@ -23,21 +28,27 @@ public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
     private static final int MAX_SEEN_BY_AVATARS = 3;
 
     private final View postActionsSeparator;
+    private final View postActionsContainer;
     private final View commentButton;
     private final View commentsIndicator;
     private final AvatarsLayout seenIndicator;
     private final View seenButton;
     private final View shareButton;
+    private final ProgressBar progressBar;
+    private final View progressContainer;
 
     public OutgoingPostFooterViewHolder(@NonNull View itemView, @NonNull PostViewHolder.PostViewHolderParent parent) {
         super(itemView, parent);
 
         postActionsSeparator = itemView.findViewById(R.id.post_actions_separator);
+        postActionsContainer = itemView.findViewById(R.id.post_actions);
         commentButton = itemView.findViewById(R.id.comment);
         commentsIndicator = itemView.findViewById(R.id.comments_indicator);
         seenIndicator = itemView.findViewById(R.id.seen_indicator);
         seenButton = itemView.findViewById(R.id.seen_button);
         shareButton = itemView.findViewById(R.id.share_button);
+        progressBar = itemView.findViewById(R.id.progress_bar);
+        progressContainer = itemView.findViewById(R.id.progress_container);
 
         seenIndicator.setAvatarLoader(parent.getAvatarLoader());
 
@@ -69,9 +80,16 @@ public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
         shareButton.setEnabled(canInteract);
     }
 
+    @Override
+    public void setPercentTransferred(int percent) {
+        progressBar.setProgress(percent);
+    }
+
     public void bindTo(@NonNull Post post) {
         super.bindTo(post);
 
+        progressContainer.setVisibility(post.transferred == Post.TRANSFERRED_NO ? View.VISIBLE : View.GONE);
+        postActionsContainer.setVisibility(post.transferred == Post.TRANSFERRED_YES ? View.VISIBLE : View.GONE);
         shareButton.setVisibility(ServerProps.getInstance().getExternalSharing() ? View.VISIBLE : View.GONE);
         if (post.seenByCount > 0) {
             seenIndicator.setVisibility(View.VISIBLE);

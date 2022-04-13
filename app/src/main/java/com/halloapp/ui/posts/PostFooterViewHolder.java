@@ -7,12 +7,14 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.R;
 import com.halloapp.content.Post;
+import com.halloapp.groups.MediaProgressLoader;
 import com.halloapp.ui.ContentViewHolderParent;
 
 public abstract class PostFooterViewHolder {
     protected static final float DISABLED_OPACITY = 0.35f;
 
     protected Post post;
+    protected MediaProgressLoader.MediaProgressCallback mediaProgressCallback;
 
     protected PostViewHolder.PostViewHolderParent parent;
 
@@ -28,8 +30,25 @@ public abstract class PostFooterViewHolder {
 
     public abstract void setCanInteract(boolean canInteract);
 
+    public abstract void setPercentTransferred(int percent);
+
     @CallSuper
     public void bindTo(@NonNull Post post) {
+        if (mediaProgressCallback != null) {
+            parent.getMediaProgressLoader().removeCallback(mediaProgressCallback);
+        }
+        mediaProgressCallback = new MediaProgressLoader.MediaProgressCallback() {
+            @Override
+            public String getContentItemId() {
+                return post.id;
+            }
+
+            @Override
+            public void onPostProgress(int percent) {
+                setPercentTransferred(percent);
+            }
+        };
+        parent.getMediaProgressLoader().registerCallback(mediaProgressCallback);
         this.post = post;
     }
 }

@@ -209,6 +209,14 @@ class ContentDbObservers {
         }
     }
 
+    void notifyMediaPercentTransferred(@NonNull ContentItem contentItem, @NonNull Media media, int percent) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onMediaPercentTransferred(contentItem, media, percent);
+            }
+        }
+    }
+
     void notifyChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {

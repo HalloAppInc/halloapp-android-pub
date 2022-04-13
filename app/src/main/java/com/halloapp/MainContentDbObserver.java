@@ -6,7 +6,9 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.ExternalShareInfo;
+import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.SeenReceipt;
@@ -229,6 +231,11 @@ public class MainContentDbObserver implements ContentDb.Observer {
 
     @Override
     public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {
+
+    }
+
+    @Override
+    public void onMediaPercentTransferred(@NonNull ContentItem contentItem, @NonNull Media media, int percent) {
 
     }
 

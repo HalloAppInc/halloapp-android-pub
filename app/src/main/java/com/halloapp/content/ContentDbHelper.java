@@ -38,7 +38,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 67;
+    private static final int DATABASE_VERSION = 68;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -227,7 +227,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + MediaTable.COLUMN_BLOB_VERSION + " INTEGER DEFAULT 0,"
                 + MediaTable.COLUMN_CHUNK_SIZE + " INTEGER DEFAULT 0,"
                 + MediaTable.COLUMN_BLOB_SIZE + " INTEGER DEFAULT 0,"
-                + MediaTable.COLUMN_CHUNK_SET + " BLOB"
+                + MediaTable.COLUMN_CHUNK_SET + " BLOB,"
+                + MediaTable.COLUMN_PERCENT_TRANSFERRED + " INTEGER DEFAULT 0,"
+                + MediaTable.COLUMN_DOWNLOAD_SIZE + " INTEGER"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + MediaTable.INDEX_MEDIA_KEY);
@@ -646,6 +648,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 66: {
                 upgradeFromVersion66(db);
+            }
+            case 67: {
+                upgradeFromVersion67(db);
             }
             break;
             default: {
@@ -1420,6 +1425,11 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + " FROM " + ChatsTable.TABLE_NAME
                 + " WHERE " + ChatsTable.COLUMN_IS_GROUP + "=1");
         db.execSQL("DELETE FROM " + ChatsTable.TABLE_NAME + " WHERE " + ChatsTable.COLUMN_IS_GROUP + "=1");
+    }
+
+    private void upgradeFromVersion67(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + MediaTable.TABLE_NAME + " ADD COLUMN " + MediaTable.COLUMN_PERCENT_TRANSFERRED + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + MediaTable.TABLE_NAME + " ADD COLUMN " + MediaTable.COLUMN_DOWNLOAD_SIZE + " INTEGER");
     }
 
     /**

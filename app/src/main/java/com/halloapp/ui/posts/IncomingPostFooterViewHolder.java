@@ -55,6 +55,11 @@ public class IncomingPostFooterViewHolder extends PostFooterViewHolder {
     }
 
     @Override
+    public void setPercentTransferred(int percent) {
+        // TODO(jack)
+    }
+
+    @Override
     public void bindTo(@NonNull Post post) {
         super.bindTo(post);
         if (post.unseenCommentCount > 0) {

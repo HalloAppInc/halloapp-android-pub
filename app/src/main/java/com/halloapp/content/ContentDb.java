@@ -101,6 +101,7 @@ public class ContentDb {
         void onGroupBackgroundChanged(@NonNull GroupId groupId);
         void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId);
         void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId);
+        void onMediaPercentTransferred(@NonNull ContentItem contentItem, @NonNull Media media, int percent);
         void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts);
         void onGroupSeen(@NonNull GroupId groupId);
         void onChatDeleted(@NonNull ChatId chatId);
@@ -134,6 +135,7 @@ public class ContentDb {
         public void onGroupBackgroundChanged(@NonNull GroupId groupId) {}
         public void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {}
         public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {}
+        public void onMediaPercentTransferred(@NonNull ContentItem contentItem, @NonNull Media media, int percent) {}
         public void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts) {}
         public void onGroupSeen(@NonNull GroupId groupId) { }
         public void onChatDeleted(@NonNull ChatId chatId) {}
@@ -440,6 +442,19 @@ public class ContentDb {
     public @Nullable Media getLatestMediaWithHash(@NonNull byte[] decSha256hash, @Media.BlobVersion int blobVersion) {
         Log.i("Get latest media with a given data hash");
         return mediaDb.getLatestMediaWithHash(decSha256hash, blobVersion);
+    }
+
+    @WorkerThread
+    public int getMediaPercentTransferred(long rowId) {
+        return mediaDb.getPercentTransferred(rowId);
+    }
+
+    @WorkerThread
+    public void setMediaPercentTransferred(@NonNull ContentItem contentItem, @NonNull Media media, int percentTransferred) {
+        databaseWriteExecutor.execute(() -> {
+            mediaDb.setPercentTransferred(media.rowId, percentTransferred);
+            observers.notifyMediaPercentTransferred(contentItem, media, percentTransferred);
+        });
     }
 
     @WorkerThread

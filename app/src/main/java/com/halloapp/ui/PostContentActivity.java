@@ -42,6 +42,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.groups.GroupLoader;
+import com.halloapp.groups.MediaProgressLoader;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.Downloader;
 import com.halloapp.media.MediaThumbnailLoader;
@@ -101,6 +102,7 @@ public class PostContentActivity extends HalloActivity {
     private static final int SWIPE_DOWN_VELOCITY_THRESHOLD = -1000;
 
     private MediaThumbnailLoader mediaThumbnailLoader;
+    private MediaProgressLoader mediaProgressLoader;
     private GroupLoader groupLoader;
     private ContactLoader contactLoader;
     private AvatarLoader avatarLoader;
@@ -233,6 +235,11 @@ public class PostContentActivity extends HalloActivity {
         public LifecycleOwner getLifecycleOwner() {
             return PostContentActivity.this;
         }
+
+        @Override
+        public MediaProgressLoader getMediaProgressLoader() {
+            return mediaProgressLoader;
+        }
     };
 
     @Override
@@ -301,6 +308,7 @@ public class PostContentActivity extends HalloActivity {
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
         int dimensionLimit = Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y));
+        mediaProgressLoader = new MediaProgressLoader();
         mediaThumbnailLoader = postId != null ? new MediaThumbnailLoader(this, dimensionLimit) : new MediaThumbnailLoader(this, dimensionLimit) {
             @MainThread
             public void load(@NonNull ImageView view, @NonNull Media media, @NonNull ViewDataLoader.Displayer<ImageView, Bitmap> displayer) {
@@ -381,6 +389,7 @@ public class PostContentActivity extends HalloActivity {
         super.onDestroy();
         groupLoader.destroy();
         mediaThumbnailLoader.destroy();
+        mediaProgressLoader.destroy();
         contactLoader.destroy();
         seenByLoader.destroy();
         ContactsDb.getInstance().removeObserver(contactsObserver);

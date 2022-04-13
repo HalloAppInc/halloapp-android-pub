@@ -303,8 +303,30 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                 }
             }
 
-            final Uploader.UploadListener uploadListener = percent -> true;
-            final ResumableUploader.ResumableUploadListener resumableUploadListener = percent -> true;
+            final Uploader.UploadListener uploadListener = new Uploader.UploadListener() {
+                int previousPercent = 0;
+                @Override
+                public boolean onProgress(int percent) {
+                    if (percent == previousPercent) {
+                        return true;
+                    }
+                    previousPercent = percent;
+                    contentDb.setMediaPercentTransferred(contentItem, media, percent);
+                    return true;
+                }
+            };
+            final ResumableUploader.ResumableUploadListener resumableUploadListener = new ResumableUploader.ResumableUploadListener() {
+                int previousPercent = 0;
+                @Override
+                public boolean onProgress(int percent) {
+                    if (percent == previousPercent) {
+                        return true;
+                    }
+                    previousPercent = percent;
+                    contentDb.setMediaPercentTransferred(contentItem, media, percent);
+                    return true;
+                }
+            };
             if (urls != null &&
                     urls.downloadUrl != null &&
                     existingHashedMedia != null &&

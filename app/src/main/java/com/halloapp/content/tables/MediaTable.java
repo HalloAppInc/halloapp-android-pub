@@ -30,5 +30,7 @@ public final class MediaTable implements BaseColumns {
     public static final String COLUMN_CHUNK_SIZE = "chunk_size";
     public static final String COLUMN_BLOB_SIZE = "blob_size";
     public static final String COLUMN_CHUNK_SET = "chunk_set";
+    public static final String COLUMN_PERCENT_TRANSFERRED = "percent_transferred";
+    public static final String COLUMN_DOWNLOAD_SIZE = "download_size";
 }
 

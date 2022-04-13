@@ -13,6 +13,53 @@
         android:layout_height="0.5dp"
         android:background="@color/post_actions_separator"/>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/progress_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/cancel"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:indeterminateOnly="false"
+            android:padding="10dp"
+            android:layout_marginStart="12dp"
+            android:minHeight="5dp"
+            android:maxHeight="5dp"
+            android:progressDrawable="@drawable/progress_bar"
+            android:progress="25"/>
+
+        <FrameLayout
+            android:id="@+id/cancel"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:layout_constraintStart_toEndOf="@+id/progress_bar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginVertical="12dp"
+            android:background="@drawable/bg_circle"
+            android:backgroundTint="@color/black_20">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                app:tint="@color/white"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_close" />
+
+        </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <LinearLayout
         android:id="@+id/post_actions"
         android:layout_width="match_parent"
