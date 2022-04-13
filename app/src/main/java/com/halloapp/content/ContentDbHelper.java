@@ -1364,8 +1364,16 @@ class ContentDbHelper extends SQLiteOpenHelper {
     }
 
     private void upgradeFromVersion65(@NonNull SQLiteDatabase db) {
-        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_EXTERNAL_SHARE_ID + " TEXT");
-        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_EXTERNAL_SHARE_KEY + " TEXT");
+        try {
+            db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_EXTERNAL_SHARE_ID + " TEXT");
+        } catch (SQLiteException e) {
+            Log.e("ContentDb/upgradeFromVersion65 column share id exists", e);
+        }
+        try {
+            db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_EXTERNAL_SHARE_KEY + " TEXT");
+        } catch (SQLiteException e) {
+            Log.e("ContentDb/upgradeFromVersion65 column share key exists", e);
+        }
     }
 
     private void upgradeFromVersion66(@NonNull SQLiteDatabase db) {
