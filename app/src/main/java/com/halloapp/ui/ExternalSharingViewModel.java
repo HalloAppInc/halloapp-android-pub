@@ -99,12 +99,12 @@ public class ExternalSharingViewModel extends ViewModel {
         bgWorkers.execute(() -> {
             ExternalShareInfo externalShareInfo = contentDb.getExternalShareInfo(postId);
             if (externalShareInfo == null || externalShareInfo.shareId == null) {
-                Log.w("Failed to get external share info from db for link revoke " + postId);
+                Log.w("ExternalSharingViewModel/revokeLink failed to get external share info from db for link revoke " + postId);
                 result.postValue(false);
                 return;
             }
             Connection.getInstance().revokeSharedPost(externalShareInfo.shareId).onError(e -> {
-                Log.w("External share revoke failed", e);
+                Log.w("ExternalSharingViewModel/revokeLink external share revoke failed", e);
                 result.postValue(false);
             }).onResponse(res -> {
                 contentDb.setExternalShareInfo(postId, null, null);
@@ -120,7 +120,7 @@ public class ExternalSharingViewModel extends ViewModel {
         bgWorkers.execute(() -> {
             Post post = contentDb.getPost(postId);
             if (post == null) {
-                Log.w("Coult not load post for media preview " + postId);
+                Log.w("ExternalSharingViewModel/getThumbnail could not load post for media preview " + postId);
                 result.postValue(null);
                 return;
             }
@@ -145,7 +145,7 @@ public class ExternalSharingViewModel extends ViewModel {
                 Bitmap bitmap = MediaUtils.decode(media.file, media.type, Constants.MAX_EXTERNAL_SHARE_THUMB_DIMENSION);
                 result.postValue(bitmap);
             } catch (IOException e) {
-                Log.e("Failed to decode media item for external share preview", e);
+                Log.e("ExternalSharingViewModel/getThumbnail failed to decode media item for external share preview", e);
                 result.postValue(null);
             }
         });
@@ -160,13 +160,14 @@ public class ExternalSharingViewModel extends ViewModel {
             String domain = serverProps.getIsInternalUser() ? "share-test.halloapp.com" : "share.halloapp.com";
             Post post = contentDb.getPost(postId);
             if (post == null) {
-                Log.w("Coult not load post for external share encoding " + postId);
+                Log.w("ExternalSharingViewModel/shareExternally could not load post for external share encoding " + postId);
                 result.postValue(null);
                 return;
             }
 
-            ExternalShareInfo externalShareInfo = contentDb.getExternalShareInfo(post.id);
+            ExternalShareInfo externalShareInfo = contentDb.getExternalShareInfo(postId);
             if (externalShareInfo != null && externalShareInfo.shareId != null && externalShareInfo.shareKey != null) {
+                Log.i("ExternalSharingViewModel/shareExternally found stored share info for " + postId + " with shareId " + externalShareInfo.shareId);
                 String url = "https://" + domain + "/" + externalShareInfo.shareId + "#k" + externalShareInfo.shareKey;
                 result.postValue(url);
                 return;
@@ -214,11 +215,11 @@ public class ExternalSharingViewModel extends ViewModel {
                         thumbnailUrl = urls.getUrl;
                     }
                 } catch (IOException e) {
-                    Log.e("Failed to decode media for sharing", e);
+                    Log.e("ExternalSharingViewModel/shareExternally failed to decode media for sharing", e);
                 } catch (ObservableErrorException e) {
-                    Log.e("Observable failure getting urls", e);
+                    Log.e("ExternalSharingViewModel/shareExternally observable failure getting urls", e);
                 } catch (InterruptedException e) {
-                    Log.e("Interrupted while getting urls", e);
+                    Log.e("ExternalSharingViewModel/shareExternally interrupted while getting urls", e);
                 }
             }
 
@@ -264,14 +265,14 @@ public class ExternalSharingViewModel extends ViewModel {
                     }
                 });
                 String shareKey = Base64.encodeToString(attachmentKey, Base64.NO_WRAP | Base64.URL_SAFE);
-                observable.onError(e -> Log.e("Failed to send for external sharing"))
+                observable.onError(e -> Log.e("ExternalSharingViewModel/shareExternally failed to send for external sharing"))
                         .onResponse(response -> {
                             String url = "https://" + domain + "/" + response.blobId + "#k" + shareKey;
                             result.postValue(url);
-                            contentDb.setExternalShareInfo(post.id, response.blobId, shareKey);
+                            contentDb.setExternalShareInfo(postId, response.blobId, shareKey);
                         });
             } catch (GeneralSecurityException e) {
-                Log.e("Failed to encrypt for external sharing", e);
+                Log.e("ExternalSharingViewModel/shareExternally failed to encrypt for external sharing", e);
             }
         });
 

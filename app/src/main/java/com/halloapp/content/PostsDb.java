@@ -1146,6 +1146,7 @@ class PostsDb {
 
     @WorkerThread
     ExternalShareInfo getExternalShareInfo(@NonNull String postId) {
+        Log.i("PostsDb.getExternalShareInfo " + postId);
         final String sql = "SELECT " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_EXTERNAL_SHARE_ID + "," + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_EXTERNAL_SHARE_KEY
                 + " FROM " + PostsTable.TABLE_NAME + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=? AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=?";
 
@@ -1160,6 +1161,7 @@ class PostsDb {
 
     @WorkerThread
     void setExternalShareInfo(@NonNull String postId, @Nullable String shareId, @Nullable String shareKey) {
+        Log.i("PostsDb.setExternalShareInfo post " + postId + " shareId " + shareId);
         final ContentValues values = new ContentValues();
         values.put(PostsTable.COLUMN_EXTERNAL_SHARE_ID, shareId);
         values.put(PostsTable.COLUMN_EXTERNAL_SHARE_KEY, shareKey);
