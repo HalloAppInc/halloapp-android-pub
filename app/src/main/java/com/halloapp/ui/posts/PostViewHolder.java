@@ -224,7 +224,9 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
     public void setCanInteract(boolean canInteract) {
         this.canInteract = canInteract;
-        this.postFooterViewHolder.setCanInteract(canInteract);
+        if (this.postFooterViewHolder != null) {
+            this.postFooterViewHolder.setCanInteract(canInteract);
+        }
     }
 
     @CallSuper
