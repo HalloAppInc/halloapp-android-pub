@@ -72,7 +72,7 @@ public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
     public void bindTo(@NonNull Post post) {
         super.bindTo(post);
 
-        shareButton.setVisibility(post.getParentGroup() == null && ServerProps.getInstance().getIsInternalUser() ? View.VISIBLE : View.GONE);
+        shareButton.setVisibility(post.getParentGroup() == null && ServerProps.getInstance().getExternalSharing() ? View.VISIBLE : View.GONE);
         if (post.seenByCount > 0) {
             seenIndicator.setVisibility(View.VISIBLE);
             seenButton.setVisibility(View.GONE);

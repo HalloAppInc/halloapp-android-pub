@@ -298,7 +298,7 @@ public class ServerProps {
     }
 
     public synchronized boolean getExternalSharing() {
-        return propExternalSharing.getValue();
+        return BuildConfig.DEBUG || propExternalSharing.getValue();
     }
 
     public synchronized boolean getGroupCommentsNotification() {
