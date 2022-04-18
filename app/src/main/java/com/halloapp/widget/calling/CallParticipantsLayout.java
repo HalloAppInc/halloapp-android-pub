@@ -62,6 +62,7 @@ public class CallParticipantsLayout extends FrameLayout {
     private int smallViewMargins;
 
     private boolean inCallView = false;
+    private boolean mirrorLocal = true;
 
     public interface MutedVideoListener {
         void onReadyToDetach();
@@ -257,13 +258,20 @@ public class CallParticipantsLayout extends FrameLayout {
 
         localVideoView.setZOrderMediaOverlay(true);
         localVideoView.setEnableHardwareScaler(true);
-        localVideoView.setMirror(true);
+        localVideoView.setMirror(mirrorLocal);
         remoteVideoView.setEnableHardwareScaler(true);
 
         remoteProxyVideoSink.setTarget(remoteVideoView);
         localProxyVideoSink.setTarget(localVideoView);
 
         callManager.setVideoSinks(localProxyVideoSink, remoteProxyVideoSink);
+    }
+
+    public void setMirrorLocal(boolean mirrorLocal) {
+        if (mirrorLocal != this.mirrorLocal) {
+            this.mirrorLocal = mirrorLocal;
+            localVideoView.setMirror(mirrorLocal);
+        }
     }
 
     public void updateLocalViewBottomMargin(float y, int duration) {

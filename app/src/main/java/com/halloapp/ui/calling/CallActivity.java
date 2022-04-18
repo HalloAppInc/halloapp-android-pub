@@ -457,6 +457,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
 
     private void createVideoCapturer(boolean frontFacing) {
         videoCapturer = VideoUtils.createVideoCapturer(this, frontFacing);
+        participantsLayout.setMirrorLocal(frontFacing);
     }
 
     private void onStartCall(@NonNull CallType callType) {
