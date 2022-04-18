@@ -658,6 +658,8 @@
     <!-- Title for feed privacy when setting it from a single post -->
     <string name="setting_feed_privacy_single_post_title">Who will see this post</string>
     <string name="setting_feed_privacy_title">Who can see my posts</string>
+    <!-- Title for feed privacy when setting it from a single post for the group section -->
+    <string name="setting_feed_privacy_groups_section_title">Share only with a group</string>
     <string name="setting_feed_all">My contacts</string>
     <string name="setting_feed_only">Only share with…</string>
     <string name="setting_feed_except">My contacts except…</string>
@@ -790,7 +792,10 @@
         <item quantity="other">%d members</item>
     </plurals>
     <string name="group_info_members">Members (%d)</string>
-    <string name="composer_sharing_all_summary">Share with my contacts</string>
+    <!-- Description for sharing privacy for sharing with your contacts -->
+    <string name="composer_sharing_all_summary">Share with all my contacts</string>
+    <!-- Description for sharing privacy for sharing with your favorites -->
+    <string name="composer_sharing_favorites_summary">Share only with favorites</string>
     <string name="composer_sharing_except_summary">Share with some of my contacts</string>
     <plurals name="composer_sharing_only_summary">
         <item quantity="one">Share with %d of my contacts</item>

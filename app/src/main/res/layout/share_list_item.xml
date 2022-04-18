@@ -8,12 +8,21 @@
     android:orientation="horizontal"
     android:background="?selectableItemBackground">
 
+    <com.google.android.material.radiobutton.MaterialRadioButton
+        android:id="@+id/selection_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="20dp"
+        android:clickable="false"
+        android:focusable="false"/>
+
     <ImageView
         android:id="@+id/group_avatar"
         android:layout_width="42dp"
         android:layout_height="42dp"
         android:layout_marginTop="11dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="0dp"
         android:layout_marginEnd="13dp"
         android:layout_marginBottom="11dp"/>
 
@@ -24,20 +33,5 @@
         android:layout_weight="1"
         android:textColor="@color/primary_text"
         android:textSize="17sp"/>
-
-    <ImageView
-        android:id="@+id/selection_indicator"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:padding="2dp"
-        android:background="@drawable/contact_selection_background"
-        android:src="@drawable/ic_check"
-        app:tint="@android:color/white"
-        android:scaleType="fitCenter"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </LinearLayout>

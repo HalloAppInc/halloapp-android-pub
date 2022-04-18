@@ -315,7 +315,7 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
 
         private ImageView avatarIconView;
         private TextView nameView;
-        private View selectionView;
+        private RadioButton selectionView;
 
         private Group group;
 
@@ -325,8 +325,6 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
             avatarIconView = itemView.findViewById(R.id.group_avatar);
             nameView = itemView.findViewById(R.id.group_name);
             selectionView = itemView.findViewById(R.id.selection_indicator);
-            selectionView.setSelected(true);
-            selectionView.setVisibility(View.GONE);
 
             avatarIconView.setOutlineProvider(new ViewOutlineProvider() {
                 @Override
@@ -347,28 +345,26 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
             this.group = group;
             nameView.setText(group.name);
             avatarLoader.load(avatarIconView, group.groupId);
-            selectionView.setVisibility(selected ? View.VISIBLE : View.GONE);
+            selectionView.setChecked(selected);
         }
     }
 
     private class HomeViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView exceptContactsSetting;
-        private TextView onlyContactsSetting;
-
         private RadioButton selMyContacts;
-        private RadioButton selExceptContacts;
         private RadioButton selOnlyContacts;
+
+        private View myContactsChevron;
+        private View favoritesChevron;
 
         public HomeViewHolder(@NonNull View itemView) {
             super(itemView);
 
             selMyContacts = itemView.findViewById(R.id.my_contacts_selection);
-            selExceptContacts = itemView.findViewById(R.id.contacts_except_selection);
             selOnlyContacts = itemView.findViewById(R.id.only_with_selection);
 
-            exceptContactsSetting = itemView.findViewById(R.id.contacts_except_setting);
-            onlyContactsSetting = itemView.findViewById(R.id.only_with_setting);
+            favoritesChevron = itemView.findViewById(R.id.favorites_chevron);
+            myContactsChevron = itemView.findViewById(R.id.my_contacts_chevron);
 
             itemView.findViewById(R.id.my_contacts).setOnClickListener(v -> {
                 if (selMyContacts.isChecked()) {
@@ -377,23 +373,24 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
                     saveList(PrivacyList.Type.ALL, Collections.emptyList());
                 }
             });
-            itemView.findViewById(R.id.contacts_except).setOnClickListener(v -> {
-                if (PermissionUtils.hasOrRequestContactPermissions(SharePrivacyActivity.this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_EXCEPT)) {
-                    editExceptList();
-                }
-            });
             itemView.findViewById(R.id.only_share_with).setOnClickListener(v -> {
                 if (PermissionUtils.hasOrRequestContactPermissions(SharePrivacyActivity.this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY)) {
                     editOnlyList();
                 }
+            });
+
+            favoritesChevron.setOnClickListener(v -> {
+
+            });
+
+            myContactsChevron.setOnClickListener(v -> {
+
             });
         }
 
         public void bind(FeedPrivacy feedPrivacy, boolean selected) {
             int selection = 0;
             if (feedPrivacy == null) {
-                onlyContactsSetting.setText("");
-                exceptContactsSetting.setText("");
             } else if (PrivacyList.Type.ALL.equals(feedPrivacy.activeList)) {
                 selection = 0;
             } else if (PrivacyList.Type.EXCEPT.equals(feedPrivacy.activeList)) {
@@ -402,16 +399,10 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
                 selection = 2;
             }
             setSelection(selected ? selection : -1);
-            if (feedPrivacy != null) {
-                onlyContactsSetting.setText(getResources().getQuantityString(R.plurals.composer_sharing_only_summary, feedPrivacy.onlyList.size(), feedPrivacy.onlyList.size()));
-                exceptContactsSetting.setText(R.string.composer_sharing_except_summary);
-
-            }
         }
 
         private void setSelection(int sel) {
             selMyContacts.setChecked(sel == 0);
-            selExceptContacts.setChecked(sel == 1);
             selOnlyContacts.setChecked(sel >= 2);
         }
     }
