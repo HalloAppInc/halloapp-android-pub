@@ -180,7 +180,7 @@ public class ExternalSharingViewModel extends ViewModel {
                     .setPostContainer(postContainer)
                     .setPostId(post.id)
                     .setUid(Long.parseLong(Me.getInstance().getUser()))
-                    .setTimestamp(post.timestamp)
+                    .setTimestamp(post.timestamp / 1000L)
                     .build();
             byte[] payload = postContainerBlob.toByteArray();
 

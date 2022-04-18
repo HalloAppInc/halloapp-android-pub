@@ -166,7 +166,7 @@ public class PostContentViewModel extends AndroidViewModel {
                         canInteract.postValue(false);
                         UserId posterUserId = new UserId(Long.toString(postContainerBlob.getUid()));
                         FeedContentParser parser = new FeedContentParser(Me.getInstance());
-                        post = parser.parsePost(id, posterUserId, postContainerBlob.getTimestamp(), postContainerBlob.getPostContainer(), false);
+                        post = parser.parsePost(id, posterUserId, postContainerBlob.getTimestamp() * 1000L, postContainerBlob.getPostContainer(), false);
                         post.transferred = Post.TRANSFERRED_YES;
 
                         return post;
