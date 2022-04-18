@@ -252,10 +252,11 @@ public class ExternalSharingViewModel extends ViewModel {
                             ogTagInfo.setThumbnailUrl(thumbnailUrlCopy);
                         }
 
+                        long expiresInMs = Constants.POSTS_EXPIRATION - (System.currentTimeMillis() - post.timestamp);
                         ExternalSharePost externalSharePost = ExternalSharePost.newBuilder()
                                 .setAction(ExternalSharePost.Action.STORE)
                                 .setBlob(ByteString.copyFrom(encryptedPayload))
-                                .setExpiresInSeconds(3 * 60 * 60 * 24)
+                                .setExpiresInSeconds(expiresInMs / 1000)
                                 .setOgTagInfo(ogTagInfo)
                                 .build();
                         return Iq.newBuilder()
