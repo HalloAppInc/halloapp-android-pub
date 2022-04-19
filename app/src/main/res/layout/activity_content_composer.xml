@@ -101,6 +101,15 @@
                 android:layout_marginBottom="4dp"
                 android:background="@drawable/bg_privacy_pill">
 
+                <ImageView
+                    android:id="@+id/privacy_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingEnd="7dp"
+                    android:paddingStart="0dp"
+                    android:src="@drawable/ic_privacy_my_contacts"/>
+
                 <TextView
                     android:id="@+id/privacy_destination"
                     android:layout_width="wrap_content"
@@ -111,7 +120,7 @@
                     android:textColor="@android:color/white"
                     android:paddingTop="5dp"
                     android:paddingBottom="7dp"
-                    tools:text="Home"/>
+                    tools:text="My contacts"/>
 
                 <ImageView
                     android:id="@+id/spinner_drop_down"

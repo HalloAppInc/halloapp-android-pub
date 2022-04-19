@@ -35,6 +35,7 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerAdapter;
@@ -189,6 +190,8 @@ public class ContentComposerActivity extends HalloActivity {
     private View voiceAddMedia;
 
     private TextView privacyDestination;
+    private ImageView privacyIcon;
+    private View changePrivacyBtn;
 
     private ContactLoader contactLoader;
     private UrlPreviewLoader urlPreviewLoader;
@@ -660,6 +663,7 @@ public class ContentComposerActivity extends HalloActivity {
         });
 
         privacyDestination = findViewById(R.id.privacy_destination);
+        privacyIcon = findViewById(R.id.privacy_icon);
         final TextView titleView = toolbar.findViewById(R.id.toolbar_title);
         if (chatId != null) {
             titleView.setText(R.string.new_message);
@@ -680,9 +684,9 @@ public class ContentComposerActivity extends HalloActivity {
         }
 
         if (chatId == null && destinations == null) {
-            View changePrivacy = findViewById(R.id.change_privacy);
-            changePrivacy.setVisibility(View.VISIBLE);
-            changePrivacy.setOnClickListener(v -> {
+            changePrivacyBtn = findViewById(R.id.change_privacy);
+            changePrivacyBtn.setVisibility(View.VISIBLE);
+            changePrivacyBtn.setOnClickListener(v -> {
                 startActivityForResult(SharePrivacyActivity.openPostPrivacy(this, groupId), REQUEST_CODE_CHANGE_PRIVACY);
             });
         }
@@ -998,13 +1002,15 @@ public class ContentComposerActivity extends HalloActivity {
     public void updatePostSubtitle(FeedPrivacy feedPrivacy) {
         if (feedPrivacy == null) {
             Log.e("ContentComposerActivity: updatePostSubtitle received null FeedPrivacy");
-            privacyDestination.setText(R.string.home);
-        } else if (PrivacyList.Type.ALL.equals(feedPrivacy.activeList)) {
+        }
+        if (feedPrivacy == null || PrivacyList.Type.ALL.equals(feedPrivacy.activeList) || PrivacyList.Type.EXCEPT.equals(feedPrivacy.activeList)) {
             privacyDestination.setText(R.string.setting_feed_all);
-        } else if (PrivacyList.Type.EXCEPT.equals(feedPrivacy.activeList)) {
-            privacyDestination.setText(R.string.setting_feed_except);
+            privacyIcon.setImageResource(R.drawable.ic_privacy_my_contacts);
+            changePrivacyBtn.setBackgroundTintList(AppCompatResources.getColorStateList(this, R.color.secondary_button_color_selector));
         } else if (PrivacyList.Type.ONLY.equals(feedPrivacy.activeList)) {
-            privacyDestination.setText(R.string.setting_feed_only);
+            privacyDestination.setText(R.string.contact_favorites);
+            privacyIcon.setImageResource(R.drawable.ic_privacy_favorites);
+            changePrivacyBtn.setBackgroundTintList(AppCompatResources.getColorStateList(this, R.color.favorites_button_color_selector));
         } else {
             Log.e("ContentComposerActivity: updatePostSubtitle received unexpected activeList - " + feedPrivacy.activeList);
             privacyDestination.setText("");
