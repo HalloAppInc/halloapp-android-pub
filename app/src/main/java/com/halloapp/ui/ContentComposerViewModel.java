@@ -87,6 +87,8 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
     private File voiceDraft;
 
+    private @PrivacyList.Type String feedTarget = PrivacyList.Type.ALL;
+
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsChanged() {
@@ -177,7 +179,12 @@ public class ContentComposerViewModel extends AndroidViewModel {
         feedPrivacyLiveData = new ComputableLiveData<FeedPrivacy>() {
             @Override
             protected FeedPrivacy compute() {
-                return feedPrivacyManager.getFeedPrivacy();
+                FeedPrivacy feedPrivacy = feedPrivacyManager.getFeedPrivacy();
+                if (feedPrivacy == null) {
+                    return new FeedPrivacy(feedTarget, null, null);
+                }
+
+                return new FeedPrivacy(feedTarget, feedPrivacy.exceptList, feedPrivacy.onlyList);
             }
         };
         feedPrivacyManager.addObserver(feedPrivacyObserver);
@@ -186,6 +193,15 @@ public class ContentComposerViewModel extends AndroidViewModel {
     public void setDestinationFeed(@Nullable GroupId groupId) {
         this.targetGroupId = groupId;
         shareTargetName.invalidate();
+    }
+
+    public @PrivacyList.Type String getPrivacyList() {
+        return feedTarget;
+    }
+
+    public void setPrivacyList(@NonNull @PrivacyList.Type String privacyList) {
+        this.feedTarget = privacyList;
+        feedPrivacyLiveData.invalidate();
     }
 
     public List<ShareDestination> getDestinationsList() {
@@ -226,7 +242,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
             destinations = new ArrayList<>(destinationList.getValue());
         }
 
-        new PrepareContentTask(chatId, groupFeedGroupId, destinations, text, getSendMediaList(), mentions, contentItems, replyPostId, replyPostMediaIndex, !supportsWideColor).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new PrepareContentTask(chatId, groupFeedGroupId, feedPrivacyLiveData.getLiveData().getValue(), destinations, text, getSendMediaList(), mentions, contentItems, replyPostId, replyPostMediaIndex, !supportsWideColor).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     void cleanTmpFiles() {
@@ -485,10 +501,22 @@ public class ContentComposerViewModel extends AndroidViewModel {
         private final String replyPostId;
         private final int replyPostMediaIndex;
         private final boolean forcesRGB;
+        private final FeedPrivacy feedPrivacy;
 
-        PrepareContentTask(@Nullable ChatId chatId, @Nullable GroupId groupId, @Nullable List<ShareDestination> destinations, @Nullable String text, @Nullable List<Media> media, @Nullable List<Mention> mentions, @NonNull MutableLiveData<List<ContentItem>> contentItems, @Nullable String replyPostId, int replyPostMediaIndex, boolean forcesRGB) {
+        PrepareContentTask(
+                @Nullable ChatId chatId,
+                @Nullable GroupId groupId,
+                @Nullable FeedPrivacy feedPrivacy,
+                @Nullable List<ShareDestination> destinations,
+                @Nullable String text, @Nullable List<Media> media,
+                @Nullable List<Mention> mentions,
+                @NonNull MutableLiveData<List<ContentItem>> contentItems,
+                @Nullable String replyPostId,
+                int replyPostMediaIndex,
+                boolean forcesRGB) {
             this.chatId = chatId;
             this.groupId = groupId;
+            this.feedPrivacy = feedPrivacy;
             this.destinations = destinations;
             this.text = text;
             this.media = media;
@@ -588,7 +616,6 @@ public class ContentComposerViewModel extends AndroidViewModel {
             List<UserId> audienceList;
             List<UserId> excludeList = null;
 
-            FeedPrivacy feedPrivacy = feedPrivacyManager.getFeedPrivacy();
             if (feedPrivacy == null || PrivacyList.Type.ALL.equals(feedPrivacy.activeList)) {
                 List<Contact> contacts = contactsDb.getUsers();
                 audienceList = new ArrayList<>(contacts.size());

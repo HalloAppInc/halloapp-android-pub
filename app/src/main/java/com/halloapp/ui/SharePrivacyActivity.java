@@ -48,14 +48,14 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class SharePrivacyActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
     public static final String RESULT_GROUP_ID = "selected_group_id";
+    public static final String RESULT_PRIVACY_TYPE = "privacy_type";
 
     private static final String EXTRA_CURRENT_SELECTION = "current_selection";
+    private static final String EXTRA_SELECTED_PRIVACY_TYPE = "selected_privacy_type";
 
-    private static final int REQUEST_CODE_SELECT_EXCEPT_LIST = 1;
-    private static final int REQUEST_CODE_SELECT_ONLY_LIST = 2;
+    private static final int REQUEST_CODE_SELECT_ONLY_LIST = 1;
 
     public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY = 1;
-    public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_EXCEPT = 2;
 
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
@@ -65,9 +65,10 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
 
     private MenuItem searchMenuItem;
 
-    public static Intent openPostPrivacy(@NonNull Context context, @Nullable GroupId groupId) {
+    public static Intent openPostPrivacy(@NonNull Context context, @Nullable @PrivacyList.Type String selectedPrivacyType, @Nullable GroupId groupId) {
         Intent i = new Intent(context, SharePrivacyActivity.class);
         i.putExtra(EXTRA_CURRENT_SELECTION, groupId);
+        i.putExtra(EXTRA_SELECTED_PRIVACY_TYPE, selectedPrivacyType);
         return i;
     }
 
@@ -75,12 +76,6 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case REQUEST_CODE_SELECT_EXCEPT_LIST:
-                if (resultCode == RESULT_OK && data != null) {
-                    List<UserId> exceptList = data.getParcelableArrayListExtra(MultipleContactPickerActivity.EXTRA_RESULT_SELECTED_IDS);
-                    saveList(PrivacyList.Type.EXCEPT, exceptList);
-                }
-                break;
             case REQUEST_CODE_SELECT_ONLY_LIST:
                 if (resultCode == RESULT_OK && data != null) {
                     List<UserId> onlyList = data.getParcelableArrayListExtra(MultipleContactPickerActivity.EXTRA_RESULT_SELECTED_IDS);
@@ -108,7 +103,9 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
 
         viewModel = new ViewModelProvider(this).get(SharePrivacyViewModel.class);
         viewModel.getGroupList().observe(this, adapter::setGroupsList);
-        viewModel.getFeedPrivacy().observe(this, adapter::setFeedPrivacy);
+        String feedPrivacyType = getIntent().getStringExtra(EXTRA_SELECTED_PRIVACY_TYPE);
+        FeedPrivacy feedPrivacy = new FeedPrivacy(feedPrivacyType, null, null);
+        adapter.setFeedPrivacy(feedPrivacy);
     }
 
     @Override
@@ -147,10 +144,6 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
         startActivityForResult(MultipleContactPickerActivity.newPickerIntentAllowEmpty(this, currentList, title), requestCode);
     }
 
-    private void editExceptList() {
-        openMultipleContactPicker(REQUEST_CODE_SELECT_EXCEPT_LIST, getExceptList(), R.string.contact_picker_feed_except_title);
-    }
-
     private void editOnlyList() {
         openMultipleContactPicker(REQUEST_CODE_SELECT_ONLY_LIST, getOnlyList(), R.string.contact_picker_feed_only_title);
     }
@@ -163,20 +156,12 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
         return null;
     }
 
-    private List<UserId> getExceptList() {
-        FeedPrivacy privacy = viewModel.getFeedPrivacy().getValue();
-        if (privacy != null) {
-            return privacy.exceptList;
-        }
-        return null;
-    }
-
     private void saveList(@PrivacyList.Type @NonNull String listType, List<UserId> userId) {
         viewModel.savePrivacy(listType, userId).observe(this, done -> {
             if (done != null) {
                 if (done) {
                     Toast.makeText(this, R.string.feed_privacy_update_success, Toast.LENGTH_LONG).show();
-                    onSelectGroup(null);
+                    onSelectFeed(listType);
                 } else {
                     SnackbarHelper.showWarning(this, R.string.feed_privacy_update_failure);
                 }
@@ -187,10 +172,6 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         switch (requestCode) {
-            case REQUEST_CODE_ASK_CONTACTS_PERMISSION_EXCEPT: {
-                editExceptList();
-                break;
-            }
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY: {
                 editOnlyList();
                 break;
@@ -311,6 +292,15 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
         finish();
     }
 
+    private void onSelectFeed(@NonNull @PrivacyList.Type String privacyList) {
+        Intent data = new Intent();
+        data.putExtra(RESULT_GROUP_ID, (GroupId) null);
+        data.putExtra(RESULT_PRIVACY_TYPE, privacyList);
+
+        setResult(RESULT_OK, data);
+        finish();
+    }
+
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView avatarIconView;
@@ -368,7 +358,7 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
 
             itemView.findViewById(R.id.my_contacts).setOnClickListener(v -> {
                 if (selMyContacts.isChecked()) {
-                    onSelectGroup(null);
+                    onSelectFeed(PrivacyList.Type.ALL);
                 } else {
                     saveList(PrivacyList.Type.ALL, Collections.emptyList());
                 }

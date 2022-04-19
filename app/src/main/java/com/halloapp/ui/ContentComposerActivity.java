@@ -687,7 +687,7 @@ public class ContentComposerActivity extends HalloActivity {
             changePrivacyBtn = findViewById(R.id.change_privacy);
             changePrivacyBtn.setVisibility(View.VISIBLE);
             changePrivacyBtn.setOnClickListener(v -> {
-                startActivityForResult(SharePrivacyActivity.openPostPrivacy(this, groupId), REQUEST_CODE_CHANGE_PRIVACY);
+                startActivityForResult(SharePrivacyActivity.openPostPrivacy(this, viewModel.getPrivacyList(), groupId), REQUEST_CODE_CHANGE_PRIVACY);
             });
         }
 
@@ -926,8 +926,11 @@ public class ContentComposerActivity extends HalloActivity {
         viewModel.setDestinationFeed(newFeedTarget);
         if (newFeedTarget != null) {
             viewModel.getFeedPrivacy().removeObservers(this);
+            privacyIcon.setVisibility(View.GONE);
+            changePrivacyBtn.setBackgroundTintList(AppCompatResources.getColorStateList(this, R.color.secondary_button_color_selector));
         } else {
             viewModel.getFeedPrivacy().observe(this, this::updatePostSubtitle);
+            privacyIcon.setVisibility(View.VISIBLE);
         }
     }
 
@@ -1275,6 +1278,15 @@ public class ContentComposerActivity extends HalloActivity {
             case REQUEST_CODE_CHANGE_PRIVACY:
                 if (result == RESULT_OK && data != null) {
                     GroupId newId = data.getParcelableExtra(SharePrivacyActivity.RESULT_GROUP_ID);
+
+                    String privacyType = data.getStringExtra(SharePrivacyActivity.RESULT_PRIVACY_TYPE);
+                    if (newId == null) {
+                        if (PrivacyList.Type.ONLY.equals(privacyType)) {
+                            viewModel.setPrivacyList(privacyType);
+                        } else {
+                            viewModel.setPrivacyList(PrivacyList.Type.ALL);
+                        }
+                    }
                     updateDestination(newId);
                 }
                 break;
