@@ -126,6 +126,11 @@
             android:label="@string/select_contact"/>
 
         <activity
+            android:name=".ui.contacts.ViewMyContactsActivity"
+            android:theme="@style/AppTheme"
+            android:label="@string/my_contacts_title"/>
+
+        <activity
             android:name=".ui.SharePrivacyActivity"
             android:theme="@style/AppTheme"
             android:label="@string/share_with"/>

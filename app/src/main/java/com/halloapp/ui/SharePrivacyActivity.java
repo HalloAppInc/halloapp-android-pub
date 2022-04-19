@@ -34,6 +34,7 @@ import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
+import com.halloapp.ui.contacts.ViewMyContactsActivity;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.SnackbarHelper;
@@ -56,6 +57,7 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
     private static final int REQUEST_CODE_SELECT_ONLY_LIST = 1;
 
     public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY = 1;
+    public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_VIEW_MY_CONTACTS = 2;
 
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
@@ -169,12 +171,19 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
         });
     }
 
+    private void viewMyContacts() {
+        startActivity(ViewMyContactsActivity.viewMyContacts(this));
+    }
+
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         switch (requestCode) {
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY: {
                 editOnlyList();
                 break;
+            }
+            case REQUEST_CODE_ASK_CONTACTS_PERMISSION_VIEW_MY_CONTACTS: {
+
             }
         }
     }
@@ -374,7 +383,9 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
             });
 
             myContactsChevron.setOnClickListener(v -> {
-
+                if (PermissionUtils.hasOrRequestContactPermissions(SharePrivacyActivity.this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_VIEW_MY_CONTACTS)) {
+                    viewMyContacts();
+                }
             });
         }
 

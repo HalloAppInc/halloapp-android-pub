@@ -553,6 +553,8 @@
     <string name="name_must_be_specified">Name must be specified</string>
     <string name="counter">%1$d/%2$d</string>
     <string name="invite_pending">Pending</string>
+    <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
+    <string name="my_contacts_disclaimer">Your contacts that join HalloApp will be able to see your unexpired posts</string>
     <string name="failed_update_profile">Failed to update profile, try again later</string>
     <!-- Title for page showing groups in common -->
     <string name="groups_in_common">Groups in common</string>
@@ -653,6 +655,10 @@
     <string name="group_info_title">Group info</string>
     <string name="admin">Admin</string>
     <string name="save">Save</string>
+    <!-- Title for screen that shows all the user's contacts -->
+    <string name="my_contacts_title">My contacts</string>
+    <!-- Title for list showing all users halloapp contacts -->
+    <string name="my_ha_contacts">My HalloApp contacts</string>
     <string name="contact_picker_feed_except_title">Hide posts from…</string>
     <string name="contact_picker_feed_only_title">Share posts with…</string>
     <!-- Title for feed privacy when setting it from a single post -->
