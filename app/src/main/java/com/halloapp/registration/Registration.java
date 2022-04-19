@@ -441,6 +441,7 @@ public class Registration {
                 return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
             }
             me.saveNoiseKey(keypair);
+            Log.i("Registration.verifyRegistration success with uid " + uid);
             return new RegistrationVerificationResult(uid, null, phone);
         } catch (IOException e) {
             Log.e("Registration.verifyRegistration network failed", e);
