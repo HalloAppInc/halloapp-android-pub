@@ -93,6 +93,8 @@ import org.webrtc.VideoEncoderFactory;
 import org.webrtc.VideoSink;
 import org.webrtc.VideoSource;
 import org.webrtc.VideoTrack;
+import org.webrtc.audio.AudioDeviceModule;
+import org.webrtc.audio.JavaAudioDeviceModule;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -251,8 +253,6 @@ public class CallManager {
         this.observers = new HashSet<>();
         this.callStats = new CallStats();
 
-        // TODO(vipin): Remove the following line.
-        // executor.execute(this::initializePeerConnectionFactory);
         if (Build.VERSION.SDK_INT >= 26) {
             executor.execute(this::telecomRegisterAccount);
         }
@@ -971,6 +971,12 @@ public class CallManager {
         KrispUtil.initializeResources();
         final VideoEncoderFactory encoderFactory = new DefaultVideoEncoderFactory(getEglBase().getEglBaseContext(), true, true);
         final VideoDecoderFactory decoderFactory = new DefaultVideoDecoderFactory(getEglBase().getEglBaseContext());
+        AudioDeviceModule audioDeviceModule;
+        if (isKrispActive()) {
+            audioDeviceModule = JavaAudioDeviceModule.builder(appContext.get()).setInputSampleRate(KrispUtil.getMaxSampleRate()).createAudioDeviceModule();
+        } else {
+            audioDeviceModule = JavaAudioDeviceModule.builder(appContext.get()).createAudioDeviceModule();
+        }
         PeerConnectionFactory.initialize(
                 PeerConnectionFactory.InitializationOptions.builder(appContext.get())
                         .setEnableInternalTracer(true)
@@ -979,6 +985,7 @@ public class CallManager {
         PeerConnectionFactory.Builder builder = PeerConnectionFactory.builder();
         builder.setVideoEncoderFactory(encoderFactory);
         builder.setVideoDecoderFactory(decoderFactory);
+        builder.setAudioDeviceModule(audioDeviceModule);
         builder.setOptions(null);
         factory = builder.createPeerConnectionFactory();
         Log.i("CallManager: PeerConnectionFactory created");
@@ -1111,6 +1118,12 @@ public class CallManager {
         }
     }
 
+    private boolean isKrispActive() {
+        return KrispUtil.isResourcePresent() &&
+                ServerProps.getInstance().getKrispNoiseSuppression() &&
+                Preferences.getInstance().getKrispNoiseSuppression();
+    }
+
     private PeerConnection createPeerConnection(@NonNull PeerConnectionFactory factory, List<StunServer> stunServers, @Nullable List<TurnServer> turnServers) {
         // TODO(nikola): maybe we should have some default stun server?
 //        String URL = "stun:stun.l.google.com:19302";
@@ -1120,9 +1133,7 @@ public class CallManager {
 
         PeerConnection.RTCConfiguration rtcConfig = createRtcConfig(stunServers, turnServers);
 
-        if (KrispUtil.isResourcePresent() &&
-                ServerProps.getInstance().getKrispNoiseSuppression() &&
-                Preferences.getInstance().getKrispNoiseSuppression()) {
+        if (isKrispActive()) {
             rtcConfig.krispWtsFilePath = KrispUtil.filePath();
             // TODO(vipin): Set audio sample rate to 32Khz.
             Log.i("CallManager: using Krisp wts file path: " + rtcConfig.krispWtsFilePath);

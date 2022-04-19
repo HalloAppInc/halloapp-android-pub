@@ -17,6 +17,10 @@ public class KrispUtil {
     private static final String RESOURCE_NAME = "krisp";
     private static final String RESOURCE_TYPE = "raw";
 
+    // Krisp's Max Sample Rate. Input sample if higher is down sampled before noise suppression
+    // and up sampled before returning.
+    private static final int MAX_SAMPLE_RATE = 32000;
+
     private static String dirPath() {
         return AppContext.getInstance().get().getFilesDir() + File.separator + RESOURCE_DIR;
     }
@@ -49,4 +53,6 @@ public class KrispUtil {
     public static boolean isResourcePresent() {
         return new File(filePath()).exists();
     }
+
+    public static int getMaxSampleRate() { return MAX_SAMPLE_RATE; }
 }
