@@ -79,12 +79,13 @@
         <FrameLayout
             android:id="@+id/my_contacts_chevron"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackgroundBorderless">
+            android:layout_height="match_parent"
+            android:background="?selectableItemBackground">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_chevron_right"
                 android:layout_marginHorizontal="25dp"
                 app:tint="@color/secondary_text_button"/>
@@ -150,14 +151,15 @@
         <FrameLayout
             android:id="@+id/favorites_chevron"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackgroundBorderless">
+            android:layout_height="match_parent"
+            android:background="?selectableItemBackground">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_chevron_right"
                 android:layout_marginHorizontal="25dp"
+                android:layout_gravity="center_vertical"
                 app:tint="@color/secondary_text_button"/>
 
         </FrameLayout>
