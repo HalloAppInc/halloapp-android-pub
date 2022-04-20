@@ -74,6 +74,7 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
     private int maxSelection = -1;
 
     private boolean editFavorites = false;
+    private boolean addFavorites = false;
 
     public static Intent openFavorites(@NonNull Context context) {
         Intent i = new Intent(context, EditFavoritesActivity.class);
@@ -113,9 +114,14 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
                     if (done != null) {
                         if (done) {
                             Toast.makeText(this, R.string.feed_privacy_update_success, Toast.LENGTH_LONG).show();
-                            favorites.clear();
-                            favorites.addAll(newFavorites);
-                            adapter.refreshSections();
+                            if (addFavorites) {
+                                setResult(RESULT_OK);
+                                finish();
+                            } else {
+                                favorites.clear();
+                                favorites.addAll(newFavorites);
+                                adapter.refreshSections();
+                            }
                         } else {
                             SnackbarHelper.showWarning(this, R.string.feed_privacy_update_failure);
                         }
@@ -163,7 +169,9 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
 
         viewModel = new ViewModelProvider(this, new EditFavoritesViewModel.Factory(getApplication(), initialSelectedContacts)).get(EditFavoritesViewModel.class);
         viewModel.favoritesList.getLiveData().observe(this, priv -> {
-            if (priv != null && priv.onlyList != null) {
+            if (priv == null || priv.onlyList == null || priv.onlyList.isEmpty()) {
+                addFavoritesMode();
+            } else {
                 favorites = new HashSet<>(priv.onlyList);
                 selectedContacts = new LinkedHashSet<>(priv.onlyList);
                 initialSelectedContacts = new HashSet<>(selectedContacts);
@@ -173,6 +181,14 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
         viewModel.contactList.getLiveData().observe(this, adapter::setContacts);
         selectionIcon = R.drawable.ic_check;
         loadContacts();
+    }
+
+    private void addFavoritesMode() {
+        addFavorites = true;
+        editFavorites = true;
+        titleView.setText(R.string.add_favorites_title);
+        editButton.setText(R.string.done);
+        adapter.notifyDataSetChanged();
     }
 
     @Override

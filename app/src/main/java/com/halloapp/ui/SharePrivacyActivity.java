@@ -80,10 +80,6 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_CODE_SELECT_ONLY_LIST:
-                if (resultCode == RESULT_OK && data != null) {
-                    List<UserId> onlyList = data.getParcelableArrayListExtra(MultipleContactPickerActivity.EXTRA_RESULT_SELECTED_IDS);
-                    saveList(PrivacyList.Type.ONLY, onlyList);
-                }
                 break;
         }
     }
@@ -143,12 +139,8 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
         return true;
     }
 
-    private void openMultipleContactPicker(int requestCode, List<UserId> currentList, @StringRes int title) {
-        startActivityForResult(MultipleContactPickerActivity.newPickerIntentAllowEmpty(this, currentList, title), requestCode);
-    }
-
     private void editOnlyList() {
-        openMultipleContactPicker(REQUEST_CODE_SELECT_ONLY_LIST, getOnlyList(), R.string.contact_picker_feed_only_title);
+        startActivityForResult(EditFavoritesActivity.openFavorites(SharePrivacyActivity.this), REQUEST_CODE_SELECT_ONLY_LIST);
     }
 
     private List<UserId> getOnlyList() {
@@ -385,13 +377,8 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
             });
 
             favoritesChevron.setOnClickListener(v -> {
-                List<UserId> onlyList = getOnlyList();
-                if (onlyList == null || onlyList.isEmpty()) {
-                    if (PermissionUtils.hasOrRequestContactPermissions(SharePrivacyActivity.this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY)) {
-                        editOnlyList();
-                    }
-                } else {
-                    startActivityForResult(EditFavoritesActivity.openFavorites(SharePrivacyActivity.this), REQUEST_CODE_SELECT_ONLY_LIST);
+                if (PermissionUtils.hasOrRequestContactPermissions(SharePrivacyActivity.this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY)) {
+                    editOnlyList();
                 }
             });
 

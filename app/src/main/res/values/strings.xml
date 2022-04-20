@@ -402,6 +402,8 @@
     <string name="contact_favorites">Favorites</string>
     <!-- Title for when user is editing their favorites -->
     <string name="edit_favorites_title">Edit favorites</string>
+    <!-- Title for when user is adding users to  their favorites. This is only shown when their favorites is empty -->
+    <string name="add_favorites_title">Add favorites</string>
     <!-- Button action for when user is editing their favorites -->
     <string name="edit_favorites_action">Edit favorites</string>
     <!-- Favorites new user experience explanation, introducing the feature in a dialog. -->
