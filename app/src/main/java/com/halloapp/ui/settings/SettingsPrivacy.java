@@ -90,6 +90,7 @@ public class SettingsPrivacy extends HalloActivity {
                 startActivity(intent);
                 return false;
             });
+            feedPrivacyPreference.setVisible(false);
 
             privacyPolicyPreference = Preconditions.checkNotNull(findPreference("privacy_policy"));
             privacyPolicyPreference.setOnPreferenceClickListener(preference -> {

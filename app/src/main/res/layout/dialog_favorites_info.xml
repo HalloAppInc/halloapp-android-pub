@@ -88,7 +88,7 @@
                 android:maxLines="1"
                 android:layout_marginHorizontal="6dp"
                 android:textAllCaps="false"
-                android:text="@string/settings"
+                android:text="@string/edit_favorites_action"
                 android:textSize="15sp"
                 android:paddingVertical="10dp"
                 android:fontFamily="sans-serif-medium"

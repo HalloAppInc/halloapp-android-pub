@@ -41,10 +41,6 @@ public class EditFavoritesViewModel extends AndroidViewModel {
         }
     };
 
-    public EditFavoritesViewModel(@NonNull Application application) {
-        this(application, null);
-    }
-
     public EditFavoritesViewModel(@NonNull Application application, @Nullable Set<UserId> initialSelection) {
         super(application);
 

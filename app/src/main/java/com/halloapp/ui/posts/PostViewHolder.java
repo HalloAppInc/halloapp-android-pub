@@ -161,7 +161,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
         if (privacyIndicator != null) {
             privacyIndicator.setOnClickListener(v -> {
-                parent.showDialogFragment(FavoritesInfoDialogFragment.newInstance(post == null || post.senderUserId.isMe()));
+                parent.showDialogFragment(FavoritesInfoDialogFragment.newInstance(post == null || post.senderUserId.isMe(), nameView.getText().toString()));
             });
         }
 

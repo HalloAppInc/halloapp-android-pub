@@ -391,13 +391,17 @@
         <item quantity="other">HalloApp expires in %d days</item>
     </plurals>
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for their posts -->
-    <string name="contact_favorites_explanation">This post is only shared with contacts you added to Favorites. You can adjust your audience in privacy settings at any time.</string>
+    <string name="contact_favorites_explanation">This post is only shared with contacts you added to Favorites. You can edit your Favorites list at any time.</string>
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts -->
     <string name="contact_favorites_explanation_others">This post is only shared with a limited audience. You can adjust your audience in privacy settings at any time.</string>
+    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
+    <string name="contact_favorites_explanation_others_with_name">%s shared this post with contacts on their Favorites list. You can setup and edit your Favorites list at any time.</string>
     <!-- Favorites means the users favorite contacts -->
     <string name="contact_favorites">Favorites</string>
     <!-- Title for when user is editing their favorites -->
     <string name="edit_favorites_title">Edit favorites</string>
+    <!-- Button action for when user is editing their favorites -->
+    <string name="edit_favorites_action">Edit favorites</string>
     <string name="share_link">Share link</string>
     <string name="copy_link">Copy link</string>
     <!-- Button for revoking a link used for external sharing -->
