@@ -75,6 +75,7 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
 
     private boolean editFavorites = false;
     private boolean addFavorites = false;
+    private boolean hasChanges = false;
 
     public static Intent openFavorites(@NonNull Context context) {
         Intent i = new Intent(context, EditFavoritesActivity.class);
@@ -100,34 +101,36 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
         titleView = toolbar.findViewById(R.id.toolbar_title);
         editButton = findViewById(R.id.edit_btn);
         editButton.setOnClickListener(v -> {
-            editFavorites = !editFavorites;
-            if (editFavorites) {
+            if (!editFavorites) {
+                editFavorites = true;
                 titleView.setText(R.string.edit_favorites_title);
                 editButton.setText(R.string.done);
+                hasChanges = false;
                 adapter.collapseFavorites();
                 adapter.refreshSections();
             } else {
-                titleView.setText(R.string.contact_favorites);
-                editButton.setText(R.string.edit);
-                List<UserId> newFavorites = new ArrayList<>(selectedContacts);
-                viewModel.saveFavorites(newFavorites).observe(this, done -> {
-                    if (done != null) {
-                        if (done) {
-                            Toast.makeText(this, R.string.feed_privacy_update_success, Toast.LENGTH_LONG).show();
-                            if (addFavorites) {
-                                setResult(RESULT_OK);
-                                finish();
+                if (hasChanges) {
+                    List<UserId> newFavorites = new ArrayList<>(selectedContacts);
+                    viewModel.saveFavorites(newFavorites).observe(this, done -> {
+                        if (done != null) {
+                            if (done) {
+                                Toast.makeText(this, R.string.feed_privacy_update_success, Toast.LENGTH_LONG).show();
+                                if (addFavorites) {
+                                    setResult(RESULT_OK);
+                                    finish();
+                                } else {
+                                    favorites.clear();
+                                    favorites.addAll(newFavorites);
+                                    exitEditMode();
+                                }
                             } else {
-                                favorites.clear();
-                                favorites.addAll(newFavorites);
-                                adapter.refreshSections();
+                                SnackbarHelper.showWarning(this, R.string.feed_privacy_update_failure);
                             }
-                        } else {
-                            SnackbarHelper.showWarning(this, R.string.feed_privacy_update_failure);
                         }
-                    }
-                });
-                adapter.notifyDataSetChanged();
+                    });
+                } else {
+                    exitEditMode();
+                }
             }
         });
         editButton.setVisibility(View.VISIBLE);
@@ -183,6 +186,13 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
         loadContacts();
     }
 
+    private void exitEditMode() {
+        titleView.setText(R.string.contact_favorites);
+        editButton.setText(R.string.edit);
+        editFavorites = false;
+        adapter.refreshSections();
+    }
+
     private void addFavoritesMode() {
         addFavorites = true;
         editFavorites = true;
@@ -193,7 +203,7 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
 
     @Override
     public void onBackPressed() {
-        if (editFavorites) {
+        if (editFavorites && hasChanges) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(R.string.alert_discard_changes_message);
             builder.setNegativeButton(R.string.cancel, null);
@@ -497,6 +507,7 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
                 if (contact == null) {
                     return;
                 }
+                hasChanges = true;
                 if (selectedContacts.contains(contact.userId)) {
                     selectedContacts.remove(contact.userId);
                 } else {
