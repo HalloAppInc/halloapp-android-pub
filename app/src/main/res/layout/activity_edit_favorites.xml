@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:id="@+id/toolbar_container"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:elevation="@dimen/action_bar_elevation"
+        android:background="@color/window_background">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:gravity="top"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
+            app:contentInsetStartWithNavigation="0dp"
+            app:popupTheme="@style/ThemeOverlay.MaterialComponents"
+            app:theme="@style/ActionBar.Composer">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_vertical"
+                android:layout_gravity="top">
+
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/contact_favorites"
+                    android:textAppearance="@style/TextAppearance.Toolbar.Title.Composer" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/edit_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginEnd="17dp"
+                android:paddingHorizontal="24dp"
+                android:layout_gravity="end|center_vertical"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="visible"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/edit"
+                android:textSize="16sp"
+                android:paddingBottom="1dp"
+                android:textColor="@color/color_secondary"
+                android:background="@drawable/bg_toolbar_button" />
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:paddingStart="70dp"
+            android:paddingEnd="16dp">
+
+            <ImageView
+                android:id="@+id/search_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_search"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/search_text"
+                app:layout_constraintBottom_toBottomOf="@+id/search_text"
+                />
+
+            <EditText
+                android:id="@+id/search_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/search_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@null"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="15sp"
+                android:hint="@string/search_contacts"
+                android:inputType="textPersonName"
+                android:importantForAutofill="no"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+                android:id="@android:id/list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                app:fastScrollPopupBgColor="@color/color_accent"
+                app:fastScrollPopupTextColor="@android:color/primary_text_dark"
+                app:fastScrollThumbColor="@color/color_accent" />
+
+        <TextView
+            android:id="@android:id/empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

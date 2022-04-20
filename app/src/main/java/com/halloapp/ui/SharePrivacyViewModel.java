@@ -27,15 +27,13 @@ import java.util.Objects;
 public class SharePrivacyViewModel extends ViewModel {
 
     private final ComputableLiveData<List<Group>> groupsList;
-    private ComputableLiveData<FeedPrivacy> feedPrivacyLiveData;
+    private final MutableLiveData<FeedPrivacy> feedPrivacyLiveData = new MutableLiveData<>();
 
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final ContentDb contentDb = ContentDb.getInstance();
     private final FeedPrivacyManager feedPrivacyManager = FeedPrivacyManager.getInstance();
 
-    private final FeedPrivacyManager.Observer feedPrivacyObserver = () -> {
-        feedPrivacyLiveData.invalidate();
-    };
+    private final FeedPrivacyManager.Observer feedPrivacyObserver = this::refreshFeedPrivacy;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
@@ -82,13 +80,15 @@ public class SharePrivacyViewModel extends ViewModel {
                 return groups;
             }
         };
-        feedPrivacyLiveData = new ComputableLiveData<FeedPrivacy>() {
-            @Override
-            protected FeedPrivacy compute() {
-                return feedPrivacyManager.getFeedPrivacy();
-            }
-        };
+
+        refreshFeedPrivacy();
         feedPrivacyManager.addObserver(feedPrivacyObserver);
+    }
+
+    private void refreshFeedPrivacy() {
+        bgWorkers.execute(() -> {
+            feedPrivacyLiveData.postValue(feedPrivacyManager.getFeedPrivacy());
+        });
     }
 
     @Override
@@ -98,7 +98,7 @@ public class SharePrivacyViewModel extends ViewModel {
     }
 
     public LiveData<FeedPrivacy> getFeedPrivacy() {
-        return feedPrivacyLiveData.getLiveData();
+        return feedPrivacyLiveData;
     }
 
     @NonNull

@@ -48,6 +48,7 @@
             android:textSize="16sp"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
+            android:visibility="gone"
             android:text="@string/setting_feed_except"/>
 
         <RadioButton
@@ -57,7 +58,7 @@
             android:textSize="16sp"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:text="@string/setting_feed_only"/>
+            android:text="@string/contact_favorites"/>
 
     </RadioGroup>
 

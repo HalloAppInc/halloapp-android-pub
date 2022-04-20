@@ -396,6 +396,8 @@
     <string name="contact_favorites_explanation_others">This post is only shared with a limited audience. You can adjust your audience in privacy settings at any time.</string>
     <!-- Favorites means the users favorite contacts -->
     <string name="contact_favorites">Favorites</string>
+    <!-- Title for when user is editing their favorites -->
+    <string name="edit_favorites_title">Edit favorites</string>
     <string name="share_link">Share link</string>
     <string name="copy_link">Copy link</string>
     <!-- Button for revoking a link used for external sharing -->

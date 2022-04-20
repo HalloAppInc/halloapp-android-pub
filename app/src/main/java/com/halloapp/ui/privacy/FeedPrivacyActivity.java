@@ -125,6 +125,9 @@ public class FeedPrivacyActivity extends HalloActivity implements EasyPermission
             }
             if (selectedType == null) {
                 selectedType = feedPrivacy.activeList;
+                if (PrivacyList.Type.EXCEPT.equals(feedPrivacy.activeList)) {
+                    selectedType = PrivacyList.Type.ALL;
+                }
             }
             checkRadioButtonForType(selectedType);
         });

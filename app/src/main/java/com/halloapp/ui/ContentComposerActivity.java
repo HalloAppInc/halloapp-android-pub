@@ -62,7 +62,6 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
-import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.AudioDurationLoader;

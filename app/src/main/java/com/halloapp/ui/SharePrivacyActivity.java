@@ -33,6 +33,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.contacts.EditFavoritesActivity;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
 import com.halloapp.ui.contacts.ViewMyContactsActivity;
 import com.halloapp.util.FilterUtils;
@@ -373,13 +374,25 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
                 }
             });
             itemView.findViewById(R.id.only_share_with).setOnClickListener(v -> {
-                if (PermissionUtils.hasOrRequestContactPermissions(SharePrivacyActivity.this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY)) {
-                    editOnlyList();
+                List<UserId> onlyList = getOnlyList();
+                if (onlyList == null || onlyList.isEmpty()) {
+                    if (PermissionUtils.hasOrRequestContactPermissions(SharePrivacyActivity.this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY)) {
+                        editOnlyList();
+                    }
+                } else {
+                    onSelectFeed(PrivacyList.Type.ONLY);
                 }
             });
 
             favoritesChevron.setOnClickListener(v -> {
-
+                List<UserId> onlyList = getOnlyList();
+                if (onlyList == null || onlyList.isEmpty()) {
+                    if (PermissionUtils.hasOrRequestContactPermissions(SharePrivacyActivity.this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_ONLY)) {
+                        editOnlyList();
+                    }
+                } else {
+                    startActivityForResult(EditFavoritesActivity.openFavorites(SharePrivacyActivity.this, getOnlyList()), REQUEST_CODE_SELECT_ONLY_LIST);
+                }
             });
 
             myContactsChevron.setOnClickListener(v -> {
