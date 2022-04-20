@@ -241,7 +241,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         } else {
             parent.getContactLoader().load(nameView, post.senderUserId, parent.shouldOpenProfileOnNamePress());
         }
-        if (PrivacyList.Type.ONLY.equals(post.getAudienceType()) && ServerProps.getInstance().getIsInternalUser()) {
+        if (PrivacyList.Type.ONLY.equals(post.getAudienceType())) {
             privacyIndicator.setVisibility(View.VISIBLE);
         } else {
             privacyIndicator.setVisibility(View.GONE);
