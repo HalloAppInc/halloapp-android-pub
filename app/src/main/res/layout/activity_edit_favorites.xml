@@ -42,7 +42,7 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:text="@string/contact_favorites"
-                    android:textAppearance="@style/TextAppearance.Toolbar.Title.Composer" />
+                    android:textAppearance="@style/TextAppearance.Toolbar.Title" />
 
             </LinearLayout>
 
