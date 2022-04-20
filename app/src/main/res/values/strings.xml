@@ -287,6 +287,8 @@
 
     <!-- Text shown in activity center upon successful registration -->
     <string name="welcome_notification">Welcome to HalloApp! &lt;a href="invite-friend">Invite a friend&lt;/a></string>
+    <!-- Text shown in activity center telling users about the new favorites feature -->
+    <string name="favorites_notification">Check out the new &lt;b>Favorites&lt;/b> feature! &lt;a href="learn-more">Learn more&lt;/a></string>
     <string name="contact_hashing_faq_dialog_title">Your privacy is our priority</string>
     <string name="contact_hashing_faq_dialog_info">HalloApp only uses the phone number field to match you with your friends on HalloApp, and does not capture any additional data from your contact book.</string>
     <string name="list_of_two">%1$s and %2$s</string>

@@ -33,13 +33,11 @@ import com.halloapp.xmpp.invites.InvitesApi;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 public class ActivityCenterViewModel extends AndroidViewModel {
 
@@ -198,6 +196,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
     public void markAllRead() {
         bgWorkers.execute(() -> {
             preferences.setWelcomeInviteNotificationSeen(true);
+            preferences.setFavoritesNotificationSeen();
 
             final HashSet<Comment> comments = new HashSet<>(contentDb.getIncomingCommentsHistory(-1));
             final List<Post> mentionedPosts = contentDb.getMentionedPosts(UserId.ME, -1);
@@ -274,6 +273,13 @@ public class ActivityCenterViewModel extends AndroidViewModel {
     public void markInvitesNotificationSeen() {
         bgWorkers.execute(() -> {
             preferences.setWelcomeInviteNotificationSeen(true);
+            socialHistory.invalidate();
+        });
+    }
+
+    public void markFavoritesNotificationSeen() {
+        bgWorkers.execute(() -> {
+            preferences.setFavoritesNotificationSeen();
             socialHistory.invalidate();
         });
     }
@@ -355,6 +361,13 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             socialActionEvents.add(event);
         }
 
+        long favoritesNuxTime = preferences.getFavoritesNotificationTime();
+        if (favoritesNuxTime != 0) {
+            SocialActionEvent event = SocialActionEvent.forFavoritesNux(favoritesNuxTime);
+            event.seen = preferences.getFavoritesNotificationSeen();
+            socialActionEvents.add(event);
+        }
+
         int unseenCount = 0;
         for (SocialActionEvent event : socialActionEvents) {
             if (!event.postSenderUserId.isMe() && !contacts.containsKey(event.postSenderUserId)) {
@@ -433,6 +446,12 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             SocialActionEvent activity = new SocialActionEvent(Action.TYPE_WELCOME, UserId.ME, null);
             activity.timestamp = timestamp;
             activity.numInvites = numInvites;
+            return activity;
+        }
+
+        public static SocialActionEvent forFavoritesNux(long timestamp) {
+            SocialActionEvent activity = new SocialActionEvent(Action.TYPE_FAVORITES_NUX, UserId.ME, null);
+            activity.timestamp = timestamp;
             return activity;
         }
 

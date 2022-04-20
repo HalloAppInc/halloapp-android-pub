@@ -24,11 +24,16 @@
                 android:background="@drawable/bottomsheet_pull_bar"/>
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
-                android:src="@drawable/ic_favorites_privacy_star"/>
+                android:paddingTop="9dp"
+                android:paddingBottom="10dp"
+
+                android:background="@drawable/bg_circle"
+                android:backgroundTint="@color/favorites_yellow"
+                android:src="@drawable/ic_favorites_star_large"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -92,6 +97,7 @@
                 android:stateListAnimator="@null"
                 android:letterSpacing="0.01"
                 android:paddingVertical="10dp"
+                android:paddingHorizontal="16dp"
                 android:fontFamily="sans-serif-medium"
                 android:textSize="15sp"
                 android:textAllCaps="false"

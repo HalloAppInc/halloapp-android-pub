@@ -31,8 +31,10 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.contacts.FavoritesNuxBottomSheetDialogFragment;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
@@ -154,6 +156,11 @@ public class ActivityCenterActivity extends HalloActivity {
         viewModel.markInvitesNotificationSeen();
     }
 
+    private void onFavoritesNotificationClicked() {
+        DialogFragmentUtils.showDialogFragmentOnce(FavoritesNuxBottomSheetDialogFragment.newInstance(), getSupportFragmentManager());
+        viewModel.markFavoritesNotificationSeen();
+    }
+
     private class SocialEventsAdapter extends RecyclerView.Adapter<SocialEventsAdapter.ViewHolder> {
 
         private List<ActivityCenterViewModel.SocialActionEvent> socialEvents;
@@ -220,7 +227,8 @@ public class ActivityCenterActivity extends HalloActivity {
                     postThumbnailLoader.load(thumbnailView, socialEvent.postSenderUserId, socialEvent.postId);
                 }
 
-                if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_WELCOME) {
+                if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_WELCOME
+                        || socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FAVORITES_NUX) {
                     thumbnailView.setVisibility(View.GONE);
                 } else {
                     thumbnailView.setVisibility(View.VISIBLE);
@@ -301,14 +309,27 @@ public class ActivityCenterActivity extends HalloActivity {
                     text = StringUtils.replaceLink(infoView.getContext(), text, "invite-friend", ActivityCenterActivity.this::onInvitesNotificationClicked);
                     infoView.setText(text);
                     infoView.setMovementMethod(LinkMovementMethod.getInstance());
+                } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FAVORITES_NUX) {
+                    CharSequence text = Html.fromHtml(infoView.getContext().getResources().getString(R.string.favorites_notification));
+                    text = StringUtils.replaceLink(infoView.getContext(), text, "learn-more", ActivityCenterActivity.this::onFavoritesNotificationClicked);
+                    infoView.setText(text);
+                    infoView.setMovementMethod(LinkMovementMethod.getInstance());
                 }
 
-                final UserId actorUserId = socialEvent.involvedUsers.isEmpty() ? socialEvent.postSenderUserId : socialEvent.involvedUsers.iterator().next();
-                avatarLoader.load(avatarView, actorUserId);
+                if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FAVORITES_NUX) {
+                    avatarLoader.cancel(avatarView);
+                    avatarView.setImageResource(R.drawable.favorites_icon_large);
+                } else {
+                    final UserId actorUserId = socialEvent.involvedUsers.isEmpty() ? socialEvent.postSenderUserId : socialEvent.involvedUsers.iterator().next();
+                    avatarLoader.load(avatarView, actorUserId);
+                }
 
                 itemView.setOnClickListener(v -> {
                     if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_WELCOME) {
                         onInvitesNotificationClicked();
+                        return;
+                    } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FAVORITES_NUX) {
+                        onFavoritesNotificationClicked();
                         return;
                     }
                     if (clickListener != null) {

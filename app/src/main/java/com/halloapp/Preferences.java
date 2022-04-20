@@ -78,6 +78,9 @@ public class Preferences {
     private static final String PREF_KEY_REGISTRATION_TIME = "registration_time";
     private static final String PREF_KEY_INVITE_NOTIFICATION_SEEN = "welcome_invite_seen";
 
+    private static final String PREF_KEY_FAVORITES_NOTIFICATION_TIME = "favorites_notification_time";
+    private static final String PREF_KEY_FAVORITES_NOTIFICATION_SEEN = "favorites_notification_seen";
+
     private static final String PREF_KEY_KEYBOARD_HEIGHT_PORTRAIT = "keyboard_height_portrait";
     private static final String PREF_KEY_KEYBOARD_HEIGHT_LANDSCAPE = "keyboard_height_landscape";
 
@@ -178,7 +181,10 @@ public class Preferences {
     private final IntPreference prefVideoCallLocalViewQuadrant = createPref(true, PREF_KEY_VIDEO_CALL_LOCAL_QUADRANT, CallParticipantsLayout.Quadrant.TOP_RIGHT);
 
     private final BooleanPreference prefKrispNoiseSuppression = createPref(false, PREF_KEY_KRISP_NOISE_SUPPRESSION, false);
+
     private final BooleanPreference prefShowedFavoritesNux = createPref(false, PREF_KEY_SHOWED_FAVORITES_NUX, false);
+    private final LongPreference prefFavoritesNotificationTime = createPref(false, PREF_KEY_FAVORITES_NOTIFICATION_TIME, 0L);
+    private final BooleanPreference prefFavoritesNotificationSeen = createPref(false, PREF_KEY_FAVORITES_NOTIFICATION_SEEN, false);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -765,5 +771,25 @@ public class Preferences {
 
     public void setFavoritesNuxShown() {
         prefShowedFavoritesNux.apply(true);
+    }
+
+    @WorkerThread
+    public long getFavoritesNotificationTime() {
+        return prefFavoritesNotificationTime.get();
+    }
+
+    @WorkerThread
+    public void setFavoritesNotificationTime(long time) {
+        prefFavoritesNotificationTime.set(time);
+    }
+
+    @WorkerThread
+    public boolean getFavoritesNotificationSeen() {
+        return prefFavoritesNotificationSeen.get();
+    }
+
+    @WorkerThread
+    public void setFavoritesNotificationSeen() {
+        prefFavoritesNotificationSeen.set(true);
     }
 }

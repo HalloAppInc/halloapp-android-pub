@@ -59,6 +59,7 @@
     <color name="media_content_outline">#dddddd</color>
     <color name="bottom_sheet_pull_bar">@color/black_20</color>
     <color name="gallery_placeholder">#eeeeee</color>
+    <color name="favorites_yellow">#FFAC2F</color>
     <color name="seen_comment_background">#f0f0f0</color>
     <color name="remove_link_preview_background">#544F46</color>
     <color name="card_background">@color/cardview_light_background</color>

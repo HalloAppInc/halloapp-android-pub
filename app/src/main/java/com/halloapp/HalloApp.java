@@ -123,6 +123,10 @@ public class HalloApp extends Application {
             ContentDb.getInstance().checkIndexes();
             ContactsDb.getInstance().checkIndexes();
             ApkHasher.getInstance().run(this);
+
+            if (Preferences.getInstance().getFavoritesNotificationTime() == 0) {
+                Preferences.getInstance().setFavoritesNotificationTime(System.currentTimeMillis());
+            }
         });
     }
 
