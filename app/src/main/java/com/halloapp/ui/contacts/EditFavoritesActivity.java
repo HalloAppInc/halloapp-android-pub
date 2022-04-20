@@ -55,8 +55,6 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
-    public static final String EXTRA_SELECTED_IDS = "selected_ids";
-
     private final ContactsAdapter adapter = new ContactsAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
     private EditFavoritesViewModel viewModel;
@@ -77,11 +75,8 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
 
     private boolean editFavorites = false;
 
-    public static Intent openFavorites(@NonNull Context context, @Nullable Collection<UserId> selectedIds) {
+    public static Intent openFavorites(@NonNull Context context) {
         Intent i = new Intent(context, EditFavoritesActivity.class);
-        if (selectedIds != null) {
-            i.putParcelableArrayListExtra(EXTRA_SELECTED_IDS, new ArrayList<>(selectedIds));
-        }
         return i;
     }
 
@@ -162,13 +157,19 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
 
         emptyView = findViewById(android.R.id.empty);
 
-        ArrayList<UserId> preselected = Preconditions.checkNotNull(getIntent().getParcelableArrayListExtra(EXTRA_SELECTED_IDS));
-        favorites = new HashSet<>(preselected);
-        selectedContacts = new LinkedHashSet<>(preselected);
+        favorites = new HashSet<>();
+        selectedContacts = new LinkedHashSet<>();
         initialSelectedContacts = new HashSet<>(selectedContacts);
 
         viewModel = new ViewModelProvider(this, new EditFavoritesViewModel.Factory(getApplication(), initialSelectedContacts)).get(EditFavoritesViewModel.class);
-
+        viewModel.favoritesList.getLiveData().observe(this, priv -> {
+            if (priv != null && priv.onlyList != null) {
+                favorites = new HashSet<>(priv.onlyList);
+                selectedContacts = new LinkedHashSet<>(priv.onlyList);
+                initialSelectedContacts = new HashSet<>(selectedContacts);
+                adapter.notifyDataSetChanged();
+            }
+        });
         viewModel.contactList.getLiveData().observe(this, adapter::setContacts);
         selectionIcon = R.drawable.ic_check;
         loadContacts();

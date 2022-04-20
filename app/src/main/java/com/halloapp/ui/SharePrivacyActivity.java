@@ -391,7 +391,7 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
                         editOnlyList();
                     }
                 } else {
-                    startActivityForResult(EditFavoritesActivity.openFavorites(SharePrivacyActivity.this, getOnlyList()), REQUEST_CODE_SELECT_ONLY_LIST);
+                    startActivityForResult(EditFavoritesActivity.openFavorites(SharePrivacyActivity.this), REQUEST_CODE_SELECT_ONLY_LIST);
                 }
             });
 

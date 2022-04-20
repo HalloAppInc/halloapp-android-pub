@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.UserId;
+import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
@@ -30,6 +31,8 @@ public class EditFavoritesViewModel extends AndroidViewModel {
     private final FeedPrivacyManager feedPrivacyManager = FeedPrivacyManager.getInstance();
 
     final ComputableLiveData<List<Contact>> contactList;
+
+    final ComputableLiveData<FeedPrivacy> favoritesList;
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
@@ -60,6 +63,13 @@ public class EditFavoritesViewModel extends AndroidViewModel {
                     }
                 }
                 return Contact.sort(contacts);
+            }
+        };
+
+        favoritesList = new ComputableLiveData<FeedPrivacy>() {
+            @Override
+            protected FeedPrivacy compute() {
+                return feedPrivacyManager.getFeedPrivacy();
             }
         };
 
