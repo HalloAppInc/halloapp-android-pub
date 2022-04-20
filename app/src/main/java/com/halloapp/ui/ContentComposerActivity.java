@@ -669,6 +669,7 @@ public class ContentComposerActivity extends HalloActivity {
             }
         });
 
+        changePrivacyBtn = findViewById(R.id.change_privacy);
         privacyDestination = findViewById(R.id.privacy_destination);
         privacyIcon = findViewById(R.id.privacy_icon);
         final TextView titleView = toolbar.findViewById(R.id.toolbar_title);
@@ -690,7 +691,6 @@ public class ContentComposerActivity extends HalloActivity {
             updateDestination(groupId);
         }
 
-        changePrivacyBtn = findViewById(R.id.change_privacy);
         if (chatId == null && destinations == null) {
             changePrivacyBtn.setVisibility(View.VISIBLE);
             changePrivacyBtn.setOnClickListener(v -> {
