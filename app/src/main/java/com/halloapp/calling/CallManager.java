@@ -1138,7 +1138,7 @@ public class CallManager {
             // TODO(vipin): Set audio sample rate to 32Khz.
             Log.i("CallManager: using Krisp wts file path: " + rtcConfig.krispWtsFilePath);
         } else {
-            Log.i("CallManager: not using Krisp");
+            Log.i("CallManager: not using Krisp, krisp pref: " + Preferences.getInstance().getKrispNoiseSuppression());
         }
         // TODO(nikola): log better this events on the peer connection.
         PeerConnection.Observer pcObserver = new PeerConnection.Observer() {

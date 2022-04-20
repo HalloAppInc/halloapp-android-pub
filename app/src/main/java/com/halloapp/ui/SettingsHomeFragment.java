@@ -19,6 +19,7 @@ import com.halloapp.R;
 import com.halloapp.StorageUsageActivity;
 import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionUtils;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.archive.ArchiveActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.invites.InviteContactsActivity;
@@ -26,6 +27,7 @@ import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.ui.settings.SettingsNotifications;
 import com.halloapp.ui.settings.SettingsPrivacy;
 import com.halloapp.ui.settings.SettingsProfile;
+import com.halloapp.ui.settings.SettingsVoiceVideo;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 
@@ -112,6 +114,14 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
         notifications.setOnClickListener(v -> {
             startActivity(new Intent(v.getContext(), SettingsNotifications.class));
         });
+
+        if (ServerProps.getInstance().getKrispNoiseSuppression()) {
+            View voiceAndVideo = root.findViewById(R.id.voice_video);
+            voiceAndVideo.setVisibility(View.VISIBLE);
+            voiceAndVideo.setOnClickListener(v -> {
+                startActivity(new Intent(v.getContext(), SettingsVoiceVideo.class));
+            });
+        }
 
         View account = root.findViewById(R.id.account);
         account.setOnClickListener(v -> {

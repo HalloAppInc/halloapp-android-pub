@@ -324,6 +324,11 @@
             android:label="@string/settings_privacy"/>
 
         <activity
+            android:name=".ui.settings.SettingsVoiceVideo"
+            android:theme="@style/AppTheme"
+            android:label="@string/settings_voice_video"/>
+
+        <activity
             android:name=".ui.settings.SettingsNotifications"
             android:theme="@style/AppTheme"
             android:label="@string/notifications"/>

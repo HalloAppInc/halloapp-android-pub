@@ -306,6 +306,8 @@
     <string name="settings_block_list">Blocked contacts</string>
     <string name="settings_feed_privacy">Posts</string>
     <string name="settings_privacy">Privacy</string>
+    <string name="settings_voice_video">Voice &amp; video</string>
+    <string name="use_krisp_noise_suppression">Use Krisp noise suppression</string>
     <plurals name="contact_selection_subtitle">
         <item quantity="one">%d contact selected</item>
         <item quantity="other">%d contacts selected</item>
