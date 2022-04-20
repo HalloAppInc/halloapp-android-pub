@@ -382,12 +382,13 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
     public static class SocialActionEvent {
 
-        @IntDef({Action.TYPE_COMMENT, Action.TYPE_MENTION_IN_COMMENT, Action.TYPE_MENTION_IN_POST, Action.TYPE_WELCOME})
+        @IntDef({Action.TYPE_COMMENT, Action.TYPE_MENTION_IN_COMMENT, Action.TYPE_MENTION_IN_POST, Action.TYPE_WELCOME, Action.TYPE_FAVORITES_NUX})
         public @interface Action {
             int TYPE_COMMENT = 0;
             int TYPE_MENTION_IN_POST = 1;
             int TYPE_MENTION_IN_COMMENT = 2;
             int TYPE_WELCOME = 3;
+            int TYPE_FAVORITES_NUX = 4;
         }
 
         public final UserId postSenderUserId;

@@ -31,5 +31,6 @@ public class HalloBottomSheetDialog extends BottomSheetDialog {
         BottomSheetBehavior<?> behavior = BottomSheetBehavior.from(Preconditions.checkNotNull(view));
         behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         behavior.setPeekHeight(0);
+        behavior.setSkipCollapsed(true);
     }
 }

@@ -55,6 +55,7 @@ public class Preferences {
     private static final String PREF_KEY_SHOWED_MAKE_POST_NUX = "showed_make_post_nux";
     private static final String PREF_KEY_SHOWED_ACTIVITY_CENTER_NUX = "showed_activity_center_nux";
     private static final String PREF_KEY_SHOWED_WELCOME_NUX = "showed_welcome_nux";
+    private static final String PREF_KEY_SHOWED_FAVORITES_NUX = "showed_favorites_nux";
     private static final String PREF_KEY_NEXT_NOTIF_ID = "next_notif_id";
     private static final String PREF_KEY_NEXT_PRESENCE_ID = "next_presence_id";
     private static final String PREF_KEY_LAST_DECRYPT_MESSAGE_ROW_ID = "last_decrypt_message_row_id";
@@ -177,6 +178,7 @@ public class Preferences {
     private final IntPreference prefVideoCallLocalViewQuadrant = createPref(true, PREF_KEY_VIDEO_CALL_LOCAL_QUADRANT, CallParticipantsLayout.Quadrant.TOP_RIGHT);
 
     private final BooleanPreference prefKrispNoiseSuppression = createPref(false, PREF_KEY_KRISP_NOISE_SUPPRESSION, false);
+    private final BooleanPreference prefShowedFavoritesNux = createPref(false, PREF_KEY_SHOWED_FAVORITES_NUX, false);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -755,5 +757,13 @@ public class Preferences {
 
     public int getLocalVideoViewQuadrant() {
         return prefVideoCallLocalViewQuadrant.get();
+    }
+
+    public boolean getShowedFavoritesNux() {
+        return prefShowedFavoritesNux.get();
+    }
+
+    public void setFavoritesNuxShown() {
+        prefShowedFavoritesNux.apply(true);
     }
 }

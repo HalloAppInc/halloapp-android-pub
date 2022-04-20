@@ -72,6 +72,7 @@ import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.chat.ReplyPreviewContainer;
+import com.halloapp.ui.contacts.FavoritesNuxBottomSheetDialogFragment;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.mediaedit.MediaEditActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
@@ -81,6 +82,7 @@ import com.halloapp.ui.share.ShareDestination;
 import com.halloapp.ui.share.ShareDestinationListView;
 import com.halloapp.util.ActivityUtils;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.Rtl;
@@ -446,6 +448,12 @@ public class ContentComposerActivity extends HalloActivity {
             bottomSendButton.setVisibility(View.GONE);
             final int horizontalPadding = getResources().getDimensionPixelSize(R.dimen.voice_post_share_end_padding);
             visualizer.setPadding(horizontalPadding, visualizer.getPaddingTop(), horizontalPadding, visualizer.getPaddingBottom());
+        } else {
+            viewModel.favoritesNuxShown.getLiveData().observe(this, shown -> {
+                if (!shown) {
+                    DialogFragmentUtils.showDialogFragmentOnce(FavoritesNuxBottomSheetDialogFragment.newInstance(), getSupportFragmentManager());
+                }
+            });
         }
 
         mediaPager = findViewById(R.id.media_pager);

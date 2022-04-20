@@ -402,6 +402,8 @@
     <string name="edit_favorites_title">Edit favorites</string>
     <!-- Button action for when user is editing their favorites -->
     <string name="edit_favorites_action">Edit favorites</string>
+    <!-- Favorites new user experience explanation, introducing the feature in a dialog. -->
+    <string name="favorites_nux_call_to_action">Now you can create a list of your favorite contacts, and share your HalloApp posts just with them</string>
     <string name="share_link">Share link</string>
     <string name="copy_link">Copy link</string>
     <!-- Button for revoking a link used for external sharing -->

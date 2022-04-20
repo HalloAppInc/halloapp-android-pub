@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="25dp"
+                android:layout_height="4dp"
+                android:layout_marginTop="12dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/bottomsheet_pull_bar"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/ic_favorites_privacy_star"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/primary_text"
+                android:layout_gravity="center_horizontal"
+                android:textSize="24sp"
+                android:layout_marginTop="10dp"
+                android:text="@string/contact_favorites"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:letterSpacing="0.01"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/secondary_text"
+                android:textSize="17sp"
+                android:layout_marginBottom="25dp"
+                android:layout_marginHorizontal="24dp"
+                android:text="@string/favorites_nux_call_to_action"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/button_container"
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="4dip"
+            android:paddingStart="8dip"
+            android:paddingEnd="8dip"
+            android:paddingBottom="10dp"
+            android:gravity="end"
+            android:measureWithLargestChild="true">
+            <com.google.android.material.button.MaterialButton android:id="@+id/not_now"
+                android:layout_width="wrap_content"
+                android:layout_gravity="start"
+                style="?attr/buttonBarButtonStyle"
+                android:maxLines="1"
+                android:layout_marginHorizontal="6dp"
+                android:textAllCaps="false"
+                android:text="@string/not_now"
+                android:textSize="15sp"
+                android:paddingVertical="10dp"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.01"
+                app:rippleColor="@color/rippleColor"
+                app:cornerRadius="30dp"
+                android:textColor="@color/favorites_dialog_blue"
+                android:layout_height="wrap_content" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/edit_favorites"
+                android:layout_width="wrap_content"
+                android:layout_gravity="end"
+                android:maxLines="1"
+                app:cornerRadius="30dp"
+                android:stateListAnimator="@null"
+                android:letterSpacing="0.01"
+                android:paddingVertical="10dp"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="15sp"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/favorites_dialog_blue"
+                android:text="@string/edit_favorites_action"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

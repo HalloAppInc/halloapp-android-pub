@@ -42,12 +42,14 @@ import com.halloapp.props.ServerProps;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.ContactsActivity;
+import com.halloapp.ui.contacts.FavoritesNuxBottomSheetDialogFragment;
 import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.home.HomeViewModel;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Events;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
@@ -207,7 +209,6 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             }
             updateFab(destination.getId());
         });
-
 
         if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0 && savedInstanceState == null) {
             // The activity was not launched from history
