@@ -32,6 +32,7 @@
     <dimen name="media_crop_region_out_threshold">22dp</dimen>
     <dimen name="media_edit_drawing_width">8dp</dimen>
     <dimen name="media_edit_menu_draw_background">42dp</dimen>
+    <dimen name="media_edit_annotation_text_size">30sp</dimen>
     <dimen name="video_edit_range_threshold">44dp</dimen>
     <dimen name="video_edit_range_border">2dp</dimen>
     <dimen name="video_edit_range_handle_radius">6dp</dimen>

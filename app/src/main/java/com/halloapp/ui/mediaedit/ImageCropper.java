@@ -62,26 +62,8 @@ public class ImageCropper {
 
         canvas.translate(-state.cropOffsetX / state.scale, -state.cropOffsetY / state.scale);
 
-        Paint drawingPaint = new Paint();
-        drawingPaint.setStyle(Paint.Style.STROKE);
-        drawingPaint.setStrokeCap(Paint.Cap.ROUND);
-        drawingPaint.setStrokeJoin(Paint.Join.ROUND);
-
-        Path path = new Path();
-        for (EditImageView.DrawingPath drawingPath : state.drawingPaths) {
-            drawingPaint.setStrokeWidth(drawingPath.width);
-            drawingPaint.setColor(drawingPath.color);
-            PointF start = drawingPath.points.get(0);
-            ArrayList<EditImageView.BezierCurve> curves = EditImageView.curves(EditImageView.sampleDrawingPoints(drawingPath.points));
-
-            path.reset();
-            path.moveTo(start.x, start.y);
-
-            for (EditImageView.BezierCurve curve : curves) {
-                path.cubicTo(curve.control1.x, curve.control1.y, curve.control2.x, curve.control2.y, curve.end.x, curve.end.y);
-            }
-
-            canvas.drawPath(path, drawingPaint);
+        for (EditImageView.Layer layer : state.layers) {
+            layer.draw(canvas);
         }
 
         canvas.restore();

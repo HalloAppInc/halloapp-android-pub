@@ -1015,4 +1015,6 @@
     <string name="draw">Draw</string>
     <!-- Undo an action -->
     <string name="undo">Undo</string>
+    <!-- Button title to toggle image annotating -->
+    <string name="toggle_annotate">Annotate</string>
 </resources>

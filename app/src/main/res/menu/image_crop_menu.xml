@@ -6,19 +6,27 @@
         android:id="@+id/rotate"
         android:icon="@drawable/ic_rotate"
         android:title="@string/rotate"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
 
     <item
         android:id="@+id/flip"
         android:icon="@drawable/ic_flip"
         android:title="@string/flip"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/annotate"
+        android:title="@string/toggle_annotate"
+        app:actionLayout="@layout/media_edit_menu_annotate_item"
+        app:showAsAction="always"
+        android:visible="false"
+        />
 
     <item
         android:id="@+id/draw"
         android:title="@string/draw"
         app:actionLayout="@layout/media_edit_menu_draw_item"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         android:visible="false"
         />
 

@@ -13,6 +13,9 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -39,8 +42,10 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         void onUpdate(@NonNull State state);
     }
 
-    private enum ReverseAction {
-        ROTATE, FLIP, REMOVE_DRAWING
+    public interface AnnotationListener {
+        void onTap(@NonNull Annotation annotation);
+        void onDrag(@NonNull Annotation annotation, float x, float y);
+        boolean onDragEnd(@NonNull Annotation annotation, float x, float y);
     }
 
     private enum CropRegionSection {
@@ -57,6 +62,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     private final float borderRadius = getResources().getDimension(R.dimen.media_crop_region_radius);
     private final float borderHandleSize = getResources().getDimension(R.dimen.media_crop_region_handle);
     private final float drawingWidth = getResources().getDimension(R.dimen.media_edit_drawing_width);
+    private final float annotationTextSize = getResources().getDimension(R.dimen.media_edit_annotation_text_size);
 
     private final RectF imageRect = new RectF();
     private final RectF cropRect = new RectF();
@@ -75,11 +81,12 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     private int drawingColor = Color.RED;
     private final Paint drawingPaint = new Paint();
     private final ArrayList<PointF> currentDrawingPath = new ArrayList<>();
-    private final ArrayDeque<DrawingPath> drawingPaths = new ArrayDeque<>();
+    private final ArrayList<Layer> layers = new ArrayList<>();
     private final ArrayDeque<ReverseAction> reverseActionStack = new ArrayDeque<>();
     private final GestureListener gestureListener = new GestureListener();
 
     private StateUpdateListener stateUpdateListener;
+    private AnnotationListener annotationListener;
 
     public EditImageView(Context context) {
         super(context);
@@ -155,6 +162,16 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         }
     }
 
+    public void setAnnotationListener(AnnotationListener listener) {
+        annotationListener = listener;
+    }
+
+    private void notifyAnnotationTapped(@NonNull Annotation annotation) {
+        if (annotationListener != null) {
+            annotationListener.onTap(annotation);
+        }
+    }
+
     public State getState() {
         if (getDrawable() == null) {
             return new State();
@@ -182,15 +199,8 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         state.cropOffsetX = Math.round((cropCenterX - imageCenterX) / baseScale);
         state.cropOffsetY = Math.round((cropCenterY - imageCenterY) / baseScale);
 
-        for (DrawingPath path : drawingPaths) {
-            ArrayList<PointF> points = new ArrayList<>(path.points.size());
-            for (PointF point : path.points) {
-                float x = (point.x - imageRect.left) / baseScale;
-                float y = (point.y - imageRect.top) / baseScale;
-                points.add(new PointF(x, y));
-            }
-
-            state.drawingPaths.add(new DrawingPath(points, path.color, path.width / baseScale));
+        for (Layer layer : layers) {
+            state.layers.add(layer.fromViewToImage(imageRect, baseScale));
         }
 
         state.reverseActionStack = new ArrayList<>(reverseActionStack);
@@ -210,7 +220,8 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             rotationCount = 0;
             hFlipped = false;
             vFlipped = false;
-            drawingPaths.clear();
+            layers.clear();
+            reverseActionStack.clear();
         } else {
             scale = state.scale;
             hFlipped = state.hFlipped;
@@ -218,6 +229,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             rotationCount = state.rotationCount;
             offsetX = state.offsetX;
             offsetY = state.offsetY;
+            layers.clear();
             reverseActionStack.clear();
             reverseActionStack.addAll(state.reverseActionStack);
         }
@@ -244,17 +256,8 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
                 Math.min(cropX + cropWidth, imageRect.right),
                 Math.min(cropY + cropHeight, imageRect.bottom));
 
-            drawingPaths.clear();
-            for (DrawingPath path : state.drawingPaths) {
-                ArrayList<PointF> points = new ArrayList<>(path.points.size());
-
-                for (PointF point : path.points) {
-                    float x = point.x * baseScale + imageRect.left;
-                    float y = point.y * baseScale + imageRect.top;
-                    points.add(new PointF(x, y));
-                }
-
-                drawingPaths.add(new DrawingPath(points, path.color, path.width * baseScale));
+            for (Layer layer : state.layers) {
+                layers.add(layer.fromImageToView(imageRect, baseScale));
             }
         }
 
@@ -275,8 +278,49 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         drawingColor = color;
     }
 
-    public boolean canUndo() {
-        return reverseActionStack.size() > 0;
+    public void addAnnotation(String text) {
+        Annotation annotation = new Annotation(text, annotationTextSize, drawingColor, new PointF(imageRect.centerX(), imageRect.centerY()), 0);
+        annotation.scale(1 / scale, offsetX, offsetY, getWidth(), getHeight());
+        layers.add(annotation);
+        reverseActionStack.add(ReverseAction.remove());
+
+        invalidate();
+        notifyStateUpdated();
+    }
+
+    public void updateAnnotation(Annotation annotation, String text) {
+        int idx = layers.indexOf(annotation);
+
+        if (idx >= 0) {
+            reverseActionStack.add(ReverseAction.restore(idx, annotation.copy()));
+            annotation.setText(text);
+            annotation.setColor(drawingColor);
+
+            invalidate();
+            notifyStateUpdated();
+        }
+    }
+
+    public void removeAnnotation(Annotation annotation) {
+        int idx = layers.indexOf(annotation);
+        layers.remove(annotation);
+        reverseActionStack.add(ReverseAction.insert(idx, annotation));
+
+        invalidate();
+        notifyStateUpdated();
+    }
+
+    private void addDrawingPath() {
+        if (currentDrawingPath.size() > 1) {
+            DrawingPath path = new DrawingPath(currentDrawingPath, drawingColor, drawingWidth);
+            path.scale(1 / scale, offsetX, offsetY, getWidth(), getHeight());
+            layers.add(path);
+            reverseActionStack.add(ReverseAction.remove());
+        }
+
+        currentDrawingPath.clear();
+        invalidate();
+        notifyStateUpdated();
     }
 
     private void computeImageRect() {
@@ -420,12 +464,12 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
         offsetX = -offsetX;
 
-        for (DrawingPath path : drawingPaths) {
-            path.flip(getWidth());
+        for (Layer layer : layers) {
+            layer.flip(getWidth());
         }
 
         if (shouldAddToReverseStack) {
-            reverseActionStack.add(ReverseAction.FLIP);
+            reverseActionStack.add(ReverseAction.flip());
         }
 
         updateImage();
@@ -459,12 +503,12 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         cropRect.set(l, b - cropRect.width() * scale, l + cropRect.height() * scale, b);
         keepCropWithinMaxRatio();
 
-        for (DrawingPath path : drawingPaths) {
-            path.rotate(before, imageRect);
+        for (Layer layer: layers) {
+            layer.rotate(before, imageRect);
         }
 
         if (shouldAddToReverseStack) {
-            reverseActionStack.add(ReverseAction.ROTATE);
+            reverseActionStack.add(ReverseAction.rotate());
         }
 
         updateImage();
@@ -472,7 +516,9 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
     public void undo() {
         if (reverseActionStack.size() > 0) {
-            switch (reverseActionStack.removeLast()) {
+            ReverseAction action = reverseActionStack.removeLast();
+
+            switch (action.type) {
                 case FLIP:
                     flip(false);
                     break;
@@ -481,14 +527,51 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
                     rotate(false);
                     rotate(false);
                     break;
-                case REMOVE_DRAWING:
-                    drawingPaths.removeLast();
+                case REMOVE:
+                    layers.remove(layers.size() - 1);
+                    break;
+                case RESTORE:
+                    layers.set(action.index, action.layer);
+                    break;
+                case INSERT:
+                    layers.add(action.index, action.layer);
                     break;
             }
 
             invalidate();
             notifyStateUpdated();
         }
+    }
+
+    @Nullable
+    private Annotation getAnnotationAt(float x, float y) {
+        for (Layer layer : layers) {
+            if (layer instanceof Annotation) {
+                Annotation annotation = (Annotation) layer;
+                Annotation scaled = (Annotation) annotation.copy();
+                scaled.scale(scale, offsetX, offsetY, getWidth(), getHeight());
+
+                float minX = scaled.center.x - (float) scaled.layout.getWidth() / 2;
+                float maxX = scaled.center.x + (float) scaled.layout.getWidth() / 2;
+                float minY = scaled.center.y - (float) scaled.layout.getHeight() / 2;
+                float maxY = scaled.center.y + (float) scaled.layout.getHeight() / 2;
+
+                if (minX <= x && x <= maxX && minY <= y && y <= maxY) {
+                    return annotation;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private void moveBy(Annotation annotation, float x, float y) {
+        annotation.scale(scale, offsetX, offsetY, getWidth(), getHeight());
+        annotation.center.x += x;
+        annotation.center.y += y;
+        annotation.scale(1 / scale, offsetX, offsetY, getWidth(), getHeight());
+
+        invalidate();
     }
 
     private CropRegionSection getCropSectionAt(float x, float y) {
@@ -628,10 +711,15 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         canvas.clipRect(imageRect);
         super.onDraw(canvas);
 
-        for (DrawingPath path : drawingPaths) {
-            DrawingPath scaled = path.scale(scale, offsetX, offsetY, getWidth(), getHeight());
-            drawPath(canvas, scaled.points, scaled.color, scaled.width);
+        canvas.save();
+        canvas.translate(offsetX, offsetY);
+        canvas.scale(scale, scale, (float) getWidth() / 2, (float) getHeight() / 2);
+
+        for (Layer layer : layers) {
+            layer.draw(canvas);
         }
+
+        canvas.restore();
 
         if (isDrawing && currentDrawingPath.size() > 1) {
             drawPath(canvas, currentDrawingPath, drawingColor, drawingWidth);
@@ -809,17 +897,24 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         private boolean isStarted = false;
         private boolean isMultiTouch = false;
         private CropRegionSection section = CropRegionSection.NONE;
+        private Annotation annotation;
+        private Annotation originalAnnotation;
+        private MotionEvent recentEvent;
+        private float recentAngle;
 
         public boolean isDraggingCropRegion() {
-            return isStarted && section != CropRegionSection.NONE;
+            return isStarted && section != CropRegionSection.NONE && annotation == null;
         }
 
         @SuppressLint("ClickableViewAccessibility")
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
+            recentEvent = motionEvent;
             final int action = motionEvent.getAction() & MotionEvent.ACTION_MASK;
 
             switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    break;
                 case MotionEvent.ACTION_POINTER_DOWN:
                     if (!isStarted) {
                         isMultiTouch = true;
@@ -841,26 +936,43 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             dragDetector.onTouchEvent(motionEvent);
 
             if (action == MotionEvent.ACTION_UP) {
+                handleAnnotationOnEnd(motionEvent);
+
                 isStarted = false;
                 isMultiTouch = false;
                 section = CropRegionSection.NONE;
+                recentEvent = null;
+                annotation = null;
 
                 if (isDrawing) {
-                    if (currentDrawingPath.size() > 1) {
-                        DrawingPath scaled = new DrawingPath(currentDrawingPath, drawingColor, drawingWidth);
-                        DrawingPath path = scaled.scale(1 / scale, offsetX, offsetY, getWidth(), getHeight());
-                        drawingPaths.add(path);
-
-                        reverseActionStack.add(ReverseAction.REMOVE_DRAWING);
-                    }
-
-                    currentDrawingPath.clear();
-                    invalidate();
-                    notifyStateUpdated();
+                    addDrawingPath();
                 }
             }
 
             return true;
+        }
+
+        private void handleAnnotationOnEnd(MotionEvent event) {
+            if (annotation != null && annotation.center != null && !annotation.equals(originalAnnotation)) {
+                if (!annotation.center.equals(originalAnnotation.center)) {
+                    if (annotationListener!= null && annotationListener.onDragEnd(annotation, event.getX(), event.getY())) {
+                        int idx = layers.indexOf(annotation);
+                        layers.remove(annotation);
+                        reverseActionStack.add(ReverseAction.insert(idx, originalAnnotation));
+                    }
+                }
+
+                int idx = layers.indexOf(annotation);
+                if (!annotation.equals(originalAnnotation) && idx >= 0) {
+                    reverseActionStack.add(ReverseAction.restore(idx, originalAnnotation));
+                }
+            }
+        }
+
+        private float getRecentAngle(ScaleGestureDetector scaleGestureDetector) {
+            float angleX = recentEvent.getX() - scaleGestureDetector.getFocusX();
+            float angleY = recentEvent.getY() - scaleGestureDetector.getFocusY();
+            return (float) Math.toDegrees(Math.atan2(angleY, angleX));
         }
 
         @Override
@@ -870,12 +982,27 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             }
 
             isStarted = true;
+            annotation = getAnnotationAt(recentEvent.getX(), recentEvent.getY());
+            originalAnnotation = annotation != null ? (Annotation) annotation.copy() : null;
+            recentAngle = getRecentAngle(scaleGestureDetector);
+
             return true;
         }
 
         @Override
         public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
-            zoomBy(scaleGestureDetector.getScaleFactor(), scaleGestureDetector.getFocusX(), scaleGestureDetector.getFocusY());
+            if (annotation == null) {
+                zoomBy(scaleGestureDetector.getScaleFactor(), scaleGestureDetector.getFocusX(), scaleGestureDetector.getFocusY());
+            } else {
+                annotation.zoomBy(scaleGestureDetector.getScaleFactor());
+
+                float angle = getRecentAngle(scaleGestureDetector);
+                annotation.rotation -= recentAngle - angle;
+                recentAngle = angle;
+
+                invalidate();
+            }
+
             return true;
         }
 
@@ -890,14 +1017,24 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
                 if (!isMultiTouch) {
                     section = getCropSectionAt(e1.getX(), e1.getY());
+                    annotation = getAnnotationAt(e1.getX(), e1.getY());
+                    originalAnnotation = annotation != null ? (Annotation) annotation.copy() : null;
                 }
             }
 
             if (isMultiTouch) {
-                moveBy(-distanceX, -distanceY);
+                if (annotation == null) {
+                    moveBy(-distanceX, -distanceY);
+                }
             } else if (isDrawing) {
                 currentDrawingPath.add(new PointF(e2.getX(), e2.getY()));
                 invalidate();
+            } else if (annotation != null) {
+                moveBy(annotation, -distanceX, -distanceY);
+
+                if (annotationListener != null) {
+                    annotationListener.onDrag(annotation, e2.getX(), e2.getY());
+                }
             } else {
                 RectF valid = new RectF(borderRect);
                 valid.inset(-2 * outThreshold, -2 * outThreshold);
@@ -908,6 +1045,17 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             }
 
             return true;
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            Annotation annotation = getAnnotationAt(e.getX(), e.getY());
+            if (annotation != null) {
+                notifyAnnotationTapped(annotation);
+                return true;
+            }
+
+            return false;
         }
     }
 
@@ -921,19 +1069,184 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         }
     }
 
-    public static class DrawingPath implements Parcelable {
-        public ArrayList<PointF> points = new ArrayList<>();
-        public int color;
-        public float width;
+    private enum ReverseActionType {
+        ROTATE, FLIP, REMOVE, RESTORE, INSERT
+    }
+
+    public static class ReverseAction implements Parcelable {
+        ReverseActionType type;
+        int index;
+        Layer layer;
+
+        protected ReverseAction() {
+        }
+
+        public static ReverseAction rotate() {
+            ReverseAction action = new ReverseAction();
+            action.type = ReverseActionType.ROTATE;
+
+            return action;
+        }
+
+        public static ReverseAction flip() {
+            ReverseAction action = new ReverseAction();
+            action.type = ReverseActionType.FLIP;
+
+            return action;
+        }
+
+        public static ReverseAction remove() {
+            ReverseAction action = new ReverseAction();
+            action.type = ReverseActionType.REMOVE;
+
+            return action;
+        }
+
+        public static ReverseAction restore(int index, Layer layer) {
+            ReverseAction action = new ReverseAction();
+            action.type = ReverseActionType.RESTORE;
+            action.index = index;
+            action.layer = layer.copy();
+
+            return action;
+        }
+
+        public static ReverseAction insert(int index, Layer layer) {
+            ReverseAction action = new ReverseAction();
+            action.type = ReverseActionType.INSERT;
+            action.index = index;
+            action.layer = layer.copy();
+
+            return action;
+        }
+
+        private ReverseAction(Parcel in) {
+            type = ReverseActionType.valueOf(in.readString());
+            index = in.readInt();
+            layer = in.readParcelable(Layer.class.getClassLoader());
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int flags) {
+            parcel.writeString(type.name());
+            parcel.writeInt(index);
+            parcel.writeParcelable(layer, flags);
+        }
+
+        public static final Creator<ReverseAction> CREATOR = new Creator<ReverseAction>() {
+            @Override
+            public ReverseAction createFromParcel(Parcel in) {
+                return new ReverseAction(in);
+            }
+
+            @Override
+            public ReverseAction[] newArray(int size) {
+                return new ReverseAction[size];
+            }
+        };
+    }
+
+    public interface Layer extends Parcelable {
+        @NonNull
+        Layer copy();
+
+        @NonNull
+        Layer fromViewToImage(RectF imageRect, float baseScale);
+
+        @NonNull
+        Layer fromImageToView(RectF imageRect, float baseScale);
+
+        void flip(int sizeWidth);
+
+        void rotate(RectF imageRectBefore, RectF imageRectAfter);
+
+        void scale(float scale, float offsetX, float offsetY, float sizeWidth, float sizeHeight);
+
+        void draw(@NonNull Canvas canvas);
+    }
+
+    public static class DrawingPath implements Layer {
+        private ArrayList<PointF> points = new ArrayList<>();
+        private final int color;
+        private float width;
+
+        private final Path path = new Path();
+        private final Paint paint = new Paint();
+        private ArrayList<BezierCurve> curves = new ArrayList<>();
 
         public DrawingPath(@NonNull ArrayList<PointF> points, int color, float width) {
             this.points = new ArrayList<>(points);
             this.color = color;
             this.width = width;
+
+            computeLayout();
         }
 
-        public DrawingPath scale(float scale, float offsetX, float offsetY, float sizeWidth, float sizeHeight) {
-            ArrayList<PointF> scaledPoints = new ArrayList<>(points.size());
+        @NonNull
+        @Override
+        public Layer copy() {
+            return new DrawingPath(new ArrayList<>(points), color, width);
+        }
+
+        @NonNull
+        @Override
+        public Layer fromViewToImage(RectF imageRect, float baseScale) {
+            ArrayList<PointF> scaled = new ArrayList<>(points.size());
+
+            for (PointF point : points) {
+                float x = (point.x - imageRect.left) / baseScale;
+                float y = (point.y - imageRect.top) / baseScale;
+                scaled.add(new PointF(x, y));
+            }
+
+            return new DrawingPath(scaled, color, width / baseScale);
+        }
+
+        @NonNull
+        @Override
+        public Layer fromImageToView(RectF imageRect, float baseScale) {
+            ArrayList<PointF> scaled = new ArrayList<>(points.size());
+
+            for (PointF point : points) {
+                float x = point.x * baseScale + imageRect.left;
+                float y = point.y * baseScale + imageRect.top;
+                scaled.add(new PointF(x, y));
+            }
+
+            return new DrawingPath(scaled, color, width * baseScale);
+        }
+
+        @Override
+        public void flip(int sizeWidth) {
+            for (PointF point : points) {
+                point.x = sizeWidth - point.x;
+            }
+
+            computeLayout();
+        }
+
+        @Override
+        public void rotate(RectF imageRectBefore, RectF imageRectAfter) {
+            float scale = imageRectAfter.width() / imageRectBefore.height();
+
+            for (PointF point : points) {
+                float x = point.x - imageRectBefore.left;
+                float y = point.y - imageRectBefore.top;
+                point.x = imageRectAfter.left + scale * y;
+                point.y = imageRectAfter.bottom - scale * x;
+            }
+
+            computeLayout();
+        }
+
+        @Override
+        public void scale(float scale, float offsetX, float offsetY, float sizeWidth, float sizeHeight) {
+            ArrayList<PointF> scaled = new ArrayList<>(points.size());
 
             for (PointF point : points) {
                 float x, y;
@@ -945,46 +1258,45 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
                     y = (point.y + (1 / scale - 1) * sizeHeight / 2 - offsetY) * scale;
                 }
 
-                scaledPoints.add(new PointF(x, y));
+                scaled.add(new PointF(x, y));
             }
 
-            return new DrawingPath(scaledPoints, color, width * scale);
+            points = scaled;
+            width *= scale;
+
+            computeLayout();
         }
 
-        public void flip(int sizeWidth) {
-            for (PointF point : points) {
-                point.x = sizeWidth - point.x;
-            }
-        }
+        private void computeLayout() {
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeCap(Paint.Cap.ROUND);
+            paint.setStrokeJoin(Paint.Join.ROUND);
+            paint.setColor(color);
+            paint.setStrokeWidth(width);
 
-        public void rotate(RectF imageRectBefore, RectF imageRectAfter) {
-            float scale = imageRectAfter.width() / imageRectBefore.height();
-
-            for (PointF point : points) {
-                float x = point.x - imageRectBefore.left;
-                float y = point.y - imageRectBefore.top;
-                point.x = imageRectAfter.left + scale * y;
-                point.y = imageRectAfter.bottom - scale * x;
-            }
+            curves = curves(sampleDrawingPoints(points));
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            DrawingPath path = (DrawingPath) o;
-            return color == path.color && Float.compare(path.width, width) == 0 && Objects.equals(points, path.points);
+        public void draw(@NonNull Canvas canvas) {
+            PointF start = points.get(0);
+
+            path.reset();
+            path.moveTo(start.x, start.y);
+
+            for (BezierCurve curve : curves) {
+                path.cubicTo(curve.control1.x, curve.control1.y, curve.control2.x, curve.control2.y, curve.end.x, curve.end.y);
+            }
+
+            canvas.drawPath(path, paint);
         }
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(points, color, width);
-        }
-
-        private DrawingPath(Parcel in) {
+        protected DrawingPath(Parcel in) {
             color = in.readInt();
             width = in.readFloat();
             in.readTypedList(points, PointF.CREATOR);
+
+            computeLayout();
         }
 
         @Override
@@ -1008,6 +1320,185 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
                 return new DrawingPath[size];
             }
         };
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            DrawingPath path = (DrawingPath) o;
+            return color == path.color && Float.compare(path.width, width) == 0 && Objects.equals(points, path.points);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(points, color, width);
+        }
+    }
+
+    public static class Annotation implements Layer {
+        private String text;
+        private float textSize;
+        private int color;
+        private final PointF center;
+        private float rotation;
+
+        private StaticLayout layout;
+
+        public Annotation(String text, float textSize, int color, PointF center, float rotation) {
+            this.text = text;
+            this.textSize = textSize;
+            this.color = color;
+            this.center = center;
+            this.rotation = rotation;
+
+            computeLayout();
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+            computeLayout();
+        }
+
+        public int getColor() {
+            return color;
+        }
+
+        public void setColor(int color) {
+            this.color = color;
+            computeLayout();
+        }
+
+        @NonNull
+        @Override
+        public Layer copy() {
+            return new Annotation(text, textSize, color, new PointF(center.x, center.y), rotation);
+        }
+
+        protected Annotation(Parcel in) {
+            text = in.readString();
+            textSize = in.readFloat();
+            color = in.readInt();
+            center = in.readParcelable(PointF.class.getClassLoader());
+            rotation = in.readFloat();
+
+            computeLayout();
+        }
+
+        private void computeLayout() {
+            TextPaint textPaint = new TextPaint();
+            textPaint.setAntiAlias(true);
+            textPaint.setTextSize(textSize);
+            textPaint.setColor(color);
+
+            int width = (int) textPaint.measureText(text);
+            layout = new StaticLayout(text, textPaint, width, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
+        }
+
+        @NonNull
+        @Override
+        public Layer fromViewToImage(RectF imageRect, float baseScale) {
+            PointF scaledCenter = new PointF((center.x - imageRect.left) / baseScale, (center.y - imageRect.top) / baseScale);
+            return new Annotation(text, textSize / baseScale, color, scaledCenter, rotation);
+        }
+
+        @NonNull
+        @Override
+        public Layer fromImageToView(RectF imageRect, float baseScale) {
+            PointF scaledCenter = new PointF(center.x * baseScale + imageRect.left, center.y * baseScale + imageRect.top);
+            return new Annotation(text, textSize * baseScale, color, scaledCenter, rotation);
+        }
+
+        @Override
+        public void draw(@NonNull Canvas canvas) {
+            canvas.save();
+
+            canvas.rotate(rotation, center.x, center.y);
+            canvas.translate(center.x - (float)layout.getWidth() / 2, center.y - (float)layout.getHeight() / 2);
+            layout.draw(canvas);
+
+            canvas.restore();
+        }
+
+        @Override
+        public void flip(int sizeWidth) {
+            center.x = sizeWidth - center.x;
+        }
+
+        @Override
+        public void rotate(RectF imageRectBefore, RectF imageRectAfter) {
+            float scale = imageRectAfter.width() / imageRectBefore.height();
+
+            float x = center.x - imageRectBefore.left;
+            float y = center.y - imageRectBefore.top;
+            center.x = imageRectAfter.left + scale * y;
+            center.y = imageRectAfter.bottom - scale * x;
+
+            rotation -= 90;
+            textSize *= scale;
+
+            computeLayout();
+        }
+
+        @Override
+        public void scale(float scale, float offsetX, float offsetY, float sizeWidth, float sizeHeight) {
+            if (scale >= 1) {
+                center.x = center.x * scale - (scale - 1) * sizeWidth / 2 + offsetX;
+                center.y = center.y * scale - (scale - 1) * sizeHeight / 2 + offsetY;
+            } else {
+                center.x = (center.x + (1 / scale - 1) * sizeWidth / 2 - offsetX) * scale;
+                center.y = (center.y + (1 / scale - 1) * sizeHeight / 2 - offsetY) * scale;
+            }
+
+            textSize *= scale;
+
+            computeLayout();
+        }
+
+        public void zoomBy(float scale) {
+            textSize *= scale;
+            computeLayout();
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int flags) {
+            parcel.writeString(text);
+            parcel.writeFloat(textSize);
+            parcel.writeInt(color);
+            parcel.writeParcelable(center, flags);
+            parcel.writeFloat(rotation);
+        }
+
+        public static final Parcelable.Creator<Annotation> CREATOR = new Parcelable.Creator<Annotation>() {
+            public Annotation createFromParcel(Parcel in) {
+                return new Annotation(in);
+            }
+
+            public Annotation[] newArray(int size) {
+                return new Annotation[size];
+            }
+        };
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Annotation that = (Annotation) o;
+            return Float.compare(that.textSize, textSize) == 0 && color == that.color && Float.compare(that.rotation, rotation) == 0 && Objects.equals(text, that.text) && Objects.equals(center, that.center);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(text, textSize, color, center, rotation);
+        }
     }
 
     public static class State implements Parcelable {
@@ -1021,7 +1512,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         public int cropHeight;
         public int cropOffsetX;
         public int cropOffsetY;
-        public ArrayList<DrawingPath> drawingPaths = new ArrayList<>();
+        public ArrayList<Layer> layers = new ArrayList<>();
         public ArrayList<ReverseAction> reverseActionStack = new ArrayList<>();
 
         @Override
@@ -1042,13 +1533,8 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             cropHeight = in.readInt();
             cropOffsetX = in.readInt();
             cropOffsetY = in.readInt();
-            in.readTypedList(drawingPaths, DrawingPath.CREATOR);
-
-            ArrayList<String> undoStackStrings = new ArrayList<>();
-            in.readStringList(undoStackStrings);
-            for (String name : undoStackStrings) {
-                reverseActionStack.add(ReverseAction.valueOf(name));
-            }
+            in.readList(layers, Layer.class.getClassLoader());
+            in.readList(reverseActionStack, ReverseAction.class.getClassLoader());
         }
 
         @Override
@@ -1063,13 +1549,8 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             parcel.writeInt(cropHeight);
             parcel.writeInt(cropOffsetX);
             parcel.writeInt(cropOffsetY);
-            parcel.writeTypedList(drawingPaths);
-
-            ArrayList<String> undoStackStrings = new ArrayList<>(reverseActionStack.size());
-            for (ReverseAction reverseAction : reverseActionStack) {
-                undoStackStrings.add(reverseAction.name());
-            }
-            parcel.writeStringList(undoStackStrings);
+            parcel.writeList(layers);
+            parcel.writeList(reverseActionStack);
         }
 
         @Override
@@ -1087,7 +1568,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             return state.offsetX == offsetX && state.offsetY == offsetY && Objects.equals(state.reverseActionStack, reverseActionStack)
                     && state.scale == scale && state.rotationCount == rotationCount && state.hFlipped == hFlipped
                     && state.vFlipped == vFlipped && state.cropWidth == cropWidth && state.cropHeight == cropHeight
-                    && state.cropOffsetX == cropOffsetX && state.cropOffsetY == cropOffsetY && Objects.equals(state.drawingPaths, drawingPaths);
+                    && state.cropOffsetX == cropOffsetX && state.cropOffsetY == cropOffsetY && Objects.equals(state.layers, layers);
         }
 
         public static final Parcelable.Creator<State> CREATOR = new Parcelable.Creator<State>() {

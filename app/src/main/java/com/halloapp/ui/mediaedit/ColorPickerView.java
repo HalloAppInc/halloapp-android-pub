@@ -79,6 +79,10 @@ public class ColorPickerView extends View {
         return color;
     }
 
+    public void setColor(int color) {
+        this.color = color;
+    }
+
     public void setColorUpdateListener(ColorUpdateListener listener) {
         colorUpdateListener = listener;
     }

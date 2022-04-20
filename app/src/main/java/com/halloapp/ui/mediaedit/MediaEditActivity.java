@@ -101,13 +101,13 @@ public class MediaEditActivity extends HalloActivity {
             return false;
         }
 
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (fragment instanceof ImageEditFragment) {
-            ImageEditFragment imageEditFragment = (ImageEditFragment) fragment;
-            return imageEditFragment.canUndo();
+        MediaEditViewModel.Model model = viewModel.getSelected().getValue();
+        if (model == null || model.getType() != Media.MEDIA_TYPE_IMAGE) {
+            return false;
         }
 
-        return false;
+        EditImageView.State state = (EditImageView.State) model.getState();
+        return state != null && state.reverseActionStack != null && state.reverseActionStack.size() > 0;
     }
 
     private void undo() {
@@ -159,6 +159,7 @@ public class MediaEditActivity extends HalloActivity {
                     .commit();
 
             previewAdapter.notifyDataSetChanged();
+            setupButtons();
 
             if (isTransitionInProgress) {
                 isTransitionInProgress = false;

@@ -5,6 +5,7 @@
     android:id="@+id/media_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
     tools:context=".ui.mediaedit.ImageEditFragment">
 
     <com.halloapp.ui.mediaedit.EditImageView
@@ -12,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="10dp"
         />
 
     <ImageView
@@ -25,6 +27,27 @@
         app:layout_constraintBottom_toBottomOf="@id/image"
         android:visibility="gone"
         />
+
+    <FrameLayout
+        android:id="@+id/annotationContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_70"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        >
+        <EditText
+            android:id="@+id/annotation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:textAlignment="center"
+            android:textSize="@dimen/media_edit_annotation_text_size"
+            android:textColor="@color/white"
+            />
+    </FrameLayout>
 
     <com.halloapp.ui.mediaedit.ColorPickerView
         android:id="@+id/color_picker"
