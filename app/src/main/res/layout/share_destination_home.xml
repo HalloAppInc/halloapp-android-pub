@@ -3,72 +3,133 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="64dp"
-    android:background="?selectableItemBackground"
-    android:paddingStart="12dp"
-    android:paddingEnd="12dp"
-    android:orientation="horizontal"
-    android:gravity="center_vertical">
-
-    <ImageView
-        android:id="@+id/selected"
-        android:layout_width="44dp"
-        android:layout_height="match_parent"
-        android:src="@drawable/ic_check"
-        app:tint="@color/color_secondary"
-        android:paddingHorizontal="8dp"
-        tools:ignore="ContentDescription" />
-
-    <ImageView
-        android:id="@+id/avatar"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        android:layout_marginStart="21dp"
-        android:padding="11dp"
-        android:src="@drawable/ic_home_selected"
-        android:background="@color/color_primary"
-        app:tint="@android:color/white"
-        tools:ignore="ContentDescription" />
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:animateLayoutChanges="false">
 
     <LinearLayout
-        android:layout_height="wrap_content"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_marginStart="16dp"
-        android:orientation="vertical"
-        android:gravity="center_vertical"
-        >
+        android:id="@+id/my_contacts"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="?selectableItemBackground"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/name"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:ellipsize="end"
-            android:fontFamily="sans-serif-medium"
-            android:singleLine="true"
-            android:textSize="17sp"
-            android:textColor="@color/primary_text"
-            android:text="@string/home" />
+        <ImageView
+            android:id="@+id/contacts_selected"
+            android:layout_width="44dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_check"
+            app:tint="@color/color_secondary"
+            android:paddingHorizontal="8dp"
+            tools:ignore="ContentDescription" />
 
-        <TextView
-            android:id="@+id/subtitle"
+        <ImageView
+            android:id="@+id/contacts_icon"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="21dp"
+            android:padding="11dp"
+            android:src="@drawable/ic_my_contacts"
+            android:background="@color/color_secondary"
+            app:tint="@android:color/white"
+            tools:ignore="ContentDescription" />
+
+        <LinearLayout
             android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:textSize="14sp"
-            android:textColor="@color/secondary_text"
-            tools:text="Share with all my contacts" />
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            >
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:singleLine="true"
+                android:textSize="17sp"
+                android:textColor="@color/primary_text"
+                android:text="@string/my_contacts_title" />
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textSize="14sp"
+                android:textColor="@color/secondary_text"
+                android:text="@string/composer_sharing_all_summary"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/privacy"
-        android:layout_width="44dp"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_more"
-        app:tint="@color/secondary_text"
-        tools:ignore="ContentDescription" />
+    <LinearLayout
+        android:id="@+id/favorites"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="?selectableItemBackground"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/favorites_selected"
+            android:layout_width="44dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_check"
+            app:tint="@color/color_secondary"
+            android:paddingHorizontal="8dp"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/favorites_icon"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="21dp"
+            android:padding="11dp"
+            android:src="@drawable/ic_favorites_star_large"
+            android:background="@color/favorites_yellow"
+            app:tint="@android:color/white"
+            tools:ignore="ContentDescription" />
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            >
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:singleLine="true"
+                android:textSize="17sp"
+                android:textColor="@color/primary_text"
+                android:text="@string/contact_favorites" />
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textSize="14sp"
+                android:textColor="@color/secondary_text"
+                android:text="@string/composer_sharing_favorites_summary" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>
 

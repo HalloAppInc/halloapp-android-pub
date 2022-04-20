@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.halloapp.contacts.Contact;
@@ -18,6 +19,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -34,6 +36,8 @@ public class ShareViewModel extends AndroidViewModel {
 
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
+
+    private final MutableLiveData<String> selectedFeedTargetLiveData = new MutableLiveData<>(PrivacyList.Type.ALL);
 
     private final FeedPrivacyManager feedPrivacyManager = FeedPrivacyManager.getInstance();
 
@@ -97,7 +101,11 @@ public class ShareViewModel extends AndroidViewModel {
                 List<Contact> contacts = contactsDb.getUsers();
                 ArrayList<ShareDestination> destinations = new ArrayList<>(groups.size() + contacts.size() + 1);
 
-                destinations.add(ShareDestination.feed());
+                if (PrivacyList.Type.ONLY.equals(selectedFeedTargetLiveData.getValue())) {
+                    destinations.add(ShareDestination.myFavorites());
+                } else {
+                    destinations.add(ShareDestination.myContacts());
+                }
 
                 for (Group group : groups) {
                     destinations.add(ShareDestination.fromGroup(group));
@@ -155,6 +163,15 @@ public class ShareViewModel extends AndroidViewModel {
         return contacts;
     }
 
+    public void setSelectedFeedTarget(@PrivacyList.Type String target) {
+        selectedFeedTargetLiveData.setValue(target);
+        destinationList.invalidate();
+    }
+
+    public LiveData<String > getFeedTarget() {
+        return selectedFeedTargetLiveData;
+    }
+
     public void updateSelectionList(List<ShareDestination> selectedDestinations) {
         List<ShareDestination> selection = selectionList.getValue();
 
@@ -181,6 +198,48 @@ public class ShareViewModel extends AndroidViewModel {
         }
 
         selectionList.setValue(selection);
+    }
+
+    void toggleHomeSelection(@PrivacyList.Type String target) {
+        List<ShareDestination> selection = selectionList.getValue();
+
+        if (selection == null) {
+            return;
+        }
+        selection = new ArrayList<>(selection);
+
+        ShareDestination favorites = ShareDestination.myFavorites();
+        ShareDestination myContacts = ShareDestination.myContacts();
+        if (PrivacyList.Type.ONLY.equals(target)) {
+            selection.remove(myContacts);
+            if (selection.contains(favorites)) {
+                selection.remove(favorites);
+            } else {
+                selection.add(favorites);
+            }
+        } else {
+            selection.remove(favorites);
+            if (selection.contains(myContacts)) {
+                selection.remove(myContacts);
+            } else {
+                selection.add(myContacts);
+            }
+        }
+        selectionList.setValue(selection);
+    }
+
+    void selectDestination(ShareDestination destination) {
+        List<ShareDestination> selection = selectionList.getValue();
+
+        if (selection == null) {
+            return;
+        }
+        selection = new ArrayList<>(selection);
+
+        if (!selection.contains(destination)) {
+            selection.add(destination);
+            selectionList.setValue(selection);
+        }
     }
 
     boolean isSelected(ShareDestination destination) {

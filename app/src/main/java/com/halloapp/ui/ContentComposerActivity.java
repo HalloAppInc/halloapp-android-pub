@@ -634,7 +634,7 @@ public class ContentComposerActivity extends HalloActivity {
                 boolean isMultiSharedToFeed = false;
                 if (viewModel.destinationList.getValue() != null && viewModel.destinationList.getValue().size() > 0) {
                     for (ShareDestination dest : viewModel.destinationList.getValue()) {
-                        if (dest.type == ShareDestination.TYPE_FEED) {
+                        if (dest.type == ShareDestination.TYPE_MY_CONTACTS || dest.type == ShareDestination.TYPE_FAVORITES) {
                             isMultiSharedToFeed = true;
                             groupId = null;
                             chatId = null;
@@ -1016,11 +1016,15 @@ public class ContentComposerActivity extends HalloActivity {
         if (feedPrivacy == null || PrivacyList.Type.ALL.equals(feedPrivacy.activeList) || PrivacyList.Type.EXCEPT.equals(feedPrivacy.activeList)) {
             privacyDestination.setText(R.string.setting_feed_all);
             privacyIcon.setImageResource(R.drawable.ic_privacy_my_contacts);
-            changePrivacyBtn.setBackgroundTintList(AppCompatResources.getColorStateList(this, R.color.secondary_button_color_selector));
+            if (changePrivacyBtn != null) {
+                changePrivacyBtn.setBackgroundTintList(AppCompatResources.getColorStateList(this, R.color.secondary_button_color_selector));
+            }
         } else if (PrivacyList.Type.ONLY.equals(feedPrivacy.activeList)) {
             privacyDestination.setText(R.string.contact_favorites);
             privacyIcon.setImageResource(R.drawable.ic_privacy_favorites);
-            changePrivacyBtn.setBackgroundTintList(AppCompatResources.getColorStateList(this, R.color.favorites_button_color_selector));
+            if (changePrivacyBtn != null) {
+                changePrivacyBtn.setBackgroundTintList(AppCompatResources.getColorStateList(this, R.color.favorites_button_color_selector));
+            }
         } else {
             Log.e("ContentComposerActivity: updatePostSubtitle received unexpected activeList - " + feedPrivacy.activeList);
             privacyDestination.setText("");

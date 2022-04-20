@@ -122,6 +122,15 @@ public class ContentComposerViewModel extends AndroidViewModel {
         this.voiceNoteRecorder = new VoiceNoteRecorder();
         this.destinationList.setValue(destinations);
 
+        if (destinations != null) {
+            for (ShareDestination destination : destinations) {
+                if (destination.type == ShareDestination.TYPE_FAVORITES) {
+                    feedTarget = PrivacyList.Type.ONLY;
+                    break;
+                }
+            }
+        }
+
         if (uris != null) {
             loadUris(uris, editStates);
         }

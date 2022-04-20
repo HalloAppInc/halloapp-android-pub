@@ -125,7 +125,6 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
             selectionListView.submitList(selection);
         });
         viewModel.feedPrivacyLiveData.getLiveData().observe(this, adapter::setPrivacy);
-
         load();
     }
 
@@ -242,42 +241,67 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
 
     class HomeViewHolder extends ViewHolder {
 
-        final private ImageView selectedView;
-        final private TextView subtitleView;
-        final private ImageView openPrivacyView;
+        final private ImageView homeSelectedView;
+        final private ImageView favoritesSelectedView;
         private DestinationItem item;
 
         HomeViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            selectedView = itemView.findViewById(R.id.selected);
-            subtitleView = itemView.findViewById(R.id.subtitle);
-            openPrivacyView = itemView.findViewById(R.id.privacy);
+            homeSelectedView = itemView.findViewById(R.id.contacts_selected);
+            favoritesSelectedView = itemView.findViewById(R.id.favorites_selected);
 
-            ImageView avatarView = itemView.findViewById(R.id.avatar);
-            avatarView.setOutlineProvider(new ViewOutlineProvider() {
+            ImageView contactsIcon = itemView.findViewById(R.id.contacts_icon);
+            contactsIcon.setOutlineProvider(new ViewOutlineProvider() {
                 @Override
                 public void getOutline(View view, Outline outline) {
                     float radius = getResources().getDimension(R.dimen.share_destination_item_radius);
                     outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
                 }
             });
-            avatarView.setClipToOutline(true);
+            contactsIcon.setClipToOutline(true);
 
-            itemView.setOnClickListener(v -> viewModel.toggleSelection(item.destination));
-            openPrivacyView.setOnClickListener(v -> startActivity(FeedPrivacyActivity.editFeedPrivacy(openPrivacyView.getContext())));
+            ImageView favoritesIcon = itemView.findViewById(R.id.favorites_icon);
+            favoritesIcon.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    float radius = getResources().getDimension(R.dimen.share_destination_item_radius);
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
+                }
+            });
+            favoritesIcon.setClipToOutline(true);
+
+            View favoritesItem = itemView.findViewById(R.id.favorites);
+            favoritesItem.setOnClickListener(v -> {
+                changeFeedTarget(PrivacyList.Type.ONLY);
+            });
+            View contactsItem = itemView.findViewById(R.id.my_contacts);
+            contactsItem.setOnClickListener(v -> {
+                changeFeedTarget(PrivacyList.Type.ALL);
+            });
+
         }
 
-        void bindTo(@NonNull DestinationItem item, FeedPrivacy privacy) {
-            this.item = item;
-            selectedView.setVisibility(item.selected ? View.VISIBLE : View.INVISIBLE);
+        private void changeFeedTarget(@NonNull @PrivacyList.Type String newTarget) {
+            viewModel.toggleHomeSelection(newTarget);
+            if (!newTarget.equals(viewModel.getFeedTarget().getValue())) {
+                viewModel.setSelectedFeedTarget(newTarget);
+            }
+        }
 
-            if (privacy == null || PrivacyList.Type.ALL.equals(privacy.activeList)) {
-                subtitleView.setText(R.string.composer_sharing_all_summary);
-            } else if (PrivacyList.Type.EXCEPT.equals(privacy.activeList)) {
-                subtitleView.setText(R.string.composer_sharing_except_summary);
-            } else if (PrivacyList.Type.ONLY.equals(privacy.activeList)) {
-                subtitleView.setText(getResources().getQuantityString(R.plurals.composer_sharing_only_summary, privacy.onlyList.size(), privacy.onlyList.size()));
+        void bindTo(@NonNull DestinationItem item) {
+            this.item = item;
+            if (item.selected) {
+                if (item.destination.type == ShareDestination.TYPE_FAVORITES) {
+                    favoritesSelectedView.setVisibility(View.VISIBLE);
+                    homeSelectedView.setVisibility(View.INVISIBLE);
+                } else {
+                    homeSelectedView.setVisibility(View.VISIBLE);
+                    favoritesSelectedView.setVisibility(View.INVISIBLE);
+                }
+            } else {
+                favoritesSelectedView.setVisibility(View.INVISIBLE);
+                homeSelectedView.setVisibility(View.INVISIBLE);
             }
         }
     }
@@ -330,7 +354,8 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
 
         public static int itemType(int destinationType) {
             switch (destinationType) {
-                case ShareDestination.TYPE_FEED:
+                case ShareDestination.TYPE_MY_CONTACTS:
+                case ShareDestination.TYPE_FAVORITES:
                     return DestinationItem.ITEM_HOME_FEED;
                 case ShareDestination.TYPE_GROUP:
                     return DestinationItem.ITEM_GROUP;
@@ -495,7 +520,7 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
 
             if (holder instanceof HomeViewHolder) {
                 HomeViewHolder homeHolder = (HomeViewHolder) holder;
-                homeHolder.bindTo(getItem(position), privacy);
+                homeHolder.bindTo(getItem(position));
                 return;
             }
 
@@ -520,6 +545,9 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
     private static final DiffUtil.ItemCallback<DestinationItem> DIFF_CALLBACK = new DiffUtil.ItemCallback<DestinationItem>() {
         @Override
         public boolean areItemsTheSame(@NonNull DestinationItem oldItem, @NonNull DestinationItem newItem) {
+            if (oldItem.type == newItem.type && oldItem.type == DestinationItem.ITEM_HOME_FEED) {
+                return true;
+            }
             return oldItem.type == newItem.type && Objects.equals(oldItem.destination, newItem.destination);
         }
 

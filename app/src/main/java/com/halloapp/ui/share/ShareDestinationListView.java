@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListAdapter;
@@ -78,7 +79,7 @@ public class ShareDestinationListView extends LinearLayout {
                 selectionView.scrollToPosition(destinationList.size() - 1);
             }
 
-            setVisibility(destinationList.size() == 0 ? View.GONE : View.VISIBLE);
+            post(() -> setVisibility(destinationList.size() == 0 ? View.GONE : View.VISIBLE));
         });
     }
 
@@ -90,13 +91,16 @@ public class ShareDestinationListView extends LinearLayout {
         abstract void bindTo(@NonNull ShareDestination destination);
     }
 
-    private class SelectedHomeViewHolder extends SelectedViewHolder {
+    private class SelectedFavoritesViewHolder extends SelectedViewHolder {
         private ShareDestination destination;
 
-        SelectedHomeViewHolder(@NonNull View itemView) {
+        private ImageView avatarView;
+        private TextView nameView;
+
+        SelectedFavoritesViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            ImageView avatarView = itemView.findViewById(R.id.avatar);
+            avatarView = itemView.findViewById(R.id.avatar);
             avatarView.setOutlineProvider(new ViewOutlineProvider() {
                 @Override
                 public void getOutline(View view, Outline outline) {
@@ -105,9 +109,46 @@ public class ShareDestinationListView extends LinearLayout {
                 }
             });
             avatarView.setClipToOutline(true);
+            nameView = itemView.findViewById(R.id.name);
 
             View removeView = itemView.findViewById(R.id.remove);
             removeView.setOnClickListener(v -> notifyOnRemove(destination));
+            avatarView.setBackgroundColor(ContextCompat.getColor(avatarView.getContext(), R.color.favorites_yellow));
+            avatarView.setImageResource(R.drawable.ic_privacy_favorites);
+            nameView.setText(R.string.contact_favorites);
+        }
+
+        @Override
+        void bindTo(@NonNull ShareDestination destination) {
+            this.destination = destination;
+        }
+    }
+
+    private class SelectedMyContactsViewHolder extends SelectedViewHolder {
+        private ShareDestination destination;
+
+        private ImageView avatarView;
+        private TextView nameView;
+
+        SelectedMyContactsViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            avatarView = itemView.findViewById(R.id.avatar);
+            avatarView.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    float radius = view.getResources().getDimension(R.dimen.share_destination_item_radius);
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
+                }
+            });
+            avatarView.setClipToOutline(true);
+            nameView = itemView.findViewById(R.id.name);
+
+            View removeView = itemView.findViewById(R.id.remove);
+            removeView.setOnClickListener(v -> notifyOnRemove(destination));
+            avatarView.setBackgroundColor(ContextCompat.getColor(avatarView.getContext(), R.color.color_secondary));
+            avatarView.setImageResource(R.drawable.ic_privacy_my_contacts);
+            nameView.setText(R.string.my_contacts_title);
         }
 
         @Override
@@ -140,7 +181,8 @@ public class ShareDestinationListView extends LinearLayout {
     }
 
     private class SelectionAdapter extends ListAdapter<ShareDestination, SelectedViewHolder> {
-        private static final int ITEM_HOME_FEED = 0;
+        private static final int ITEM_MY_CONTACTS = 0;
+        private static final int ITEM_FAVORITES = 3;
         private static final int ITEM_GROUP = 1;
         private static final int ITEM_CONTACT = 2;
 
@@ -152,8 +194,10 @@ public class ShareDestinationListView extends LinearLayout {
         @Override
         public SelectedViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             switch (viewType) {
-                case ITEM_HOME_FEED:
-                    return new SelectedHomeViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.share_destination_home_selected, parent, false));
+                case ITEM_MY_CONTACTS:
+                    return new SelectedMyContactsViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.share_destination_home_selected, parent, false));
+                case ITEM_FAVORITES:
+                    return new SelectedFavoritesViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.share_destination_home_selected, parent, false));
                 case ITEM_CONTACT:
                     return new SelectedItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.share_destination_contact_selected, parent, false));
                 case ITEM_GROUP:
@@ -171,8 +215,10 @@ public class ShareDestinationListView extends LinearLayout {
         @Override
         public int getItemViewType(int position) {
             switch (getItem(position).type) {
-                case ShareDestination.TYPE_FEED:
-                    return ITEM_HOME_FEED;
+                case ShareDestination.TYPE_MY_CONTACTS:
+                    return ITEM_MY_CONTACTS;
+                case ShareDestination.TYPE_FAVORITES:
+                    return ITEM_FAVORITES;
                 case ShareDestination.TYPE_GROUP:
                     return ITEM_GROUP;
                 case ShareDestination.TYPE_CONTACT:

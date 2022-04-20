@@ -11,17 +11,26 @@ import com.halloapp.id.ChatId;
 import java.util.Objects;
 
 public class ShareDestination implements Parcelable {
-    public final static int TYPE_FEED = 0;
+    public final static int TYPE_MY_CONTACTS = 0;
     public final static int TYPE_GROUP = 1;
     public final static int TYPE_CONTACT = 2;
+    public final static int TYPE_FAVORITES = 3;
 
     public int type;
     public String name;
     public ChatId id;
 
-    public static ShareDestination feed() {
+    public static ShareDestination myContacts() {
         ShareDestination destination = new ShareDestination();
-        destination.type = TYPE_FEED;
+        destination.type = TYPE_MY_CONTACTS;
+        destination.name = "";
+
+        return destination;
+    }
+
+    public static ShareDestination myFavorites() {
+        ShareDestination destination = new ShareDestination();
+        destination.type = TYPE_FAVORITES;
         destination.name = "";
 
         return destination;
