@@ -690,8 +690,8 @@ public class ContentComposerActivity extends HalloActivity {
             updateDestination(groupId);
         }
 
+        changePrivacyBtn = findViewById(R.id.change_privacy);
         if (chatId == null && destinations == null) {
-            changePrivacyBtn = findViewById(R.id.change_privacy);
             changePrivacyBtn.setVisibility(View.VISIBLE);
             changePrivacyBtn.setOnClickListener(v -> {
                 startActivityForResult(SharePrivacyActivity.openPostPrivacy(this, viewModel.getPrivacyList(), groupId), REQUEST_CODE_CHANGE_PRIVACY);
@@ -1016,15 +1016,11 @@ public class ContentComposerActivity extends HalloActivity {
         if (feedPrivacy == null || PrivacyList.Type.ALL.equals(feedPrivacy.activeList) || PrivacyList.Type.EXCEPT.equals(feedPrivacy.activeList)) {
             privacyDestination.setText(R.string.setting_feed_all);
             privacyIcon.setImageResource(R.drawable.ic_privacy_my_contacts);
-            if (changePrivacyBtn != null) {
-                changePrivacyBtn.setBackgroundTintList(AppCompatResources.getColorStateList(this, R.color.secondary_button_color_selector));
-            }
+            changePrivacyBtn.setBackgroundTintList(AppCompatResources.getColorStateList(this, R.color.secondary_button_color_selector));
         } else if (PrivacyList.Type.ONLY.equals(feedPrivacy.activeList)) {
             privacyDestination.setText(R.string.contact_favorites);
             privacyIcon.setImageResource(R.drawable.ic_privacy_favorites);
-            if (changePrivacyBtn != null) {
-                changePrivacyBtn.setBackgroundTintList(AppCompatResources.getColorStateList(this, R.color.favorites_button_color_selector));
-            }
+            changePrivacyBtn.setBackgroundTintList(AppCompatResources.getColorStateList(this, R.color.favorites_button_color_selector));
         } else {
             Log.e("ContentComposerActivity: updatePostSubtitle received unexpected activeList - " + feedPrivacy.activeList);
             privacyDestination.setText("");
