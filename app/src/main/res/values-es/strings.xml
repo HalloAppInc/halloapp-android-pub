@@ -226,6 +226,7 @@ Para modificar los permisos de la aplicación, abre la pantalla de configuració
     <!-- Fuzzy -->
     <string name="yesterday_at_time">"ayer a las %s"</string>
 
+    <!-- We need a singular option for 1:00 -->
     <!-- Fuzzy -->
     <string name="day_of_week_at_time">"El %1$s a las %2$s"</string>
     <string name="unknown_contact">"Contacto desconocido"</string>
@@ -236,9 +237,7 @@ Para modificar los permisos de la aplicación, abre la pantalla de configuració
     <string name="action_save">"Guardar"</string>
     <string name="invite_friends">"Invitar a tu familia y amigos"</string>
     <string name="invite_friend_chooser_title">"Invita a %s"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_text_with_name_and_number">"Hola %1$s, tengo una invitación para que te unas a mí en HalloApp - una red social con relaciones reales para los más cercanos a mí. Usa %2$s para registrarte. Obténla en %3$s"</string>
+    <string name="invite_text_with_name_and_number">"Hola %1$s, tengo una invitación para que te unas a mí en HalloApp - una red social con relaciones reales para mis más cercanos. Usa %2$s para registrarte. Obtenla en %3$s"</string>
     <string name="name_hint">"Tu nombre"</string>
     <string name="name_must_be_specified">"Debes especificar tu nombre"</string>
 
@@ -248,11 +247,7 @@ Para modificar los permisos de la aplicación, abre la pantalla de configuració
     <string name="failed_update_profile">"Tu perfil no se pudo actualizar, inténtalo de nuevo más tarde"</string>
     <string name="profile_updated">"Tu perfil ha sido actualizado"</string>
     <string name="flip">"Voltear"</string>
-
-    <!-- Fuzzy -->
     <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
-
-    <!-- Fuzzy -->
     <string name="email_logs_text">"
 ----------------------------------------
 Por favor describe tu problema arriba.
@@ -287,11 +282,7 @@ versión: %2$s
     <string name="system_message_member_auto_promoted_you">"Tú fuiste autopromovido como administrador"</string>
     <string name="system_message_group_name_changed">"%1$s cambió el nombre del grupo a %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"Tú cambiaste el nombre del grupo a %s"</string>
-
-    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed">"%s cambió el avatar del grupo"</string>
-
-    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed_by_you">"Tú cambiaste el avatar del grupo"</string>
     <string name="system_message_group_deleted">"%s eliminó el grupo"</string>
     <string name="system_message_group_deleted_by_you">"Tú eliminaste el grupo"</string>
@@ -311,11 +302,7 @@ versión: %2$s
     <string name="system_post_member_auto_promoted_you">"Tú fuiste ascendido a administrador"</string>
     <string name="system_post_group_name_changed">"%1$s cambió el nombre del grupo a %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"Tú cambiaste el nombre del grupo a %s"</string>
-
-    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed">"%s cambió el avatar del grupo"</string>
-
-    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed_by_you">"Tú cambiaste el avatar del grupo"</string>
     <string name="system_post_group_deleted">"%s eliminó el grupo"</string>
     <string name="system_post_group_deleted_by_you">"Tú eliminaste el grupo"</string>
@@ -393,8 +380,6 @@ versión: %2$s
         <item quantity="other">"Saliendo de los grupos"</item>
     </plurals>
     <string name="failed_leave_group">"No se pudo salir del grupo, inténtalo más tarde"</string>
-
-    <!-- Fuzzy -->
     <plurals name="friends_on_halloapp">
         <item quantity="one">"%d es un contacto en HalloApp"</item>
         <item quantity="other">"%d son contactos en HalloApp"</item>
@@ -440,20 +425,15 @@ versión: %2$s
         <item quantity="other">"%d participantes"</item>
     </plurals>
 
+    <!-- Description for sharing privacy for sharing with your contacts -->
     <!-- Fuzzy -->
     <string name="composer_sharing_all_summary">"Compartir con mis contactos"</string>
-
-    <!-- Fuzzy -->
     <string name="composer_sharing_except_summary">"Compartir con algunos de mis contactos"</string>
-
-    <!-- Fuzzy -->
     <plurals name="composer_sharing_only_summary">
         <item quantity="one">"Compartir con %d de mis contactos"</item>
         <item quantity="other">"Compartir con %d de mis contactos"</item>
     </plurals>
     <string name="post_preview_no_caption">"%s compartió una publicación"</string>
-
-    <!-- Fuzzy -->
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
     <string name="composer_sharing_message">"Enviar a %s"</string>
     <plurals name="max_video_length">
@@ -497,9 +477,7 @@ versión: %2$s
     <string name="not_now">"Ahora no"</string>
     <string name="continue_button">"Continuar"</string>
     <string name="invite_link_load_failed">"No se pudo abrir el enlace de invitación del grupo"</string>
-
-    <!-- Fuzzy -->
-    <string name="message_tombstone_placeholder">"Esperando este mensaje. Esto puede tomar un tiempo. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="message_tombstone_placeholder">"Esperando por este mensaje. Puede que demore. "<![CDATA[<a href="learn-more">Más información</a>]]>"."</string>
     <string name="failed_no_longer_member">"Ya no formas parte de este grupo."</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -530,7 +508,6 @@ versión: %2$s
     <string name="key_verification_tap_to_scan">"Toca para escanear"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <!-- Fuzzy -->
     <string name="key_verification_explanation">"Para verificar la seguridad de tu conexión con %s, comprueba que los números de arriba coinciden con los mostrados en su dispositivo o escanea el código QR en su teléfono. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
@@ -889,8 +866,7 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="link_preview_loading">"Cargando vista previa…"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
-    <!-- Fuzzy -->
-    <string name="add_to_contacts_notice">"Para ver publicaciones de %s, añade su número a tu agenda. Toca para añadir."</string>
+    <string name="add_to_contacts_notice">"Para ver publicaciones de %s, añade su número a tu libreta de contactos. Toca para añadir."</string>
 
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">"Falló al abrir enlace"</string>
@@ -972,7 +948,6 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="storage_usage_title">"Uso del almacenamiento"</string>
 
     <!-- Storage usage section header for home feed category -->
-    <!-- Fuzzy -->
     <string name="storage_usage_home">"Contenido inicial"</string>
 
     <!-- Storage usage section header for chats category -->
@@ -1009,15 +984,12 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="ongoing_call_notifications_channel_name">"Notificaciones de llamada en curso"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <!-- Fuzzy -->
     <string name="ringing">"Marcando"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <!-- Fuzzy -->
     <string name="calling">"Llamando"</string>
 
     <!-- The call notification accept button label -->
-    <!-- Fuzzy -->
     <string name="call_accept_button">"Aceptar"</string>
 
     <!-- The call notification decline button label -->
@@ -1186,7 +1158,6 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="address_book_action_message">"Mensaje %s"</string>
 
     <!-- Text provided as title when a post is shared outside of HalloApp -->
-    <!-- Fuzzy -->
     <string name="external_share_title">"Publicación en HalloApp de %s"</string>
 
     <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
@@ -1264,6 +1235,7 @@ Abre la pantalla de configuración de la app para modificar los permisos."</stri
     <string name="call_other_side_on_unhold">"Llamada reanudada"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for posts -->
+    <!-- Fuzzy -->
     <string name="contact_favorites_explanation">"Esta publicación solo se comparte con los contactos que agregaste a Favoritos. Puedes cambiar tu audiencia en la configuración de privacidad en cualquier momento."</string>
 
     <!-- Favorites means the users favorite contacts -->
@@ -1308,6 +1280,42 @@ Abre la pantalla de configuración de la app para modificar los permisos."</stri
 
     <!-- Text shown explaining how external sharing works on the sharing bottom sheet -->
     <string name="external_share_info">"Cualquiera que tenga el enlace puede ver tu publicación. El enlace caduca con tu publicación. La vista previa del enlace no está cifrada."</string>
+
+    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
+    <string name="contact_favorites_explanation_others_with_name">"%s shared this post with contacts on their Favorites list. You can setup and edit your Favorites list at any time."</string>
+
+    <!-- Title for when user is editing their favorites -->
+    <string name="edit_favorites_title">"Edit favorites"</string>
+
+    <!-- Button action for when user is editing their favorites -->
+    <string name="edit_favorites_action">"Edit favorites"</string>
+
+    <!-- Favorites new user experience explanation, introducing the feature in a dialog. -->
+    <string name="favorites_nux_call_to_action">"Now you can create a list of your favorite contacts, and share your HalloApp posts just with them"</string>
+
+    <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
+    <string name="my_contacts_disclaimer">"Your contacts that join HalloApp will be able to see your unexpired posts"</string>
+
+    <!-- Title for screen that shows all the user's contacts -->
+    <string name="my_contacts_title">"My contacts"</string>
+
+    <!-- Title for list showing all users halloapp contacts -->
+    <string name="my_ha_contacts">"My HalloApp contacts"</string>
+
+    <!-- Title for feed privacy when setting it from a single post for the group section -->
+    <string name="setting_feed_privacy_groups_section_title">"Share only with a group"</string>
+
+    <!-- Description for sharing privacy for sharing with your favorites -->
+    <string name="composer_sharing_favorites_summary">"Share only with favorites"</string>
+
+    <!-- Text shown in activity center telling users about the new favorites feature -->
+    <string name="favorites_notification">"Check out the new &lt;b&gt;Favorites&lt;/b&gt; feature! &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
+
+    <!-- Title for when user is adding users to  their favorites. This is only shown when their favorites is empty -->
+    <string name="add_favorites_title">"Add favorites"</string>
+
+    <!-- Button title to toggle image annotating -->
+    <string name="toggle_annotate">"Annotate"</string>
     <string name="share_externally">"Compartir externamente"</string>
     <string name="incoming_call_notification_title">"Llamada entrante"</string>
     <string name="call_action">"Llamar"</string>

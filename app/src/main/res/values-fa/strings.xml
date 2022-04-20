@@ -421,6 +421,7 @@ version: %2$s
         <item quantity="other">"%d عضو"</item>
     </plurals>
 
+    <!-- Description for sharing privacy for sharing with your contacts -->
     <!-- Fuzzy -->
     <string name="composer_sharing_all_summary">"به اشتراک گذاشتن با مخاطب‌هایم"</string>
 
@@ -1241,6 +1242,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="call_other_side_on_unhold">"ادامه تماس"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for posts -->
+    <!-- Fuzzy -->
     <string name="contact_favorites_explanation">"این پست فقط با کسانی که در لیست محبوب‌های شما هستند به اشتراک گذاشته میشود. میتوانید آن را در حریم خصوصی تغییر دهید."</string>
 
     <!-- Favorites means the users favorite contacts -->
@@ -1268,22 +1270,58 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     </plurals>
 
     <!-- Button for revoking a link used for external sharing -->
-    <string name="revoke_link">"Revoke link"</string>
+    <string name="revoke_link">"لغو لینک"</string>
 
     <!-- Text for button for sharing a post -->
-    <string name="share_via">"Share via…"</string>
+    <string name="share_via">"به اشتراک گذاشتن از طریق…"</string>
 
     <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
-    <string name="revoke_link_in_progress">"Revoking link"</string>
+    <string name="revoke_link_in_progress">"در حال لغو لینک"</string>
 
     <!-- Text shown in snackbar when external sharing link is revoked -->
-    <string name="link_revoked">"Link revoked"</string>
+    <string name="link_revoked">"لینک لغو شد"</string>
 
     <!-- Text shown in a snackbar when link revocation failed -->
-    <string name="link_revoke_failed">"Failed to revoke link"</string>
+    <string name="link_revoke_failed">"خطا در لغو لینک"</string>
 
     <!-- Text shown explaining how external sharing works on the sharing bottom sheet -->
-    <string name="external_share_info">"Anyone with the link can see your post. Link expires with your post. Link preview is unencrypted."</string>
+    <string name="external_share_info">"هر شخص با این لینک میتواند پست شما را مشاهده کند. لینک‌ها بعد از انقضای پست شما منحل میشوند. پیش‌نمایش لینک کدگذاری نشده است."</string>
+
+    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
+    <string name="contact_favorites_explanation_others_with_name">"%s shared this post with contacts on their Favorites list. You can setup and edit your Favorites list at any time."</string>
+
+    <!-- Title for when user is editing their favorites -->
+    <string name="edit_favorites_title">"Edit favorites"</string>
+
+    <!-- Button action for when user is editing their favorites -->
+    <string name="edit_favorites_action">"Edit favorites"</string>
+
+    <!-- Favorites new user experience explanation, introducing the feature in a dialog. -->
+    <string name="favorites_nux_call_to_action">"Now you can create a list of your favorite contacts, and share your HalloApp posts just with them"</string>
+
+    <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
+    <string name="my_contacts_disclaimer">"Your contacts that join HalloApp will be able to see your unexpired posts"</string>
+
+    <!-- Title for screen that shows all the user's contacts -->
+    <string name="my_contacts_title">"My contacts"</string>
+
+    <!-- Title for list showing all users halloapp contacts -->
+    <string name="my_ha_contacts">"My HalloApp contacts"</string>
+
+    <!-- Title for feed privacy when setting it from a single post for the group section -->
+    <string name="setting_feed_privacy_groups_section_title">"Share only with a group"</string>
+
+    <!-- Description for sharing privacy for sharing with your favorites -->
+    <string name="composer_sharing_favorites_summary">"Share only with favorites"</string>
+
+    <!-- Text shown in activity center telling users about the new favorites feature -->
+    <string name="favorites_notification">"Check out the new &lt;b&gt;Favorites&lt;/b&gt; feature! &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
+
+    <!-- Title for when user is adding users to  their favorites. This is only shown when their favorites is empty -->
+    <string name="add_favorites_title">"Add favorites"</string>
+
+    <!-- Button title to toggle image annotating -->
+    <string name="toggle_annotate">"Annotate"</string>
     <string name="share_externally">"به اشتراک گذاشتن خارج هالواپ"</string>
     <string name="incoming_call_notification_title">"تماس دریافتی"</string>
     <string name="call_action">"تماس"</string>

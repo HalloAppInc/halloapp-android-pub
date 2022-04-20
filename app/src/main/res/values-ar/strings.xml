@@ -491,6 +491,9 @@
         <item quantity="many">"%d عضوًا"</item>
         <item quantity="other">"%d عضو"</item>
     </plurals>
+
+    <!-- Description for sharing privacy for sharing with your contacts -->
+    <!-- Fuzzy -->
     <string name="composer_sharing_all_summary">"المشاركة مع جهات اتصالي"</string>
     <string name="composer_sharing_except_summary">"المشاركة مع بعض جهات اتصالي"</string>
     <plurals name="composer_sharing_only_summary">
@@ -1369,6 +1372,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="call_other_side_on_unhold">"تم استئناف المكالمة"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for posts -->
+    <!-- Fuzzy -->
     <string name="contact_favorites_explanation">"تقتصر مشاركة هذا المنشور على جهات الاتصال التي أضفتها إلى المفضلة. يمكنك تعديل جمهورك في أي وقت ضمن إعدادات الخصوصية."</string>
 
     <!-- Favorites means the users favorite contacts -->
@@ -1416,6 +1420,42 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Text shown explaining how external sharing works on the sharing bottom sheet -->
     <string name="external_share_info">"أي شخص لديه الرابط يمكنه رؤية منشورك. وتنتهي صلاحية الرابط بانتهاء صلاحية المنشور. علمًا بأن معاينة الرابط غير مشفّرة."</string>
+
+    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
+    <string name="contact_favorites_explanation_others_with_name">"%s shared this post with contacts on their Favorites list. You can setup and edit your Favorites list at any time."</string>
+
+    <!-- Title for when user is editing their favorites -->
+    <string name="edit_favorites_title">"Edit favorites"</string>
+
+    <!-- Button action for when user is editing their favorites -->
+    <string name="edit_favorites_action">"Edit favorites"</string>
+
+    <!-- Favorites new user experience explanation, introducing the feature in a dialog. -->
+    <string name="favorites_nux_call_to_action">"Now you can create a list of your favorite contacts, and share your HalloApp posts just with them"</string>
+
+    <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
+    <string name="my_contacts_disclaimer">"Your contacts that join HalloApp will be able to see your unexpired posts"</string>
+
+    <!-- Title for screen that shows all the user's contacts -->
+    <string name="my_contacts_title">"My contacts"</string>
+
+    <!-- Title for list showing all users halloapp contacts -->
+    <string name="my_ha_contacts">"My HalloApp contacts"</string>
+
+    <!-- Title for feed privacy when setting it from a single post for the group section -->
+    <string name="setting_feed_privacy_groups_section_title">"Share only with a group"</string>
+
+    <!-- Description for sharing privacy for sharing with your favorites -->
+    <string name="composer_sharing_favorites_summary">"Share only with favorites"</string>
+
+    <!-- Text shown in activity center telling users about the new favorites feature -->
+    <string name="favorites_notification">"Check out the new &lt;b&gt;Favorites&lt;/b&gt; feature! &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
+
+    <!-- Title for when user is adding users to  their favorites. This is only shown when their favorites is empty -->
+    <string name="add_favorites_title">"Add favorites"</string>
+
+    <!-- Button title to toggle image annotating -->
+    <string name="toggle_annotate">"Annotate"</string>
     <string name="share_externally">"مشاركة خارج هالوآب"</string>
     <string name="incoming_call_notification_title">"مكالمة واردة"</string>
     <string name="call_action">"اتصال"</string>

@@ -453,6 +453,7 @@ uid: %1$s
         <item quantity="other">"%d участника"</item>
     </plurals>
 
+    <!-- Description for sharing privacy for sharing with your contacts -->
     <!-- Fuzzy -->
     <string name="composer_sharing_all_summary">"Поделиться с моими контактами"</string>
 
@@ -1291,60 +1292,97 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     </plurals>
 
     <!-- Displayed on the call screen when the call is on hold -->
-    <string name="call_on_hold">"On hold"</string>
+    <string name="call_on_hold">"Вызов на удержании"</string>
 
     <!-- Toast displayed when the other side puts the call on hold -->
-    <string name="call_other_side_on_hold">"Call is on hold"</string>
+    <string name="call_other_side_on_hold">"Вызов на удержании"</string>
 
     <!-- Toast displayed when the other side removes the call hold -->
-    <string name="call_other_side_on_unhold">"Call has resumed"</string>
+    <string name="call_other_side_on_unhold">"Звонок продолжан"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for posts -->
-    <string name="contact_favorites_explanation">"This post is only shared with contacts you added to Favorites. You can adjust your audience in privacy settings at any time."</string>
+    <!-- Fuzzy -->
+    <string name="contact_favorites_explanation">"Этот пост доступен только тем контактам, которых вы добавили в Избранное. Вы можете настроить свою аудиторию в настройках конфиденциальности в любое время."</string>
 
     <!-- Favorites means the users favorite contacts -->
-    <string name="contact_favorites">"Favorites"</string>
+    <string name="contact_favorites">"Избранное"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts -->
-    <string name="contact_favorites_explanation_others">"This post is only shared with a limited audience. You can adjust your audience in privacy settings at any time."</string>
+    <string name="contact_favorites_explanation_others">"Этот пост доступен только для ограниченных контактах. Вы можете изменить настройки конфиденциальности в любое время."</string>
 
     <!-- Drawing on images -->
-    <string name="draw">"Draw"</string>
+    <string name="draw">"Редактировать"</string>
 
     <!-- Undo an action -->
-    <string name="undo">"Undo"</string>
+    <string name="undo">"Отменить"</string>
 
     <!-- Text shown in progress dialog while loading a post for individual viewing, usually from a private reply or an external sharing link -->
-    <string name="loading_post">"Loading post…"</string>
+    <string name="loading_post">"Загрузка поста…"</string>
 
     <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <string name="failed_load_post">"Failed to load post"</string>
+    <string name="failed_load_post">"Не удалось загрузить пост"</string>
 
     <!-- Text in groups pill telling the user theres new posts -->
     <plurals name="new_posts_quantity">
-        <item quantity="one">"%d new post"</item>
-        <item quantity="few">"%d new post"</item>
-        <item quantity="many">"%d new post"</item>
-        <item quantity="other">"%d new post"</item>
+        <item quantity="one">"%d новое сообщение"</item>
+        <item quantity="few">"%d новых сообщений"</item>
+        <item quantity="many">"%d новых сообщений"</item>
+        <item quantity="other">"%d новых сообщений"</item>
     </plurals>
 
     <!-- Button for revoking a link used for external sharing -->
-    <string name="revoke_link">"Revoke link"</string>
+    <string name="revoke_link">"Отозвать ссылку"</string>
 
     <!-- Text for button for sharing a post -->
-    <string name="share_via">"Share via…"</string>
+    <string name="share_via">"Отправить по…"</string>
 
     <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
-    <string name="revoke_link_in_progress">"Revoking link"</string>
+    <string name="revoke_link_in_progress">"Отзыв ссылки"</string>
 
     <!-- Text shown in snackbar when external sharing link is revoked -->
-    <string name="link_revoked">"Link revoked"</string>
+    <string name="link_revoked">"Ссылка отозвана"</string>
 
     <!-- Text shown in a snackbar when link revocation failed -->
-    <string name="link_revoke_failed">"Failed to revoke link"</string>
+    <string name="link_revoke_failed">"Не удалось отозвать ссылку"</string>
 
     <!-- Text shown explaining how external sharing works on the sharing bottom sheet -->
-    <string name="external_share_info">"Anyone with the link can see your post. Link expires with your post. Link preview is unencrypted."</string>
+    <string name="external_share_info">"Любой, у кого есть ссылка, может увидеть ваш пост. Срок действия ссылки истекает вместе с вашим сообщением. Предварительный просмотр ссылки не зашифрован."</string>
+
+    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
+    <string name="contact_favorites_explanation_others_with_name">"%s shared this post with contacts on their Favorites list. You can setup and edit your Favorites list at any time."</string>
+
+    <!-- Title for when user is editing their favorites -->
+    <string name="edit_favorites_title">"Edit favorites"</string>
+
+    <!-- Button action for when user is editing their favorites -->
+    <string name="edit_favorites_action">"Edit favorites"</string>
+
+    <!-- Favorites new user experience explanation, introducing the feature in a dialog. -->
+    <string name="favorites_nux_call_to_action">"Now you can create a list of your favorite contacts, and share your HalloApp posts just with them"</string>
+
+    <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
+    <string name="my_contacts_disclaimer">"Your contacts that join HalloApp will be able to see your unexpired posts"</string>
+
+    <!-- Title for screen that shows all the user's contacts -->
+    <string name="my_contacts_title">"My contacts"</string>
+
+    <!-- Title for list showing all users halloapp contacts -->
+    <string name="my_ha_contacts">"My HalloApp contacts"</string>
+
+    <!-- Title for feed privacy when setting it from a single post for the group section -->
+    <string name="setting_feed_privacy_groups_section_title">"Share only with a group"</string>
+
+    <!-- Description for sharing privacy for sharing with your favorites -->
+    <string name="composer_sharing_favorites_summary">"Share only with favorites"</string>
+
+    <!-- Text shown in activity center telling users about the new favorites feature -->
+    <string name="favorites_notification">"Check out the new &lt;b&gt;Favorites&lt;/b&gt; feature! &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
+
+    <!-- Title for when user is adding users to  their favorites. This is only shown when their favorites is empty -->
+    <string name="add_favorites_title">"Add favorites"</string>
+
+    <!-- Button title to toggle image annotating -->
+    <string name="toggle_annotate">"Annotate"</string>
     <string name="share_externally">"Поделиться"</string>
     <string name="incoming_call_notification_title">"Входящий звонок"</string>
     <string name="call_action">"Звонок"</string>

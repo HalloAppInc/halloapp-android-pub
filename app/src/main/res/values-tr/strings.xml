@@ -130,8 +130,6 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="no_photos_or_videos_found">"Fotoğraf veya video bulunamadı"</string>
     <string name="gallery">"Galeri"</string>
     <string name="avatar_picker_title">"Profil fotoğrafı"</string>
-
-    <!-- Fuzzy -->
     <string name="group_avatar_picker_title">"Grup simgesi"</string>
     <string name="other_media">"Diğer görseller"</string>
     <string name="rotate">"Döndür"</string>
@@ -239,9 +237,7 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="invite_friend_chooser_title">"%s kişisini davet et"</string>
 
     <!-- Will the second %s here be a link? -->
-    <!-- Fuzzy -->
-    <string name="invite_text_with_name_and_number">"Merhaba %1$s! Seni, sevdiklerimizle gerçek bağlantılar kurabildiğimiz bir uygulama olan HalloApp'e davet ediyorum. Kaydolmak için %2$s numarasını kullan. %3$s adresinden uygulamayı 
-indir."</string>
+    <string name="invite_text_with_name_and_number">"Merhaba %1$s! Seni, sevdiklerimizle gerçek bağlantılar kurabildiğimiz bir uygulama olan HalloApp'e davet ediyorum. Kaydolmak için %2$s numarasını kullan. %3$s adresinden uygulamayı indir."</string>
     <string name="name_hint">"Adın"</string>
     <string name="name_must_be_specified">"Ad belirtilmeli"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -284,11 +280,7 @@ version: %2$s
     <string name="system_message_member_auto_promoted_you">"Otomatik olarak yönetici oldun"</string>
     <string name="system_message_group_name_changed">"%1$s, grubun adını %2$s olarak değiştirdi"</string>
     <string name="system_message_group_name_changed_by_you">"Grubun adını %s olarak değiştirdin"</string>
-
-    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed">"%s, grubun simgesini değiştirdi"</string>
-
-    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed_by_you">"Grubun simgesini değiştirdin"</string>
     <string name="system_message_group_deleted">"%s, grubu sildi"</string>
     <string name="system_message_group_deleted_by_you">"Grubu sildin"</string>
@@ -308,11 +300,7 @@ version: %2$s
     <string name="system_post_member_auto_promoted_you">"Otomatik olarak yönetici oldun"</string>
     <string name="system_post_group_name_changed">"%1$s, grubun adını %2$s olarak değiştirdi"</string>
     <string name="system_post_group_name_changed_by_you">"Grubun adını %s olarak değiştirdin"</string>
-
-    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed">"%s, grubun simgesini değiştirdi"</string>
-
-    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed_by_you">"Grubun simgesini değiştirdin"</string>
     <string name="system_post_group_deleted">"%s, grubu sildi"</string>
     <string name="system_post_group_deleted_by_you">"Grubu sildin"</string>
@@ -340,9 +328,7 @@ version: %2$s
         <item quantity="other">"%s davet hakkın kaldı"</item>
     </plurals>
     <string name="invite_friends_title">"Aileni ve arkadaşlarını davet et"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_title">"Davetiye gönder"</string>
+    <string name="invite_title">"Arkadaşlarını davet et"</string>
     <string name="settings_invite_option">"HalloApp'e davet et"</string>
     <string name="invite_already_on_halloapp">"Halihazırda HalloApp'te"</string>
     <string name="invite_invalid_phone_number">"Telefon numarası geçersiz"</string>
@@ -434,16 +420,12 @@ version: %2$s
         <item quantity="other">"%d üye"</item>
     </plurals>
 
-    <!-- Fuzzy -->
-    <string name="composer_sharing_all_summary">"Kişilerimle paylaşılıyor"</string>
-
-    <!-- Fuzzy -->
-    <string name="composer_sharing_except_summary">"Kişilerimden bazılarıyla paylaşılıyor"</string>
-
-    <!-- Fuzzy -->
+    <!-- Description for sharing privacy for sharing with your contacts -->
+    <string name="composer_sharing_all_summary">"Kişilerimle paylaş"</string>
+    <string name="composer_sharing_except_summary">"Kişilerimden bazılarıyla paylaş"</string>
     <plurals name="composer_sharing_only_summary">
-        <item quantity="one">"Kişilerimden %d tanesi ile paylaşılıyor"</item>
-        <item quantity="other">"Kişilerimden %d tanesi ile paylaşılıyor"</item>
+        <item quantity="one">"Kişilerimden %d tanesi ile paylaş"</item>
+        <item quantity="other">"Kişilerimden %d tanesi ile paylaş"</item>
     </plurals>
     <string name="post_preview_no_caption">"%s, bir gönderi paylaştı"</string>
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
@@ -489,9 +471,7 @@ version: %2$s
     <string name="not_now">"Şimdi değil"</string>
     <string name="continue_button">"Devam"</string>
     <string name="invite_link_load_failed">"Grup davet ilişimi açılamadı"</string>
-
-    <!-- Fuzzy -->
-    <string name="message_tombstone_placeholder">"Mesaj yükleniyor. Bu biraz zaman alabilir. &lt;a href=\"learn-more\"&gt;Daha fazlasını öğren&lt;/a&gt;"</string>
+    <string name="message_tombstone_placeholder">"Mesaj bekleniyor. Bu biraz zaman alabilir. &lt;a href=\"learn-more\"&gt;Daha fazlasını öğren&lt;/a&gt;"</string>
     <string name="failed_no_longer_member">"Artık bu grubun bir üyesi değilsin"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -522,8 +502,7 @@ version: %2$s
     <string name="key_verification_tap_to_scan">"Taramak için dokun"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <!-- Fuzzy -->
-    <string name="key_verification_explanation">"%1$s ile bağlantınızın güvenliğini doğrulamak için yukarıdaki numaraların, onun cihazında gösterilenlerle eşleşip eşleşmediğini kontrol et veya telefonundaki QR kodunu tarat. "<![CDATA[<a href="learn-more">Daha fazlasını öğren</a>]]>"."</string>
+    <string name="key_verification_explanation">"%1$s ile bağlantınızın güvenliğini doğrulamak için yukarıdaki numaranın, onun cihazında gösterilenle eşleşip eşleşmediğini kontrol et veya o telefondaki QR kodunu tarat. "<![CDATA[<a href="learn-more">Daha fazlasını öğren</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"Daha fazla"</string>
@@ -743,8 +722,7 @@ Uygulama izinlerini değiştirmek için Uygulama Ayarları ekranını aç."</str
     <string name="return_to_registration">"Kayda dön."</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <!-- Fuzzy -->
-    <string name="archive_empty">"Süresi dolan gönderilerin burada görünecek."</string>
+    <string name="archive_empty">"30 günlük süresi dolan gönderilerin burada görünecek"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"Desteklenmeyen içerik"</string>
@@ -1004,16 +982,13 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını açın."</
     <string name="ongoing_call_notifications_channel_name">"Devam eden çağrı bildirimleri"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <!-- Fuzzy -->
-    <string name="ringing">"Çalıyor"</string>
+    <string name="ringing">"Çalıyor…"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <!-- Fuzzy -->
-    <string name="calling">"Aranıyor"</string>
+    <string name="calling">"Arıyor…"</string>
 
     <!-- The call notification accept button label -->
-    <!-- Fuzzy -->
-    <string name="call_accept_button">"Kabul et"</string>
+    <string name="call_accept_button">"Cevapla"</string>
 
     <!-- The call notification decline button label -->
     <string name="call_decline_button">"Reddet"</string>
@@ -1174,132 +1149,168 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</str
     <string name="call_action_video">"Görüntülü arama"</string>
 
     <!-- Action shown in user's address book for option to start a call, %s replaced with the phone number -->
-    <string name="address_book_action_call">"Voice call %s"</string>
+    <string name="address_book_action_call">"Sesli arama %s"</string>
 
     <!-- Action shown in user's address book for option to send a message, %s replaced with the phone number -->
-    <string name="address_book_action_message">"Message %s"</string>
+    <string name="address_book_action_message">"Mesaj %s"</string>
 
     <!-- Text provided as title when a post is shared outside of HalloApp -->
-    <string name="external_share_title">"%s's HalloApp Post"</string>
+    <string name="external_share_title">"%s kişisinin HalloApp gönderisi"</string>
 
     <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
-    <string name="external_share_description_text">"Text post"</string>
+    <string name="external_share_description_text">"Metin gönderisi"</string>
 
     <!-- Text provided as description for an audio post being shared outside of HalloApp -->
-    <string name="external_share_description_audio">"Audio post"</string>
+    <string name="external_share_description_audio">"Sesli gönderi"</string>
 
     <!-- Text provided as description for media post being shared outside of HalloApp -->
-    <string name="external_share_description_media">"Media post"</string>
+    <string name="external_share_description_media">"Görsel içeren gönderi"</string>
 
     <!-- Text on an indeterminate progress dialog when you tap to share a post outside of HalloApp -->
-    <string name="external_share_in_progress">"Creating sharing link"</string>
+    <string name="external_share_in_progress">"Paylaşım ilişimi yaratılıyor"</string>
 
     <!-- Text in a temporary dialog when sharing externally fails -->
-    <string name="external_share_failed">"Failed to create sharing link, please try again"</string>
+    <string name="external_share_failed">"İlişim yaratılamadı, lütfen tekrar dene"</string>
 
     <!-- Text shared or copied to clipboard when sharing a post outside HalloApp -->
-    <string name="external_share_copy">"Check out my post on HalloApp: %s"</string>
+    <string name="external_share_copy">"HalloApp'teki gönderime bak: %s"</string>
 
     <!-- Rationale for when requesting microphone or camera permission for voice calls, but it has already been denied. -->
-    <string name="call_record_audio_or_camera_permission_rationale_denied">"To make a voice or video call we need permission to access the microphone and camera.
+    <string name="call_record_audio_or_camera_permission_rationale_denied">"Sesli veya görüntülü arama yapabilmen için mikrofon ve kamera erişim iznine ihtiyacımız var. 
 
-Open the app settings screen to modify app permissions."</string>
+Uygulama ayarlarına giderek bu izinleri aç."</string>
 
     <!-- text shown in a card prompting user to search for friends/family to invite -->
-    <string name="invite_card_search_text">"Search for more friends and family"</string>
+    <string name="invite_card_search_text">"Daha fazla arkadaş ve aile bireyi ara"</string>
 
     <!-- Text shown as title for invite suggested friends card -->
-    <string name="invite_card_header">"HalloApp is fun with friends and family"</string>
+    <string name="invite_card_header">"HalloApp aile ve arkadaşlarla eğlencelidir"</string>
 
     <!-- Action on missed call notifications allowing the user to callback without opening the app first -->
-    <string name="call_back_notification_label">"Call back"</string>
+    <string name="call_back_notification_label">"Geri ara"</string>
 
     <!-- Text in notifications for missed calls %1$d is replaced with the number of missed calls -->
     <plurals name="missed_calls_notification">
-        <item quantity="one">"%1$d missed call"</item>
-        <item quantity="other">"%1$d missed call"</item>
+        <item quantity="one">"%1$d cevapsız çağrı"</item>
+        <item quantity="other">"%1$d cevapsız çağrı"</item>
     </plurals>
 
     <!-- Label under the bluetooth button in calls -->
     <string name="bluetooth">"Bluetooth"</string>
 
     <!-- Notice displayed in the call screen -->
-    <string name="call_e2e_notice">"End-to-end encrypted"</string>
+    <string name="call_e2e_notice">"Uçtan uca şifreli"</string>
 
     <!-- String shown while preparing to share logs from the app -->
-    <string name="preparing_logs">"Preparing logs…"</string>
+    <string name="preparing_logs">"Geri bildirim hazırlanıyor…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
-    <string name="post_tombstone_placeholder">"Waiting for this post. This may take a while. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="post_tombstone_placeholder">"Gönderi bekleniyor. Bu biraz zaman alabilir. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
-    <string name="comment_tombstone_placeholder">"Waiting for this comment. This may take a while. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="comment_tombstone_placeholder">"Yorum bekleniyor. Bu biraz zaman alabilir. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
 
     <!-- Name for notifications channel for missed calls -->
-    <string name="missed_call_notifications_channel_name">"Missed call notifications"</string>
+    <string name="missed_call_notifications_channel_name">"Cevapsız arama bildirimleri"</string>
 
     <!-- Single new comment notification text. %s replaced with name of comment sender -->
-    <string name="new_comment_notification">"New comment from %s"</string>
+    <string name="new_comment_notification">"%s kişisinden yeni yorum"</string>
 
     <!-- Text in notifications for comments from potentially multiple people. %1$d replaced with number of comments, %2$s replaced with list of names -->
     <plurals name="new_comments_list_notification">
-        <item quantity="one">"%1$d new comment from %2$s"</item>
-        <item quantity="other">"%1$d new comment from %2$s"</item>
+        <item quantity="one">"%2$s kişisinden %1$d yeni yorum"</item>
+        <item quantity="other">"%2$s kişisinden %1$d yeni yorum"</item>
     </plurals>
 
     <!-- Displayed on the call screen when the call is on hold -->
-    <string name="call_on_hold">"On hold"</string>
+    <string name="call_on_hold">"Beklemede"</string>
 
     <!-- Toast displayed when the other side puts the call on hold -->
-    <string name="call_other_side_on_hold">"Call is on hold"</string>
+    <string name="call_other_side_on_hold">"Arama beklemede"</string>
 
     <!-- Toast displayed when the other side removes the call hold -->
-    <string name="call_other_side_on_unhold">"Call has resumed"</string>
+    <string name="call_other_side_on_unhold">"Arama bitti"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for posts -->
-    <string name="contact_favorites_explanation">"This post is only shared with contacts you added to Favorites. You can adjust your audience in privacy settings at any time."</string>
+    <string name="contact_favorites_explanation">"Bu gönderi yalnızca Yakınlar listendekilerle paylaşılıyor. Yakınlar listeni istediğinde yeniden düzenleyebilirsin. "</string>
 
     <!-- Favorites means the users favorite contacts -->
-    <string name="contact_favorites">"Favorites"</string>
+    <string name="contact_favorites">"Yakınlar"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts -->
-    <string name="contact_favorites_explanation_others">"This post is only shared with a limited audience. You can adjust your audience in privacy settings at any time."</string>
+    <string name="contact_favorites_explanation_others">"Bu gönderi sınırlı bir kitleyle paylaşılmıştır. Bu kitleyi gizlilik ayarlarından istediğin zaman düzenleyebilirsin. "</string>
 
     <!-- Drawing on images -->
-    <string name="draw">"Draw"</string>
+    <string name="draw">"Çiz"</string>
 
     <!-- Undo an action -->
-    <string name="undo">"Undo"</string>
+    <string name="undo">"Geri al"</string>
 
     <!-- Text shown in progress dialog while loading a post for individual viewing, usually from a private reply or an external sharing link -->
-    <string name="loading_post">"Loading post…"</string>
+    <string name="loading_post">"Gönderi yükleniyor…"</string>
 
     <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <string name="failed_load_post">"Failed to load post"</string>
+    <string name="failed_load_post">"Gönderi yüklenemedi"</string>
 
     <!-- Text in groups pill telling the user theres new posts -->
     <plurals name="new_posts_quantity">
-        <item quantity="one">"%d new post"</item>
-        <item quantity="other">"%d new post"</item>
+        <item quantity="one">"%d yeni gönderi"</item>
+        <item quantity="other">"%d yeni gönderi"</item>
     </plurals>
 
     <!-- Button for revoking a link used for external sharing -->
-    <string name="revoke_link">"Revoke link"</string>
+    <string name="revoke_link">"İlişimi iptal et "</string>
 
     <!-- Text for button for sharing a post -->
-    <string name="share_via">"Share via…"</string>
+    <string name="share_via">"… yoluyla paylaş"</string>
 
     <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
-    <string name="revoke_link_in_progress">"Revoking link"</string>
+    <string name="revoke_link_in_progress">"İlişim iptal ediliyor"</string>
 
     <!-- Text shown in snackbar when external sharing link is revoked -->
-    <string name="link_revoked">"Link revoked"</string>
+    <string name="link_revoked">"İlişim iptal edildi"</string>
 
     <!-- Text shown in a snackbar when link revocation failed -->
-    <string name="link_revoke_failed">"Failed to revoke link"</string>
+    <string name="link_revoke_failed">"İlişim iptal edilemedi"</string>
 
     <!-- Text shown explaining how external sharing works on the sharing bottom sheet -->
-    <string name="external_share_info">"Anyone with the link can see your post. Link expires with your post. Link preview is unencrypted."</string>
+    <string name="external_share_info">"İlişime sahip herkes gönderini görebilir. İlişim, yayınınla birlikte sona erer. İlişimin önizlemesi şifrelenmemiştir."</string>
+
+    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
+    <string name="contact_favorites_explanation_others_with_name">"%s shared this post with contacts on their Favorites list. You can setup and edit your Favorites list at any time."</string>
+
+    <!-- Title for when user is editing their favorites -->
+    <string name="edit_favorites_title">"Edit favorites"</string>
+
+    <!-- Button action for when user is editing their favorites -->
+    <string name="edit_favorites_action">"Edit favorites"</string>
+
+    <!-- Favorites new user experience explanation, introducing the feature in a dialog. -->
+    <string name="favorites_nux_call_to_action">"Now you can create a list of your favorite contacts, and share your HalloApp posts just with them"</string>
+
+    <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
+    <string name="my_contacts_disclaimer">"Your contacts that join HalloApp will be able to see your unexpired posts"</string>
+
+    <!-- Title for screen that shows all the user's contacts -->
+    <string name="my_contacts_title">"My contacts"</string>
+
+    <!-- Title for list showing all users halloapp contacts -->
+    <string name="my_ha_contacts">"My HalloApp contacts"</string>
+
+    <!-- Title for feed privacy when setting it from a single post for the group section -->
+    <string name="setting_feed_privacy_groups_section_title">"Share only with a group"</string>
+
+    <!-- Description for sharing privacy for sharing with your favorites -->
+    <string name="composer_sharing_favorites_summary">"Share only with favorites"</string>
+
+    <!-- Text shown in activity center telling users about the new favorites feature -->
+    <string name="favorites_notification">"Check out the new &lt;b&gt;Favorites&lt;/b&gt; feature! &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
+
+    <!-- Title for when user is adding users to  their favorites. This is only shown when their favorites is empty -->
+    <string name="add_favorites_title">"Add favorites"</string>
+
+    <!-- Button title to toggle image annotating -->
+    <string name="toggle_annotate">"Annotate"</string>
     <string name="share_externally">"Harici olarak paylaş"</string>
     <string name="incoming_call_notification_title">"Gelen çağrı"</string>
     <string name="call_action">"Arama"</string>

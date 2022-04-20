@@ -411,7 +411,9 @@ versie: %2$s
         <item quantity="one">"%d deelnemer"</item>
         <item quantity="other">"%d deelnemers"</item>
     </plurals>
-    <string name="composer_sharing_all_summary">"Delen met mijn contacten"</string>
+
+    <!-- Description for sharing privacy for sharing with your contacts -->
+    <string name="composer_sharing_all_summary">"Delen met al mijn contacten"</string>
     <string name="composer_sharing_except_summary">"Delen met bepaalde contacten"</string>
     <plurals name="composer_sharing_only_summary">
         <item quantity="one">"Delen met %d van mijn contacten"</item>
@@ -1208,7 +1210,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <!-- Text in notifications for comments from potentially multiple people. %1$d replaced with number of comments, %2$s replaced with list of names -->
     <plurals name="new_comments_list_notification">
         <item quantity="one">"%1$d nieuwe reactie van %2$s"</item>
-        <item quantity="other">"%1$d nieuwe reactie van %2$s"</item>
+        <item quantity="other">"%1$d nieuwe reacties van %2$s"</item>
     </plurals>
 
     <!-- Displayed on the call screen when the call is on hold -->
@@ -1221,13 +1223,13 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="call_other_side_on_unhold">"Oproep is hervat"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for posts -->
-    <string name="contact_favorites_explanation">"Deze post wordt alleen gedeeld met contacten die je hebt toegevoegd aan Favorieten. Je kunt je publiek op ieder moment aanpassen in de privacy-instellingen."</string>
+    <string name="contact_favorites_explanation">"Deze post is alleen gedeeld met contacten die je hebt toegevoegd aan Favorieten. Je kunt je Favorietenlijst op ieder moment bewerken."</string>
 
     <!-- Favorites means the users favorite contacts -->
     <string name="contact_favorites">"Favorieten"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts -->
-    <string name="contact_favorites_explanation_others">"Deze post wordt alleen gedeeld met een beperkt publiek. Je kunt je publiek op ieder moment aanpassen in de privacy-instellingen."</string>
+    <string name="contact_favorites_explanation_others">"Deze post is alleen gedeeld met een beperkt publiek. Je kunt je publiek op ieder moment aanpassen in de privacy-instellingen."</string>
 
     <!-- Drawing on images -->
     <string name="draw">"Tekenen"</string>
@@ -1264,6 +1266,42 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Text shown explaining how external sharing works on the sharing bottom sheet -->
     <string name="external_share_info">"Iedereen met deze link kan je post zien. Links verlopen zodra je post op HalloApp verloopt. Linkvoorbeeld is onversleuteld."</string>
+
+    <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
+    <string name="contact_favorites_explanation_others_with_name">"%s heeft deze post gedeeld met contacten op de eigen Favorietenlijst. Je kunt jouw Favorietenlijst op ieder moment instellen en bewerken."</string>
+
+    <!-- Title for when user is editing their favorites -->
+    <string name="edit_favorites_title">"Favorieten bewerken"</string>
+
+    <!-- Button action for when user is editing their favorites -->
+    <string name="edit_favorites_action">"Favorieten bewerken"</string>
+
+    <!-- Favorites new user experience explanation, introducing the feature in a dialog. -->
+    <string name="favorites_nux_call_to_action">"Je kunt nu een lijst van je favoriete contacten maken en je HalloApp-posts alleen met hen delen"</string>
+
+    <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
+    <string name="my_contacts_disclaimer">"Je contacten die lid worden van HalloApp kunnen je niet-verlopen posts zien"</string>
+
+    <!-- Title for screen that shows all the user's contacts -->
+    <string name="my_contacts_title">"Mijn contacten"</string>
+
+    <!-- Title for list showing all users halloapp contacts -->
+    <string name="my_ha_contacts">"Mijn HalloApp contacten"</string>
+
+    <!-- Title for feed privacy when setting it from a single post for the group section -->
+    <string name="setting_feed_privacy_groups_section_title">"Alleen delen met een groep"</string>
+
+    <!-- Description for sharing privacy for sharing with your favorites -->
+    <string name="composer_sharing_favorites_summary">"Alleen delen met favorieten"</string>
+
+    <!-- Text shown in activity center telling users about the new favorites feature -->
+    <string name="favorites_notification">"Probeer de nieuwe functie &lt;b&gt;Favorieten&lt;/b&gt;! &lt;a href=\"learn-more\"&gt;Meer informatie&lt;/a&gt;"</string>
+
+    <!-- Title for when user is adding users to  their favorites. This is only shown when their favorites is empty -->
+    <string name="add_favorites_title">"Add favorites"</string>
+
+    <!-- Button title to toggle image annotating -->
+    <string name="toggle_annotate">"Annotate"</string>
     <string name="share_externally">"Extern delen"</string>
     <string name="incoming_call_notification_title">"Inkomende oproep"</string>
     <string name="call_action">"Bellen"</string>
