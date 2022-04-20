@@ -408,7 +408,7 @@ public class PostContentActivity extends HalloActivity {
     private class SinglePostAdapter extends AdapterWithLifecycle<PostViewHolder> {
 
         private Post post;
-        private boolean canInteract;
+        private boolean canInteract = true;
 
         private boolean initialSelectionSet = false;
 

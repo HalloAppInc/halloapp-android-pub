@@ -84,7 +84,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
     protected PostFooterViewHolder postFooterViewHolder;
 
-    private boolean canInteract;
+    private boolean canInteract = true;
     private boolean showGroupName;
     private @ColorRes int cardBgColor;
 
