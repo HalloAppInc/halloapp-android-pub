@@ -27,6 +27,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.clients.EncryptedPayload;
 import com.halloapp.proto.clients.GroupHistoryPayload;
 import com.halloapp.proto.clients.MemberDetails;
 import com.halloapp.proto.server.HistoryResend;
@@ -220,7 +221,8 @@ public class GroupViewModel extends AndroidViewModel {
                     // TODO(jack): Clean up stale payloads in daily worker after some time period
 
                     GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
-                    byte[] encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
+                    byte[] rawEncPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
+                    byte[] encPayload = EncryptedPayload.newBuilder().setSenderStateEncryptedPayload(ByteString.copyFrom(rawEncPayload)).build().toByteArray();
                     HistoryResend.Builder builder = HistoryResend.newBuilder()
                             .setGid(groupId.rawId())
                             .setId(id)

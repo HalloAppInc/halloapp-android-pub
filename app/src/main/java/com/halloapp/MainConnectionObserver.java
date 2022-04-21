@@ -35,6 +35,7 @@ import com.halloapp.privacy.BlockListManager;
 import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.Background;
+import com.halloapp.proto.clients.EncryptedPayload;
 import com.halloapp.proto.clients.GroupHistoryPayload;
 import com.halloapp.proto.clients.SenderKey;
 import com.halloapp.proto.clients.SenderState;
@@ -475,7 +476,8 @@ public class MainConnectionObserver extends Connection.Observer {
                     } catch (InvalidProtocolBufferException e) {
                         try {
                             GroupHistoryPayload groupHistoryPayload = GroupHistoryPayload.parseFrom(payload);
-                            byte[] encPayload = SignalSessionManager.getInstance().encryptMessage(payload, senderUserId);
+                            byte[] rawEncPayload = SignalSessionManager.getInstance().encryptMessage(payload, senderUserId);
+                            byte[] encPayload = EncryptedPayload.newBuilder().setSenderStateEncryptedPayload(ByteString.copyFrom(rawEncPayload)).build().toByteArray();
                             HistoryResend.Builder builder = HistoryResend.newBuilder()
                                     .setGid(groupId.rawId())
                                     .setId(historyId)
@@ -837,6 +839,7 @@ public class MainConnectionObserver extends Connection.Observer {
         }
 
         bgWorkers.execute(() -> {
+            // TODO: And when reading here
             ByteString encrypted = historyResend.getEncPayload(); // TODO(jack): Verify plaintext matches if present
             UserId publisherUserId = new UserId(Long.toString(publisherUid));
             GroupId groupId = new GroupId(historyResend.getGid());
@@ -874,9 +877,10 @@ public class MainConnectionObserver extends Connection.Observer {
                     }
                 }
 
-                byte[] encryptedBytes = encrypted.toByteArray();
                 try {
-                    byte[] decrypted = GroupFeedSessionManager.getInstance().decryptMessage(encryptedBytes, groupId, publisherUserId);
+                    byte[] encryptedBytes = encrypted.toByteArray();
+                    byte[] rawEncryptedBytes = EncryptedPayload.parseFrom(encryptedBytes).getSenderStateEncryptedPayload().toByteArray();
+                    byte[] decrypted = GroupFeedSessionManager.getInstance().decryptMessage(rawEncryptedBytes, groupId, publisherUserId);
                     GroupHistoryPayload groupHistoryPayload = GroupHistoryPayload.parseFrom(decrypted);
                     groupsApi.handleGroupHistoryPayload(groupHistoryPayload, groupId);
                 } catch (CryptoException e) {
