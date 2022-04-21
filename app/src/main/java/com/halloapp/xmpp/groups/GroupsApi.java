@@ -36,6 +36,7 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.HalloIq;
+import com.halloapp.xmpp.ProtoPrinter;
 import com.halloapp.xmpp.feed.FeedContentEncoder;
 import com.halloapp.xmpp.util.IqResult;
 import com.halloapp.xmpp.util.Observable;
@@ -261,7 +262,8 @@ public class GroupsApi {
         long myUid = Long.parseLong(me.getUser());
         for (MemberDetails memberDetails : groupHistoryPayload.getMemberDetailsList()) {
             if (myUid == memberDetails.getUid()) {
-                Log.i("This history resend includes me as recipient; dropping");
+                Log.i("This history resend includes me as recipient; creating tombstones");
+                addTombstones(groupHistoryPayload.getContentDetailsList(), groupId);
                 return;
             }
         }
@@ -345,6 +347,38 @@ public class GroupsApi {
                 // TODO(jack): Verify that identity key matches one provided
                 UserId peerUserId = new UserId(Long.toString(memberDetails.getUid()));
                 sendGroupHistoryResend(groupId, peerUserId, id, groupFeedItemsPayload);
+            }
+        }
+    }
+
+    private void addTombstones(List<ContentDetails> contentDetailsList, GroupId groupId) {
+        for (ContentDetails contentDetails : contentDetailsList) {
+            if (contentDetails.hasPostIdContext()) {
+                PostIdContext postIdContext = contentDetails.getPostIdContext();
+                UserId senderUserId = new UserId(Long.toString(postIdContext.getSenderUid()));
+                Post post = new Post(0,
+                        senderUserId,
+                        postIdContext.getFeedPostId(),
+                        postIdContext.getTimestamp(),
+                        Post.TRANSFERRED_DECRYPT_FAILED,
+                        Post.SEEN_NO,
+                        "");
+                post.parentGroup = groupId;
+                contentDb.addPost(post);
+            } else if (contentDetails.hasCommentIdContext()) {
+                CommentIdContext commentIdContext = contentDetails.getCommentIdContext();
+                UserId senderUserId = new UserId(Long.toString(commentIdContext.getSenderUid()));
+                String parentCommentId = "".equals(commentIdContext.getParentCommentId()) ? null : commentIdContext.getParentCommentId();
+                Comment comment = new Comment(0,
+                        commentIdContext.getFeedPostId(),
+                        senderUserId,
+                        commentIdContext.getCommentId(),
+                        parentCommentId,
+                        commentIdContext.getTimestamp(),
+                        Comment.TRANSFERRED_DECRYPT_FAILED,
+                        false,
+                        "");
+                contentDb.addComment(comment);
             }
         }
     }

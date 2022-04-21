@@ -294,7 +294,7 @@ public class ServerProps {
     }
 
     public synchronized boolean getUsePlaintextGroupFeed() {
-        return propUsePlaintextGroupFeed.getValue();
+        return propUsePlaintextGroupFeed.getValue() && !BuildConfig.DEBUG;
     }
 
     public synchronized boolean getExternalSharing() {

@@ -38,6 +38,11 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.clients.CommentIdContext;
+import com.halloapp.proto.clients.ContentDetails;
+import com.halloapp.proto.clients.GroupHistoryPayload;
+import com.halloapp.proto.clients.MemberDetails;
+import com.halloapp.proto.clients.PostIdContext;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -49,6 +54,7 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.util.logs.LogProvider;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.groups.GroupsApi;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -86,6 +92,7 @@ public class Debug {
     private static final String DEBUG_MENU_SKIP_INBOUND_GROUP_FEED_KEY = "Skip inbound key";
     private static final String DEBUG_MENU_CORRUPT_GROUP_KEY_STORE = "Corrupt group key store";
     private static final String DEBUG_MENU_CLEAR_DOWNLOADED_EMOJIS = "Clear downloaded emojis";
+    private static final String DEBUG_MENU_ADD_HISTORY_RESEND_TOMBSTONES = "Add history resend tombstones";
 
     private static final BgWorkers bgWorkers = BgWorkers.getInstance();
 
@@ -391,6 +398,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_SKIP_OUTBOUND_GROUP_FEED_KEY);
         menu.getMenu().add(DEBUG_MENU_SKIP_INBOUND_GROUP_FEED_KEY);
         menu.getMenu().add(DEBUG_MENU_CORRUPT_GROUP_KEY_STORE);
+        menu.getMenu().add(DEBUG_MENU_ADD_HISTORY_RESEND_TOMBSTONES);
         menu.setOnMenuItemClickListener(item -> {
             SnackbarHelper.showInfo(activity, item.getTitle());
             switch (item.getTitle().toString()) {
@@ -439,6 +447,49 @@ public class Debug {
                 }
                 case DEBUG_MENU_CORRUPT_GROUP_KEY_STORE: {
                     showCorruptGroupKeyStoreDialog(activity, groupId);
+                    break;
+                }
+                case DEBUG_MENU_ADD_HISTORY_RESEND_TOMBSTONES: {
+                    bgWorkers.execute(() -> {
+                        List<MemberInfo> members = ContentDb.getInstance().getGroupMembers(groupId);
+                        List<MemberInfo> otherMembers = new ArrayList<>();
+                        List<CharSequence> names = new ArrayList<>();
+                        for (MemberInfo member : members) {
+                            if (member.userId.isMe()) {
+                                continue;
+                            }
+                            otherMembers.add(member);
+                            names.add(member.userId.rawId());
+                        }
+                        CharSequence[] arr = new CharSequence[0];
+                        activity.runOnUiThread(() -> {
+                            AlertDialog.Builder selectUserBuilder = new AlertDialog.Builder(activity);
+                            selectUserBuilder.setTitle("Pick sender")
+                                    .setItems(names.toArray(arr), (dialog, whichUser) -> {
+                                        MemberInfo member = otherMembers.get(whichUser);
+                                        UserId peerUserId = member.userId;
+                                        Log.d("Debug selected: " + whichUser + " -> " + member);
+                                        bgWorkers.execute(() -> {
+                                            String postId = RandomId.create();
+                                            String parentCommentId = RandomId.create();
+                                            String childCommentId = RandomId.create();
+                                            long now = System.currentTimeMillis();
+                                            long senderUid = Long.parseLong(peerUserId.rawId());
+                                            ContentDetails postDetails = ContentDetails.newBuilder().setPostIdContext(PostIdContext.newBuilder().setFeedPostId(postId).setTimestamp(now).setSenderUid(senderUid).build()).build();
+                                            ContentDetails parentCommentDetails = ContentDetails.newBuilder().setCommentIdContext(CommentIdContext.newBuilder().setCommentId(parentCommentId).setFeedPostId(postId).setTimestamp(now).setSenderUid(senderUid).build()).build();
+                                            ContentDetails childCommentDetails = ContentDetails.newBuilder().setCommentIdContext(CommentIdContext.newBuilder().setCommentId(childCommentId).setParentCommentId(parentCommentId).setFeedPostId(postId).setTimestamp(now).setSenderUid(senderUid).build()).build();
+                                            GroupHistoryPayload groupHistoryPayload = GroupHistoryPayload.newBuilder()
+                                                    .addContentDetails(postDetails)
+                                                    .addContentDetails(parentCommentDetails)
+                                                    .addContentDetails(childCommentDetails)
+                                                    .addMemberDetails(MemberDetails.newBuilder().setUid(Long.parseLong(Me.getInstance().getUser())).build())
+                                                    .build();
+                                            GroupsApi.getInstance().handleGroupHistoryPayload(groupHistoryPayload, groupId);
+                                        });
+                                    });
+                            selectUserBuilder.create().show();
+                        });
+                    });
                     break;
                 }
             }

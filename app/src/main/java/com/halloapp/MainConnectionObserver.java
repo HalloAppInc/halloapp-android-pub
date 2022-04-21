@@ -638,21 +638,18 @@ public class MainConnectionObserver extends Connection.Observer {
     public void onGroupMemberChangeReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @Nullable HistoryResend historyResend, @NonNull String ackId) {
         List<MemberInfo> added = new ArrayList<>();
         List<MemberInfo> removed = new ArrayList<>();
-        boolean addedIncludesMe = false;
         for (MemberElement memberElement : members) {
             MemberInfo memberInfo = new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name);
             if (MemberElement.Action.ADD.equals(memberElement.action)) {
                 added.add(memberInfo);
                 if (memberInfo.userId.isMe()) {
                     notifications.showNewGroupNotification(groupId, senderName, groupName);
-                    addedIncludesMe = true;
                 }
             } else if (MemberElement.Action.REMOVE.equals(memberElement.action)) {
                 removed.add(memberInfo);
             }
         }
 
-        final boolean shouldIgnoreHistoryResend = addedIncludesMe;
         contentDb.addRemoveGroupMembers(groupId, groupName, avatarId, added, removed, () -> {
             if (!added.isEmpty()) {
                 String idList = toUserIdList(added);
@@ -684,9 +681,6 @@ public class MainConnectionObserver extends Connection.Observer {
                 connection.sendAck(ackId);
             } else if (sender.isMe()) {
                 Log.i("User is originator; ignoring history resend");
-                connection.sendAck(ackId);
-            } else if (shouldIgnoreHistoryResend) {
-                Log.i("User is in added list; ignoring history resend");
                 connection.sendAck(ackId);
             } else {
                 handleHistoryResend(historyResend, Long.parseLong(sender.rawId()), ackId);
@@ -839,7 +833,6 @@ public class MainConnectionObserver extends Connection.Observer {
         }
 
         bgWorkers.execute(() -> {
-            // TODO: And when reading here
             ByteString encrypted = historyResend.getEncPayload(); // TODO(jack): Verify plaintext matches if present
             UserId publisherUserId = new UserId(Long.toString(publisherUid));
             GroupId groupId = new GroupId(historyResend.getGid());
