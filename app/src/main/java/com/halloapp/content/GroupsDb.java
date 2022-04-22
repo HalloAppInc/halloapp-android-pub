@@ -532,6 +532,8 @@ public class GroupsDb {
 
         final int deletedPosts = db.delete(PostsTable.TABLE_NAME, PostsTable.COLUMN_GROUP_ID + "=?", new String[] {groupId.rawId()});
         Log.i("PostsDb/deleteGroup: " + deletedPosts + " posts deleted for group id " + groupId.rawId());
+
+        db.delete(GroupsTable.TABLE_NAME, GroupsTable.COLUMN_GROUP_ID + "=?", new String[] {groupId.rawId()});
         db.setTransactionSuccessful();
         db.endTransaction();
     }
