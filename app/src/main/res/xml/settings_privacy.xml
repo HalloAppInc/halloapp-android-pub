@@ -3,8 +3,7 @@
     <com.halloapp.widget.HAPreferenceCategory>
 
         <Preference app:key="feed_privacy"
-            app:title="@string/settings_feed_privacy"
-            app:summary=" "/>
+            app:title="@string/settings_feed_privacy"/>
 
         <Preference app:key="block_list"
             app:title="@string/settings_block_list"

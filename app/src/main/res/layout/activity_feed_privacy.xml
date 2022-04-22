@@ -5,92 +5,146 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/options_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:visibility="gone">
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:textSize="16sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:fontFamily="sans-serif-medium"
-        android:text="@string/setting_feed_privacy_title"/>
-    
-    <RadioGroup
-        android:layout_marginTop="8dp"
-        android:id="@+id/list_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        android:layout_marginStart="8dp">
-
-        <RadioButton
-            android:id="@+id/radio_all"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/header"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="8dp"
+            android:layout_marginTop="24dp"
             android:textSize="16sp"
-            android:paddingEnd="8dp"
-            android:text="@string/setting_feed_all"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:text="@string/setting_feed_privacy_title"/>
 
-        <RadioButton
-            android:id="@+id/radio_except"
+        <LinearLayout
+            android:id="@+id/my_contacts"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:visibility="gone"
-            android:text="@string/setting_feed_except"/>
+            android:layout_height="64sp"
+            android:orientation="horizontal"
+            android:layout_marginTop="18dp"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="0dp"
+            android:background="?selectableItemBackground">
 
-        <RadioButton
-            android:id="@+id/radio_only"
+            <ImageView
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:scaleType="center"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/ic_my_contacts"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/my_contacts_header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/setting_feed_all"
+                    android:textColor="@color/primary_text"
+                    android:fontFamily="sans-serif-medium"
+                    android:textSize="17sp"/>
+
+                <TextView
+                    android:id="@+id/my_contacts_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/composer_sharing_all_summary"
+                    android:textColor="@color/tertiary_text"
+                    android:textSize="12sp"/>
+
+            </LinearLayout>
+
+
+            <FrameLayout
+                android:id="@+id/my_contacts_chevron"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?selectableItemBackground">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_chevron_right"
+                    android:layout_marginHorizontal="25dp"
+                    app:tint="@color/secondary_text_button"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/only_share_with"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:text="@string/contact_favorites"/>
+            android:layout_height="64sp"
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            android:paddingEnd="0dp"
+            android:gravity="center_vertical"
+            android:background="?selectableItemBackground">
 
-    </RadioGroup>
+            <ImageView
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/ic_favorites"/>
 
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.Button"
-        android:id="@+id/save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="@string/save"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/list_group"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/contact_favorites"
+                    android:textColor="@color/primary_text"
+                    android:fontFamily="sans-serif-medium"
+                    android:textSize="17sp"/>
 
-    <ProgressBar
-        android:id="@+id/progress_spinner"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_gravity="center"
-        android:indeterminate="true"/>
+                <TextView
+                    android:id="@+id/only_with_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/composer_sharing_favorites_summary"
+                    android:textColor="@color/tertiary_text"
+                    android:textSize="12sp"/>
 
-    <TextView
-        android:id="@+id/error_msg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="16sp"
-        android:fontFamily="sans-serif-medium"
-        android:text="@string/feed_privacy_fail_to_load"
-        android:visibility="gone"/>
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/favorites_chevron"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?selectableItemBackground">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_chevron_right"
+                    android:layout_marginHorizontal="25dp"
+                    android:layout_gravity="center_vertical"
+                    app:tint="@color/secondary_text_button"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
 </FrameLayout>

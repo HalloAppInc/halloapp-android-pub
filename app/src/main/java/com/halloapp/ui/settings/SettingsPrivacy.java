@@ -90,7 +90,6 @@ public class SettingsPrivacy extends HalloActivity {
                 startActivity(intent);
                 return false;
             });
-            feedPrivacyPreference.setVisible(false);
 
             privacyPolicyPreference = Preconditions.checkNotNull(findPreference("privacy_policy"));
             privacyPolicyPreference.setOnPreferenceClickListener(preference -> {
@@ -111,27 +110,6 @@ public class SettingsPrivacy extends HalloActivity {
                     blocklistPreference.setSummary(getString(R.string.settings_block_list_none_summary));
                 } else {
                     blocklistPreference.setSummary(getResources().getQuantityString(R.plurals.settings_block_list_summary, list.size(), list.size()));
-                }
-            });
-            settingsViewModel.getFeedPrivacy().observe(getViewLifecycleOwner(), feedPrivacy -> {
-                if (feedPrivacy == null) {
-                    feedPrivacyPreference.setSummary(" ");
-                } else if (PrivacyList.Type.ALL.equals(feedPrivacy.activeList)) {
-                    feedPrivacyPreference.setSummary(getString(R.string.settings_feed_contacts_summary));
-                } else if (PrivacyList.Type.EXCEPT.equals(feedPrivacy.activeList)) {
-                    if (feedPrivacy.exceptList.isEmpty()) {
-                        feedPrivacyPreference.setSummary(getString(R.string.settings_feed_contacts_summary));
-                    } else {
-                        feedPrivacyPreference.setSummary(getResources().getQuantityString(R.plurals.settings_feed_excluded_summary, feedPrivacy.exceptList.size(), feedPrivacy.exceptList.size()));
-                    }
-                } else if (PrivacyList.Type.ONLY.equals(feedPrivacy.activeList)) {
-                    if (feedPrivacy.onlyList.isEmpty()) {
-                        feedPrivacyPreference.setSummary(getString(R.string.settings_feed_selected_empty));
-                    } else {
-                        feedPrivacyPreference.setSummary(getResources().getQuantityString(R.plurals.settings_feed_selected, feedPrivacy.onlyList.size(), feedPrivacy.onlyList.size()));
-                    }
-                } else {
-                    feedPrivacyPreference.setSummary(" ");
                 }
             });
         }

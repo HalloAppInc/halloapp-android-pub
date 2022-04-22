@@ -55,6 +55,8 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
+    public static final String EXTRA_FOR_SINGLE_POST = "for_single_post";
+
     private final ContactsAdapter adapter = new ContactsAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
     private EditFavoritesViewModel viewModel;
@@ -77,8 +79,15 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
     private boolean addFavorites = false;
     private boolean hasChanges = false;
 
+    private boolean forSinglePost;
+
     public static Intent openFavorites(@NonNull Context context) {
+        return openFavorites(context, false);
+    }
+
+    public static Intent openFavorites(@NonNull Context context, boolean forSinglePost) {
         Intent i = new Intent(context, EditFavoritesActivity.class);
+        i.putExtra(EXTRA_FOR_SINGLE_POST, forSinglePost);
         return i;
     }
 
@@ -165,6 +174,8 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
                 adapter::getSectionName));
 
         emptyView = findViewById(android.R.id.empty);
+
+        forSinglePost = getIntent().getBooleanExtra(EXTRA_FOR_SINGLE_POST, false);
 
         favorites = new HashSet<>();
         selectedContacts = new LinkedHashSet<>();
@@ -352,7 +363,7 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
                 ((ContactsActivity.ViewHolder) holder).bindTo(contact, filterTokens);
             } else if (holder instanceof HeaderViewHolder) {
                 if (position == favoritesHeaderIndex) {
-                    ((HeaderViewHolder) holder).setText(editFavorites ? R.string.contact_favorites : R.string.setting_feed_privacy_single_post_title);
+                    ((HeaderViewHolder) holder).setText((editFavorites || !forSinglePost) ? R.string.contact_favorites : R.string.setting_feed_privacy_single_post_title);
                 } else if (position == myContactsHeaderIndex) {
                     ((HeaderViewHolder) holder).setText(R.string.my_ha_contacts);
                 }

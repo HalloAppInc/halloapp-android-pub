@@ -140,7 +140,7 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
     }
 
     private void editOnlyList() {
-        startActivityForResult(EditFavoritesActivity.openFavorites(SharePrivacyActivity.this), REQUEST_CODE_SELECT_ONLY_LIST);
+        startActivityForResult(EditFavoritesActivity.openFavorites(SharePrivacyActivity.this, true), REQUEST_CODE_SELECT_ONLY_LIST);
     }
 
     private List<UserId> getOnlyList() {
