@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.text.TextUtils;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
@@ -169,6 +170,11 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         };
 
         fetchInvites();
+    }
+
+    @MainThread
+    public void invalidateSocialHistory() {
+        socialHistory.invalidate();
     }
 
     private void fetchInvites() {

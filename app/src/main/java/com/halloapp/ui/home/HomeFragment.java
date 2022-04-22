@@ -369,6 +369,12 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        activityCenterViewModel.invalidateSocialHistory();
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         saveScrollState();
