@@ -318,7 +318,7 @@
     </plurals>
     <string name="no_contacts_selected_subtitle">No contacts selected</string>
     <string name="help">Help</string>
-    <string name="about">About</string>
+    <string name="about">About HalloApp</string>
     <string name="notify_posts">Posts</string>
     <string name="notify_comments">Comments</string>
     <string name="read_more">read more</string>
@@ -337,6 +337,8 @@
     <string name="options">Options</string>
     <string name="block">Block</string>
     <string name="play">Play</string>
+    <!-- Settings option for storage and data  -->
+    <string name="settings_storage_usage">Storage &amp; data</string>
     <string name="new_posts">New posts</string>
     <!-- Confirmation dialog message when user tries to exit with unsaved changes. Options are cancel (keep editing) and discard (exit). -->
     <string name="alert_discard_changes_message">Discard changes?</string>

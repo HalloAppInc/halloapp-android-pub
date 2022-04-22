@@ -123,6 +123,7 @@
     <color name="groups_spinner_bar">#FFFFFF</color>
     <color name="groups_spinner_bg">#ff4500</color>
     <color name="groups_refresh_bg">#CDff4500</color>
+    <color name="profile_icon_color">#4D4D4D</color>
 
 
     <color name="bg_call_button_neutral">#EDECE9</color>

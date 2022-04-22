@@ -22,8 +22,11 @@ import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.archive.ArchiveActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.contacts.EditFavoritesActivity;
+import com.halloapp.ui.contacts.ViewMyContactsActivity;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
+import com.halloapp.ui.settings.SettingsActivity;
 import com.halloapp.ui.settings.SettingsNotifications;
 import com.halloapp.ui.settings.SettingsPrivacy;
 import com.halloapp.ui.settings.SettingsProfile;
@@ -33,7 +36,7 @@ import com.halloapp.widget.ActionBarShadowOnScrollListener;
 
 import java.util.Locale;
 
-public class SettingsHomeFragment extends HalloFragment implements MainNavFragment {
+public class MyProfileHomeFragment extends HalloFragment implements MainNavFragment {
 
     private MyProfileViewModel viewModel;
 
@@ -52,7 +55,7 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
         viewModel = new ViewModelProvider(requireActivity()).get(MyProfileViewModel.class);
 
         avatarLoader = AvatarLoader.getInstance();
-        View root = inflater.inflate(R.layout.fragment_settings_home, container, false);
+        View root = inflater.inflate(R.layout.fragment_my_profile_home, container, false);
         scrollView = root.findViewById(R.id.container);
 
         View profileContainer = root.findViewById(R.id.profile_container);
@@ -64,17 +67,22 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
         about.setOnClickListener(v -> IntentUtils.openUrlInBrowser(about, "de".equals(Locale.getDefault().getLanguage()) ? Constants.GERMAN_ABOUT_URL : Constants.ABOUT_PAGE_URL));
         View myPosts = root.findViewById(R.id.my_posts);
         myPosts.setOnClickListener(v -> {
-            startActivity(ViewProfileActivity.viewProfile(v.getContext(), UserId.ME));
+            startActivity(new Intent(v.getContext(), ViewMyPostsActivity.class));
         });
-        View archivedPosts = root.findViewById(R.id.archived_posts);
-        archivedPosts.setOnClickListener(v -> {
-            startActivity(new Intent(v.getContext(), ArchiveActivity.class));
-        });
-
 
         View help = root.findViewById(R.id.help);
         help.setOnClickListener(v -> {
             startActivity(new Intent(v.getContext(), HelpActivity.class));
+        });
+
+        View myContacts = root.findViewById(R.id.my_contacts);
+        myContacts.setOnClickListener(v -> {
+            startActivity(ViewMyContactsActivity.viewMyContacts(v.getContext()));
+        });
+
+        View favorites = root.findViewById(R.id.favorites);
+        favorites.setOnClickListener(v -> {
+            startActivity(EditFavoritesActivity.openFavorites(v.getContext()));
         });
 
         View invite = root.findViewById(R.id.invite);
@@ -84,48 +92,9 @@ public class SettingsHomeFragment extends HalloFragment implements MainNavFragme
             }
         });
 
-        View share = root.findViewById(R.id.share);
-        share.setOnClickListener(v -> {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_SEND);
-            intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_halloapp_text));
-            intent.setType("text/plain");
-
-            Intent shareIntent = Intent.createChooser(intent, null);
-            startActivity(shareIntent);
-        });
-
-        View privacy = root.findViewById(R.id.privacy);
-        privacy.setOnClickListener(v -> {
-            startActivity(new Intent(v.getContext(), SettingsPrivacy.class));
-        });
-        View darkMode = root.findViewById(R.id.darkmode);
-        darkMode.setOnClickListener(v -> {
-            DarkModeDialog dialog = new DarkModeDialog(getContext());
-            dialog.show();
-        });
-
-        View storageUsage = root.findViewById(R.id.storage_usage);
-        storageUsage.setOnClickListener(v -> {
-            startActivity(new Intent(v.getContext(), StorageUsageActivity.class));
-        });
-
-        View notifications = root.findViewById(R.id.notifications);
-        notifications.setOnClickListener(v -> {
-            startActivity(new Intent(v.getContext(), SettingsNotifications.class));
-        });
-
-        if (ServerProps.getInstance().getKrispNoiseSuppression()) {
-            View voiceAndVideo = root.findViewById(R.id.voice_video);
-            voiceAndVideo.setVisibility(View.VISIBLE);
-            voiceAndVideo.setOnClickListener(v -> {
-                startActivity(new Intent(v.getContext(), SettingsVoiceVideo.class));
-            });
-        }
-
-        View account = root.findViewById(R.id.account);
-        account.setOnClickListener(v -> {
-            startActivity(new Intent(v.getContext(), AccountActivity.class));
+        View settings = root.findViewById(R.id.settings);
+        settings.setOnClickListener(v -> {
+            startActivity(new Intent(v.getContext(), SettingsActivity.class));
         });
 
         TextView number = root.findViewById(R.id.number);

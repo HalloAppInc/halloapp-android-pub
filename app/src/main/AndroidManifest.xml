@@ -195,6 +195,14 @@
             android:label="@string/settings_feed_privacy"/>
 
         <activity
+            android:name=".ui.ViewMyPostsActivity"
+            android:label=""/>
+
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:label="@string/settings"/>
+
+        <activity
             android:name=".ui.archive.ArchiveActivity"
             android:label="@string/archive"/>
 
