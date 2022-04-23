@@ -21,6 +21,9 @@ import com.halloapp.content.Group;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.group.GroupFeedSessionManager;
 import com.halloapp.crypto.group.GroupSetupInfo;
+import com.halloapp.crypto.keys.EncryptedKeyStore;
+import com.halloapp.crypto.signal.SignalSessionManager;
+import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
@@ -30,8 +33,12 @@ import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.EncryptedPayload;
 import com.halloapp.proto.clients.GroupHistoryPayload;
 import com.halloapp.proto.clients.MemberDetails;
+import com.halloapp.proto.clients.SenderKey;
+import com.halloapp.proto.clients.SenderState;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.IdentityKey;
+import com.halloapp.proto.server.SenderStateBundle;
+import com.halloapp.proto.server.SenderStateWithKeyInfo;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
@@ -220,6 +227,42 @@ public class GroupViewModel extends AndroidViewModel {
                     contentDb.setHistoryResendPayload(groupId, id, payload);
                     // TODO(jack): Clean up stale payloads in daily worker after some time period
 
+                    byte[] chainKey = EncryptedKeyStore.getInstance().getMyGroupChainKey(groupId);
+                    byte[] publicSignatureKeyBytes = EncryptedKeyStore.getInstance().getMyPublicGroupSigningKey(groupId).getKeyMaterial();
+                    int currentChainIndex = EncryptedKeyStore.getInstance().getMyGroupCurrentChainIndex(groupId);
+                    SenderKey senderKey = SenderKey.newBuilder()
+                            .setChainKey(ByteString.copyFrom(chainKey))
+                            .setPublicSignatureKey(ByteString.copyFrom(publicSignatureKeyBytes))
+                            .build();
+                    SenderState senderState = SenderState.newBuilder()
+                            .setSenderKey(senderKey)
+                            .setCurrentChainIndex(currentChainIndex)
+                            .build();
+                    List<SenderStateBundle> extraSenderStateBundles = new ArrayList<>();
+                    for (UserId peerUserId : userIds) {
+                        byte[] senderStateBytes = senderState.toByteArray();
+                        byte[] encSenderKey = SignalSessionManager.getInstance().encryptMessage(senderStateBytes, peerUserId);
+                        SenderStateWithKeyInfo.Builder info = SenderStateWithKeyInfo.newBuilder()
+                                .setEncSenderState(ByteString.copyFrom(encSenderKey));
+                        SignalSessionSetupInfo signalSessionSetupInfo;
+                        try {
+                            signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(peerUserId);
+                        } catch (Exception e) {
+                            throw new CryptoException("failed_get_session_setup_info", e);
+                        }
+                        if (signalSessionSetupInfo != null) {
+                            info.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
+                            if (signalSessionSetupInfo.oneTimePreKeyId != null) {
+                                info.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
+                            }
+                        }
+                        SenderStateBundle senderStateBundle = SenderStateBundle.newBuilder()
+                                .setSenderState(info)
+                                .setUid(Long.parseLong(peerUserId.rawId()))
+                                .build();
+                        extraSenderStateBundles.add(senderStateBundle);
+                    }
+
                     GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
                     byte[] rawEncPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
                     byte[] encPayload = EncryptedPayload.newBuilder().setSenderStateEncryptedPayload(ByteString.copyFrom(rawEncPayload)).build().toByteArray();
@@ -233,6 +276,7 @@ public class GroupViewModel extends AndroidViewModel {
                     if (groupSetupInfo.senderStateBundles != null) {
                         builder.addAllSenderStateBundles(groupSetupInfo.senderStateBundles);
                     }
+                    builder.addAllSenderStateBundles(extraSenderStateBundles);
                     if (groupSetupInfo.audienceHash != null) {
                         builder.setAudienceHash(ByteString.copyFrom(groupSetupInfo.audienceHash));
                     }
