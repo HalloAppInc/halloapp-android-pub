@@ -29,10 +29,12 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionUtils;
+import com.halloapp.ui.ContactsPostDisclaimerDialogFragment;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.invites.InviteContactsActivity;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
@@ -52,6 +54,7 @@ public class ViewMyContactsActivity extends HalloActivity implements EasyPermiss
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
     private static final String EXTRA_TITLE_RES = "title_res";
+    private static final String EXTRA_SHOW_DISCLAIMER_IN_TITLE = "show_disclaimer_title";
 
     private final ContactsAdapter adapter = new ContactsAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
@@ -60,9 +63,17 @@ public class ViewMyContactsActivity extends HalloActivity implements EasyPermiss
     private TextView emptyView;
     private ProgressBar progressBar;
 
-    public static Intent viewMyContacts(@NonNull Context context) {
-        Intent i = new Intent(context, ViewMyContactsActivity.class);
+    private View infoBtn;
 
+    private boolean showDisclaimerInTitle = false;
+
+    public static Intent viewMyContacts(@NonNull Context context) {
+        return viewMyContacts(context, false);
+    }
+
+    public static Intent viewMyContacts(@NonNull Context context, boolean showDisclaimerInTitle) {
+        Intent i = new Intent(context, ViewMyContactsActivity.class);
+        i.putExtra(EXTRA_SHOW_DISCLAIMER_IN_TITLE, showDisclaimerInTitle);
         return i;
     }
 
@@ -86,25 +97,6 @@ public class ViewMyContactsActivity extends HalloActivity implements EasyPermiss
             setTitle(titleRes);
         }
 
-        /*EditText searchBox = findViewById(R.id.search_text);
-        searchBox.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                adapter.getFilter().filter(s.toString());
-            }
-        });
-        searchBox.requestFocus();*/
-
         final RecyclerView listView = findViewById(android.R.id.list);
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         listView.setLayoutManager(layoutManager);
@@ -119,6 +111,13 @@ public class ViewMyContactsActivity extends HalloActivity implements EasyPermiss
         emptyView = findViewById(android.R.id.empty);
 
         progressBar = findViewById(R.id.progress);
+
+        showDisclaimerInTitle = getIntent().getBooleanExtra(EXTRA_SHOW_DISCLAIMER_IN_TITLE, false);
+        infoBtn = findViewById(R.id.info_btn);
+        infoBtn.setOnClickListener(v -> {
+            DialogFragmentUtils.showDialogFragmentOnce(ContactsPostDisclaimerDialogFragment.newInstance(), getSupportFragmentManager());
+        });
+        infoBtn.setVisibility(showDisclaimerInTitle ? View.VISIBLE : View.GONE);
 
         viewModel = new ViewModelProvider(this).get(ContactsViewModel.class);
         viewModel.contactList.getLiveData().observe(this, adapter::setContacts);
@@ -296,7 +295,7 @@ public class ViewMyContactsActivity extends HalloActivity implements EasyPermiss
 
         @Override
         public int getItemCount() {
-            return getFilteredContactsCount() + (!inSearch ? 1 : 0);
+            return getFilteredContactsCount() + ((!inSearch && !showDisclaimerInTitle) ? 1 : 0);
         }
 
         @NonNull

@@ -674,7 +674,8 @@
 
     <!-- Button that takes users to system settings -->
     <string name="go_to_settings">Go to settings</string>
-
+    <!-- Dialog text explaining to user how my halloapp contacts works for unexpired posts -->
+    <string name="contacts_post_disclaimer">Your phone contacts who join HalloApp can see your unexpired posts up to 7 days</string>
     <string name="group_info_title">Group info</string>
     <string name="admin">Admin</string>
     <string name="save">Save</string>

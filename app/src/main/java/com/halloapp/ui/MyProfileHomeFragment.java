@@ -79,7 +79,7 @@ public class MyProfileHomeFragment extends HalloFragment implements MainNavFragm
 
         View myContacts = root.findViewById(R.id.my_contacts);
         myContacts.setOnClickListener(v -> {
-            startActivity(ViewMyContactsActivity.viewMyContacts(v.getContext()));
+            startActivity(ViewMyContactsActivity.viewMyContacts(v.getContext(), true));
         });
 
         View favorites = root.findViewById(R.id.favorites);
