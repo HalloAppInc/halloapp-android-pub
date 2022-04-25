@@ -553,9 +553,23 @@
     <string name="online">online</string>
     <string name="today">Today</string>
     <string name="today_at_time">today at %s</string>
+
+    <!-- TODO(jack): remove singular ones after transitioning to plurals -->
+    <!-- A human-readable timestamp for today at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
+    <plurals name="today_at_time_plurals">
+        <item quantity="other">today at %s</item>
+    </plurals>
     <string name="yesterday">Yesterday</string>
     <string name="yesterday_at_time">yesterday at %s</string>
+    <!-- A human-readable timestamp for yesterday at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
+    <plurals name="yesterday_at_time_plurals">
+        <item quantity="other">yesterday at %s</item>
+    </plurals>
     <string name="day_of_week_at_time">%1$s at %2$s</string>
+    <!-- A human-readable timestamp for a day in the last week at a specific time; the plural quantity is chosen based on the hour, %1$s is replaced with the day of the week, and %2$s is replaced with the time formatted in accordance with the locale conventions -->
+    <plurals name="day_of_week_at_time_plurals">
+        <item quantity="other">%1$s at %2$s</item>
+    </plurals>
     <string name="unknown_contact">Unknown contact</string>
     <string name="select_contact">New message</string>
     <string name="search_groups">Search groups</string>

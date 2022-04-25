@@ -123,13 +123,14 @@ public class TimeFormatter {
 
         CharSequence dateString;
         final String time = DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_TIME);
+        int hour = Integer.parseInt(time);
         if (TimeUtils.isSameDay(now, timestamp)) {
-            dateString = context.getString(R.string.today_at_time, time);
+            dateString = context.getResources().getQuantityString(R.plurals.today_at_time_plurals, hour, time);
         } else if (DateUtils.isToday(timestamp + DateUtils.DAY_IN_MILLIS)) {
-            dateString = context.getString(R.string.yesterday_at_time, time);
+            dateString = context.getResources().getQuantityString(R.plurals.yesterday_at_time_plurals, hour, time);
         } else if (timestamp > now - DateUtils.WEEK_IN_MILLIS) {
             String dayOfWeekShort = new SimpleDateFormat("EE", Locale.getDefault()).format(timestamp);
-            dateString = context.getString(R.string.day_of_week_at_time, dayOfWeekShort, time);
+            dateString = context.getResources().getQuantityString(R.plurals.day_of_week_at_time_plurals, hour, dayOfWeekShort, time);
         } else {
             dateString = DateUtils.getRelativeTimeSpanString(timestamp, now, 0, DateUtils.FORMAT_ABBREV_MONTH|DateUtils.FORMAT_SHOW_YEAR);
         }
