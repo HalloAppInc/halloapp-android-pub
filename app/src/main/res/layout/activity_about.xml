@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="28dp"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical"
+            android:paddingVertical="20dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_oh_hallo"
+                android:layout_marginBottom="23dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/halloapp_about"
+                android:textColor="@color/primary_text"
+                android:lineSpacingMultiplier="1.25"
+                android:textSize="17sp"
+                android:layout_marginBottom="20dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/halloapp_about_thanks"
+                android:textColor="@color/primary_text"
+                android:lineSpacingMultiplier="1.25"
+                android:layout_marginBottom="15dp"
+                android:textSize="17sp"/>
+
+            <TextView
+                android:id="@+id/support_link"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/halloapp_about_support"
+                android:textColor="@color/secondary_text"
+                android:lineSpacingMultiplier="1.25"
+                android:textSize="17sp"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</FrameLayout>

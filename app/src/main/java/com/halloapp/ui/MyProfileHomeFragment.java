@@ -64,7 +64,9 @@ public class MyProfileHomeFragment extends HalloFragment implements MainNavFragm
         });
 
         View about = root.findViewById(R.id.about);
-        about.setOnClickListener(v -> IntentUtils.openUrlInBrowser(about, "de".equals(Locale.getDefault().getLanguage()) ? Constants.GERMAN_ABOUT_URL : Constants.ABOUT_PAGE_URL));
+        about.setOnClickListener(v -> {
+            startActivity(new Intent(v.getContext(), AboutActivity.class));
+        });
         View myPosts = root.findViewById(R.id.my_posts);
         myPosts.setOnClickListener(v -> {
             startActivity(new Intent(v.getContext(), ViewMyPostsActivity.class));

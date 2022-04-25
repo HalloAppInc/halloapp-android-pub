@@ -203,6 +203,10 @@
             android:label="@string/settings"/>
 
         <activity
+            android:name=".ui.AboutActivity"
+            android:label="@string/about_title"/>
+
+        <activity
             android:name=".ui.archive.ArchiveActivity"
             android:label="@string/archive"/>
 
