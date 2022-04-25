@@ -12,6 +12,7 @@ import com.halloapp.props.ServerProps;
 import com.halloapp.ui.AccountActivity;
 import com.halloapp.ui.DarkModeDialog;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.util.Preconditions;
 
 public class SettingsActivity extends HalloActivity {
 
@@ -20,6 +21,8 @@ public class SettingsActivity extends HalloActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_settings);
+
+        Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         View privacy = findViewById(R.id.privacy);
         privacy.setOnClickListener(v -> {
