@@ -569,8 +569,8 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public List<ContentDetails> getHistoryResendContent(@NonNull GroupId groupId) {
-        return postsDb.getHistoryResendContent(groupId);
+    public List<ContentDetails> getHistoryResendContent(@NonNull GroupId groupId, long myUid) {
+        return postsDb.getHistoryResendContent(groupId, myUid);
     }
 
     @WorkerThread

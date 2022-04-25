@@ -598,7 +598,7 @@ class PostsDb {
     }
 
     @WorkerThread
-    public List<ContentDetails> getHistoryResendContent(@NonNull GroupId groupId) {
+    public List<ContentDetails> getHistoryResendContent(@NonNull GroupId groupId, long myUid) {
         List<ContentDetails> ret = new ArrayList<>();
         final String sql =
                 "SELECT rowid, id, hash, post_id, parent_id, gid FROM "
@@ -612,14 +612,15 @@ class PostsDb {
                 String postId = cursor.getString(3);
                 if (postId == null) { // is a post
                     ret.add(ContentDetails.newBuilder()
-                            .setPostIdContext(PostIdContext.newBuilder().setFeedPostId(id))
+                            .setPostIdContext(PostIdContext.newBuilder().setFeedPostId(id).setSenderUid(myUid))
                             .setContentHash(ByteString.copyFrom(cursor.getBlob(2)))
                             .build());
                 } else { // is a comment
                     String parentId = cursor.getString(4);
                     CommentIdContext.Builder builder = CommentIdContext.newBuilder()
                             .setCommentId(id)
-                            .setFeedPostId(postId);
+                            .setFeedPostId(postId)
+                            .setSenderUid(myUid);
                     if (parentId != null) {
                         builder.setParentCommentId(parentId);
                     }
