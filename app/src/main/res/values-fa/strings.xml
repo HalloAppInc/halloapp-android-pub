@@ -1290,7 +1290,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="external_share_info">"هر شخص با این لینک میتواند پست شما را مشاهده کند. لینک‌ها بعد از انقضای پست شما منحل میشوند. پیش‌نمایش لینک کدگذاری نشده است."</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
-    <string name="contact_favorites_explanation_others_with_name">"s% این پست را با مخاطبین محبوبش به اشتراک گذاشته است. شما هم میتوانید لیست مخاطبین محبوبتان را ویرایش کنید."</string>
+    <string name="contact_favorites_explanation_others_with_name">"%s این پست را با مخاطبین محبوبش به اشتراک گذاشته است. شما هم میتوانید لیست مخاطبین محبوبتان را ویرایش کنید."</string>
 
     <!-- Title for when user is editing their favorites -->
     <string name="edit_favorites_title">"ویرایش مخاطبین محبوب"</string>
