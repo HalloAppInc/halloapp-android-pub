@@ -118,7 +118,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     </plurals>
     <string name="no_contacts_selected_subtitle">"Geen contacten geselecteerd"</string>
     <string name="help">"Help"</string>
-    <string name="about">"Over"</string>
+    <string name="about">"Over HalloApp"</string>
     <string name="notify_posts">"Posts"</string>
     <string name="notify_comments">"Reacties"</string>
     <string name="read_more">"lees meer"</string>
@@ -1146,7 +1146,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="address_book_action_message">"Bericht sturen naar %s"</string>
 
     <!-- Text provided as title when a post is shared outside of HalloApp -->
-    <string name="external_share_title">"HalloApp Post from %s"</string>
+    <string name="external_share_title">"HalloApp-post van %s"</string>
 
     <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
     <string name="external_share_description_text">"Tekstpost"</string>
@@ -1265,10 +1265,10 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="link_revoke_failed">"Intrekken van link mislukt"</string>
 
     <!-- Text shown explaining how external sharing works on the sharing bottom sheet -->
-    <string name="external_share_info">"Iedereen met deze link kan je post zien. Links verlopen zodra je post op HalloApp verloopt. Linkvoorbeeld is onversleuteld."</string>
+    <string name="external_share_info">"Iedereen met deze link kan je post zien. Link verloopt zodra je post verloopt. Linkvoorbeeld is onversleuteld."</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
-    <string name="contact_favorites_explanation_others_with_name">"%s heeft deze post gedeeld met contacten op de eigen Favorietenlijst. Je kunt jouw Favorietenlijst op ieder moment instellen en bewerken."</string>
+    <string name="contact_favorites_explanation_others_with_name">"%s heeft deze post gedeeld met contacten op een Favorietenlijst. Je kunt je eigen Favorietenlijst op ieder moment instellen en bewerken."</string>
 
     <!-- Title for when user is editing their favorites -->
     <string name="edit_favorites_title">"Favorieten bewerken"</string>
@@ -1298,10 +1298,30 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="favorites_notification">"Probeer de nieuwe functie &lt;b&gt;Favorieten&lt;/b&gt;! &lt;a href=\"learn-more\"&gt;Meer informatie&lt;/a&gt;"</string>
 
     <!-- Title for when user is adding users to  their favorites. This is only shown when their favorites is empty -->
-    <string name="add_favorites_title">"Add favorites"</string>
+    <string name="add_favorites_title">"Favorieten toevoegen"</string>
 
     <!-- Button title to toggle image annotating -->
-    <string name="toggle_annotate">"Annotate"</string>
+    <string name="toggle_annotate">"Tekst toevoegen"</string>
+    <string name="settings_voice_video">"Spraak &amp; video"</string>
+    <string name="use_krisp_noise_suppression">"Krisp ruisonderdrukking gebruiken"</string>
+
+    <!-- About us text first paragraph -->
+    <string name="halloapp_about">"HalloApp is hier! En we maken het voor jou en iedereen die je dierbaar is. We hebben sociale apps teruggebracht naar de basis, met een focus op veiligheid en privacy waarvan we vinden dat iedereen in de wereld toegang toe zou moeten hebben. HalloApp zal nooit je persoonlijke informatie gebruiken of advertenties laten zien. In plaats daarvan zijn we van plan om in de toekomst extra functies tegen een kleine betaling aan te bieden."</string>
+
+    <!-- about us second paragraph as thanks -->
+    <string name="halloapp_about_thanks">"Bedankt voor het gebruiken en delen van HalloApp met je vrienden en familie. We verbeteren de app iedere week!"</string>
+
+    <!-- Feedback or support line in about -->
+    <string name="halloapp_about_support">"Heb je vragen of feedback? E-mail ons dan op &lt;a href=\"support-email\"&gt;support@halloapp.com&lt;/a&gt;"</string>
+
+    <!-- Title for the About screen -->
+    <string name="about_title">"Over"</string>
+
+    <!-- Settings option for storage and data -->
+    <string name="settings_storage_usage">"Opslag &amp; gegevens"</string>
+
+    <!-- Dialog text explaining to user how my halloapp contacts works for unexpired posts -->
+    <string name="contacts_post_disclaimer">"Je contacten die lid worden van HalloApp kunnen je niet-verlopen posts zien van de afgelopen 7 dagen"</string>
     <string name="share_externally">"Extern delen"</string>
     <string name="incoming_call_notification_title">"Inkomende oproep"</string>
     <string name="call_action">"Bellen"</string>
